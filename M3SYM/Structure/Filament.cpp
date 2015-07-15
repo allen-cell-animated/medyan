@@ -453,17 +453,29 @@ Filament* Filament::sever(int cylinderPosition) {
     auto c2 = _cylinderVector.front();
     
     ///copy bead at severing point, attach to new filament
-    Bead* b = _subSystem->addTrackable<Bead>
-              (*(_cylinderVector.front()->getFirstBead()));
+    Bead* newB = _subSystem->addTrackable<Bead>
+                 (*(c2->getFirstBead()));
+    Bead* oldB = c2->getFirstBead();
     
-    //offset this bead by a little for safety
+    //offset these beads by a little for safety
     auto msize = SysParams::Geometry().monomerSize;
     
-    b->coordinate[0] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
-    b->coordinate[1] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
-    b->coordinate[2] += (randomInteger(0,1) ? -1 : +1) * randomDouble(msize, 2 * msize);
+    vector<double> offsetCoord = {(randomInteger(0,1) ? -1 : +1) *
+                                   randomDouble(msize, 2 * msize),
+                                  (randomInteger(0,1) ? -1 : +1) *
+                                   randomDouble(msize, 2 * msize),
+                                  (randomInteger(0,1) ? -1 : +1) *
+                                   randomDouble(msize, 2 * msize)};
     
-    c1->setSecondBead(b);
+    oldB->coordinate[0] += offsetCoord[0];
+    oldB->coordinate[1] += offsetCoord[1];
+    oldB->coordinate[2] += offsetCoord[2];
+    
+    newB->coordinate[0] += -offsetCoord[0];
+    newB->coordinate[1] += -offsetCoord[1];
+    newB->coordinate[2] += -offsetCoord[2];
+    
+    c1->setSecondBead(newB);
     
     //set plus and minus ends
     c1->setPlusEnd(true);
