@@ -2023,6 +2023,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         vector<string> products = get<1>(r);
         
         for(auto &reactant : reactants) {
+            
             if(reactant.find("BULK") != string::npos) {
                 
                 //Look up species, make sure in list
@@ -2065,6 +2066,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         }
         
         for(auto &product : products) {
+            
             if(product.find("BULK") != string::npos) {
                 
                 //Look up species, make sure in list
