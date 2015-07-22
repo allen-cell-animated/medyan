@@ -33,7 +33,7 @@ namespace mathfunc {
     }
     
     /// Return normalized vector
-    inline vector<double>normalizedVector(vector<double>& v) {
+    inline vector<double> normalizedVector(const vector<double>& v) {
         
         double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
         
@@ -42,6 +42,12 @@ namespace mathfunc {
         v1.push_back(v[0]/norm); v1.push_back(v[1]/norm); v1.push_back(v[2]/norm);
         
         return v1;
+    }
+    
+    /// Get the magnitude of a vector
+    inline double magnitude(const vector<double>& v) {
+        
+        return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     }
     
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
@@ -259,17 +265,25 @@ namespace mathfunc {
     }
     
     /// Returns true if two vectors (p1->p2 and p3->p4) are parallel
-    inline bool ifParallel(const vector<double>& p1, const vector<double>& p2,
+    inline bool areParallel(const vector<double>& p1, const vector<double>& p2,
+                            const vector<double>& p3, const vector<double>& p4) {
+        
+        auto v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
+        auto v2 = {p4[0] - p3[0], p4[1] - p3[1], p4[2] - p3[2]};
+        
+        return magnitude(crossProduct(v1,v2)) <= 1E-10;
+    }
+    
+    /// Returns true if two vectors (p1->p2 and p3->p4) are in the same plane
+    inline bool areInPlane(const vector<double>& p1, const vector<double>& p2,
                            const vector<double>& p3, const vector<double>& p4) {
         
-        vector<double> v;
+        auto v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
+        auto v2 = {p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]};
+        auto v3 = {p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2]};
         
-        v.push_back( (p2[2]-p1[2])*(p4[3]-p3[3]) -  (p2[3]-p1[3])*(p4[2]-p3[2]) );
-        v.push_back( (p2[3]-p1[3])*(p4[1]-p3[1]) -  (p2[1]-p1[1])*(p4[3]-p3[3]) );
-        v.push_back( (p2[1]-p1[1])*(p4[2]-p3[2]) -  (p2[2]-p1[2])*(p4[1]-p3[1]) );
-        
-        double norm = sqrt( v[1]*v[1] + v[2]*v[2] + v[3]*v[3] );
-        return norm <= 1e-20;
+        auto cp = crossProduct(v1, v2);
+        return dotProduct(v3, cp) <= 1E-10;
     }
     
     /// Function to move bead out of plane by specified amount

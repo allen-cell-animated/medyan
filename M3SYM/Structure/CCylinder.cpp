@@ -206,6 +206,25 @@ CCylinder::~CCylinder() {
     }
 }
 
+vector<ReactionBase*> CCylinder::getAllReactions() {
+    
+    vector<ReactionBase*> reactions;
+    
+    //get internal rxns
+    for(auto r : _internalReactions) reactions.push_back(r);
+    
+    //get cross cylinder rxns
+    for(auto it = _crossCylinderReactions.begin();
+            it != _crossCylinderReactions.end(); it++)
+        
+        for(auto it2 = it->second.begin();
+                it2 != it->second.end(); it2++)
+            
+            reactions.push_back(*it2);
+    
+    return reactions;
+}
+
 void CCylinder::printCCylinder()
 {
     cout << "Compartment:" << _compartment << endl;

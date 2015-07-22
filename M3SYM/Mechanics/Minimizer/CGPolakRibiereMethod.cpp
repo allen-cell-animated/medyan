@@ -19,7 +19,7 @@
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
                                                     double ENERGYTOL,
                                                     double MAXDIST){
-
+    
     //system size
     int N = Bead::numBeads();
     int NDOF = 3 * N;

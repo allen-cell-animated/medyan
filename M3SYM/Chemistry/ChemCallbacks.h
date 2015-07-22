@@ -266,10 +266,21 @@ struct BranchingCallback {
         //get branch projection
 #ifdef MECHANICS
         //use mechanical parameters
-        double l = SysParams::Mechanics().BrStretchingL[branchType];
-        double t = SysParams::Mechanics().BrBendingTheta[branchType];
+        double l, t;
+        
+        if(SysParams::Mechanics().BrStretchingL.size() != 0) {
+            l = SysParams::Mechanics().BrStretchingL[branchType];
+            t = SysParams::Mechanics().BrBendingTheta[branchType];
+        }
+        else {
+            cout << "Branching initialization cannot occur unless mechanical parameters are specified."
+                 << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+                 << endl;
+            l = 10.0;
+            t = 1.22;
+        }
 #else
-        cout << "Branching reaction cannot occur unless mechanics is enabled. Using"
+        cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
              << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
              << endl;
         double l = 10.0;
@@ -605,7 +616,10 @@ struct FilamentSeveringCallback {
         Filament* f = _c1->getFilament();
         
         //create a new filament by severing
-        f->sever(_c1->getPositionFilament());
+        Filament* newF = f->sever(_c1->getPositionFilament());
+        
+        //if severing did not occur, return
+        if(newF == nullptr) return;
     }
 };
 

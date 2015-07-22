@@ -132,6 +132,9 @@ public:
     void removeAllReactingCylinders();
     //@}
     
+    /// Get all reactions that this CCylinder has ownership of
+    vector<ReactionBase*> getAllReactions();
+    
     /// Print
     virtual void printCCylinder();
     

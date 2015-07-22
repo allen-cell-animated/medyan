@@ -42,7 +42,7 @@ protected:
     //@{
     /// Parameter used in backtracking line search
     const double LAMBDAREDUCE = 0.5;   ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 0.4; ///< Backtrack slope parameter
+    const double BACKTRACKSLOPE = 0.01; ///< Backtrack slope parameter
     //@}
     
     //@{

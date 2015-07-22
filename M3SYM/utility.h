@@ -103,4 +103,10 @@ inline int randomInteger(int low, int high) {
 }
 
 
+///Check equality of doubles
+inline bool areSame(double d1, double d2) {
+    
+    return fabs(d1 - d2) < 1E-6;
+}
+
 #endif

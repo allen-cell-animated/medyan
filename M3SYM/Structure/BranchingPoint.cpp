@@ -76,6 +76,25 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
 
 BranchingPoint::~BranchingPoint() noexcept {
     
+#ifdef MECHANICS
+    //offset the branching cylinder's bead by a little for safety
+    auto msize = SysParams::Geometry().monomerSize;
+    
+    vector<double> offsetCoord = {(randomInteger(0,1) ? -1 : +1) *
+                                   randomDouble(msize, 2 * msize),
+                                  (randomInteger(0,1) ? -1 : +1) *
+                                   randomDouble(msize, 2 * msize),
+                                  (randomInteger(0,1) ? -1 : +1) *
+                                   randomDouble(msize, 2 * msize)};
+    
+    auto b = _c2->getFirstBead();
+    
+    b->coordinate[0] += offsetCoord[0];
+    b->coordinate[1] += offsetCoord[1];
+    b->coordinate[2] += offsetCoord[2];
+#endif
+    
+    
 #ifdef CHEMISTRY
     //mark the correct species on the minus end of the branched
     //filament. If this is a filament species, change it to its
@@ -87,6 +106,10 @@ BranchingPoint::~BranchingPoint() noexcept {
     //there is a filament species, mark its corresponding minus end
     if(speciesFilament != -1) {
         m->speciesMinusEnd(speciesFilament)->up();
+        
+        //unmark the filament and bound species
+        m->speciesFilament(speciesFilament)->down();
+        m->speciesBound(BOUND_EMPTY)->down();
     }
     //mark the free species instead
     else {

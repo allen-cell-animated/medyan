@@ -91,7 +91,8 @@ double BranchingFF::computeEnergy(double d) {
        
             U_i = interaction->computeEnergy(b, d);
             
-            if(fabs(U_i) == numeric_limits<double>::infinity() || U_i != U_i) {
+            if(fabs(U_i) == numeric_limits<double>::infinity()
+               || U_i != U_i || U_i < -1.0) {
                 
                 //set culprit and return
                 _branchingCulprit = b;

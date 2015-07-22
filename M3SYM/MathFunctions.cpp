@@ -24,53 +24,49 @@ namespace mathfunc {
                                        const vector<double>& p3,
                                        const vector<double>& p4,
                                        int i, double d) {
-        vector<double> v;
+        vector<double> norm;
         vector<double> v1;
+        vector<double> v2;
         
-        //plane
-        v.push_back( (p2[2]-p1[2])*(p4[3]-p3[3]) -  (p2[3]-p1[3])*(p4[2]-p3[2]) );
-        v.push_back( (p2[3]-p1[3])*(p4[1]-p3[1]) -  (p2[1]-p1[1])*(p4[3]-p3[3]) );
-        v.push_back( (p2[1]-p1[1])*(p4[2]-p3[2]) -  (p2[2]-p1[2])*(p4[1]-p3[1]) );
-        
-        double norm = sqrt( v[1]*v[1] + v[2]*v[2] + v[3]*v[3] );
-        
-        v1.push_back(v[0]/norm);
-        v1.push_back(v[1]/norm);
-        v1.push_back(v[2]/norm);
+        //get plane
+        v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
+        v2 = {p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]};
+
+        norm = normalizedVector(crossProduct(v1, v2));
         
         //move bead 1
         if (i == 1){
             vector<double> newP1;
-            newP1.push_back(p1[0] + v1[0]*d);
-            newP1.push_back(p1[1] + v1[1]*d);
-            newP1.push_back(p1[2] + v1[2]*d);
+            newP1.push_back(p1[0] + norm[0]*d);
+            newP1.push_back(p1[1] + norm[1]*d);
+            newP1.push_back(p1[2] + norm[2]*d);
             return newP1;
         }
         
         //move bead 2
         else if (i == 2){
             vector<double> newP2;
-            newP2.push_back(p2[0] + v1[0]*d);
-            newP2.push_back(p2[1] + v1[1]*d);
-            newP2.push_back(p2[2] + v1[2]*d);
+            newP2.push_back(p2[0] + norm[0]*d);
+            newP2.push_back(p2[1] + norm[1]*d);
+            newP2.push_back(p2[2] + norm[2]*d);
             return newP2;
         }
         
         //move bead 3
         else if (i == 3){
             vector<double> newP3;
-            newP3.push_back(p3[0] + v1[0]*d);
-            newP3.push_back(p3[1] + v1[1]*d);
-            newP3.push_back(p3[2] + v1[2]*d);
+            newP3.push_back(p3[0] + norm[0]*d);
+            newP3.push_back(p3[1] + norm[1]*d);
+            newP3.push_back(p3[2] + norm[2]*d);
             return newP3;
         }
         
         //move bead 4
         else {
             vector<double> newP4;
-            newP4.push_back(p4[0] + v1[0]*d);
-            newP4.push_back(p4[1] + v1[1]*d);
-            newP4.push_back(p4[2] + v1[2]*d);
+            newP4.push_back(p4[0] + norm[0]*d);
+            newP4.push_back(p4[1] + norm[1]*d);
+            newP4.push_back(p4[2] + norm[2]*d);
             return newP4;
         }
     }

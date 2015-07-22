@@ -177,8 +177,8 @@ void Cylinder::updateReactionRates() {
 bool Cylinder::isFullLength() {
     
 #ifdef MECHANICS
-    return _mCylinder->getEqLength() ==
-            SysParams::Geometry().cylinderSize;
+    return areSame(_mCylinder->getEqLength(),
+                   SysParams::Geometry().cylinderSize);
 #else
     return true;
 #endif

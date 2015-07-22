@@ -139,6 +139,10 @@ double ChemNRMImpl::generateTau(double a){
 bool ChemNRMImpl::makeStep() {
 
     //try to get a reaction
+    if(_heap.empty()) {
+        cout << "There are no reactions to fire, returning..." << endl;
+        return false;
+    }
     RNodeNRM *rn = _heap.top()._rn;
     
     double tau_top = rn->getTau();
