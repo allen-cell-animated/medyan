@@ -122,14 +122,13 @@ BranchingPoint::~BranchingPoint() noexcept {
         
         //find the free monomer, either bulk or diffusing
         Species* freeMonomer = nullptr;
+        auto grid = _subSystem->getCompartmentGrid();
         
         Species* dMonomer  = _compartment->findSpeciesByName(speciesName);
         Species* dfMonomer = _compartment->findSpeciesByName(speciesFirstChar);
         
-        Species* bMonomer  = _subSystem->getCompartmentGrid()->
-                             findSpeciesBulkByName(speciesName);
-        Species* bfMonomer = _subSystem->getCompartmentGrid()->
-                             findSpeciesBulkByName(speciesFirstChar);
+        Species* bMonomer  = grid->findSpeciesBulkByName(speciesName);
+        Species* bfMonomer = grid->findSpeciesBulkByName(speciesFirstChar);
         
         //try diffusing
         if(dMonomer != nullptr) freeMonomer = dMonomer;
@@ -150,8 +149,9 @@ BranchingPoint::~BranchingPoint() noexcept {
         //remove the filament from the system
         _subSystem->removeTrackable<Filament>(_c2->getFilament());
             
-        //update reactions
-        freeMonomer->getRSpecies().activateAssocReactantReactions();
+        //mark species, update reactions
+        freeMonomer->up();
+        freeMonomer->updateReactantPropensities();
     }
 #endif
     //reset branching cylinder

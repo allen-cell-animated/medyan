@@ -145,6 +145,16 @@ struct BoundParams {
     /// Cutoff for force calculation
     double BoundaryCutoff = 0;
     double diameter = 0;
+    
+    /// Moving speed (if any)
+    double moveSpeed = 0;
+    
+    //@{
+    /// Moving times
+    double moveStartTime = 0;
+    double moveEndTime = 0;
+    //@}
+  
 };
 
 /// Struct to hold dynamic rate changing parameters

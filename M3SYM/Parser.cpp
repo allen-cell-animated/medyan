@@ -963,10 +963,10 @@ void SystemParser::readBoundParams() {
             else if (lineVector.size() == 2) {
                 BParams.BoundaryCutoff = atof((lineVector[1].c_str()));
             }
-            //Default value to be half compartment size
+            //Default value to be compartment size
             else {
                 BParams.BoundaryCutoff =
-                SysParams::Geometry().compartmentSizeX / 2;
+                SysParams::Geometry().compartmentSizeX;
             }
         }
         else if (line.find("BINTERACTIONK") != string::npos) {
@@ -1002,6 +1002,30 @@ void SystemParser::readBoundParams() {
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
                 BParams.diameter = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("BMOVESPEED") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                BParams.moveSpeed = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("BMOVESTARTTIME") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                BParams.moveStartTime = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("BMOVEENDTIME") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() == 2) {
+                BParams.moveEndTime = atof((lineVector[1].c_str()));
             }
             else {}
         }
@@ -1176,6 +1200,17 @@ BoundaryType SystemParser::readBoundaryType() {
             }
             else if (lineVector.size() == 2) {
                 BType.boundaryShape = lineVector[1];
+            }
+        }
+        else if (line.find("BOUNDARYMOVE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout << "A boundary move type needs to be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                BType.boundaryMove = lineVector[1];
             }
         }
     }

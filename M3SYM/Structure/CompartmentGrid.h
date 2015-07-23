@@ -53,11 +53,10 @@ public:
             addChild(unique_ptr<Component>(new Compartment()));
     }
     
-    /// Activate all compartments
-    void activateAll() {
+    /// Set all compartments as active. Used at initialization
+    void setAllAsActive() {
         for (auto &c : children())
-            ((Compartment*)(c.get()))->activate();
-        
+            ((Compartment*)(c.get()))->setAsActive();
     }
     
     /// Get name of this compartment grid

@@ -49,8 +49,9 @@ private:
     void genBulkReactions();
     
     void genNucleationReactions();
+    void genFilBindingReactions();
+    
     void genFilReactionTemplates();
-    void genFilBindingManagers();
     //@}
     
 public:

@@ -397,6 +397,17 @@ public:
     virtual inline void up() {_rspecies->up();}
     virtual inline void down() {_rspecies->down();}
     //@}
+    
+    /// Update the reaction propensities associated with this species.
+    /// This will not activate the reactions if currently passivated,
+    /// or update any dependents asosciated with these reactions.
+    void updateReactantPropensities();
+    
+    /// Activate the reactions associated with this species. i.e. if
+    /// passivated, will activate accordingly and update propensities
+    /// and all dependents.
+    void activateReactantReactions();
+
 };
 
 /// Used for species without spatial information (i.e. well-mixed in the container)

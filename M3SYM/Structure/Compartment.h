@@ -47,8 +47,8 @@ class Cylinder;
  */
 
 class Compartment : public Composite {
-protected:
     
+protected:
     ///CHEMICAL CONTAINERS
     SpeciesPtrContainerVector _species;  ///< Container with all species
                                          ///< in this compartment
@@ -72,7 +72,6 @@ protected:
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
     
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
-
     
     ///OTHER COMPARTMENT PROPERTIES
     vector<double> _coords;  ///< Coordinates of this compartment
@@ -121,11 +120,24 @@ public:
     /// ReactionBase.
     virtual bool apply_impl(ReactionVisitor &v) override;
     
-    ///Activate a compartment
-    virtual void activate() {_activated = true;}
+    ///Set a compartment as active. Used at initialization.
+    virtual void setAsActive() {_activated = true;}
     
-    ///Deactivate a compartment
-    virtual void deactivate() {_activated = false;}
+    /// Activate a compartment. Has the following side effects:
+    /// 1) Adds diffusion reactions between this compartment's diffusing
+    ///    species and its neighboring active compartments
+    virtual void activate(ChemSim* chem);
+    
+    /// Deactivate a compartment. Has the following sid effects:
+    /// 0) Initially checks that all cylinders are removed
+    ///    from this compartment. A compartment cannot be deactivated
+    ///    unless this condition is already true.
+    /// 1) Transfers copy numbers of all diffusing species from this
+    ///    compartment and moves them to a neighboring active compartment.
+    ///    If there are no neighboring active compartments, an error will result.
+    /// 2) Removes all diffusion reactions involving diffusing species
+    ///    in this compartment.
+    virtual void deactivate(ChemSim* chem);
     
     ///Check if compartment is activated
     virtual bool isActivated() {return _activated;}
@@ -133,6 +145,13 @@ public:
     ///Setter and getter for coordinates
     virtual void setCoordinates(vector<double> coords) {_coords = coords;}
     virtual const vector<double>& coordinates() {return _coords;}
+    
+    
+    /// Transfer all species copy numbers from this compartment to neighboring
+    /// active compartments. If no neighboring active compartments are present,
+    /// throw an error.
+    virtual void transferSpecies();
+    
     
     /// Removes all reactions from this compartment, diffusing and internal
     virtual void clearReactions() {
@@ -554,7 +573,18 @@ public:
     vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
 
     /// Generate all diffusion reactions for this compartment and its neighbors
-    void generateAllDiffusionReactions();
+    ///@return - a vector of reactionbases that was just added
+    vector<ReactionBase*> generateAllDiffusionReactions();
+    
+    
+    /// Remove diffusion reactions between this compartment and another
+    ///@return - a vector of reactionbases that was just removed
+    void removeDiffusionReactions(ChemSim* chem, Compartment* C);
+    
+    /// Remove all diffusion reactions for this compartment and its neighbors
+    ///@return - a vector of reactionbases that was just removed
+    void removeAllDiffusionReactions(ChemSim* chem);
+    
     
     /// Gives the number of neighbors to this compartment
     size_t numberOfNeighbours() const {return _neighbours.size();}

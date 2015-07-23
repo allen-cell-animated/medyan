@@ -38,6 +38,19 @@ ostream& operator<<(ostream& os, const Species& s){
     return os;
 }
 
+void Species::updateReactantPropensities() {
+    
+    for(auto r : _rspecies->reactantReactions())
+        r->updatePropensity();
+}
+
+void Species::activateReactantReactions() {
+    
+    for(auto r : _rspecies->reactantReactions())
+        r->activateReaction();
+}
+
+
 unordered_map<string,int> SpeciesNamesDB::_map_string_int;
 vector<string> SpeciesNamesDB::_vec_int_string;
 unsigned long  SpeciesNamesDB::_num = 0;

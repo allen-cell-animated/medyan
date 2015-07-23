@@ -1058,7 +1058,7 @@ void ChemManager::genFilReactionTemplates() {
     }
 }
 
-void ChemManager::genFilBindingManagers() {
+void ChemManager::genFilBindingReactions() {
     
     auto grid = _subSystem->getCompartmentGrid();
     
@@ -1979,7 +1979,10 @@ void ChemManager::updateCopyNumbers() {
                 }
                 //find the species, increase copy number
                 Species* species = randomCompartment->findSpeciesByName(name);
+                
                 species->up();
+                species->updateReactantPropensities();
+                
                 copyNumber--;
             }
             
@@ -2000,8 +2003,8 @@ void ChemManager::updateCopyNumbers() {
             Species* species = grid->findSpeciesBulkByName(name);
             species->setN(copyNumber);
             
-            //update reactions
-            species->getRSpecies().activateAssocReactantReactions();
+            //activate reactions
+            species->activateReactantReactions();
             
             //set zero copy number
             get<1>(s) = 0;
@@ -2469,7 +2472,7 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
     updateCopyNumbers();
     
     genNucleationReactions();
-    genFilBindingManagers();
+    genFilBindingReactions();
     
     //add reactions in compartment grid to chemsim
     grid->addChemSimReactions(chemSim);

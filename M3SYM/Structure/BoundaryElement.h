@@ -39,6 +39,10 @@ class Bead;
  */
 class BoundaryElement : public Trackable, public Neighbor {
 
+friend class BoundaryCubic;
+friend class BoundarySpherical;
+friend class BoundaryCapsule;
+    
 private:
     static Database<BoundaryElement*> _boundaryElements;
     ///< Collection of boundary elements in SubSystem
@@ -66,6 +70,9 @@ public:
     
     ///return coordinates of boundary element
     const vector<double>& getCoords() {return _coords;}
+    
+    ///update the coordinates of the boundary element
+    virtual void updateCoords(const vector<double> newCoords) = 0;
     
     /// Implement for all boundary elements
     /// Returns the distance from a given point to this boundary element

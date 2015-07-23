@@ -46,9 +46,9 @@ struct MechanicsAlgorithm {
     string ConjugateGradient = "";
     
     /// Tolerance and cg parameters
-    double gradientTolerance = 0.001;
+    double gradientTolerance = 1.0;
     double energyTolerance = 1e-6;
-    double maxDistance = 0.0001;
+    double maxDistance = 1.0;
     
     /// Not yet used
     string MD = "";
@@ -156,6 +156,8 @@ struct ChemistryData {
 struct BoundaryType {
     
     string boundaryShape = "";
+    
+    string boundaryMove = "";
 };
 
 /// Struct to hold the ForceField types

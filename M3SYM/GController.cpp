@@ -197,12 +197,12 @@ CompartmentGrid* GController::initializeGrid() {
 
 }
 
-void GController::activateCompartments(Boundary* boundary) {
+void GController::setActiveCompartments(Boundary* boundary) {
     
     //initialize all compartments equivalent to cproto
     for(auto &c : _compartmentGrid->children()) {
         Compartment *C = (Compartment*)(c.get());
-        if(boundary->within(C->coordinates())) C->activate();
+        if(boundary->within(C)) C->setAsActive();
     }
 }
 
@@ -236,9 +236,9 @@ Compartment* GController::getRandomCompartment() {
         
         //create a random coordinate
         vector<double> coord =
-        {_grid[0] * _compartmentSize[0] * randomDouble(0,1),
-         _grid[1] * _compartmentSize[1] * randomDouble(0,1),
-         _grid[2] * _compartmentSize[2] * randomDouble(0,1)};
+        {_grid[0] * _compartmentSize[0] * randomDouble(0,0.999),
+         _grid[1] * _compartmentSize[1] * randomDouble(0,0.999),
+         _grid[2] * _compartmentSize[2] * randomDouble(0,0.999)};
         
         Compartment* c = getCompartment(coord);
         if(c->isActivated()) return c;

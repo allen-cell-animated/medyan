@@ -21,6 +21,7 @@
 #include "SubSystem.h"
 #include "BoundaryImpl.h"
 #include "FilamentInitializer.h"
+#include "CompartmentGrid.h"
 
 #include "Filament.h"
 #include "Cylinder.h"
@@ -78,19 +79,14 @@ void Controller::initialize(string inputFile,
     string forceName  = _outputDirectory + "forces.traj";
     string stressName = _outputDirectory + "stresses.traj";
     
-    if(oTypes.basicSnapshot)
-        _outputs.push_back(new BasicSnapshot(snapName));
-    if(oTypes.birthTimes)
-        _outputs.push_back(new BirthTimes(birthName));
-    if(oTypes.forces)
-        _outputs.push_back(new Forces(forceName));
-    if(oTypes.stresses)
-        _outputs.push_back(new Stresses(stressName));
+    if(oTypes.basicSnapshot) _outputs.push_back(new BasicSnapshot(snapName));
+    if(oTypes.birthTimes)    _outputs.push_back(new BirthTimes(birthName));
+    if(oTypes.forces)        _outputs.push_back(new Forces(forceName));
+    if(oTypes.stresses)      _outputs.push_back(new Stresses(stressName));
     
     //Always read geometry, check consistency
     p.readGeoParams();
-    if(!SysParams::checkGeoParameters())
-        exit(EXIT_FAILURE);
+    if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
     
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
@@ -122,26 +118,69 @@ void Controller::initialize(string inputFile,
     //Initialize boundary
     cout << "---" << endl;
     cout << "Initializing boundary...";
-    if(BTypes.boundaryShape == "CUBIC") {
-        _subSystem->addBoundary(new BoundaryCubic(_subSystem));
+    
+    BoundaryType type;
+    BoundaryMove move;
+    
+    if(BTypes.boundaryMove == "NONE") move = BoundaryMove::None;
+    else if(BTypes.boundaryMove == "TOP") {
+        
+#ifndef CHEMISTRY
+        cout << "Top moving boundary cannot be executed without chemistry enabled. Fix these"
+        << " compilation macros and try again." << endl;
+        exit(EXIT_FAILURE);
+#endif
+        move = BoundaryMove::Top;
     }
+    else if(BTypes.boundaryMove == "ALL") {
+        
+#ifndef CHEMISTRY
+        cout << "Full moving boundary cannot be executed without chemistry enabled. Fix these"
+             << " compilation macros and try again." << endl;
+        exit(EXIT_FAILURE);
+#endif
+        
+        move = BoundaryMove::All;
+    }
+    else {
+        cout << "Given boundary movement not yet implemented. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if(BTypes.boundaryShape == "CUBIC")
+        _subSystem->addBoundary(new BoundaryCubic(_subSystem, move));
+
     else if(BTypes.boundaryShape == "SPHERICAL") {
+        
+        if(move != BoundaryMove::None) {
+            
+            cout << "Moving boundaries for a spherical shape not yet implemented. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
         _subSystem->addBoundary(
-        new BoundarySpherical(_subSystem, SysParams::Boundaries().diameter));
+        new BoundarySpherical(_subSystem, SysParams::Boundaries().diameter, move));
     }
+
     else if(BTypes.boundaryShape == "CAPSULE") {
+        
+        if(move != BoundaryMove::None) {
+            
+            cout << "Moving boundaries for a capsule shape not yet implemented. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
         _subSystem->addBoundary(
-        new BoundaryCapsule(_subSystem, SysParams::Boundaries().diameter));
+        new BoundaryCapsule(_subSystem, SysParams::Boundaries().diameter, move));
     }
     else{
-        cout << endl << "Given boundary not yet implemented. Exiting." <<endl;
+        cout << endl << "Given boundary shape not yet implemented. Exiting." <<endl;
         exit(EXIT_FAILURE);
     }
     cout << "Done." <<endl;
     
 #ifdef CHEMISTRY
     //Activate necessary compartments for diffusion
-    _gController->activateCompartments(_subSystem->getBoundary());
+    _gController->setActiveCompartments(_subSystem->getBoundary());
     
     //read parameters
     p.readChemParams();
@@ -160,8 +199,7 @@ void Controller::initialize(string inputFile,
     //if no snapshot step size set, set this to maxint so we use time
     _numStepsPerSnapshot = CAlgorithm.numStepsPerSnapshot;
     
-    if(_numStepsPerSnapshot == 0)
-        _numStepsPerSnapshot = numeric_limits<int>::max();
+    if(_numStepsPerSnapshot == 0) _numStepsPerSnapshot = numeric_limits<int>::max();
     
     _snapshotTime = CAlgorithm.snapshotTime;
     _numChemSteps = CAlgorithm.numChemSteps;
@@ -246,6 +284,33 @@ void Controller::initialize(string inputFile,
             _subSystem->addTrackable<Filament>(_subSystem, it, numSegment + 1);
     }
     cout << "Done. " << filamentData.size() << " filaments created." << endl;
+}
+
+void Controller::moveBoundary(double deltaTau) {
+    
+    //calculate distance to move
+    double dist = SysParams::Boundaries().moveSpeed * deltaTau;
+    
+    //move it
+    if(tau() >= SysParams::Boundaries().moveStartTime &&
+       tau() <= SysParams::Boundaries().moveEndTime)
+        _subSystem->getBoundary()->move(dist);
+    
+    //activate, deactivate necessary compartments
+    for(auto &c : _subSystem->getCompartmentGrid()->children()) {
+        
+        Compartment *C = (Compartment*)(c.get());
+        
+        if(_subSystem->getBoundary()->within(C)) {
+            
+            if(C->isActivated()) continue;
+            else _cController->activate(C);
+        }
+        else {
+            if(!C->isActivated()) continue;
+            else _cController->deactivate(C);
+        }
+    }
 }
 
 void Controller::updatePositions() {
@@ -355,6 +420,10 @@ void Controller::run() {
                 updateNeighborLists();
             
             i += _numChemSteps;
+            
+            //move the boundary
+            moveBoundary(tau() - oldTau);
+            
             oldTau = tau();
         }
 #endif
@@ -401,6 +470,9 @@ void Controller::run() {
             // update neighbor lists
             if(i % _numStepsPerNeighbor == 0)
                 updateNeighborLists();
+            
+            //move the boundary
+            moveBoundary(tau() - oldTau);
             
             oldTau = tau();
         }

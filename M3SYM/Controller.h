@@ -59,6 +59,9 @@ private:
     int _numChemSteps;        ///< Number of consecutive chemical steps
     int _numStepsPerNeighbor; ///< NUmber of steps before a neighbor list update
     
+    /// Move the boundary based on the timestep
+    void moveBoundary(double deltaTau);
+    
     /// Update the positions of all elements in the system
     void updatePositions();
     

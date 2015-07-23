@@ -27,6 +27,8 @@ using namespace mathfunc;
 /// A plane implementation of a BoundaryElement.
 class PlaneBoundaryElement : public BoundaryElement {
     
+friend class BoundaryCubic;
+    
 private:
     /// Parameters of equation (ax + by + cz + d = 0)
     double _a, _b, _c, _d;
@@ -73,10 +75,22 @@ public:
         
         return vector<double>{_a, _b, _c};
     }
+    
+    virtual void updateCoords(const vector<double> newCoords) {
+        
+        _coords = newCoords;
+        
+        //also update plane params
+        _d = -_a * _coords[0] -
+              _b * _coords[1] -
+              _c * _coords[2];
+    }
 };
 
 /// A spherical implementation of a BoundaryElement.
 class SphereBoundaryElement : public BoundaryElement {
+    
+friend class BoundarySpherical;
     
 private:
     double _radius; ///< Radius of sphere
@@ -111,10 +125,17 @@ public:
         
         return twoPointDirection(point, _coords);
     }
+
+    virtual void updateCoords(const vector<double> newCoords) {
+    
+        _coords = newCoords;
+    }
 };
 
 /// A cylinder implementation of a BoundaryElement.
 class CylindricalZBoundaryElement : public BoundaryElement {
+    
+friend class BoundaryCapsule;
     
 private:
     double _radius; ///< Radius of cylinder
@@ -167,10 +188,17 @@ public:
         return twoPointDirection({point[0],  point[1], 0},
                                {_coords[0],_coords[1], 0});
     }
+    
+    virtual void updateCoords(const vector<double> newCoords) {
+        
+        _coords = newCoords;
+    }
 };
 
 /// A half-sphere implementation of a BoundaryElement.
 class HalfSphereZBoundaryElement : public BoundaryElement {
+    
+friend class BoundaryCapsule;
     
 private:
     double _radius; ///< Radius of half sphere
@@ -216,6 +244,11 @@ public:
     virtual const vector<double> normal(const vector<double>& point) {
         
         return twoPointDirection(point, _coords);
+    }
+    
+    virtual void updateCoords(const vector<double> newCoords) {
+        
+        _coords = newCoords;
     }
 };
 

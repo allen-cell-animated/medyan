@@ -16,6 +16,8 @@
 
 #include "common.h"
 
+#include "Compartment.h"
+
 //FORWARD DECLARATIONS
 class SubSystem;
 class ChemSim;
@@ -49,6 +51,11 @@ private:
 public:
     /// Constructor which sets subsystem pointer
     CController(SubSystem* s) : _subSystem(s) {}
+    
+    ///Activate a compartment. Wrapper function for Compartment::activate().
+    void activate(Compartment* C) {C->activate(_chemSim);}
+    ///Deactivate a compartment. Wrapper function for Compartment::deactivate().
+    void deactivate(Compartment* C) {C->deactivate(_chemSim);}
     
     /// Initialize the ChemSim algorithm as well as the ChemManager
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used

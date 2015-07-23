@@ -67,8 +67,9 @@ public:
     /// Initialize and return the grid based on input parameters
     CompartmentGrid* initializeGrid();
     
-    /// Activate compartments in compartment grid based on a boundary
-    void activateCompartments(Boundary* boundary);
+    /// Set compartments in compartment grid as active based on boundary.
+    /// Used at system initialization.
+    void setActiveCompartments(Boundary* boundary);
     
     //@{
     /// Get a compartment based on coordinates or indices

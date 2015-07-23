@@ -16,14 +16,18 @@
 #include "BoundarySurfaceImpl.h"
 #include "BoundaryElement.h"
 
+#include "Compartment.h"
+
 #include "SysParams.h"
 
-BoundaryCubic::BoundaryCubic(SubSystem* s) : Boundary(s, 3, BoundaryShape::Cube){
+BoundaryCubic::BoundaryCubic(SubSystem* s, BoundaryMove move)
+
+    : Boundary(s, 3, BoundaryShape::Cube, move){
     
     //Get full system size (want planes to be slightly inside compartment grid)
-    double zeroX = 0.05 * SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX;
-    double zeroY = 0.05 * SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY;
-    double zeroZ = 0.05 * SysParams::Geometry().compartmentSizeZ * SysParams::Geometry().NZ;
+    double zeroX = 0.02 * SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX;
+    double zeroY = 0.02 * SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY;
+    double zeroZ = 0.02 * SysParams::Geometry().compartmentSizeZ * SysParams::Geometry().NZ;
     
     double sysX = SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX - zeroX;
     double sysY = SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY - zeroY;
@@ -32,24 +36,60 @@ BoundaryCubic::BoundaryCubic(SubSystem* s) : Boundary(s, 3, BoundaryShape::Cube)
     //Create boundary surfaces, add to vector
     //X normal planes
     _boundarySurfaces.emplace_back(new Plane(s, {zeroX, sysY / 2, sysZ / 2}, {1, 0, 0}));
+        
     _boundarySurfaces.emplace_back(new Plane(s, {sysX, sysY / 2, sysZ / 2}, {-1, 0, 0}));
     
     //Y normal planes
     _boundarySurfaces.emplace_back(new Plane(s, {sysX / 2, zeroY, sysZ / 2}, {0, 1, 0}));
+        
     _boundarySurfaces.emplace_back(new Plane(s, {sysX / 2, sysY, sysZ / 2}, {0, -1, 0}));
     
     //Z normal planes
     _boundarySurfaces.emplace_back(new Plane(s, {sysX / 2, sysY / 2, zeroZ}, {0, 0, 1}));
+        
     _boundarySurfaces.emplace_back(new Plane(s, {sysX / 2, sysY / 2, sysZ}, {0, 0, -1}));
     
 }
+
+bool BoundaryCubic::within(Compartment* C) {
+    
+    for(auto &bs : _boundarySurfaces) {
+        
+        auto be = bs->boundaryElements()[0].get();
+        
+        //go half a compartment dist in the direction of normal
+        auto coordinate = C->coordinates();
+        
+        //initial check of coord
+        if(be->distance(coordinate) > 0) continue;
+        
+        //if not, see if any part is in bounds
+        auto normal = be->normal(coordinate);
+        
+        auto effCoordinate = {coordinate[0] + SysParams::Geometry().compartmentSizeX * normal[0] / 2,
+                              coordinate[1] + SysParams::Geometry().compartmentSizeY * normal[1] / 2,
+                              coordinate[2] + SysParams::Geometry().compartmentSizeZ * normal[2] / 2};
+        
+        //check if this is within boundary
+        if(be->distance(effCoordinate) <= 0)
+            return false;
+    
+    }
+    return true;
+}
+
 
 bool BoundaryCubic::within(const vector<double>& coordinates) {
     
     // check if all planes return positive distance
     // (means in front of plane, relative to normal)
-    for(auto &bs : _boundarySurfaces)
-        if(bs->boundaryElements()[0]->distance(coordinates) <= 0) return false;
+    for(auto &bs : _boundarySurfaces) {
+        
+        auto be = bs->boundaryElements()[0].get();
+        
+        if(be->distance(coordinates) <= 0)
+            return false;
+    }
     return true;
 }
 
@@ -60,7 +100,9 @@ double BoundaryCubic::distance(const vector<double>& coordinates) {
     
     for(auto &bs : _boundarySurfaces) {
         
-        double dist = bs->boundaryElements()[0]->distance(coordinates);
+        auto be = bs->boundaryElements()[0].get();
+        
+        double dist = be->distance(coordinates);
         
         if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;
@@ -69,10 +111,59 @@ double BoundaryCubic::distance(const vector<double>& coordinates) {
     return smallestDist;
 }
 
+void BoundaryCubic::move(double dist) {
+    
+    //do nothing
+    if(_move == BoundaryMove::None) return;
+    
+    //move the top plane
+    else if(_move == BoundaryMove::Top) {
+        
+        for(auto &bs : _boundarySurfaces) {
+            
+            auto be = bs->boundaryElements()[0].get();
+            
+            if(be->normal({0,0,0})[2] < 0) {
+                
+                be->updateCoords({be->_coords[0], be->_coords[1], be->_coords[2] + dist});
+                return;
+            }
+        }
+    }
+    
+    else if(_move == BoundaryMove::All) {
+        
+        for(auto &bs : _boundarySurfaces) {
+            
+            auto be = bs->boundaryElements()[0].get();
+            
+            
+            if(be->normal({0,0,0})[0] > 0)
+                be->updateCoords({be->_coords[0] - dist, be->_coords[1], be->_coords[2]});
+                
+            else if (be->normal({0,0,0})[0] < 0)
+                be->updateCoords({be->_coords[0] + dist, be->_coords[1], be->_coords[2]});
+                
+            else if (be->normal({0,0,0})[1] > 0)
+                be->updateCoords({be->_coords[0], be->_coords[1] - dist, be->_coords[2]});
+                
+            else if (be->normal({0,0,0})[1] < 0)
+                be->updateCoords({be->_coords[0], be->_coords[1] + dist, be->_coords[2]});
+                
+            else if (be->normal({0,0,0})[2] > 0)
+                be->updateCoords({be->_coords[0], be->_coords[1], be->_coords[2] - dist});
+                
+            else if (be->normal({0,0,0})[2] < 0)
+                be->updateCoords({be->_coords[0], be->_coords[1], be->_coords[2] + dist});
 
-BoundarySpherical::BoundarySpherical(SubSystem* s, double diameter)
+        }
+    }
+}
 
-    : Boundary(s, 3, BoundaryShape::Sphere) {
+
+BoundarySpherical::BoundarySpherical(SubSystem* s, double diameter, BoundaryMove move)
+
+    : Boundary(s, 3, BoundaryShape::Sphere, move) {
     
     double sysX = SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX;
     double sysY = SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY;
@@ -82,31 +173,35 @@ BoundarySpherical::BoundarySpherical(SubSystem* s, double diameter)
     new Sphere(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2));
 }
 
+bool BoundarySpherical::within(Compartment* C) {
+    
+    //just calls regular within for now
+    return within(C->coordinates());
+}
+
 bool BoundarySpherical::within(const vector<double>& coordinates) {
     
     //check if the boundary element returns a positive distance
-    BoundaryElement* sphereBoundaryElement =
-        _boundarySurfaces[0]->boundaryElements()[0].get();
+    auto be = _boundarySurfaces[0]->boundaryElements()[0].get();
     
-    return sphereBoundaryElement->distance(coordinates) > 0;
+    return be->distance(coordinates) > 0;
     
 }
 
 double BoundarySpherical::distance(const vector<double>& coordinates) {
     
-    BoundaryElement* sphereBoundaryElement =
-    _boundarySurfaces[0]->boundaryElements()[0].get();
+    auto be = _boundarySurfaces[0]->boundaryElements()[0].get();
     
-    double dist = sphereBoundaryElement->distance(coordinates);
+    double dist = be->distance(coordinates);
     
     if(dist > 0) return dist;
     else return numeric_limits<double>::infinity();
 }
 
 
-BoundaryCapsule::BoundaryCapsule(SubSystem* s, double diameter)
+BoundaryCapsule::BoundaryCapsule(SubSystem* s, double diameter, BoundaryMove move)
 
-    : Boundary(s, 3, BoundaryShape::Capsule) {
+    : Boundary(s, 3, BoundaryShape::Capsule, move) {
     
     double sysX = SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX;
     double sysY = SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY;
@@ -114,21 +209,31 @@ BoundaryCapsule::BoundaryCapsule(SubSystem* s, double diameter)
 
     double height = sysZ - diameter;
     
-    _boundarySurfaces.emplace_back(
-    new CylinderZ(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
-    _boundarySurfaces.emplace_back(
-    new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 + height / 2}, diameter / 2, false));
-    _boundarySurfaces.emplace_back(
-    new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 - height / 2}, diameter / 2, true));
+    _boundarySurfaces.emplace_back( new CylinderZ(s, {sysX / 2, sysY / 2, sysZ / 2},
+                                                  diameter / 2, height));
+        
+    _boundarySurfaces.emplace_back( new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 + height / 2},
+                                                    diameter / 2, false));
+        
+    _boundarySurfaces.emplace_back( new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 - height / 2},
+                                                    diameter / 2, true));
 }
+
+bool BoundaryCapsule::within(Compartment* C) {
+    
+    //just calls regular within for now
+    return within(C->coordinates());
+}
+
 
 bool BoundaryCapsule::within(const vector<double>& coordinates) {
     
     //check if the boundary elements return a positive distance
-    for(auto &bSurface : _boundarySurfaces) {
-        BoundaryElement* boundaryElement = bSurface->boundaryElements()[0].get();
+    for(auto &bs : _boundarySurfaces) {
         
-        double dist = boundaryElement->distance(coordinates);
+        auto be = bs->boundaryElements()[0].get();
+        
+        double dist = be->distance(coordinates);
         if(dist <= 0) return false;
     }
     return true;
@@ -141,7 +246,9 @@ double BoundaryCapsule::distance(const vector<double>& coordinates) {
     
     for(auto &bs : _boundarySurfaces) {
         
-        double dist = bs->boundaryElements()[0]->distance(coordinates);
+        auto be = bs->boundaryElements()[0].get();
+        
+        double dist = be->distance(coordinates);
         
         if(dist < 0) continue;
         if(dist < smallestDist) smallestDist = dist;

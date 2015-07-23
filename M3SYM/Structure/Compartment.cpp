@@ -61,12 +61,135 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
 }
 
-
-void Compartment::generateAllDiffusionReactions() {
+vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
+    
+    vector<ReactionBase*> rxns;
+    
     if(_activated) {
-        for (auto &C: _neighbours)
-            generateDiffusionReactions(C);
+        for (auto &C: _neighbours) {
+            auto newRxns = generateDiffusionReactions(C);
+            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+        }
     }
+    return vector<ReactionBase*>(rxns.begin(), rxns.end());
+}
+
+void Compartment::removeDiffusionReactions(ChemSim* chem, Compartment* C)
+{
+    //look for neighbor's diffusion reactions
+    vector<ReactionBase*> to_remove;
+    
+    for(auto &r : C->_diffusion_reactions.reactions()) {
+        
+        auto rs = r.get()->rspecies()[1];
+        if(rs->getSpecies().getParent() == this) {
+            
+            r->passivateReaction();
+            chem->removeReaction(r.get());
+            
+            to_remove.push_back(r.get());
+        }
+    }
+    
+    //remove them
+    for(auto &r : to_remove)
+        C->_diffusion_reactions.removeReaction(r);
+    
+}
+
+void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
+    
+    //remove all diffusion reactions that this has ownership of
+    for(auto &r : _diffusion_reactions.reactions()) {
+        r->passivateReaction();
+        chem->removeReaction(r.get());
+    }
+    
+    _diffusion_reactions.clear();
+    
+    //remove neighboring diffusing reactions with this compartment
+    for (auto &C: _neighbours)
+        removeDiffusionReactions(chem, C);
+}
+
+
+void Compartment::transferSpecies() {
+    
+    //get active neighbors
+    vector<Compartment*> activeNeighbors;
+    
+    for(auto &neighbor : _neighbours)
+        if(neighbor->isActivated())
+            activeNeighbors.push_back(neighbor);
+    
+    assert(activeNeighbors.size() != 0
+           && "Cannot transfer species to another compartment... no neighbors are active");
+    
+    //go through species
+    Species* sp_neighbor;
+    vector<Species*> sp_neighbors;
+    
+    for(auto &sp : _species.species()) {
+        
+        int copyNumber = sp->getN();
+        auto nit = activeNeighbors.begin();
+        
+        while(copyNumber > 0) {
+            sp->down();
+            
+            //choose a random active neighbor
+            auto neighbor = *nit;
+            sp_neighbor = neighbor->findSpeciesByName(sp->getName());
+            
+            //add to list if not already
+            auto spit = find(sp_neighbors.begin(),
+                             sp_neighbors.end(),
+                             sp_neighbor);
+            
+            if(spit == sp_neighbors.end())
+                sp_neighbors.push_back(sp_neighbor);
+            
+            //increase copy number
+            sp_neighbor->up();
+            
+            //reset if we've looped through
+            if(++nit == activeNeighbors.end())
+                nit = activeNeighbors.begin();
+            copyNumber--;
+        }
+        
+        //activate all reactions changed
+        for(auto spn : sp_neighbors)
+            spn->updateReactantPropensities();
+    }
+}
+
+void Compartment::activate(ChemSim* chem) {
+    
+    assert(!_activated && "Compartment is already activated.");
+    
+    //set marker
+    _activated = true;
+    
+    //add all diffusion reactions
+    auto rxns = generateAllDiffusionReactions();
+    for(auto &r : rxns) chem->addReaction(r);
+
+}
+
+void Compartment::deactivate(ChemSim* chem) {
+    
+    //assert no cylinders in this compartment
+    assert((_cylinders.size() == 0)
+           && "Compartment cannot be deactivated when containing active cylinders.");
+    
+    assert(_activated && "Compartment is already deactivated.");
+    
+    //set marker
+    _activated = false;
+    
+    transferSpecies();
+    removeAllDiffusionReactions(chem);
 }
 
 bool operator==(const Compartment& a, const Compartment& b) {
