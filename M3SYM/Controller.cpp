@@ -142,6 +142,10 @@ void Controller::initialize(string inputFile,
         
         move = BoundaryMove::All;
     }
+    //if nothing is specified, don't move boundaries
+    else if(BTypes.boundaryMove == "") {
+        move = BoundaryMove::None;
+    }
     else {
         cout << "Given boundary movement not yet implemented. Exiting." << endl;
         exit(EXIT_FAILURE);

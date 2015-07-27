@@ -145,11 +145,29 @@ The following geometrical parameters can be set. All geometry parameters must be
   \hline
   BDIAMETER & double & Diameter for applicable shapes, including SPHERICAL and CAPSULE \\
   \hline
-
 \end{tabular}
 \end{table}
 
 \break
+\noindent If movement of boundaries is desired, the following parameters can also be set. If these parameters are not set, the system will assume non-moving boundaries. Currently, moving boundaries are only implemented for the CUBIC boundary shape.
+
+\begin{table} [!ht]
+\centering
+\begin{tabular}{|L{5cm}|C{3cm}|L{5.2cm}|}  
+\hline
+ \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
+ \hline
+  BOUNDARYMOVE & NONE, ALL, TOP & Movement of a boundary. ALL specifies that all boundaries will move in the given direction, and top specifies that the top of the boundary in the z direction will move. \\
+  \hline
+  BMOVESPEED & double & Speed of boundary movement in $nm / s$. If a negative value is given, the boundary will move towards the center of the grid. If positive, the boundary will move away from the center of the grid.\\
+  \hline
+   BMOVESTARTTIME & double & Time at which the boundary will begin to move. If not specified, the boundary will start moving at the beginning of the simulation.\\
+  \hline
+    BMOVEENDTIME & double &Time at which the boundary will stop movement.\\
+  \hline
+\end{tabular}
+\end{table}
+
 \subsubsection{Mechanics}
 
 The following mechanical parameters can be set. It should be noted that the number of parameters for each force field must match the number of species of that type, specified in the \texttt{SystemFile}. Force field constant units are dependent on the potential used, but in general will be in pN scaling. For more information on force fields used in the MEDYAN3 model, see (*paper*). If a force field type is left blank, that force field will not be included in the simulation.
@@ -565,7 +583,7 @@ The forces file gives the forces on each element in the system, in similar form 
 
 \subsection{Visualization of output}
 
-The output described in the previous section can be visualized using a python script found in \texttt{InstallDirectory/visual}, named \texttt{ReadTrajectory.py}. This script uses MayaVi (http://mayavi.sourceforge.net) to produce a visualization of trajectory frames, as well as an animation of an entire simulation.
+The output described in the previous section can be visualized using a python script found in \texttt{InstallDirectory/visual}, named \texttt{AnimateTrajectory.py}. This script uses MayaVi (http://mayavi.sourceforge.net) to produce a visualization of trajectory frames, as well as an animation of an entire simulation.
 
 \subsubsection{Installation of MayaVi}
 
