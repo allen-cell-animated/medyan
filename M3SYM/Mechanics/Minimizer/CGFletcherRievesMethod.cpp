@@ -17,7 +17,6 @@
 #include "Output.h"
 
 void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                      double ENERGYTOL,
                                                       double MAXDIST)
 {
     //system size
@@ -58,16 +57,11 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         //shift gradient
         shiftGradient(beta);
         
-        //reset if search direction not downhill
-        if(CGMethod::allFDotFA() <= 0)
-            shiftGradient(0.0);
-        
         prevEnergy = curEnergy;
         curEnergy = FFM.computeEnergy(0.0);
         
         curGrad = newGrad;
     }
     while (/* Iteration criterion */  numIter < 2 * NDOF &&
-           /* Gradient tolerance  */  maxF() > GRADTOL &&
-           /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
+           /* Gradient tolerance  */  maxF() > GRADTOL);
 }

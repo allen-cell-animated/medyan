@@ -62,8 +62,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     if(areInPlane(c1, c2, c3, c4)) {
         
         //slightly move point
-        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2,
-                                 SysParams::Geometry().monomerSize);
+        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
     }
     
     double a = scalarProduct(c1, c2, c1, c2);
@@ -137,11 +136,9 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     
     //check if in same plane
     if(areInPlane(c1Stretched, c2Stretched, c3Stretched, c4Stretched)) {
-        
         //slightly move point
         c2Stretched = movePointOutOfPlane(c1Stretched, c2Stretched,
-                                          c3Stretched, c4Stretched, 2,
-                                          SysParams::Geometry().monomerSize);
+                                          c3Stretched, c4Stretched, 2, 0.01);
     }
     
     double a = scalarProduct(c1Stretched, c2Stretched, c1Stretched, c2Stretched);
@@ -214,8 +211,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
     if(areInPlane(c1, c2, c3, c4)) {
         
         //slightly move point
-        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2,
-                                 SysParams::Geometry().monomerSize);
+        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
     }
 
     double a = scalarProduct(c1, c2, c1, c2);
@@ -352,8 +348,7 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
     if(areInPlane(c1, c2, c3, c4)) {
         
         //slightly move point
-        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2,
-                                 SysParams::Geometry().monomerSize);
+        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
     }
     
     double a = scalarProduct(c1, c2, c1, c2);

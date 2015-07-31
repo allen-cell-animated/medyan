@@ -27,9 +27,8 @@
 class PolakRibiere : public CGMethod
 {
 public:
-    void minimize(ForceFieldManager &FFM, double GRADTOL,
-                                          double ENERGYTOL,
-                                          double MAXDIST);
+    virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
+                                                  double MAXDIST);
 };
 
 #endif

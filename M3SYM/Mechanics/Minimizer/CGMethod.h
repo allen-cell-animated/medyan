@@ -35,14 +35,14 @@ protected:
     
     //@{
     /// Lambda parameter for use in linear search methods
-    const double LAMBDAMAX = 1.0;  ///< Max lambda that can be returned,
-                                    ///< used in all methods
+    const double LAMBDAMAX = 0.1;  ///< Max lambda that can be returned,
+                                   ///< used in all methods
     //@}
     
     //@{
     /// Parameter used in backtracking line search
     const double LAMBDAREDUCE = 0.5;   ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 0.01; ///< Backtrack slope parameter
+    const double BACKTRACKSLOPE = 1E-3; ///< Backtrack slope parameter
     //@}
     
     //@{
@@ -58,7 +58,7 @@ protected:
     const double C = 1 - R;
     //@}
     
-    const double LSENERGYTOL = 1e-6; ///< Line search energy tolerance for all
+    const double LSENERGYTOL = 1e-8; ///< Line search energy tolerance for all
                                      ///< linesearch methods
     
     //@{
@@ -105,7 +105,6 @@ public:
     
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                  double ENERGYTOL,
                                                   double MAXDIST) = 0;
 };
 

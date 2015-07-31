@@ -19,6 +19,9 @@
 #include <random>
 #include <sstream>
 
+//to test for zero values
+const double ZERO_PREC = 1E-6;
+
 using namespace std;
 
 /// Make a unique ptr
@@ -106,7 +109,7 @@ inline int randomInteger(int low, int high) {
 ///Check equality of doubles
 inline bool areSame(double d1, double d2) {
     
-    return fabs(d1 - d2) < 1E-6;
+    return fabs(d1 - d2) < ZERO_PREC;
 }
 
 #endif

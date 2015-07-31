@@ -17,7 +17,6 @@
 #include "Output.h"
 
 void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                       double ENERGYTOL,
                                                        double MAXDIST)
 {
     //system size
@@ -50,7 +49,6 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         curEnergy = FFM.computeEnergy(0.0);
     }
     while (/* Iteration criterion */  numIter < 2 * NDOF &&
-           /* Gradient tolerance  */  maxF() > GRADTOL &&
-           /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
+           /* Gradient tolerance  */  maxF() > GRADTOL);
 }
 

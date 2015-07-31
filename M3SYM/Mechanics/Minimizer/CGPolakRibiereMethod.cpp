@@ -17,7 +17,6 @@
 #include "Output.h"
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                    double ENERGYTOL,
                                                     double MAXDIST){
     
     //system size
@@ -26,7 +25,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     if (NDOF == 0) return;
     
 	double curEnergy = FFM.computeEnergy(0.0);
-    double prevEnergy;
+    double prevEnergy, maxForce;
     
 	FFM.computeForces();
     startMinimization();
@@ -54,24 +53,20 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //reset after ndof iterations
 		if (numIter % NDOF == 0)  beta = 0.0;
         //Polak-Ribieri update
-        else beta = max(0.0, (newGrad - prevGrad)/ curGrad);
-
+        else beta = max(0.0, (newGrad - prevGrad) / curGrad);
+        
         //update prev forces
         FFM.computeForcesAuxP();
         
         //shift gradient
         shiftGradient(beta);
         
-        //reset if search direction not downhill
-        if(CGMethod::allFDotFA() <= 0)
-            shiftGradient(0.0);
-        
 		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0);
         
+        maxForce = maxF();
         curGrad = newGrad;
     }
 	while (/* Iteration criterion */  numIter < 2 * NDOF &&
-           /* Gradient tolerance  */  maxF() > GRADTOL &&
-           /* Energy tolerance    */  curEnergy - prevEnergy <= -ENERGYTOL);
+           /* Gradient tolerance  */  maxForce > GRADTOL);
 }

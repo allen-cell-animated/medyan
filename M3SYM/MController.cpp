@@ -29,17 +29,14 @@ void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
     if (MAlgorithm.ConjugateGradient == "FLETCHERRIEVES")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<FletcherRieves>(MAlgorithm.gradientTolerance,
-                                              MAlgorithm.energyTolerance,
                                               MAlgorithm.maxDistance));
     else if (MAlgorithm.ConjugateGradient == "POLAKRIBIERE")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<PolakRibiere>(MAlgorithm.gradientTolerance,
-                                            MAlgorithm.energyTolerance,
                                             MAlgorithm.maxDistance));
     else if (MAlgorithm.ConjugateGradient == "STEEPESTDESCENT")
         _minimizerAlgorithms.push_back(
         new ConjugateGradient<SteepestDescent>(MAlgorithm.gradientTolerance,
-                                               MAlgorithm.energyTolerance,
                                                MAlgorithm.maxDistance));
     
     else {

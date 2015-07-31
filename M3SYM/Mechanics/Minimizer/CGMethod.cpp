@@ -208,7 +208,7 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST) {
     double lambdaPrev = lambda;
     double energyPrevLambda = currentEnergy;
     
-    double relErr, lambda0, delProj;
+    double relErr, lambda0, delProj, delLambda;
     
     //backtracking loop
     while(true) {
@@ -223,30 +223,28 @@ double CGMethod::quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST) {
         //move beads back
         resetBeads();
         
-        proj = allFDotFA();
-        delProj = proj - projPrev;
+        proj = allFDotFA(); delProj = proj - projPrev;
         
         if(fabs(proj) < EPS_QUAD || fabs(delProj) < EPS_QUAD)
             return 0.0;
         
         //check if ready for a quadratic projection
-        relErr = fabs(1.0 - (0.5 * (lambda - lambdaPrev) *
-                                   (proj + projPrev) +
-                                    energyLambda) / energyPrevLambda);
+        delLambda = lambda - lambdaPrev;
         
-        lambda0 = lambda - (lambda - lambdaPrev) * proj / delProj;
+        relErr = fabs(1.0 - (0.5 * delLambda * (proj + projPrev) +
+                                   energyLambda) / energyPrevLambda);
         
-        //check if energy is decreasing and lambda within bounds
-        if(relErr <= QUADRATICTOL &&
-           energyLambda - currentEnergy <= 0 &&
-           lambda0 > 0.0 && lambda0 < LAMBDAMAX) return lambda0;
-    
+        lambda0 = lambda - delLambda * proj / delProj;
+        
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * projOrig;
         double energyChange = energyLambda - currentEnergy;
         
+        
+        //check if energy is decreasing and lambda within bounds
+        if(relErr <= QUADRATICTOL && energyChange <= 0) return lambda0;
+        
         //return if ok
-        if(energyChange <= idealEnergyChange)
-            return lambda;
+        if(energyChange <= -idealEnergyChange) return lambda;
         
         //save state
         projPrev = proj; lambdaPrev = lambda;

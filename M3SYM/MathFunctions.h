@@ -270,8 +270,8 @@ namespace mathfunc {
         
         auto v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
         auto v2 = {p4[0] - p3[0], p4[1] - p3[1], p4[2] - p3[2]};
-        
-        return magnitude(crossProduct(v1,v2)) <= 1E-10;
+
+        return areSame(magnitude(crossProduct(v1,v2)), 0.0);
     }
     
     /// Returns true if two vectors (p1->p2 and p3->p4) are in the same plane
@@ -283,7 +283,8 @@ namespace mathfunc {
         auto v3 = {p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2]};
         
         auto cp = crossProduct(v1, v2);
-        return dotProduct(v3, cp) <= 1E-10;
+        
+        return areSame(dotProduct(v3, cp), 0.0);
     }
     
     /// Function to move bead out of plane by specified amount
