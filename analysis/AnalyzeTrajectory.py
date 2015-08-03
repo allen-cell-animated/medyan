@@ -41,8 +41,8 @@ class BrancherSnapshot:
 		self.type=None;
 		self.coords={}
 
-#A complete frame
-class Frame:
+#A complete snapshot
+class Snapshot:
 	def __init__(self):
 		self.step=None
 		self.time=None
@@ -56,6 +56,20 @@ class Frame:
 		self.motors={}
 		self.branchers={}
 
+#A chemical snapshot
+class ChemSnapshot:
+	def __init__(self):
+		self.step=None
+		self.time=None
+		self.diffusingSpecies={}
+		self.bulkSpecies={}
+		self.filamentSpecies={}
+		self.plusEndSpecies={}
+		self.minusEndSpecies={}
+		self.linkerSpecies={}
+		self.motorSpecies={}
+		self.brancherSpecies={}
+
 ########################################################
 #
 #			         PARSING FUNCTIONS
@@ -64,14 +78,14 @@ class Frame:
 
 
 #Read all data from a trajectory file
-#returns a list of frames with all data
+#returns a list of Snapshots with all data
 def readTrajectory(filename):
 
 	#Open the traj file
 	traj_file=open(filename)
 
-	FrameList=[]
-	first_frame_line=True
+	SnapshotList=[]
+	first_Snapshot_line=True
 	first_line=True
 	reading_filament=False
 	reading_linker=False
@@ -87,24 +101,24 @@ def readTrajectory(filename):
 	for line in traj_file:
 		line = line.strip()
 
-		#get frame data
+		#get Snapshot data
 
-		if(first_frame_line):
-			F=Frame()
+		if(first_Snapshot_line):
+			F=Snapshot()
 			F.step, F.time, F.n_filaments, F.n_linkers, \
 			F.n_motors, F.n_branchers = map(double,line.split())
 			F.n_filaments = int(F.n_filaments)
 			F.n_linkers = int(F.n_linkers)
 			F.n_motors = int(F.n_motors)
 			F.n_branchers = int(F.n_branchers)
-			first_frame_line=False
+			first_Snapshot_line=False
 			line_number+=1
 			continue
 
 		if(len(line)==0):
-			first_frame_line=True
+			first_Snapshot_line=True
 			first_filament_line=True
-			FrameList.append(F)
+			SnapshotList.append(F)
 			assert F.n_filaments == len(F.filaments)
 			assert F.n_linkers   == len(F.linkers)
 			assert F.n_motors    == len(F.motors)
@@ -201,19 +215,95 @@ def readTrajectory(filename):
 
 		line_number+=1
 
-	#return the final frame list
-	return FrameList	
+	#return the final Snapshot list
+	return SnapshotList	
 
-#Read a number of trajectories, return array of frame lists
+#Read a number of trajectories, return array of Snapshot lists
 def readTrajectories(fileNames):
 
-	FrameLists = []
+	SnapshotLists = []
 
 	for trajFile in fileNames:
-		FrameLists.append(readTrajectory(trajFile))
+		SnapshotLists.append(readTrajectory(trajFile))
 
-	return FrameLists
+	return SnapshotLists
 
+#Read all data from a chemical output file
+#return a list of chemical snapshots
+def readChemistryOutput(fileName):
+
+	ChemSnapshotList = []
+
+	#Open the traj file
+	chem_file=open(fileName)
+
+	SnapshotList=[]
+	first_Snapshot_line=True
+	first_line=True
+	line_number=0
+
+	for line in chem_file:
+		line = line.strip()
+
+		if(first_Snapshot_line):
+			C=ChemSnapshot()
+			C.step, C.time = map(double,line.split())
+			first_Snapshot_line=False
+			line_number+=1
+			continue
+
+		elif(len(line)==0):
+			first_Snapshot_line=True
+			ChemSnapshotList.append(C)
+			line_number+=1
+			continue
+
+		else:
+			line_split = line.split()
+			
+			species_split = line_split[0].split(":")
+
+			species_name = species_split[0]
+			species_type = species_split[1]
+
+			if(species_type == "DIFFUSING"):
+				C.diffusingSpecies[species_name] = line_split[1]
+
+			if(species_type == "BULK"):
+				C.bulkSpecies[species_name] = line_split[1]
+
+			if(species_type == "FILAMENT"):
+				C.filamentSpecies[species_name] = line_split[1]
+
+			if(species_type == "PLUSEND"):
+				C.plusEndSpecies[species_name] = line_split[1]
+
+			if(species_type == "MINUSEND"):
+				C.minusEndSpecies[species_name] = line_split[1]
+
+			if(species_type == "LINKER"):
+				C.linkerSpecies[species_name] = line_split[1]
+
+			if(species_type == "MOTOR"):
+				C.motorSpecies[species_name] = line_split[1]
+
+			if(species_type == "BRANCHER"):
+				C.brancherSpecies[species_name] = line_split[1]
+
+			line_number+=1
+
+	return ChemSnapshotList
+
+
+#Read a number of chem outputs, return array of chem lists
+def readChemistryOutputs(fileNames):
+
+	ChemSnapshotLists = []
+
+	for chemFile in fileNames:
+		ChemLists.append(readChemistryOutput(chemFile))
+
+	return ChemSnapshotLists
 
 ########################################################
 #
@@ -234,15 +324,15 @@ def readTrajectories(fileNames):
 
 #Calculate average filament end to end distance at each step
 #returns a list of time and distance pairs
-def avgEndToEndDistance(FrameList):
+def avgEndToEndDistance(SnapshotList):
 
 	avgDists = []
 
-	for frame in FrameList:
+	for Snapshot in SnapshotList:
 
 		totalDist = 0;
 
-		for filamentID, FS in frame.filaments.iteritems():
+		for filamentID, FS in Snapshot.filaments.iteritems():
 
 			#get first and last bead
 			b1 = FS.coords[0]
@@ -253,24 +343,24 @@ def avgEndToEndDistance(FrameList):
 			totalDist += dist
 
 		#average
-		totalDist /= len(frame.filaments)
+		totalDist /= len(Snapshot.filaments)
 		totalDist *= 0.001 #to um
 
 		#add to list
-		avgDists.append((frame.time, totalDist))
+		avgDists.append((Snapshot.time, totalDist))
 
 	return avgDists
 
 #Calculate average filament end to end distance from a number of trajectories
 #plot the data over time. If file is provided, save to that file
-def avgEndToEndDistances(FrameLists, saveFile=''):
+def avgEndToEndDistances(SnapshotLists, saveFile=''):
 
 	avgDistsList = []
 
 	#get all data
-	for FrameList in FrameLists:
+	for SnapshotList in SnapshotLists:
 
-		avgDists = avgEndToEndDistance(FrameList)
+		avgDists = avgEndToEndDistance(SnapshotList)
 		avgDistsList.append(avgDists)
 
 	#now combine data
@@ -290,8 +380,8 @@ def avgEndToEndDistances(FrameLists, saveFile=''):
 			avgDistsSet.append(avgDists[i][1])
 
 		#average
-		finalTime /= len(FrameLists)
-		finalAvgDist /= len(FrameLists)
+		finalTime /= len(SnapshotLists)
+		finalAvgDist /= len(SnapshotLists)
 		error = numpy.std(avgDistsSet)
 
 		finalAvgDists.append((finalTime, finalAvgDist, error))
@@ -317,15 +407,15 @@ def avgEndToEndDistances(FrameLists, saveFile=''):
 
 #Calculate average filament length at each step
 #returns a list of time and distance pairs
-def avgLength(FrameList):
+def avgLength(SnapshotList):
 
 	avgLengths = []
 
-	for frame in FrameList:
+	for Snapshot in SnapshotList:
 
 		totalLength = 0;
 
-		for filamentID, FS in frame.filaments.iteritems():
+		for filamentID, FS in Snapshot.filaments.iteritems():
 
 			filLength = 0;
 
@@ -341,23 +431,23 @@ def avgLength(FrameList):
 			totalLength += filLength
 
 		#average
-		totalLength /= len(frame.filaments)
+		totalLength /= len(Snapshot.filaments)
 
 		#add to list
-		avgLengths.append((frame.time,totalLength))
+		avgLengths.append((Snapshot.time,totalLength))
 
 	return avgLengths
 
 #Calculate average lengths from a number of trajectories
 #plot the data over time. If file is provided, save to that file
-def avgLengths(FrameLists, saveFile=''):
+def avgLengths(SnapshotLists, saveFile=''):
 
 	avgLengthsList = []
 
 	#get all data
-	for FrameList in FrameLists:
+	for SnapshotList in SnapshotLists:
 
-		avgLengths = avgLength(FrameList)
+		avgLengths = avgLength(SnapshotList)
 		avgLengthsList.append(avgLengths)
 
 	#now combine data
@@ -378,8 +468,8 @@ def avgLengths(FrameLists, saveFile=''):
 			avgLengthsSet.append(avgLengths[i][1])
 
 		#average
-		finalTime /= len(FrameLists)
-		finalAvgLength /= len(FrameLists)
+		finalTime /= len(SnapshotLists)
+		finalAvgLength /= len(SnapshotLists)
 
 		error = numpy.std(avgLengthsSet)
 
@@ -602,16 +692,16 @@ def minimum_covering_sphere(points):
 #uses the end points of filaments
 #minimum covering sphere based on www.mel.nist.gov/msidlibrary/doc/hopp95.pdf
 #returns a list of the time and volume pairs
-def minEnclosingVolume(FrameList):
+def minEnclosingVolume(SnapshotList):
 
 	minEnclosingVols = []
 
-	for i in xrange(2, len(FrameList), 2):
-		frame = FrameList[i]
+	for i in xrange(2, len(SnapshotList), 2):
+		Snapshot = SnapshotList[i]
 
 		points = []
 
-		for filamentID, FS in frame.filaments.iteritems():
+		for filamentID, FS in Snapshot.filaments.iteritems():
 
 			points.append(FS.coords[0])
 			points.append(FS.coords[len(FS.coords) - 1])
@@ -619,7 +709,7 @@ def minEnclosingVolume(FrameList):
 		center, radius = minimum_covering_sphere(points)
 
 		#add to list
-		minEnclosingVols.append((frame.time, (4/3) * math.pi * pow(radius * 0.001,3)))
+		minEnclosingVols.append((Snapshot.time, (4/3) * math.pi * pow(radius * 0.001,3)))
 
 	return minEnclosingVols
 
@@ -628,14 +718,14 @@ def minEnclosingVolume(FrameList):
 #uses the end points of filaments
 #plot the data over time. If file is provided, save to that file
 #minimum covering sphere based on www.mel.nist.gov/msidlibrary/doc/hopp95.pdf
-def minEnclosingVolumes(FrameLists, saveFile=''):
+def minEnclosingVolumes(SnapshotLists, saveFile=''):
 
 	minEnclosingVolumesList = []
 
 	#get all data
-	for FrameList in FrameLists:
+	for SnapshotList in SnapshotLists:
 
-		minEnclosingVolumes = minEnclosingVolume(FrameList)
+		minEnclosingVolumes = minEnclosingVolume(SnapshotList)
 		minEnclosingVolumesList.append(minEnclosingVolumes)
 
 	#now combine data
@@ -656,8 +746,8 @@ def minEnclosingVolumes(FrameLists, saveFile=''):
 			minEnclosingVolumesSet.append(minEnclosingVolumes[i][1])
 
 		#average
-		finalTime /= len(FrameLists)
-		finalMinEnclosingVolume /= len(FrameLists)
+		finalTime /= len(SnapshotLists)
+		finalMinEnclosingVolume /= len(SnapshotLists)
 
 		error = numpy.std(minEnclosingVolumesSet)
 
@@ -686,30 +776,30 @@ def minEnclosingVolumes(FrameLists, saveFile=''):
 #from order parameter definition at http://cmt.dur.ac.uk/sjc/thesis_dlc/node65.html
 #takes the largest eigenvalue of Q, a second rank ordering tensor over cylinder pairs
 #returns a list of time and value pairs
-def orderParameter(FrameList):
+def orderParameter(SnapshotList):
 
 	orderParams = []
 
-	for i in xrange(0, len(FrameList), 2):
+	for i in xrange(0, len(SnapshotList), 2):
 
-		frame = FrameList[i]
+		Snapshot = SnapshotList[i]
 
-		if len(frame.cylinders) <= 1: 
+		if len(Snapshot.cylinders) <= 1: 
 
-			orderParams.append((frame.time, 1.0))
+			orderParams.append((Snapshot.time, 1.0))
 			continue
 
-		Q = np.zeros((len(frame.cylinders), len(frame.cylinders)))
+		Q = np.zeros((len(Snapshot.cylinders), len(Snapshot.cylinders)))
 
 		i = 0
-		for cylinderIDA, CSA in frame.cylinders.iteritems():
+		for cylinderIDA, CSA in Snapshot.cylinders.iteritems():
 
 			#calculate direction
 			magA = sqrt((CSA.coords[1] - CSA.coords[0]).dot(CSA.coords[1] - CSA.coords[0]))
 			directionA = (CSA.coords[1] - CSA.coords[0]) / magA
 
 			j = 0
-			for cylinderIDB, CSB in frame.cylinders.iteritems():
+			for cylinderIDB, CSB in Snapshot.cylinders.iteritems():
 
 				#calculate direction
 				magB = sqrt((CSB.coords[1] - CSB.coords[0]).dot(CSB.coords[1] - CSB.coords[0]))
@@ -722,7 +812,7 @@ def orderParameter(FrameList):
 					delta = 0
 
 				#q value
-				Q[i][j] = (1 / float(len(frame.cylinders))) * \
+				Q[i][j] = (1 / float(len(Snapshot.cylinders))) * \
 						  (1.5 * np.dot(directionA, directionB) - 0.5 * delta)
 
 				j+=1
@@ -732,7 +822,7 @@ def orderParameter(FrameList):
 		#take largest eigenvalue
 		largestEigenvalue, largestEigenVector = la.eigs(Q,k=1)
 		#add to list
-		orderParams.append((frame.time,largestEigenvalue[0]))
+		orderParams.append((Snapshot.time,largestEigenvalue[0]))
 
 	return orderParams 
 
@@ -741,14 +831,14 @@ def orderParameter(FrameList):
 #from order parameter definition at http://cmt.dur.ac.uk/sjc/thesis_dlc/node65.html
 #takes the largest eigenvalue of Q, a second rank ordering tensor over cylinder pairs
 #plot the data over time. If file is provided, save to that file
-def orderParameters(FrameLists, saveFile=''):
+def orderParameters(SnapshotLists, saveFile=''):
 
 	orderParamsList = []
 
 	#get all data
-	for FrameList in FrameLists:
+	for SnapshotList in SnapshotLists:
 
-		orderParams = orderParameter(FrameList)
+		orderParams = orderParameter(SnapshotList)
 		orderParamsList.append(orderParams)
 
 	#now combine data
@@ -769,8 +859,8 @@ def orderParameters(FrameLists, saveFile=''):
 			orderParamSet.append(orderParams[i][1])
 
 		#average
-		finalTime /= len(FrameLists)
-		finalOrderParam /= len(FrameLists)
+		finalTime /= len(SnapshotLists)
+		finalOrderParam /= len(SnapshotLists)
 
 		error = numpy.std(orderParamSet)
 
@@ -799,20 +889,20 @@ def orderParameters(FrameLists, saveFile=''):
 
 #Calculate the radius of gyration over all cylinders 
 #returns a list of time and R_g^2 pairs
-def radiusOfGyration(FrameList):
+def radiusOfGyration(SnapshotList):
 
 	Rgs = []
 
-	for frameIndex in xrange(0, len(FrameList)):
+	for SnapshotIndex in xrange(0, len(SnapshotList)):
 
-		frame = FrameList[frameIndex]
+		Snapshot = SnapshotList[SnapshotIndex]
 
-		#get center of mass of frame
+		#get center of mass of Snapshot
 		com = np.array([0.0,0.0,0.0])
 		beadCount = 0
 
 		#go through filaments
-		for filamentID, FS in frame.filaments.iteritems():
+		for filamentID, FS in Snapshot.filaments.iteritems():
 			for coord in FS.coords:
 
 				com += coord
@@ -825,7 +915,7 @@ def radiusOfGyration(FrameList):
 		numCylinders = 0
 
 		#Loop through cylinders
-		for cylinderID, CS in frame.cylinders.iteritems():
+		for cylinderID, CS in Snapshot.cylinders.iteritems():
 
 			numCylinders += 1
 			cam = (CS.coords[1] + CS.coords[0]) / 2
@@ -838,21 +928,21 @@ def radiusOfGyration(FrameList):
 		RgSquare /= numCylinders
 		Rg = RgSquare * 0.00001
 
-		Rgs.append((frame.time, Rg))
+		Rgs.append((Snapshot.time, Rg))
 
 	#return velocities
 	return Rgs
 
 #Calculate the radius of gyration over all cylinders from a number of trajectories
 #plot the data over time. If file is provided, save to that file
-def radiusOfGyrations(FrameLists, saveFile=''):
+def radiusOfGyrations(SnapshotLists, saveFile=''):
 
 	RgList = []
 
 	#get all data
-	for FrameList in FrameLists:
+	for SnapshotList in SnapshotLists:
 
-		Rgs = radiusOfGyration(FrameList)
+		Rgs = radiusOfGyration(SnapshotList)
 		RgList.append(Rgs)
 
 	#now combine data
@@ -873,8 +963,8 @@ def radiusOfGyrations(FrameLists, saveFile=''):
 			RgSet.append(Rgs[i][1])
 
 		#average
-		finalTime /= len(FrameLists)
-		finalRg /= len(FrameLists)
+		finalTime /= len(SnapshotLists)
+		finalRg /= len(SnapshotLists)
 
 		error = numpy.std(RgSet)
 
@@ -901,23 +991,23 @@ def radiusOfGyrations(FrameLists, saveFile=''):
 
 #Calculate contractile velocity towards the center of mass
 #returns a list of time and velocity pairs
-def contractileVelocity(FrameList):
+def contractileVelocity(SnapshotList):
 
 	velocities = []
 
-	for frameIndex in xrange(0, len(FrameList) - 1):
+	for SnapshotIndex in xrange(0, len(SnapshotList) - 1):
 
-		frameI = FrameList[frameIndex]
-		frameF = FrameList[frameIndex + 1]
+		SnapshotI = SnapshotList[SnapshotIndex]
+		SnapshotF = SnapshotList[SnapshotIndex + 1]
 
-		deltaT = frameF.time - frameI.time
+		deltaT = SnapshotF.time - SnapshotI.time
 
-		#get center of mass of frame i
+		#get center of mass of Snapshot i
 		com = np.array([0.0,0.0,0.0])
 		beadCount = 0
 
 		#go through filaments
-		for filamentID, FS in frameI.filaments.iteritems():
+		for filamentID, FS in SnapshotI.filaments.iteritems():
 			for coord in FS.coords:
 
 				com += coord
@@ -929,11 +1019,11 @@ def contractileVelocity(FrameList):
 		velocity = 0
 		numCylinders = 0
 		#Loop through cylinders
-		for cylinderIDA, CSA in frameF.cylinders.iteritems():
+		for cylinderIDA, CSA in SnapshotF.cylinders.iteritems():
 
 			#find in initial. if it doesnt exist, leave out
 			try:
-				CSB = frameI.cylinders[cylinderIDA]
+				CSB = SnapshotI.cylinders[cylinderIDA]
 			except Exception, e:
 				continue
 
@@ -953,21 +1043,21 @@ def contractileVelocity(FrameList):
 		velocity /= numCylinders
 		velocity *= 0.001 #units
 
-		velocities.append((frameF.time, velocity))
+		velocities.append((SnapshotF.time, velocity))
 
 	#return velocities
 	return velocities
 
 #Calculate contractile velocity towards the center of mass from a number of trajectories
 #plot the data over time. If file is provided, save to that file
-def contractileVelocities(FrameLists, saveFile=''):
+def contractileVelocities(SnapshotLists, saveFile=''):
 
 	velocitiesList = []
 
 	#get all data
-	for FrameList in FrameLists:
+	for SnapshotList in SnapshotLists:
 
-		velocities = contractileVelocity(FrameList)
+		velocities = contractileVelocity(SnapshotList)
 		velocitiesList.append(velocities)
 
 	#now combine data
@@ -988,8 +1078,8 @@ def contractileVelocities(FrameLists, saveFile=''):
 			velocitySet.append(velocities[i][1])
 
 		#average
-		finalTime /= len(FrameLists)
-		finalVelocity /= len(FrameLists)
+		finalTime /= len(SnapshotLists)
+		finalVelocity /= len(SnapshotLists)
 
 		error = numpy.std(velocitySet)
 
@@ -1032,12 +1122,12 @@ def getIndex(coordinate, grid, compartment):
     return index
 
 
-#Calculates density of filaments in each compartment for a frame
+#Calculates density of filaments in each compartment for a Snapshot
 #Uses number of cylinders in each compartment
 #Param grid is the size of the grid (NX, NY, NZ)
 #Param compartment is the size of compartment (nx, ny, nz)
 #So, the entire grid is NX*nx * NY*ny * NZ*nz 
-def density(Frame, grid, compartment):
+def density(Snapshot, grid, compartment):
 
 	#create dict of compartment index and num cylinders by dimensions
 	numCylinders = {}
@@ -1062,7 +1152,7 @@ def density(Frame, grid, compartment):
 				numCylinders[index] = 0
 
 	#now, loop through cylinders, populate numCylinders
-	for cylinderID, CS in Frame.cylinders.iteritems():
+	for cylinderID, CS in Snapshot.cylinders.iteritems():
 
 		#get coordinate, find index
 		coordinate = (CS.coords[1] + CS.coords[0]) / 2
@@ -1092,4 +1182,9 @@ def density(Frame, grid, compartment):
 	#plt.xlim([0, compartment[]])
 
 	plt.scatter(xVals, yVals, zs=zVals, c=densityValues)
+
+#plot chemical snapshots
+
+
+
 

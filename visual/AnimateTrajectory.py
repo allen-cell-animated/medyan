@@ -47,7 +47,7 @@ class BrancherSnapshot:
 		self.type=None;
 		self.coords={}
 
-class Frame:
+class Snapshot:
 	def __init__(self):
 		self.step=None
 		self.time=None
@@ -60,8 +60,8 @@ class Frame:
 		self.motors={}
 		self.branchers={}
 
-FrameList=[]
-first_frame_line=True
+SnapshotList=[]
+first_snapshot_line=True
 first_line=True
 reading_filament=False
 reading_linker=False
@@ -84,22 +84,22 @@ for line in traj_file:
 	if(color):
 		color_line = color_lines[line_number]
 
-	if(first_frame_line):
-		F=Frame()
+	if(first_snapshot_line):
+		F=Snapshot()
 		F.step, F.time, F.n_filaments, F.n_linkers, \
 		F.n_motors, F.n_branchers = map(double,line.split())
 		F.n_filaments = int(F.n_filaments)
 		F.n_linkers = int(F.n_linkers)
 		F.n_motors = int(F.n_motors)
 		F.n_branchers = int(F.n_branchers)
-		first_frame_line=False
+		first_snapshot_line=False
 		line_number+=1
 		continue
 
 	if(len(line)==0):
-		first_frame_line=True
+		first_snapshot_line=True
 		first_filament_line=True
-		FrameList.append(F)
+		SnapshotList.append(F)
 		assert F.n_filaments == len(F.filaments)
 		assert F.n_linkers == len(F.linkers)
 		assert F.n_motors == len(F.motors)
@@ -195,22 +195,28 @@ for line in traj_file:
 	line_number+=1
 
 @mlab.show
-def show_frame(frame_number=-1):
+def show_snapshot(snapshot_number=-1):
 
-	#if were saving the frames
+	#if were saving the Snapshots
 	saving = False
 	saveFile = ''
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
-	MAXVAL = 0.00
+	MAXVAL = 10.00
 	MINVAL = 0.00
 	SCALETITLE = ''
 	COLORMAP = ''
 
 	#grid size
-	GRIDSIZEMAX = 0.0
-	GRIDSIZEMIN = 0.0
+	GRIDSIZEMAXX = 1000.0
+	GRIDSIZEMINX = 0.0
+
+	GRIDSIZEMAXY = 1000.0
+	GRIDSIZEMINY = 0.0
+
+	GRIDSIZEMAXZ = 1000.0
+	GRIDSIZEMINZ = 0.0
 
 	#default color, in RGB
 	DBEADCOLOR    = (1.0,1.0,1.0) 
@@ -218,36 +224,36 @@ def show_frame(frame_number=-1):
 	DLINKERCOLOR  = (1.0,0.99,0.49)
 	DMOTORCOLOR   = (1.0,0.2,0.2)
 
-	local_frame=FrameList[frame_number]
+	local_snapshot=SnapshotList[snapshot_number]
 	mlab.figure(1, size=(1000, 1000), bgcolor=(0.32, 0.32, 0.32))
 	mlab.clf()
 
 	#create grid
-	x = [GRIDSIZEMIN,GRIDSIZEMIN,GRIDSIZEMAX]
-	y = [GRIDSIZEMAX,GRIDSIZEMIN,GRIDSIZEMIN]
-	z = [GRIDSIZEMIN,GRIDSIZEMAX,GRIDSIZEMIN]
+	x = [GRIDSIZEMINX,GRIDSIZEMINX,GRIDSIZEMAXX]
+	y = [GRIDSIZEMAXY,GRIDSIZEMINY,GRIDSIZEMINY]
+	z = [GRIDSIZEMINZ,GRIDSIZEMAXZ,GRIDSIZEMINZ]
 	pts = mlab.points3d(x,y,z, scale_mode='none', scale_factor=0.2)
 		
 	outline=mlab.pipeline.outline(pts, line_width=0.25)
 
 	#DISPLAYING FILAMENTS
-	if(len(local_frame.filaments) != 0):
+	if(len(local_snapshot.filaments) != 0):
 		x=[]
 		c=[]
 		connections=[]
 
 		for i in 0, 1, 2:
 			q=[]
-			for fid in sorted(local_frame.filaments.keys()):
-				q.append(local_frame.filaments[fid].coords[i])
+			for fid in sorted(local_snapshot.filaments.keys()):
+				q.append(local_snapshot.filaments[fid].coords[i])
 			x.append(hstack(q))
 
-		for fid in sorted(local_frame.filaments.keys()):
-			for color in local_frame.filaments[fid].colors:
+		for fid in sorted(local_snapshot.filaments.keys()):
+			for color in local_snapshot.filaments[fid].colors:
 				c.append(color)
 
-		for fid in sorted(local_frame.filaments.keys()):
-				connections.append(local_frame.filaments[fid].connections)
+		for fid in sorted(local_snapshot.filaments.keys()):
+				connections.append(local_snapshot.filaments[fid].connections)
 
 		connections = vstack(connections)
 
@@ -258,13 +264,13 @@ def show_frame(frame_number=-1):
 			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
 
 		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
-								    scale_mode='none', color=DBEADCOLOR)
+								    scale_mode='scalar', scale_factor = 7.0, color=DBEADCOLOR)
 
 		# Connect them
 		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-		tube=mlab.pipeline.tube(src, tube_radius=1.25)
+		tube=mlab.pipeline.tube(src, tube_radius=5)
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):
@@ -277,27 +283,27 @@ def show_frame(frame_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DFILCOLOR)
 
 		#display time
-		time = 'Time = ' + str(round(local_frame.time,3)) + "s"
+		time = 'Time = ' + str(round(local_snapshot.time,3)) + "s"
 		mlab.text(0.6, 0.9, time)
 
 	#DISPLAYING LINKERS
-	if(len(local_frame.linkers) != 0):
+	if(len(local_snapshot.linkers) != 0):
 		x=[]
 		c=[]
 		connections=[]
 
 		for i in 0, 1, 2:
 			q=[]
-			for lid in sorted(local_frame.linkers.keys()):
-				q.append(local_frame.linkers[lid].coords[i])
+			for lid in sorted(local_snapshot.linkers.keys()):
+				q.append(local_snapshot.linkers[lid].coords[i])
 			x.append(hstack(q))
 
-		for lid in sorted(local_frame.linkers.keys()):
-			for color in local_frame.linkers[lid].colors:
+		for lid in sorted(local_snapshot.linkers.keys()):
+			for color in local_snapshot.linkers[lid].colors:
 				c.append(color)
 
-		for lid in sorted(local_frame.linkers.keys()):
-				connections.append(local_frame.linkers[lid].connections)
+		for lid in sorted(local_snapshot.linkers.keys()):
+				connections.append(local_snapshot.linkers[lid].connections)
 
 		connections = vstack(connections)
 
@@ -314,7 +320,7 @@ def show_frame(frame_number=-1):
 		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-		tube=mlab.pipeline.tube(src, tube_radius=0.5)
+		tube=mlab.pipeline.tube(src, tube_radius=3)
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):
@@ -324,23 +330,23 @@ def show_frame(frame_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DLINKERCOLOR)
 
 	#DISPLAYING MOTORS
-	if(len(local_frame.motors) != 0):
+	if(len(local_snapshot.motors) != 0):
 		x=[]
 		c=[]
 		connections=[]
 
 		for i in 0, 1, 2:
 			q=[]
-			for mid in sorted(local_frame.motors.keys()):
-				q.append(local_frame.motors[mid].coords[i])
+			for mid in sorted(local_snapshot.motors.keys()):
+				q.append(local_snapshot.motors[mid].coords[i])
 			x.append(hstack(q))
 
-		for mid in sorted(local_frame.motors.keys()):
-			for color in local_frame.motors[mid].colors:
+		for mid in sorted(local_snapshot.motors.keys()):
+			for color in local_snapshot.motors[mid].colors:
 				c.append(color)
 
-		for mid in sorted(local_frame.motors.keys()):
-				connections.append(local_frame.motors[mid].connections)
+		for mid in sorted(local_snapshot.motors.keys()):
+				connections.append(local_snapshot.motors[mid].connections)
 
 		connections = vstack(connections)
 
@@ -357,7 +363,7 @@ def show_frame(frame_number=-1):
 		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-		tube=mlab.pipeline.tube(src, tube_radius=0.75)
+		tube=mlab.pipeline.tube(src, tube_radius=3)
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):
@@ -367,14 +373,14 @@ def show_frame(frame_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DMOTORCOLOR)
 
 	#DISPLAYING BRANCHERS (NO COLOR)
-	if(len(local_frame.branchers) != 0):
+	if(len(local_snapshot.branchers) != 0):
 		x=[]
 		connections=[]
 
 		for i in 0, 1, 2:
 			q=[]
-			for bid in sorted(local_frame.branchers.keys()):
-				q.append(local_frame.branchers[bid].coords[i])
+			for bid in sorted(local_snapshot.branchers.keys()):
+				q.append(local_snapshot.branchers[bid].coords[i])
 			x.append(hstack(q))
 
 		# Create the points
@@ -383,12 +389,12 @@ def show_frame(frame_number=-1):
 									scale_factor=2.0, color=DBEADCOLOR)
 
 	if(saving):
-		mlab.savefig(filename=saveFile + "Snapshot" + str(frame_number) + ".jpg")
+		mlab.savefig(filename=saveFile + "Snapshot" + str(snapshot_number) + ".jpg")
 
 @mlab.animate(delay=10, ui=True)
 def anim():
-	for i in range(0,len(FrameList), 1):
-		show_frame(i)
+	for i in range(0,len(SnapshotList), 1):
+		show_snapshot(i)
 		yield
 		
 
