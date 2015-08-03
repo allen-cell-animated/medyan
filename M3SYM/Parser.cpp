@@ -43,6 +43,8 @@ OutputTypes SystemParser::readOutputTypes() {
             else if (lineVector[1] == "FORCES")     oTypes.forces = true;
             
             else if (lineVector[1] == "STRESSES")   oTypes.stresses = true;
+            
+            else if (lineVector[1] == "CHEMISTRY")  oTypes.chemistry = true;
         }
     }
     return oTypes;

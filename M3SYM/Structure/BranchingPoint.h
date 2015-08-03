@@ -122,6 +122,9 @@ public:
     virtual void updatePosition();
     
     virtual void printInfo();
+    
+    /// Count the number of brancher species with a given name in the system
+    static species_copy_t countSpecies(const string& name);
 };
 
 #endif

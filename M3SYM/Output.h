@@ -18,6 +18,11 @@
 
 #include "common.h"
 
+#include "Parser.h"
+
+///FORWARD DECLARATIONS
+class CompartmentGrid;
+
 /// To print a specified output into a file
 /*!
  *  An output object, initialized by the Controller, can print a number of specific
@@ -93,5 +98,24 @@ public:
     virtual void print(int step);
 };
 
+/// Print all chemical species in the system, including diffusing
+/// and bulk species, filament, motors, linkers and branchers.
+class Chemistry : public Output {
+
+ChemistryData _chemData; ///< chemistry data of this system
+CompartmentGrid* _grid; ///< compartment grid of the system
+    
+public:
+    Chemistry(string outputFileName,
+              ChemistryData chemData,
+              CompartmentGrid* grid)
+    
+        : Output(outputFileName),
+         _chemData(chemData), _grid(grid) {}
+    
+    ~Chemistry() {}
+
+    virtual void print(int step);
+};
 
 #endif

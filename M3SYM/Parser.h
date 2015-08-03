@@ -38,6 +38,8 @@ struct OutputTypes {
     bool forces = false;
     /// Stresses
     bool stresses = false;
+    /// Chemistry
+    bool chemistry = false;
     //@}
 };
 

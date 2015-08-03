@@ -220,4 +220,19 @@ void BranchingPoint::printInfo() {
     
     cout << endl;
 }
+            
+species_copy_t BranchingPoint::countSpecies(const string& name) {
+    
+    species_copy_t copyNum = 0;
+    
+    for(auto b : _branchingPoints.getElements()) {
+        
+        auto s = b->getCBranchingPoint()->getFirstSpecies();
+        string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
+        
+        if(sname == name)
+            copyNum += s->getN();
+    }
+    return copyNum;
+}
 

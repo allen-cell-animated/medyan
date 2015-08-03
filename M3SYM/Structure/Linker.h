@@ -135,6 +135,9 @@ public:
     virtual void updateReactionRates();
     
     virtual void printInfo();
+    
+    /// Count the number of linker species with a given name in the system
+    static species_copy_t countSpecies(const string& name);
 };
 
 

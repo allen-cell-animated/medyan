@@ -783,3 +783,66 @@ bool Filament::isConsistent() {
     return true;
 }
 
+
+species_copy_t Filament::countSpecies(const string& name) {
+    
+    species_copy_t copyNum = 0;
+    
+    for(auto f : _filaments.getElements()) {
+        
+        //loop through the filament
+        for(auto c : f->_cylinderVector) {
+            
+            for(int i = 0; i < c->getCCylinder()->getSize(); i++) {
+                auto m = c->getCCylinder()->getCMonomer(i);
+                
+                //filament species
+                int activeIndex = m->activeSpeciesFilament();
+                
+                if(activeIndex != -1) {
+                    
+                    auto s = m->speciesFilament(activeIndex);
+                    string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
+                    
+                    if(sname == name)
+                        copyNum += s->getN();
+                    
+                    continue;
+                }
+                
+                //plus end species
+                activeIndex = m->activeSpeciesPlusEnd();
+                
+                if(activeIndex != -1) {
+                    
+                    auto s = m->speciesPlusEnd(activeIndex);
+                    string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
+                    
+                    if(sname == name)
+                        copyNum += s->getN();
+                    
+                    continue;
+                }
+                
+                //minus end species
+                activeIndex = m->activeSpeciesMinusEnd();
+                
+                if(activeIndex != -1) {
+                    
+                    auto s = m->speciesMinusEnd(activeIndex);
+                    string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
+                    
+                    if(sname == name)
+                        copyNum += s->getN();
+                    
+                    continue;
+                }
+                
+            }
+        }
+    }
+    return copyNum;
+}
+
+
+

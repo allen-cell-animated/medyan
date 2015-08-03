@@ -164,6 +164,9 @@ public:
                        SubSystem* ps);
     
     virtual void printInfo();
+    
+    /// Count the number of motor species with a given name in the system
+    static species_copy_t countSpecies(const string& name);
 };
 
 #endif

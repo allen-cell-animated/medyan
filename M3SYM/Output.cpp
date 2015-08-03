@@ -22,6 +22,8 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 
+#include "CompartmentGrid.h"
+
 #include "MathFunctions.h"
 
 using namespace mathfunc;
@@ -336,6 +338,67 @@ void Stresses::print(int step) {
         
         //Nothing for branchers
         _outputFile << 0.0 << endl;
+    }
+    
+    _outputFile <<endl;
+}
+
+void Chemistry::print(int step) {
+    
+    // print first line (step number, time)
+    _outputFile << step << " " << tau() << endl;
+    
+    // all diffusing and bulk species
+    for(auto sd : _chemData.speciesDiffusing) {
+        
+        string name = get<0>(sd);
+        auto copyNum = _grid->countDiffusingSpecies(name);
+        
+        _outputFile << name << ":DIFFUSING " << copyNum << endl;
+    }
+    
+    for(auto sb : _chemData.speciesBulk) {
+        
+        string name = get<0>(sb);
+        auto copyNum = _grid->countBulkSpecies(name);
+        
+        _outputFile << name << ":BULK " << copyNum << endl;
+    }
+    
+    for(auto sf : _chemData.speciesFilament) {
+        
+        auto copyNum = Filament::countSpecies(sf);
+        _outputFile << sf << ":FILAMENT " << copyNum << endl;
+    }
+    
+    for(auto sp : _chemData.speciesPlusEnd) {
+        
+        auto copyNum = Filament::countSpecies(sp);
+        _outputFile << sp << ":PLUSEND " << copyNum << endl;
+    }
+    
+    for(auto sm : _chemData.speciesMinusEnd) {
+        
+        auto copyNum = Filament::countSpecies(sm);
+        _outputFile << sm << ":MINUSEND " << copyNum << endl;
+    }
+    
+    for(auto sl : _chemData.speciesLinker) {
+        
+        auto copyNum = Linker::countSpecies(sl);
+        _outputFile << sl << ":LINKER " << copyNum << endl;
+    }
+
+    for(auto sm : _chemData.speciesMotor) {
+        
+        auto copyNum = MotorGhost::countSpecies(sm);
+        _outputFile << sm << ":MOTOR " << copyNum << endl;
+    }
+    
+    for(auto sb : _chemData.speciesBrancher) {
+        
+        auto copyNum = MotorGhost::countSpecies(sb);
+        _outputFile << sb << ":BRANCHER " << copyNum << endl;
     }
     
     _outputFile <<endl;

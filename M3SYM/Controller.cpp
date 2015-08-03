@@ -221,6 +221,12 @@ void Controller::initialize(string inputFile,
     }
     _cController->initialize(CAlgorithm.algorithm, ChemData);
     cout << "Done." << endl;
+    
+    //Set up chemistry output if any
+    string chemsnapname = _outputDirectory + "chemistry.traj";
+    if(oTypes.chemistry)
+        _outputs.push_back(new Chemistry(chemsnapname, ChemData,
+                                         _subSystem->getCompartmentGrid()));
 #endif
     
 #ifdef DYNAMICRATES
@@ -388,6 +394,8 @@ void Controller::run() {
                 for(auto o: _outputs) o->print(i + _numChemSteps);
                 break;
             }
+            i += _numChemSteps;
+            
             //add the last step
             tauLastSnapshot += tau() - oldTau;
 #endif
@@ -422,8 +430,6 @@ void Controller::run() {
             // update neighbor lists
             if(i % _numStepsPerNeighbor == 0)
                 updateNeighborLists();
-            
-            i += _numChemSteps;
             
             //move the boundary
             moveBoundary(tau() - oldTau);

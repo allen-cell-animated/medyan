@@ -357,7 +357,7 @@ The output of M3SYM will be directed to the \texttt{OutputFile} specified. The f
 \hline
  \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
  \hline
-  OUTPUTTYPE & SNAPSHOT, FORCES, STRESSES, BIRTHTIMES & Output type\\
+  OUTPUTTYPE & SNAPSHOT, FORCES, STRESSES, BIRTHTIMES, CHEMISTRY & Output type\\
   \hline
  
 \end{tabular}
@@ -578,6 +578,16 @@ The forces file gives the forces on each element in the system, in similar form 
 \item birthtimes.traj: the birth time of on cylinders, cross-linkers, and motors are printed.
 
 \end{itemize}
+
+\subsubsection{chemistry.traj}
+The chemistry trajectory file gives the copy numbers of all species in the system, along with the current chemical step and time. It is produced with the following form:\\
+
+\noindent\texttt{chemstepnumber time}\\
+\texttt{SPECIESNAME COPYNUMBER}\\
+\texttt{...}\\
+
+\noindent where \texttt{SPECIESNAME} represents the name of the system species and \texttt{COPYNUMBER} is the current copy number of that species at the given timestep.
+
 
 \subsection{Visualization of output}
 

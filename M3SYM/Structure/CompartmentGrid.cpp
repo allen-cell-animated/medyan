@@ -26,3 +26,26 @@ void CompartmentGrid::addChemSimReactions(ChemSim* chem) {
         chem->addReaction(r.get());
     
 }
+
+species_copy_t CompartmentGrid::countDiffusingSpecies(const string& name) {
+    
+    species_copy_t copyNum = 0;
+
+    for(auto &c : children()) {
+        
+        auto s = ((Compartment*)(c.get()))->findSpeciesByName(name);
+        assert(s != nullptr && "Counting a diffusing species that does not exist.");
+        
+        copyNum += s->getN();
+    }
+    return copyNum;
+}
+
+
+species_copy_t CompartmentGrid::countBulkSpecies(const string& name) {
+    
+    auto s = findSpeciesBulkByName(name);
+    assert(s != nullptr && "Counting a bulk species that does not exist.");
+    
+    return s->getN();
+}

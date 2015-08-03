@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------
 //  **M3SYM** - Simulation Package for the Mechanochemical
 //              Dynamics of Active Networks, 3rd Generation
@@ -139,7 +138,8 @@ short CMonomer::activeSpeciesPlusEnd() {
     
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
-        if(s != nullptr && s->getN() == 1) return i;
+        if(s != nullptr && s->getN() == 1)
+            return i;
     }
     return -1;
 }
@@ -149,7 +149,8 @@ short CMonomer::activeSpeciesMinusEnd() {
     
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
-        if(s != nullptr && s->getN() == 1) return i;
+        if(s != nullptr && s->getN() == 1)
+            return i;
     }
     return -1;
 }

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  29 JUL 2015 17:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  3 AUG 2015 14:32
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -319,7 +319,7 @@ Overfull \hbox (5.93391pt too wide) in paragraph at lines 356--364
  [][] 
  []
 
-
+[11]
 Underfull \hbox (badness 10000) in paragraph at lines 374--375
 
  []
@@ -339,7 +339,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 374--375
 
  []
 
-[11]
+
 Underfull \hbox (badness 10000) in paragraph at lines 384--385
 
  []
@@ -535,52 +535,62 @@ Underfull \hbox (badness 10000) in paragraph at lines 560--573
  []
 
 [18]
-Underfull \hbox (badness 10000) in paragraph at lines 597--599
+Underfull \hbox (badness 10000) in paragraph at lines 583--584
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 600--601
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 602--603
+Underfull \hbox (badness 10000) in paragraph at lines 585--588
 
  []
 
 [19]
-Underfull \hbox (badness 10000) in paragraph at lines 604--605
+Underfull \hbox (badness 10000) in paragraph at lines 607--609
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 611--612
+Underfull \hbox (badness 10000) in paragraph at lines 610--611
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 613--616
+Underfull \hbox (badness 10000) in paragraph at lines 612--613
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 613--616
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 617--618
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 619--620
+Underfull \hbox (badness 10000) in paragraph at lines 614--615
 
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 621--622
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 623--626
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 623--626
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 627--628
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 629--630
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 631--632
 
  []
 
@@ -606,7 +616,7 @@ sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr
 ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/lo
 cal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/loc
 al/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on UsageGuide.pdf (21 pages, 165179 bytes).
+Output written on UsageGuide.pdf (21 pages, 165377 bytes).
 PDF statistics:
  108 PDF objects out of 1000 (max. 8388607)
  75 compressed objects within 1 object stream

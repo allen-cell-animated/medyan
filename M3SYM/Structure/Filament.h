@@ -178,6 +178,9 @@ public:
     /// Check the consistency of the filament. For now,
     /// Mainly involves checking chemistry of the constituent cylinders.
     bool isConsistent();
+    
+    /// Count the number of filament species with a given name in the system
+    static species_copy_t countSpecies(const string& name);
 };
 
 #endif

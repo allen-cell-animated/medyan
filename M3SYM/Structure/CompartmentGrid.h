@@ -127,7 +127,12 @@ public:
 
     /// Remove a bulk reaction
     virtual void removeBulkReaction(ReactionBase *r) {_bulkReactions.removeReaction(r);}
-
+    
+    
+    /// Count the number of diffusing species with a given name
+    species_copy_t countDiffusingSpecies(const string& name);
+    /// Count the number of bulk species with a given name
+    species_copy_t  countBulkSpecies(const string& name);
 };
 
 #endif
