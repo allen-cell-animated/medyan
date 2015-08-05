@@ -25,7 +25,6 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
     if (NDOF == 0) return;
     
     double curEnergy = FFM.computeEnergy(0.0);
-    double prevEnergy;
     
     FFM.computeForces();
     startMinimization();
@@ -45,7 +44,6 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         //shift gradient
         shiftGradient(0.0);
         
-        prevEnergy = curEnergy;
         curEnergy = FFM.computeEnergy(0.0);
     }
     while (/* Iteration criterion */  numIter < 2 * NDOF &&

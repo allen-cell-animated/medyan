@@ -25,7 +25,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     if (NDOF == 0) return;
     
 	double curEnergy = FFM.computeEnergy(0.0);
-    double prevEnergy, maxForce;
+    double maxForce;
     
 	FFM.computeForces();
     startMinimization();
@@ -61,7 +61,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //shift gradient
         shiftGradient(beta);
         
-		prevEnergy = curEnergy;
 		curEnergy = FFM.computeEnergy(0.0);
         
         maxForce = maxF();
