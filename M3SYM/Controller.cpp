@@ -435,6 +435,8 @@ void Controller::run() {
             moveBoundary(tau() - oldTau);
             
             oldTau = tau();
+            
+            _numTotalSteps = i;
         }
 #endif
     }
@@ -488,7 +490,9 @@ void Controller::run() {
         }
 #endif
     }
-
+    //print last snapshots
+    for(auto o: _outputs) o->print(_numTotalSteps);
+    
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
     
