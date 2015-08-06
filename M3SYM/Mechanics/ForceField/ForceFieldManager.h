@@ -36,7 +36,8 @@ public:
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
-    double computeEnergy(double d);
+    /// @param print - prints detailed info about energies
+    double computeEnergy(double d, bool verbose = false);
     
     /// Compute the forces of all force fields
     void computeForces();

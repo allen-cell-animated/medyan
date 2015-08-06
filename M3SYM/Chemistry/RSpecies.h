@@ -514,7 +514,7 @@ public:
         // copy number and return
         double deltaTau = tau() - _localTau;
         
-        if(deltaTau == 0.0) {
+        if(areSame(deltaTau, 0.0)) {
             
             _average = ++_n;
             return;

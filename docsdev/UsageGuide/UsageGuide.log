@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  3 AUG 2015 14:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  6 AUG 2015 17:42
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -297,260 +297,255 @@ Underfull \vbox (badness 10000) detected at line 216
  []
 
 [6] [7]
-Underfull \vbox (badness 10000) detected at line 285
+Underfull \vbox (badness 10000) detected at line 287
  []
 
 [8] [9]
-Overfull \hbox (25.85074pt too wide) in alignment at lines 299--326
+Overfull \hbox (25.85074pt too wide) in alignment at lines 301--328
  [] [] [] 
  []
 
 
-Underfull \vbox (badness 10000) detected at line 326
+Underfull \vbox (badness 10000) detected at line 328
  []
 
 [10]
-Overfull \hbox (5.93391pt too wide) in paragraph at lines 335--348
+Overfull \hbox (5.93391pt too wide) in paragraph at lines 337--350
  [][] 
  []
 
 
-Overfull \hbox (5.93391pt too wide) in paragraph at lines 356--364
+Overfull \hbox (5.93391pt too wide) in paragraph at lines 358--366
  [][] 
  []
 
 [11]
-Underfull \hbox (badness 10000) in paragraph at lines 374--375
+Underfull \hbox (badness 10000) in paragraph at lines 376--377
 
  []
 
 
-Overfull \hbox (27.37506pt too wide) in paragraph at lines 374--375
+Overfull \hbox (27.37506pt too wide) in paragraph at lines 376--377
 [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 374--375
+Underfull \hbox (badness 10000) in paragraph at lines 376--377
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 374--375
+Underfull \hbox (badness 10000) in paragraph at lines 376--377
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 384--385
+Underfull \hbox (badness 10000) in paragraph at lines 386--387
 
  []
 
 
-Overfull \hbox (27.37506pt too wide) in paragraph at lines 384--385
+Overfull \hbox (27.37506pt too wide) in paragraph at lines 386--387
 [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 384--385
+Underfull \hbox (badness 10000) in paragraph at lines 386--387
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 393--394
+Underfull \hbox (badness 10000) in paragraph at lines 395--396
 
  []
 
 
-Overfull \hbox (27.37506pt too wide) in paragraph at lines 393--394
+Overfull \hbox (27.37506pt too wide) in paragraph at lines 395--396
 [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 393--394
+Underfull \hbox (badness 10000) in paragraph at lines 395--396
 
  []
 
 [12]
-Underfull \hbox (badness 10000) in paragraph at lines 418--422
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 423--428
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 423--428
+Underfull \hbox (badness 10000) in paragraph at lines 420--424
 
  []
 
 [13]
-Underfull \hbox (badness 10000) in paragraph at lines 429--434
+Underfull \hbox (badness 10000) in paragraph at lines 425--430
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 429--434
+Underfull \hbox (badness 10000) in paragraph at lines 425--430
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 438--443
+Underfull \hbox (badness 10000) in paragraph at lines 431--436
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 438--443
+Underfull \hbox (badness 10000) in paragraph at lines 431--436
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 446--450
+Underfull \hbox (badness 10000) in paragraph at lines 440--445
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 446--450
+Underfull \hbox (badness 10000) in paragraph at lines 440--445
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 448--452
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 448--452
 
  []
 
 [14]
-Underfull \hbox (badness 10000) in paragraph at lines 456--460
+Underfull \hbox (badness 10000) in paragraph at lines 458--462
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 456--460
+Underfull \hbox (badness 10000) in paragraph at lines 458--462
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 466--471
+Underfull \hbox (badness 10000) in paragraph at lines 468--473
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 466--471
+Underfull \hbox (badness 10000) in paragraph at lines 468--473
 
  []
 
 [15]
-Underfull \hbox (badness 10000) in paragraph at lines 474--479
+Underfull \hbox (badness 10000) in paragraph at lines 476--481
 
  []
 
 
-Overfull \hbox (17.02464pt too wide) in paragraph at lines 474--479
+Overfull \hbox (17.02464pt too wide) in paragraph at lines 476--481
 \OT1/cmtt/m/n/10.95 <NAME>:BRANCHER + <NAME>:PLUSEND <RATE> <NUCLEATIONZONE> <N
 UCLEATIONDIST> 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 474--479
+Underfull \hbox (badness 10000) in paragraph at lines 476--481
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 494--499
+Underfull \hbox (badness 10000) in paragraph at lines 496--501
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 494--499
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 502--507
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 502--507
+Underfull \hbox (badness 10000) in paragraph at lines 496--501
 
  []
 
 [16]
-Underfull \hbox (badness 10000) in paragraph at lines 510--515
+Underfull \hbox (badness 10000) in paragraph at lines 504--509
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 510--515
+Underfull \hbox (badness 10000) in paragraph at lines 504--509
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 518--522
+Underfull \hbox (badness 10000) in paragraph at lines 512--517
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 518--522
+Underfull \hbox (badness 10000) in paragraph at lines 512--517
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 529--530
+Underfull \hbox (badness 10000) in paragraph at lines 520--524
 
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 532
-.
-LaTeX Font Info:    No file OMScmtt.fd. on input line 532.
 
-LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
-(Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 532.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 531--534
+Underfull \hbox (badness 10000) in paragraph at lines 520--524
 
  []
 
 [17]
-Underfull \hbox (badness 10000) in paragraph at lines 541--542
+Underfull \hbox (badness 10000) in paragraph at lines 531--532
+
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 534
+.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 534.
+
+LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbraceleft' on input line 534.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 533--536
 
  []
 
 
-Overfull \hbox (1.14696pt too wide) in paragraph at lines 543--555
+Underfull \hbox (badness 10000) in paragraph at lines 543--544
+
+ []
+
+
+Overfull \hbox (1.14696pt too wide) in paragraph at lines 545--557
 \OT1/cmtt/m/n/10.95 beadcoord1x beadcoord1y beadcoord1z beadcoord2x beadcoord2y
  beadcoord2z ... 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 543--555
+Underfull \hbox (badness 10000) in paragraph at lines 545--557
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 558--559
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 560--573
+Underfull \hbox (badness 10000) in paragraph at lines 560--561
 
  []
 
 [18]
-Underfull \hbox (badness 10000) in paragraph at lines 583--584
+Underfull \hbox (badness 10000) in paragraph at lines 562--575
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 585--588
+Underfull \hbox (badness 10000) in paragraph at lines 585--586
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 587--590
 
  []
 
 [19]
-Underfull \hbox (badness 10000) in paragraph at lines 607--609
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 610--611
+Underfull \hbox (badness 10000) in paragraph at lines 609--611
 
  []
 
@@ -565,22 +560,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 614--615
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 621--622
+Underfull \hbox (badness 10000) in paragraph at lines 616--617
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 623--626
+Underfull \hbox (badness 10000) in paragraph at lines 623--624
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 623--626
+Underfull \hbox (badness 10000) in paragraph at lines 625--628
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 627--628
+Underfull \hbox (badness 10000) in paragraph at lines 625--628
 
  []
 
@@ -594,7 +589,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 631--632
 
  []
 
-[20] [21] (./UsageGuide.aux)
+[20]
+Underfull \hbox (badness 10000) in paragraph at lines 633--634
+
+ []
+
+[21] (./UsageGuide.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -606,7 +606,7 @@ Here is how much of TeX's memory you used:
  5863 multiletter control sequences out of 15000+600000
  11866 words of font info for 45 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,11n,26p,685b,239s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,11n,26p,685b,216s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
@@ -616,7 +616,7 @@ sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr
 ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/lo
 cal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/loc
 al/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on UsageGuide.pdf (21 pages, 165377 bytes).
+Output written on UsageGuide.pdf (21 pages, 165536 bytes).
 PDF statistics:
  108 PDF objects out of 1000 (max. 8388607)
  75 compressed objects within 1 object stream

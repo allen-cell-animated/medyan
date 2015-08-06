@@ -115,52 +115,9 @@ void CGMethod::printForces()
     cout << "End of Print Forces" << endl;
 }
 
-
-double CGMethod::goldenSection(ForceFieldManager& FFM)
-{
-	double a = 0;
-	double b = 200;
-    double phi = 0.5 * (1 + sqrt(5) );
-    double inv_phi = 1/phi;
-	double x1 = b - inv_phi * (b - a);
-	double x2 = a + inv_phi * (b - a);
+double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
+                                                                double LAMBDAMAX) {
     
-	while (fabs(b - a) > LSENERGYTOL)
-	{
-		if (FFM.computeEnergy(x1) >= FFM.computeEnergy(x2) ){
-            a = x1;
-            x1 = x2;
-            x2 =a + inv_phi * (b - a);
-        }
-        else {
-            b = x2;
-            x2 = x1;
-            x1 = b - inv_phi * (b - a);
-        }
-    }
-    double returnLambda = (a + b)/2.0;
-    
-    return returnLambda;
-}
-
-
-double CGMethod::binarySearch(ForceFieldManager& FFM)
-{
-    double a = 0, b = 100;
-    while (fabs(b - a) > LSENERGYTOL){
-        
-        double half_x1 = ((a + b)/2 - LSENERGYTOL/4);
-        double half_x2 = ((a + b)/2 + LSENERGYTOL/4);
-        if (FFM.computeEnergy(half_x1) <= FFM.computeEnergy(half_x2)) b = half_x2;
-        else a = half_x1;
-    }
-     return (a + b) / 2;
-}
-
-
-double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) {
-    
-    double proj = allFDotFA();
     double f = maxF();
     
     //return zero if no forces
@@ -175,86 +132,16 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST) 
         
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
-        
-        double idealEnergyChange = -BACKTRACKSLOPE * lambda * proj;
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
-        if(energyChange <= idealEnergyChange) return lambda;
+        if(energyChange <= 0.0) return lambda;
         
         //reduce lambda
         lambda *= LAMBDAREDUCE;
         
-        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL)
+        if(lambda <= 0.0 || lambda <= LAMBDATOL) {
             return 0.0;
+        }
     }
 }
-
-double CGMethod::quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST) {
-    
-    double proj = allFDotFA();
-    double f = maxF();
-    
-    //return zero if no forces
-    if(f == 0.0) return 0.0;
-    
-    //calculate first lambda
-    double lambda = min(LAMBDAMAX, MAXDIST / f);
-    double currentEnergy = FFM.computeEnergy(0.0);
-    
-    //more vars
-    double projOrig = proj;
-    double projPrev = proj;
-    double lambdaPrev = lambda;
-    double energyPrevLambda = currentEnergy;
-    
-    double relErr, lambda0, delProj, delLambda;
-    
-    //backtracking loop
-    while(true) {
-        
-        //new energy when moved by lambda
-        double energyLambda = FFM.computeEnergy(lambda);
-        
-        //compute new projection
-        moveBeads(lambda);
-        FFM.computeForcesAux();
-        
-        //move beads back
-        resetBeads();
-        
-        proj = allFDotFA(); delProj = proj - projPrev;
-        
-        if(fabs(proj) < EPS_QUAD || fabs(delProj) < EPS_QUAD)
-            return 0.0;
-        
-        //check if ready for a quadratic projection
-        delLambda = lambda - lambdaPrev;
-        
-        relErr = fabs(1.0 - (0.5 * delLambda * (proj + projPrev) +
-                                   energyLambda) / energyPrevLambda);
-        
-        lambda0 = lambda - delLambda * proj / delProj;
-        
-        double idealEnergyChange = -BACKTRACKSLOPE * lambda * projOrig;
-        double energyChange = energyLambda - currentEnergy;
-        
-        
-        //check if energy is decreasing and lambda within bounds
-        if(relErr <= QUADRATICTOL && energyChange <= 0) return lambda0;
-        
-        //return if ok
-        if(energyChange <= -idealEnergyChange) return lambda;
-        
-        //save state
-        projPrev = proj; lambdaPrev = lambda;
-        energyPrevLambda = energyLambda;
-        
-        //reduce lambda
-        lambda *= LAMBDAREDUCE;
-        
-        if(lambda <= 0.0 || idealEnergyChange >= -LSENERGYTOL)
-            return 0.0;
-    }
-}
-

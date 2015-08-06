@@ -33,7 +33,7 @@ double BranchingBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
                                 b3->coordinate, b4->coordinate);
     
-    double theta = acos(l1l2 / L1L2);
+    double theta = safeacos(l1l2 / L1L2);
     double dtheta = theta-eqTheta;
     
     
@@ -61,7 +61,7 @@ double BranchingBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                          b3->coordinate, b3->force,
                                          b4->coordinate, b4->force, d);
     
-    double theta = acos(l1l2 / L1L2);
+    double theta = safeacos(l1l2 / L1L2);
     double dtheta = theta-eqTheta;
     
     double energy = kBend * ( 1 - cos(dtheta) );
@@ -89,7 +89,7 @@ void BranchingBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double B = l1l2*invL1*A*A*L2;
     double C = l1l2*invL2*A*A*L1;
     
-    double theta = acos(l1l2 *A);
+    double theta = safeacos(l1l2 *A);
     double dtheta = theta-eqTheta;
     
     double k =  kBend* sin(dtheta)/sin(theta);
@@ -161,7 +161,7 @@ void BranchingBendingCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     double B = l1l2*invL1*A*A*L2;
     double C = l1l2*invL2*A*A*L1;
     
-    double theta = acos(l1l2 *A);
+    double theta = safeacos(l1l2 *A);
     double dtheta = theta-eqTheta;
     
     double k =  kBend* sin(dtheta)/sin(theta);

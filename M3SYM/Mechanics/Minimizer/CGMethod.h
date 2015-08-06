@@ -34,32 +34,10 @@ class CGMethod {
 protected:
     
     //@{
-    /// Lambda parameter for use in linear search methods
-    const double LAMBDAMAX = 0.1;  ///< Max lambda that can be returned,
-                                   ///< used in all methods
-    //@}
-    
-    //@{
     /// Parameter used in backtracking line search
     const double LAMBDAREDUCE = 0.5;   ///< Lambda reduction parameter for backtracking
-    const double BACKTRACKSLOPE = 1E-6; ///< Backtrack slope parameter
+    const double LAMBDATOL = 1e-12;    ///< Lambda tolerance parameter
     //@}
-    
-    //@{
-    /// Parameter used in quadratic line search
-    const double QUADRATICTOL = 0.1;
-    const double EPS_QUAD = 1e-28;
-    //@}
-    
-    //@{
-    /// Parameter used in golden section
-    const double PHI = (1 + sqrt(5)) / 2;
-    const double R = 0.61803399;
-    const double C = 1 - R;
-    //@}
-    
-    const double LSENERGYTOL = 1e-8; ///< Line search energy tolerance for all
-                                     ///< linesearch methods
     
     //@{
     /// For use in minimization
@@ -86,17 +64,13 @@ protected:
     //@}
     
     //@{
-    /// Linear search method
-    double goldenSection(ForceFieldManager &FFM);
-    double binarySearch(ForceFieldManager& FFM);
-    
+    /// Linear search methods
     ///@note - The most robust linesearch method, but slow at times.
-    double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST);
-    
-    ///@note - The fastest linesearch method. Sometimes unstable.
-    double quadraticLineSearch(ForceFieldManager& FFM, double MAXDIST);
+    double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
+                                                          double LAMBDAMAX);
     //@}
     
+    /// Print forces on all beads
     void printForces();
     
 public:
@@ -105,7 +79,8 @@ public:
     
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                  double MAXDIST) = 0;
+                                                  double MAXDIST,
+                                                  double LAMBDAMAX) = 0;
 };
 
 

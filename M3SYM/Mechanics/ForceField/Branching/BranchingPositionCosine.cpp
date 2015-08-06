@@ -40,7 +40,7 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
     midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
     
-    double theta = acos(xd / XD);
+    double theta = safeacos(xd / XD);
     double eqTheta = 0.5*M_PI;
     double dtheta = theta-eqTheta;
     
@@ -75,7 +75,7 @@ double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
                                 zero, b3->coordinate,b3->force, d);
     
-    double theta = acos(xd / XD);
+    double theta = safeacos(xd / XD);
     double eqTheta = 0.5*M_PI;
     double dtheta = theta-eqTheta;
     
@@ -107,7 +107,7 @@ void BranchingPositionCosine::forces(Bead* b1, Bead* b2, Bead* b3,
     double B = invX*invX;
     double C = invD*invD;
     
-    double theta = acos(xd * A);
+    double theta = safeacos(xd * A);
     double eqTheta = 0.5*M_PI;
     double dtheta = theta-eqTheta;
     
@@ -160,7 +160,7 @@ void BranchingPositionCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
     double B = invX*invX;
     double C = invD*invD;
     
-    double theta = acos(xd * A);
+    double theta = safeacos(xd * A);
     double eqTheta = 0.5*M_PI;
     double dtheta = theta-eqTheta;
     

@@ -50,6 +50,7 @@ struct MechanicsAlgorithm {
     /// Tolerance and cg parameters
     double gradientTolerance = 1.0;
     double maxDistance = 1.0;
+    double lambdaMax = 1.0;
     
     /// Not yet used
     string MD = "";

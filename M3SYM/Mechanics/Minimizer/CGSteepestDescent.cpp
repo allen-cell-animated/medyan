@@ -17,12 +17,11 @@
 #include "Output.h"
 
 void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                       double MAXDIST)
+                                                       double MAXDIST,
+                                                       double LAMBDAMAX)
 {
     //system size
     int N = Bead::numBeads();
-    int NDOF = 3 * N;
-    if (NDOF == 0) return;
     
     double curEnergy = FFM.computeEnergy(0.0);
     
@@ -30,12 +29,14 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
     startMinimization();
     
     int numIter = 0;
-    do {
+    while (/* Iteration criterion */  numIter < N &&
+           /* Gradient tolerance  */  maxF() > GRADTOL) {
+        
         numIter++;
         double lambda;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM, MAXDIST);
+        lambda = backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
         moveBeads(lambda); setBeads();
         
         //compute new forces
@@ -46,7 +47,5 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curEnergy = FFM.computeEnergy(0.0);
     }
-    while (/* Iteration criterion */  numIter < 2 * NDOF &&
-           /* Gradient tolerance  */  maxF() > GRADTOL);
 }
 

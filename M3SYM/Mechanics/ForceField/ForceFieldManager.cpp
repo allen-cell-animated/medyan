@@ -13,12 +13,14 @@
 
 #include "ForceFieldManager.h"
 
-double ForceFieldManager::computeEnergy(double d) {
+double ForceFieldManager::computeEnergy(double d, bool verbose) {
     
     double energy = 0;
     for(auto &f : _forceFields) {
         
         auto tempEnergy = f->computeEnergy(d);
+        
+        if(verbose) cout << f->getName() << " energy = " << tempEnergy << " ";
         
         //if energy is infinity, exit with infinity.
         if(tempEnergy <= -1) {
@@ -42,6 +44,7 @@ double ForceFieldManager::computeEnergy(double d) {
         else energy += tempEnergy;
         
     }
+    if(verbose) cout << endl;
     return energy;
 }
 

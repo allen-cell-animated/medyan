@@ -112,4 +112,11 @@ inline bool areSame(double d1, double d2) {
     return fabs(d1 - d2) < ZERO_PREC;
 }
 
+///Safe arccosine function
+inline double safeacos (double x) {
+    if (x < -1.0) x = -1.0;
+    else if (x > 1.0) x = 1.0;
+    return acos(x);
+}
+
 #endif

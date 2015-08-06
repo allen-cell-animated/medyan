@@ -17,15 +17,12 @@
 #include "Output.h"
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                    double MAXDIST){
-    
+                                                    double MAXDIST,
+                                                    double LAMBDAMAX){
     //system size
     int N = Bead::numBeads();
-    int NDOF = 3 * N;
-    if (NDOF == 0) return;
     
 	double curEnergy = FFM.computeEnergy(0.0);
-    double maxForce;
     
 	FFM.computeForces();
     startMinimization();
@@ -34,12 +31,14 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     double curGrad = CGMethod::allFDotF();
     
 	int numIter = 0;
-	do {
+    while (/* Iteration criterion */  numIter < N &&
+           /* Gradient tolerance  */  maxF() > GRADTOL) {
+
 		numIter++;
 		double lambda, beta, newGrad, prevGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM, MAXDIST);
+        lambda = backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
         moveBeads(lambda); setBeads();
         
         //compute new forces
@@ -49,11 +48,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         newGrad = CGMethod::allFADotFA();
         prevGrad = CGMethod::allFADotFAP();
         
-        //choose beta
-        //reset after ndof iterations
-		if (numIter % NDOF == 0)  beta = 0.0;
         //Polak-Ribieri update
-        else beta = max(0.0, (newGrad - prevGrad) / curGrad);
+        beta = max(0.0, (newGrad - prevGrad) / curGrad);
         
         //update prev forces
         FFM.computeForcesAuxP();
@@ -61,11 +57,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //shift gradient
         shiftGradient(beta);
         
-		curEnergy = FFM.computeEnergy(0.0);
+        //direction reset if not downhill or no progress made
+        if(CGMethod::allFDotFA() <= 0 || areSame(curGrad, newGrad))
+            shiftGradient(0.0);
         
-        maxForce = maxF();
+        curEnergy = FFM.computeEnergy(0.0);
         curGrad = newGrad;
     }
-	while (/* Iteration criterion */  numIter < 2 * NDOF &&
-           /* Gradient tolerance  */  maxForce > GRADTOL);
 }
