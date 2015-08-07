@@ -150,8 +150,6 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
 double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                                     double LAMBDAMAX) {
     
-    cout << "Safe backtrack" << endl;
-    
     //reset safe mode
     _safeMode = false;
     double f = maxF();

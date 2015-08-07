@@ -31,10 +31,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
     
-    cout << "Starting minimization" << endl;
-    cout << "Energy = " << curEnergy << endl;
-    cout << "MaxF = " << maxF() << endl;
-    
 	int numIter = 0;
     while (/* Iteration criterion */  numIter < N &&
            /* Gradient tolerance  */  maxF() > GRADTOL) {
@@ -74,5 +70,5 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curEnergy = FFM.computeEnergy(0.0);
         curGrad = newGrad;
-    }
+    } 
 }
