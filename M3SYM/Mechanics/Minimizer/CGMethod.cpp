@@ -173,6 +173,6 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
         //just shake if we cant find an energy min,
         //so we dont get stuck
         if(lambda <= 0.0 || lambda <= LAMBDATOL)
-            return LAMBDAMAX;
+            return MAXDIST / maxF();
     }
 }

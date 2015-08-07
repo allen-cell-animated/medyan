@@ -48,7 +48,7 @@ float LowDutyPCMCatch::changeRate(float onRate, float offRate,
     double rateOneSide = (offRate / N_b) * exp(-force / (N_b * _F0));
     
     double newRate = (rateOneSide * rateOneSide) / (numHeads * onRate);
-
+    
     return newRate;
 
 }
