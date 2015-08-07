@@ -42,7 +42,7 @@ protected:
     const double LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
     const double LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
     
-    const double SAFELAMBDAREDUCE = 0.8; ///< Lambda reduction parameter for conservative backtracking
+    const double SAFELAMBDAREDUCE = 0.9; ///< Lambda reduction parameter for conservative backtracking
     
     const double BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
     //@}

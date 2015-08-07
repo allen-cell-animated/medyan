@@ -152,13 +152,9 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     
     //reset safe mode
     _safeMode = false;
-    double f = maxF();
-    
-    //return zero if no forces
-    if(f == 0.0) return 0.0;
     
     //calculate first lambda
-    double lambda = min(LAMBDAMAX, MAXDIST / f);
+    double lambda = LAMBDAMAX;
     double currentEnergy = FFM.computeEnergy(0.0);
     
     //backtracking loop
@@ -174,7 +170,9 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
         //reduce lambda
         lambda *= LAMBDAREDUCE;
         
+        //just shake if we cant find an energy min,
+        //so we dont get stuck
         if(lambda <= 0.0 || lambda <= LAMBDATOL)
-            return 0.0;
+            return LAMBDAMAX;
     }
 }
