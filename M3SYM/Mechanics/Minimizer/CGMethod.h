@@ -33,10 +33,18 @@ class CGMethod {
 
 protected:
     
+    /// Safe mode which chooses the safe backtracking search if the
+    /// minimizer got itself into trouble.
+    bool _safeMode = false;
+    
     //@{
     /// Parameter used in backtracking line search
-    const double LAMBDAREDUCE = 0.5;   ///< Lambda reduction parameter for backtracking
-    const double LAMBDATOL = 1e-12;    ///< Lambda tolerance parameter
+    const double LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
+    const double LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
+    
+    const double SAFELAMBDAREDUCE = 0.8; ///< Lambda reduction parameter for conservative backtracking
+    
+    const double BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
     //@}
     
     //@{
@@ -65,9 +73,15 @@ protected:
     
     //@{
     /// Linear search methods
-    ///@note - The most robust linesearch method, but slow at times.
+    /// A simple backtracking search method that computes an optimal
+    /// energy change and compares the backtracked energy to it
     double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                           double LAMBDAMAX);
+    
+    /// The safemode backtracking search, returns the first energy decrease
+    ///@note - The most robust linesearch method, but very slow
+    double safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
+                                                              double LAMBDAMAX);
     //@}
     
     /// Print forces on all beads

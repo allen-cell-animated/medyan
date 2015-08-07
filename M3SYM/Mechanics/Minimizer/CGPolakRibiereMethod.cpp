@@ -19,6 +19,7 @@
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
                                                     double MAXDIST,
                                                     double LAMBDAMAX){
+    
     //system size
     int N = Bead::numBeads();
     
@@ -30,6 +31,10 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
     
+    cout << "Starting minimization" << endl;
+    cout << "Energy = " << curEnergy << endl;
+    cout << "MaxF = " << maxF() << endl;
+    
 	int numIter = 0;
     while (/* Iteration criterion */  numIter < N &&
            /* Gradient tolerance  */  maxF() > GRADTOL) {
@@ -38,7 +43,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 		double lambda, beta, newGrad, prevGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
+        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
+                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
+        
         moveBeads(lambda); setBeads();
         
         //compute new forces
@@ -57,9 +64,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //shift gradient
         shiftGradient(beta);
         
+        //cout << "Beta = " << beta << endl;
+        
         //direction reset if not downhill or no progress made
-        if(CGMethod::allFDotFA() <= 0 || areSame(curGrad, newGrad))
+        if(CGMethod::allFDotFA() <= 0 || areSame(curGrad, newGrad)) {
             shiftGradient(0.0);
+            _safeMode = true;
+        }
         
         curEnergy = FFM.computeEnergy(0.0);
         curGrad = newGrad;

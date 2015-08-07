@@ -117,7 +117,43 @@ void CGMethod::printForces()
 
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                                 double LAMBDAMAX) {
+
+    double f = maxF();
     
+    //return zero if no forces
+    if(f == 0.0) return 0.0;
+    
+    //calculate first lambda
+    double lambda = min(LAMBDAMAX, MAXDIST / f);
+    double currentEnergy = FFM.computeEnergy(0.0);
+    
+    //backtracking loop
+    while(true) {
+        
+        //new energy when moved by lambda
+        double energyLambda = FFM.computeEnergy(lambda);
+        
+        double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
+        double energyChange = energyLambda - currentEnergy;
+        
+        //return if ok
+        if(energyChange <= idealEnergyChange) return lambda;
+        
+        //reduce lambda
+        lambda *= LAMBDAREDUCE;
+        
+        if(lambda <= 0.0 || lambda <= LAMBDATOL)
+            return 0.0;
+    }
+}
+
+double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
+                                                                    double LAMBDAMAX) {
+    
+    cout << "Safe backtrack" << endl;
+    
+    //reset safe mode
+    _safeMode = false;
     double f = maxF();
     
     //return zero if no forces
@@ -140,8 +176,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         //reduce lambda
         lambda *= LAMBDAREDUCE;
         
-        if(lambda <= 0.0 || lambda <= LAMBDATOL) {
+        if(lambda <= 0.0 || lambda <= LAMBDATOL)
             return 0.0;
-        }
     }
 }

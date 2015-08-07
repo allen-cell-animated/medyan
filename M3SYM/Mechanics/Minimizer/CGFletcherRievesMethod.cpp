@@ -38,7 +38,8 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         double lambda, beta, newGrad;
         
         //find lambda by line search, move beads
-        lambda = backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
+        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
+                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
         moveBeads(lambda); setBeads();
         
         //compute new forces
@@ -54,8 +55,10 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         shiftGradient(beta);
         
         //direction reset if not downhill or no progress made
-        if(CGMethod::allFDotFA() <= 0 || areSame(curGrad, newGrad))
+        if(CGMethod::allFDotFA() <= 0 || areSame(curGrad, newGrad)) {
             shiftGradient(0.0);
+            _safeMode = true;
+        }
         
         curEnergy = FFM.computeEnergy(0.0);
         curGrad = newGrad;
