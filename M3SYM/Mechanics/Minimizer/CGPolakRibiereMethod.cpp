@@ -30,6 +30,10 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
+//    
+//    cout << "Starting minimization" << endl;
+//    cout << "Energy = " << curEnergy << endl;
+//    cout << "MaxF = " << maxF() << endl;
     
 	int numIter = 0;
     while (/* Iteration criterion */  numIter < N &&
@@ -62,11 +66,19 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //direction reset if not downhill or no progress made
         if(CGMethod::allFDotFA() <= 0 || areSame(curGrad, newGrad)) {
+            
+            cout << "Safe mode enabled" << endl;
+            
             shiftGradient(0.0);
             _safeMode = true;
         }
         
         curEnergy = FFM.computeEnergy(0.0);
         curGrad = newGrad;
-    }
+    }    
+//    cout << "Ending minimization" << endl;
+//    cout << "Numiter = " << numIter << endl;
+//    cout << "NBeads = " << N << endl;
+//    cout << "Energy = " << curEnergy << endl;
+//    cout << "MaxF = " << maxF() << endl;
 }
