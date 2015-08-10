@@ -76,9 +76,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         curEnergy = FFM.computeEnergy(0.0);
         curGrad = newGrad;
     }    
-//    cout << "Ending minimization" << endl;
-//    cout << "Numiter = " << numIter << endl;
-//    cout << "NBeads = " << N << endl;
-//    cout << "Energy = " << curEnergy << endl;
-//    cout << "MaxF = " << maxF() << endl;
+    cout << "Ending minimization" << endl;
+    cout << "Numiter = " << numIter << endl;
+    cout << "NBeads = " << N << endl;
+    cout << "Energy = " << curEnergy << endl;
+    cout << "MaxF = " << maxF() << endl;
 }
