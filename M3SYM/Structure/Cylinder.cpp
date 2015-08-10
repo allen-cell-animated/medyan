@@ -106,16 +106,32 @@ void Cylinder::updatePosition() {
     
     if(c != _compartment) {
 
+#ifdef CHEMISTRY
+        auto oldCompartment = _compartment;
+        auto newCompartment = c;
+#endif
+        
         //remove from old compartment, add to new
         _compartment->removeCylinder(this);
         _compartment = c;
         _compartment->addCylinder(this);
         
 #ifdef CHEMISTRY
+        auto oldCCylinder = _cCylinder.get();
+        
         CCylinder* clone = _cCylinder->clone(c);
         setCCylinder(clone);
-#endif
+        
+        auto newCCylinder = _cCylinder.get();
+        
+        ///Remove old ccylinder from binding managers, add new one
+        for(auto &manager : oldCompartment->getFilamentBindingManagers())
+            manager->removePossibleBindings(oldCCylinder);
+        
+        for(auto &manager : newCompartment->getFilamentBindingManagers())
+            manager->addPossibleBindings(newCCylinder);
     }
+#endif
     
 #ifdef MECHANICS
     //update length
