@@ -60,7 +60,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //shift gradient
         shiftGradient(beta);
         
-        //direction reset if not downhill or no progress made
+        //direction reset if not downhill, or no progress made
         if(CGMethod::allFDotFA() <= 0 || areSame(curGrad, newGrad)) {
             
             shiftGradient(0.0);
@@ -69,5 +69,10 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         curEnergy = FFM.computeEnergy(0.0);
         curGrad = newGrad;
+    }
+    
+    if (numIter > N) {
+        cout << "WARNING: Did not minimize in N (= number of beads) steps." << endl;
+        cout << "Maximum force in system = " << maxF() << endl;
     }
 }
