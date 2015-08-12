@@ -23,8 +23,6 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
     //system size
     int N = Bead::numBeads();
     
-    double curEnergy = FFM.computeEnergy(0.0);
-    
     FFM.computeForces();
     startMinimization();
     
@@ -44,8 +42,6 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //shift gradient
         shiftGradient(0.0);
-        
-        curEnergy = FFM.computeEnergy(0.0);
     }
     
     if (numIter >= N) {

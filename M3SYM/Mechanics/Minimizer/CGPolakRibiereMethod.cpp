@@ -23,8 +23,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     //system size
     int N = Bead::numBeads();
     
-	double curEnergy = FFM.computeEnergy(0.0);
-    
 	FFM.computeForces();
     startMinimization();
 
@@ -67,7 +65,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
             _safeMode = true;
         }
         
-        curEnergy = FFM.computeEnergy(0.0);
         curGrad = newGrad;
     }
     
