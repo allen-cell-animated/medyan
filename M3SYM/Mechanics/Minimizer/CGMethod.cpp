@@ -63,6 +63,25 @@ double CGMethod::maxF() {
     return maxF;
 }
 
+Bead* CGMethod::maxBead() {
+    
+    double maxF = 0;
+    double force;
+    Bead* retbead = nullptr;
+    
+    //calc max force
+    for(auto b: Bead::getBeads()) {
+        
+        force = b->FADotFA();
+        
+        if(force >= maxF) {
+            retbead = b;
+            maxF = force;
+        }
+    }
+    return retbead;
+}
+
 void CGMethod::startMinimization() {
 
     for(auto b: Bead::getBeads())

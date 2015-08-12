@@ -67,5 +67,8 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
     if (numIter >= N) {
         cout << "WARNING: Did not minimize in N (= number of beads) steps." << endl;
         cout << "Maximum force in system = " << maxF() << endl;
+        
+        cout << "Culprit ..." << endl;
+        maxBead()->printInfo();
     }
 }

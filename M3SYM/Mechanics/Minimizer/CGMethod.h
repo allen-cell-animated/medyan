@@ -20,6 +20,7 @@
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
+class Bead;
 
 /// For performing a conjugate gradient minimization method
 
@@ -56,6 +57,9 @@ protected:
     
     /// Get the max force in the system
     double maxF();
+    
+    /// Get bead with the max force in the system
+    Bead* maxBead();
     
     /// Sets coordinates before minimization
     void startMinimization();
