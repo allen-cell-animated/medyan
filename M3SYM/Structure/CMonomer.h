@@ -99,7 +99,6 @@ public:
     short activeSpeciesPlusEnd();
     short activeSpeciesMinusEnd();
     
-    short activeSpeciesBound();
     short activeSpeciesLinker();
     short activeSpeciesMotor();
     short activeSpeciesBrancher();

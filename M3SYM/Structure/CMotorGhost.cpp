@@ -25,8 +25,8 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
     SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(motorType);
     SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(motorType);
 
-    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
-    SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
+    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(M_BOUND_EMPTY);
+    SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(M_BOUND_EMPTY);
         
     //mark species
     assert(sm1->getN() == 0 && sm2->getN() == 0 &&
@@ -59,8 +59,8 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     os.push_back(&rs[SPECIESM_BINDING_INDEX]->getSpecies());
     
-    Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
-    Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
+    Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(M_BOUND_EMPTY);
+    Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(M_BOUND_EMPTY);
     
     os.push_back(empty1);
     os.push_back(empty2);
@@ -99,7 +99,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
         
         //change off reaction to include new species
         Species* smOther = _secondSpecies;
-        Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
+        Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(M_BOUND_EMPTY);
         
         Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
@@ -114,7 +114,7 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
         
         //change off reaction to include new species
         Species* smOther = _firstSpecies;
-        Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
+        Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(M_BOUND_EMPTY);
         
         Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
@@ -162,7 +162,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         
         //change off reaction to include new species
         Species* smOther = _secondSpecies;
-        Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(BOUND_EMPTY);
+        Species* seOther = _cc2->getCMonomer(_position2)->speciesBound(M_BOUND_EMPTY);
         
         Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
@@ -183,7 +183,7 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
         
         //change off reaction to include new species
         Species* smOther = _firstSpecies;
-        Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(BOUND_EMPTY);
+        Species* seOther = _cc1->getCMonomer(_position1)->speciesBound(M_BOUND_EMPTY);
         
         Species* sbd = &(_offRxn->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         

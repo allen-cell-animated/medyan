@@ -155,16 +155,6 @@ short CMonomer::activeSpeciesMinusEnd() {
     return -1;
 }
 
-short CMonomer::activeSpeciesBound() {
-    short numBoundSpecies = SysParams::Chemistry().numBoundSpecies;
-    short offset = _speciesBoundIndex[SPECIESBOUND];
-    
-    for(int i = 0; i < numBoundSpecies; i++) {
-        SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && s->getN() == 1) return i;
-    }
-    return -1;
-}
 short CMonomer::activeSpeciesLinker() {
     short numLinkerSpecies = SysParams::Chemistry().numLinkerSpecies;
     short offset = _speciesBoundIndex[SPECIESLINKER];
@@ -212,16 +202,6 @@ bool CMonomer::isConsistent() {
             
         }
     }
-    for(int i = 0; i < _numBSpecies; i++) {
-        
-        if(_speciesBound[i]->getN() != 1 &&
-           _speciesBound[i]->getN() != 0) {
-            
-            cout << _speciesBound[i]->getName() << " has an invalid copy number. It is = "
-                 << _speciesBound[i]->getN() << " and is at species index " << i << "." << endl;
-            return false;
-        }
-    }
     
     //check filament species
     if(activeSpeciesFilament() != -1 &&
@@ -229,17 +209,6 @@ bool CMonomer::isConsistent() {
         activeSpeciesMinusEnd() != -1)) {
            
         cout << "Has a simultaneously active filament and plus/minus end species." << endl;
-           
-        return false;
-    }
-    
-    //check bound species
-    if(activeSpeciesBound() != -1 &&
-       (activeSpeciesLinker() != -1 ||
-        activeSpeciesMotor() != -1  ||
-        activeSpeciesBrancher() != -1)) {
-           
-        cout << "Has a simultaneously active bound and motor/linker/brancher species." << endl;
            
         return false;
     }

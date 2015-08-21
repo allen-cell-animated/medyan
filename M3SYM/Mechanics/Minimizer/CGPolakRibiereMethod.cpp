@@ -73,6 +73,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         cout << "Maximum force in system = " << maxF() << endl;
         
         cout << "Culprit ..." << endl;
-        maxBead()->printInfo();
+        auto b = maxBead();
+        if(b != nullptr) b->printInfo();
     }
 }

@@ -38,14 +38,14 @@ using namespace mathfunc;
 
 /// Callback to update the compartment-local binding species based on
 /// a change of copy number for an empty site.
-struct UpdateBindingCallback {
+struct UpdateBrancherBindingCallback {
     
     Cylinder* _cylinder; ///< cylinder to update
     
     short _bindingSite;  ///< binding site to update
     
     //Constructor, sets members
-    UpdateBindingCallback(Cylinder* cylinder, short bindingSite)
+    UpdateBrancherBindingCallback(Cylinder* cylinder, short bindingSite)
     
         : _cylinder(cylinder), _bindingSite(bindingSite) {}
     
@@ -57,15 +57,83 @@ struct UpdateBindingCallback {
         
         for(auto &manager : c->getFilamentBindingManagers()) {
             
-            CCylinder* cc = _cylinder->getCCylinder();
-            
-            //update binding sites
-            if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
-            
-            else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+            if(dynamic_cast<BranchingManager*>(manager.get())) {
+                
+                CCylinder* cc = _cylinder->getCCylinder();
+                
+                //update binding sites
+                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+                
+                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+            }
         }
     }
 };
+
+struct UpdateLinkerBindingCallback {
+    
+    Cylinder* _cylinder; ///< cylinder to update
+    
+    short _bindingSite;  ///< binding site to update
+    
+    //Constructor, sets members
+    UpdateLinkerBindingCallback(Cylinder* cylinder, short bindingSite)
+    
+    : _cylinder(cylinder), _bindingSite(bindingSite) {}
+    
+    //callback
+    void operator() (RSpecies *r, int delta) {
+        
+        //update this cylinder
+        Compartment* c = _cylinder->getCompartment();
+        
+        for(auto &manager : c->getFilamentBindingManagers()) {
+            
+            if(dynamic_cast<LinkerBindingManager*>(manager.get())) {
+                
+                CCylinder* cc = _cylinder->getCCylinder();
+                
+                //update binding sites
+                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+                
+                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+            }
+        }
+    }
+};
+
+struct UpdateMotorBindingCallback {
+    
+    Cylinder* _cylinder; ///< cylinder to update
+    
+    short _bindingSite;  ///< binding site to update
+    
+    //Constructor, sets members
+    UpdateMotorBindingCallback(Cylinder* cylinder, short bindingSite)
+    
+    : _cylinder(cylinder), _bindingSite(bindingSite) {}
+    
+    //callback
+    void operator() (RSpecies *r, int delta) {
+        
+        //update this cylinder
+        Compartment* c = _cylinder->getCompartment();
+        
+        for(auto &manager : c->getFilamentBindingManagers()) {
+            
+            if(dynamic_cast<MotorBindingManager*>(manager.get())) {
+                
+                CCylinder* cc = _cylinder->getCCylinder();
+                
+                //update binding sites
+                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+                
+                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+            }
+        }
+    }
+};
+
 #endif
 
 #ifdef REACTION_SIGNALING

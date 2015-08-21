@@ -37,10 +37,12 @@ using namespace std;
 ///Boost typedef
 typedef boost::signals2::shared_connection_block ConnectionBlock;
 
-/// Default empty site number in CMonomer
+/// Default empty site numbers in CMonomer
 /// @note - DO NOT CHANGE!!!
 
-#define BOUND_EMPTY       0
+#define B_BOUND_EMPTY       0
+#define L_BOUND_EMPTY       1
+#define M_BOUND_EMPTY       2
 
 //@{
 /// Constant Species index identifiers
@@ -62,10 +64,10 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 
 /// Polymerization
 #define POLYREACTANTS         2
-#define POLYPRODUCTS          3
+#define POLYPRODUCTS          2
 
 /// Depolymerization
-#define DEPOLYREACTANTS       3
+#define DEPOLYREACTANTS       2
 #define DEPOLYPRODUCTS        2
 
 /// Linker and motor binding

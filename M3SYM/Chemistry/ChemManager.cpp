@@ -126,7 +126,7 @@ void ChemManager::genFilReactionTemplates() {
         
         //Checks on number of reactants, products
         if(reactants.size() != POLYREACTANTS ||
-           products.size() != POLYPRODUCTS - 1) {
+           products.size() != POLYPRODUCTS) {
             cout << "Invalid polymerization reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
@@ -336,7 +336,7 @@ void ChemManager::genFilReactionTemplates() {
         //read strings, and look up type
         
         //Checks on number of reactants, products
-        if(reactants.size() != DEPOLYREACTANTS - 1 ||
+        if(reactants.size() != DEPOLYREACTANTS ||
            products.size() != DEPOLYPRODUCTS) {
             cout << "Invalid depolymerization reaction. Exiting." << endl;
             exit(EXIT_FAILURE);
@@ -604,9 +604,9 @@ void ChemManager::genFilReactionTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesBound.begin(), it);
                 
-                if(position != BOUND_EMPTY) {
+                if(position != M_BOUND_EMPTY) {
                     cout <<
-                    "Second species listed in a motor walking reaction must be the empty site. Exiting."
+                    "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
@@ -688,9 +688,9 @@ void ChemManager::genFilReactionTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesBound.begin(), it);
                 
-                if(position != BOUND_EMPTY) {
+                if(position != M_BOUND_EMPTY) {
                     cout <<
-                    "Second species listed in a motor walking reaction must be the empty site. Exiting."
+                    "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
@@ -1195,9 +1195,9 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != BOUND_EMPTY) {
+                    if(position != B_BOUND_EMPTY) {
                         cout <<
-                        "Third species listed in a branching reaction must be the empty site. Exiting."
+                        "Third species listed in a branching reaction must be the corresponding brancher empty site. Exiting."
                         << endl;
                         exit(EXIT_FAILURE);
                     }
@@ -1346,9 +1346,9 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != BOUND_EMPTY) {
+                    if(position != L_BOUND_EMPTY) {
                         cout <<
-                        "First species listed in a linker reaction must be the empty site. Exiting."
+                        "First species listed in a linker reaction must be the corresponding linker empty site. Exiting."
                         << endl;
                         exit(EXIT_FAILURE);
                     }
@@ -1385,9 +1385,9 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != BOUND_EMPTY) {
+                    if(position != L_BOUND_EMPTY) {
                         cout <<
-                        "Second species listed in a linker reaction must be the empty site. Exiting."
+                        "Second species listed in a linker reaction must be the corresponding linker empty site. Exiting."
                         << endl;
                         exit(EXIT_FAILURE);
                     }
@@ -1569,9 +1569,9 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != BOUND_EMPTY) {
+                    if(position != M_BOUND_EMPTY) {
                         cout <<
-                        "First species listed in a motor reaction must be the empty site. Exiting."
+                        "First species listed in a motor reaction must be the corresponding motor empty site. Exiting."
                         << endl;
                         exit(EXIT_FAILURE);
                     }
@@ -1607,9 +1607,9 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != BOUND_EMPTY) {
+                    if(position != M_BOUND_EMPTY) {
                         cout <<
-                        "Second species listed in a motor reaction must be the empty site. Exiting."
+                        "Second species listed in a motor reaction must be the corresponding motor empty site. Exiting."
                         << endl;
                         exit(EXIT_FAILURE);
                     }
@@ -2501,11 +2501,21 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                 SysParams::Chemistry().bindingSites.end(), i)
            !=  SysParams::Chemistry().bindingSites.end()) {
             
-            //add callback to binding sites
-            UpdateBindingCallback bcallback(c, i);
+            //add callback to all binding sites
+            UpdateBrancherBindingCallback bcallback(c, i);
             
-            Species* es = cc->getCMonomer(i)->speciesBound(BOUND_EMPTY);
-            ConnectionBlock rcb(es->connect(bcallback,false));
+            Species* bs = cc->getCMonomer(i)->speciesBound(B_BOUND_EMPTY);
+            ConnectionBlock rcbb(bs->connect(bcallback,false));
+            
+            UpdateLinkerBindingCallback lcallback(c, i);
+            
+            Species* ls = cc->getCMonomer(i)->speciesBound(L_BOUND_EMPTY);
+            ConnectionBlock rcbl(ls->connect(lcallback,false));
+            
+            UpdateMotorBindingCallback mcallback(c, i);
+            
+            Species* ms = cc->getCMonomer(i)->speciesBound(M_BOUND_EMPTY);
+            ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
     
@@ -2538,13 +2548,16 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
-            m1->speciesBound(BOUND_EMPTY)->up();
+            m1->speciesBound(B_BOUND_EMPTY)->up();
+            m1->speciesBound(L_BOUND_EMPTY)->up();
+            m1->speciesBound(M_BOUND_EMPTY)->up();
             
             //fill new cylinder with default filament value
             for(int i = 0; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
-                cc->getCMonomer(i)->speciesBound(BOUND_EMPTY)->up();
-                
+                cc->getCMonomer(i)->speciesBound(B_BOUND_EMPTY)->up();
+                cc->getCMonomer(i)->speciesBound(L_BOUND_EMPTY)->up();
+                cc->getCMonomer(i)->speciesBound(M_BOUND_EMPTY)->up();
             }
             for(auto &r : _filRxnTemplates) r->addReaction(lastcc, cc);
         }
@@ -2560,7 +2573,9 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             //fill with default filament value
             for(int i = 1; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
-                cc->getCMonomer(i)->speciesBound(BOUND_EMPTY)->up();
+                cc->getCMonomer(i)->speciesBound(B_BOUND_EMPTY)->up();
+                cc->getCMonomer(i)->speciesBound(L_BOUND_EMPTY)->up();
+                cc->getCMonomer(i)->speciesBound(M_BOUND_EMPTY)->up();
             }
         }
     }    
