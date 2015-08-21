@@ -34,7 +34,7 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool runtime) {
     
     auto coord = cylinder->coordinate;
     auto comp = cylinder->getCompartment();
-    auto searchDist = SysParams::Geometry().largestCompartmentSide * 2;
+    auto searchDist = SysParams::Geometry().largestCompartmentSide;
     
     GController::findCompartments(coord, comp, searchDist, compartments);
     
