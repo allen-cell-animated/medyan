@@ -30,16 +30,9 @@ double FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     double l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
                                 b2->coordinate, b3->coordinate);
     
-    //cout << "l1l2 = " << l1l2 << ", L1L2 = " << L1L2 << endl;
-    
     double phi = safeacos(l1l2 / L1L2);
-    
-    //cout << "Phi = " << phi << endl;
-    //cout << "EqTheta = " << eqTheta << endl;
-    //cout << "Kbend = " << kBend << endl;
     double dPhi = phi-eqTheta;
     
-    //cout << "Energy = " << kBend * ( 1 - cos(dPhi) ) << endl;
     return kBend * ( 1 - cos(dPhi) );
 }
 

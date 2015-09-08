@@ -397,7 +397,7 @@ Any \textbf{filament-related species} can be defined in the following form:\newl
 \item \texttt{FILAMENT} : A filamentous species. At least one filament species must be defined if using filaments in simulation.
 \item \texttt{PLUSEND} : A plus end species on a filament, which is defined as the front of the filament. There must be at least one plus end species for every filament species defined in the system.
 \item \texttt{MINUSEND} : A minus end species on a filament, which is defined as the back of the filament. There must be at least one minus end species for every filament species defined in the system.
-\item \texttt{BOUND} : A bound species on a filament. There must be at least one bound species defined in the system, which will denote the "empty" spot on a filament.
+\item \texttt{BOUND} : A bound species on a filament. There must be at least one bound species defined in the system for each type of binding molecule, which will denote the "empty" spot on a filament for that molecule. They must be listed in order of 1) branching binding site, 2) Linker binding site, 3) motor binding site.
 \item \texttt{LINKER} : A cross-linker species. The ordering of cross-linker initializations should match their mechanical parameters, as stated above.
 \item \texttt{MOTOR} : A myosin II motor species. The ordering of motor initializations should match their mechanical parameters, as stated above.
 \item \texttt{BRANCHER} : A branching species. The ordering of branches initializations should match their mechanical parameters, as stated above.
@@ -450,7 +450,7 @@ the length of the filament by a single monomer.
 \texttt{<NAME>:BOUND:1 + <NAME>:BOUND:2 + <NAME>:BULK/DIFFUSING <->}\newline
 \texttt{<NAME>:LINKER:1 + <NAME>:LINKER:2 <ONRATE> <OFFRATE> <RMIN> <RMAX>}\newline
 
-where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} and \texttt{<OFFRATE>} are float values that determines the rate constant of the binding and unbinding reactions. \texttt{<RMIN>} and \texttt{<RMAX>} are the range of the chemical reaction, and this can be set depending on the structure of the simulated cross-linker. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. 
+where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} and \texttt{<OFFRATE>} are float values that determines the rate constant of the binding and unbinding reactions. \texttt{<RMIN>} and \texttt{<RMAX>} are the range of the chemical reaction, and this can be set depending on the structure of the simulated cross-linker. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding cross-linker binding site.
 
 This reaction produces cross-linker species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the cross-linkers, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any linker potentials that have been created between the filaments.
 
@@ -460,7 +460,7 @@ This reaction produces cross-linker species at two separate positions on each re
 \texttt{<NAME>:BOUND:1 + <NAME>:BOUND:2 + <NAME>:BULK/DIFFUSING <->}\newline
 \texttt{<NAME>:MOTOR:1 + <NAME>:MOTOR:2 <ONRATE> <OFFRATE> <RMIN> <RMAX>}\newline
 
-where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} and \texttt{<OFFRATE>} are float values that determines the rate constant of the binding and unbinding reactions. \texttt{<RMIN>} and \texttt{<RMAX>} are the range of the chemical reaction, and this can be set depending on the structure of the simulated motor. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. 
+where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} and \texttt{<OFFRATE>} are float values that determines the rate constant of the binding and unbinding reactions. \texttt{<RMIN>} and \texttt{<RMAX>} are the range of the chemical reaction, and this can be set depending on the structure of the simulated motor. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding motor binding site.
 
 This binding reaction produces motor species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the motor, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any motor potentials that have been created between the filaments.
 
@@ -469,7 +469,7 @@ This binding reaction produces motor species at two separate positions on each r
 \texttt{MOTORWALKINGREACTION:}\newline
 \texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 ->}\newline
 \texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 <RATE>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. The choice of \texttt{N/N+1} will determine whether the motor is stepping forward or backward. A motor movement from \texttt{N} to \texttt{N+1} is defined as forward movement (towards the plus end of the filament), and the opposite is backward (towards the minus end). These choices for the reactants and products must be self-consistent as well as consistent with the bound species positions chosen in the reaction, or a startup error will result. 
+where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. The choice of \texttt{N/N+1} will determine whether the motor is stepping forward or backward. A motor movement from \texttt{N} to \texttt{N+1} is defined as forward movement (towards the plus end of the filament), and the opposite is backward (towards the minus end). These choices for the reactants and products must be self-consistent as well as consistent with the bound species positions chosen in the reaction, or a startup error will result. The bound species listed must be the corresponding motor binding site.
 
 This reaction will move a motor head in the given direction.
  
@@ -477,7 +477,7 @@ This reaction will move a motor head in the given direction.
 \texttt{BRANCHINGREACTION:}\newline
 \texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING +  <NAME>:BOUND <->}\newline
 \texttt{<NAME>:BRANCHER + <NAME>:PLUSEND <RATE> <NUCLEATIONZONE> <NUCLEATIONDIST>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.  It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}.
+where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.  It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding branching binding site.
 
 The \texttt{NUCLEATIONZONE} and \texttt{NUCLEATIONDIST} specify the volume in which a branching reaction can occur. The choices for the zone parameter are the following
 

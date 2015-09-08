@@ -233,3 +233,17 @@ void Cylinder::printInfo() {
     cout << endl;
 }
 
+bool Cylinder::within(Cylinder* other, double dist) {
+    
+    //check midpoints
+    if(twoPointDistance(coordinate, other->coordinate) <= dist)
+        return true;
+    
+    //briefly check endpoints of other
+    if(twoPointDistance(coordinate, other->_b1->coordinate) <= dist ||
+       twoPointDistance(coordinate, other->_b2->coordinate) <= dist)
+        return true;
+    
+    return false;
+}
+

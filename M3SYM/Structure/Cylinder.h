@@ -170,6 +170,10 @@ public:
     bool isFullLength();
                                        
     virtual void printInfo();
+                                       
+    /// Returns whether a cylinder is within a certain distance from another
+    /// Uses the closest point between the two cylinders
+    virtual bool within(Cylinder* other, double dist);
 };
 
 #endif

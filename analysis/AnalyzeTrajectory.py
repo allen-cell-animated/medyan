@@ -81,6 +81,8 @@ class ChemSnapshot:
 #returns a list of Snapshots with all data
 def readTrajectory(filename):
 
+	print "Reading " + filename + "..."
+
 	#Open the traj file
 	traj_file=open(filename)
 
@@ -216,6 +218,8 @@ def readTrajectory(filename):
 		line_number+=1
 
 	#return the final Snapshot list
+	print str(len(SnapshotList)) + " snapshots read."
+
 	return SnapshotList	
 
 #Read a number of trajectories, return array of Snapshot lists
@@ -224,6 +228,7 @@ def readTrajectories(fileNames):
 	SnapshotLists = []
 
 	for trajFile in fileNames:
+		print "Reading trajectory..."
 		SnapshotLists.append(readTrajectory(trajFile))
 
 	return SnapshotLists
@@ -231,6 +236,8 @@ def readTrajectories(fileNames):
 #Read all data from a chemical output file
 #return a list of chemical snapshots
 def readChemistryOutput(fileName):
+
+	print "Reading " + fileName + "..."
 
 	ChemSnapshotList = []
 
@@ -292,6 +299,8 @@ def readChemistryOutput(fileName):
 
 			line_number+=1
 
+	print str(len(ChemSnapshotList)) + " snapshots read."
+
 	return ChemSnapshotList
 
 
@@ -301,6 +310,7 @@ def readChemistryOutputs(fileNames):
 	ChemSnapshotLists = []
 
 	for chemFile in fileNames:
+		print "Reading chemistry output..."
 		ChemLists.append(readChemistryOutput(chemFile))
 
 	return ChemSnapshotLists
@@ -776,218 +786,151 @@ def minEnclosingVolumes(SnapshotLists, saveFile=''):
 #from order parameter definition at http://cmt.dur.ac.uk/sjc/thesis_dlc/node65.html
 #takes the largest eigenvalue of Q, a second rank ordering tensor over cylinder pairs
 #returns a list of time and value pairs
-def orderParameter(SnapshotList):
+def orderParameter(SnapshotList, snapshot=1):
 
 	orderParams = []
 
-	for i in xrange(0, len(SnapshotList), 2):
+	Snapshot = SnapshotList[snapshot]
 
-		Snapshot = SnapshotList[i]
+	Q = np.zeros((len(Snapshot.filaments), len(Snapshot.filaments)))
 
-		if len(Snapshot.cylinders) <= 1: 
+	i = 0
+	for filIDA, FSA in Snapshot.filaments.iteritems():
 
-			orderParams.append((Snapshot.time, 1.0))
-			continue
+		#calculate direction
+		magA = sqrt((FSA.coords[len(FSA.coords) - 1] - FSA.coords[0]). \
+					 dot(FSA.coords[len(FSA.coords) - 1] - FSA.coords[0]))
+		directionA = (FSA.coords[len(FSA.coords) - 1] - FSA.coords[0]) / magA
 
-		Q = np.zeros((len(Snapshot.cylinders), len(Snapshot.cylinders)))
-
-		i = 0
-		for cylinderIDA, CSA in Snapshot.cylinders.iteritems():
+		j = 0
+		for filIDB, FSB in Snapshot.filaments.iteritems():
 
 			#calculate direction
-			magA = sqrt((CSA.coords[1] - CSA.coords[0]).dot(CSA.coords[1] - CSA.coords[0]))
-			directionA = (CSA.coords[1] - CSA.coords[0]) / magA
+			magB = sqrt((FSB.coords[len(FSB.coords) - 1] - FSB.coords[0]). \
+						 dot(FSB.coords[len(FSB.coords) - 1] - FSB.coords[0]))
+			directionB = (FSB.coords[len(FSB.coords) - 1] - FSB.coords[0]) / magB
 
-			j = 0
-			for cylinderIDB, CSB in Snapshot.cylinders.iteritems():
+			#pairwise delta
+			if filIDA == filIDB:
+				delta = 1
+			else:
+				delta = 0
 
-				#calculate direction
-				magB = sqrt((CSB.coords[1] - CSB.coords[0]).dot(CSB.coords[1] - CSB.coords[0]))
-				directionB = (CSB.coords[1] - CSB.coords[0]) / magB
+			#q value
+			Q[i][j] = (1 / float(len(Snapshot.filaments))) * \
+					  (1.5 * np.dot(directionA, directionB) - 0.5 * delta)
 
-				#pairwise delta
-				if cylinderIDA == cylinderIDB:
-					delta = 1
-				else:
-					delta = 0
+			j+=1
 
-				#q value
-				Q[i][j] = (1 / float(len(Snapshot.cylinders))) * \
-						  (1.5 * np.dot(directionA, directionB) - 0.5 * delta)
+		i+=1
 
-				j+=1
-
-			i+=1
-
-		#take largest eigenvalue
-		largestEigenvalue, largestEigenVector = la.eigs(Q,k=1)
-		#add to list
-		orderParams.append((Snapshot.time,largestEigenvalue[0]))
-
-	return orderParams 
+	#take largest eigenvalue
+	largestEigenvalue, largestEigenVector = la.eigs(Q,k=1)
+	#return
+	return (Snapshot.time,largestEigenvalue[0])
 
 
 ##Calculate nematic order parameter of cylinders from a number of trajectories
 #from order parameter definition at http://cmt.dur.ac.uk/sjc/thesis_dlc/node65.html
 #takes the largest eigenvalue of Q, a second rank ordering tensor over cylinder pairs
 #plot the data over time. If file is provided, save to that file
-def orderParameters(SnapshotLists, saveFile=''):
+def orderParameters(SnapshotLists, snapshot=1):
 
 	orderParamsList = []
 
 	#get all data
 	for SnapshotList in SnapshotLists:
 
-		orderParams = orderParameter(SnapshotList)
+		orderParams = orderParameter(SnapshotList, snapshot)
 		orderParamsList.append(orderParams)
 
-	#now combine data
-	finalOrderParams = []
+	finalTime = 0
+	finalOrderParam = 0
 
-	for i in xrange(0, len(orderParams)):
+	orderParamSet = []
 
-		finalTime = 0
-		finalOrderParam = 0
+	for orderParam in orderParamsList:
 
-		orderParamSet = []
+		finalTime += orderParam[0]
+		finalOrderParam += orderParam[1]
 
-		for orderParams in orderParamsList:
+		orderParamSet.append(orderParam[1])
 
-			finalTime += orderParams[i][0]
-			finalOrderParam += orderParams[i][1]
+	#average
+	finalTime /= len(orderParamsList)
+	finalOrderParam /= len(orderParamsList)
 
-			orderParamSet.append(orderParams[i][1])
+	error = numpy.std(orderParamSet)
 
-		#average
-		finalTime /= len(SnapshotLists)
-		finalOrderParam /= len(SnapshotLists)
-
-		error = numpy.std(orderParamSet)
-
-		finalOrderParams.append((finalTime,finalOrderParam,error))
-
-	#plot
-	fig = plt.figure(figsize=(10.0,10.0))
-	host = fig.add_subplot(111)
-
-	times  = [x[0] for x in finalOrderParams]
-	params = [x[1] for x in finalOrderParams]
-	#errors = [x[2] for x in finalOrderParams]
-
-	plt.errorbar(times, params)
-
-	plt.title(r'$\mathrm{Nematic\/order\/parameter\/of\/filaments})$')
-	plt.xlabel(r'$\mathrm{Time}\/(s)$')
-	plt.ylabel(r'$\mathrm{Order\/parameter}$')
-
-	plt.ylim(0, 0.8)
-
-	#if file provided, save
-	if saveFile != '':
-		fig.savefig(saveFile)
-
+	return (finalTime,finalOrderParam,error)
 
 #Calculate the radius of gyration over all cylinders 
-#returns a list of time and R_g^2 pairs
-def radiusOfGyration(SnapshotList):
+#returns a time and Rg pair for the chosen snapshot
+def radiusOfGyration(SnapshotList, snapshot=1):
 
-	Rgs = []
+	Snapshot = SnapshotList[snapshot]
 
-	for SnapshotIndex in xrange(0, len(SnapshotList)):
-
-		Snapshot = SnapshotList[SnapshotIndex]
-
-		#get center of mass of Snapshot
-		com = np.array([0.0,0.0,0.0])
-		beadCount = 0
+	#get center of mass of Snapshot
+	com = np.array([0.0,0.0,0.0])
+	beadCount = 0
 
 		#go through filaments
-		for filamentID, FS in Snapshot.filaments.iteritems():
-			for coord in FS.coords:
+	for filamentID, FS in Snapshot.filaments.iteritems():
+		for coord in FS.coords:
 
-				com += coord
-				beadCount += 1
+			com += coord
+			beadCount += 1
 
-		#normalize
-		com /= beadCount
+	#normalize
+	com /= beadCount
 
-		RgSquare = 0
-		numCylinders = 0
+	RgSquare = 0
+	numCylinders = 0
 
-		#Loop through cylinders
-		for cylinderID, CS in Snapshot.cylinders.iteritems():
+	#Loop through cylinders
+	for cylinderID, CS in Snapshot.cylinders.iteritems():
 
-			numCylinders += 1
-			cam = (CS.coords[1] + CS.coords[0]) / 2
+		numCylinders += 1
+		cam = (CS.coords[1] + CS.coords[0]) / 2
 
-			RgSquare += (cam - com).dot(cam - com)
+		RgSquare += (cam - com).dot(cam - com)
 
-		#normalize
-		if numCylinders == 0: continue
+	RgSquare /= numCylinders
+	Rg = sqrt(RgSquare * 0.00001)
 
-		RgSquare /= numCylinders
-		Rg = RgSquare * 0.00001
+	return (Snapshot.time, Rg)
 
-		Rgs.append((Snapshot.time, Rg))
-
-	#return velocities
-	return Rgs
 
 #Calculate the radius of gyration over all cylinders from a number of trajectories
-#plot the data over time. If file is provided, save to that file
-def radiusOfGyrations(SnapshotLists, saveFile=''):
+def radiusOfGyrations(SnapshotLists, snapshot=1):
 
 	RgList = []
 
 	#get all data
 	for SnapshotList in SnapshotLists:
 
-		Rgs = radiusOfGyration(SnapshotList)
-		RgList.append(Rgs)
+		Rg = radiusOfGyration(SnapshotList, snapshot)
+		RgList.append(Rg)
 
 	#now combine data
-	finalRgs = []
+	finalTime = 0
+	finalRg = 0
 
-	for i in xrange(0, len(Rgs)):
+	for Rg in RgList:
 
-		finalTime = 0
-		finalRg = 0
+		finalTime += Rg[0]
+		finalRg += Rg[1]
 
-		RgSet = []
+	#average
+	finalTime /= len(RgList)
+	finalRg /= len(RgList)
 
-		for Rgs in RgList:
+	Rgs = [x[1] for x in RgList]
 
-			finalTime += Rgs[i][0]
-			finalRg += Rgs[i][1]
+	perc_25 = np.percentile(Rgs, 25)
+	perc_75 = np.percentile(Rgs, 75)
 
-			RgSet.append(Rgs[i][1])
-
-		#average
-		finalTime /= len(SnapshotLists)
-		finalRg /= len(SnapshotLists)
-
-		error = numpy.std(RgSet)
-
-		finalRgs.append((finalTime,finalRg,error))
-
-	#plot
-	fig = plt.figure(figsize=(10.0,10.0))
-	host = fig.add_subplot(111)
-
-	times  = [x[0] for x in finalRgs]
-	rgs    = [x[1] for x in finalRgs]
-	#errors = [x[2] for x in finalOrderParams]
-
-	plt.errorbar(times, rgs)
-
-	plt.title(r'$\mathrm{Radius\/of\/gyration\/of\/network}$')
-	plt.xlabel(r'$\mathrm{Time}\/(s)$')
-	plt.ylabel(r'$\mathrm{R_g^2\/(um)}$')
-
-	#if file provided, save
-	if saveFile != '':
-		fig.savefig(saveFile)
-
+	return (finalTime,finalRg,perc_25,perc_75)
 
 #Calculate contractile velocity towards the center of mass
 #returns a list of time and velocity pairs
@@ -1103,7 +1046,6 @@ def contractileVelocities(SnapshotLists, saveFile=''):
 	if saveFile != '':
 		fig.savefig(saveFile)
 
-
 #finds index of coordinate by linear mapping
 def getIndex(coordinate, grid, compartment):
 
@@ -1183,7 +1125,198 @@ def density(Snapshot, grid, compartment):
 
 	plt.scatter(xVals, yVals, zs=zVals, c=densityValues)
 
-#plot chemical snapshots
+
+###############################################
+#
+#
+#
+#				PLOS FIGURES
+#
+#
+#
+###############################################
+
+def calculateRgs(snapshot=1):
+
+	FrameLists = readTrajectories([])
+
+
+	return radiusOfGyrations(FrameLists, snapshot)
+
+def calculateRgVsT():
+
+	FrameLists = readTrajectories([])
+
+	Rgs1 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs1.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	FrameLists = readTrajectories([])
+
+	Rgs2 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs2.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	FrameLists = readTrajectories([])
+
+	Rgs3 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs3.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	FrameLists = readTrajectories([])
+
+	Rgs4 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs4.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	FrameLists = readTrajectories([])
+
+	Rgs5 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs5.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+
+	FrameLists = readTrajectories([])
+
+	Rgs6 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs6.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	return [Rgs1, Rgs2, Rgs3, Rgs4, Rgs5, Rgs6]
+
+
+def plotRgHeatMap(saveFile=''):
+
+	#read data
+	x_labels = [0.01,0.02,0.05,0.1,0.2,0.5]
+	y_labels = [0.02, 0.01, 0.005]
+
+	data = np.array([[1.460,1.392,1.199,1.144,1.105,1.091],
+				     [1.600,1.518,1.387,1.332,1.305,1.268],
+			         [1.713,1.652,1.512,1.437,1.449,1.410]])
+
+	fig, ax = plt.subplots()
+	heatmap = ax.pcolor(data, cmap=plt.cm.YlGnBu_r)
+
+	cbar = plt.colorbar(heatmap)
+
+	cbar.ax.get_yaxis().set_ticks([])
+	for j, lab in enumerate(['$1.0$','$1.2$','$1.4$','$1.6$']):
+   		 cbar.ax.text(1.2, (2 * j + 1) / 8.0, lab, ha='left', va='center')
+	cbar.ax.get_yaxis().labelpad = 15
+	cbar.ax.set_ylabel(r'$\mathrm{R_g\/(\mu m)}$', fontsize=16)
+
+
+	# put the major ticks at the middle of each cell
+	ax.set_xticks(np.arange(data.shape[1])+0.5, minor=False)
+	ax.set_yticks(np.arange(data.shape[0])+0.5, minor=False)
+
+	# want a more natural, table-like display
+	ax.invert_yaxis()
+
+	ax.set_xticklabels(x_labels, minor=False)
+	ax.set_yticklabels(y_labels, minor=False)
+	plt.show()
+
+	plt.ylabel(r'$\mathrm{R_{m:a}}$', fontsize=20)
+	plt.xlabel(r'$\mathrm{R_{\alpha:a}}$', fontsize=20)
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotRgVsT(data, saveFile=''):
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	data1 = data[0]
+	data2 = data[1]
+	data3 = data[2]
+	data4 = data[3]
+	data5 = data[4]
+	data6 = data[5]
+
+	time1 = [x[0] for x in data1]
+	time2 = [x[0] for x in data2]
+	time3 = [x[0] for x in data3]
+	time4 = [x[0] for x in data4]
+	time5 = [x[0] for x in data5]
+	time6 = [x[0] for x in data6]
+
+	Rg1_0 = data1[0][1]
+	Rg2_0 = data2[0][1]
+	Rg3_0 = data3[0][1]
+	Rg4_0 = data4[0][1]
+	Rg5_0 = data5[0][1]
+	Rg6_0 = data6[0][1]
+
+	Rg1 = [x[1]/Rg1_0 for x in data1]
+	Rg2 = [x[1]/Rg2_0 for x in data2]
+	Rg3 = [x[1]/Rg3_0 for x in data3]
+	Rg4 = [x[1]/Rg4_0 for x in data4]
+	Rg5 = [x[1]/Rg5_0 for x in data5]
+	Rg6 = [x[1]/Rg6_0 for x in data6]
+	
+	perc_25_1 = [x[2]/Rg1_0 for x in data1]
+	perc_25_2 = [x[2]/Rg2_0 for x in data2]
+	perc_25_3 = [x[2]/Rg3_0 for x in data3]
+	perc_25_4 = [x[2]/Rg4_0 for x in data4]
+	perc_25_5 = [x[2]/Rg5_0 for x in data5]
+	perc_25_6 = [x[2]/Rg6_0 for x in data6]
+
+	perc_75_1 = [x[3]/Rg1_0 for x in data1]
+	perc_75_2 = [x[3]/Rg2_0 for x in data2]
+	perc_75_3 = [x[3]/Rg3_0 for x in data3]
+	perc_75_4 = [x[3]/Rg4_0 for x in data4]
+	perc_75_5 = [x[3]/Rg5_0 for x in data5]
+	perc_75_6 = [x[3]/Rg6_0 for x in data6]
+
+	plt.plot(time1, Rg1, 'r', label=r'$\mathrm{R_{\alpha:a}=0.01}$')
+	plt.plot(time2, Rg2, 'g', label=r'$\mathrm{R_{\alpha:a}=0.02}$')
+	plt.plot(time3, Rg3, 'b', label=r'$\mathrm{R_{\alpha:a}=0.05}$')
+	plt.plot(time4, Rg4, 'y', label=r'$\mathrm{R_{\alpha:a}=0.1}$')
+	plt.plot(time5, Rg5, 'm', label=r'$\mathrm{R_{\alpha:a}=0.2}$')
+	plt.plot(time6, Rg6, 'c', label=r'$\mathrm{R_{\alpha:a}=0.5}$')
+
+	fill_between(time1, perc_25_1, perc_75_1, alpha=0.25, linewidth=0, color='r')
+	fill_between(time2, perc_25_2, perc_75_2, alpha=0.25, linewidth=0, color='g')
+	fill_between(time3, perc_25_3, perc_75_3, alpha=0.25, linewidth=0, color='b')
+	fill_between(time4, perc_25_4, perc_75_4, alpha=0.25, linewidth=0, color='y')
+	fill_between(time5, perc_25_5, perc_75_5, alpha=0.25, linewidth=0, color='m')
+	fill_between(time6, perc_25_6, perc_75_6, alpha=0.25, linewidth=0, color='c')
+
+	plt.xlabel(r'$\mathrm{Time\/(s)}$', fontsize=20)
+	plt.ylabel(r'$\mathrm{R_{g,f} / R_{g,i}\/(\mu m)}$', fontsize=20)
+	plt.xlim(0,2000)
+
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
 
 
 

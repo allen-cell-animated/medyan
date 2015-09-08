@@ -203,10 +203,10 @@ def show_snapshot(snapshot_number=-1):
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
-	MAXVAL = 10.00
+	MAXVAL = 0.00
 	MINVAL = 0.00
 	SCALETITLE = ''
-	COLORMAP = ''
+	COLORMAP = 'YlGnBu'
 
 	#grid size
 	GRIDSIZEMAXX = 1000.0
@@ -220,12 +220,12 @@ def show_snapshot(snapshot_number=-1):
 
 	#default color, in RGB
 	DBEADCOLOR    = (1.0,1.0,1.0) 
-	DFILCOLOR     = (0.2,0.4,0.8)
-	DLINKERCOLOR  = (1.0,0.99,0.49)
-	DMOTORCOLOR   = (1.0,0.2,0.2)
+	DFILCOLOR     = (1.0,0.0,0.0)
+	DLINKERCOLOR  = (0.0,1.0,0.1)
+	DMOTORCOLOR   = (0.0,0.2,1.0)
 
 	local_snapshot=SnapshotList[snapshot_number]
-	mlab.figure(1, size=(1000, 1000), bgcolor=(0.32, 0.32, 0.32))
+	mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
 	mlab.clf()
 
 	#create grid
@@ -234,7 +234,11 @@ def show_snapshot(snapshot_number=-1):
 	z = [GRIDSIZEMINZ,GRIDSIZEMAXZ,GRIDSIZEMINZ]
 	pts = mlab.points3d(x,y,z, scale_mode='none', scale_factor=0.2)
 		
-	outline=mlab.pipeline.outline(pts, line_width=0.25)
+	outline=mlab.pipeline.outline(pts, line_width=0.25, color=(0.0,0.0,0.0))
+
+	#display time
+	time = 'Time = ' + str(int(local_snapshot.time)) + "s"
+	mlab.text(0.6, 0.9, time, color=(0.0,0.0,0.0))
 
 	#DISPLAYING FILAMENTS
 	if(len(local_snapshot.filaments) != 0):
@@ -264,7 +268,7 @@ def show_snapshot(snapshot_number=-1):
 			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
 
 		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
-								    scale_mode='scalar', scale_factor = 7.0, color=DBEADCOLOR)
+								    scale_mode='scalar', scale_factor=3.0, color=DBEADCOLOR)
 
 		# Connect them
 		src.mlab_source.dataset.lines = connections
@@ -276,15 +280,14 @@ def show_snapshot(snapshot_number=-1):
 		if(len(c) != 0):
 			surface = mlab.pipeline.surface(tube, colormap=COLORMAP,
 										    vmax = MAXVAL, vmin = MINVAL)
-			mlab.colorbar(object=surface, orientation='vertical', 
-						  title=SCALETITLE, label_fmt='%.3f')
+			cb = mlab.colorbar(object=surface, orientation='vertical', 
+						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=6)
 
+			cb.title_text_property.color = (0.0,0.0,0.0)
+			cb.label_text_property.color = (0.0,0.0,0.0)
+			cb.label_text_property.font_size = 4
 		else:
 			surface = mlab.pipeline.surface(tube, color=DFILCOLOR)
-
-		#display time
-		time = 'Time = ' + str(round(local_snapshot.time,3)) + "s"
-		mlab.text(0.6, 0.9, time)
 
 	#DISPLAYING LINKERS
 	if(len(local_snapshot.linkers) != 0):

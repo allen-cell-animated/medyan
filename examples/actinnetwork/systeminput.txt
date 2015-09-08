@@ -23,9 +23,10 @@ BOUNDARYSHAPE:               CUBIC
 ### ALGORITHM ###
 CONJUGATEGRADIENT:           POLAKRIBIERE
 
+
 GRADIENTTOLERANCE:           1.0
-ENERGYTOLERANCE:			 0.01
-MAXDISTANCE:				 1.0
+MAXDISTANCE:		     0.05
+LAMBDAMAX:		     0.005
 
 ### FILAMENTS ###
 
@@ -48,11 +49,8 @@ BRSTRETCHINGK:		     1000.0
 BRSTRETCHINGL:		     6.0
 
 BRBENDINGTYPE:		     COSINE
-BRBENDINGK:		     	 100.0
+BRBENDINGK:		     1000.0
 BRBENDINGTHETA:		     1.22
-
-BRDIHEDRALTYPE:          COSINE
-BRDIHEDRALK:		     500.0
 	
 BRPOSITIONTYPE:		     COSINE
 BRPOSITIONK:		     1000.0         
@@ -60,16 +58,16 @@ BRPOSITIONK:		     1000.0
 ### EXCLUDED VOLUME ###
 
 VOLUMETYPE:                 REPULSION
-VOLUMECUTOFF:               27.0
+VOLUMECUTOFF:               54.0
 
-VOLUMEK:                    1000.0
+VOLUMEK:                    1E5
 
 ### BOUNDARY ###
 
 BOUNDARYTYPE:               REPULSIONEXP
 BCUTOFF:                    50.0
 
-BINTERACTIONK:              4.1
+BINTERACTIONK:              41.0
 BSCREENLENGTH:              2.7
 
 ##################################################
@@ -93,7 +91,7 @@ NUMFILAMENTSPECIES:          1
 NUMPLUSENDSPECIES:           1
 NUMMINUSENDSPECIES:          1
 
-NUMBOUNDSPECIES:             1
+NUMBOUNDSPECIES:             3
 NUMLINKERSPECIES:            1
 NUMMOTORSPECIES:             0
 NUMBRANCHERSPECIES:          1

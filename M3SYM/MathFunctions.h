@@ -72,7 +72,6 @@ namespace mathfunc {
                     ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])) *
                     ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
     }
-
     
     /// Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z2)
     inline vector<double> twoPointDirection(const vector<double>& v1,
