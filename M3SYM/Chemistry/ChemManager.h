@@ -41,6 +41,8 @@ class ChemManager {
 private:
     //@{
     /// Helper functions. Names are pretty self-explanatory.
+    void setupBindingSites();
+    
     void configCMonomer(); void initCMonomer(CMonomer* m, Compartment* c);
     
     void genSpecies(Compartment& protoCompartment);

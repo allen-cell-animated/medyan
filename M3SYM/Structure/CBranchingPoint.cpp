@@ -25,7 +25,7 @@ CBranchingPoint::CBranchingPoint(short branchType, Compartment* c,
 
     //Find species on cylinder that should be marked
     SpeciesBound* sb1 = _cc1->getCMonomer(_position1)->speciesBrancher(branchType);
-    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(B_BOUND_EMPTY);
+    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(brancherBindingSite);
     
     //mark species
     assert(sb1->getN() == 0 && se1->getN() == 1 &&
@@ -53,7 +53,7 @@ void CBranchingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     //create the reaction species
     CMonomer* m = _cc1->getCMonomer(_position1);
     vector<Species*> os = {m->speciesBrancher(_branchType),
-                           m->speciesBound(B_BOUND_EMPTY), sfb};
+                           m->speciesBound(brancherBindingSite), sfb};
     
     //create reaction, add to cylinder
     ReactionBase* offRxn =

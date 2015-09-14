@@ -40,9 +40,9 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 /// Default empty site numbers in CMonomer
 /// @note - DO NOT CHANGE!!!
 
-#define B_BOUND_EMPTY       0
-#define L_BOUND_EMPTY       1
-#define M_BOUND_EMPTY       2
+extern short brancherBindingSite;
+extern short linkerBindingSite;
+extern short motorBindingSite;
 
 //@{
 /// Constant Species index identifiers

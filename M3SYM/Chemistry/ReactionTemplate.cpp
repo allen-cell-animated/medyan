@@ -65,9 +65,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        productSpecies.push_back(m1->speciesBound(B_BOUND_EMPTY));
-        productSpecies.push_back(m1->speciesBound(L_BOUND_EMPTY));
-        productSpecies.push_back(m1->speciesBound(M_BOUND_EMPTY));
+        productSpecies.push_back(m1->speciesBound(brancherBindingSite));
+        productSpecies.push_back(m1->speciesBound(linkerBindingSite));
+        productSpecies.push_back(m1->speciesBound(motorBindingSite));
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -110,9 +110,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    productSpecies.push_back(m->speciesBound(B_BOUND_EMPTY));
-    productSpecies.push_back(m->speciesBound(L_BOUND_EMPTY));
-    productSpecies.push_back(m->speciesBound(M_BOUND_EMPTY));
+    productSpecies.push_back(m->speciesBound(brancherBindingSite));
+    productSpecies.push_back(m->speciesBound(linkerBindingSite));
+    productSpecies.push_back(m->speciesBound(motorBindingSite));
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -168,9 +168,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        productSpecies.push_back(m1->speciesBound(B_BOUND_EMPTY));
-        productSpecies.push_back(m1->speciesBound(L_BOUND_EMPTY));
-        productSpecies.push_back(m1->speciesBound(M_BOUND_EMPTY));
+        productSpecies.push_back(m1->speciesBound(brancherBindingSite));
+        productSpecies.push_back(m1->speciesBound(linkerBindingSite));
+        productSpecies.push_back(m1->speciesBound(motorBindingSite));
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
@@ -212,9 +212,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    productSpecies.push_back(m->speciesBound(B_BOUND_EMPTY));
-    productSpecies.push_back(m->speciesBound(L_BOUND_EMPTY));
-    productSpecies.push_back(m->speciesBound(M_BOUND_EMPTY));
+    productSpecies.push_back(m->speciesBound(brancherBindingSite));
+    productSpecies.push_back(m->speciesBound(linkerBindingSite));
+    productSpecies.push_back(m->speciesBound(motorBindingSite));
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
@@ -255,9 +255,9 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        reactantSpecies.push_back(m2->speciesBound(B_BOUND_EMPTY));
-        reactantSpecies.push_back(m2->speciesBound(L_BOUND_EMPTY));
-        reactantSpecies.push_back(m2->speciesBound(M_BOUND_EMPTY));
+        reactantSpecies.push_back(m2->speciesBound(brancherBindingSite));
+        reactantSpecies.push_back(m2->speciesBound(linkerBindingSite));
+        reactantSpecies.push_back(m2->speciesBound(motorBindingSite));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
@@ -313,9 +313,9 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        reactantSpecies.push_back(m2->speciesBound(B_BOUND_EMPTY));
-        reactantSpecies.push_back(m2->speciesBound(L_BOUND_EMPTY));
-        reactantSpecies.push_back(m2->speciesBound(M_BOUND_EMPTY));
+        reactantSpecies.push_back(m2->speciesBound(brancherBindingSite));
+        reactantSpecies.push_back(m2->speciesBound(linkerBindingSite));
+        reactantSpecies.push_back(m2->speciesBound(motorBindingSite));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
@@ -365,9 +365,9 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    reactantSpecies.push_back(m2->speciesBound(B_BOUND_EMPTY));
-    reactantSpecies.push_back(m2->speciesBound(L_BOUND_EMPTY));
-    reactantSpecies.push_back(m2->speciesBound(M_BOUND_EMPTY));
+    reactantSpecies.push_back(m2->speciesBound(brancherBindingSite));
+    reactantSpecies.push_back(m2->speciesBound(linkerBindingSite));
+    reactantSpecies.push_back(m2->speciesBound(motorBindingSite));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
@@ -414,9 +414,9 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    reactantSpecies.push_back(m2->speciesBound(B_BOUND_EMPTY));
-    reactantSpecies.push_back(m2->speciesBound(L_BOUND_EMPTY));
-    reactantSpecies.push_back(m2->speciesBound(M_BOUND_EMPTY));
+    reactantSpecies.push_back(m2->speciesBound(brancherBindingSite));
+    reactantSpecies.push_back(m2->speciesBound(linkerBindingSite));
+    reactantSpecies.push_back(m2->speciesBound(motorBindingSite));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
@@ -819,9 +819,9 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m->speciesFilament(getInt(r)));
         
         //IMPLICITLY NEEDS AN EMPTY BOUND
-        reactantSpecies.push_back(m->speciesBound(B_BOUND_EMPTY));
-        reactantSpecies.push_back(m->speciesBound(L_BOUND_EMPTY));
-        reactantSpecies.push_back(m->speciesBound(M_BOUND_EMPTY));
+        reactantSpecies.push_back(m->speciesBound(brancherBindingSite));
+        reactantSpecies.push_back(m->speciesBound(linkerBindingSite));
+        reactantSpecies.push_back(m->speciesBound(motorBindingSite));
         
         //Add the reaction
         vector<Species*> species = reactantSpecies;

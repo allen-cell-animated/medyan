@@ -117,9 +117,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         return false;
     }
     //at least one bound
-    if(CParams.numBoundSpecies < 3) {
-        cout << "Must provide at least three bound species, which are the empty binding sites "
-             <<"for motors, linkers, and branchers. Exiting." << endl;
+    if(CParams.numBoundSpecies < 1) {
+        cout << "Must provide at least one bound species, which is an empty bounding site. Exiting." << endl;
         return false;
     }
     
@@ -144,6 +143,25 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         cout << "Number of motor step sizes in chemistry input does not "
              << "match the number of motor species. Check these parameters. Exiting."
         <<endl;
+        return false;
+    }
+    
+    //check if binding sites are valid
+    if(chem.speciesBrancher.size() > 0 && chem.brancherBindingSite == "") {
+        cout << "A brancher binding site must be set for brancher species. Exiting."
+             << endl;
+        return false;
+    }
+    
+    if(chem.speciesLinker.size() > 0 && chem.linkerBindingSite == "") {
+        cout << "A linker binding site must be set for linker species. Exiting."
+        << endl;
+        return false;
+    }
+    
+    if(chem.speciesMotor.size() > 0 && chem.motorBindingSite == "") {
+        cout << "A motor binding site must be set for motor species. Exiting."
+        << endl;
         return false;
     }
     

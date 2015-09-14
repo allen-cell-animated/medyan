@@ -100,6 +100,13 @@ struct ChemParams {
     
     /// Binding sites on filaments
     vector<short> bindingSites = {};
+    
+    //@{
+    /// Positions of all bound molecules in species vectors
+    short brancherBoundIndex = 0;
+    short motorBoundIndex = 0;
+    short linkerBoundIndex = 0;
+    //@}
 };
 
 /// Struct to hold geometry parameters for the system

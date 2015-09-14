@@ -82,7 +82,7 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     }
     
     //add valid site
-    if (cc->getCMonomer(bindingSite)->speciesBound(B_BOUND_EMPTY)->getN() == 1 && inZone) {
+    if (cc->getCMonomer(bindingSite)->speciesBound(brancherBindingSite)->getN() == 1 && inZone) {
         
         auto t = tuple<CCylinder*, short>(cc, bindingSite);
         _possibleBindings.insert(t);
@@ -164,7 +164,7 @@ void BranchingManager::updateAllPossibleBindings() {
                 else
                     inZone = false;
             }
-            if (cc->getCMonomer(*it)->speciesBound(B_BOUND_EMPTY)->getN() == 1 && inZone) {
+            if (cc->getCMonomer(*it)->speciesBound(brancherBindingSite)->getN() == 1 && inZone) {
                 
                 auto t = tuple<CCylinder*, short>(cc, *it);
                 _possibleBindings.insert(t);
@@ -202,7 +202,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
     vector<LinkerBindingManager*> affectedManagers;
     
     //add valid binding sites
-    if (cc->getCMonomer(bindingSite)->speciesBound(L_BOUND_EMPTY)->getN() == 1 ) {
+    if (cc->getCMonomer(bindingSite)->speciesBound(linkerBindingSite)->getN() == 1 ) {
         
         //loop through neighbors
         //now re add valid based on CCNL
@@ -217,7 +217,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
             for(auto it = SysParams::Chemistry().bindingSites.begin();
                      it != SysParams::Chemistry().bindingSites.end(); it++) {
                 
-                if (ccn->getCMonomer(*it)->speciesBound(L_BOUND_EMPTY)->getN() == 1) {
+                if (ccn->getCMonomer(*it)->speciesBound(linkerBindingSite)->getN() == 1) {
                     
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderIntSize;
@@ -363,7 +363,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                  it1 != SysParams::Chemistry().bindingSites.end(); it1++) {
         
             //now re add valid binding sites
-            if (cc->getCMonomer(*it1)->speciesBound(L_BOUND_EMPTY)->getN() == 1 ) {
+            if (cc->getCMonomer(*it1)->speciesBound(linkerBindingSite)->getN() == 1 ) {
                 
                 //loop through neighbors
                 //now re add valid based on CCNL
@@ -376,7 +376,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                     for(auto it2 = SysParams::Chemistry().bindingSites.begin();
                              it2 != SysParams::Chemistry().bindingSites.end(); it2++) {
                         
-                        if (ccn->getCMonomer(*it2)->speciesBound(L_BOUND_EMPTY)->getN() == 1) {
+                        if (ccn->getCMonomer(*it2)->speciesBound(linkerBindingSite)->getN() == 1) {
                             
                             //check distances..
                             auto mp1 = (float)*it1 / SysParams::Geometry().cylinderIntSize;
@@ -437,7 +437,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
     vector<MotorBindingManager*> affectedManagers;
     
     //add valid binding sites
-    if (cc->getCMonomer(bindingSite)->speciesBound(M_BOUND_EMPTY)->getN() == 1) {
+    if (cc->getCMonomer(bindingSite)->speciesBound(motorBindingSite)->getN() == 1) {
         
         //loop through neighbors
         //now re add valid based on CCNL
@@ -452,7 +452,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
             for(auto it = SysParams::Chemistry().bindingSites.begin();
                      it != SysParams::Chemistry().bindingSites.end(); it++) {
                 
-                if (ccn->getCMonomer(*it)->speciesBound(M_BOUND_EMPTY)->getN() == 1) {
+                if (ccn->getCMonomer(*it)->speciesBound(motorBindingSite)->getN() == 1) {
                     
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderIntSize;
@@ -598,7 +598,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                  it1 != SysParams::Chemistry().bindingSites.end(); it1++) {
             
             //now re add valid binding sites
-            if (cc->getCMonomer(*it1)->speciesBound(M_BOUND_EMPTY)->getN() == 1) {
+            if (cc->getCMonomer(*it1)->speciesBound(motorBindingSite)->getN() == 1) {
                 
                 //loop through neighbors
                 //now re add valid based on CCNL
@@ -611,7 +611,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                     for(auto it2 = SysParams::Chemistry().bindingSites.begin();
                              it2 != SysParams::Chemistry().bindingSites.end(); it2++) {
                         
-                        if (ccn->getCMonomer(*it2)->speciesBound(M_BOUND_EMPTY)->getN() == 1) {
+                        if (ccn->getCMonomer(*it2)->speciesBound(motorBindingSite)->getN() == 1) {
                             
                             //check distances..
                             auto mp1 = (float)*it1 / SysParams::Geometry().cylinderIntSize;

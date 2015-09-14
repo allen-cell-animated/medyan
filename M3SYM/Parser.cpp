@@ -1570,6 +1570,40 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 chem.speciesMinusEnd.push_back(lineVector[1]);
             else {}
         }
+        else if(line.find("BRANCHERBINDINGSITE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() !=  2) {
+                cout << "Error reading a brancher binding site. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chem.brancherBindingSite = lineVector[1];
+            else {}
+        }
+        else if(line.find("LINKERBINDINGSITE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() !=  2) {
+                cout << "Error reading a linker binding site. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chem.linkerBindingSite = lineVector[1];
+            else {}
+        }
+        
+        else if(line.find("MOTORBINDINGSITE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() !=  2) {
+                cout << "Error reading a motor binding site. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                chem.motorBindingSite = lineVector[1];
+            else {}
+        }
         
         //loop through a reaction
        else if(line.find("GENREACTION") != string::npos) {

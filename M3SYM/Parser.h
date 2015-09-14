@@ -152,6 +152,12 @@ struct ChemistryData {
     vector<string> speciesBrancher = {};
     //@}
     
+    //@{
+    /// Binding sites parsed
+    string brancherBindingSite = "";
+    string linkerBindingSite = "";
+    string motorBindingSite = "";
+    //@}
 };
 
 /// Struct to hold the parameters of the Boundary

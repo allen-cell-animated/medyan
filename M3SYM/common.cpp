@@ -14,3 +14,7 @@
 #include "common.h"
 
 double global_time;
+
+short brancherBindingSite;
+short linkerBindingSite;
+short motorBindingSite;
