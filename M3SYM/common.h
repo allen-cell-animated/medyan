@@ -15,6 +15,7 @@
 #define M3SYM_common_h
 
 #include <iostream>
+#include <vector>
 #include <boost/signals2/shared_connection_block.hpp>
 
 #include "utility.h"
@@ -40,9 +41,12 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 /// Default empty site numbers in CMonomer
 /// @note - DO NOT CHANGE!!!
 
-extern short brancherBindingSite;
-extern short linkerBindingSite;
-extern short motorBindingSite;
+extern short brancherBindingIndex;
+extern short linkerBindingIndex;
+extern short motorBindingIndex;
+
+///A list of the unique binding site species numbers
+extern vector<short> bindingIndices;
 
 //@{
 /// Constant Species index identifiers

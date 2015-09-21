@@ -406,9 +406,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     
     //filament
     m2->speciesFilament(filament)->up();
-    m2->speciesBound(brancherBindingSite)->up();
-    m2->speciesBound(linkerBindingSite)->up();
-    m2->speciesBound(motorBindingSite)->up();
+    
+    for(auto j : bindingIndices)
+        m2->speciesBound(j)->up();
     
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
@@ -497,16 +497,16 @@ Filament* Filament::sever(int cylinderPosition) {
     //plus end
     m1->speciesFilament(filamentInt1)->down();
     m1->speciesPlusEnd(filamentInt1)->up();
-    m1->speciesBound(brancherBindingSite)->down();
-    m1->speciesBound(linkerBindingSite)->down();
-    m1->speciesBound(motorBindingSite)->down();
+    
+    for(auto j : bindingIndices)
+        m1->speciesBound(j)->down();
     
     //minus end
     m2->speciesFilament(filamentInt2)->down();
     m2->speciesMinusEnd(filamentInt2)->up();
-    m2->speciesBound(brancherBindingSite)->down();
-    m2->speciesBound(linkerBindingSite)->down();
-    m2->speciesBound(motorBindingSite)->down();
+    
+    for(auto j : bindingIndices)
+        m2->speciesBound(j)->down();
     
     //remove any cross-cylinder rxns between these two cylinders
     cc1->removeCrossCylinderReactions(cc2);

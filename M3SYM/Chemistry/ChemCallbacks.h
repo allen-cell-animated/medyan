@@ -452,6 +452,7 @@ struct MotorUnbindingCallback {
     MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) : _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
+        
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
     }
@@ -476,7 +477,7 @@ struct MotorBindingCallback {
     : _ps(ps), _mManager(mManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-
+        
         //get a random binding
         short motorType = _mManager->getBoundInt();
         

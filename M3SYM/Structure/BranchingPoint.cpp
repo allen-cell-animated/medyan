@@ -109,7 +109,7 @@ BranchingPoint::~BranchingPoint() noexcept {
         
         //unmark the filament and bound species
         m->speciesFilament(speciesFilament)->down();
-        m->speciesBound(brancherBindingSite)->down();
+        m->speciesBound(brancherBindingIndex)->down();
     }
     //mark the free species instead
     else {

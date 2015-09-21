@@ -157,6 +157,8 @@ template void* Reaction<4,0>::operator new(size_t size);
 template void Reaction<4,0>::operator delete(void* ptr);
 template void* Reaction<5,2>::operator new(size_t size);
 template void Reaction<5,2>::operator delete(void* ptr);
+template void* Reaction<4,2>::operator new(size_t size);
+template void Reaction<4,2>::operator delete(void* ptr);
 #endif
 
 template void Reaction<1,1>::updatePropensityImpl();
@@ -227,4 +229,9 @@ template void Reaction<5,2>::updatePropensityImpl();
 template void Reaction<5,2>::activateReactionUnconditionalImpl();
 template void Reaction<5,2>::passivateReactionImpl();
 template Reaction<5,2>* Reaction<5,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+
+template void Reaction<4,2>::updatePropensityImpl();
+template void Reaction<4,2>::activateReactionUnconditionalImpl();
+template void Reaction<4,2>::passivateReactionImpl();
+template Reaction<4,2>* Reaction<4,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
 

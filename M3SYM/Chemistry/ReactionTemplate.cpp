@@ -65,14 +65,20 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        productSpecies.push_back(m1->speciesBound(brancherBindingSite));
-        productSpecies.push_back(m1->speciesBound(linkerBindingSite));
-        productSpecies.push_back(m1->speciesBound(motorBindingSite));
+        for(auto j : bindingIndices)
+            productSpecies.push_back(m1->speciesBound(j));
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
+        
+        ReactionBase* rxn;
+        if(bindingIndices.size() == 3)
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
+        else if(bindingIndices.size() == 2)
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+        else
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
         
         //callback
 #ifdef REACTION_SIGNALING
@@ -110,14 +116,20 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    productSpecies.push_back(m->speciesBound(brancherBindingSite));
-    productSpecies.push_back(m->speciesBound(linkerBindingSite));
-    productSpecies.push_back(m->speciesBound(motorBindingSite));
+    for(auto j : bindingIndices)
+        productSpecies.push_back(m->speciesBound(j));
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+    
+    ReactionBase* rxn;
+    if(bindingIndices.size() == 3)
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+    else if(bindingIndices.size() == 2)
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
+    else
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
     
     //callbacks
 #ifdef REACTION_SIGNALING
@@ -168,14 +180,20 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        productSpecies.push_back(m1->speciesBound(brancherBindingSite));
-        productSpecies.push_back(m1->speciesBound(linkerBindingSite));
-        productSpecies.push_back(m1->speciesBound(motorBindingSite));
+        for(auto j : bindingIndices)
+            productSpecies.push_back(m1->speciesBound(j));
         
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
+        
+        ReactionBase *rxn;
+        if(bindingIndices.size() == 3)
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
+        else if(bindingIndices.size() == 2)
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+        else
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
         
 #ifdef REACTION_SIGNALING
         FilamentPolymerizationBackCallback polyCallback(cc->getCylinder());
@@ -212,14 +230,20 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    productSpecies.push_back(m->speciesBound(brancherBindingSite));
-    productSpecies.push_back(m->speciesBound(linkerBindingSite));
-    productSpecies.push_back(m->speciesBound(motorBindingSite));
+    for(auto j : bindingIndices)
+        productSpecies.push_back(m->speciesBound(j));
     
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+    
+    ReactionBase* rxn;
+    if(bindingIndices.size() == 3)
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+    else if(bindingIndices.size() == 2)
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
+    else
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
     
 #ifdef REACTION_SIGNALING
     auto minusEndType = get<0>(_products[1]);
@@ -255,9 +279,8 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        reactantSpecies.push_back(m2->speciesBound(brancherBindingSite));
-        reactantSpecies.push_back(m2->speciesBound(linkerBindingSite));
-        reactantSpecies.push_back(m2->speciesBound(motorBindingSite));
+        for(auto j : bindingIndices)
+            reactantSpecies.push_back(m2->speciesBound(j));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
@@ -276,8 +299,15 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn =
-        new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
+        
+        ReactionBase* rxn;
+        
+        if(bindingIndices.size() == 3)
+            rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
+        else if(bindingIndices.size() == 2)
+            rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
+        else
+            rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
         
 #ifdef REACTION_SIGNALING
         FilamentDepolymerizationFrontCallback depolyCallback(cc->getCylinder());
@@ -313,9 +343,8 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        reactantSpecies.push_back(m2->speciesBound(brancherBindingSite));
-        reactantSpecies.push_back(m2->speciesBound(linkerBindingSite));
-        reactantSpecies.push_back(m2->speciesBound(motorBindingSite));
+        for(auto j : bindingIndices)
+            reactantSpecies.push_back(m2->speciesBound(j));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
@@ -334,8 +363,15 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         //Add the reaction. If it needs a callback then attach
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-        ReactionBase* rxn =
-        new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
+        
+        ReactionBase* rxn;
+        
+        if(bindingIndices.size() == 3)
+            rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
+        else if(bindingIndices.size() == 2)
+            rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
+        else
+            rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
         
 #ifdef REACTION_SIGNALING
         FilamentDepolymerizationBackCallback depolyCallback(cc->getCylinder());
@@ -365,9 +401,8 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    reactantSpecies.push_back(m2->speciesBound(brancherBindingSite));
-    reactantSpecies.push_back(m2->speciesBound(linkerBindingSite));
-    reactantSpecies.push_back(m2->speciesBound(motorBindingSite));
+    for(auto j : bindingIndices)
+        reactantSpecies.push_back(m2->speciesBound(j));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
@@ -386,7 +421,14 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
+    
+    ReactionBase* rxn;
+    if(bindingIndices.size() == 3)
+        rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
+    else if(bindingIndices.size() == 2)
+        rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
+    else
+        rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
     
 #ifdef REACTION_SIGNALING
     FilamentRetractionFrontCallback retCallback(cc1->getCylinder());
@@ -414,9 +456,8 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    reactantSpecies.push_back(m2->speciesBound(brancherBindingSite));
-    reactantSpecies.push_back(m2->speciesBound(linkerBindingSite));
-    reactantSpecies.push_back(m2->speciesBound(motorBindingSite));
+    for(auto j : bindingIndices)
+        reactantSpecies.push_back(m2->speciesBound(j));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
@@ -435,7 +476,15 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     //Add the reaction. If it needs a callback then attach
     vector<Species*> species = reactantSpecies;
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-    ReactionBase* rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
+    
+    ReactionBase* rxn;
+    
+    if(bindingIndices.size() == 3)
+        rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
+    else if(bindingIndices.size() == 2)
+        rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
+    else
+        rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
     
 #ifdef REACTION_SIGNALING
     FilamentRetractionBackCallback retCallback(cc1->getCylinder());
@@ -819,14 +868,21 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m->speciesFilament(getInt(r)));
         
         //IMPLICITLY NEEDS AN EMPTY BOUND
-        reactantSpecies.push_back(m->speciesBound(brancherBindingSite));
-        reactantSpecies.push_back(m->speciesBound(linkerBindingSite));
-        reactantSpecies.push_back(m->speciesBound(motorBindingSite));
+        
+        for(auto j : bindingIndices)
+            reactantSpecies.push_back(m->speciesBound(j));
         
         //Add the reaction
         vector<Species*> species = reactantSpecies;
-        ReactionBase* rxn =
-        new Reaction<SEVERINGREACTANTS + 3,SEVERINGPRODUCTS>(species, _rate);
+        
+        ReactionBase* rxn;
+        
+        if(bindingIndices.size() == 3)
+            rxn = new Reaction<SEVERINGREACTANTS + 3,SEVERINGPRODUCTS>(species, _rate);
+        else if(bindingIndices.size() == 2)
+            rxn = new Reaction<SEVERINGREACTANTS + 2,SEVERINGPRODUCTS>(species, _rate);
+        else
+            rxn = new Reaction<SEVERINGREACTANTS + 1,SEVERINGPRODUCTS>(species, _rate);
         
 #ifdef REACTION_SIGNALING
         FilamentSeveringCallback scallback(cc->getCylinder());

@@ -147,19 +147,19 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     }
     
     //check if binding sites are valid
-    if(chem.speciesBrancher.size() > 0 && chem.brancherBindingSite == "") {
+    if(chem.speciesBrancher.size() > 0 && chem.brancherBindingIndex == "") {
         cout << "A brancher binding site must be set for brancher species. Exiting."
              << endl;
         return false;
     }
     
-    if(chem.speciesLinker.size() > 0 && chem.linkerBindingSite == "") {
+    if(chem.speciesLinker.size() > 0 && chem.linkerBindingIndex == "") {
         cout << "A linker binding site must be set for linker species. Exiting."
         << endl;
         return false;
     }
     
-    if(chem.speciesMotor.size() > 0 && chem.motorBindingSite == "") {
+    if(chem.speciesMotor.size() > 0 && chem.motorBindingIndex == "") {
         cout << "A motor binding site must be set for motor species. Exiting."
         << endl;
         return false;

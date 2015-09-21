@@ -24,8 +24,8 @@ CLinker::CLinker(short linkerType, Compartment* c,
     //Find species on cylinder that should be marked
     SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(linkerType);
     SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(linkerType);
-    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(linkerBindingSite);
-    SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(linkerBindingSite);
+    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(linkerBindingIndex);
+    SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(linkerBindingIndex);
     
     //mark species
     assert(sl1->getN() == 0 && sl2->getN() == 0 &&
@@ -58,8 +58,8 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     os.push_back(&rs[SPECIESL_BINDING_INDEX]->getSpecies());
     
-    Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(linkerBindingSite);
-    Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(linkerBindingSite);
+    Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(linkerBindingIndex);
+    Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(linkerBindingIndex);
     
     os.push_back(empty1);
     os.push_back(empty2);
