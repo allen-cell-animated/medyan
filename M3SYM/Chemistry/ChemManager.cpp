@@ -95,31 +95,39 @@ void ChemManager::configCMonomer() {
     
     //set up static CMonomer things
     CMonomer::_numFSpecies = _chemData.speciesFilament.size() +
-    _chemData.speciesPlusEnd.size()  +
-    _chemData.speciesMinusEnd.size();
+                             _chemData.speciesPlusEnd.size()  +
+                             _chemData.speciesMinusEnd.size();
     
     CMonomer::_numBSpecies = _chemData.speciesBound.size()   +
-    _chemData.speciesLinker.size()  +
-    _chemData.speciesMotor.size()   +
-    _chemData.speciesBrancher.size();
+                             _chemData.speciesLinker.size()  +
+                             _chemData.speciesMotor.size()   +
+                             _chemData.speciesBrancher.size();
     
     //set up species offsets
     short o1 = _chemData.speciesFilament.size();
+    
     short o2 = o1 + _chemData.speciesPlusEnd.size();
     
     short o3 = _chemData.speciesBound.size();
+    
     short o4 = o3 + _chemData.speciesLinker.size();
+    
     short o5 = o4 + _chemData.speciesMotor.size();
     
     //create offset vector for filament
     CMonomer::_speciesFilamentIndex.push_back(0);
+    
     CMonomer::_speciesFilamentIndex.push_back(o1);
+    
     CMonomer::_speciesFilamentIndex.push_back(o2);
     
     //create offset vector for bound
     CMonomer::_speciesBoundIndex.push_back(0);
+    
     CMonomer::_speciesBoundIndex.push_back(o3);
+    
     CMonomer::_speciesBoundIndex.push_back(o4);
+    
     CMonomer::_speciesBoundIndex.push_back(o5);
 }
 
