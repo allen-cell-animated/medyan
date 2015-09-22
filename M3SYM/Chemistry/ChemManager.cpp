@@ -30,10 +30,10 @@ void ChemManager::setupBindingSites() {
     //set binding indices
     //check if binding sites are valid and mark
     
-    if(_chemData.brancherBindingIndex != "") {
+    if(_chemData.B_BINDING_INDEX != "") {
         auto it = find(_chemData.speciesBound.begin(),
                        _chemData.speciesBound.end(),
-                       _chemData.brancherBindingIndex);
+                       _chemData.B_BINDING_INDEX);
         
         if(it == _chemData.speciesBound.end()) {
             
@@ -42,15 +42,15 @@ void ChemManager::setupBindingSites() {
              exit(EXIT_FAILURE);
         }
         else {
-            brancherBindingIndex = it - _chemData.speciesBound.begin();
+            B_BINDING_INDEX = it - _chemData.speciesBound.begin();
         }
     }
     
-    if(_chemData.linkerBindingIndex != "") {
+    if(_chemData.L_BINDING_INDEX != "") {
         
         auto it = find(_chemData.speciesBound.begin(),
                        _chemData.speciesBound.end(),
-                       _chemData.linkerBindingIndex);
+                       _chemData.L_BINDING_INDEX);
         
         if(it == _chemData.speciesBound.end()) {
             
@@ -59,15 +59,15 @@ void ChemManager::setupBindingSites() {
              exit(EXIT_FAILURE);
         }
         else {
-            linkerBindingIndex = it - _chemData.speciesBound.begin();
+            L_BINDING_INDEX = it - _chemData.speciesBound.begin();
         }
     }
     
-    if(_chemData.motorBindingIndex != "") {
+    if(_chemData.M_BINDING_INDEX != "") {
         
         auto it = find(_chemData.speciesBound.begin(),
                        _chemData.speciesBound.end(),
-                       _chemData.motorBindingIndex);
+                       _chemData.M_BINDING_INDEX);
         
         if(it == _chemData.speciesBound.end()) {
             
@@ -76,19 +76,19 @@ void ChemManager::setupBindingSites() {
             exit(EXIT_FAILURE);
         }
         else {
-            motorBindingIndex = it - _chemData.speciesBound.begin();
+            M_BINDING_INDEX = it - _chemData.speciesBound.begin();
         }
     }
     
     //for initialization of cylinders
-    bindingIndices.push_back(brancherBindingIndex);
+    BINDING_INDEX.push_back(B_BINDING_INDEX);
     
-    if(brancherBindingIndex != linkerBindingIndex)
-         bindingIndices.push_back(linkerBindingIndex);
+    if(B_BINDING_INDEX != L_BINDING_INDEX)
+         BINDING_INDEX.push_back(L_BINDING_INDEX);
     
-    if(brancherBindingIndex != motorBindingIndex &&
-       linkerBindingIndex   != motorBindingIndex)
-        bindingIndices.push_back(motorBindingIndex);
+    if(B_BINDING_INDEX != M_BINDING_INDEX &&
+       L_BINDING_INDEX   != M_BINDING_INDEX)
+        BINDING_INDEX.push_back(M_BINDING_INDEX);
 }
 
 void ChemManager::configCMonomer() {
@@ -670,7 +670,7 @@ void ChemManager::genFilReactionTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesBound.begin(), it);
                 
-                if(position != motorBindingIndex) {
+                if(position != M_BINDING_INDEX) {
                     cout <<
                     "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
                     << endl;
@@ -754,7 +754,7 @@ void ChemManager::genFilReactionTemplates() {
                 //get position of iterator
                 position = distance(_chemData.speciesBound.begin(), it);
                 
-                if(position != motorBindingIndex) {
+                if(position != M_BINDING_INDEX) {
                     cout <<
                     "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
                     << endl;
@@ -1261,7 +1261,7 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != brancherBindingIndex) {
+                    if(position != B_BINDING_INDEX) {
                         cout <<
                         "Third species listed in a branching reaction must be the corresponding brancher empty site. Exiting."
                         << endl;
@@ -1412,7 +1412,7 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != linkerBindingIndex) {
+                    if(position != L_BINDING_INDEX) {
                         cout <<
                         "First species listed in a linker reaction must be the corresponding linker empty site. Exiting."
                         << endl;
@@ -1451,7 +1451,7 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != linkerBindingIndex) {
+                    if(position != L_BINDING_INDEX) {
                         cout <<
                         "Second species listed in a linker reaction must be the corresponding linker empty site. Exiting."
                         << endl;
@@ -1635,7 +1635,7 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != motorBindingIndex) {
+                    if(position != M_BINDING_INDEX) {
                         cout <<
                         "First species listed in a motor reaction must be the corresponding motor empty site. Exiting."
                         << endl;
@@ -1673,7 +1673,7 @@ void ChemManager::genFilBindingReactions() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound.begin(), it);
                     
-                    if(position != motorBindingIndex) {
+                    if(position != M_BINDING_INDEX) {
                         cout <<
                         "Second species listed in a motor reaction must be the corresponding motor empty site. Exiting."
                         << endl;
@@ -2571,17 +2571,17 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             //add callback to all binding sites
             UpdateBrancherBindingCallback bcallback(c, i);
             
-            Species* bs = cc->getCMonomer(i)->speciesBound(brancherBindingIndex);
+            Species* bs = cc->getCMonomer(i)->speciesBound(B_BINDING_INDEX);
             ConnectionBlock rcbb(bs->connect(bcallback,false));
             
             UpdateLinkerBindingCallback lcallback(c, i);
             
-            Species* ls = cc->getCMonomer(i)->speciesBound(linkerBindingIndex);
+            Species* ls = cc->getCMonomer(i)->speciesBound(L_BINDING_INDEX);
             ConnectionBlock rcbl(ls->connect(lcallback,false));
             
             UpdateMotorBindingCallback mcallback(c, i);
             
-            Species* ms = cc->getCMonomer(i)->speciesBound(motorBindingIndex);
+            Species* ms = cc->getCMonomer(i)->speciesBound(M_BINDING_INDEX);
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
@@ -2616,14 +2616,14 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
             
-            for(auto j : bindingIndices)
+            for(auto j : BINDING_INDEX)
                 m1->speciesBound(j)->up();
             
             //fill new cylinder with default filament value
             for(int i = 0; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
                 
-                for(auto j : bindingIndices)
+                for(auto j : BINDING_INDEX)
                     cc->getCMonomer(i)->speciesBound(j)->up();
             }
             for(auto &r : _filRxnTemplates) r->addReaction(lastcc, cc);
@@ -2641,7 +2641,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             for(int i = 1; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
                 
-                for(auto j : bindingIndices)
+                for(auto j : BINDING_INDEX)
                     cc->getCMonomer(i)->speciesBound(j)->up();
             }
         }

@@ -65,7 +65,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        for(auto j : bindingIndices)
+        for(auto j : BINDING_INDEX)
             productSpecies.push_back(m1->speciesBound(j));
         
         //Add the reaction. If it needs a callback then attach
@@ -73,9 +73,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         
         ReactionBase* rxn;
-        if(bindingIndices.size() == 3)
+        if(BINDING_INDEX.size() == 3)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
-        else if(bindingIndices.size() == 2)
+        else if(BINDING_INDEX.size() == 2)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
         else
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
@@ -116,7 +116,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    for(auto j : bindingIndices)
+    for(auto j : BINDING_INDEX)
         productSpecies.push_back(m->speciesBound(j));
     
     //Add the reaction. If it needs a callback then attach
@@ -124,9 +124,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(bindingIndices.size() == 3)
+    if(BINDING_INDEX.size() == 3)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
-    else if(bindingIndices.size() == 2)
+    else if(BINDING_INDEX.size() == 2)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
     else
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
@@ -180,7 +180,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        for(auto j : bindingIndices)
+        for(auto j : BINDING_INDEX)
             productSpecies.push_back(m1->speciesBound(j));
         
         //Add the reaction. If it needs a callback then attach
@@ -188,9 +188,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         
         ReactionBase *rxn;
-        if(bindingIndices.size() == 3)
+        if(BINDING_INDEX.size() == 3)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
-        else if(bindingIndices.size() == 2)
+        else if(BINDING_INDEX.size() == 2)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
         else
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
@@ -230,7 +230,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    for(auto j : bindingIndices)
+    for(auto j : BINDING_INDEX)
         productSpecies.push_back(m->speciesBound(j));
     
     //Add the reaction. If it needs a callback then attach
@@ -238,9 +238,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(bindingIndices.size() == 3)
+    if(BINDING_INDEX.size() == 3)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
-    else if(bindingIndices.size() == 2)
+    else if(BINDING_INDEX.size() == 2)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
     else
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
@@ -279,7 +279,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        for(auto j : bindingIndices)
+        for(auto j : BINDING_INDEX)
             reactantSpecies.push_back(m2->speciesBound(j));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
@@ -302,9 +302,9 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
         ReactionBase* rxn;
         
-        if(bindingIndices.size() == 3)
+        if(BINDING_INDEX.size() == 3)
             rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
-        else if(bindingIndices.size() == 2)
+        else if(BINDING_INDEX.size() == 2)
             rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
         else
             rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
@@ -343,7 +343,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        for(auto j : bindingIndices)
+        for(auto j : BINDING_INDEX)
             reactantSpecies.push_back(m2->speciesBound(j));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
@@ -366,9 +366,9 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         
         ReactionBase* rxn;
         
-        if(bindingIndices.size() == 3)
+        if(BINDING_INDEX.size() == 3)
             rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
-        else if(bindingIndices.size() == 2)
+        else if(BINDING_INDEX.size() == 2)
             rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
         else
             rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
@@ -401,7 +401,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    for(auto j : bindingIndices)
+    for(auto j : BINDING_INDEX)
         reactantSpecies.push_back(m2->speciesBound(j));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
@@ -423,9 +423,9 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(bindingIndices.size() == 3)
+    if(BINDING_INDEX.size() == 3)
         rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
-    else if(bindingIndices.size() == 2)
+    else if(BINDING_INDEX.size() == 2)
         rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
     else
         rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
@@ -456,7 +456,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    for(auto j : bindingIndices)
+    for(auto j : BINDING_INDEX)
         reactantSpecies.push_back(m2->speciesBound(j));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
@@ -479,9 +479,9 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     ReactionBase* rxn;
     
-    if(bindingIndices.size() == 3)
+    if(BINDING_INDEX.size() == 3)
         rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
-    else if(bindingIndices.size() == 2)
+    else if(BINDING_INDEX.size() == 2)
         rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
     else
         rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
@@ -869,7 +869,7 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         
         //IMPLICITLY NEEDS AN EMPTY BOUND
         
-        for(auto j : bindingIndices)
+        for(auto j : BINDING_INDEX)
             reactantSpecies.push_back(m->speciesBound(j));
         
         //Add the reaction
@@ -877,9 +877,9 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         
         ReactionBase* rxn;
         
-        if(bindingIndices.size() == 3)
+        if(BINDING_INDEX.size() == 3)
             rxn = new Reaction<SEVERINGREACTANTS + 3,SEVERINGPRODUCTS>(species, _rate);
-        else if(bindingIndices.size() == 2)
+        else if(BINDING_INDEX.size() == 2)
             rxn = new Reaction<SEVERINGREACTANTS + 2,SEVERINGPRODUCTS>(species, _rate);
         else
             rxn = new Reaction<SEVERINGREACTANTS + 1,SEVERINGPRODUCTS>(species, _rate);

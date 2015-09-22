@@ -15,8 +15,8 @@
 
 double global_time;
 
-short brancherBindingIndex;
-short linkerBindingIndex;
-short motorBindingIndex;
+short B_BINDING_INDEX;
+short L_BINDING_INDEX;
+short M_BINDING_INDEX;
 
-vector<short> bindingIndices;
+vector<short> BINDING_INDEX;

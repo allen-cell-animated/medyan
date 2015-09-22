@@ -1578,7 +1578,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                chem.brancherBindingIndex = lineVector[1];
+                chem.B_BINDING_INDEX = lineVector[1];
             else {}
         }
         else if(line.find("LINKERBINDINGSITE") != string::npos) {
@@ -1589,7 +1589,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                chem.linkerBindingIndex = lineVector[1];
+                chem.L_BINDING_INDEX = lineVector[1];
             else {}
         }
         
@@ -1601,7 +1601,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                chem.motorBindingIndex = lineVector[1];
+                chem.M_BINDING_INDEX = lineVector[1];
             else {}
         }
         

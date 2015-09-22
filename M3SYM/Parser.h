@@ -154,9 +154,9 @@ struct ChemistryData {
     
     //@{
     /// Binding sites parsed
-    string brancherBindingIndex = "";
-    string linkerBindingIndex = "";
-    string motorBindingIndex = "";
+    string B_BINDING_INDEX = "";
+    string L_BINDING_INDEX = "";
+    string M_BINDING_INDEX = "";
     //@}
 };
 

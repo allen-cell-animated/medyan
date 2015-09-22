@@ -38,15 +38,15 @@ using namespace std;
 ///Boost typedef
 typedef boost::signals2::shared_connection_block ConnectionBlock;
 
-/// Default empty site numbers in CMonomer
+/// Default empty sites in CMonomer
 /// @note - DO NOT CHANGE!!!
 
-extern short brancherBindingIndex;
-extern short linkerBindingIndex;
-extern short motorBindingIndex;
+extern short B_BINDING_INDEX;
+extern short L_BINDING_INDEX;
+extern short M_BINDING_INDEX;
 
 ///A list of the unique binding site species numbers
-extern vector<short> bindingIndices;
+extern vector<short> BINDING_INDEX;
 
 //@{
 /// Constant Species index identifiers
