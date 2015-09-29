@@ -41,12 +41,15 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 /// Default empty sites in CMonomer
 /// @note - DO NOT CHANGE!!!
 
-extern short B_BINDING_INDEX;
-extern short L_BINDING_INDEX;
-extern short M_BINDING_INDEX;
+extern vector<short> B_BINDING_INDEX;
+extern vector<short> L_BINDING_INDEX;
+extern vector<short> M_BINDING_INDEX;
 
 ///A list of the unique binding site species numbers
-extern vector<short> BINDING_INDEX;
+extern vector<vector<short>> BINDING_INDEX;
+
+///Num filaments maximum
+#define MAX_FILAMENTS 10
 
 //@{
 /// Constant Species index identifiers

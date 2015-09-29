@@ -29,127 +29,122 @@ void ChemManager::setupBindingSites() {
     
     //set binding indices
     //check if binding sites are valid and mark
+    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
-    if(_chemData.B_BINDING_INDEX != "") {
-        auto it = find(_chemData.speciesBound.begin(),
-                       _chemData.speciesBound.end(),
-                       _chemData.B_BINDING_INDEX);
         
-        if(it == _chemData.speciesBound.end()) {
+        if(_chemData.B_BINDING_INDEX[filType] != "") {
+            auto it = find(_chemData.speciesBound[filType].begin(),
+                           _chemData.speciesBound[filType].end(),
+                           _chemData.B_BINDING_INDEX[filType]);
             
-            cout << "The brancher binding site listed is not a valid bound species. Exiting."
-                 << endl;
-             exit(EXIT_FAILURE);
+            if(it == _chemData.speciesBound[filType].end()) {
+                
+                cout << "The brancher binding site listed is not a valid bound species. Exiting."
+                     << endl;
+                 exit(EXIT_FAILURE);
+            }
+            else {
+                B_BINDING_INDEX[filType] = it - _chemData.speciesBound[filType].begin();
+            }
         }
-        else {
-            B_BINDING_INDEX = it - _chemData.speciesBound.begin();
-        }
-    }
-    
-    if(_chemData.L_BINDING_INDEX != "") {
         
-        auto it = find(_chemData.speciesBound.begin(),
-                       _chemData.speciesBound.end(),
-                       _chemData.L_BINDING_INDEX);
-        
-        if(it == _chemData.speciesBound.end()) {
+        if(_chemData.L_BINDING_INDEX[filType] != "") {
             
-            cout << "The linker binding site listed is not a valid bound species. Exiting."
-                 << endl;
-             exit(EXIT_FAILURE);
-        }
-        else {
-            L_BINDING_INDEX = it - _chemData.speciesBound.begin();
-        }
-    }
-    
-    if(_chemData.M_BINDING_INDEX != "") {
-        
-        auto it = find(_chemData.speciesBound.begin(),
-                       _chemData.speciesBound.end(),
-                       _chemData.M_BINDING_INDEX);
-        
-        if(it == _chemData.speciesBound.end()) {
+            auto it = find(_chemData.speciesBound[filType].begin(),
+                           _chemData.speciesBound[filType].end(),
+                           _chemData.L_BINDING_INDEX[filType]);
             
-            cout << "The motor binding site listed is not a valid bound species. Exiting."
-                 << endl;
-            exit(EXIT_FAILURE);
+            if(it == _chemData.speciesBound.end()) {
+                
+                cout << "The linker binding site listed is not a valid bound species. Exiting."
+                     << endl;
+                 exit(EXIT_FAILURE);
+            }
+            else {
+                L_BINDING_INDEX[filType] = it - _chemData.speciesBound[filType].begin();
+            }
         }
-        else {
-            M_BINDING_INDEX = it - _chemData.speciesBound.begin();
+        
+        if(_chemData.M_BINDING_INDEX[filType] != "") {
+            
+            auto it = find(_chemData.speciesBound[filType].begin(),
+                           _chemData.speciesBound[filType].end(),
+                           _chemData.M_BINDING_INDEX[filType]);
+            
+            if(it == _chemData.speciesBound[filType].end()) {
+                
+                cout << "The motor binding site listed is not a valid bound species. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else {
+                M_BINDING_INDEX[filType] = it - _chemData.speciesBound[filType].begin();
+            }
         }
+        
+        //for initialization of cylinders
+        BINDING_INDEX[filType].push_back(B_BINDING_INDEX[filType]);
+        
+        if(B_BINDING_INDEX[filType] != L_BINDING_INDEX[filType])
+             BINDING_INDEX[filType].push_back(L_BINDING_INDEX[filType]);
+        
+        if(B_BINDING_INDEX[filType] != M_BINDING_INDEX[filType] &&
+           L_BINDING_INDEX[filType] != M_BINDING_INDEX[filType])
+            BINDING_INDEX[filType].push_back(M_BINDING_INDEX[filType]);
     }
-    
-    //for initialization of cylinders
-    BINDING_INDEX.push_back(B_BINDING_INDEX);
-    
-    if(B_BINDING_INDEX != L_BINDING_INDEX)
-         BINDING_INDEX.push_back(L_BINDING_INDEX);
-    
-    if(B_BINDING_INDEX != M_BINDING_INDEX &&
-       L_BINDING_INDEX   != M_BINDING_INDEX)
-        BINDING_INDEX.push_back(M_BINDING_INDEX);
 }
 
 void ChemManager::configCMonomer() {
     
-    //set up static CMonomer things
-    CMonomer::_numFSpecies = _chemData.speciesFilament.size() +
-                             _chemData.speciesPlusEnd.size()  +
-                             _chemData.speciesMinusEnd.size();
+    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
-    CMonomer::_numBSpecies = _chemData.speciesBound.size()   +
-                             _chemData.speciesLinker.size()  +
-                             _chemData.speciesMotor.size()   +
-                             _chemData.speciesBrancher.size();
-    
-    //set up species offsets
-    short o1 = _chemData.speciesFilament.size();
-    
-    short o2 = o1 + _chemData.speciesPlusEnd.size();
-    
-    short o3 = _chemData.speciesBound.size();
-    
-    short o4 = o3 + _chemData.speciesLinker.size();
-    
-    short o5 = o4 + _chemData.speciesMotor.size();
-    
-    //create offset vector for filament
-    CMonomer::_speciesFilamentIndex.push_back(0);
-    
-    CMonomer::_speciesFilamentIndex.push_back(o1);
-    
-    CMonomer::_speciesFilamentIndex.push_back(o2);
-    
-    //create offset vector for bound
-    CMonomer::_speciesBoundIndex.push_back(0);
-    
-    CMonomer::_speciesBoundIndex.push_back(o3);
-    
-    CMonomer::_speciesBoundIndex.push_back(o4);
-    
-    CMonomer::_speciesBoundIndex.push_back(o5);
+        //set up static CMonomer things
+        CMonomer::_numFSpecies[filType] = _chemData.speciesFilament[filType].size() +
+                                        _chemData.speciesPlusEnd[filType].size()  +
+                                        _chemData.speciesMinusEnd[filType].size();
+        
+        CMonomer::_numBSpecies[filType] = _chemData.speciesBound[filType].size()   +
+                                        _chemData.speciesLinker[filType].size()  +
+                                        _chemData.speciesMotor[filType].size()   +
+                                        _chemData.speciesBrancher[filType].size();
+        
+        //set up species offsets
+        short o1 = _chemData.speciesFilament[filType].size();
+        short o2 = o1 + _chemData.speciesPlusEnd[filType].size();
+        
+        short o3 = _chemData.speciesBound[filType].size();
+        short o4 = o3 + _chemData.speciesLinker[filType].size();
+        short o5 = o4 + _chemData.speciesMotor[filType].size();
+        
+        //create offset vector for filament
+        CMonomer::_speciesFilamentIndex[filType].insert(
+        CMonomer::_speciesFilamentIndex[filType].end(), {0,o1,o2});
+        
+        //create offset vector for bound
+        CMonomer::_speciesBoundIndex[filType].insert(
+        CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5});
+    }
 }
 
-void ChemManager::initCMonomer(CMonomer* m, Compartment* c) {
+void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) {
     
     // FILAMENT SPECIES
     
     int fIndex = 0;
-    for(auto &f : _chemData.speciesFilament) {
+    for(auto &f : _chemData.speciesFilament[filamentType]) {
         SpeciesFilament* sf =
         c->addSpeciesFilament(SpeciesNamesDB::genUniqueFilName(f));
         m->_speciesFilament[fIndex] = sf;
         fIndex++;
     }
-    for (auto &p : _chemData.speciesPlusEnd) {
+    for (auto &p : _chemData.speciesPlusEnd[filamentType]) {
         SpeciesPlusEnd* sp =
         c->addSpeciesPlusEnd(SpeciesNamesDB::genUniqueFilName(p));
         m->_speciesFilament[fIndex] = sp;
         fIndex++;
         
     }
-    for (auto &mi : _chemData.speciesMinusEnd) {
+    for (auto &mi : _chemData.speciesMinusEnd[filamentType]) {
         SpeciesMinusEnd* smi =
         c->addSpeciesMinusEnd(SpeciesNamesDB::genUniqueFilName(mi));
         m->_speciesFilament[fIndex] = smi;
@@ -159,25 +154,25 @@ void ChemManager::initCMonomer(CMonomer* m, Compartment* c) {
     // BOUND SPECIES
     
     int bIndex = 0;
-    for (auto &b : _chemData.speciesBound) {
+    for (auto &b : _chemData.speciesBound[filamentType]) {
         SpeciesBound* sb =
         c->addSpeciesBound(SpeciesNamesDB::genUniqueFilName(b));
         m->_speciesBound[bIndex] = sb;
         bIndex++;
     }
-    for (auto &l : _chemData.speciesLinker) {
+    for (auto &l : _chemData.speciesLinker[filamentType]) {
         SpeciesLinker* sl =
         c->addSpeciesLinker(SpeciesNamesDB::genUniqueFilName(l));
         m->_speciesBound[bIndex] = sl;
         bIndex++;
     }
-    for (auto &mo : _chemData.speciesMotor) {
+    for (auto &mo : _chemData.speciesMotor[filamentType]) {
         SpeciesMotor* sm =
         c->addSpeciesMotor(SpeciesNamesDB::genUniqueFilName(mo));
         m->_speciesBound[bIndex] = sm;
         bIndex++;
     }
-    for (auto &br : _chemData.speciesBrancher) {
+    for (auto &br : _chemData.speciesBrancher[filamentType]) {
         SpeciesBrancher* sbr =
         c->addSpeciesBrancher(SpeciesNamesDB::genUniqueFilName(br));
         m->_speciesBound[bIndex] = sbr;
@@ -187,860 +182,319 @@ void ChemManager::initCMonomer(CMonomer* m, Compartment* c) {
 
 void ChemManager::genFilReactionTemplates() {
     
-    //set up reaction templates
-    for(auto &r: _chemData.polymerizationReactions) {
-        
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        FilamentReactionDirection d;
-        
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
-        //read strings, and look up type
-        
-        //Checks on number of reactants, products
-        if(reactants.size() != POLYREACTANTS ||
-           products.size() != POLYPRODUCTS) {
-            cout << "Invalid polymerization reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST SPECIES MUST BE BULK OR DIFFUSING
-        auto reactant = reactants[0];
-        if(reactant.find("BULK") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                              [name](tuple<string, int, double, string> element) {
-                                  return get<0>(element) == name ? true : false; });
-            
-            if(it == _chemData.speciesBulk.end()) {
-                cout <<
-                "A bulk species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            reactantTemplate.push_back( tuple<int, SpeciesType>(
-            SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
-        }
-        
-        else if(reactant.find("DIFFUSING") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double, string, int> element) {
-                                  return get<0>(element) == name ? true : false; });
-            if(it == _chemData.speciesDiffusing.end()) {
-                cout <<
-                "A diffusing species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            reactantTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
-        }
-        else {
-            cout <<
-            "First species listed in a polymerization reaction must be either bulk or diffusing. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //SECOND SPECIES MUST BE PLUS OR MINUS END
-        reactant = reactants[1];
-        if(reactant.find("PLUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesPlusEnd.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesPlusEnd.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::PLUSEND));
-                
-                d = FilamentReactionDirection::FORWARD;
-            }
-            else {
-                cout <<
-                "A plus end species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        else if(reactant.find("MINUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesMinusEnd.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesMinusEnd.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::MINUSEND));
-                
-                d = FilamentReactionDirection::BACKWARD;
-            }
-            else {
-                cout <<
-                "A minus end species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else {
-            
-            cout <<
-            "Second species listed in a polymerization reaction must be either plusend or minusend. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-            
-        }
-        
-        //FIRST PRODUCT SPECIES MUST BE FILAMENT SPECIES
-        auto product = products[0];
-        if(product.find("FILAMENT") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesFilament.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesFilament.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::FILAMENT));
-            }
-            else {
-                cout <<
-                "A filament species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else {
-            cout <<
-            "Third species listed in a polymerization reaction must be filament. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //SECOND PRODUCT SPECIES MUST BE PLUS OR MINUS END
-        product = products[1];
-        //read strings, and look up type
-        if(product.find("PLUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesPlusEnd.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesPlusEnd.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::PLUSEND));
-            }
-            else {
-                cout <<
-                "A plusend species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        else if(product.find("MINUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesMinusEnd.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesMinusEnd.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::MINUSEND));
-            }
-            else {
-                cout <<
-                "A plusend species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else {
-            cout <<
-            "Fourth species listed in a polymerization reaction must be either plusend or minusend. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //Add polymerization managers
-        if(d == FilamentReactionDirection::FORWARD)
-            _filRxnTemplates.emplace_back(
-            new PolyPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
-        else
-            _filRxnTemplates.emplace_back(
-            new PolyMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
-    }
     
-    //set up reaction templates
-    for(auto &r: _chemData.depolymerizationReactions) {
-        
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        FilamentReactionDirection d;
-        
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
-        //read strings, and look up type
-        
-        //Checks on number of reactants, products
-        if(reactants.size() != DEPOLYREACTANTS ||
-           products.size() != DEPOLYPRODUCTS) {
-            cout << "Invalid depolymerization reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST REACTANT SPECIES MUST BE FILAMENT SPECIES
-        auto reactant = reactants[0];
-        if(reactant.find("FILAMENT") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesFilament.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesFilament.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::FILAMENT));
-            }
-            else {
-                cout <<
-                "A filament species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else {
-            cout <<
-            "First species listed in a depolymerization reaction must be filament. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //SECOND REACTANT SPECIES MUST BE PLUS OR MINUS END
-        reactant = reactants[1];
-        //read strings, and look up type
-        if(reactant.find("PLUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesPlusEnd.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesPlusEnd.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::PLUSEND));
-                
-                d = FilamentReactionDirection::BACKWARD;
-            }
-            else {
-                cout <<
-                "A plusend species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        else if(reactant.find("MINUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesMinusEnd.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesMinusEnd.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::MINUSEND));
-                d = FilamentReactionDirection::FORWARD;
-            }
-            else {
-                cout <<
-                "A minusend species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else {
-            cout <<
-            "Second species listed in a depolymerization reaction must be either plusend or minusend. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        
-        //FIRST PRODUCT SPECIES MUST BE BULK OR DIFFUSING
-        auto product = products[0];
-        if(product.find("BULK") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
-                              [name](tuple<string, int, double, string> element) {
-                                  return get<0>(element) == name ? true : false; });
-            
-            if(it == _chemData.speciesBulk.end()) {
-                cout <<
-                "A bulk species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            productTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
-        }
-        
-        else if(product.find("DIFFUSING") != string::npos) {
-            
-            //Look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
-                              [name](tuple<string, int, double, double, string, int> element) {
-                                  return get<0>(element) == name ? true : false; });
-            if(it == _chemData.speciesDiffusing.end()) {
-                cout <<
-                "A diffusing species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            productTemplate.push_back(tuple<int, SpeciesType>(
-            SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
-        }
-        else {
-            cout <<
-            "Third species listed in a depolymerization reaction must be either bulk or diffusing. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //SECOND PRODUCT SPECIES MUST BE PLUS OR MINUS END
-        product = products[1];
-        if(product.find("PLUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesPlusEnd.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesPlusEnd.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::PLUSEND));
-            }
-            else {
-                cout <<
-                "A plus end species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        else if(product.find("MINUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesMinusEnd.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesMinusEnd.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::MINUSEND));
-            }
-            else {
-                cout <<
-                "A minus end species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else {
-            cout <<
-            "Fourth species listed in a depolymerization reaction must be either plusend or minusend. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //Add depolymerization managers
-        if(d == FilamentReactionDirection::FORWARD)
-            _filRxnTemplates.emplace_back(
-            new DepolyMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
-        else
-            _filRxnTemplates.emplace_back(
-            new DepolyPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
-    }
+    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
-    for(auto &r: _chemData.motorWalkingReactions) {
-        
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
-        //read strings, and look up type
-        ReactionType type;
-        string species1;
-        
-        //Checks on number of reactants, products
-        if(reactants.size() != MWALKINGREACTANTS ||
-           products.size() != MWALKINGPRODUCTS) {
-            cout << "Invalid motor walking reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST REACTANT SPECIES MUST BE MOTOR
-        auto reactant = reactants[0];
-        if(reactant.find("MOTOR") != string::npos) {
+        //set up reaction templates
+        for(auto &r: _chemData.polymerizationReactions[filType]) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
-            int position = 0;
+            vector<tuple<int, SpeciesType>> reactantTemplate;
+            vector<tuple<int, SpeciesType>> productTemplate;
+            FilamentReactionDirection d;
             
-            if(it != _chemData.speciesMotor.end()) {
-                species1 = name;
-                
-                //check if forward or backward walking
-                if(reactant.find("N+1") != string::npos)
-                    type = ReactionType::MOTORWALKINGBACKWARD;
-                else
-                    type = ReactionType::MOTORWALKINGFORWARD;
-                
-                //get position of iterator
-                position = distance(_chemData.speciesMotor.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::MOTOR));
-            }
-            else {
-                cout <<
-                "A motor species that was included in a reaction was not initialized. Exiting."
-                << endl;
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+            //read strings, and look up type
+            
+            //Checks on number of reactants, products
+            if(reactants.size() != POLYREACTANTS ||
+               products.size() != POLYPRODUCTS) {
+                cout << "Invalid polymerization reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else{
-            cout <<
-            "First species listed in a motor walking reaction must be motor. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        
-        //SECOND REACTANT SPECIES MUST BE EMPTY SITE
-        reactant = reactants[1];
-        //read strings, and look up type
-        if(reactant.find("BOUND") != string::npos) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesBound.end()) {
+            //FIRST SPECIES MUST BE BULK OR DIFFUSING
+            auto reactant = reactants[0];
+            if(reactant.find("BULK") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesBound.begin(), it);
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                  [name](tuple<string, int, double, string> element) {
+                                      return get<0>(element) == name ? true : false; });
                 
-                if(position != M_BINDING_INDEX) {
+                if(it == _chemData.speciesBulk.end()) {
                     cout <<
-                    "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-                
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::BOUND));
-            }
-            else {
-                cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            cout <<
-            "Second species listed in a motor walking reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST PRODUCT SPECIES MUST BE MOTOR
-        auto product = products[0];
-        if(product.find("MOTOR") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesMotor.begin(), _chemData.speciesMotor.end(), name);
-            int position = 0;
-            
-            if(name != species1) {
-                cout <<
-                "Motor species in reactants and products of motor walking reaction must be same. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
+                reactantTemplate.push_back( tuple<int, SpeciesType>(
+                SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
             }
             
-            if((product.find("N+1") != string::npos && type != ReactionType::MOTORWALKINGFORWARD)) {
+            else if(reactant.find("DIFFUSING") != string::npos) {
                 
-                cout <<
-                "Motor walking reaction must have a direction (Check N and N+1 distinctions). Exiting."
-                <<endl;
-                exit(EXIT_FAILURE);
-                
-            }
-            
-            if(it != _chemData.speciesMotor.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesMotor.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::MOTOR));
-            }
-            else {
-                cout <<
-                "A motor species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else {
-            cout <<
-            "Third species listed in a motor walking reaction must be motor. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //SECOND PRODUCT SPECIES MUST BE EMPTY SITE
-        product = products[1];
-        if(product.find("BOUND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesBound.begin(), _chemData.speciesBound.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesBound.end()) {
-                
-                //get position of iterator
-                position = distance(_chemData.speciesBound.begin(), it);
-                
-                if(position != M_BINDING_INDEX) {
+                //Look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                                  [name](tuple<string, int, double, double, string, int> element) {
+                                      return get<0>(element) == name ? true : false; });
+                if(it == _chemData.speciesDiffusing.end()) {
                     cout <<
-                    "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
+                    "A diffusing species that was included in a reaction was not initialized. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
+                reactantTemplate.push_back(tuple<int, SpeciesType>(
+                SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
+            }
+            else {
+                cout <<
+                "First species listed in a polymerization reaction must be either bulk or diffusing. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //SECOND SPECIES MUST BE PLUS OR MINUS END
+            reactant = reactants[1];
+            if(reactant.find("PLUSEND") != string::npos) {
                 
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::BOUND));
-            }
-            else {
-                cout <<
-                "A bound species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            cout <<
-            "Fourth species listed in a motor walking reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //add reaction
-        if(type == ReactionType::MOTORWALKINGFORWARD)
-            _filRxnTemplates.emplace_back(
-            new MotorWalkFTemplate(reactantTemplate, productTemplate, get<2>(r)));
-        else {
-            _filRxnTemplates.emplace_back(
-            new MotorWalkBTemplate(reactantTemplate, productTemplate, get<2>(r)));
-        }
-    }
-    
-    //set up reaction templates
-    for(auto &r: _chemData.agingReactions) {
-        
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
-        //read strings, and look up type
-        
-        //Checks on number of reactants, products
-        if(reactants.size() != AGINGREACTANTS ||
-           products.size() != AGINGPRODUCTS) {
-            cout << "Invalid aging reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST REACTANT SPECIES MUST BE FILAMENT, PLUS OR MINUS END
-        auto reactant = reactants[0];
-        //read strings, and look up type
-        if(reactant.find("FILAMENT") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesFilament.end()) {
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesPlusEnd[filType].begin(), _chemData.speciesPlusEnd[filType].end(), name);
+                int position = 0;
                 
-                //get position of iterator
-                position = distance(_chemData.speciesFilament.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::FILAMENT));
+                if(it != _chemData.speciesPlusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesPlusEnd[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                    
+                    d = FilamentReactionDirection::FORWARD;
+                }
+                else {
+                    cout <<
+                    "A plus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
-            else {
-                cout <<
-                "A filament species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else if(reactant.find("PLUSEND") != string::npos) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesPlusEnd.end()) {
+            else if(reactant.find("MINUSEND") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesPlusEnd.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::PLUSEND));
-            }
-            else {
-                cout <<
-                "A plus end species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else if(reactant.find("MINUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesMinusEnd.end()) {
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesMinusEnd[filType].begin(), _chemData.speciesMinusEnd[filType].end(), name);
+                int position = 0;
                 
-                //get position of iterator
-                position = distance(_chemData.speciesMinusEnd.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::MINUSEND));
+                if(it != _chemData.speciesMinusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMinusEnd[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                    
+                    d = FilamentReactionDirection::BACKWARD;
+                }
+                else {
+                    cout <<
+                    "A minus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
-                cout <<
-                "A minus end species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else{
-            cout <<
-            "First species listed in an aging reaction must be filament. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST PRODUCT SPECIES MUST BE FILAMENT, PLUS, OR MINUS END
-        auto product = products[0];
-        //read strings, and look up type
-        if(product.find("FILAMENT") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesFilament.end()) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesFilament.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::FILAMENT));
-            }
-            else {
                 cout <<
-                "A filament species that was included in a reaction was not initialized. Exiting."
+                "Second species listed in a polymerization reaction must be either plusend or minusend. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
-            }
-        }
-        else if(product.find("PLUSEND") != string::npos) {
-            
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesPlusEnd.end()) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesPlusEnd.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::PLUSEND));
             }
-            else {
-                cout <<
-                "A plus end species that was included in a reaction was not initialized. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        else if(product.find("MINUSEND") != string::npos) {
             
-            //look up species, make sure in list
-            string name = product.substr(0, product.find(":"));
-            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
-            int position = 0;
-            
-            if(it != _chemData.speciesMinusEnd.end()) {
+            //FIRST PRODUCT SPECIES MUST BE FILAMENT SPECIES
+            auto product = products[0];
+            if(product.find("FILAMENT") != string::npos) {
                 
-                //get position of iterator
-                position = distance(_chemData.speciesMinusEnd.begin(), it);
-                productTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                  SpeciesType::MINUSEND));
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesFilament[filType].begin(), _chemData.speciesFilament[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesFilament[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesFilament[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+                }
+                else {
+                    cout <<
+                    "A filament species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A minus end species that was included in a reaction was not initialized. Exiting."
+                "Third species listed in a polymerization reaction must be filament. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else{
-            cout <<
-            "Second species listed in an aging reaction must be bound. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //add reaction
-        _filRxnTemplates.emplace_back(
-                                      new AgingTemplate(reactantTemplate, productTemplate, get<2>(r)));
-    }
-    
-    
-    //set up reaction templates
-    for(auto &r: _chemData.destructionReactions) {
-        
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        
-        vector<string> reactants = get<0>(r);
-        vector<string> products = get<1>(r);
-        //read strings, and look up type
-        
-        //Checks on number of reactants, products
-        if(reactants.size() != DESTRUCTIONREACTANTS ||
-           products.size() != DESTRUCTIONPRODUCTS ) {
-            cout << "Invalid destruction reaction. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        //FIRST SPECIES MUST BE PLUS END
-        auto reactant = reactants[0];
-        if(reactant.find("PLUSEND") != string::npos) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesPlusEnd.begin(), _chemData.speciesPlusEnd.end(), name);
+            //SECOND PRODUCT SPECIES MUST BE PLUS OR MINUS END
+            product = products[1];
+            //read strings, and look up type
+            if(product.find("PLUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesPlusEnd[filType].begin(), _chemData.speciesPlusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesPlusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesPlusEnd[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                }
+                else {
+                    cout <<
+                    "A plusend species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
             
-            if(it != _chemData.speciesPlusEnd.end()) {
-                //get position of iterator
-                int position = distance(_chemData.speciesPlusEnd.begin(), it);
-                reactantTemplate.push_back(
-                                           tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+            else if(product.find("MINUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesMinusEnd[filType].begin(), _chemData.speciesMinusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesMinusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMinusEnd[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                }
+                else {
+                    cout <<
+                    "A plusend species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A plus end species that was included in a reaction was not initialized. Exiting."
+                "Fourth species listed in a polymerization reaction must be either plusend or minusend. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "First species listed in a destruction reaction must be plus end. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
+            
+            //Add polymerization managers
+            if(d == FilamentReactionDirection::FORWARD)
+                _filRxnTemplates[filType].emplace_back(
+                new PolyPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            else
+                _filRxnTemplates[filType].emplace_back(
+                new PolyMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
         }
         
-        //SECOND SPECIES MUST BE MINUS END
-        reactant = reactants[1];
-        if(reactant.find("MINUSEND") != string::npos) {
+        //set up reaction templates
+        for(auto &r: _chemData.depolymerizationReactions[filType]) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesMinusEnd.begin(), _chemData.speciesMinusEnd.end(), name);
+            vector<tuple<int, SpeciesType>> reactantTemplate;
+            vector<tuple<int, SpeciesType>> productTemplate;
+            FilamentReactionDirection d;
             
-            if(it != _chemData.speciesMinusEnd.end()) {
-                //get position of iterator
-                int position = distance(_chemData.speciesMinusEnd.begin(), it);
-                reactantTemplate.push_back(
-                                           tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+            //read strings, and look up type
+            
+            //Checks on number of reactants, products
+            if(reactants.size() != DEPOLYREACTANTS ||
+               products.size() != DEPOLYPRODUCTS) {
+                cout << "Invalid depolymerization reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST REACTANT SPECIES MUST BE FILAMENT SPECIES
+            auto reactant = reactants[0];
+            if(reactant.find("FILAMENT") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesFilament[filType].begin(), _chemData.speciesFilament[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesFilament[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesFilament[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+                }
+                else {
+                    cout <<
+                    "A filament species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A minus end species that was included in a reaction was not initialized. Exiting."
+                "First species listed in a depolymerization reaction must be filament. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "Second species listed in a destruction reaction must be minus end. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        ///ALL PRODUCTS MUST BE BULK OR DIFFUSING
-        for (auto &product : products) {
             
+            //SECOND REACTANT SPECIES MUST BE PLUS OR MINUS END
+            reactant = reactants[1];
+            //read strings, and look up type
+            if(reactant.find("PLUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesPlusEnd[filType].begin(), _chemData.speciesPlusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesPlusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesPlusEnd[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                    
+                    d = FilamentReactionDirection::BACKWARD;
+                }
+                else {
+                    cout <<
+                    "A plusend species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            else if(reactant.find("MINUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesMinusEnd[filType].begin(), _chemData.speciesMinusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesMinusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMinusEnd[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                    d = FilamentReactionDirection::FORWARD;
+                }
+                else {
+                    cout <<
+                    "A minusend species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "Second species listed in a depolymerization reaction must be either plusend or minusend. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            
+            //FIRST PRODUCT SPECIES MUST BE BULK OR DIFFUSING
+            auto product = products[0];
             if(product.find("BULK") != string::npos) {
                 
                 //Look up species, make sure in list
@@ -1077,58 +531,577 @@ void ChemManager::genFilReactionTemplates() {
             }
             else {
                 cout <<
-                "Third species listed in a destruction reaction must be either bulk or diffusing. Exiting."
+                "Third species listed in a depolymerization reaction must be either bulk or diffusing. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        
-        //add reaction
-        _filRxnTemplates.emplace_back(
-                                      new DestructionTemplate(reactantTemplate, productTemplate, get<2>(r)));
-    }
-    
-    //set up reaction templates
-    for(auto &r: _chemData.severingReactions) {
-        
-        vector<tuple<int, SpeciesType>> reactantTemplate;
-        vector<tuple<int, SpeciesType>> productTemplate;
-        
-        string reactant = get<0>(r);
-        //read strings, and look up type
-        
-        
-        // SPECIES MUST BE FILAMENT
-        if(reactant.find("FILAMENT") != string::npos) {
             
-            //look up species, make sure in list
-            string name = reactant.substr(0, reactant.find(":"));
-            auto it = find(_chemData.speciesFilament.begin(), _chemData.speciesFilament.end(), name);
-            int position = 0;
+            //SECOND PRODUCT SPECIES MUST BE PLUS OR MINUS END
+            product = products[1];
+            if(product.find("PLUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesPlusEnd[filType].begin(), _chemData.speciesPlusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesPlusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesPlusEnd[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                }
+                else {
+                    cout <<
+                    "A plus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
             
-            if(it != _chemData.speciesFilament.end()) {
-                //get position of iterator
-                position = distance(_chemData.speciesFilament.begin(), it);
-                reactantTemplate.push_back(tuple<int, SpeciesType>(position,
-                                                                   SpeciesType::FILAMENT));
+            else if(product.find("MINUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesMinusEnd[filType].begin(), _chemData.speciesMinusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesMinusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMinusEnd[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                }
+                else {
+                    cout <<
+                    "A minus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
             }
             else {
                 cout <<
-                "A filament species that was included in a reaction was not initialized. Exiting."
+                "Fourth species listed in a depolymerization reaction must be either plusend or minusend. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
-        }
-        else {
-            cout <<
-            "Reactant species listed in a severing reaction must be filament. Exiting."
-            << endl;
-            exit(EXIT_FAILURE);
+            
+            //Add depolymerization managers
+            if(d == FilamentReactionDirection::FORWARD)
+                _filRxnTemplates[filType].emplace_back(
+                new DepolyMinusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            else
+                _filRxnTemplates[filType].emplace_back(
+                new DepolyPlusEndTemplate(reactantTemplate, productTemplate, get<2>(r)));
         }
         
-        //add reaction
-        _filRxnTemplates.emplace_back(
-                                      new SeveringTemplate(reactantTemplate, productTemplate, get<1>(r)));
+        for(auto &r: _chemData.motorWalkingReactions[filType]) {
+            
+            vector<tuple<int, SpeciesType>> reactantTemplate;
+            vector<tuple<int, SpeciesType>> productTemplate;
+            
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+            //read strings, and look up type
+            ReactionType type;
+            string species1;
+            
+            //Checks on number of reactants, products
+            if(reactants.size() != MWALKINGREACTANTS ||
+               products.size() != MWALKINGPRODUCTS) {
+                cout << "Invalid motor walking reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST REACTANT SPECIES MUST BE MOTOR
+            auto reactant = reactants[0];
+            if(reactant.find("MOTOR") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesMotor[filType].begin(), _chemData.speciesMotor[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesMotor[filType].end()) {
+                    species1 = name;
+                    
+                    //check if forward or backward walking
+                    if(reactant.find("N+1") != string::npos)
+                        type = ReactionType::MOTORWALKINGBACKWARD;
+                    else
+                        type = ReactionType::MOTORWALKINGFORWARD;
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMotor[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MOTOR));
+                }
+                else {
+                    cout <<
+                    "A motor species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else{
+                cout <<
+                "First species listed in a motor walking reaction must be motor. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            
+            //SECOND REACTANT SPECIES MUST BE EMPTY SITE
+            reactant = reactants[1];
+            //read strings, and look up type
+            if(reactant.find("BOUND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesBound[filType].begin(), _chemData.speciesBound[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesBound[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesBound[filType].begin(), it);
+                    
+                    if(position != M_BINDING_INDEX[filType]) {
+                        cout <<
+                        "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::BOUND));
+                }
+                else {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else{
+                cout <<
+                "Second species listed in a motor walking reaction must be bound. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST PRODUCT SPECIES MUST BE MOTOR
+            auto product = products[0];
+            if(product.find("MOTOR") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesMotor[filType].begin(), _chemData.speciesMotor[filType].end(), name);
+                int position = 0;
+                
+                if(name != species1) {
+                    cout <<
+                    "Motor species in reactants and products of motor walking reaction must be same. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+                
+                if((product.find("N+1") != string::npos && type != ReactionType::MOTORWALKINGFORWARD)) {
+                    
+                    cout <<
+                    "Motor walking reaction must have a direction (Check N and N+1 distinctions). Exiting."
+                    <<endl;
+                    exit(EXIT_FAILURE);
+                    
+                }
+                
+                if(it != _chemData.speciesMotor[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMotor[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MOTOR));
+                }
+                else {
+                    cout <<
+                    "A motor species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "Third species listed in a motor walking reaction must be motor. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //SECOND PRODUCT SPECIES MUST BE EMPTY SITE
+            product = products[1];
+            if(product.find("BOUND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesBound[filType].begin(), _chemData.speciesBound[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesBound[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesBound[filType].begin(), it);
+                    
+                    if(position != M_BINDING_INDEX[filType]) {
+                        cout <<
+                        "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::BOUND));
+                }
+                else {
+                    cout <<
+                    "A bound species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else{
+                cout <<
+                "Fourth species listed in a motor walking reaction must be bound. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //add reaction
+            if(type == ReactionType::MOTORWALKINGFORWARD)
+                _filRxnTemplates[filType].emplace_back(
+                new MotorWalkFTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            else {
+                _filRxnTemplates[filType].emplace_back(
+                new MotorWalkBTemplate(reactantTemplate, productTemplate, get<2>(r)));
+            }
+        }
+        
+        //set up reaction templates
+        for(auto &r: _chemData.agingReactions[filType]) {
+            
+            vector<tuple<int, SpeciesType>> reactantTemplate;
+            vector<tuple<int, SpeciesType>> productTemplate;
+            
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+            //read strings, and look up type
+            
+            //Checks on number of reactants, products
+            if(reactants.size() != AGINGREACTANTS ||
+               products.size() != AGINGPRODUCTS) {
+                cout << "Invalid aging reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST REACTANT SPECIES MUST BE FILAMENT, PLUS OR MINUS END
+            auto reactant = reactants[0];
+            //read strings, and look up type
+            if(reactant.find("FILAMENT") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesFilament[filType].begin(), _chemData.speciesFilament[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesFilament[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesFilament[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+                }
+                else {
+                    cout <<
+                    "A filament species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else if(reactant.find("PLUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesPlusEnd[filType].begin(), _chemData.speciesPlusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesPlusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesPlusEnd[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                }
+                else {
+                    cout <<
+                    "A plus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else if(reactant.find("MINUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesMinusEnd[filType].begin(), _chemData.speciesMinusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesMinusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMinusEnd[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                }
+                else {
+                    cout <<
+                    "A minus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else{
+                cout <<
+                "First species listed in an aging reaction must be filament. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST PRODUCT SPECIES MUST BE FILAMENT, PLUS, OR MINUS END
+            auto product = products[0];
+            //read strings, and look up type
+            if(product.find("FILAMENT") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesFilament[filType].begin(), _chemData.speciesFilament[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesFilament[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesFilament[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+                }
+                else {
+                    cout <<
+                    "A filament species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else if(product.find("PLUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesPlusEnd[filType].begin(), _chemData.speciesPlusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesPlusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesPlusEnd[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                }
+                else {
+                    cout <<
+                    "A plus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else if(product.find("MINUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = product.substr(0, product.find(":"));
+                auto it = find(_chemData.speciesMinusEnd[filType].begin(), _chemData.speciesMinusEnd[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesMinusEnd[filType].end()) {
+                    
+                    //get position of iterator
+                    position = distance(_chemData.speciesMinusEnd[filType].begin(), it);
+                    productTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                }
+                else {
+                    cout <<
+                    "A minus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else{
+                cout <<
+                "Second species listed in an aging reaction must be bound. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //add reaction
+            _filRxnTemplates[filType].emplace_back(new AgingTemplate(reactantTemplate, productTemplate, get<2>(r)));
+        }
+        
+        
+        //set up reaction templates
+        for(auto &r: _chemData.destructionReactions[filType]) {
+            
+            vector<tuple<int, SpeciesType>> reactantTemplate;
+            vector<tuple<int, SpeciesType>> productTemplate;
+            
+            vector<string> reactants = get<0>(r);
+            vector<string> products = get<1>(r);
+            //read strings, and look up type
+            
+            //Checks on number of reactants, products
+            if(reactants.size() != DESTRUCTIONREACTANTS ||
+               products.size() != DESTRUCTIONPRODUCTS ) {
+                cout << "Invalid destruction reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //FIRST SPECIES MUST BE PLUS END
+            auto reactant = reactants[0];
+            if(reactant.find("PLUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesPlusEnd[filType].begin(), _chemData.speciesPlusEnd[filType].end(), name);
+                
+                if(it != _chemData.speciesPlusEnd[filType].end()) {
+                    //get position of iterator
+                    int position = distance(_chemData.speciesPlusEnd[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::PLUSEND));
+                }
+                else {
+                    cout <<
+                    "A plus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "First species listed in a destruction reaction must be plus end. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //SECOND SPECIES MUST BE MINUS END
+            reactant = reactants[1];
+            if(reactant.find("MINUSEND") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesMinusEnd[filType].begin(), _chemData.speciesMinusEnd[filType].end(), name);
+                
+                if(it != _chemData.speciesMinusEnd[filType].end()) {
+                    //get position of iterator
+                    int position = distance(_chemData.speciesMinusEnd[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::MINUSEND));
+                }
+                else {
+                    cout <<
+                    "A minus end species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "Second species listed in a destruction reaction must be minus end. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            ///ALL PRODUCTS MUST BE BULK OR DIFFUSING
+            for (auto &product : products) {
+                
+                if(product.find("BULK") != string::npos) {
+                    
+                    //Look up species, make sure in list
+                    string name = product.substr(0, product.find(":"));
+                    auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
+                                      [name](tuple<string, int, double, string> element) {
+                                          return get<0>(element) == name ? true : false; });
+                    
+                    if(it == _chemData.speciesBulk.end()) {
+                        cout <<
+                        "A bulk species that was included in a reaction was not initialized. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    productTemplate.push_back(tuple<int, SpeciesType>(
+                    SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
+                }
+                
+                else if(product.find("DIFFUSING") != string::npos) {
+                    
+                    //Look up species, make sure in list
+                    string name = product.substr(0, product.find(":"));
+                    auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
+                                      [name](tuple<string, int, double, double, string, int> element) {
+                                          return get<0>(element) == name ? true : false; });
+                    if(it == _chemData.speciesDiffusing.end()) {
+                        cout <<
+                        "A diffusing species that was included in a reaction was not initialized. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                    productTemplate.push_back(tuple<int, SpeciesType>(
+                    SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
+                }
+                else {
+                    cout <<
+                    "Third species listed in a destruction reaction must be either bulk or diffusing. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            
+            //add reaction
+            _filRxnTemplates[filType].emplace_back(new DestructionTemplate(reactantTemplate, productTemplate, get<2>(r)));
+        }
+        
+        //set up reaction templates
+        for(auto &r: _chemData.severingReactions[filType]) {
+            
+            vector<tuple<int, SpeciesType>> reactantTemplate;
+            vector<tuple<int, SpeciesType>> productTemplate;
+            
+            string reactant = get<0>(r);
+            //read strings, and look up type
+            
+            
+            // SPECIES MUST BE FILAMENT
+            if(reactant.find("FILAMENT") != string::npos) {
+                
+                //look up species, make sure in list
+                string name = reactant.substr(0, reactant.find(":"));
+                auto it = find(_chemData.speciesFilament[filType].begin(), _chemData.speciesFilament[filType].end(), name);
+                int position = 0;
+                
+                if(it != _chemData.speciesFilament[filType].end()) {
+                    //get position of iterator
+                    position = distance(_chemData.speciesFilament[filType].begin(), it);
+                    reactantTemplate.push_back(tuple<int, SpeciesType>(position, SpeciesType::FILAMENT));
+                }
+                else {
+                    cout <<
+                    "A filament species that was included in a reaction was not initialized. Exiting."
+                    << endl;
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                cout <<
+                "Reactant species listed in a severing reaction must be filament. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            
+            //add reaction
+            _filRxnTemplates[filType].emplace_back(new SeveringTemplate(reactantTemplate, productTemplate, get<1>(r)));
+        }
     }
 }
 

@@ -182,9 +182,10 @@ void SystemParser::readChemParams() {
                 CParams.numBrancherSpecies = atof(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMBINDINGSITES") != string::npos) {
+        if (line.find("NUMFILAMENTS") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
+            
             if(lineVector.size() > 2) {
                 cout <<
                 "There was an error parsing input file at Chemistry parameters. Exiting."
@@ -192,7 +193,17 @@ void SystemParser::readChemParams() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CParams.numBindingSites = atof(lineVector[1].c_str());
+                CParams.numFilaments = atoi(lineVector[1].c_str());
+            }
+        }
+        
+        if (line.find("NUMBINDINGSITES") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numBindingSites.push_back(atoi(lineVector[i].c_str()));
             }
         }
         if (line.find("NUMMOTORHEADSMIN") != string::npos) {
@@ -225,17 +236,20 @@ void SystemParser::readChemParams() {
         
     }
     //Figure out the binding sites
-    int deltaBinding = SysParams::Geometry().cylinderIntSize /
-                       CParams.numBindingSites;
+    for(int i = 0; i < CParams.numBindingSites.size(); i++) {
     
-    int firstBindingSite = deltaBinding / 2 + 1;
-    int bindingCount = firstBindingSite;
+        int deltaBinding = SysParams::Geometry().cylinderIntSize[i] /
+                           CParams.numBindingSites[i];
     
-    //add all other binding sites
-    while(bindingCount < SysParams::Geometry().cylinderIntSize) {
+        int firstBindingSite = deltaBinding / 2 + 1;
+        int bindingCount = firstBindingSite;
+    
+        //add all other binding sites
+        while(bindingCount < SysParams::Geometry().cylinderIntSize[i]) {
         
-        CParams.bindingSites.push_back(bindingCount);
-        bindingCount += deltaBinding;
+            CParams.bindingSites[i].push_back(bindingCount);
+            bindingCount += deltaBinding;
+        }
     }
     
     //set system parameters
@@ -614,14 +628,10 @@ void SystemParser::readMechParams() {
         if (line.find("FSTRETCHINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.FStretchingK = atof(lineVector[1].c_str());
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.FStretchingK.push_back(atof((lineVector[i].c_str())));
             }
         }
 
@@ -629,27 +639,17 @@ void SystemParser::readMechParams() {
         else if (line.find("FBENDINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.FBendingK = atof((lineVector[1].c_str()));
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.FBendingK.push_back(atof((lineVector[i].c_str())));
             }
         }
         else if (line.find("FBENDINGTHETA") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.FBendingTheta = atof((lineVector[1].c_str()));
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.FBendingTheta.push_back(atof((lineVector[i].c_str())));
             }
         }
         
@@ -657,27 +657,17 @@ void SystemParser::readMechParams() {
         else if (line.find("FTWISTINGK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.FTwistingK = atof((lineVector[1].c_str()));
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.FTwistingK.push_back(atof((lineVector[i].c_str())));
             }
         }
         else if (line.find("FTWISTINGPHI") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.FTwistingPhi = atof((lineVector[1].c_str()));
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.FTwistingPhi.push_back(atof((lineVector[i].c_str())));
             }
         }
         
@@ -851,28 +841,18 @@ void SystemParser::readMechParams() {
         else if (line.find("VOLUMEK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.VolumeK = atof((lineVector[1].c_str()));
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.VolumeK.push_back(atof((lineVector[i].c_str())));
             }
         }
         
         else if (line.find("VOLUMECUTOFF") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Mechanics parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.VolumeCutoff = atof((lineVector[1].c_str()));
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.VolumeCutoff.push_back(atof((lineVector[i].c_str())));
             }
         }
         else {}
@@ -1053,17 +1033,11 @@ void SystemParser::readDyRateParams() {
         if (line.find("DFPOLYMERIZATIONLEN") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at dynamic rate parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dFilPolymerizationCharLength.push_back(
+                                  atof((lineVector[i].c_str())));
             }
-            else if (lineVector.size() == 2) {
-                DRParams.dFilPolymerizationCharLength =
-                          atof((lineVector[1].c_str()));
-            }
-            else {}
         }
 
         else if (line.find("DMUNBINDINGFORCE") != string::npos) {
@@ -1134,14 +1108,10 @@ DynamicRateTypes SystemParser::readDynamicRateTypes() {
         if (line.find("DFPOLYMERIZATIONTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at dynamic polymerization type. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                DRTypes.dFPolymerizationType = lineVector[1];
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRTypes.dFPolymerizationType.push_back(lineVector[i]);
             }
         }
         
@@ -1177,8 +1147,6 @@ DynamicRateTypes SystemParser::readDynamicRateTypes() {
     }
     return DRTypes;
 }
-
-
 
 
 BoundaryType SystemParser::readBoundaryType() {
@@ -1228,8 +1196,8 @@ void SystemParser::readGeoParams() {
     
     vector<double> gridTemp;
     vector<double> compartmentTemp;
-    double monomerSize = 0;
-    double cylinderSize = 0;
+    vector<double> monomerSize = {};
+    vector<double> cylinderSize = {};
     short nDim = 0;
     
     //find grid size lines
@@ -1271,24 +1239,21 @@ void SystemParser::readGeoParams() {
         else if(line.find("MONOMERSIZE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout << "A monomer size needs to be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    monomerSize.push_back(atof((lineVector[i].c_str())));
             }
-            else if (lineVector.size() == 2)
-                monomerSize = atof(lineVector[1].c_str());
             else {}
         }
         
         else if(line.find("CYLINDERSIZE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout << "A cylinder size needs to be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    cylinderSize.push_back(atof((lineVector[i].c_str())));
             }
-            else if (lineVector.size() == 2)
-                cylinderSize = atof(lineVector[1].c_str());
             else {}
         }
         
@@ -1311,19 +1276,30 @@ void SystemParser::readGeoParams() {
     GParams.cylinderSize = cylinderSize;
     GParams.monomerSize = monomerSize;
     
-#ifdef CHEMISTRY
-    if(cylinderSize / monomerSize < SysParams::Geometry().minCylinderIntSize) {
-        cout <<
-        "With chemistry, cylinder size specified is too short. Exiting."
-        << endl;
+    if(GParams.cylinderSize.size() != GParams.monomerSize.size()) {
+        
+        cout << "Must specify an equivalent number of cylinder and monomer sizes. Exiting."
+             << endl;
         exit(EXIT_FAILURE);
     }
+    
+    for(int i = 0; i < GParams.cylinderSize.size(); i++) {
+        
+#ifdef CHEMISTRY
+        if(cylinderSize[i] / monomerSize[i] < SysParams::Geometry().minCylinderIntSize) {
+            cout <<
+            "With chemistry, cylinder size specified is too short. Exiting."
+            << endl;
+            exit(EXIT_FAILURE);
+        }
 #endif
-    GParams.cylinderIntSize = int(cylinderSize / monomerSize);
-    
-    GParams.minCylinderSize =
-        SysParams::Geometry().minCylinderIntSize * GParams.monomerSize;
-    
+        GParams.cylinderIntSize.push_back(int(cylinderSize[i] / monomerSize[i]));
+        
+        GParams.minCylinderSize.push_back(
+        SysParams::Geometry().minCylinderIntSize * GParams.monomerSize[i]);
+        
+    }
+        
     if(gridTemp.size() >= 1) GParams.NX = gridTemp[0];
     if(gridTemp.size() >= 2) GParams.NY = gridTemp[1];
     if(gridTemp.size() >= 3) GParams.NZ = gridTemp[2];
@@ -1495,113 +1471,113 @@ ChemistryData ChemistryParser::readChemistryInput() {
         else if(line.find("SPECIESFILAMENT") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a filament species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.speciesFilament.push_back(lineVector[1]);
+            else if (lineVector.size() == 3)
+                chem.speciesFilament[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
             else {}
         }
         else if(line.find("SPECIESBOUND") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a filament bound species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.speciesBound.push_back(lineVector[1]);
+            else if (lineVector.size() == 3)
+                chem.speciesBound[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
             else {}
         }
         
         else if(line.find("SPECIESLINKER") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a filament linker species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.speciesLinker.push_back(lineVector[1]);
+            else if (lineVector.size() == 3)
+                chem.speciesLinker[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
             else {}
         }
         else if(line.find("SPECIESMOTOR") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a filament motor species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.speciesMotor.push_back(lineVector[1]);
+            else if (lineVector.size() == 3)
+                chem.speciesMotor[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
             else {}
         }
         else if(line.find("SPECIESBRANCHER") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a filament brancher species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.speciesBrancher.push_back(lineVector[1]);
+            else if (lineVector.size() == 3)
+                chem.speciesBrancher[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
             else {}
         }
         else if(line.find("SPECIESPLUSEND") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a filament plus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2) 
-                chem.speciesPlusEnd.push_back(lineVector[1]);
+            else if (lineVector.size() == 3)
+                chem.speciesPlusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
             else {}
         }
         else if(line.find("SPECIESMINUSEND") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a filament minus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.speciesMinusEnd.push_back(lineVector[1]);
+            else if (lineVector.size() == 3)
+                chem.speciesMinusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
             else {}
         }
         else if(line.find("BRANCHERBINDINGSITE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a brancher binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.B_BINDING_INDEX = lineVector[1];
+            else if (lineVector.size() == 3)
+                chem.B_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
         }
         else if(line.find("LINKERBINDINGSITE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a linker binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.L_BINDING_INDEX = lineVector[1];
+            else if (lineVector.size() == 3)
+                chem.L_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
         }
         
         else if(line.find("MOTORBINDINGSITE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  2) {
+            if(lineVector.size() !=  3) {
                 cout << "Error reading a motor binding site. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 2)
-                chem.M_BINDING_INDEX = lineVector[1];
+            else if (lineVector.size() == 3)
+                chem.M_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
         }
         
@@ -1669,10 +1645,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -1680,7 +1658,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.nucleationReactions.push_back(
+                chem.nucleationReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
             }
@@ -1698,10 +1676,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -1709,7 +1689,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.depolymerizationReactions.push_back(
+                chem.depolymerizationReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
@@ -1727,10 +1707,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     
                     if(*it != "+") reactants.push_back((*it));
                 }
@@ -1740,7 +1722,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+") products.push_back((*it));
                 }
                 
-                chem.polymerizationReactions.push_back(
+                chem.polymerizationReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
@@ -1756,11 +1738,13 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> products;
             
             vector<string> lineVector = split<string>(line);
+
+            int filType = atoi(lineVector[1].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -1768,7 +1752,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.linkerReactions.push_back(
+                chem.linkerReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double, double, double, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
@@ -1788,10 +1772,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -1799,12 +1785,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.motorReactions.push_back(
+                chem.motorReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double, double, double, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
-                                    atof(lineVector[lineVector.size() - 3].c_str()),
-                                    atof(lineVector[lineVector.size() - 2].c_str()),
-                                    atof(lineVector[lineVector.size() - 1].c_str())));
+                                      atof(lineVector[lineVector.size() - 3].c_str()),
+                                      atof(lineVector[lineVector.size() - 2].c_str()),
+                                      atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
             else {
@@ -1820,10 +1806,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -1831,7 +1819,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.motorWalkingReactions.push_back(
+                chem.motorWalkingReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
@@ -1849,10 +1837,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -1860,7 +1850,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.agingReactions.push_back(
+                chem.agingReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
@@ -1878,10 +1868,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -1889,7 +1881,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.destructionReactions.push_back(
+                chem.destructionReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
             }
@@ -1906,10 +1898,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -1917,12 +1911,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     if(*it != "+")  products.push_back((*it));
                 }
                 
-                chem.branchingReactions.push_back(
+                chem.branchingReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double, double, string, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
-                 atof(lineVector[lineVector.size() - 3].c_str()),
-                      lineVector[lineVector.size() - 2].c_str(),
-                 atof(lineVector[lineVector.size() - 1].c_str())));
+                                      atof(lineVector[lineVector.size() - 3].c_str()),
+                                           lineVector[lineVector.size() - 2].c_str(),
+                                      atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
                 cout << "Error reading a branching reaction. Exiting." << endl;
@@ -1934,12 +1928,14 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
+            int filType = atoi(lineVector[1].c_str());
+            
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "AT");
             if(arrowIt != lineVector.end()) {
                 
                 auto it = arrowIt + 1;
                 
-                chem.severingReactions.push_back(tuple<string, double>
+                chem.severingReactions[filType].push_back(tuple<string, double>
                 ((*it), atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {

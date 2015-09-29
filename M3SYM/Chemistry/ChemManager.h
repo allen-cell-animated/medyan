@@ -43,7 +43,8 @@ private:
     /// Helper functions. Names are pretty self-explanatory.
     void setupBindingSites();
     
-    void configCMonomer(); void initCMonomer(CMonomer* m, Compartment* c);
+    void configCMonomer();
+    void initCMonomer(CMonomer* m, short filamentType, Compartment* c);
     
     void genSpecies(Compartment& protoCompartment);
     
@@ -84,7 +85,9 @@ private:
     ChemistryData _chemData; ///<The chemistry data for the system
     
     /// A list of reactions to add to every new CCylinder
-    vector<unique_ptr<FilamentReactionTemplate>> _filRxnTemplates;
+    /// @note - is a 2D vector corresponding to different filament types
+    vector<vector<unique_ptr<FilamentReactionTemplate>>> _filRxnTemplates =
+    vector<vector<unique_ptr<FilamentReactionTemplate>>>(MAX_FILAMENTS);
 };
 
 

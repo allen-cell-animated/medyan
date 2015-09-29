@@ -34,25 +34,29 @@ private:
     //@{
     /// Species array
     SpeciesFilament** _speciesFilament;
-    SpeciesBound** _speciesBound;
+    SpeciesBound**    _speciesBound;
     //@}
+    
+    ///Filament type that this monomer is in
+    short _filamentType;
     
     //@{
     /// Species index vectors
     /// These index vectors are used to access the correct species in the actual
     /// species arrays. Each index in the species index vector corresponds to an
     /// offset for that species in the species array.
-    static vector<short> _speciesFilamentIndex;
-    static vector<short> _speciesBoundIndex;
+    /// @note - this is a 2D vector for different filament types.
+    static vector<vector<short>> _speciesFilamentIndex;
+    static vector<vector<short>> _speciesBoundIndex;
     //@}
     
-    ///Number of species for each type
-    static short _numFSpecies;
-    static short _numBSpecies;
+    ///Number of species for each filament type
+    static vector<short> _numFSpecies;
+    static vector<short> _numBSpecies;
     
 public:
     /// Constructor does nothing but memset arrays
-    CMonomer();
+    CMonomer(short filamentType);
     
     /// Default destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as

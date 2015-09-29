@@ -15,8 +15,8 @@
 
 double global_time;
 
-short B_BINDING_INDEX;
-short L_BINDING_INDEX;
-short M_BINDING_INDEX;
+vector<short> B_BINDING_INDEX = vector<short>(MAX_FILAMENTS);
+vector<short> L_BINDING_INDEX = vector<short>(MAX_FILAMENTS);
+vector<short> M_BINDING_INDEX = vector<short>(MAX_FILAMENTS);
 
-vector<short> BINDING_INDEX;
+vector<vector<short>> BINDING_INDEX = vector<vector<short>>(MAX_FILAMENTS);

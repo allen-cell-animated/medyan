@@ -77,6 +77,8 @@ struct ChemistryAlgorithm {
 };
 
 /// Struct to hold Species and Reaction information
+/// @note - all filament-related reactions and species are 2D vectors corresponding
+///         to the filament type specified in the input file.
 struct ChemistryData {
     
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
@@ -86,7 +88,8 @@ struct ChemistryData {
     vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
     
     /// Filament nucleation reaction
-    vector<tuple<vector<string>, vector<string>, double>> nucleationReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double>>> nucleationReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
     
     //@{
     /// Filament reactions
@@ -95,24 +98,30 @@ struct ChemistryData {
      *  string of reactants, string of products, and the reaction rate.
      */
     /// Polymerization reactions
-    vector<tuple<vector<string>, vector<string>, double>> polymerizationReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double>>> polymerizationReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
     
     /// Depolymerization reactions
-    vector<tuple<vector<string>, vector<string>, double>> depolymerizationReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double>>> depolymerizationReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
     
     /// Aging reactions
-    vector<tuple<vector<string>, vector<string>, double>> agingReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double>>> agingReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
     
     /// Destruction reactions
-    vector<tuple<vector<string>, vector<string>, double>> destructionReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double>>> destructionReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
     
     /// Branching reactions
     /// This reaction also contains the off rate, and a string
     /// specifying the nucleation zone and relevant distance parameter
-    vector<tuple<vector<string>, vector<string>, double, double, string, double>> branchingReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>>(MAX_FILAMENTS);
     
     /// Severing reactions
-    vector<tuple<string, double>> severingReactions = {};
+    vector<vector<tuple<string, double>>> severingReactions =
+    vector<vector<tuple<string, double>>>(MAX_FILAMENTS);
     //@}
     
     //@{
@@ -123,13 +132,16 @@ struct ChemistryData {
      *  range.
      */
     /// Linker reactions
-    vector<tuple<vector<string>, vector<string>, double, double, double, double>> linkerReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> linkerReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>>(MAX_FILAMENTS);
     /// MotorGhost reactions
-    vector<tuple<vector<string>, vector<string>, double, double, double, double>> motorReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>>(MAX_FILAMENTS);
     //@}
     
     /// MotorGhost walking reactions
-    vector<tuple<vector<string>, vector<string>, double>> motorWalkingReactions = {};
+    vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions =
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, release time, and CONST/REG qualifier
@@ -142,21 +154,21 @@ struct ChemistryData {
     
     //@{
     /// Filament species parsed
-    vector<string> speciesFilament = {};
-    vector<string> speciesPlusEnd  = {};
-    vector<string> speciesMinusEnd = {};
+    vector<vector<string>> speciesFilament = vector<vector<string>>(MAX_FILAMENTS);
+    vector<vector<string>> speciesPlusEnd  = vector<vector<string>>(MAX_FILAMENTS);
+    vector<vector<string>> speciesMinusEnd = vector<vector<string>>(MAX_FILAMENTS);
     
-    vector<string> speciesBound  = {};
-    vector<string> speciesLinker = {};
-    vector<string> speciesMotor  = {};
-    vector<string> speciesBrancher = {};
+    vector<vector<string>> speciesBound    = vector<vector<string>>(MAX_FILAMENTS);
+    vector<vector<string>> speciesLinker   = vector<vector<string>>(MAX_FILAMENTS);
+    vector<vector<string>> speciesMotor    = vector<vector<string>>(MAX_FILAMENTS);
+    vector<vector<string>> speciesBrancher = vector<vector<string>>(MAX_FILAMENTS);
     //@}
     
     //@{
     /// Binding sites parsed
-    string B_BINDING_INDEX = "";
-    string L_BINDING_INDEX = "";
-    string M_BINDING_INDEX = "";
+    vector<string> B_BINDING_INDEX = {};
+    vector<string> L_BINDING_INDEX = {};
+    vector<string> M_BINDING_INDEX = {};
     //@}
 };
 
@@ -212,7 +224,7 @@ struct MechanicsFFType {
 struct DynamicRateTypes {
     
     ///Polymerization rate changing
-    string dFPolymerizationType = "";
+    vector<string> dFPolymerizationType = {};
     
     ///Linker rate changing
     vector<string> dLUnbindingType = {};

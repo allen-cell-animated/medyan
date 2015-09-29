@@ -16,17 +16,17 @@
 
 #include "SysParams.h"
 
-vector<short> CMonomer::_speciesFilamentIndex;
-vector<short> CMonomer::_speciesBoundIndex;
+vector<vector<short>> CMonomer::_speciesFilamentIndex = vector<vector<short>>(MAX_FILAMENTS);
+vector<vector<short>> CMonomer::_speciesBoundIndex    = vector<vector<short>>(MAX_FILAMENTS);
 
-short CMonomer::_numFSpecies = 0;
-short CMonomer::_numBSpecies = 0;
+vector<short> CMonomer::_numFSpecies = vector<short>(MAX_FILAMENTS);
+vector<short> CMonomer::_numBSpecies = vector<short>(MAX_FILAMENTS);
 
 
-CMonomer::CMonomer() {
+CMonomer::CMonomer(short filamentType) : _filamentType(filamentType) {
     
-    _speciesFilament = new SpeciesFilament*[_numFSpecies]();
-    _speciesBound = new SpeciesBound*[_numBSpecies]();
+    _speciesFilament = new SpeciesFilament*[_numFSpecies[_filamentType]]();
+    _speciesBound = new SpeciesBound*[_numBSpecies[_filamentType]]();
 };
 
 CMonomer::~CMonomer() noexcept{
@@ -36,9 +36,11 @@ CMonomer::~CMonomer() noexcept{
 }
 
 
-CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
+CMonomer::CMonomer(const CMonomer& rhs, Compartment* c)
 
-    for(int i = 0; i < _numFSpecies; i++) {
+    : CMonomer(rhs._filamentType) {
+
+    for(int i = 0; i < _numFSpecies[_filamentType]; i++) {
         
         //clone and add to array
         SpeciesFilament* s = rhs._speciesFilament[i];
@@ -50,7 +52,7 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
     
     //For bound species, transfer the CBound (if any)
     
-    for(int i = 0; i < _numBSpecies; i++) {
+    for(int i = 0; i < _numBSpecies[_filamentType]; i++) {
         
         //clone and add to array
         SpeciesBound* s = rhs._speciesBound[i];
@@ -75,12 +77,12 @@ CMonomer::CMonomer(const CMonomer& rhs, Compartment* c) : CMonomer() {
 
 void CMonomer::print()
 {
-    for(int i = 0; i < _numFSpecies; i++) {
+    for(int i = 0; i < _numFSpecies[_filamentType]; i++) {
         SpeciesFilament* s = _speciesFilament[i];
         if(s != nullptr && s->getN() == 1)
             cout << s->getName();
     }
-    for(int i = 0; i < _numBSpecies; i++) {
+    for(int i = 0; i < _numBSpecies[_filamentType]; i++) {
         SpeciesBound* s = _speciesBound[i];
         if(s != nullptr && s->getN() == 1)
             cout << s->getName();
@@ -90,32 +92,32 @@ void CMonomer::print()
 //GETTERS
 
 SpeciesFilament* CMonomer::speciesFilament(int index) {
-    short offset = _speciesFilamentIndex[SPECIESFILAMENT];
+    short offset = _speciesFilamentIndex[_filamentType][SPECIESFILAMENT];
     return _speciesFilament[index + offset];
 }
 SpeciesFilament* CMonomer::speciesPlusEnd (int index) {
-    short offset = _speciesFilamentIndex[SPECIESPLUSEND];
+    short offset = _speciesFilamentIndex[_filamentType][SPECIESPLUSEND];
     return _speciesFilament[index + offset];
 }
 SpeciesFilament* CMonomer::speciesMinusEnd(int index) {
-    short offset = _speciesFilamentIndex[SPECIESMINUSEND];
+    short offset = _speciesFilamentIndex[_filamentType][SPECIESMINUSEND];
     return _speciesFilament[index + offset];
 }
 
 SpeciesBound* CMonomer::speciesBound(int index) {
-    short offset = _speciesBoundIndex[SPECIESBOUND];
+    short offset = _speciesBoundIndex[_filamentType][SPECIESBOUND];
     return _speciesBound[index + offset];
 }
 SpeciesBound* CMonomer::speciesLinker(int index) {
-    short offset = _speciesBoundIndex[SPECIESLINKER];
+    short offset = _speciesBoundIndex[_filamentType][SPECIESLINKER];
     return _speciesBound[index + offset];
 }
 SpeciesBound* CMonomer::speciesMotor(int index) {
-    short offset = _speciesBoundIndex[SPECIESMOTOR];
+    short offset = _speciesBoundIndex[_filamentType][SPECIESMOTOR];
     return _speciesBound[index + offset];
 }
 SpeciesBound* CMonomer::speciesBrancher(int index) {
-    short offset = _speciesBoundIndex[SPECIESBRANCHER];
+    short offset = _speciesBoundIndex[_filamentType][SPECIESBRANCHER];
     return _speciesBound[index + offset];
 }
 
@@ -124,7 +126,7 @@ SpeciesBound* CMonomer::speciesBrancher(int index) {
 
 short CMonomer::activeSpeciesFilament() {
     short numFilamentSpecies = SysParams::Chemistry().numFilamentSpecies;
-    short offset = _speciesFilamentIndex[SPECIESFILAMENT];
+    short offset = _speciesFilamentIndex[_filamentType][SPECIESFILAMENT];
     
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
@@ -134,7 +136,7 @@ short CMonomer::activeSpeciesFilament() {
 }
 short CMonomer::activeSpeciesPlusEnd() {
     short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies;
-    short offset = _speciesFilamentIndex[SPECIESPLUSEND];
+    short offset = _speciesFilamentIndex[_filamentType][SPECIESPLUSEND];
     
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
@@ -145,7 +147,7 @@ short CMonomer::activeSpeciesPlusEnd() {
 }
 short CMonomer::activeSpeciesMinusEnd() {
     short numMinusEndSpecies = SysParams::Chemistry().numMinusEndSpecies;
-    short offset = _speciesFilamentIndex[SPECIESMINUSEND];
+    short offset = _speciesFilamentIndex[_filamentType][SPECIESMINUSEND];
     
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
@@ -157,7 +159,7 @@ short CMonomer::activeSpeciesMinusEnd() {
 
 short CMonomer::activeSpeciesLinker() {
     short numLinkerSpecies = SysParams::Chemistry().numLinkerSpecies;
-    short offset = _speciesBoundIndex[SPECIESLINKER];
+    short offset = _speciesBoundIndex[_filamentType][SPECIESLINKER];
     
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
@@ -168,7 +170,7 @@ short CMonomer::activeSpeciesLinker() {
 }
 short CMonomer::activeSpeciesMotor() {
     short numMotorSpecies = SysParams::Chemistry().numMotorSpecies;
-    short offset = _speciesBoundIndex[SPECIESMOTOR];
+    short offset = _speciesBoundIndex[_filamentType][SPECIESMOTOR];
     
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
@@ -178,7 +180,7 @@ short CMonomer::activeSpeciesMotor() {
 }
 short CMonomer::activeSpeciesBrancher() {
     short numBrancherSpecies = SysParams::Chemistry().numBrancherSpecies;
-    short offset = _speciesBoundIndex[SPECIESBRANCHER];
+    short offset = _speciesBoundIndex[_filamentType][SPECIESBRANCHER];
     
     for(int i = 0; i < numBrancherSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
@@ -190,7 +192,7 @@ short CMonomer::activeSpeciesBrancher() {
 bool CMonomer::isConsistent() {
     
     //check all species between 0 and 1 inclusive
-    for(int i = 0; i < _numFSpecies; i++) {
+    for(int i = 0; i < _numFSpecies[_filamentType]; i++) {
         
         if(_speciesFilament[i]->getN() != 1 &&
            _speciesFilament[i]->getN() != 0) {
@@ -199,10 +201,8 @@ bool CMonomer::isConsistent() {
                  << _speciesFilament[i]->getN() << " and is at species index " << i << "." << endl;
             
             return false;
-            
         }
     }
-    
     //check filament species
     if(activeSpeciesFilament() != -1 &&
        (activeSpeciesPlusEnd() != -1 ||

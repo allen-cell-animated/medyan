@@ -118,7 +118,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     }
     //at least one bound
     if(CParams.numBoundSpecies < 1) {
-        cout << "Must provide at least one bound species, which is an empty bounding site. Exiting." << endl;
+        cout << "Must provide at least one bound species, which is an empty binding site. Exiting." << endl;
         return false;
     }
     
@@ -147,20 +147,20 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     }
     
     //check if binding sites are valid
-    if(chem.speciesBrancher.size() > 0 && chem.B_BINDING_INDEX == "") {
-        cout << "A brancher binding site must be set for brancher species. Exiting."
+    if(chem.speciesBrancher.size() != chem.B_BINDING_INDEX.size()) {
+        cout << "A brancher binding site must be set for every brancher species. Exiting."
              << endl;
         return false;
     }
     
-    if(chem.speciesLinker.size() > 0 && chem.L_BINDING_INDEX == "") {
-        cout << "A linker binding site must be set for linker species. Exiting."
+    if(chem.speciesLinker.size() != chem.L_BINDING_INDEX.size()) {
+        cout << "A linker binding site must be set for every linker species. Exiting."
         << endl;
         return false;
     }
     
-    if(chem.speciesMotor.size() > 0 && chem.M_BINDING_INDEX == "") {
-        cout << "A motor binding site must be set for motor species. Exiting."
+    if(chem.speciesMotor.size() != chem.M_BINDING_INDEX.size()) {
+        cout << "A motor binding site must be set for every motor species. Exiting."
         << endl;
         return false;
     }
@@ -173,16 +173,19 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     //check ff and associated parameters for consistency
     
     //FILAMENT
-    if(mech.FStretchingType != "" && MParams.FStretchingK == 0) {
-        cout << "Must set a filament stetching constant. Exiting." << endl;
+    if(mech.FStretchingType != "" &&
+       MParams.FStretchingK.size() != CParams.numFilaments) {
+        cout << "Must set a filament stetching constant for all filaments. Exiting." << endl;
         return false;
     }
-    if(mech.FBendingType != "" && MParams.FBendingK == 0) {
-        cout << "Must set a filament bending constant. Exiting." << endl;
+    if(mech.FBendingType != "" &&
+       MParams.FBendingK.size() != CParams.numFilaments) {
+        cout << "Must set a filament bending constant for all filaments. Exiting." << endl;
         return false;
     }
-    if(mech.FTwistingType != "" && MParams.FTwistingK == 0) {
-        cout << "Must set a filament twisting constant. Exiting." << endl;
+    if(mech.FTwistingType != "" &&
+       MParams.FTwistingK.size() != CParams.numFilaments) {
+        cout << "Must set a filament twisting constant for all filaments. Exiting." << endl;
         return false;
     }
     
@@ -290,12 +293,14 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     }
     
     //VOLUME
-    if(mech.VolumeFFType != "" && MParams.VolumeK == 0) {
-        cout << "Must set a volume constant. Exiting." << endl;
+    if(mech.VolumeFFType != "" &&
+       MParams.VolumeK.size() != CParams.numFilaments) {
+        cout << "Must set a volume constant for every filament type. Exiting." << endl;
         return false;
     }
-    if(mech.VolumeFFType != "" && MParams.VolumeCutoff == 0) {
-        cout << "Must set a volume cutoff. Exiting." << endl;
+    if(mech.VolumeFFType != "" &&
+       MParams.VolumeCutoff.size() != CParams.numFilaments) {
+        cout << "Must set a volume cutoff for all filaments. Exiting." << endl;
         return false;
     }
     
@@ -335,6 +340,13 @@ bool SysParams::checkGeoParameters() {
 bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
     
     //check types match number of species
+    if(dy.dFPolymerizationType.size() != CParams.numFilaments &&
+       !dy.dFPolymerizationType.empty()) {
+        cout << "Number of filament dynamic rate polymerization forms must" <<
+                " match the number of filaments. Exiting." << endl;
+        return false;
+    }
+    
     if(dy.dLUnbindingType.size() != CParams.numLinkerSpecies &&
        !dy.dLUnbindingType.empty()) {
         cout << "Number of linker dynamic rate unbinding forms must" <<
@@ -356,8 +368,9 @@ bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
     }
     
     //now check parameters
-    if(dy.dFPolymerizationType != "" && DRParams.dFilPolymerizationCharLength == 0) {
-        cout << "Must set a dynamic rate polymerization length. Exiting." << endl;
+    if(dy.dFPolymerizationType.size() != SysParams::DynamicRates().
+                                         dFilPolymerizationCharLength.size()) {
+        cout << "Must set a dynamic rate polymerization length for all filaments. Exiting." << endl;
         return false;
     }
     

@@ -25,11 +25,11 @@ struct MechParams {
     
     //@{
     /// Filament parameter
-    double FStretchingK  = 0;
-    double FBendingK     = 0;
-    double FBendingTheta = 0;
-    double FTwistingK    = 0;
-    double FTwistingPhi  = 0;
+    vector<double> FStretchingK  = {};
+    vector<double> FBendingK     = {};
+    vector<double> FBendingTheta = {};
+    vector<double> FTwistingK    = {};
+    vector<double> FTwistingPhi  = {};
     //@}
     
     //@{
@@ -62,8 +62,8 @@ struct MechParams {
     
     //@{
     /// Volume parameter
-    double VolumeK = 0;
-    double VolumeCutoff = 0;
+    vector<double> VolumeK = {};
+    vector<double> VolumeCutoff = {};
     //@}
 };
 
@@ -87,8 +87,11 @@ struct ChemParams {
     short numBrancherSpecies = 0;
     //@}
     
+    /// Number of filaments
+    short numFilaments = 0;
+    
     /// Number of binding sites per cylinder
-    short numBindingSites = 0;
+    vector<short> numBindingSites = {};
     
     //@{
     ///Extra motor parameters
@@ -99,13 +102,13 @@ struct ChemParams {
     //@}
     
     /// Binding sites on filaments
-    vector<short> bindingSites = {};
+    vector<vector<short>> bindingSites = {};
     
     //@{
     /// Positions of all bound molecules in species vectors
-    short brancherBoundIndex = 0;
-    short motorBoundIndex = 0;
-    short linkerBoundIndex = 0;
+    vector<short> brancherBoundIndex = {};
+    vector<short> motorBoundIndex = {};
+    vector<short> linkerBoundIndex = {};
     //@}
 };
 
@@ -126,18 +129,16 @@ struct GeoParams {
     
     double largestCompartmentSide = 0;
     
-    double monomerSize = 0;
+    vector<double> monomerSize = {};
     
-    int cylinderIntSize = 0;
-    double cylinderSize = 0;
+    vector<int> cylinderIntSize = {};
+    vector<double> cylinderSize = {};
+    
+    vector<double> minCylinderSize = {};
     
     /// Minimum monomer length of a cylinder is preset
     int minCylinderIntSize = 3;
-    
-    double minCylinderSize = 0;
     //@}
-    
-    
 };
 
 /// Struct to hold Boundary parameters for the system
@@ -168,7 +169,7 @@ struct BoundParams {
 struct DyRateParams {
     
     /// Option for dynamic polymerization rate of filaments
-    double dFilPolymerizationCharLength = 0.0;
+    vector<double> dFilPolymerizationCharLength = {};
     
     /// Option for dynamic unbinding rate of linkers
     vector<double> dLinkerUnbindingCharLength = {};
