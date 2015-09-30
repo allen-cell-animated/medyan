@@ -67,6 +67,8 @@ protected:
     short _boundInt; ///< Integer index in CMonomer of bound chemical value
     string _boundName; ///< String name of bound chemical value
     
+    short _filamentType; ///< The filament type to operate on
+    
     Species* _bindingSpecies; ///< The binding species that this manager tracks.
                               ///< Resposible for all copy number changes
     
@@ -107,10 +109,11 @@ protected:
 public:
     FilamentBindingManager(ReactionBase* reaction,
                            Compartment* compartment,
-                           short boundInt, string boundName)
+                           short boundInt, string boundName,
+                           short filamentType)
     
     : _bindingReaction(reaction), _compartment(compartment),
-      _boundInt(boundInt), _boundName(boundName) {
+      _boundInt(boundInt), _boundName(boundName), _filamentType(filamentType) {
     
 #if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
         cout << "Any filament binding reaction relies on reaction and species signaling. Please"
@@ -170,7 +173,9 @@ private:
 public:
     BranchingManager(ReactionBase* reaction,
                      Compartment* compartment,
-                     short boundInt, string boundName,
+                     short boundInt,
+                     string boundName,
+                     short filamentType,
                      NucleationZoneType zone = NucleationZoneType::ALL,
                      double nucleationDistance = numeric_limits<double>::infinity());
     ~BranchingManager() {}
@@ -235,7 +240,9 @@ private:
 public:
     LinkerBindingManager(ReactionBase* reaction,
                          Compartment* compartment,
-                         short boundInt, string boundName,
+                         short boundInt,
+                         string boundName,
+                         short filamentType,
                          float rMax, float rMin);
     
     ~LinkerBindingManager() {}
@@ -306,7 +313,9 @@ private:
 public:
     MotorBindingManager(ReactionBase* reaction,
                         Compartment* compartment,
-                        short boundInt, string boundName,
+                        short boundInt,
+                        string boundName,
+                        short filamentType,
                         float rMax, float rMin);
     
     ~MotorBindingManager() {}

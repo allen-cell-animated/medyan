@@ -321,7 +321,9 @@ struct BranchingCallback {
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
         
-        double pos = double(get<1>(site)) / SysParams::Geometry().cylinderIntSize;
+        short filType = c1->getFilament()->getType();
+        
+        double pos = double(get<1>(site)) / SysParams::Geometry().cylinderIntSize[filType];
         
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
@@ -354,7 +356,7 @@ struct BranchingCallback {
         double l = 10.0;
         double t = 1.22;
 #endif
-        double s = SysParams::Geometry().monomerSize;
+        double s = SysParams::Geometry().monomerSize[filType];
         
         auto branchPosDir = branchProjection(n, p, l, s, t);
         auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
@@ -422,8 +424,10 @@ struct LinkerBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
+        short filType = c1->getFilament()->getType();
+        
         // Create a linker
-        int cylinderSize = SysParams::Geometry().cylinderIntSize;
+        int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
         
         double pos1 = double(get<1>(site[0])) / cylinderSize;
         double pos2 = double(get<1>(site[1])) / cylinderSize;
@@ -487,8 +491,10 @@ struct MotorBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
+        short filType = c1->getFilament()->getType();
+        
         // Create a motor
-        int cylinderSize = SysParams::Geometry().cylinderIntSize;
+        int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
         
         double pos1 = double(get<1>(site[0])) / cylinderSize;
         double pos2 = double(get<1>(site[1])) / cylinderSize;
@@ -539,10 +545,12 @@ struct MotorWalkingCallback {
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
         
+        short filType = _c->getFilament()->getType();
+        
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
-        int cylinderSize = SysParams::Geometry().cylinderIntSize;
+        int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
         
@@ -586,10 +594,12 @@ struct MotorMovingCylinderCallback {
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
         
+        short filType = _oldC->getFilament()->getType();
+        
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
-        int cylinderSize = SysParams::Geometry().cylinderIntSize;
+        int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
         
@@ -599,7 +609,6 @@ struct MotorMovingCylinderCallback {
         //reset the associated reactions
         m->updateReactionRates();
 #endif
-        
     }
 };
 
@@ -615,17 +624,21 @@ struct FilamentCreationCallback {
     short _filament;
     //@}
 
+    ///Filament type to create
+    short _filType;
+    
     Compartment* _compartment; ///< compartment to put this filament in
     SubSystem* _ps; ///< Ptr to the subsystem
     
     FilamentCreationCallback(short plusEnd,
                              short minusEnd,
                              short filament,
+                             short filType,
                              SubSystem* ps,
                              Compartment* c = nullptr)
     
         : _plusEnd(plusEnd), _minusEnd(minusEnd), _filament(filament),
-          _compartment(c), _ps(ps) {}
+          _filType(filType), _compartment(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
 
@@ -651,7 +664,7 @@ struct FilamentCreationCallback {
             normalize(direction);
             
             auto npp = nextPointProjection(position,
-                SysParams::Geometry().cylinderSize, direction);
+            SysParams::Geometry().cylinderSize[_filType], direction);
             
             //check if within boundary
             if(_ps->getBoundary()->within(position) &&
@@ -660,7 +673,7 @@ struct FilamentCreationCallback {
         }
         
         //create filament, set up ends and filament species
-        Filament* f = _ps->addTrackable<Filament>(_ps, position, direction, true, false);
+        Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction,  true, false);
         
         //initialize the nucleation
         f->nucleate(_plusEnd, _filament, _minusEnd);

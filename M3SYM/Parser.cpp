@@ -1404,8 +1404,10 @@ ChemistryData ChemistryParser::readChemistryInput() {
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    ChemistryData chem;
-    string line;
+    ///To keep track of duplicate names
+    vector<string> allSpeciesNames;
+    
+    ChemistryData chem; string line;
 
     while(getline(_inputFile, line)) {
         
@@ -1425,6 +1427,14 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     cout << "Option for bulk species not valid. Exiting." << endl;
                     cout << lineVector[4] << endl;
                     exit(EXIT_FAILURE);
+                }
+
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
                 }
                 
                 chem.speciesBulk.push_back(tuple<string, int, double, string>
@@ -1448,6 +1458,14 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     exit(EXIT_FAILURE);
                 }
                 
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
                 chem.speciesDiffusing.push_back(tuple<string, int, double, double, string, int>
                     (lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
@@ -1459,6 +1477,14 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     
                     cout << "Not enough arguments for a non REG-qualified diffusing species. Exiting." << endl;
                     exit(EXIT_FAILURE);
+                }
+                
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
                 }
                 
                 chem.speciesDiffusing.push_back(tuple<string, int, double, double, string, int>
@@ -1475,8 +1501,19 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 cout << "Error reading a filament species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3)
+            else if (lineVector.size() == 3) {
+                
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
                 chem.speciesFilament[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+                
+            }
             else {}
         }
         else if(line.find("SPECIESBOUND") != string::npos) {
@@ -1486,8 +1523,18 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 cout << "Error reading a filament bound species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3)
+            else if (lineVector.size() == 3) {
+                
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
                 chem.speciesBound[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+            }
             else {}
         }
         
@@ -1498,8 +1545,18 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 cout << "Error reading a filament linker species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3)
+            else if (lineVector.size() == 3) {
+                
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
                 chem.speciesLinker[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+            }
             else {}
         }
         else if(line.find("SPECIESMOTOR") != string::npos) {
@@ -1509,8 +1566,18 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 cout << "Error reading a filament motor species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3)
+            else if (lineVector.size() == 3) {
+                
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
                 chem.speciesMotor[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+            }
             else {}
         }
         else if(line.find("SPECIESBRANCHER") != string::npos) {
@@ -1520,8 +1587,18 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 cout << "Error reading a filament brancher species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3)
+            else if (lineVector.size() == 3) {
+            
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
                 chem.speciesBrancher[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+            }
             else {}
         }
         else if(line.find("SPECIESPLUSEND") != string::npos) {
@@ -1531,8 +1608,18 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 cout << "Error reading a filament plus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3)
+            else if (lineVector.size() == 3) {
+                
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
                 chem.speciesPlusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+            }
             else {}
         }
         else if(line.find("SPECIESMINUSEND") != string::npos) {
@@ -1542,8 +1629,18 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 cout << "Error reading a filament minus end species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3)
+            else if (lineVector.size() == 3) {
+                
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
                 chem.speciesMinusEnd[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+            }
             else {}
         }
         else if(line.find("BRANCHERBINDINGSITE") != string::npos) {

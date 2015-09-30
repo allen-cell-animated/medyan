@@ -365,40 +365,43 @@ void Chemistry::print(int step) {
         _outputFile << name << ":BULK " << copyNum << endl;
     }
     
-    for(auto sf : _chemData.speciesFilament) {
-        
-        auto copyNum = Filament::countSpecies(sf);
-        _outputFile << sf << ":FILAMENT " << copyNum << endl;
-    }
+    for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
-    for(auto sp : _chemData.speciesPlusEnd) {
+        for(auto sf : _chemData.speciesFilament[filType]) {
+            
+            auto copyNum = Filament::countSpecies(sf);
+            _outputFile << sf << ":FILAMENT " << copyNum << endl;
+        }
         
-        auto copyNum = Filament::countSpecies(sp);
-        _outputFile << sp << ":PLUSEND " << copyNum << endl;
-    }
-    
-    for(auto sm : _chemData.speciesMinusEnd) {
+        for(auto sp : _chemData.speciesPlusEnd[filType]) {
+            
+            auto copyNum = Filament::countSpecies(sp);
+            _outputFile << sp << ":PLUSEND " << copyNum << endl;
+        }
         
-        auto copyNum = Filament::countSpecies(sm);
-        _outputFile << sm << ":MINUSEND " << copyNum << endl;
-    }
-    
-    for(auto sl : _chemData.speciesLinker) {
+        for(auto sm : _chemData.speciesMinusEnd[filType]) {
+            
+            auto copyNum = Filament::countSpecies(sm);
+            _outputFile << sm << ":MINUSEND " << copyNum << endl;
+        }
         
-        auto copyNum = Linker::countSpecies(sl);
-        _outputFile << sl << ":LINKER " << copyNum << endl;
-    }
+        for(auto sl : _chemData.speciesLinker[filType]) {
+            
+            auto copyNum = Linker::countSpecies(sl);
+            _outputFile << sl << ":LINKER " << copyNum << endl;
+        }
 
-    for(auto sm : _chemData.speciesMotor) {
+        for(auto sm : _chemData.speciesMotor[filType]) {
+            
+            auto copyNum = MotorGhost::countSpecies(sm);
+            _outputFile << sm << ":MOTOR " << copyNum << endl;
+        }
         
-        auto copyNum = MotorGhost::countSpecies(sm);
-        _outputFile << sm << ":MOTOR " << copyNum << endl;
-    }
-    
-    for(auto sb : _chemData.speciesBrancher) {
-        
-        auto copyNum = MotorGhost::countSpecies(sb);
-        _outputFile << sb << ":BRANCHER " << copyNum << endl;
+        for(auto sb : _chemData.speciesBrancher[filType]) {
+            
+            auto copyNum = MotorGhost::countSpecies(sb);
+            _outputFile << sb << ":BRANCHER " << copyNum << endl;
+        }
     }
     
     _outputFile <<endl;

@@ -18,6 +18,7 @@
 #include "ChemManager.h"
 #include "ChemRNode.h"
 
+#include "Filament.h"
 #include "Bead.h"
 
 #include "GController.h"
@@ -192,9 +193,11 @@ void Cylinder::updateReactionRates() {
 
 bool Cylinder::isFullLength() {
     
+    short filType = getFilament()->getType()
+    
 #ifdef MECHANICS
     return areSame(_mCylinder->getEqLength(),
-                   SysParams::Geometry().cylinderSize);
+                   SysParams::Geometry().cylinderSize[filType]);
 #else
     return true;
 #endif

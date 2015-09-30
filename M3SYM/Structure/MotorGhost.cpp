@@ -64,9 +64,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
         
         exit(EXIT_FAILURE);
     }
+    short filType = c1->getFilament()->getType();
           
-    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
-    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
+    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize[filType]);
+    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize[filType]);
           
     //set number of heads by picking random int between maxheads and minheads
     _numHeads = randomInteger(
@@ -251,10 +252,11 @@ void MotorGhost::moveMotorHead(Cylinder* c,
         if(shift > 0) _position2 += shift;
         else _position2 -= shift;
     }
+    short filType = c->getFilament()->getType();
     
 #ifdef CHEMISTRY
-    short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize);
-    short newpos = int (newPosition * SysParams::Geometry().cylinderIntSize);
+    short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize[filType]);
+    short newpos = int (newPosition * SysParams::Geometry().cylinderIntSize[filType]);
     
     _cMotorGhost->moveMotorHead(c->getCCylinder(), oldpos, newpos,
                                 _motorType, boundType, ps);
@@ -278,10 +280,11 @@ void MotorGhost::moveMotorHead(Cylinder* oldC,
         _position2 = newPosition;
         _c2 = newC;
     }
+    short filType = _c1->getFilament()->getType();
     
 #ifdef CHEMISTRY
-    short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize);
-    short newpos = int (newPosition * SysParams::Geometry().cylinderIntSize);
+    short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize[filType]);
+    short newpos = int (newPosition * SysParams::Geometry().cylinderIntSize[filType]);
     
     _cMotorGhost->moveMotorHead(oldC->getCCylinder(), newC->getCCylinder(),
                                 oldpos, newpos, _motorType, boundType, ps);

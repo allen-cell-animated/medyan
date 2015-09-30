@@ -21,6 +21,8 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
 
     : CBound(c, cc1, cc2, position1, position2) {
     
+
+        
     //Find species on cylinder that should be marked
     SpeciesBound* sm1 = _cc1->getCMonomer(_position1)->speciesMotor(motorType);
     SpeciesBound* sm2 = _cc2->getCMonomer(_position2)->speciesMotor(motorType);

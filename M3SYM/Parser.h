@@ -288,6 +288,7 @@ public:
     
     //@{
     /// Parameter parser. Reads input directly into system parameters
+    /// @note - does not check for correctness and consistency here.
     void readMechParams();
     void readChemParams();
     void readGeoParams();
@@ -324,6 +325,7 @@ public:
     
     /// Reads filament input file. Returns a vector of Filament positions,
     /// all containing starting and ending points.
+    /// @note - Does not check for coordinate correctness.
     vector<vector<vector<double>>> readFilaments();
 };
 
@@ -336,6 +338,8 @@ public:
     
     /// Reads chemical reactions and species from input file. Returns a
     /// ChemistryData struct containing this data
+    /// @note - this does not check for consistency and correctness, the only
+    ///         sanity check here is that there are no duplicate species names.
     ChemistryData readChemistryInput();
 };
 

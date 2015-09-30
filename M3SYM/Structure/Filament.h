@@ -44,6 +44,8 @@ class Bead;
 class Filament : public Trackable {
 
 private:
+    short _filType; ///< Filament type
+    
     deque<Cylinder*> _cylinderVector; ///< Vector of cylinders;
     SubSystem* _subSystem; ///< SubSystem pointer
     
