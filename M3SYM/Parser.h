@@ -36,8 +36,8 @@ struct OutputTypes {
     bool birthTimes = false;
     /// Forces
     bool forces = false;
-    /// Stresses
-    bool stresses = false;
+    /// Tensions
+    bool tensions = false;
     /// Chemistry
     bool chemistry = false;
     //@}
@@ -64,11 +64,9 @@ struct ChemistryAlgorithm {
     //@{
     /// User can specify either the total number of chemical steps to perform,
     /// or the total run time of the simulation.
-    int numTotalSteps = 0;
-    double runTime = 0.0;
+    int numTotalSteps = 0; double runTime = 0.0;
     
-    int numStepsPerSnapshot = 0;
-    double snapshotTime = 0;
+    int numStepsPerSnapshot = 0; double snapshotTime = 0.0;
     //@}
     
     int numChemSteps = 0; ///< Specifying number of chemical steps at a time
@@ -89,7 +87,7 @@ struct ChemistryData {
     
     /// Filament nucleation reaction
     vector<vector<tuple<vector<string>, vector<string>, double>>> nucleationReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
     
     //@{
     /// Filament reactions
@@ -99,29 +97,29 @@ struct ChemistryData {
      */
     /// Polymerization reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> polymerizationReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
     
     /// Depolymerization reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> depolymerizationReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
     
     /// Aging reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> agingReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
     
     /// Destruction reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> destructionReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
     
     /// Branching reactions
     /// This reaction also contains the off rate, and a string
     /// specifying the nucleation zone and relevant distance parameter
     vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>>(MAX_FILAMENT_TYPES);
     
     /// Severing reactions
     vector<vector<tuple<string, double>>> severingReactions =
-    vector<vector<tuple<string, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<string, double>>>(MAX_FILAMENT_TYPES);
     //@}
     
     //@{
@@ -133,15 +131,15 @@ struct ChemistryData {
      */
     /// Linker reactions
     vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> linkerReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>>(MAX_FILAMENT_TYPES);
     /// MotorGhost reactions
     vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>>(MAX_FILAMENT_TYPES);
     //@}
     
     /// MotorGhost walking reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENTS);
+    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, release time, and CONST/REG qualifier
@@ -154,21 +152,21 @@ struct ChemistryData {
     
     //@{
     /// Filament species parsed
-    vector<vector<string>> speciesFilament = vector<vector<string>>(MAX_FILAMENTS);
-    vector<vector<string>> speciesPlusEnd  = vector<vector<string>>(MAX_FILAMENTS);
-    vector<vector<string>> speciesMinusEnd = vector<vector<string>>(MAX_FILAMENTS);
+    vector<vector<string>> speciesFilament = vector<vector<string>>(MAX_FILAMENT_TYPES);
+    vector<vector<string>> speciesPlusEnd  = vector<vector<string>>(MAX_FILAMENT_TYPES);
+    vector<vector<string>> speciesMinusEnd = vector<vector<string>>(MAX_FILAMENT_TYPES);
     
-    vector<vector<string>> speciesBound    = vector<vector<string>>(MAX_FILAMENTS);
-    vector<vector<string>> speciesLinker   = vector<vector<string>>(MAX_FILAMENTS);
-    vector<vector<string>> speciesMotor    = vector<vector<string>>(MAX_FILAMENTS);
-    vector<vector<string>> speciesBrancher = vector<vector<string>>(MAX_FILAMENTS);
+    vector<vector<string>> speciesBound    = vector<vector<string>>(MAX_FILAMENT_TYPES);
+    vector<vector<string>> speciesLinker   = vector<vector<string>>(MAX_FILAMENT_TYPES);
+    vector<vector<string>> speciesMotor    = vector<vector<string>>(MAX_FILAMENT_TYPES);
+    vector<vector<string>> speciesBrancher = vector<vector<string>>(MAX_FILAMENT_TYPES);
     //@}
     
     //@{
     /// Binding sites parsed
-    vector<string> B_BINDING_INDEX = {};
-    vector<string> L_BINDING_INDEX = {};
-    vector<string> M_BINDING_INDEX = {};
+    vector<string> B_BINDING_INDEX = vector<string>(MAX_FILAMENT_TYPES);
+    vector<string> L_BINDING_INDEX = vector<string>(MAX_FILAMENT_TYPES);
+    vector<string> M_BINDING_INDEX = vector<string>(MAX_FILAMENT_TYPES);
     //@}
 };
 
@@ -176,7 +174,6 @@ struct ChemistryData {
 struct BoundaryType {
     
     string boundaryShape = "";
-    
     string boundaryMove = "";
 };
 
@@ -252,6 +249,8 @@ struct FilamentSetup {
     int numFilaments = 0;
     ///Filament length, in number of cylinders
     int filamentLength = 1;
+    ///Filament type to create
+    short filamentType = 0;
 };
 
 /// A general parser
@@ -323,10 +322,10 @@ public:
     FilamentParser(string inputFileName) : Parser(inputFileName) {}
     ~FilamentParser() {}
     
-    /// Reads filament input file. Returns a vector of Filament positions,
-    /// all containing starting and ending points.
+    /// Reads filament input file. Returns a vector of tuples containing
+    /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-    vector<vector<vector<double>>> readFilaments();
+    vector<tuple<short, vector<double>, vector<double>>> readFilaments();
 };
 
 /// Used to parse all chemical information, initialized by the Controller.

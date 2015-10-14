@@ -41,6 +41,9 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool runtime) {
     for(auto &comp : compartments) {
         for(auto &ncylinder : comp->getCylinders()) {
             
+            //Don't add different types of cylinders for now.
+            if(cylinder->getFilamentType() != ncylinder->getFilamentType()) continue;
+            
             //Don't add the same cylinder!
             if(cylinder == ncylinder) continue;
             

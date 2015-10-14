@@ -49,7 +49,7 @@ extern vector<short> M_BINDING_INDEX;
 extern vector<vector<short>> BINDING_INDEX;
 
 ///Num filaments maximum
-#define MAX_FILAMENTS 10
+#define MAX_FILAMENT_TYPES 10
 
 //@{
 /// Constant Species index identifiers

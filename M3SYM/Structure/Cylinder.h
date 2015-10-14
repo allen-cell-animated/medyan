@@ -75,7 +75,7 @@ private:
     static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
     
     ///For dynamic polymerization rate
-    static FilamentRateChanger* _polyChanger;
+    static vector<FilamentRateChanger*> _polyChanger;
                                        
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
@@ -109,6 +109,9 @@ public:
     /// Set parent
     void setFilament(Filament* pf) {_pFilament = pf;}
     
+    /// Get filament type
+    short getFilamentType();
+                                       
     //@{
     /// Get beads
     Bead* getFirstBead() {return _b1;}

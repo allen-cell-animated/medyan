@@ -53,6 +53,9 @@ void Controller::initialize(string inputFile,
                             string inputDirectory,
                             string outputDirectory) {
     
+    ///Seed simple rand generation for small tasks
+    srand(time(NULL));
+    
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
     cout << "If dynamic rates is turned on, chemistry and mechanics must be "
@@ -77,12 +80,12 @@ void Controller::initialize(string inputFile,
     string snapName   = _outputDirectory + "snapshot.traj";
     string birthName  = _outputDirectory + "birthtimes.traj";
     string forceName  = _outputDirectory + "forces.traj";
-    string stressName = _outputDirectory + "stresses.traj";
+    string tensionName = _outputDirectory + "tensions.traj";
     
     if(oTypes.basicSnapshot) _outputs.push_back(new BasicSnapshot(snapName));
     if(oTypes.birthTimes)    _outputs.push_back(new BirthTimes(birthName));
     if(oTypes.forces)        _outputs.push_back(new Forces(forceName));
-    if(oTypes.stresses)      _outputs.push_back(new Stresses(stressName));
+    if(oTypes.tensions)      _outputs.push_back(new Tensions(tensionName));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -264,7 +267,8 @@ void Controller::initialize(string inputFile,
     
     //Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
-    vector<vector<vector<double>>> filamentData;
+    vector<tuple<short, vector<double>, vector<double>>> filamentData;
+    
     cout << "---" << endl;
     cout << "Initializing filaments...";
     
@@ -272,26 +276,42 @@ void Controller::initialize(string inputFile,
         FilamentParser fp(_inputDirectory + FSetup.inputFile);
         filamentData = fp.readFilaments();
     }
-    else {
-        FilamentInitializer* fInit = new RandomFilamentDist();
-        filamentData = fInit->createFilaments(_subSystem->getBoundary(),
-                                              FSetup.numFilaments,
-                                              FSetup.filamentLength);
-        delete fInit;
-    }
+    
+    //add other filaments if specified
+    
+    FilamentInitializer* fInit = new RandomFilamentDist();
+    
+    auto filamentDataGen = fInit->createFilaments(_subSystem->getBoundary(),
+                                                  FSetup.numFilaments,
+                                                  FSetup.filamentType,
+                                                  FSetup.filamentLength);
+    filamentData.insert(filamentData.end(), filamentDataGen.begin(), filamentDataGen.end());
+    delete fInit;
+    
     //add filaments
     for (auto it: filamentData) {
         
-        double d = twoPointDistance(it[0], it[1]);
-        vector<double> tau = twoPointDirection(it[0], it[1]);
+        auto coord1 = get<1>(it);
+        auto coord2 = get<2>(it);
+        auto type = get<0>(it);
+        
+        if(type >= SysParams::Chemistry().numFilaments) {
+            cout << "Filament data specified contains an invalid filament type. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        vector<vector<double>> coords = {coord1, coord2};
+        
+        double d = twoPointDistance(coord1, coord2);
+        vector<double> tau = twoPointDirection(coord1, coord2);
 
-        int numSegment = d / SysParams::Geometry().cylinderSize;
+        int numSegment = d / SysParams::Geometry().cylinderSize[type];
 
         // check how many segments can fit between end-to-end of the filament
         if (numSegment == 0)
-            _subSystem->addTrackable<Filament>(_subSystem, it, 2);
+            _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2);
         else
-            _subSystem->addTrackable<Filament>(_subSystem, it, numSegment + 1);
+            _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1);
     }
     cout << "Done. " << filamentData.size() << " filaments created." << endl;
 }
@@ -326,19 +346,16 @@ void Controller::moveBoundary(double deltaTau) {
 void Controller::updatePositions() {
     
     //NEED TO UPDATE CYLINDERS FIRST
-    for(auto c : Cylinder::getCylinders())
-        c->updatePosition();
+    for(auto c : Cylinder::getCylinders()) c->updatePosition();
     
     //update all other moveables
-    for(auto m : _subSystem->getMovables())
-        m->updatePosition();
+    for(auto m : _subSystem->getMovables()) m->updatePosition();
 }
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables())
-        r->updateReactionRates();
+    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
 }
 #endif
 

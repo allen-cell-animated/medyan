@@ -24,8 +24,6 @@
 
 using namespace mathfunc;
 
-SubSystem* FilamentReactionTemplate::_ps = 0;
-
 void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers of filament
@@ -44,8 +42,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
         //FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (getType(r) == SpeciesType::BULK)
-            reactantSpecies.push_back(_ps->getCompartmentGrid()->
-                                      findSpeciesBulkByMolecule(getInt(r)));
+            reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));
         
         else if(getType(r) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
@@ -65,7 +62,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesPlusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        for(auto j : BINDING_INDEX)
+        for(auto j : BINDING_INDEX[_filamentType])
             productSpecies.push_back(m1->speciesBound(j));
         
         //Add the reaction. If it needs a callback then attach
@@ -99,8 +96,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     auto r = _reactants[0];
     //FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (getType(r) == SpeciesType::BULK)
-        reactantSpecies.push_back(_ps->getCompartmentGrid()->
-                                  findSpeciesBulkByMolecule(getInt(r)));
+        reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));
     
     else if(getType(r) == SpeciesType::DIFFUSING) {
         Compartment* c = cc->getCompartment();
@@ -116,7 +112,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    for(auto j : BINDING_INDEX)
+    for(auto j : BINDING_INDEX[_filamentType])
         productSpecies.push_back(m->speciesBound(j));
     
     //Add the reaction. If it needs a callback then attach
@@ -159,8 +155,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         auto r = _reactants[0];
         //FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (getType(r) == SpeciesType::BULK)
-            reactantSpecies.push_back(_ps->getCompartmentGrid()->
-                                      findSpeciesBulkByMolecule(getInt(r)));
+            reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));
         
         else if(getType(r) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
@@ -180,7 +175,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         productSpecies.push_back(m2->speciesMinusEnd(getInt(p)));
         
         //this reaction also marks an empty bound site
-        for(auto j : BINDING_INDEX)
+        for(auto j : BINDING_INDEX[_filamentType])
             productSpecies.push_back(m1->speciesBound(j));
         
         //Add the reaction. If it needs a callback then attach
@@ -213,8 +208,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
     //FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (getType(r) == SpeciesType::BULK)
-        reactantSpecies.push_back(_ps->getCompartmentGrid()->
-                                  findSpeciesBulkByMolecule(getInt(r)));
+        reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));
     
     else if(getType(r)  == SpeciesType::DIFFUSING) {
         Compartment* c = cc->getCompartment();
@@ -230,7 +224,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     productSpecies.push_back(m->speciesFilament(getInt(p)));
     
     //this reaction also marks an empty bound site
-    for(auto j : BINDING_INDEX)
+    for(auto j : BINDING_INDEX[_filamentType])
         productSpecies.push_back(m->speciesBound(j));
     
     //Add the reaction. If it needs a callback then attach
@@ -279,14 +273,14 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        for(auto j : BINDING_INDEX)
+        for(auto j : BINDING_INDEX[_filamentType])
             reactantSpecies.push_back(m2->speciesBound(j));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
         if( getType(p) == SpeciesType::BULK)
-            productSpecies.push_back(_ps->getCompartmentGrid()->
-                                     findSpeciesBulkByMolecule(getInt(p)));
+            productSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(p)));
+        
         else if(getType(p) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
             productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
@@ -343,14 +337,14 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
         
         //this reaction also needs an empty bound site
-        for(auto j : BINDING_INDEX)
+        for(auto j : BINDING_INDEX[_filamentType])
             reactantSpecies.push_back(m2->speciesBound(j));
         
         //FIRST PRODUCT MUST BE BULK OR DIFFUSING
         auto p = _products[0];
         if(getType(p) == SpeciesType::BULK)
-            productSpecies.push_back(_ps->getCompartmentGrid()->
-                                     findSpeciesBulkByMolecule(getInt(p)));
+            productSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(p)));
+        
         else if(getType(p) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
             productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
@@ -401,14 +395,14 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesPlusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    for(auto j : BINDING_INDEX)
+    for(auto j : BINDING_INDEX[_filamentType])
         reactantSpecies.push_back(m2->speciesBound(j));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
     if(getType(p) == SpeciesType::BULK)
-        productSpecies.push_back(_ps->getCompartmentGrid()->
-                                 findSpeciesBulkByMolecule(getInt(p)));
+        productSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(p)));
+    
     else if(getType(p) == SpeciesType::DIFFUSING) {
         Compartment* c = cc2->getCompartment();
         productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
@@ -456,14 +450,14 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     reactantSpecies.push_back(m1->speciesMinusEnd(getInt(r)));
     
     //this reaction also needs an empty bound site
-    for(auto j : BINDING_INDEX)
+    for(auto j : BINDING_INDEX[_filamentType])
         reactantSpecies.push_back(m2->speciesBound(j));
     
     //FIRST PRODUCT MUST BE BULK OR DIFFUSING
     auto p = _products[0];
     if(getType(p) == SpeciesType::BULK)
-        productSpecies.push_back(_ps->getCompartmentGrid()->
-                                 findSpeciesBulkByMolecule(getInt(p)));
+        productSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(p)));
+    
     else if(getType(p) == SpeciesType::DIFFUSING) {
         Compartment* c = cc1->getCompartment();
         productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
@@ -498,8 +492,8 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 void MotorWalkFTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = SysParams::Chemistry().bindingSites.begin();
-             it != SysParams::Chemistry().bindingSites.end() - 1; it++) {
+    for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+             it != SysParams::Chemistry().bindingSites[_filamentType].end() - 1; it++) {
         
         int site1 = *(it);
         int site2 = *(it+1);
@@ -551,8 +545,8 @@ void MotorWalkFTemplate::addReaction(CCylinder* cc) {
 
 void MotorWalkFTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-    CMonomer* m1 = cc1->getCMonomer(SysParams::Chemistry().bindingSites.back());
-    CMonomer* m2 = cc2->getCMonomer(SysParams::Chemistry().bindingSites.front());
+    CMonomer* m1 = cc1->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].back());
+    CMonomer* m2 = cc2->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].front());
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
@@ -587,8 +581,8 @@ void MotorWalkFTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 #ifdef REACTION_SIGNALING
     MotorMovingCylinderCallback
     motorChangeCallback(cc1->getCylinder(), cc2->getCylinder(),
-                        SysParams::Chemistry().bindingSites.back(),
-                        SysParams::Chemistry().bindingSites.front(),
+                        SysParams::Chemistry().bindingSites[_filamentType].back(),
+                        SysParams::Chemistry().bindingSites[_filamentType].front(),
                         motorType, boundType, _ps);
     ConnectionBlock rcb(rxn->connect(motorChangeCallback, false));
 #endif
@@ -600,8 +594,8 @@ void MotorWalkFTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 void MotorWalkBTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = SysParams::Chemistry().bindingSites.end() - 1;
-             it != SysParams::Chemistry().bindingSites.begin(); it--) {
+    for(auto it = SysParams::Chemistry().bindingSites[_filamentType].end() - 1;
+             it != SysParams::Chemistry().bindingSites[_filamentType].begin(); it--) {
         
         int site1 = *(it);
         int site2 = *(it-1);
@@ -653,8 +647,8 @@ void MotorWalkBTemplate::addReaction(CCylinder* cc) {
 
 void MotorWalkBTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
-    CMonomer* m1 = cc2->getCMonomer(SysParams::Chemistry().bindingSites.front());
-    CMonomer* m2 = cc1->getCMonomer(SysParams::Chemistry().bindingSites.back());
+    CMonomer* m1 = cc2->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].front());
+    CMonomer* m2 = cc1->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].back());
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
     
@@ -689,8 +683,8 @@ void MotorWalkBTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 #ifdef REACTION_SIGNALING
     MotorMovingCylinderCallback
     motorChangeCallback(cc2->getCylinder(), cc1->getCylinder(),
-                        SysParams::Chemistry().bindingSites.front(),
-                        SysParams::Chemistry().bindingSites.back(),
+                        SysParams::Chemistry().bindingSites[_filamentType].front(),
+                        SysParams::Chemistry().bindingSites[_filamentType].back(),
                         motorType, boundType, _ps);
     ConnectionBlock rcb(rxn->connect(motorChangeCallback, false));
 #endif
@@ -716,24 +710,18 @@ void AgingTemplate::addReaction(CCylinder* cc) {
         SpeciesType type = getType(r);
         int speciesInt = getInt(r);
         
-        if(type == SpeciesType::FILAMENT)
-            reactantSpecies.push_back(m1->speciesFilament(speciesInt));
-        else if(type == SpeciesType::PLUSEND)
-            reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-        else if(type == SpeciesType::MINUSEND)
-            reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        if(type == SpeciesType::FILAMENT) reactantSpecies.push_back(m1->speciesFilament(speciesInt));
+        else if(type == SpeciesType::PLUSEND)  reactantSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+        else if(type == SpeciesType::MINUSEND) reactantSpecies.push_back(m1->speciesMinusEnd(speciesInt));
         
         //FIRST PRODUCT MUST BE FILAMENT, PLUS OR MINUS SPECIES
         auto p = _products[0];
         type = getType(p);
         speciesInt = getInt(p);
         
-        if(type == SpeciesType::FILAMENT)
-            productSpecies.push_back(m1->speciesFilament(speciesInt));
-        else if(type == SpeciesType::PLUSEND)
-            productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
-        else if(type == SpeciesType::MINUSEND)
-            productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
+        if(type == SpeciesType::FILAMENT) productSpecies.push_back(m1->speciesFilament(speciesInt));
+        else if(type == SpeciesType::PLUSEND)  productSpecies.push_back(m1->speciesPlusEnd(speciesInt));
+        else if(type == SpeciesType::MINUSEND) productSpecies.push_back(m1->speciesMinusEnd(speciesInt));
         
         //Add the reaction
         vector<Species*> species = reactantSpecies;
@@ -771,8 +759,8 @@ void DestructionTemplate::addReaction(CCylinder* cc) {
         //ALL PRODUCTS MUST BE BULK OR DIFFUSING
         auto p = _products[0];
         if(getType(p) == SpeciesType::BULK)
-            productSpecies.push_back(_ps->getCompartmentGrid()->
-                                     findSpeciesBulkByMolecule(getInt(p)));
+            productSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(p)));
+        
         else if(getType(p) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
             productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
@@ -781,8 +769,8 @@ void DestructionTemplate::addReaction(CCylinder* cc) {
         p = _products[1];
         
         if(getType(p) == SpeciesType::BULK)
-            productSpecies.push_back(_ps->getCompartmentGrid()->
-                                     findSpeciesBulkByMolecule(getInt(p)));
+            productSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(p)));
+        
         else if(getType(p) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
             productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
@@ -822,8 +810,8 @@ void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     //ALL PRODUCTS MUST BE BULK OR DIFFUSING
     auto p = _products[0];
     if(getType(p) == SpeciesType::BULK)
-        productSpecies.push_back(_ps->getCompartmentGrid()->
-                                 findSpeciesBulkByMolecule(getInt(p)));
+        productSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(p)));
+    
     else if(getType(p) == SpeciesType::DIFFUSING) {
         Compartment* c = cc1->getCompartment();
         productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
@@ -831,8 +819,8 @@ void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     p = _products[1];
     if(getType(p) == SpeciesType::BULK)
-        productSpecies.push_back(_ps->getCompartmentGrid()->
-                                 findSpeciesBulkByMolecule(getInt(p)));
+        productSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(p)));
+    
     else if(getType(p) == SpeciesType::DIFFUSING) {
         Compartment* c = cc1->getCompartment();
         productSpecies.push_back(c->findSpeciesByMolecule(getInt(p)));
@@ -856,8 +844,8 @@ void DestructionTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
 void SeveringTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
-    for(auto it = SysParams::Chemistry().bindingSites.begin();
-             it != SysParams::Chemistry().bindingSites.end(); it++) {
+    for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+             it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
         
         int site = *(it);
         CMonomer* m = cc->getCMonomer(site);
@@ -868,15 +856,13 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         reactantSpecies.push_back(m->speciesFilament(getInt(r)));
         
         //IMPLICITLY NEEDS AN EMPTY BOUND
-        
-        for(auto j : BINDING_INDEX)
+        for(auto j : BINDING_INDEX[_filamentType])
             reactantSpecies.push_back(m->speciesBound(j));
         
         //Add the reaction
         vector<Species*> species = reactantSpecies;
         
         ReactionBase* rxn;
-        
         if(BINDING_INDEX.size() == 3)
             rxn = new Reaction<SEVERINGREACTANTS + 3,SEVERINGPRODUCTS>(species, _rate);
         else if(BINDING_INDEX.size() == 2)
@@ -892,3 +878,5 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         rxn->setReactionType(ReactionType::SEVERING);
     }
 }
+
+SubSystem* FilamentReactionTemplate::_ps = 0;

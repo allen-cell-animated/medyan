@@ -148,20 +148,14 @@ public:
     
     ///Move a motor head forward
     ///@note - Updates chemical binding and mechanical parameters accordingly
-    void moveMotorHead(Cylinder* c,
-                       double oldPosition,
-                       double newPosition,
-                       short boundType,
-                       SubSystem* ps);
+    void moveMotorHead(Cylinder* c, double oldPosition, double newPosition,
+                       short boundType, SubSystem* ps);
     
     ///Move a motor head to a new cylinder
     ///@note - Updates chemical binding and mechanical parameters accordingly
-    void moveMotorHead(Cylinder* oldC,
-                       Cylinder* newC,
-                       double oldPosition,
-                       double newPosition,
-                       short boundType,
-                       SubSystem* ps);
+    void moveMotorHead(Cylinder* oldC, Cylinder* newC,
+                       double oldPosition, double newPosition,
+                       short boundType, SubSystem* ps);
     
     virtual void printInfo();
     

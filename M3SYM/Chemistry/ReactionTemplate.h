@@ -37,8 +37,7 @@ class CCylinder;
  *  FilamentReactionTemplate is used to store a filament reaction. It contains vectors
  *  of tuples that represent the position in the CMonomer in which the species is stored 
  *  (for products and reactants), as well as the rate of the reaction. The integer value 
- *  that is the position of the species in the CMonomer vector is held by the 
- *  ChemTemplate.
+ *  that is the position of the species in the CMonomer vector is held by the ChemManager.
  *  @note if the species is a bulk or diffusing species, the integer molecule value in 
  *  the tuple stored in the SpeciesNamesDB.
  *
@@ -52,17 +51,20 @@ friend class CController;
 protected:
     static SubSystem* _ps; ///< A subsystem pointer to initialize and
                            ///< call chemical callbacks
-
+    short _filamentType;   ///< Filament type that this template acts on
+    
     vector<tuple<int,SpeciesType>> _reactants; ///< Reactants in this reaction
     vector<tuple<int,SpeciesType>> _products; ///< Products in this reaction
     
     float _rate; ///< Rate of reaction
     
 public:
-    FilamentReactionTemplate(vector<tuple<int, SpeciesType>> reactants,
+    FilamentReactionTemplate(short filamentType,
+                             vector<tuple<int, SpeciesType>> reactants,
                              vector<tuple<int, SpeciesType>> products,
                              float rate)
-        : _reactants(reactants), _products(products), _rate(rate) {
+        : _filamentType(_filamentType),
+          _reactants(reactants), _products(products), _rate(rate) {
 
 #if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
         cout << "Any filament reaction relies on reaction and species signaling. Please"
@@ -85,10 +87,11 @@ public:
 class PolyPlusEndTemplate : public FilamentReactionTemplate {
     
 public:
-    PolyPlusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
-                       vector<tuple<int, SpeciesType>> products,
-                       float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    PolyPlusEndTemplate(short filamentType,
+                        vector<tuple<int, SpeciesType>> reactants,
+                        vector<tuple<int, SpeciesType>> products,
+                        float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~PolyPlusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -99,10 +102,11 @@ public:
 class PolyMinusEndTemplate : public FilamentReactionTemplate {
     
 public:
-    PolyMinusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
-                        vector<tuple<int, SpeciesType>> products,
-                        float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    PolyMinusEndTemplate(short filamentType,
+                         vector<tuple<int, SpeciesType>> reactants,
+                         vector<tuple<int, SpeciesType>> products,
+                         float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~PolyMinusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -114,10 +118,11 @@ public:
 class DepolyPlusEndTemplate : public FilamentReactionTemplate {
     
 public:
-    DepolyPlusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
-                         vector<tuple<int, SpeciesType>> products,
-                         float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    DepolyPlusEndTemplate(short filamentType,
+                          vector<tuple<int, SpeciesType>> reactants,
+                          vector<tuple<int, SpeciesType>> products,
+                          float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~DepolyPlusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -128,10 +133,11 @@ public:
 class DepolyMinusEndTemplate : public FilamentReactionTemplate {
     
 public:
-    DepolyMinusEndTemplate(vector<tuple<int, SpeciesType>> reactants,
-                          vector<tuple<int, SpeciesType>> products,
-                          float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    DepolyMinusEndTemplate(short filamentType,
+                           vector<tuple<int, SpeciesType>> reactants,
+                           vector<tuple<int, SpeciesType>> products,
+                           float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~DepolyMinusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -143,10 +149,11 @@ class MotorWalkFTemplate : public FilamentReactionTemplate {
     
 public:
     ///default constructor and destructor
-    MotorWalkFTemplate(vector<tuple<int, SpeciesType>> reactants,
-                      vector<tuple<int, SpeciesType>> products,
-                      float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    MotorWalkFTemplate(short filamentType,
+                       vector<tuple<int, SpeciesType>> reactants,
+                       vector<tuple<int, SpeciesType>> products,
+                       float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~MotorWalkFTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -158,10 +165,11 @@ class MotorWalkBTemplate : public FilamentReactionTemplate {
     
 public:
     ///default constructor and destructor
-    MotorWalkBTemplate(vector<tuple<int, SpeciesType>> reactants,
-                      vector<tuple<int, SpeciesType>> products,
-                      float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    MotorWalkBTemplate(short filamentType,
+                       vector<tuple<int, SpeciesType>> reactants,
+                       vector<tuple<int, SpeciesType>> products,
+                       float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~MotorWalkBTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -173,10 +181,11 @@ public:
 class AgingTemplate : public FilamentReactionTemplate {
     
 public:
-    AgingTemplate(vector<tuple<int, SpeciesType>> reactants,
-                 vector<tuple<int, SpeciesType>> products,
-                 float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    AgingTemplate(short filamentType,
+                  vector<tuple<int, SpeciesType>> reactants,
+                  vector<tuple<int, SpeciesType>> products,
+                  float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~AgingTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -188,10 +197,11 @@ class DestructionTemplate : public FilamentReactionTemplate {
     
     
 public:
-    DestructionTemplate(vector<tuple<int, SpeciesType>> reactants,
-                       vector<tuple<int, SpeciesType>> products,
-                       float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    DestructionTemplate(short filamentType,
+                        vector<tuple<int, SpeciesType>> reactants,
+                        vector<tuple<int, SpeciesType>> products,
+                        float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~DestructionTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -203,10 +213,11 @@ public:
 class SeveringTemplate : public FilamentReactionTemplate {
     
 public:
-    SeveringTemplate(vector<tuple<int, SpeciesType>> reactants,
-                    vector<tuple<int, SpeciesType>> products,
-                    float rate)
-    : FilamentReactionTemplate(reactants, products, rate) {}
+    SeveringTemplate(short filamentType,
+                     vector<tuple<int, SpeciesType>> reactants,
+                     vector<tuple<int, SpeciesType>> products,
+                     float rate)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
     ~SeveringTemplate() {}
     
     virtual void addReaction(CCylinder* cc);

@@ -49,7 +49,7 @@ public:
     
     /// Copy constructor, standard
     CLinker(const CLinker& rhs, Compartment* c)
-        : CBound(c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
+        : CBound(rhs._filamentType, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
           _pLinker(rhs._pLinker){
         
         //set species

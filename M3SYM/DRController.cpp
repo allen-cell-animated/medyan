@@ -23,23 +23,32 @@
 void DRController::initialize(DynamicRateTypes& drTypes) {
     
     //filament polymerization changer
-    if(drTypes.dFPolymerizationType == "BROWRATCHET") {
-        //get params
-        double a = SysParams::DynamicRates().dFilPolymerizationCharLength;
-        Cylinder::_polyChanger = new BrownianRatchet(a);
-    }
-    else if(drTypes.dFPolymerizationType == "") {}
-    else {
-        cout << "Filament polymerization rate changing form not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
-    }
+    int filamentIndex = 0;
     
+    if(SysParams::Chemistry().numFilaments != 0) {
+    
+        for(auto &changer : drTypes.dFPolymerizationType) {
+        
+            if(changer == "BROWRATCHET") {
+                //get params
+                double a = SysParams::DynamicRates().dFilPolymerizationCharLength[filamentIndex];
+                Cylinder::_polyChanger.push_back(new BrownianRatchet(a));
+            }
+            else if(changer == "") {}
+            else {
+                cout << "Filament polymerization rate changing form not recognized. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            filamentIndex++;
+        }
+    }
+
     //linker unbinding changer
     int charLengthIndex = 0;
     int ampIndex = 0;
     int linkerIndex = 0;
     
-    if(SysParams::Chemistry().numLinkerSpecies != 0) {
+    if(sum(SysParams::Chemistry().numLinkerSpecies) != 0) {
     
         for(auto &changer : drTypes.dLUnbindingType) {
             
@@ -91,7 +100,7 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
     int forceIndex = 0;
     int motorIndex = 0;
     
-    if(SysParams::Chemistry().numMotorSpecies != 0) {
+    if(sum(SysParams::Chemistry().numMotorSpecies) != 0) {
     
         //motor unbinding changer
         for(auto &changer : drTypes.dMUnbindingType) {
@@ -131,7 +140,7 @@ void DRController::initialize(DynamicRateTypes& drTypes) {
                 double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
                 
                 //add the rate changer
-                MotorGhost::_walkingChangers.push_back(new LowDutyHillStall(motorIndex, f));
+                MotorGhost::_walkingChangers.push_back(new LowDutyHillStall(motorIndex, 0, f));
                 forceIndex++;
             }
             else {

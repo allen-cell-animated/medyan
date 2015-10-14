@@ -25,9 +25,6 @@
 
 using namespace mathfunc;
 
-vector<LinkerRateChanger*> Linker::_unbindingChangers;
-
-Database<Linker*> Linker::_linkers;
 
 void Linker::updateCoordinate() {
     
@@ -62,13 +59,12 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
         exit(EXIT_FAILURE);
     }
           
-    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize);
-    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize);
+    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize[c1->getFilamentType()]);
+    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize[c1->getFilamentType()]);
         
 #ifdef CHEMISTRY
     _cLinker = unique_ptr<CLinker>(
-        new CLinker(linkerType, _compartment,
-                    _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
+        new CLinker(linkerType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
     _cLinker->setLinker(this);
         
 #endif
@@ -80,8 +76,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     auto x4 = _c2->getSecondBead()->coordinate;
           
     _mLinker = unique_ptr<MLinker>(
-        new MLinker(linkerType, position1, position2,
-                    x1, x2, x3, x4));
+        new MLinker(linkerType, position1, position2, x1, x2, x3, x4));
     _mLinker->setLinker(this);
 #endif
 }
@@ -151,9 +146,7 @@ void Linker::updateReactionRates() {
     ReactionBase* offRxn = _cLinker->getOffReaction();
 
     //change the rate
-    float newRate =
-        _unbindingChangers[_linkerType]->
-        changeRate(offRxn->getBareRate(), force);
+    float newRate = _unbindingChangers[_linkerType]->changeRate(offRxn->getBareRate(), force);
     
     offRxn->setRate(newRate);
     offRxn->updatePropensity();
@@ -209,4 +202,6 @@ species_copy_t Linker::countSpecies(const string& name) {
     return copyNum;
 }
 
+vector<LinkerRateChanger*> Linker::_unbindingChangers;
 
+Database<Linker*> Linker::_linkers;

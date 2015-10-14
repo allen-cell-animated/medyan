@@ -70,32 +70,6 @@ public:
     
     ~Bead();
     
-    //@{
-    /// Auxiliary method for CG minimization
-    inline double FDotF() {
-        return force[0]*force[0]+
-               force[1]*force[1]+
-               force[2]*force[2];
-    }
-    inline double FDotFA() {
-        return force[0]*forceAux[0]+
-               force[1]*forceAux[1]+
-               force[2]*forceAux[2];
-    }
-    
-    inline double FADotFA() {
-        return forceAux[0]*forceAux[0]+
-               forceAux[1]*forceAux[1]+
-               forceAux[2]*forceAux[2];
-    }
-    
-    inline double FADotFAP() {
-        return forceAux[0]*forceAuxP[0]+
-               forceAux[1]*forceAuxP[1]+
-               forceAux[2]*forceAuxP[2];
-    }
-    //@}
-    
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
     
@@ -131,6 +105,24 @@ public:
     virtual void updatePosition();
     
     virtual void printInfo();
+    
+    //@{
+    /// Auxiliary method for CG minimization
+    inline double FDotF() {
+        return force[0]*force[0] + force[1]*force[1] + force[2]*force[2];
+    }
+    inline double FDotFA() {
+        return force[0]*forceAux[0] + force[1]*forceAux[1] + force[2]*forceAux[2];
+    }
+    
+    inline double FADotFA() {
+        return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];
+    }
+    
+    inline double FADotFAP() {
+        return forceAux[0]*forceAuxP[0] + forceAux[1]*forceAuxP[1] + forceAux[2]*forceAuxP[2];
+    }
+    //@}
     
 private:
     Compartment* _compartment = nullptr;

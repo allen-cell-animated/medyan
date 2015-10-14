@@ -11,12 +11,10 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "common.h"
+#include "utility.h"
 
-double global_time;
-
-vector<short> B_BINDING_INDEX = vector<short>(MAX_FILAMENT_TYPES);
-vector<short> L_BINDING_INDEX = vector<short>(MAX_FILAMENT_TYPES);
-vector<short> M_BINDING_INDEX = vector<short>(MAX_FILAMENT_TYPES);
-
-vector<vector<short>> BINDING_INDEX = vector<vector<short>>(MAX_FILAMENT_TYPES);
+unsigned long long rdtsc(){
+    unsigned int lo,hi;
+    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+    return ((unsigned long long)hi << 32) | lo;
+}

@@ -13,13 +13,25 @@
 
 #include "CCylinder.h"
 
+#include "Cylinder.h"
+
 #include "CBound.h"
 #include "ChemManager.h"
 
 ChemSim* CCylinder::_chemSim = 0;
 
+/// Default constructor, sets compartment and cylinder
+CCylinder::CCylinder(Compartment* C, Cylinder* c)
+    : _compartment(C), _pCylinder(c) {
+    
+    //set size based on parent cylinder
+    _size = SysParams::Geometry().cylinderSize[c->getFilamentType()] /
+            SysParams::Geometry().monomerSize[c->getFilamentType()];
+}
+
+
 CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
-    : _compartment(c), _pCylinder(rhs._pCylinder) {
+    : _compartment(c), _pCylinder(rhs._pCylinder), _size(rhs._size) {
         
     CCylinder* rhsPtr = const_cast<CCylinder*>(&rhs);
         
@@ -195,11 +207,11 @@ CCylinder::~CCylinder() {
     //Remove all species
     for(auto &m: _monomers) {
         
-        for(int i = 0; i < CMonomer::_numFSpecies; i++) {
+        for(int i = 0; i < CMonomer::_numFSpecies[_pCylinder->getFilamentType()]; i++) {
             SpeciesFilament* s = m->speciesFilament(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
-        for(int i = 0; i < CMonomer::_numBSpecies; i++) {
+        for(int i = 0; i < CMonomer::_numBSpecies[_pCylinder->getFilamentType()]; i++) {
             SpeciesBound* s = m->speciesBound(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
@@ -249,5 +261,10 @@ bool CCylinder::isConsistent() {
         index++;
     }
     return true;
+}
+
+short CCylinder::getFilamentType() {
+    
+    return _pCylinder->getFilamentType();
 }
 

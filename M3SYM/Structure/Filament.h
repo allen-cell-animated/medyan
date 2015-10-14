@@ -64,7 +64,8 @@ public:
     /// direction. Using all this, two constructors for beads and cylinders are called.
     /// @param nucleation - this filament was nucleated at runtime by a non-branching species
     /// @param branching - this filament was branched at runtime from an existing filament
-	Filament(SubSystem* s, vector<double>& position,
+	Filament(SubSystem* s, short filamentType,
+                           vector<double>& position,
                            vector<double>& direction,
                            bool nucleation = false,
                            bool branch = false);
@@ -72,12 +73,14 @@ public:
     /// This constructor is called to create a filament at startup. It creates a filament
     /// with a number of beads numBeads. Filaments starts and ends in the point
     /// determined by position vector.
-    Filament(SubSystem* s, vector<vector<double>>& position,
-             int numBeads, string projectionType = "STRAIGHT");
+    Filament(SubSystem* s, short filamentType,
+             vector<vector<double>>& position, int numBeads,
+             string projectionType = "STRAIGHT");
     
     /// This constructor is called when a filament is severed. It creates a filament
     /// that initially has no cylinders.
-    Filament(SubSystem* s) : Trackable(), _subSystem(s), _ID(_filaments.getID()) {}
+    Filament(SubSystem* s, short filamentType)
+        : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {}
     
     /// This destructor is called when a filament is to be removed from the system.
     /// Removes all cylinders and beads associated with the filament.
@@ -146,6 +149,9 @@ public:
     /// Get ID
     int getID() {return _ID;}
     
+    /// Get type
+    short getType() {return _filType;}
+    
     //@{
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _filaments.addElement(this);}
@@ -182,7 +188,7 @@ public:
     bool isConsistent();
     
     /// Count the number of filament species with a given name in the system
-    static species_copy_t countSpecies(const string& name);
+    static species_copy_t countSpecies(short filamentType, const string& name);
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include "ReactionBase.h"
 
 #include "SysParams.h"
+#include "Rand.h"
 
 #define SPECIESBB_BINDING_INDEX 2
 #define SPECIESMLB_BINDING_INDEX 0
@@ -75,7 +76,6 @@ protected:
     short _nlIndex = 0; ///<Index of this manager (for access of neighbor lists)
     short _mIndex = 0;  ///<Index of this manager (for access in other compartments)
     
-    static mt19937 *_eng; ///< Random number generator
     static SubSystem *_subSystem; ///< Ptr to the SubSystem
     
     ///helper function to update copy number and reactions
@@ -122,7 +122,7 @@ public:
 #endif
 
     }
-    ~FilamentBindingManager() {delete _eng;}
+    ~FilamentBindingManager() {}
     
     //@{
     ///add possible binding reactions that could occur
@@ -173,8 +173,7 @@ private:
 public:
     BranchingManager(ReactionBase* reaction,
                      Compartment* compartment,
-                     short boundInt,
-                     string boundName,
+                     short boundInt, string boundName,
                      short filamentType,
                      NucleationZoneType zone = NucleationZoneType::ALL,
                      double nucleationDistance = numeric_limits<double>::infinity());
@@ -207,9 +206,7 @@ public:
                && "Major bug: Branching manager should not have zero binding \
                   sites when called to choose a binding site.");
         
-        uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
-        
-        int randomIndex = dis(*_eng);
+        int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
         auto it = _possibleBindings.begin();
         
         advance(it, randomIndex);
@@ -280,9 +277,7 @@ public:
                && "Major bug: Linker binding manager should not have zero binding \
                    sites when called to choose a binding site.");
         
-        uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
-        
-        int randomIndex = dis(*_eng);
+        int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
         auto it = _possibleBindings.begin();
         
         advance(it, randomIndex);
@@ -353,9 +348,7 @@ public:
                && "Major bug: Motor binding manager should not have zero binding \
                    sites when called to choose a binding site.");
         
-        uniform_int_distribution<> dis(0, _possibleBindings.size() - 1);
-        
-        int randomIndex = dis(*_eng);
+        int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
         auto it = _possibleBindings.begin();
         
         advance(it, randomIndex);

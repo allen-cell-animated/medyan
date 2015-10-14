@@ -27,7 +27,6 @@
 
 using namespace mathfunc;
 
-mt19937* FilamentBindingManager::_eng = 0;
 SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CCNeighborList*> LinkerBindingManager::_neighborLists;
@@ -37,11 +36,9 @@ vector<CCNeighborList*> MotorBindingManager::_neighborLists;
 
 BranchingManager::BranchingManager(ReactionBase* reaction,
                                    Compartment* compartment,
-                                   short boundInt,
-                                   string boundName,
+                                   short boundInt, string boundName,
                                    short filamentType,
-                                   NucleationZoneType zone,
-                                   double nucleationDistance)
+                                   NucleationZoneType zone, double nucleationDistance)
 
     : FilamentBindingManager(reaction, compartment, boundInt, boundName, filamentType),
       _nucleationZone(zone), _nucleationDistance(nucleationDistance) {
@@ -55,7 +52,7 @@ BranchingManager::BranchingManager(ReactionBase* reaction,
 
 void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
-    if(cc->getCylinder()->getFilament()->getType() != _filamentType) return;
+    if(cc->getFilamentType() != _filamentType) return;
     
     bool inZone = true;
     //see if in nucleation zone
@@ -109,7 +106,7 @@ void BranchingManager::addPossibleBindings(CCylinder* cc) {
 
 void BranchingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
     
-    if(cc->getCylinder()->getFilament()->getType() != _filamentType) return;
+    if(cc->getFilamentType() != _filamentType) return;
     
     //remove tuple which has this ccylinder
     _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
@@ -137,7 +134,7 @@ void BranchingManager::updateAllPossibleBindings() {
     
     for(auto &c : _compartment->getCylinders()) {
     
-        if(c->getFilament()->getType() != _filamentType) continue;
+        if(c->getFilamentType() != _filamentType) continue;
         
         auto cc = c->getCCylinder();
         
@@ -207,7 +204,7 @@ LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
-    if(cc->getCylinder()->getFilament()->getType() != _filamentType) return;
+    if(cc->getFilamentType() != _filamentType) return;
     
     //if we change other managers copy number
     vector<LinkerBindingManager*> affectedManagers;
@@ -222,7 +219,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
             Cylinder* c = cc->getCylinder();
             
             if(cn->getFilament() == c->getFilament()) continue;
-            if(cn->getFilament()->getType() != _filamentType) continue;
+            if(cn->getFilamentType() != _filamentType) continue;
             
             auto ccn = cn->getCCylinder();
             
@@ -302,7 +299,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {
 
 void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
     
-    if(cc->getCylinder()->getFilament()->getType() != _filamentType) return;
+    if(cc->getFilamentType() != _filamentType) return;
     
     //if we change other managers copy number
     vector<LinkerBindingManager*> affectedManagers;
@@ -328,7 +325,7 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
     //remove all neighbors which have this binding site pair
     for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
         
-        if(cn->getFilament()->getType() != _filamentType) continue;
+        if(cn->getFilamentType() != _filamentType) continue;
         
         if(cn->getCompartment() != _compartment) {
             
@@ -372,7 +369,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     
     for(auto c : _compartment->getCylinders()) {
     
-        if(c->getFilament()->getType() != _filamentType) continue;
+        if(c->getFilamentType() != _filamentType) continue;
         
         auto cc = c->getCCylinder();
     
@@ -387,7 +384,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                 for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
                     
                     if(cn->getFilament() == c->getFilament()) continue;
-                    if(cn->getFilament()->getType() != _filamentType) continue;
+                    if(cn->getFilamentType() != _filamentType) continue;
                     
                     auto ccn = cn->getCCylinder();
                     
@@ -451,7 +448,7 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
 
 void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
-    if(cc->getCylinder()->getFilament()->getType() != _filamentType) return;
+    if(cc->getFilamentType() != _filamentType) return;
     
     //if we change other managers copy number
     vector<MotorBindingManager*> affectedManagers;
@@ -466,7 +463,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
             Cylinder* c = cc->getCylinder();
             
             if(cn->getFilament() == c->getFilament()) continue;
-            if(cn->getFilament()->getType() != _filamentType) continue;
+            if(cn->getFilamentType() != _filamentType) continue;
         
             auto ccn = cn->getCCylinder();
             
@@ -547,7 +544,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
 
 void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
     
-    if(cc->getCylinder()->getFilament()->getType() != _filamentType) return;
+    if(cc->getFilamentType() != _filamentType) return;
     
     //if we change other managers copy number
     vector<MotorBindingManager*> affectedManagers;
@@ -573,7 +570,7 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
     //remove all neighbors which have this binding site pair
     for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
         
-        if(cn->getFilament()->getType() != _filamentType) continue;
+        if(cn->getFilamentType() != _filamentType) continue;
         
         if(cn->getCompartment() != _compartment) {
             
@@ -617,7 +614,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
     
     for(auto c : _compartment->getCylinders()) {
         
-        if(c->getFilament()->getType() != _filamentType) continue;
+        if(c->getFilamentType() != _filamentType) continue;
         
         auto cc = c->getCCylinder();
         
@@ -632,7 +629,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                 for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
                     
                     if(cn->getFilament() == c->getFilament()) continue;
-                    if(cn->getFilament()->getType() != _filamentType) continue;
+                    if(cn->getFilamentType() != _filamentType) continue;
                     
                     auto ccn = cn->getCCylinder();
                     

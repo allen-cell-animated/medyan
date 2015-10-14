@@ -51,7 +51,7 @@ public:
     /// Copy constructor, standard
     CMotorGhost(const CMotorGhost& rhs, Compartment* c)
     
-        : CBound(c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
+        : CBound(rhs._filamentType, c, rhs._cc1, rhs._cc2, rhs._position1, rhs._position2),
           _pMotorGhost(rhs._pMotorGhost) {
         
         //set species

@@ -74,14 +74,17 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     
     //These FF's have a neighbor list associated with them
     //add to the subsystem's database of neighbor lists.
-    
     auto volumeFF = new VolumeCylindricalFF(forceFields.VolumeFFType);
+    
     _FFManager._forceFields.push_back(volumeFF);
+    
     for(auto nl : volumeFF->getNeighborLists())
         _subSystem->addNeighborList(nl);
     
     auto boundaryFF = new BoundaryFF(forceFields.BoundaryFFType);
-     _FFManager._forceFields.push_back(boundaryFF);
+    
+    _FFManager._forceFields.push_back(boundaryFF);
+    
     for(auto nl : boundaryFF->getNeighborLists())
         _subSystem->addNeighborList(nl);
     

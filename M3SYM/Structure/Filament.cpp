@@ -31,17 +31,19 @@
 
 #include "SysParams.h"
 #include "MathFunctions.h"
+#include "Rand.h"
 
 using namespace mathfunc;
 
 Database<Filament*> Filament::_filaments;
 
 
-Filament::Filament(SubSystem* s, vector<double>& position,
+Filament::Filament(SubSystem* s, short filamentType,
+                                 vector<double>& position,
                                  vector<double>& direction,
                                  bool nucleation, bool branch)
 
-    : Trackable(), _subSystem(s), _ID(_filaments.getID()) {
+    : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
  
     //create beads
     Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
@@ -49,8 +51,8 @@ Filament::Filament(SubSystem* s, vector<double>& position,
     //choose length
     double length = 0.0;
     
-    if(branch)          length = SysParams::Geometry().monomerSize;
-    else if(nucleation) length = SysParams::Geometry().minCylinderSize;
+    if(branch)          length = SysParams::Geometry().monomerSize[_filType];
+    else if(nucleation) length = SysParams::Geometry().minCylinderSize[_filType];
     
     auto pos2 = nextPointProjection(position, length, direction);
         
@@ -65,10 +67,11 @@ Filament::Filament(SubSystem* s, vector<double>& position,
 }
 
 
-Filament::Filament(SubSystem* s, vector<vector<double> >& position,
-                   int numBeads, string projectionType)
+Filament::Filament(SubSystem* s, short filamentType,
+                   vector<vector<double> >& position, int numBeads,
+                   string projectionType)
 
-    : Trackable(), _subSystem(s), _ID(_filaments.getID()) {
+    : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
     
     //create a projection of beads
     vector<vector<double>> tmpBeadsCoord;
@@ -131,7 +134,7 @@ void Filament::extendFront(vector<double>& coordinates) {
     auto direction = twoPointDirection(b2->coordinate, coordinates);
     
     auto newBeadCoords = nextPointProjection(b2->coordinate,
-                         SysParams::Geometry().cylinderSize, direction);
+                         SysParams::Geometry().cylinderSize[_filType], direction);
     
     //create bead
     Bead* bNew = _subSystem->addTrackable<Bead>
@@ -161,7 +164,7 @@ void Filament::extendBack(vector<double>& coordinates) {
     auto direction = twoPointDirection(b2->coordinate, coordinates);
     
     auto newBeadCoords = nextPointProjection(b2->coordinate,
-                         SysParams::Geometry().cylinderSize, direction);
+                         SysParams::Geometry().cylinderSize[_filType], direction);
     
     //create bead
     Bead* bNew = _subSystem->addTrackable<Bead>
@@ -191,7 +194,7 @@ void Filament::extendFront(short plusEnd) {
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
     
     auto npp = nextPointProjection(b2->coordinate,
-               SysParams::Geometry().monomerSize, direction1);
+               SysParams::Geometry().monomerSize[_filType], direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = _subSystem->addTrackable<Bead>
@@ -237,7 +240,7 @@ void Filament::extendBack(short minusEnd) {
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
     
     auto npp = nextPointProjection(b2->coordinate,
-               SysParams::Geometry().monomerSize, direction1);
+               SysParams::Geometry().monomerSize[_filType], direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = _subSystem->addTrackable<Bead>
@@ -319,13 +322,13 @@ void Filament::polymerizeFront() {
     auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
     
     b2->coordinate = nextPointProjection(b2->coordinate,
-                     SysParams::Geometry().monomerSize, direction);
+                     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
     //increase eq length, update
-    cBack->getMCylinder()->setEqLength(
+    cBack->getMCylinder()->setEqLength(_filType,
         cBack->getMCylinder()->getEqLength() +
-        SysParams::Geometry().monomerSize);
+        SysParams::Geometry().monomerSize[_filType]);
 #endif
 }
 
@@ -339,13 +342,13 @@ void Filament::polymerizeBack() {
     auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
     
     b1->coordinate = nextPointProjection(b1->coordinate,
-                     SysParams::Geometry().monomerSize, direction);
+                     SysParams::Geometry().monomerSize[_filType], direction);
 
 #ifdef MECHANICS
     //increase eq length, update
-    cFront->getMCylinder()->setEqLength(
+    cFront->getMCylinder()->setEqLength(_filType,
         cFront->getMCylinder()->getEqLength() +
-        SysParams::Geometry().monomerSize);
+        SysParams::Geometry().monomerSize[_filType]);
 #endif
 }
 
@@ -359,13 +362,13 @@ void Filament::depolymerizeFront() {
     auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
     
     b2->coordinate = nextPointProjection(b2->coordinate,
-                     SysParams::Geometry().monomerSize, direction);
+                     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
     //decrease eq length, update
-    cBack->getMCylinder()->setEqLength(
+    cBack->getMCylinder()->setEqLength(_filType,
         cBack->getMCylinder()->getEqLength() -
-        SysParams::Geometry().monomerSize);
+        SysParams::Geometry().monomerSize[_filType]);
 #endif
 }
 
@@ -379,13 +382,13 @@ void Filament::depolymerizeBack() {
     auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
     
     b1->coordinate = nextPointProjection(b1->coordinate,
-                     SysParams::Geometry().monomerSize, direction);
+                     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
     //decrease eq length, update
-    cFront->getMCylinder()->setEqLength(
+    cFront->getMCylinder()->setEqLength(_filType,
         cFront->getMCylinder()->getEqLength() -
-        SysParams::Geometry().monomerSize);
+        SysParams::Geometry().monomerSize[_filType]);
 #endif
 }
 
@@ -395,7 +398,7 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
 #ifdef CHEMISTRY
     //chemically initialize species
     CCylinder* cc = _cylinderVector[0]->getCCylinder();
-    int monomerPosition = SysParams::Geometry().cylinderIntSize / 2 + 1;
+    int monomerPosition = SysParams::Geometry().cylinderIntSize[_filType] / 2 + 1;
     
     CMonomer* m1 = cc->getCMonomer(monomerPosition - 1);
     CMonomer* m2 = cc->getCMonomer(monomerPosition);
@@ -407,7 +410,7 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //filament
     m2->speciesFilament(filament)->up();
     
-    for(auto j : BINDING_INDEX)
+    for(auto j : BINDING_INDEX[_filType])
         m2->speciesBound(j)->up();
     
     //plus end
@@ -439,7 +442,7 @@ Filament* Filament::sever(int cylinderPosition) {
 #endif
     
     //create a new filament
-    Filament* newFilament = _subSystem->addTrackable<Filament>(_subSystem);
+    Filament* newFilament = _subSystem->addTrackable<Filament>(_subSystem, _filType);
     
     //Split the cylinder vector at position, transfer cylinders to new filament
     for(int i = vectorPosition; i > 0; i--) {
@@ -460,14 +463,11 @@ Filament* Filament::sever(int cylinderPosition) {
     Bead* oldB = c2->getFirstBead();
     
     //offset these beads by a little for safety
-    auto msize = SysParams::Geometry().monomerSize;
+    auto msize = SysParams::Geometry().monomerSize[_filType];
     
-    vector<double> offsetCoord = {(randomInteger(0,1) ? -1 : +1) *
-                                   randomDouble(msize, 2 * msize),
-                                  (randomInteger(0,1) ? -1 : +1) *
-                                   randomDouble(msize, 2 * msize),
-                                  (randomInteger(0,1) ? -1 : +1) *
-                                   randomDouble(msize, 2 * msize)};
+    vector<double> offsetCoord = {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+                                  (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+                                  (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
     
     oldB->coordinate[0] += offsetCoord[0];
     oldB->coordinate[1] += offsetCoord[1];
@@ -498,14 +498,14 @@ Filament* Filament::sever(int cylinderPosition) {
     m1->speciesFilament(filamentInt1)->down();
     m1->speciesPlusEnd(filamentInt1)->up();
     
-    for(auto j : BINDING_INDEX)
+    for(auto j : BINDING_INDEX[_filType])
         m1->speciesBound(j)->down();
     
     //minus end
     m2->speciesFilament(filamentInt2)->down();
     m2->speciesMinusEnd(filamentInt2)->up();
     
-    for(auto j : BINDING_INDEX)
+    for(auto j : BINDING_INDEX[_filType])
         m2->speciesBound(j)->down();
     
     //remove any cross-cylinder rxns between these two cylinders
@@ -529,9 +529,9 @@ vector<vector<double>> Filament::straightFilamentProjection(
     
     for (int i = 0; i<numBeads; i++) {
         
-        tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize * i * tau[0];
-        tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize * i * tau[1];
-        tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize * i * tau[2];
+        tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
+        tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
+        tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * tau[2];
         
         coordinate.push_back(tmpVec);
     }
@@ -556,19 +556,19 @@ vector<vector<double>> Filament::zigZagFilamentProjection(
         
         if(i%2 == 0) {
             tmpVec[0] = v[0][0] +
-            SysParams::Geometry().cylinderSize * i * tau[0];
+            SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
             tmpVec[1] = v[0][1] +
-            SysParams::Geometry().cylinderSize * i * tau[1];
+            SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
             tmpVec[2] = v[0][2] +
-            SysParams::Geometry().cylinderSize * i * tau[2];
+            SysParams::Geometry().cylinderSize[_filType] * i * tau[2];
         }
         else {
             tmpVec[0] = v[0][0] +
-            SysParams::Geometry().cylinderSize * i * perptau[0];
+            SysParams::Geometry().cylinderSize[_filType]* i * perptau[0];
             tmpVec[1] = v[0][1] +
-            SysParams::Geometry().cylinderSize * i * perptau[1];
+            SysParams::Geometry().cylinderSize[_filType] * i * perptau[1];
             tmpVec[2] = v[0][2] +
-            SysParams::Geometry().cylinderSize * i * perptau[2];
+            SysParams::Geometry().cylinderSize[_filType] * i * perptau[2];
         }
         
         coordinate.push_back(tmpVec);
@@ -739,6 +739,7 @@ void Filament::printInfo() {
     
     cout << "Filament: ptr = " << this << endl;
     cout << "Filament ID = " << _ID << endl;
+    cout << "Filament type = " << _filType << endl;
     
     cout << endl;
     cout << "Cylinder information..." << endl;
@@ -790,11 +791,13 @@ bool Filament::isConsistent() {
 }
 
 
-species_copy_t Filament::countSpecies(const string& name) {
+species_copy_t Filament::countSpecies(short filamentType, const string& name) {
     
     species_copy_t copyNum = 0;
     
     for(auto f : _filaments.getElements()) {
+        
+        if(f->getType() != filamentType) continue;
         
         //loop through the filament
         for(auto c : f->_cylinderVector) {

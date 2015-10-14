@@ -42,10 +42,11 @@ void BasicSnapshot::print(int step) {
     
     for(auto &filament : Filament::getFilaments()) {
         
-        //print first line(Filament ID, length, left_delta, right_delta
+        //print first line (Filament ID, type, length, left_delta, right_delta)
         _outputFile << "F " << filament->getID() << " " <<
-            filament->getCylinderVector().size() + 1 << " " <<
-            filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
 
         //print coordinates
         for (auto cylinder : filament->getCylinderVector()){
@@ -136,8 +137,9 @@ void BirthTimes::print(int step) {
     
     for(auto &filament : Filament::getFilaments()) {
         
-        //print first line(Filament ID, length, left_delta, right_delta
+        //print first line (Filament ID, type, length, left_delta, right_delta)
         _outputFile << "F " << filament->getID() << " " <<
+        filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
         
@@ -202,8 +204,9 @@ void Forces::print(int step) {
     
     for(auto &filament : Filament::getFilaments()) {
         
-        //print first line(Filament ID, length, left_delta, right_delta
+        //print first line (Filament ID, type, length, left_delta, right_delta
         _outputFile << "F " << filament->getID() << " " <<
+        filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
         
@@ -260,7 +263,7 @@ void Forces::print(int step) {
 }
 
 
-void Stresses::print(int step) {
+void Tensions::print(int step) {
 
     _outputFile.precision(10);
     
@@ -274,8 +277,9 @@ void Stresses::print(int step) {
     
     for(auto &filament : Filament::getFilaments()) {
         
-        //print first line(Filament ID, length, left_delta, right_delta
+        //print first line (Filament ID, type, length, left_delta, right_delta)
         _outputFile << "F " << filament->getID() << " " <<
+        filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
         
@@ -369,19 +373,19 @@ void Chemistry::print(int step) {
     
         for(auto sf : _chemData.speciesFilament[filType]) {
             
-            auto copyNum = Filament::countSpecies(sf);
+            auto copyNum = Filament::countSpecies(filType, sf);
             _outputFile << sf << ":FILAMENT " << copyNum << endl;
         }
         
         for(auto sp : _chemData.speciesPlusEnd[filType]) {
             
-            auto copyNum = Filament::countSpecies(sp);
+            auto copyNum = Filament::countSpecies(filType, sp);
             _outputFile << sp << ":PLUSEND " << copyNum << endl;
         }
         
         for(auto sm : _chemData.speciesMinusEnd[filType]) {
             
-            auto copyNum = Filament::countSpecies(sm);
+            auto copyNum = Filament::countSpecies(filType, sm);
             _outputFile << sm << ":MINUSEND " << copyNum << endl;
         }
         

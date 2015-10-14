@@ -31,6 +31,7 @@
 #include "GController.h"
 #include "MathFunctions.h"
 #include "SysParams.h"
+#include "Rand.h"
 
 using namespace mathfunc;
 
@@ -321,7 +322,7 @@ struct BranchingCallback {
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
         
-        short filType = c1->getFilament()->getType();
+        short filType = c1->getFilamentType();
         
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderIntSize[filType];
         
@@ -362,7 +363,7 @@ struct BranchingCallback {
         auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
         
         //create a new filament
-        Filament* f = _ps->addTrackable<Filament>(_ps, bp, bd, true, true);
+        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
         
         //mark first cylinder
         Cylinder* c = f->getCylinderVector().front();
@@ -424,7 +425,7 @@ struct LinkerBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
-        short filType = c1->getFilament()->getType();
+        short filType = c1->getFilamentType();
         
         // Create a linker
         int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
@@ -491,7 +492,7 @@ struct MotorBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
-        short filType = c1->getFilament()->getType();
+        short filType = c1->getFilamentType();
         
         // Create a motor
         int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
@@ -545,7 +546,7 @@ struct MotorWalkingCallback {
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
         
-        short filType = _c->getFilament()->getType();
+        short filType = _c->getFilamentType();
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
@@ -594,7 +595,7 @@ struct MotorMovingCylinderCallback {
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
         
-        short filType = _oldC->getFilament()->getType();
+        short filType = _oldC->getFilamentType();
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
@@ -658,9 +659,7 @@ struct FilamentCreationCallback {
             position = GController::getRandomCoordinates(c);
             
             //getting random numbers between -1 and 1
-            direction = {randomDouble(-1,1),
-                         randomDouble(-1,1),
-                         randomDouble(-1,1)};
+            direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), Rand::randDouble(-1,1)};
             normalize(direction);
             
             auto npp = nextPointProjection(position,
@@ -673,7 +672,7 @@ struct FilamentCreationCallback {
         }
         
         //create filament, set up ends and filament species
-        Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction,  true, false);
+        Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction, true, false);
         
         //initialize the nucleation
         f->nucleate(_plusEnd, _filament, _minusEnd);

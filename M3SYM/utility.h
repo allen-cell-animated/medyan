@@ -15,14 +15,32 @@
 #define M3SYM_utility_h
 
 #include <tuple>
+#include <chrono>
 #include <memory>
-#include <random>
+#include <math.h>
+#include <vector>
 #include <sstream>
+
+using namespace std;
 
 //to test for zero values
 const double ZERO_PREC = 1E-6;
 
-using namespace std;
+/// A random seed based on clock cycles
+extern unsigned long long rdtsc();
+
+///Check equaility of doubles
+inline bool areSame(double d1, double d2) {
+    
+    return fabs(d1 - d2) < ZERO_PREC;
+}
+
+/// Safe arc cos function
+inline double safeacos (double x) {
+    if (x < -1.0) x = -1.0;
+    else if (x > 1.0) x = 1.0;
+    return acos(x);
+}
 
 /// Make a unique ptr
 template<typename T, typename ...Args>
@@ -93,30 +111,15 @@ namespace std{
         }
         
     };
-}
-
-///Get a random double between low and high
-inline double randomDouble(double low, double high) {
-    return ((float)rand() / RAND_MAX) * (high - low) + low;
-}
-
-///Get a random integer between low and high
-inline int randomInteger(int low, int high) {
-    return low + (rand() % (high - low + 1));
-}
-
-
-///Check equality of doubles
-inline bool areSame(double d1, double d2) {
     
-    return fabs(d1 - d2) < ZERO_PREC;
-}
-
-///Safe arccosine function
-inline double safeacos (double x) {
-    if (x < -1.0) x = -1.0;
-    else if (x > 1.0) x = 1.0;
-    return acos(x);
+    ///Sum a vector of shorts
+    inline short sum(vector<short> vec) {
+        
+        short sum = 0;
+        for (auto val : vec) sum += val;
+        
+        return sum;
+    }
 }
 
 #endif

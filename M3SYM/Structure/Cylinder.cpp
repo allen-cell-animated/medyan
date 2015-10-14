@@ -26,11 +26,6 @@
 
 using namespace mathfunc;
 
-FilamentRateChanger* Cylinder::_polyChanger = 0;
-ChemManager* Cylinder::_chemManager = 0;
-
-Database<Cylinder*> Cylinder::_cylinders;
-
 void Cylinder::updateCoordinate() {
     
     coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
@@ -38,14 +33,11 @@ void Cylinder::updateCoordinate() {
 
 
 Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
-                   bool extensionFront,
-                   bool extensionBack,
-                   bool initialization)
+                   bool extensionFront, bool extensionBack, bool initialization)
 
     : Trackable(true, true, true, false),
       _b1(b1), _b2(b2), _pFilament(f),
-      _positionFilament(positionFilament),
-      _ID(_cylinders.getID()) {
+      _positionFilament(positionFilament), _ID(_cylinders.getID()) {
     
     //Set coordinate
     updateCoordinate();
@@ -67,17 +59,15 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     _cCylinder->setCylinder(this);
           
     //init using chem manager
-    _chemManager->initializeCCylinder(_cCylinder.get(),
-                                      extensionFront,
-                                      extensionBack,
-                                      initialization);
+    _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
+                                      extensionBack, initialization);
 #endif
 
 #ifdef MECHANICS
     //set eqLength according to cylinder size
     double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
         
-    _mCylinder = unique_ptr<MCylinder>(new MCylinder(eqLength));
+    _mCylinder = unique_ptr<MCylinder>(new MCylinder(getFilamentType(), eqLength));
     _mCylinder->setCylinder(this);
 #endif
         
@@ -88,6 +78,9 @@ Cylinder::~Cylinder() noexcept {
     //remove from compartment
     _compartment->removeCylinder(this);
 }
+
+/// Get filament type
+short Cylinder::getFilamentType() {return _pFilament->getType();}
 
 void Cylinder::updatePosition() {
 
@@ -120,15 +113,17 @@ void Cylinder::updatePosition() {
 #ifdef CHEMISTRY
         auto oldCCylinder = _cCylinder.get();
         
+        //Remove old ccylinder from binding managers
+        for(auto &manager : oldCompartment->getFilamentBindingManagers())
+            manager->removePossibleBindings(oldCCylinder);
+        
+        //clone and set new ccylinder
         CCylinder* clone = _cCylinder->clone(c);
         setCCylinder(clone);
         
         auto newCCylinder = _cCylinder.get();
         
-        ///Remove old ccylinder from binding managers, add new one
-        for(auto &manager : oldCompartment->getFilamentBindingManagers())
-            manager->removePossibleBindings(oldCCylinder);
-        
+        //Add new ccylinder to binding managers
         for(auto &manager : newCompartment->getFilamentBindingManagers())
             manager->addPossibleBindings(newCCylinder);
     }
@@ -150,7 +145,7 @@ void Cylinder::updateReactionRates() {
     double force;
     
     //if no rate changer was defined, skip
-    if(_polyChanger == nullptr) return;
+    if(_polyChanger.empty()) return;
     
     //load force from front (affects plus end polymerization)
     if(_plusEnd) {
@@ -163,7 +158,7 @@ void Cylinder::updateReactionRates() {
             
             if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
             
-                float newRate = _polyChanger->changeRate(r->getBareRate(), force);
+                float newRate = _polyChanger[getFilamentType()]->changeRate(r->getBareRate(), force);
                 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -182,7 +177,7 @@ void Cylinder::updateReactionRates() {
             
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
-                float newRate =  _polyChanger->changeRate(r->getBareRate(), force);
+                float newRate =  _polyChanger[getFilamentType()]->changeRate(r->getBareRate(), force);
 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -193,7 +188,7 @@ void Cylinder::updateReactionRates() {
 
 bool Cylinder::isFullLength() {
     
-    short filType = getFilament()->getType()
+    short filType = getFilamentType();
     
 #ifdef MECHANICS
     return areSame(_mCylinder->getEqLength(),
@@ -250,3 +245,7 @@ bool Cylinder::within(Cylinder* other, double dist) {
     return false;
 }
 
+vector<FilamentRateChanger*> Cylinder::_polyChanger;
+ChemManager* Cylinder::_chemManager = 0;
+
+Database<Cylinder*> Cylinder::_cylinders;

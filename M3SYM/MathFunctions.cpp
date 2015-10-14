@@ -16,6 +16,7 @@
 #include <math.h>
 
 #include "MathFunctions.h"
+#include "Rand.h"
 
 namespace mathfunc {
     
@@ -76,9 +77,9 @@ namespace mathfunc {
                                                            const vector<double>& p,
                                                            double l, double m, double theta){
         //get random permutation from p
-        vector<double> r = {p[0] + randomDouble(-1, 1),
-                            p[1] + randomDouble(-1, 1),
-                            p[2] + randomDouble(-1, 1)};
+        vector<double> r = {p[0] + Rand::randDouble(-1, 1),
+                            p[1] + Rand::randDouble(-1, 1),
+                            p[2] + Rand::randDouble(-1, 1)};
         
         //construct vector z which is r-p
         auto z = twoPointDirection(p, r);
@@ -90,7 +91,7 @@ namespace mathfunc {
         normalize(u); normalize(v);
         
         //find random point on circle defining the branching point
-        double thetaRandom = randomDouble(0, 2*M_PI);
+        double thetaRandom = Rand::randDouble(0, 2*M_PI);
         vector<double> bp1;
         bp1.push_back(p[0] + l * (u[0] * cos(thetaRandom) + v[0] * sin(thetaRandom)));
         bp1.push_back(p[1] + l * (u[1] * cos(thetaRandom) + v[1] * sin(thetaRandom)));
@@ -105,9 +106,9 @@ namespace mathfunc {
         double newL = (l + m * sin(theta));
         
         vector<double> bp2;
-        bp2.push_back(newP[0] + newL * ( u[0] * cos(thetaRandom) + v[0] * sin(thetaRandom)));
-        bp2.push_back(newP[1] + newL * ( u[1] * cos(thetaRandom) + v[1] * sin(thetaRandom)));
-        bp2.push_back(newP[2] + newL * ( u[2] * cos(thetaRandom) + v[2] * sin(thetaRandom)));
+        bp2.push_back(newP[0] + newL * (u[0] * cos(thetaRandom) + v[0] * sin(thetaRandom)));
+        bp2.push_back(newP[1] + newL * (u[1] * cos(thetaRandom) + v[1] * sin(thetaRandom)));
+        bp2.push_back(newP[2] + newL * (u[2] * cos(thetaRandom) + v[2] * sin(thetaRandom)));
             
         //get direction
         auto direction = twoPointDirection(bp1, bp2);

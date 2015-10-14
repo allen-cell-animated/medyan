@@ -15,20 +15,17 @@
 
 #include "MotorGhost.h"
 
-#include "Bead.h"
+#include "Filament.h"
 #include "Cylinder.h"
+#include "Bead.h"
 #include "ChemRNode.h"
 
 #include "GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
+#include "Rand.h"
 
 using namespace mathfunc;
-
-vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
-vector<MotorRateChanger*> MotorGhost::_walkingChangers;
-
-Database<MotorGhost*> MotorGhost::_motorGhosts;
 
 void MotorGhost::updateCoordinate() {
     
@@ -64,20 +61,18 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
         
         exit(EXIT_FAILURE);
     }
-    short filType = c1->getFilament()->getType();
+    short filType = c1->getFilamentType();
           
     int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize[filType]);
     int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize[filType]);
           
     //set number of heads by picking random int between maxheads and minheads
-    _numHeads = randomInteger(
-        SysParams::Chemistry().motorNumHeadsMin[_motorType],
-        SysParams::Chemistry().motorNumHeadsMax[_motorType]);
+    _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
+                                  SysParams::Chemistry().motorNumHeadsMax[_motorType]);
     
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
-        new CMotorGhost(motorType, _compartment,
-                        _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
+        new CMotorGhost(motorType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
     _cMotorGhost->setMotorGhost(this);
 #endif
     
@@ -88,8 +83,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     auto x4 = _c2->getSecondBead()->coordinate;
           
     _mMotorGhost = unique_ptr<MMotorGhost>(
-        new MMotorGhost(motorType, _numHeads, position1, position2,
-                        x1, x2, x3, x4));
+        new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -177,10 +171,8 @@ void MotorGhost::updateReactionRates() {
         vector<double> c1Direction = twoPointDirection(x2,x1);
         vector<double> c2Direction = twoPointDirection(x4,x3);
         
-        double forceDotDirectionC1 =
-        max(0.0, force * dotProduct(motorC1Direction, c1Direction));
-        double forceDotDirectionC2 =
-        max(0.0, force * dotProduct(motorC2Direction, c2Direction));
+        double forceDotDirectionC1 = max(0.0, force * dotProduct(motorC1Direction, c1Direction));
+        double forceDotDirectionC2 = max(0.0, force * dotProduct(motorC2Direction, c2Direction));
         
         //WALKING REACTIONS
         Species* s1 = _cMotorGhost->getFirstSpecies();
@@ -192,8 +184,7 @@ void MotorGhost::updateReactionRates() {
                 
                 float newRate =
                     _walkingChangers[_motorType]->
-                    changeRate(_cMotorGhost->getOnRate(),
-                               _cMotorGhost->getOffRate(),
+                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
                                _numHeads, forceDotDirectionC1);
                 
                 r->setRate(newRate);
@@ -206,8 +197,7 @@ void MotorGhost::updateReactionRates() {
                 
                 float newRate =
                     _walkingChangers[_motorType]->
-                    changeRate(_cMotorGhost->getOnRate(),
-                               _cMotorGhost->getOffRate(),
+                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
                                _numHeads, forceDotDirectionC2);
                 
                 r->setRate(newRate);
@@ -225,8 +215,7 @@ void MotorGhost::updateReactionRates() {
         //change the rate
         float newRate =
             _unbindingChangers[_motorType]->
-            changeRate(_cMotorGhost->getOnRate(),
-                       _cMotorGhost->getOffRate(),
+            changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
                        _numHeads, force);
         
         offRxn->setRate(newRate);
@@ -235,10 +224,8 @@ void MotorGhost::updateReactionRates() {
 }
 
 void MotorGhost::moveMotorHead(Cylinder* c,
-                               double oldPosition,
-                               double newPosition,
-                               short boundType,
-                               SubSystem* ps) {
+                               double oldPosition, double newPosition,
+                               short boundType, SubSystem* ps) {
     
     //shift the position of one side of the motor
     double shift =  newPosition - oldPosition;
@@ -252,7 +239,7 @@ void MotorGhost::moveMotorHead(Cylinder* c,
         if(shift > 0) _position2 += shift;
         else _position2 -= shift;
     }
-    short filType = c->getFilament()->getType();
+    short filType = c->getFilamentType();
     
 #ifdef CHEMISTRY
     short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize[filType]);
@@ -264,12 +251,9 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     
 }
 
-void MotorGhost::moveMotorHead(Cylinder* oldC,
-                               Cylinder* newC,
-                               double oldPosition,
-                               double newPosition,
-                               short boundType,
-                               SubSystem* ps) {
+void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
+                               double oldPosition, double newPosition,
+                               short boundType, SubSystem* ps) {
     
     //shift the head
     if(oldC == _c1) {
@@ -280,7 +264,7 @@ void MotorGhost::moveMotorHead(Cylinder* oldC,
         _position2 = newPosition;
         _c2 = newC;
     }
-    short filType = _c1->getFilament()->getType();
+    short filType = _c1->getFilamentType();
     
 #ifdef CHEMISTRY
     short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize[filType]);
@@ -342,4 +326,8 @@ species_copy_t MotorGhost::countSpecies(const string& name) {
     return copyNum;
 }
 
+vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
+vector<MotorRateChanger*> MotorGhost::_walkingChangers;
+
+Database<MotorGhost*> MotorGhost::_motorGhosts;
 

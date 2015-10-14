@@ -49,7 +49,7 @@ private:
 public:
     /// Constructor sets equlilibrium length, and also adjusts other
     /// parameters according to this length
-    MCylinder(double eqLength);
+    MCylinder(short filamentType, double eqLength);
     ~MCylinder() {};
 
     /// Set parent 
@@ -57,7 +57,7 @@ public:
     Cylinder* getCylinder() {return _pCylinder;}
     
     /// Set the equlilibrium length, which changes mechanical constants accordingly
-    void setEqLength(double L);
+    void setEqLength(short filamentType, double l);
     /// Get the current equlibrium length of this MCylinder
     double getEqLength() {return _eqLength;}
     

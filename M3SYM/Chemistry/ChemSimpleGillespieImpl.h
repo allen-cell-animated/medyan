@@ -34,7 +34,7 @@ class ChemSimpleGillespieImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ChemSimpleGillespieImpl() :
-    ChemSimImpl(), _eng((unsigned long)(time(nullptr))),
+    ChemSimImpl(), _eng(rdtsc()),
     _exp_distr(0.0), _uniform_distr() { resetTime(); }
     
     /// Copying is not allowed

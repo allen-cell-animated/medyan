@@ -19,6 +19,7 @@
 
 #include "MathFunctions.h"
 #include "SysParams.h"
+#include "Rand.h"
 
 using namespace mathfunc;
 
@@ -201,7 +202,9 @@ void GController::setActiveCompartments(Boundary* boundary) {
     
     //initialize all compartments equivalent to cproto
     for(auto &c : _compartmentGrid->children()) {
+        
         Compartment *C = (Compartment*)(c.get());
+        
         if(boundary->within(C)) C->setAsActive();
     }
 }
@@ -236,9 +239,9 @@ Compartment* GController::getRandomCompartment() {
         
         //create a random coordinate
         vector<double> coord =
-        {_grid[0] * _compartmentSize[0] * randomDouble(0,0.999),
-         _grid[1] * _compartmentSize[1] * randomDouble(0,0.999),
-         _grid[2] * _compartmentSize[2] * randomDouble(0,0.999)};
+        {_grid[0] * _compartmentSize[0] * Rand::randDouble(0,0.999),
+         _grid[1] * _compartmentSize[1] * Rand::randDouble(0,0.999),
+         _grid[2] * _compartmentSize[2] * Rand::randDouble(0,0.999)};
         
         Compartment* c = getCompartment(coord);
         if(c->isActivated()) return c;
@@ -251,12 +254,9 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     auto coordsCompartment = c->coordinates();
     vector<double> coords;
     
-    coords.push_back(coordsCompartment[0] +
-    _compartmentSize[0] * randomDouble(-1,1) / 2);
-    coords.push_back(coordsCompartment[1] +
-    _compartmentSize[1] * randomDouble(-1,1) / 2);
-    coords.push_back(coordsCompartment[2] +
-    _compartmentSize[2] * randomDouble(-1,1) / 2);
+    coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randDouble(-1,1) / 2);
+    coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randDouble(-1,1) / 2);
+    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randDouble(-1,1) / 2);
     
     return coords;
 }

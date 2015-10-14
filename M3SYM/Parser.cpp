@@ -42,7 +42,7 @@ OutputTypes SystemParser::readOutputTypes() {
             
             else if (lineVector[1] == "FORCES")     oTypes.forces = true;
             
-            else if (lineVector[1] == "STRESSES")   oTypes.stresses = true;
+            else if (lineVector[1] == "TENSIONS")   oTypes.tensions = true;
             
             else if (lineVector[1] == "CHEMISTRY")  oTypes.chemistry = true;
         }
@@ -93,96 +93,68 @@ void SystemParser::readChemParams() {
         if (line.find("NUMFILAMENTSPECIES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numFilamentSpecies = atof(lineVector[1].c_str());
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numFilamentSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
     
         if (line.find("NUMPLUSENDSPECIES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numPlusEndSpecies = atof(lineVector[1].c_str());
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numPlusEndSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
         if (line.find("NUMMINUSENDSPECIES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numMinusEndSpecies = atof(lineVector[1].c_str());
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numMinusEndSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
         if (line.find("NUMBOUNDSPECIES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numBoundSpecies = atof(lineVector[1].c_str());
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numBoundSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
         if (line.find("NUMLINKERSPECIES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numLinkerSpecies = atof(lineVector[1].c_str());
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numLinkerSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
         if (line.find("NUMMOTORSPECIES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numMotorSpecies = atof(lineVector[1].c_str());
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numMotorSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
         if (line.find("NUMBRANCHERSPECIES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CParams.numBrancherSpecies = atof(lineVector[1].c_str());
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numBrancherSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
-        if (line.find("NUMFILAMENTS") != string::npos) {
+        if (line.find("NUMFILAMENTTYPES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             
@@ -238,18 +210,22 @@ void SystemParser::readChemParams() {
     //Figure out the binding sites
     for(int i = 0; i < CParams.numBindingSites.size(); i++) {
     
+        vector<short> tempBindingSites;
+        
         int deltaBinding = SysParams::Geometry().cylinderIntSize[i] /
                            CParams.numBindingSites[i];
     
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;
-    
+        
         //add all other binding sites
         while(bindingCount < SysParams::Geometry().cylinderIntSize[i]) {
         
-            CParams.bindingSites[i].push_back(bindingCount);
+            tempBindingSites.push_back(bindingCount);
             bindingCount += deltaBinding;
         }
+        //push to CParams
+        CParams.bindingSites.push_back(tempBindingSites);
     }
     
     //set system parameters
@@ -1344,7 +1320,8 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.inputFile = lineVector[1];
             else {}
         }
-        else if(line.find("NUMFILAMENTS") != string::npos) {
+        else if(line.find("NUMFILAMENTS") != string::npos &&
+                line.find("NUMFILAMENTSPECIES") == string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
@@ -1366,16 +1343,28 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.filamentLength = atoi(lineVector[1].c_str());
             else {}
         }
+        else if(line.find("FILAMENTTYPE") != string::npos &&
+                line.find("NUMFILAMENTTYPES") == string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading filament type. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                FSetup.filamentType = atoi(lineVector[1].c_str());
+            else {}
+        }
     }
     return FSetup;
 }
 
-vector<vector<vector<double>>> FilamentParser::readFilaments() {
+vector<tuple<short, vector<double>, vector<double>>> FilamentParser::readFilaments() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    vector<vector<vector<double>>> returnVector;
+    vector<tuple<short, vector<double>, vector<double>>> returnVector;
     string line;
     
     while(getline(_inputFile, line)) {
@@ -1383,17 +1372,20 @@ vector<vector<vector<double>>> FilamentParser::readFilaments() {
         if(line.find("#") != string::npos) { continue; }
         
         vector<string> lineVector = split<string>(line);
-        if(lineVector.size() == 7) {
+        if(lineVector.size() == 8) {
             vector<double> coord1;
             vector<double> coord2;
-            for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 4; it++) {
+            
+            short type = atoi((*(lineVector.begin() + 1)).c_str());
+            
+            for(auto it = lineVector.begin() + 2; it != lineVector.begin() + 5; it++) {
                 coord1.push_back(atof(((*it).c_str())));
             }
-            for(auto it = lineVector.begin() + 4; it != lineVector.end(); it++) {
+            for(auto it = lineVector.begin() + 5; it != lineVector.end(); it++) {
                 coord2.push_back(atof(((*it).c_str())));
             }
             
-            returnVector.push_back({coord1, coord2});
+            returnVector.emplace_back(type, coord1, coord2);
         }
     }
     return returnVector;

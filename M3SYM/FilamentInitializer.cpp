@@ -17,30 +17,26 @@
 
 #include "MathFunctions.h"
 #include "SysParams.h"
+#include "Rand.h"
 
 using namespace mathfunc;
 
-vector<vector<vector<double>>>
-RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilaments) {
+vector<tuple<short, vector<double>, vector<double>>>
+RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, short filamentType, int lenFilaments) {
     
-    vector<vector<vector<double>>> filamentData;
+    vector<tuple<short, vector<double>, vector<double>>> filamentData;
     
     //Create random distribution of filaments
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
         
-        double firstX = randomDouble(0,1) * SysParams::Geometry().NX *
-                        SysParams::Geometry().compartmentSizeX;
+        double firstX = Rand::randDouble(0,1) * SysParams::Geometry().NX * SysParams::Geometry().compartmentSizeX;
+        double firstY = Rand::randDouble(0,1) * SysParams::Geometry().NY * SysParams::Geometry().compartmentSizeY;
+        double firstZ = Rand::randDouble(0,1) * SysParams::Geometry().NZ * SysParams::Geometry().compartmentSizeZ;
         
-        double firstY = randomDouble(0,1) * SysParams::Geometry().NY *
-                        SysParams::Geometry().compartmentSizeY;
-        
-        double firstZ = randomDouble(0,1) * SysParams::Geometry().NZ *
-                        SysParams::Geometry().compartmentSizeZ;
-        
-        double directionX = randomDouble(-1,1);
-        double directionY = randomDouble(-1,1);
-        double directionZ = randomDouble(-1,1);
+        double directionX = Rand::randDouble(-1,1);
+        double directionY = Rand::randDouble(-1,1);
+        double directionZ = Rand::randDouble(-1,1);
         
         //Create a random filament vector one cylinder long
         vector<double> firstPoint = {firstX, firstY, firstZ};
@@ -50,10 +46,10 @@ RandomFilamentDist::createFilaments(Boundary* b, int numFilaments, int lenFilame
         
         vector<double> secondPoint =
             nextPointProjection(firstPoint,(double)lenFilaments *
-            SysParams::Geometry().cylinderSize - 0.01, direction);
+            SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
         
         if(b->within(firstPoint) && b->within(secondPoint)) {
-            filamentData.push_back({firstPoint, secondPoint});
+            filamentData.emplace_back(filamentType, firstPoint, secondPoint);
             filamentCounter++;
         }
     }

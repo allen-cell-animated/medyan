@@ -11,12 +11,7 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "common.h"
+#include "Rand.h"
 
-double global_time;
-
-vector<short> B_BINDING_INDEX = vector<short>(MAX_FILAMENT_TYPES);
-vector<short> L_BINDING_INDEX = vector<short>(MAX_FILAMENT_TYPES);
-vector<short> M_BINDING_INDEX = vector<short>(MAX_FILAMENT_TYPES);
-
-vector<vector<short>> BINDING_INDEX = vector<vector<short>>(MAX_FILAMENT_TYPES);
+mt19937 Rand::_eng(rdtsc());
+uniform_int_distribution<int> Rand::_int_distr;

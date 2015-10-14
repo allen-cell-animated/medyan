@@ -23,10 +23,9 @@
 #include "GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
+#include "Rand.h"
 
 using namespace mathfunc;
-
-Database<BranchingPoint*> BranchingPoint::_branchingPoints;
 
 void BranchingPoint::updateCoordinate() {
     
@@ -38,10 +37,8 @@ void BranchingPoint::updateCoordinate() {
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                short branchType, double position)
 
-    : Trackable(true),
-      _c1(c1), _c2(c2), _position(position),
-      _branchType(branchType), _branchID(_branchingPoints.getID()),
-      _birthTime(tau()) {
+    : Trackable(true), _c1(c1), _c2(c2), _position(position),
+      _branchType(branchType), _branchID(_branchingPoints.getID()), _birthTime(tau()) {
     
     //Find compartment
     updateCoordinate();
@@ -55,18 +52,16 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
         exit(EXIT_FAILURE);
     }
         
-    int pos = int(position * SysParams::Geometry().cylinderIntSize);
+    int pos = int(position * SysParams::Geometry().cylinderIntSize[c1->getFilamentType()]);
     
 #ifdef CHEMISTRY
-    _cBranchingPoint = unique_ptr<CBranchingPoint>(
-                       new CBranchingPoint(branchType, _compartment,
-                       c1->getCCylinder(), c2->getCCylinder(), pos));
+    _cBranchingPoint = unique_ptr<CBranchingPoint>(new CBranchingPoint(branchType, _compartment,
+                                                   c1->getCCylinder(), c2->getCCylinder(), pos));
     _cBranchingPoint->setBranchingPoint(this);
 #endif
     
 #ifdef MECHANICS
-    _mBranchingPoint = unique_ptr<MBranchingPoint>(
-                       new MBranchingPoint(branchType));
+    _mBranchingPoint = unique_ptr<MBranchingPoint>(new MBranchingPoint(branchType));
     _mBranchingPoint->setBranchingPoint(this);
 #endif
         
@@ -78,14 +73,11 @@ BranchingPoint::~BranchingPoint() noexcept {
     
 #ifdef MECHANICS
     //offset the branching cylinder's bead by a little for safety
-    auto msize = SysParams::Geometry().monomerSize;
+    auto msize = SysParams::Geometry().monomerSize[_c1->getFilamentType()];
     
-    vector<double> offsetCoord = {(randomInteger(0,1) ? -1 : +1) *
-                                   randomDouble(msize, 2 * msize),
-                                  (randomInteger(0,1) ? -1 : +1) *
-                                   randomDouble(msize, 2 * msize),
-                                  (randomInteger(0,1) ? -1 : +1) *
-                                   randomDouble(msize, 2 * msize)};
+    vector<double> offsetCoord = {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+                                  (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+                                  (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
     
     auto b = _c2->getFirstBead();
     
@@ -109,15 +101,14 @@ BranchingPoint::~BranchingPoint() noexcept {
         
         //unmark the filament and bound species
         m->speciesFilament(speciesFilament)->down();
-        m->speciesBound(B_BINDING_INDEX)->down();
+        m->speciesBound(B_BINDING_INDEX[_c1->getFilamentType()])->down();
     }
     //mark the free species instead
     else {
         //find the free species
         Species* speciesFilament = m->speciesFilament(m->activeSpeciesPlusEnd());
         
-        string speciesName = SpeciesNamesDB::
-                             removeUniqueFilName(speciesFilament->getName());
+        string speciesName = SpeciesNamesDB::removeUniqueFilName(speciesFilament->getName());
         string speciesFirstChar = speciesName.substr(0,1);
         
         //find the free monomer, either bulk or diffusing
@@ -236,3 +227,4 @@ species_copy_t BranchingPoint::countSpecies(const string& name) {
     return copyNum;
 }
 
+Database<BranchingPoint*> BranchingPoint::_branchingPoints;

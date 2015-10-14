@@ -87,7 +87,7 @@ private:
     /// A list of reactions to add to every new CCylinder
     /// @note - is a 2D vector corresponding to different filament types
     vector<vector<unique_ptr<FilamentReactionTemplate>>> _filRxnTemplates =
-    vector<vector<unique_ptr<FilamentReactionTemplate>>>(MAX_FILAMENTS);
+    vector<vector<unique_ptr<FilamentReactionTemplate>>>(MAX_FILAMENT_TYPES);
 };
 
 

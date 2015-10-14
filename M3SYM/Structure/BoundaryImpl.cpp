@@ -36,17 +36,14 @@ BoundaryCubic::BoundaryCubic(SubSystem* s, BoundaryMove move)
     //Create boundary surfaces, add to vector
     //X normal planes
     _boundarySurfaces.emplace_back(new Plane(s, {zeroX, sysY / 2, sysZ / 2}, {1, 0, 0}));
-        
     _boundarySurfaces.emplace_back(new Plane(s, {sysX, sysY / 2, sysZ / 2}, {-1, 0, 0}));
     
     //Y normal planes
     _boundarySurfaces.emplace_back(new Plane(s, {sysX / 2, zeroY, sysZ / 2}, {0, 1, 0}));
-        
     _boundarySurfaces.emplace_back(new Plane(s, {sysX / 2, sysY, sysZ / 2}, {0, -1, 0}));
     
     //Z normal planes
     _boundarySurfaces.emplace_back(new Plane(s, {sysX / 2, sysY / 2, zeroZ}, {0, 0, 1}));
-        
     _boundarySurfaces.emplace_back(new Plane(s, {sysX / 2, sysY / 2, sysZ}, {0, 0, -1}));
     
 }
@@ -209,14 +206,9 @@ BoundaryCapsule::BoundaryCapsule(SubSystem* s, double diameter, BoundaryMove mov
 
     double height = sysZ - diameter;
     
-    _boundarySurfaces.emplace_back( new CylinderZ(s, {sysX / 2, sysY / 2, sysZ / 2},
-                                                  diameter / 2, height));
-        
-    _boundarySurfaces.emplace_back( new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 + height / 2},
-                                                    diameter / 2, false));
-        
-    _boundarySurfaces.emplace_back( new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 - height / 2},
-                                                    diameter / 2, true));
+    _boundarySurfaces.emplace_back( new CylinderZ(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
+    _boundarySurfaces.emplace_back( new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 + height / 2}, diameter / 2, false));
+    _boundarySurfaces.emplace_back( new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 - height / 2}, diameter / 2, true));
 }
 
 bool BoundaryCapsule::within(Compartment* C) {

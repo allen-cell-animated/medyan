@@ -59,15 +59,13 @@ private:
     Compartment* _compartment; ///< Compartment this ccylinder is in
     Cylinder* _pCylinder;      ///< Parent cylinder
     
-    short _size = SysParams::Geometry().cylinderSize /
-                  SysParams::Geometry().monomerSize; ///< Maximum length
+    short _size = 0; ///< Maximum length
     
     static ChemSim* _chemSim;   ///< A pointer to the ChemSim, initialized by CController
     
 public:
     /// Default constructor, sets compartment and cylinder
-    CCylinder(Compartment* C, Cylinder* c)
-        : _compartment(C), _pCylinder(c) {}
+    CCylinder(Compartment* C, Cylinder* c);
     
     /// Copy constructor
     /// @note This constructor will create a new CCylinder with different Species and
@@ -144,6 +142,9 @@ public:
     
     /// Get size in number of monomers
     short getSize() {return _size;}
+    
+    /// Get the filament type
+    short getFilamentType();
     
 };
 

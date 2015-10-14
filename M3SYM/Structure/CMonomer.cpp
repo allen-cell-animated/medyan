@@ -16,13 +16,6 @@
 
 #include "SysParams.h"
 
-vector<vector<short>> CMonomer::_speciesFilamentIndex = vector<vector<short>>(MAX_FILAMENTS);
-vector<vector<short>> CMonomer::_speciesBoundIndex    = vector<vector<short>>(MAX_FILAMENTS);
-
-vector<short> CMonomer::_numFSpecies = vector<short>(MAX_FILAMENTS);
-vector<short> CMonomer::_numBSpecies = vector<short>(MAX_FILAMENTS);
-
-
 CMonomer::CMonomer(short filamentType) : _filamentType(filamentType) {
     
     _speciesFilament = new SpeciesFilament*[_numFSpecies[_filamentType]]();
@@ -125,7 +118,7 @@ SpeciesBound* CMonomer::speciesBrancher(int index) {
 //GET ACTIVE
 
 short CMonomer::activeSpeciesFilament() {
-    short numFilamentSpecies = SysParams::Chemistry().numFilamentSpecies;
+    short numFilamentSpecies = SysParams::Chemistry().numFilamentSpecies[_filamentType];
     short offset = _speciesFilamentIndex[_filamentType][SPECIESFILAMENT];
     
     for(int i = 0; i < numFilamentSpecies; i++) {
@@ -135,7 +128,7 @@ short CMonomer::activeSpeciesFilament() {
     return -1;
 }
 short CMonomer::activeSpeciesPlusEnd() {
-    short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies;
+    short numPlusEndSpecies = SysParams::Chemistry().numPlusEndSpecies[_filamentType];
     short offset = _speciesFilamentIndex[_filamentType][SPECIESPLUSEND];
     
     for(int i = 0; i < numPlusEndSpecies; i++) {
@@ -146,7 +139,7 @@ short CMonomer::activeSpeciesPlusEnd() {
     return -1;
 }
 short CMonomer::activeSpeciesMinusEnd() {
-    short numMinusEndSpecies = SysParams::Chemistry().numMinusEndSpecies;
+    short numMinusEndSpecies = SysParams::Chemistry().numMinusEndSpecies[_filamentType];
     short offset = _speciesFilamentIndex[_filamentType][SPECIESMINUSEND];
     
     for(int i = 0; i < numMinusEndSpecies; i++) {
@@ -158,7 +151,7 @@ short CMonomer::activeSpeciesMinusEnd() {
 }
 
 short CMonomer::activeSpeciesLinker() {
-    short numLinkerSpecies = SysParams::Chemistry().numLinkerSpecies;
+    short numLinkerSpecies = SysParams::Chemistry().numLinkerSpecies[_filamentType];
     short offset = _speciesBoundIndex[_filamentType][SPECIESLINKER];
     
     for(int i = 0; i < numLinkerSpecies; i++) {
@@ -169,7 +162,7 @@ short CMonomer::activeSpeciesLinker() {
     
 }
 short CMonomer::activeSpeciesMotor() {
-    short numMotorSpecies = SysParams::Chemistry().numMotorSpecies;
+    short numMotorSpecies = SysParams::Chemistry().numMotorSpecies[_filamentType];
     short offset = _speciesBoundIndex[_filamentType][SPECIESMOTOR];
     
     for(int i = 0; i < numMotorSpecies; i++) {
@@ -179,7 +172,7 @@ short CMonomer::activeSpeciesMotor() {
     return -1;
 }
 short CMonomer::activeSpeciesBrancher() {
-    short numBrancherSpecies = SysParams::Chemistry().numBrancherSpecies;
+    short numBrancherSpecies = SysParams::Chemistry().numBrancherSpecies[_filamentType];
     short offset = _speciesBoundIndex[_filamentType][SPECIESBRANCHER];
     
     for(int i = 0; i < numBrancherSpecies; i++) {
@@ -215,6 +208,12 @@ bool CMonomer::isConsistent() {
     
     return true;
 }
+
+vector<vector<short>> CMonomer::_speciesFilamentIndex = vector<vector<short>>(MAX_FILAMENT_TYPES);
+vector<vector<short>> CMonomer::_speciesBoundIndex    = vector<vector<short>>(MAX_FILAMENT_TYPES);
+
+vector<short> CMonomer::_numFSpecies = vector<short>(MAX_FILAMENT_TYPES);
+vector<short> CMonomer::_numBSpecies = vector<short>(MAX_FILAMENT_TYPES);
 
 
 

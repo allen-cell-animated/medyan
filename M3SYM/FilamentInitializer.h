@@ -39,8 +39,10 @@ public:
     /// be fixed in the future.
     virtual ~FilamentInitializer() noexcept {}
     
-    virtual vector<vector<vector<double>>>
-    createFilaments(Boundary* b, int numFilaments, int lenFilaments) = 0;
+    /// Returns a vector of tuples representing the filament type and beginning and end
+    /// coordinates of the filament, similar to the structure of manual filament parsing.
+    virtual vector<tuple<short, vector<double>, vector<double>>>
+    createFilaments(Boundary* b, int numFilaments, short filamentType, int lenFilaments) = 0;
 };
 
 /// An implementation of FilamentInitialzer that creates a completely random
@@ -48,8 +50,8 @@ public:
 class RandomFilamentDist : public FilamentInitializer {
     
 public:
-    virtual vector<vector<vector<double>>>
-    createFilaments(Boundary* b, int numFilaments, int lenFilaments);
+    virtual vector<tuple<short, vector<double>, vector<double>>>
+    createFilaments(Boundary* b, int numFilaments, short filamentType, int lenFilaments);
 };
 
 #endif

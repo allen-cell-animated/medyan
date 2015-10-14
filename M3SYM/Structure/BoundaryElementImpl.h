@@ -44,10 +44,7 @@ public:
         
         ///set parameters
         _a = normal[0]; _b = normal[1]; _c = normal[2];
-        
-        _d = -_a * _coords[0] -
-              _b * _coords[1] -
-              _c * _coords[2];
+        _d = -_a * _coords[0] - _b * _coords[1] - _c * _coords[2];
     }
     
     virtual double distance(const vector<double>& point) {

@@ -26,7 +26,7 @@ class CompartmentGrid;
 /// To print a specified output into a file
 /*!
  *  An output object, initialized by the Controller, can print a number of specific
- *  output formats, including current snapshot, forces, stresses, and birth times. 
+ *  output formats, including current snapshot, forces, tensions, and birth times. 
  *  Upon destruction, the output file is closed.
  */
 
@@ -84,16 +84,16 @@ public:
     virtual void print(int step);
 };
 
-/// Print "stresses" for each Filament, Linker, and MotorGhost
+/// Print tension for each Filament, Linker, and MotorGhost
 /// @note This class prints the following:
 ///                 k * (l - l_0)
 /// where k is the stretching force constant, l is the current
 /// length, and l_0 is the equilibrium length.
-class Stresses : public Output {
+class Tensions : public Output {
     
 public:
-    Stresses(string outputFileName) : Output(outputFileName) {}
-    ~Stresses() {}
+    Tensions(string outputFileName) : Output(outputFileName) {}
+    ~Tensions() {}
     
     virtual void print(int step);
 };

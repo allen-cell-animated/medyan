@@ -78,23 +78,26 @@ struct ChemParams {
     
     //@{
     /// Number of filament related species
-    short numFilamentSpecies = 0;
-    short numPlusEndSpecies  = 0;
-    short numMinusEndSpecies = 0;
-    short numBoundSpecies    = 0;
-    short numLinkerSpecies   = 0;
-    short numMotorSpecies    = 0;
-    short numBrancherSpecies = 0;
+    /// Vector corresponds to number of species on each filament type
+    vector<short> numFilamentSpecies = {};
+    vector<short> numPlusEndSpecies  = {};
+    vector<short> numMinusEndSpecies = {};
+    vector<short> numBoundSpecies    = {};
+    vector<short> numLinkerSpecies   = {};
+    vector<short> numMotorSpecies    = {};
+    vector<short> numBrancherSpecies = {};
     //@}
-    
-    /// Number of filaments
+
+    /// Number of different filament types
     short numFilaments = 0;
     
     /// Number of binding sites per cylinder
+    /// Vector corresponds to each filament type
     vector<short> numBindingSites = {};
     
     //@{
     ///Extra motor parameters
+    /// Vector corresponds to each filament type
     vector<short> motorNumHeadsMin = {};
     vector<short> motorNumHeadsMax = {};
     
@@ -102,10 +105,12 @@ struct ChemParams {
     //@}
     
     /// Binding sites on filaments
+    /// 2D Vector corresponds to each filament type
     vector<vector<short>> bindingSites = {};
     
     //@{
     /// Positions of all bound molecules in species vectors
+    /// Vector corresponds to each filament type
     vector<short> brancherBoundIndex = {};
     vector<short> motorBoundIndex = {};
     vector<short> linkerBoundIndex = {};

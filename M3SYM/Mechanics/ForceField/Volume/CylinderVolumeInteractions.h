@@ -32,8 +32,7 @@ protected:
 public:
     ///Constructor, initializes a cylinder neighbor list
     CylinderVolumeInteractions() {
-    
-        _neighborList = new CCNeighborList(SysParams::Mechanics().VolumeCutoff);
+        _neighborList = new CCNeighborList(SysParams::Mechanics().VolumeCutoff[0]);
     }
     
     /// Compute the energy of this interaction

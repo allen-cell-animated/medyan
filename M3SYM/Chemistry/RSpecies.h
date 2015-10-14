@@ -617,16 +617,13 @@ public:
                                     RSpeciesType t=RSpeciesType::REG) {
         //create the appropriate rspecies
         //average
-        if(t == RSpeciesType::AVG)
-            return new RSpeciesAvg(parent, n, ulim);
+        if(t == RSpeciesType::AVG) return new RSpeciesAvg(parent, n, ulim);
         //constant
-        else if(t == RSpeciesType::CONST)
-            return new RSpeciesConst(parent, n, ulim);
+        else if(t == RSpeciesType::CONST) return new RSpeciesConst(parent, n, ulim);
         //regular
-        else if(t == RSpeciesType::REG)
-            return new RSpeciesReg(parent, n, ulim);
-        else
-            return nullptr;
+        else if(t == RSpeciesType::REG) return new RSpeciesReg(parent, n, ulim);
+        
+        else return nullptr;
     }
 };
 

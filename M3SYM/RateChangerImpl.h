@@ -171,15 +171,15 @@ private:
     float _stepFrac = 1.0; ///< step size of a single head relative to sim
     
 public:
-    LowDutyHillStall(short motorType, double charForce)
+    LowDutyHillStall(short motorType, short filamentType, double charForce)
     
         : MotorRateChanger(motorType), _F0(charForce) {
     
         //calculate rate based on step fraction
         double d_step = SysParams::Chemistry().motorStepSize[_motorType];
         
-        double d_total = (double)SysParams::Geometry().cylinderSize /
-                                 SysParams::Chemistry().numBindingSites;
+        double d_total = (double)SysParams::Geometry().cylinderSize[filamentType] /
+                                 SysParams::Chemistry().numBindingSites[filamentType];
         
         _stepFrac = d_step / d_total;
     }

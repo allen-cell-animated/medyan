@@ -38,6 +38,8 @@ class CCylinder;
 class CBound {
     
 protected:
+    short _filamentType; ///< The filament type that this CBound binds to
+    
     SpeciesBound* _firstSpecies = nullptr; ///< Corresponding first species on Filament
     SpeciesBound* _secondSpecies = nullptr;///< Corresponding second species on Filament
     
@@ -59,10 +61,10 @@ protected:
     
 public:
     /// Constructor, just sets species
-    CBound(Compartment* c, CCylinder* cc1, CCylinder* cc2,
+    CBound(short filamentType, Compartment* c, CCylinder* cc1, CCylinder* cc2,
            short position1, short position2)
     
-        : _compartment(c), _cc1(cc1), _cc2(cc2),
+        : _filamentType(filamentType), _compartment(c), _cc1(cc1), _cc2(cc2),
           _position1(position1), _position2(position2) {}
     
     /// Virtual destructor
