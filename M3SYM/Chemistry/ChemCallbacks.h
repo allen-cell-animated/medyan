@@ -303,11 +303,8 @@ struct BranchingCallback {
     float _onRate;         ///< Rate of the binding reaction
     float _offRate;        ///< Rate of the unbinding reaction
     
-    BranchingCallback(BranchingManager* bManager,
-                      short plusEnd,
-                      float onRate,
-                      float offRate,
-                      SubSystem* ps)
+    BranchingCallback(BranchingManager* bManager, short plusEnd,
+                      float onRate, float offRate, SubSystem* ps)
     
     : _ps(ps), _bManager(bManager),
       _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
@@ -408,9 +405,7 @@ struct LinkerBindingCallback {
     float _offRate;               ///< Rate of the unbinding reaction
 
     LinkerBindingCallback(LinkerBindingManager* lManager,
-                          float onRate,
-                          float offRate,
-                          SubSystem* ps)
+                          float onRate, float offRate, SubSystem* ps)
     
         : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
     
@@ -475,9 +470,7 @@ struct MotorBindingCallback {
     float _offRate;               ///< Rate of the unbinding reaction
     
     MotorBindingCallback(MotorBindingManager* mManager,
-                         float onRate,
-                         float offRate,
-                         SubSystem* ps)
+                         float onRate, float offRate, SubSystem* ps)
     
     : _ps(ps), _mManager(mManager), _onRate(onRate), _offRate(offRate) {}
     
@@ -530,11 +523,8 @@ struct MotorWalkingCallback {
     SubSystem* _ps;      ///< Ptr to subsystem
     
     MotorWalkingCallback(Cylinder* c,
-                        short oldPosition,
-                        short newPosition,
-                        short motorType,
-                        short boundType,
-                        SubSystem* ps)
+                        short oldPosition, short newPosition,
+                        short motorType, short boundType, SubSystem* ps)
     
         :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
          _motorType(motorType), _boundType(boundType), _ps(ps) {}
@@ -579,11 +569,8 @@ struct MotorMovingCylinderCallback {
     SubSystem* _ps;         ///< Ptr to subsystem
     
     MotorMovingCylinderCallback(Cylinder* oldC, Cylinder* newC,
-                                short oldPosition,
-                                short newPosition,
-                                short motorType,
-                                short boundType,
-                                SubSystem* ps)
+                                short oldPosition, short newPosition,
+                                short motorType, short boundType, SubSystem* ps)
     
         :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
          _motorType(motorType), _boundType(boundType), _ps(ps) {}
@@ -631,12 +618,8 @@ struct FilamentCreationCallback {
     Compartment* _compartment; ///< compartment to put this filament in
     SubSystem* _ps; ///< Ptr to the subsystem
     
-    FilamentCreationCallback(short plusEnd,
-                             short minusEnd,
-                             short filament,
-                             short filType,
-                             SubSystem* ps,
-                             Compartment* c = nullptr)
+    FilamentCreationCallback(short plusEnd, short minusEnd, short filament,
+                             short filType, SubSystem* ps, Compartment* c = nullptr)
     
         : _plusEnd(plusEnd), _minusEnd(minusEnd), _filament(filament),
           _filType(filType), _compartment(c), _ps(ps) {}

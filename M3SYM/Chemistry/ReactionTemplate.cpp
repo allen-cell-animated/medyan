@@ -70,9 +70,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         
         ReactionBase* rxn;
-        if(BINDING_INDEX.size() == 3)
+        if(BINDING_INDEX[_filamentType].size() == 3)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
-        else if(BINDING_INDEX.size() == 2)
+        else if(BINDING_INDEX[_filamentType].size() == 2)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
         else
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
@@ -120,9 +120,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(BINDING_INDEX.size() == 3)
+    if(BINDING_INDEX[_filamentType].size() == 3)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
-    else if(BINDING_INDEX.size() == 2)
+    else if(BINDING_INDEX[_filamentType].size() == 2)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
     else
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
@@ -183,9 +183,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         
         ReactionBase *rxn;
-        if(BINDING_INDEX.size() == 3)
+        if(BINDING_INDEX[_filamentType].size() == 3)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
-        else if(BINDING_INDEX.size() == 2)
+        else if(BINDING_INDEX[_filamentType].size() == 2)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
         else
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
@@ -232,9 +232,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(BINDING_INDEX.size() == 3)
+    if(BINDING_INDEX[_filamentType].size() == 3)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
-    else if(BINDING_INDEX.size() == 2)
+    else if(BINDING_INDEX[_filamentType].size() == 2)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
     else
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
@@ -296,9 +296,9 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
         ReactionBase* rxn;
         
-        if(BINDING_INDEX.size() == 3)
+        if(BINDING_INDEX[_filamentType].size() == 3)
             rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
-        else if(BINDING_INDEX.size() == 2)
+        else if(BINDING_INDEX[_filamentType].size() == 2)
             rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
         else
             rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
@@ -360,9 +360,9 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         
         ReactionBase* rxn;
         
-        if(BINDING_INDEX.size() == 3)
+        if(BINDING_INDEX[_filamentType].size() == 3)
             rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
-        else if(BINDING_INDEX.size() == 2)
+        else if(BINDING_INDEX[_filamentType].size() == 2)
             rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
         else
             rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
@@ -417,9 +417,9 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(BINDING_INDEX.size() == 3)
+    if(BINDING_INDEX[_filamentType].size() == 3)
         rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
-    else if(BINDING_INDEX.size() == 2)
+    else if(BINDING_INDEX[_filamentType].size() == 2)
         rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
     else
         rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
@@ -473,9 +473,9 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     ReactionBase* rxn;
     
-    if(BINDING_INDEX.size() == 3)
+    if(BINDING_INDEX[_filamentType].size() == 3)
         rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
-    else if(BINDING_INDEX.size() == 2)
+    else if(BINDING_INDEX[_filamentType].size() == 2)
         rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
     else
         rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
@@ -863,9 +863,9 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
         vector<Species*> species = reactantSpecies;
         
         ReactionBase* rxn;
-        if(BINDING_INDEX.size() == 3)
+        if(BINDING_INDEX[_filamentType].size() == 3)
             rxn = new Reaction<SEVERINGREACTANTS + 3,SEVERINGPRODUCTS>(species, _rate);
-        else if(BINDING_INDEX.size() == 2)
+        else if(BINDING_INDEX[_filamentType].size() == 2)
             rxn = new Reaction<SEVERINGREACTANTS + 2,SEVERINGPRODUCTS>(species, _rate);
         else
             rxn = new Reaction<SEVERINGREACTANTS + 1,SEVERINGPRODUCTS>(species, _rate);
