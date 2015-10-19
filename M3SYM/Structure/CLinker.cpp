@@ -25,8 +25,8 @@ CLinker::CLinker(short linkerType, Compartment* c,
     //Find species on cylinder that should be marked
     SpeciesBound* sl1 = _cc1->getCMonomer(_position1)->speciesLinker(linkerType);
     SpeciesBound* sl2 = _cc2->getCMonomer(_position2)->speciesLinker(linkerType);
-    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(L_BINDING_INDEX[_filamentType]);
-    SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(L_BINDING_INDEX[_filamentType]);
+    SpeciesBound* se1 = _cc1->getCMonomer(_position1)->speciesBound(SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+    SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     
     //mark species
     assert(sl1->getN() == 0 && sl2->getN() == 0 &&
@@ -59,8 +59,8 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     os.push_back(&rs[SPECIESL_BINDING_INDEX]->getSpecies());
     
-    Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(L_BINDING_INDEX[_filamentType]);
-    Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(L_BINDING_INDEX[_filamentType]);
+    Species* empty1 = _cc1->getCMonomer(_position1)->speciesBound(SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+    Species* empty2 = _cc2->getCMonomer(_position2)->speciesBound(SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     
     os.push_back(empty1);
     os.push_back(empty2);

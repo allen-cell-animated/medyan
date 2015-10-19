@@ -26,8 +26,8 @@
 #include "SysParams.h"
 #include "Rand.h"
 
-#define SPECIESBB_BINDING_INDEX 2
-#define SPECIESMLB_BINDING_INDEX 0
+#define B_RXN_INDEX 2
+#define ML_RXN_INDEX 0
 
 //FORWARD DECLARATIONS
 class SubSystem;

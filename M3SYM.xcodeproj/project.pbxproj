@@ -21,7 +21,6 @@
 		F7199B3B1A30CCE500CD5DCC /* CBranchingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B391A30CCE500CD5DCC /* CBranchingPoint.h */; };
 		F735B76D1A2D16F200AE21D1 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7531A2D16F200AE21D1 /* CController.cpp */; };
 		F735B76E1A2D16F200AE21D1 /* CController.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7541A2D16F200AE21D1 /* CController.h */; };
-		F735B76F1A2D16F200AE21D1 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7551A2D16F200AE21D1 /* common.cpp */; };
 		F735B7701A2D16F200AE21D1 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7561A2D16F200AE21D1 /* common.h */; };
 		F735B7711A2D16F200AE21D1 /* Component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7571A2D16F200AE21D1 /* Component.cpp */; };
 		F735B7721A2D16F200AE21D1 /* Component.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7581A2D16F200AE21D1 /* Component.h */; };
@@ -148,6 +147,7 @@
 		F768ACEE1BC8158A00B838AD /* Rand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F768ACEC1BC8158A00B838AD /* Rand.cpp */; };
 		F768ACEF1BC8158A00B838AD /* Rand.h in Headers */ = {isa = PBXBuildFile; fileRef = F768ACED1BC8158A00B838AD /* Rand.h */; };
 		F77745901BCD404000F3AB4C /* utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777458F1BCD404000F3AB4C /* utility.cpp */; };
+		F77745921BCEE9FA00F3AB4C /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F77745911BCEE9FA00F3AB4C /* common.cpp */; };
 		F777FAA719C2294E00D2850A /* libm3sym.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libm3sym.dylib */; };
 		F790403E1B0E57B50033EA7E /* Trackable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F790403D1B0E57B50033EA7E /* Trackable.cpp */; };
 		F7A5200D1A8260EE003C49E0 /* ReactionTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A5200B1A8260EE003C49E0 /* ReactionTemplate.cpp */; };
@@ -251,7 +251,6 @@
 		F7199B391A30CCE500CD5DCC /* CBranchingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBranchingPoint.h; sourceTree = "<group>"; };
 		F735B7531A2D16F200AE21D1 /* CController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CController.cpp; sourceTree = "<group>"; };
 		F735B7541A2D16F200AE21D1 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
-		F735B7551A2D16F200AE21D1 /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		F735B7561A2D16F200AE21D1 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		F735B7571A2D16F200AE21D1 /* Component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Component.cpp; sourceTree = "<group>"; };
 		F735B7581A2D16F200AE21D1 /* Component.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Component.h; sourceTree = "<group>"; };
@@ -379,6 +378,7 @@
 		F768ACED1BC8158A00B838AD /* Rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rand.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libm3sym.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libm3sym.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F777458F1BCD404000F3AB4C /* utility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utility.cpp; sourceTree = "<group>"; };
+		F77745911BCEE9FA00F3AB4C /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		F790403D1B0E57B50033EA7E /* Trackable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trackable.cpp; sourceTree = "<group>"; };
 		F7954C49197D98BE00074A12 /* M3SYM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = M3SYM; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
@@ -753,7 +753,7 @@
 		F7954C4A197D98BE00074A12 /* M3SYM */ = {
 			isa = PBXGroup;
 			children = (
-				F735B7551A2D16F200AE21D1 /* common.cpp */,
+				F77745911BCEE9FA00F3AB4C /* common.cpp */,
 				F735B7561A2D16F200AE21D1 /* common.h */,
 				F777458F1BCD404000F3AB4C /* utility.cpp */,
 				F735B76B1A2D16F200AE21D1 /* utility.h */,
@@ -1051,7 +1051,6 @@
 				F7525A561A70241E007A4E9F /* BranchingDihedral.cpp in Sources */,
 				F7C9CFF11A2D165D0087434A /* BoundaryElementImpl.cpp in Sources */,
 				F7C9CFFF1A2D165D0087434A /* CMotorGhost.cpp in Sources */,
-				F735B76F1A2D16F200AE21D1 /* common.cpp in Sources */,
 				F735B7771A2D16F200AE21D1 /* GController.cpp in Sources */,
 				F735B7751A2D16F200AE21D1 /* Controller.cpp in Sources */,
 				F735B7711A2D16F200AE21D1 /* Component.cpp in Sources */,
@@ -1077,6 +1076,7 @@
 				F7525A7D1A702431007A4E9F /* FilamentStretchingHarmonic.cpp in Sources */,
 				F735B7B61A2D173F00AE21D1 /* CGMethod.cpp in Sources */,
 				F7A520151A8BBF24003C49E0 /* DRController.cpp in Sources */,
+				F77745921BCEE9FA00F3AB4C /* common.cpp in Sources */,
 				F7525A941A702461007A4E9F /* LinkerFF.cpp in Sources */,
 				F735B7B41A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp in Sources */,
 				F735B7801A2D16F200AE21D1 /* Parser.cpp in Sources */,

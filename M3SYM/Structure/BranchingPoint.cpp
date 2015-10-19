@@ -101,7 +101,7 @@ BranchingPoint::~BranchingPoint() noexcept {
         
         //unmark the filament and bound species
         m->speciesFilament(speciesFilament)->down();
-        m->speciesBound(B_BINDING_INDEX[_c1->getFilamentType()])->down();
+        m->speciesBound(SysParams::Chemistry().brancherBoundIndex[_c1->getFilamentType()])->down();
     }
     //mark the free species instead
     else {

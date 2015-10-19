@@ -410,7 +410,7 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //filament
     m2->speciesFilament(filament)->up();
     
-    for(auto j : BINDING_INDEX[_filType])
+    for(auto j : SysParams::Chemistry().bindingIndices[_filType])
         m2->speciesBound(j)->up();
     
     //plus end
@@ -498,14 +498,14 @@ Filament* Filament::sever(int cylinderPosition) {
     m1->speciesFilament(filamentInt1)->down();
     m1->speciesPlusEnd(filamentInt1)->up();
     
-    for(auto j : BINDING_INDEX[_filType])
+    for(auto j : SysParams::Chemistry().bindingIndices[_filType])
         m1->speciesBound(j)->down();
     
     //minus end
     m2->speciesFilament(filamentInt2)->down();
     m2->speciesMinusEnd(filamentInt2)->up();
     
-    for(auto j : BINDING_INDEX[_filType])
+    for(auto j : SysParams::Chemistry().bindingIndices[_filType])
         m2->speciesBound(j)->down();
     
     //remove any cross-cylinder rxns between these two cylinders
@@ -516,8 +516,7 @@ Filament* Filament::sever(int cylinderPosition) {
     return newFilament;
 }
 
-vector<vector<double>> Filament::straightFilamentProjection(
-                       vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double>>& v, int numBeads) {
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -538,8 +537,7 @@ vector<vector<double>> Filament::straightFilamentProjection(
     return coordinate;
 }
 
-vector<vector<double>> Filament::zigZagFilamentProjection(
-                       vector<vector<double>>& v, int numBeads){
+vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -555,33 +553,19 @@ vector<vector<double>> Filament::zigZagFilamentProjection(
     for (int i = 0; i<numBeads; i++) {
         
         if(i%2 == 0) {
-            tmpVec[0] = v[0][0] +
-            SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
-            tmpVec[1] = v[0][1] +
-            SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
-            tmpVec[2] = v[0][2] +
-            SysParams::Geometry().cylinderSize[_filType] * i * tau[2];
+            tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
+            tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
+            tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * tau[2];
         }
         else {
-            tmpVec[0] = v[0][0] +
-            SysParams::Geometry().cylinderSize[_filType]* i * perptau[0];
-            tmpVec[1] = v[0][1] +
-            SysParams::Geometry().cylinderSize[_filType] * i * perptau[1];
-            tmpVec[2] = v[0][2] +
-            SysParams::Geometry().cylinderSize[_filType] * i * perptau[2];
+            tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[0];
+            tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[1];
+            tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[2];
         }
         
         coordinate.push_back(tmpVec);
     }
     return coordinate;
-}
-
-/// Generate a random number
-/// @note - created by Aravind 12/2014
-double random_g() {
-    // HERE
-    //return ran3(&time(0));
-    return 0.0;
 }
 
 /// Create a projection
@@ -590,13 +574,13 @@ void marsagila(vector<double>&v)
 {
     double d1,d2,d3;
     double *x=new double[3];
-    d1=2*random_g()-1;
-    d2=2*random_g()-1;
+    d1=2*Rand::randDouble(0,1)-1;
+    d2=2*Rand::randDouble(0,1)-1;
     d3=pow(d1,2)+pow(d2,2);
     while(d3>=1)
     {
-        d1=2*random_g()-1;
-        d2=2*random_g()-1;
+        d1=2*Rand::randDouble(0,1)-1;
+        d2=2*Rand::randDouble(0,1)-1;
         d3=pow(d1,2)+pow(d2,2);
     }
     x[0]=2.0*d1*pow((1.0-d3),0.5);
@@ -614,8 +598,7 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
                 boost::numeric::ublas::matrix<double>&Z,
                 vector<double>&x,vector<double>&y,
                 vector<double>&z,int nbeads,
-                vector<vector<double>> &coordinate)
-{
+                vector<vector<double>> &coordinate) {
     int t,i;
     double dt,length,cyl_length,sum;
     vector<int> id;
@@ -654,11 +637,9 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     transform(dz.begin(), dz.end(),dz.begin(),back_inserter(dz2), multiplies<double>());
     
     //array of sum(dx^2+dy^2)
-    transform(dx2.begin(),dx2.end(),dy2.begin(),
-              back_inserter(dxdy2),plus<double>());
+    transform(dx2.begin(),dx2.end(),dy2.begin(), back_inserter(dxdy2),plus<double>());
     //array of sum(dx^2+dy^2+dz^2)
-    transform(dxdy2.begin(),dxdy2.end(),dz2.begin(),
-              back_inserter(length2),plus<double>());
+    transform(dxdy2.begin(),dxdy2.end(),dz2.begin(), back_inserter(length2),plus<double>());
     
     std::vector<double> tempLength;
     for(auto x: length2) tempLength.push_back(sqrt(x));
@@ -690,8 +671,7 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
 }
 
 /// @note - Created by Aravind 12/2014
-vector<vector<double>> Filament::arcFilamentProjection(
-                       vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v, int numBeads) {
     
     using namespace boost::numeric::ublas;
     
@@ -713,17 +693,13 @@ vector<vector<double>> Filament::arcFilamentProjection(
     mod=pow(mod,0.5); //MODULUS.
     mod=mod*0.5;
     
-    std::transform(x3.begin(), x3.end(),x3.begin(),
-                   std::bind1st(std::multiplies<double>(), mod));
-    std::transform(x4.begin(), x4.end(),x4.begin(),
-                   std::bind1st(std::multiplies<double>(), mod));
+    std::transform(x3.begin(), x3.end(),x3.begin(), std::bind1st(std::multiplies<double>(), mod));
+    std::transform(x4.begin(), x4.end(),x4.begin(), std::bind1st(std::multiplies<double>(), mod));
     //transform point on sphere to the one centred at x1.
-    std::transform(x3.begin(), x3.end(), v[0].begin(),
-                   std::back_inserter(X3) , std::plus<double>());
+    std::transform(x3.begin(), x3.end(), v[0].begin(), std::back_inserter(X3) , std::plus<double>());
     //transform sphere centre to x2.
-    std::transform(x4.begin(), x4.end(), v[1].begin(),
-                   std::back_inserter(X4) , std::plus<double>());
-    
+    std::transform(x4.begin(), x4.end(), v[1].begin(), std::back_inserter(X4) , std::plus<double>());
+
     // The four points that the beizer curve passes through.
     X(0,0)=v[0][0]; X(1,0)=X3[0]; X(2,0)=X4[0]; X(3,0)=v[1][0];
     Y(0,0)=v[0][1]; Y(1,0)=X3[1]; Y(2,0)=X4[1]; Y(3,0)=v[1][1];

@@ -171,14 +171,9 @@ public:
     /// Projection function, returns a vector of coordinates for bead creation
     vector<double> nextBeadProjection(Bead* b, double d, vector<double> director);
     
-    vector<vector<double>>
-    straightFilamentProjection(vector<vector<double>>& v, int numBeads);
-    
-    vector<vector<double>>
-    zigZagFilamentProjection(vector<vector<double>>& v, int numBeads);
-    
-    vector<vector<double>>
-    arcFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> straightFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> zigZagFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> arcFilamentProjection(vector<vector<double>>& v, int numBeads);
     //@}
     
     virtual void printInfo();

@@ -38,17 +38,7 @@ using namespace std;
 ///Boost typedef
 typedef boost::signals2::shared_connection_block ConnectionBlock;
 
-/// Default empty sites in CMonomer
-/// @note - DO NOT CHANGE!!!
-
-extern vector<short> B_BINDING_INDEX;
-extern vector<short> L_BINDING_INDEX;
-extern vector<short> M_BINDING_INDEX;
-
-///A list of the unique binding site species numbers
-extern vector<vector<short>> BINDING_INDEX;
-
-///Num filaments maximum
+///Num filament types maximum
 #define MAX_FILAMENT_TYPES 10
 
 //@{

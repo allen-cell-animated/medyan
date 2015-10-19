@@ -44,7 +44,7 @@ void ChemManager::setupBindingSites() {
                  exit(EXIT_FAILURE);
             }
             else {
-                B_BINDING_INDEX[filType] = it - _chemData.speciesBound[filType].begin();
+                SysParams::CParams.brancherBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
             }
         }
         
@@ -61,7 +61,7 @@ void ChemManager::setupBindingSites() {
                  exit(EXIT_FAILURE);
             }
             else {
-                L_BINDING_INDEX[filType] = it - _chemData.speciesBound[filType].begin();
+                SysParams::CParams.linkerBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
             }
         }
         
@@ -78,19 +78,19 @@ void ChemManager::setupBindingSites() {
                 exit(EXIT_FAILURE);
             }
             else {
-                M_BINDING_INDEX[filType] = it - _chemData.speciesBound[filType].begin();
+                SysParams::CParams.motorBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
             }
         }
         
         //for initialization of cylinders
-        BINDING_INDEX[filType].push_back(B_BINDING_INDEX[filType]);
+        SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.brancherBoundIndex[filType]);
         
-        if(B_BINDING_INDEX[filType] != L_BINDING_INDEX[filType])
-             BINDING_INDEX[filType].push_back(L_BINDING_INDEX[filType]);
+        if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.linkerBoundIndex[filType])
+             SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.linkerBoundIndex[filType]);
         
-        if(B_BINDING_INDEX[filType] != M_BINDING_INDEX[filType] &&
-           L_BINDING_INDEX[filType] != M_BINDING_INDEX[filType])
-            BINDING_INDEX[filType].push_back(M_BINDING_INDEX[filType]);
+        if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.motorBoundIndex[filType] &&
+           SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.motorBoundIndex[filType])
+            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.motorBoundIndex[filType]);
     }
 }
 
@@ -665,7 +665,7 @@ void ChemManager::genFilReactionTemplates() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound[filType].begin(), it);
                     
-                    if(position != M_BINDING_INDEX[filType]) {
+                    if(position != SysParams::CParams.motorBoundIndex[filType]) {
                         cout <<
                         "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
                         << endl;
@@ -747,7 +747,7 @@ void ChemManager::genFilReactionTemplates() {
                     //get position of iterator
                     position = distance(_chemData.speciesBound[filType].begin(), it);
                     
-                    if(position != M_BINDING_INDEX[filType]) {
+                    if(position != SysParams::CParams.motorBoundIndex[filType]) {
                         cout <<
                         "Second species listed in a motor walking reaction must be the corresponding motor empty site. Exiting."
                         << endl;
@@ -1300,7 +1300,7 @@ void ChemManager::genFilBindingReactions() {
                         //get position of iterator
                         position = distance(_chemData.speciesBound[filType].begin(), it);
                         
-                        if(position != B_BINDING_INDEX[filType]) {
+                        if(position != SysParams::CParams.brancherBoundIndex[filType]) {
                             cout <<
                             "Third species listed in a branching reaction must be the corresponding brancher empty site. Exiting."
                             << endl;
@@ -1455,7 +1455,7 @@ void ChemManager::genFilBindingReactions() {
                         //get position of iterator
                         position = distance(_chemData.speciesBound[filType].begin(), it);
                         
-                        if(position != L_BINDING_INDEX[filType]) {
+                        if(position != SysParams::CParams.linkerBoundIndex[filType]) {
                             cout <<
                             "First species listed in a linker reaction must be the corresponding linker empty site. Exiting."
                             << endl;
@@ -1493,7 +1493,7 @@ void ChemManager::genFilBindingReactions() {
                         //get position of iterator
                         position = distance(_chemData.speciesBound[filType].begin(), it);
                         
-                        if(position != L_BINDING_INDEX[filType]) {
+                        if(position != SysParams::CParams.linkerBoundIndex[filType]) {
                             cout <<
                             "Second species listed in a linker reaction must be the corresponding linker empty site. Exiting."
                             << endl;
@@ -1677,7 +1677,7 @@ void ChemManager::genFilBindingReactions() {
                         //get position of iterator
                         position = distance(_chemData.speciesBound[filType].begin(), it);
                         
-                        if(position != M_BINDING_INDEX[filType]) {
+                        if(position != SysParams::CParams.motorBoundIndex[filType]) {
                             cout <<
                             "First species listed in a motor reaction must be the corresponding motor empty site. Exiting."
                             << endl;
@@ -1714,7 +1714,7 @@ void ChemManager::genFilBindingReactions() {
                         //get position of iterator
                         position = distance(_chemData.speciesBound[filType].begin(), it);
                         
-                        if(position != M_BINDING_INDEX[filType]) {
+                        if(position != SysParams::CParams.motorBoundIndex[filType]) {
                             cout <<
                             "Second species listed in a motor reaction must be the corresponding motor empty site. Exiting."
                             << endl;
@@ -2566,17 +2566,17 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             //add callback to all binding sites
             UpdateBrancherBindingCallback bcallback(c, i);
             
-            Species* bs = cc->getCMonomer(i)->speciesBound(B_BINDING_INDEX[filamentType]);
+            Species* bs = cc->getCMonomer(i)->speciesBound(SysParams::CParams.brancherBoundIndex[filamentType]);
             ConnectionBlock rcbb(bs->connect(bcallback,false));
             
             UpdateLinkerBindingCallback lcallback(c, i);
             
-            Species* ls = cc->getCMonomer(i)->speciesBound(L_BINDING_INDEX[filamentType]);
+            Species* ls = cc->getCMonomer(i)->speciesBound(SysParams::CParams.linkerBoundIndex[filamentType]);
             ConnectionBlock rcbl(ls->connect(lcallback,false));
             
             UpdateMotorBindingCallback mcallback(c, i);
             
-            Species* ms = cc->getCMonomer(i)->speciesBound(M_BINDING_INDEX[filamentType]);
+            Species* ms = cc->getCMonomer(i)->speciesBound(SysParams::CParams.motorBoundIndex[filamentType]);
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
@@ -2611,14 +2611,14 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
             
-            for(auto j : BINDING_INDEX[filamentType])
+            for(auto j : SysParams::CParams.bindingIndices[filamentType])
                 m1->speciesBound(j)->up();
             
             //fill new cylinder with default filament value
             for(int i = 0; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
                 
-                for(auto j : BINDING_INDEX[filamentType])
+                for(auto j : SysParams::CParams.bindingIndices[filamentType])
                     cc->getCMonomer(i)->speciesBound(j)->up();
             }
             for(auto &r : _filRxnTemplates[filamentType]) r->addReaction(lastcc, cc);
@@ -2636,7 +2636,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             for(int i = 1; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
                 
-                for(auto j : BINDING_INDEX[filamentType])
+                for(auto j : SysParams::CParams.bindingIndices[filamentType])
                     cc->getCMonomer(i)->speciesBound(j)->up();
             }
         }

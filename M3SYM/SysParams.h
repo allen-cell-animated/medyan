@@ -89,7 +89,7 @@ struct ChemParams {
     //@}
 
     /// Number of different filament types
-    short numFilaments = 0;
+    short numFilaments = 1;
     
     /// Number of binding sites per cylinder
     /// Vector corresponds to each filament type
@@ -111,9 +111,11 @@ struct ChemParams {
     //@{
     /// Positions of all bound molecules in species vectors
     /// Vector corresponds to each filament type
-    vector<short> brancherBoundIndex = {};
-    vector<short> motorBoundIndex = {};
-    vector<short> linkerBoundIndex = {};
+    vector<short> brancherBoundIndex = vector<short>(MAX_FILAMENT_TYPES);
+    vector<short> linkerBoundIndex   = vector<short>(MAX_FILAMENT_TYPES);
+    vector<short> motorBoundIndex    = vector<short>(MAX_FILAMENT_TYPES);
+    
+    vector<vector<short>> bindingIndices = vector<vector<short>>(MAX_FILAMENT_TYPES);
     //@}
 };
 
@@ -192,6 +194,7 @@ struct DyRateParams {
 /// initialized by the SystemParser
 class SysParams {
 friend class SystemParser;
+friend class ChemManager;
     
 #ifdef TESTING ///Public access if testing only
 public:
