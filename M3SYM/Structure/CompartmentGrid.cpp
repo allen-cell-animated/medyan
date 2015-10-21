@@ -17,10 +17,8 @@
 
 void CompartmentGrid::addChemSimReactions(ChemSim* chem) {
     
-    for(auto &c : children()) {
-        Compartment* C = (Compartment*)(c.get());
+    for(auto C : getCompartments())
         C->addChemSimReactions(chem);
-    }
     
     for(auto &r : _bulkReactions.reactions())
         chem->addReaction(r.get());

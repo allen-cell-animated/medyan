@@ -22,8 +22,8 @@
 
 //FORWARD DECLARATIONS
 class BoundaryInteractions;
-class Bead;
 class BoundaryElement;
+class Bead;
 
 /// An implementation of the ForceField class that calculates BoundaryElement
 /// repulsion and attraction to [Beads](@ref Bead) in the system.
@@ -33,12 +33,8 @@ private:
     vector<unique_ptr<BoundaryInteractions>>
     _boundaryInteractionVector; ///< Vector of initialized boundary element interactions
     
-    //@{
-    /// The culprits in the case of an error
-    Bead* _beadCulprit;
-    BoundaryElement* _boundaryCulprit;
-    //@}
-    
+    /// The culprit in the case of an error
+    BoundaryInteractions* _culpritInteraction;
 public:
     /// Initialize the forcefields (repulsion, attraction, etc)
     BoundaryFF(string type);

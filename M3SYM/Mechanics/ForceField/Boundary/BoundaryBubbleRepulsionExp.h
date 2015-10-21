@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_BoundaryRepulsionExp_h
-#define M3SYM_BoundaryRepulsionExp_h
+#ifndef M3SYM_BoundaryBubbleRepulsionExp_h
+#define M3SYM_BoundaryBubbleRepulsionExp_h
 
 #include <vector>
 #include <cmath>
@@ -22,13 +22,13 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A exponential repulsive potential used by the BoundaryRepulsion template.
-class BoundaryRepulsionExp {
+/// A exponential repulsive potential used by the BoundaryBubbleRepulsion template.
+class BoundaryBubbleRepulsionExp {
     
 public:
-    double computeEnergy(Bead*, double, double, double);
-    void computeForces(Bead*, double, vector<double>& norm, double, double);
-    void computeForcesAux(Bead*, double, vector<double>& norm, double, double);
+    double computeEnergy(Bead*, double, double, double, double);
+    void computeForces(Bead*, double, double, vector<double>& norm, double, double);
+    void computeForcesAux(Bead*, double, double, vector<double>& norm, double, double);
 };
 
 #endif

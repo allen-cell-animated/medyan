@@ -449,19 +449,6 @@ public:
         return _bindingManagers;
     }
     
-    ///Add a bead to this compartment
-    void addBead(Bead* b) {_beads.insert(b);}
-    
-    ///Remove a bead from this compartment
-    ///@note does nothing if bead is not in compartment already
-    void removeBead(Bead* b) {
-        auto it = _beads.find(b);
-        if(it != _beads.end()) _beads.erase(it);
-    }
-    
-    ///get the beads in this compartment
-   unordered_set<Bead*>& getBeads() {return _beads;}
-    
     ///Add a boundary element to this compartment
     void addBoundaryElement(BoundaryElement* be) {_boundaryElements.insert(be);}
     

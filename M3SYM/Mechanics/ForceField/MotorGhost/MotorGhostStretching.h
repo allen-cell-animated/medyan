@@ -29,11 +29,11 @@ private:
     MStretchingInteractionType _FFType;
 
 public:
-    virtual double computeEnergy(MotorGhost*, double d);
-    virtual void computeForces(MotorGhost*);
-    virtual void computeForcesAux(MotorGhost*);
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     
-    virtual const string getName() {return "Stretching";}
+    virtual const string getName() {return "Motor Stretching";}
 };
 
 #endif

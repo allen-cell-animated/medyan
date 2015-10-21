@@ -29,11 +29,11 @@ private:
     FBendingInteractionType _FFType;
     
 public:
-    virtual double computeEnergy(Filament*, double d);
-    virtual void computeForces( Filament*);
-    virtual void computeForcesAux( Filament*);
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     
-    virtual const string getName() {return "Bending";}
+    virtual const string getName() {return "Filament Bending";}
 };
 
 #endif

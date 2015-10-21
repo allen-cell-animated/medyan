@@ -24,17 +24,14 @@
 class FilamentInteractions;
 class Filament;
 
-/// An implementation of the ForceField class that calculates Filament
-/// stretching, bending, and twisting.
+/// An implementation of the ForceField class that calculates Filament interactions.
 class FilamentFF : public ForceField {
  
 private:
     vector<unique_ptr<FilamentInteractions>>
     _filamentInteractionVector; ///< Vector of initialized filament interactions
     
-    ///The culprit in the case of an error
-    Filament* _filamentCulprit;
-    
+    FilamentInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
     FilamentFF(string& stretching, string& bending, string& twisting);

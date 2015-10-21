@@ -42,11 +42,9 @@ void Linker::updateCoordinate() {
 Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
                double position1, double position2)
 
-    : Trackable(true, true),
-      _c1(c1), _c2(c2),
+    : Trackable(true, true), _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _linkerType(linkerType), _linkerID(_linkers.getID()),
-      _birthTime(tau()) {
+      _linkerType(linkerType), _linkerID(_linkers.getID()), _birthTime(tau()) {
         
     updateCoordinate();
 
@@ -54,13 +52,13 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
     catch (exception& e) {
         cout << e.what();
         
-        printInfo();
+        printSelf();
         
         exit(EXIT_FAILURE);
     }
           
-    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize[c1->getFilamentType()]);
-    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize[c1->getFilamentType()]);
+    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize[c1->getType()]);
+    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize[c1->getType()]);
         
 #ifdef CHEMISTRY
     _cLinker = unique_ptr<CLinker>(
@@ -97,7 +95,7 @@ void Linker::updatePosition() {
     catch (exception& e) {
         cout << e.what();
         
-        printInfo();
+        printSelf();
         
         exit(EXIT_FAILURE);
     }
@@ -130,7 +128,7 @@ void Linker::updatePosition() {
 #endif
 }
 
-/// @note - The function uses the motor's stretching force at
+/// @note - The function uses the linker's stretching force at
 /// the current state to change this rate. Does not consider
 /// compression forces, only stretching.
 
@@ -153,7 +151,7 @@ void Linker::updateReactionRates() {
 }
 
 
-void Linker::printInfo() {
+void Linker::printSelf() {
     
     cout << endl;
     
@@ -181,8 +179,8 @@ void Linker::printInfo() {
     cout << endl;
     
     cout << "Associated cylinders (one and two): " << endl;
-    _c1->printInfo();
-    _c2->printInfo();
+    _c1->printSelf();
+    _c2->printSelf();
     
     cout << endl;
 }

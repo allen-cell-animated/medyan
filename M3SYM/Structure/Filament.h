@@ -23,6 +23,7 @@
 
 #include "Database.h"
 #include "Trackable.h"
+#include "Composite.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -41,13 +42,13 @@ class Bead;
  * 
  * A Filament can also be initialized as a number of different shapes.
  */
-class Filament : public Trackable {
+class Filament : public Composite, public Trackable {
 
 private:
-    short _filType; ///< Filament type
-    
     deque<Cylinder*> _cylinderVector; ///< Vector of cylinders;
     SubSystem* _subSystem; ///< SubSystem pointer
+    
+    short _filType; ///< Filament type
     
     int _ID; ///< Unique integer id of this filament
     
@@ -176,7 +177,7 @@ public:
     vector<vector<double>> arcFilamentProjection(vector<vector<double>>& v, int numBeads);
     //@}
     
-    virtual void printInfo();
+    virtual void printSelf();
     
     /// Check the consistency of the filament. For now,
     /// Mainly involves checking chemistry of the constituent cylinders.

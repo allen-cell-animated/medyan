@@ -143,8 +143,8 @@ public:
     /// Get size in number of monomers
     short getSize() {return _size;}
     
-    /// Get the filament type
-    short getFilamentType();
+    /// Get the type
+    short getType();
     
 };
 

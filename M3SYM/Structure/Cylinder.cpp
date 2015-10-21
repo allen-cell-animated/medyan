@@ -32,13 +32,14 @@ void Cylinder::updateCoordinate() {
 }
 
 
-Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
+Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
                    bool extensionFront, bool extensionBack, bool initialization)
 
-    : Trackable(true, true, true, false),
-      _b1(b1), _b2(b2), _pFilament(f),
-      _positionFilament(positionFilament), _ID(_cylinders.getID()) {
+    : Trackable(true, true, true, false), _type(type),
+      _b1(b1), _b2(b2),_position(position), _ID(_cylinders.getID()) {
     
+    parent->addChild(unique_ptr<Component>(this));
+          
     //Set coordinate
     updateCoordinate();
 
@@ -46,7 +47,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     catch (exception& e) {
         cout << e.what() << endl;
         
-        printInfo();
+        printSelf();
         
         exit(EXIT_FAILURE);
     }
@@ -67,7 +68,7 @@ Cylinder::Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,
     //set eqLength according to cylinder size
     double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
         
-    _mCylinder = unique_ptr<MCylinder>(new MCylinder(getFilamentType(), eqLength));
+    _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
     _mCylinder->setCylinder(this);
 #endif
         
@@ -77,10 +78,11 @@ Cylinder::~Cylinder() noexcept {
     
     //remove from compartment
     _compartment->removeCylinder(this);
+    
 }
 
 /// Get filament type
-short Cylinder::getFilamentType() {return _pFilament->getType();}
+short Cylinder::getType() {return _type;}
 
 void Cylinder::updatePosition() {
 
@@ -93,7 +95,7 @@ void Cylinder::updatePosition() {
     catch (exception& e) {
         cout << e.what();
         
-        printInfo();
+        printSelf();
         
         exit(EXIT_FAILURE);
     }
@@ -158,7 +160,7 @@ void Cylinder::updateReactionRates() {
             
             if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
             
-                float newRate = _polyChanger[getFilamentType()]->changeRate(r->getBareRate(), force);
+                float newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
                 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -177,7 +179,7 @@ void Cylinder::updateReactionRates() {
             
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
-                float newRate =  _polyChanger[getFilamentType()]->changeRate(r->getBareRate(), force);
+                float newRate =  _polyChanger[_type]->changeRate(r->getBareRate(), force);
 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -188,23 +190,20 @@ void Cylinder::updateReactionRates() {
 
 bool Cylinder::isFullLength() {
     
-    short filType = getFilamentType();
-    
 #ifdef MECHANICS
-    return areSame(_mCylinder->getEqLength(),
-                   SysParams::Geometry().cylinderSize[filType]);
+    return areSame(_mCylinder->getEqLength(), SysParams::Geometry().cylinderSize[_type]);
 #else
     return true;
 #endif
 }
 
-void Cylinder::printInfo() {
+void Cylinder::printSelf() {
     
     cout << endl;
     
     cout << "Cylinder: ptr = " << this << endl;
     cout << "Cylinder ID = " << _ID << endl;
-    cout << "Parent filament ptr = " << _pFilament << endl;
+    cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
     if(_plusEnd) cout << "Is a plus end." << endl;
@@ -212,7 +211,7 @@ void Cylinder::printInfo() {
     
     if(_branchingCylinder != nullptr) cout << "Has a branching cylinder." << endl;
     
-    cout << "Position on filament = " << _positionFilament << endl;
+    cout << "Position = " << _position << endl;
     
     cout << endl;
     
@@ -225,8 +224,8 @@ void Cylinder::printInfo() {
     
     cout << "Bead information..." << endl;
     
-    _b1->printInfo();
-    _b2->printInfo();
+    _b1->printSelf();
+    _b2->printSelf();
     
     cout << endl;
 }

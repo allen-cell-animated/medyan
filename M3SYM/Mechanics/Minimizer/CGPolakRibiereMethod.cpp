@@ -74,6 +74,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         cout << "Culprit ..." << endl;
         auto b = maxBead();
-        if(b != nullptr) b->printInfo();
+        if(b != nullptr) b->printSelf();
+        
+        cout << "System energy..." << endl;
+        FFM.computeEnergy(0.0, true);
+        
+        cout << endl;
     }
 }

@@ -215,6 +215,9 @@ struct MechanicsFFType {
     /// BoundaryFF Type
     string BoundaryFFType = "";
     
+    /// Bubble Type
+    string BubbleFFType = "";
+    
 };
 
 ///Struct to hold dynamic rate changer types

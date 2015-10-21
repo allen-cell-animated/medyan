@@ -52,7 +52,7 @@ Compartment* GController::getCompartment(const vector<size_t> &indices)
         i++;
     }
     try {
-    return (Compartment*)(_compartmentGrid->children().at(index).get());
+        return _compartmentGrid->getCompartment(index);
     }
     catch (exception& e){
         cout << "Bad compartment access at..." << endl;
@@ -92,7 +92,7 @@ Compartment* GController::getCompartment(const vector<double> &coords)
     }
     
     try {
-    return (Compartment*)(_compartmentGrid->children().at(index).get());
+        return _compartmentGrid->getCompartment(index);
     }
     catch (exception& e){
         cout << "Bad compartment access at..." << endl;
@@ -201,12 +201,8 @@ CompartmentGrid* GController::initializeGrid() {
 void GController::setActiveCompartments(Boundary* boundary) {
     
     //initialize all compartments equivalent to cproto
-    for(auto &c : _compartmentGrid->children()) {
-        
-        Compartment *C = (Compartment*)(c.get());
-        
+    for(auto C : _compartmentGrid->getCompartments())
         if(boundary->within(C)) C->setAsActive();
-    }
 }
 
 void GController::findCompartments(const vector<double>& coords,

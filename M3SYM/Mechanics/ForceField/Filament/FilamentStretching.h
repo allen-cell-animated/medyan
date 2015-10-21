@@ -26,11 +26,11 @@ private:
     FStretchingInteractionType _FFType; 
     
 public:
-    virtual double computeEnergy(Filament*, double d);
-    virtual void computeForces(Filament*);
-    virtual void computeForcesAux(Filament*);
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     
-    virtual const string getName() {return "Stretching";}
+    virtual const string getName() {return "Filament Stretching";}
 };
 
 

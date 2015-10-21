@@ -30,7 +30,4 @@ public:
     void forcesAux(Bead*, Bead*, Bead*, Bead*, double, double);
 };
 
-
-
-
 #endif

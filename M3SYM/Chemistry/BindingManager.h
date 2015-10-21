@@ -232,7 +232,7 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
-    static vector<CCNeighborList*> _neighborLists;
+    static vector<CylinderCylinderNL*> _neighborLists;
     
 public:
     LinkerBindingManager(ReactionBase* reaction,
@@ -303,7 +303,7 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     
     //static neighbor list
-    static vector<CCNeighborList*> _neighborLists;
+    static vector<CylinderCylinderNL*> _neighborLists;
     
 public:
     MotorBindingManager(ReactionBase* reaction,

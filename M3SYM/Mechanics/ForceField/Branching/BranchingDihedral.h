@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
-/// Represents an interaction keeping BranchingPoint in plane
+/// Represents an interaction keeping BranchingPoint in dihedral plane
 template <class BDihedralInteractionType>
 class BranchingDihedral : public BranchingInteractions {
     
@@ -29,11 +29,11 @@ private:
     BDihedralInteractionType _FFType;
     
 public:
-    virtual double computeEnergy(BranchingPoint*, double d);
-    virtual void computeForces(BranchingPoint*);
-    virtual void computeForcesAux(BranchingPoint*);
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     
-    virtual const string getName() {return "Dihedral";}
+    virtual const string getName() {return "Branching Dihedral";}
 };
 
 #endif

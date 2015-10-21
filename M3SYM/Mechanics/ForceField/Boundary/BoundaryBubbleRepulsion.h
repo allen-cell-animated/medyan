@@ -11,35 +11,47 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_BoundaryRepulsion_h
-#define M3SYM_BoundaryRepulsion_h
+#ifndef M3SYM_BoundaryBubbleRepulsion_h
+#define M3SYM_BoundaryBubbleRepulsion_h
 
 #include <vector>
 
 #include "common.h"
 
 #include "BoundaryInteractions.h"
+#include "NeighborListImpl.h"
+
+#include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;
 
-/// Represents a repulsive interaction between a BoundaryElement and Bead.
+/// Represents a repulsive interaction between a BoundaryElement and Bubbles.
 template <class BRepulsionInteractionType>
-class BoundaryRepulsion : public BoundaryInteractions {
+class BoundaryBubbleRepulsion : public BoundaryInteractions {
     
 private:
     BRepulsionInteractionType _FFType;
-    
+    BoundaryBubbleNL* _neighborList; ///<Neighbor list of Bubble's bead - BoundaryElement
 public:
-    virtual double computeEnergy(BoundaryElement*, Bead*, double d);
+    
+    /// Constructor
+    BoundaryBubbleRepulsion() {
+        _neighborList = new BoundaryBubbleNL(SysParams::Boundaries().BoundaryCutoff);
+    }
+    
+    virtual double computeEnergy(double d);
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces(BoundaryElement*, Bead*);
-    virtual void computeForcesAux(BoundaryElement*, Bead*);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     //@}
     
-    virtual const string getName() {return "Repulsion";}
+    /// Get the neighbor list for this interaction
+    virtual NeighborList* getNeighborList() {return _neighborList;}
+    
+    virtual const string getName() {return "Boundary-Bubble Repulsion";}
 };
 #endif

@@ -20,57 +20,76 @@
 #include "Bead.h"
 
 template <class BPositionInteractionType>
-double BranchingPosition<BPositionInteractionType>::computeEnergy(BranchingPoint* b, double d) {
+double BranchingPosition<BPositionInteractionType>::computeEnergy(double d) {
     
-    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+    double U = 0;
+    double U_i;
     
-    double kPosition = b->getMBranchingPoint()->getPositionConstant();
-    double position = b->getPosition();
+    for (auto b: BranchingPoint::getBranchingPoints()) {
+        
+        Bead* b1 = b->getFirstCylinder()->getFirstBead();
+        Bead* b2 = b->getFirstCylinder()->getSecondBead();
+        Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        
+        double kPosition = b->getMBranchingPoint()->getPositionConstant();
+        double position = b->getPosition();
+        
+        if (d == 0.0)
+            U_i = _FFType.energy(b1, b2, b3, kPosition, position);
+        else
+            U_i = _FFType.energy(b1, b2, b3, kPosition, position, d);
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            _branchingCulprit = b;
+            
+            return -1;
+        }
+        else
+            U += U_i;
+    }
     
-    if (d == 0.0)
-        return _FFType.energy(b1, b2, b3, kPosition, position);
-    else
-        return _FFType.energy(b1, b2, b3, kPosition, position, d);
-    
-    
+    return U;
 }
 
 template <class BPositionInteractionType>
-void BranchingPosition<BPositionInteractionType>::computeForces(BranchingPoint* b) {
+void BranchingPosition<BPositionInteractionType>::computeForces() {
     
-    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+    for (auto b: BranchingPoint::getBranchingPoints()) {
     
-    double kPosition = b->getMBranchingPoint()->getPositionConstant();
-    double position = b->getPosition();
-    
-    _FFType.forces(b1, b2, b3, kPosition, position);
+        Bead* b1 = b->getFirstCylinder()->getFirstBead();
+        Bead* b2 = b->getFirstCylinder()->getSecondBead();
+        Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        
+        double kPosition = b->getMBranchingPoint()->getPositionConstant();
+        double position = b->getPosition();
+        
+        _FFType.forces(b1, b2, b3, kPosition, position);
+    }
     
 }
 
 
 template <class BPositionInteractionType>
-void BranchingPosition<BPositionInteractionType>::computeForcesAux(BranchingPoint* b) {
+void BranchingPosition<BPositionInteractionType>::computeForcesAux() {
     
-    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-    Bead* b3 = b->getSecondCylinder()->getFirstBead();
-    
-    double kPosition = b->getMBranchingPoint()->getPositionConstant();
-    double position = b->getPosition();
-    
-    _FFType.forcesAux(b1, b2, b3, kPosition, position);
-    
+    for (auto b: BranchingPoint::getBranchingPoints()) {
+        
+        Bead* b1 = b->getFirstCylinder()->getFirstBead();
+        Bead* b2 = b->getFirstCylinder()->getSecondBead();
+        Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        
+        double kPosition = b->getMBranchingPoint()->getPositionConstant();
+        double position = b->getPosition();
+        
+        _FFType.forcesAux(b1, b2, b3, kPosition, position);
+    }
 }
 
 
 ///Template specializations
-template double
-BranchingPosition<BranchingPositionCosine>::computeEnergy(BranchingPoint* b, double d);
-template void
-BranchingPosition<BranchingPositionCosine>::computeForces(BranchingPoint* b);
-template void
-BranchingPosition<BranchingPositionCosine>::computeForcesAux(BranchingPoint* b);
+template double BranchingPosition<BranchingPositionCosine>::computeEnergy(double d);
+template void BranchingPosition<BranchingPositionCosine>::computeForces();
+template void BranchingPosition<BranchingPositionCosine>::computeForcesAux();

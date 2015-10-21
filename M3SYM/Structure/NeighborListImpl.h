@@ -23,13 +23,13 @@
 #include "DynamicNeighbor.h"
 
 //FORWARD DECLARATIONS
-class Bead;
 class Cylinder;
+class Bubble;
 class BoundaryElement;
 
 /// An implementation of NeighborList for Cylinder-Cylinder interactions
 /// This can be a half or full list depending on the usage.
-class CCNeighborList : public NeighborList {
+class CylinderCylinderNL : public NeighborList {
     
 private:
     unordered_map<Cylinder*, vector<Cylinder*>> _list;
@@ -43,7 +43,7 @@ private:
     void updateNeighbors(Cylinder* cylinder, bool runtime = false);
     
 public:
-    CCNeighborList(float rMax, float rMin=0.0, bool full = false)
+    CylinderCylinderNL(float rMax, float rMin=0.0, bool full = false)
     
         : NeighborList(rMax, rMin), _full(full) {}
     
@@ -64,33 +64,8 @@ public:
     
 };
 
-/// An implementation of NeighborList for Bead-BoundaryElement interactions
-class BBENeighborList : public NeighborList {
-    
-private:
-    unordered_map<BoundaryElement*, vector<Bead*>> _list;
-    ///< The neighbors list, as a hash map
-    
-    ///Helper function to update neighbors
-    void updateNeighbors(BoundaryElement* be);
-    
-public:
-    BBENeighborList(float rMax): NeighborList(rMax) {}
-    
-    virtual void addNeighbor(Neighbor* n);
-    virtual void removeNeighbor(Neighbor* n);
-    
-    virtual void addDynamicNeighbor(DynamicNeighbor* n);
-    virtual void removeDynamicNeighbor(DynamicNeighbor* n);
-    
-    virtual void reset();
-    
-    /// Get all Bead neighbors of a boundary element
-    vector<Bead*> getNeighbors(BoundaryElement* be);
-};
-
-/// An implementation of NeighborList for Cylinder-BoundaryElement interaction
-class CBENeighborList : public NeighborList {
+/// An implementation of NeighborList for BoundaryElement-Cylinder interactions
+class BoundaryCylinderNL : public NeighborList {
     
 private:
     unordered_map<BoundaryElement*, vector<Cylinder*>> _list;
@@ -100,7 +75,7 @@ private:
     void updateNeighbors(BoundaryElement* be);
     
 public:
-    CBENeighborList(float rMax): NeighborList(rMax) {}
+    BoundaryCylinderNL(float rMax): NeighborList(rMax) {}
     
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
@@ -113,5 +88,94 @@ public:
     /// Get all Cylinder neighbors of a boundary element
     vector<Cylinder*> getNeighbors(BoundaryElement* be);
 };
+
+
+/// An implementation of NeighborList for BoundaryElement-Bubble interactions
+class BoundaryBubbleNL : public NeighborList {
+    
+private:
+    unordered_map<BoundaryElement*, vector<Bubble*>> _list;
+    ///< The neighbors list, as a hash map
+    
+    ///Helper function to update neighbors
+    void updateNeighbors(BoundaryElement* be);
+    
+public:
+    BoundaryBubbleNL(float rMax): NeighborList(rMax) {}
+    
+    virtual void addNeighbor(Neighbor* n);
+    virtual void removeNeighbor(Neighbor* n);
+    
+    virtual void addDynamicNeighbor(DynamicNeighbor* n);
+    virtual void removeDynamicNeighbor(DynamicNeighbor* n);
+    
+    virtual void reset();
+    
+    /// Get all Bubble neighbors of a boundary element
+    vector<Bubble*> getNeighbors(BoundaryElement* be);
+};
+
+/// An implementation of NeighborList for Bubble-Bubble interactions
+/// @note - This is currently implemented as a half list only
+class BubbleBubbleNL : public NeighborList {
+    
+private:
+    unordered_map<Bubble*, vector<Bubble*>> _list;
+    ///< The neighbors list, as a hash map
+    
+    ///Helper function to update neighbors
+    void updateNeighbors(Bubble* bb);
+    
+public:
+    BubbleBubbleNL(float rMax): NeighborList(rMax) {}
+    
+    virtual void addNeighbor(Neighbor* n);
+    virtual void removeNeighbor(Neighbor* n);
+    
+    //@{
+    /// The implementation of these functions calls the static version,
+    /// all Bubbles are dynamic
+    virtual void addDynamicNeighbor(DynamicNeighbor* n) {addNeighbor(n);}
+    virtual void removeDynamicNeighbor(DynamicNeighbor* n) {removeNeighbor(n);}
+    //@}
+    
+    virtual void reset();
+    
+    /// Get all Bubble neighbors of a bubble
+    vector<Bubble*> getNeighbors(Bubble* bb);
+};
+
+/// An implementation of NeighborList for Bubble-Cylinder interactions
+class BubbleCylinderNL : public NeighborList {
+    
+private:
+    unordered_map<Bubble*, vector<Cylinder*>> _list;
+    ///< The neighbors list, as a hash map
+    
+    ///Helper function to update neighbors
+    void updateNeighbors(Bubble* bb);
+    
+public:
+    BubbleCylinderNL(float rMax): NeighborList(rMax) {}
+    
+    virtual void addNeighbor(Neighbor* n);
+    virtual void removeNeighbor(Neighbor* n);
+    
+    //@{
+    /// The implementation of these functions calls the static version,
+    /// all Bubbles and Cylinders are dynamic
+    virtual void addDynamicNeighbor(DynamicNeighbor* n) {addNeighbor(n);}
+    virtual void removeDynamicNeighbor(DynamicNeighbor* n) {removeNeighbor(n);}
+    //@}
+    
+    virtual void reset();
+    
+    /// Get all Cylinder neighbors of a bubble
+    vector<Cylinder*> getNeighbors(Bubble* bb);
+};
+
+
+
+
 
 #endif

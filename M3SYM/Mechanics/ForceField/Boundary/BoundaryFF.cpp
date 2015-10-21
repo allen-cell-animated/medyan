@@ -13,21 +13,24 @@
 
 #include "BoundaryFF.h"
 
-#include "BoundaryRepulsion.h"
-#include "BoundaryRepulsionLJ.h"
-#include "BoundaryRepulsionExp.h"
+#include "BoundaryCylinderRepulsion.h"
+#include "BoundaryCylinderRepulsionExp.h"
+
+#include "BoundaryBubbleRepulsion.h"
+#include "BoundaryBubbleRepulsionExp.h"
 
 #include "BoundaryElement.h"
 #include "Bead.h"
+#include "Composite.h"
 
 BoundaryFF::BoundaryFF (string type) {
     
-    if (type == "REPULSIONLJ")
+    if (type == "REPULSIONEXP") {
         _boundaryInteractionVector.emplace_back(
-            new BoundaryRepulsion<BoundaryRepulsionLJ>());
-    else if (type == "REPULSIONEXP")
+        new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
         _boundaryInteractionVector.emplace_back(
-            new BoundaryRepulsion<BoundaryRepulsionExp>());
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+    }
     else if(type == "") {}
     else {
         cout << "Boundary FF not recognized. Exiting." << endl;
@@ -39,10 +42,13 @@ void BoundaryFF::whoIsCulprit() {
     
     cout << endl;
     
-    cout << "Printing the culprit bead and boundary element..." << endl;
+    cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    _beadCulprit->printInfo();
-    _boundaryCulprit->printInfo();
+    cout << "Printing the culprit boundary element..." << endl;
+    _culpritInteraction->_boundaryElementCulprit->printSelf();
+    
+    cout << "Printing the other culprit structure..." << endl;
+    _culpritInteraction->_otherCulprit->printSelf();
     
     cout << endl;
 }
@@ -50,62 +56,34 @@ void BoundaryFF::whoIsCulprit() {
 
 double BoundaryFF::computeEnergy(double d) {
     
-    double U = 0;
+    double U= 0;
     double U_i;
     
-    for (auto &interaction : _boundaryInteractionVector){
+    for (auto &interaction : _boundaryInteractionVector) {
         
-        auto nl = interaction->getNeighborList();
+        U_i = interaction->computeEnergy(d);
         
-        for (auto be: BoundaryElement::getBoundaryElements()) {
-            
-            for(auto &bd : nl->getNeighbors(be)) {
-                
-                U_i = interaction->computeEnergy(be, bd, d);
-                
-                if(fabs(U_i) == numeric_limits<double>::infinity()
-                   || U_i != U_i || U_i < -1.0) {
-                    
-                    //set culprits and return
-                    _beadCulprit = bd;
-                    _boundaryCulprit = be;
-                    
-                    return -1;
-                }
-                else
-                    U += U_i;
-            }
+        if(U_i <= -1) {
+            //set culprit and return
+            _culpritInteraction = interaction.get();
+            return -1;
         }
+        else U += U_i;
+        
     }
     return U;
 }
 
 void BoundaryFF::computeForces() {
 
-    for (auto &interaction : _boundaryInteractionVector){
-        
-        auto nl = interaction->getNeighborList();
-        
-        for (auto be: BoundaryElement::getBoundaryElements()) {
-            
-            for(auto bd : nl->getNeighbors(be))
-                interaction->computeForces(be, bd);
-        }
-    }
+    for (auto &interaction : _boundaryInteractionVector)
+        interaction->computeForces();
 }
 
 void BoundaryFF::computeForcesAux() {
     
-    for (auto &interaction : _boundaryInteractionVector){
-        
-        auto nl = interaction->getNeighborList();
-        
-        for (auto be: BoundaryElement::getBoundaryElements()) {
-            
-            for(auto bd : nl->getNeighbors(be))
-                interaction->computeForcesAux(be, bd);
-        }
-    }
+    for (auto &interaction : _boundaryInteractionVector)
+        interaction->computeForcesAux();
 }
 
 vector<NeighborList*> BoundaryFF::getNeighborLists() {

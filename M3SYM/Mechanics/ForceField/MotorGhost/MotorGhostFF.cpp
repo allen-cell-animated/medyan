@@ -22,7 +22,7 @@ MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twistin
 {
     if (stretching == "HARMONIC")
         _motorGhostInteractionVector.emplace_back(
-            new MotorGhostStretching<MotorGhostStretchingHarmonic>());
+        new MotorGhostStretching<MotorGhostStretchingHarmonic>());
     else if(stretching == "") {}
     else {
         cout << "Motor stretching FF not recognized. Exiting." << endl;
@@ -34,54 +34,44 @@ void MotorGhostFF::whoIsCulprit() {
     
     cout << endl;
     
-    cout << "Printing the culprit motor..." << endl;
+    cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    _motorCulprit->printInfo();
+    cout << "Printing the culprit motor..." << endl;
+    _culpritInteraction->_motorCulprit->printSelf();
     
     cout << endl;
 }
 
 double MotorGhostFF::computeEnergy(double d) {
     
-    double U = 0;
+    double U= 0;
     double U_i;
     
     for (auto &interaction : _motorGhostInteractionVector) {
         
-        for (auto m: MotorGhost::getMotorGhosts()) {
-            
-            U_i = interaction->computeEnergy(m, d);
-            
-            if(fabs(U_i) == numeric_limits<double>::infinity()
-               || U_i != U_i || U_i < -1.0) {
-                
-                //set culprit and return
-                _motorCulprit = m;
-                
-                return -1;
-            }
-            else
-                U += U_i;
+        U_i = interaction->computeEnergy(d);
+        
+        if(U_i <= -1) {
+            //set culprit and return
+            _culpritInteraction = interaction.get();
+            return -1;
         }
+        else U += U_i;
+        
     }
     return U;
+
 }
 
 void MotorGhostFF::computeForces() {
     
-    for (auto &interaction : _motorGhostInteractionVector) {
-        
-        for (auto m: MotorGhost::getMotorGhosts())
-            interaction->computeForces(m);
-    }
+    for (auto &interaction : _motorGhostInteractionVector)
+        interaction->computeForces();
 }
 
 void MotorGhostFF::computeForcesAux() {
     
-    for (auto &interaction : _motorGhostInteractionVector) {
-        
-        for (auto m: MotorGhost::getMotorGhosts())
-            interaction->computeForcesAux(m);
-    }
+    for (auto &interaction : _motorGhostInteractionVector)
+        interaction->computeForcesAux();
 }
 

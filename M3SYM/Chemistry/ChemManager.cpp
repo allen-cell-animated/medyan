@@ -1116,9 +1116,7 @@ void ChemManager::genFilBindingReactions() {
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
         //loop through all compartments
-        for(auto &c : grid->children()) {
-        
-            Compartment *C = (Compartment*)(c.get());
+        for(auto C : grid->getCompartments()) {
         
             int managerIndex = 0;
             int linkerIndex = 0;
@@ -1808,7 +1806,7 @@ void ChemManager::genFilBindingReactions() {
         
         //init neighbor lists
         //get a compartment
-        Compartment* C0 = (Compartment*)grid->children(0);
+        Compartment* C0 = grid->getCompartments()[0];
         
         for(auto &manager : C0->getFilamentBindingManagers()) {
             
@@ -1818,8 +1816,8 @@ void ChemManager::genFilBindingReactions() {
             if((lManager = dynamic_cast<LinkerBindingManager*>(manager.get()))) {
                 
                 auto nl =
-                new CCNeighborList(lManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
-                               max(lManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
+                new CylinderCylinderNL(lManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
+                                   max(lManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
                 
                 //add to subsystem and manager
                 LinkerBindingManager::_neighborLists.push_back(nl);
@@ -1829,8 +1827,8 @@ void ChemManager::genFilBindingReactions() {
             else if((mManager = dynamic_cast<MotorBindingManager*>(manager.get()))) {
                 
                 auto nl =
-                new CCNeighborList(mManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
-                               max(mManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
+                new CylinderCylinderNL(mManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
+                                   max(mManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
                 
                 //add to subsystem and manager
                 MotorBindingManager::_neighborLists.push_back(nl);
@@ -2331,8 +2329,7 @@ void ChemManager::genNucleationReactions() {
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
         //loop through all compartments
-        for(auto &c : grid->children()) {
-            Compartment *C = (Compartment*)(c.get());
+        for(auto C : grid->getCompartments()) {
             
             //go through reactions, add each
             for(auto &r: _chemData.nucleationReactions[filType]) {
@@ -2520,14 +2517,11 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
     
     //initialize all compartments equivalent to cproto
     //will copy all general and bulk reactions
-    for(auto &c : grid->children()) {
-        Compartment *C = (Compartment*)(c.get());
+    for(auto C : grid->getCompartments())
         *C = cProto;
-    }
-    for(auto &c : grid->children()) {
-        Compartment *C = (Compartment*)(c.get());
+    for(auto C : grid->getCompartments())
         C->generateAllDiffusionReactions();
-    }
+    
     //try initial copy number setting
     updateCopyNumbers();
     
@@ -2549,34 +2543,37 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
     //get some related objects
     Compartment* C = cc->getCompartment();
     Cylinder* c = cc->getCylinder();
-    Filament* f = c->getFilament();
     
-    short filamentType = f->getType();
+    Filament* f = (Filament*)(c->getParent());
+    short filType = f->getType();
     
     //add monomers to cylinder
     for(int i = 0; i < cc->getSize(); i++) {
-        CMonomer* m = new CMonomer(filamentType);
-        initCMonomer(m, filamentType, C);
+        CMonomer* m = new CMonomer(filType);
+        initCMonomer(m, filType, C);
         cc->addCMonomer(m);
         
-        if(find(SysParams::Chemistry().bindingSites[filamentType].begin(),
-                SysParams::Chemistry().bindingSites[filamentType].end(), i)
-            !=  SysParams::Chemistry().bindingSites[filamentType].end()) {
+        if(find(SysParams::Chemistry().bindingSites[filType].begin(),
+                SysParams::Chemistry().bindingSites[filType].end(), i)
+            !=  SysParams::Chemistry().bindingSites[filType].end()) {
             
             //add callback to all binding sites
             UpdateBrancherBindingCallback bcallback(c, i);
             
-            Species* bs = cc->getCMonomer(i)->speciesBound(SysParams::CParams.brancherBoundIndex[filamentType]);
+            Species* bs = cc->getCMonomer(i)->speciesBound(
+                          SysParams::CParams.brancherBoundIndex[filType]);
             ConnectionBlock rcbb(bs->connect(bcallback,false));
             
             UpdateLinkerBindingCallback lcallback(c, i);
             
-            Species* ls = cc->getCMonomer(i)->speciesBound(SysParams::CParams.linkerBoundIndex[filamentType]);
+            Species* ls = cc->getCMonomer(i)->speciesBound(
+                          SysParams::CParams.linkerBoundIndex[filType]);
             ConnectionBlock rcbl(ls->connect(lcallback,false));
             
             UpdateMotorBindingCallback mcallback(c, i);
             
-            Species* ms = cc->getCMonomer(i)->speciesBound(SysParams::CParams.motorBoundIndex[filamentType]);
+            Species* ms = cc->getCMonomer(i)->speciesBound(
+                          SysParams::CParams.motorBoundIndex[filType]);
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
@@ -2587,12 +2584,12 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
     //extension of front
     if(extensionFront) {
         lastcc = f->getCylinderVector().back()->getCCylinder();
-        for(auto &r : _filRxnTemplates[filamentType]) r->addReaction(lastcc, cc);
+        for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
     }
     //extension of back
     else if(extensionBack) {
         lastcc = f->getCylinderVector().front()->getCCylinder();
-        for(auto &r : _filRxnTemplates[filamentType]) r->addReaction(cc, lastcc);
+        for(auto &r : _filRxnTemplates[filType]) r->addReaction(cc, lastcc);
     }
     
     //Base case, initialization
@@ -2611,17 +2608,17 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
             
-            for(auto j : SysParams::CParams.bindingIndices[filamentType])
+            for(auto j : SysParams::CParams.bindingIndices[filType])
                 m1->speciesBound(j)->up();
             
             //fill new cylinder with default filament value
             for(int i = 0; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
                 
-                for(auto j : SysParams::CParams.bindingIndices[filamentType])
+                for(auto j : SysParams::CParams.bindingIndices[filType])
                     cc->getCMonomer(i)->speciesBound(j)->up();
             }
-            for(auto &r : _filRxnTemplates[filamentType]) r->addReaction(lastcc, cc);
+            for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
         }
         //this is first one
         else {
@@ -2636,12 +2633,12 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             for(int i = 1; i < cc->getSize() - 1; i++) {
                 cc->getCMonomer(i)->speciesFilament(0)->up();
                 
-                for(auto j : SysParams::CParams.bindingIndices[filamentType])
+                for(auto j : SysParams::CParams.bindingIndices[filType])
                     cc->getCMonomer(i)->speciesBound(j)->up();
             }
         }
     }    
     //Add all reaction templates to this cylinder
-    for(auto &r : _filRxnTemplates[filamentType]) { r->addReaction(cc); }
+    for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
 }
 

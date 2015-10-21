@@ -47,12 +47,12 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     catch (exception& e) {
         cout << e.what();
         
-        printInfo();
+        printSelf();
         
         exit(EXIT_FAILURE);
     }
         
-    int pos = int(position * SysParams::Geometry().cylinderIntSize[c1->getFilamentType()]);
+    int pos = int(position * SysParams::Geometry().cylinderIntSize[c1->getType()]);
     
 #ifdef CHEMISTRY
     _cBranchingPoint = unique_ptr<CBranchingPoint>(new CBranchingPoint(branchType, _compartment,
@@ -73,11 +73,12 @@ BranchingPoint::~BranchingPoint() noexcept {
     
 #ifdef MECHANICS
     //offset the branching cylinder's bead by a little for safety
-    auto msize = SysParams::Geometry().monomerSize[_c1->getFilamentType()];
+    auto msize = SysParams::Geometry().monomerSize[_c1->getType()];
     
-    vector<double> offsetCoord = {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-                                  (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-                                  (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
+    vector<double> offsetCoord =
+        {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+         (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+         (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
     
     auto b = _c2->getFirstBead();
     
@@ -101,7 +102,7 @@ BranchingPoint::~BranchingPoint() noexcept {
         
         //unmark the filament and bound species
         m->speciesFilament(speciesFilament)->down();
-        m->speciesBound(SysParams::Chemistry().brancherBoundIndex[_c1->getFilamentType()])->down();
+        m->speciesBound(SysParams::Chemistry().brancherBoundIndex[_c1->getType()])->down();
     }
     //mark the free species instead
     else {
@@ -138,7 +139,10 @@ BranchingPoint::~BranchingPoint() noexcept {
         }
             
         //remove the filament from the system
-        _subSystem->removeTrackable<Filament>(_c2->getFilament());
+        Filament *bf = (Filament*)(_c2->getParent());
+        _subSystem->removeTrackable<Filament>(bf);
+        
+        delete bf;
             
         //mark species, update reactions
         freeMonomer->up();
@@ -166,7 +170,7 @@ void BranchingPoint::updatePosition() {
     catch (exception& e) {
         cout << e.what();
         
-        printInfo();
+        printSelf();
         
         exit(EXIT_FAILURE);
     }
@@ -184,7 +188,7 @@ void BranchingPoint::updatePosition() {
     }
 }
             
-void BranchingPoint::printInfo() {
+void BranchingPoint::printSelf() {
     
     cout << endl;
     
@@ -206,8 +210,8 @@ void BranchingPoint::printInfo() {
     cout << endl;
     
     cout << "Associated cylinders (mother and branching): " << endl;
-    _c1->printInfo();
-    _c2->printInfo();
+    _c1->printSelf();
+    _c2->printSelf();
     
     cout << endl;
 }

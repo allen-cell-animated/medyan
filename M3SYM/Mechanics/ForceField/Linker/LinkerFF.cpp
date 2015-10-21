@@ -22,7 +22,7 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 {
     if (stretching == "HARMONIC")
         _linkerInteractionVector.emplace_back(
-            new LinkerStretching<LinkerStretchingHarmonic>());
+        new LinkerStretching<LinkerStretchingHarmonic>());
     else if(stretching == "") {}
     else {
         cout << "Linker stretching FF not recognized. Exiting." << endl;
@@ -34,54 +34,43 @@ void LinkerFF::whoIsCulprit() {
     
     cout << endl;
     
-    cout << "Printing the culprit linker..." << endl;
+    cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    _linkerCulprit->printInfo();
+    cout << "Printing the culprit linker..." << endl;
+    _culpritInteraction->_linkerCulprit->printSelf();
     
     cout << endl;
 }
 
 double LinkerFF::computeEnergy(double d) {
     
-    double U = 0;
+    double U= 0;
     double U_i;
     
     for (auto &interaction : _linkerInteractionVector) {
         
-        for (auto l: Linker::getLinkers()) {
-            
-            U_i = interaction->computeEnergy(l, d);
-            
-            if(fabs(U_i) == numeric_limits<double>::infinity()
-               || U_i != U_i || U_i < -1.0) {
-                
-                //set culprits and return
-                _linkerCulprit = l;
-                
-                return -1;
-            }
-            else
-                U += U_i;
+        U_i = interaction->computeEnergy(d);
+        
+        if(U_i <= -1) {
+            //set culprit and return
+            _culpritInteraction = interaction.get();
+            return -1;
         }
+        else U += U_i;
+        
     }
     return U;
 }
 
 void LinkerFF::computeForces() {
     
-    for (auto &interaction : _linkerInteractionVector) {
-        
-        for (auto l: Linker::getLinkers())
-            interaction->computeForces(l);
-    }
+    for (auto &interaction : _linkerInteractionVector)
+        interaction->computeForces();
 }
 
 void LinkerFF::computeForcesAux() {
     
-    for (auto &interaction : _linkerInteractionVector) {
-        
-        for (auto l: Linker::getLinkers())
-            interaction->computeForcesAux(l);
-    }
+    for (auto &interaction : _linkerInteractionVector)
+        interaction->computeForcesAux();
 }
 

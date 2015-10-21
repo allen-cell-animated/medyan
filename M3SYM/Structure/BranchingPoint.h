@@ -22,6 +22,7 @@
 #include "Database.h"
 #include "Trackable.h"
 #include "Movable.h"
+#include "Component.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -35,7 +36,7 @@ class Cylinder;
  *  Extending the Movable class, the positions of all instances 
  *  can be updated by the SubSystem.
  */
-class BranchingPoint : public Trackable, public Movable {
+class BranchingPoint : public Component, public Trackable, public Movable {
     
 private:
     unique_ptr<MBranchingPoint> _mBranchingPoint; ///< Pointer to mech branch point
@@ -121,7 +122,7 @@ public:
     /// @note - changes compartment if needed
     virtual void updatePosition();
     
-    virtual void printInfo();
+    virtual void printSelf();
     
     /// Count the number of brancher species with a given name in the system
     static species_copy_t countSpecies(const string& name);

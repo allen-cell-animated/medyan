@@ -66,6 +66,11 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         cout << "Maximum force in system = " << maxF() << endl;
         
         cout << "Culprit ..." << endl;
-        maxBead()->printInfo();
+        maxBead()->printSelf();
+        
+        cout << "System energy..." << endl;
+        FFM.computeEnergy(0.0, true);
+        
+        cout << endl;
     }
 }

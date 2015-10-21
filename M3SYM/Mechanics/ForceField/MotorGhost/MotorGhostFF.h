@@ -32,9 +32,7 @@ private:
     vector <unique_ptr<MotorGhostInteractions>>
     _motorGhostInteractionVector; ///< Vector of initialized motor interactions
     
-    /// The culprit motor in the case of an error
-    MotorGhost* _motorCulprit;
-    
+    MotorGhostInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
     MotorGhostFF(string& stretching, string& bending, string& twisting);

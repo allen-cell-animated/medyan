@@ -126,7 +126,7 @@ public:
     virtual size_t countReactions() const {return 0;};
     
     /// Prints information about this node. Useful for debugging.
-    virtual void printSelf() {}
+    virtual void printSelf() = 0;
 };
 
 

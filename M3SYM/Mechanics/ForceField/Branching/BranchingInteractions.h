@@ -24,13 +24,19 @@ class BranchingPoint;
 /// Represents an interaction at a BranchingPoint
 class BranchingInteractions {
     
+friend class BranchingFF;
+    
+protected:
+    /// The branching point in the case of an error
+    BranchingPoint* _branchingCulprit;
+    
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(BranchingPoint*, double d) = 0;
+    virtual double computeEnergy(double d) = 0;
     /// Compute forces of this interaction
-    virtual void computeForces(BranchingPoint*) = 0;
+    virtual void computeForces() = 0;
     /// Compute auxiliary forces of this interaction
-    virtual void computeForcesAux(BranchingPoint*) = 0;
+    virtual void computeForcesAux() = 0;
     
     /// Get the name of this interaction
     virtual const string getName() = 0;

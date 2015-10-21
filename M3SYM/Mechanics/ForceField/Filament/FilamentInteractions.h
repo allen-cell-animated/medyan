@@ -23,14 +23,20 @@ class Filament;
 
 /// Represents an internal Filament interaction
 class FilamentInteractions {
+    
+friend class FilamentFF;
+    
+protected:
+    /// The filament in the case of an error
+    Filament* _filamentCulprit;
 
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(Filament*,  double d) = 0;
+    virtual double computeEnergy(double d) = 0;
     /// Compute forces of this interaction
-    virtual void computeForces(Filament*) = 0;
+    virtual void computeForces() = 0;
     /// Compute auxiliary forces of this interaction
-    virtual void computeForcesAux(Filament*) = 0;
+    virtual void computeForcesAux() = 0;
     
     /// Get the name of this interaction
     virtual const string getName() = 0;

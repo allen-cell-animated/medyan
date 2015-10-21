@@ -11,22 +11,24 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_BoundaryRepulsionLJ_h
-#define M3SYM_BoundaryRepulsionLJ_h
+#ifndef M3SYM_BoundaryCylinderRepulsionExp_h
+#define M3SYM_BoundaryCylinderRepulsionExp_h
 
 #include <vector>
+#include <cmath>
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A Lennard-Jones repulsive potential used by the BoundaryRepulsion template.
-class BoundaryRepulsionLJ {
-
+/// A exponential repulsive potential used by the BoundaryCylinderRepulsion template.
+class BoundaryCylinderRepulsionExp {
+    
 public:
     double computeEnergy(Bead*, double, double, double);
     void computeForces(Bead*, double, vector<double>& norm, double, double);
     void computeForcesAux(Bead*, double, vector<double>& norm, double, double);
 };
+
 #endif

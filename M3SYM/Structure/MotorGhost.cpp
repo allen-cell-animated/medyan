@@ -57,11 +57,11 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     catch (exception& e) {
         cout << e.what();
         
-        printInfo();
+        printSelf();
         
         exit(EXIT_FAILURE);
     }
-    short filType = c1->getFilamentType();
+    short filType = c1->getType();
           
     int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize[filType]);
     int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize[filType]);
@@ -106,7 +106,7 @@ void MotorGhost::updatePosition() {
     catch (exception& e) {
         cout << e.what();
         
-        printInfo();
+        printSelf();
         
         exit(EXIT_FAILURE);
     }
@@ -239,7 +239,7 @@ void MotorGhost::moveMotorHead(Cylinder* c,
         if(shift > 0) _position2 += shift;
         else _position2 -= shift;
     }
-    short filType = c->getFilamentType();
+    short filType = c->getType();
     
 #ifdef CHEMISTRY
     short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize[filType]);
@@ -264,7 +264,7 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
         _position2 = newPosition;
         _c2 = newC;
     }
-    short filType = _c1->getFilamentType();
+    short filType = _c1->getType();
     
 #ifdef CHEMISTRY
     short oldpos = int (oldPosition * SysParams::Geometry().cylinderIntSize[filType]);
@@ -276,7 +276,7 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
 }
 
 
-void MotorGhost::printInfo() {
+void MotorGhost::printSelf() {
     
     cout << endl;
     
@@ -305,8 +305,8 @@ void MotorGhost::printInfo() {
     cout << endl;
     
     cout << "Associated cylinders (one and two): " << endl;
-    _c1->printInfo();
-    _c2->printInfo();
+    _c1->printSelf();
+    _c2->printSelf();
     
     cout << endl;
 }

@@ -28,6 +28,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
+#include "Bubble.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -278,7 +279,6 @@ void Controller::initialize(string inputFile,
     }
     
     //add other filaments if specified
-    
     FilamentInitializer* fInit = new RandomFilamentDist();
     
     auto filamentDataGen = fInit->createFilaments(_subSystem->getBoundary(),
@@ -314,6 +314,11 @@ void Controller::initialize(string inputFile,
             _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1);
     }
     cout << "Done. " << filamentData.size() << " filaments created." << endl;
+    
+    ///TEST FOR ADDING BUBBLES
+    vector<double> coordinates = {500,500,500};
+    _subSystem->addTrackable<Bubble>(_subSystem, coordinates, 0, 100, 41, 2.7);
+    
 }
 
 void Controller::moveBoundary(double deltaTau) {
@@ -327,9 +332,7 @@ void Controller::moveBoundary(double deltaTau) {
         _subSystem->getBoundary()->move(dist);
     
     //activate, deactivate necessary compartments
-    for(auto &c : _subSystem->getCompartmentGrid()->children()) {
-        
-        Compartment *C = (Compartment*)(c.get());
+    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
         
         if(_subSystem->getBoundary()->within(C)) {
             
@@ -421,6 +424,12 @@ void Controller::run() {
             _mController->run();
             
             updatePositions();
+            
+            ///TEST FOR ADDING BUBBLES
+            for(auto bb : Bubble::getBubbles()) {
+                bb->printSelf();
+            }
+            
             
             if(i % _numStepsPerSnapshot == 0 ||
                tauLastSnapshot >= _snapshotTime) {

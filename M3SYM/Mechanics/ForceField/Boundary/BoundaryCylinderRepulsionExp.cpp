@@ -11,23 +11,19 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#include "BoundaryRepulsionExp.h"
+#include "BoundaryCylinderRepulsionExp.h"
 
 #include "Bead.h"
 
-#include "SysParams.h"
-
-double BoundaryRepulsionExp::computeEnergy(Bead* b, double r,
-                                           double kRep, double screenLength) {
-    //ceiling to avoid blowups
+double BoundaryCylinderRepulsionExp::computeEnergy(Bead* b, double r,
+                                                   double kRep, double screenLength) {
     double R = -r/screenLength;
     return kRep * exp(R);
 }
 
-void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm,
-                                         double kRep, double screenLength) {
+void BoundaryCylinderRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm,
+                                                 double kRep, double screenLength) {
     
-    //ceiling to avoid blowups
     double R = -r/screenLength;
     double f0 = kRep * exp(R)/screenLength;
 
@@ -40,10 +36,9 @@ void BoundaryRepulsionExp::computeForces(Bead* b, double r, vector<double>& norm
     
 }
 
-void BoundaryRepulsionExp::computeForcesAux(Bead* b, double r, vector<double>& norm,
-                                            double kRep, double screenLength) {
+void BoundaryCylinderRepulsionExp::computeForcesAux(Bead* b, double r, vector<double>& norm,
+                                                    double kRep, double screenLength) {
     
-    //ceiling to avoid blowups
     double R = -r/screenLength;
     double f0 = kRep * exp(R)/screenLength;
     

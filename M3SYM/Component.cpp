@@ -26,3 +26,4 @@ Composite* Component::getRoot() {
 bool Component::apply (Visitor &v) {
     return v.visit(this);
 }
+

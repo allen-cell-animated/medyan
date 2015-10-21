@@ -23,13 +23,19 @@ class MotorGhost;
 /// Represents an internal MotorGhost interaction
 class MotorGhostInteractions {
     
+friend class MotorGhostFF;
+    
+protected:
+    /// The motor ghost in the case of an error
+    MotorGhost* _motorCulprit;
+    
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy( MotorGhost*,  double d) = 0;
+    virtual double computeEnergy(double d) = 0;
     /// Compute the forces of this interaction
-    virtual void computeForces(MotorGhost*) = 0;
+    virtual void computeForces() = 0;
     /// Compute the auxiliary forces of this interaction
-    virtual void computeForcesAux(MotorGhost*) = 0;
+    virtual void computeForcesAux() = 0;
 
     /// Get the name of this interaction
     virtual const string getName() = 0;

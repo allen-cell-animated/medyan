@@ -41,7 +41,7 @@ class DRController;
  *  Extending the Reactable class, the reactions associated with all
  *  instances can be updated by the SubSystem.
  */
-class Linker : public Composite, public Trackable, public Movable, public Reactable {
+class Linker : public Component, public Trackable, public Movable, public Reactable {
 
 friend class DRController;
     
@@ -134,7 +134,7 @@ public:
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
     
-    virtual void printInfo();
+    virtual void printSelf();
     
     /// Count the number of linker species with a given name in the system
     static species_copy_t countSpecies(const string& name);

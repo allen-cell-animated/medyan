@@ -87,6 +87,8 @@ public:
     }
     
     /// Remove a trackable from the SubSystem
+    /// Deleting the actual object should be executed by the actual
+    /// callback and/or controlling function.
     template<class T>
     void removeTrackable(T* t) {
         
@@ -108,9 +110,6 @@ public:
             for(auto nlist : _neighborLists.getElements())
                 nlist->removeNeighbor((Neighbor*)t);
         }
-        
-        //delete it
-        delete t;
     }
     
     //@{

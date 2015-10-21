@@ -17,6 +17,9 @@
 #include "common.h"
 
 #include "CylinderVolumeInteractions.h"
+#include "NeighborListImpl.h"
+
+#include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
@@ -27,13 +30,22 @@ class CylinderExclVolume : public CylinderVolumeInteractions {
     
 private:
     CVolumeInteractionType _FFType;
+    CylinderCylinderNL* _neighborList;  ///< Neighbor list of cylinders
     
 public:
-    virtual double computeEnergy(Cylinder*, Cylinder*, double d);
-    virtual void computeForces(Cylinder*, Cylinder*);
-    virtual void computeForcesAux(Cylinder*, Cylinder*);
+    ///Constructor
+    CylinderExclVolume() {
+        _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff[0]);
+    }
+    
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
 
-    virtual const string getName() {return "Excluded Volume";}
+    /// Get the neighbor list for this interaction
+    virtual NeighborList* getNeighborList() {return _neighborList;}
+    
+    virtual const string getName() {return "Cylinder Excluded Volume";}
 };
 
 #endif

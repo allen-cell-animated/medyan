@@ -35,7 +35,7 @@ class ReactionVisitor;
  *  convenient methods for applying a function to all nodes (i.e. the Visitor pattern). 
  *  Each node in the hieararchy may have a parent and may contain several children 
  *  nodes. A class that is derived from Composite can contain children Component 
- *  objects. @note Composite objects may contain Species and ReactionBase collections, 
+ *  objects. @note Composite objects may contain other collections,
  *  however, this is treated seperately from the Composite pattern (i.e. separate 
  *  methods exist for the corresponding access to elements, changes, etc.)
  */    

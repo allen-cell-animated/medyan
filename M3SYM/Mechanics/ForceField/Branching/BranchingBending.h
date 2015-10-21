@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM__BranchingBending_h
-#define M3SYM__BranchingBending_h
+#ifndef M3SYM_BranchingBending_h
+#define M3SYM_BranchingBending_h
 
 #include "common.h"
 
@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
-/// Represents an interaction keeping BranchingPoint angle (~270 for Arp2/3)
+/// Represents an interaction maintaining a BranchingPoint angle (~270 for Arp2/3)
 template <class BBendingInteractionType>
 class BranchingBending : public BranchingInteractions {
     
@@ -29,11 +29,11 @@ private:
     BBendingInteractionType _FFType;
     
 public:
-    virtual double computeEnergy(BranchingPoint*, double d);
-    virtual void computeForces(BranchingPoint*);
-    virtual void computeForcesAux(BranchingPoint*);
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     
-    virtual const string getName() {return "Bending";}
+    virtual const string getName() {return "Branching Bending";}
 };
 
 #endif

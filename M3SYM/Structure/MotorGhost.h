@@ -16,7 +16,7 @@
 
 #include "common.h"
 
-#include "Composite.h"
+#include "Component.h"
 #include "CMotorGhost.h"
 #include "MMotorGhost.h"
 
@@ -42,7 +42,7 @@ class SubSystem;
  *  Extending the Reactable class, the reactions associated with 
  *  all instances can be updated by the SubSystem.
  */
-class MotorGhost : public Composite, public Trackable, public Movable, public Reactable {
+class MotorGhost : public Component, public Trackable, public Movable, public Reactable {
    
 friend class DRController;
 
@@ -157,7 +157,7 @@ public:
                        double oldPosition, double newPosition,
                        short boundType, SubSystem* ps);
     
-    virtual void printInfo();
+    virtual void printSelf();
     
     /// Count the number of motor species with a given name in the system
     static species_copy_t countSpecies(const string& name);

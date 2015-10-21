@@ -29,11 +29,11 @@ private:
     LStretchingInteractionType _FFType;
     
 public:
-    virtual double computeEnergy(Linker*, double d);
-    virtual void computeForces(Linker*);
-    virtual void computeForcesAux(Linker*);
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     
-    virtual const string getName() {return "Stretching";}
+    virtual const string getName() {return "Linker Stretching";}
 };
 
 #endif

@@ -16,7 +16,7 @@
 Database<BoundaryElement*> BoundaryElement::_boundaryElements;
 
 
-void BoundaryElement::printInfo() {
+void BoundaryElement::printSelf() {
     
     cout << endl;
     

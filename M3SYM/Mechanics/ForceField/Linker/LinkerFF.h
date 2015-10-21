@@ -33,7 +33,7 @@ private:
     _linkerInteractionVector; ///< Vector of initialized linker interactions
     
     /// The culprit in the case of an error
-    Linker* _linkerCulprit;
+    LinkerInteractions* _culpritInteraction;
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces

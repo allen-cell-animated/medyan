@@ -53,10 +53,26 @@ public:
             addChild(unique_ptr<Component>(new Compartment()));
     }
     
+    /// Get compartments that this grid holds
+    vector<Compartment*> getCompartments() {
+        
+        vector<Compartment*> compartments;
+        
+        for (auto &c : children())
+            compartments.push_back((Compartment*)c.get());
+        
+        return compartments;
+    }
+    
+    /// Get a compartment at certain index
+    Compartment* getCompartment(int index) {
+        
+        return (Compartment*)(children()[index].get());
+    }
+    
     /// Set all compartments as active. Used at initialization
     void setAllAsActive() {
-        for (auto &c : children())
-            ((Compartment*)(c.get()))->setAsActive();
+        for (auto C : getCompartments()) C->setAsActive();
     }
     
     /// Get name of this compartment grid

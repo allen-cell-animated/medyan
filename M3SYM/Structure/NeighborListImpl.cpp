@@ -14,7 +14,9 @@
 #include "NeighborListImpl.h"
 
 #include "Bead.h"
+#include "Filament.h"
 #include "Cylinder.h"
+#include "Bubble.h"
 #include "BoundaryElement.h"
 
 #include "GController.h"
@@ -24,7 +26,7 @@ using namespace mathfunc;
 
 //CYLINDER-CYLINDER
 
-void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool runtime) {
+void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
     
     //clear existing
     _list[cylinder].clear();
@@ -42,7 +44,7 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool runtime) {
         for(auto &ncylinder : comp->getCylinders()) {
             
             //Don't add different types of cylinders for now.
-            if(cylinder->getFilamentType() != ncylinder->getFilamentType()) continue;
+            if(cylinder->getType() != ncylinder->getType()) continue;
             
             //Don't add the same cylinder!
             if(cylinder == ncylinder) continue;
@@ -50,12 +52,12 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool runtime) {
             //Dont add if ID is more than cylinder for half-list
             if(!_full && cylinder->getID() <= ncylinder->getID()) continue;
             
-            //Don't add if on the same filament
-            if(cylinder->getFilament() == ncylinder->getFilament()) {
+            //Don't add if belonging to same parent
+            if(cylinder->getParent() == ncylinder->getParent()) {
                 
                 //if not cross filament, check if not neighboring
-                auto dist = fabs(cylinder->getPositionFilament() -
-                                ncylinder->getPositionFilament());
+                auto dist = fabs(cylinder->getPosition() -
+                                 ncylinder->getPosition());
                 if(dist <= 2) continue;
             }
             
@@ -73,7 +75,7 @@ void CCNeighborList::updateNeighbors(Cylinder* cylinder, bool runtime) {
     }
 }
 
-void CCNeighborList::addNeighbor(Neighbor* n) {
+void CylinderCylinderNL::addNeighbor(Neighbor* n) {
 
     //return if not a cylinder!
     Cylinder* cylinder;
@@ -83,7 +85,7 @@ void CCNeighborList::addNeighbor(Neighbor* n) {
     updateNeighbors(cylinder, true);
 }
 
-void CCNeighborList::removeNeighbor(Neighbor* n) {
+void CylinderCylinderNL::removeNeighbor(Neighbor* n) {
     
     Cylinder* cylinder;
     if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
@@ -98,7 +100,7 @@ void CCNeighborList::removeNeighbor(Neighbor* n) {
     }
 }
 
-void CCNeighborList::reset() {
+void CylinderCylinderNL::reset() {
     
     _list.clear();
     
@@ -108,88 +110,14 @@ void CCNeighborList::reset() {
         updateNeighbors(cylinder);
 }
 
-vector<Cylinder*> CCNeighborList::getNeighbors(Cylinder* cylinder) {
+vector<Cylinder*> CylinderCylinderNL::getNeighbors(Cylinder* cylinder) {
     
     return _list[cylinder];
 }
 
-//BEAD-BOUNDARY ELEMENT
+//BOUNDARYELEMENT - CYLINDER
 
-void BBENeighborList::updateNeighbors(BoundaryElement* be) {
-    
-    //clear existing
-    _list[be].clear();
-    
-    //loop through beads, add as neighbor
-    for (auto &b : Bead::getBeads()) {
-        
-        double dist = be->distance(b->coordinate);
-        //If within range, add it
-        if(dist < _rMax) _list[be].push_back(b);
-    }
-}
-
-void BBENeighborList::addNeighbor(Neighbor* n) {
-    
-    //return if not a boundary element!
-    BoundaryElement* be;
-    if(!(be = dynamic_cast<BoundaryElement*>(n))) return;
-    
-    //update neighbors
-    updateNeighbors(be);
-}
-
-void BBENeighborList::removeNeighbor(Neighbor* n) {
-    
-    BoundaryElement* be;
-    if(!(be = dynamic_cast<BoundaryElement*>(n))) return;
-    
-    _list.erase(be);
-}
-
-void BBENeighborList::addDynamicNeighbor(DynamicNeighbor* n) {
-    
-    //return if not a boundary element!
-    Bead* b; if(!(b = dynamic_cast<Bead*>(n))) return;
-    
-    for(auto it = _list.begin(); it != _list.end(); it++) {
-        
-        //if within range, add it
-        if(it->first->distance(b->coordinate) < _rMax)
-            it->second.push_back(b);
-    }
-}
-
-void BBENeighborList::removeDynamicNeighbor(DynamicNeighbor* n) {
-    
-    //return if not a bead!
-    Bead* b; if(!(b = dynamic_cast<Bead*>(n))) return;
-    
-    for(auto it = _list.begin(); it != _list.end(); it++) {
-        
-        auto bit = find(it->second.begin(), it->second.end(), b);
-        if(bit != it->second.end()) it->second.erase(bit);
-    }
-}
-
-void BBENeighborList::reset() {
-    
-    _list.clear();
-    
-    //loop through all neighbor keys
-    for(auto boundary: BoundaryElement::getBoundaryElements())
-        
-        updateNeighbors(boundary);
-}
-
-vector<Bead*> BBENeighborList::getNeighbors(BoundaryElement* be) {
-    
-    return _list[be];
-}
-
-//CYLINDER-BOUNDARY ELEMENT
-
-void CBENeighborList::updateNeighbors(BoundaryElement* be) {
+void BoundaryCylinderNL::updateNeighbors(BoundaryElement* be) {
     
     //clear existing
     _list[be].clear();
@@ -203,7 +131,7 @@ void CBENeighborList::updateNeighbors(BoundaryElement* be) {
     }
 }
 
-void CBENeighborList::addNeighbor(Neighbor* n) {
+void BoundaryCylinderNL::addNeighbor(Neighbor* n) {
     
     //return if not a boundary element!
     BoundaryElement* be;
@@ -213,7 +141,7 @@ void CBENeighborList::addNeighbor(Neighbor* n) {
     updateNeighbors(be);
 }
 
-void CBENeighborList::removeNeighbor(Neighbor* n) {
+void BoundaryCylinderNL::removeNeighbor(Neighbor* n) {
     
     BoundaryElement* be;
     if(!(be = dynamic_cast<BoundaryElement*>(n))) return;
@@ -221,33 +149,36 @@ void CBENeighborList::removeNeighbor(Neighbor* n) {
     _list.erase(be);
 }
 
-void CBENeighborList::addDynamicNeighbor(DynamicNeighbor* n) {
+void BoundaryCylinderNL::addDynamicNeighbor(DynamicNeighbor* n) {
     
-    //return if not a boundary element!
-    Cylinder* c; if(!(c = dynamic_cast<Cylinder*>(n))) return;
+    //return if not a cylinder!
+    Cylinder* c;
+    
+    if(!(c = dynamic_cast<Cylinder*>(n))) return;
     
     for(auto it = _list.begin(); it != _list.end(); it++) {
         
-        //Add if within range
+        //if within range, add it
         if(it->first->distance(c->coordinate) < _rMax)
             it->second.push_back(c);
     }
 }
 
-void CBENeighborList::removeDynamicNeighbor(DynamicNeighbor* n) {
+void BoundaryCylinderNL::removeDynamicNeighbor(DynamicNeighbor* n) {
     
-    //return if not a boundary element!
-    Cylinder* cylinder;
-    if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
+    //return if not a cylinder!
+    Cylinder* c;
+    
+    if(!(c = dynamic_cast<Cylinder*>(n))) return;
     
     for(auto it = _list.begin(); it != _list.end(); it++) {
         
-        auto cit = find(it->second.begin(), it->second.end(), cylinder);
+        auto cit = find(it->second.begin(), it->second.end(), c);
         if(cit != it->second.end()) it->second.erase(cit);
     }
 }
 
-void CBENeighborList::reset() {
+void BoundaryCylinderNL::reset() {
     
     _list.clear();
     
@@ -257,7 +188,209 @@ void CBENeighborList::reset() {
         updateNeighbors(boundary);
 }
 
-vector<Cylinder*> CBENeighborList::getNeighbors(BoundaryElement* be) {
+vector<Cylinder*> BoundaryCylinderNL::getNeighbors(BoundaryElement* be) {
     
     return _list[be];
 }
+
+//BOUNDARYELEMENT - BUBBLE
+
+void BoundaryBubbleNL::updateNeighbors(BoundaryElement* be) {
+    
+    //clear existing
+    _list[be].clear();
+    
+    //loop through beads, add as neighbor
+    for (auto &b : Bubble::getBubbles()) {
+        
+        double dist = be->distance(b->coordinate);
+        //If within range, add it
+        if(dist < _rMax) _list[be].push_back(b);
+    }
+}
+
+void BoundaryBubbleNL::addNeighbor(Neighbor* n) {
+    
+    //return if not a boundary element!
+    BoundaryElement* be;
+    if(!(be = dynamic_cast<BoundaryElement*>(n))) return;
+    
+    //update neighbors
+    updateNeighbors(be);
+}
+
+void BoundaryBubbleNL::removeNeighbor(Neighbor* n) {
+    
+    BoundaryElement* be;
+    if(!(be = dynamic_cast<BoundaryElement*>(n))) return;
+    
+    _list.erase(be);
+}
+
+void BoundaryBubbleNL::addDynamicNeighbor(DynamicNeighbor* n) {
+    
+    //return if not a filament bead!
+    Bubble* b;
+    
+    if(!(b = dynamic_cast<Bubble*>(n))) return;
+    
+    for(auto it = _list.begin(); it != _list.end(); it++) {
+        
+        //if within range, add it
+        if(it->first->distance(b->coordinate) < _rMax)
+            it->second.push_back(b);
+    }
+}
+
+void BoundaryBubbleNL::removeDynamicNeighbor(DynamicNeighbor* n) {
+    
+    //return if not a filament bead!
+    Bubble* b;
+    
+    if(!(b = dynamic_cast<Bubble*>(n))) return;
+    
+    for(auto it = _list.begin(); it != _list.end(); it++) {
+        
+        auto bit = find(it->second.begin(), it->second.end(), b);
+        if(bit != it->second.end()) it->second.erase(bit);
+    }
+}
+
+void BoundaryBubbleNL::reset() {
+    
+    _list.clear();
+    
+    //loop through all neighbor keys
+    for(auto boundary: BoundaryElement::getBoundaryElements())
+        
+        updateNeighbors(boundary);
+}
+
+vector<Bubble*> BoundaryBubbleNL::getNeighbors(BoundaryElement* be) {
+    
+    return _list[be];
+}
+
+//BUBBLE - BUBBLE
+
+void BubbleBubbleNL::updateNeighbors(Bubble* bb) {
+    
+    //clear existing
+    _list[bb].clear();
+    
+    //loop through beads, add as neighbor
+    for (auto &bbo : Bubble::getBubbles()) {
+        
+        double dist = twoPointDistance(bb->coordinate, bbo->coordinate);
+        
+        if(bb->getID() <= bbo->getID()) continue;
+        
+        //If within range, add it
+        if(dist < _rMax) _list[bb].push_back(bbo);
+    }
+}
+
+void BubbleBubbleNL::addNeighbor(Neighbor* n) {
+    
+    //return if not a bubble!
+    Bubble* bb;
+    if(!(bb = dynamic_cast<Bubble*>(n))) return;
+    
+    //update neighbors
+    updateNeighbors(bb);
+}
+
+void BubbleBubbleNL::removeNeighbor(Neighbor* n) {
+    
+    Bubble* bb;
+    if(!(bb = dynamic_cast<Bubble*>(n))) return;
+    
+    _list.erase(bb);
+    
+    //remove from other lists
+    for(auto it = _list.begin(); it != _list.end(); it++) {
+        
+        auto bit = find(it->second.begin(), it->second.end(), bb);
+        if(bit != it->second.end()) it->second.erase(bit);
+    }
+}
+
+void BubbleBubbleNL::reset() {
+    
+    _list.clear();
+    
+    //loop through all neighbor keys
+    for(auto bb: Bubble::getBubbles())
+        updateNeighbors(bb);
+}
+
+vector<Bubble*> BubbleBubbleNL::getNeighbors(Bubble* bb) {
+    
+    return _list[bb];
+}
+
+///BUBBLE - CYLINDER
+
+void BubbleCylinderNL::updateNeighbors(Bubble* bb) {
+    
+    //clear existing
+    _list[bb].clear();
+    
+    //loop through beads, add as neighbor
+    for (auto &c : Cylinder::getCylinders()) {
+        
+        double dist = twoPointDistance(c->coordinate, bb->coordinate);
+        
+        //If within range, add it
+        if(dist < _rMax) _list[bb].push_back(c);
+    }
+}
+
+void BubbleCylinderNL::addNeighbor(Neighbor* n) {
+    
+    Bubble* bb; Cylinder* c;
+    if((bb = dynamic_cast<Bubble*>(n))) {
+        updateNeighbors(bb);
+    }
+    else if((c = dynamic_cast<Cylinder*>(n))) {
+        
+        for(auto it = _list.begin(); it != _list.end(); it++) {
+            
+            //if within range, add it
+            if(twoPointDistance(it->first->coordinate, c->coordinate) < _rMax)
+                it->second.push_back(c);
+        }
+    }
+    else return;
+}
+
+void BubbleCylinderNL::removeNeighbor(Neighbor* n) {
+    
+    Bubble* bb; Cylinder* c;
+    if((bb = dynamic_cast<Bubble*>(n))) {
+        _list.erase(bb);
+    }
+    else if((c = dynamic_cast<Cylinder*>(n))) {
+        for(auto it = _list.begin(); it != _list.end(); it++) {
+            
+            auto cit = find(it->second.begin(), it->second.end(), c);
+            if(cit != it->second.end()) it->second.erase(cit);
+        }
+    }
+    else return;
+}
+
+void BubbleCylinderNL::reset() {
+    
+    _list.clear();
+    
+    //loop through all neighbor keys
+    for(auto bb: Bubble::getBubbles())
+        updateNeighbors(bb);
+}
+
+vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
+    
+    return _list[bb];
+}
+

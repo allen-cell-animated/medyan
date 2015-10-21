@@ -25,8 +25,8 @@ CCylinder::CCylinder(Compartment* C, Cylinder* c)
     : _compartment(C), _pCylinder(c) {
     
     //set size based on parent cylinder
-    _size = SysParams::Geometry().cylinderSize[c->getFilamentType()] /
-            SysParams::Geometry().monomerSize[c->getFilamentType()];
+    _size = SysParams::Geometry().cylinderSize[c->getType()] /
+            SysParams::Geometry().monomerSize[c->getType()];
 }
 
 
@@ -207,11 +207,11 @@ CCylinder::~CCylinder() {
     //Remove all species
     for(auto &m: _monomers) {
         
-        for(int i = 0; i < CMonomer::_numFSpecies[_pCylinder->getFilamentType()]; i++) {
+        for(int i = 0; i < CMonomer::_numFSpecies[_pCylinder->getType()]; i++) {
             SpeciesFilament* s = m->speciesFilament(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
-        for(int i = 0; i < CMonomer::_numBSpecies[_pCylinder->getFilamentType()]; i++) {
+        for(int i = 0; i < CMonomer::_numBSpecies[_pCylinder->getType()]; i++) {
             SpeciesBound* s = m->speciesBound(i);
             if(s != nullptr) _compartment->removeSpecies(s);
         }
@@ -263,8 +263,8 @@ bool CCylinder::isConsistent() {
     return true;
 }
 
-short CCylinder::getFilamentType() {
+short CCylinder::getType() {
     
-    return _pCylinder->getFilamentType();
+    return _pCylinder->getType();
 }
 

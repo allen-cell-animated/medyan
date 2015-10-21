@@ -154,7 +154,7 @@ struct FilamentExtensionFrontCallback {
     //Callback
     void operator() (ReactionBase *r){
         //extend the front
-        Filament* f = _cylinder->getFilament();
+        Filament* f = (Filament*)(_cylinder->getParent());
         f->extendFront(_plusEnd);
     }
 };
@@ -173,7 +173,7 @@ struct FilamentExtensionBackCallback {
     //Callback
     void operator() (ReactionBase *r){
         //extend the back
-        Filament* f = _cylinder->getFilament();
+        Filament* f = (Filament*)(_cylinder->getParent());
         f->extendBack(_minusEnd);
     }
 };
@@ -189,7 +189,7 @@ struct FilamentRetractionFrontCallback {
         : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
-        Filament* f = _cylinder->getFilament();
+        Filament* f =(Filament*)( _cylinder->getParent());
         f->retractFront();
     }
 };
@@ -205,7 +205,7 @@ struct FilamentRetractionBackCallback {
         : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
-        Filament* f = _cylinder->getFilament();
+        Filament* f = (Filament*)(_cylinder->getParent());
         f->retractBack();
     }
 };
@@ -221,7 +221,7 @@ struct FilamentPolymerizationFrontCallback {
         : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
-        Filament* f = _cylinder->getFilament();
+        Filament* f = (Filament*)(_cylinder->getParent());
         f->polymerizeFront();
     }
 };
@@ -237,7 +237,7 @@ struct FilamentPolymerizationBackCallback {
         : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
-        Filament* f = _cylinder->getFilament();
+        Filament* f = (Filament*)(_cylinder->getParent());
         f->polymerizeBack();
     }
 };
@@ -253,7 +253,7 @@ struct FilamentDepolymerizationFrontCallback {
         : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
-        Filament* f = _cylinder->getFilament();
+        Filament* f = (Filament*)(_cylinder->getParent());
         f->depolymerizeFront();
     }
 };
@@ -269,7 +269,7 @@ struct FilamentDepolymerizationBackCallback {
         : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
-        Filament* f = _cylinder->getFilament();
+        Filament* f = (Filament*)(_cylinder->getParent());
         f->depolymerizeBack();
     }
 };
@@ -287,6 +287,7 @@ struct BranchingPointUnbindingCallback {
         
         //remove the branching point
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
+        delete _branchingPoint;
     }
 };
 
@@ -319,7 +320,7 @@ struct BranchingCallback {
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
         
-        short filType = c1->getFilamentType();
+        short filType = c1->getType();
         
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderIntSize[filType];
         
@@ -391,6 +392,7 @@ struct LinkerUnbindingCallback {
         
         //remove the linker
         _ps->removeTrackable<Linker>(_linker);
+        delete _linker;
     }
 };
 
@@ -420,7 +422,7 @@ struct LinkerBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
-        short filType = c1->getFilamentType();
+        short filType = c1->getType();
         
         // Create a linker
         int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
@@ -455,6 +457,7 @@ struct MotorUnbindingCallback {
         
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
+        delete _motor;
     }
 };
 
@@ -485,7 +488,7 @@ struct MotorBindingCallback {
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
         
-        short filType = c1->getFilamentType();
+        short filType = c1->getType();
         
         // Create a motor
         int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
@@ -536,7 +539,7 @@ struct MotorWalkingCallback {
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
         
-        short filType = _c->getFilamentType();
+        short filType = _c->getType();
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
@@ -582,7 +585,7 @@ struct MotorMovingCylinderCallback {
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
         
-        short filType = _oldC->getFilamentType();
+        short filType = _oldC->getType();
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
@@ -677,10 +680,10 @@ struct FilamentSeveringCallback {
             r->rspecies()[i]->up();
         
         //sever the filament at given position
-        Filament* f = _c1->getFilament();
+        Filament* f = (Filament*)(_c1->getParent());
         
         //create a new filament by severing
-        Filament* newF = f->sever(_c1->getPositionFilament());
+        Filament* newF = f->sever(_c1->getPosition());
         
         //if severing did not occur, return
         if(newF == nullptr) return;
@@ -698,7 +701,10 @@ struct FilamentDestructionCallback {
     
     void operator() (ReactionBase* r) {
         
-        _ps->removeTrackable<Filament>(_c->getFilament());
+        Filament* f = (Filament*)(_c->getParent());
+        
+        _ps->removeTrackable<Filament>(f);
+        delete f;
     }
 };
 

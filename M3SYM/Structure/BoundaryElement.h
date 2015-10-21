@@ -21,6 +21,7 @@
 #include "Database.h"
 #include "Trackable.h"
 #include "Neighbor.h"
+#include "Component.h"
 
 #include "GController.h"
 
@@ -37,7 +38,7 @@ class Bead;
  * Extending the Neighbor class, all instances can be kept in 
  * [NeighborLists](@ref NeighborList).
  */
-class BoundaryElement : public Trackable, public Neighbor {
+class BoundaryElement : public Component, public Trackable, public Neighbor {
 
 friend class BoundaryCubic;
 friend class BoundarySpherical;
@@ -109,7 +110,7 @@ public:
         return _boundaryElements.countElements();
     }
     
-    virtual void printInfo();
+    virtual void printSelf();
 };
 
 #endif

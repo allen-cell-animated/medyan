@@ -11,8 +11,8 @@
 //  http://papoian.chem.umd.edu/
 //------------------------------------------------------------------
 
-#ifndef M3SYM_VolumeCylindricalFF_h
-#define M3SYM_VolumeCylindricalFF_h
+#ifndef M3SYM_CylinderVolumeFF_h
+#define M3SYM_CylinderVolumeFF_h
 
 #include <vector>
 
@@ -24,27 +24,22 @@
 class CylinderVolumeInteractions;
 class Cylinder;
 
-/// An implementation of the ForceField class that calculates Cylinder
-/// volume interactions.
-class VolumeCylindricalFF : public ForceField {
+/// An implementation of the ForceField class that calculates
+/// Cylinder volume interactions.
+class CylinderVolumeFF : public ForceField {
     
 private:
     vector <unique_ptr<CylinderVolumeInteractions>>
     _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
     
-    //@{
-    /// The cylinder culprits in the case of an error
-    Cylinder* _cylinderCulprit1;
-    Cylinder* _cylinderCulprit2;
-    //@}
-    
+    CylinderVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
     /// Initialize the volume forcefields
-    VolumeCylindricalFF(string& interaction);
+    CylinderVolumeFF(string& interaction);
     
-    virtual string getName() {return "Volume cylindrical";}
+    virtual string getName() {return "Cylinder Volume";}
     virtual void whoIsCulprit();
-    
+
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();

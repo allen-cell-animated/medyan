@@ -44,7 +44,7 @@ class Filament;
  *  [NeighborLists](@ref NeighborList).
  */
 
-class Bead : public Component, public Trackable, public Movable, public DynamicNeighbor {
+class Bead : public Component, public Trackable, public Movable{
 public:
     vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
@@ -59,29 +59,17 @@ public:
                             ///< Usually a boundary element
     
     ///Main constructor
-    Bead (vector<double> v, Filament* f, int positionFilament);
+    Bead (vector<double> v, Composite* parent, int position);
     
     ///Default constructor
-    Bead(Filament* f, int positionFilament)
-        : Trackable(true, false, true, false),
-          coordinate(3, 0), coordinateP(3, 0), coordinateB(3,0 ),
-          force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
-          _pFilament(f), _positionFilament(positionFilament) {}
-    
-    ~Bead();
+    Bead(Composite* parent, int position);
+    ~Bead() {}
     
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
     
-    /// Set position on the local Filament
-    void setPositionFilament(int positionFilament) {
-        _positionFilament = positionFilament;
-    }
-    /// Get position on the local Filament
-    int getPositionFilament() {return _positionFilament;}
-    
-    /// Get the parent filament
-    Filament* getFilament() {return _pFilament;}
+    /// Get position
+    int getPosition() {return _position;}
     
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
@@ -104,34 +92,39 @@ public:
     /// Update the position, inherited from Movable
     virtual void updatePosition();
     
-    virtual void printInfo();
+    virtual void printSelf();
     
     //@{
     /// Auxiliary method for CG minimization
     inline double FDotF() {
-        return force[0]*force[0] + force[1]*force[1] + force[2]*force[2];
+        return force[0]*force[0] +
+               force[1]*force[1] +
+               force[2]*force[2];
     }
     inline double FDotFA() {
-        return force[0]*forceAux[0] + force[1]*forceAux[1] + force[2]*forceAux[2];
+        return force[0]*forceAux[0] +
+               force[1]*forceAux[1] +
+               force[2]*forceAux[2];
     }
     
     inline double FADotFA() {
-        return forceAux[0]*forceAux[0] + forceAux[1]*forceAux[1] + forceAux[2]*forceAux[2];
+        return forceAux[0]*forceAux[0] +
+               forceAux[1]*forceAux[1] +
+               forceAux[2]*forceAux[2];
     }
     
     inline double FADotFAP() {
-        return forceAux[0]*forceAuxP[0] + forceAux[1]*forceAuxP[1] + forceAux[2]*forceAuxP[2];
+        return forceAux[0]*forceAuxP[0] +
+               forceAux[1]*forceAuxP[1] +
+               forceAux[2]*forceAuxP[2];
     }
     //@}
     
 private:
-    Compartment* _compartment = nullptr;
-        ///< Pointer to the compartment that this bead is in
+    Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     
-    Filament* _pFilament = nullptr;
-    
-    int _positionFilament; ///< Position on Filament (1st, 2nd, etc...)
-    float _birthTime;      ///< Time of birth
+    int _position;     ///< Position on structure
+    float _birthTime;  ///< Time of birth
     
     static Database<Bead*> _beads; ///< Collection of beads in SubSystem
 };

@@ -65,6 +65,14 @@ struct MechParams {
     vector<double> VolumeK = {};
     vector<double> VolumeCutoff = {};
     //@}
+    
+    //@{
+    /// Bubble parameter
+    vector<double> BubbleK = {};
+    vector<double> BubbleScreenLength = {};
+    
+    double BubbleCutoff = 0.0;
+    //@}
 };
 
 /// Struct to hold chemistry parameters for the system

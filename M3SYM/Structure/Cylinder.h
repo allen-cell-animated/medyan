@@ -18,7 +18,6 @@
 
 #include "common.h"
 
-#include "Composite.h"
 #include "MCylinder.h"
 #include "CCylinder.h"
 #include "RateChanger.h"
@@ -28,6 +27,7 @@
 #include "Movable.h"
 #include "Reactable.h"
 #include "DynamicNeighbor.h"
+#include "Component.h"
 
 //FORWARD DECLARATIONS
 class Filament;
@@ -47,7 +47,7 @@ class Compartment;
  *  Extending the DynamicNeighbor class, all instances can be 
  *  kept in [NeighborLists](@ref NeighborList).
  */
-class Cylinder : public Composite, public Trackable, public Movable,
+class Cylinder : public Component, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor {
     
 friend class CController;
@@ -60,12 +60,13 @@ private:
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
     
-    Filament* _pFilament;  ///< Pointer to parent filament where this cylinder belongs
-    int _positionFilament; ///< Position on filament (1st, 2nd, ... etc)
+    int _position;          ///< Position on structure
     
     bool _plusEnd = false;  ///< If the cylinder is at the plus end
     bool _minusEnd = false; ///< If the cylinder is at the minus end
     
+    short _type; ///< Type of cylinder, either corresponding to Filament or other
+                                       
     int _ID; ///< Unique ID of cylinder, managed by Database
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
@@ -87,8 +88,8 @@ public:
     vector<double> coordinate;
     ///< Coordinates of midpoint, updated with updatePosition()
                                        
-    /// Constructor, initializes a cylinder and
-    Cylinder(Filament* f, Bead* b1, Bead* b2, int positionFilament,  
+    /// Constructor, initializes a cylinder
+    Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
              bool extensionFront = false,
              bool extensionBack  = false,
              bool initialization = false);
@@ -104,13 +105,8 @@ public:
     /// @note: since this is a unique ptr, will implicitly delete old chem cylinder
     void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
     
-    /// Get parent
-    Filament* getFilament() {return _pFilament;}
-    /// Set parent
-    void setFilament(Filament* pf) {_pFilament = pf;}
-    
-    /// Get filament type
-    short getFilamentType();
+    /// Get cylinder type
+    short getType();
                                        
     //@{
     /// Get beads
@@ -145,7 +141,7 @@ public:
     void setMinusEnd(bool minusEnd) {_minusEnd = minusEnd;}
     //@}
     
-    int getPositionFilament() {return _positionFilament;}
+    int getPosition() {return _position;}
     
     //@{
     /// SubSystem management, inherited from Trackable
@@ -172,7 +168,7 @@ public:
     /// Check if this cylinder is grown to full length
     bool isFullLength();
                                        
-    virtual void printInfo();
+    virtual void printSelf();
                                        
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders

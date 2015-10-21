@@ -173,16 +173,12 @@ TEST(CompartmentContainerTest, Main) {
     Cproto.addInternalReaction(r2);
 
     ///initialize all compartments with species
-    for(auto &c : grid->children()) {
-        Compartment *C = (Compartment*)(c.get());
+    for(auto C : grid->getCompartments())
         *C = Cproto;
-    }
     
     ///Generate all diffusion reactions
-    for(auto &c : grid->children()) {
-        Compartment *C = (Compartment*)(c.get());
+    for(auto C : grid->getCompartments())
         C->generateAllDiffusionReactions();
-    }
     
     _numSpecies = grid->countSpecies();
     

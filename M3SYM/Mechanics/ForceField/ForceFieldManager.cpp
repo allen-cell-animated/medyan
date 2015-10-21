@@ -20,7 +20,7 @@ double ForceFieldManager::computeEnergy(double d, bool verbose) {
         
         auto tempEnergy = f->computeEnergy(d);
         
-        if(verbose) cout << f->getName() << " energy = " << tempEnergy << " ";
+        if(verbose) cout << f->getName() << " energy = " << tempEnergy << endl;
         
         //if energy is infinity, exit with infinity.
         if(tempEnergy <= -1) {
@@ -44,7 +44,6 @@ double ForceFieldManager::computeEnergy(double d, bool verbose) {
         else energy += tempEnergy;
         
     }
-    if(verbose) cout << endl;
     return energy;
 }
 

@@ -14,7 +14,7 @@
 #include "Bead.h"
 
 #include "Compartment.h"
-#include "Filament.h"
+#include "Composite.h"
 
 #include "SysParams.h"
 #include "GController.h"
@@ -24,34 +24,37 @@ using namespace mathfunc;
 
 Database<Bead*> Bead::_beads;
 
-Bead::Bead (vector<double> v, Filament* f, int positionFilament)
+Bead::Bead (vector<double> v, Composite* parent, int position)
 
-    : Trackable(true, false, true, false),
+    : Trackable(true),
       coordinate(v), coordinateP(v), coordinateB(v),
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
-      _pFilament(f), _positionFilament(positionFilament), _birthTime(tau()) {
+      _position(position), _birthTime(tau()) {
     
-    //Find compartment, add this bead
+    parent->addChild(unique_ptr<Component>(this));
+          
+    //Find compartment
     try {_compartment = GController::getCompartment(v);}
     catch (exception& e) {
         
         cout << e.what() << endl;
         
-        printInfo();
+        printSelf();
         
-        //also print filament info
-        _pFilament->printInfo();
+        //also print parent info
+        getParent()->printSelf();
         
         exit(EXIT_FAILURE);
     }
-          
-    _compartment->addBead(this);
 }
 
-Bead::~Bead() {
+Bead::Bead(Composite* parent, int position)
+
+    : Trackable(true),
+    coordinate(3, 0), coordinateP(3, 0), coordinateB(3, 0),
+    force(3, 0), forceAux(3, 0), forceAuxP(3, 0),  _position(position) {
     
-    //remove from compartment
-    _compartment->removeBead(this);
+    parent->addChild(unique_ptr<Component>(this));
 }
 
 void Bead::updatePosition() {
@@ -65,24 +68,17 @@ void Bead::updatePosition() {
         //print exception
         cout << e.what() << endl;
         
-        printInfo();
+        printSelf();
         
-        //also print filament info
-        _pFilament->printInfo();
+        //also print parent info
+        getParent()->printSelf();
         
         //exit
         exit(EXIT_FAILURE);
     }
-
-    if(c != _compartment) {
-        //remove from old compartment, add to new
-        _compartment->removeBead(this);
-        _compartment = c;
-        _compartment->addBead(this);
-    }
 }
 
-void Bead::printInfo() {
+void Bead::printSelf() {
     
     cout << endl;
     
@@ -93,7 +89,7 @@ void Bead::printInfo() {
     cout << "Forces = " << force[0] << ", " << force[1] << ", " << force[2] << endl;
     cout << "Auxiliary forces = " << forceAux[0] << ", " << forceAux[1] << ", " << forceAux[2] << endl;
 
-    cout << "Position on filament = " << _positionFilament << endl;
+    cout << "Position on structure = " << _position << endl;
     cout << "Birth time = " << _birthTime << endl;
     
     cout << endl;

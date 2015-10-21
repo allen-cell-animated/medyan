@@ -21,7 +21,7 @@
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
-/// Represents an interaction fixing a Cylinder fixed by a BranchingPoint on the main.
+/// Represents an interaction fixing a Cylinder anchored by a BranchingPoint on the parent.
 template <class BStretchingInteractionType>
 class BranchingPosition : public BranchingInteractions {
     
@@ -29,11 +29,11 @@ private:
     BStretchingInteractionType _FFType;
     
 public:
-    virtual double computeEnergy(BranchingPoint*, double d);
-    virtual void computeForces(BranchingPoint*);
-    virtual void computeForcesAux(BranchingPoint*);
+    virtual double computeEnergy(double d);
+    virtual void computeForces();
+    virtual void computeForcesAux();
     
-    virtual const string getName() {return "Position";}
+    virtual const string getName() {return "Branching Position";}
 };
 
 #endif

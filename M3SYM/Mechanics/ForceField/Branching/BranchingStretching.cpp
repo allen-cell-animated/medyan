@@ -20,61 +20,78 @@
 #include "Bead.h"
 
 template <class BStretchingInteractionType>
-double BranchingStretching<BStretchingInteractionType>::computeEnergy(
-                                          BranchingPoint* b, double d) {
+double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d) {
     
-    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-    Bead* b3 = b->getSecondCylinder()->getFirstBead();
-
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
-    double position = b->getPosition();
+    double U = 0;
+    double U_i;
     
-    if (d == 0.0)
-        return _FFType.energy(b1, b2, b3, position, kStretch, eqLength);
-    else
-        return _FFType.energy(b1, b2, b3, position, kStretch, eqLength, d);
-    
+    for (auto b: BranchingPoint::getBranchingPoints()) {
+        
+        Bead* b1 = b->getFirstCylinder()->getFirstBead();
+        Bead* b2 = b->getFirstCylinder()->getSecondBead();
+        Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        
+        double kStretch = b->getMBranchingPoint()->getStretchingConstant();
+        double eqLength = b->getMBranchingPoint()->getEqLength();
+        double position = b->getPosition();
+        
+        if (d == 0.0)
+            U_i = _FFType.energy(b1, b2, b3, position, kStretch, eqLength);
+        else
+            U_i = _FFType.energy(b1, b2, b3, position, kStretch, eqLength, d);
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            _branchingCulprit = b;
+            
+            return -1;
+        }
+        else
+            U += U_i;
+    }
+    return U;
 }
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::computeForces(BranchingPoint* b) {
+void BranchingStretching<BStretchingInteractionType>::computeForces() {
     
-    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+    for (auto b: BranchingPoint::getBranchingPoints()) {
     
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
-    double position = b->getPosition();
-    
-    _FFType.forces(b1, b2, b3, position, kStretch, eqLength);
-    
+        Bead* b1 = b->getFirstCylinder()->getFirstBead();
+        Bead* b2 = b->getFirstCylinder()->getSecondBead();
+        Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        
+        double kStretch = b->getMBranchingPoint()->getStretchingConstant();
+        double eqLength = b->getMBranchingPoint()->getEqLength();
+        double position = b->getPosition();
+        
+        _FFType.forces(b1, b2, b3, position, kStretch, eqLength);
+    }
 }
 
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::computeForcesAux(
-                                                     BranchingPoint* b) {
+void BranchingStretching<BStretchingInteractionType>::computeForcesAux() {
     
-    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-    Bead* b3 = b->getSecondCylinder()->getFirstBead();
-    
-    double kStretch = b->getMBranchingPoint()->getStretchingConstant();
-    double eqLength = b->getMBranchingPoint()->getEqLength();
-    double position = b->getPosition();
-    
-    _FFType.forcesAux(b1, b2, b3, position, kStretch, eqLength);
-    
+    for (auto b: BranchingPoint::getBranchingPoints()) {
+        
+        Bead* b1 = b->getFirstCylinder()->getFirstBead();
+        Bead* b2 = b->getFirstCylinder()->getSecondBead();
+        Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        
+        double kStretch = b->getMBranchingPoint()->getStretchingConstant();
+        double eqLength = b->getMBranchingPoint()->getEqLength();
+        double position = b->getPosition();
+        
+        _FFType.forcesAux(b1, b2, b3, position, kStretch, eqLength);
+    }
 }
 
 
 ///Template specializations
 template double
-BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(BranchingPoint* b, double d);
-template void
-BranchingStretching<BranchingStretchingHarmonic>::computeForces(BranchingPoint* b);
-template void
-BranchingStretching<BranchingStretchingHarmonic>::computeForcesAux(BranchingPoint* b);
+BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(double d);
+template void BranchingStretching<BranchingStretchingHarmonic>::computeForces();
+template void BranchingStretching<BranchingStretchingHarmonic>::computeForcesAux();

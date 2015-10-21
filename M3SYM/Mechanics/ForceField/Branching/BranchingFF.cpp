@@ -72,9 +72,10 @@ void BranchingFF::whoIsCulprit() {
     
     cout << endl;
     
-    cout << "Printing the culprit branching point..." << endl;
+    cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    _branchingCulprit->printInfo();
+    cout << "Printing the culprit branching point..." << endl;
+    _culpritInteraction->_branchingCulprit->printSelf();
     
     cout << endl;
 }
@@ -82,44 +83,32 @@ void BranchingFF::whoIsCulprit() {
 
 double BranchingFF::computeEnergy(double d) {
     
-    double U = 0;
+    double U= 0;
     double U_i;
     
     for (auto &interaction : _branchingInteractionVector) {
         
-        for (auto b: BranchingPoint::getBranchingPoints()) {
-       
-            U_i = interaction->computeEnergy(b, d);
-            
-            if(fabs(U_i) == numeric_limits<double>::infinity()
-               || U_i != U_i || U_i < -1.0) {
-                
-                //set culprit and return
-                _branchingCulprit = b;
-                
-                return -1;
-            }
-            else
-                U += U_i;
+        U_i = interaction->computeEnergy(d);
+        
+        if(U_i <= -1) {
+            //set culprit and return
+            _culpritInteraction = interaction.get();
+            return -1;
         }
+        else U += U_i;
+        
     }
     return U;
 }
 
 void BranchingFF::computeForces() {
     
-    for (auto &interaction : _branchingInteractionVector) {
-        
-        for (auto b: BranchingPoint::getBranchingPoints())
-            interaction->computeForces(b);
-    }
+    for (auto &interaction : _branchingInteractionVector)
+        interaction->computeForces();
 }
 
 void BranchingFF::computeForcesAux() {
     
-    for (auto &interaction : _branchingInteractionVector) {
-        
-        for (auto b: BranchingPoint::getBranchingPoints())
-            interaction->computeForcesAux(b);
-    }
+    for (auto &interaction : _branchingInteractionVector)
+        interaction->computeForcesAux();
 }

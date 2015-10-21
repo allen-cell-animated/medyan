@@ -18,10 +18,9 @@
 #include "BindingManager.h"
 
 void SubSystem::updateBindingManagers() {
-    for(auto &child : _compartmentGrid->children()) {
-        Compartment* c = (Compartment*)child.get();
+    for(auto C : _compartmentGrid->getCompartments()) {
         
-        for(auto &manager : c->getFilamentBindingManagers())
+        for(auto &manager : C->getFilamentBindingManagers())
             manager->updateAllPossibleBindings();
     }
 }

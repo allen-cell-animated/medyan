@@ -38,10 +38,8 @@ using namespace mathfunc;
 Database<Filament*> Filament::_filaments;
 
 
-Filament::Filament(SubSystem* s, short filamentType,
-                                 vector<double>& position,
-                                 vector<double>& direction,
-                                 bool nucleation, bool branch)
+Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
+                   vector<double>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
  
@@ -59,7 +57,7 @@ Filament::Filament(SubSystem* s, short filamentType,
     Bead* b2 = _subSystem->addTrackable<Bead>(pos2, this, 1);
     
     //create cylinder
-    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, 0);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0);
     
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
@@ -67,9 +65,8 @@ Filament::Filament(SubSystem* s, short filamentType,
 }
 
 
-Filament::Filament(SubSystem* s, short filamentType,
-                   vector<vector<double> >& position, int numBeads,
-                   string projectionType)
+Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& position,
+                   int numBeads, string projectionType)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
     
@@ -77,14 +74,11 @@ Filament::Filament(SubSystem* s, short filamentType,
     vector<vector<double>> tmpBeadsCoord;
     
     //straight projection
-    if(projectionType == "STRAIGHT")
-        tmpBeadsCoord = straightFilamentProjection(position, numBeads);
+    if(projectionType == "STRAIGHT") tmpBeadsCoord = straightFilamentProjection(position, numBeads);
     //zigzag projection
-    else if(projectionType == "ZIGZAG")
-        tmpBeadsCoord = zigZagFilamentProjection(position, numBeads);
+    else if(projectionType == "ZIGZAG") tmpBeadsCoord = zigZagFilamentProjection(position, numBeads);
     //arc projection
-    else if(projectionType == "ARC")
-        tmpBeadsCoord = arcFilamentProjection(position, numBeads);
+    else if(projectionType == "ARC") tmpBeadsCoord = arcFilamentProjection(position, numBeads);
    
     //create beads
     auto direction = twoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
@@ -92,7 +86,7 @@ Filament::Filament(SubSystem* s, short filamentType,
     Bead* b1 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[0], this, 0);
     Bead* b2 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[1], this, 1);
     
-    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, 0,
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0,
                                                       false, false, true);
         
     c0->setPlusEnd(true);
@@ -107,14 +101,12 @@ Filament::~Filament() {
     
     //remove cylinders, beads from system
     for(auto &c : _cylinderVector) {
-        //delete bead
+
         _subSystem->removeTrackable<Bead>(c->getFirstBead());
         
-        //remove second bead if last
         if(c->isPlusEnd())
             _subSystem->removeTrackable<Bead>(c->getSecondBead());
         
-        //delete cylinder
         _subSystem->removeTrackable<Cylinder>(c);
     }
 }
@@ -126,7 +118,7 @@ void Filament::extendFront(vector<double>& coordinates) {
     Cylinder* cBack = _cylinderVector.back();
     cBack->setPlusEnd(false);
     
-    int lastPositionFilament = cBack->getPositionFilament();
+    int lastPositionFilament = cBack->getPosition();
     
     Bead* b2 = cBack->getSecondBead();
     
@@ -137,13 +129,11 @@ void Filament::extendFront(vector<double>& coordinates) {
                          SysParams::Geometry().cylinderSize[_filType], direction);
     
     //create bead
-    Bead* bNew = _subSystem->addTrackable<Bead>
-                 (newBeadCoords, this, b2->getPositionFilament() + 1);
+    Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
     
     //create cylinder
-    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
-                   (this, b2, bNew, lastPositionFilament + 1,
-                    false, false, true);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
+                                  lastPositionFilament + 1, false, false, true);
     
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
@@ -156,7 +146,7 @@ void Filament::extendBack(vector<double>& coordinates) {
     Cylinder* cFront = _cylinderVector.front();
     cFront->setMinusEnd(false);
     
-    int lastPositionFilament = cFront->getPositionFilament();
+    int lastPositionFilament = cFront->getPosition();
     
     Bead* b2 = cFront->getFirstBead();
     
@@ -167,13 +157,11 @@ void Filament::extendBack(vector<double>& coordinates) {
                          SysParams::Geometry().cylinderSize[_filType], direction);
     
     //create bead
-    Bead* bNew = _subSystem->addTrackable<Bead>
-                 (newBeadCoords, this, b2->getPositionFilament() - 1);
+    Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() - 1);
     
     //create cylinder
-    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
-                   (this, bNew, b2, lastPositionFilament - 1,
-                    false, false, true);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
+                                 lastPositionFilament - 1, false, false, true);
     
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
@@ -185,7 +173,7 @@ void Filament::extendFront(short plusEnd) {
 
     Cylinder* cBack = _cylinderVector.back();
     
-    int lastPositionFilament = cBack->getPositionFilament();
+    int lastPositionFilament = cBack->getPosition();
     
     Bead* b1 = cBack->getFirstBead();
     Bead* b2 = cBack->getSecondBead();
@@ -197,8 +185,7 @@ void Filament::extendFront(short plusEnd) {
                SysParams::Geometry().monomerSize[_filType], direction1);
     
     //create a new bead in same place as b2
-    Bead* bNew = _subSystem->addTrackable<Bead>
-                 (npp, this, b2->getPositionFilament() + 1);
+    Bead* bNew = _subSystem->addTrackable<Bead>(npp, this, b2->getPosition() + 1);
     
 #ifdef MECHANICS
     //transfer the same load force to new bead
@@ -206,8 +193,8 @@ void Filament::extendFront(short plusEnd) {
     bNew->loadForce = b2->loadForce;
 #endif
     
-    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
-                   (this, b2, bNew, lastPositionFilament + 1, true);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
+                                               lastPositionFilament + 1, true);
     
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
@@ -231,7 +218,7 @@ void Filament::extendFront(short plusEnd) {
 void Filament::extendBack(short minusEnd) {
     
     Cylinder* cFront = _cylinderVector.front();
-    int lastPositionFilament = cFront->getPositionFilament();
+    int lastPositionFilament = cFront->getPosition();
     
     Bead* b2 = cFront->getFirstBead();
     Bead* b1 = cFront->getSecondBead();
@@ -243,8 +230,7 @@ void Filament::extendBack(short minusEnd) {
                SysParams::Geometry().monomerSize[_filType], direction1);
     
     //create a new bead in same place as b2
-    Bead* bNew = _subSystem->addTrackable<Bead>
-                 (npp, this, b2->getPositionFilament() - 1);
+    Bead* bNew = _subSystem->addTrackable<Bead>(npp, this, b2->getPosition() - 1);
 
 #ifdef MECHANICS
     //transfer the same load force to new bead
@@ -252,8 +238,8 @@ void Filament::extendBack(short minusEnd) {
     bNew->loadForce = b2->loadForce;
 #endif
     
-    Cylinder* c0 = _subSystem->addTrackable<Cylinder>
-                   (this, bNew, b2, lastPositionFilament - 1, false, true);
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
+                                        lastPositionFilament - 1, false, true);
     
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
@@ -282,7 +268,10 @@ void Filament::retractFront() {
     _cylinderVector.pop_back();
     
     _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
+    removeChild(retCylinder->getSecondBead());
+    
     _subSystem->removeTrackable<Cylinder>(retCylinder);
+    removeChild(retCylinder);
     
     _cylinderVector.back()->setPlusEnd(true);
 
@@ -300,7 +289,10 @@ void Filament::retractBack() {
     _cylinderVector.pop_front();
     
     _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());
+    removeChild(retCylinder->getFirstBead());
+    
     _subSystem->removeTrackable<Cylinder>(retCylinder);
+    removeChild(retCylinder);
     
     _cylinderVector.front()->setMinusEnd(true);
     
@@ -426,7 +418,7 @@ Filament* Filament::sever(int cylinderPosition) {
     //loop through cylinder vector, find position
     for(auto &c : _cylinderVector) {
         
-        if(c->getPositionFilament() == cylinderPosition) break;
+        if(c->getPosition() == cylinderPosition) break;
         else vectorPosition++;
     }
     
@@ -450,7 +442,7 @@ Filament* Filament::sever(int cylinderPosition) {
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
         
-        c->setFilament(newFilament);
+        newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
     }
     //new front of new filament, back of old
@@ -458,16 +450,16 @@ Filament* Filament::sever(int cylinderPosition) {
     auto c2 = _cylinderVector.front();
     
     ///copy bead at severing point, attach to new filament
-    Bead* newB = _subSystem->addTrackable<Bead>
-                 (*(c2->getFirstBead()));
+    Bead* newB = _subSystem->addTrackable<Bead>(*(c2->getFirstBead()));
     Bead* oldB = c2->getFirstBead();
     
     //offset these beads by a little for safety
     auto msize = SysParams::Geometry().monomerSize[_filType];
     
-    vector<double> offsetCoord = {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-                                  (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-                                  (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
+    vector<double> offsetCoord =
+        {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+         (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+         (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
     
     oldB->coordinate[0] += offsetCoord[0];
     oldB->coordinate[1] += offsetCoord[1];
@@ -709,7 +701,7 @@ vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v
     return coordinates;
 }
 
-void Filament::printInfo() {
+void Filament::printSelf() {
     
     cout << endl;
     
@@ -721,7 +713,7 @@ void Filament::printInfo() {
     cout << "Cylinder information..." << endl;
     
     for(auto c : _cylinderVector)
-        c->printInfo();
+        c->printSelf();
     
     cout << endl;
     
@@ -734,7 +726,7 @@ bool Filament::isConsistent() {
     for(auto &c : _cylinderVector) {
         if(!c->getCCylinder()->isConsistent()) {
          
-            cout << "Cylinder at position " << c->getPositionFilament()
+            cout << "Cylinder at position " << c->getPosition()
                  << " is chemically inconsistent" << endl;
             return false;
         }
