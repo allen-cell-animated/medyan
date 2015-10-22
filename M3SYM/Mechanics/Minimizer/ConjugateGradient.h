@@ -46,7 +46,7 @@ public:
     
     /// This function will minimize the system until the following criterion are met:
     /// 1) Largest force in the network < GRADTOL
-    /// 3) Number of iterations exceeds N
+    /// 3) Number of iterations exceeds 2N
     void equlibrate(ForceFieldManager &FFM) {
         _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX);
     }

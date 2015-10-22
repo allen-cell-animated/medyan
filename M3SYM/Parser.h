@@ -256,6 +256,19 @@ struct FilamentSetup {
     short filamentType = 0;
 };
 
+/// Struct to hold Bubble setup information
+struct BubbleSetup {
+    
+    string inputFile = "";
+    
+    ///If want a random distribution, used if inputFile is left blank
+    int numBubbles = 0;
+    ///Bubble type to create
+    short bubbleType = 0;
+};
+
+
+
 /// A general parser
 /*!
  *  A parser object, when initialized, opens an input file. Upon destruction, it 
@@ -314,6 +327,9 @@ public:
     /// Read Filament information
     FilamentSetup readFilamentSetup();
     
+    /// Read Bubble information
+    BubbleSetup readBubbleSetup();
+    
     /// Chemistry information
     ChemistrySetup readChemistrySetup();
 };
@@ -330,6 +346,20 @@ public:
     /// @note - Does not check for coordinate correctness.
     vector<tuple<short, vector<double>, vector<double>>> readFilaments();
 };
+
+/// Used to parse initial Bubble information, initialized by the Controller.
+class BubbleParser : public Parser {
+    
+public:
+    BubbleParser(string inputFileName) : Parser(inputFileName) {}
+    ~BubbleParser() {}
+    
+    /// Reads bubble input file. Returns a vector of tuples containing
+    /// bubble type and position.
+    /// @note - Does not check for coordinate correctness.
+    vector<tuple<short, vector<double>>> readBubbles();
+};
+
 
 /// Used to parse all chemical information, initialized by the Controller.
 class ChemistryParser: public Parser {

@@ -78,7 +78,7 @@ void FilamentBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3,
     double B = l1l2*invL1*A*A*L2;
     double C = l1l2*invL2*A*A*L1;
    
-    if (areSame(eqTheta, 0.0)) k = kBend;
+    if (areEqual(eqTheta, 0.0)) k = kBend;
     
     else{
         double phi = safeacos(l1l2 *A);
@@ -138,7 +138,7 @@ void FilamentBendingCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
     double B = l1l2*invL1*A*A*L2;
     double C = l1l2*invL2*A*A*L1;
     
-    if (areSame(eqTheta, 0.0)) k = kBend;
+    if (areEqual(eqTheta, 0.0)) k = kBend;
     
     else{
         double phi = safeacos(l1l2 *A);

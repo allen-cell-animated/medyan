@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = ''
+traj_filename = '/Users/jameskomianos/Desktop/Test/snapshot.traj'
 color_filename = ''
 
 #Open the traj file
@@ -18,6 +18,7 @@ if(color_filename != ''):
 class FilamentSnapshot:
 	def __init__(self):
 		self.id=None
+		self.type=None
 		self.length=None
 		self.delta_left=None	
 		self.delta_right=None	
@@ -47,6 +48,12 @@ class BrancherSnapshot:
 		self.type=None;
 		self.coords={}
 
+class BubbleSnapshot:
+	def __init__(self):
+		self.id=None
+		self.type=None;
+		self.coords={}
+
 class Snapshot:
 	def __init__(self):
 		self.step=None
@@ -55,10 +62,12 @@ class Snapshot:
 		self.n_linkers=None
 		self.n_motors=None
 		self.n_branchers=None
+		self.n_bubbles=None
 		self.filaments={}
 		self.linkers={}
 		self.motors={}
 		self.branchers={}
+		self.bubbles={}
 
 SnapshotList=[]
 first_snapshot_line=True
@@ -67,10 +76,12 @@ reading_filament=False
 reading_linker=False
 reading_motor=False
 reading_brancher=False
+reading_bubble=False
 n_beads_filament=0
 n_beads_linker=0
 n_beads_motor=0
 n_beads_brancher=0;
+n_beads_bubble=0;
 
 line_number = 0;
 
@@ -87,11 +98,12 @@ for line in traj_file:
 	if(first_snapshot_line):
 		F=Snapshot()
 		F.step, F.time, F.n_filaments, F.n_linkers, \
-		F.n_motors, F.n_branchers = map(double,line.split())
+		F.n_motors, F.n_branchers, F.n_bubbles = map(double,line.split())
 		F.n_filaments = int(F.n_filaments)
-		F.n_linkers = int(F.n_linkers)
-		F.n_motors = int(F.n_motors)
+		F.n_linkers   = int(F.n_linkers)
+		F.n_motors    = int(F.n_motors)
 		F.n_branchers = int(F.n_branchers)
+		F.n_bubbles   = int(F.n_bubbles)
 		first_snapshot_line=False
 		line_number+=1
 		continue
@@ -101,21 +113,24 @@ for line in traj_file:
 		first_filament_line=True
 		SnapshotList.append(F)
 		assert F.n_filaments == len(F.filaments)
-		assert F.n_linkers == len(F.linkers)
-		assert F.n_motors == len(F.motors)
+		assert F.n_linkers   == len(F.linkers)
+		assert F.n_motors    == len(F.motors)
 		assert F.n_branchers == len(F.branchers)
+		assert F.n_bubbles   == len(F.bubbles)
 		n_beads_filament=0
 		n_beads_linker=0
 		n_beads_motor=0
 		n_beads_brancher=0;
+		n_beads_bubble=0;
 		line_number+=1
 		continue
 			
 	if(first_line):
 		line_split = line.split()
-		if(line[0] == "F"):
+
+		if(line_split[0] == "FILAMENT"):
 			FS=FilamentSnapshot()
-			FS.id, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
+			FS.id, FS.type, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
 			first_line=False
 			F.filaments[FS.id]=FS
 			FS.connections=vstack(
@@ -125,7 +140,7 @@ for line in traj_file:
 			reading_filament=True
 			line_number+=1
 			continue
-		if(line[0] == "L"):
+		if(line_split[0] == "LINKER"):
 			LS = LinkerSnapshot()
 			LS.id, LS.type = map(int, line_split[1:])
 			first_line = False
@@ -136,7 +151,7 @@ for line in traj_file:
 			reading_linker=True
 			line_number+=1
 			continue
-		if(line[0] == "M"):
+		if(line_split[0] == "MOTOR"):
 			MS = MotorSnapshot()
 			MS.id, MS.type = map(int, line_split[1:])
 			first_line = False
@@ -148,13 +163,22 @@ for line in traj_file:
 			line_number+=1
 			continue
 
-		if(line[0] == "B"):
+		if(line_split[0] == "BRANCHER"):
 			BS = BrancherSnapshot()
 			BS.id, BS.type = map(int, line_split[1:])
 			first_line = False
 			F.branchers[BS.id] = BS
 			n_beads_brancher+=1
 			reading_brancher=True
+			line_number+=1
+			continue
+		if(line_split[0] == "BUBBLE"):
+			US = BubbleSnapshot()
+			US.id, US.type = map(int, line_split[1:])
+			first_line = False
+			F.bubbles[US.id] = US
+			n_beads_bubble+=1
+			reading_bubble=True
 			line_number+=1
 			continue
 
@@ -192,6 +216,13 @@ for line in traj_file:
 		first_line=True
 		reading_brancher=False
 
+	if(reading_bubble):
+		US.coords=array(line.split(),'f')
+		N=len(US.coords)
+		US.coords=US.coords.reshape(N/3,3).T
+		first_line=True
+		reading_bubble=False
+
 	line_number+=1
 
 @mlab.show
@@ -223,6 +254,7 @@ def show_snapshot(snapshot_number=-1):
 	DFILCOLOR     = (1.0,0.0,0.0)
 	DLINKERCOLOR  = (0.0,1.0,0.1)
 	DMOTORCOLOR   = (0.0,0.2,1.0)
+	DBUBBLECOLOR  = (0.2,0.7,0.5)
 
 	local_snapshot=SnapshotList[snapshot_number]
 	mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
@@ -239,6 +271,21 @@ def show_snapshot(snapshot_number=-1):
 	#display time
 	time = 'Time = ' + str(int(local_snapshot.time)) + "s"
 	mlab.text(0.6, 0.9, time, color=(0.0,0.0,0.0))
+
+	#DISPLAYING RANDOM POINTS FOR ACTIN MONOMERS
+	n1_monomers = 0
+
+	n1_x = []
+	n1_y = []
+	n1_z = []
+
+	for i in xrange(0, n1_monomers):
+
+		n1_x.append(random.uniform(0,1000.0))
+		n1_y.append(random.uniform(0,1000.0))
+		n1_z.append(random.uniform(0,1000.0))
+
+	mlab.points3d(n1_x,n1_y,n1_z, scale_factor=12.0, color=DFILCOLOR)
 
 	#DISPLAYING FILAMENTS
 	if(len(local_snapshot.filaments) != 0):
@@ -299,6 +346,7 @@ def show_snapshot(snapshot_number=-1):
 			q=[]
 			for lid in sorted(local_snapshot.linkers.keys()):
 				q.append(local_snapshot.linkers[lid].coords[i])
+
 			x.append(hstack(q))
 
 		for lid in sorted(local_snapshot.linkers.keys()):
@@ -306,7 +354,7 @@ def show_snapshot(snapshot_number=-1):
 				c.append(color)
 
 		for lid in sorted(local_snapshot.linkers.keys()):
-				connections.append(local_snapshot.linkers[lid].connections)
+			connections.append(local_snapshot.linkers[lid].connections)
 
 		connections = vstack(connections)
 
@@ -317,7 +365,7 @@ def show_snapshot(snapshot_number=-1):
 			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
 
 		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
-								    scale_mode='none', color=DBEADCOLOR)
+								    scale_mode='none', color=(DBEADCOLOR))
 
 		# Connect them
 		src.mlab_source.dataset.lines = connections
@@ -366,7 +414,7 @@ def show_snapshot(snapshot_number=-1):
 		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-		tube=mlab.pipeline.tube(src, tube_radius=3)
+		tube=mlab.pipeline.tube(src, tube_radius=4)
 		tube.filter.number_of_sides=12
 
 		if(len(c) != 0):
@@ -390,6 +438,22 @@ def show_snapshot(snapshot_number=-1):
 		src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
 		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
 									scale_factor=2.0, color=DBEADCOLOR)
+
+	#DISPLAYING BUBBLES
+	if(len(local_snapshot.bubbles) != 0):
+		x=[]
+		connections=[]
+
+		for i in 0, 1, 2:
+			q=[]
+			for uid in sorted(local_snapshot.bubbles.keys()):
+				q.append(local_snapshot.bubbles[uid].coords[i])
+			x.append(hstack(q))
+
+		# Create the points
+		src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
+		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
+									scale_factor=50.0, color=DBUBBLECOLOR)
 
 	if(saving):
 		mlab.savefig(filename=saveFile + "Snapshot" + str(snapshot_number) + ".jpg")

@@ -106,9 +106,8 @@ ChemistryData _chemData; ///< chemistry data of this system
 CompartmentGrid* _grid; ///< compartment grid of the system
     
 public:
-    Chemistry(string outputFileName,
-              ChemistryData chemData,
-              CompartmentGrid* grid)
+    Chemistry(string outputFileName, ChemistryData chemData,
+                                     CompartmentGrid* grid)
     
         : Output(outputFileName),
          _chemData(chemData), _grid(grid) {}

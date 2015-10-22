@@ -316,18 +316,17 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     //VOLUME
     if(mech.VolumeFFType != "" &&
        MParams.VolumeK.size() != CParams.numFilaments) {
-        cout << "Must set a volume constant for every filament type. Exiting." << endl;
+        cout << "Must set a cylinder volume force constant for every filament type. Exiting." << endl;
         return false;
     }
-    if(mech.VolumeFFType != "" &&
-       MParams.VolumeCutoff.size() != CParams.numFilaments) {
-        cout << "Must set a volume cutoff for all filaments. Exiting." << endl;
+    if(mech.VolumeFFType != "" && areEqual(MParams.VolumeCutoff, 0.0)) {
+        cout << "Must set a cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
     
     //Boundary
     if(mech.BoundaryFFType != "" && BParams.BoundaryK == 0) {
-        cout << "Must set a boundary constant. Exiting." << endl;
+        cout << "Must set a boundary force constant. Exiting." << endl;
         return false;
     }
     if(mech.BoundaryFFType != "" && BParams.BScreenLength == 0) {
@@ -335,9 +334,23 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     if(mech.BoundaryFFType != "" && BParams.BoundaryCutoff == 0) {
-        cout << "Must set a boundary cutoff. Exiting." << endl;
+        cout << "Must set a boundary cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
+    
+    //Bubbles
+    if(mech.BubbleFFType != "" &&
+      (MParams.BubbleK.size() != MParams.numBubbleTypes ||
+       MParams.BubbleRadius.size() != MParams.numBubbleTypes ||
+       MParams.BubbleScreenLength.size() != MParams.numBubbleTypes)) {
+        cout << "Must set all bubble mechanical constants for every bubble type. Exiting." << endl;
+        return false;
+    }
+    if(mech.BubbleFFType != "" && areEqual(MParams.BubbleCutoff, 0.0)) {
+        cout << "Must set a bubble cutoff for mechanical equilibration. Exiting." << endl;
+        return false;
+    }
+    
     
     ///Cylinder and monomer lengths specified
     if(GParams.cylinderSize.size() != CParams.numFilaments) {

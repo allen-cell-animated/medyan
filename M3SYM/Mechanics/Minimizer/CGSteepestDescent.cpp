@@ -14,6 +14,7 @@
 #include "CGSteepestDescent.h"
 
 #include "ForceFieldManager.h"
+#include "Composite.h"
 #include "Output.h"
 
 void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
@@ -44,12 +45,15 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         shiftGradient(0.0);
     }
     
-    if (numIter >= N) {
+    if (numIter >= 2 * N) {
+        cout << endl;
+        
         cout << "WARNING: Did not minimize in N (= number of beads) steps." << endl;
         cout << "Maximum force in system = " << maxF() << endl;
         
         cout << "Culprit ..." << endl;
-        maxBead()->printSelf();
+        auto b = maxBead();
+        if(b != nullptr) b->getParent()->printSelf();
         
         cout << "System energy..." << endl;
         FFM.computeEnergy(0.0, true);

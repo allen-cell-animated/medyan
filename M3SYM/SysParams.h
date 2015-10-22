@@ -63,15 +63,19 @@ struct MechParams {
     //@{
     /// Volume parameter
     vector<double> VolumeK = {};
-    vector<double> VolumeCutoff = {};
+    double VolumeCutoff = 0.0;
     //@}
     
     //@{
     /// Bubble parameter
     vector<double> BubbleK = {};
+    vector<double> BubbleRadius = {};
     vector<double> BubbleScreenLength = {};
     
     double BubbleCutoff = 0.0;
+    
+    ///If using more than one bubble
+    short numBubbleTypes = 1;
     //@}
 };
 

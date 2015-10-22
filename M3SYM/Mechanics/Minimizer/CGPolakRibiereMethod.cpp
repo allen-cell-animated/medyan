@@ -14,6 +14,7 @@
 #include "CGPolakRibiereMethod.h"
 
 #include "ForceFieldManager.h"
+#include "Composite.h"
 #include "Output.h"
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
@@ -59,7 +60,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         shiftGradient(beta);
         
         //direction reset if not downhill, or no progress made
-        if(CGMethod::allFDotFA() <= 0 || areSame(curGrad, newGrad)) {
+        if(CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad)) {
             
             shiftGradient(0.0);
             _safeMode = true;
@@ -68,13 +69,15 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         curGrad = newGrad;
     }
     
-    if (numIter >= N) {
+    if (numIter >= 2 * N) {
+        cout << endl;
+        
         cout << "WARNING: Did not minimize in N (= number of beads) steps." << endl;
         cout << "Maximum force in system = " << maxF() << endl;
         
         cout << "Culprit ..." << endl;
         auto b = maxBead();
-        if(b != nullptr) b->printSelf();
+        if(b != nullptr) b->getParent()->printSelf();
         
         cout << "System energy..." << endl;
         FFM.computeEnergy(0.0, true);

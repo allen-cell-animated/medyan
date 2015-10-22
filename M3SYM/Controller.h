@@ -59,6 +59,16 @@ private:
     int _numChemSteps;        ///< Number of consecutive chemical steps
     int _numStepsPerNeighbor; ///< NUmber of steps before a neighbor list update
     
+    ///INITIALIZATION HELPER FUNCTIONS
+    
+    /// Set up an initial configuration of a network
+    /// For now, only [Bubbles](@ref Bubble) and [Filaments](@ref Filament)
+    /// can be initialized before the simulation begins. Any other elements
+    /// should be initialized in this function.
+    void setupInitialNetwork(SystemParser& p);
+    
+    ///RUNTIME HELPER FUNCTIONS
+    
     /// Move the boundary based on the timestep
     void moveBoundary(double deltaTau);
     

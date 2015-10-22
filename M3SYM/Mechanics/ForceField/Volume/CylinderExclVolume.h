@@ -35,7 +35,7 @@ private:
 public:
     ///Constructor
     CylinderExclVolume() {
-        _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff[0]);
+        _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
     }
     
     virtual double computeEnergy(double d);

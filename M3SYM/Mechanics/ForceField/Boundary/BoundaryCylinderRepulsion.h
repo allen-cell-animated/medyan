@@ -27,8 +27,7 @@
 class BoundaryElement;
 class Bead;
 
-/// Represents a repulsive interaction between a BoundaryElement
-/// and the constituent Cylinder.
+/// Represents a repulsive interaction between a BoundaryElement and Cylinder.
 template <class BRepulsionInteractionType>
 class BoundaryCylinderRepulsion : public BoundaryInteractions {
     

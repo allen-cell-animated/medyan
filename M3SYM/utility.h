@@ -30,7 +30,7 @@ const double ZERO_PREC = 1E-6;
 extern unsigned long long rdtsc();
 
 ///Check equaility of doubles
-inline bool areSame(double d1, double d2) {
+inline bool areEqual(double d1, double d2) {
     
     return fabs(d1 - d2) < ZERO_PREC;
 }

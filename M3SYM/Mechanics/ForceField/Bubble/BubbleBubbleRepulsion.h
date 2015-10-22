@@ -26,7 +26,7 @@
 //FORWARD DECLARATIONS
 class Bead;
 
-/// Represents a repulsive interaction between two Bubbles.
+/// Represents a repulsive interaction between two [Bubbles](@ref Bubble).
 template <class BRepulsionInteractionType>
 class BubbleBubbleRepulsion : public BubbleInteractions {
     

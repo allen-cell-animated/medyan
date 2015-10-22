@@ -16,13 +16,18 @@
 #include "SubSystem.h"
 #include "Bead.h"
 
-Bubble::Bubble(SubSystem* ps, vector<double> coordinates,
-               short type, double radius, double kRepuls, double screenLength)
+#include "SysParams.h"
+
+Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
 
     : Trackable(true, false, true, false), _ps(ps), _type(type),
-      _radius(radius), _kRepuls(kRepuls), _screenLength(screenLength),
       _ID(_bubbles.getID()), coordinate(coordinates) {
     
+    //set up mechanical constants
+    _kRepuls = SysParams::Mechanics().BubbleK[_type];
+    _radius  = SysParams::Mechanics().BubbleRadius[_type];
+    _screenLength = SysParams::Mechanics().BubbleScreenLength[_type];
+          
     //set up bead
     _bead = _ps->addTrackable<Bead>(coordinates, this, 0);
 }

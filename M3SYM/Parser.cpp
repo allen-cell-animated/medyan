@@ -387,12 +387,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
         
         if(line.find("#") != string::npos) { continue; }
         
-        if (line.find("FSTRETCHINGTYPE") != string::npos) {
+        if (line.find("FSTRETCHINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Filament stretching type. Exiting."
+                "There was an error parsing input file at Filament stretching FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -400,12 +400,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.FStretchingType = lineVector[1];
             }
         }
-        else if (line.find("FBENDINGTYPE") != string::npos) {
+        else if (line.find("FBENDINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Filament bending type. Exiting."
+                "There was an error parsing input file at Filament bending FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -413,12 +413,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.FBendingType = lineVector[1];
             }
         }
-        else if (line.find("FTWISTINGTYPE") != string::npos) {
+        else if (line.find("FTWISTINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Filament twisting type. Exiting."
+                "There was an error parsing input file at Filament twisting FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -426,12 +426,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.FTwistingType = lineVector[1];
             }
         }
-        else if (line.find("LSTRETCHINGTYPE") != string::npos) {
+        else if (line.find("LSTRETCHINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Linker stretching type. Exiting."
+                "There was an error parsing input file at Linker stretching FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -439,12 +439,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.LStretchingType = lineVector[1];
             }
         }
-        else if (line.find("LBENDINGTYPE") != string::npos) {
+        else if (line.find("LBENDINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Linker bending type. Exiting."
+                "There was an error parsing input file at Linker bending FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -452,12 +452,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.LBendingType = lineVector[1];
             }
         }
-        else if (line.find("LTWISTINGTYPE") != string::npos) {
+        else if (line.find("LTWISTINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Linker twisting type. Exiting."
+                "There was an error parsing input file at Linker twisting FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -465,12 +465,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.LTwistingType = lineVector[1];
             }
         }
-        else if (line.find("MSTRETCHINGTYPE") != string::npos) {
+        else if (line.find("MSTRETCHINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Motor stretching type. Exiting."
+                "There was an error parsing input file at Motor stretching FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -478,12 +478,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.MStretchingType = lineVector[1];
             }
         }
-        else if (line.find("MBENDINGTYPE") != string::npos) {
+        else if (line.find("MBENDINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Motor bending type. Exiting."
+                "There was an error parsing input file at Motor bending FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -491,12 +491,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.MBendingType = lineVector[1];
             }
         }
-        else if (line.find("MTWISTINGTYPE") != string::npos) {
+        else if (line.find("MTWISTINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Motor twisting type. Exiting."
+                "There was an error parsing input file at Motor twisting FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -504,12 +504,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.MTwistingType = lineVector[1];
             }
         }
-        if (line.find("BRSTRETCHINGTYPE") != string::npos) {
+        if (line.find("BRSTRETCHINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Branch stretching type. Exiting."
+                "There was an error parsing input file at Branch stretching FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -517,12 +517,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.BrStretchingType = lineVector[1];
             }
         }
-        else if (line.find("BRBENDINGTYPE") != string::npos) {
+        else if (line.find("BRBENDINGFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Branch bending type. Exiting."
+                "There was an error parsing input file at Branch bending FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -530,12 +530,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.BrBendingType = lineVector[1];
             }
         }
-        else if (line.find("BRDIHEDRALTYPE") != string::npos) {
+        else if (line.find("BRDIHEDRALFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Branch dihedral type. Exiting."
+                "There was an error parsing input file at Branch dihedral FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -543,12 +543,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.BrDihedralType = lineVector[1];
             }
         }
-        else if (line.find("BRPOSITIONTYPE") != string::npos) {
+        else if (line.find("BRPOSITIONFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Branch dihedral type. Exiting."
+                "There was an error parsing input file at Branch position FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -556,12 +556,12 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.BrPositionType = lineVector[1];
             }
         }
-        else if (line.find("BOUNDARYTYPE") != string::npos) {
+        else if (line.find("BOUNDARYFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Boundary type. Exiting."
+                "There was an error parsing input file at Boundary FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
@@ -569,17 +569,30 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MTypes.BoundaryFFType = lineVector[1];
             }
         }
-        else if (line.find("VOLUMETYPE") != string::npos) {
+        else if (line.find("VOLUMEFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
                 cout <<
-                "There was an error parsing input file at Volume type. Exiting."
+                "There was an error parsing input file at Volume FF type. Exiting."
                 << endl;
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
                 MTypes.VolumeFFType = lineVector[1];
+            }
+        }
+        else if (line.find("BUBBLEFFTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at Bubble FF type. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MTypes.BubbleFFType = lineVector[1];
             }
         }
         
@@ -826,11 +839,66 @@ void SystemParser::readMechParams() {
         else if (line.find("VOLUMECUTOFF") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.VolumeCutoff.push_back(atof((lineVector[i].c_str())));
+            if(lineVector.size() != 2) {
+                cout <<
+                "Error reading Volume cutoff. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MParams.VolumeCutoff = atoi(lineVector[1].c_str());
             }
         }
+        
+        //Bubble parameter
+        else if (line.find("BUBBLEINTERACTIONK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BubbleK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        else if (line.find("BUBBLESCREENLENGTH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BubbleScreenLength.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        else if (line.find("BUBBLECUTOFF") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "Error reading Bubble cutoff. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MParams.BubbleCutoff = atoi(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("BUBBLERADIUS") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.BubbleRadius.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        else if (line.find("NUMBUBBLETYPES") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "Error reading number of Bubble types. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MParams.numBubbleTypes = atoi(lineVector[1].c_str());
+            }
+        }
+        
         else {}
     }
     //Set system parameters
@@ -909,7 +977,7 @@ void SystemParser::readBoundParams() {
         
         if(line.find("#") != string::npos) { continue; }
         
-        if (line.find("BCUTOFF") != string::npos) {
+        if (line.find("BOUNDARYCUTOFF") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -927,7 +995,7 @@ void SystemParser::readBoundParams() {
                 SysParams::Geometry().compartmentSizeX;
             }
         }
-        else if (line.find("BINTERACTIONK") != string::npos) {
+        else if (line.find("BOUNDARYINTERACTIONK") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -941,7 +1009,7 @@ void SystemParser::readBoundParams() {
             }
             else {}
         }
-        else if (line.find("BSCREENLENGTH") != string::npos) {
+        else if (line.find("BOUNDARYSCREENLENGTH") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -955,7 +1023,7 @@ void SystemParser::readBoundParams() {
             }
             else {}
         }
-        else if (line.find("BDIAMETER") != string::npos) {
+        else if (line.find("BOUNDARYDIAMETER") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
@@ -963,7 +1031,7 @@ void SystemParser::readBoundParams() {
             }
             else {}
         }
-        else if (line.find("BMOVESPEED") != string::npos) {
+        else if (line.find("BOUNDARYMOVESPEED") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
@@ -979,7 +1047,7 @@ void SystemParser::readBoundParams() {
             }
             else {}
         }
-        else if (line.find("BMOVEENDTIME") != string::npos) {
+        else if (line.find("BOUNDARYMOVEENDTIME") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
@@ -1359,6 +1427,56 @@ FilamentSetup SystemParser::readFilamentSetup() {
     return FSetup;
 }
 
+BubbleSetup SystemParser::readBubbleSetup() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    BubbleSetup BSetup;
+    
+    string line;
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != string::npos) { continue; }
+        
+        if(line.find("BUBBLEFILE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading bubble input file. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                BSetup.inputFile = lineVector[1];
+            else {}
+        }
+        else if(line.find("NUMBUBBLES") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading number of bubbles. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                BSetup.numBubbles = atoi(lineVector[1].c_str());
+            else {}
+        }
+        else if(line.find("BUBBLETYPE") != string::npos &&
+                line.find("NUMBUBBLETYPES") == string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading bubble type. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                BSetup.bubbleType = atoi(lineVector[1].c_str());
+            else {}
+        }
+    }
+    return BSetup;
+}
+
 vector<tuple<short, vector<double>, vector<double>>> FilamentParser::readFilaments() {
     
     _inputFile.clear();
@@ -1386,6 +1504,33 @@ vector<tuple<short, vector<double>, vector<double>>> FilamentParser::readFilamen
             }
             
             returnVector.emplace_back(type, coord1, coord2);
+        }
+    }
+    return returnVector;
+}
+
+vector<tuple<short, vector<double>>> BubbleParser::readBubbles() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    vector<tuple<short, vector<double>>> returnVector;
+    string line;
+    
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != string::npos) { continue; }
+        
+        vector<string> lineVector = split<string>(line);
+        if(lineVector.size() == 5) {
+            vector<double> coord;
+            
+            short type = atoi((*(lineVector.begin() + 1)).c_str());
+            
+            for(auto it = lineVector.begin() + 2; it != lineVector.end(); it++) {
+                coord.push_back(atof(((*it).c_str())));
+            }
+            returnVector.emplace_back(type, coord);
         }
     }
     return returnVector;

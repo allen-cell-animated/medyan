@@ -34,7 +34,7 @@ class CCylinder;
 
 /// To store Filament chemical reaction information read from an input file
 /*!
- *  FilamentReactionTemplate is used to store a filament reaction. It contains vectors
+ *  FilamentReactionTemplate is used to store a Filament reaction. It contains vectors
  *  of tuples that represent the position in the CMonomer in which the species is stored 
  *  (for products and reactants), as well as the rate of the reaction. The integer value 
  *  that is the position of the species in the CMonomer vector is held by the ChemManager.

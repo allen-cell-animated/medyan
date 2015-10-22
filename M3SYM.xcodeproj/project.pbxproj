@@ -159,6 +159,8 @@
 		F764F0B01BD81D4F00E2BBB8 /* BubbleCylinderRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F764F0AF1BD81D4F00E2BBB8 /* BubbleCylinderRepulsion.cpp */; };
 		F764F0B31BD81E6C00E2BBB8 /* BubbleCylinderRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F764F0B11BD81E6C00E2BBB8 /* BubbleCylinderRepulsionExp.cpp */; };
 		F764F0B41BD81E6C00E2BBB8 /* BubbleCylinderRepulsionExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F764F0B21BD81E6C00E2BBB8 /* BubbleCylinderRepulsionExp.h */; };
+		F764F0B71BD9349600E2BBB8 /* BubbleInitializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F764F0B51BD9349600E2BBB8 /* BubbleInitializer.cpp */; };
+		F764F0B81BD9349600E2BBB8 /* BubbleInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = F764F0B61BD9349600E2BBB8 /* BubbleInitializer.h */; };
 		F768ACEE1BC8158A00B838AD /* Rand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F768ACEC1BC8158A00B838AD /* Rand.cpp */; };
 		F768ACEF1BC8158A00B838AD /* Rand.h in Headers */ = {isa = PBXBuildFile; fileRef = F768ACED1BC8158A00B838AD /* Rand.h */; };
 		F77745901BCD404000F3AB4C /* utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F777458F1BCD404000F3AB4C /* utility.cpp */; };
@@ -404,6 +406,8 @@
 		F764F0AF1BD81D4F00E2BBB8 /* BubbleCylinderRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleCylinderRepulsion.cpp; path = Bubble/BubbleCylinderRepulsion.cpp; sourceTree = "<group>"; };
 		F764F0B11BD81E6C00E2BBB8 /* BubbleCylinderRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleCylinderRepulsionExp.cpp; path = Bubble/BubbleCylinderRepulsionExp.cpp; sourceTree = "<group>"; };
 		F764F0B21BD81E6C00E2BBB8 /* BubbleCylinderRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleCylinderRepulsionExp.h; path = Bubble/BubbleCylinderRepulsionExp.h; sourceTree = "<group>"; };
+		F764F0B51BD9349600E2BBB8 /* BubbleInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BubbleInitializer.cpp; sourceTree = "<group>"; };
+		F764F0B61BD9349600E2BBB8 /* BubbleInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BubbleInitializer.h; sourceTree = "<group>"; };
 		F768ACEC1BC8158A00B838AD /* Rand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rand.cpp; sourceTree = "<group>"; };
 		F768ACED1BC8158A00B838AD /* Rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rand.h; sourceTree = "<group>"; };
 		F771ADBB15655CD70010B123 /* libm3sym.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libm3sym.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -840,6 +844,8 @@
 				F7A520181AA0DA07003C49E0 /* RateChangerImpl.h */,
 				F75259E31A6EBDFE007A4E9F /* FilamentInitializer.cpp */,
 				F75259E11A6EBDD4007A4E9F /* FilamentInitializer.h */,
+				F764F0B51BD9349600E2BBB8 /* BubbleInitializer.cpp */,
+				F764F0B61BD9349600E2BBB8 /* BubbleInitializer.h */,
 				F735B75F1A2D16F200AE21D1 /* M3Sym.cpp */,
 				F71E973C1565A783002BDF16 /* TESTS */,
 				F763ED091548FFC70069DA61 /* Chemistry */,
@@ -939,6 +945,7 @@
 				F764F0A01BD7E3EE00E2BBB8 /* BubbleBubbleRepulsion.h in Headers */,
 				BF9A59381B0B72C300ADF902 /* Trackable.h in Headers */,
 				F764F0981BD7DFC900E2BBB8 /* BubbleFF.h in Headers */,
+				F764F0B81BD9349600E2BBB8 /* BubbleInitializer.h in Headers */,
 				F7525A5B1A70241E007A4E9F /* BranchingFF.h in Headers */,
 				F7C9D0141A2D165D0087434A /* MLinker.h in Headers */,
 				F7525A961A702461007A4E9F /* LinkerInteractions.h in Headers */,
@@ -1159,6 +1166,7 @@
 				F735B7A21A2D172800AE21D1 /* ChemSim.cpp in Sources */,
 				F7525A3A1A7023EF007A4E9F /* CylinderExclVolume.cpp in Sources */,
 				F7525A721A702431007A4E9F /* FilamentBending.cpp in Sources */,
+				F764F0B71BD9349600E2BBB8 /* BubbleInitializer.cpp in Sources */,
 				F7525A7B1A702431007A4E9F /* FilamentStretching.cpp in Sources */,
 				F7A520191AA0DA07003C49E0 /* RateChangerImpl.cpp in Sources */,
 				F7C9D0011A2D165D0087434A /* Compartment.cpp in Sources */,

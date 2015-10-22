@@ -15,20 +15,19 @@
 #define M3SYM_FilamentInitializer_h
 
 #include "common.h"
-#include "utility.h"
 
-#include "SubSystem.h"
+typedef vector<tuple<short, vector<double>, vector<double>>> FilamentData;
 
 ///FORWARD DECLARATIONS
 class Boundary;
 
-/// An interface to initialize an initial configuration of filaments in the system
+/// An interface to initialize an initial configuration of [Filaments](@ref Filament)
+/// in the SubSystem.
 /*!
  *  FilamentInitiazer class should be inherited to provide an intial scheme for
- *  filling a subsystem with filaments. The filaments could be completely random,
- *  directed, a certain length, etc.
+ *  filling a SubSystem with [Filaments](@ref Filament). The filaments could be 
+ *  completely random, directed, a certain length, etc.
  */
-
 class FilamentInitializer {
     
 public:
@@ -39,19 +38,21 @@ public:
     /// be fixed in the future.
     virtual ~FilamentInitializer() noexcept {}
     
-    /// Returns a vector of tuples representing the filament type and beginning and end
-    /// coordinates of the filament, similar to the structure of manual filament parsing.
-    virtual vector<tuple<short, vector<double>, vector<double>>>
-    createFilaments(Boundary* b, int numFilaments, short filamentType, int lenFilaments) = 0;
+    /// Returns a vector of tuples representing the Filament type and beginning and end
+    /// coordinates, similar to the structure of manual parsing.
+    virtual FilamentData createFilaments(Boundary* b, int numFilaments,
+                                                      int filamentType,
+                                                      int lenFilaments) = 0;
 };
 
 /// An implementation of FilamentInitialzer that creates a completely random
-/// filament distribution.
+/// Filament distribution.
 class RandomFilamentDist : public FilamentInitializer {
     
 public:
-    virtual vector<tuple<short, vector<double>, vector<double>>>
-    createFilaments(Boundary* b, int numFilaments, short filamentType, int lenFilaments);
+    FilamentData createFilaments(Boundary* b, int numFilaments,
+                                              int filamentType,
+                                              int lenFilaments);
 };
 
 #endif

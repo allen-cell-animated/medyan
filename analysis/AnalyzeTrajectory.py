@@ -9,6 +9,7 @@ import math
 class FilamentSnapshot:
 	def __init__(self):
 		self.id=None
+		self.type=None
 		self.length=None
 		self.delta_left=None	
 		self.delta_right=None	
@@ -41,6 +42,13 @@ class BrancherSnapshot:
 		self.type=None;
 		self.coords={}
 
+#A bubble snapshot
+class BubbleSnapshot:
+	def __init__(self):
+		self.id=None
+		self.type=None;
+		self.coords={}
+
 #A complete snapshot
 class Snapshot:
 	def __init__(self):
@@ -55,6 +63,7 @@ class Snapshot:
 		self.linkers={}
 		self.motors={}
 		self.branchers={}
+		self.bubbles={}
 
 #A chemical snapshot
 class ChemSnapshot:
@@ -93,10 +102,12 @@ def readTrajectory(filename):
 	reading_linker=False
 	reading_motor=False
 	reading_brancher=False
+	reading_bubble=False
 	n_beads_filament=0
 	n_beads_linker=0
 	n_beads_motor=0
 	n_beads_brancher=0;
+	n_beads_bubble=0;
 
 	line_number = 0;
 
@@ -104,11 +115,10 @@ def readTrajectory(filename):
 		line = line.strip()
 
 		#get Snapshot data
-
 		if(first_Snapshot_line):
 			F=Snapshot()
 			F.step, F.time, F.n_filaments, F.n_linkers, \
-			F.n_motors, F.n_branchers = map(double,line.split())
+			F.n_motors, F.n_branchers F.n_bubbles = map(double,line.split())
 			F.n_filaments = int(F.n_filaments)
 			F.n_linkers = int(F.n_linkers)
 			F.n_motors = int(F.n_motors)
@@ -125,10 +135,12 @@ def readTrajectory(filename):
 			assert F.n_linkers   == len(F.linkers)
 			assert F.n_motors    == len(F.motors)
 			assert F.n_branchers == len(F.branchers)
+			assert F.n_bubbles   == len(F.bubbles)
 			n_beads_filament=0
 			n_beads_linker=0
 			n_beads_motor=0
 			n_beads_brancher=0;
+			n_beads_bubble=0;
 			line_number+=1
 			continue
 				
@@ -137,7 +149,7 @@ def readTrajectory(filename):
 
 			line_split = line.split()
 
-			if(line[0] == "F"):
+			if(line_split[0] == "FILAMENT"):
 				FS=FilamentSnapshot()
 				FS.id, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
 				first_line=False
@@ -147,7 +159,7 @@ def readTrajectory(filename):
 				line_number+=1
 				continue
 
-			if(line[0] == "L"):
+			if(line[0] == "LINKER"):
 				LS = LinkerSnapshot()
 				LS.id, LS.type = map(int, line_split[1:])
 				first_line = False
@@ -157,7 +169,7 @@ def readTrajectory(filename):
 				line_number+=1
 				continue
 
-			if(line[0] == "M"):
+			if(line[0] == "MOTOR"):
 				MS = MotorSnapshot()
 				MS.id, MS.type = map(int, line_split[1:])
 				first_line = False
@@ -167,13 +179,22 @@ def readTrajectory(filename):
 				line_number+=1
 				continue
 
-			if(line[0] == "B"):
+			if(line[0] == "BRANCHER"):
 				BS = BrancherSnapshot()
 				BS.id, BS.type = map(int, line_split[1:])
 				first_line = False
 				F.branchers[BS.id] = BS
 				n_beads_brancher+=1
 				reading_brancher=True
+				line_number+=1
+				continue
+			if(line_split[0] == "BUBBLE"):
+				US = BubbleSnapshot()
+				US.id, US.type = map(int, line_split[1:])
+				first_line = False
+				F.bubbles[US.id] = US
+				n_beads_bubble+=1
+				reading_bubble=True
 				line_number+=1
 				continue
 
@@ -214,6 +235,13 @@ def readTrajectory(filename):
 			BS.coords = BS.coords.reshape(N/3,3)
 			first_line=True
 			reading_brancher=False
+
+		if(reading_bubble):
+			US.coords=array(line.split(),'f')
+			N=len(US.coords)
+			US.coords=US.coords.reshape(N/3,3).T
+			first_line=True
+			reading_bubble=False
 
 		line_number+=1
 
@@ -927,10 +955,10 @@ def radiusOfGyrations(SnapshotLists, snapshot=1):
 
 	Rgs = [x[1] for x in RgList]
 
-	perc_25 = np.percentile(Rgs, 25)
-	perc_75 = np.percentile(Rgs, 75)
+	errplus = finalRg + np.std(Rgs)
+	errminus = finalRg -  np.std(Rgs)
 
-	return (finalTime,finalRg,perc_25,perc_75)
+	return (finalTime,finalRg,errplus,errminus)
 
 #Calculate contractile velocity towards the center of mass
 #returns a list of time and velocity pairs
@@ -1138,8 +1166,7 @@ def density(Snapshot, grid, compartment):
 
 def calculateRgs(snapshot=1):
 
-	FrameLists = readTrajectories([])
-
+	FrameLists = readTrajectories(["/Users/jameskomianos/Desktop/Contractility/contractilitydata/M0.02A0.1/Run0/snapshot.traj"])
 
 	return radiusOfGyrations(FrameLists, snapshot)
 
@@ -1203,13 +1230,13 @@ def calculateRgVsT():
 	return [Rgs1, Rgs2, Rgs3, Rgs4, Rgs5, Rgs6]
 
 
-def plotRgHeatMap(saveFile=''):
+def plotRgHeatMap1(saveFile=''):
 
 	#read data
 	x_labels = [0.01,0.02,0.05,0.1,0.2,0.5]
 	y_labels = [0.02, 0.01, 0.005]
 
-	data = np.array([[1.460,1.392,1.199,1.144,1.105,1.091],
+	data = np.array([[1.460,1.392,1.199,1.144,1.105,1.120],
 				     [1.600,1.518,1.387,1.332,1.305,1.268],
 			         [1.713,1.652,1.512,1.437,1.449,1.410]])
 
@@ -1219,8 +1246,49 @@ def plotRgHeatMap(saveFile=''):
 	cbar = plt.colorbar(heatmap)
 
 	cbar.ax.get_yaxis().set_ticks([])
-	for j, lab in enumerate(['$1.0$','$1.2$','$1.4$','$1.6$']):
-   		 cbar.ax.text(1.2, (2 * j + 1) / 8.0, lab, ha='left', va='center')
+	for j, lab in enumerate(['$1.0$','$1.2$','$1.4$','$1.6$', '$1.8$']):
+   		 cbar.ax.text(1.0, (1.5 * j) / 6.0, lab, ha='left', va='center')
+	cbar.ax.get_yaxis().labelpad = 15
+	cbar.ax.set_ylabel(r'$\mathrm{R_g\/(\mu m)}$', fontsize=16)
+
+
+	# put the major ticks at the middle of each cell
+	ax.set_xticks(np.arange(data.shape[1])+0.5, minor=False)
+	ax.set_yticks(np.arange(data.shape[0])+0.5, minor=False)
+
+	# want a more natural, table-like display
+	ax.invert_yaxis()
+
+	ax.set_xticklabels(x_labels, minor=False)
+	ax.set_yticklabels(y_labels, minor=False)
+	plt.show()
+
+	plt.ylabel(r'$\mathrm{R_{m:a}}$', fontsize=20)
+	plt.xlabel(r'$\mathrm{R_{\alpha:a}}$', fontsize=20)
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotRgHeatMap2(saveFile=''):
+
+	#read data
+	x_labels = [0.01,0.02,0.05,0.1,0.2,0.5]
+	y_labels = [0.02, 0.01, 0.005]
+
+	data = np.array([[1.518,1.473,1.425,1.453,1.447,1.443],
+				     [1.650,1.583,1.503,1.525,1.500,1.495],
+			         [1.716,1.658,1.573,1.553,1.553,1.537]])
+
+	fig, ax = plt.subplots()
+	heatmap = ax.pcolor(data, cmap=plt.cm.YlGnBu_r)
+
+	cbar = plt.colorbar(heatmap)
+
+	cbar.ax.get_yaxis().set_ticks([])
+	for j, lab in enumerate(['$1.4$','$1.5$','$1.6$','$1.7$','$1.8$']):
+   		 cbar.ax.text(1.0, (1.5 * j) / 6.0, lab, ha='left', va='center')
 	cbar.ax.get_yaxis().labelpad = 15
 	cbar.ax.set_ylabel(r'$\mathrm{R_g\/(\mu m)}$', fontsize=16)
 
@@ -1278,19 +1346,19 @@ def plotRgVsT(data, saveFile=''):
 	Rg5 = [x[1]/Rg5_0 for x in data5]
 	Rg6 = [x[1]/Rg6_0 for x in data6]
 	
-	perc_25_1 = [x[2]/Rg1_0 for x in data1]
-	perc_25_2 = [x[2]/Rg2_0 for x in data2]
-	perc_25_3 = [x[2]/Rg3_0 for x in data3]
-	perc_25_4 = [x[2]/Rg4_0 for x in data4]
-	perc_25_5 = [x[2]/Rg5_0 for x in data5]
-	perc_25_6 = [x[2]/Rg6_0 for x in data6]
+	errplus_1 = [x[2]/Rg1_0 for x in data1]
+	errplus_2 = [x[2]/Rg2_0 for x in data2]
+	errplus_3 = [x[2]/Rg3_0 for x in data3]
+	errplus_4 = [x[2]/Rg4_0 for x in data4]
+	errplus_5 = [x[2]/Rg5_0 for x in data5]
+	errplus_6 = [x[2]/Rg6_0 for x in data6]
 
-	perc_75_1 = [x[3]/Rg1_0 for x in data1]
-	perc_75_2 = [x[3]/Rg2_0 for x in data2]
-	perc_75_3 = [x[3]/Rg3_0 for x in data3]
-	perc_75_4 = [x[3]/Rg4_0 for x in data4]
-	perc_75_5 = [x[3]/Rg5_0 for x in data5]
-	perc_75_6 = [x[3]/Rg6_0 for x in data6]
+	errminus_1 = [x[3]/Rg1_0 for x in data1]
+	errminus_2 = [x[3]/Rg2_0 for x in data2]
+	errminus_3 = [x[3]/Rg3_0 for x in data3]
+	errminus_4 = [x[3]/Rg4_0 for x in data4]
+	errminus_5 = [x[3]/Rg5_0 for x in data5]
+	errminus_6 = [x[3]/Rg6_0 for x in data6]
 
 	plt.plot(time1, Rg1, 'r', label=r'$\mathrm{R_{\alpha:a}=0.01}$')
 	plt.plot(time2, Rg2, 'g', label=r'$\mathrm{R_{\alpha:a}=0.02}$')
@@ -1299,12 +1367,12 @@ def plotRgVsT(data, saveFile=''):
 	plt.plot(time5, Rg5, 'm', label=r'$\mathrm{R_{\alpha:a}=0.2}$')
 	plt.plot(time6, Rg6, 'c', label=r'$\mathrm{R_{\alpha:a}=0.5}$')
 
-	fill_between(time1, perc_25_1, perc_75_1, alpha=0.25, linewidth=0, color='r')
-	fill_between(time2, perc_25_2, perc_75_2, alpha=0.25, linewidth=0, color='g')
-	fill_between(time3, perc_25_3, perc_75_3, alpha=0.25, linewidth=0, color='b')
-	fill_between(time4, perc_25_4, perc_75_4, alpha=0.25, linewidth=0, color='y')
-	fill_between(time5, perc_25_5, perc_75_5, alpha=0.25, linewidth=0, color='m')
-	fill_between(time6, perc_25_6, perc_75_6, alpha=0.25, linewidth=0, color='c')
+	fill_between(time1, errplus_1, errminus_1, alpha=0.25, linewidth=0, color='r')
+	fill_between(time2, errplus_2, errminus_2, alpha=0.25, linewidth=0, color='g')
+	fill_between(time3, errplus_3, errminus_3, alpha=0.25, linewidth=0, color='b')
+	fill_between(time4, errplus_4, errminus_4, alpha=0.25, linewidth=0, color='y')
+	fill_between(time5, errplus_5, errminus_5, alpha=0.25, linewidth=0, color='m')
+	fill_between(time6, errplus_6, errminus_6, alpha=0.25, linewidth=0, color='c')
 
 	plt.xlabel(r'$\mathrm{Time\/(s)}$', fontsize=20)
 	plt.ylabel(r'$\mathrm{R_{g,f} / R_{g,i}\/(\mu m)}$', fontsize=20)

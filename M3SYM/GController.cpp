@@ -13,9 +13,10 @@
 
 #include "GController.h"
 
-#include "Boundary.h"
 #include "Parser.h"
+#include "SubSystem.h"
 #include "CompartmentGrid.h"
+#include "BoundaryImpl.h"
 
 #include "MathFunctions.h"
 #include "SysParams.h"
@@ -194,15 +195,87 @@ CompartmentGrid* GController::initializeGrid() {
     //Create connections based on dimensionality
     generateConnections();
     
+    _subSystem->setCompartmentGrid(_compartmentGrid);
     return _compartmentGrid;
-
 }
 
-void GController::setActiveCompartments(Boundary* boundary) {
+Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
+    
+    BoundaryType type;
+    BoundaryMove move;
+    
+    if(BTypes.boundaryMove == "NONE") move = BoundaryMove::None;
+    else if(BTypes.boundaryMove == "TOP") {
+        
+#ifndef CHEMISTRY
+        cout << "Top moving boundary cannot be executed without "
+             << "chemistry enabled. Fix these compilation macros "
+             << "and try again." << endl;
+        exit(EXIT_FAILURE);
+#endif
+        move = BoundaryMove::Top;
+    }
+    else if(BTypes.boundaryMove == "ALL") {
+        
+#ifndef CHEMISTRY
+        cout << "Full moving boundary cannot be executed without "
+             << "chemistry enabled. Fix these compilation macros "
+             << "and try again." << endl;
+        exit(EXIT_FAILURE);
+#endif
+        
+        move = BoundaryMove::All;
+    }
+    //if nothing is specified, don't move boundaries
+    else if(BTypes.boundaryMove == "") {
+        move = BoundaryMove::None;
+    }
+    else {
+        cout << "Given boundary movement not yet implemented. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    if(BTypes.boundaryShape == "CUBIC")
+        _boundary = new BoundaryCubic(_subSystem, move);
+    
+    else if(BTypes.boundaryShape == "SPHERICAL") {
+        
+        if(move != BoundaryMove::None) {
+            
+            cout << "Moving boundaries for a spherical shape "
+                 << "not yet implemented. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        _boundary = new BoundarySpherical(_subSystem,
+                    SysParams::Boundaries().diameter, move);
+    }
+    
+    else if(BTypes.boundaryShape == "CAPSULE") {
+        
+        if(move != BoundaryMove::None) {
+            
+            cout << "Moving boundaries for a capsule shape "
+                 << "not yet implemented. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        _boundary = new BoundaryCapsule(_subSystem,
+                    SysParams::Boundaries().diameter, move);
+    }
+    else{
+        cout << endl << "Given boundary shape not yet implemented. Exiting." <<endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    _subSystem->addBoundary(_boundary);
+    return _boundary;
+}
+
+void GController::setActiveCompartments() {
     
     //initialize all compartments equivalent to cproto
     for(auto C : _compartmentGrid->getCompartments())
-        if(boundary->within(C)) C->setAsActive();
+        if(_boundary->within(C)) C->setAsActive();
 }
 
 void GController::findCompartments(const vector<double>& coords,
@@ -257,6 +330,16 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     return coords;
 }
 
+vector<double> GController::getRandomCoordinates() {
+    
+    vector<double> coords;
+    
+    coords.push_back(Rand::randDouble(0,1) * _grid[0] * _compartmentSize[0]);
+    coords.push_back(Rand::randDouble(0,1) * _grid[1] * _compartmentSize[1]);
+    coords.push_back(Rand::randDouble(0,1) * _grid[2] * _compartmentSize[2]);
+    
+    return coords;
+}
 
 short GController::_nDim = 0;
 

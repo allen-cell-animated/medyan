@@ -57,8 +57,7 @@ public:
                                ///< Updated with updatePosition()
     
     /// Main constructor, sets up bead and other properties
-    Bubble(SubSystem* ps, vector<double> coordinates,
-           short type, double radius, double kRepuls, double screenLength);
+    Bubble(SubSystem* ps, vector<double> coordinates, short type);
 
     //@{
     /// Getters
@@ -69,6 +68,7 @@ public:
     Bead* getBead() {return _bead;}
     
     int getID() {return _ID;}
+    short getType() {return _type;}
     //@}
     
     /// Print bubble information

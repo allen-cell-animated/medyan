@@ -21,6 +21,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
+#include "Bubble.h"
 
 #include "CompartmentGrid.h"
 
@@ -33,17 +34,18 @@ void BasicSnapshot::print(int step) {
     _outputFile.precision(10);
     
     // print first line (step number, time, number of filaments,
-    // linkers, motors, branchers)
+    // linkers, motors, branchers, bubbles)
     _outputFile << step << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
-        BranchingPoint::numBranchingPoints() << endl;
+        BranchingPoint::numBranchingPoints() << " " <<
+        Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "F " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getID() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -70,7 +72,7 @@ void BasicSnapshot::print(int step) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "L " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getID()<< " " <<
                                linker->getType() << endl;
         
         //print coordinates
@@ -91,7 +93,7 @@ void BasicSnapshot::print(int step) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "M " << motor->getID() << " " <<
+        _outputFile << "MOTOR " << motor->getID() << " " <<
                                motor->getType() << endl;
         
         //print coordinates
@@ -112,11 +114,22 @@ void BasicSnapshot::print(int step) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "B " << branch->getID() << " " <<
-                               branch->getType() << endl;
+        _outputFile << "BRANCHER " << branch->getID() << " " <<
+                                      branch->getType() << endl;
         
         //print coordinates
         auto x = branch->coordinate;
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
+    }
+    
+    for(auto &bubble : Bubble::getBubbles()) {
+        
+        //print first line
+        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+                                    bubble->getType() << endl;
+        
+        //print coordinates
+        auto x = bubble->coordinate;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
     
@@ -128,17 +141,18 @@ void BirthTimes::print(int step) {
     _outputFile.precision(10);
     
     // print first line (step number, time, number of filaments,
-    // linkers, motors, branchers)
+    // linkers, motors, branchers, bubbles)
     _outputFile << step << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
-        BranchingPoint::numBranchingPoints() << endl;
+        BranchingPoint::numBranchingPoints() << " " <<
+        Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "F " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getID() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -158,7 +172,7 @@ void BirthTimes::print(int step) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "L " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getID()<< " " <<
                                linker->getType() << endl;
         
         //print birth times
@@ -169,7 +183,7 @@ void BirthTimes::print(int step) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "M " << motor->getID() << " " <<
+        _outputFile << "MOTOR " << motor->getID() << " " <<
                                motor->getType() << endl;
         
         //print birth times
@@ -180,13 +194,22 @@ void BirthTimes::print(int step) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "B " << branch->getID() << " " <<
-                               branch->getType() << endl;
+        _outputFile << "BRANCHER " << branch->getID() << " " <<
+                                      branch->getType() << endl;
         
         //print birth times
         _outputFile << branch->getBirthTime() << endl;
     }
-    
+    for(auto &bubble : Bubble::getBubbles()) {
+        
+        //print first line
+        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+                                    bubble->getType() << endl;
+        
+        //print birth times
+        _outputFile << bubble->getBead()->getBirthTime() << endl;
+    }
+
     _outputFile <<endl;
 }
 
@@ -200,12 +223,13 @@ void Forces::print(int step) {
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
-        BranchingPoint::numBranchingPoints() << endl;
+        BranchingPoint::numBranchingPoints() << " " <<
+        Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta
-        _outputFile << "F " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getID() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -230,7 +254,7 @@ void Forces::print(int step) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "L " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getID()<< " " <<
                                linker->getType() << endl;
         
         //print stretch force
@@ -241,8 +265,8 @@ void Forces::print(int step) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "M " << motor->getID() << " " <<
-                               motor->getType() << endl;
+        _outputFile << "MOTOR " << motor->getID() << " " <<
+                                   motor->getType() << endl;
         
         //print stretch force
         _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
@@ -252,10 +276,19 @@ void Forces::print(int step) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "B " << branch->getID() << " " <<
-                               branch->getType() << endl;
+        _outputFile << "BRANCHER " << branch->getID() << " " <<
+                                      branch->getType() << endl;
         
         //Nothing for branchers
+        _outputFile << 0.0 << endl;
+    }
+    for(auto &bubble : Bubble::getBubbles()) {
+        
+        //print first line
+        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+                                    bubble->getType() << endl;
+        
+        //Nothing for bubbles
         _outputFile << 0.0 << endl;
     }
     
@@ -273,12 +306,13 @@ void Tensions::print(int step) {
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
-        BranchingPoint::numBranchingPoints() << endl;
+        BranchingPoint::numBranchingPoints() << " " <<
+        Bubble::numBubbles() << endl;;
     
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "F " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getID() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -306,7 +340,7 @@ void Tensions::print(int step) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "L " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getID()<< " " <<
                                linker->getType() << endl;
         
         //print
@@ -322,7 +356,7 @@ void Tensions::print(int step) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "M " << motor->getID() << " " <<
+        _outputFile << "MOTOR " << motor->getID() << " " <<
                                motor->getType() << endl;
         
         //print
@@ -337,10 +371,19 @@ void Tensions::print(int step) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "B " << branch->getID() << " " <<
-                               branch->getType() << endl;
+        _outputFile << "BRANCHER " << branch->getID() << " " <<
+                                      branch->getType() << endl;
         
         //Nothing for branchers
+        _outputFile << 0.0 << endl;
+    }
+    for(auto &bubble : Bubble::getBubbles()) {
+        
+        //print first line
+        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+                                    bubble->getType() << endl;
+        
+        //Nothing for bubbles
         _outputFile << 0.0 << endl;
     }
     

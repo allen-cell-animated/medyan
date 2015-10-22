@@ -27,7 +27,7 @@
 class BoundaryElement;
 class Bead;
 
-/// Represents a repulsive interaction between a BoundaryElement and Bubbles.
+/// Represents a repulsive interaction between a BoundaryElement and Bubble.
 template <class BRepulsionInteractionType>
 class BoundaryBubbleRepulsion : public BoundaryInteractions {
     

@@ -18,6 +18,8 @@
 
 #include "common.h"
 
+#include "Parser.h"
+
 /// An exception to be thrown when an index/coordinate is out of bounds of the grid
 class OutOfBoundsException : public exception {
     
@@ -39,6 +41,7 @@ class NaNCoordinateException : public exception {
 class Boundary;
 class Compartment;
 class CompartmentGrid;
+class SubSystem;
 
 /// Used to control the geometry of the CompartmentGrid, as well as the geometry of
 /// the entire system
@@ -60,16 +63,28 @@ private:
     
     static CompartmentGrid* _compartmentGrid; ///< The compartment grid
     
+    Boundary* _boundary;   ///< The boundary that this controls
+    
+    SubSystem* _subSystem; ///< SubSystem ptr
+    
     ///Generate all neighbors lists for each compartment in the CompartmentGrid
     void generateConnections();
     
 public:
+    ///Constructor sets SubSystem
+    GController(SubSystem* ps) : _subSystem(ps) {}
+    
     /// Initialize and return the grid based on input parameters
+    /// Used at system initialization.
     CompartmentGrid* initializeGrid();
+    
+    /// Initialize and return a boundary based on input parameters
+    /// Used at system initialization.
+    Boundary* initializeBoundary(BoundaryType& BType);
     
     /// Set compartments in compartment grid as active based on boundary.
     /// Used at system initialization.
-    void setActiveCompartments(Boundary* boundary);
+    void setActiveCompartments();
     
     //@{
     /// Get a compartment based on coordinates or indices
@@ -93,6 +108,9 @@ public:
     
     /// Get random coordinates in a given compartment
     static vector<double> getRandomCoordinates(Compartment* c);
+    
+    /// Get random coordinates from entire grid
+    static vector<double> getRandomCoordinates();
 };
 
 #endif
