@@ -14,6 +14,8 @@
 #include "FilamentInitializer.h"
 
 #include "Boundary.h"
+#include "Bubble.h"
+#include "Bead.h"
 
 #include "MathFunctions.h"
 #include "GController.h"
@@ -44,7 +46,16 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             nextPointProjection(firstPoint,(double)lenFilaments *
             SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
         
-        if(b->within(firstPoint) && b->within(secondPoint)) {
+        //check if these points are outside bubbles
+        bool inBubble = false;
+        for(auto bb : Bubble::getBubbles()) {
+            
+            if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
+               (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                inBubble = true;
+        }
+        
+        if(b->within(firstPoint) && b->within(secondPoint) && !inBubble) {
             filaments.emplace_back(filamentType, firstPoint, secondPoint);
             filamentCounter++;
         }

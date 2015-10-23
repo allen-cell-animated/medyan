@@ -15,15 +15,15 @@
 
 #include "Bead.h"
 
-double BoundaryBubbleRepulsionExp::computeEnergy(Bead* b, double r, double r0,
-                                                 double kRep, double screenLength) {
+double BoundaryBubbleRepulsionExp::energy(Bead* b, double r, double r0,
+                                          double kRep, double screenLength) {
     double R = -(r - r0) / screenLength;
     return kRep * exp(R);
 }
 
-void BoundaryBubbleRepulsionExp::computeForces(Bead* b, double r, double r0,
-                                               vector<double>& norm, double kRep,
-                                               double screenLength) {
+void BoundaryBubbleRepulsionExp::forces(Bead* b, double r, double r0,
+                                        vector<double>& norm, double kRep,
+                                        double screenLength) {
     
     double R = -(r - r0) / screenLength;
     double f0 = kRep * exp(R) / screenLength;
@@ -34,9 +34,9 @@ void BoundaryBubbleRepulsionExp::computeForces(Bead* b, double r, double r0,
     
 }
 
-void BoundaryBubbleRepulsionExp::computeForcesAux(Bead* b, double r, double r0,
-                                                  vector<double>& norm, double kRep,
-                                                  double screenLength) {
+void BoundaryBubbleRepulsionExp::forcesAux(Bead* b, double r, double r0,
+                                           vector<double>& norm, double kRep,
+                                           double screenLength) {
     
     double R = -(r - r0) / screenLength;
     double f0 = kRep * exp(R) / screenLength;

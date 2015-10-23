@@ -20,7 +20,7 @@
 #include "MotorGhost.h"
 #include "Cylinder.h"
 
-void DRController::initialize(DynamicRateTypes& drTypes) {
+void DRController::initialize(DynamicRateType& drTypes) {
     
     //filament polymerization changer
     int filamentIndex = 0;

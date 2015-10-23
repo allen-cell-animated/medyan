@@ -383,7 +383,7 @@ bool SysParams::checkGeoParameters() {
     return true;
 }
 
-bool SysParams::checkDyRateParameters(DynamicRateTypes& dy) {
+bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
     
     //check types match number of species
     if(dy.dFPolymerizationType.size() != CParams.numFilaments &&

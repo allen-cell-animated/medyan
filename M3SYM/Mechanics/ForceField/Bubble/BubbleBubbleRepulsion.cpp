@@ -38,10 +38,10 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d)
             Bead* bd2 = bbo->getBead();
             
             if (d == 0.0)
-                U_i =  _FFType.computeEnergy(
+                U_i =  _FFType.energy(
                 bd1, bd2, radius1, radius2, kRep, screenLength);
             else
-                U_i = _FFType.computeEnergy(
+                U_i = _FFType.energy(
                 bd1, bd2, radius1, radius2, kRep, screenLength, d);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -77,7 +77,7 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
             
-            _FFType.computeForces(bd1, bd2, radius1, radius2, kRep, screenLength);
+            _FFType.forces(bd1, bd2, radius1, radius2, kRep, screenLength);
             
         }
     }
@@ -100,7 +100,7 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
             
-            _FFType.computeForcesAux(bd1, bd2, radius1, radius2, kRep, screenLength);
+            _FFType.forcesAux(bd1, bd2, radius1, radius2, kRep, screenLength);
             
         }
     }

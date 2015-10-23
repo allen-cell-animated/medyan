@@ -17,7 +17,7 @@
 #include "common.h"
 
 //FORWARD DECLARATIONS
-struct DynamicRateTypes;
+struct DynamicRateType;
 
 /// Used to initialize the dynamic rate components of a simulation.
 
@@ -31,7 +31,7 @@ class DRController {
     
 public:
     ///Intialize all elements with corresponding DynamicRateChanger objects.
-    void initialize(DynamicRateTypes& drTypes);
+    void initialize(DynamicRateType& drTypes);
 };
 
 

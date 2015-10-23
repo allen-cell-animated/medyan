@@ -35,8 +35,8 @@ private:
     /// The culprit in the case of an error
     BubbleInteractions* _culpritInteraction;
 public:
-    /// Initialize the forcefields (repulsion, attraction, etc)
-    BubbleFF(string type);
+    /// Initialize the forcefields
+    BubbleFF(string type, string mtoc);
     
     virtual string getName() {return "Bubble";}
     virtual void whoIsCulprit();

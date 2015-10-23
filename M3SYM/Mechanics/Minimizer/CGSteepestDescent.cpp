@@ -18,11 +18,14 @@
 #include "Output.h"
 
 void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                       double MAXDIST,
-                                                       double LAMBDAMAX)
+                               double MAXDIST, double LAMBDAMAX, bool steplimit)
 {
-    //system size
-    int N = Bead::numBeads();
+    //number of steps
+    int N;
+    if(steplimit)
+        N = 3 * Bead::numBeads();
+    else
+        N = numeric_limits<int>::max();
     
     FFM.computeForces();
     startMinimization();
@@ -45,7 +48,7 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         shiftGradient(0.0);
     }
     
-    if (numIter >= 2 * N) {
+    if (numIter >= N) {
         cout << endl;
         
         cout << "WARNING: Did not minimize in N (= number of beads) steps." << endl;

@@ -31,6 +31,7 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Bubble.h"
+#include "MTOC.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -182,7 +183,7 @@ void Controller::initialize(string inputFile,
     p.readDyRateParams();
     
     //read dynamic rate types
-    DynamicRateTypes DRTypes = p.readDynamicRateTypes();
+    DynamicRateType DRTypes = p.readDynamicRateType();
     
     //init controller
     _drController->initialize(DRTypes);
@@ -210,6 +211,9 @@ void Controller::initialize(string inputFile,
     
     //setup initial network configuration
     setupInitialNetwork(p);
+    
+    //setup special structures
+    setupSpecialStructures(p);
 }
 
 void Controller::setupInitialNetwork(SystemParser& p) {
@@ -301,6 +305,39 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     cout << "Done. " << filaments.size() << " filaments created." << endl;
 }
 
+void Controller::setupSpecialStructures(SystemParser& p) {
+    
+    SpecialSetupType SType = p.readSpecialSetupType();
+    
+    //set up a MTOC if desired
+    //For now, uses the first ten initialzed filament
+    //For now, uses the first bubble initialized
+    if(SType.mtoc) {
+        
+        int filamentCount = 0, numFilaments = 10;
+        MTOC* mtoc = _subSystem->addTrackable<MTOC>();
+        
+        for(auto f : Filament::getFilaments()) {
+            
+            if(filamentCount >= numFilaments) break;
+            
+            else  {
+                if(f->getType() == SType.mtocFilamentType) {
+                    mtoc->addFilament(f);
+                    filamentCount++;
+                }
+            }
+        }
+        for(auto b : Bubble::getBubbles()) {
+            
+            if(b->getType() == SType.mtocBubbleType) {
+                
+                mtoc->setBubble(b);
+                break;
+            }
+        }
+    }
+}
 
 void Controller::moveBoundary(double deltaTau) {
     
@@ -368,7 +405,7 @@ void Controller::run() {
     
     //perform first minimization
 #ifdef MECHANICS
-    _mController->run();
+    _mController->run(false);
     
     //reupdate positions and neighbor lists
     updatePositions();

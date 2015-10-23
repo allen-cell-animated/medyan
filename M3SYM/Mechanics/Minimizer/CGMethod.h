@@ -97,8 +97,7 @@ public:
     
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                  double MAXDIST,
-                                                  double LAMBDAMAX) = 0;
+                          double MAXDIST, double LAMBDAMAX, bool steplimit) = 0;
 };
 
 

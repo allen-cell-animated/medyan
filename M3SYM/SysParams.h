@@ -199,7 +199,6 @@ struct DyRateParams {
     
     /// Option for dynamic walking rate of motors
     vector<double> dMotorWalkingCharForce = {};
-    
 };
 
 /// Static class that holds all simulation parameters,
@@ -231,7 +230,7 @@ public:
     //Check for consistency of parameters. Done at runtime by the Controller.
     static bool checkChemParameters(ChemistryData& chem);
     static bool checkMechParameters(MechanicsFFType& mech);
-    static bool checkDyRateParameters(DynamicRateTypes& dy);
+    static bool checkDyRateParameters(DynamicRateType& dy);
     static bool checkGeoParameters();
     //@}
     

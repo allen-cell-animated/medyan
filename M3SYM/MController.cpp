@@ -85,11 +85,10 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     for(auto nl : boundaryFF->getNeighborLists())
         _subSystem->addNeighborList(nl);
     
-    auto bubbleFF = new BubbleFF(forceFields.BubbleFFType);
+    auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,
+                                 forceFields.MTOCFFType);
     _FFManager._forceFields.push_back(bubbleFF);
     for(auto nl : bubbleFF->getNeighborLists())
-        _subSystem->addNeighborList(nl);
-    
-    
+        _subSystem->addNeighborList(nl);  
 }
 

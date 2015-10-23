@@ -19,11 +19,16 @@
 #include "BubbleBubbleRepulsion.h"
 #include "BubbleBubbleRepulsionExp.h"
 
+#include "MTOCAttachment.h"
+#include "FilamentStretchingHarmonic.h"
+
 #include "Bubble.h"
 #include "Bead.h"
 #include "Component.h"
 
-BubbleFF::BubbleFF (string type) {
+BubbleFF::BubbleFF (string type, string mtoc) {
+    
+    //general bubble interactions
     if (type == "REPULSIONEXP") {
         _bubbleInteractionVector.emplace_back(
         new BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>());
@@ -33,6 +38,17 @@ BubbleFF::BubbleFF (string type) {
     else if(type == "") {}
     else {
         cout << "Bubble FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    //specifically for MTOC
+    if (mtoc == "ATTACHMENTHARMONIC") {
+        _bubbleInteractionVector.emplace_back(
+        new MTOCAttachment<FilamentStretchingHarmonic>());
+    }
+    else if(mtoc == "") {}
+    else {
+        cout << "MTOC FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -89,8 +105,11 @@ vector<NeighborList*> BubbleFF::getNeighborLists() {
     
     vector<NeighborList*> neighborLists;
     
-    for(auto &interaction : _bubbleInteractionVector)
-        neighborLists.push_back(interaction->getNeighborList());
+    for(auto &interaction : _bubbleInteractionVector) {
+        
+        NeighborList* nl = interaction->getNeighborList();
+        if(nl != nullptr) neighborLists.push_back(nl);
+    }
     
     return neighborLists;
 }

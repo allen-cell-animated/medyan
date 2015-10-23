@@ -18,11 +18,14 @@
 #include "Output.h"
 
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
-                                                    double MAXDIST,
-                                                    double LAMBDAMAX){
+                            double MAXDIST, double LAMBDAMAX, bool steplimit){
     
-    //system size
-    int N = Bead::numBeads();
+    //number of steps
+    int N;
+    if(steplimit)
+        N = 3 * Bead::numBeads();
+    else
+        N = numeric_limits<int>::max();
     
 	FFM.computeForces();
     startMinimization();
@@ -69,7 +72,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         curGrad = newGrad;
     }
     
-    if (numIter >= 2 * N) {
+    if (numIter >= N) {
         cout << endl;
         
         cout << "WARNING: Did not minimize in N (= number of beads) steps." << endl;

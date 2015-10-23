@@ -377,7 +377,7 @@ ChemistrySetup SystemParser::readChemistrySetup() {
 
 MechanicsFFType SystemParser::readMechanicsFFType() {
     
-    MechanicsFFType MTypes;
+    MechanicsFFType MType;
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -397,7 +397,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.FStretchingType = lineVector[1];
+                MType.FStretchingType = lineVector[1];
             }
         }
         else if (line.find("FBENDINGFFTYPE") != string::npos) {
@@ -410,7 +410,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.FBendingType = lineVector[1];
+                MType.FBendingType = lineVector[1];
             }
         }
         else if (line.find("FTWISTINGFFTYPE") != string::npos) {
@@ -423,7 +423,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.FTwistingType = lineVector[1];
+                MType.FTwistingType = lineVector[1];
             }
         }
         else if (line.find("LSTRETCHINGFFTYPE") != string::npos) {
@@ -436,7 +436,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.LStretchingType = lineVector[1];
+                MType.LStretchingType = lineVector[1];
             }
         }
         else if (line.find("LBENDINGFFTYPE") != string::npos) {
@@ -449,7 +449,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.LBendingType = lineVector[1];
+                MType.LBendingType = lineVector[1];
             }
         }
         else if (line.find("LTWISTINGFFTYPE") != string::npos) {
@@ -462,7 +462,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.LTwistingType = lineVector[1];
+                MType.LTwistingType = lineVector[1];
             }
         }
         else if (line.find("MSTRETCHINGFFTYPE") != string::npos) {
@@ -475,7 +475,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.MStretchingType = lineVector[1];
+                MType.MStretchingType = lineVector[1];
             }
         }
         else if (line.find("MBENDINGFFTYPE") != string::npos) {
@@ -488,7 +488,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.MBendingType = lineVector[1];
+                MType.MBendingType = lineVector[1];
             }
         }
         else if (line.find("MTWISTINGFFTYPE") != string::npos) {
@@ -501,7 +501,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.MTwistingType = lineVector[1];
+                MType.MTwistingType = lineVector[1];
             }
         }
         if (line.find("BRSTRETCHINGFFTYPE") != string::npos) {
@@ -514,7 +514,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.BrStretchingType = lineVector[1];
+                MType.BrStretchingType = lineVector[1];
             }
         }
         else if (line.find("BRBENDINGFFTYPE") != string::npos) {
@@ -527,7 +527,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.BrBendingType = lineVector[1];
+                MType.BrBendingType = lineVector[1];
             }
         }
         else if (line.find("BRDIHEDRALFFTYPE") != string::npos) {
@@ -540,7 +540,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.BrDihedralType = lineVector[1];
+                MType.BrDihedralType = lineVector[1];
             }
         }
         else if (line.find("BRPOSITIONFFTYPE") != string::npos) {
@@ -553,7 +553,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.BrPositionType = lineVector[1];
+                MType.BrPositionType = lineVector[1];
             }
         }
         else if (line.find("BOUNDARYFFTYPE") != string::npos) {
@@ -566,7 +566,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.BoundaryFFType = lineVector[1];
+                MType.BoundaryFFType = lineVector[1];
             }
         }
         else if (line.find("VOLUMEFFTYPE") != string::npos) {
@@ -579,7 +579,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.VolumeFFType = lineVector[1];
+                MType.VolumeFFType = lineVector[1];
             }
         }
         else if (line.find("BUBBLEFFTYPE") != string::npos) {
@@ -592,13 +592,26 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MTypes.BubbleFFType = lineVector[1];
+                MType.BubbleFFType = lineVector[1];
+            }
+        }
+        else if (line.find("MTOCFFTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at MTOC FF type. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MType.MTOCFFType = lineVector[1];
             }
         }
         
         else {}
     }
-    return MTypes;
+    return MType;
 }
 
 void SystemParser::readMechParams() {
@@ -1137,9 +1150,9 @@ void SystemParser::readDyRateParams() {
     SysParams::DRParams = DRParams;
 }
 
-DynamicRateTypes SystemParser::readDynamicRateTypes() {
+DynamicRateType SystemParser::readDynamicRateType() {
     
-    DynamicRateTypes DRTypes;
+    DynamicRateType DRType;
     
     _inputFile.clear();
     _inputFile.seekg(0);
@@ -1155,7 +1168,7 @@ DynamicRateTypes SystemParser::readDynamicRateTypes() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRTypes.dFPolymerizationType.push_back(lineVector[i]);
+                    DRType.dFPolymerizationType.push_back(lineVector[i]);
             }
         }
         
@@ -1165,7 +1178,7 @@ DynamicRateTypes SystemParser::readDynamicRateTypes() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRTypes.dMUnbindingType.push_back(lineVector[i]);
+                    DRType.dMUnbindingType.push_back(lineVector[i]);
             }
         }
         
@@ -1175,7 +1188,7 @@ DynamicRateTypes SystemParser::readDynamicRateTypes() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRTypes.dMWalkingType.push_back(lineVector[i]);
+                    DRType.dMWalkingType.push_back(lineVector[i]);
             }
         }
         
@@ -1185,11 +1198,11 @@ DynamicRateTypes SystemParser::readDynamicRateTypes() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    DRTypes.dLUnbindingType.push_back(lineVector[i]);
+                    DRType.dLUnbindingType.push_back(lineVector[i]);
             }
         }
     }
-    return DRTypes;
+    return DRType;
 }
 
 
@@ -1230,6 +1243,59 @@ BoundaryType SystemParser::readBoundaryType() {
     }
     return BType;
 }
+
+SpecialSetupType SystemParser::readSpecialSetupType() {
+    
+    SpecialSetupType SType;
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    string line;
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != string::npos) { continue; }
+        
+        if (line.find("SPECIALSETUP") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 3) {
+                cout <<
+                "There was an error parsing input file at special setup types. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector[1] == "MTOC") SType.mtoc = true;
+        }
+        else if (line.find("MTOCFILAMENTTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "A filament type to connect to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                SType.mtocFilamentType = atoi(lineVector[1].c_str());
+            }
+        }
+        
+        else if (line.find("MTOCBUBBLETYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                SType.mtocBubbleType = atoi(lineVector[1].c_str());
+            }
+        }
+    }
+    return SType;
+}
+
 
 void SystemParser::readGeoParams() {
     
@@ -1412,7 +1478,8 @@ FilamentSetup SystemParser::readFilamentSetup() {
             else {}
         }
         else if(line.find("FILAMENTTYPE") != string::npos &&
-                line.find("NUMFILAMENTTYPES") == string::npos) {
+                line.find("NUMFILAMENTTYPES") == string::npos &&
+                line.find("MTOCFILAMENTTYPE") == string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {

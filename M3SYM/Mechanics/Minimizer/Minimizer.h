@@ -28,7 +28,8 @@ class Minimizer {
 public:
     /// Equilibrate a system based on given configuration and force-fields
     /// @param FFM - The force field manager of this system. @see ForceFieldManager.
-    void virtual equlibrate(ForceFieldManager &FFM) = 0;
+    /// @param stepLimit - If there is a limit for the number of equlibration steps.
+    void virtual equlibrate(ForceFieldManager &FFM, bool stepLimit) = 0;
 };
 
 #endif

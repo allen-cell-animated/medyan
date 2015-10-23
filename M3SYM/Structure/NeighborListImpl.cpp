@@ -43,9 +43,6 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
     for(auto &comp : compartments) {
         for(auto &ncylinder : comp->getCylinders()) {
             
-            //Don't add different types of cylinders for now.
-            if(cylinder->getType() != ncylinder->getType()) continue;
-            
             //Don't add the same cylinder!
             if(cylinder == ncylinder) continue;
             

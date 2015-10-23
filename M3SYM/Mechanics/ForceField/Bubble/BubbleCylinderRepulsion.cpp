@@ -44,9 +44,9 @@ double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double 
                 bd2 = c->getSecondBead();
             
             if (d == 0.0)
-                U_i =  _FFType.computeEnergy(bd1, bd2, radius, kRep, screenLength);
+                U_i =  _FFType.energy(bd1, bd2, radius, kRep, screenLength);
             else
-                U_i = _FFType.computeEnergy(bd1, bd2, radius, kRep, screenLength, d);
+                U_i = _FFType.energy(bd1, bd2, radius, kRep, screenLength, d);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
@@ -86,7 +86,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
             else
                 bd2 = c->getSecondBead();
             
-            _FFType.computeForces(bd1, bd2, radius, kRep, screenLength);
+            _FFType.forces(bd1, bd2, radius, kRep, screenLength);
             
         }
     }
@@ -114,7 +114,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux() {
             else
                 bd2 = c->getSecondBead();
             
-            _FFType.computeForcesAux(bd1, bd2, radius, kRep, screenLength);
+            _FFType.forcesAux(bd1, bd2, radius, kRep, screenLength);
             
         }
     }

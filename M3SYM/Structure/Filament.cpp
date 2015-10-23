@@ -94,7 +94,7 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
     _cylinderVector.push_back(c0);
     
     for (int i = 2; i<numBeads; i++)
-        extendFront(tmpBeadsCoord[i]);
+        extendPlusEnd(tmpBeadsCoord[i]);
 }
 
 Filament::~Filament() {
@@ -113,7 +113,7 @@ Filament::~Filament() {
 
 
 //Extend front for initialization
-void Filament::extendFront(vector<double>& coordinates) {
+void Filament::extendPlusEnd(vector<double>& coordinates) {
     
     Cylinder* cBack = _cylinderVector.back();
     cBack->setPlusEnd(false);
@@ -141,7 +141,7 @@ void Filament::extendFront(vector<double>& coordinates) {
 }
 
 //Extend back for initialization
-void Filament::extendBack(vector<double>& coordinates) {
+void Filament::extendMinusEnd(vector<double>& coordinates) {
 
     Cylinder* cFront = _cylinderVector.front();
     cFront->setMinusEnd(false);
@@ -169,7 +169,7 @@ void Filament::extendBack(vector<double>& coordinates) {
 }
 
 //extend front at runtime
-void Filament::extendFront(short plusEnd) {
+void Filament::extendPlusEnd(short plusEnd) {
 
     Cylinder* cBack = _cylinderVector.back();
     
@@ -215,7 +215,7 @@ void Filament::extendFront(short plusEnd) {
 }
 
 //extend back at runtime
-void Filament::extendBack(short minusEnd) {
+void Filament::extendMinusEnd(short minusEnd) {
     
     Cylinder* cFront = _cylinderVector.front();
     int lastPositionFilament = cFront->getPosition();
@@ -262,7 +262,7 @@ void Filament::extendBack(short minusEnd) {
 }
 
 //Depolymerize front at runtime
-void Filament::retractFront() {
+void Filament::retractPlusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.back();
     _cylinderVector.pop_back();
@@ -283,7 +283,7 @@ void Filament::retractFront() {
     _deltaPlusEnd--;
 }
 
-void Filament::retractBack() {
+void Filament::retractMinusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.front();
     _cylinderVector.pop_front();
@@ -304,7 +304,7 @@ void Filament::retractBack() {
     _deltaMinusEnd--;
 }
 
-void Filament::polymerizeFront() {
+void Filament::polymerizePlusEnd() {
     
     Cylinder* cBack = _cylinderVector.back();
     
@@ -324,7 +324,7 @@ void Filament::polymerizeFront() {
 #endif
 }
 
-void Filament::polymerizeBack() {
+void Filament::polymerizeMinusEnd() {
     
     Cylinder* cFront = _cylinderVector.front();
     
@@ -344,7 +344,7 @@ void Filament::polymerizeBack() {
 #endif
 }
 
-void Filament::depolymerizeFront() {
+void Filament::depolymerizePlusEnd() {
     
     Cylinder* cBack = _cylinderVector.back();
     
@@ -364,7 +364,7 @@ void Filament::depolymerizeFront() {
 #endif
 }
 
-void Filament::depolymerizeBack() {
+void Filament::depolymerizeMinusEnd() {
     
     Cylinder* cFront = _cylinderVector.front();
     

@@ -773,10 +773,10 @@ void ChemManager::genFilReactionTemplates() {
             //add reaction
             if(type == ReactionType::MOTORWALKINGFORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                new MotorWalkFTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
             else {
                 _filRxnTemplates[filType].emplace_back(
-                new MotorWalkBTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
             }
         }
         
@@ -2637,7 +2637,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                     cc->getCMonomer(i)->speciesBound(j)->up();
             }
         }
-    }    
+    }
     //Add all reaction templates to this cylinder
     for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
 }

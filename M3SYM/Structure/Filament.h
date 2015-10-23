@@ -45,7 +45,10 @@ class Bead;
 class Filament : public Composite, public Trackable {
 
 private:
-    deque<Cylinder*> _cylinderVector; ///< Vector of cylinders;
+    /// Deque of cylinders
+    /// @note - the "front" of this deck is the minus end of the filament.
+    deque<Cylinder*> _cylinderVector;
+    
     SubSystem* _subSystem; ///< SubSystem pointer
     
     short _filType; ///< Filament type
@@ -91,37 +94,37 @@ public:
     /// in the filament. This function creates a new bead. So, this function is mostly
     /// called during further extension, not initiation.
     /// @param plusEnd - the plus end species to be marked. Only if doing chemistry.
-    void extendFront(short plusEnd);
+    void extendPlusEnd(short plusEnd);
     /// Same as extension front, but adds a new first cylinder with first bead = new
     /// bead and a second bead is equal to the first bead in the cylinder, which used
     /// to be first.
     /// @param minusEnd - the minus end species to be marked. Only if doing chemistry.
-    void extendBack(short minusEnd);
+    void extendMinusEnd(short minusEnd);
     
     ///Extend, used for initialization
-    void extendFront(vector<double>& coordinates);
-    void extendBack(vector<double>& coordinates);
+    void extendPlusEnd(vector<double>& coordinates);
+    void extendMinusEnd(vector<double>& coordinates);
     
     /// Retraction of front of a cylinder. Removes one cylinder and one bead from the
     /// front of filament.
-    void retractFront();
+    void retractPlusEnd();
     /// Retraction of back of a cylinder. Removes a cylinder and bead from back of
     /// filament.
-    void retractBack();
+    void retractMinusEnd();
     
     /// Polymerization of a filament front, which moves the leading bead one monomer
     /// length. Updates cylinder parameters accordingly.
-    void polymerizeFront();
+    void polymerizePlusEnd();
     /// Same as Polymerization front, but moves the back bead one monomer length, and
     /// updates cylinder parameters accordingly.
-    void polymerizeBack();
+    void polymerizeMinusEnd();
     
     /// Depolymerization of a filament front, which moves the leading bead back one
     /// monomer length. Updates cylinder parameters accordingly.
-    void depolymerizeFront();
+    void depolymerizePlusEnd();
     /// Same as depolymerization front, but moves the back bead forward one monomer
     /// length. Updates cylinder parameters accordingly.
-    void depolymerizeBack();
+    void depolymerizeMinusEnd();
     
     /// Initialize the nucleation of a new filament
     /// Initializes all chemical species in initial Cylinder
@@ -152,6 +155,12 @@ public:
     
     /// Get type
     short getType() {return _filType;}
+    
+    //@{
+    /// Get end cylinder
+    Cylinder* getMinusEndCylinder() {return _cylinderVector.front();}
+    Cylinder* getPlusEndCylinder() {return _cylinderVector.back();}
+    //@}
     
     //@{
     /// SubSystem management, inherited from Trackable

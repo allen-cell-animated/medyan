@@ -26,9 +26,9 @@ class Bead;
 class BoundaryCylinderRepulsionExp {
     
 public:
-    double computeEnergy(Bead*, double, double, double);
-    void computeForces(Bead*, double, vector<double>& norm, double, double);
-    void computeForcesAux(Bead*, double, vector<double>& norm, double, double);
+    double energy(Bead*, double, double, double);
+    void forces(Bead*, double, vector<double>& norm, double, double);
+    void forcesAux(Bead*, double, vector<double>& norm, double, double);
 };
 
 #endif

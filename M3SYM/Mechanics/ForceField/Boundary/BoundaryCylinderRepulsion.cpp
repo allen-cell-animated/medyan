@@ -40,10 +40,10 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
                 bd = c->getSecondBead();
             
             if (d == 0.0)
-                U_i =  _FFType.computeEnergy(
+                U_i =  _FFType.energy(
                 bd, be->distance(bd->coordinate), kRep, screenLength);
             else
-                U_i = _FFType.computeEnergy(
+                U_i = _FFType.energy(
                 bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -81,7 +81,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
                 bd = c->getSecondBead();
             
             auto normal = be->normal(bd->coordinate);
-            _FFType.computeForces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+            _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
             
         }
     }
@@ -106,7 +106,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux() {
                 bd = c->getSecondBead();
             
             auto normal = be->normal(bd->coordinate);
-            _FFType.computeForcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+            _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
             
         }
     }

@@ -63,7 +63,7 @@ public:
                              vector<tuple<int, SpeciesType>> reactants,
                              vector<tuple<int, SpeciesType>> products,
                              float rate)
-        : _filamentType(_filamentType),
+        : _filamentType(filamentType),
           _reactants(reactants), _products(products), _rate(rate) {
 
 #if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
@@ -145,32 +145,32 @@ public:
 };
 
 /// Template for MotorGhost walking
-class MotorWalkFTemplate : public FilamentReactionTemplate {
+class MotorWalkPTemplate : public FilamentReactionTemplate {
     
 public:
     ///default constructor and destructor
-    MotorWalkFTemplate(short filamentType,
+    MotorWalkPTemplate(short filamentType,
                        vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
                        float rate)
     : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
-    ~MotorWalkFTemplate() {}
+    ~MotorWalkPTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 /// Template for MotorGhost walking
-class MotorWalkBTemplate : public FilamentReactionTemplate {
+class MotorWalkMTemplate : public FilamentReactionTemplate {
     
 public:
     ///default constructor and destructor
-    MotorWalkBTemplate(short filamentType,
+    MotorWalkMTemplate(short filamentType,
                        vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
                        float rate)
     : FilamentReactionTemplate(filamentType, reactants, products, rate) {}
-    ~MotorWalkBTemplate() {}
+    ~MotorWalkMTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);

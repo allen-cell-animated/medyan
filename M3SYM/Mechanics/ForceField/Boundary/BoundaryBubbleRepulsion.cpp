@@ -36,12 +36,12 @@ double BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double 
             Bead* bd = bb->getBead();
             
             if (d == 0.0)
-                U_i =  _FFType.computeEnergy(
+                U_i =  _FFType.energy(
                 bd, be->distance(bd->coordinate), radius, kRep, screenLength);
             else
-                U_i = _FFType.computeEnergy(
+                U_i = _FFType.energy(
                 bd, be->stretchedDistance(bd->coordinate, bd->force, d),
-                                            radius, kRep, screenLength);
+                                          radius, kRep, screenLength);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
@@ -74,8 +74,8 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
             Bead* bd = bb->getBead();
             
             auto normal = be->normal(bd->coordinate);
-            _FFType.computeForces(bd, be->distance(bd->coordinate),
-                                  radius, normal, kRep, screenLength);
+            _FFType.forces(bd, be->distance(bd->coordinate),
+                           radius, normal, kRep, screenLength);
             
         }
     }
@@ -96,8 +96,8 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
             Bead* bd = bb->getBead();
             
             auto normal = be->normal(bd->coordinate);
-            _FFType.computeForcesAux(bd, be->distance(bd->coordinate),
-                                     radius, normal, kRep, screenLength);
+            _FFType.forcesAux(bd, be->distance(bd->coordinate),
+                              radius, normal, kRep, screenLength);
             
         }
     }

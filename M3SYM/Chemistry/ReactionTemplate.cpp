@@ -70,6 +70,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         
         ReactionBase* rxn;
+        
         if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
         else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
@@ -79,7 +80,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
         //callback
 #ifdef REACTION_SIGNALING
-        FilamentPolymerizationFrontCallback polyCallback(cc->getCylinder());
+        FilamentPolymerizationPlusEndCallback polyCallback(cc->getCylinder());
         ConnectionBlock rcb(rxn->connect(polyCallback,false));
 #endif
         
@@ -130,7 +131,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     //callbacks
 #ifdef REACTION_SIGNALING
     short plusEndProduct = getInt(_products[1]);
-    FilamentExtensionFrontCallback extCallback(cc->getCylinder(), plusEndProduct);
+    FilamentExtensionPlusEndCallback extCallback(cc->getCylinder(), plusEndProduct);
     ConnectionBlock rcb(rxn->connect(extCallback,false));
 #endif
     
@@ -191,7 +192,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
         
 #ifdef REACTION_SIGNALING
-        FilamentPolymerizationBackCallback polyCallback(cc->getCylinder());
+        FilamentPolymerizationMinusEndCallback polyCallback(cc->getCylinder());
         ConnectionBlock rcb(rxn->connect(polyCallback,false));
 #endif
         cc->addInternalReaction(rxn);
@@ -241,7 +242,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
 #ifdef REACTION_SIGNALING
     auto minusEndType = get<0>(_products[1]);
-    FilamentExtensionBackCallback extCallback(cc->getCylinder(), minusEndType);
+    FilamentExtensionMinusEndCallback extCallback(cc->getCylinder(), minusEndType);
     ConnectionBlock rcb(rxn->connect(extCallback,false));
 #endif
     
@@ -304,7 +305,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
             rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
         
 #ifdef REACTION_SIGNALING
-        FilamentDepolymerizationFrontCallback depolyCallback(cc->getCylinder());
+        FilamentDepolymerizationPlusEndCallback depolyCallback(cc->getCylinder());
         ConnectionBlock rcb(rxn->connect(depolyCallback,false));
 #endif
         
@@ -368,7 +369,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
             rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
         
 #ifdef REACTION_SIGNALING
-        FilamentDepolymerizationBackCallback depolyCallback(cc->getCylinder());
+        FilamentDepolymerizationMinusEndCallback depolyCallback(cc->getCylinder());
         ConnectionBlock rcb(rxn->connect(depolyCallback,false));
 #endif
         
@@ -425,7 +426,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
     
 #ifdef REACTION_SIGNALING
-    FilamentRetractionFrontCallback retCallback(cc1->getCylinder());
+    FilamentRetractionPlusEndCallback retCallback(cc1->getCylinder());
     ConnectionBlock rcb(rxn->connect(retCallback,false));
 #endif
     
@@ -481,7 +482,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
         rxn = new Reaction<DEPOLYREACTANTS+1,DEPOLYPRODUCTS>(species, _rate);
     
 #ifdef REACTION_SIGNALING
-    FilamentRetractionBackCallback retCallback(cc1->getCylinder());
+    FilamentRetractionMinusEndCallback retCallback(cc1->getCylinder());
     ConnectionBlock rcb(rxn->connect(retCallback,false));
 #endif
     
@@ -489,7 +490,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
 }
 
-void MotorWalkFTemplate::addReaction(CCylinder* cc) {
+void MotorWalkPTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -543,7 +544,7 @@ void MotorWalkFTemplate::addReaction(CCylinder* cc) {
     }
 }
 
-void MotorWalkFTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorWalkPTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc1->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].back());
     CMonomer* m2 = cc2->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].front());
@@ -591,7 +592,7 @@ void MotorWalkFTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
 }
 
-void MotorWalkBTemplate::addReaction(CCylinder* cc) {
+void MotorWalkMTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = SysParams::Chemistry().bindingSites[_filamentType].end() - 1;
@@ -645,7 +646,7 @@ void MotorWalkBTemplate::addReaction(CCylinder* cc) {
     }
 }
 
-void MotorWalkBTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+void MotorWalkMTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].front());
     CMonomer* m2 = cc1->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].back());

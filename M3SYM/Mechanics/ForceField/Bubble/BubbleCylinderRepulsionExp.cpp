@@ -19,8 +19,8 @@
 
 using namespace mathfunc;
 
-double BubbleCylinderRepulsionExp::computeEnergy(Bead* b1, Bead* b2, double radius,
-                                                 double kRep, double screenLength) {
+double BubbleCylinderRepulsionExp::energy(Bead* b1, Bead* b2, double radius,
+                                          double kRep, double screenLength) {
     
     double dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
@@ -30,8 +30,8 @@ double BubbleCylinderRepulsionExp::computeEnergy(Bead* b1, Bead* b2, double radi
     return kRep * exp(R);
 }
 
-double BubbleCylinderRepulsionExp::computeEnergy(Bead* b1, Bead* b2, double radius,
-                                                 double kRep, double screenLength, double d) {
+double BubbleCylinderRepulsionExp::energy(Bead* b1, Bead* b2, double radius,
+                                          double kRep, double screenLength, double d) {
     
     double dist = twoPointDistanceStretched(b1->coordinate, b1->force,
                                             b2->coordinate, b2->force, d);
@@ -41,8 +41,8 @@ double BubbleCylinderRepulsionExp::computeEnergy(Bead* b1, Bead* b2, double radi
     return kRep * exp(R);
 }
 
-void BubbleCylinderRepulsionExp::computeForces(Bead* b1, Bead* b2, double radius,
-                                               double kRep, double screenLength) {
+void BubbleCylinderRepulsionExp::forces(Bead* b1, Bead* b2, double radius,
+                                        double kRep, double screenLength) {
     
     //get dist
     double dist = twoPointDistance(b1->coordinate, b2->coordinate);
@@ -67,8 +67,8 @@ void BubbleCylinderRepulsionExp::computeForces(Bead* b1, Bead* b2, double radius
     b2->force[2] += f0 *norm[2];
 }
 
-void BubbleCylinderRepulsionExp::computeForcesAux(Bead* b1, Bead* b2, double radius,
-                                                  double kRep, double screenLength) {
+void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
+                                           double kRep, double screenLength) {
     
     //get dist
     double dist = twoPointDistance(b1->coordinate, b2->coordinate);
