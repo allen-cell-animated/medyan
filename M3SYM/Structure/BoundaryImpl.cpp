@@ -18,6 +18,7 @@
 
 #include "Compartment.h"
 
+#include "GController.h"
 #include "SysParams.h"
 
 BoundaryCubic::BoundaryCubic(SubSystem* s, BoundaryMove move)
@@ -25,13 +26,13 @@ BoundaryCubic::BoundaryCubic(SubSystem* s, BoundaryMove move)
     : Boundary(s, 3, BoundaryShape::Cube, move){
     
     //Get full system size (want planes to be slightly inside compartment grid)
-    double zeroX = 0.02 * SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX;
-    double zeroY = 0.02 * SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY;
-    double zeroZ = 0.02 * SysParams::Geometry().compartmentSizeZ * SysParams::Geometry().NZ;
+    double zeroX = 0.02 * GController::getSize()[0];
+    double zeroY = 0.02 * GController::getSize()[1];
+    double zeroZ = 0.02 * GController::getSize()[2];
     
-    double sysX = SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX - zeroX;
-    double sysY = SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY - zeroY;
-    double sysZ = SysParams::Geometry().compartmentSizeZ * SysParams::Geometry().NZ - zeroZ;
+    double sysX = GController::getSize()[0] - zeroX;
+    double sysY = GController::getSize()[1] - zeroY;
+    double sysZ = GController::getSize()[2] - zeroZ;
     
     //Create boundary surfaces, add to vector
     //X normal planes
@@ -63,9 +64,10 @@ bool BoundaryCubic::within(Compartment* C) {
         //if not, see if any part is in bounds
         auto normal = be->normal(coordinate);
         
-        auto effCoordinate = {coordinate[0] + SysParams::Geometry().compartmentSizeX * normal[0] / 2,
-                              coordinate[1] + SysParams::Geometry().compartmentSizeY * normal[1] / 2,
-                              coordinate[2] + SysParams::Geometry().compartmentSizeZ * normal[2] / 2};
+        auto effCoordinate =
+        {coordinate[0] + SysParams::Geometry().compartmentSizeX * normal[0] / 2,
+         coordinate[1] + SysParams::Geometry().compartmentSizeY * normal[1] / 2,
+         coordinate[2] + SysParams::Geometry().compartmentSizeZ * normal[2] / 2};
         
         //check if this is within boundary
         if(be->distance(effCoordinate) <= 0)
@@ -162,18 +164,40 @@ BoundarySpherical::BoundarySpherical(SubSystem* s, double diameter, BoundaryMove
 
     : Boundary(s, 3, BoundaryShape::Sphere, move) {
     
-    double sysX = SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX;
-    double sysY = SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY;
-    double sysZ = SysParams::Geometry().compartmentSizeZ * SysParams::Geometry().NZ;
-    
+    double sysX = GController::getSize()[0];
+    double sysY = GController::getSize()[1];
+    double sysZ = GController::getSize()[2];
+        
     _boundarySurfaces.emplace_back(
     new Sphere(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2));
 }
 
 bool BoundarySpherical::within(Compartment* C) {
     
-    //just calls regular within for now
-    return within(C->coordinates());
+    for(auto &bs : _boundarySurfaces) {
+        
+        auto be = bs->boundaryElements()[0].get();
+        
+        //go half a compartment dist in the direction of normal
+        auto coordinate = C->coordinates();
+        
+        //initial check of coord
+        if(be->distance(coordinate) > 0) continue;
+        
+        //if not, see if any part is in bounds
+        auto normal = be->normal(coordinate);
+        
+        auto effCoordinate =
+        {coordinate[0] + SysParams::Geometry().compartmentSizeX * normal[0] / 2,
+         coordinate[1] + SysParams::Geometry().compartmentSizeY * normal[1] / 2,
+         coordinate[2] + SysParams::Geometry().compartmentSizeZ * normal[2] / 2};
+        
+        //check if this is within boundary
+        if(be->distance(effCoordinate) <= 0)
+            return false;
+        
+    }
+    return true;
 }
 
 bool BoundarySpherical::within(const vector<double>& coordinates) {
@@ -200,15 +224,18 @@ BoundaryCapsule::BoundaryCapsule(SubSystem* s, double diameter, BoundaryMove mov
 
     : Boundary(s, 3, BoundaryShape::Capsule, move) {
     
-    double sysX = SysParams::Geometry().compartmentSizeX * SysParams::Geometry().NX;
-    double sysY = SysParams::Geometry().compartmentSizeY * SysParams::Geometry().NY;
-    double sysZ = SysParams::Geometry().compartmentSizeZ * SysParams::Geometry().NZ;
+    double sysX = GController::getSize()[0];
+    double sysY = GController::getSize()[1];
+    double sysZ = GController::getSize()[2];
 
     double height = sysZ - diameter;
     
-    _boundarySurfaces.emplace_back( new CylinderZ(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
-    _boundarySurfaces.emplace_back( new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 + height / 2}, diameter / 2, false));
-    _boundarySurfaces.emplace_back( new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 - height / 2}, diameter / 2, true));
+    _boundarySurfaces.emplace_back(
+    new CylinderZ(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
+    _boundarySurfaces.emplace_back(
+    new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 + height / 2}, diameter / 2, false));
+    _boundarySurfaces.emplace_back(
+    new HalfSphereZ(s, {sysX / 2, sysY / 2, sysZ / 2 - height / 2}, diameter / 2, true));
 }
 
 bool BoundaryCapsule::within(Compartment* C) {

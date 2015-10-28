@@ -167,10 +167,13 @@ CompartmentGrid* GController::initializeGrid() {
              SysParams::Geometry().NY,
              SysParams::Geometry().NZ};
     
+    _size = {_compartmentSize[0] * _grid[0],
+             _compartmentSize[1] * _grid[1],
+             _compartmentSize[2] * _grid[2]};
+    
     _centerGrid = {_compartmentSize[0] * _grid[0] / 2,
                    _compartmentSize[1] * _grid[2] / 2,
                    _compartmentSize[2] * _grid[2] / 2};
-    
     
     //Check that grid and compartmentSize match nDim
     if((_nDim == 3 &&
@@ -272,10 +275,10 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
 }
 
 void GController::setActiveCompartments() {
-    
+
     //initialize all compartments equivalent to cproto
     for(auto C : _compartmentGrid->getCompartments())
-        if(_boundary->within(C)) C->setAsActive();
+        if(_boundary->within(C))  C->setAsActive();
 }
 
 void GController::findCompartments(const vector<double>& coords,
@@ -344,6 +347,7 @@ vector<double> GController::getRandomCoordinates() {
 short GController::_nDim = 0;
 
 vector<int>    GController::_grid = {};
+vector<double> GController::_size = {};
 vector<double> GController::_compartmentSize = {};
 vector<double> GController::_centerGrid = {};
 

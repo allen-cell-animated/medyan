@@ -212,14 +212,14 @@ void SystemParser::readChemParams() {
     
         vector<short> tempBindingSites;
         
-        int deltaBinding = SysParams::Geometry().cylinderIntSize[i] /
+        int deltaBinding = SysParams::Geometry().cylinderNumMon[i] /
                            CParams.numBindingSites[i];
     
         int firstBindingSite = deltaBinding / 2 + 1;
         int bindingCount = firstBindingSite;
         
         //add all other binding sites
-        while(bindingCount < SysParams::Geometry().cylinderIntSize[i]) {
+        while(bindingCount < SysParams::Geometry().cylinderNumMon[i]) {
         
             tempBindingSites.push_back(bindingCount);
             bindingCount += deltaBinding;
@@ -1279,6 +1279,30 @@ SpecialSetupType SystemParser::readSpecialSetupType() {
                 SType.mtocFilamentType = atoi(lineVector[1].c_str());
             }
         }
+        else if (line.find("MTOCNUMFILAMENTS") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "A number of filaments to connect to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                SType.mtocNumFilaments = atoi(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("MTOCFILAMENTLENGTH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "A filament length for filaments connected to an MTOC must be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                SType.mtocFilamentLength = atoi(lineVector[1].c_str());
+            }
+        }
         
         else if (line.find("MTOCBUBBLETYPE") != string::npos) {
             
@@ -1396,17 +1420,17 @@ void SystemParser::readGeoParams() {
     for(int i = 0; i < GParams.cylinderSize.size(); i++) {
         
 #ifdef CHEMISTRY
-        if(cylinderSize[i] / monomerSize[i] < SysParams::Geometry().minCylinderIntSize) {
+        if(cylinderSize[i] / monomerSize[i] < SysParams::Geometry().minCylinderNumMon) {
             cout <<
             "With chemistry, cylinder size specified is too short. Exiting."
             << endl;
             exit(EXIT_FAILURE);
         }
 #endif
-        GParams.cylinderIntSize.push_back(int(cylinderSize[i] / monomerSize[i]));
+        GParams.cylinderNumMon.push_back(int(cylinderSize[i] / monomerSize[i]));
         
         GParams.minCylinderSize.push_back(
-        SysParams::Geometry().minCylinderIntSize * GParams.monomerSize[i]);
+        SysParams::Geometry().minCylinderNumMon * GParams.monomerSize[i]);
         
     }
         
@@ -1419,15 +1443,8 @@ void SystemParser::readGeoParams() {
     if(compartmentTemp.size() >= 3) GParams.compartmentSizeZ = compartmentTemp[2];
     
     //find max compartment side
-    if(GParams.compartmentSizeX > GParams.largestCompartmentSide)
-        GParams.largestCompartmentSide = GParams.compartmentSizeX;
-    
-    if(GParams.compartmentSizeY > GParams.largestCompartmentSide)
-        GParams.largestCompartmentSide = GParams.compartmentSizeY;
-    
-    if(GParams.compartmentSizeZ > GParams.largestCompartmentSide)
-        GParams.largestCompartmentSide = GParams.compartmentSizeZ;
-    
+    GParams.largestCompartmentSide = max(GParams.compartmentSizeX,
+                                     max(GParams.compartmentSizeY, GParams.compartmentSizeZ));
     SysParams::GParams = GParams;
 }
 
@@ -1455,7 +1472,8 @@ FilamentSetup SystemParser::readFilamentSetup() {
             else {}
         }
         else if(line.find("NUMFILAMENTS") != string::npos &&
-                line.find("NUMFILAMENTSPECIES") == string::npos) {
+                line.find("NUMFILAMENTSPECIES") == string::npos &&
+                line.find("MTOCNUMFILAMENTS") == string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
@@ -1466,7 +1484,8 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.numFilaments = atoi(lineVector[1].c_str());
             else {}
         }
-        else if(line.find("FILAMENTLENGTH") != string::npos) {
+        else if(line.find("FILAMENTLENGTH") != string::npos &&
+                line.find("MTOCFILAMENTLENGTH") == string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {

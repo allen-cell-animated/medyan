@@ -249,7 +249,9 @@ struct SpecialSetupType {
     //@{
     ///MTOC Parameters
     short mtocFilamentType = 0;
-    short mtocBubbleType = 0;
+    int mtocNumFilaments   = 0;
+    int mtocFilamentLength = 0;
+    short mtocBubbleType   = 0;
     //@}
 };
 

@@ -150,13 +150,15 @@ struct GeoParams {
     
     vector<double> monomerSize = {};
     
-    vector<int> cylinderIntSize = {};
+    ///Number of monomers in a cylinder
+    vector<int> cylinderNumMon = {};
+    
     vector<double> cylinderSize = {};
     
     vector<double> minCylinderSize = {};
     
     /// Minimum monomer length of a cylinder is preset
-    int minCylinderIntSize = 3;
+    int minCylinderNumMon = 3;
     //@}
 };
 

@@ -53,7 +53,7 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     //see if in nucleation zone
     if(_nucleationZone != NucleationZoneType::ALL) {
         
-        auto mp = (float)bindingSite / SysParams::Geometry().cylinderIntSize[_filamentType];
+        auto mp = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
         
         auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
         auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
@@ -142,7 +142,7 @@ void BranchingManager::updateAllPossibleBindings() {
             //see if in nucleation zone
             if(_nucleationZone != NucleationZoneType::ALL) {
                 
-                auto mp = (float)*it / SysParams::Geometry().cylinderIntSize[_filamentType];
+                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
                 
                 auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
                 auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
@@ -228,8 +228,8 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() == 1) {
                     
                     //check distances..
-                    auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderIntSize[_filamentType];
-                    auto mp2 = (float)*it / SysParams::Geometry().cylinderIntSize[_filamentType];
+                    auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
+                    auto mp2 = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
                     
                     auto x1 = c->getFirstBead()->coordinate;
                     auto x2 = c->getSecondBead()->coordinate;
@@ -395,8 +395,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() == 1) {
                             
                             //check distances..
-                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderIntSize[_filamentType];
-                            auto mp2 = (float)*it2 / SysParams::Geometry().cylinderIntSize[_filamentType];
+                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
+                            auto mp2 = (float)*it2 / SysParams::Geometry().cylinderNumMon[_filamentType];
                             
                             auto x1 = c->getFirstBead()->coordinate;
                             auto x2 = c->getSecondBead()->coordinate;
@@ -476,8 +476,8 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() == 1) {
                     
                     //check distances..
-                    auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderIntSize[_filamentType];
-                    auto mp2 = (float)*it / SysParams::Geometry().cylinderIntSize[_filamentType];
+                    auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
+                    auto mp2 = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
                     
                     auto x1 = c->getFirstBead()->coordinate;
                     auto x2 = c->getSecondBead()->coordinate;
@@ -644,8 +644,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
                             SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() == 1) {
                             
                             //check distances..
-                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderIntSize[_filamentType];
-                            auto mp2 = (float)*it2 / SysParams::Geometry().cylinderIntSize[_filamentType];
+                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
+                            auto mp2 = (float)*it2 / SysParams::Geometry().cylinderNumMon[_filamentType];
                             
                             auto x1 = c->getFirstBead()->coordinate;
                             auto x2 = c->getSecondBead()->coordinate;

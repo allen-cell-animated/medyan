@@ -46,7 +46,7 @@ public:
 };
 
 /// An implementation of FilamentInitialzer that creates a completely random
-/// Filament distribution.
+/// Filament distribution within the specified boundary
 class RandomFilamentDist : public FilamentInitializer {
     
 public:
@@ -54,5 +54,23 @@ public:
                                               int filamentType,
                                               int lenFilaments);
 };
+
+/// An implementation of FilamentInitialzer that creates a random MTOC configuration
+class MTOCFilamentDist : public FilamentInitializer {
+    
+private:
+    vector<double> _coordMTOC; ///< Coordinates of the MTOC to make filaments around
+    double _radius;            ///< Radius of MTOC
+    
+public:
+    ///Constructor sets parameters of MTOC
+    MTOCFilamentDist(vector<double> coord, double radius)
+        : _coordMTOC(coord), _radius(radius) {}
+    
+    FilamentData createFilaments(Boundary* b, int numFilaments,
+                                              int filamentType,
+                                              int lenFilaments);
+};
+
 
 #endif

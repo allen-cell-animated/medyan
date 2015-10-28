@@ -322,7 +322,7 @@ struct BranchingCallback {
         
         short filType = c1->getType();
         
-        double pos = double(get<1>(site)) / SysParams::Geometry().cylinderIntSize[filType];
+        double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
         
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
@@ -425,7 +425,7 @@ struct LinkerBindingCallback {
         short filType = c1->getType();
         
         // Create a linker
-        int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
+        int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         
         double pos1 = double(get<1>(site[0])) / cylinderSize;
         double pos2 = double(get<1>(site[1])) / cylinderSize;
@@ -491,7 +491,7 @@ struct MotorBindingCallback {
         short filType = c1->getType();
         
         // Create a motor
-        int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
+        int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         
         double pos1 = double(get<1>(site[0])) / cylinderSize;
         double pos2 = double(get<1>(site[1])) / cylinderSize;
@@ -544,7 +544,7 @@ struct MotorWalkingCallback {
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
-        int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
+        int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
         
@@ -590,7 +590,7 @@ struct MotorMovingCylinderCallback {
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
-        int cylinderSize = SysParams::Geometry().cylinderIntSize[filType];
+        int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
         

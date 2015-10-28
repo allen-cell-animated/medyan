@@ -237,17 +237,23 @@ def show_snapshot(snapshot_number=-1):
 	MAXVAL = 0.00
 	MINVAL = 0.00
 	SCALETITLE = ''
-	COLORMAP = 'YlGnBu'
+	COLORMAP = ''
 
 	#grid size
-	GRIDSIZEMAXX = 2000.0
+	GRIDSIZEMAXX = 3000.0
 	GRIDSIZEMINX = 0.0
 
-	GRIDSIZEMAXY = 2000.0
+	GRIDSIZEMAXY = 3000.0
 	GRIDSIZEMINY = 0.0
 
-	GRIDSIZEMAXZ = 2000.0
+	GRIDSIZEMAXZ = 3000.0
 	GRIDSIZEMINZ = 0.0
+
+	#diameter if spherically bound
+	DIAMETER = 2750
+
+	#boundary type
+	BOUNDARYTYPE = "SPHERICAL"
 
 	#default color, in RGB
 	DBEADCOLOR    = (1.0,1.0,1.0) 
@@ -255,52 +261,99 @@ def show_snapshot(snapshot_number=-1):
 	DFILCOLOR2    = (0.2,0.5,0.4)
 	DLINKERCOLOR  = (0.0,1.0,0.1)
 	DMOTORCOLOR   = (0.0,0.2,1.0)
-	DBUBBLECOLOR  = (0.2,0.7,0.5)
+	DBUBBLECOLOR1  = (0.2,0.7,0.5)
+	DBUBBLECOLOR2  = (0.4,0.9,0.2)
 
 	local_snapshot=SnapshotList[snapshot_number]
 	mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
 	mlab.clf()
 
 	#create grid
-	x = [GRIDSIZEMINX,GRIDSIZEMINX,GRIDSIZEMAXX]
-	y = [GRIDSIZEMAXY,GRIDSIZEMINY,GRIDSIZEMINY]
-	z = [GRIDSIZEMINZ,GRIDSIZEMAXZ,GRIDSIZEMINZ]
-	pts = mlab.points3d(x,y,z, scale_mode='none', scale_factor=0.2)
+	if BOUNDARYTYPE == "CUBIC" :
+
+		x = [GRIDSIZEMINX,GRIDSIZEMINX,GRIDSIZEMAXX]
+		y = [GRIDSIZEMAXY,GRIDSIZEMINY,GRIDSIZEMINY]
+		z = [GRIDSIZEMINZ,GRIDSIZEMAXZ,GRIDSIZEMINZ]
+		pts = mlab.points3d(x,y,z, scale_mode='none', scale_factor=0.2)
 		
-	outline=mlab.pipeline.outline(pts, line_width=0.25, color=(0.0,0.0,0.0))
+		outline=mlab.pipeline.outline(pts, line_width=0.25, color=(0.0,0.0,0.0))
+
+	elif BOUNDARYTYPE == "SPHERICAL" :
+
+		sphere = mlab.points3d(GRIDSIZEMAXX/2, 
+							   GRIDSIZEMAXY/2, 
+							   GRIDSIZEMAXZ/2, 
+							   scale_mode='none',
+                               scale_factor=DIAMETER,
+                               color=(0.67, 0.77, 0.93),
+                               resolution=50,
+                               opacity=0.3,
+                               name='Boundary')
+
+		sphere.actor.property.specular = 0.45
+		sphere.actor.property.specular_power = 5
+		sphere.actor.property.backface_culling = True
 
 	#display time
 	time = 'Time = ' + str(int(local_snapshot.time)) + "s"
 	mlab.text(0.6, 0.9, time, color=(0.0,0.0,0.0))
 
 	#DISPLAYING RANDOM POINTS FOR MONOMERS
-	n1_monomers = 100
+	#can add as many types of monomers as needed
+	n1_monomers = 0
+	n2_monomers = 0
 
 	n1_x = []
 	n1_y = []
 	n1_z = []
 
-	for i in xrange(0, n1_monomers):
-
-		n1_x.append(random.uniform(0,GRIDSIZEMAXX))
-		n1_y.append(random.uniform(0,GRIDSIZEMAXY))
-		n1_z.append(random.uniform(0,GRIDSIZEMAXZ))
-
-	mlab.points3d(n1_x,n1_y,n1_z, scale_factor=12.0, color=DFILCOLOR1)
-
-	n2_monomers = 50
-
 	n2_x = []
 	n2_y = []
 	n2_z = []
 
-	for i in xrange(0, n2_monomers):
+	if(BOUNDARYTYPE == "CUBIC"):
 
-		n2_x.append(random.uniform(0,GRIDSIZEMAXX))
-		n2_y.append(random.uniform(0,GRIDSIZEMAXY))
-		n2_z.append(random.uniform(0,GRIDSIZEMAXZ))
+		for i in xrange(0, n1_monomers):
 
-	mlab.points3d(n2_x,n2_y,n2_z, scale_factor=12.0, color=DFILCOLOR2)
+			n1_x.append(random.uniform(0,GRIDSIZEMAXX))
+			n1_y.append(random.uniform(0,GRIDSIZEMAXY))
+			n1_z.append(random.uniform(0,GRIDSIZEMAXZ))
+
+		mlab.points3d(n1_x,n1_y,n1_z, scale_factor=12.0, color=DFILCOLOR1)
+
+		for i in xrange(0, n2_monomers):
+
+			n2_x.append(random.uniform(0,GRIDSIZEMAXX))
+			n2_y.append(random.uniform(0,GRIDSIZEMAXY))
+			n2_z.append(random.uniform(0,GRIDSIZEMAXZ))
+
+		mlab.points3d(n2_x,n2_y,n2_z, scale_factor=12.0, color=DFILCOLOR2)
+
+	elif BOUNDARYTYPE == "SPHERICAL" :
+
+		for i in xrange(0, n1_monomers):
+
+			r = random.uniform(0,DIAMETER/2)
+			l = random.uniform(0,2 * math.pi)
+			h = random.uniform(-math.pi/2, math.pi/2)
+
+			n1_x.append(r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2)
+			n1_y.append(r * math.sin(h) + GRIDSIZEMAXY/2)
+			n1_z.append(r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2)
+
+		mlab.points3d(n1_x,n1_y,n1_z, scale_factor=12.0, color=DFILCOLOR1)
+
+		for i in xrange(0, n2_monomers):
+
+			r = random.uniform(0,DIAMETER/2)
+			l = random.uniform(0,2 * math.pi)
+			h = random.uniform(-math.pi/2, math.pi/2)
+
+			n2_x.append(r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2)
+			n2_y.append(r * math.sin(h) + GRIDSIZEMAXY/2)
+			n2_z.append(r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2)
+
+		mlab.points3d(n2_x,n2_y,n2_z, scale_factor=12.0, color=DFILCOLOR2)
 
 	#DISPLAYING FILAMENTS
 	if(len(local_snapshot.filaments) != 0):
@@ -320,17 +373,18 @@ def show_snapshot(snapshot_number=-1):
 
 				if(local_snapshot.filaments[fid].type == 0) :
 					q1.append(local_snapshot.filaments[fid].coords[i])
-				else:
-					q1.append(local_snapshot.filaments[fid].coords[i])
 					q2.append(local_snapshot.filaments[fid].coords[i])
-
-			x1.append(hstack(q1))
+				else:
+					q2.append(local_snapshot.filaments[fid].coords[i])
+					
+			
+			#x1.append(hstack(q1))
 			x2.append(hstack(q2))
 
 		for fid in sorted(local_snapshot.filaments.keys()):
 			for color in local_snapshot.filaments[fid].colors:
 
-				if(local_snapshot.filaments[fid].type == 0) :
+				if(local_snapshot.filaments[fid].type == 0):
 					c1.append(color)
 				else:
 					c2.append(color)
@@ -342,48 +396,48 @@ def show_snapshot(snapshot_number=-1):
 			else:	
 				connections2.append(local_snapshot.filaments[fid].connections)
 
-		connections1 = vstack(connections1)
+		#connections1 = vstack(connections1)
 		connections2 = vstack(connections2)
 
 		# Create the points
-		if(len(c1) != 0):
-			src1 = mlab.pipeline.scalar_scatter(x1[0], x1[1], x1[2], c1)
-		else:
-			src1 = mlab.pipeline.scalar_scatter(x1[0], x1[1], x1[2])
+#		if(len(c1) != 0):
+#			src1 = mlab.pipeline.scalar_scatter(x1[0], x1[1], x1[2], c1)
+#		else:
+#			src1 = mlab.pipeline.scalar_scatter(x1[0], x1[1], x1[2])
 
 		if(len(c2) != 0):
 			src2 = mlab.pipeline.scalar_scatter(x2[0], x2[1], x2[2], c2)
 		else:
 			src2 = mlab.pipeline.scalar_scatter(x2[0], x2[1], x2[2])
 
-		gsphere1=mlab.pipeline.glyph(src1, mode="sphere", resolution=24, 
-								     scale_mode='scalar', scale_factor=3.0, color=(DBEADCOLOR))
+#		gsphere1=mlab.pipeline.glyph(src1, mode="sphere", resolution=24, 
+#								     scale_mode='scalar', scale_factor=3.0, color=(DBEADCOLOR))
 		gsphere2=mlab.pipeline.glyph(src2, mode="sphere", resolution=24, 
 								     scale_mode='scalar', scale_factor=3.0, color=(DBEADCOLOR))
 
 		# Connect them
-		src1.mlab_source.dataset.lines = connections1
+#		src1.mlab_source.dataset.lines = connections1
 		src2.mlab_source.dataset.lines = connections2
 
 		# Finally, display the set of lines
-		tube1=mlab.pipeline.tube(src1, tube_radius=5)
-		tube1.filter.number_of_sides=12
+#		tube1=mlab.pipeline.tube(src1, tube_radius=5)
+#		tube1.filter.number_of_sides=12
 
 		tube2=mlab.pipeline.tube(src2, tube_radius=15)
 		tube2.filter.number_of_sides=12
 
-		if(len(c1) != 0):
-			surface1 = mlab.pipeline.surface(tube1, colormap=COLORMAP,
-										    vmax = MAXVAL, vmin = MINVAL)
-			cb1 = mlab.colorbar(object=surface1, orientation='vertical', 
-						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=6)
-
-			cb1.title_text_property.color = (0.0,0.0,0.0)
-			cb1.label_text_property.color = (0.0,0.0,0.0)
-			cb1.label_text_property.font_size = 4
-
-		else:
-			surface1 = mlab.pipeline.surface(tube1, color=DFILCOLOR1)
+#		if(len(c1) != 0):
+#			surface1 = mlab.pipeline.surface(tube1, colormap=COLORMAP,
+#										    vmax = MAXVAL, vmin = MINVAL)
+#			cb1 = mlab.colorbar(object=surface1, orientation='vertical', 
+#						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=6)
+#
+#			cb1.title_text_property.color = (0.0,0.0,0.0)
+#			cb1.label_text_property.color = (0.0,0.0,0.0)
+#			cb1.label_text_property.font_size = 4
+#
+#		else:
+#			surface1 = mlab.pipeline.surface(tube1, color=DFILCOLOR1)
 
 		if(len(c2) != 0):
 			surface2 = mlab.pipeline.surface(tube2, colormap=COLORMAP,
@@ -404,7 +458,7 @@ def show_snapshot(snapshot_number=-1):
 		connections=[]
 
 		#Add random diffusing linkers
-		n_diffusing_linkers = 100
+		n_diffusing_linkers = 0
 		len_linker = 35.0
 		linker_type = 0
 		n_beads_linker = 2 * len(local_snapshot.linkers) 
@@ -419,9 +473,21 @@ def show_snapshot(snapshot_number=-1):
 								   arange(i + 1, i + 1.5)]).T
 
 			#first random coord
-			coord1x = random.uniform(0,GRIDSIZEMAXX - len_linker)
-			coord1y = random.uniform(0,GRIDSIZEMAXY - len_linker)
-			coord1z = random.uniform(0,GRIDSIZEMAXZ - len_linker)
+			if BOUNDARYTYPE == "CUBIC":
+
+				coord1x = random.uniform(0,GRIDSIZEMAXX - len_linker)
+				coord1y = random.uniform(0,GRIDSIZEMAXY - len_linker)
+				coord1z = random.uniform(0,GRIDSIZEMAXZ - len_linker)
+
+			elif BOUNDARYTYPE == "SPHERICAL":
+
+				r = random.uniform(0,DIAMETER/2)
+				l = random.uniform(0,2 * math.pi)
+				h = random.uniform(-math.pi/2, math.pi/2)
+
+				coord1x = r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2 - len_linker
+				coord1y = r * math.sin(h) + GRIDSIZEMAXY/2 - len_linker
+				coord1z = r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2 - len_linker
 
 			#random projection
 			direction = [random.uniform(-1,1),
@@ -488,6 +554,59 @@ def show_snapshot(snapshot_number=-1):
 		c=[]
 		connections=[]
 
+		#Add random diffusing motors
+		n_diffusing_motors = 0
+		len_motor = 200.0
+		motor_type = 0
+		n_beads_motor = 2 * len(local_snapshot.motors) 
+
+		for i in xrange(n_beads_motor, n_beads_motor + 2 * n_diffusing_motors, 2) :
+
+			MS = MotorSnapshot()
+			MS.id = random.randint(10E6,10E8)
+			MS.type = motor_type
+			local_snapshot.motors[MS.id] = MS
+			MS.connections=vstack([arange(i, i + 0.5), 
+								   arange(i + 1, i + 1.5)]).T
+
+			#first random coord
+			if BOUNDARYTYPE == "CUBIC":
+
+				coord1x = random.uniform(0,GRIDSIZEMAXX - len_motor)
+				coord1y = random.uniform(0,GRIDSIZEMAXY - len_motor)
+				coord1z = random.uniform(0,GRIDSIZEMAXZ - len_motor)
+
+			elif BOUNDARYTYPE == "SPHERICAL":
+
+				r = random.uniform(0,DIAMETER/2)
+				l = random.uniform(0,2 * math.pi)
+				h = random.uniform(-math.pi/2, math.pi/2)
+
+				coord1x = r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2 - len_motor
+				coord1y = r * math.sin(h) + GRIDSIZEMAXY/2 - len_motor
+				coord1z = r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2 - len_motor
+
+			#random projection
+			direction = [random.uniform(-1,1),
+						 random.uniform(-1,1),
+						 random.uniform(-1,1)]
+
+			dist = sqrt(pow(direction[0],2) + 
+						pow(direction[1],2) + 
+						pow(direction[2],2))
+
+			normDir = [float(i)/dist for i in direction]
+
+			coord2x = coord1x + normDir[0] * len_motor
+			coord2y = coord1y + normDir[1] * len_motor
+			coord2z = coord1z + normDir[2] * len_motor
+
+			MS.coords=array([coord1x, coord1y, coord1z,
+					   		 coord2x, coord2y, coord2z])
+
+			N=len(MS.coords)
+			MS.coords=MS.coords.reshape(N/3,3).T
+
 		for i in 0, 1, 2:
 			q=[]
 			for mid in sorted(local_snapshot.motors.keys()):
@@ -528,7 +647,6 @@ def show_snapshot(snapshot_number=-1):
 	#DISPLAYING BRANCHERS (NO COLOR)
 	if(len(local_snapshot.branchers) != 0):
 		x=[]
-		connections=[]
 
 		for i in 0, 1, 2:
 			q=[]
@@ -543,19 +661,27 @@ def show_snapshot(snapshot_number=-1):
 
 	#DISPLAYING BUBBLES
 	if(len(local_snapshot.bubbles) != 0):
-		x=[]
-		connections=[]
+		x1=[]
+		x2=[]
 
 		for i in 0, 1, 2:
-			q=[]
+			q1=[]
+			q2=[]
 			for uid in sorted(local_snapshot.bubbles.keys()):
-				q.append(local_snapshot.bubbles[uid].coords[i])
-			x.append(hstack(q))
+				if(local_snapshot.bubbles[uid].type == 0) :
+					q1.append(local_snapshot.bubbles[uid].coords[i])
+				else:
+					q2.append(local_snapshot.bubbles[uid].coords[i])
+			x1.append(hstack(q1))
+			x2.append(hstack(q2))
 
 		# Create the points
-		src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
-		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
-									scale_factor=550.0, color=DBUBBLECOLOR)
+		src1 = mlab.pipeline.scalar_scatter(x1[0], x1[1], x1[2])
+		gsphere=mlab.pipeline.glyph(src1, mode="sphere", resolution=24, 
+									scale_factor=300.0, color=DBUBBLECOLOR1)
+		src2 = mlab.pipeline.scalar_scatter(x2[0], x2[1], x2[2])
+		gsphere=mlab.pipeline.glyph(src2, mode="sphere", resolution=24, 
+									scale_factor=1000.0, color=DBUBBLECOLOR2)
 
 	if(saving):
 		mlab.savefig(filename=saveFile + "Snapshot" + str(snapshot_number) + ".jpg")

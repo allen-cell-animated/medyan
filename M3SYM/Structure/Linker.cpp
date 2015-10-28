@@ -57,8 +57,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
         exit(EXIT_FAILURE);
     }
           
-    int pos1 = int(position1 * SysParams::Geometry().cylinderIntSize[c1->getType()]);
-    int pos2 = int(position2 * SysParams::Geometry().cylinderIntSize[c1->getType()]);
+    int pos1 = int(position1 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
+    int pos2 = int(position2 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
         
 #ifdef CHEMISTRY
     _cLinker = unique_ptr<CLinker>(

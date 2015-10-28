@@ -307,36 +307,55 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 
 void Controller::setupSpecialStructures(SystemParser& p) {
     
+    cout << "---" << endl;
+    cout << "Setting up special structures...";
+    
     SpecialSetupType SType = p.readSpecialSetupType();
     
     //set up a MTOC if desired
-    //For now, uses the first ten initialzed filament
-    //For now, uses the first bubble initialized
+    //For now, uses 20 filaments
     if(SType.mtoc) {
         
-        int filamentCount = 0, numFilaments = 10;
         MTOC* mtoc = _subSystem->addTrackable<MTOC>();
         
-        for(auto f : Filament::getFilaments()) {
+        //create the bubble in top part of grid, centered in x,y
+        double bcoordx = GController::getSize()[0] / 2;
+        double bcoordy = GController::getSize()[1] / 2;
+        double bcoordz = GController::getSize()[2] * 5 / 6;
+        
+        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
+        Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
+
+        mtoc->setBubble(b);
+        
+        FilamentInitializer *init = new MTOCFilamentDist(bcoords,
+        SysParams::Mechanics().BubbleRadius[SType.mtocBubbleType]);
+        
+        auto filaments = init->createFilaments(_subSystem->getBoundary(),
+                                               SType.mtocNumFilaments,
+                                               SType.mtocFilamentType,
+                                               SType.mtocFilamentLength);
+        //add filaments
+        for (auto it: filaments) {
             
-            if(filamentCount >= numFilaments) break;
+            auto coord1 = get<1>(it);
+            auto coord2 = get<2>(it);
             
-            else  {
-                if(f->getType() == SType.mtocFilamentType) {
-                    mtoc->addFilament(f);
-                    filamentCount++;
-                }
-            }
-        }
-        for(auto b : Bubble::getBubbles()) {
+            vector<vector<double>> coords = {coord1, coord2};
             
-            if(b->getType() == SType.mtocBubbleType) {
-                
-                mtoc->setBubble(b);
-                break;
-            }
+            double d = twoPointDistance(coord1, coord2);
+            vector<double> tau = twoPointDirection(coord1, coord2);
+            
+            int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
+            
+            // check how many segments can fit between end-to-end of the filament
+            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
+                                                             coords, numSegment + 1, "ARC");
+            
+            mtoc->addFilament(f);
         }
     }
+    cout << "Done." << endl;
 }
 
 void Controller::moveBoundary(double deltaTau) {

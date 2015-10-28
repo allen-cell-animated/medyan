@@ -52,7 +52,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
         exit(EXIT_FAILURE);
     }
         
-    int pos = int(position * SysParams::Geometry().cylinderIntSize[c1->getType()]);
+    int pos = int(position * SysParams::Geometry().cylinderNumMon[c1->getType()]);
     
 #ifdef CHEMISTRY
     _cBranchingPoint = unique_ptr<CBranchingPoint>(new CBranchingPoint(branchType, _compartment,
