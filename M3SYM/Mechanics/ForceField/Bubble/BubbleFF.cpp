@@ -20,7 +20,7 @@
 #include "BubbleBubbleRepulsionExp.h"
 
 #include "MTOCAttachment.h"
-#include "FilamentStretchingHarmonic.h"
+#include "MTOCAttachmentHarmonic.h"
 
 #include "Bubble.h"
 #include "Bead.h"
@@ -44,7 +44,7 @@ BubbleFF::BubbleFF (string type, string mtoc) {
     //specifically for MTOC
     if (mtoc == "ATTACHMENTHARMONIC") {
         _bubbleInteractionVector.emplace_back(
-        new MTOCAttachment<FilamentStretchingHarmonic>());
+        new MTOCAttachment<MTOCAttachmentHarmonic>());
     }
     else if(mtoc == "") {}
     else {

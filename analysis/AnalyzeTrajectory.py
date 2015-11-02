@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import scipy.sparse.linalg as la
 import math
 
-#A filament snapshot
+#Various snapshots for objects
 class FilamentSnapshot:
 	def __init__(self):
 		self.id=None
@@ -14,42 +14,38 @@ class FilamentSnapshot:
 		self.delta_left=None	
 		self.delta_right=None	
 		self.coords={}
+		self.colors={}
+		self.connections=None
 
-#A cylinder snapshot
-class CylinderSnapshot:
-	def __init__(self):
-		self.id = None
-		self.coords={}
-
-#A linker snapshot
 class LinkerSnapshot:
 	def __init__(self):
 		self.id=None
 		self.type=None
 		self.coords={}
+		self.colors={}
+		self.connections=None
 
-#A motor snapshot
 class MotorSnapshot:
 	def __init__(self):
 		self.id=None
 		self.type=None
 		self.coords={}
+		self.colors={}
+		self.connections=None
 
-#A brancher snapshot
 class BrancherSnapshot:
 	def __init__(self):
 		self.id=None
 		self.type=None;
 		self.coords={}
 
-#A bubble snapshot
 class BubbleSnapshot:
 	def __init__(self):
 		self.id=None
 		self.type=None;
 		self.coords={}
 
-#A complete snapshot
+#A full snapshot
 class Snapshot:
 	def __init__(self):
 		self.step=None
@@ -58,12 +54,13 @@ class Snapshot:
 		self.n_linkers=None
 		self.n_motors=None
 		self.n_branchers=None
+		self.n_bubbles=None
 		self.filaments={}
-		self.cylinders={}
 		self.linkers={}
 		self.motors={}
 		self.branchers={}
 		self.bubbles={}
+
 
 #A chemical snapshot
 class ChemSnapshot:
@@ -96,7 +93,7 @@ def readTrajectory(filename):
 	traj_file=open(filename)
 
 	SnapshotList=[]
-	first_Snapshot_line=True
+	first_snapshot_line=True
 	first_line=True
 	reading_filament=False
 	reading_linker=False
@@ -114,21 +111,21 @@ def readTrajectory(filename):
 	for line in traj_file:
 		line = line.strip()
 
-		#get Snapshot data
-		if(first_Snapshot_line):
+		if(first_snapshot_line):
 			F=Snapshot()
 			F.step, F.time, F.n_filaments, F.n_linkers, \
-			F.n_motors, F.n_branchers F.n_bubbles = map(double,line.split())
+			F.n_motors, F.n_branchers, F.n_bubbles = map(double,line.split())
 			F.n_filaments = int(F.n_filaments)
-			F.n_linkers = int(F.n_linkers)
-			F.n_motors = int(F.n_motors)
+			F.n_linkers   = int(F.n_linkers)
+			F.n_motors    = int(F.n_motors)
 			F.n_branchers = int(F.n_branchers)
-			first_Snapshot_line=False
+			F.n_bubbles   = int(F.n_bubbles)
+			first_snapshot_line=False
 			line_number+=1
 			continue
 
 		if(len(line)==0):
-			first_Snapshot_line=True
+			first_snapshot_line=True
 			first_filament_line=True
 			SnapshotList.append(F)
 			assert F.n_filaments == len(F.filaments)
@@ -143,43 +140,46 @@ def readTrajectory(filename):
 			n_beads_bubble=0;
 			line_number+=1
 			continue
-				
-		#Read the line
+			
 		if(first_line):
-
 			line_split = line.split()
 
 			if(line_split[0] == "FILAMENT"):
 				FS=FilamentSnapshot()
-				FS.id, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
+				FS.id, FS.type, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
 				first_line=False
 				F.filaments[FS.id]=FS
+				FS.connections=vstack(
+					[arange(n_beads_filament, n_beads_filament + FS.length - 1.5), 
+					 arange(n_beads_filament + 1, n_beads_filament + FS.length - .5)]).T
 				n_beads_filament+=FS.length
 				reading_filament=True
 				line_number+=1
 				continue
-
-			if(line[0] == "LINKER"):
+			if(line_split[0] == "LINKER"):
 				LS = LinkerSnapshot()
 				LS.id, LS.type = map(int, line_split[1:])
 				first_line = False
 				F.linkers[LS.id] = LS
+				LS.connections=vstack([arange(n_beads_linker, n_beads_linker + 0.5), 
+				  			           arange(n_beads_linker + 1, n_beads_linker + 1.5)]).T
 				n_beads_linker+=2
 				reading_linker=True
 				line_number+=1
 				continue
-
-			if(line[0] == "MOTOR"):
+			if(line_split[0] == "MOTOR"):
 				MS = MotorSnapshot()
 				MS.id, MS.type = map(int, line_split[1:])
 				first_line = False
 				F.motors[MS.id] = MS
+				MS.connections=vstack([arange(n_beads_motor, n_beads_motor + 0.5), 
+									   arange(n_beads_motor + 1, n_beads_motor + 1.5)]).T
 				n_beads_motor+=2
 				reading_motor=True
 				line_number+=1
 				continue
 
-			if(line[0] == "BRANCHER"):
+			if(line_split[0] == "BRANCHER"):
 				BS = BrancherSnapshot()
 				BS.id, BS.type = map(int, line_split[1:])
 				first_line = False
@@ -198,41 +198,31 @@ def readTrajectory(filename):
 				line_number+=1
 				continue
 
-		#Format coordinates
 		if(reading_filament):
 			FS.coords=array(line.split(),'f')
 			N=len(FS.coords)
-			FS.coords = FS.coords.reshape(N/3,3)
-
-			#create cylinder snapshots
-			for i in xrange(0, len(FS.coords) - 1):
-				CS = CylinderSnapshot()
-				#create unique id using cylinder position and fil id
-				CS.id = (FS.id + i) * (FS.id + i + 1) / 2 + FS.id
-				CS.coords = [FS.coords[i], FS.coords[i+1]]
-				F.cylinders[CS.id] = CS
-
+			FS.coords=FS.coords.reshape(N/3,3).T
 			first_line=True
 			reading_filament=False
 
 		if(reading_linker):
 			LS.coords=array(line.split(),'f')
 			N=len(LS.coords)
-			LS.coords = LS.coords.reshape(N/3,3)
+			LS.coords=LS.coords.reshape(N/3,3).T
 			first_line=True
 			reading_linker=False
 
 		if(reading_motor):
 			MS.coords=array(line.split(),'f')
 			N=len(MS.coords)
-			MS.coords = MS.coords.reshape(N/3,3)
+			MS.coords=MS.coords.reshape(N/3,3).T
 			first_line=True
 			reading_motor=False
 
 		if(reading_brancher):
 			BS.coords=array(line.split(),'f')
 			N=len(BS.coords)
-			BS.coords = BS.coords.reshape(N/3,3)
+			BS.coords=BS.coords.reshape(N/3,3).T
 			first_line=True
 			reading_brancher=False
 
@@ -1166,8 +1156,7 @@ def density(Snapshot, grid, compartment):
 
 def calculateRgs(snapshot=1):
 
-	FrameLists = readTrajectories(["/Users/jameskomianos/Desktop/Contractility/contractilitydata/M0.02A0.1/Run0/snapshot.traj"])
-
+	FrameLists = readTrajectories([])
 	return radiusOfGyrations(FrameLists, snapshot)
 
 def calculateRgVsT():
@@ -1181,54 +1170,7 @@ def calculateRgVsT():
 
 	del FrameLists
 
-	FrameLists = readTrajectories([])
-
-	Rgs2 = []
-
-	for snap in xrange(2, len(FrameLists[0]), 2):
-		Rgs2.append(radiusOfGyrations(FrameLists, snapshot=snap))
-
-	del FrameLists
-
-	FrameLists = readTrajectories([])
-
-	Rgs3 = []
-
-	for snap in xrange(2, len(FrameLists[0]), 2):
-		Rgs3.append(radiusOfGyrations(FrameLists, snapshot=snap))
-
-	del FrameLists
-
-	FrameLists = readTrajectories([])
-
-	Rgs4 = []
-
-	for snap in xrange(2, len(FrameLists[0]), 2):
-		Rgs4.append(radiusOfGyrations(FrameLists, snapshot=snap))
-
-	del FrameLists
-
-	FrameLists = readTrajectories([])
-
-	Rgs5 = []
-
-	for snap in xrange(2, len(FrameLists[0]), 2):
-		Rgs5.append(radiusOfGyrations(FrameLists, snapshot=snap))
-
-	del FrameLists
-
-
-	FrameLists = readTrajectories([])
-
-	Rgs6 = []
-
-	for snap in xrange(2, len(FrameLists[0]), 2):
-		Rgs6.append(radiusOfGyrations(FrameLists, snapshot=snap))
-
-	del FrameLists
-
-	return [Rgs1, Rgs2, Rgs3, Rgs4, Rgs5, Rgs6]
-
+	return [Rgs1]
 
 def plotRgHeatMap1(saveFile=''):
 
@@ -1319,60 +1261,19 @@ def plotRgVsT(data, saveFile=''):
 
 	#organize data
 	data1 = data[0]
-	data2 = data[1]
-	data3 = data[2]
-	data4 = data[3]
-	data5 = data[4]
-	data6 = data[5]
 
 	time1 = [x[0] for x in data1]
-	time2 = [x[0] for x in data2]
-	time3 = [x[0] for x in data3]
-	time4 = [x[0] for x in data4]
-	time5 = [x[0] for x in data5]
-	time6 = [x[0] for x in data6]
 
 	Rg1_0 = data1[0][1]
-	Rg2_0 = data2[0][1]
-	Rg3_0 = data3[0][1]
-	Rg4_0 = data4[0][1]
-	Rg5_0 = data5[0][1]
-	Rg6_0 = data6[0][1]
 
 	Rg1 = [x[1]/Rg1_0 for x in data1]
-	Rg2 = [x[1]/Rg2_0 for x in data2]
-	Rg3 = [x[1]/Rg3_0 for x in data3]
-	Rg4 = [x[1]/Rg4_0 for x in data4]
-	Rg5 = [x[1]/Rg5_0 for x in data5]
-	Rg6 = [x[1]/Rg6_0 for x in data6]
-	
 	errplus_1 = [x[2]/Rg1_0 for x in data1]
-	errplus_2 = [x[2]/Rg2_0 for x in data2]
-	errplus_3 = [x[2]/Rg3_0 for x in data3]
-	errplus_4 = [x[2]/Rg4_0 for x in data4]
-	errplus_5 = [x[2]/Rg5_0 for x in data5]
-	errplus_6 = [x[2]/Rg6_0 for x in data6]
 
 	errminus_1 = [x[3]/Rg1_0 for x in data1]
-	errminus_2 = [x[3]/Rg2_0 for x in data2]
-	errminus_3 = [x[3]/Rg3_0 for x in data3]
-	errminus_4 = [x[3]/Rg4_0 for x in data4]
-	errminus_5 = [x[3]/Rg5_0 for x in data5]
-	errminus_6 = [x[3]/Rg6_0 for x in data6]
 
-	plt.plot(time1, Rg1, 'r', label=r'$\mathrm{R_{\alpha:a}=0.01}$')
-	plt.plot(time2, Rg2, 'g', label=r'$\mathrm{R_{\alpha:a}=0.02}$')
-	plt.plot(time3, Rg3, 'b', label=r'$\mathrm{R_{\alpha:a}=0.05}$')
-	plt.plot(time4, Rg4, 'y', label=r'$\mathrm{R_{\alpha:a}=0.1}$')
-	plt.plot(time5, Rg5, 'm', label=r'$\mathrm{R_{\alpha:a}=0.2}$')
-	plt.plot(time6, Rg6, 'c', label=r'$\mathrm{R_{\alpha:a}=0.5}$')
+	plt.plot(time1, Rg1, 'r', label=r'$\mathrm{}$')
 
 	fill_between(time1, errplus_1, errminus_1, alpha=0.25, linewidth=0, color='r')
-	fill_between(time2, errplus_2, errminus_2, alpha=0.25, linewidth=0, color='g')
-	fill_between(time3, errplus_3, errminus_3, alpha=0.25, linewidth=0, color='b')
-	fill_between(time4, errplus_4, errminus_4, alpha=0.25, linewidth=0, color='y')
-	fill_between(time5, errplus_5, errminus_5, alpha=0.25, linewidth=0, color='m')
-	fill_between(time6, errplus_6, errminus_6, alpha=0.25, linewidth=0, color='c')
 
 	plt.xlabel(r'$\mathrm{Time\/(s)}$', fontsize=20)
 	plt.ylabel(r'$\mathrm{R_{g,f} / R_{g,i}\/(\mu m)}$', fontsize=20)
@@ -1383,9 +1284,4 @@ def plotRgVsT(data, saveFile=''):
 	#if file provided, save
 	if saveFile != '':
 		fig.savefig(saveFile)
-
-
-
-
-
 

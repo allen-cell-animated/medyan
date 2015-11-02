@@ -13,4 +13,33 @@
 
 #include "MTOC.h"
 
+#include "Bubble.h"
+#include "Filament.h"
+#include "Cylinder.h"
+#include "Bead.h"
+
+void MTOC::setBubble(Bubble* b) {
+    
+    _bubble = b;
+    _bubble->setAsMTOC();
+    
+    addChild(unique_ptr<Component>(b));
+}
+
+void MTOC::printSelf() {
+    
+    cout << endl;
+    
+    cout << "MTOC: ptr = " << this << endl;
+    cout << "MTOC ID = " << _ID << endl;
+    
+    cout << endl;
+    cout << "Bubble information..." << endl;
+    
+    _bubble->printSelf();
+    
+    cout << endl;
+}
+
+
 Database<MTOC*> MTOC::_mtocs;

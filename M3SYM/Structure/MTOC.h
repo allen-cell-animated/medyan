@@ -18,6 +18,7 @@
 
 #include "Database.h"
 #include "Trackable.h"
+#include "Composite.h"
 
 //FORWARD DECLARATIONS
 class Bubble;
@@ -33,20 +34,22 @@ class Filament;
  *  and is only mechanically relevant for now, but may be extended to have chemical 
  *  properties in the future.
  */
-class MTOC : public Trackable {
+class MTOC : public Composite, public Trackable {
     
 private:
     Bubble* _bubble; ///< A bubble that physically represents the MTOC
     vector<Filament*> _filaments; ///< An ordered vector of filaments in the MTOC
     
+    int _ID; ///< Unique identifier
+    
     static Database<MTOC*> _mtocs; ///< Collection of beads in SubSystem
 public:
     ///Constructor
-    MTOC() : Trackable() {}
+    MTOC() : Trackable(), _ID(_mtocs.getID()) {}
     
     //@{
     ///Setters
-    void setBubble(Bubble* b) {_bubble = b;}
+    void setBubble(Bubble* b);
     
     void addFilament(Filament* f) {_filaments.push_back(f);}
     //@}
@@ -71,6 +74,8 @@ public:
     static int numMTOCs() {
         return _mtocs.countElements();
     }
+    
+    virtual void printSelf();
     
 };
 

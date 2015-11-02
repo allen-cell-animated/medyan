@@ -13,7 +13,7 @@
 
 #include "MTOCAttachment.h"
 
-#include "FilamentStretchingHarmonic.h"
+#include "MTOCAttachmentHarmonic.h"
 
 #include "MTOC.h"
 #include "Bubble.h"
@@ -31,13 +31,14 @@ double MTOCAttachment<MTOCInteractionType>::computeEnergy(double d) {
         
         Bead* b1 = mtoc->getBubble()->getBead();
         
-        for(auto &f : mtoc->getFilaments()) {
+        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+            
+            Filament *f = mtoc->getFilaments()[fIndex];
             
             Cylinder* c = f->getMinusEndCylinder();
             
             Bead* b2 = c->getFirstBead();
             double kStretch = c->getMCylinder()->getStretchingConst();
-            
             double radius = mtoc->getBubble()->getRadius();
             
             if (d == 0.0)
@@ -68,13 +69,14 @@ void MTOCAttachment<MTOCInteractionType>::computeForces() {
         
         Bead* b1 = mtoc->getBubble()->getBead();
         
-        for(auto &f : mtoc->getFilaments()) {
+        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+            
+            Filament *f = mtoc->getFilaments()[fIndex];
             
             Cylinder* c = f->getMinusEndCylinder();
             
             Bead* b2 = c->getFirstBead();
             double kStretch = c->getMCylinder()->getStretchingConst();
-            
             double radius = mtoc->getBubble()->getRadius();
 
             _FFType.forces(b1, b2, kStretch, radius);
@@ -90,13 +92,14 @@ void MTOCAttachment<MTOCInteractionType>::computeForcesAux() {
     
         Bead* b1 = mtoc->getBubble()->getBead();
         
-        for(auto &f : mtoc->getFilaments()) {
+        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+            
+            Filament *f = mtoc->getFilaments()[fIndex];
             
             Cylinder* c = f->getMinusEndCylinder();
             
             Bead* b2 = c->getFirstBead();
             double kStretch = c->getMCylinder()->getStretchingConst();
-            
             double radius = mtoc->getBubble()->getRadius();
             
             _FFType.forcesAux(b1, b2, kStretch, radius);
@@ -105,6 +108,6 @@ void MTOCAttachment<MTOCInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double MTOCAttachment<FilamentStretchingHarmonic>::computeEnergy(double d);
-template void MTOCAttachment<FilamentStretchingHarmonic>::computeForces();
-template void MTOCAttachment<FilamentStretchingHarmonic>::computeForcesAux();
+template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(double d);
+template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces();
+template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux();

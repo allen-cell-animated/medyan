@@ -48,9 +48,11 @@ private:
     double _kRepuls;      ///< Repulsion constant for bubble-bubble and bubble-cylinder interactions
     double _screenLength; ///< Screening length for a repulsive potential
     
-    int _ID;  ///< Identifier
+    int _ID;        ///< Identifier
     
     static Database<Bubble*> _bubbles; ///< Collection in SubSystem
+    
+    bool _isMTOC = false;   ///< If representing a MTOC
     
 public:
     vector<double> coordinate; ///< Current coordinates of bubble,
@@ -71,6 +73,9 @@ public:
     short getType() {return _type;}
     //@}
     
+    void setAsMTOC() {_isMTOC = true;}
+    bool isMTOC() {return _isMTOC;}
+
     /// Print bubble information
     virtual void printSelf();
     

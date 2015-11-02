@@ -32,8 +32,8 @@ class Bead;
 /*!
  * The BoundaryElement class is a representation of a BoundarySurface element, which can
  * interact with other elements in the system, including other BoundaryElements as well 
- * as [Beads] (@ref Bead) in [Filaments](@ref Filament). Together, a collection of 
- * boundary elements make up a BoundarySurface. 
+ * as [Beads] (@ref Bead) in [Filaments](@ref Filament) and [Bubbles](@ref Bubble). 
+ * Together, a collection of boundary elements make up a BoundarySurface. 
  *
  * Extending the Neighbor class, all instances can be kept in 
  * [NeighborLists](@ref NeighborList).

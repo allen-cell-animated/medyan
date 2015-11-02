@@ -66,7 +66,8 @@ void ForceFieldManager::computeForcesAux() {
     resetForcesAux();
     
     //recompute
-    for(auto &f : _forceFields) f->computeForcesAux();
+    for(auto &f : _forceFields)
+        f->computeForcesAux();
 }
 
 void ForceFieldManager::computeForcesAuxP() {
@@ -78,8 +79,10 @@ void ForceFieldManager::computeForcesAuxP() {
 
 void ForceFieldManager::resetForces() {
     
-    for(auto b: Bead::getBeads())
+    for(auto b: Bead::getBeads()) {
         b->force.assign (3, 0); //Set force to zero;
+        b->loadForce = 0;       //Set load force to zero;
+    }
 }
 
 void ForceFieldManager::resetForcesAux() {

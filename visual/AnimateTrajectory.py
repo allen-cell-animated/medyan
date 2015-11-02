@@ -240,29 +240,27 @@ def show_snapshot(snapshot_number=-1):
 	COLORMAP = ''
 
 	#grid size
-	GRIDSIZEMAXX = 3000.0
+	GRIDSIZEMAXX = 1000.0
 	GRIDSIZEMINX = 0.0
 
-	GRIDSIZEMAXY = 3000.0
+	GRIDSIZEMAXY = 1000.0
 	GRIDSIZEMINY = 0.0
 
-	GRIDSIZEMAXZ = 3000.0
+	GRIDSIZEMAXZ = 1000.0
 	GRIDSIZEMINZ = 0.0
 
-	#diameter if spherically bound
-	DIAMETER = 2750
+	#boundary type, CUBIC or SPHERICAL
+	BOUNDARYTYPE = "CUBIC"
 
-	#boundary type
-	BOUNDARYTYPE = "SPHERICAL"
+	#diameter if spherically bound
+	DIAMETER = 0.0
 
 	#default color, in RGB
 	DBEADCOLOR    = (1.0,1.0,1.0) 
-	DFILCOLOR1    = (1.0,0.0,0.0)
-	DFILCOLOR2    = (0.2,0.5,0.4)
+	DFILCOLOR     = (1.0,0.0,0.0)
 	DLINKERCOLOR  = (0.0,1.0,0.1)
 	DMOTORCOLOR   = (0.0,0.2,1.0)
-	DBUBBLECOLOR1  = (0.2,0.7,0.5)
-	DBUBBLECOLOR2  = (0.4,0.9,0.2)
+	DBUBBLECOLOR  = (0.2,0.7,0.5)
 
 	local_snapshot=SnapshotList[snapshot_number]
 	mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
@@ -301,15 +299,10 @@ def show_snapshot(snapshot_number=-1):
 	#DISPLAYING RANDOM POINTS FOR MONOMERS
 	#can add as many types of monomers as needed
 	n1_monomers = 0
-	n2_monomers = 0
 
 	n1_x = []
 	n1_y = []
 	n1_z = []
-
-	n2_x = []
-	n2_y = []
-	n2_z = []
 
 	if(BOUNDARYTYPE == "CUBIC"):
 
@@ -319,15 +312,7 @@ def show_snapshot(snapshot_number=-1):
 			n1_y.append(random.uniform(0,GRIDSIZEMAXY))
 			n1_z.append(random.uniform(0,GRIDSIZEMAXZ))
 
-		mlab.points3d(n1_x,n1_y,n1_z, scale_factor=12.0, color=DFILCOLOR1)
-
-		for i in xrange(0, n2_monomers):
-
-			n2_x.append(random.uniform(0,GRIDSIZEMAXX))
-			n2_y.append(random.uniform(0,GRIDSIZEMAXY))
-			n2_z.append(random.uniform(0,GRIDSIZEMAXZ))
-
-		mlab.points3d(n2_x,n2_y,n2_z, scale_factor=12.0, color=DFILCOLOR2)
+		mlab.points3d(n1_x,n1_y,n1_z, scale_factor=12.0, color=DFILCOLOR)
 
 	elif BOUNDARYTYPE == "SPHERICAL" :
 
@@ -341,115 +326,60 @@ def show_snapshot(snapshot_number=-1):
 			n1_y.append(r * math.sin(h) + GRIDSIZEMAXY/2)
 			n1_z.append(r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2)
 
-		mlab.points3d(n1_x,n1_y,n1_z, scale_factor=12.0, color=DFILCOLOR1)
-
-		for i in xrange(0, n2_monomers):
-
-			r = random.uniform(0,DIAMETER/2)
-			l = random.uniform(0,2 * math.pi)
-			h = random.uniform(-math.pi/2, math.pi/2)
-
-			n2_x.append(r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2)
-			n2_y.append(r * math.sin(h) + GRIDSIZEMAXY/2)
-			n2_z.append(r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2)
-
-		mlab.points3d(n2_x,n2_y,n2_z, scale_factor=12.0, color=DFILCOLOR2)
+		mlab.points3d(n1_x,n1_y,n1_z, scale_factor=12.0, color=DFILCOLOR)
 
 	#DISPLAYING FILAMENTS
 	if(len(local_snapshot.filaments) != 0):
 
 		#can add as many filaments as desired
-		x1=[]
-		x2=[]
-		c1=[]
-		c2=[]
-		connections1=[]
-		connections2=[]
+		x=[]
+		c=[]
+		connections=[]
 
 		for i in 0, 1, 2:
-			q1=[]
-			q2=[]
+			q=[]
 			for fid in sorted(local_snapshot.filaments.keys()):
-
-				if(local_snapshot.filaments[fid].type == 0) :
-					q1.append(local_snapshot.filaments[fid].coords[i])
-					q2.append(local_snapshot.filaments[fid].coords[i])
-				else:
-					q2.append(local_snapshot.filaments[fid].coords[i])
+				q.append(local_snapshot.filaments[fid].coords[i])
 					
-			
-			#x1.append(hstack(q1))
-			x2.append(hstack(q2))
+			x.append(hstack(q))
 
 		for fid in sorted(local_snapshot.filaments.keys()):
 			for color in local_snapshot.filaments[fid].colors:
-
-				if(local_snapshot.filaments[fid].type == 0):
-					c1.append(color)
-				else:
-					c2.append(color)
+				c.append(color)
 
 		for fid in sorted(local_snapshot.filaments.keys()):
-			
-			if(local_snapshot.filaments[fid].type == 0):
-				connections1.append(local_snapshot.filaments[fid].connections)
-			else:	
-				connections2.append(local_snapshot.filaments[fid].connections)
+			connections.append(local_snapshot.filaments[fid].connections)
 
-		#connections1 = vstack(connections1)
-		connections2 = vstack(connections2)
+		connections = vstack(connections)
 
 		# Create the points
-#		if(len(c1) != 0):
-#			src1 = mlab.pipeline.scalar_scatter(x1[0], x1[1], x1[2], c1)
-#		else:
-#			src1 = mlab.pipeline.scalar_scatter(x1[0], x1[1], x1[2])
-
-		if(len(c2) != 0):
-			src2 = mlab.pipeline.scalar_scatter(x2[0], x2[1], x2[2], c2)
+		if(len(c) != 0):
+			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2], c)
 		else:
-			src2 = mlab.pipeline.scalar_scatter(x2[0], x2[1], x2[2])
+			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
 
-#		gsphere1=mlab.pipeline.glyph(src1, mode="sphere", resolution=24, 
-#								     scale_mode='scalar', scale_factor=3.0, color=(DBEADCOLOR))
-		gsphere2=mlab.pipeline.glyph(src2, mode="sphere", resolution=24, 
+		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
 								     scale_mode='scalar', scale_factor=3.0, color=(DBEADCOLOR))
 
 		# Connect them
-#		src1.mlab_source.dataset.lines = connections1
-		src2.mlab_source.dataset.lines = connections2
+		src.mlab_source.dataset.lines = connections
 
 		# Finally, display the set of lines
-#		tube1=mlab.pipeline.tube(src1, tube_radius=5)
-#		tube1.filter.number_of_sides=12
+		tube=mlab.pipeline.tube(src, tube_radius=5)
+		tube.filter.number_of_sides=12
 
-		tube2=mlab.pipeline.tube(src2, tube_radius=15)
-		tube2.filter.number_of_sides=12
-
-#		if(len(c1) != 0):
-#			surface1 = mlab.pipeline.surface(tube1, colormap=COLORMAP,
-#										    vmax = MAXVAL, vmin = MINVAL)
-#			cb1 = mlab.colorbar(object=surface1, orientation='vertical', 
-#						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=6)
-#
-#			cb1.title_text_property.color = (0.0,0.0,0.0)
-#			cb1.label_text_property.color = (0.0,0.0,0.0)
-#			cb1.label_text_property.font_size = 4
-#
-#		else:
-#			surface1 = mlab.pipeline.surface(tube1, color=DFILCOLOR1)
-
-		if(len(c2) != 0):
-			surface2 = mlab.pipeline.surface(tube2, colormap=COLORMAP,
+		if(len(c) != 0):
+			surface = mlab.pipeline.surface(tube, colormap=COLORMAP,
 										    vmax = MAXVAL, vmin = MINVAL)
-			cb2 = mlab.colorbar(object=surface2, orientation='vertical', 
+			cb = mlab.colorbar(object=surface1, orientation='vertical', 
 						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=6)
 
-			cb2.title_text_property.color = (0.0,0.0,0.0)
-			cb2.label_text_property.color = (0.0,0.0,0.0)
-			cb2.label_text_property.font_size = 4
+			cb.title_text_property.color = (0.0,0.0,0.0)
+			cb.label_text_property.color = (0.0,0.0,0.0)
+			cb.label_text_property.font_size = 4
+
 		else:
-			surface2 = mlab.pipeline.surface(tube2, color=DFILCOLOR2)
+			surface = mlab.pipeline.surface(tube, color=DFILCOLOR)
 
 	#DISPLAYING LINKERS
 	if(len(local_snapshot.linkers) != 0):
@@ -661,27 +591,18 @@ def show_snapshot(snapshot_number=-1):
 
 	#DISPLAYING BUBBLES
 	if(len(local_snapshot.bubbles) != 0):
-		x1=[]
-		x2=[]
+		x=[]
 
 		for i in 0, 1, 2:
-			q1=[]
-			q2=[]
+			q=[]
 			for uid in sorted(local_snapshot.bubbles.keys()):
-				if(local_snapshot.bubbles[uid].type == 0) :
-					q1.append(local_snapshot.bubbles[uid].coords[i])
-				else:
-					q2.append(local_snapshot.bubbles[uid].coords[i])
-			x1.append(hstack(q1))
-			x2.append(hstack(q2))
+				q.append(local_snapshot.bubbles[uid].coords[i])
+			x.append(hstack(q))
 
 		# Create the points
-		src1 = mlab.pipeline.scalar_scatter(x1[0], x1[1], x1[2])
-		gsphere=mlab.pipeline.glyph(src1, mode="sphere", resolution=24, 
-									scale_factor=300.0, color=DBUBBLECOLOR1)
-		src2 = mlab.pipeline.scalar_scatter(x2[0], x2[1], x2[2])
-		gsphere=mlab.pipeline.glyph(src2, mode="sphere", resolution=24, 
-									scale_factor=1000.0, color=DBUBBLECOLOR2)
+		src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
+		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
+									scale_factor=200.0, color=DBUBBLECOLOR)
 
 	if(saving):
 		mlab.savefig(filename=saveFile + "Snapshot" + str(snapshot_number) + ".jpg")

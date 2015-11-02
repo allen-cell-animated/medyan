@@ -19,6 +19,8 @@
 		F7199B371A30C84600CD5DCC /* MBranchingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B351A30C84600CD5DCC /* MBranchingPoint.h */; };
 		F7199B3A1A30CCE500CD5DCC /* CBranchingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B381A30CCE500CD5DCC /* CBranchingPoint.cpp */; };
 		F7199B3B1A30CCE500CD5DCC /* CBranchingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B391A30CCE500CD5DCC /* CBranchingPoint.h */; };
+		F71F29C01BE2721600F08420 /* MTOCAttachmentHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F71F29BE1BE2721600F08420 /* MTOCAttachmentHarmonic.cpp */; };
+		F71F29C11BE2721600F08420 /* MTOCAttachmentHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F71F29BF1BE2721600F08420 /* MTOCAttachmentHarmonic.h */; };
 		F735B76D1A2D16F200AE21D1 /* CController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F735B7531A2D16F200AE21D1 /* CController.cpp */; };
 		F735B76E1A2D16F200AE21D1 /* CController.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7541A2D16F200AE21D1 /* CController.h */; };
 		F735B7701A2D16F200AE21D1 /* common.h in Headers */ = {isa = PBXBuildFile; fileRef = F735B7561A2D16F200AE21D1 /* common.h */; };
@@ -270,6 +272,8 @@
 		F7199B351A30C84600CD5DCC /* MBranchingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBranchingPoint.h; sourceTree = "<group>"; };
 		F7199B381A30CCE500CD5DCC /* CBranchingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBranchingPoint.cpp; sourceTree = "<group>"; };
 		F7199B391A30CCE500CD5DCC /* CBranchingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBranchingPoint.h; sourceTree = "<group>"; };
+		F71F29BE1BE2721600F08420 /* MTOCAttachmentHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCAttachmentHarmonic.cpp; path = Bubble/MTOCAttachmentHarmonic.cpp; sourceTree = "<group>"; };
+		F71F29BF1BE2721600F08420 /* MTOCAttachmentHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTOCAttachmentHarmonic.h; path = Bubble/MTOCAttachmentHarmonic.h; sourceTree = "<group>"; };
 		F735B7531A2D16F200AE21D1 /* CController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CController.cpp; sourceTree = "<group>"; };
 		F735B7541A2D16F200AE21D1 /* CController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CController.h; sourceTree = "<group>"; };
 		F735B7561A2D16F200AE21D1 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
@@ -770,6 +774,8 @@
 				F764F09A1BD7E35100E2BBB8 /* BubbleInteractions.h */,
 				F764F0BF1BD9667300E2BBB8 /* MTOCAttachment.cpp */,
 				F764F0C01BD9667300E2BBB8 /* MTOCAttachment.h */,
+				F71F29BE1BE2721600F08420 /* MTOCAttachmentHarmonic.cpp */,
+				F71F29BF1BE2721600F08420 /* MTOCAttachmentHarmonic.h */,
 				F764F0AD1BD81A1100E2BBB8 /* BubbleBubbleRepulsion.cpp */,
 				F764F09E1BD7E3EE00E2BBB8 /* BubbleBubbleRepulsion.h */,
 				F764F0A11BD7E53900E2BBB8 /* BubbleBubbleRepulsionExp.cpp */,
@@ -943,6 +949,7 @@
 				F7C9D0161A2D165D0087434A /* MMotorGhost.h in Headers */,
 				F764F0A41BD7E53900E2BBB8 /* BubbleBubbleRepulsionExp.h in Headers */,
 				F7525A081A7023A4007A4E9F /* BoundaryCylinderRepulsionExp.h in Headers */,
+				F71F29C11BE2721600F08420 /* MTOCAttachmentHarmonic.h in Headers */,
 				F7525A041A7023A4007A4E9F /* BoundaryInteractions.h in Headers */,
 				F7525A7A1A702431007A4E9F /* FilamentInteractions.h in Headers */,
 				F735B7B71A2D173F00AE21D1 /* CGMethod.h in Headers */,
@@ -1191,6 +1198,7 @@
 				F7525A3A1A7023EF007A4E9F /* CylinderExclVolume.cpp in Sources */,
 				F7525A721A702431007A4E9F /* FilamentBending.cpp in Sources */,
 				F764F0B71BD9349600E2BBB8 /* BubbleInitializer.cpp in Sources */,
+				F71F29C01BE2721600F08420 /* MTOCAttachmentHarmonic.cpp in Sources */,
 				F7525A7B1A702431007A4E9F /* FilamentStretching.cpp in Sources */,
 				F7A520191AA0DA07003C49E0 /* RateChangerImpl.cpp in Sources */,
 				F7C9D0011A2D165D0087434A /* Compartment.cpp in Sources */,

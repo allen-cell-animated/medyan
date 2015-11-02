@@ -39,7 +39,7 @@ public:
     /// @param print - prints detailed info about energies
     double computeEnergy(double d, bool verbose = false);
     
-    /// Compute the forces of all force fields
+    /// Compute the forces of all force fields 
     void computeForces();
     /// Compute the forcesAux of all force fields
     void computeForcesAux();

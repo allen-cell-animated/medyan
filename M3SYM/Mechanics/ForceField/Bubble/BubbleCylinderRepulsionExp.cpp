@@ -53,7 +53,7 @@ void BubbleCylinderRepulsionExp::forces(Bead* b1, Bead* b2, double radius,
     double f0 = kRep * exp(R) / screenLength;
     
     //update the load force of the bead
-    b2->loadForce = f0;
+    b2->loadForce += f0;
     
     //get norm
     auto norm = normalizedVector(twoPointDirection(b1->coordinate, b2->coordinate));
@@ -77,9 +77,6 @@ void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
     
     double R = -effd / screenLength;
     double f0 = kRep * exp(R) / screenLength;
-    
-    //update the load force of the bead
-    b2->loadForce = f0;
     
     //get norm
     auto norm = normalizedVector(twoPointDirection(b1->coordinate, b2->coordinate));

@@ -15,6 +15,7 @@
 
 #include "BubbleCylinderRepulsionExp.h"
 
+#include "MTOC.h"
 #include "Bubble.h"
 #include "Cylinder.h"
 #include "Bead.h"
@@ -28,6 +29,18 @@ double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double 
     for (auto bb: Bubble::getBubbles()) {
         
         for(auto &c : _neighborList->getNeighbors(bb)) {
+            
+            //if part of an MTOC, skip
+            if(bb->isMTOC()) {
+                
+                auto mtoc = (MTOC*)bb->getParent();
+                auto filaments = mtoc->getFilaments();
+                
+                auto f = (Filament*)c->getParent();
+                
+                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+                    continue;
+            }
             
             double kRep = bb->getRepulsionConst();
             double screenLength = bb->getScreeningLength();
@@ -72,6 +85,18 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
         
         for(auto &c : _neighborList->getNeighbors(bb)) {
             
+            //if part of an MTOC, skip
+            if(bb->isMTOC()) {
+                
+                auto mtoc = (MTOC*)bb->getParent();
+                auto filaments = mtoc->getFilaments();
+                
+                auto f = (Filament*)c->getParent();
+                
+                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+                    continue;
+            }
+            
             double kRep = bb->getRepulsionConst();
             double screenLength = bb->getScreeningLength();
             
@@ -99,6 +124,18 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux() {
     for (auto bb : Bubble::getBubbles()) {
         
         for(auto &c : _neighborList->getNeighbors(bb)) {
+            
+            //if part of an MTOC, skip
+            if(bb->isMTOC()) {
+                
+                auto mtoc = (MTOC*)bb->getParent();
+                auto filaments = mtoc->getFilaments();
+                
+                auto f = (Filament*)c->getParent();
+                
+                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+                    continue;
+            }
             
             double kRep = bb->getRepulsionConst();
             double screenLength = bb->getScreeningLength();

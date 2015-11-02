@@ -22,10 +22,13 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
 {
     //number of steps
     int N;
-    if(steplimit)
-        N = 5 * Bead::numBeads();
-    else
+    if(steplimit) {
+        int beadMaxStep = 3 * Bead::numBeads();
+        N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS);
+    }
+    else {
         N = numeric_limits<int>::max();
+    }
     
     FFM.computeForces();
     startMinimization();
@@ -68,7 +71,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
     if (numIter >= N) {
         cout << endl;
         
-        cout << "WARNING: Did not minimize in N (= number of beads) steps." << endl;
+        cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
         cout << "Maximum force in system = " << maxF() << endl;
         
         cout << "Culprit ..." << endl;
@@ -80,4 +83,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         cout << endl;
     }
+    
+    //final force calculation
+    FFM.computeForces();
 }

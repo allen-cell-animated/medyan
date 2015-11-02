@@ -38,6 +38,10 @@ protected:
     /// minimizer got itself into trouble.
     bool _safeMode = false;
     
+    /// Minimum number of minimization steps, in the case of a
+    /// small number of beads in the system
+    const int _MINNUMSTEPS = 1E4;
+    
     //@{
     /// Parameter used in backtracking line search
     const double LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
