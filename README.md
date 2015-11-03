@@ -1,7 +1,7 @@
 # README #
 
 Welcome to Papoian Lab’s M3SYM, the software implementation of the 
-*Mechanochemical Dynamics of Active Networks* model. 
+*Mechanochemical Dynamics of Active Networks, 3rd Generation* model. 
 
 For more general information about the code, visit the Papoian lab webpage:
 
