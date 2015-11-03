@@ -15,8 +15,9 @@
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
+\def\Z{\vphantom{\parbox[c]{1cm}{\Huge Something Long}}}
 
-\title{Usage Guide for M3SYM v1.0}
+\title{Usage Guide for M3SYM v1.1}
 \author{Papoian Lab, University of Maryland}
 \date{}							% Activate to display a given date or no date
 
@@ -34,49 +35,44 @@
 
  Cell motility plays a key role in human biology and disease, contributing ubiquitously
  to such important processes as embryonic development, wound repair and cancer 
- metastasis. Papoian laboratory is interested in gaining deeper understanding of the
+ metastasis. The Papoian laboratory is interested in gaining deeper understanding of the
  physical chemistry behind these complex, far-from-equilibrium mechanochemical 
- processes. His approach and model, named the \textit{Mechanochemical Dynamics of Active Networks,
- 3rd Generation} (MEDYAN3), is based on combining stochastic reaction-diffusion treatment
+ processes. His approach and model, named the \textit{Mechanochemical Dynamics of Active Networks} 
+ (MEDYAN), is based on combining stochastic reaction-diffusion treatment
  of cellular biochemical processes with polymer physics of cytoskeletal filament network 
- growth, while explicitly coupling chemistry and mechanics. For a more detailed description of MEDYAN3, 
- please see (*paper here*)
+ growth, while explicitly coupling chemistry and mechanics. For a more detailed description of MEDYAN, see [1].
  
- Papoian laboratory has developed M3SYM, a software package based on the MEDYAN3
+ The Papoian laboratory has developed M3SYM, a software package based on the MEDYAN
  model, to simulate growth dynamics of actin based filamentous networks \textit{in vitro} and 
  \textit{in vivo}. Recent papers where M3SYM or its predecessor, StochTools, were used 
  can be found on the publication section of the Papoian group's main web page. 
  The M3SYM package can also be extended to simulate the dynamics of any active matter network.
 
+
 \section {Overview of Features}
 
 M3SYM is a package that can simultaneously simulate complex chemical and mechanical dynamics
-of an active matter network. For more information on the MEDYAN3 model, which M3SYM implements,
-please see (*paper*)
+of an active matter network. For more information on the MEDYAN model, which M3SYM implements,
+see [1].
 
 \subsection{Chemical capabilities}
  The chemical capabilities of M3SYM include:
 
 \begin{itemize}
 
-\item Stochastic reaction-diffusion on a three dimensional grid using stochastic simulation algorithms, including the \textit{Gillespie} and \textit{Next Reaction Method}.
+\item Stochastic reaction-diffusion on a three dimensional grid using stochastic simulation algorithms, including the \textit{direct} Gillespie algorithm and the \textit{Next Reaction Method}.
 \item Complex chemical representation of filaments, allowing for heterogeneous chemical monomers in a single filament segment.
 \item A wide range of filament reactions, including:
 \begin{itemize}
 \item Polymerization of either end of filament
 \item Depolymerization of either end of filament
+\item Filament nucleation, either branching or spontaneous
 \item Severing of filament at chosen sections
-\item Branching of filaments
 \item Cross-linker binding and unbinding to filament
-\end{itemize}
+\item Motor walking, binding, and unbinding to filament
+\item Monomeric reactions within a filament
 
-\break
-In the case of cytoskeletal networks, the following reactions can also be simulated:
-\begin{itemize}
-\item Actin filament aging by ATP hydrolysis
-\item Myosin II motor binding, unbinding, and walking
 \end{itemize}
-
 \end{itemize}
 
 \subsection{Mechanical capabilities}
@@ -85,12 +81,13 @@ M3SYM allows for a wide range of mechanical interactions, including:
 \begin{itemize}
 \item Force fields for filament interactions, including
 \begin{itemize}
-\item Filament stretching and bending
-\item Branching point stretching and bending
-\item Excluded volume interactions
+\item Filament stretching and bending 
+\item Branching point stretching, bending, and dihedral
+\item Excluded volume 
 \end{itemize}
-\item Stretching force fields for cross-linkers and myosin II motors 
-\item Boundary interaction force fields
+\item Stretching force fields for cross-linkers and motors 
+\item Boundary steric repulsion force field
+\item Bubble repulsion force field
 \end{itemize}
 
 \noindent These force fields can be minimized by a choice of conjugate gradient algorithm.
@@ -99,11 +96,12 @@ M3SYM allows for a wide range of mechanical interactions, including:
 
 M3SYM couples chemistry and mechanics by altering reaction rates based on mechanical stresses in a given 
 network. This allows for a full treatment of the complex mechanochemical responses in active matter networks.
-See (*paper*) for a more detailed description.
+See [1] for a more detailed description.
 
 \section{Running M3SYM}
 
 To run the M3SYM executable, execute the following command in the terminal shell: \newline \newline\indent \texttt{> ./M3SYM -s <SystemFile> -i <InputDirectory> -o <OutputDirectory>} \newline \newline The \texttt{SystemFile} will be described in the later sections. \newline\newline  The \texttt{InputDirectory} specifies where all input files are contained, with their names being specified in the \texttt{SystemFile}. This must be an absolute directory path. The \texttt{OutputDirectory} specifies where the produced output will be placed. This also must be an absolute directory path. See the later sections for details on input and output files.
+
 \section {Input}
 
 \subsection{System file}
@@ -111,276 +109,312 @@ To run the M3SYM executable, execute the following command in the terminal shell
 The system file is a simple text file that defines all parameters of the simulation. The M3SYM executable must take
  in a system file as a command line argument. \newline\newline Each parameter must be defined in the following syntax: \newline \newline \centerline{\texttt{<PARAMETER>:  <PARAMETERVALUE>}} \newline\newline where the parameter name is followed by a semicolon, and the value of the parameter is placed after the semicolon. Outlined below are the parameters that can be included. \\
  
- \noindent Unless otherwise noted, all distance parameters are in units of nanometers. 
+ \noindent Unless otherwise noted, all distance parameters are in units of nanometers. \\
+
+\noindent All filament properties must be listed in the order of filament definition, and must be consistent across all definitions. To list various parameter values, provide a space between those values after the parameter qualifier. In cases where a filament type is needed, filament types range from 0 to \texttt{NUMFILAMENTTYPES}, as defined accordingly. \\
+
+\noindent Parameter options will be listed as \texttt{<PARAMETER>} -- value type -- description.
+
 
 \subsubsection{Geometry}
 
-The following geometrical parameters can be set. All geometry parameters must be set in the system file, or a startup error will result. 
+The following geometric parameters can be set. All geometry parameters must be set in the system file, or a startup error will result. \\
 
-\begin{table} [!ht]
-\centering
-\begin{tabular}{|L{5cm}|C{3cm}|L{5.2cm}|}  
-\hline
- \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
- \hline
-  NDIM & 1, 2, 3 & Number of dimensions in system \\
-  \hline
-  NX & int & Number of compartments in X \\
-  \hline
-  NY & int & Number of compartments in Y \\
-  \hline
-  NZ & int & Number of compartments in Z \\
-  \hline
-  COMPARTMENTSIZEX & double & Size of compartment in X \\
-  \hline
-  COMPARTMENTSIZEY & double & Size of compartment in Y \\
-  \hline
-  COMPARTMENTSIZEZ & double & Size of compartment in Z \\
-  \hline
-  MONOMERSIZE & double & Size of monomer for filament growth \\
-  \hline
-  CYLINDERSIZE & double & Size of cylinder in filament\\
-  \hline
-  BOUNDARYSHAPE & SPHERICAL, CUBIC, CAPSULE & Boundary shape \\
-  \hline
-  BDIAMETER & double & Diameter for applicable shapes, including SPHERICAL and CAPSULE \\
-  \hline
-\end{tabular}
-\end{table}
+\small 
+\noindent \texttt{NDIM} -- 1, 2, 3 -- Number of dimensions in system. \\
+ 
+\noindent \texttt{NX} -- int -- Number of compartments in X direction. \\
 
-\break
-\noindent If movement of boundaries is desired, the following parameters can also be set. If these parameters are not set, the system will assume non-moving boundaries. Currently, moving boundaries are only implemented for the CUBIC boundary shape.
+\noindent \texttt{NY} -- int -- Number of compartments in Y direction. \\
 
-\begin{table} [!ht]
-\centering
-\begin{tabular}{|L{5cm}|C{3cm}|L{5.2cm}|}  
-\hline
- \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
- \hline
-  BOUNDARYMOVE & NONE, ALL, TOP & Movement of a boundary. ALL specifies that all boundaries will move in the given direction, and top specifies that the top of the boundary in the z direction will move. \\
-  \hline
-  BMOVESPEED & double & Speed of boundary movement in $nm / s$. If a negative value is given, the boundary will move towards the center of the grid. If positive, the boundary will move away from the center of the grid.\\
-  \hline
-   BMOVESTARTTIME & double & Time at which the boundary will begin to move. If not specified, the boundary will start moving at the beginning of the simulation.\\
-  \hline
-    BMOVEENDTIME & double &Time at which the boundary will stop movement.\\
-  \hline
-\end{tabular}
-\end{table}
+\noindent \texttt{NZ} -- int -- Number of compartments in Z direction. \\
+
+\noindent \texttt{COMPARTMENTSIZEX} -- double -- Size of compartment in X direction. \\
+
+\noindent \texttt{COMPARTMENTSIZEY} -- double -- Size of compartment in Y direction. \\
+
+\noindent \texttt{COMPARTMENTSIZEZ} -- double -- Size of compartment in Z direction. \\
+
+\noindent \texttt{MONOMERSIZE} -- double -- Size of monomer for filament growth .\\
+
+\noindent \texttt{CYLINDERSIZE} -- double -- Size of cylinder in filament.\\
+
+\noindent \texttt{BOUNDARYSHAPE} -- SPHERICAL, CUBIC, CAPSULE -- Boundary shape. \\
+
+\noindent \texttt{BOUNDARYDIAMETER} -- double -- Diameter for applicable shapes, including SPHERICAL and CAPSULE geometries.\\
+
+\normalsize
+
+\noindent If movement of boundaries is desired, the following parameters can also be set. If these parameters are not set, the system will assume non-moving boundaries. Currently, moving boundaries are only implemented for the CUBIC boundary shape. \\ 
+
+\small 
+
+\noindent \texttt{BOUNDARYMOVE} -- NONE, ALL, TOP -- Movement of a boundary. ALL specifies that all boundaries will move in the given direction, and top specifies that the top of the boundary in the z direction will move. \\
+ 
+\noindent  \texttt{BMOVESPEED} -- double -- Speed of boundary movement in $nm / s$. If a negative value is given, the boundary will move towards the center of the grid. If positive, the boundary will move away from the center of the grid.\\
+ 
+\noindent  \texttt{BMOVESTARTTIME} -- double -- Time at which the boundary will begin to move. If not specified, the boundary will start moving at the beginning of the simulation.\\
+ 
+\noindent  \texttt{BMOVEENDTIME} -- double --Time at which the boundary will stop movement.\\ 
+\normalsize
+ 
 
 \subsubsection{Mechanics}
 
-The following mechanical parameters can be set. It should be noted that the number of parameters for each force field must match the number of species of that type, specified in the \texttt{SystemFile}. Force field constant units are dependent on the potential used, but in general will be in pN scaling. For more information on force fields used in the MEDYAN3 model, see (*paper*). If a force field type is left blank, that force field will not be included in the simulation.
+The following mechanical parameters can be set. It is noted that the number of parameters for each force field must match the number of species of that type, specified in the \texttt{SystemFile}. This must be consistent for all simulation elements, including filaments, cross-linkers, motors, branchers, and bubbles. To set multiple parameters corresponding to multiple species, list the parameter values with space in between after the parameter qualifier. \\
 
-\begin{longtable}{|L{4.65cm}|C{4cm}|L{4cm}|}  
-\hline
- \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
- \hline
-  CONJUGATEGRADIENT & POLAKRIBIERE, FLETCHERRIEVES, STEEPESTDESCENT & Type of conjugate gradient minimization \\
-  \hline
-  GRADIENTTOLERANCE & double & Gradient tolerance in conjugate gradient (in pN) \\
-    \hline
-   MAXDISTANCE & double & Maximum distance beads can be moved in minimization \\
-  \hline
-   LAMBDAMAX & double & Maximum lambda that can be returned in line search \\
-  \hline
-  FSTRETCHINGTYPE & HARMONIC & Filament stretching force field \\
-  \hline
-   FSTRETCHINGK & double & Filament stretching force constant \\
-  \hline
-    FBENDINGTYPE & HARMONIC, COSINE & Filament bending force field \\
-  \hline
-   FBENDINGK & double & Filament bending force constant \\
-  \hline
-   FBENDINGTHETA & double & Filament bending angle (radians) \\
-  \hline
-   LSTRETCHINGTYPE & HARMONIC & Cross-linker stretching force field \\
-  \hline
-   LSTRETCHINGK & double & Cross-linker stretching force constant \\
-  \hline
-    MSTRETCHINGTYPE & HARMONIC & Myosin II  stretching force field \\
-  \hline
-   MSTRETCHINGK & double & Myosin II stretching force constant \\
-  \hline
-   BRSTRETCHINGTYPE & HARMONIC & Branching point stretching force field \\
-  \hline
-   BRSTRETCHINGK & double & Branching point stretching force constant \\
-  \hline
-    BRBENDINGTYPE & COSINE & Branching point bending force field \\
-  \hline
-   BRBENDINGK & double & Branching point bending force constant \\
-   \hline
-   BRBENDINGTHETA & double & Branching point bending angle (radians) \\
-  \hline
-   BRDIHEDRALTYPE & COSINE & Branching point dihedral force field \\
-  \hline
-   BRDIHEDRALK & double & Branching point stretching force constant \\
-  \hline
-   BRPOSITIONTYPE & HARMONIC & Branching point position force field \\
-  \hline
-   BRPOSITIONK & double & Branching point position force constant \\
-  \hline
-   VOLUMETYPE & REPULSION & Volume force type \\
-  \hline
-   VOLUMECUTOFF & double & Volume interaction cutoff distance\\
-  \hline
-  VOLUMEK & double & Volume force constant \\
-  \hline
-  BOUNDARYTYPE & REPULSIONEXP, REPULSIONLJ & Boundary force type \\
-  \hline
-   BOUNDARYCUTOFF & double & Boundary interaction cutoff distance\\
-  \hline
-  BINTERACTIONK & double & Boundary force constant \\
-  \hline
-  BSCREENLENGTH & double & Boundary screening length constant\\
-  \hline
- 
-\end{longtable}
+\noindent Force field constant units are dependent on the potential used, but in general will be in $pN$ and $nm$ scaling. For more information on force fields used in the MEDYAN model, see [1]. If a force field type is left blank, that force field will not be included in the simulation.\\
+
+\small 
+   \noindent \texttt{CONJUGATEGRADIENT} -- POLAKRIBIERE, FLETCHERRIEVES, STEEPESTDESCENT -- Type of conjugate gradient minimization. \\
+   
+    \noindent \texttt{GRADIENTTOLERANCE} -- double -- Gradient tolerance in conjugate gradient (in $pN$). \\
+     
+    \noindent  \texttt{MAXDISTANCE} -- double -- Maximum distance beads can be moved in minimization. \\
+   
+    \noindent  \texttt{LAMBDAMAX} -- double -- Maximum lambda that can be returned in line search. \\
+   
+    \noindent \texttt{FSTRETCHINGTYPE} -- HARMONIC -- Filament stretching force field. \\
+  
+    \noindent \texttt{FSTRETCHINGK} -- double -- Filament stretching force constant. \\
+   
+     \noindent \texttt{FBENDINGTYPE} -- HARMONIC, COSINE -- Filament bending force field. \\
+   
+     \noindent \texttt{FBENDINGK} -- double -- Filament bending force constant. \\
+   
+     \noindent \texttt{FBENDINGTHETA} -- double -- Filament bending angle (radians). \\
+   
+     \noindent \texttt{LSTRETCHINGTYPE} -- HARMONIC -- Cross-linker stretching force field.\\
+   
+     \noindent  \texttt{LSTRETCHINGK} -- double -- Cross-linker stretching force constant. \\
+   
+     \noindent \texttt{ MSTRETCHINGTYPE} -- HARMONIC -- Motor stretching force field. \\
+   
+     \noindent \texttt{MSTRETCHINGK} -- double -- Motor stretching force constant. \\
+   
+     \noindent \texttt{BRSTRETCHINGTYPE} -- HARMONIC -- Branching point stretching force field. \\
+   
+     \noindent \texttt{BRSTRETCHINGK} -- double -- Branching point stretching force constant. \\
+   
+    \noindent  \texttt{BRBENDINGTYPE} -- COSINE -- Branching point bending force field. \\
+   
+    \noindent \texttt{BRBENDINGK} -- double -- Branching point bending force constant. \\
+    
+    \noindent \texttt{BRBENDINGTHETA} -- double -- Branching point bending angle (radians). \\
+   
+    \noindent \texttt{BRDIHEDRALTYPE} -- COSINE -- Branching point dihedral force field. \\
+   
+     \noindent \texttt{BRDIHEDRALK} -- double -- Branching point stretching force constant. \\
+   
+     \noindent \texttt{BRPOSITIONTYPE} -- HARMONIC -- Branching point position force field.\\
+   
+     \noindent \texttt{BRPOSITIONK} -- double -- Branching point position force constant. \\
+   
+     \noindent \texttt{VOLUMEFFTYPE} -- REPULSION -- Volume force type. \\
+   
+    \noindent  \texttt{VOLUMECUTOFF} -- double -- Volume interaction cutoff distance.\\
+   
+    \noindent  \texttt{VOLUMEK} -- double -- Volume force constant. \\
+   
+     \noindent \texttt{BOUNDARYFFTYPE} -- REPULSIONEXP -- Boundary force type. \\
+   
+      \noindent \texttt{BOUNDARYCUTOFF} -- double -- Boundary interaction cutoff distance.\\
+   
+     \noindent \texttt{BOUNDARYINTERACTIONK} -- double -- Boundary force constant. \\
+   
+     \noindent \texttt{BOUNDARYSCREENLENGTH} -- double -- Boundary screening length constant.\\
+   
+     \noindent \texttt{BUBBLEFFTYPE} -- REPULSIONEXP -- Bubble force type. \\
+   
+     \noindent  \texttt{BUBBLECUTOFF} -- double -- Boundary interaction cutoff distance.\\
+   
+     \noindent \texttt{BUBBLEINTERACTIONK} -- double -- Bubble force constant. \\
+   
+     \noindent \texttt{BUBBLESCREENLENGTH} -- double -- Bubble screening length constant.\\
+   
+     \noindent \texttt{BUBBLERADIUS} -- double -- Bubble radius.\\
+   
+     \noindent \texttt{NUMBUBBLETYPES } -- int -- Number of different bubble types.\\
+     
+      \noindent \texttt{MTOCFFTYPE} -- ATTACHMENTHARMONIC -- MTOC force type. \\
+
+\normalsize
 
 \subsubsection{Chemistry}
 
-The following chemical parameters can be set. The number of species of each type must match the chemistry input file, as well as the number of mechanical parameters for each force field. All chemical parameters must be set unless otherwise noted in the description. For the motor parameters, the number of parameters must match the number of motor species in the system. For more information on chemical algorithms, see (*paper*)
+The following chemical parameters can be set. It should be noted that the number of parameters listed for each chemical species type that resides on a filament must match the number of filament types, specified in the \texttt{SystemFile}. This must be consistent for all filament types. To set multiple parameters corresponding to multiple filaments, list the parameters with space in between after the parameter qualifier. \\
 
-\begin{longtable}{|L{4.9cm}|C{2.5cm}|L{4.75cm}|}  
-\hline
- \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
- \hline
-  CHEMISTRYFILE & string & Input chemistry file. Should be in the \texttt{InputDirectory} \\
-  \hline
-  CALGORITHM & GILLESPIE, NRM & Chemistry algorithm used \\
-  \hline
-  NUMTOTALSTEPS & int & Number of total chemical steps to perform. If RUNTIME is set, this will not be used \\
-  \hline
-  RUNTIME & double & Total runtime of simulation (seconds) \\
-  \hline
-  NUMSTEPSPERS & int & Number of total steps per snapshot. If SNAPSHOTTIME is set, this will not be used \\
-  \hline
-  SNAPSHOTTIME & double & Time of each snapshot (seconds) \\
-  \hline
-  NUMCHEMSTEPS & int & Number of chemical steps per mechanical equilibration \\
-  \hline
-  NUMSTEPSPERN & int & Number of chemical steps per neighbor list update. This includes updating
+\noindent All chemical parameters must be set unless otherwise noted in the description. For the motor parameters, the number of parameters must match the number of motor species in the system. For more information on chemical algorithms, see [1]. \\
+
+\small
+    \noindent\texttt{CHEMISTRYFILE} -- string -- Input chemistry file. Should be in the \texttt{InputDirectory}. \\
+   
+     \noindent\texttt{CALGORITHM} -- GILLESPIE, NRM -- Chemistry algorithm used. \\
+   
+     \noindent\texttt{NUMTOTALSTEPS} -- int -- Number of total chemical steps. If RUNTIME is set, will not be used. \\
+   
+     \noindent\texttt{RUNTIME} -- double -- Total runtime of simulation ($s$). \\
+   
+     \noindent\texttt{NUMSTEPSPERS} -- int -- Number of steps per snapshot. If SNAPSHOTTIME is set, will not be used. \\
+   
+     \noindent\texttt{SNAPSHOTTIME} -- double -- Time of each snapshot ($s$). \\
+   
+     \noindent\texttt{NUMCHEMSTEPS} -- int -- Number of chemical steps per mechanical equilibration. \\
+   
+     \noindent\texttt{NUMSTEPSPERN} -- int -- Number of chemical steps per neighbor list update. This includes updating
    chemical reactions as well as force fields which rely on neighbor lists. \\
-  \hline
-  NUMDIFFUSINGSPECIES & int & Diffusing species in system \\
-  \hline
-  NUMBULKSPECIES & int & Bulk species in system \\
-  \hline
-  NUMFILAMENTSPECIES & int & Filament species in system \\
-  \hline
-  NUMPLUSENDSPECIES & int & Plus end species in system \\
-  \hline
-  NUMMINUSENDSPECIES & int & Minus end species in system \\
-  \hline
-  NUMBOUNDSPECIES & int & Bound species in system \\
-  \hline
-    NUMLINKERSPECIES & int & Cross-linker species in system \\
-  \hline
-    NUMMOTORSPECIES & int & Myosin II motor species in system \\
-  \hline
-    NUMBRANCHERSPECIES & int & Brancher species in system \\
-  \hline
-    NUMBINDINGSITES & int & Number of binding sites per cylinder. This will set binding sites for cross-linkers,
-    motors, and other binding molecules. \\
-  \hline
-    NUMMOTORHEADSMIN & int & Minimum number of motor heads per motor species defined. \\
-    \hline
-    NUMMOTORHEADSMAX & int & Maximum number of motor heads per motor species defined. \\
-    \hline
-    MOTORSTEPSIZE & double & Single motor head step size. \\
-    \hline
- 
-\end{longtable}
+   
+     \noindent\texttt{NUMDIFFUSINGSPECIES} -- int -- Diffusing species in system. \\
+   
+     \noindent\texttt{NUMBULKSPECIES} -- int -- Bulk species in system. \\
+   
+      \noindent\texttt{NUMFILAMENTTYPES} -- int -- Number of different filament types. \\
+   
+     \noindent\texttt{NUMFILAMENTSPECIES} -- int -- Filament species in system for each filament type defined. \\
+   
+     \noindent\texttt{NUMPLUSENDSPECIES} -- int -- Plus end species in system for each filament type defined. \\
+   
+     \noindent\texttt{NUMMINUSENDSPECIES} -- int -- Minus end species in system for each filament type defined. \\
+   
+     \noindent\texttt{NUMBOUNDSPECIES} -- int -- Bound species in system for each filament type defined. \\
+   
+      \noindent\texttt{NUMLINKERSPECIES} -- int -- Cross-linker species in system for each filament type defined.  \\
+   
+       \noindent\texttt{NUMMOTORSPECIES} -- int -- Motor species in system for each filament type defined. \\
+   
+       \noindent\texttt{NUMBRANCHERSPECIES} -- int -- Brancher species in system for each filament type defined. \\
+   
+       \noindent\texttt{NUMBINDINGSITES} -- int -- Number of binding sites per cylinder for each filament type defined. 
+       This will set binding sites for cross-linkers, motors, and other binding molecules. \\
+   
+       \noindent\texttt{NUMMOTORHEADSMIN} -- int -- Minimum number of motor heads per motor species defined. \\
+     
+       \noindent\texttt{NUMMOTORHEADSMAX} -- int -- Maximum number of motor heads per motor species defined. \\
+     
+       \noindent\texttt{MOTORSTEPSIZE} -- double -- Single motor head step size. \\
+     
+
+\normalsize
 
 \subsubsection{Dynamic rates}
 
-The following dynamic rate forms and parameters can be set. These parameters are characteristic lengths and amplitudes of the rate changing equations outlined in (*paper*). These can be tuned to mimic the stall and unbinding mechanochemical coupling of cross-linkers and myosin II motors. Note that if dynamic rates are enabled, the number of dynamic rate forms for each type of reaction must match the number of species of that type specified in the \texttt{SystemFile}, i.e. the number of forms for cross-linker unbinding must match the number of cross-linker species, etc.
+The following dynamic rate forms and parameters can be set. These parameters are characteristic lengths and amplitudes of the rate changing equations outlined in [1]. These can be tuned to mimic the stall and unbinding mechanochemical coupling of cross-linkers and myosin II motors. Note that if dynamic rates are enabled, the number of dynamic rate forms for each type of reaction must match the number of species of that type specified in the \texttt{SystemFile}, i.e. the number of forms for cross-linker unbinding must match the number of cross-linker species, etc.\\
 
-The number of parameters specified for each type of dynamic rate form must match the number of parameters required for those forms. See below for details, and see (*paper*) for more information on the explicit forms. Parameters must be listed in order of the form that they correspond to, also corresponding to the species that they represent.
+\noindent The number of parameters specified for each type of dynamic rate form must match the number of parameters required for those forms. See below for details, and see [1] for more information on the explicit forms. Parameters must be listed in order of the form that they correspond to, also corresponding to the species that they represent.\\
 
-\begin{longtable}{|L{5.5cm}|C{3.2cm}|L{6cm}|}  
-\hline
- \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
- \hline
- DFPOLYMERIZATIONTYPE & BROWRATCHET & Filament polymerization dynamic rate form \\
- \hline
-  DFPOLYMERIZATIONLEN & double & Characteristic length for filament polymerization dynamic rate form \\
-  \hline
-  DLUNBINDINGTYPE & BASICCATCHSLIP, BASICSLIP & Cross-linker unbinding dynamic rate form. 
+\small
+
+  \noindent\texttt{DFPOLYMERIZATIONTYPE} -- BROWRATCHET -- Filament polymerization dynamic rate form. \\
+  
+  \noindent\texttt{DFPOLYMERIZATIONLEN} -- double -- Characteristic length for filament polymerization dynamic rate form. \\
+   
+  \noindent\texttt{DLUNBINDINGTYPE} -- BASICCATCHSLIP, BASICSLIP -- Cross-linker unbinding dynamic rate form. 
   If BASICCATCHSLIP, two
   parameters for DLUNBINDINGLEN and DLUNBINDINGAMP are needed to define the functional form. 
   If BASICSLIP, one 
   DLUNBIDINGLEN is needed to define the functional form. \\
-  \hline
-  DLUNBINDINGLEN & double & Characteristic length of cross-linker unbinding dynamic rate form \\
-  \hline
-   DLUNBINDINGAMP & double & Amplitude of cross-linker unbinding dynamic rate form \\
-  \hline
-    DMUNBINDINGTYPE & LOWDUTYPCMCATCH & Myosin II unbinding dynamic rate form. \\
-  \hline
-  DMUNBINDINGFORCE & double & Characteristic force of myosin II unbinding dynamic rate form \\
-  \hline
-  DMWALKINGTYPE & LOWDUTYHILLSTALL & Myosin II walking dynamic rate form \\ 
-  \hline
-  DMWALKINGLEN & double & Characteristic force of myosin II walking dynamic rate form \\
-  \hline
+   
+  \noindent\texttt{DLUNBINDINGLEN} -- double -- Characteristic length of cross-linker unbinding dynamic rate form. \\
+   
+   \noindent\texttt{DLUNBINDINGAMP} -- double -- Amplitude of cross-linker unbinding dynamic rate form. \\
+   
+   \noindent\texttt{DMUNBINDINGTYPE} -- LOWDUTYPCMCATCH -- Myosin II unbinding dynamic rate form. \\
+   
+   \noindent\texttt{DMUNBINDINGFORCE} -- double -- Characteristic force of myosin II unbinding dynamic rate form. \\
+   
+   \noindent\texttt{DMWALKINGTYPE} -- LOWDUTYHILLSTALL -- Myosin II walking dynamic rate form. \\ 
+   
+   \noindent\texttt{DMWALKINGLEN} -- double -- Characteristic force of myosin II walking dynamic rate form. \\
+   
  
-\end{longtable}
+\normalsize
 
 \subsubsection{Starting filament configuration}
 
 The following filament initialization parameters can be set. These parameters define the initial configuration and length
-of filaments in the system. It is noted that at least one filament, plus end, and minus end chemical species must be initialized in the chemistry input file, or a startup error will result.
+of filaments in the system. It is noted that at least one filament, plus end, and minus end chemical species must be initialized in the chemistry input file, or a startup error will result.\\
 
-\begin{table} [!ht]
-\centering
-\begin{tabular}{|L{4cm}|C{4cm}|L{6cm}|}  
-\hline
- \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
- \hline
-  FILAMENTFILE & string & Name of filament initialization file. This is not required.\\
-  \hline
-  NUMFILAMENTS & int & Number of random filaments to initialize. These filaments will be randomly 
+\small
+
+  \noindent\texttt{FILAMENTFILE} -- string -- Name of filament initialization file. This is not required.\\
+
+  \noindent\texttt{NUMFILAMENTS} -- int -- Number of random filaments to initialize. These filaments will be randomly 
   distributed in the system volume.\\
-  \hline
-  FILAMENTLENGTH & int & Number of cylinders per filament to initialize, defining the initial length of the filaments.\\
-  \hline
 
-\end{tabular}
-\end{table}
+  \noindent\texttt{FILAMENTLENGTH} -- int -- Number of cylinders per filament to initialize, defining the initial length of the filaments.\\
+  
+   \noindent\texttt{FILAMENTTYTPE} -- int -- Filament type to initialize.\\
+
+\normalsize
+
+\subsubsection{Starting bubble configuration}
+
+The following bubble initialization parameters can be set. These parameters define the initial configuration of bubbles in the system, similar to the filament configuration parameters. It is noted that at least one type of bubble must be set, or a startup error will result.\\
+
+\small
+
+  \noindent\texttt{BUBBLEFILE} -- string -- Name of bubble initialization file. This is not required.\\
+
+  \noindent\texttt{NUMBUBBLES} -- int -- Number of random filaments to initialize. These filaments will be randomly 
+  distributed in the system volume.\\
+
+   \noindent\texttt{BUBBLETYTPE} -- int -- Bubble type to initialize.\\
+   
+\normalsize
+
+\subsubsection{Special setup}
+
+The following special setups can be initialized with corresponding parameters. These setups must be set on different lines, so users should specify a new parameter, on separate lines, for each setup desired:\\
+
+\small 
+
+\noindent\texttt{SPECIALSETUP} -- MTOC -- Type of special setup. \\
+
+\normalsize
+
+\noindent For a microtubule organizing center (MTOC) setup, the following parameters can be defined:\\
+
+\small
+  \noindent\texttt{MTOCFILAMENTTYPE} -- int -- Type of filament to attach to the MTOC.\\
+
+  \noindent\texttt{MTOCNUMFILAMENTS} -- int -- Number of filaments to create and attach to the MTOC.\\
+  
+  \noindent\texttt{MTOCFILAMENTLENGTH} -- int -- Length of filaments to attach to the MTOC, in number of cylinders.\\
+    
+  \noindent\texttt{MTOCBUBBLETYPE} -- int -- Type of bubble to be the MTOC. \\
+\normalsize
 
 \subsubsection{Output formats}
 
-The output of M3SYM will be directed to the \texttt{OutputFile} specified. The following output can be set. These outputs must be set on different lines, so users should specify a new parameter, on separate lines, for each output value desired. Output files will be explained in more detail in a later section.
+The output of M3SYM will be directed to the \texttt{OutputFile} specified. The following output can be set. These outputs must be set on different lines, so users should specify a new parameter, on separate lines, for each output value desired. Output files will be explained in more detail in a later section.\\
 
-\begin{table} [!ht]
-\centering
-\begin{tabular}{|L{4cm}|C{6cm}|L{4cm}|}  
-\hline
- \textbf{Parameter} & \textbf{Value type} & \textbf{Description} \\
- \hline
-  OUTPUTTYPE & SNAPSHOT, FORCES, STRESSES, BIRTHTIMES, CHEMISTRY & Output type\\
-  \hline
+\small
+
+  \noindent\texttt{OUTPUTTYPE} -- SNAPSHOT, FORCES, STRESSES, BIRTHTIMES, CHEMISTRY -- Output type.\\
  
-\end{tabular}
-\end{table}
+\normalsize
+
 
 \subsection{Chemistry input file}
-The chemistry input file, whose name is specified in the \texttt{SystemFile}, contains the chemical configuration of the system, including species and reactions. It is noted that the order in which cross-linker, motor, and branches species are defined in the chemistry input file should match the relevant mechanical parameters, which are defined in the \texttt{SystemFile}. The number of species of each type should also match the \texttt{SystemFile}'s species type numbers, or a startup error will result.
+The chemistry input file, whose name is specified in the \texttt{SystemFile}, contains the chemical configuration of the system, including species and reactions. It is noted that the order in which cross-linker, motor, and branches species are defined in the chemistry input file should match the relevant mechanical parameters, which are defined in the \texttt{SystemFile}. The number of species of each type should also match the \texttt{SystemFile}'s species type numbers, or a startup error will result. \\
+
+\noindent All species names given must be unique strings, or a startup error will result.\\
+
+\noindent In all species and reaction definitions, \texttt{FILAMENTTYPE} is an integer that specifies the type of filament that this filament species belongs to. For example, if there are two filament types defined, the \texttt{FILAMENTTYPE} parameter could be 0 or 1. An invalid value of this parameter will result in an error.
 
 \subsubsection{Species}
 Different types of species can be defined as follows:
 
 \begin{itemize}
 \item 
-A \textbf{diffusing species} is defined in the following form:\newline\newline \centerline{\texttt{SPECIESDIFFUSING: <NAME> <COPYNUMBER> <DIFFRATE> <RELEASETIME> <QUALIFIER> <NUMEVENTS>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{DIFFUSIONRATE} is a float value that determines the diffusion rate of this molecule between compartments. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).\\
+A \textbf{diffusing species} is defined in the following form:\newline\newline \texttt{SPECIESDIFFUSING: <NAME> <COPYNUMBER> <DIFFRATE> <RELEASETIME> <QUALIFIER> (<NUMEVENTS>)} \newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{DIFFUSIONRATE} is a float value that determines the diffusion rate of this molecule between compartments. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).\\
 
 The \texttt{QUALIFIER} field is used to define the type of reacting species. The options are the following:
 \begin{itemize}
 \item \texttt{REG} : A regular reacting species. Copy numbers are updated typically.
 \item \texttt{AVG} : An averaging reacting species. The species will use a copy number averaged over a set number of copy number changes (\texttt{NUMEVENTS}) for efficiency.
 \end{itemize}
-The \texttt{NUMEVENTS} field is only used in the case of defining an averaging reacting species. If using a regular, this should  not be included in the file or an error will result.
+The \texttt{NUMEVENTS} field, denoted in parentheses as optional, only used in the case of defining an averaging reacting species. If using a regular, this should not be included in the file or an error will result.
 
 \item
 A \textbf{bulk species}, which is assumed to be spatially homogeneous, is defined in the following form:\newline\newline\centerline{\texttt{SPECIESBULK: <NAME> <COPYNUMBER> <RELEASETIME> <QUALIFIER>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).
@@ -392,17 +426,27 @@ The \texttt{QUALIFIER} field is used to define the type of reacting species. The
 \end{itemize}
 
 \item
-Any \textbf{filament-related species} can be defined in the following form:\newline\newline\centerline{\texttt{SPECIES<SPECIESTYPE>: <NAME>}}\newline\newline where \texttt{SPECIESTYPE} can be:
+Any \textbf{filament-related species} can be defined in the following form:\newline\newline\centerline{\texttt{SPECIES<SPECIESTYPE>: <NAME> <FILAMENTTYPE>}}\newline\newline where \texttt{SPECIESTYPE} can be:
 \begin{itemize}
 \item \texttt{FILAMENT} : A filamentous species. At least one filament species must be defined if using filaments in simulation.
 \item \texttt{PLUSEND} : A plus end species on a filament, which is defined as the front of the filament. There must be at least one plus end species for every filament species defined in the system.
 \item \texttt{MINUSEND} : A minus end species on a filament, which is defined as the back of the filament. There must be at least one minus end species for every filament species defined in the system.
-\item \texttt{BOUND} : A bound species on a filament. There must be at least one bound species defined in the system for each type of binding molecule, which will denote the "empty" spot on a filament for that molecule. They must be listed in order of 1) branching binding site, 2) Linker binding site, 3) motor binding site.
-\item \texttt{LINKER} : A cross-linker species. The ordering of cross-linker initializations should match their mechanical parameters, as stated above.
+\item \texttt{BOUND} : A bound species on a filament. There must be at least one bound species defined for each filament type. \item \texttt{LINKER} : A cross-linker species. The ordering of cross-linker initializations should match their mechanical parameters, as stated above.
 \item \texttt{MOTOR} : A myosin II motor species. The ordering of motor initializations should match their mechanical parameters, as stated above.
 \item \texttt{BRANCHER} : A branching species. The ordering of branches initializations should match their mechanical parameters, as stated above.
 \end{itemize}
+
 \end{itemize}
+
+\subsubsection{Binding sites}
+
+For every species that binds to filaments (linkers, motors, branchers), a binding site species must be set. This binding site must be a bound species on any filament type. It is declared in the following form: \newline
+
+\noindent\texttt{LINKERBINDINGSITE: <NAME> <FILAMENTTYPE>}\\
+\texttt{MOTORBINDINGSITE: <NAME> <FILAMENTTYPE>}\\
+\texttt{BRANCHERBINDINGSITE: <NAME> <FILAMENTTYPE>}\\
+
+\noindent where \texttt{NAME} is the name of a pre-defined bound species on a filament of type \texttt{FILAMENTTYPE}.
 
 \subsubsection{Reactions}
 
@@ -429,7 +473,7 @@ where any bulk or diffusing species can be included, and \texttt{<RATE>} is a fl
 where any bulk species can be included. If the reaction only contains bulk species, it must be specified as a bulk reaction. \texttt{<RATE>} is a float value that determines the rate constant  of the reaction.
 
 \item A \textbf{polymerization reaction} can be defined in the following form:\newline\newline
-\texttt{POLYMERIZATIONREACTION:}\newline
+\texttt{POLYMERIZATIONREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:BULK/DIFFUSING + <NAME>:PLUSEND/MINUSEND ->}\newline
 \texttt{<NAME>:FILAMENT + <NAME>:PLUSEND/MINUSEND <RATE>}\newline\newline 
 where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant  of the reaction. It is noted that the first species listed can be either \texttt{DIFFUSING} or \texttt{BULK}, and the reaction can contain a \texttt{PLUSEND} or \texttt{MINUSEND}.
@@ -438,7 +482,7 @@ This reaction will polymerize the filament, producing a new chemical species on 
 the length of the filament by a single monomer.
 
 \item A \textbf{depolymerization reaction} can be defined in the following form:\newline\newline
-\texttt{DEPOLYMERIZATIONREACTION:}\newline
+\texttt{DEPOLYMERIZATIONREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:FILAMENT + <NAME>:PLUSEND/MINUSEND ->}\newline
 \texttt{<NAME>:BULK/DIFFUSING + <NAME>:PLUSEND/MINUSEND <RATE>}\newline\newline
  where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the third species listed can be either \texttt{DIFFUSING} or \texttt{BULK}, and the reaction can contain a \texttt{PLUSEND} or \texttt{MINUSEND}.
@@ -446,7 +490,7 @@ the length of the filament by a single monomer.
  This reaction will depolymerize the filament, removing a chemical species from the end of the filament and decreasing the length of the filament by a single monomer.
 
 \item A \textbf{cross-linker reaction} between two filaments can be defined in the following form:\newline\newline
-\texttt{LINKERREACTION:}\newline
+\texttt{LINKERREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:BOUND:1 + <NAME>:BOUND:2 + <NAME>:BULK/DIFFUSING <->}\newline
 \texttt{<NAME>:LINKER:1 + <NAME>:LINKER:2 <ONRATE> <OFFRATE> <RMIN> <RMAX>}\newline
 
@@ -455,8 +499,8 @@ where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} a
 This reaction produces cross-linker species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the cross-linkers, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any linker potentials that have been created between the filaments.
 
  
- \item A \textbf{myosin II motor reaction} between two filaments can be defined in the following form:\newline\newline
-\texttt{MOTORREACTION:}\newline
+ \item A \textbf{motor reaction} between two filaments can be defined in the following form:\newline\newline
+\texttt{MOTORREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:BOUND:1 + <NAME>:BOUND:2 + <NAME>:BULK/DIFFUSING <->}\newline
 \texttt{<NAME>:MOTOR:1 + <NAME>:MOTOR:2 <ONRATE> <OFFRATE> <RMIN> <RMAX>}\newline
 
@@ -465,8 +509,8 @@ where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>} a
 This binding reaction produces motor species at two separate positions on each respective filament which are chemically and mechanically connected. If mechanical force fields are defined for the motor, a potential will be created between the filaments. The unbinding reaction will remove these species from the filaments, as well as remove any motor potentials that have been created between the filaments.
 
 
-\item A \textbf{myosin II motor walking reaction} can be defined in the following form:\newline\newline
-\texttt{MOTORWALKINGREACTION:}\newline
+\item A \textbf{motor walking reaction} can be defined in the following form:\newline\newline
+\texttt{MOTORWALKINGREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 ->}\newline
 \texttt{<NAME>:MOTOR:N/N+1 + <NAME>:BOUND:N/N+1 <RATE>}\newline\newline
 where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. The choice of \texttt{N/N+1} will determine whether the motor is stepping forward or backward. A motor movement from \texttt{N} to \texttt{N+1} is defined as forward movement (towards the plus end of the filament), and the opposite is backward (towards the minus end). These choices for the reactants and products must be self-consistent as well as consistent with the bound species positions chosen in the reaction, or a startup error will result. The bound species listed must be the corresponding motor binding site.
@@ -474,7 +518,7 @@ where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is 
 This reaction will move a motor head in the given direction.
  
 \item A \textbf{branching reaction} can be defined in the following form:\newline\newline
-\texttt{BRANCHINGREACTION:}\newline
+\texttt{BRANCHINGREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING +  <NAME>:BOUND <->}\newline
 \texttt{<NAME>:BRANCHER + <NAME>:PLUSEND <RATE> <NUCLEATIONZONE> <NUCLEATIONDIST>}\newline\newline
 where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.  It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding branching binding site.
@@ -494,7 +538,7 @@ It is noted that \texttt{NUCLEATIONDIST} needs to be specified for all nucleatio
 This reaction will create a new branching point, as well as a filament with the desired chemical plus end. If mechanical force fields are defined for the branching point, a potential will be created between the parent and child filament. The unbinding reaction will remove the branching point from the filaments, thus freeing the child filament from the parent. It will also remove any branching point potentials that have been created between the filaments.
  
 \item A \textbf{nucleation reaction} can be defined in the following form:\newline\newline
-\texttt{NUCLEATIONREACTION:}\newline
+\texttt{NUCLEATIONREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING ->}\newline
 \texttt{<NAME>:PLUSEND + <NAME>:FILAMENT + <NAME>:MINUSEND <RATE>}\newline\newline
 where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}.
@@ -502,7 +546,7 @@ where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is 
 This reaction will create a new filament with the given chemical plus end, minus end, and filament species.
 
 \item A \textbf{destruction reaction} can be defined in the following form:\newline\newline
-\texttt{DESTRUCTIONREACTION:}\newline
+\texttt{DESTRUCTIONREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:PLUSEND + <NAME>:MINUSEND ->}\newline
 \texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING <RATE>}\newline\newline
 where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. It is noted that the third and fourth species listed can be either \texttt{DIFFUSING} or \texttt{BULK}.
@@ -510,7 +554,7 @@ where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is 
 This reaction will destroy a filament, removing it from the system.
 
 \item An \textbf{filament aging reaction} can be defined in the following form:\newline\newline
-\texttt{AGINGREACTION:}\newline
+\texttt{AGINGREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:FILAMENT/PLUSEND/MINUSEND ->}\newline
 \texttt{<NAME>:FILAMENT/PLUSEND/MINUSEND <RATE>}\newline\newline
 where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction. Either of the reactant or product species can be \texttt{FILAMENT}, \texttt{PLUSEND}, or \texttt{MINUEND}, but the product and reactant species must be the same type, or a startup error will result.
@@ -518,7 +562,7 @@ where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is 
 This reaction will change the chemical species that resides in a filament.
 
 \item A \textbf{filament severing reaction} can be defined in the following form:\newline\newline
-\texttt{SEVERINGREACTION:}\newline
+\texttt{SEVERINGREACTION: <FILAMENTTYPE>}\newline
 \texttt{AT <NAME>:FILAMENT <RATE>}\newline\newline
 where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.
 
@@ -528,12 +572,18 @@ This reaction will sever the filament at the closest cylinder connection to a gi
 
 \subsection{Filament input file}
 
-The filament input file, whose name is specified in the \texttt{SystemFile}, contains coordinates of filaments to initialize in the system at startup. The format of an initial filament declaration is as follows:\newline
+The filament input file, whose name is specified in the \texttt{SystemFile}, contains the type and coordinates of filaments to initialize in the system at startup. The format of an initial filament declaration is as follows:\newline
 
-\texttt{FILAMENT: coord1x coord1y coord1z coord2x coord2y coord2z}\newline\newline
+\texttt{FILAMENT: <FILAMENTTYPE> coord1x coord1y coord1z coord2x coord2y coord2z}\newline\newline
 \noindent where \texttt{\{coord1x, coord1y, coord1z\}} and \texttt{\{coord2x, coord2y, coord2z\}} specify the starting and 
 ending coordinates of the filament.
 
+\subsection{Bubble input file}
+
+The bubble input file, whose name is specified in the \texttt{SystemFile}, contains a coordinate of bubbles to initialize in the system at startup. The format of an initial filament declaration is as follows:\newline
+
+\texttt{BUBBLE: <BUBBLETYPE> coordx coordy coordz}\newline\newline
+\noindent where \texttt{\{coordx, coordy, coordz\}} is the coordinate of the bubble.
 \section {Output}
 
 M3SYM can produce a number of output types, set in the \texttt{SystemFile}, produced at a snapshot frequency also defined in the \texttt{SystemFile}. These output files will be placed in the \texttt{OutputDirectory} specified at runtime. The output types and visualization of this output are described below.
@@ -543,7 +593,7 @@ M3SYM can produce a number of output types, set in the \texttt{SystemFile}, prod
 The snapshot file gives the basic trajectory information of the system. It includes a brief description for all filaments, cross-linkers, motors, and branching points in the system, as well as information on the current chemical step. It is produced with the following form:\newline
 
 \noindent\texttt{chemstepnumber time numfilaments numlinkers nummotors numbranchers}\newline
-\texttt{F filamentid filamentcyllength deltal deltar}\newline
+\texttt{F filamentid filamenttype filamentcyllength deltal deltar}\newline
 \texttt{beadcoord1x beadcoord1y beadcoord1z beadcoord2x beadcoord2y beadcoord2z ...}\newline
 \texttt{...}\newline
 \texttt{L linkerid linkertype }\newline
@@ -560,7 +610,7 @@ The snapshot file gives the basic trajectory information of the system. It inclu
 The forces file gives the forces on each element in the system, in similar form to the snapshot file. It is produced with the following format:\newline
 
 \noindent\texttt{chemstepnumber time numfilaments numlinkers nummotors numbranchers}\newline
-\texttt{F filamentid filamentcyllength deltal deltar}\newline
+\texttt{F filamentid filamenttype filamentcyllength deltal deltar}\newline
 \texttt{bead1property bead2property ...}\newline
 \texttt{...}\newline
 \texttt{L linkerid linkertype }\newline
@@ -586,10 +636,8 @@ The chemistry trajectory file gives the copy numbers of all species in the syste
 
 \noindent\texttt{chemstepnumber time}\\
 \texttt{SPECIESNAME COPYNUMBER}\\
-\texttt{...}\\
 
 \noindent where \texttt{SPECIESNAME} represents the name of the system species and \texttt{COPYNUMBER} is the current copy number of that species at the given timestep.
-
 
 \subsection{Visualization of output}
 
@@ -617,18 +665,17 @@ may need to be declared, depending on your system configuration:\newline
 
 \noindent We will assume for the next section that this alias is configured.
 
-
 \subsubsection{Running the visualization script, AnimateTrajectory.py}
 
-The visualization script must be edited by the user on lines 6-8 to include the desired snapshot file. A color file can also be specified, which will color the network based on either a force, stress, or birth time file. If no color file is included, the elements of the network will be colored to a default value. The script can also be edited on lines 201-214 to include titles, scales, default colors, and choice of color map. \newline
+The visualization script must be edited by the user on lines 6-8 to include the desired snapshot file. A color file can also be specified, which will color the network based on either a force, stress, or birth time file. If no color file is included, the elements of the network will be colored to a default value. The script can also be edited on lines 231-267 to include titles, boundaries, scales, default colors, and choice of color map. \newline
 
 \noindent Run the script using the following commands:\newline\newline
 \indent\texttt{> ip}\newline
 \indent\texttt{> run -i AnimateTrajectory.py}\newline
 
-\noindent This will load all snapshots of the trajectory files specified. To show a frame, execute the following commands:\newline
+\noindent This will load all snapshots of the trajectory files specified. To show a snapshot, execute the following commands:\newline
 
-\texttt{> show\_frame(frame number)}\newline
+\texttt{> show\_snapshot(snapshot number)}\newline
 
 \noindent To show the entire simulation frame by frame, execute the following:\newline
 
@@ -658,5 +705,11 @@ http://www.stack.nl/~dimitri/doxygen/ for more information.
 \subsection{Other information}
 
 Please direct all code inquiries to James Komianos (jkomianos@gmail.com).
+
+\section{References}
+
+[1] Popov K, Komianos J, and GA Papoian. ``MEDYAN: Mechanochemical Simulations 
+\indent of Actomyosin Networks and Other Active Matter." PLoS Computational Biology (in 
+\indent review), 2015.
 
 \end{document}  

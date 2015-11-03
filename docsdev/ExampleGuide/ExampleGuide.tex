@@ -10,7 +10,7 @@
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
 
-\title{Example Guide for M3SYM v1.0}
+\title{Example Guide for M3SYM v1.1}
 \author{Papoian Lab, University of Maryland}
 \date{}							% Activate to display a given date or no date
 
@@ -34,17 +34,17 @@ Examples can be found in \texttt{InstallDirectory/examples}. Each example includ
 
 \section{A basic cytoskeletal network}
 
-This example, a basic cytoskeletal network with alpha-actinin cross-linkers and Arp2/3 branching complexes, can be found in
-\texttt{InstallDirectory/examples/actinnetwork}. This is set up to be a 30s simulation.
+This example, a basic cytoskeletal network with $\alpha$-actinin cross-linkers and Arp2/3 branching complexes, can be found in
+\texttt{InstallDirectory/examples/actinnetwork}. This is set up to be a 30 $s$ simulation.
 
 \subsection{Initial system configuration}
  
  This example is set up with the following initial configuration:
  
  \begin{itemize}
- \item Compartment size of 500nm, in a 2x2x2 grid 
- \item 1um side cubic boundary
- \item 50 randomly placed filaments, all initially 0.02um
+ \item Compartment size of 500 $nm$, in a 2x2x2 grid 
+ \item 1 $\mu m ^3$ cubic boundary
+ \item 50 randomly placed filaments, all initially 0.02 $\mu m$
  \end{itemize}
 
 \subsection{Chemistry involved}
@@ -53,14 +53,14 @@ This example is set up with the following chemical configuration:
 
 \begin{itemize}
 \item Diffusing actin, Arp2/3, and alpha-actinin species
-\item Initial concentrations of 10uM, 50nM, and 200nM respectively.
+\item Initial concentrations of 10 $\mu M$, 50 $nM$, and 200 $nM$ respectively.
 \item Actin polymerization and depolymerization
-\item Alpha-actinin binding and unbinding
-\item Arp2/3 branching and unbranching
+\item $\alpha$-actinin binding and unbinding
+\item Arp2/3 branching and debranching
 
 \end{itemize}
 
-\noindent For more information on the reaction constants and concentrations chosen, see (*paper*).
+\noindent For more information on the reaction constants and concentrations chosen, see [1].
 
 \subsection{Mechanics involved}
 
@@ -68,19 +68,24 @@ This example is set up with the following mechanical configuration:
 
 \begin{itemize}
 \item Harmonic actin filament stretching force field
-\item Harmonic actin filament bending force field
-\item Harmonic alpha actinin cross-linker stretching force field
+\item Cosine actin filament bending force field
+\item Harmonic $\alpha$-actinin cross-linker stretching force field
 \item Harmonic branch stretching and cosine angle force field
 \item Exponential boundary force field
-\item Repulsive excluded volume force field
+\item Repulsive cylindrical excluded volume force field
 \end{itemize}
 
-\noindent Dynamic reaction rate changes involving these force fields, including alpha-actinin unbinding, were tuned to fit single molecule experiments.\newline\newline
-\noindent For more information on the force field parameters chosen, please see (*paper*). 
-
+\noindent Dynamic reaction rate changes involving these force fields, including $\alpha$-actinin unbinding and actin polymerization, were tuned to fit single molecule experiments.\newline\newline
+\noindent For more information on the force field parameters chosen, please see [1]. 
 
 \subsection{Sample visual output}
 
 Coming soon!
+
+\section{References}
+
+[1] Popov K, Komianos J, and GA Papoian. ``MEDYAN: Mechanochemical Simulations 
+\indent of Actomyosin Networks and Other Active Matter." PLoS Computational Biology (in 
+\indent review), 2015.
 
 \end{document}

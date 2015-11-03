@@ -1223,7 +1223,6 @@ void ChemManager::genFilBindingReactions() {
                     
                     //Look up species, make sure in list
                     string name = reactant.substr(0, reactant.find(":"));
-                    brancherName = name;
                     
                     auto it = find_if(_chemData.speciesDiffusing.begin(),_chemData.speciesDiffusing.end(),
                                       [name](tuple<string, int, double, double, string, int> element) {
@@ -1897,7 +1896,6 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                 auto products = get<1>(rb);
 
                 auto sb_bound = products[0].substr(0, products[0].find(":"));
-                //auto sb_react = reactants[0].substr(0, reactants[0].find(":"));
                 
                 //basic check because we have not yet checked reactions
                 if(reactants.size() != BRANCHINGREACTANTS ||
@@ -1907,7 +1905,6 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                 }
                 
                 if(sb_bound == sb) {
-                //if(sb_react == sb) {
                     //look at bound species associated
                     string bound = reactants[2].substr(0, reactants[2].find(":"));
                     
@@ -1943,10 +1940,8 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                 }
                 
                 auto sl_bound = products[0].substr(0, products[0].find(":"));
-                //auto sl_react = reactants[2].substr(0, reactants[2].find(":"));
                 
                 if(sl_bound == sl) {
-                //if(sl_react == sl) {
                     
                     //look at bound species associated
                     string bound = reactants[0].substr(0, reactants[0].find(":"));
@@ -1983,10 +1978,8 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                 }
                 
                 auto sm_bound = products[0].substr(0, products[0].find(":"));
-                //auto sm_react = reactants[2].substr(0, reactants[2].find(":"));
                 
                 if(sm_bound == sm) {
-                //if(sm_react == sm) {
                     
                     //look at bound species associated
                     string bound = reactants[0].substr(0, reactants[0].find(":"));

@@ -1,7 +1,8 @@
 # README #
 
 Welcome to Papoian Lab’s M3SYM, the software implementation of the 
-*Mechanochemical Dynamics of Active Networks, 3rd Generation* model. 
+*Mechanochemical Dynamics of Active Networks* model. 
+
 For more general information about the code, visit the Papoian lab webpage:
 
 	http://papoian.chem.umd.edu/ 
@@ -12,8 +13,8 @@ The main authors of the code are the following:
 	
 	*Name*		     		*Email*
 	Garegin Papoian      gpapoian@umd.edu	
-	James Komianos       jkomiano@umd.edu
-	Konstantin Popov     -
+	James Komianos       jkomianos@gmail.com
+	Konstantin Popov     konstantin.i.popov@gmail.com
 
 All general correspondence about the code and its applications should 
 be directed to Garegin Papoian. All developer and more specific code, 

@@ -64,7 +64,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
     
     for(auto filType = 0; filType < CParams.numFilaments; filType++) {
     
-        if(chem.speciesFilament[filType].size() != CParams.numFilamentSpecies[filType]) {
+        if(CParams.numFilamentSpecies.size() != 0 &&
+           chem.speciesFilament[filType].size() != CParams.numFilamentSpecies[filType]) {
             
             cout << "Number of filament species in chemistry input does not "
             << "match the system file. Check these parameters. Exiting."
@@ -72,7 +73,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        if(chem.speciesPlusEnd[filType].size() != CParams.numPlusEndSpecies[filType]) {
+        if(CParams.numPlusEndSpecies.size() != 0 &&
+           chem.speciesPlusEnd[filType].size() != CParams.numPlusEndSpecies[filType]) {
             
             cout << "Number of plus end species in chemistry input does not "
             << "match the system file. Check these parameters. Exiting."
@@ -80,7 +82,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        if(chem.speciesPlusEnd[filType].size()  != CParams.numMinusEndSpecies[filType]) {
+        if(CParams.numMinusEndSpecies.size() != 0 &&
+           chem.speciesMinusEnd[filType].size()  != CParams.numMinusEndSpecies[filType]) {
             
             cout << "Number of minus end species in chemistry input does not "
             << "match the system file. Check these parameters. Exiting."
@@ -88,7 +91,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        if(chem.speciesBound[filType].size() != CParams.numBoundSpecies[filType]) {
+        if(CParams.numBoundSpecies.size() != 0 &&
+           chem.speciesBound[filType].size() != CParams.numBoundSpecies[filType]) {
             
             cout << "Number of bound species in chemistry input does not "
             << "match the system file. Check these parameters. Exiting."
@@ -96,7 +100,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        if(chem.speciesLinker[filType].size() != CParams.numLinkerSpecies[filType]) {
+        if(CParams.numLinkerSpecies.size() != 0 &&
+           chem.speciesLinker[filType].size() != CParams.numLinkerSpecies[filType]) {
             
             cout << "Number of linker species in chemistry input does not "
             << "match the system file. Check these parameters. Exiting."
@@ -104,7 +109,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        if(chem.speciesMotor[filType].size() != CParams.numMotorSpecies[filType]) {
+        if(CParams.numMotorSpecies.size() != 0 &&
+           chem.speciesMotor[filType].size() != CParams.numMotorSpecies[filType]) {
             
             cout << "Number of motor species in chemistry input does not "
             << "match the system file. Check these parameters. Exiting."
@@ -112,7 +118,8 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
-        if(chem.speciesBrancher[filType].size() != CParams.numBrancherSpecies[filType]) {
+        if(CParams.numBrancherSpecies.size() != 0 &&
+           chem.speciesBrancher[filType].size() != CParams.numBrancherSpecies[filType]) {
             
             cout << "Number of brancher species in chemistry input does not "
             << "match the system file. Check these parameters. Exiting."

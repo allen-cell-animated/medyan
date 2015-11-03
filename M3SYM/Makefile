@@ -28,16 +28,19 @@ LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl
 LDFLAGS = $(FAST)
 
 CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
+-Wno-uninitialized -Wno-unknown-warning-option \
 -I/usr/local/include -I/usr/include/boost \
--I./ -IStructure -IChemistry             \
--IMechanics/Minimizer                    \
--IMechanics/ForceField                   \
--IMechanics/ForceField/Volume            \
--IMechanics/ForceField/Boundary          \
--IMechanics/ForceField/Branching         \
--IMechanics/ForceField/Filament          \
--IMechanics/ForceField/Linker            \
--IMechanics/ForceField/MotorGhost        \
+-I./ -IStructure -IStructure/Special      \
+-IChemistry                               \
+-IMechanics/Minimizer                     \
+-IMechanics/ForceField                    \
+-IMechanics/ForceField/Volume             \
+-IMechanics/ForceField/Boundary           \
+-IMechanics/ForceField/Branching          \
+-IMechanics/ForceField/Filament           \
+-IMechanics/ForceField/Linker             \
+-IMechanics/ForceField/MotorGhost         \
+-IMechanics/ForceField/Bubble             \
 
 
 #################MAIN USER MACROS#################
