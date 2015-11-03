@@ -57,9 +57,6 @@ void Controller::initialize(string inputFile,
                             string inputDirectory,
                             string outputDirectory) {
     
-    ///Seed simple rand generation for small tasks
-    srand(time(NULL));
-    
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
     cout << "If dynamic rates is turned on, chemistry and mechanics must be "
@@ -102,6 +99,17 @@ void Controller::initialize(string inputFile,
     _gController->initializeGrid();
     cout << "Done." << endl;
     
+    //Initialize boundary
+    cout << "---" << endl;
+    cout << "Initializing boundary...";
+    
+    auto BTypes = p.readBoundaryType();
+    p.readBoundParams();
+    
+    //initialize
+    _gController->initializeBoundary(BTypes);
+    cout << "Done." <<endl;
+    
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -117,16 +125,6 @@ void Controller::initialize(string inputFile,
     cout << "Done." <<endl;
 
 #endif
-    //Initialize boundary
-    cout << "---" << endl;
-    cout << "Initializing boundary...";
-    
-    auto BTypes = p.readBoundaryType();
-    p.readBoundParams();
-    
-    //initialize
-    _gController->initializeBoundary(BTypes);
-    cout << "Done." <<endl;
     
 #ifdef CHEMISTRY
     //Activate necessary compartments for diffusion
