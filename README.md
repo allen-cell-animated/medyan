@@ -35,6 +35,5 @@ See the following documentation for details:
 
 	*Documentation file*			*Description*
 	docs/InstallGuide.pdf		Tips on compilation, etc
-	docs/UsageGuide.pdf			Tips on input, output, etc
+	docs/UsageGuide.pdf	        Tips on input, output, etc
 	docs/ExampleGuide.pdf		Packaged example description
-
