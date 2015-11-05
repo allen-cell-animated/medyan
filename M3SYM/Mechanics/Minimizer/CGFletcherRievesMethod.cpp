@@ -23,7 +23,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
     //number of steps
     int N;
     if(steplimit) {
-        int beadMaxStep = 3 * Bead::numBeads();
+        int beadMaxStep = 5 * Bead::numBeads();
         N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS);
     }
     else {
