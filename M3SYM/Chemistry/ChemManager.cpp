@@ -1784,7 +1784,9 @@ void ChemManager::genFilBindingReactions() {
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+                //multiply by num heads to get rate
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (SysParams::Chemistry().motorNumHeadsMin[motorInt] +
+                                                                                 SysParams::Chemistry().motorNumHeadsMax[motorInt]) / 2);
                 rxn->setReactionType(ReactionType::MOTORBINDING);
                 
                 C->addInternalReaction(rxn);
