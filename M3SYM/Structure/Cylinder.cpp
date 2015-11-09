@@ -35,8 +35,8 @@ void Cylinder::updateCoordinate() {
 Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
                    bool extensionFront, bool extensionBack, bool initialization)
 
-    : Trackable(true, true, true, false), _type(type),
-      _b1(b1), _b2(b2),_position(position), _ID(_cylinders.getID()) {
+    : Trackable(true, true, true, false),
+      _b1(b1), _b2(b2), _type(type), _position(position), _ID(_cylinders.getID()) {
     
     parent->addChild(unique_ptr<Component>(this));
           

@@ -59,10 +59,7 @@ Bead::Bead(Composite* parent, int position)
 
 void Bead::updatePosition() {
     
-    //Update the compartment
-    Compartment* c;
-    
-    try {c = GController::getCompartment(coordinate);}
+    try {GController::getCompartment(coordinate);}
     catch (exception& e) {
         
         //print exception
