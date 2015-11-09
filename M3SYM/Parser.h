@@ -164,9 +164,9 @@ struct ChemistryData {
       depolymerizationReactions(MAX_FILAMENT_TYPES),
       agingReactions(MAX_FILAMENT_TYPES),
       destructionReactions(MAX_FILAMENT_TYPES),
-      severingReactions(MAX_FILAMENT_TYPES),
     
       branchingReactions(MAX_FILAMENT_TYPES),
+      severingReactions(MAX_FILAMENT_TYPES),
       linkerReactions(MAX_FILAMENT_TYPES),
       motorReactions(MAX_FILAMENT_TYPES),
       motorWalkingReactions(MAX_FILAMENT_TYPES),

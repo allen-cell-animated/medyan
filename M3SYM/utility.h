@@ -20,6 +20,7 @@
 #include <math.h>
 #include <vector>
 #include <sstream>
+#include <iterator>
 
 using namespace std;
 
