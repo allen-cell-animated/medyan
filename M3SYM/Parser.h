@@ -86,8 +86,7 @@ struct ChemistryData {
     vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
     
     /// Filament nucleation reaction
-    vector<vector<tuple<vector<string>, vector<string>, double>>> nucleationReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
+    vector<vector<tuple<vector<string>, vector<string>, double>>> nucleationReactions;
     
     //@{
     /// Filament reactions
@@ -96,30 +95,21 @@ struct ChemistryData {
      *  string of reactants, string of products, and the reaction rate.
      */
     /// Polymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> polymerizationReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
-    
+    vector<vector<tuple<vector<string>, vector<string>, double>>> polymerizationReactions;
     /// Depolymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> depolymerizationReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
-    
+    vector<vector<tuple<vector<string>, vector<string>, double>>> depolymerizationReactions;
     /// Aging reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> agingReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
-    
+    vector<vector<tuple<vector<string>, vector<string>, double>>> agingReactions;
     /// Destruction reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> destructionReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
+    vector<vector<tuple<vector<string>, vector<string>, double>>> destructionReactions;
     
     /// Branching reactions
     /// This reaction also contains the off rate, and a string
     /// specifying the nucleation zone and relevant distance parameter
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>>(MAX_FILAMENT_TYPES);
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactions;
     
     /// Severing reactions
-    vector<vector<tuple<string, double>>> severingReactions =
-    vector<vector<tuple<string, double>>>(MAX_FILAMENT_TYPES);
+    vector<vector<tuple<string, double>>> severingReactions;
     //@}
     
     //@{
@@ -130,16 +120,13 @@ struct ChemistryData {
      *  range.
      */
     /// Linker reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> linkerReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>>(MAX_FILAMENT_TYPES);
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> linkerReactions;
     /// MotorGhost reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>>(MAX_FILAMENT_TYPES);
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions;
     //@}
     
     /// MotorGhost walking reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions =
-    vector<vector<tuple<vector<string>, vector<string>, double>>>(MAX_FILAMENT_TYPES);
+    vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions;
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, release time, and CONST/REG qualifier
@@ -152,22 +139,50 @@ struct ChemistryData {
     
     //@{
     /// Filament species parsed
-    vector<vector<string>> speciesFilament = vector<vector<string>>(MAX_FILAMENT_TYPES);
-    vector<vector<string>> speciesPlusEnd  = vector<vector<string>>(MAX_FILAMENT_TYPES);
-    vector<vector<string>> speciesMinusEnd = vector<vector<string>>(MAX_FILAMENT_TYPES);
+    vector<vector<string>> speciesFilament;
+    vector<vector<string>> speciesPlusEnd;
+    vector<vector<string>> speciesMinusEnd;
     
-    vector<vector<string>> speciesBound    = vector<vector<string>>(MAX_FILAMENT_TYPES);
-    vector<vector<string>> speciesLinker   = vector<vector<string>>(MAX_FILAMENT_TYPES);
-    vector<vector<string>> speciesMotor    = vector<vector<string>>(MAX_FILAMENT_TYPES);
-    vector<vector<string>> speciesBrancher = vector<vector<string>>(MAX_FILAMENT_TYPES);
+    vector<vector<string>> speciesBound;
+    vector<vector<string>> speciesLinker;
+    vector<vector<string>> speciesMotor;
+    vector<vector<string>> speciesBrancher;
     //@}
     
     //@{
     /// Binding sites parsed
-    vector<string> B_BINDING_INDEX = vector<string>(MAX_FILAMENT_TYPES);
-    vector<string> L_BINDING_INDEX = vector<string>(MAX_FILAMENT_TYPES);
-    vector<string> M_BINDING_INDEX = vector<string>(MAX_FILAMENT_TYPES);
+    vector<string> B_BINDING_INDEX;
+    vector<string> L_BINDING_INDEX;
+    vector<string> M_BINDING_INDEX;
     //@}
+    
+    ///Constructor initializes memory of vector members
+    ChemistryData()
+    
+    : nucleationReactions(MAX_FILAMENT_TYPES),
+      polymerizationReactions(MAX_FILAMENT_TYPES),
+      depolymerizationReactions(MAX_FILAMENT_TYPES),
+      agingReactions(MAX_FILAMENT_TYPES),
+      destructionReactions(MAX_FILAMENT_TYPES),
+      severingReactions(MAX_FILAMENT_TYPES),
+    
+      branchingReactions(MAX_FILAMENT_TYPES),
+      linkerReactions(MAX_FILAMENT_TYPES),
+      motorReactions(MAX_FILAMENT_TYPES),
+      motorWalkingReactions(MAX_FILAMENT_TYPES),
+    
+      speciesFilament(MAX_FILAMENT_TYPES),
+      speciesPlusEnd(MAX_FILAMENT_TYPES),
+      speciesMinusEnd(MAX_FILAMENT_TYPES),
+      speciesBound(MAX_FILAMENT_TYPES),
+      speciesLinker(MAX_FILAMENT_TYPES),
+      speciesMotor(MAX_FILAMENT_TYPES),
+      speciesBrancher(MAX_FILAMENT_TYPES),
+    
+      B_BINDING_INDEX(MAX_FILAMENT_TYPES),
+      L_BINDING_INDEX(MAX_FILAMENT_TYPES),
+      M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
+    
 };
 
 /// Struct to hold the parameters of the Boundary

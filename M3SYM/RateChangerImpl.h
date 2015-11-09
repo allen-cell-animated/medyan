@@ -101,7 +101,7 @@ public:
 /// Myosin II ensemble based on the following exponential form
 /// (adopted from Erdmann et al 2013):
 ///
-///      k_unbinding,eff = (k_0 / N_b) * exp(-F / (N_b * F_0))
+///      k_unbinding,eff = (k_0 / 2 * N_b) * exp(-F / (N_b * F_0))
 ///
 /// where k_0 is the unbinding rate under zero load,
 /// F_0 is the characteristic force defining this catch,
@@ -112,12 +112,6 @@ public:
 ///
 /// where alpha has been empirically determined to be 0.04
 /// for a low duty ratio motor (p = 0.1).
-/// The total rate for unbinding for the entire mini-filament
-/// unbinding from two actin filaments is:
-///
-///   k_unbinding,total = k_unbinding,eff^2 / k_binding,eff
-///
-/// where k_binding,eff is as previously defined.
 
 class LowDutyPCMCatch : public MotorRateChanger {
     
