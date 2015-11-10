@@ -45,9 +45,12 @@ float LowDutyPCMCatch::changeRate(float onRate, float offRate,
     float N_b = min(double(numHeads), 0.1 * numHeads + (force * 0.04));
 
     //calculate new rate
-    double newRate = (offRate / N_b) * exp(-force / (N_b * _F0));
+    double rateOneSide = (offRate / N_b) * exp(-force / (N_b * _F0));
+    
+    double newRate = (rateOneSide * rateOneSide) / (numHeads * onRate);
     
     return newRate;
+
 }
 
 float LowDutyHillStall::changeRate(float onRate, float offRate,
@@ -61,5 +64,7 @@ float LowDutyHillStall::changeRate(float onRate, float offRate,
                           / (_F0 + (force / (0.12 * numHeads))));
     
     return newRate;
+
+    
 }
 
