@@ -55,8 +55,8 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     int pos = int(position * SysParams::Geometry().cylinderNumMon[c1->getType()]);
     
 #ifdef CHEMISTRY
-    _cBranchingPoint = unique_ptr<CBranchingPoint>(new CBranchingPoint(branchType, _compartment,
-                                                   c1->getCCylinder(), c2->getCCylinder(), pos));
+    _cBranchingPoint = unique_ptr<CBranchingPoint>(
+    new CBranchingPoint(branchType, _compartment, c1->getCCylinder(), c2->getCCylinder(), pos));
     _cBranchingPoint->setBranchingPoint(this);
 #endif
     
@@ -76,9 +76,9 @@ BranchingPoint::~BranchingPoint() noexcept {
     auto msize = SysParams::Geometry().monomerSize[_c1->getType()];
     
     vector<double> offsetCoord =
-        {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-         (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-         (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
+    {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
     
     auto b = _c2->getFirstBead();
     

@@ -62,7 +62,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
         
 #ifdef CHEMISTRY
     _cLinker = unique_ptr<CLinker>(
-        new CLinker(linkerType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
+    new CLinker(linkerType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
     _cLinker->setLinker(this);
         
 #endif

@@ -20,6 +20,7 @@
 
 #include "SubSystem.h"
 #include "Boundary.h"
+#include "CompartmentGrid.h"
 
 #include "MathFunctions.h"
 #include "GController.h"
@@ -180,6 +181,35 @@ void BranchingManager::updateAllPossibleBindings() {
     updateBindingReaction(oldN, newN);
 }
 
+bool BranchingManager::isConsistent() {
+    
+    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++) {
+        
+        CCylinder* cc = get<0>(*it);
+        Cylinder* c   = cc->getCylinder();
+        
+        short bindingSite = get<1>(*it);
+        
+        bool flag = true;
+    
+        //check site empty
+        if(cc->getCMonomer(bindingSite)->speciesBound(
+           SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN() != 1)
+            flag = false;
+
+        if(!flag) {
+            cout << "Binding site in branching manager is inconsistent. " << endl;
+            cout << "Binding site = " << bindingSite << endl;
+            
+            cout << "Cylinder info ..." << endl;
+            c->printSelf();
+            
+            return false;
+        }
+    }
+    return true;
+}
+
 //LINKER
 
 LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
@@ -278,6 +308,12 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
         
         m->updateBindingReaction(oldNOther, newNOther);
         
+        if(!m->isConsistent()) {
+            
+            cout << "Problem" << endl;
+            //exit(EXIT_FAILURE);
+            
+        }
     }
     
     //update this manager
@@ -285,6 +321,13 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
     int newN = numBindingSites();
     
     updateBindingReaction(oldN, newN);
+    
+    if(!isConsistent()) {
+        
+        cout << "Problem" << endl;
+        //exit(EXIT_FAILURE);
+        
+    }
 }
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {
@@ -331,7 +374,8 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
             auto m = (LinkerBindingManager*)cn->getCompartment()->
                       getFilamentBindingManagers()[_mIndex].get();
             
-            affectedManagers.push_back(m);
+            if(find(affectedManagers.begin(), affectedManagers.end(), m) == affectedManagers.end())
+                affectedManagers.push_back(m);
         }
     }
     
@@ -350,6 +394,19 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
         int newNOther = m->numBindingSites();
         
         m->updateBindingReaction(oldNOther, newNOther);
+        
+        if(!m->isConsistent()) {
+            
+            cout << "Problem" << endl;
+            //exit(EXIT_FAILURE);
+            
+        }
+    }
+    
+    if(!isConsistent()) {
+        
+        cout << "Problem" << endl;
+        //exit(EXIT_FAILURE);
         
     }
 }
@@ -426,6 +483,52 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     int newN = numBindingSites();
     
     updateBindingReaction(oldN, newN);
+    
+    if(!isConsistent()) {
+        
+        cout << "Problem" << endl;
+        //exit(EXIT_FAILURE);
+        
+    }
+}
+
+bool LinkerBindingManager::isConsistent() {
+    
+    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++) {
+        
+        CCylinder* cc1 = get<0>(it->first);
+        Cylinder*  c1  = cc1->getCylinder();
+        
+        CCylinder* cc2 = get<0>(it->second);
+        Cylinder*  c2  = cc2->getCylinder();
+        
+        short bindingSite1 = get<1>(it->first);
+        short bindingSite2 = get<1>(it->second);
+        
+        bool flag = true;
+        
+        //check site empty
+        if(cc1->getCMonomer(bindingSite1)->speciesBound(
+           SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() != 1 ||
+           
+           cc2->getCMonomer(bindingSite2)->speciesBound(
+           SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() != 1)
+
+            flag = false;
+        
+        if(!flag) {
+            cout << "Binding site in linker manager is inconsistent. " << endl;
+            cout << "Binding site for cylinder 1 = " << bindingSite1 << endl;
+            cout << "Binding site for cylinder 2 = " << bindingSite2 << endl;
+            
+            cout << "Cylinder info ..." << endl;
+            c1->printSelf();
+            c2->printSelf();
+            
+            return false;
+        }
+    }
+    return true;
 }
 
 
@@ -527,6 +630,12 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
         
         m->updateBindingReaction(oldNOther, newNOther);
         
+        if(!m->isConsistent()) {
+            
+            cout << "Problem" << endl;
+            exit(EXIT_FAILURE);
+            
+        }
     }
     
     //update this manager
@@ -534,6 +643,13 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
     int newN = numBindingSites();
     
     updateBindingReaction(oldN, newN);
+    
+    if(!isConsistent()) {
+        
+        cout << "Problem" << endl;
+        exit(EXIT_FAILURE);
+        
+    }
 }
 
 void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
@@ -580,7 +696,8 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
             auto m = (MotorBindingManager*)cn->getCompartment()->
                       getFilamentBindingManagers()[_mIndex].get();
             
-            affectedManagers.push_back(m);
+            if(find(affectedManagers.begin(), affectedManagers.end(), m) == affectedManagers.end())
+                affectedManagers.push_back(m);
         }
     }
     
@@ -599,6 +716,19 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
         int newNOther = m->numBindingSites();
         
         m->updateBindingReaction(oldNOther, newNOther);
+        
+        if(!m->isConsistent()) {
+            
+            cout << "Problem" << endl;
+            //exit(EXIT_FAILURE);
+            
+        }
+    }
+    
+    if(!isConsistent()) {
+        
+        cout << "Problem" << endl;
+        //exit(EXIT_FAILURE);
         
     }
 }
@@ -675,6 +805,72 @@ void MotorBindingManager::updateAllPossibleBindings() {
     int newN = numBindingSites();
     
     updateBindingReaction(oldN, newN);
+    
+    if(!isConsistent()) {
+        
+        cout << "Problem" << endl;
+        exit(EXIT_FAILURE);
+        
+    }
+}
+
+bool MotorBindingManager::isConsistent() {
+    
+    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++) {
+        
+        CCylinder* cc1 = get<0>(it->first);
+        Cylinder*  c1  = cc1->getCylinder();
+        
+        CCylinder* cc2 = get<0>(it->second);
+        Cylinder*  c2  = cc2->getCylinder();
+        
+        short bindingSite1 = get<1>(it->first);
+        short bindingSite2 = get<1>(it->second);
+        
+        bool flag = true;
+        
+        //check site empty
+        if(cc1->getCMonomer(bindingSite1)->speciesBound(
+           SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() != 1 ||
+           
+           cc2->getCMonomer(bindingSite2)->speciesBound(
+           SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() != 1)
+            
+            flag = false;
+        
+        if(!flag) {
+            cout << "Binding site in motor manager is inconsistent. " << endl;
+            cout << "Binding site for cylinder 1 = " << bindingSite1 << endl;
+            cout << "Binding site for cylinder 2 = " << bindingSite2 << endl;
+            
+            cout << "Cylinder info ..." << endl;
+            c1->printSelf();
+            c2->printSelf();
+            
+            //check if in neighbor list
+            auto nlist = _neighborLists[_nlIndex]->getNeighbors(c1);
+            
+            if(find(nlist.begin(), nlist.end(), c2) == nlist.end()) {
+                
+                
+                cout << "Not in neighbor list 1" << endl;
+                
+            }
+            
+            nlist = _neighborLists[_nlIndex]->getNeighbors(c2);
+            
+            if(find(nlist.begin(), nlist.end(), c1) == nlist.end()) {
+                
+                
+                cout << "Not in neighbor list 2" << endl;
+                
+            }
+            
+            
+            return false;
+        }
+    }
+    return true;
 }
 
 SubSystem* FilamentBindingManager::_subSystem = 0;

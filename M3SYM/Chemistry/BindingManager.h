@@ -152,6 +152,10 @@ public:
     
     ///Set the index of this manager, for access to other managers
     void setMIndex(int index) {_mIndex = index;}
+    
+    ///Check consistency and correctness of binding sites. Used for debugging.
+    virtual bool isConsistent() = 0;
+    
 };
 
 
@@ -213,6 +217,8 @@ public:
         
         return *it;
     }
+    
+    virtual bool isConsistent();
 };
 
 /// Manager for Linker binding.
@@ -284,6 +290,8 @@ public:
         
         return vector<tuple<CCylinder*, short>>{it->first, it->second};
     }
+    
+    virtual bool isConsistent();
 };
 
 /// Manager for MotorGhost binding
@@ -355,6 +363,8 @@ public:
         
         return vector<tuple<CCylinder*, short>>{it->first, it->second};
     }
+    
+    virtual bool isConsistent();
 };
 
 #endif

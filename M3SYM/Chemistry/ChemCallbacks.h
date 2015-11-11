@@ -129,7 +129,7 @@ struct UpdateMotorBindingCallback {
                 //update binding sites
                 if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
                 
-                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+                else /* -1 */ manager->removePossibleBindings(cc, _bindingSite);
             }
         }
     }

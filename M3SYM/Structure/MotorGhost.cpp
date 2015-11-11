@@ -72,7 +72,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
-        new CMotorGhost(motorType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
+    new CMotorGhost(motorType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
     _cMotorGhost->setMotorGhost(this);
 #endif
     
@@ -83,7 +83,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     auto x4 = _c2->getSecondBead()->coordinate;
           
     _mMotorGhost = unique_ptr<MMotorGhost>(
-        new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
+    new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -183,9 +183,10 @@ void MotorGhost::updateReactionRates() {
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
                 
                 float newRate =
-                    _walkingChangers[_motorType]->
-                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
-                               _numHeads, forceDotDirectionC1);
+                _walkingChangers[_motorType]->
+                changeRate(_cMotorGhost->getOnRate(),
+                           _cMotorGhost->getOffRate(),
+                           _numHeads, forceDotDirectionC1);
                 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -196,9 +197,10 @@ void MotorGhost::updateReactionRates() {
             if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
                 
                 float newRate =
-                    _walkingChangers[_motorType]->
-                    changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
-                               _numHeads, forceDotDirectionC2);
+                _walkingChangers[_motorType]->
+                changeRate(_cMotorGhost->getOnRate(),
+                           _cMotorGhost->getOffRate(),
+                           _numHeads, forceDotDirectionC2);
                 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -214,9 +216,8 @@ void MotorGhost::updateReactionRates() {
         
         //change the rate
         float newRate =
-            _unbindingChangers[_motorType]->
-            changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(),
-                       _numHeads, force);
+        _unbindingChangers[_motorType]->
+        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numHeads, force);
         
         offRxn->setRate(newRate);
         offRxn->activateReaction();

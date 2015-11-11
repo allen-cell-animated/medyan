@@ -33,12 +33,11 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
     
     //Find surrounding compartments (For now its conservative)
     vector<Compartment*> compartments;
-    
-    auto coord = cylinder->coordinate;
-    auto comp = cylinder->getCompartment();
     auto searchDist = SysParams::Geometry().largestCompartmentSide;
     
-    GController::findCompartments(coord, comp, searchDist, compartments);
+    GController::findCompartments(cylinder->coordinate,
+                                  cylinder->getCompartment(),
+                                  searchDist + _rMax, compartments);
     
     for(auto &comp : compartments) {
         for(auto &ncylinder : comp->getCylinders()) {

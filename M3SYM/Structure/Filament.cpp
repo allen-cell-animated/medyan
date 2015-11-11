@@ -122,23 +122,19 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
     Cylinder* cBack = _cylinderVector.back();
     cBack->setPlusEnd(false);
     
-    int lastPositionFilament = cBack->getPosition();
+    int lpf = cBack->getPosition();
     
     Bead* b2 = cBack->getSecondBead();
     
     //create a new bead
     auto direction = twoPointDirection(b2->coordinate, coordinates);
-    
     auto newBeadCoords = nextPointProjection(b2->coordinate,
-                         SysParams::Geometry().cylinderSize[_filType], direction);
+    SysParams::Geometry().cylinderSize[_filType], direction);
     
-    //create bead
+    //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
-    
-    //create cylinder
     Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
-                                  lastPositionFilament + 1, false, false, true);
-    
+                                                       lpf + 1, false, false, true);
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
@@ -150,23 +146,19 @@ void Filament::extendMinusEnd(vector<double>& coordinates) {
     Cylinder* cFront = _cylinderVector.front();
     cFront->setMinusEnd(false);
     
-    int lastPositionFilament = cFront->getPosition();
+    int lpf = cFront->getPosition();
     
     Bead* b2 = cFront->getFirstBead();
     
     //create a new bead
     auto direction = twoPointDirection(b2->coordinate, coordinates);
-    
     auto newBeadCoords = nextPointProjection(b2->coordinate,
-                         SysParams::Geometry().cylinderSize[_filType], direction);
+    SysParams::Geometry().cylinderSize[_filType], direction);
     
-    //create bead
+    //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() - 1);
-    
-    //create cylinder
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
-                                 lastPositionFilament - 1, false, false, true);
-    
+                                                  lpf - 1, false, false, true);
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
 
@@ -177,7 +169,7 @@ void Filament::extendPlusEnd(short plusEnd) {
 
     Cylinder* cBack = _cylinderVector.back();
     
-    int lastPositionFilament = cBack->getPosition();
+    int lpf = cBack->getPosition();
     
     Bead* b1 = cBack->getFirstBead();
     Bead* b2 = cBack->getSecondBead();
@@ -186,7 +178,7 @@ void Filament::extendPlusEnd(short plusEnd) {
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
     
     auto npp = nextPointProjection(b2->coordinate,
-               SysParams::Geometry().monomerSize[_filType], direction1);
+    SysParams::Geometry().monomerSize[_filType], direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = _subSystem->addTrackable<Bead>(npp, this, b2->getPosition() + 1);
@@ -198,8 +190,7 @@ void Filament::extendPlusEnd(short plusEnd) {
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
-                                               lastPositionFilament + 1, true);
-    
+                                                      lpf + 1, true);
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
@@ -222,7 +213,7 @@ void Filament::extendPlusEnd(short plusEnd) {
 void Filament::extendMinusEnd(short minusEnd) {
     
     Cylinder* cFront = _cylinderVector.front();
-    int lastPositionFilament = cFront->getPosition();
+    int lpf = cFront->getPosition();
     
     Bead* b2 = cFront->getFirstBead();
     Bead* b1 = cFront->getSecondBead();
@@ -231,7 +222,7 @@ void Filament::extendMinusEnd(short minusEnd) {
     auto direction1 = twoPointDirection(b1->coordinate, b2->coordinate);
     
     auto npp = nextPointProjection(b2->coordinate,
-               SysParams::Geometry().monomerSize[_filType], direction1);
+    SysParams::Geometry().monomerSize[_filType], direction1);
     
     //create a new bead in same place as b2
     Bead* bNew = _subSystem->addTrackable<Bead>(npp, this, b2->getPosition() - 1);
@@ -243,8 +234,7 @@ void Filament::extendMinusEnd(short minusEnd) {
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
-                                        lastPositionFilament - 1, false, true);
-    
+                                                      lpf - 1, false, true);
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
@@ -318,13 +308,13 @@ void Filament::polymerizePlusEnd() {
     auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
     
     b2->coordinate = nextPointProjection(b2->coordinate,
-                     SysParams::Geometry().monomerSize[_filType], direction);
+    SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
     //increase eq length, update
-    cBack->getMCylinder()->setEqLength(_filType,
-        cBack->getMCylinder()->getEqLength() +
-        SysParams::Geometry().monomerSize[_filType]);
+    double newEqLen = cBack->getMCylinder()->getEqLength() +
+                      SysParams::Geometry().monomerSize[_filType];
+    cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
 }
 
@@ -338,13 +328,13 @@ void Filament::polymerizeMinusEnd() {
     auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
     
     b1->coordinate = nextPointProjection(b1->coordinate,
-                     SysParams::Geometry().monomerSize[_filType], direction);
+    SysParams::Geometry().monomerSize[_filType], direction);
 
 #ifdef MECHANICS
     //increase eq length, update
-    cFront->getMCylinder()->setEqLength(_filType,
-        cFront->getMCylinder()->getEqLength() +
-        SysParams::Geometry().monomerSize[_filType]);
+    double newEqLen = cFront->getMCylinder()->getEqLength() +
+                      SysParams::Geometry().monomerSize[_filType];
+    cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
 }
 
@@ -358,13 +348,13 @@ void Filament::depolymerizePlusEnd() {
     auto direction = twoPointDirection(b2->coordinate, b1->coordinate);
     
     b2->coordinate = nextPointProjection(b2->coordinate,
-                     SysParams::Geometry().monomerSize[_filType], direction);
+    SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
     //decrease eq length, update
-    cBack->getMCylinder()->setEqLength(_filType,
-        cBack->getMCylinder()->getEqLength() -
-        SysParams::Geometry().monomerSize[_filType]);
+    double newEqLen = cBack->getMCylinder()->getEqLength() -
+                      SysParams::Geometry().monomerSize[_filType];
+    cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
 }
 
@@ -378,13 +368,13 @@ void Filament::depolymerizeMinusEnd() {
     auto direction = twoPointDirection(b1->coordinate, b2->coordinate);
     
     b1->coordinate = nextPointProjection(b1->coordinate,
-                     SysParams::Geometry().monomerSize[_filType], direction);
+    SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
     //decrease eq length, update
-    cFront->getMCylinder()->setEqLength(_filType,
-        cFront->getMCylinder()->getEqLength() -
-        SysParams::Geometry().monomerSize[_filType]);
+    double newEqLen = cFront->getMCylinder()->getEqLength() -
+                      SysParams::Geometry().monomerSize[_filType];
+    cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
 }
 
@@ -461,9 +451,9 @@ Filament* Filament::sever(int cylinderPosition) {
     auto msize = SysParams::Geometry().monomerSize[_filType];
     
     vector<double> offsetCoord =
-        {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-         (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-         (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
+    {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
+     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
     
     oldB->coordinate[0] += offsetCoord[0];
     oldB->coordinate[1] += offsetCoord[1];
