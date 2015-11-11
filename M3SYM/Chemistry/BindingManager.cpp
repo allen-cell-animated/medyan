@@ -307,13 +307,6 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
         int newNOther = m->numBindingSites();
         
         m->updateBindingReaction(oldNOther, newNOther);
-        
-        if(!m->isConsistent()) {
-            
-            cout << "Problem" << endl;
-            //exit(EXIT_FAILURE);
-            
-        }
     }
     
     //update this manager
@@ -321,13 +314,6 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
     int newN = numBindingSites();
     
     updateBindingReaction(oldN, newN);
-    
-    if(!isConsistent()) {
-        
-        cout << "Problem" << endl;
-        //exit(EXIT_FAILURE);
-        
-    }
 }
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {
@@ -394,20 +380,6 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
         int newNOther = m->numBindingSites();
         
         m->updateBindingReaction(oldNOther, newNOther);
-        
-        if(!m->isConsistent()) {
-            
-            cout << "Problem" << endl;
-            //exit(EXIT_FAILURE);
-            
-        }
-    }
-    
-    if(!isConsistent()) {
-        
-        cout << "Problem" << endl;
-        //exit(EXIT_FAILURE);
-        
     }
 }
 
@@ -483,13 +455,6 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     int newN = numBindingSites();
     
     updateBindingReaction(oldN, newN);
-    
-    if(!isConsistent()) {
-        
-        cout << "Problem" << endl;
-        //exit(EXIT_FAILURE);
-        
-    }
 }
 
 bool LinkerBindingManager::isConsistent() {
@@ -629,13 +594,6 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
         int newNOther = m->numBindingSites();
         
         m->updateBindingReaction(oldNOther, newNOther);
-        
-        if(!m->isConsistent()) {
-            
-            cout << "Problem" << endl;
-            exit(EXIT_FAILURE);
-            
-        }
     }
     
     //update this manager
@@ -643,13 +601,6 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
     int newN = numBindingSites();
     
     updateBindingReaction(oldN, newN);
-    
-    if(!isConsistent()) {
-        
-        cout << "Problem" << endl;
-        exit(EXIT_FAILURE);
-        
-    }
 }
 
 void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
@@ -716,20 +667,6 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
         int newNOther = m->numBindingSites();
         
         m->updateBindingReaction(oldNOther, newNOther);
-        
-        if(!m->isConsistent()) {
-            
-            cout << "Problem" << endl;
-            //exit(EXIT_FAILURE);
-            
-        }
-    }
-    
-    if(!isConsistent()) {
-        
-        cout << "Problem" << endl;
-        //exit(EXIT_FAILURE);
-        
     }
 }
 
@@ -805,13 +742,6 @@ void MotorBindingManager::updateAllPossibleBindings() {
     int newN = numBindingSites();
     
     updateBindingReaction(oldN, newN);
-    
-    if(!isConsistent()) {
-        
-        cout << "Problem" << endl;
-        exit(EXIT_FAILURE);
-        
-    }
 }
 
 bool MotorBindingManager::isConsistent() {
