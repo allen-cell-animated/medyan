@@ -225,6 +225,78 @@ for line in traj_file:
 
 	line_number+=1
 
+
+#Code to implicitly plot an algebraic surface, by:
+#http://indranilsinharoy.com/2014/03/02/plotting-algebraic-surfaces-using-mayavi/
+def implicit_plot(expr, ext_grid, fig_handle=None, Nx=101, Ny=101, Nz=101,
+                 col_isurf=(50/255, 199/255, 152/255), col_osurf=(240/255,36/255,87/255),
+                 opa_val=0.8, opaque=True, ori_axis=True, **kwargs):
+
+    if fig_handle==None:  # create a new figure
+        fig = mlab.figure(1,bgcolor=(0.97, 0.97, 0.97), fgcolor=(0, 0, 0), size=(800, 800))
+    else:
+        fig = fig_handle
+
+    xl, xr, yl, yr, zl, zr = ext_grid
+    x, y, z = np.mgrid[xl:xr:eval('{}j'.format(Nx)),
+                       yl:yr:eval('{}j'.format(Ny)),
+                       zl:zr:eval('{}j'.format(Nz))]
+    scalars = eval(expr)
+    src = mlab.pipeline.scalar_field(x, y, z, scalars)
+    if opaque:
+        delta = 1.e-5
+        opa_val=1.0
+    else:
+        delta = 0.0
+
+    cont1 = mlab.pipeline.iso_surface(src, color=col_isurf, contours=[0-delta],
+                                      transparent=False, opacity=opa_val)
+    cont1.compute_normals = False # for some reasons, setting this to true actually cause
+                                  # more unevenness on the surface, instead of more smooth
+
+    if opaque: # the outer surface is specular, the inner surface is not
+        cont2 = mlab.pipeline.iso_surface(src, color=col_osurf, contours=[0+delta],
+                                          transparent=False, opacity=opa_val)
+        cont2.compute_normals = False
+        cont1.actor.property.backface_culling = True
+        cont2.actor.property.frontface_culling = True
+        cont2.actor.property.specular = 0.2 #0.4 #0.8
+        cont2.actor.property.specular_power = 15.0
+
+    else:  # make the surface (the only surface) specular
+        cont1.actor.property.specular = 0.2 #0.4 #0.8
+        cont1.actor.property.specular_power = 15.0
+ 
+    # Scene lights (4 lights are used)
+    engine = mlab.get_engine()
+    scene = engine.current_scene
+    cam_light_azimuth = [78, -57, 0, 0]
+    cam_light_elevation = [8, 8, 40, -60]
+    cam_light_intensity = [0.72, 0.48, 0.60, 0.20]
+
+    for i in range(4):
+        camlight = scene.scene.light_manager.lights[i]
+        camlight.activate = True
+        camlight.azimuth = cam_light_azimuth[i]
+        camlight.elevation = cam_light_elevation[i]
+        camlight.intensity = cam_light_intensity[i]
+
+    # axis through the origin
+    if ori_axis:
+        len_caxis = int(1.05*np.max(np.abs(np.array(ext_grid))))
+        caxis = mlab.points3d(0.0, 0.0, 0.0, len_caxis, mode='axes',color=(0.15,0.15,0.15),
+                              line_width=1.0, scale_factor=1.,opacity=1.0)
+        caxis.actor.property.lighting = False
+
+    # if no figure is passed, the function will create a figure.
+    if fig_handle==None:
+        # Setting camera
+        cam = fig.scene.camera
+        cam.elevation(-20)
+        cam.zoom(1.0) # zoom should always be in the end.
+        mlab.show()
+
+
 @mlab.show
 def show_snapshot(snapshot_number=-1):
 
@@ -240,13 +312,13 @@ def show_snapshot(snapshot_number=-1):
 	COLORMAP = ''
 
 	#grid size
-	GRIDSIZEMAXX = 3000.0
+	GRIDSIZEMAXX = 1000.0
 	GRIDSIZEMINX = 0.0
 
-	GRIDSIZEMAXY = 3000.0
+	GRIDSIZEMAXY = 1000.0
 	GRIDSIZEMINY = 0.0
 
-	GRIDSIZEMAXZ = 3000.0
+	GRIDSIZEMAXZ = 1000.0
 	GRIDSIZEMINZ = 0.0
 
 	#boundary type, CUBIC or SPHERICAL
@@ -263,7 +335,7 @@ def show_snapshot(snapshot_number=-1):
 	DBUBBLECOLOR  = (0.2,0.7,0.5)
 
 	local_snapshot=SnapshotList[snapshot_number]
-	mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
+	figw = mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
 	mlab.clf()
 
 	#create grid
@@ -278,20 +350,18 @@ def show_snapshot(snapshot_number=-1):
 
 	elif BOUNDARYTYPE == "SPHERICAL" :
 
-		sphere = mlab.points3d(GRIDSIZEMAXX/2, 
-							   GRIDSIZEMAXY/2, 
-							   GRIDSIZEMAXZ/2, 
-							   scale_mode='none',
-                               scale_factor=DIAMETER,
-                               color=(0.67, 0.77, 0.93),
-                               resolution=50,
-                               opacity=0.3,
-                               name='Boundary')
+		implicit_plot('(x - {a})**2 + (y - {b})**2 + (z - {c})**2 - {r}**2'.format(a=GRIDSIZEMAXX/2, b=GRIDSIZEMAXY/2, c=GRIDSIZEMAXZ/2, r=DIAMETER/2), 
+					  (0, GRIDSIZEMAXX, 0, GRIDSIZEMAXY, 0, GRIDSIZEMAXZ),
+              		  fig_handle=figw, Nx=64, Ny=64, Nz=64, col_isurf=(0.67, 0.77, 0.93),
+             		  opaque=False, opa_val=0.3, ori_axis=False)
 
-		sphere.actor.property.specular = 0.45
-		sphere.actor.property.specular_power = 5
-		sphere.actor.property.backface_culling = True
+	elif BOUNDARYTYPE == "ELLIPSOID" :
 
+		implicit_plot('((x - {i})/ {a})**2 + ((y - {j}) / {b})**2 + ((z - {k})/ {c})**2 - 1'.format(a=GRIDSIZEMAXX/2, b=GRIDSIZEMAXY/2, c=GRIDSIZEMAXZ/2, 
+																									i=GRIDSIZEMAXX/2, j=GRIDSIZEMAXY/2, k=GRIDSIZEMAXZ/2), 
+					  (0 - 200, GRIDSIZEMAXX + 200, 0 - 200, GRIDSIZEMAXY + 200, 0 - 200, GRIDSIZEMAXZ + 200),
+              		  fig_handle=figw, Nx=64, Ny=64, Nz=64, col_isurf=(0.67, 0.77, 0.93),
+             		  opaque=False, opa_val=0.3, ori_axis=False)
 	#display time
 	time = 'Time = ' + str(int(local_snapshot.time)) + "s"
 	mlab.text(0.6, 0.9, time, color=(0.0,0.0,0.0))
@@ -371,7 +441,7 @@ def show_snapshot(snapshot_number=-1):
 		if(len(c) != 0):
 			surface = mlab.pipeline.surface(tube, colormap=COLORMAP,
 										    vmax = MAXVAL, vmin = MINVAL)
-			cb = mlab.colorbar(object=surface1, orientation='vertical', 
+			cb = mlab.colorbar(object=surface, orientation='vertical', 
 						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=6)
 
 			cb.title_text_property.color = (0.0,0.0,0.0)
@@ -415,9 +485,9 @@ def show_snapshot(snapshot_number=-1):
 				l = random.uniform(0,2 * math.pi)
 				h = random.uniform(-math.pi/2, math.pi/2)
 
-				coord1x = r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2 - len_linker
-				coord1y = r * math.sin(h) + GRIDSIZEMAXY/2 - len_linker
-				coord1z = r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2 - len_linker
+				coord1x = r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2
+				coord1y = r * math.sin(h) + GRIDSIZEMAXY/2
+				coord1z = r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2
 
 			#random projection
 			direction = [random.uniform(-1,1),
@@ -512,9 +582,9 @@ def show_snapshot(snapshot_number=-1):
 				l = random.uniform(0,2 * math.pi)
 				h = random.uniform(-math.pi/2, math.pi/2)
 
-				coord1x = r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2 - len_motor
-				coord1y = r * math.sin(h) + GRIDSIZEMAXY/2 - len_motor
-				coord1z = r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2 - len_motor
+				coord1x = r * math.cos(l) * math.cos(h) + GRIDSIZEMAXX/2
+				coord1y = r * math.sin(h) + GRIDSIZEMAXY/2
+				coord1z = r * math.sin(l) * math.cos(h) + GRIDSIZEMAXZ/2
 
 			#random projection
 			direction = [random.uniform(-1,1),

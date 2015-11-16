@@ -52,7 +52,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
     
         for(auto &changer : drTypes.dLUnbindingType) {
             
-            if(changer == "BASICCATCHSLIP") {
+            if(changer == "CATCHSLIP") {
                 
                 //if user did not specify enough parameters, return
                 if(ampIndex + 1 >= SysParams::DynamicRates().dLinkerUnbindingAmplitude.size() ||
@@ -68,14 +68,13 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 double x2 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex + 1];
                 
                 //add the rate changer
-                Linker::_unbindingChangers.push_back(
-                    new BasicCatchSlip(linkerIndex, a1, a2, x1, x2));
+                Linker::_unbindingChangers.push_back(new CatchSlip(linkerIndex, a1, a2, x1, x2));
                 
                 charLengthIndex += 2;
                 ampIndex += 2;
             }
             
-            else if(changer == "BASICSLIP") {
+            else if(changer == "SLIP") {
                 
                 //if user did not specify enough parameters, return
                 if(charLengthIndex >= SysParams::DynamicRates().dLinkerUnbindingCharLength.size() )
@@ -85,7 +84,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 double x1 = SysParams::DynamicRates().dLinkerUnbindingCharLength[charLengthIndex];
                 
                 //add the rate changer
-                Linker::_unbindingChangers.push_back(new BasicSlip(linkerIndex, x1));
+                Linker::_unbindingChangers.push_back(new Slip(linkerIndex, x1));
                 charLengthIndex += 1;
             }
             else {
@@ -105,7 +104,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
         //motor unbinding changer
         for(auto &changer : drTypes.dMUnbindingType) {
             
-            if(changer == "LOWDUTYPCMCATCH") {
+            if(changer == "LOWDUTYCATCH") {
                 
                 //if user did not specify enough parameters, return
                 if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())
@@ -115,8 +114,22 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
                 
                 //add the rate changer
-                MotorGhost::_unbindingChangers.push_back(new LowDutyPCMCatch(motorIndex, f));
+                MotorGhost::_unbindingChangers.push_back(new LowDutyCatch(motorIndex, f));
                 forceIndex++;
+            }
+            if(changer == "LOWDUTYCATCHSLIP") {
+                
+                //if user did not specify enough parameters, return
+                if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())
+                    return;
+                
+                //get param
+                double fCatch = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
+                double fSlip  = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex + 1];
+                
+                //add the rate changer
+                MotorGhost::_unbindingChangers.push_back(new LowDutyCatchSlip(motorIndex, fCatch, fSlip));
+                forceIndex += 2;
             }
             else {
                 cout << "Motor unbinding rate changing form not recognized. Exiting." << endl;
@@ -130,7 +143,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
         //motor walking 
         for(auto &changer : drTypes.dMWalkingType) {
 
-            if(changer == "LOWDUTYHILLSTALL") {
+            if(changer == "LOWDUTYSTALL") {
                 
                 //if user did not specify enough parameters, return
                 if(forceIndex >= SysParams::DynamicRates().dMotorWalkingCharForce.size())
@@ -140,7 +153,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
                 
                 //add the rate changer
-                MotorGhost::_walkingChangers.push_back(new LowDutyHillStall(motorIndex, 0, f));
+                MotorGhost::_walkingChangers.push_back(new LowDutyStall(motorIndex, 0, f));
                 forceIndex++;
             }
             else {

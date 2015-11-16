@@ -432,11 +432,11 @@ bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
     
     for(auto &changer : dy.dLUnbindingType) {
         
-        if(changer == "BASICCATCHSLIP") {
+        if(changer == "CATCHSLIP") {
             numCharLengths += 2;
             numAmps += 2;
         }
-        else if(changer == "BASICSLIP") {
+        else if(changer == "SLIP") {
             numCharLengths += 1;
         }
         
@@ -459,8 +459,20 @@ bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
         return false;
     }
     
-    if(dy.dMUnbindingType.size() != SysParams::DynamicRates().
-                                    dMotorUnbindingCharForce.size()) {
+    auto numCharForces = 0;
+    
+    for(auto &changer : dy.dMUnbindingType) {
+        
+        if(changer == "LOWDUTYCATCHSLIP") {
+            numCharForces += 2;
+        }
+        else if(changer == "LOWDUTYCATCH") {
+            numCharForces += 1;
+        }
+        
+    }
+    if(numCharForces != SysParams::DynamicRates().
+                        dMotorUnbindingCharForce.size()) {
         cout << "Number of characteristic forces specified for chosen "
              << "motor unbinding dynamic rate forms is not accurate. Exiting."
         << endl;

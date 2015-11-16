@@ -25,46 +25,56 @@ float BrownianRatchet::changeRate(float bareRate, double force) {
     return newRate;
 }
 
-float BasicCatchSlip::changeRate(float bareRate, double force) {
+float CatchSlip::changeRate(float bareRate, double force) {
     
     return bareRate * (_a1 * exp(- force * _x1 / kT) +
                        _a2 * exp(  force * _x2 / kT));
 }
 
-float BasicSlip::changeRate(float bareRate, double force) {
+float Slip::changeRate(float bareRate, double force) {
     
     double newRate = bareRate * exp( force * _x / kT);
 
     return newRate;
 }
 
-float LowDutyPCMCatch::changeRate(float onRate, float offRate,
+float LowDutyCatch::changeRate(float onRate, float offRate,
                                   int numHeads, double force) {
     
     //determine N_b
-    float N_b = min(double(numHeads), 0.1 * numHeads + (force * 0.04));
-
-    //calculate new rate
-    double rateOneSide = (offRate / N_b) * exp(-force / (N_b * _F0));
+    float N_b = min(double(numHeads), dutyRatio * numHeads + (force * alpha));
     
-    double newRate = (rateOneSide * rateOneSide) / (numHeads * onRate);
+    //calculate new rate
+    double newRate = (offRate / N_b) * exp(-force / (N_b * _F0));
+    
     
     return newRate;
-
 }
 
-float LowDutyHillStall::changeRate(float onRate, float offRate,
+float LowDutyCatchSlip::changeRate(float onRate, float offRate,
                                    int numHeads, double force) {
     
+    //determine N_b
+    float N_b = min(double(numHeads), dutyRatio * numHeads + (force * alpha));
+    
+    //calculate new rate
+    double newRate = (offRate / N_b) * (_a1 * exp(-force / (N_b * _FCatch)) +
+                                        _a2 * exp( force / (N_b * _FSlip)));
+    
+    return newRate;
+    
+}
+
+float LowDutyStall::changeRate(float onRate, float offRate,
+                               int numHeads, double force) {
+    
     //determine k_0
-    float k_0 = 9.0 * onRate * _stepFrac;
+    float k_0 = ((1 - dutyRatio) / dutyRatio) * onRate * _stepFrac;
     
     //calculate new rate
     double newRate =  max(0.0, k_0 * (_F0 - force / numHeads)
-                          / (_F0 + (force / (0.12 * numHeads))));
+                          / (_F0 + (force / (beta * numHeads))));
     
     return newRate;
-
-    
 }
 

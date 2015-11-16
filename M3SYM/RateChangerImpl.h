@@ -43,14 +43,14 @@ public:
 ///Used for cross-linker unbinding when under stress.
 
 /// @note - This function updates unbinding rates based on the
-/// following exponential form (Bell form, Bell et al, 1978):
+/// following exponential form of Bell et al, 1978:
 ///
 ///  k = k_0 * (a_c * exp(-f * x_c / kT)  + a_s * exp(-f * x_s / kT))
 ///
 ///  where x and a are the characteristic lengths and amplitudes
 ///  of the catch and slip portions of the function, respectively.
 
-class BasicCatchSlip : public LinkerRateChanger {
+class CatchSlip : public LinkerRateChanger {
     
 private:
     double _a1; ///< catch bond amplitude
@@ -59,9 +59,9 @@ private:
     double _x2; ///< slip bond characteristic length
     
 public:
-    BasicCatchSlip(short linkerType,
-                   double amplitude1, double amplitude2,
-                   double charLength1, double charLength2)
+    CatchSlip(short linkerType,
+              double amplitude1, double amplitude2,
+              double charLength1, double charLength2)
     
         : LinkerRateChanger(linkerType),
           _a1(amplitude1),  _a2(amplitude2),
@@ -74,52 +74,58 @@ public:
 ///Used for cross-linker unbinding when under stress.
 
 /// @note - This function updates unbinding rates based on the
-/// following exponential form (Bell form, Bell et al, 1978):
+/// following exponential form of Bell et al, 1978:
 ///
 ///                 k = k_0 * exp(f * a / kT)
 ///
 /// So as to exponetially increase the unbinding with more force.
 
-class BasicSlip : public LinkerRateChanger {
+class Slip : public LinkerRateChanger {
     
 private:
     double _x; ///< The characteristic length for this function
     
 public:
-    BasicSlip(short linkerType, double charLength)
+    Slip(short linkerType, double charLength)
     
         : LinkerRateChanger(linkerType), _x(charLength) {}
     
     virtual float changeRate(float bareRate, double force);
 };
 
-///A low duty PCM catch bond implementation of the MotorRateChanger
+///A low duty catch bond implementation of the MotorRateChanger
 ///Used for a low duty ratio motor unbinding when under stress
+///Adopted from the Parallel Cluster Model (PCM) of Erdmann et al. 2013.
 
 /// @note - Assuming a duty ratio p = 0.1
 /// @note - This function updates unbinding rates of a
-/// Myosin II ensemble based on the following exponential form
-/// (adopted from Erdmann et al 2013):
+/// Myosin II ensemble based on the following exponential form:
 ///
-///      k_unbinding,eff = (k_0 / 2 * N_b) * exp(-F / (N_b * F_0))
+///      k_unbinding,eff = (k_0 / N_b) * exp(-F / (N_b * F_0))
 ///
 /// where k_0 is the unbinding rate under zero load,
 /// F_0 is the characteristic force defining this catch,
 /// and N_b is the number of bound motor heads in the ensemble,
-/// approximated by Erdmann et al 2013 to be:
+/// approximated by Erdmann et al. 2013 to be:
 ///
 ///             N_b = p * N_t + (F * alpha)
 ///
 /// where alpha has been empirically determined to be 0.04
 /// for a low duty ratio motor (p = 0.1).
 
-class LowDutyPCMCatch : public MotorRateChanger {
+class LowDutyCatch : public MotorRateChanger {
     
 private:
     double _F0;  ///< characteristic force
     
+    //@{
+    ///Constant parameters
+    const double dutyRatio = 0.1;
+    const double alpha = 0.04;
+    //@}
+    
 public:
-    LowDutyPCMCatch(short motorType, double charForce)
+    LowDutyCatch(short motorType, double charForce)
     
         : MotorRateChanger(motorType), _F0(charForce) {}
     
@@ -127,20 +133,70 @@ public:
                              int numHeads, double force);
 };
 
-
-///A low duty Hill form stall force implementation of the MotorRateChanger.
-///Used for a low duty ratio motor walking when under stress.
+///A low duty catch-slip bond implementation of the MotorRateChanger
+///Used for a low duty ratio motor unbinding when under stress
+///Adopted from both the Parallel Cluster Model (PCM) of Erdmann et al.,
+///as well as Stam et al. 2015.
 
 /// @note - Assuming a duty ratio p = 0.1
-/// @note - This function updates walking rates based on the
-/// following form (based on Hill et al 1937):
+/// @note - This function updates unbinding rates of a
+/// Myosin II ensemble based on the following exponential form:
+///
+///      k_unbinding,eff = (k_0 / N_b) * (_a1 * exp(-F / (N_b * _FCatch)) +
+///                                       _a2 * exp( F / (N_b * _FSlip))))
+///
+/// where k_0 is the unbinding rate under zero load,
+/// _FCatch and _FSlip are the characteristic forces,
+/// _a1 and _a2 are the amplitudes of each part, taken
+/// as 0.92 and 0.08 respectively (Stam et al, 2015),
+/// and N_b is the number of bound motor heads in the ensemble,
+/// approximated by Erdmann et al. 2013 to be:
+///
+///             N_b = p * N_t + (F * alpha)
+///
+/// where alpha has been empirically determined to be 0.04
+/// for a low duty ratio motor (p = 0.1).
+
+class LowDutyCatchSlip : public MotorRateChanger {
+    
+private:
+    double _FCatch;  ///< characteristic catch force
+    double _FSlip;   ///< characteristic slip force
+    
+    //@{
+    ///Constant parameters
+    const double dutyRatio = 0.1;
+    const double alpha = 0.04;
+    
+    const double _a1 = 0.92;   ///< catch amplitude
+    const double _a2 = 0.08;   ///< slip amplitude
+    //@}
+    
+public:
+    LowDutyCatchSlip(short motorType, double charCatchForce,
+                                         double charSlipForce)
+    
+    : MotorRateChanger(motorType),
+      _FCatch(charCatchForce), _FSlip(charSlipForce) {}
+    
+    virtual float changeRate(float onRate, float offRate,
+                             int numHeads, double force);
+};
+
+
+///A low duty stall force implementation of the MotorRateChanger.
+///Used for a low duty ratio motor walking when under stress.
+///Adopted from Hill et al. 1937, and Erdmann et al. 2013.
+
+/// @note - Assuming a duty ratio p = 0.1
+/// @note - This function updates walking rates based on the Hill form:
 ///
 ///   k_eff = k_0 * (F_0 - F / N_t) / (F_0 + (F / (N_t * beta)))
 ///
-/// where F_0 is the characteristic force defining this catch,
+/// where F_0 is the characteristic force defining this stall,
 /// beta has been empirically determined to be 0.12, and
 /// k_0 is the walking rate under zero load, which was approximated
-/// by Erdmann et al 2013 to be:
+/// by Erdmann et al. 2013 to be:
 ///
 ///        k_0 = ((N_t - N_b) / N_b) * k_b
 ///
@@ -158,14 +214,22 @@ public:
 ///
 ///             N_b = p * Nt
 ///
-class LowDutyHillStall : public MotorRateChanger  {
+class LowDutyStall : public MotorRateChanger  {
     
 private:
-    double _F0;  ///< characteristic force
+    double _F0;            ///< characteristic force
     float _stepFrac = 1.0; ///< step size of a single head relative to sim
     
+    
+    //@{
+    ///Constant parameters
+    const double dutyRatio = 0.1;
+    const double beta = 0.12;
+    //@}
+    
+    
 public:
-    LowDutyHillStall(short motorType, short filamentType, double charForce)
+    LowDutyStall(short motorType, short filamentType, double charForce)
     
         : MotorRateChanger(motorType), _F0(charForce) {
     

@@ -308,21 +308,25 @@ The following dynamic rate forms and parameters can be set. These parameters are
   
   \noindent\texttt{DFPOLYMERIZATIONLEN} -- double -- Characteristic length for filament polymerization dynamic rate form. \\
    
-  \noindent\texttt{DLUNBINDINGTYPE} -- BASICCATCHSLIP, BASICSLIP -- Cross-linker unbinding dynamic rate form. 
-  If BASICCATCHSLIP, two
+  \noindent\texttt{DLUNBINDINGTYPE} -- CATCHSLIP, SLIP -- Cross-linker unbinding dynamic rate form. 
+  If CATCHSLIP, two
   parameters for DLUNBINDINGLEN and DLUNBINDINGAMP are needed to define the functional form. 
-  If BASICSLIP, one 
+  If SLIP, one 
   DLUNBIDINGLEN is needed to define the functional form. \\
    
   \noindent\texttt{DLUNBINDINGLEN} -- double -- Characteristic length of cross-linker unbinding dynamic rate form. \\
    
    \noindent\texttt{DLUNBINDINGAMP} -- double -- Amplitude of cross-linker unbinding dynamic rate form. \\
    
-   \noindent\texttt{DMUNBINDINGTYPE} -- LOWDUTYPCMCATCH -- Myosin II unbinding dynamic rate form. \\
+   \noindent\texttt{DMUNBINDINGTYPE} -- LOWDUTYCATCHSLIP, LOWDUTYSLIP-- Myosin II unbinding dynamic rate form.
+  If LOWDUTYCATCHSLIP, two
+  parameters for DMUNBINDINGFORCE are needed to define the functional form. 
+  If LOWDUTYSLIP, one 
+  DMUNBIDINGFORCE is needed to define the functional form. \\
    
    \noindent\texttt{DMUNBINDINGFORCE} -- double -- Characteristic force of myosin II unbinding dynamic rate form. \\
    
-   \noindent\texttt{DMWALKINGTYPE} -- LOWDUTYHILLSTALL -- Myosin II walking dynamic rate form. \\ 
+   \noindent\texttt{DMWALKINGTYPE} -- LOWDUTYSTALL -- Myosin II walking dynamic rate form. \\ 
    
    \noindent\texttt{DMWALKINGLEN} -- double -- Characteristic force of myosin II walking dynamic rate form. \\
    
