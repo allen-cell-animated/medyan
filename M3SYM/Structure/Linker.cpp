@@ -79,6 +79,14 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #endif
 }
 
+Linker::~Linker() noexcept {
+    
+    //add data to histograms
+    double lifetime = tau() - _birthTime;
+    _lifetimes->addValue(lifetime);
+}
+
+
 void Linker::updatePosition() {
     
 #ifdef CHEMISTRY
@@ -203,3 +211,4 @@ species_copy_t Linker::countSpecies(const string& name) {
 vector<LinkerRateChanger*> Linker::_unbindingChangers;
 
 Database<Linker*> Linker::_linkers;
+Histogram* Linker::_lifetimes;

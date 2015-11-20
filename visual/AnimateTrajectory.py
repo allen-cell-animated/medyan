@@ -54,7 +54,7 @@ class BubbleSnapshot:
 		self.type=None;
 		self.coords={}
 
-class Snapshot:
+class TrajSnapshot:
 	def __init__(self):
 		self.step=None
 		self.time=None
@@ -69,7 +69,7 @@ class Snapshot:
 		self.branchers={}
 		self.bubbles={}
 
-SnapshotList=[]
+TrajSnapshotList=[]
 first_snapshot_line=True
 first_line=True
 reading_filament=False
@@ -96,7 +96,7 @@ for line in traj_file:
 		color_line = color_lines[line_number]
 
 	if(first_snapshot_line):
-		F=Snapshot()
+		F=TrajSnapshot()
 		F.step, F.time, F.n_filaments, F.n_linkers, \
 		F.n_motors, F.n_branchers, F.n_bubbles = map(double,line.split())
 		F.n_filaments = int(F.n_filaments)
@@ -111,7 +111,7 @@ for line in traj_file:
 	if(len(line)==0):
 		first_snapshot_line=True
 		first_filament_line=True
-		SnapshotList.append(F)
+		TrajSnapshotList.append(F)
 		assert F.n_filaments == len(F.filaments)
 		assert F.n_linkers   == len(F.linkers)
 		assert F.n_motors    == len(F.motors)
@@ -334,7 +334,7 @@ def show_snapshot(snapshot_number=-1):
 	DMOTORCOLOR   = (0.0,0.2,1.0)
 	DBUBBLECOLOR  = (0.2,0.7,0.5)
 
-	local_snapshot=SnapshotList[snapshot_number]
+	local_snapshot=TrajSnapshotList[snapshot_number]
 	figw = mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
 	mlab.clf()
 
@@ -679,7 +679,7 @@ def show_snapshot(snapshot_number=-1):
 
 @mlab.animate(delay=10, ui=True)
 def anim():
-	for i in range(0,len(SnapshotList), 1):
+	for i in range(0,len(TrajSnapshotList), 1):
 		show_snapshot(i)
 		yield
 		

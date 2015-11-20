@@ -22,6 +22,7 @@
 #include "common.h"
 
 #include "Database.h"
+#include "Histogram.h"
 #include "Trackable.h"
 #include "Composite.h"
 
@@ -44,6 +45,8 @@ class Bead;
  */
 class Filament : public Composite, public Trackable {
 
+friend class Controller;
+    
 private:
     /// Deque of cylinders
     /// @note - the "front" of this deck is the minus end of the filament.
@@ -60,7 +63,15 @@ private:
     short _deltaMinusEnd = 0;  ///< Change in filament's cylinders
                                ///< at minus end since last snapshot
     
+    int _plusEndPosition   = 0;  ///< Position of plus end bead at last turnover
+    double _turnoverTime   = 0;  ///< Time since last turnover
+    
     static Database<Filament*> _filaments; ///< Collection in SubSystem
+    
+    //@{
+    ///Histogram data
+    static Histogram* _turnoverTimes;
+    //@}
     
 public:
     /// This constructor creates a short filament, containing only two beads, at runtime.
@@ -176,6 +187,9 @@ public:
     static int numFilaments() {
         return _filaments.countElements();
     }
+    
+    /// Get the turnover times
+    static Histogram* getTurnoverTimes() {return _turnoverTimes;}
     
     //@{
     /// Projection function, returns a vector of coordinates for bead creation

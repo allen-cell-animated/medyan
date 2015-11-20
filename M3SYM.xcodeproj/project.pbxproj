@@ -82,6 +82,7 @@
 		F7401C3D1AF9388D00BA97A5 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7401C331AF9388D00BA97A5 /* Species.cpp */; };
 		F7401C3E1AF9388D00BA97A5 /* Species.h in Headers */ = {isa = PBXBuildFile; fileRef = F7401C341AF9388D00BA97A5 /* Species.h */; };
 		F7401C3F1AF9388D00BA97A5 /* SpeciesContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = F7401C351AF9388D00BA97A5 /* SpeciesContainer.h */; };
+		F74242861BFB9C72003C36BC /* Histogram.h in Headers */ = {isa = PBXBuildFile; fileRef = F74242841BFB9C72003C36BC /* Histogram.h */; };
 		F75259E21A6EBDD4007A4E9F /* FilamentInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = F75259E11A6EBDD4007A4E9F /* FilamentInitializer.h */; };
 		F75259E41A6EBDFE007A4E9F /* FilamentInitializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75259E31A6EBDFE007A4E9F /* FilamentInitializer.cpp */; };
 		F7525A021A7023A4007A4E9F /* BoundaryFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F75259F91A7023A4007A4E9F /* BoundaryFF.cpp */; };
@@ -335,6 +336,7 @@
 		F7401C331AF9388D00BA97A5 /* Species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Species.cpp; sourceTree = "<group>"; };
 		F7401C341AF9388D00BA97A5 /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
 		F7401C351AF9388D00BA97A5 /* SpeciesContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeciesContainer.h; sourceTree = "<group>"; };
+		F74242841BFB9C72003C36BC /* Histogram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Histogram.h; sourceTree = "<group>"; };
 		F75259E11A6EBDD4007A4E9F /* FilamentInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentInitializer.h; sourceTree = "<group>"; };
 		F75259E31A6EBDFE007A4E9F /* FilamentInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentInitializer.cpp; sourceTree = "<group>"; };
 		F75259F91A7023A4007A4E9F /* BoundaryFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryFF.cpp; path = Boundary/BoundaryFF.cpp; sourceTree = "<group>"; };
@@ -847,6 +849,7 @@
 				F735B7581A2D16F200AE21D1 /* Component.h */,
 				F735B7591A2D16F200AE21D1 /* Composite.cpp */,
 				F735B75A1A2D16F200AE21D1 /* Composite.h */,
+				F74242841BFB9C72003C36BC /* Histogram.h */,
 				F735B7601A2D16F200AE21D1 /* MathFunctions.cpp */,
 				F735B7611A2D16F200AE21D1 /* MathFunctions.h */,
 				F735B7691A2D16F200AE21D1 /* SysParams.cpp */,
@@ -1017,6 +1020,7 @@
 				F735B7761A2D16F200AE21D1 /* Controller.h in Headers */,
 				F7525A951A702461007A4E9F /* LinkerFF.h in Headers */,
 				F7525A031A7023A4007A4E9F /* BoundaryFF.h in Headers */,
+				F74242861BFB9C72003C36BC /* Histogram.h in Headers */,
 				BF365D881ABC728F006EE099 /* NeighborListImpl.h in Headers */,
 				F7525A8A1A70244D007A4E9F /* MotorGhostStretching.h in Headers */,
 			);

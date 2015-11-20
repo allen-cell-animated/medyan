@@ -454,3 +454,43 @@ void Chemistry::print(int step) {
     _outputFile <<endl;
 }
 
+void MotorLifetimes::print(int step) {
+    
+    _outputFile.precision(3);
+    
+    // print first line (step number, time)
+    _outputFile << step << " " << tau() << " " << endl;
+    
+    MotorGhost::getLifetimes()->print(_outputFile);
+    _outputFile << endl << endl;
+    
+    //clear list
+    MotorGhost::getLifetimes()->clearValues();
+}
+
+
+void LinkerLifetimes::print(int step) {
+    
+    _outputFile.precision(3);
+    
+    // print first line (step number, time)
+    _outputFile << step << " " << tau() << " " << endl;
+    
+    Linker::getLifetimes()->print(_outputFile);
+    _outputFile << endl << endl;
+    
+    //clear list
+    Linker::getLifetimes()->clearValues();
+}
+
+
+void FilamentTurnoverTimes::print(int step) {
+    
+    _outputFile.precision(3);
+    
+    // print first line (step number, time)
+    _outputFile << step << " " << tau() << " " << endl;
+    
+    Filament::getTurnoverTimes()->print(_outputFile);
+    _outputFile << endl << endl;
+}

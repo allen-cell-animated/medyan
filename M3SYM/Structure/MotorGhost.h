@@ -21,6 +21,7 @@
 #include "MMotorGhost.h"
 
 #include "Database.h"
+#include "Histogram.h"
 #include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
@@ -28,6 +29,7 @@
 
 //FORWARD DECLARATIONS
 class Cylinder;
+class Controller;
 class DRController;
 class SubSystem;
 
@@ -44,6 +46,7 @@ class SubSystem;
  */
 class MotorGhost : public Component, public Trackable, public Movable, public Reactable {
    
+friend class Controller;
 friend class DRController;
 
 private:
@@ -67,6 +70,11 @@ private:
     
     static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
     
+    //@{
+    ///Histogram data
+    static Histogram* _lifetimes;
+    //@}
+    
     ///For dynamic rate unbinding
     static vector<MotorRateChanger*> _unbindingChangers;
     ///For dynamic rate walking
@@ -82,7 +90,7 @@ public:
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                double position1 = 0.5, double position2 = 0.5);
     
-    virtual ~MotorGhost() noexcept {};
+    virtual ~MotorGhost() noexcept;
     
     //@{
     /// Get cylinder
@@ -139,6 +147,9 @@ public:
         return _motorGhosts.countElements();
     }
 
+    /// Get the lifetimes
+    static Histogram* getLifetimes() {return _lifetimes;}
+    
     /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
     virtual void updatePosition();

@@ -45,8 +45,8 @@ class BubbleSnapshot:
 		self.type=None;
 		self.coords={}
 
-#A full snapshot
-class Snapshot:
+#A full trajectory snapshot
+class TrajSnapshot:
 	def __init__(self):
 		self.step=None
 		self.time=None
@@ -76,6 +76,14 @@ class ChemSnapshot:
 		self.motorSpecies={}
 		self.brancherSpecies={}
 
+
+#A histogram of values from a snapshot
+class HistSnapshot:
+	def __init__(self):
+		self.step=None
+		self.time=None
+		self.hist={}
+
 ########################################################
 #
 #			         PARSING FUNCTIONS
@@ -92,7 +100,7 @@ def readTrajectory(filename):
 	#Open the traj file
 	traj_file=open(filename)
 
-	SnapshotList=[]
+	TrajSnapshotList=[]
 	first_snapshot_line=True
 	first_line=True
 	reading_filament=False
@@ -112,7 +120,7 @@ def readTrajectory(filename):
 		line = line.strip()
 
 		if(first_snapshot_line):
-			F=Snapshot()
+			F=TrajSnapshot()
 			F.step, F.time, F.n_filaments, F.n_linkers, \
 			F.n_motors, F.n_branchers, F.n_bubbles = map(double,line.split())
 			F.n_filaments = int(F.n_filaments)
@@ -127,7 +135,7 @@ def readTrajectory(filename):
 		if(len(line)==0):
 			first_snapshot_line=True
 			first_filament_line=True
-			SnapshotList.append(F)
+			TrajSnapshotList.append(F)
 			assert F.n_filaments == len(F.filaments)
 			assert F.n_linkers   == len(F.linkers)
 			assert F.n_motors    == len(F.motors)
@@ -236,24 +244,24 @@ def readTrajectory(filename):
 		line_number+=1
 
 	#return the final Snapshot list
-	print str(len(SnapshotList)) + " snapshots read."
+	print str(len(TrajSnapshotList)) + " snapshots read."
 
-	return SnapshotList	
+	return TrajSnapshotList	
 
 #Read a number of trajectories, return array of Snapshot lists
 def readTrajectories(fileNames):
 
-	SnapshotLists = []
+	TrajSnapshotLists = []
 
 	for trajFile in fileNames:
 		print "Reading trajectory..."
-		SnapshotLists.append(readTrajectory(trajFile))
+		TrajSnapshotLists.append(readTrajectory(trajFile))
 
-	return SnapshotLists
+	return TrajSnapshotLists
 
 #Read all data from a chemical output file
 #return a list of chemical snapshots
-def readChemistryOutput(fileName):
+def readChemistry(fileName):
 
 	print "Reading " + fileName + "..."
 
@@ -262,7 +270,6 @@ def readChemistryOutput(fileName):
 	#Open the traj file
 	chem_file=open(fileName)
 
-	SnapshotList=[]
 	first_Snapshot_line=True
 	first_line=True
 	line_number=0
@@ -323,15 +330,101 @@ def readChemistryOutput(fileName):
 
 
 #Read a number of chem outputs, return array of chem lists
-def readChemistryOutputs(fileNames):
+def readChemistry(fileNames):
 
 	ChemSnapshotLists = []
 
 	for chemFile in fileNames:
 		print "Reading chemistry output..."
-		ChemLists.append(readChemistryOutput(chemFile))
+		ChemSnapshotLists.append(readChemistryOutput(chemFile))
 
 	return ChemSnapshotLists
+
+#Read a histogram from a file, return histogram snapshot list
+def readHistogram(fileName):
+
+	print "Reading " + fileName + "..."
+
+	HistSnapshotList = []
+
+	#Open the traj file
+	hist_file=open(fileName)
+
+	first_Snapshot_line=True
+	first_line=True
+	line_number=0
+
+	for line in hist_file:
+		line = line.strip()
+
+		if(first_Snapshot_line):
+			H=HistSnapshot()
+			H.step, H.time = map(double,line.split())
+			first_Snapshot_line=False
+			line_number+=1
+			continue
+
+		elif(len(line)==0):
+			first_Snapshot_line=True
+			HistSnapshotList.append(H)
+			line_number+=1
+			continue
+
+		else:
+			line_split = line.split()
+			
+			for i in xrange(0, len(line_split), 3):
+				binMin, binMax, freq = map(double, line_split[i:i+3])
+				H.hist[(binMin, binMax)] = freq
+
+			line_number+=1
+
+	print str(len(HistSnapshotList)) + " snapshots read."
+
+	return HistSnapshotList
+
+#Read a number of histogram outputs, return array of histogram lists
+def readHistograms(fileNames):
+
+	HistSnapshotLists = []
+
+	for histFile in fileNames:
+		print "Reading histogram output..."
+		HistSnapshotLists.append(readHistograms(histFile))
+
+	return HistogramSnapshotLists
+
+#combine two histograms
+#this can be called recursively to get a single histogram for set of trajectories
+#returns a single histogram snapshot
+def combineTwoHistograms(histSnapshot1, histSnapshot2):
+
+	H = HistSnapshot()
+
+	#avg time and step
+	H.time = (histSnapshot1.time + histSnapshot2.time) / 2
+	H.step = (histSnapshot1.step + histSnapshot2.step) / 2
+
+	#combine hist values
+	for bins, freq in histSnapshot1.hist.iteritems():
+		H.hist[bins] = freq
+
+	for bins, freq in histSnapshot2.hist.iteritems():
+		H.hist[bins] += freq
+
+	return H
+
+
+#combine an arbitrary length histogram snapshot list
+def combineAllHistograms(histSnapshotList):
+
+	#combine first two
+	H = combineTwoHistograms(histSnapshotList[0], histSnapshotList[1])
+
+	for i in xrange(2, len(histSnapshotList), 1):
+		H = combineTwoHistograms(H, histSnapshotList[i])
+
+	return H
 
 ########################################################
 #
@@ -351,175 +444,114 @@ def readChemistryOutputs(fileNames):
 
 
 #Calculate average filament end to end distance at each step
-#returns a list of time and distance pairs
-def avgEndToEndDistance(SnapshotList):
+#returns a time and distance pair
+def avgEndToEndDistance(SnapshotList, snapshot=1):
 
-	avgDists = []
+	Snapshot = SnapshotList[snapshot]
 
-	for Snapshot in SnapshotList:
+	totalDist = 0;
 
-		totalDist = 0;
+	for filamentID, FS in Snapshot.filaments.iteritems():
 
-		for filamentID, FS in Snapshot.filaments.iteritems():
+		#get first and last bead
+		b1 = FS.coords[0]
+		b2 = FS.coords[len(FS.coords) - 1]
 
-			#get first and last bead
-			b1 = FS.coords[0]
-			b2 = FS.coords[len(FS.coords) - 1]
+		#calculate distance
+		dist = sqrt((b2 - b1).dot(b2 - b1))
+		totalDist += dist
 
-			#calculate distance
-			dist = sqrt((b2 - b1).dot(b2 - b1))
-			totalDist += dist
+	#average
+	totalDist /= len(Snapshot.filaments)
+	totalDist *= 0.001 #to um
 
-		#average
-		totalDist /= len(Snapshot.filaments)
-		totalDist *= 0.001 #to um
+	#add to list
+	return (Snapshot.time, totalDist)
 
-		#add to list
-		avgDists.append((Snapshot.time, totalDist))
-
-	return avgDists
 
 #Calculate average filament end to end distance from a number of trajectories
-#plot the data over time. If file is provided, save to that file
-def avgEndToEndDistances(SnapshotLists, saveFile=''):
+def avgEndToEndDistances(SnapshotLists, snapshot=1):
 
 	avgDistsList = []
 
 	#get all data
 	for SnapshotList in SnapshotLists:
 
-		avgDists = avgEndToEndDistance(SnapshotList)
+		avgDists = avgEndToEndDistance(SnapshotList, snapshot)
 		avgDistsList.append(avgDists)
 
 	#now combine data
-	finalAvgDists = []
+	finalTime = 0
+	finalAvgDist = 0
 
-	for i in xrange(0, len(avgDists)):
+	for avgDists in avgDistsList:
 
-		finalTime = 0
-		finalAvgDist = 0
+		finalTime += avgDists[0] 
+		finalAvgDist += avgDists[1]
 
-		avgDistsSet = []
+	#average
+	finalTime /= len(SnapshotLists)
+	finalAvgDist /= len(SnapshotLists)
+	error = numpy.std(avgDistsList)
 
-		for avgDists in avgDistsList:
-
-			finalTime += avgDists[i][0] 
-			finalAvgDist += avgDists[i][1]
-			avgDistsSet.append(avgDists[i][1])
-
-		#average
-		finalTime /= len(SnapshotLists)
-		finalAvgDist /= len(SnapshotLists)
-		error = numpy.std(avgDistsSet)
-
-		finalAvgDists.append((finalTime, finalAvgDist, error))
-
-	#plot
-	fig = plt.figure(figsize=(10.0,10.0))
-	host = fig.add_subplot(111)
-
-	times  = [x[0] for x in finalAvgDists]
-	dists  = [x[1] for x in finalAvgDists]
-	errors = [x[2] for x in finalAvgDists]
-
-	plt.errorbar(times, dists, yerr=errors)
-
-	plt.title("Average end to end distance of filaments")
-	plt.xlabel("Time (s)")
-	plt.ylabel("End to end distance (um)")
-
-	#if file provided, save
-	if saveFile != '':
-		fig.savefig(saveFile)
-
+	return (finalTime, finalAvgDist, error)
 
 #Calculate average filament length at each step
-#returns a list of time and distance pairs
-def avgLength(SnapshotList):
+#returns a time and distance pair
+def avgLength(SnapshotList, snapshot=1):
 
-	avgLengths = []
+	Snapshot = SnapshotList[snapshot]
 
-	for Snapshot in SnapshotList:
+	totalLength = 0;
 
-		totalLength = 0;
+	for filamentID, FS in Snapshot.filaments.iteritems():
 
-		for filamentID, FS in Snapshot.filaments.iteritems():
+		filLength = 0;
 
-			filLength = 0;
+		for i in xrange(0, len(FS.coords) - 1):
 
-			for i in xrange(0, len(FS.coords) - 1):
+			#get first and last bead
+			b1 = FS.coords[i]
+			b2 = FS.coords[i+1]
 
-				#get first and last bead
-				b1 = FS.coords[i]
-				b2 = FS.coords[i+1]
-
-				#calculate distance
-				filLength += sqrt((b2 - b1).dot(b2 - b1))
+			#calculate distance
+			filLength += sqrt((b2 - b1).dot(b2 - b1))
 			
-			totalLength += filLength
+		totalLength += filLength
 
-		#average
-		totalLength /= len(Snapshot.filaments)
+	#average
+	totalLength /= len(Snapshot.filaments)
 
-		#add to list
-		avgLengths.append((Snapshot.time,totalLength))
-
-	return avgLengths
+	#add to list
+	return (Snapshot.time,totalLength)
 
 #Calculate average lengths from a number of trajectories
-#plot the data over time. If file is provided, save to that file
-def avgLengths(SnapshotLists, saveFile=''):
+def avgLengths(SnapshotLists, snapshot=1):
 
 	avgLengthsList = []
 
 	#get all data
 	for SnapshotList in SnapshotLists:
 
-		avgLengths = avgLength(SnapshotList)
+		avgLengths = avgLength(SnapshotList, snapshot)
 		avgLengthsList.append(avgLengths)
 
 	#now combine data
-	finalAvgLengths = []
+	finalTime = 0
+	finalAvgLength = 0
 
-	for i in xrange(0, len(avgLengths)):
+	for avgLengths in avgLengthsList:
 
-		finalTime = 0
-		finalAvgLength = 0
+		finalTime += avgLengths[0]
+		finalAvgLength += avgLengths[1]
 
-		avgLengthsSet = []
+	#average
+	finalTime /= len(SnapshotLists)
+	finalAvgLength /= len(SnapshotLists)
 
-		for avgLengths in avgLengthsList:
+	error = numpy.std(avgLengthsList)
 
-			finalTime += avgLengths[i][0]
-			finalAvgLength += avgLengths[i][1]
-
-			avgLengthsSet.append(avgLengths[i][1])
-
-		#average
-		finalTime /= len(SnapshotLists)
-		finalAvgLength /= len(SnapshotLists)
-
-		error = numpy.std(avgLengthsSet)
-
-		finalAvgLengths.append((finalTime, finalAvgLength, error))
-
-	#plot
-	fig = plt.figure(figsize=(10.0,10.0))
-	host = fig.add_subplot(111)
-
-	times  = [x[0] for x in finalAvgLengths]
-	lens   = [x[1] for x in finalAvgLengths]
-	errors = [x[2] for x in finalAvgLengths]
-
-	plt.errorbar(times, lens, yerr=errors)
-
-	plt.title("Average length of filaments")
-	plt.xlabel("Time (s)")
-	plt.ylabel("Length (um)")
-
-	#if file provided, save
-	if saveFile != '':
-		fig.savefig(saveFile)
+	return (finalTime, finalAvgLength, error)
 
 #CREDIT TO: BlenderArtists.org
 
@@ -719,85 +751,53 @@ def minimum_covering_sphere(points):
 #calculate the minimum enclosing sphere volume of all elements (in um^3)
 #uses the end points of filaments
 #minimum covering sphere based on www.mel.nist.gov/msidlibrary/doc/hopp95.pdf
-#returns a list of the time and volume pairs
-def minEnclosingVolume(SnapshotList):
+#returns a time and volume pair
+def minEnclosingVolume(SnapshotList, snapshot=1):
 
-	minEnclosingVols = []
+	Snapshot = SnapshotList[i]
 
-	for i in xrange(2, len(SnapshotList), 2):
-		Snapshot = SnapshotList[i]
+	points = []
 
-		points = []
+	for filamentID, FS in Snapshot.filaments.iteritems():
 
-		for filamentID, FS in Snapshot.filaments.iteritems():
+		points.append(FS.coords[0])
+		points.append(FS.coords[len(FS.coords) - 1])
 
-			points.append(FS.coords[0])
-			points.append(FS.coords[len(FS.coords) - 1])
+	center, radius = minimum_covering_sphere(points)
 
-		center, radius = minimum_covering_sphere(points)
-
-		#add to list
-		minEnclosingVols.append((Snapshot.time, (4/3) * math.pi * pow(radius * 0.001,3)))
-
-	return minEnclosingVols
+	#return
+	return (Snapshot.time, (4/3) * math.pi * pow(radius * 0.001,3))
 
 
 #Calculate minimum enclosing sphere volumes from a number of trajectories (in um^3)
 #uses the end points of filaments
-#plot the data over time. If file is provided, save to that file
 #minimum covering sphere based on www.mel.nist.gov/msidlibrary/doc/hopp95.pdf
-def minEnclosingVolumes(SnapshotLists, saveFile=''):
+def minEnclosingVolumes(SnapshotLists, snapshot=1):
 
 	minEnclosingVolumesList = []
 
 	#get all data
 	for SnapshotList in SnapshotLists:
 
-		minEnclosingVolumes = minEnclosingVolume(SnapshotList)
+		minEnclosingVolumes = minEnclosingVolume(SnapshotList, snapshot)
 		minEnclosingVolumesList.append(minEnclosingVolumes)
 
 	#now combine data
-	finalMinEnclosingVolumes = []
+	finalTime = 0
+	finalMinEnclosingVolume = 0
 
-	for i in xrange(0, len(minEnclosingVolumes)):
+	for minEnclosingVolumes in minEnclosingVolumesList:
 
-		finalTime = 0
-		finalMinEnclosingVolume = 0
+		finalTime += minEnclosingVolumes[0] 
+		finalMinEnclosingVolume += minEnclosingVolumes[1]
 
-		minEnclosingVolumesSet = []
+	#average
+	finalTime /= len(SnapshotLists)
+	finalMinEnclosingVolume /= len(SnapshotLists)
 
-		for minEnclosingVolumes in minEnclosingVolumesList:
+	error = numpy.std(minEnclosingVolumesList)
 
-			finalTime += minEnclosingVolumes[i][0] 
-			finalMinEnclosingVolume += minEnclosingVolumes[i][1]
-
-			minEnclosingVolumesSet.append(minEnclosingVolumes[i][1])
-
-		#average
-		finalTime /= len(SnapshotLists)
-		finalMinEnclosingVolume /= len(SnapshotLists)
-
-		error = numpy.std(minEnclosingVolumesSet)
-
-		finalMinEnclosingVolumes.append((finalTime, finalMinEnclosingVolume, error))
-
-	#plot
-	fig = plt.figure(figsize=(10.0,10.0))
-	host = fig.add_subplot(111)
-
-	times  = [x[0] for x in finalMinEnclosingVolumes]
-	vols   = [x[1] for x in finalMinEnclosingVolumes]
-	#errors = [x[2] for x in finalMinEnclosingVolumes]
-
-	plt.errorbar(times, vols)
-
-	plt.title(r'$\mathrm{Minimum\/spherical\/enclosing\/volume}\/(um^3)$')
-	plt.xlabel(r'$\mathrm{Time}\/(s)$')
-	plt.ylabel(r'$\mathrm{Volume}\/(um^3)$')
-
-	#if file provided, save
-	if saveFile != '':
-		fig.savefig(saveFile)
+	return (finalTime, finalMinEnclosingVolume, error)
 
 
 #Calculate nematic order parameter of cylinders at each timestep
@@ -865,20 +865,16 @@ def orderParameters(SnapshotLists, snapshot=1):
 	finalTime = 0
 	finalOrderParam = 0
 
-	orderParamSet = []
-
 	for orderParam in orderParamsList:
 
 		finalTime += orderParam[0]
 		finalOrderParam += orderParam[1]
 
-		orderParamSet.append(orderParam[1])
-
 	#average
 	finalTime /= len(orderParamsList)
 	finalOrderParam /= len(orderParamsList)
 
-	error = numpy.std(orderParamSet)
+	error = numpy.std(orderParamList)
 
 	return (finalTime,finalOrderParam,error)
 
@@ -1046,23 +1042,7 @@ def contractileVelocities(SnapshotLists, saveFile=''):
 
 		finalVelocities.append((finalTime, finalVelocity, error))
 
-	#plot
-	fig = plt.figure(figsize=(10.0,10.0))
-	host = fig.add_subplot(111)
-
-	times  = [x[0] for x in finalVelocities]
-	vels   = [x[1] for x in finalVelocities]
-	errors = [x[2] for x in finalVelocities]
-
-	plt.errorbar(times, vels, yerr=errors)
-
-	plt.title("Contractile velocity of filaments")
-	plt.xlabel("Time (s)")
-	plt.ylabel("Velocity (um / s)")
-
-	#if file provided, save
-	if saveFile != '':
-		fig.savefig(saveFile)
+	return finalVelocities
 
 #finds index of coordinate by linear mapping
 def getIndex(coordinate, grid, compartment):
@@ -1131,28 +1111,49 @@ def density(Snapshot, grid, compartment):
 		compartmentCoords.append(compartmentMap[index])
 		densityValues.append(numCylinders[index])
 
-	#Plot
-	fig = plt.figure()
-	ax = fig.add_subplot(111, projection='3d')
-
-	xVals = [x[0] + compartment[0] / 2 for x in compartmentCoords]
-	yVals = [x[1] + compartment[1] / 2 for x in compartmentCoords]
-	zVals = [x[2] + compartment[2] / 2 for x in compartmentCoords]
-
-	#plt.xlim([0, compartment[]])
-
-	plt.scatter(xVals, yVals, zs=zVals, c=densityValues)
-
 
 ###############################################
 #
 #
 #
-#				PLOS FIGURES
+#				  PLOTTING
 #
 #
 #
 ###############################################
+
+def plotHistogram(histogramSnapshot, normalize=False):
+
+	numBins = len(histogramSnapshot.hist)
+
+	xfreqs = []
+	xbins  = []
+
+	#get bins and freqs
+	index = 0
+	for bin in sorted(histogramSnapshot.hist):
+
+		binMin, binMax = bin
+
+		xbins.append(binMin)
+		xfreqs.append(histogramSnapshot.hist[bin])
+
+		if(index == numBins):
+			xbins.append(binMax)
+		index += 1
+
+	#normalize if needed
+	if(normalize):
+		maxfreq = max(xfreqs)
+		xfreqs = [x/maxfreq for x in xfreqs]
+		
+	pos = np.arange(len(xbins))
+	width = 0.1  # gives histogram aspect to the bar diagram
+
+	ax = plt.axes()
+
+	plt.bar(xbins, xfreqs, width, color='r')
+	plt.show()
 
 def calculateRgs(snapshot=1):
 

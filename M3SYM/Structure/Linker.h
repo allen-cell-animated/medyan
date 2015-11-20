@@ -21,6 +21,7 @@
 #include "MLinker.h"
 
 #include "Database.h"
+#include "Histogram.h"
 #include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
@@ -28,6 +29,7 @@
 
 //FORWARD DECLARATIONS
 class Cylinder;
+class Controller;
 class DRController;
 
 /// A container to store a MLinker and CLinker.
@@ -43,6 +45,7 @@ class DRController;
  */
 class Linker : public Component, public Trackable, public Movable, public Reactable {
 
+friend class Controller;
 friend class DRController;
     
 private:
@@ -65,6 +68,11 @@ private:
     static Database<Linker*> _linkers;
     ///< Collection in SubSystem
     
+    //@{
+    ///Histogram data
+    static Histogram* _lifetimes;
+    //@}
+    
     ///For dynamic rate unbinding
     static vector<LinkerRateChanger*> _unbindingChangers;
     
@@ -78,7 +86,7 @@ public:
     Linker(Cylinder* c1, Cylinder* c2, short linkerType,
            double position1 = 0.5, double position2 = 0.5);
     
-    virtual ~Linker() noexcept {};
+    virtual ~Linker() noexcept;
     
     //@{
     ///Get attached cylinder
@@ -126,6 +134,9 @@ public:
     static int numLinkers() {
         return _linkers.countElements();
     }
+    
+    /// Get the lifetimes
+    static Histogram* getLifetimes() {return _lifetimes;}
     
     /// Update the position, inherited from Movable
     /// @note - changes compartment if needed

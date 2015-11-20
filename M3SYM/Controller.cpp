@@ -72,22 +72,25 @@ void Controller::initialize(string inputFile,
     //Parse input, get parameters
     SystemParser p(inputFile);
     
-    //read output types
-    OutputTypes oTypes = p.readOutputTypes();
-    
     //snapshot type output
     cout << endl;
     
-    string snapName   = _outputDirectory + "snapshot.traj";
-    string birthName  = _outputDirectory + "birthtimes.traj";
-    string forceName  = _outputDirectory + "forces.traj";
-    string tensionName = _outputDirectory + "tensions.traj";
+    //trajectory-style data
+    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj"));
+    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
+    _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
+    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj"));
     
-    if(oTypes.basicSnapshot) _outputs.push_back(new BasicSnapshot(snapName));
-    if(oTypes.birthTimes)    _outputs.push_back(new BirthTimes(birthName));
-    if(oTypes.forces)        _outputs.push_back(new Forces(forceName));
-    if(oTypes.tensions)      _outputs.push_back(new Tensions(tensionName));
+    //histogram-style data
+    _outputs.push_back(new MotorLifetimes(_outputDirectory + "motorlifetimes.hist"));
+    _outputs.push_back(new LinkerLifetimes(_outputDirectory + "linkerlifetimes.hist"));
+    _outputs.push_back(new FilamentTurnoverTimes(_outputDirectory + "filamentturnovertimes.hist"));
     
+    //INIT HISTOGRAMS
+    MotorGhost::_lifetimes   = new Histogram(1000, 0.0, 100.0);
+    Linker::_lifetimes       = new Histogram(1000, 0.0, 100.0);
+    Filament::_turnoverTimes = new Histogram(2000, 0, 2000.0);
+
     //Always read geometry, check consistency
     p.readGeoParams();
     if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
@@ -169,9 +172,8 @@ void Controller::initialize(string inputFile,
     
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
-    if(oTypes.chemistry)
-        _outputs.push_back(new Chemistry(chemsnapname, ChemData,
-                                         _subSystem->getCompartmentGrid()));
+    _outputs.push_back(new Chemistry(chemsnapname, ChemData,
+                                     _subSystem->getCompartmentGrid()));
 #endif
     
 #ifdef DYNAMICRATES

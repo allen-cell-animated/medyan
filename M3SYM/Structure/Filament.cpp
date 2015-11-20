@@ -37,7 +37,7 @@
 using namespace mathfunc;
 
 Database<Filament*> Filament::_filaments;
-
+Histogram* Filament::_turnoverTimes;
 
 Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
                    vector<double>& direction, bool nucleation, bool branch)
@@ -63,6 +63,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
+        
+    //set plus end marker
+    _plusEndPosition = 1;
 }
 
 
@@ -99,6 +102,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
     
     for (int i = 2; i<numBeads; i++)
         extendPlusEnd(tmpBeadsCoord[i]);
+        
+    //set plus end marker
+    _plusEndPosition = numBeads - 1;
 }
 
 Filament::~Filament() {
@@ -296,6 +302,18 @@ void Filament::retractMinusEnd() {
 #endif
     
     _deltaMinusEnd--;
+    
+    //check if filament has turned over
+    if(_cylinderVector.front()->getFirstBead()->getPosition()
+       == _plusEndPosition) {
+        
+        //add
+        _turnoverTime = tau() - _turnoverTime;
+        _turnoverTimes->addValue(_turnoverTime);
+        
+        //reset plus end
+        _plusEndPosition = _cylinderVector.back()->getSecondBead()->getPosition();
+    }
 }
 
 void Filament::polymerizePlusEnd() {

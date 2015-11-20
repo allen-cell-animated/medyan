@@ -117,4 +117,35 @@ public:
     virtual void print(int step);
 };
 
+
+/// Print MotorGhost binding lifetimes
+class MotorLifetimes : public Output {
+    
+public:
+    MotorLifetimes(string outputFileName) : Output(outputFileName) {}
+    ~MotorLifetimes() {}
+    
+    virtual void print(int step);
+};
+
+/// Print Linker binding lifetimes
+class LinkerLifetimes : public Output {
+    
+public:
+    LinkerLifetimes(string outputFileName) : Output(outputFileName) {}
+    ~LinkerLifetimes() {}
+    
+    virtual void print(int step);
+};
+
+/// Print Filament turnover times
+class FilamentTurnoverTimes : public Output {
+    
+public:
+    FilamentTurnoverTimes(string outputFileName) : Output(outputFileName) {}
+    ~FilamentTurnoverTimes() {}
+    
+    virtual void print(int step);
+};
+
 #endif

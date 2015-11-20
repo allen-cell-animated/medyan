@@ -89,6 +89,14 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     
 }
 
+MotorGhost::~MotorGhost() noexcept {
+    
+    //add data to histograms
+    double lifetime = tau() - _birthTime;
+     
+    _lifetimes->addValue(lifetime);
+}
+
 void MotorGhost::updatePosition() {
     
 #ifdef CHEMISTRY
@@ -331,4 +339,5 @@ vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
 vector<MotorRateChanger*> MotorGhost::_walkingChangers;
 
 Database<MotorGhost*> MotorGhost::_motorGhosts;
+Histogram* MotorGhost::_lifetimes;
 

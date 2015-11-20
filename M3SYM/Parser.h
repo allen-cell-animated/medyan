@@ -330,9 +330,6 @@ public:
     SystemParser(string inputFileName) : Parser(inputFileName) {}
     ~SystemParser() {}
     
-    /// Output parser
-    OutputTypes readOutputTypes();
-    
     //@{
     /// Parameter parser. Reads input directly into system parameters
     /// @note - does not check for correctness and consistency here.
