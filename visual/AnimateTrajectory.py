@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = ''
+traj_filename = '/Users/jameskomianos/Desktop/Test/snapshot.traj'
 color_filename = ''
 
 #Open the traj file
@@ -301,8 +301,8 @@ def implicit_plot(expr, ext_grid, fig_handle=None, Nx=101, Ny=101, Nz=101,
 def show_snapshot(snapshot_number=-1):
 
 	#if were saving the Snapshots
-	saving = False
-	saveFile = ''
+	saving = True
+	saveFile = '/Users/jameskomianos/Desktop/Test/Snapshots/'
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling

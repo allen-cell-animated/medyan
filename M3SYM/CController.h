@@ -62,8 +62,8 @@ public:
     ///@param chemInitializer - a string defining the chemical manager used
     void initialize(string& chemAlgorithm, ChemistryData& chem);
     
-    ///Run a number of chemical steps
-    bool run(int steps);
+    ///Run chemistry for a given amount of time
+    bool run(double time);
 };
 
 

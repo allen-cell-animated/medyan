@@ -89,13 +89,8 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     
 }
 
-MotorGhost::~MotorGhost() noexcept {
-    
-    //add data to histograms
-    double lifetime = tau() - _birthTime;
-     
-    _lifetimes->addValue(lifetime);
-}
+///@note - nothing for now, but could record data here
+MotorGhost::~MotorGhost() noexcept {}
 
 void MotorGhost::updatePosition() {
     

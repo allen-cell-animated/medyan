@@ -86,9 +86,13 @@ public:
     /// copy numbers given at that moment in time. The global time is reset to zero again.
     void initialize();
     
-    /// This method runs the Gillespie algorithm for the given number of steps.
-    virtual bool run(int steps) {
-        for(int i=0; i<steps; ++i){
+    /// This method runs the Gillespie algorithm for the given amount of time.
+    /// @return true if successful.
+    virtual bool run(double time) {
+        
+        double endTime = _t + time;
+        
+        while(_t < endTime) {
             bool success = makeStep();
             if(!success)
                 return false;

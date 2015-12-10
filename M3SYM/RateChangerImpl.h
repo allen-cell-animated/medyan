@@ -101,16 +101,17 @@ public:
 /// @note - This function updates unbinding rates of a
 /// Myosin II ensemble based on the following exponential form:
 ///
-///      k_unbinding,eff = (k_0 / N_b) * exp(-F / (N_b * F_0))
+///      k_unbinding,eff = beta * (k_0 / N_b) * exp(-F / (N_b * F_0))
 ///
 /// where k_0 is the unbinding rate under zero load,
 /// F_0 is the characteristic force defining this catch,
+/// beta has been chosen to be 0.2,
 /// and N_b is the number of bound motor heads in the ensemble,
 /// approximated by Erdmann et al. 2013 to be:
 ///
-///             N_b = p * N_t + (F * alpha)
+///             N_b = p * N_t + (F * gamma)
 ///
-/// where alpha has been empirically determined to be 0.04
+/// where gamma has been chosen to be 0.05
 /// for a low duty ratio motor (p = 0.1).
 
 class LowDutyCatch : public MotorRateChanger {
@@ -121,7 +122,8 @@ private:
     //@{
     ///Constant parameters
     const double dutyRatio = 0.1;
-    const double alpha = 0.04;
+    const double beta = 0.2;
+    const double gamma = 0.05;
     //@}
     
 public:
@@ -142,19 +144,21 @@ public:
 /// @note - This function updates unbinding rates of a
 /// Myosin II ensemble based on the following exponential form:
 ///
-///      k_unbinding,eff = (k_0 / N_b) * (_a1 * exp(-F / (N_b * _FCatch)) +
-///                                       _a2 * exp( F / (N_b * _FSlip))))
+///      k_unbinding,eff = beta * (k_0 / N_b) *
+///                        (_a1 * exp(-F / (N_b * _FCatch)) +
+///                         _a2 * exp( F / (N_b * _FSlip))))
 ///
 /// where k_0 is the unbinding rate under zero load,
 /// _FCatch and _FSlip are the characteristic forces,
 /// _a1 and _a2 are the amplitudes of each part, taken
 /// as 0.92 and 0.08 respectively (Stam et al, 2015),
+/// beta has been chosen to be 0.2,
 /// and N_b is the number of bound motor heads in the ensemble,
 /// approximated by Erdmann et al. 2013 to be:
 ///
-///             N_b = p * N_t + (F * alpha)
+///             N_b = p * N_t + (F * gamma)
 ///
-/// where alpha has been empirically determined to be 0.04
+/// where gamma has been chosen to be 0.05
 /// for a low duty ratio motor (p = 0.1).
 
 class LowDutyCatchSlip : public MotorRateChanger {
@@ -166,7 +170,8 @@ private:
     //@{
     ///Constant parameters
     const double dutyRatio = 0.1;
-    const double alpha = 0.04;
+    const double beta = 0.2;
+    const double gamma = 0.05;
     
     const double _a1 = 0.92;   ///< catch amplitude
     const double _a2 = 0.08;   ///< slip amplitude
@@ -191,10 +196,10 @@ public:
 /// @note - Assuming a duty ratio p = 0.1
 /// @note - This function updates walking rates based on the Hill form:
 ///
-///   k_eff = k_0 * (F_0 - F / N_t) / (F_0 + (F / (N_t * beta)))
+///   k_eff = k_0 * (F_0 - F / N_t) / (F_0 + (F / (N_t * zeta)))
 ///
 /// where F_0 is the characteristic force defining this stall,
-/// beta has been empirically determined to be 0.12, and
+/// zeta has been chosen to be 0.1, and
 /// k_0 is the walking rate under zero load, which was approximated
 /// by Erdmann et al. 2013 to be:
 ///
@@ -224,7 +229,7 @@ private:
     //@{
     ///Constant parameters
     const double dutyRatio = 0.1;
-    const double beta = 0.12;
+    const double zeta = 0.1;
     //@}
     
     

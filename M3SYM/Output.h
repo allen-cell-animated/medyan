@@ -49,7 +49,7 @@ public:
     ~Output() {_outputFile.close();}
     
     /// To be implemented in sub classes
-    virtual void print(int step) = 0;
+    virtual void print(int snapshot) = 0;
 };
 
 /// Print basic information about all Filament, Linker,
@@ -60,7 +60,7 @@ public:
     BasicSnapshot(string outputFileName) : Output(outputFileName) {}
     ~BasicSnapshot() {}
     
-    virtual void print(int step);
+    virtual void print(int snapshot);
 };
 
 /// Print birth times of beads for each Filament, Linker,
@@ -71,7 +71,7 @@ public:
     BirthTimes(string outputFileName) : Output(outputFileName) {}
     ~BirthTimes() {}
     
-    virtual void print(int step);
+    virtual void print(int snapshot);
 };
 
 /// Print forces on beads for each Filament
@@ -81,7 +81,7 @@ public:
     Forces(string outputFileName) : Output(outputFileName) {}
     ~Forces() {}
     
-    virtual void print(int step);
+    virtual void print(int snapshot);
 };
 
 /// Print tension for each Filament, Linker, and MotorGhost
@@ -95,7 +95,7 @@ public:
     Tensions(string outputFileName) : Output(outputFileName) {}
     ~Tensions() {}
     
-    virtual void print(int step);
+    virtual void print(int snapshot);
 };
 
 /// Print all chemical species in the system, including diffusing
@@ -114,7 +114,7 @@ public:
     
     ~Chemistry() {}
 
-    virtual void print(int step);
+    virtual void print(int snapshot);
 };
 
 
@@ -125,7 +125,7 @@ public:
     MotorLifetimes(string outputFileName) : Output(outputFileName) {}
     ~MotorLifetimes() {}
     
-    virtual void print(int step);
+    virtual void print(int snapshot);
 };
 
 /// Print Linker binding lifetimes
@@ -135,7 +135,7 @@ public:
     LinkerLifetimes(string outputFileName) : Output(outputFileName) {}
     ~LinkerLifetimes() {}
     
-    virtual void print(int step);
+    virtual void print(int snapshot);
 };
 
 /// Print Filament turnover times
@@ -145,7 +145,7 @@ public:
     FilamentTurnoverTimes(string outputFileName) : Output(outputFileName) {}
     ~FilamentTurnoverTimes() {}
     
-    virtual void print(int step);
+    virtual void print(int snapshot);
 };
 
 #endif

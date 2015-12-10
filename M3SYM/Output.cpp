@@ -29,13 +29,13 @@
 
 using namespace mathfunc;
 
-void BasicSnapshot::print(int step) {
+void BasicSnapshot::print(int snapshot) {
     
     _outputFile.precision(10);
     
-    // print first line (step number, time, number of filaments,
+    // print first line (snapshot number, time, number of filaments,
     // linkers, motors, branchers, bubbles)
-    _outputFile << step << " " << tau() << " " <<
+    _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
@@ -136,13 +136,13 @@ void BasicSnapshot::print(int step) {
     _outputFile <<endl;
 }
 
-void BirthTimes::print(int step) {
+void BirthTimes::print(int snapshot) {
     
     _outputFile.precision(10);
     
-    // print first line (step number, time, number of filaments,
+    // print first line (snapshot number, time, number of filaments,
     // linkers, motors, branchers, bubbles)
-    _outputFile << step << " " << tau() << " " <<
+    _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
@@ -213,13 +213,13 @@ void BirthTimes::print(int step) {
     _outputFile <<endl;
 }
 
-void Forces::print(int step) {
+void Forces::print(int snapshot) {
     
     _outputFile.precision(10);
     
-    // print first line (step number, time, number of filaments,
+    // print first line (snapshot number, time, number of filaments,
     // linkers, motors, branchers)
-    _outputFile << step << " " << tau() << " " <<
+    _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
@@ -296,13 +296,13 @@ void Forces::print(int step) {
 }
 
 
-void Tensions::print(int step) {
+void Tensions::print(int snapshot) {
 
     _outputFile.precision(10);
     
-    // print first line (step number, time, number of filaments,
+    // print first line (snapshot number, time, number of filaments,
     // linkers, motors, branchers)
-    _outputFile << step << " " << tau() << " " <<
+    _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
@@ -390,10 +390,10 @@ void Tensions::print(int step) {
     _outputFile <<endl;
 }
 
-void Chemistry::print(int step) {
+void Chemistry::print(int snapshot) {
     
-    // print first line (step number, time)
-    _outputFile << step << " " << tau() << endl;
+    // print first line (snapshot number, time)
+    _outputFile << snapshot << " " << tau() << endl;
     
     // all diffusing and bulk species
     for(auto sd : _chemData.speciesDiffusing) {
@@ -454,12 +454,12 @@ void Chemistry::print(int step) {
     _outputFile <<endl;
 }
 
-void MotorLifetimes::print(int step) {
+void MotorLifetimes::print(int snapshot) {
     
     _outputFile.precision(3);
     
-    // print first line (step number, time)
-    _outputFile << step << " " << tau() << " " << endl;
+    // print first line (snapshot number, time)
+    _outputFile << snapshot << " " << tau() << " " << endl;
     
     MotorGhost::getLifetimes()->print(_outputFile);
     _outputFile << endl << endl;
@@ -469,12 +469,12 @@ void MotorLifetimes::print(int step) {
 }
 
 
-void LinkerLifetimes::print(int step) {
+void LinkerLifetimes::print(int snapshot) {
     
     _outputFile.precision(3);
     
     // print first line (step number, time)
-    _outputFile << step << " " << tau() << " " << endl;
+    _outputFile << snapshot << " " << tau() << " " << endl;
     
     Linker::getLifetimes()->print(_outputFile);
     _outputFile << endl << endl;
@@ -484,12 +484,12 @@ void LinkerLifetimes::print(int step) {
 }
 
 
-void FilamentTurnoverTimes::print(int step) {
+void FilamentTurnoverTimes::print(int snapshot) {
     
     _outputFile.precision(3);
     
     // print first line (step number, time)
-    _outputFile << step << " " << tau() << " " << endl;
+    _outputFile << snapshot << " " << tau() << " " << endl;
     
     Filament::getTurnoverTimes()->print(_outputFile);
     _outputFile << endl << endl;

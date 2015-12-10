@@ -39,14 +39,13 @@ float Slip::changeRate(float bareRate, double force) {
 }
 
 float LowDutyCatch::changeRate(float onRate, float offRate,
-                                  int numHeads, double force) {
+                               int numHeads, double force) {
     
     //determine N_b
-    float N_b = min(double(numHeads), dutyRatio * numHeads + (force * alpha));
+    float N_b = min(double(numHeads), dutyRatio * numHeads + (force * gamma));
     
     //calculate new rate
-    double newRate = (offRate / N_b) * exp(-force / (N_b * _F0));
-    
+    double newRate = beta * (offRate / N_b) * exp(-force / (N_b * _F0));
     
     return newRate;
 }
@@ -55,11 +54,12 @@ float LowDutyCatchSlip::changeRate(float onRate, float offRate,
                                    int numHeads, double force) {
     
     //determine N_b
-    float N_b = min(double(numHeads), dutyRatio * numHeads + (force * alpha));
+    float N_b = min(double(numHeads), dutyRatio * numHeads + (force * gamma));
     
     //calculate new rate
-    double newRate = (offRate / N_b) * (_a1 * exp(-force / (N_b * _FCatch)) +
-                                        _a2 * exp( force / (N_b * _FSlip)));
+    double newRate = beta * (offRate / N_b) *
+                     (_a1 * exp(-force / (N_b * _FCatch)) +
+                      _a2 * exp( force / (N_b * _FSlip)));
     
     return newRate;
     
@@ -73,7 +73,7 @@ float LowDutyStall::changeRate(float onRate, float offRate,
     
     //calculate new rate
     double newRate =  max(0.0, k_0 * (_F0 - force / numHeads)
-                          / (_F0 + (force / (beta * numHeads))));
+                          / (_F0 + (force / (zeta * numHeads))));
     
     return newRate;
 }

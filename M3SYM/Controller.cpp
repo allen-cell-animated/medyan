@@ -80,16 +80,6 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj"));
-    
-    //histogram-style data
-    _outputs.push_back(new MotorLifetimes(_outputDirectory + "motorlifetimes.hist"));
-    _outputs.push_back(new LinkerLifetimes(_outputDirectory + "linkerlifetimes.hist"));
-    _outputs.push_back(new FilamentTurnoverTimes(_outputDirectory + "filamentturnovertimes.hist"));
-    
-    //INIT HISTOGRAMS
-    MotorGhost::_lifetimes   = new Histogram(1000, 0.0, 100.0);
-    Linker::_lifetimes       = new Histogram(1000, 0.0, 100.0);
-    Filament::_turnoverTimes = new Histogram(2000, 0, 2000.0);
 
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -143,19 +133,13 @@ void Controller::initialize(string inputFile,
     auto CAlgorithm = p.readChemistryAlgorithm();
     auto CSetup = p.readChemistrySetup();
     
-    //num steps for sim
-    _numTotalSteps = CAlgorithm.numTotalSteps;
+    //run time for sim
     _runTime = CAlgorithm.runTime;
     
-    //if no snapshot step size set, set this to maxint so we use time
-    _numStepsPerSnapshot = CAlgorithm.numStepsPerSnapshot;
-    
-    if(_numStepsPerSnapshot == 0)
-        _numStepsPerSnapshot = numeric_limits<int>::max();
-    
+    //freq of snapshots, minimizations, neighborlist updates
     _snapshotTime = CAlgorithm.snapshotTime;
-    _numChemSteps = CAlgorithm.numChemSteps;
-    _numStepsPerNeighbor = CAlgorithm.numStepsPerNeighbor;
+    _minimizationTime = CAlgorithm.minimizationTime;
+    _neighborListTime = CAlgorithm.neighborListTime;
     
     ChemistryData ChemData;
     
@@ -413,6 +397,8 @@ void Controller::run() {
     
 #ifdef CHEMISTRY
     double tauLastSnapshot = 0;
+    double tauLastMinimization = 0;
+    double tauLastNeighborList = 0;
     double oldTau = 0;
 #endif
     
@@ -440,43 +426,40 @@ void Controller::run() {
     
     cout << "Starting simulation..." << endl;
     
+    int i = 1;
+    
     //if runtime was specified, use this
     if(_runTime != 0) {
     
 #ifdef CHEMISTRY
-        int i = 0;
         while(tau() <= _runTime) {
             //run ccontroller
-            if(!_cController->run(_numChemSteps)) {
-                for(auto o: _outputs) o->print(i + _numChemSteps);
+            if(!_cController->run(_minimizationTime)) {
+                for(auto o: _outputs) o->print(i);
                 break;
             }
-            i += _numChemSteps;
             
             //add the last step
             tauLastSnapshot += tau() - oldTau;
+            tauLastMinimization += tau() - oldTau;
+            tauLastNeighborList += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
-            _mController->run();
-            
-            updatePositions();
-            
-            if(i % _numStepsPerSnapshot == 0 ||
-               tauLastSnapshot >= _snapshotTime) {
-                cout << "Current simulation time = "<< tau() << endl;
-                for(auto o: _outputs) o->print(i + _numChemSteps);
-                tauLastSnapshot = 0.0;
+            if(tauLastMinimization >= _minimizationTime) {
+                _mController->run();
+                updatePositions();
+                
+                tauLastMinimization = 0.0;
             }
-#elif defined(CHEMISTRY)
-            if(i % _numStepsPerSnapshot == 0
-               tauLastSnapshot >= _snapshotTime) {
+            
+            if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;
-                for(auto o: _outputs) o->print(i + _numChemSteps);
+                for(auto o: _outputs) o->print(i++);
                 tauLastSnapshot = 0.0;
             }
 #elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(1);
+            for(auto o: _outputs) o->print(i++);
 #endif
 
 #ifdef DYNAMICRATES
@@ -485,60 +468,10 @@ void Controller::run() {
             
 #ifdef CHEMISTRY
             // update neighbor lists
-            if(i % _numStepsPerNeighbor == 0)
+            if(tauLastNeighborList >= _neighborListTime) {
                 updateNeighborLists();
-            
-            //move the boundary
-            moveBoundary(tau() - oldTau);
-            
-            oldTau = tau();
-            
-            _numTotalSteps = i;
-        }
-#endif
-    }
-    
-    else {
-#ifdef CHEMISTRY
-        for(int i = 0; i < _numTotalSteps; i+=_numChemSteps) {
-            //run ccontroller
-            if(!_cController->run(_numChemSteps)) {
-                for(auto o: _outputs) o->print(i + _numChemSteps);
-                break;
+                tauLastNeighborList = 0.0;
             }
-            //add the last step
-            tauLastSnapshot += tau() - oldTau;
-#endif
-#if defined(MECHANICS) && defined(CHEMISTRY)
-            //run mcontroller, update system
-            _mController->run();
-            updatePositions();
-            
-            if(i % _numStepsPerSnapshot == 0 ||
-               tauLastSnapshot >= _snapshotTime) {
-                cout << "Current simulation time = "<< tau() << endl;
-                for(auto o: _outputs) o->print(i + _numChemSteps);
-                tauLastSnapshot = 0.0;
-            }
-#elif defined(CHEMISTRY)
-            if(i % _numStepsPerSnapshot == 0 ||
-               tauLastSnapshot >= _snapshotTime) {
-                cout << "Current simulation time = "<< tau() << endl;
-                for(auto o: _outputs) o->print(i + _numChemSteps);
-                tauLastSnapshot = 0.0;
-            }
-#elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(1);
-#endif
-
-#ifdef DYNAMICRATES
-            updateReactionRates();
-#endif
-            
-#ifdef CHEMISTRY
-            // update neighbor lists
-            if(i % _numStepsPerNeighbor == 0)
-                updateNeighborLists();
             
             //move the boundary
             moveBoundary(tau() - oldTau);
@@ -548,7 +481,7 @@ void Controller::run() {
 #endif
     }
     //print last snapshots
-    for(auto o: _outputs) o->print(_numTotalSteps);
+    for(auto o: _outputs) o->print(i);
     
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
@@ -557,6 +490,3 @@ void Controller::run() {
     cout << "Total simulation time: dt=" << tau() << endl;
     cout << "Done with simulation!" << endl;
 }
-
-
-

@@ -50,14 +50,12 @@ private:
     
     vector<Output*> _outputs; ///< Vector of specified outputs
     
-    int _numTotalSteps;       ///< Number of chemical steps we are running, or specify the time
     double _runTime;          ///< Total desired runtime for simulation
-    
-    int _numStepsPerSnapshot; ///< Number of steps before a snapshot is recorded
+
     double _snapshotTime;     ///< Desired time for each snapshot
     
-    int _numChemSteps;        ///< Number of consecutive chemical steps
-    int _numStepsPerNeighbor; ///< NUmber of steps before a neighbor list update
+    double _minimizationTime;  ///< Frequency of mechanical minimization
+    double _neighborListTime;  ///< Frequency of neighbor list updates
     
     ///INITIALIZATION HELPER FUNCTIONS
     

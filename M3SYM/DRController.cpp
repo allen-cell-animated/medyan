@@ -117,7 +117,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 MotorGhost::_unbindingChangers.push_back(new LowDutyCatch(motorIndex, f));
                 forceIndex++;
             }
-            if(changer == "LOWDUTYCATCHSLIP") {
+            else if(changer == "LOWDUTYCATCHSLIP") {
                 
                 //if user did not specify enough parameters, return
                 if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())

@@ -302,18 +302,6 @@ void Filament::retractMinusEnd() {
 #endif
     
     _deltaMinusEnd--;
-    
-    //check if filament has turned over
-    if(_cylinderVector.front()->getFirstBead()->getPosition()
-       == _plusEndPosition) {
-        
-        //add
-        _turnoverTime = tau() - _turnoverTime;
-        _turnoverTimes->addValue(_turnoverTime);
-        
-        //reset plus end
-        _plusEndPosition = _cylinderVector.back()->getSecondBead()->getPosition();
-    }
 }
 
 void Filament::polymerizePlusEnd() {

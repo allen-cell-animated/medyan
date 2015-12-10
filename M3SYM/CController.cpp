@@ -75,12 +75,12 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
     
 }
 
-bool CController::run(int steps) {
+bool CController::run(double time) {
     
     //update copy numbers
     _chemManager->updateCopyNumbers();
     
     //run the steps
-    return _chemSim->run(steps);
+    return _chemSim->run(time);
 }
 

@@ -54,8 +54,11 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
                (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
                 inBubble = true;
         }
+        double safeDist = SysParams::Boundaries().BoundaryCutoff;
         
-        if(b->within(firstPoint) && b->within(secondPoint) && !inBubble) {
+        if(b->within(firstPoint) && b->within(secondPoint) &&
+           b->distance(firstPoint) > safeDist &&
+           b->distance(secondPoint) > safeDist && !inBubble) {
             filaments.emplace_back(filamentType, firstPoint, secondPoint);
             filamentCounter++;
         }

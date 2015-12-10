@@ -62,16 +62,15 @@ struct ChemistryAlgorithm {
     string algorithm = "";
     
     //@{
-    /// User can specify either the total number of chemical steps to perform,
-    /// or the total run time of the simulation.
-    int numTotalSteps = 0; double runTime = 0.0;
+    /// User can specify total run time of the simulation, as well as
+    /// frequency of snapshots, neighbor list updates and minimizations.
+    double runTime = 0.0;
     
-    int numStepsPerSnapshot = 0; double snapshotTime = 0.0;
+    double snapshotTime = 0.0;
+    
+    double minimizationTime = 0.0;
+    double neighborListTime = 0.0;
     //@}
-    
-    int numChemSteps = 0; ///< Specifying number of chemical steps at a time
-    int numStepsPerNeighbor = 0; ///< Number of chemical steps per a neighbor
-                                 ///< list update. Will affect efficiency.
 };
 
 /// Struct to hold Species and Reaction information

@@ -223,19 +223,6 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.algorithm = lineVector[1];
             }
         }
-        if (line.find("NUMTOTALSTEPS:") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry algorithm. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.numTotalSteps = atoi(lineVector[1].c_str());
-            }
-        }
         
         if (line.find("RUNTIME:") != string::npos) {
             
@@ -248,19 +235,6 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.runTime = atof(lineVector[1].c_str());
-            }
-        }
-        if (line.find("NUMSTEPSPERS:") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Chemistry algorithm. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                CAlgorithm.numStepsPerSnapshot = atoi(lineVector[1].c_str());
             }
         }
         if (line.find("SNAPSHOTTIME:") != string::npos) {
@@ -277,7 +251,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
         }
         
-        if (line.find("NUMCHEMSTEPS:") != string::npos) {
+        if (line.find("MINIMIZATIONTIME:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -287,10 +261,10 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CAlgorithm.numChemSteps = atoi(lineVector[1].c_str());
+                CAlgorithm.minimizationTime = atof(lineVector[1].c_str());
             }
         }
-        if (line.find("NUMSTEPSPERN:") != string::npos) {
+        if (line.find("NEIGHBORLISTTIME:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() != 2) {
@@ -300,7 +274,7 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                CAlgorithm.numStepsPerNeighbor = atoi(lineVector[1].c_str());
+                CAlgorithm.neighborListTime = atof(lineVector[1].c_str());
             }
         } 
     }

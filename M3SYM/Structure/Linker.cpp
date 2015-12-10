@@ -79,12 +79,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #endif
 }
 
-Linker::~Linker() noexcept {
-    
-    //add data to histograms
-    double lifetime = tau() - _birthTime;
-    _lifetimes->addValue(lifetime);
-}
+///@note - nothing for now, but could record data here
+Linker::~Linker() noexcept {}
 
 
 void Linker::updatePosition() {

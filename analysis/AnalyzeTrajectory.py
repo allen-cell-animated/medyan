@@ -444,7 +444,7 @@ def combineAllHistograms(histSnapshotList):
 
 
 #Calculate average filament end to end distance at each step
-#returns a time and distance pair
+#returns a time and distance pairs
 def avgEndToEndDistance(SnapshotList, snapshot=1):
 
 	Snapshot = SnapshotList[snapshot]
@@ -1146,7 +1146,7 @@ def plotHistogram(histogramSnapshot, normalize=False):
 	if(normalize):
 		maxfreq = max(xfreqs)
 		xfreqs = [x/maxfreq for x in xfreqs]
-		
+
 	pos = np.arange(len(xbins))
 	width = 0.1  # gives histogram aspect to the bar diagram
 

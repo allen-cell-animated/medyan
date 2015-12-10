@@ -49,8 +49,8 @@ public:
     /// Remove Reaction *r from the simulated chemical network 
     void removeReaction(ReactionBase *r);
     
-    /// Run the chemical dynamics for a specific number of steps
-    bool run(int steps);
+    /// Run the chemical dynamics for a set amount of time
+    bool run(double time);
     
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
