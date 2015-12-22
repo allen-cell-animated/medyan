@@ -3,10 +3,10 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = '/Users/jameskomianos/Desktop/Test/snapshot.traj'
+traj_filename = ''
 color_filename = ''
 
-#Open the traj file
+#Open the traj filex
 traj_file=open(traj_filename)
 
 #Do we have color?
@@ -311,6 +311,9 @@ def show_snapshot(snapshot_number=-1):
 	SCALETITLE = ''
 	COLORMAP = ''
 
+	#tracking plus and minus ends
+	TRACKENDS = True
+
 	#grid size
 	GRIDSIZEMAXX = 1000.0
 	GRIDSIZEMINX = 0.0
@@ -333,6 +336,8 @@ def show_snapshot(snapshot_number=-1):
 	DLINKERCOLOR  = (0.0,1.0,0.1)
 	DMOTORCOLOR   = (0.0,0.2,1.0)
 	DBUBBLECOLOR  = (0.2,0.7,0.5)
+	PLUSENDCOLOR  = (0.0,0.2,0.6)
+	MINUSENDCOLOR = (0.0,0.6,0.1)
 
 	local_snapshot=TrajSnapshotList[snapshot_number]
 	figw = mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
@@ -401,6 +406,9 @@ def show_snapshot(snapshot_number=-1):
 	#DISPLAYING FILAMENTS
 	if(len(local_snapshot.filaments) != 0):
 
+		plusends =[[], [], []]
+		minusends=[[], [], []]
+
 		#can add as many filaments as desired
 		x=[]
 		c=[]
@@ -410,8 +418,17 @@ def show_snapshot(snapshot_number=-1):
 			q=[]
 			for fid in sorted(local_snapshot.filaments.keys()):
 				q.append(local_snapshot.filaments[fid].coords[i])
-					
+
 			x.append(hstack(q))
+
+		#plus ends and minus ends if tracked
+		if(TRACKENDS):
+			for i in 0, 1, 2:
+				for fid in sorted(local_snapshot.filaments.keys()):
+					coords = local_snapshot.filaments[fid].coords
+
+					plusends[i].append(coords[i][len(coords[i]) - 1])
+					minusends[i].append(coords[i][0])
 
 		for fid in sorted(local_snapshot.filaments.keys()):
 			for color in local_snapshot.filaments[fid].colors:
@@ -427,6 +444,15 @@ def show_snapshot(snapshot_number=-1):
 			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2], c)
 		else:
 			src = mlab.pipeline.scalar_scatter(x[0], x[1], x[2])
+
+		if(TRACKENDS):
+			plusendsrc = mlab.pipeline.scalar_scatter(plusends[0], plusends[1], plusends[2])
+			gsphere=mlab.pipeline.glyph(plusendsrc, mode="sphere", resolution=24, 
+								        scale_mode='scalar', scale_factor=20.0, color=(PLUSENDCOLOR))
+
+			minusendsrc = mlab.pipeline.scalar_scatter(minusends[0], minusends[1], minusends[2])
+			gsphere=mlab.pipeline.glyph(minusendsrc, mode="sphere", resolution=24, 
+								        scale_mode='scalar', scale_factor=20.0, color=(MINUSENDCOLOR))
 
 		gsphere=mlab.pipeline.glyph(src, mode="sphere", resolution=24, 
 								     scale_mode='scalar', scale_factor=3.0, color=(DBEADCOLOR))
