@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = ''
+traj_filename = '/Users/jameskomianos/Desktop/snapshot.traj'
 color_filename = ''
 
 #Open the traj filex
@@ -312,16 +312,16 @@ def show_snapshot(snapshot_number=-1):
 	COLORMAP = ''
 
 	#tracking plus and minus ends
-	TRACKENDS = True
+	TRACKENDS = False
 
 	#grid size
-	GRIDSIZEMAXX = 1000.0
+	GRIDSIZEMAXX = 3000.0
 	GRIDSIZEMINX = 0.0
 
-	GRIDSIZEMAXY = 1000.0
+	GRIDSIZEMAXY = 3000.0
 	GRIDSIZEMINY = 0.0
 
-	GRIDSIZEMAXZ = 1000.0
+	GRIDSIZEMAXZ = 3000.0
 	GRIDSIZEMINZ = 0.0
 
 	#boundary type, CUBIC or SPHERICAL
@@ -336,8 +336,8 @@ def show_snapshot(snapshot_number=-1):
 	DLINKERCOLOR  = (0.0,1.0,0.1)
 	DMOTORCOLOR   = (0.0,0.2,1.0)
 	DBUBBLECOLOR  = (0.2,0.7,0.5)
-	PLUSENDCOLOR  = (0.0,0.2,0.6)
-	MINUSENDCOLOR = (0.0,0.6,0.1)
+	PLUSENDCOLOR  = (1.0,1.0,1.0)
+	MINUSENDCOLOR = (0.1,0.1,0.1)
 
 	local_snapshot=TrajSnapshotList[snapshot_number]
 	figw = mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))

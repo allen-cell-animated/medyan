@@ -17,6 +17,12 @@ class FilamentSnapshot:
 		self.colors={}
 		self.connections=None
 
+#A cylinder snapshot
+class CylinderSnapshot:
+	def __init__(self):
+		self.id = None
+		self.coords={}
+
 class LinkerSnapshot:
 	def __init__(self):
 		self.id=None
@@ -54,8 +60,9 @@ class TrajSnapshot:
 		self.n_linkers=None
 		self.n_motors=None
 		self.n_branchers=None
-		self.n_bubbles=None
+		self.n_bubbles=0
 		self.filaments={}
+		self.cylinders={}
 		self.linkers={}
 		self.motors={}
 		self.branchers={}
@@ -121,8 +128,14 @@ def readTrajectory(filename):
 
 		if(first_snapshot_line):
 			F=TrajSnapshot()
-			F.step, F.time, F.n_filaments, F.n_linkers, \
-			F.n_motors, F.n_branchers, F.n_bubbles = map(double,line.split())
+
+			if len(line.split()) == 7:
+				F.step, F.time, F.n_filaments, F.n_linkers, \
+				F.n_motors, F.n_branchers, F.n_bubbles = map(double,line.split())
+			else:
+				F.step, F.time, F.n_filaments, F.n_linkers, \
+				F.n_motors, F.n_branchers = map(double,line.split())
+
 			F.n_filaments = int(F.n_filaments)
 			F.n_linkers   = int(F.n_linkers)
 			F.n_motors    = int(F.n_motors)
@@ -136,11 +149,13 @@ def readTrajectory(filename):
 			first_snapshot_line=True
 			first_filament_line=True
 			TrajSnapshotList.append(F)
+
 			assert F.n_filaments == len(F.filaments)
 			assert F.n_linkers   == len(F.linkers)
 			assert F.n_motors    == len(F.motors)
 			assert F.n_branchers == len(F.branchers)
 			assert F.n_bubbles   == len(F.bubbles)
+
 			n_beads_filament=0
 			n_beads_linker=0
 			n_beads_motor=0
@@ -152,9 +167,14 @@ def readTrajectory(filename):
 		if(first_line):
 			line_split = line.split()
 
-			if(line_split[0] == "FILAMENT"):
+			if(line_split[0] == "FILAMENT") or (line_split[0] == "F"):
 				FS=FilamentSnapshot()
-				FS.id, FS.type, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
+
+				if(len(line_split[1:]) == 5):
+					FS.id, FS.type, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
+				else:
+					FS.id, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
+
 				first_line=False
 				F.filaments[FS.id]=FS
 				FS.connections=vstack(
@@ -164,7 +184,7 @@ def readTrajectory(filename):
 				reading_filament=True
 				line_number+=1
 				continue
-			if(line_split[0] == "LINKER"):
+			if(line_split[0] == "LINKER") or (line_split[0] == "L"):
 				LS = LinkerSnapshot()
 				LS.id, LS.type = map(int, line_split[1:])
 				first_line = False
@@ -175,7 +195,7 @@ def readTrajectory(filename):
 				reading_linker=True
 				line_number+=1
 				continue
-			if(line_split[0] == "MOTOR"):
+			if(line_split[0] == "MOTOR") or (line_split[0] == "M"):
 				MS = MotorSnapshot()
 				MS.id, MS.type = map(int, line_split[1:])
 				first_line = False
@@ -187,7 +207,7 @@ def readTrajectory(filename):
 				line_number+=1
 				continue
 
-			if(line_split[0] == "BRANCHER"):
+			if(line_split[0] == "BRANCHER") or (line_split[0] == "B"):
 				BS = BrancherSnapshot()
 				BS.id, BS.type = map(int, line_split[1:])
 				first_line = False
@@ -209,35 +229,44 @@ def readTrajectory(filename):
 		if(reading_filament):
 			FS.coords=array(line.split(),'f')
 			N=len(FS.coords)
-			FS.coords=FS.coords.reshape(N/3,3).T
+			FS.coords=FS.coords.reshape(N/3,3)
+
+			#create cylinder snapshots
+			for i in xrange(0, len(FS.coords) - 1):
+				CS = CylinderSnapshot()
+				#create unique id using cylinder position and fil id
+				CS.id = (FS.id + i) * (FS.id + i + 1) / 2 + FS.id
+				CS.coords = [FS.coords[i], FS.coords[i+1]]
+				F.cylinders[CS.id] = CS
+
 			first_line=True
 			reading_filament=False
 
 		if(reading_linker):
 			LS.coords=array(line.split(),'f')
 			N=len(LS.coords)
-			LS.coords=LS.coords.reshape(N/3,3).T
+			LS.coords=LS.coords.reshape(N/3,3)
 			first_line=True
 			reading_linker=False
 
 		if(reading_motor):
 			MS.coords=array(line.split(),'f')
 			N=len(MS.coords)
-			MS.coords=MS.coords.reshape(N/3,3).T
+			MS.coords=MS.coords.reshape(N/3,3)
 			first_line=True
 			reading_motor=False
 
 		if(reading_brancher):
 			BS.coords=array(line.split(),'f')
 			N=len(BS.coords)
-			BS.coords=BS.coords.reshape(N/3,3).T
+			BS.coords=BS.coords.reshape(N/3,3)
 			first_line=True
 			reading_brancher=False
 
 		if(reading_bubble):
 			US.coords=array(line.split(),'f')
 			N=len(US.coords)
-			US.coords=US.coords.reshape(N/3,3).T
+			US.coords=US.coords.reshape(N/3,3)
 			first_line=True
 			reading_bubble=False
 
@@ -890,6 +919,7 @@ def radiusOfGyration(SnapshotList, snapshot=1):
 
 		#go through filaments
 	for filamentID, FS in Snapshot.filaments.iteritems():
+
 		for coord in FS.coords:
 
 			com += coord
@@ -916,6 +946,7 @@ def radiusOfGyration(SnapshotList, snapshot=1):
 
 
 #Calculate the radius of gyration over all cylinders from a number of trajectories
+#shows the IQR of the data set instead of std dev to avoid skew by outliers
 def radiusOfGyrations(SnapshotLists, snapshot=1):
 
 	RgList = []
@@ -940,11 +971,9 @@ def radiusOfGyrations(SnapshotLists, snapshot=1):
 	finalRg /= len(RgList)
 
 	Rgs = [x[1] for x in RgList]
+	err = np.std(Rgs)
 
-	errplus = finalRg + np.std(Rgs)
-	errminus = finalRg -  np.std(Rgs)
-
-	return (finalTime,finalRg,errplus,errminus)
+	return (finalTime,finalRg,err)
 
 #Calculate contractile velocity towards the center of mass
 #returns a list of time and velocity pairs
@@ -1006,8 +1035,7 @@ def contractileVelocity(SnapshotList):
 	return velocities
 
 #Calculate contractile velocity towards the center of mass from a number of trajectories
-#plot the data over time. If file is provided, save to that file
-def contractileVelocities(SnapshotLists, saveFile=''):
+def contractileVelocities(SnapshotLists):
 
 	velocitiesList = []
 
@@ -1043,6 +1071,117 @@ def contractileVelocities(SnapshotLists, saveFile=''):
 		finalVelocities.append((finalTime, finalVelocity, error))
 
 	return finalVelocities
+
+#Calculate average mean square displacement of filaments 
+#returns a list of time and msd pairs
+def meanSquareDisplacement(SnapshotList):
+ 
+	msds = []
+
+	for SnapshotIndex in xrange(1, len(SnapshotList) - 1, 2):
+
+		SnapshotI = SnapshotList[1]
+		SnapshotF = SnapshotList[SnapshotIndex]
+
+		msd = 0
+		numFilaments = 0
+
+		sds = []
+
+		#Loop through cylinders
+		for filamentIDA, FSA in SnapshotF.filaments.iteritems():
+
+			#find in initial. if it doesnt exist, leave out
+			try:
+				FSB= SnapshotI.filaments[filamentIDA]
+			except Exception, e:
+				continue
+
+			numFilaments += 1
+
+			#calc com of fil A
+			comA = np.array([0.0,0.0,0.0])
+			beadCount = 0
+
+			for coord in FSA.coords:
+
+				comA += coord
+				beadCount += 1
+
+			#normalize
+			comA /= beadCount
+
+			#same for fil b
+			comB = np.array([0.0,0.0,0.0])
+			beadCount = 0
+
+			for coord in FSB.coords:
+
+				comB += coord
+				beadCount += 1
+
+			#normalize
+			comB /= beadCount
+
+			#calc square displacement (in um^2)
+			sd = (comB - comA).dot(comB - comA) * 0.001 * 0.001
+
+			sds.append(sd)
+
+		#calc msd, error
+		if numFilaments == 0: continue
+
+		msd = np.mean(sds)
+
+		msds.append((SnapshotF.time, msd))
+
+	#return msds
+	return msds
+
+#Calculate average log mean square displacement of filaments over trajectories
+#also returns log time for easy plotting
+def logMeanSquareDisplacements(SnapshotLists):
+
+	msdsList = []
+
+	#get all data
+	for SnapshotList in SnapshotLists:
+
+		msds = meanSquareDisplacement(SnapshotList)
+		msdsList.append(msds)
+
+	#now combine data
+	finalMsds = []
+
+	for i in xrange(0, len(msds)):
+
+		finalTime = 0
+		finalMsd = 0
+
+		msdSet = []
+
+		for msds in msdsList:
+
+			finalTime += msds[i][0]
+			finalMsd += msds[i][1]
+
+			msdSet.append(msds[i][1])
+
+		#average
+		finalTime /= len(SnapshotLists)
+		finalMsd /= len(SnapshotLists)
+
+		#log
+		finalTimeLog = math.log(finalTime)
+		finalMsdLog = math.log(finalMsd)
+
+		#with log propagation
+		err = 0.434 * numpy.std(msdSet) / finalMsd
+
+		finalMsds.append((finalTime, finalMsd, err))
+
+	return finalMsds
+
 
 #finds index of coordinate by linear mapping
 def getIndex(coordinate, grid, compartment):
@@ -1116,7 +1255,7 @@ def density(Snapshot, grid, compartment):
 #
 #
 #
-#				  PLOTTING
+#			    PLOTTING ANALYSIS
 #
 #
 #
@@ -1162,7 +1301,22 @@ def calculateRgs(snapshot=1):
 
 def calculateRgVsT():
 
-	FrameLists = readTrajectories([])
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.01exbind/Run15/snapshot.traj'])
 
 	Rgs1 = []
 
@@ -1171,9 +1325,279 @@ def calculateRgVsT():
 
 	del FrameLists
 
-	return [Rgs1]
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.02exbind/Run15/snapshot.traj'])
 
-def plotRgHeatMap1(saveFile=''):
+	Rgs2 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs2.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.05exbind/Run15/snapshot.traj'])
+
+	Rgs3 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs3.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1exbind/Run15/snapshot.traj'])
+
+	Rgs4 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs4.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.2exbind/Run15/snapshot.traj'])
+
+	Rgs5 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs5.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.5exbind/Run15/snapshot.traj'])
+
+	Rgs6 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs6.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	return [Rgs1, Rgs2, Rgs3, Rgs4, Rgs5, Rgs6]
+
+def calculateLogMsdVsLogT():
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/M0.01A0.1/Run15/snapshot.traj'])
+
+	msds0 = logMeanSquareDisplacements(FrameLists)
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.125/Run15/snapshot.traj'])
+
+	msds1 = logMeanSquareDisplacements(FrameLists)
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.25/Run15/snapshot.traj'])
+
+	msds2 = logMeanSquareDisplacements(FrameLists)
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR0.5/Run15/snapshot.traj'])
+
+	msds3 = logMeanSquareDisplacements(FrameLists)
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR2/Run15/snapshot.traj'])
+
+	msds4 = logMeanSquareDisplacements(FrameLists)
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run14/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR4/Run15/snapshot.traj'])
+
+	msds5 = logMeanSquareDisplacements(FrameLists)
+
+	del FrameLists
+
+	FrameLists = readTrajectories(['/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run0/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run1/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run2/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run3/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run4/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run5/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run6/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run7/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run8/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run9/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run10/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run11/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run12/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run13/snapshot.traj',
+		'/Users/jameskomianos/Desktop/PLOSData/contractilitydata/TR8/Run14/snapshot.traj'])
+
+	msds6 = logMeanSquareDisplacements(FrameLists)
+
+	del FrameLists
+
+	return [msds1, msds2, msds3, msds0, msds4, msds5, msds6]
+
+def plotRgHeatMap(saveFile=''):
 
 	#read data
 	x_labels = [0.01,0.02,0.05,0.1,0.2,0.5]
@@ -1214,7 +1638,7 @@ def plotRgHeatMap1(saveFile=''):
 		fig.savefig(saveFile)
 
 
-def plotRgHeatMap2(saveFile=''):
+def plotRgHeatMapExBind(saveFile=''):
 
 	#read data
 	x_labels = [0.01,0.02,0.05,0.1,0.2,0.5]
@@ -1255,29 +1679,140 @@ def plotRgHeatMap2(saveFile=''):
 		fig.savefig(saveFile)
 
 
-def plotRgVsT(data, saveFile=''):
+def plotRgRatioVsT(data, saveFile=''):
+
+	numTraj = 16
 
 	fig = plt.figure(figsize=(10.0,10.0))
 	host = fig.add_subplot(111)
 
 	#organize data
 	data1 = data[0]
+	data2 = data[1]
+	data3 = data[2]
+	data4 = data[3]
+	data5 = data[4]
+	data6 = data[5]
 
 	time1 = [x[0] for x in data1]
+	time2 = [x[0] for x in data2]
+	time3 = [x[0] for x in data3]
+	time4 = [x[0] for x in data4]
+	time5 = [x[0] for x in data5]
+	time6 = [x[0] for x in data6]
 
 	Rg1_0 = data1[0][1]
+	Rg2_0 = data2[0][1]
+	Rg3_0 = data3[0][1]
+	Rg4_0 = data4[0][1]
+	Rg5_0 = data5[0][1]
+	Rg6_0 = data6[0][1]
+
+	err1_0 = data1[0][2]
+	err2_0 = data2[0][2]
+	err3_0 = data3[0][2]
+	err4_0 = data4[0][2]
+	err5_0 = data5[0][2]
+	err6_0 = data6[0][2]
 
 	Rg1 = [x[1]/Rg1_0 for x in data1]
-	errplus_1 = [x[2]/Rg1_0 for x in data1]
+	Rg2 = [x[1]/Rg2_0 for x in data2]
+	Rg3 = [x[1]/Rg3_0 for x in data3]
+	Rg4 = [x[1]/Rg4_0 for x in data4]
+	Rg5 = [x[1]/Rg5_0 for x in data5]
+	Rg6 = [x[1]/Rg6_0 for x in data6]
 
-	errminus_1 = [x[3]/Rg1_0 for x in data1]
+	#with propagation
+	errplus_1 = [x[1]/Rg1_0 + (x[1]/Rg1_0)*sqrt(pow(x[2] / x[1], 2) + pow(err1_0 / Rg1_0, 2)) for x in data1]
+	errplus_2 = [x[1]/Rg2_0 + (x[1]/Rg2_0)*sqrt(pow(x[2] / x[1], 2) + pow(err2_0 / Rg2_0, 2)) for x in data2]
+	errplus_3 = [x[1]/Rg3_0 + (x[1]/Rg3_0)*sqrt(pow(x[2] / x[1], 2) + pow(err3_0 / Rg3_0, 2)) for x in data3]
+	errplus_4 = [x[1]/Rg4_0 + (x[1]/Rg4_0)*sqrt(pow(x[2] / x[1], 2) + pow(err4_0 / Rg4_0, 2)) for x in data4]
+	errplus_5 = [x[1]/Rg5_0 + (x[1]/Rg5_0)*sqrt(pow(x[2] / x[1], 2) + pow(err5_0 / Rg5_0, 2)) for x in data5]
+	errplus_6 = [x[1]/Rg6_0 + (x[1]/Rg6_0)*sqrt(pow(x[2] / x[1], 2) + pow(err6_0 / Rg6_0, 2)) for x in data6]
 
-	plt.plot(time1, Rg1, 'r', label=r'$\mathrm{}$')
+	errminus_1 = [x[1]/Rg1_0 - (x[1]/Rg1_0)*sqrt(pow(x[2] / x[1], 2) + pow(err1_0 / Rg1_0, 2)) for x in data1]
+	errminus_2 = [x[1]/Rg2_0 - (x[1]/Rg2_0)*sqrt(pow(x[2] / x[1], 2) + pow(err2_0 / Rg2_0, 2)) for x in data2]
+	errminus_3 = [x[1]/Rg3_0 - (x[1]/Rg3_0)*sqrt(pow(x[2] / x[1], 2) + pow(err3_0 / Rg3_0, 2)) for x in data3]
+	errminus_4 = [x[1]/Rg4_0 - (x[1]/Rg4_0)*sqrt(pow(x[2] / x[1], 2) + pow(err4_0 / Rg4_0, 2)) for x in data4]
+	errminus_5 = [x[1]/Rg5_0 - (x[1]/Rg5_0)*sqrt(pow(x[2] / x[1], 2) + pow(err5_0 / Rg5_0, 2)) for x in data5]
+	errminus_6 = [x[1]/Rg6_0 - (x[1]/Rg6_0)*sqrt(pow(x[2] / x[1], 2) + pow(err6_0 / Rg6_0, 2)) for x in data6]
 
-	fill_between(time1, errplus_1, errminus_1, alpha=0.25, linewidth=0, color='r')
+	plt.plot(time1, Rg1, 'r', label=r'$\mathrm{R_{\alpha,a} = 0.01}$', linewidth=3)
+	plt.plot(time2, Rg2, 'g', label=r'$\mathrm{R_{\alpha,a} = 0.02}$', linewidth=3)
+	plt.plot(time3, Rg3, 'b', label=r'$\mathrm{R_{\alpha,a} = 0.05}$', linewidth=3)
+	plt.plot(time4, Rg4, 'y', label=r'$\mathrm{R_{\alpha,a} = 0.1}$', linewidth=3)
+	plt.plot(time5, Rg5, 'c', label=r'$\mathrm{R_{\alpha,a} = 0.2}$', linewidth=3)
+	plt.plot(time6, Rg6, 'm', label=r'$\mathrm{R_{\alpha,a} = 0.5}$', linewidth=3)
+
+	fill_between(time1, errplus_1, errminus_1, alpha=0.22, linewidth=3, color='r')
+	fill_between(time2, errplus_2, errminus_2, alpha=0.22, linewidth=3, color='g')
+	fill_between(time3, errplus_3, errminus_3, alpha=0.22, linewidth=3, color='b')
+	fill_between(time4, errplus_4, errminus_4, alpha=0.22, linewidth=3, color='y')
+	fill_between(time5, errplus_5, errminus_5, alpha=0.22, linewidth=3, color='c')
+	fill_between(time6, errplus_6, errminus_6, alpha=0.22, linewidth=3, color='m')
 
 	plt.xlabel(r'$\mathrm{Time\/(s)}$', fontsize=20)
 	plt.ylabel(r'$\mathrm{R_{g,f} / R_{g,i}\/(\mu m)}$', fontsize=20)
+	plt.xlim(0,2000)
+
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotLogMsdVsLogT(data, saveFile=''):
+
+	numTraj = 16
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	data1 = data[0]
+	data2 = data[1]
+	data3 = data[2]
+	data4 = data[3]
+	data5 = data[4]
+	data6 = data[5]
+	data7 = data[6]
+
+	time1 = [x[0] for x in data1]
+	time2 = [x[0] for x in data2]
+	time3 = [x[0] for x in data3]
+	time4 = [x[0] for x in data4]
+	time5 = [x[0] for x in data5]
+	time6 = [x[0] for x in data6]
+	time7 = [x[0] for x in data7]
+
+	msds1 = [x[1] for x in data1]
+	msds2 = [x[1] for x in data2]
+	msds3 = [x[1] for x in data3]
+	msds4 = [x[1] for x in data4]
+	msds5 = [x[1] for x in data5]
+	msds6 = [x[1] for x in data6]
+	msds7 = [x[1] for x in data7]
+
+	#propagated logarithmic error
+	err_1 = [x[2] for x in data1]
+	err_2 = [x[2] for x in data2]
+	err_3 = [x[2] for x in data3]
+	err_4 = [x[2] for x in data4]
+	err_5 = [x[2] for x in data5]
+	err_6 = [x[2] for x in data6]
+	err_7 = [x[2] for x in data7]
+
+	plt.errorbar(time1, msds1, yerr=err_1 ,fmt='o', color='r', label=r'$\mathrm{x = 0.125}$')
+	plt.errorbar(time2, msds2, yerr=err_2 ,fmt='o', color='g', label=r'$\mathrm{x = 0.25}$')
+	plt.errorbar(time3, msds3, yerr=err_3 ,fmt='o', color='b', label=r'$\mathrm{x = 0.5}$')
+	plt.errorbar(time4, msds4, yerr=err_4 ,fmt='o', color='y', label=r'$\mathrm{x = 1}$')
+	plt.errorbar(time5, msds5, yerr=err_5 ,fmt='o', color='c', label=r'$\mathrm{x = 2}$')
+	plt.errorbar(time6, msds6, yerr=err_6 ,fmt='o', color='m', label=r'$\mathrm{x = 4}$')
+	plt.errorbar(time7, msds7, yerr=err_7 ,fmt='o', color='k', label=r'$\mathrm{x = 8}$')
+
+	plt.xlabel(r'$\mathrm{log(t)}$', fontsize=20)
+	plt.ylabel(r'$\mathrm{log(msd)}}$', fontsize=20)
 	plt.xlim(0,2000)
 
 	plt.legend()
