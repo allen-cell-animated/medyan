@@ -62,7 +62,7 @@ class TrajSnapshot:
 		self.n_linkers=None
 		self.n_motors=None
 		self.n_branchers=None
-		self.n_bubbles=None
+		self.n_bubbles=0
 		self.filaments={}
 		self.linkers={}
 		self.motors={}
@@ -97,8 +97,14 @@ for line in traj_file:
 
 	if(first_snapshot_line):
 		F=TrajSnapshot()
-		F.step, F.time, F.n_filaments, F.n_linkers, \
-		F.n_motors, F.n_branchers, F.n_bubbles = map(double,line.split())
+
+		if len(line.split()) == 7:
+			F.step, F.time, F.n_filaments, F.n_linkers, \
+			F.n_motors, F.n_branchers, F.n_bubbles = map(double,line.split())
+		else:
+			F.step, F.time, F.n_filaments, F.n_linkers, \
+			F.n_motors, F.n_branchers = map(double,line.split())
+
 		F.n_filaments = int(F.n_filaments)
 		F.n_linkers   = int(F.n_linkers)
 		F.n_motors    = int(F.n_motors)
@@ -128,9 +134,14 @@ for line in traj_file:
 	if(first_line):
 		line_split = line.split()
 
-		if(line_split[0] == "FILAMENT"):
+		if(line_split[0] == "FILAMENT") or (line_split[0] == "F"):
 			FS=FilamentSnapshot()
-			FS.id, FS.type, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
+			
+			if(len(line_split[1:]) == 5):
+				FS.id, FS.type, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
+			else:
+				FS.id, FS.length, FS.delta_left, FS.delta_right = map(int,line_split[1:])
+
 			first_line=False
 			F.filaments[FS.id]=FS
 			FS.connections=vstack(
@@ -140,7 +151,7 @@ for line in traj_file:
 			reading_filament=True
 			line_number+=1
 			continue
-		if(line_split[0] == "LINKER"):
+		if(line_split[0] == "LINKER") or (line_split[0] == "L"):
 			LS = LinkerSnapshot()
 			LS.id, LS.type = map(int, line_split[1:])
 			first_line = False
@@ -151,7 +162,7 @@ for line in traj_file:
 			reading_linker=True
 			line_number+=1
 			continue
-		if(line_split[0] == "MOTOR"):
+		if(line_split[0] == "MOTOR") or (line_split[0] == "M"):
 			MS = MotorSnapshot()
 			MS.id, MS.type = map(int, line_split[1:])
 			first_line = False
@@ -162,8 +173,7 @@ for line in traj_file:
 			reading_motor=True
 			line_number+=1
 			continue
-
-		if(line_split[0] == "BRANCHER"):
+		if(line_split[0] == "BRANCHER") or (line_split[0] == "B"):
 			BS = BrancherSnapshot()
 			BS.id, BS.type = map(int, line_split[1:])
 			first_line = False
@@ -306,13 +316,16 @@ def show_snapshot(snapshot_number=-1):
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
-	MAXVAL = 0.00
-	MINVAL = 0.00
-	SCALETITLE = ''
-	COLORMAP = ''
+	MAXVAL = 90.00
+	MINVAL = -90.00
+	SCALETITLE = 'XY-Angle'
+	COLORMAP = 'spectral'
 
 	#tracking plus and minus ends
 	TRACKENDS = False
+
+	#color by radial angle
+	COLORBYANGLE = True 
 
 	#grid size
 	GRIDSIZEMAXX = 3000.0
@@ -336,8 +349,8 @@ def show_snapshot(snapshot_number=-1):
 	DLINKERCOLOR  = (0.0,1.0,0.1)
 	DMOTORCOLOR   = (0.0,0.2,1.0)
 	DBUBBLECOLOR  = (0.2,0.7,0.5)
-	PLUSENDCOLOR  = (1.0,1.0,1.0)
-	MINUSENDCOLOR = (0.1,0.1,0.1)
+	PLUSENDCOLOR  = (0.0,0.0,0.0)
+	MINUSENDCOLOR = (1.0,1.0,1.0)
 
 	local_snapshot=TrajSnapshotList[snapshot_number]
 	figw = mlab.figure(1, size=(1000, 1000), bgcolor=(1.0,1.0,1.0))
@@ -434,6 +447,34 @@ def show_snapshot(snapshot_number=-1):
 			for color in local_snapshot.filaments[fid].colors:
 				c.append(color)
 
+		if (COLORBYANGLE): 
+			for filamentID, FS in local_snapshot.filaments.iteritems():
+
+				#loop through cylinders
+				for i in xrange(1, len(FS.coords[0]), 1):
+
+					b1x = FS.coords[0][i-1]
+					b1y = FS.coords[1][i-1]
+					b1z = FS.coords[2][i-1]
+
+					b2x = FS.coords[0][i]
+					b2y = FS.coords[1][i]
+					b2z = FS.coords[2][i]
+
+					b1 = np.array([b1x, b1y, b1z])
+					b2 = np.array([b2x, b2y, b2z])
+
+					#calculate angle from z plane
+					dist = sqrt((b2 - b1).dot(b2 - b1))
+					direction = (b2 - b1) / dist
+
+					angle = math.acos(direction.dot(np.array([0,0,1]))) * 180 / math.pi - 90
+
+					c.append(-angle)
+
+					if (i == len(FS.coords[0]) - 1): 
+						c.append(angle)
+
 		for fid in sorted(local_snapshot.filaments.keys()):
 			connections.append(local_snapshot.filaments[fid].connections)
 
@@ -468,7 +509,7 @@ def show_snapshot(snapshot_number=-1):
 			surface = mlab.pipeline.surface(tube, colormap=COLORMAP,
 										    vmax = MAXVAL, vmin = MINVAL)
 			cb = mlab.colorbar(object=surface, orientation='vertical', 
-						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=6)
+						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=5)
 
 			cb.title_text_property.color = (0.0,0.0,0.0)
 			cb.label_text_property.color = (0.0,0.0,0.0)
@@ -478,7 +519,8 @@ def show_snapshot(snapshot_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DFILCOLOR)
 
 	#DISPLAYING LINKERS
-	if(len(local_snapshot.linkers) != 0):
+	if(False):
+	#if(len(local_snapshot.linkers) != 0):
 		x=[]
 		c=[]
 		connections=[]
@@ -575,7 +617,8 @@ def show_snapshot(snapshot_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DLINKERCOLOR)
 
 	#DISPLAYING MOTORS
-	if(len(local_snapshot.motors) != 0):
+	if(False):
+	#if(len(local_snapshot.motors) != 0):
 		x=[]
 		c=[]
 		connections=[]
