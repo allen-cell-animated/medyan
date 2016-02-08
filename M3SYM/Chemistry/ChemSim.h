@@ -52,6 +52,9 @@ public:
     /// Run the chemical dynamics for a set amount of time
     bool run(double time);
     
+    /// Run the chemical dynamics for a set amount of reaction steps
+    bool runSteps(int steps);
+    
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
     void printReactions();

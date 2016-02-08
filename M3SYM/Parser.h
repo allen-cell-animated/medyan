@@ -71,6 +71,17 @@ struct ChemistryAlgorithm {
     double minimizationTime = 0.0;
     double neighborListTime = 0.0;
     //@}
+    
+    //@{
+    /// Can also specify a frequency in terms of number of chemical reaction steps
+    /// Useful for smaller systems and debugging
+    int runSteps = 0;
+    
+    int snapshotSteps = 0;
+    
+    int minimizationSteps = 0;
+    int neighborListSteps = 0;
+    //@}
 };
 
 /// Struct to hold Species and Reaction information

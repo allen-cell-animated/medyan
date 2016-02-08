@@ -211,6 +211,19 @@ public:
         return true;
     }
     
+    /// This method runs the Gillespie algorithm for the given amount of reaction steps.
+    /// @return true if successful.
+    virtual bool runSteps(int steps) {
+        
+        for(int i = 0; i < steps; i++) {
+            
+            bool success = makeStep();
+            if(!success)
+                return false;
+        }
+        return true;
+    }
+    
     /// This method is used to track the change in the total propensity of the network
     /// as the previously passivated ReactionBase *r has become activated
     void activateReaction(ReactionBase *r);

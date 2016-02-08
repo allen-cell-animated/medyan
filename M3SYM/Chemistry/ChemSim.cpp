@@ -31,6 +31,10 @@ bool ChemSim::run(double time){
     return _pimpl->run(time);
 }
 
+bool ChemSim::runSteps(int steps){
+    return _pimpl->runSteps(steps);
+}
+
 void ChemSim::initialize() {
     return _pimpl->initialize();
 }

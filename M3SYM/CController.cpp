@@ -84,3 +84,12 @@ bool CController::run(double time) {
     return _chemSim->run(time);
 }
 
+bool CController::runSteps(int steps) {
+    
+    //update copy numbers
+    _chemManager->updateCopyNumbers();
+    
+    //run the steps
+    return _chemSim->runSteps(steps);
+}
+

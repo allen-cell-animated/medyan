@@ -9,27 +9,27 @@
 \contentsline {subsubsection}{\numberline {4.1.1}Geometry}{5}
 \contentsline {subsubsection}{\numberline {4.1.2}Mechanics}{6}
 \contentsline {subsubsection}{\numberline {4.1.3}Chemistry}{8}
-\contentsline {subsubsection}{\numberline {4.1.4}Dynamic rates}{9}
+\contentsline {subsubsection}{\numberline {4.1.4}Dynamic rates}{10}
 \contentsline {subsubsection}{\numberline {4.1.5}Starting filament configuration}{10}
 \contentsline {subsubsection}{\numberline {4.1.6}Starting bubble configuration}{11}
 \contentsline {subsubsection}{\numberline {4.1.7}Special setup}{11}
-\contentsline {subsubsection}{\numberline {4.1.8}Output formats}{11}
+\contentsline {subsubsection}{\numberline {4.1.8}Output formats}{12}
 \contentsline {subsection}{\numberline {4.2}Chemistry input file}{12}
 \contentsline {subsubsection}{\numberline {4.2.1}Species}{12}
-\contentsline {subsubsection}{\numberline {4.2.2}Binding sites}{13}
+\contentsline {subsubsection}{\numberline {4.2.2}Binding sites}{14}
 \contentsline {subsubsection}{\numberline {4.2.3}Reactions}{14}
-\contentsline {subsection}{\numberline {4.3}Filament input file}{18}
-\contentsline {subsection}{\numberline {4.4}Bubble input file}{18}
+\contentsline {subsection}{\numberline {4.3}Filament input file}{19}
+\contentsline {subsection}{\numberline {4.4}Bubble input file}{19}
 \contentsline {section}{\numberline {5}Output}{19}
 \contentsline {subsection}{\numberline {5.1}Types of output files}{19}
 \contentsline {subsubsection}{\numberline {5.1.1}snapshot.traj}{19}
-\contentsline {subsubsection}{\numberline {5.1.2}forces.traj, stresses.traj, and birthtimes.traj}{19}
-\contentsline {subsubsection}{\numberline {5.1.3}chemistry.traj}{20}
-\contentsline {subsection}{\numberline {5.2}Visualization of output}{20}
-\contentsline {subsubsection}{\numberline {5.2.1}Installation of MayaVi}{20}
-\contentsline {subsubsection}{\numberline {5.2.2}Running the visualization script, AnimateTrajectory.py}{21}
+\contentsline {subsubsection}{\numberline {5.1.2}forces.traj, stresses.traj, and birthtimes.traj}{20}
+\contentsline {subsubsection}{\numberline {5.1.3}chemistry.traj}{21}
+\contentsline {subsection}{\numberline {5.2}Visualization of output}{21}
+\contentsline {subsubsection}{\numberline {5.2.1}Installation of MayaVi}{21}
+\contentsline {subsubsection}{\numberline {5.2.2}Running the visualization script, AnimateTrajectory.py}{22}
 \contentsline {section}{\numberline {6}Developer guide}{22}
 \contentsline {subsection}{\numberline {6.1}Pull requests}{22}
 \contentsline {subsection}{\numberline {6.2}Coding style}{22}
-\contentsline {subsection}{\numberline {6.3}Other information}{22}
-\contentsline {section}{\numberline {7}References}{22}
+\contentsline {subsection}{\numberline {6.3}Other information}{23}
+\contentsline {section}{\numberline {7}References}{23}

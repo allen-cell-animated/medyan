@@ -304,6 +304,19 @@ public:
         return true;
     }
     
+    /// This method runs the Gillespie algorithm for the given amount of reaction steps.
+    /// @return true if successful.
+    virtual bool runSteps(int steps) {
+        
+        for(int i = 0; i < steps; i++) {
+            
+            bool success = makeStep();
+            if(!success)
+                return false;
+        }
+        return true;
+    }
+    
     /// Prints all RNodes in the reaction network
     virtual void printReactions() const;
     

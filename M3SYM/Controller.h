@@ -57,6 +57,16 @@ private:
     double _minimizationTime;  ///< Frequency of mechanical minimization
     double _neighborListTime;  ///< Frequency of neighbor list updates
     
+    //@{
+    /// Same parameter set as timestep, but in terms of chemical
+    /// reaction steps. Useful for small runs and debugging.
+    double _runSteps;
+    double _snapshotSteps;
+    
+    double _minimizationSteps;
+    double _neighborListSteps;
+    //@}
+    
     ///INITIALIZATION HELPER FUNCTIONS
     
     /// Set up an initial configuration of a network

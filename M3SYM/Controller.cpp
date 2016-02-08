@@ -141,6 +141,12 @@ void Controller::initialize(string inputFile,
     _minimizationTime = CAlgorithm.minimizationTime;
     _neighborListTime = CAlgorithm.neighborListTime;
     
+    //if run time was not set, look for runsteps parameters
+    _runSteps = CAlgorithm.runSteps;
+    _snapshotSteps = CAlgorithm.snapshotSteps;
+    _minimizationSteps = CAlgorithm.minimizationSteps;
+    _neighborListSteps = CAlgorithm.neighborListSteps;
+    
     ChemistryData ChemData;
     
     if(CSetup.inputFile != "") {
@@ -400,8 +406,13 @@ void Controller::run() {
     double tauLastMinimization = 0;
     double tauLastNeighborList = 0;
     double oldTau = 0;
-#endif
     
+    long stepsLastSnapshot = 0;
+    long stepsLastMinimization = 0;
+    long stepsLastNeighborList = 0;
+    
+    long totalSteps = 0;
+#endif
     chrono::high_resolution_clock::time_point chk1, chk2;
     chk1 = chrono::high_resolution_clock::now();
     
@@ -480,6 +491,59 @@ void Controller::run() {
         }
 #endif
     }
+    //if run steps were specified, use this
+    if(_runSteps != 0) {
+        
+#ifdef CHEMISTRY
+        while(totalSteps <= _runSteps) {
+            //run ccontroller
+            if(!_cController->runSteps(_minimizationSteps)) {
+                for(auto o: _outputs) o->print(i);
+                break;
+            }
+            
+            //add the last step
+            stepsLastSnapshot += _minimizationSteps;
+            stepsLastMinimization += _minimizationSteps;
+            stepsLastNeighborList += _minimizationSteps;
+            
+            totalSteps += _minimizationSteps;
+#endif
+#if defined(MECHANICS) && defined(CHEMISTRY)
+            //run mcontroller, update system
+            if(stepsLastMinimization >= _minimizationSteps) {
+                _mController->run();
+                updatePositions();
+                
+                stepsLastMinimization = 0;
+            }
+            
+            if(stepsLastSnapshot >= _snapshotSteps) {
+                cout << "Current simulation time = "<< tau() << endl;
+                for(auto o: _outputs) o->print(i++);
+                stepsLastSnapshot = 0;
+            }
+#elif defined(MECHANICS)
+            for(auto o: _outputs) o->print(i++);
+#endif
+            
+#ifdef DYNAMICRATES
+            updateReactionRates();
+#endif
+            
+#ifdef CHEMISTRY
+            // update neighbor lists
+            if(stepsLastNeighborList >= _neighborListSteps) {
+                updateNeighborLists();
+                stepsLastNeighborList = 0;
+            }
+            
+            //move the boundary
+            moveBoundary(tau() - oldTau);
+        }
+#endif
+    }
+    
     //print last snapshots
     for(auto o: _outputs) o->print(i);
     

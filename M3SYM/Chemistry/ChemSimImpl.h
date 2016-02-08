@@ -46,6 +46,9 @@ public:
     /// Run the chemical dynamics for a set amount of time
     virtual bool run(double time) = 0;
     
+    /// Run the chemical dynamics for a set amount of reaction steps
+    virtual bool runSteps(int steps) = 0;
+    
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
     virtual void printReactions() const = 0;

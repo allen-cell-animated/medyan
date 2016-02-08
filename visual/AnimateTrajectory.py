@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = '/Users/jameskomianos/Desktop/snapshot.traj'
+traj_filename = ''
 color_filename = ''
 
 #Open the traj filex
@@ -311,30 +311,30 @@ def implicit_plot(expr, ext_grid, fig_handle=None, Nx=101, Ny=101, Nz=101,
 def show_snapshot(snapshot_number=-1):
 
 	#if were saving the Snapshots
-	saving = True
-	saveFile = '/Users/jameskomianos/Desktop/Test/Snapshots/'
+	saving = False
+	saveFile = ''
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
-	MAXVAL = 90.00
-	MINVAL = -90.00
-	SCALETITLE = 'XY-Angle'
-	COLORMAP = 'spectral'
+	MAXVAL = 0
+	MINVAL = 0
+	SCALETITLE = ''
+	COLORMAP = ''
 
 	#tracking plus and minus ends
 	TRACKENDS = False
 
 	#color by radial angle
-	COLORBYANGLE = True 
+	COLORBYANGLE = False
 
 	#grid size
-	GRIDSIZEMAXX = 3000.0
+	GRIDSIZEMAXX = 1000.0
 	GRIDSIZEMINX = 0.0
 
-	GRIDSIZEMAXY = 3000.0
+	GRIDSIZEMAXY = 1000.0
 	GRIDSIZEMINY = 0.0
 
-	GRIDSIZEMAXZ = 3000.0
+	GRIDSIZEMAXZ = 1000.0
 	GRIDSIZEMINZ = 0.0
 
 	#boundary type, CUBIC or SPHERICAL

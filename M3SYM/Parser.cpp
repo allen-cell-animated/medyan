@@ -237,6 +237,19 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.runTime = atof(lineVector[1].c_str());
             }
         }
+        if (line.find("RUNSTEPS:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.runSteps = atoi(lineVector[1].c_str());
+            }
+        }
         if (line.find("SNAPSHOTTIME:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -250,7 +263,19 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
                 CAlgorithm.snapshotTime = atof(lineVector[1].c_str());
             }
         }
-        
+        if (line.find("SNAPSHOTSTEPS:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.snapshotSteps = atoi(lineVector[1].c_str());
+            }
+        }
         if (line.find("MINIMIZATIONTIME:") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -262,6 +287,19 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             }
             else if (lineVector.size() == 2) {
                 CAlgorithm.minimizationTime = atof(lineVector[1].c_str());
+            }
+        }
+        if (line.find("MINIMIZATIONSTEPS:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.minimizationSteps = atoi(lineVector[1].c_str());
             }
         }
         if (line.find("NEIGHBORLISTTIME:") != string::npos) {
@@ -276,7 +314,20 @@ ChemistryAlgorithm SystemParser::readChemistryAlgorithm() {
             else if (lineVector.size() == 2) {
                 CAlgorithm.neighborListTime = atof(lineVector[1].c_str());
             }
-        } 
+        }
+        if (line.find("NEIGHBORLISTSTEPS:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                CAlgorithm.neighborListSteps = atoi(lineVector[1].c_str());
+            }
+        }
     }
     return CAlgorithm;
 }

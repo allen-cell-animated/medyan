@@ -188,7 +188,7 @@ The following mechanical parameters can be set. It is noted that the number of p
    
      \noindent  \texttt{LSTRETCHINGK} -- double -- Cross-linker stretching force constant. \\
    
-     \noindent \texttt{ MSTRETCHINGTYPE} -- HARMONIC -- Motor stretching force field. \\
+     \noindent \texttt{MSTRETCHINGTYPE} -- HARMONIC -- Motor stretching force field. \\
    
      \noindent \texttt{MSTRETCHINGK} -- double -- Motor stretching force constant. \\
    
@@ -246,23 +246,29 @@ The following chemical parameters can be set. It should be noted that the number
 
 \noindent All chemical parameters must be set unless otherwise noted in the description. For the motor parameters, the number of parameters must match the number of motor species in the system. For more information on chemical algorithms, see [1]. \\
 
+\noindent An alternate set of parameters can be specified in replacement of \texttt{RUNTIME} for smaller systems in which simulation time is based on explicit reaction steps; if \texttt{RUNTIME} is not initialized or set to zero, the parameter \texttt{RUNSTEPS} and its associated chemical step-based parameter set will be used if provided.\\
+
 \small
     \noindent\texttt{CHEMISTRYFILE} -- string -- Input chemistry file. Should be in the \texttt{InputDirectory}. \\
    
      \noindent\texttt{CALGORITHM} -- GILLESPIE, NRM -- Chemistry algorithm used. \\
    
-     \noindent\texttt{NUMTOTALSTEPS} -- int -- Number of total chemical steps. If RUNTIME is set, will not be used. \\
+     \noindent\texttt{RUNSTEPS} -- int -- Number of total chemical steps. If RUNTIME is set, will not be used. \\
    
      \noindent\texttt{RUNTIME} -- double -- Total runtime of simulation ($s$). \\
    
-     \noindent\texttt{NUMSTEPSPERS} -- int -- Number of steps per snapshot. If SNAPSHOTTIME is set, will not be used. \\
+     \noindent\texttt{SNAPSHOTSTEPS} -- int -- Number of steps per snapshot. If SNAPSHOTTIME is set, will not be used. \\
    
      \noindent\texttt{SNAPSHOTTIME} -- double -- Time of each snapshot ($s$). \\
+        
+    \noindent\texttt{MINIMIZATIONSTEPS} -- int -- Number of chemical steps per mechanical equilibration. If MINIMIZATIONTIME is set, will not be used. \\
    
-     \noindent\texttt{NUMCHEMSTEPS} -- int -- Number of chemical steps per mechanical equilibration. \\
+     \noindent\texttt{MINIMIZATIONTIME} -- double -- Time between each mechanical equilibration ($s$) \\
+
+     \noindent\texttt{NEIGHBORLISTSTEPS} -- int -- Number of chemical steps per neighbor list update. This includes updating
+   chemical reactions as well as force fields which rely on neighbor lists. If NEIGHBORLISTTIME is set, will not be used. \\
    
-     \noindent\texttt{NUMSTEPSPERN} -- int -- Number of chemical steps per neighbor list update. This includes updating
-   chemical reactions as well as force fields which rely on neighbor lists. \\
+     \noindent\texttt{NEIGHBORLISTTIME} -- int -- Time between each neighbor list update ($s$) \\
    
      \noindent\texttt{NUMDIFFUSINGSPECIES} -- int -- Diffusing species in system. \\
    
