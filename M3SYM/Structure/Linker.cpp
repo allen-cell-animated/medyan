@@ -80,7 +80,10 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 }
 
 ///@note - nothing for now, but could record data here
-Linker::~Linker() noexcept {}
+Linker::~Linker() noexcept {
+
+    _lifetimes->addValue(tau() - _birthTime);
+}
 
 
 void Linker::updatePosition() {

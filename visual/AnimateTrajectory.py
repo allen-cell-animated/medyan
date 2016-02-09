@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = ''
+traj_filename = '/Users/jameskomianos/Desktop/Test/snapshot.traj'
 color_filename = ''
 
 #Open the traj filex
@@ -311,8 +311,8 @@ def implicit_plot(expr, ext_grid, fig_handle=None, Nx=101, Ny=101, Nz=101,
 def show_snapshot(snapshot_number=-1):
 
 	#if were saving the Snapshots
-	saving = False
-	saveFile = ''
+	saving = True
+	saveFile = '/Users/jameskomianos/Desktop/Test/Snapshots/'
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
@@ -322,19 +322,19 @@ def show_snapshot(snapshot_number=-1):
 	COLORMAP = ''
 
 	#tracking plus and minus ends
-	TRACKENDS = False
+	TRACKENDS = True
 
 	#color by radial angle
 	COLORBYANGLE = False
 
 	#grid size
-	GRIDSIZEMAXX = 1000.0
+	GRIDSIZEMAXX = 2000.0
 	GRIDSIZEMINX = 0.0
 
-	GRIDSIZEMAXY = 1000.0
+	GRIDSIZEMAXY = 2000.0
 	GRIDSIZEMINY = 0.0
 
-	GRIDSIZEMAXZ = 1000.0
+	GRIDSIZEMAXZ = 2000.0
 	GRIDSIZEMINZ = 0.0
 
 	#boundary type, CUBIC or SPHERICAL
@@ -519,8 +519,8 @@ def show_snapshot(snapshot_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DFILCOLOR)
 
 	#DISPLAYING LINKERS
-	if(False):
-	#if(len(local_snapshot.linkers) != 0):
+	#if(False):
+	if(len(local_snapshot.linkers) != 0):
 		x=[]
 		c=[]
 		connections=[]
@@ -617,8 +617,8 @@ def show_snapshot(snapshot_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DLINKERCOLOR)
 
 	#DISPLAYING MOTORS
-	if(False):
-	#if(len(local_snapshot.motors) != 0):
+	#if(False):
+	if(len(local_snapshot.motors) != 0):
 		x=[]
 		c=[]
 		connections=[]

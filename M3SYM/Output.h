@@ -128,6 +128,16 @@ public:
     virtual void print(int snapshot);
 };
 
+/// Print MotorGhost walk lengths
+class MotorWalkLengths : public Output {
+    
+public:
+    MotorWalkLengths(string outputFileName) : Output(outputFileName) {}
+    ~MotorWalkLengths() {}
+    
+    virtual void print(int snapshot);
+};
+
 /// Print Linker binding lifetimes
 class LinkerLifetimes : public Output {
     

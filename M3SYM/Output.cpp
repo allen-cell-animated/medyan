@@ -468,6 +468,20 @@ void MotorLifetimes::print(int snapshot) {
     MotorGhost::getLifetimes()->clearValues();
 }
 
+void MotorWalkLengths::print(int snapshot) {
+    
+    _outputFile.precision(3);
+    
+    // print first line (snapshot number, time)
+    _outputFile << snapshot << " " << tau() << " " << endl;
+    
+    MotorGhost::getWalkLengths()->print(_outputFile);
+    _outputFile << endl << endl;
+    
+    //clear list
+    MotorGhost::getWalkLengths()->clearValues();
+}
+
 
 void LinkerLifetimes::print(int snapshot) {
     

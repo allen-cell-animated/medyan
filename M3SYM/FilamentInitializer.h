@@ -55,6 +55,16 @@ public:
                                               int lenFilaments);
 };
 
+/// An implementation of FilamentInitialzer that creates a sufficiently spaced
+/// network of filaments for investigation of small numbers of filaments.
+class ConnectedFilamentDist : public FilamentInitializer {
+    
+public:
+    FilamentData createFilaments(Boundary* b, int numFilaments,
+                                 int filamentType,
+                                 int lenFilaments);
+};
+
 /// An implementation of FilamentInitialzer that creates a random MTOC configuration
 class MTOCFilamentDist : public FilamentInitializer {
     

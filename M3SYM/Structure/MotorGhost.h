@@ -63,6 +63,7 @@ private:
     int _motorID; ///< Integer ID of this motor, managed by Database
     
     float _birthTime; ///< Birth time
+    float _walkLength = 0; ///< Walk length of ensemble
     
     Compartment* _compartment; ///< Where this motorghost is
     
@@ -73,6 +74,7 @@ private:
     //@{
     ///Histogram data
     static Histogram* _lifetimes;
+    static Histogram* _walkLengths;
     //@}
     
     ///For dynamic rate unbinding
@@ -149,6 +151,9 @@ public:
 
     /// Get the lifetimes
     static Histogram* getLifetimes() {return _lifetimes;}
+    
+    /// Get walk lengths
+    static Histogram* getWalkLengths() {return _walkLengths;}
     
     /// Update the position, inherited from Movable
     /// @note - changes compartment if needed

@@ -90,7 +90,11 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 }
 
 ///@note - nothing for now, but could record data here
-MotorGhost::~MotorGhost() noexcept {}
+MotorGhost::~MotorGhost() noexcept {
+
+    _lifetimes->addValue(tau() - _birthTime);
+    _walkLengths->addValue(_walkLength);
+}
 
 void MotorGhost::updatePosition() {
     
@@ -245,6 +249,9 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     }
     short filType = c->getType();
     
+    //record walk length
+    _walkLength += shift * SysParams::Geometry().cylinderSize[filType];
+    
 #ifdef CHEMISTRY
     short oldpos = int (oldPosition * SysParams::Geometry().cylinderNumMon[filType]);
     short newpos = int (newPosition * SysParams::Geometry().cylinderNumMon[filType]);
@@ -269,6 +276,9 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
         _c2 = newC;
     }
     short filType = _c1->getType();
+    
+    //record walk length
+    _walkLength += (1-oldPosition + newPosition) * SysParams::Geometry().cylinderSize[filType];
     
 #ifdef CHEMISTRY
     short oldpos = int (oldPosition * SysParams::Geometry().cylinderNumMon[filType]);
@@ -335,4 +345,5 @@ vector<MotorRateChanger*> MotorGhost::_walkingChangers;
 
 Database<MotorGhost*> MotorGhost::_motorGhosts;
 Histogram* MotorGhost::_lifetimes;
+Histogram* MotorGhost::_walkLengths;
 
