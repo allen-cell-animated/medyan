@@ -279,8 +279,17 @@ def readTrajectory(filename):
 	return TrajSnapshotList	
 
 #Read a number of trajectories, return array of Snapshot lists
-def readTrajectories(fileNames):
+def readTrajectories(fileNames, fileDirectory='', runMin=0, runMax=10):
 
+	#if file directory specified, auto-generate file names:
+	if (fileDirectory != ''):
+
+		fileNames = []
+
+		for trajNum in xrange(runMin, runMax):
+			fileNames.append(fileDirectory + '/Run' + str(trajNum) + '/snapshot.traj')
+
+	#now read data
 	TrajSnapshotLists = []
 
 	for trajFile in fileNames:
@@ -834,51 +843,65 @@ def minEnclosingVolumes(SnapshotLists, snapshot=1):
 #from order parameter definition at http://cmt.dur.ac.uk/sjc/thesis_dlc/node65.html
 #takes the largest eigenvalue of Q, a second rank ordering tensor over cylinder pairs
 #returns a list of time and value pairs
-def orderParameter(SnapshotList, snapshot=1):
+def orderParameter(SnapshotList, snapshot=1, optype='apolar'):
 
 	orderParams = []
-
 	try:
 		Snapshot = SnapshotList[snapshot]
 
 	except IndexError:
-		print "Index error. Excluding this snapshot list."
+		#print "Index error. Excluding this snapshot list."
 		return False
 
-	Q = np.zeros((len(Snapshot.filaments), len(Snapshot.filaments)))
+	Q = np.zeros((3, 3))
 
-	i = 0
-	for filamentIDA, FSA in Snapshot.filaments.iteritems():
+	for alpha in [0,1,2]:
 
-		#calculate direction
-		magA = sqrt((FSA.coords[1] - FSA.coords[0]).dot(FSA.coords[1] - FSA.coords[0]))
-		directionA = (FSA.coords[1] - FSA.coords[0]) / magA
+		for beta in [0,1,2]:
 
-		j = 0
-		for filamentIDB, FSB in Snapshot.filaments.iteritems():
+			for filamentID, FS in Snapshot.filaments.iteritems():
 
-			#calculate direction
-			magB = sqrt((FSB.coords[1] - FSB.coords[0]).dot(FSB.coords[1] - FSB.coords[0]))
-			directionB = (FSB.coords[1] - FSB.coords[0]) / magB
+				#calculate direction
+				mag = sqrt((FS.coords[len(FS.coords) - 1] - FS.coords[0]).dot(FS.coords[len(FS.coords) - 1] - FS.coords[0]))
+				direction = (FS.coords[len(FS.coords) - 1] - FS.coords[0]) / mag
 
-			#pairwise delta
-			if filamentIDA == filamentIDB: 
-				delta = 1
-			else:
-				delta = 0
+				#pairwise delta
+				if alpha == beta: 
+					delta = 1
+				else:
+					delta = 0
 
-			#q value
-			Q[i][j] = (3.0/2.0) * (1 / float(len(Snapshot.filaments))) * abs(np.dot(directionA, directionB)) - (1.0/2.0) * delta
+				#q value
+				Q[alpha][beta] += ((3.0/2.0) * direction[alpha] * direction[beta] - (1.0/2.0) * delta)
 
-			j+=1
-
-		i+=1
+			Q[alpha][beta] *= 1 / (float(len(Snapshot.filaments)))
 
 	#take largest eigenvalue
-	w = la.eigvals(Q)
+	w, v= la.eig(Q)
+	director = v[0]
 
-	#return
-	return (Snapshot.time, max(w))
+	#apolar order parameter is largest eigenvalue
+	if(optype == 'apolar'):
+
+		return (Snapshot.time, max(w).real)
+
+	#if we want polar order parameter
+	elif(optype == 'polar'):
+
+		sumCos = 0
+
+		#now get cosines
+		for filamentID, FS in Snapshot.filaments.iteritems():
+
+			#calculate direction
+			mag = sqrt((FS.coords[len(FS.coords) - 1] - FS.coords[0]).dot(FS.coords[len(FS.coords) - 1] - FS.coords[0]))
+			direction = (FS.coords[len(FS.coords) - 1] - FS.coords[0]) / mag
+
+			sumCos += director.dot(direction)
+
+		sumCos *= 1 / (float(len(Snapshot.filaments)))
+
+		return (Snapshot.time, abs(sumCos))
 
 
 ##Calculate nematic order parameter of cylinders from a number of trajectories
@@ -905,8 +928,6 @@ def orderParameters(SnapshotLists, snapshot=1):
 
 		finalTime += orderParam[0]
 		finalOrderParam += orderParam[1]
-
-		print orderParam[1]
 
 		orderParamSet.append(orderParam[1])
 
@@ -1327,12 +1348,93 @@ def calculateMsdVsT():
 
 def calculateOrderParamVsT():
 
-	FrameLists = readTrajectories([])
+	FrameLists = readTrajectories('',fileDirectory='/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-NCP', runMin=0, runMax=40)
 
-	op0 = orderParameters(FrameLists, snapshot=200)
+	ops = []
+
+	for i in xrange(0, len(FrameLists)):
+
+		ops.append([])
+
+		for j in xrange(0, 375):
+
+			op = orderParameter(FrameLists[i], snapshot=j, optype='polar')
+
+			if(op): 
+				lastOp = orderParameter(FrameLists[i], snapshot=j, optype='polar')
+				ops[i].append(lastOp)
+				di = 0
+
+			#fill in data that did not run
+			else:
+				ops[i].append((lastOp[0] + 5.3*di, lastOp[1]))
+				di += 1
 
 	del FrameLists
-	return op0
+	return ops
+
+def calculateOrderParamPercentagesVsT():
+
+	FrameLists = readTrajectories('',fileDirectory='/Users/jameskomianos/Desktop/Data/alignmentdata/Small2', runMin=0, runMax=40)
+
+	ops = []
+
+	for i in xrange(0, len(FrameLists)):
+
+		ops.append([])
+
+		for j in xrange(0, 375):
+
+			op = orderParameter(FrameLists[i], snapshot=j, optype='polar')
+
+			if(op): 
+				lastOp = orderParameter(FrameLists[i], snapshot=j, optype='polar')
+				ops[i].append(lastOp)
+				di = 0
+
+			#fill in data that did not run
+			else:
+				ops[i].append((lastOp[0] + 5.3*di, lastOp[1]))
+				di += 1
+
+	del FrameLists
+
+	#loop through runs, get percentages in range
+	q1 = 0.0
+	q2 = 0.33
+	q3 = 0.66
+	q4 = 1.0
+
+	freqs = []
+
+	for i in xrange(0, len(ops[0])):
+
+		freqQ1 = 0;
+		freqQ2 = 0;
+		freqQ3 = 0;
+
+		time = 0;
+
+		for j in xrange(0, len(ops)):
+
+			if(ops[j][i][1] >= 0.0 and ops[j][i][1] < 0.33):
+
+				freqQ1 += 1
+
+			if(ops[j][i][1] >= 0.33 and ops[j][i][1] < 0.66):
+
+				freqQ2 += 1
+
+			if(ops[j][i][1] >= 0.66 and ops[j][i][1] <= 1.0):
+
+				freqQ3 += 1
+
+			time += ops[j][i][0]
+
+		freqs.append((time / len(ops), float(freqQ1) / len(ops), float(freqQ2) / len(ops), float(freqQ3) / len(ops)))
+
+	return freqs
+
 
 def plotRgHeatMap(saveFile=''):
 
@@ -1553,10 +1655,73 @@ def plotDiffusionExponents(data, saveFile=''):
 	if saveFile != '':
 		fig.savefig(saveFile)
 
+def plotOrderParamVsT(data, saveFile=''):
+
+	afont = {'fontname':'Arial'}
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	for index in xrange(0, len(data)):
+
+		data1 = data[index]
+
+		time1 = [x[0] for x in data1]
+		op1   = [x[1] for x in data1]
+
+		#propagated logarithmic error
+		#err_1 = [x[2] for x in data1]
+
+		plt.plot(time1, op1,linewidth=1, color='b')
+
+	plt.xlabel('t', fontsize=24,  **afont)
+	plt.ylabel('S', fontsize=24,  **afont)
+	plt.xlim(0,2000)
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotOrderParamPercentagesVsT(data, saveFile=''):
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	colors = ['r', 'g', 'b']
+	labels = [r'$\mathsf{0\/<\/\/S_1<\/1/3}$',r'$\mathsf{1/3\/<\/\/S_1<\/2/3}$', r'$\mathsf{2/3\/<\/\/S_1<\/1}$']
+
+	for i in [0,1,2]:
+
+		times = []
+		percs = []
+
+		for point in data:
+
+			times.append(point[0])
+			percs.append(point[1+i])
+
+		plt.plot(times, percs, linewidth=1, color=colors[i],label=labels[i])
+
+	plt.xlabel(r'$\mathsf{t}$', fontsize=24)
+	plt.ylabel(r'$\mathsf{P(\Delta S_1)}$', fontsize=24)
+	plt.xlim(0,2000)
+	plt.ylim(0,1)
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
 
 def plotOrderParameterVsTreadmill(data, saveFile=''):
 
-	fig = plt.figure(figsize=(10.0,10.0))
+	fig = plt.figure(figsize=(20.0,5.0))
 	host = fig.add_subplot(111)
 
 	#organize data
