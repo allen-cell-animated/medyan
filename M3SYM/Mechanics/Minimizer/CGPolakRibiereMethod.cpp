@@ -72,6 +72,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
             _safeMode = true;
         }
         curGrad = newGrad;
+        
     }
     
     if (numIter >= N) {

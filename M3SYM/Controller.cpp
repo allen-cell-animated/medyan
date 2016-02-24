@@ -67,9 +67,9 @@ void Controller::initialize(string inputFile,
     
     //init histograms
     Linker::_lifetimes = new Histogram(100, 0.0, 100.0);
-    MotorGhost::_lifetimes = new Histogram(100, 0.0, 1000.0);
-    MotorGhost::_walkLengths = new Histogram(100, 0.0, 1000.0);
-    Filament::_turnoverTimes = new Histogram(100, 0.0, 2000.0);
+    MotorGhost::_lifetimes = new Histogram(1000, 0.0, 1000.0);
+    MotorGhost::_walkLengths = new Histogram(200, -2000.0, 2000.0);
+    Filament::_turnoverTimes = new Histogram(200, 0.0, 2000.0);
     
     //init input directory
     _inputDirectory  = inputDirectory;
@@ -268,7 +268,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
     
     //add other filaments if specified
-    FilamentInitializer* fInit = new ConnectedFilamentDist();
+    FilamentInitializer* fInit = new RandomFilamentDist();
     
     auto filamentsGen = fInit->createFilaments(_subSystem->getBoundary(),
                                                FSetup.numFilaments,
@@ -382,6 +382,33 @@ void Controller::moveBoundary(double deltaTau) {
             if(!C->isActivated()) continue;
             else _cController->deactivate(C);
         }
+    }
+}
+
+void Controller::executeSpecialProtocols() {
+    
+    //making filaments static
+    if(SysParams::Chemistry().makeFilamentsStatic &&
+       SysParams::Chemistry().makeFilamentsStaticTime <= tau()) {
+        
+        //loop through all cylinders, passivate (de)polymerization
+        for(auto c : Cylinder::getCylinders())
+            c->getCCylinder()->passivatePolyReactions();
+        
+        //shut off
+        SysParams::CParams.makeFilamentsStatic = false;
+    }
+    
+    //making linkers static
+    if(SysParams::Chemistry().makeLinkersStatic &&
+       SysParams::Chemistry().makeLinkersStaticTime <= tau()) {
+        
+        // loop through all linkers, passivate unbinding
+        for(auto l: Linker::getLinkers())
+            l->getCLinker()->getOffReaction()->passivateReaction();
+        
+        //shut off
+        SysParams::CParams.makeLinkersStatic = false;
     }
 }
 
@@ -499,6 +526,9 @@ void Controller::run() {
             //move the boundary
             moveBoundary(tau() - oldTau);
             
+            //special protocols
+            executeSpecialProtocols();
+            
             oldTau = tau();
         }
 #endif
@@ -552,6 +582,9 @@ void Controller::run() {
             
             //move the boundary
             moveBoundary(tau() - oldTau);
+            
+            //special protocols
+            executeSpecialProtocols();
         }
 #endif
     }

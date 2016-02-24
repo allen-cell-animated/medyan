@@ -907,14 +907,14 @@ def orderParameter(SnapshotList, snapshot=1, optype='apolar'):
 ##Calculate nematic order parameter of cylinders from a number of trajectories
 #from order parameter definition at http://cmt.dur.ac.uk/sjc/thesis_dlc/node65.html
 #takes the largest eigenvalue of Q, a second rank ordering tensor over cylinder pairs
-def orderParameters(SnapshotLists, snapshot=1):
+def orderParameters(SnapshotLists, snapshot=1, optype='apolar'):
 
 	orderParamsList = []
 
 	#get all data
 	for SnapshotList in SnapshotLists:
 
-		orderParam = orderParameter(SnapshotList, snapshot)
+		orderParam = orderParameter(SnapshotList, snapshot, optype)
 
 		if(orderParam):
 			orderParamsList.append(orderParam)
@@ -1293,6 +1293,155 @@ def density(Snapshot, grid, compartment):
 #
 ###############################################
 
+def calculateRgs(snapshot=1):
+
+	FrameLists = readTrajectories([])
+	return radiusOfGyrations(FrameLists, snapshot)
+
+def calculateRgVsT():
+
+	FrameLists = readTrajectories([])
+
+	Rgs1 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs1.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+def calculateMsdVsT():
+
+	msds0 = meanSquareDisplacements([])
+
+def calculateOrderParamVsT(fileDirectory='', optype='apolar'):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=40)
+	ops = []
+
+	for i in xrange(0, len(FrameLists)):
+
+		ops.append([])
+
+		for j in xrange(0, 375):
+
+			op = orderParameter(FrameLists[i], snapshot=j, optype=optype)
+
+			if(op): 
+				lastOp = op
+				ops[i].append(op)
+				di = 0
+
+			#fill in data that did not run
+			else:
+				ops[i].append((lastOp[0] + 5.3*di, lastOp[1]))
+				di += 1
+
+	del FrameLists
+	return ops
+
+def calculateOrderParamPercentagesVsT(fileDirectory='', optype='apolar'):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=40)
+	ops = []
+
+	for i in xrange(0, len(FrameLists)):
+
+		ops.append([])
+
+		for j in xrange(0, 375):
+
+			op = orderParameter(FrameLists[i], snapshot=j, optype=optype)
+
+			if(op): 
+				lastOp = op
+				ops[i].append(op)
+				di = 0
+
+			#fill in data that did not run
+			else:
+				ops[i].append((lastOp[0] + 5.3*di, lastOp[1]))
+				di += 1
+
+	del FrameLists
+
+	#loop through runs, get percentages in range
+	q1 = 0.0
+	q2 = 0.33
+	q3 = 0.66
+	q4 = 1.0
+
+	freqs = []
+
+	for i in xrange(0, len(ops[0])):
+
+		freqQ1 = 0
+		freqQ2 = 0
+		freqQ3 = 0
+
+		time = 0
+
+		for j in xrange(0, len(ops)):
+
+			if(ops[j][i][1] >= q1 and ops[j][i][1] < q2):
+				freqQ1 += 1
+
+			if(ops[j][i][1] >= q2 and ops[j][i][1] < q3):
+				freqQ2 += 1
+
+			if(ops[j][i][1] >= q3 and ops[j][i][1] <= q4):
+				freqQ3 += 1
+
+			time += ops[j][i][0]
+
+		freqs.append((time / len(ops), float(freqQ1) / len(ops), \
+			float(freqQ2) / len(ops), float(freqQ3) / len(ops)))
+
+	return freqs
+
+def calculateOrderParamDistribution(fileDirectory='',snapshot=1, optype = 'apolar'):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=40)
+	ops = []
+	opsOneSnapshot = []
+
+	for i in xrange(0, len(FrameLists)):
+
+		ops.append([])
+
+		for j in xrange(0, 400):
+
+			op = orderParameter(FrameLists[i], snapshot=j, optype=optype)
+
+			if(op): 
+				lastOp = op
+				ops[i].append(op)
+				di = 0
+
+			#fill in data that did not run
+			else:
+				ops[i].append((lastOp[0] + 5.3*di, lastOp[1]))
+				di += 1
+
+	del FrameLists
+	for i in xrange(0, len(ops)):
+
+		opsOneSnapshot.append(ops[i][snapshot][1])
+
+	return opsOneSnapshot
+
+def calculateOrderParamAverages(fileDirectory='', optype='apolar'):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=20)
+	ops = []
+
+	for j in xrange(0, 380):
+
+		ops.append(orderParameters(FrameLists, snapshot=j, optype=optype))
+
+	del FrameLists
+
+	return ops
+
 def plotHistogram(histogramSnapshot, normalize=False):
 
 	numBins = len(histogramSnapshot.hist)
@@ -1325,116 +1474,6 @@ def plotHistogram(histogramSnapshot, normalize=False):
 
 	plt.bar(xbins, xfreqs, width, color='r')
 	plt.show()
-
-def calculateRgs(snapshot=1):
-
-	FrameLists = readTrajectories([])
-	return radiusOfGyrations(FrameLists, snapshot)
-
-def calculateRgVsT():
-
-	FrameLists = readTrajectories([])
-
-	Rgs1 = []
-
-	for snap in xrange(2, len(FrameLists[0]), 2):
-		Rgs1.append(radiusOfGyrations(FrameLists, snapshot=snap))
-
-	del FrameLists
-
-def calculateMsdVsT():
-
-	msds0 = meanSquareDisplacements([])
-
-def calculateOrderParamVsT():
-
-	FrameLists = readTrajectories('',fileDirectory='/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-NCP', runMin=0, runMax=40)
-
-	ops = []
-
-	for i in xrange(0, len(FrameLists)):
-
-		ops.append([])
-
-		for j in xrange(0, 375):
-
-			op = orderParameter(FrameLists[i], snapshot=j, optype='polar')
-
-			if(op): 
-				lastOp = orderParameter(FrameLists[i], snapshot=j, optype='polar')
-				ops[i].append(lastOp)
-				di = 0
-
-			#fill in data that did not run
-			else:
-				ops[i].append((lastOp[0] + 5.3*di, lastOp[1]))
-				di += 1
-
-	del FrameLists
-	return ops
-
-def calculateOrderParamPercentagesVsT():
-
-	FrameLists = readTrajectories('',fileDirectory='/Users/jameskomianos/Desktop/Data/alignmentdata/Small2', runMin=0, runMax=40)
-
-	ops = []
-
-	for i in xrange(0, len(FrameLists)):
-
-		ops.append([])
-
-		for j in xrange(0, 375):
-
-			op = orderParameter(FrameLists[i], snapshot=j, optype='polar')
-
-			if(op): 
-				lastOp = orderParameter(FrameLists[i], snapshot=j, optype='polar')
-				ops[i].append(lastOp)
-				di = 0
-
-			#fill in data that did not run
-			else:
-				ops[i].append((lastOp[0] + 5.3*di, lastOp[1]))
-				di += 1
-
-	del FrameLists
-
-	#loop through runs, get percentages in range
-	q1 = 0.0
-	q2 = 0.33
-	q3 = 0.66
-	q4 = 1.0
-
-	freqs = []
-
-	for i in xrange(0, len(ops[0])):
-
-		freqQ1 = 0;
-		freqQ2 = 0;
-		freqQ3 = 0;
-
-		time = 0;
-
-		for j in xrange(0, len(ops)):
-
-			if(ops[j][i][1] >= 0.0 and ops[j][i][1] < 0.33):
-
-				freqQ1 += 1
-
-			if(ops[j][i][1] >= 0.33 and ops[j][i][1] < 0.66):
-
-				freqQ2 += 1
-
-			if(ops[j][i][1] >= 0.66 and ops[j][i][1] <= 1.0):
-
-				freqQ3 += 1
-
-			time += ops[j][i][0]
-
-		freqs.append((time / len(ops), float(freqQ1) / len(ops), float(freqQ2) / len(ops), float(freqQ3) / len(ops)))
-
-	return freqs
-
 
 def plotRgHeatMap(saveFile=''):
 
@@ -1655,7 +1694,9 @@ def plotDiffusionExponents(data, saveFile=''):
 	if saveFile != '':
 		fig.savefig(saveFile)
 
-def plotOrderParamVsT(data, saveFile=''):
+def plotOrderParamVsT(saveFile=''):
+
+	data = calculateOrderParamVsT('')
 
 	afont = {'fontname':'Arial'}
 
@@ -1670,9 +1711,6 @@ def plotOrderParamVsT(data, saveFile=''):
 		time1 = [x[0] for x in data1]
 		op1   = [x[1] for x in data1]
 
-		#propagated logarithmic error
-		#err_1 = [x[2] for x in data1]
-
 		plt.plot(time1, op1,linewidth=1, color='b')
 
 	plt.xlabel('t', fontsize=24,  **afont)
@@ -1685,7 +1723,9 @@ def plotOrderParamVsT(data, saveFile=''):
 		fig.savefig(saveFile)
 
 
-def plotOrderParamPercentagesVsT(data, saveFile=''):
+def plotOrderParamPercentagesVsT(saveFile=''):
+
+	data = calculateOrderParamPercentagesVsT('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-C22', optype = 'apolar')
 
 	matplotlib.rcParams['font.sans-serif']=["Arial"] 
 
@@ -1694,7 +1734,7 @@ def plotOrderParamPercentagesVsT(data, saveFile=''):
 
 	#organize data
 	colors = ['r', 'g', 'b']
-	labels = [r'$\mathsf{0\/<\/\/S_1<\/1/3}$',r'$\mathsf{1/3\/<\/\/S_1<\/2/3}$', r'$\mathsf{2/3\/<\/\/S_1<\/1}$']
+	labels = [r'$\mathsf{0\/<\/\/S_2<\/1/3}$',r'$\mathsf{1/3\/<\/\/S_2<\/2/3}$', r'$\mathsf{2/3\/<\/\/S_2<\/1}$']
 
 	for i in [0,1,2]:
 
@@ -1709,7 +1749,7 @@ def plotOrderParamPercentagesVsT(data, saveFile=''):
 		plt.plot(times, percs, linewidth=1, color=colors[i],label=labels[i])
 
 	plt.xlabel(r'$\mathsf{t}$', fontsize=24)
-	plt.ylabel(r'$\mathsf{P(\Delta S_1)}$', fontsize=24)
+	plt.ylabel(r'$\mathsf{P(\Delta S_2)}$', fontsize=24)
 	plt.xlim(0,2000)
 	plt.ylim(0,1)
 	plt.legend()
@@ -1717,6 +1757,120 @@ def plotOrderParamPercentagesVsT(data, saveFile=''):
 	#if file provided, save
 	if saveFile != '':
 		fig.savefig(saveFile)
+
+def plotOrderParamDistribution(saveFile = ''):
+
+	data = []
+
+	#set data here
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-C2', snapshot=200, optype='apolar'))
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2', snapshot=200, optype='apolar'))
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-C22', snapshot=200, optype='apolar'))
+
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	colors = ['g', 'b', 'r']
+	labels = [r'$\mathsf{F_0 = 2 pN}$',r'$\mathsf{F_0 = 12 pN}$', r'$\mathsf{F_0 = 22 pN}$']
+
+	numTrajs = 40.0
+
+	for i in xrange(0, len(data)):
+
+		data0 = data[i]
+
+		normed_value = 1 / numTrajs
+
+		hist, bins = np.histogram(data0, bins=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0])
+
+		widths = np.diff(bins) / len(data)
+		hist = [x*normed_value for x in hist]
+
+		plt.bar(bins[:-1] + (0.1/len(data)) * i, hist, widths, label=labels[i], color=colors[i], alpha=0.7)
+
+	plt.xlabel(r'$\mathsf{S_2}$', fontsize=24)
+	plt.ylabel(r'$\mathsf{P(S_2)}$', fontsize=24)
+
+	plt.xticks([0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0])
+
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)	
+
+def plotOrderParamBoxes(saveFile = ''):
+
+	data = []
+
+	#set data here
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-C2', snapshot=200, optype='apolar'))
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2', snapshot=200, optype='apolar'))
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-C22', snapshot=200, optype='apolar'))
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	plt.boxplot([data[0],data[1],data[2]], sym='')
+
+	labels = [2,12,22]
+	plt.xticks([1,2,3], labels)
+
+	plt.ylabel(r'$\mathsf{S_2}$', fontsize=24)
+	plt.xlabel(r'$\mathsf{F_0 (pN)}$', fontsize=24)
+
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+def plotOrderParamAverages(saveFile = ''):
+
+	data = []
+
+	#set data here
+	data.append(calculateOrderParamAverages('/Users/jameskomianos/Desktop/Data/alignmentdata/Small4', optype='polar'))
+	data.append(calculateOrderParamAverages('/Users/jameskomianos/Desktop/Data/alignmentdata/Small8', optype='polar'))
+	data.append(calculateOrderParamAverages('/Users/jameskomianos/Desktop/Data/alignmentdata/Small16', optype='polar'))
+
+	print data
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	colors = ['g', 'b', 'r']
+	labels = [r'$\mathsf{N=4}$',r'$\mathsf{N=8}$', r'$\mathsf{N=16}$']
+
+	#organize data
+	for index in xrange(0, len(data)):
+
+		data1 = data[index]
+
+		time1 = [x[0] for x in data1]
+		op1   = [x[1] for x in data1]
+		err1  = [x[2] for x in data1]
+
+		plt.errorbar(time1, op1, yerr=err1, linewidth=1, color=colors[index], label = labels[index])
+
+	plt.xlabel('t', fontsize=24)
+	plt.ylabel(r'$\mathsf{S_1}$', fontsize=24)
+	plt.xlim(0,2000)
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
 
 
 def plotOrderParameterVsTreadmill(data, saveFile=''):

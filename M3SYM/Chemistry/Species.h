@@ -407,7 +407,11 @@ public:
     /// passivated, will activate accordingly and update propensities
     /// and all dependents.
     void activateReactantReactions();
-
+    
+    /// Passivate the reactions associated with this species. i.e. if
+    /// activated, will passivate accordingly and update propensities
+    /// and all dependents.
+    void passivateReactantReactions();
 };
 
 /// Used for species without spatial information (i.e. well-mixed in the container)

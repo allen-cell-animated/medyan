@@ -18,6 +18,7 @@
 #include "utility.h"
 
 #include "SubSystem.h"
+#include "CompartmentGrid.h"
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
@@ -533,7 +534,7 @@ struct MotorWalkingCallback {
          _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        
+
         //get species
         CCylinder* cc = _c->getCCylinder();
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
@@ -603,6 +604,102 @@ struct MotorMovingCylinderCallback {
     }
 };
 
+
+/// Callback for a MotorGhost walking off the end of a cylinder.
+/// Essentially the same reaction as an unbinding reaction, with some added bookkeeping.
+struct MotorWalkingOffCallback {
+    
+    Cylinder* _cylinder;    ///< Current cylinder
+    
+    short _position;        ///< Position of motor
+    
+    short _motorType;       ///< Type of motor
+    short _boundType;       ///< Type of bound this motor is taking place of
+    
+    SubSystem* _ps;         ///< Ptr to subsystem
+    
+    MotorWalkingOffCallback(Cylinder* cylinder, short position,
+                            short motorType, short boundType, SubSystem* ps)
+    
+        : _cylinder(cylinder), _position(position),
+          _motorType(motorType), _boundType(boundType), _ps(ps) {}
+    
+    void operator() (ReactionBase *r) {
+        
+        //get species
+        CCylinder* oldCC = _cylinder->getCCylinder();
+        CMonomer* monomer = oldCC->getCMonomer(_position);
+        
+        SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
+        short filType = _cylinder->getType();
+        
+        //find the free speciess
+        string speciesName = SpeciesNamesDB::removeUniqueFilName(sm1->getName());
+        string speciesFirstChar = speciesName.substr(0,1);
+        
+        //find the free monomer, either bulk or diffusing
+        Species* freeMonomer = nullptr;
+        auto grid = _ps->getCompartmentGrid();
+        
+        Species* dMonomer  = _cylinder->getCompartment()->findSpeciesByName(speciesName);
+        Species* dfMonomer = _cylinder->getCompartment()->findSpeciesByName(speciesFirstChar);
+        
+        Species* bMonomer  = grid->findSpeciesBulkByName(speciesName);
+        Species* bfMonomer = grid->findSpeciesBulkByName(speciesFirstChar);
+        
+        //try diffusing
+        if(dMonomer != nullptr) freeMonomer = dMonomer;
+        // try bulk
+        else if(bMonomer  != nullptr) freeMonomer = bMonomer;
+        //diffusing, remove all but first char
+        else if(dfMonomer != nullptr) freeMonomer = dfMonomer;
+        //bulk, remove all but first char
+        else if(bfMonomer != nullptr) freeMonomer = bfMonomer;
+        //could not find. exit ungracefully
+        else {
+            cout << "In motor walkoff reaction, could not find corresponding " <<
+            "diffusing or bulk monomeric species of boundmotor species " << speciesName <<
+            ". Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        
+        //get motor
+        MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
+        
+        SpeciesBound *sm2;
+        SpeciesBound *se2;
+        
+        //get second binding site
+        if(m->getCMotorGhost()->getFirstSpecies() == sm1) {
+            sm2 = m->getCMotorGhost()->getSecondSpecies();
+            
+            int position2 = m->getCMotorGhost()->getSecondPosition();
+            CCylinder* cc = m->getCMotorGhost()->getSecondCCylinder();
+            
+            se2 = cc->getCMonomer(position2)->speciesBound(
+                  SysParams::Chemistry().motorBoundIndex[filType]);
+        }
+        else {
+            sm2 = m->getCMotorGhost()->getFirstSpecies();
+            
+            int position2 = m->getCMotorGhost()->getFirstPosition();
+            CCylinder* cc = m->getCMotorGhost()->getFirstCCylinder();
+            
+            se2 = cc->getCMonomer(position2)->speciesBound(
+                  SysParams::Chemistry().motorBoundIndex[filType]);
+        }
+        ///mark species, update reactions
+        se2->up(); sm2->down();
+        
+        //mark diffusing species, update reactions
+        freeMonomer->up();
+        freeMonomer->updateReactantPropensities();
+        
+        //remove the motor
+        _ps->removeTrackable<MotorGhost>(m);
+        delete m;
+    }
+};
 
 
 /// Struct to create a new filament based on a given reaction

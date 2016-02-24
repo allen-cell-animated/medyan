@@ -139,13 +139,13 @@ struct ChemistryData {
     vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions;
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
-    /// initial copy number, release time, and CONST/REG qualifier
-    vector<tuple<string, int, double, string>> speciesBulk = {};
+    /// initial copy number, release time, removal time, and CONST/REG qualifier
+    vector<tuple<string, int, double, double, string>> speciesBulk = {};
     
     /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
     /// initial copy number per compartment, the rate of diffusion, release time,
     /// AVG/REG qualifier, and number of events to average if applicable.
-    vector<tuple<string, int, double, double, string, int>> speciesDiffusing = {};
+    vector<tuple<string, int, double, double, double, string, int>> speciesDiffusing = {};
     
     //@{
     /// Filament species parsed
@@ -279,7 +279,6 @@ struct SpecialSetupType {
     short mtocBubbleType   = 0;
     //@}
 };
-
 
 /// Struct to hold chem setup information
 struct ChemistrySetup {

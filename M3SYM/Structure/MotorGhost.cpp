@@ -148,7 +148,7 @@ void MotorGhost::updatePosition() {
 }
 
 /// @note - This function updates forward walking rates using the
-/// stetching force in the opposite direction of the forward walk.
+/// stetching force in the opposite direction of the motor walk.
 /// Does not consider negative forces in this direction.
 
 /// Updates unbinding rates based on the stretch force. Does not
@@ -178,8 +178,8 @@ void MotorGhost::updateReactionRates() {
         vector<double> c1Direction = twoPointDirection(x2,x1);
         vector<double> c2Direction = twoPointDirection(x4,x3);
         
-        double forceDotDirectionC1 = max(0.0, force * dotProduct(motorC1Direction, c1Direction));
-        double forceDotDirectionC2 = max(0.0, force * dotProduct(motorC2Direction, c2Direction));
+        double forceDotDirectionC1 = force * dotProduct(motorC1Direction, c1Direction);
+        double forceDotDirectionC2 = force * dotProduct(motorC2Direction, c2Direction);
         
         //WALKING REACTIONS
         Species* s1 = _cMotorGhost->getFirstSpecies();
@@ -193,7 +193,17 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, forceDotDirectionC1);
+                           _numHeads, max(0.0, forceDotDirectionC1));
+                
+                r->setRate(newRate);
+                r->updatePropensity();
+            }
+            else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
+                float newRate =
+                _walkingChangers[_motorType]->
+                changeRate(_cMotorGhost->getOnRate(),
+                           _cMotorGhost->getOffRate(),
+                           _numHeads, max(0.0, -forceDotDirectionC1));
                 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -207,7 +217,18 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, forceDotDirectionC2);
+                           _numHeads, max(0.0, forceDotDirectionC2));
+                
+                r->setRate(newRate);
+                r->updatePropensity();
+            }
+            else if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+                
+                float newRate =
+                _walkingChangers[_motorType]->
+                changeRate(_cMotorGhost->getOnRate(),
+                           _cMotorGhost->getOffRate(),
+                           _numHeads, max(0.0, -forceDotDirectionC2));
                 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -240,12 +261,10 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     
     //shift the head
     if(c == _c1) {
-        if(shift > 0) _position1 += shift;
-        else _position1 -= shift;
+        _position1 += shift;
     }
     else {
-        if(shift > 0) _position2 += shift;
-        else _position2 -= shift;
+        _position2 += shift;
     }
     short filType = c->getType();
     

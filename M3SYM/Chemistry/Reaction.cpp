@@ -23,7 +23,7 @@
 
 template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {
-    
+
     //just update the rnode
     if(_rnode!=nullptr)
         _rnode->activateReaction();
@@ -100,7 +100,12 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     newReaction->_signal = std::move(_signal);
     _signal = nullptr;
 #endif
-
+    
+#if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
+    //transfer passivated flag
+    newReaction->_passivated = _passivated;
+#endif
+    
     //Copy reaction type
     newReaction->_reactionType = _reactionType;
     return newReaction;

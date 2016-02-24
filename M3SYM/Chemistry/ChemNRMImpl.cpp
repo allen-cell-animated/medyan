@@ -145,7 +145,14 @@ bool ChemNRMImpl::makeStep() {
     }
     RNodeNRM *rn = _heap.top()._rn;
     
+    if(rn->getReaction()->getReactionType() == ReactionType::LINKERUNBINDING && tau() > 1.0) {
+        
+        cout << "Problem here" << endl;
+    }
+    
+    
     double tau_top = rn->getTau();
+    
     if(tau_top==numeric_limits<double>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;

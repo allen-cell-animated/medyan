@@ -67,6 +67,10 @@ public:
     
     ///Run chemistry for a given number of reaction steps
     bool runSteps(int steps);
+    
+    ///Remove set of reactions at runtime, specified by input
+    void removeReactions();
+    
 };
 
 

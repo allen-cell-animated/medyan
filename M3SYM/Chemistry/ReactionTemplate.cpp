@@ -541,6 +541,29 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
+        
+        //at last position, add walk-off reaction
+        if(it+1 == SysParams::Chemistry().bindingSites[_filamentType].end() - 1 &&
+           cc->getCylinder()->isPlusEnd()) {
+            
+            vector<Species*> species;
+            auto p = _products[0];
+            species.push_back(m2->speciesMotor(getInt(p)));
+            
+            p = _products[1];
+            species.push_back(m2->speciesBound(getInt(p)));
+            
+            ReactionBase* rxn =
+            new Reaction<MWALKINGREACTANTS - 1, MWALKINGPRODUCTS - 1>(species, _rate);
+            
+#ifdef REACTION_SIGNALING
+            MotorWalkingOffCallback
+            motorMoveCallback(cc->getCylinder(), site2, motorType, boundType, _ps);
+            ConnectionBlock rcb(rxn->connect(motorMoveCallback, false));
+#endif
+            cc->addInternalReaction(rxn);
+            rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
+        }
     }
 }
 
@@ -643,6 +666,29 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+        
+        //at last position, add walk-off reaction
+        if(it-1 == SysParams::Chemistry().bindingSites[_filamentType].begin() &&
+           cc->getCylinder()->isMinusEnd()) {
+            
+            vector<Species*> species;
+            auto p = _products[0];
+            species.push_back(m2->speciesMotor(getInt(p)));
+            
+            p = _products[1];
+            species.push_back(m2->speciesBound(getInt(p)));
+            
+            ReactionBase* rxn =
+            new Reaction<MWALKINGREACTANTS - 1, MWALKINGPRODUCTS - 1>(species, _rate);
+            
+#ifdef REACTION_SIGNALING
+            MotorWalkingOffCallback
+            motorMoveCallback(cc->getCylinder(), site2, motorType, boundType, _ps);
+            ConnectionBlock rcb(rxn->connect(motorMoveCallback, false));
+#endif
+            cc->addInternalReaction(rxn);
+            rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+        }
     }
 }
 

@@ -51,6 +51,13 @@ void Species::activateReactantReactions() {
 }
 
 
+void Species::passivateReactantReactions() {
+    
+    for(auto r : _rspecies->reactantReactions())
+        r->passivateReaction();
+}
+
+
 unordered_map<string,int> SpeciesNamesDB::_map_string_int;
 vector<string> SpeciesNamesDB::_vec_int_string;
 unsigned long  SpeciesNamesDB::_num = 0;

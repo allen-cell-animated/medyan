@@ -94,6 +94,10 @@ private:
     /// Update neighbors lists, called in run
     void updateNeighborLists();
     
+    /// Execute any special protocols needed, for example,
+    /// making Linker and Filament species static
+    void executeSpecialProtocols();
+    
 public:
     Controller(SubSystem* s);
     ~Controller() {};

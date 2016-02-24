@@ -129,6 +129,24 @@ struct ChemParams {
     
     vector<vector<short>> bindingIndices = vector<vector<short>>(MAX_FILAMENT_TYPES);
     //@}
+    
+    
+    //@{
+    /// SPECIAL CHEMICAL PROTOCOLS
+    
+    /// Option to make Filament objects static after a certain time.
+    /// This passivates any polymerization or depolymerization
+    /// reactions, resulting in constant length filaments for the rest of simulation.
+    bool makeFilamentsStatic = false;
+    double makeFilamentsStaticTime = 0.0;
+    
+    /// Option to make Linker objects static after a certain time.
+    /// This passivates any unbinding reactions, resulting in permanently
+    /// bound linkers for the rest of simulation.
+    bool makeLinkersStatic = false;
+    double makeLinkersStaticTime = 0.0;
+    
+    //@}
 };
 
 /// Struct to hold geometry parameters for the system
@@ -206,6 +224,7 @@ struct DyRateParams {
 /// Static class that holds all simulation parameters,
 /// initialized by the SystemParser
 class SysParams {
+friend class Controller;
 friend class SystemParser;
 friend class ChemManager;
     

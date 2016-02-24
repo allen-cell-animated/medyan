@@ -218,6 +218,20 @@ CCylinder::~CCylinder() {
     }
 }
 
+void CCylinder::passivatePolyReactions() {
+    
+    for(auto r : getAllReactions()) {
+        
+        if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND   ||
+           r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND  ||
+           r->getReactionType() == ReactionType::DEPOLYMERIZATIONPLUSEND ||
+           r->getReactionType() == ReactionType::DEPOLYMERIZATIONMINUSEND) {
+            
+            r->passivateReaction();
+        }
+    }
+}
+
 vector<ReactionBase*> CCylinder::getAllReactions() {
     
     vector<ReactionBase*> reactions;

@@ -51,7 +51,7 @@ public:
     ///Adds a value to the histogram by updating the correct bin
     void addValue(double value) {
         
-        int bin = (int) (value / _range);
+        int bin = max(0, (int) (value / _range));
         assert(bin >= 0 && bin < _numBins && "Histogram error - trying to add value outside of bin range.");
         
         _frequencies[bin] += 1;
