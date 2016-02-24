@@ -116,11 +116,11 @@ public:
     
     //@{
     /// Reaction management function
-    void addInternalReaction(ReactionBase* r);
+    void addInternalReaction(ReactionBase* r, bool activate=true);
     void removeInternalReaction(ReactionBase* r);
     void removeAllInternalReactions();
     
-    void addCrossCylinderReaction(CCylinder* other, ReactionBase* r);
+    void addCrossCylinderReaction(CCylinder* other, ReactionBase* r, bool activate=true);
     void removeCrossCylinderReaction(CCylinder* other, ReactionBase* r);
     void removeCrossCylinderReactions(CCylinder* other);
     void removeAllCrossCylinderReactions();

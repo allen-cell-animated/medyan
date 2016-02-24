@@ -80,5 +80,4 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
-
 }

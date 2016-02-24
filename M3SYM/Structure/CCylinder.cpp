@@ -46,7 +46,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         if(r->getCBound() != nullptr)
             r->getCBound()->setOffReaction(rxnClone);
         
-        addInternalReaction(rxnClone);
+        addInternalReaction(rxnClone, !r->isPassivated());
     }
     //copy all cross-cylinder reactions
     for(auto it = rhs._crossCylinderReactions.begin();
@@ -60,7 +60,7 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
             
-            addCrossCylinderReaction(it->first, rxnClone);
+            addCrossCylinderReaction(it->first, rxnClone, !r->isPassivated());
         }
     }
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
@@ -75,12 +75,12 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
             
-            ccyl->addCrossCylinderReaction(this, rxnClone);
+            ccyl->addCrossCylinderReaction(this, rxnClone, !r->isPassivated());
         }
     }
 }
 
-void CCylinder::addInternalReaction(ReactionBase* r) {
+void CCylinder::addInternalReaction(ReactionBase* r, bool activate) {
     
     //add to compartment and chemsim
     _compartment->addInternalReaction(r);
@@ -90,7 +90,7 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
     _internalReactions.insert(r);
     
     //activate reaction
-    r->activateReaction();
+    if(activate) r->activateReaction();
 }
 
 
@@ -111,7 +111,8 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
 }
 
 void CCylinder::addCrossCylinderReaction(CCylinder* other,
-                                         ReactionBase* r) {
+                                         ReactionBase* r,
+                                         bool activate) {
     
     //add to compartment and chemsim
     _compartment->addInternalReaction(r);
@@ -122,7 +123,7 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other,
     other->addReactingCylinder(this);
     
     //activate reaction
-    r->activateReaction();
+    if(activate) r->activateReaction();
 }
 
 void CCylinder::addReactingCylinder(CCylinder* other) {
