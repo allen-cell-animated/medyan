@@ -46,7 +46,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
         if(r->getCBound() != nullptr)
             r->getCBound()->setOffReaction(rxnClone);
         
-        addInternalReaction(rxnClone, !r->isPassivated());
+        addInternalReaction(rxnClone);
+        if(r->isPassivated()) rxnClone->passivateReaction();
     }
     //copy all cross-cylinder reactions
     for(auto it = rhs._crossCylinderReactions.begin();
@@ -60,7 +61,8 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
             
-            addCrossCylinderReaction(it->first, rxnClone, !r->isPassivated());
+            addCrossCylinderReaction(it->first, rxnClone);
+            if(r->isPassivated()) rxnClone->passivateReaction();
         }
     }
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
@@ -75,12 +77,13 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             if(r->getCBound() != nullptr)
                 r->getCBound()->setOffReaction(rxnClone);
             
-            ccyl->addCrossCylinderReaction(this, rxnClone, !r->isPassivated());
+            ccyl->addCrossCylinderReaction(this, rxnClone);
+            if(r->isPassivated()) rxnClone->passivateReaction();
         }
     }
 }
 
-void CCylinder::addInternalReaction(ReactionBase* r, bool activate) {
+void CCylinder::addInternalReaction(ReactionBase* r) {
     
     //add to compartment and chemsim
     _compartment->addInternalReaction(r);
@@ -90,7 +93,7 @@ void CCylinder::addInternalReaction(ReactionBase* r, bool activate) {
     _internalReactions.insert(r);
     
     //activate reaction
-    if(activate) r->activateReaction();
+    r->activateReaction();
 }
 
 
@@ -111,8 +114,7 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
 }
 
 void CCylinder::addCrossCylinderReaction(CCylinder* other,
-                                         ReactionBase* r,
-                                         bool activate) {
+                                         ReactionBase* r) {
     
     //add to compartment and chemsim
     _compartment->addInternalReaction(r);
@@ -123,7 +125,7 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other,
     other->addReactingCylinder(this);
     
     //activate reaction
-    if(activate) r->activateReaction();
+    r->activateReaction();
 }
 
 void CCylinder::addReactingCylinder(CCylinder* other) {
