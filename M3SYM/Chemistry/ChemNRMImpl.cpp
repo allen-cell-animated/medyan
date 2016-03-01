@@ -150,6 +150,21 @@ bool ChemNRMImpl::makeStep() {
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }
+    
+    if(tau_top < _t ) {
+        
+        cout << "We have a problem" << endl;
+        cout << "tau top = " << tau_top << ", global tau = " << _t << endl;
+        cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
+    }
+    
+    if(tau_top - _t > 0.1) {
+        
+        cout << "WARNING: High tau detected" << endl;
+        cout << "tau top = " << tau_top << ", global tau = " << _t << endl;
+        cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
+    }
+    
     _t=tau_top;
     syncGlobalTime();
     

@@ -47,7 +47,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
             r->getCBound()->setOffReaction(rxnClone);
         
         addInternalReaction(rxnClone);
-        if(r->isPassivated()) rxnClone->passivateReaction();
     }
     //copy all cross-cylinder reactions
     for(auto it = rhs._crossCylinderReactions.begin();
@@ -62,7 +61,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
                 r->getCBound()->setOffReaction(rxnClone);
             
             addCrossCylinderReaction(it->first, rxnClone);
-            if(r->isPassivated()) rxnClone->passivateReaction();
         }
     }
     //Copy reacting cylinders, Clone reactions where this cylinder is involved
@@ -78,7 +76,6 @@ CCylinder::CCylinder(const CCylinder& rhs, Compartment* c)
                 r->getCBound()->setOffReaction(rxnClone);
             
             ccyl->addCrossCylinderReaction(this, rxnClone);
-            if(r->isPassivated()) rxnClone->passivateReaction();
         }
     }
 }
