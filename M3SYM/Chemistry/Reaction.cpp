@@ -25,8 +25,7 @@ template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {
 
     //just update the rnode
-    if(_rnode!=nullptr)
-        _rnode->activateReaction();
+    if(_rnode!=nullptr) _rnode->activateReaction();
 }
 
 
