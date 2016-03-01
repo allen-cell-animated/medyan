@@ -394,9 +394,6 @@ void Controller::executeSpecialProtocols() {
         //loop through all cylinders, passivate (de)polymerization
         for(auto c : Cylinder::getCylinders())
             c->getCCylinder()->passivatePolyReactions();
-        
-        //shut off
-        SysParams::CParams.makeFilamentsStatic = false;
     }
     
     //making linkers static
@@ -406,9 +403,6 @@ void Controller::executeSpecialProtocols() {
         // loop through all linkers, passivate unbinding
         for(auto l: Linker::getLinkers())
             l->getCLinker()->getOffReaction()->passivateReaction();
-        
-        //shut off
-        SysParams::CParams.makeLinkersStatic = false;
     }
 }
 
