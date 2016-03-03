@@ -499,11 +499,13 @@ void Controller::run() {
             
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;
-                for(auto o: _outputs) o->print(i++);
+                for(auto o: _outputs) o->print(i);
+                i++;
                 tauLastSnapshot = 0.0;
             }
 #elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(i++);
+            for(auto o: _outputs) o->print(i);
+            i++;
 #endif
 
 #ifdef DYNAMICRATES
@@ -556,11 +558,13 @@ void Controller::run() {
             
             if(stepsLastSnapshot >= _snapshotSteps) {
                 cout << "Current simulation time = "<< tau() << endl;
-                for(auto o: _outputs) o->print(i++);
+                for(auto o: _outputs) o->print(i);
+                i++;
                 stepsLastSnapshot = 0;
             }
 #elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(i++);
+            for(auto o: _outputs) o->print(i);
+            i++;
 #endif
             
 #ifdef DYNAMICRATES

@@ -150,6 +150,12 @@ bool ChemNRMImpl::makeStep() {
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }
+    //assert heap ordering
+    if(tau_top <= _t) {
+        cout << "The heap is not correctly sorted, returning..." << endl;
+        cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
+        return false;
+    }
     
     _t=tau_top;
     syncGlobalTime();
