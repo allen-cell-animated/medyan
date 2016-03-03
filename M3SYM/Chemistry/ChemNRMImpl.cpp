@@ -155,7 +155,6 @@ bool ChemNRMImpl::makeStep() {
     if(tau_top <= _t) {
         cout << "The heap is not correctly sorted, returning..." << endl;
         cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
-        rn->getReaction()->printToStream(cout);
         rn->printSelf();
         return false;
     }
@@ -209,6 +208,8 @@ bool ChemNRMImpl::makeStep() {
             if(tau_new <= _t) {
                 
                 cout << "We have a problem. " << endl;
+                cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
+                rn->printSelf();
                 
             }
             
