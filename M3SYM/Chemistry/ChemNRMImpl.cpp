@@ -149,7 +149,7 @@ bool ChemNRMImpl::makeStep() {
     if(tau_top==numeric_limits<double>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
-    }
+    }    
     
     //assert heap ordering
     if(tau_top <= _t) {

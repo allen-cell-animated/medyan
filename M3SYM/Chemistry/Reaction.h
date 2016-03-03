@@ -235,10 +235,6 @@ template <unsigned short M, unsigned short N>
             }
             os << ", " << "curr_rate = " << getRate() << ", a="
                << computePropensity() << ", ReactionBase ptr=" << this << "\n";
-                
-                
-            os << "Is passivated = " << isPassivated()
-               << ", Reaction type = " << getReactionType() << "\n";
         }
         
         /// Implementation of  clone()
