@@ -153,7 +153,7 @@ bool ChemNRMImpl::makeStep() {
     
     ///DEBUG
     //assert heap ordering
-    if(tau_top <= _t) {
+    if(tau_top < _t) {
         cout << "ERROR: The heap is not correctly sorted, returning..." << endl;
         cout << "Tau top = " << tau_top << endl;
         cout << "Tau current = " << _t << endl;
@@ -208,7 +208,7 @@ bool ChemNRMImpl::makeStep() {
             }
 #endif
             ///DEBUG
-            if(tau_new <= _t) {
+            if(tau_new < _t) {
                 
                 cout << "ERROR: Generated tau is incorrect. " << endl;
                 
