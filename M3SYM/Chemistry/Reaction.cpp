@@ -24,8 +24,8 @@
 template<unsigned short M, unsigned short N>
     void Reaction<M,N>::updatePropensityImpl() {
 
-    //just update the rnode
-    if(_rnode!=nullptr) _rnode->activateReaction();
+    //just update the rnode if not passivated
+    if(_rnode!=nullptr && !_passivated) _rnode->activateReaction();
 }
 
 
@@ -48,8 +48,7 @@ template <unsigned short M, unsigned short N>
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=false;
 #endif
-    if(_rnode!=nullptr)
-        _rnode->activateReaction();
+    if(_rnode!=nullptr) _rnode->activateReaction();
 }
 
 template <unsigned short M, unsigned short N>
@@ -72,8 +71,7 @@ void Reaction<M,N>::passivateReactionImpl() {
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=true;
 #endif
-    if(_rnode!=nullptr)
-        _rnode->passivateReaction();
+    if(_rnode!=nullptr) _rnode->passivateReaction();
 }
   
 template <unsigned short M, unsigned short N>
