@@ -207,6 +207,12 @@ bool ChemNRMImpl::makeStep() {
             ///DEBUG
             if(tau_new <= _t) {
                 
+                cout << "Tau new = " << tau_new << endl;
+                cout << "Tau old = " << tau_old << endl;
+                cout << "Tau current = " << _t << endl;
+                cout << "a_old = " << a_old << endl;
+                cout << "a_new = " << a_new << endl;
+                
                 cout << "We have a problem. " << endl;
                 cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
                 rn->printSelf();
