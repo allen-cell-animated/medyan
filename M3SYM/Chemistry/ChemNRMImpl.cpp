@@ -150,10 +150,13 @@ bool ChemNRMImpl::makeStep() {
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }
+    
     //assert heap ordering
     if(tau_top <= _t) {
         cout << "The heap is not correctly sorted, returning..." << endl;
         cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
+        rn->getReaction()->printToStream(cout);
+        rn->printSelf();
         return false;
     }
     
@@ -202,6 +205,13 @@ bool ChemNRMImpl::makeStep() {
                 tau_new = (a_old/a_new)*(tau_old-_t)+_t;
             }
 #endif
+            ///DEBUG
+            if(tau_new <= _t) {
+                
+                cout << "We have a problem. " << endl;
+                
+            }
+            
             rn_other->setTau(tau_new);
             rn_other->updateHeap();
         }
