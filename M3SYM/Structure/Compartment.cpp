@@ -54,7 +54,6 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
         if(C->isActivated()) {
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate);
-            R->setReactionType(ReactionType::DIFFUSION);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
         }

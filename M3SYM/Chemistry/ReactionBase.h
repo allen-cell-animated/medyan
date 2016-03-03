@@ -199,22 +199,22 @@ public:
     /// Can be used to quickly determine whether this ReactionBase should be allowed to
     /// activate - if one of the reactants has a copy number equal to zero, then zero is
     /// returned, indicating that this ReactionBase should not be (yet) activated.
-    float getProductOfReactants () const {return getProductOfReactantsImpl();}
+    double getProductOfReactants () const {return getProductOfReactantsImpl();}
     
     /// (Private) implementation of the getProductOfReactants() method to be elaborated
     /// in derived classes.
-    virtual float getProductOfReactantsImpl() const = 0;
+    virtual double getProductOfReactantsImpl() const = 0;
     
     /// Computes the product of the copy number of all product RSpecies minus maximum
     /// allowed copy number. Can be used to quickly determine whether this ReactionBase
     /// should be allowed to activate - if one of the products has a copy number equal
     /// to the maximum allowed, then zero is returned, indicating that this ReactionBase
     /// should not be (yet) activated.
-    float getProductOfProducts () const {return getProductOfProductsImpl();}
+    double getProductOfProducts () const {return getProductOfProductsImpl();}
     
     /// (Private) implementation of the getProductOfProducts() method to be elaborated
     /// in derived classes.
-    virtual float getProductOfProductsImpl() const = 0;
+    virtual double getProductOfProductsImpl() const = 0;
     
     /// Return true if the ReactionBase is currently passivated
 #if defined TRACK_ZERO_COPY_N || defined  TRACK_UPPER_COPY_N
@@ -305,11 +305,11 @@ public:
     
     /// Compute the ReactionBase propensity that is needed by a Gillespie like
     /// algorithm, rate*reactant_1.getN()*reactant_2.getN()...
-    float computePropensity() const {return computePropensityImpl();}
+    double computePropensity() const {return computePropensityImpl();}
     
     /// (Private) implementation of the computePropensity() method to be elaborated
     /// in derived classes.
-    virtual float computePropensityImpl() const = 0;
+    virtual double computePropensityImpl() const = 0;
     
     /// Usually is applied to ReactionBase objects with propensity of 0 (e.g. when one
     /// of the copy numbers of reactants has dropped to 0. This method call notifies all
