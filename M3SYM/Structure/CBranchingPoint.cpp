@@ -29,7 +29,7 @@ CBranchingPoint::CBranchingPoint(short branchType, Compartment* c,
                         SysParams::Chemistry().brancherBoundIndex[_filamentType]);
     
     //mark species
-    assert(sb1->getN() == 0 && se1->getN() == 1 &&
+    assert(areEqual(sb1->getN(), 0.0) && areEqual(se1->getN(), 1.0) &&
            "Major bug: Brancher binding to an occupied site.");
         
     sb1->up(); se1->down();

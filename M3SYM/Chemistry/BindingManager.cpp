@@ -79,8 +79,8 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     }
     
     //add valid site
-    if (cc->getCMonomer(bindingSite)->speciesBound(
-        SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN() == 1 && inZone) {
+    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+        SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
         
         auto t = tuple<CCylinder*, short>(cc, bindingSite);
         _possibleBindings.insert(t);
@@ -166,8 +166,8 @@ void BranchingManager::updateAllPossibleBindings() {
                 else
                     inZone = false;
             }
-            if (cc->getCMonomer(*it)->speciesBound(
-                SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN() == 1 && inZone) {
+            if (areEqual(cc->getCMonomer(*it)->speciesBound(
+                SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
                 
                 auto t = tuple<CCylinder*, short>(cc, *it);
                 _possibleBindings.insert(t);
@@ -193,8 +193,8 @@ bool BranchingManager::isConsistent() {
         bool flag = true;
     
         //check site empty
-        if(cc->getCMonomer(bindingSite)->speciesBound(
-           SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN() != 1)
+        if(!areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+           SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0))
             flag = false;
 
         if(!flag) {
@@ -237,8 +237,8 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
     vector<LinkerBindingManager*> affectedManagers;
     
     //add valid binding sites
-    if (cc->getCMonomer(bindingSite)->speciesBound(
-        SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() == 1 ) {
+    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+        SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
         
         //loop through neighbors
         //now re add valid based on CCNL
@@ -254,8 +254,8 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
             for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
                 
-                if (ccn->getCMonomer(*it)->speciesBound(
-                    SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() == 1) {
+                if (areEqual(ccn->getCMonomer(*it)->speciesBound(
+                    SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
                     
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -405,8 +405,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                  it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
         
             //now re add valid binding sites
-            if (cc->getCMonomer(*it1)->speciesBound(
-                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() == 1 ) {
+            if (areEqual(cc->getCMonomer(*it1)->speciesBound(
+                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0) ) {
                 
                 //loop through neighbors
                 //now re add valid based on CCNL
@@ -420,8 +420,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                     for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
                              it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
                         
-                        if (ccn->getCMonomer(*it2)->speciesBound(
-                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() == 1) {
+                        if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
+                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
                             
                             //check distances..
                             auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -473,11 +473,11 @@ bool LinkerBindingManager::isConsistent() {
         bool flag = true;
         
         //check site empty
-        if(cc1->getCMonomer(bindingSite1)->speciesBound(
-           SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() != 1 ||
+        if(!areEqual(cc1->getCMonomer(bindingSite1)->speciesBound(
+           SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0) ||
            
-           cc2->getCMonomer(bindingSite2)->speciesBound(
-           SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN() != 1)
+           !areEqual(cc2->getCMonomer(bindingSite2)->speciesBound(
+           SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0))
 
             flag = false;
         
@@ -523,8 +523,8 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
     vector<MotorBindingManager*> affectedManagers;
     
     //add valid binding sites
-    if (cc->getCMonomer(bindingSite)->speciesBound(
-        SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() == 1) {
+    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+        SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
         
         //loop through neighbors
         //now re add valid based on CCNL
@@ -540,8 +540,8 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
             for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
                 
-                if (ccn->getCMonomer(*it)->speciesBound(
-                    SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() == 1) {
+                if (areEqual(ccn->getCMonomer(*it)->speciesBound(
+                    SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
                     
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -692,8 +692,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
                  it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
             
             //now re add valid binding sites
-            if (cc->getCMonomer(*it1)->speciesBound(
-                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() == 1) {
+            if (areEqual(cc->getCMonomer(*it1)->speciesBound(
+                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
                 
                 //loop through neighbors
                 //now re add valid based on CCNL
@@ -707,8 +707,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
                     for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
                              it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
                         
-                        if (ccn->getCMonomer(*it2)->speciesBound(
-                            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() == 1) {
+                        if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
+                            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
                             
                             //check distances..
                             auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -760,11 +760,11 @@ bool MotorBindingManager::isConsistent() {
         bool flag = true;
         
         //check site empty
-        if(cc1->getCMonomer(bindingSite1)->speciesBound(
-           SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() != 1 ||
+        if(!areEqual(cc1->getCMonomer(bindingSite1)->speciesBound(
+           SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0) ||
            
-           cc2->getCMonomer(bindingSite2)->speciesBound(
-           SysParams::Chemistry().motorBoundIndex[_filamentType])->getN() != 1)
+           !areEqual(cc2->getCMonomer(bindingSite2)->speciesBound(
+           SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0))
             
             flag = false;
         

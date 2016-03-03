@@ -473,7 +473,7 @@ void Controller::run() {
     int i = 1;
     
     //if runtime was specified, use this
-    if(_runTime != 0) {
+    if(!areEqual(_runTime, 0.0)) {
     
 #ifdef CHEMISTRY
         while(tau() <= _runTime) {

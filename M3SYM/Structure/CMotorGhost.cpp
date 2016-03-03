@@ -31,8 +31,8 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
                         SysParams::Chemistry().motorBoundIndex[_filamentType]);
         
     //mark species
-    assert(sm1->getN() == 0 && sm2->getN() == 0 &&
-           se1->getN() == 1 && se2->getN() == 1 &&
+    assert(areEqual(sm1->getN(), 0.0) && areEqual(sm2->getN(), 0.0) &&
+           areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
            "Major bug: Motor binding to an occupied site.");
         
     sm1->up(); sm2->up();

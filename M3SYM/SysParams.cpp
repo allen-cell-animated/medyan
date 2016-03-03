@@ -332,15 +332,15 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     }
     
     //Boundary
-    if(mech.BoundaryFFType != "" && BParams.BoundaryK == 0) {
+    if(mech.BoundaryFFType != "" && areEqual(BParams.BoundaryK, 0.0)) {
         cout << "Must set a boundary force constant. Exiting." << endl;
         return false;
     }
-    if(mech.BoundaryFFType != "" && BParams.BScreenLength == 0) {
+    if(mech.BoundaryFFType != "" && areEqual(BParams.BScreenLength, 0.0)) {
         cout << "Must set a boundary screen length. Exiting." << endl;
         return false;
     }
-    if(mech.BoundaryFFType != "" && BParams.BoundaryCutoff == 0) {
+    if(mech.BoundaryFFType != "" && areEqual(BParams.BoundaryCutoff, 0.0)) {
         cout << "Must set a boundary cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }

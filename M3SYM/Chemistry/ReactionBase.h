@@ -336,13 +336,13 @@ public:
     /// propensity is still zero.
     void activateReaction() {
 #ifdef TRACK_ZERO_COPY_N
-        if(getProductOfReactants()==0) // One of the reactants is still at zero copy n,
-                                       // no need to activate yet...
+        if(areEqual(getProductOfReactants(), 0.0)) // One of the reactants is still at zero copy n,
+                                                   // no need to activate yet...
             return;
 #endif
 #ifdef TRACK_UPPER_COPY_N
-        if(getProductOfProducts()==0) // One of the products is at the maximum allowed
-                                      //copy number, no need to activate yet...
+        if(areEqual(getProductOfProducts(), 0.0)) // One of the products is at the maximum allowed
+                                                  //copy number, no need to activate yet...
             return;
 #endif
         activateReactionUnconditional();

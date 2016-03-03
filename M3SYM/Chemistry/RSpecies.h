@@ -262,7 +262,7 @@ public:
     virtual void down() = 0;
     
     /// Return the effective copy number of this RSpecies
-    virtual double getN() const = 0;
+    virtual float getN() const = 0;
     /// Return the true copy number of this RSpecies
     virtual inline species_copy_t getTrueN() const {return _n;}
     
@@ -349,7 +349,7 @@ public:
 #endif
     }
     /// Return the true copy number
-    virtual double getN() const {return (double)_n;}
+    virtual float getN() const {return (float)_n;}
 };
 
 
@@ -404,7 +404,7 @@ public:
     }
     //@}
     /// Return the true copy number
-    virtual double getN() const {return (double)_n;}
+    virtual float getN() const {return (float)_n;}
 };
 
 /// An average RSpecies that tracks the average copy number over a number of events.
@@ -600,7 +600,7 @@ public:
     }
     
     /// Return the current average
-    virtual double getN() const {return _average;}
+    virtual float getN() const {return _average;}
 };
 
 /// Print self into an iostream

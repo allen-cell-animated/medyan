@@ -72,12 +72,12 @@ void CMonomer::print()
 {
     for(int i = 0; i < _numFSpecies[_filamentType]; i++) {
         SpeciesFilament* s = _speciesFilament[i];
-        if(s != nullptr && s->getN() == 1)
+        if(s != nullptr && areEqual(s->getN(), 1.0))
             cout << s->getName();
     }
     for(int i = 0; i < _numBSpecies[_filamentType]; i++) {
         SpeciesBound* s = _speciesBound[i];
-        if(s != nullptr && s->getN() == 1)
+        if(s != nullptr && areEqual(s->getN(), 1.0))
             cout << s->getName();
     }
 }
@@ -123,7 +123,7 @@ short CMonomer::activeSpeciesFilament() {
     
     for(int i = 0; i < numFilamentSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
-        if(s != nullptr && s->getN() == 1) return i;
+        if(s != nullptr && areEqual(s->getN(), 1.0)) return i;
     }
     return -1;
 }
@@ -133,7 +133,7 @@ short CMonomer::activeSpeciesPlusEnd() {
     
     for(int i = 0; i < numPlusEndSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
-        if(s != nullptr && s->getN() == 1)
+        if(s != nullptr && areEqual(s->getN(), 1.0))
             return i;
     }
     return -1;
@@ -144,7 +144,7 @@ short CMonomer::activeSpeciesMinusEnd() {
     
     for(int i = 0; i < numMinusEndSpecies; i++) {
         SpeciesFilament* s = _speciesFilament[i + offset];
-        if(s != nullptr && s->getN() == 1)
+        if(s != nullptr && areEqual(s->getN(), 1.0))
             return i;
     }
     return -1;
@@ -156,7 +156,7 @@ short CMonomer::activeSpeciesLinker() {
     
     for(int i = 0; i < numLinkerSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && s->getN() == 1) return i;
+        if(s != nullptr && areEqual(s->getN(), 1.0)) return i;
     }
     return -1;
     
@@ -167,7 +167,7 @@ short CMonomer::activeSpeciesMotor() {
     
     for(int i = 0; i < numMotorSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && s->getN() == 1) return i;
+        if(s != nullptr && areEqual(s->getN(), 1.0)) return i;
     }
     return -1;
 }
@@ -177,7 +177,7 @@ short CMonomer::activeSpeciesBrancher() {
     
     for(int i = 0; i < numBrancherSpecies; i++) {
         SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && s->getN() == 1) return i;
+        if(s != nullptr && areEqual(s->getN(), 1.0)) return i;
     }
     return -1;
 }
@@ -187,8 +187,8 @@ bool CMonomer::isConsistent() {
     //check all species between 0 and 1 inclusive
     for(int i = 0; i < _numFSpecies[_filamentType]; i++) {
         
-        if(_speciesFilament[i]->getN() != 1 &&
-           _speciesFilament[i]->getN() != 0) {
+        if(!areEqual(_speciesFilament[i]->getN(), 1.0) &&
+           !areEqual(_speciesFilament[i]->getN(), 0.0)) {
             
             cout << _speciesFilament[i]->getName() << " has an invalid copy number. It is = "
                  << _speciesFilament[i]->getN() << " and is at species index " << i << "." << endl;

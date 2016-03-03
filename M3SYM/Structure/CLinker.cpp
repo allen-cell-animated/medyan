@@ -32,8 +32,8 @@ CLinker::CLinker(short linkerType, Compartment* c,
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     
     //mark species
-    assert(sl1->getN() == 0 && sl2->getN() == 0 &&
-           se1->getN() == 1 && se2->getN() == 1 &&
+    assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
+           areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
            "Major bug: Linker binding to an occupied site.");
     
     sl1->up(); sl2->up();

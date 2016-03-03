@@ -168,7 +168,7 @@ template <unsigned short M, unsigned short N>
         {
             if(isPassivated()) return 0.0;
 #ifdef TRACK_UPPER_COPY_N
-            if(this->Reaction<M,N>::getProductOfProductsImpl()==0){
+            if(areEqual(this->Reaction<M,N>::getProductOfProductsImpl(),0.0)){
                 return float(0.0);
             }
 #endif
