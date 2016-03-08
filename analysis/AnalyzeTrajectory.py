@@ -1725,7 +1725,7 @@ def plotOrderParamVsT(saveFile=''):
 
 def plotOrderParamPercentagesVsT(saveFile=''):
 
-	data = calculateOrderParamPercentagesVsT('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-C22', optype = 'apolar')
+	data = calculateOrderParamPercentagesVsT('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-MV10', optype = 'polar')
 
 	matplotlib.rcParams['font.sans-serif']=["Arial"] 
 
@@ -1734,7 +1734,7 @@ def plotOrderParamPercentagesVsT(saveFile=''):
 
 	#organize data
 	colors = ['r', 'g', 'b']
-	labels = [r'$\mathsf{0\/<\/\/S_2<\/1/3}$',r'$\mathsf{1/3\/<\/\/S_2<\/2/3}$', r'$\mathsf{2/3\/<\/\/S_2<\/1}$']
+	labels = [r'$\mathsf{0\/<\/\/S_1<\/1/3}$',r'$\mathsf{1/3\/<\/\/S_1<\/2/3}$', r'$\mathsf{2/3\/<\/\/S_1<\/1}$']
 
 	for i in [0,1,2]:
 
@@ -1749,7 +1749,7 @@ def plotOrderParamPercentagesVsT(saveFile=''):
 		plt.plot(times, percs, linewidth=1, color=colors[i],label=labels[i])
 
 	plt.xlabel(r'$\mathsf{t}$', fontsize=24)
-	plt.ylabel(r'$\mathsf{P(\Delta S_2)}$', fontsize=24)
+	plt.ylabel(r'$\mathsf{P(\Delta S_1)}$', fontsize=24)
 	plt.xlim(0,2000)
 	plt.ylim(0,1)
 	plt.legend()
