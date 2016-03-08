@@ -144,7 +144,7 @@ public:
         auto child_iter = find_if(_species.begin(),_species.end(),
           [&name](const unique_ptr<Species> &element) {
           return element->getName()==name ? true : false;});
-        if(child_iter!=_species.end()) {s
+        if(child_iter!=_species.end()) {
             return child_iter->get();
         }
         
