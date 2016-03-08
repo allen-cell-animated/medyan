@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = '/Users/jameskomianos/Desktop/snapshot.traj'
+traj_filename = '/Users/jameskomianos/Desktop/Data/alignmentdata/Small2/Run0/snapshot.traj'
 color_filename = ''
 
 #Open the traj filex
@@ -328,13 +328,13 @@ def show_snapshot(snapshot_number=-1):
 	COLORBYANGLE = False
 
 	#grid size
-	GRIDSIZEMAXX = 1000.0
+	GRIDSIZEMAXX = 3000.0
 	GRIDSIZEMINX = 0.0
 
-	GRIDSIZEMAXY = 1000.0
+	GRIDSIZEMAXY = 3000.0
 	GRIDSIZEMINY = 0.0
 
-	GRIDSIZEMAXZ = 1000.0
+	GRIDSIZEMAXZ = 3000.0
 	GRIDSIZEMINZ = 0.0
 
 	#boundary type, CUBIC or SPHERICAL
@@ -381,8 +381,8 @@ def show_snapshot(snapshot_number=-1):
               		  fig_handle=figw, Nx=64, Ny=64, Nz=64, col_isurf=(0.67, 0.77, 0.93),
              		  opaque=False, opa_val=0.3, ori_axis=False)
 	#display time
-	time = 'Time = ' + str(local_snapshot.time) + "s"
-	mlab.text(0.6, 0.9, time, color=(0.0,0.0,0.0))
+	#time = 'Time = ' + str(local_snapshot.time) + "s"
+	#mlab.text(0.6, 0.9, time, color=(0.0,0.0,0.0))
 
 	#DISPLAYING RANDOM POINTS FOR MONOMERS
 	#can add as many types of monomers as needed

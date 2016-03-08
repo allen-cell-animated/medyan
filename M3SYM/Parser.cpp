@@ -1676,7 +1676,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
                 chem.speciesBulk.push_back(tuple<string, int, double, double, string>
                     (lineVector[1], atoi(lineVector[2].c_str()),
-                     atof(lineVector[3].c_str()), atof(lineVector[4].c_str()), lineVector[4]));
+                     atof(lineVector[3].c_str()), atof(lineVector[4].c_str()), lineVector[5]));
             }
             else {}
         }
