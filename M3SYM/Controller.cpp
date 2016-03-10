@@ -268,7 +268,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
     
     //add other filaments if specified
-    FilamentInitializer* fInit = new ConnectedFilamentDist();
+    FilamentInitializer* fInit = new RandomFilamentDist();
     
     auto filamentsGen = fInit->createFilaments(_subSystem->getBoundary(),
                                                FSetup.numFilaments,
