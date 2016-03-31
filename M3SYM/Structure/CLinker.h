@@ -3,12 +3,12 @@
 //  **M3SYM** - Simulation Package for the Mechanochemical
 //              Dynamics of Active Networks, 3rd Generation
 //
-//  Copyright (2014) Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
-//  See the Papoian lab page for more information:
-//  http://papoian.chem.umd.edu/
+//  See the MEDYAN web page for more information:
+//  http://www.medyan.org
 //------------------------------------------------------------------
 
 #ifndef M3SYM_CLinker_h

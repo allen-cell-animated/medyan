@@ -3,33 +3,34 @@
 //  **M3SYM** - Simulation Package for the Mechanochemical
 //              Dynamics of Active Networks, 3rd Generation
 //
-//  Copyright (2014) Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
-//  See the Papoian lab page for more information:
-//  http://papoian.chem.umd.edu/
+//  See the MEDYAN web page for more information:
+//  http://www.medyan.org
 //------------------------------------------------------------------
 
 /*! \mainpage M3SYM software package
  
  \section intro_sec Introduction
  
- Cell motility plays a key role in human biology and disease, contributing ubiquitously
+The cell cytoskeleton plays a key role in human biology and disease, contributing ubiquitously
  to such important processes as embryonic development, wound repair and cancer 
  metastasis. Papoian laboratory is interested in gaining deeper understanding of the
  physical chemistry behind these complex, far-from-equilibrium mechanochemical 
- processes. His approach and model, named Mechanochemical Dynamics of Active Networks,
- 3rd Generation (MEDYAN3), is based on combining stochastic reaction-diffusion treatment
+ processes. His approach and model, named Mechanochemical Dynamics of Active Networks
+ (MEDYAN), is based on combining stochastic reaction-diffusion treatment
  of cellular biochemical processes with polymer physics of cytoskeletal filament network 
  growth, while explicitly coupling chemistry and mechanics.
  
- Papoian laboratory has developed **M3SYM**, a software package based on the MEDYAN3
- model, to simulate growth dynamics of actin based filamentous networks *in vitro* and 
+ Papoian laboratory has developed **M3SYM**, a third-generation software package based on 
+ the MEDYAN model, to simulate growth dynamics of actin based filamentous networks *in vitro* and 
  *in vivo*. Recent papers where **M3SYM** or its predecessor, **StochTools**, were used 
- can be found on the publication section of [the Papoian group's main web page: ]
- (http://papoian.chem.umd.edu/ ). The **M3SYM** package can also be extended to simulate
- the dynamics of any active matter network.
+ can be found on the publication section of [the Papoian group's main web page]
+ (http://papoian.chem.umd.edu/ ) or on [the MEDYAN web page] (http://www.medyan.org ).
+ The **M3SYM** package can also be extended to simulate the dynamics of any active
+ matter network.
  
  \section install_sec Installation
  
