@@ -17,8 +17,8 @@
 
 \def\Z{\vphantom{\parbox[c]{1cm}{\Huge Something Long}}}
 
-\title{Usage Guide for M3SYM v1.1}
-\author{Papoian Lab, University of Maryland}
+\title{Usage Guide for M3SYM v1.0}
+\author{Papoian Lab, University of Maryland \\ Written by James Komianos}
 \date{}							% Activate to display a given date or no date
 
 \begin{document}
@@ -33,7 +33,7 @@
 \newpage
 \section {Introduction}
 
- Cell motility plays a key role in human biology and disease, contributing ubiquitously
+ The cell cytoskeleton plays a key role in human biology and disease, contributing ubiquitously
  to such important processes as embryonic development, wound repair and cancer 
  metastasis. The Papoian laboratory is interested in gaining deeper understanding of the
  physical chemistry behind these complex, far-from-equilibrium mechanochemical 
@@ -45,9 +45,8 @@
  The Papoian laboratory has developed M3SYM, a software package based on the MEDYAN
  model, to simulate growth dynamics of actin based filamentous networks \textit{in vitro} and 
  \textit{in vivo}. Recent papers where M3SYM or its predecessor, StochTools, were used 
- can be found on the publication section of the Papoian group's main web page. 
+ can be found on the publication section of the Papoian group's main web page, or on the MEDYAN website. 
  The M3SYM package can also be extended to simulate the dynamics of any active matter network.
-
 
 \section {Overview of Features}
 
@@ -86,8 +85,8 @@ M3SYM allows for a wide range of mechanical interactions, including:
 \item Excluded volume 
 \end{itemize}
 \item Stretching force fields for cross-linkers and motors 
-\item Boundary steric repulsion force field
-\item Bubble repulsion force field
+\item Boundary steric repulsion
+\item Bubble repulsion
 \end{itemize}
 
 \noindent These force fields can be minimized by a choice of conjugate gradient algorithm.
@@ -394,13 +393,21 @@ The following special setups can be initialized with corresponding parameters. T
   \noindent\texttt{MTOCBUBBLETYPE} -- int -- Type of bubble to be the MTOC. \\
 \normalsize
 
+\subsubsection{Special protocols}
+
+The following special protocols can be initialized. These protocols must be set on different lines, so users should specify a new parameter, on separate lines, for each setup desired:\\
+
+\small
+
+\noindent\texttt{SPECIALPROTOCOL} -- MAKEFILAMENTSSTATIC, MAKELINKERSSTATIC -- Make either filament or cross-linker chemistry static after a certain amount of time. This parameter must be followed by a double specifying the simulation time that this protocol is activated.\\
+
 \subsubsection{Output formats}
 
 The output of M3SYM will be directed to the \texttt{OutputFile} specified. The following output can be set. These outputs must be set on different lines, so users should specify a new parameter, on separate lines, for each output value desired. Output files will be explained in more detail in a later section.\\
 
 \small
 
-  \noindent\texttt{OUTPUTTYPE} -- SNAPSHOT, FORCES, STRESSES, BIRTHTIMES, CHEMISTRY -- Output type.\\
+  \noindent\texttt{OUTPUTTYPE} -- SNAPSHOT, FORCES, TENSIONS, BIRTHTIMES, CHEMISTRY -- Output type.\\
  
 \normalsize
 
@@ -417,7 +424,7 @@ Different types of species can be defined as follows:
 
 \begin{itemize}
 \item 
-A \textbf{diffusing species} is defined in the following form:\newline\newline \texttt{SPECIESDIFFUSING: <NAME> <COPYNUMBER> <DIFFRATE> <RELEASETIME> <QUALIFIER> (<NUMEVENTS>)} \newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{DIFFUSIONRATE} is a float value that determines the diffusion rate of this molecule between compartments. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).\\
+A \textbf{diffusing species} is defined in the following form:\newline\newline \texttt{SPECIESDIFFUSING: <NAME> <COPYNUMBER> <DIFFRATE> <RELEASETIME> <REMOVALTIME> <QUALIFIER> (<NUMEVENTS>)} \newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{DIFFUSIONRATE} is a float value that determines the diffusion rate of this molecule between compartments. \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds). \texttt{REMOVALTIME} specifies whether the species should be removed from the simulation. If no removal is desired, this can be set to 0.\\
 
 The \texttt{QUALIFIER} field is used to define the type of reacting species. The options are the following:
 \begin{itemize}
@@ -427,7 +434,7 @@ The \texttt{QUALIFIER} field is used to define the type of reacting species. The
 The \texttt{NUMEVENTS} field, denoted in parentheses as optional, only used in the case of defining an averaging reacting species. If using a regular, this should not be included in the file or an error will result.
 
 \item
-A \textbf{bulk species}, which is assumed to be spatially homogeneous, is defined in the following form:\newline\newline\centerline{\texttt{SPECIESBULK: <NAME> <COPYNUMBER> <RELEASETIME> <QUALIFIER>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds).
+A \textbf{bulk species}, which is assumed to be spatially homogeneous, is defined in the following form:\newline\newline\centerline{\texttt{SPECIESBULK: <NAME> <COPYNUMBER> <RELEASETIME> <REMOVALTIME> <QUALIFIER>}}\newline\newline where \texttt{NAME} is any string defining the name of the species, \texttt{COPYNUMBER} is the number of molecules of that species in the system, and \texttt{RELEASETIME} specifies when this molecule populates the system in simulation (in seconds). \texttt{REMOVALTIME} specifies whether the species should be removed from the simulation. If no removal is desired, this can be set to 0.
 
 The \texttt{QUALIFIER} field is used to define the type of reacting species. The options are the following:
 \begin{itemize}
@@ -677,7 +684,7 @@ may need to be declared, depending on your system configuration:\newline
 
 \subsubsection{Running the visualization script, AnimateTrajectory.py}
 
-The visualization script must be edited by the user on lines 6-8 to include the desired snapshot file. A color file can also be specified, which will color the network based on either a force, stress, or birth time file. If no color file is included, the elements of the network will be colored to a default value. The script can also be edited on lines 231-267 to include titles, boundaries, scales, default colors, and choice of color map. \newline
+The visualization script must be edited by the user on lines 6-8 to include the desired snapshot file. A color file can also be specified, which will color the network based on either a force, stress, or birth time file. If no color file is included, the elements of the network will be colored to a default value. The script can also be edited on lines 311-353 to include titles, boundaries, scales, default colors, and choice of color map. \newline
 
 \noindent Run the script using the following commands:\newline\newline
 \indent\texttt{> ip}\newline
@@ -693,9 +700,13 @@ The visualization script must be edited by the user on lines 6-8 to include the 
 
 \section{Developer guide}
 
-\subsection{Pull requests}
+\subsection{Analysis of output}
 
-Pull requests for the M3SYM repository should be directed to James Komianos (jkomianos@gmail.com). From there, detailed instructions on cloning the repository, and general guidelines on adding features will be given.
+The output described in the previous section can be analyzed using a python script found in \texttt{InstallDirectory/analysis}, named \texttt{AnalyzeTrajectory.py}. This script reads trajectory files in a similar manner to AnimateTrajectory.py and has a number of functions for various analysis tools related to cytoskeletal networks. For more information and examples of using these functions, please see the ExampleGuide found in \texttt{InstallDirectory/docs}.
+
+\subsection{Repository requests}
+
+Requests for pulling the M3SYM repository should be directed to James Komianos (jkomianos@gmail.com). From there, detailed instructions on cloning the repository, and general guidelines on adding features will be given.
 
 \subsection{Coding style}
 
@@ -719,7 +730,6 @@ Please direct all code inquiries to James Komianos (jkomianos@gmail.com).
 \section{References}
 
 [1] Popov K, Komianos J, and GA Papoian. ``MEDYAN: Mechanochemical Simulations 
-\indent of Actomyosin Networks and Other Active Matter." PLoS Computational Biology (in 
-\indent review), 2015.
+\indent of Contraction and Polarity Alignment in Actomyosin Networks." PLoS Computational \indent Biology, 2016.
 
 \end{document}  

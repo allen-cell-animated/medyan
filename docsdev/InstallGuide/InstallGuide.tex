@@ -14,8 +14,8 @@
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
-\title{Installation Guide for M3SYM v1.1}
-\author{Papoian Lab, University of Maryland}
+\title{Installation Guide for M3SYM v1.0}
+\author{Papoian Lab, University of Maryland \\ Written by James Komianos}
 \date{}							% Activate to display a given date or no date
 
 \begin{document}
@@ -63,35 +63,35 @@ The code can be compiled with either \texttt{DEBUG} flags, which specifies the d
 
 \subsection {Command line compilation macros}
 
-The command line macros can be edited in the Makefile to turn on or off certain code capabilities. See the Usage guide for more details on these macros and their implications. The macros available for user editing are: \newline
+The command line macros can be edited in the Makefile to turn on or off certain code capabilities. See the Usage guide for more details on these macros and their implications. \textit{While these macros are customizable, we highly recommend the default usage as previously defined in the original Makefile for full capability}. The macros available for user editing are: \newline
 
 \small
 \begin{table} [!ht]
 \centering
-\begin{tabular}{|L{5cm}|L{7.5cm}|}  
+\begin{tabular}{|L{5cm}|L{9cm}|}  
 \hline
  \textbf{Macro} & \textbf{Description} \\
  \hline
-  CHEMISTRY & Enable system chemistry \\
+  CHEMISTRY & Enable system chemistry. \\
   \hline
-  MECHANICS & Enable system mechanics \\ 
+  MECHANICS & Enable system mechanics. \\ 
   \hline
   DYNAMICRATES & Enable dynamic rate changing. This macro can only be specified if both CHEMISTRY and
   MECHANICS are enabled. \\
   \hline
-  BOOST\_MEM\_POOL & Enable boost memory pool optimizations \\
+  BOOST\_MEM\_POOL & Enable boost memory pool optimizations. \\
   \hline
-   BOOL\_POOL\_NSIZE & Set boost memory pool size \\
+   BOOL\_POOL\_NSIZE & Set boost memory pool size. Default value is 65536. \\
   \hline
-   TRACK\_DEPENDENTS & Track reaction dependents in system \\
+   TRACK\_DEPENDENTS & Track reaction dependents in system. \\
   \hline
-    TRACK\_ZERO\_COPY\_N & For activation of reactions \\
+    TRACK\_ZERO\_COPY\_N & For activation of reactions based on copy number. \\
   \hline
-     TRACK\_UPPER\_COPY\_N & For activation of reactions \\
+     TRACK\_UPPER\_COPY\_N & For activation of reactions based on copy number. \\
   \hline
-     REACTION\_SIGNALING & Enable reaction callback signaling \\
+     REACTION\_SIGNALING & Enable reaction callback signaling. \\
   \hline
-     RSPECIES\_SIGNALING & Enable species callback signaling\\
+     RSPECIES\_SIGNALING & Enable species callback signaling.\\
   \hline
 \end{tabular}
 \end{table}

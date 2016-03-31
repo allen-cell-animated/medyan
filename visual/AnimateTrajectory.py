@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = '/Users/jameskomianos/Desktop/MEDYANData/medyandata/LARGE/Run0/snapshot.traj'
+traj_filename = ''
 color_filename = ''
 
 #Open the traj filex
@@ -311,8 +311,8 @@ def implicit_plot(expr, ext_grid, fig_handle=None, Nx=101, Ny=101, Nz=101,
 def show_snapshot(snapshot_number=-1):
 
 	#if were saving the Snapshots
-	saving = True
-	saveFile = '/Users/jameskomianos/Desktop/'
+	saving = False
+	saveFile = ''
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
@@ -328,13 +328,13 @@ def show_snapshot(snapshot_number=-1):
 	COLORBYANGLE = False
 
 	#grid size
-	GRIDSIZEMAXX = 3000.0
+	GRIDSIZEMAXX = 0.0
 	GRIDSIZEMINX = 0.0
 
-	GRIDSIZEMAXY = 3000.0
+	GRIDSIZEMAXY = 0.0
 	GRIDSIZEMINY = 0.0
 
-	GRIDSIZEMAXZ = 3000.0
+	GRIDSIZEMAXZ = 0.0
 	GRIDSIZEMINZ = 0.0
 
 	#boundary type, CUBIC or SPHERICAL
@@ -381,8 +381,8 @@ def show_snapshot(snapshot_number=-1):
               		  fig_handle=figw, Nx=64, Ny=64, Nz=64, col_isurf=(0.67, 0.77, 0.93),
              		  opaque=False, opa_val=0.3, ori_axis=False)
 	#display time
-	#time = 'Time = ' + str(local_snapshot.time) + "s"
-	#mlab.text(0.6, 0.9, time, color=(0.0,0.0,0.0))
+	time = 'Time = ' + str(local_snapshot.time) + "s"
+	mlab.text(0.6, 0.9, time, color=(0.0,0.0,0.0))
 
 	#DISPLAYING RANDOM POINTS FOR MONOMERS
 	#can add as many types of monomers as needed
@@ -518,14 +518,13 @@ def show_snapshot(snapshot_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DFILCOLOR)
 
 	#DISPLAYING LINKERS
-	#if(False):
 	if(len(local_snapshot.linkers) != 0):
 		x=[]
 		c=[]
 		connections=[]
 
 		#Add random diffusing linkers
-		n_diffusing_linkers = 5000
+		n_diffusing_linkers = 0
 		len_linker = 35.0
 		linker_type = 0
 		n_beads_linker = 2 * len(local_snapshot.linkers) 
@@ -616,14 +615,13 @@ def show_snapshot(snapshot_number=-1):
 			surface = mlab.pipeline.surface(tube, color=DLINKERCOLOR)
 
 	#DISPLAYING MOTORS
-	#if(False):
 	if(len(local_snapshot.motors) != 0):
 		x=[]
 		c=[]
 		connections=[]
 
 		#Add random diffusing motors
-		n_diffusing_motors = 15
+		n_diffusing_motors = 0
 		len_motor = 200.0
 		motor_type = 0
 		n_beads_motor = 2 * len(local_snapshot.motors) 
@@ -743,7 +741,7 @@ def show_snapshot(snapshot_number=-1):
 									scale_factor=200.0, color=DBUBBLECOLOR)
 
 	if(saving):
-		mlab.savefig(filename=saveFile + "Snapshot" + str(snapshot_number) + ".png", magnification=10)
+		mlab.savefig(filename=saveFile + "Snapshot" + str(snapshot_number) + ".png")
 
 @mlab.animate(delay=10, ui=True)
 def anim():
