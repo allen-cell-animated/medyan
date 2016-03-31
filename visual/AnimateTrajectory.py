@@ -3,7 +3,7 @@ from mayavi import mlab
 
 #SPECIFY THE TRAJ FILE AND THE COLOR FILE
 #If no color file is specified, the default coloring will be used	
-traj_filename = '/Users/jameskomianos/Desktop/Data/alignmentdata/Small2/Run0/snapshot.traj'
+traj_filename = '/Users/jameskomianos/Desktop/MEDYANData/medyandata/LARGE/Run0/snapshot.traj'
 color_filename = ''
 
 #Open the traj filex
@@ -312,7 +312,7 @@ def show_snapshot(snapshot_number=-1):
 
 	#if were saving the Snapshots
 	saving = True
-	saveFile = '/Users/jameskomianos/Desktop/Test/Snapshots/'
+	saveFile = '/Users/jameskomianos/Desktop/'
 
 	#PARAMETERS TO SET FOR VISUAL
 	#for color scaling
@@ -364,7 +364,7 @@ def show_snapshot(snapshot_number=-1):
 		z = [GRIDSIZEMINZ,GRIDSIZEMAXZ,GRIDSIZEMINZ]
 		pts = mlab.points3d(x,y,z, scale_mode='none', scale_factor=0.2)
 		
-		outline=mlab.pipeline.outline(pts, line_width=0.25, color=(0.0,0.0,0.0))
+		outline=mlab.pipeline.outline(pts, line_width=0.6, color=(0.0,0.0,0.0))
 
 	elif BOUNDARYTYPE == "SPHERICAL" :
 
@@ -386,7 +386,7 @@ def show_snapshot(snapshot_number=-1):
 
 	#DISPLAYING RANDOM POINTS FOR MONOMERS
 	#can add as many types of monomers as needed
-	n1_monomers = 0
+	n1_monomers = 1000
 
 	n1_x = []
 	n1_y = []
@@ -441,7 +441,7 @@ def show_snapshot(snapshot_number=-1):
 					coords = local_snapshot.filaments[fid].coords
 
 					plusends[i].append(coords[i][len(coords[i]) - 1])
-					#minusends[i].append(coords[i][0])
+					minusends[i].append(coords[i][0])
 
 		for fid in sorted(local_snapshot.filaments.keys()):
 			for color in local_snapshot.filaments[fid].colors:
@@ -512,8 +512,7 @@ def show_snapshot(snapshot_number=-1):
 						  	   title=SCALETITLE, label_fmt='%.0f', nb_labels=5)
 
 			cb.title_text_property.color = (0.0,0.0,0.0)
-			cb.label_text_property.color = (0.0,0.0,0.0)
-			cb.label_text_property.font_size = 4
+			cb.label_text_property.color = (1.0,1.0,1.0)
 
 		else:
 			surface = mlab.pipeline.surface(tube, color=DFILCOLOR)
@@ -526,7 +525,7 @@ def show_snapshot(snapshot_number=-1):
 		connections=[]
 
 		#Add random diffusing linkers
-		n_diffusing_linkers = 0
+		n_diffusing_linkers = 5000
 		len_linker = 35.0
 		linker_type = 0
 		n_beads_linker = 2 * len(local_snapshot.linkers) 
@@ -624,7 +623,7 @@ def show_snapshot(snapshot_number=-1):
 		connections=[]
 
 		#Add random diffusing motors
-		n_diffusing_motors = 0
+		n_diffusing_motors = 15
 		len_motor = 200.0
 		motor_type = 0
 		n_beads_motor = 2 * len(local_snapshot.motors) 
@@ -744,7 +743,7 @@ def show_snapshot(snapshot_number=-1):
 									scale_factor=200.0, color=DBUBBLECOLOR)
 
 	if(saving):
-		mlab.savefig(filename=saveFile + "Snapshot" + str(snapshot_number) + ".jpg")
+		mlab.savefig(filename=saveFile + "Snapshot" + str(snapshot_number) + ".png", magnification=10)
 
 @mlab.animate(delay=10, ui=True)
 def anim():
