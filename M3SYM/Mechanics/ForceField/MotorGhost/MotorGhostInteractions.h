@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
-//  **M3SYM** - Simulation Package for the Mechanochemical
-//              Dynamics of Active Networks, 3rd Generation
+//  **MEDYAN** - Simulation Package for the Mechanochemical
+//               Dynamics of Active Networks, v3.0
 //
 //  Copyright (2015)  Papoian Lab, University of Maryland
 //
@@ -12,8 +12,8 @@
 //------------------------------------------------------------------
 
 
-#ifndef M3SYM_MotorGhostInteractions_h
-#define M3SYM_MotorGhostInteractions_h
+#ifndef MEDYAN_MotorGhostInteractions_h
+#define MEDYAN_MotorGhostInteractions_h
 
 #include "common.h"
 

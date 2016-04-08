@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
-//  **M3SYM** - Simulation Package for the Mechanochemical
-//              Dynamics of Active Networks, 3rd Generation
+//  **MEDYAN** - Simulation Package for the Mechanochemical
+//               Dynamics of Active Networks, v3.0
 //
 //  Copyright (2015)  Papoian Lab, University of Maryland
 //
@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-/*! \mainpage M3SYM software package
+/*! \mainpage **MEDYAN** software package
  
  \section intro_sec Introduction
  
@@ -19,40 +19,40 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  to such important processes as embryonic development, wound repair and cancer 
  metastasis. Papoian laboratory is interested in gaining deeper understanding of the
  physical chemistry behind these complex, far-from-equilibrium mechanochemical 
- processes. His approach and model, named Mechanochemical Dynamics of Active Networks
- (MEDYAN), is based on combining stochastic reaction-diffusion treatment
+ processes. Their approach and model, named Mechanochemical Dynamics of Active Networks
+ (**MEDYAN**), is based on combining stochastic reaction-diffusion treatment
  of cellular biochemical processes with polymer physics of cytoskeletal filament network 
  growth, while explicitly coupling chemistry and mechanics.
  
- Papoian laboratory has developed **M3SYM**, a third-generation software package based on 
- the MEDYAN model, to simulate growth dynamics of actin based filamentous networks *in vitro* and 
- *in vivo*. Recent papers where **M3SYM** or its predecessor, **StochTools**, were used 
- can be found on the publication section of [the Papoian group's main web page]
- (http://papoian.chem.umd.edu/ ) or on [the MEDYAN web page] (http://www.medyan.org ).
- The **M3SYM** package can also be extended to simulate the dynamics of any active
+ Papoian laboratory has developed a third-generation software package based on
+ the **MEDYAN** model, to simulate growth dynamics of actin based filamentous networks *in vitro* 
+ and *in vivo*. Recent papers where **MEDYAN** or its second-generation predecessor, **StochTools**,
+ were used can be found on the publication section of [the Papoian group's main web page]
+ (http://papoian.chem.umd.edu/ ) or on [the **MEDYAN** web page] (http://www.medyan.org ).
+ The **MEDYAN** package can also be extended to simulate the dynamics of any active
  matter network.
  
  \section install_sec Installation
  
  \subsection step1 Step 1: Prerequisites
  
- The following software packages need to be installed first:
+ The following libraries need to be installed first:
  See Installation guide (docs/InstallGuide.pdf) for more details.
  
  - Boost 1.49
  - GSL ...
  
- \subsection step2 Step 2: Installation of M3SYM itself
+ \subsection step2 Step 2: Installation of **MEDYAN** itself
  
- Untar the **M3SYM** source code into some directory, enter 
- into the "M3SYM" and execute "make" from the command line.
+ Untar the **MEDYAN** source code into some directory, enter 
+ into the "MEDYAN" folder and execute "make" from the command line.
  
  See Installation guide (docs/InstallGuide.pdf) for more information
  on setting command line compilation macros, compiler compatibility, etc.
  
- \subsection step3 Step 3: Running M3SYM
+ \subsection step3 Step 3: Running **MEDYAN**
  
- See the Usage guid (docs/UsageGuide.pdf) for more information. M3SYM
+ See the Usage guid (docs/UsageGuide.pdf) for more information. The **MEDYAN**
  executable must be run with the following command line arguments:
  
  -s : System input file to be used. Must be an absolute path
@@ -73,16 +73,16 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "SubSystem.h"
 
 void printUsage() {
-    cout << "Usage: M3SYM -s systemFile -i inputDirectory -o outputDirectory" << endl;
+    cout << "Usage: MEDYAN -s systemFile -i inputDirectory -o outputDirectory" << endl;
 }
 
 int main(int argc, char **argv) {
 
     cout << endl;
-    cout << "*********************** M3SYM *************************" << endl;
+    cout << "*********************** MEDYAN ************************" << endl;
     cout << "   Simulation package for the Mechanochemical Dynamics " << endl;
     cout << "         of Active Networks, Third Generation.         " << endl;
-    cout << "         PAPOIAN LAB 2014, ALL RIGHTS RESERVED         " << endl;
+    cout << "         PAPOIAN LAB 2015, ALL RIGHTS RESERVED         " << endl;
     cout << "*******************************************************" << endl;
     
     cout.precision(8);

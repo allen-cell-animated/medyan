@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
-//  **M3SYM** - Simulation Package for the Mechanochemical
-//              Dynamics of Active Networks, 3rd Generation
+//  **MEDYAN** - Simulation Package for the Mechanochemical
+//               Dynamics of Active Networks, v3.0
 //
 //  Copyright (2015)  Papoian Lab, University of Maryland
 //
@@ -79,23 +79,24 @@ vector<double> A1_A8_Network (int method)
         default:
             assert(0 && "The method variable can only be 0, 1, or 2.");
     }
-    ChemSim::setInstance(chem_sim_impl);
+    ChemSim* chemsim = new ChemSim();
+    chemsim->setInstance(chem_sim_impl);
     
 
-    ChemSim::addReaction(&r3);
-    ChemSim::addReaction(&r4);
-    ChemSim::addReaction(&r5);
-    ChemSim::addReaction(&r6);
-    ChemSim::addReaction(&r7);
-    ChemSim::addReaction(&r8);
-    ChemSim::addReaction(&r9);
-    ChemSim::addReaction(&r10);
-    ChemSim::addReaction(&r1f);
-    ChemSim::addReaction(&r1b);
-    ChemSim::addReaction(&r2f);
-    ChemSim::addReaction(&r2b);
+    chemsim->addReaction(&r3);
+    chemsim->addReaction(&r4);
+    chemsim->addReaction(&r5);
+    chemsim->addReaction(&r6);
+    chemsim->addReaction(&r7);
+    chemsim->addReaction(&r8);
+    chemsim->addReaction(&r9);
+    chemsim->addReaction(&r10);
+    chemsim->addReaction(&r1f);
+    chemsim->addReaction(&r1b);
+    chemsim->addReaction(&r2f);
+    chemsim->addReaction(&r2b);
 
-    ChemSim::initialize();
+    chemsim->initialize();
     
     vector<long long int> x_hist(NA1MAX+1);
     
@@ -110,14 +111,14 @@ vector<double> A1_A8_Network (int method)
         A8.setN(0);
         
         long long int x_pentult=0;
-        ChemSim::initialize();
+        chemsim->initialize();
         long long int events=0;
         do {
             x_pentult=A1.getN();
-            bool success = ChemSim::run(1);
+            bool success = chemsim->runSteps(1);
             if(!success){
-                cout << "chem.run(1) has failed, i= " << i << endl;
-                ChemSim::printReactions();
+                cout << "chem.runSteps(1) has failed, i= " << i << endl;
+                chemsim->printReactions();
                 break;
             }
             ++events;

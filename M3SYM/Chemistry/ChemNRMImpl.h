@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
-//  **M3SYM** - Simulation Package for the Mechanochemical
-//              Dynamics of Active Networks, 3rd Generation
+//  **MEDYAN** - Simulation Package for the Mechanochemical
+//               Dynamics of Active Networks, v3.0
 //
 //  Copyright (2015)  Papoian Lab, University of Maryland
 //
@@ -17,8 +17,8 @@
 /// ** Michael A. Gibson, and Jehoshua Bruck J. Phys. Chem. A, 2000,
 /// 104 (9), 1876-1889 **
 
-#ifndef M3SYM_ChemNRMImpl_h
-#define M3SYM_ChemNRMImpl_h
+#ifndef MEDYAN_ChemNRMImpl_h
+#define MEDYAN_ChemNRMImpl_h
 
 #include <vector>
 #include <random>

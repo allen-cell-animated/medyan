@@ -17,7 +17,7 @@
 
 \def\Z{\vphantom{\parbox[c]{1cm}{\Huge Something Long}}}
 
-\title{Usage Guide for M3SYM v1.0}
+\title{Usage Guide for MEDYAN v3.0}
 \author{Papoian Lab, University of Maryland \\ Written by James Komianos}
 \date{}							% Activate to display a given date or no date
 
@@ -42,20 +42,20 @@
  of cellular biochemical processes with polymer physics of cytoskeletal filament network 
  growth, while explicitly coupling chemistry and mechanics. For a more detailed description of MEDYAN, see [1].
  
- The Papoian laboratory has developed M3SYM, a third-generation software package based on the MEDYAN
+ The Papoian laboratory has developed a third-generation software package based on the MEDYAN
  model, to simulate growth dynamics of actin based filamentous networks \textit{in vitro} and 
- \textit{in vivo}. Recent papers where M3SYM or its predecessor, StochTools, were used 
+ \textit{in vivo}. Recent papers where MEDYAN or its predecessor, StochTools, were used 
  can be found on the publication section of the Papoian group's main web page, or on the MEDYAN website. 
- The M3SYM package can also be extended to simulate the dynamics of any active matter network.
+ The MEDYAN package can also be extended to simulate the dynamics of any active matter network.
 
 \section {Overview of Features}
 
-M3SYM is a package that can simultaneously simulate complex chemical and mechanical dynamics
-of an active matter network. For more information on the MEDYAN model, which M3SYM implements,
+MEDYAN is a package that can simultaneously simulate complex chemical and mechanical dynamics
+of an active matter network. For more information on the MEDYAN model, which MEDYAN implements,
 see [1].
 
 \subsection{Chemical capabilities}
- The chemical capabilities of M3SYM include:
+ The chemical capabilities of MEDYAN include:
 
 \begin{itemize}
 
@@ -75,7 +75,7 @@ see [1].
 \end{itemize}
 
 \subsection{Mechanical capabilities}
-M3SYM allows for a wide range of mechanical interactions, including:
+MEDYAN allows for a wide range of mechanical interactions, including:
 
 \begin{itemize}
 \item Force fields for filament interactions, including
@@ -93,19 +93,19 @@ M3SYM allows for a wide range of mechanical interactions, including:
 
 \subsection{Mechanochemical coupling} 
 
-M3SYM couples chemistry and mechanics by altering reaction rates based on mechanical stresses in a given 
+MEDYAN couples chemistry and mechanics by altering reaction rates based on mechanical stresses in a given 
 network. This allows for a full treatment of the complex mechanochemical responses in active matter networks.
 See [1] for a more detailed description.
 
-\section{Running M3SYM}
+\section{Running MEDYAN}
 
-To run the M3SYM executable, execute the following command in the terminal shell: \newline \newline\indent \texttt{> ./M3SYM -s <SystemFile> -i <InputDirectory> -o <OutputDirectory>} \newline \newline The \texttt{SystemFile} will be described in the later sections. \newline\newline  The \texttt{InputDirectory} specifies where all input files are contained, with their names being specified in the \texttt{SystemFile}. This must be an absolute directory path. The \texttt{OutputDirectory} specifies where the produced output will be placed. This also must be an absolute directory path. See the later sections for details on input and output files.
+To run the MEDYAN executable, execute the following command in the terminal shell: \newline \newline\indent \texttt{> ./MEDYAN -s <SystemFile> -i <InputDirectory> -o <OutputDirectory>} \newline \newline The \texttt{SystemFile} will be described in the later sections. \newline\newline  The \texttt{InputDirectory} specifies where all input files are contained, with their names being specified in the \texttt{SystemFile}. This must be an absolute directory path. The \texttt{OutputDirectory} specifies where the produced output will be placed. This also must be an absolute directory path. See the later sections for details on input and output files.
 
 \section {Input}
 
 \subsection{System file}
 
-The system file is a simple text file that defines all parameters of the simulation. The M3SYM executable must take
+The system file is a simple text file that defines all parameters of the simulation. The MEDYAN executable must take
  in a system file as a command line argument. \newline\newline Each parameter must be defined in the following syntax: \newline \newline \centerline{\texttt{<PARAMETER>:  <PARAMETERVALUE>}} \newline\newline where the parameter name is followed by a semicolon, and the value of the parameter is placed after the semicolon. Outlined below are the parameters that can be included. \\
  
  \noindent Unless otherwise noted, all distance parameters are in units of nanometers. \\
@@ -403,7 +403,7 @@ The following special protocols can be initialized. These protocols must be set 
 
 \subsubsection{Output formats}
 
-The output of M3SYM will be directed to the \texttt{OutputFile} specified. The following output can be set. These outputs must be set on different lines, so users should specify a new parameter, on separate lines, for each output value desired. Output files will be explained in more detail in a later section.\\
+The output of MEDYAN will be directed to the \texttt{OutputFile} specified. The following output can be set. These outputs must be set on different lines, so users should specify a new parameter, on separate lines, for each output value desired. Output files will be explained in more detail in a later section.\\
 
 \small
 
@@ -603,7 +603,7 @@ The bubble input file, whose name is specified in the \texttt{SystemFile}, conta
 \noindent where \texttt{\{coordx, coordy, coordz\}} is the coordinate of the bubble.
 \section {Output}
 
-M3SYM can produce a number of output types, set in the \texttt{SystemFile}, produced at a snapshot frequency also defined in the \texttt{SystemFile}. These output files will be placed in the \texttt{OutputDirectory} specified at runtime. The output types and visualization of this output are described below.
+MEDYAN can produce a number of output types, set in the \texttt{SystemFile}, produced at a snapshot frequency also defined in the \texttt{SystemFile}. These output files will be placed in the \texttt{OutputDirectory} specified at runtime. The output types and visualization of this output are described below.
 
 \subsection{Types of output files}
 \subsubsection{snapshot.traj}
@@ -706,11 +706,11 @@ The output described in the previous section can be analyzed using a python scri
 
 \subsection{Repository requests}
 
-Requests for pulling the M3SYM repository should be directed to James Komianos (jkomianos@gmail.com). From there, detailed instructions on cloning the repository, and general guidelines on adding features will be given.
+Requests for pulling the MEDYAN repository should be directed to James Komianos (jkomianos@gmail.com). From there, detailed instructions on cloning the repository, and general guidelines on adding features will be given.
 
 \subsection{Coding style}
 
-M3SYM follows standard style guides and object-oriented design principles. For details on general C++ coding style, see the Google C++ style guide at http://google-styleguide.googlecode.com/svn/trunk/cppguide.html. In general, the following best practices should be followed:
+MEDYAN follows standard style guides and object-oriented design principles. For details on general C++ coding style, see the Google C++ style guide at http://google-styleguide.googlecode.com/svn/trunk/cppguide.html. In general, the following best practices should be followed:
 
 \begin{itemize}
 

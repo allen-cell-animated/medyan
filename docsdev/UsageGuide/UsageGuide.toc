@@ -3,7 +3,7 @@
 \contentsline {subsection}{\numberline {2.1}Chemical capabilities}{3}
 \contentsline {subsection}{\numberline {2.2}Mechanical capabilities}{4}
 \contentsline {subsection}{\numberline {2.3}Mechanochemical coupling}{4}
-\contentsline {section}{\numberline {3}Running M3SYM}{4}
+\contentsline {section}{\numberline {3}Running MEDYAN}{4}
 \contentsline {section}{\numberline {4}Input}{4}
 \contentsline {subsection}{\numberline {4.1}System file}{4}
 \contentsline {subsubsection}{\numberline {4.1.1}Geometry}{5}

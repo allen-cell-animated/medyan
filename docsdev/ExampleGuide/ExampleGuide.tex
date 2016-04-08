@@ -10,7 +10,7 @@
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
 
-\title{Example Guide for M3SYM v1.1}
+\title{Example Guide for MEDYAN v3.0}
 \author{Papoian Lab, University of Maryland}
 \date{}							% Activate to display a given date or no date
 
@@ -24,9 +24,9 @@
 
 \section{Introduction}
 
-Examples can be found in \texttt{InstallDirectory/examples}. Each example includes a \texttt{SystemFile} as well as chemical input file. To run a given example once the M3SYM executable is created, go to the \texttt{InstallDirectory} and run the following:\newline
+Examples can be found in \texttt{InstallDirectory/examples}. Each example includes a \texttt{SystemFile} as well as chemical input file. To run a given example once the MEDYAN executable is created, go to the \texttt{InstallDirectory} and run the following:\newline
 
-\indent \texttt{> ./M3SYM -s ./examples/<ExampleFolder>/system.txt}\newline
+\indent \texttt{> ./MEDYAN -s ./examples/<ExampleFolder>/system.txt}\newline
 \indent\indent \texttt{-i ./examples/<ExampleFolder>/  -o <OutputDirectory>}\newline
 
 \noindent where \texttt{<ExampleFolder>} is the specific example folder desired, and \texttt{<OutputDirectory>} is the directory of the desired output. See the usage guide for more details on these files and directories.
@@ -34,58 +34,9 @@ Examples can be found in \texttt{InstallDirectory/examples}. Each example includ
 
 \section{A basic cytoskeletal network}
 
-This example, a basic cytoskeletal network with $\alpha$-actinin cross-linkers and Arp2/3 branching complexes, can be found in
-\texttt{InstallDirectory/examples/actinnetwork}. This is set up to be a 30 $s$ simulation.
-
-\subsection{Initial system configuration}
- 
- This example is set up with the following initial configuration:
- 
- \begin{itemize}
- \item Compartment size of 500 $nm$, in a 2x2x2 grid 
- \item 1 $\mu m ^3$ cubic boundary
- \item 50 randomly placed filaments, all initially 0.02 $\mu m$
- \end{itemize}
-
-\subsection{Chemistry involved}
-
-This example is set up with the following chemical configuration:
-
-\begin{itemize}
-\item Diffusing actin, Arp2/3, and alpha-actinin species
-\item Initial concentrations of 10 $\mu M$, 50 $nM$, and 200 $nM$ respectively.
-\item Actin polymerization and depolymerization
-\item $\alpha$-actinin binding and unbinding
-\item Arp2/3 branching and debranching
-
-\end{itemize}
-
-\noindent For more information on the reaction constants and concentrations chosen, see [1].
-
-\subsection{Mechanics involved}
-
-This example is set up with the following mechanical configuration:
-
-\begin{itemize}
-\item Harmonic actin filament stretching force field
-\item Cosine actin filament bending force field
-\item Harmonic $\alpha$-actinin cross-linker stretching force field
-\item Harmonic branch stretching and cosine angle force field
-\item Exponential boundary force field
-\item Repulsive cylindrical excluded volume force field
-\end{itemize}
-
-\noindent Dynamic reaction rate changes involving these force fields, including $\alpha$-actinin unbinding and actin polymerization, were tuned to fit single molecule experiments.\newline\newline
-\noindent For more information on the force field parameters chosen, please see [1]. 
-
-\subsection{Sample visual output}
-
-Coming soon!
-
 \section{References}
 
 [1] Popov K, Komianos J, and GA Papoian. ``MEDYAN: Mechanochemical Simulations 
-\indent of Actomyosin Networks and Other Active Matter." PLoS Computational Biology (in 
-\indent review), 2015.
+\indent of Contraction and Polarity Alignment in Actomyosin Networks." PLoS Computational \indent Biology, 2016.
 
 \end{document}
