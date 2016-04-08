@@ -65,12 +65,6 @@ void Controller::initialize(string inputFile,
     exit(EXIT_FAILURE);
 #endif
     
-    //init histograms
-    Linker::_lifetimes = new Histogram(100, 0.0, 100.0);
-    MotorGhost::_lifetimes = new Histogram(1000, 0.0, 1000.0);
-    MotorGhost::_walkLengths = new Histogram(200, -2000.0, 2000.0);
-    Filament::_turnoverTimes = new Histogram(200, 0.0, 2000.0);
-    
     //init input directory
     _inputDirectory  = inputDirectory;
     _outputDirectory = outputDirectory;
@@ -86,12 +80,6 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj"));
-
-    _outputs.push_back(new LinkerLifetimes(_outputDirectory + "linkerlifetimes.hist"));
-    _outputs.push_back(new MotorLifetimes(_outputDirectory + "motorlifetimes.hist"));
-    _outputs.push_back(new MotorWalkLengths(_outputDirectory + "motorwalklengths.hist"));
-    _outputs.push_back(new FilamentTurnoverTimes(_outputDirectory + "filturnovertimes.hist"));
-    
     
     //Always read geometry, check consistency
     p.readGeoParams();
