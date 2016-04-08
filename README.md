@@ -1,30 +1,29 @@
 # README #
 
-Welcome to Papoian Lab’s M3SYM, the software implementation of the 
-*Mechanochemical Dynamics of Active Networks* model. 
+Welcome to Papoian Lab’s *Mechanochemical Dynamics of Active Networks* software package. 
+Copyright 2015, Papoian lab and University of Maryland.
 
-For more general information about the code, visit the Papoian lab webpage:
+For more general information about the code, visit the code webpage (http://www.medyan.org) or the Papoian lab page (http://papoian.chem.umd.edu/). 
 
-	http://papoian.chem.umd.edu/ 
-
-*Info about license here*
+This code is distributed under the license found in this directory, license.txt.
 
 The main authors of the code are the following:
 	
 	*Name*		     		*Email*
 	Garegin Papoian      gpapoian@umd.edu	
 	James Komianos       jkomianos@gmail.com
-	Konstantin Popov     konstantin.i.popov@gmail.com
+	Konstantin Popov     kpopov@email.unc.edu
 
 All general correspondence about the code and its applications should 
 be directed to Garegin Papoian. All developer and more specific code, 
 installation, and usage correspondence should be directed to James Komianos.
 
-The M3SYM distribution has the following files and directories:
+This MEDYAN distribution (v3.0) has the following files and directories:
 
 	*File/Dir*				   *Description*
 	README.md				Current file
-	M3SYM					All source files
+	license.txt				Code licensing information
+	MEDYAN					All source files
 	docs					Documentation files
 	examples				A few packaged examples
 	visual					Visualization scripts
