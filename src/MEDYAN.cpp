@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-/*! \mainpage **MEDYAN** software package
+/*! \mainpage MEDYAN software package
  
  \section intro_sec Introduction
  
@@ -28,7 +28,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  the **MEDYAN** model, to simulate growth dynamics of actin based filamentous networks *in vitro* 
  and *in vivo*. Recent papers where **MEDYAN** or its second-generation predecessor, **StochTools**,
  were used can be found on the publication section of [the Papoian group's main web page]
- (http://papoian.chem.umd.edu/ ) or on [the **MEDYAN** web page] (http://www.medyan.org ).
+ (http://papoian.chem.umd.edu/ ) or on [the MEDYAN web page] (http://www.medyan.org ).
  The **MEDYAN** package can also be extended to simulate the dynamics of any active
  matter network.
  
@@ -42,17 +42,17 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  - Boost 1.49
  - GSL ...
  
- \subsection step2 Step 2: Installation of **MEDYAN** itself
+ \subsection step2 Step 2: Installation of MEDYAN itself
  
- Untar the **MEDYAN** source code into some directory, enter 
+ Untar the MEDYAN source code into some directory, enter
  into the "MEDYAN" folder and execute "make" from the command line.
  
  See Installation guide (docs/InstallGuide.pdf) for more information
  on setting command line compilation macros, compiler compatibility, etc.
  
- \subsection step3 Step 3: Running **MEDYAN**
+ \subsection step3 Step 3: Running MEDYAN
  
- See the Usage guid (docs/UsageGuide.pdf) for more information. The **MEDYAN**
+ See the Usage guide (docs/UsageGuide.pdf) for more information. The MEDYAN
  executable must be run with the following command line arguments:
  
  -s : System input file to be used. Must be an absolute path

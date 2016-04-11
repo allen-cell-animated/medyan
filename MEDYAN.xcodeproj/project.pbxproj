@@ -428,7 +428,7 @@
 		F777458F1BCD404000F3AB4C /* utility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = utility.cpp; sourceTree = "<group>"; };
 		F77745911BCEE9FA00F3AB4C /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		F790403D1B0E57B50033EA7E /* Trackable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Trackable.cpp; sourceTree = "<group>"; };
-		F7954C49197D98BE00074A12 /* M3SYM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = M3SYM; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7954C49197D98BE00074A12 /* MEDYAN */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MEDYAN; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7A202D7194271C7005A9B5C /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../googletest/gtest.framework; sourceTree = "<group>"; };
 		F7A5200B1A8260EE003C49E0 /* ReactionTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactionTemplate.cpp; sourceTree = "<group>"; };
 		F7A520101A8BB820003C49E0 /* RateChanger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateChanger.h; sourceTree = "<group>"; };
@@ -728,7 +728,7 @@
 			children = (
 				F771ADBB15655CD70010B123 /* libmedyan.dylib */,
 				F7C7A0F315FFBA3D00DF9838 /* TestSuite */,
-				F7954C49197D98BE00074A12 /* M3SYM */,
+				F7954C49197D98BE00074A12 /* MEDYAN */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1060,7 +1060,7 @@
 			);
 			name = MEDYAN;
 			productName = Cyto;
-			productReference = F7954C49197D98BE00074A12 /* M3SYM */;
+			productReference = F7954C49197D98BE00074A12 /* MEDYAN */;
 			productType = "com.apple.product-type.tool";
 		};
 		F7C7A0DD15FFBA3D00DF9838 /* TestSuite */ = {
