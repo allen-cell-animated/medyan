@@ -23,7 +23,7 @@ This MEDYAN distribution (v3.0) has the following files and directories:
 	*File/Dir*				   *Description*
 	README.md				Current file
 	license.txt				Code licensing information
-	src					All source files
+	src				        All source files
 	docs					Documentation files
 	examples				A few packaged examples
 	visual					Visualization scripts
