@@ -70,7 +70,7 @@ private:
     ///INITIALIZATION HELPER FUNCTIONS
     
     /// Set up an initial configuration of a network
-    /// For now, only [Bubbles](@ref Bubble) and [Filaments](@ref Filament)
+    /// For now, only [Filaments](@ref Filament)
     /// can be initialized before the simulation begins. Any other elements
     /// should be initialized in this function.
     void setupInitialNetwork(SystemParser& p);

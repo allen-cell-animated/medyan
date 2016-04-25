@@ -23,7 +23,6 @@
 #include "CompartmentGrid.h"
 
 #include "FilamentInitializer.h"
-#include "BubbleInitializer.h"
 
 #include "Filament.h"
 #include "Cylinder.h"

@@ -24,7 +24,6 @@
 
 //FORWARD DECLARATIONS
 class Cylinder;
-class Bubble;
 class BoundaryElement;
 
 /// An implementation of NeighborList for Cylinder-Cylinder interactions

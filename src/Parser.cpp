@@ -848,57 +848,6 @@ void SystemParser::readMechParams() {
                 MParams.VolumeCutoff = atoi(lineVector[1].c_str());
             }
         }
-        
-        //Bubble parameter
-        else if (line.find("BUBBLEINTERACTIONK") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BubbleK.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("BUBBLESCREENLENGTH") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BubbleScreenLength.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("BUBBLECUTOFF") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "Error reading Bubble cutoff. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.BubbleCutoff = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("BUBBLERADIUS") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BubbleRadius.push_back(atof((lineVector[i].c_str())));
-            }
-        }
-        else if (line.find("NUMBUBBLETYPES") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "Error reading number of Bubble types. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MParams.numBubbleTypes = atoi(lineVector[1].c_str());
-            }
-        }
-        
         else {}
     }
     //Set system parameters
@@ -1423,56 +1372,6 @@ FilamentSetup SystemParser::readFilamentSetup() {
     return FSetup;
 }
 
-BubbleSetup SystemParser::readBubbleSetup() {
-    
-    _inputFile.clear();
-    _inputFile.seekg(0);
-    
-    BubbleSetup BSetup;
-    
-    string line;
-    while(getline(_inputFile, line)) {
-        
-        if(line.find("#") != string::npos) { continue; }
-        
-        if(line.find("BUBBLEFILE") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading bubble input file. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                BSetup.inputFile = lineVector[1];
-            else {}
-        }
-        else if(line.find("NUMBUBBLES") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading number of bubbles. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                BSetup.numBubbles = atoi(lineVector[1].c_str());
-            else {}
-        }
-        else if(line.find("BUBBLETYPE") != string::npos &&
-                line.find("NUMBUBBLETYPES") == string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading bubble type. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                BSetup.bubbleType = atoi(lineVector[1].c_str());
-            else {}
-        }
-    }
-    return BSetup;
-}
-
 vector<tuple<short, vector<double>, vector<double>>> FilamentParser::readFilaments() {
     
     _inputFile.clear();
@@ -1500,33 +1399,6 @@ vector<tuple<short, vector<double>, vector<double>>> FilamentParser::readFilamen
             }
             
             returnVector.emplace_back(type, coord1, coord2);
-        }
-    }
-    return returnVector;
-}
-
-vector<tuple<short, vector<double>>> BubbleParser::readBubbles() {
-    
-    _inputFile.clear();
-    _inputFile.seekg(0);
-    
-    vector<tuple<short, vector<double>>> returnVector;
-    string line;
-    
-    while(getline(_inputFile, line)) {
-        
-        if(line.find("#") != string::npos) { continue; }
-        
-        vector<string> lineVector = split<string>(line);
-        if(lineVector.size() == 5) {
-            vector<double> coord;
-            
-            short type = atoi((*(lineVector.begin() + 1)).c_str());
-            
-            for(auto it = lineVector.begin() + 2; it != lineVector.end(); it++) {
-                coord.push_back(atof(((*it).c_str())));
-            }
-            returnVector.emplace_back(type, coord);
         }
     }
     return returnVector;
