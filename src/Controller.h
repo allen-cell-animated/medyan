@@ -75,14 +75,7 @@ private:
     /// should be initialized in this function.
     void setupInitialNetwork(SystemParser& p);
     
-    /// Setup any special structures needed
-    void setupSpecialStructures(SystemParser& p);
-    
     ///RUNTIME HELPER FUNCTIONS
-    
-    /// Move the boundary based on the timestep
-    void moveBoundary(double deltaTau);
-    
     /// Update the positions of all elements in the system
     void updatePositions();
     

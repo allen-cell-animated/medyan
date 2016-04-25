@@ -30,8 +30,6 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
-#include "Bubble.h"
-#include "MTOC.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -201,47 +199,9 @@ void Controller::initialize(string inputFile,
     
     //setup initial network configuration
     setupInitialNetwork(p);
-    
-    //setup special structures
-    setupSpecialStructures(p);
 }
 
 void Controller::setupInitialNetwork(SystemParser& p) {
-    
-    //Read bubble setup, parse bubble input file if needed
-    BubbleSetup BSetup = p.readBubbleSetup();
-    BubbleData bubbles;
-    
-    cout << "---" << endl;
-    cout << "Initializing bubbles...";
-    
-    if(BSetup.inputFile != "") {
-        BubbleParser bp(_inputDirectory + BSetup.inputFile);
-        bubbles = bp.readBubbles();
-    }
-    //add other bubbles if specified
-    BubbleInitializer* bInit = new RandomBubbleDist();
-    
-    auto bubblesGen = bInit->createBubbles(_subSystem->getBoundary(),
-                                           BSetup.numBubbles,
-                                           BSetup.bubbleType);
-    bubbles.insert(bubbles.end(), bubblesGen.begin(), bubblesGen.end());
-    delete bInit;
-    
-    //add bubbles
-    for (auto it: bubbles) {
-        
-        auto coord = get<1>(it);
-        auto type = get<0>(it);
-        
-        if(type >= SysParams::Mechanics().numBubbleTypes) {
-            cout << "Bubble data specified contains an "
-                 <<"invalid bubble type. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        _subSystem->addTrackable<Bubble>(_subSystem, coord, type);
-    }
-    cout << "Done. " << bubbles.size() << " bubbles created." << endl;
     
     //Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
@@ -293,84 +253,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1);
     }
     cout << "Done. " << filaments.size() << " filaments created." << endl;
-}
-
-void Controller::setupSpecialStructures(SystemParser& p) {
-    
-    cout << "---" << endl;
-    cout << "Setting up special structures...";
-    
-    SpecialSetupType SType = p.readSpecialSetupType();
-    
-    //set up a MTOC if desired
-    //For now, uses 20 filaments
-    if(SType.mtoc) {
-        
-        MTOC* mtoc = _subSystem->addTrackable<MTOC>();
-        
-        //create the bubble in top part of grid, centered in x,y
-        double bcoordx = GController::getSize()[0] / 2;
-        double bcoordy = GController::getSize()[1] / 2;
-        double bcoordz = GController::getSize()[2] * 5 / 6;
-        
-        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
-        Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
-
-        mtoc->setBubble(b);
-        
-        FilamentInitializer *init = new MTOCFilamentDist(bcoords,
-        SysParams::Mechanics().BubbleRadius[SType.mtocBubbleType]);
-        
-        auto filaments = init->createFilaments(_subSystem->getBoundary(),
-                                               SType.mtocNumFilaments,
-                                               SType.mtocFilamentType,
-                                               SType.mtocFilamentLength);
-        //add filaments
-        for (auto it: filaments) {
-            
-            auto coord1 = get<1>(it);
-            auto coord2 = get<2>(it);
-            
-            vector<vector<double>> coords = {coord1, coord2};
-            
-            double d = twoPointDistance(coord1, coord2);
-            vector<double> tau = twoPointDirection(coord1, coord2);
-            
-            int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
-            
-            // check how many segments can fit between end-to-end of the filament
-            Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
-                                                             coords, numSegment + 1, "ARC");
-            
-            mtoc->addFilament(f);
-        }
-    }
-    cout << "Done." << endl;
-}
-
-void Controller::moveBoundary(double deltaTau) {
-    
-    //calculate distance to move
-    double dist = SysParams::Boundaries().moveSpeed * deltaTau;
-    
-    //move it
-    if(tau() >= SysParams::Boundaries().moveStartTime &&
-       tau() <= SysParams::Boundaries().moveEndTime)
-        _subSystem->getBoundary()->move(dist);
-    
-    //activate, deactivate necessary compartments
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
-        
-        if(_subSystem->getBoundary()->within(C)) {
-            
-            if(C->isActivated()) continue;
-            else _cController->activate(C);
-        }
-        else {
-            if(!C->isActivated()) continue;
-            else _cController->deactivate(C);
-        }
-    }
 }
 
 void Controller::executeSpecialProtocols() {
@@ -507,9 +389,6 @@ void Controller::run() {
                 tauLastNeighborList = 0.0;
             }
             
-            //move the boundary
-            moveBoundary(tau() - oldTau);
-            
             //special protocols
             executeSpecialProtocols();
             
@@ -565,9 +444,6 @@ void Controller::run() {
                 updateNeighborLists();
                 stepsLastNeighborList = 0;
             }
-            
-            //move the boundary
-            moveBoundary(tau() - oldTau);
             
             //special protocols
             executeSpecialProtocols();

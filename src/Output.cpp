@@ -21,7 +21,6 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
-#include "Bubble.h"
 
 #include "CompartmentGrid.h"
 
@@ -40,7 +39,7 @@ void BasicSnapshot::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
+        0 << endl;
     
     for(auto &filament : Filament::getFilaments()) {
         
@@ -122,17 +121,6 @@ void BasicSnapshot::print(int snapshot) {
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
     
-    for(auto &bubble : Bubble::getBubbles()) {
-        
-        //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
-                                    bubble->getType() << endl;
-        
-        //print coordinates
-        auto x = bubble->coordinate;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
-    }
-    
     _outputFile <<endl;
 }
 
@@ -147,7 +135,7 @@ void BirthTimes::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
+        0 << endl;
     
     for(auto &filament : Filament::getFilaments()) {
         
@@ -200,15 +188,6 @@ void BirthTimes::print(int snapshot) {
         //print birth times
         _outputFile << branch->getBirthTime() << endl;
     }
-    for(auto &bubble : Bubble::getBubbles()) {
-        
-        //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
-                                    bubble->getType() << endl;
-        
-        //print birth times
-        _outputFile << bubble->getBead()->getBirthTime() << endl;
-    }
 
     _outputFile <<endl;
 }
@@ -224,7 +203,7 @@ void Forces::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
+        0 << endl;
     
     for(auto &filament : Filament::getFilaments()) {
         
@@ -282,15 +261,6 @@ void Forces::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
-    for(auto &bubble : Bubble::getBubbles()) {
-        
-        //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
-                                    bubble->getType() << endl;
-        
-        //Nothing for bubbles
-        _outputFile << 0.0 << endl;
-    }
     
     _outputFile <<endl;
 }
@@ -307,7 +277,7 @@ void Tensions::print(int snapshot) {
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;;
+        0 << endl;;
     
     for(auto &filament : Filament::getFilaments()) {
         
@@ -377,16 +347,6 @@ void Tensions::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
-    for(auto &bubble : Bubble::getBubbles()) {
-        
-        //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
-                                    bubble->getType() << endl;
-        
-        //Nothing for bubbles
-        _outputFile << 0.0 << endl;
-    }
-    
     _outputFile <<endl;
 }
 

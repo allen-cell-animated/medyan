@@ -16,9 +16,6 @@
 #include "BoundaryCylinderRepulsion.h"
 #include "BoundaryCylinderRepulsionExp.h"
 
-#include "BoundaryBubbleRepulsion.h"
-#include "BoundaryBubbleRepulsionExp.h"
-
 #include "BoundaryElement.h"
 #include "Bead.h"
 #include "Composite.h"
@@ -28,8 +25,6 @@ BoundaryFF::BoundaryFF (string type) {
     if (type == "REPULSIONEXP") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
     else if(type == "") {}
     else {

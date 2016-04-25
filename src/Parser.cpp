@@ -596,33 +596,6 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MType.VolumeFFType = lineVector[1];
             }
         }
-        else if (line.find("BUBBLEFFTYPE") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at Bubble FF type. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MType.BubbleFFType = lineVector[1];
-            }
-        }
-        else if (line.find("MTOCFFTYPE") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout <<
-                "There was an error parsing input file at MTOC FF type. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                MType.MTOCFFType = lineVector[1];
-            }
-        }
-        
         else {}
     }
     return MType;
@@ -1257,83 +1230,6 @@ BoundaryType SystemParser::readBoundaryType() {
     }
     return BType;
 }
-
-SpecialSetupType SystemParser::readSpecialSetupType() {
-    
-    SpecialSetupType SType;
-    
-    _inputFile.clear();
-    _inputFile.seekg(0);
-    
-    string line;
-    while(getline(_inputFile, line)) {
-        
-        if(line.find("#") != string::npos) { continue; }
-        
-        if (line.find("SPECIALSETUP") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 3) {
-                cout <<
-                "There was an error parsing input file at special setup types. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector[1] == "MTOC") SType.mtoc = true;
-        }
-        else if (line.find("MTOCFILAMENTTYPE") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "A filament type to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.mtocFilamentType = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("MTOCNUMFILAMENTS") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "A number of filaments to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.mtocNumFilaments = atoi(lineVector[1].c_str());
-            }
-        }
-        else if (line.find("MTOCFILAMENTLENGTH") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "A filament length for filaments connected to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.mtocFilamentLength = atoi(lineVector[1].c_str());
-            }
-        }
-        
-        else if (line.find("MTOCBUBBLETYPE") != string::npos) {
-            
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() != 2) {
-                cout <<
-                "A bubble type to connect to an MTOC must be specified. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2) {
-                SType.mtocBubbleType = atoi(lineVector[1].c_str());
-            }
-        }
-    }
-    return SType;
-}
-
 
 void SystemParser::readGeoParams() {
     

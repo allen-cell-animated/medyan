@@ -86,7 +86,6 @@ MEDYAN allows for a wide range of mechanical interactions, including:
 \end{itemize}
 \item Stretching force fields for cross-linkers and motors 
 \item Boundary steric repulsion
-\item Bubble repulsion
 \end{itemize}
 
 \noindent These force fields can be minimized by a choice of conjugate gradient algorithm.
@@ -160,7 +159,7 @@ The following geometric parameters can be set. All geometry parameters must be s
 
 \subsubsection{Mechanics}
 
-The following mechanical parameters can be set. It is noted that the number of parameters for each force field must match the number of species of that type, specified in the \texttt{SystemFile}. This must be consistent for all simulation elements, including filaments, cross-linkers, motors, branchers, and bubbles. To set multiple parameters corresponding to multiple species, list the parameter values with space in between after the parameter qualifier. \\
+The following mechanical parameters can be set. It is noted that the number of parameters for each force field must match the number of species of that type, specified in the \texttt{SystemFile}. This must be consistent for all simulation elements, including filaments, cross-linkers, motors, and branchers. To set multiple parameters corresponding to multiple species, list the parameter values with space in between after the parameter qualifier. \\
 
 \noindent Force field constant units are dependent on the potential used, but in general will be in $pN$ and $nm$ scaling. For more information on force fields used in the MEDYAN model, see [1]. If a force field type is left blank, that force field will not be included in the simulation.\\
 
@@ -222,20 +221,6 @@ The following mechanical parameters can be set. It is noted that the number of p
      \noindent \texttt{BOUNDARYINTERACTIONK} -- double -- Boundary force constant. \\
    
      \noindent \texttt{BOUNDARYSCREENLENGTH} -- double -- Boundary screening length constant.\\
-   
-     \noindent \texttt{BUBBLEFFTYPE} -- REPULSIONEXP -- Bubble force type. \\
-   
-     \noindent  \texttt{BUBBLECUTOFF} -- double -- Boundary interaction cutoff distance.\\
-   
-     \noindent \texttt{BUBBLEINTERACTIONK} -- double -- Bubble force constant. \\
-   
-     \noindent \texttt{BUBBLESCREENLENGTH} -- double -- Bubble screening length constant.\\
-   
-     \noindent \texttt{BUBBLERADIUS} -- double -- Bubble radius.\\
-   
-     \noindent \texttt{NUMBUBBLETYPES } -- int -- Number of different bubble types.\\
-     
-      \noindent \texttt{MTOCFFTYPE} -- ATTACHMENTHARMONIC -- MTOC force type. \\
 
 \normalsize
 
@@ -354,43 +339,6 @@ of filaments in the system. It is noted that at least one filament, plus end, an
   
    \noindent\texttt{FILAMENTTYTPE} -- int -- Filament type to initialize.\\
 
-\normalsize
-
-\subsubsection{Starting bubble configuration}
-
-The following bubble initialization parameters can be set. These parameters define the initial configuration of bubbles in the system, similar to the filament configuration parameters. It is noted that at least one type of bubble must be set, or a startup error will result.\\
-
-\small
-
-  \noindent\texttt{BUBBLEFILE} -- string -- Name of bubble initialization file. This is not required.\\
-
-  \noindent\texttt{NUMBUBBLES} -- int -- Number of random filaments to initialize. These filaments will be randomly 
-  distributed in the system volume.\\
-
-   \noindent\texttt{BUBBLETYTPE} -- int -- Bubble type to initialize.\\
-   
-\normalsize
-
-\subsubsection{Special setup}
-
-The following special setups can be initialized with corresponding parameters. These setups must be set on different lines, so users should specify a new parameter, on separate lines, for each setup desired:\\
-
-\small 
-
-\noindent\texttt{SPECIALSETUP} -- MTOC -- Type of special setup. \\
-
-\normalsize
-
-\noindent For a microtubule organizing center (MTOC) setup, the following parameters can be defined:\\
-
-\small
-  \noindent\texttt{MTOCFILAMENTTYPE} -- int -- Type of filament to attach to the MTOC.\\
-
-  \noindent\texttt{MTOCNUMFILAMENTS} -- int -- Number of filaments to create and attach to the MTOC.\\
-  
-  \noindent\texttt{MTOCFILAMENTLENGTH} -- int -- Length of filaments to attach to the MTOC, in number of cylinders.\\
-    
-  \noindent\texttt{MTOCBUBBLETYPE} -- int -- Type of bubble to be the MTOC. \\
 \normalsize
 
 \subsubsection{Special protocols}
@@ -595,12 +543,6 @@ The filament input file, whose name is specified in the \texttt{SystemFile}, con
 \noindent where \texttt{\{coord1x, coord1y, coord1z\}} and \texttt{\{coord2x, coord2y, coord2z\}} specify the starting and 
 ending coordinates of the filament.
 
-\subsection{Bubble input file}
-
-The bubble input file, whose name is specified in the \texttt{SystemFile}, contains a coordinate of bubbles to initialize in the system at startup. The format of an initial filament declaration is as follows:\newline
-
-\texttt{BUBBLE: <BUBBLETYPE> coordx coordy coordz}\newline\newline
-\noindent where \texttt{\{coordx, coordy, coordz\}} is the coordinate of the bubble.
 \section {Output}
 
 MEDYAN can produce a number of output types, set in the \texttt{SystemFile}, produced at a snapshot frequency also defined in the \texttt{SystemFile}. These output files will be placed in the \texttt{OutputDirectory} specified at runtime. The output types and visualization of this output are described below.

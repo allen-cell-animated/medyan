@@ -240,12 +240,6 @@ struct MechanicsFFType {
     /// BoundaryFF Type
     string BoundaryFFType = "";
     
-    /// Bubble Type
-    string BubbleFFType = "";
-    
-    /// MTOC Type
-    string MTOCFFType = "";
-    
 };
 
 ///Struct to hold dynamic rate changer type
@@ -261,22 +255,6 @@ struct DynamicRateType {
     ///Motor rate changing
     vector<string> dMUnbindingType = {};
     vector<string> dMWalkingType = {};
-    //@}
-};
-
-
-/// Struct to hold any special setup types
-struct SpecialSetupType {
-    
-    ///MTOC configuration
-    bool mtoc = false;
-    
-    //@{
-    ///MTOC Parameters
-    short mtocFilamentType = 0;
-    int mtocNumFilaments   = 0;
-    int mtocFilamentLength = 0;
-    short mtocBubbleType   = 0;
     //@}
 };
 
@@ -360,7 +338,6 @@ public:
     MechanicsFFType readMechanicsFFType();
     DynamicRateType readDynamicRateType();
     BoundaryType readBoundaryType();
-    SpecialSetupType readSpecialSetupType();
     //@}
     
     /// Read Filament information

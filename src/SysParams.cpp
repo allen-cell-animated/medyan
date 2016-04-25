@@ -345,20 +345,6 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     
-    //Bubbles
-    if(mech.BubbleFFType != "" &&
-      (MParams.BubbleK.size() != MParams.numBubbleTypes ||
-       MParams.BubbleRadius.size() != MParams.numBubbleTypes ||
-       MParams.BubbleScreenLength.size() != MParams.numBubbleTypes)) {
-        cout << "Must set all bubble mechanical constants for every bubble type. Exiting." << endl;
-        return false;
-    }
-    if(mech.BubbleFFType != "" && areEqual(MParams.BubbleCutoff, 0.0)) {
-        cout << "Must set a bubble cutoff for mechanical equilibration. Exiting." << endl;
-        return false;
-    }
-    
-    
     ///Cylinder and monomer lengths specified
     if(GParams.cylinderSize.size() != CParams.numFilaments) {
         

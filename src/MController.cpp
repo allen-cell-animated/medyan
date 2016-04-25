@@ -20,7 +20,6 @@
 #include "MotorGhostFF.h"
 #include "BoundaryFF.h"
 #include "BranchingFF.h"
-#include "BubbleFF.h"
 #include "CylinderVolumeFF.h"
 
 #include "ConjugateGradient.h"
@@ -84,11 +83,6 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     _FFManager._forceFields.push_back(boundaryFF);
     for(auto nl : boundaryFF->getNeighborLists())
         _subSystem->addNeighborList(nl);
-    
-    auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,
-                                 forceFields.MTOCFFType);
-    _FFManager._forceFields.push_back(bubbleFF);
-    for(auto nl : bubbleFF->getNeighborLists())
-        _subSystem->addNeighborList(nl);  
+
 }
 
