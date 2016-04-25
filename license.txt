@@ -15,7 +15,7 @@ The following is a set of terms regarding the use and modification of the MEDYAN
 
 4. Any academic or research works by the user resulting in a publication that has used any of the MEDYAN distributions’ source code must cite the following paper:
 
-K. Popov, J. Komianos, and G.A. Papoian. MEDYAN: Mechanochemical Simulations of Contraction and Polarity Alignment in Actomyosin Networks. PLoS Computational Biology, 2016.
+Popov K, Komianos J, Papoian GA (2016)MEDYAN: Mechanochemical Simulations ofContraction and Polarity Alignment in ActomyosinNetworks. PLoS Comput Biol 12(4): e1004877.doi:10.1371/journal.pcbi.1004877
 
 5. Commercial use of the MEDYAN source code, including integration of this source code to a product for sale or distribution of the source code to a third party for sale, requires a commercial license. If the user would like a commercial license for the MEDYAN source code, the user will contact the Papoian lab to negotiate an appropriate license.
 
