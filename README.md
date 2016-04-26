@@ -25,9 +25,8 @@ This MEDYAN distribution (v3.0) has the following files and directories:
 	license.txt				Code licensing information
 	src                     All source files
 	docs					Documentation files
-	examples				A few packaged examples
-	visual					Visualization scripts
-	analysis				Analysis scripts
+	examples				A packaged example
+	visual					Visualization script
 	papers					Relevant papers 
 
 See the following documentation for details:
