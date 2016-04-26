@@ -1,3 +1,11 @@
 \contentsline {section}{\numberline {1}Introduction}{2}
-\contentsline {section}{\numberline {2}A basic cytoskeletal network}{2}
-\contentsline {section}{\numberline {3}References}{2}
+\contentsline {section}{\numberline {2}Example 1: A simple actomyosin network}{2}
+\contentsline {subsection}{\numberline {2.1}Input file parameters}{2}
+\contentsline {subsubsection}{\numberline {2.1.1}systeminput.txt}{2}
+\contentsline {subsubsection}{\numberline {2.1.2}chemistryinput.txt}{3}
+\contentsline {subsection}{\numberline {2.2}Running simulation}{4}
+\contentsline {subsection}{\numberline {2.3}Visualization and analysis}{4}
+\contentsline {subsubsection}{\numberline {2.3.1}Running visualizer}{4}
+\contentsline {subsubsection}{\numberline {2.3.2}Simple analysis: $R_g$ and $S$}{4}
+\contentsline {subsection}{\numberline {2.4}Other exercises}{5}
+\contentsline {section}{\numberline {3}References}{7}
