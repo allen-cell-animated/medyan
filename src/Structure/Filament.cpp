@@ -306,8 +306,6 @@ void Filament::retractMinusEnd() {
     ///If filament has turned over, mark as such
     if(_plusEndPosition == getMinusEndCylinder()->getFirstBead()->getPosition()) {
         
-        _turnoverTimes->addValue(tau() - _turnoverTime);
-        
         //reset
         _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
         _turnoverTime = tau();

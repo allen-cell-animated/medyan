@@ -90,11 +90,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 }
 
 ///@note - nothing for now, but could record data here
-MotorGhost::~MotorGhost() noexcept {
-
-    _lifetimes->addValue(tau() - _birthTime);
-    _walkLengths->addValue(_walkLength);
-}
+MotorGhost::~MotorGhost() noexcept {}
 
 void MotorGhost::updatePosition() {
     

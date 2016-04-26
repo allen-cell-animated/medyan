@@ -55,7 +55,14 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
                 inBubble = true;
         }
         
-        if(b->within(firstPoint) && b->within(secondPoint) && !inBubble) {
+        //check if within cutoff of boundary
+        bool outsideCutoff = false;
+        if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff ||
+           b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff ) {
+            outsideCutoff = true;
+        }
+        
+        if(b->within(firstPoint) && b->within(secondPoint) && !inBubble && !outsideCutoff) {
             filaments.emplace_back(filamentType, firstPoint, secondPoint);
             filamentCounter++;
         }
