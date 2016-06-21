@@ -68,6 +68,8 @@ private:
     Compartment* _compartment; ///< Where this motorghost is
     
     int _numHeads = 1; ///< Number of heads that this motor contains
+    double _numBoundHeads = 1; ///< Number of bound heads in the ensemble,
+                               ///< which is force-dependent
     
     static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
     

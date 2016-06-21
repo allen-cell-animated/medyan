@@ -98,6 +98,17 @@ public:
     virtual void print(int snapshot);
 };
 
+/// Print type of each species
+class Types : public Output {
+    
+public:
+    Types(string outputFileName) : Output(outputFileName) {}
+    ~Types() {}
+    
+    virtual void print(int snapshot);
+};
+
+
 /// Print all chemical species in the system, including diffusing
 /// and bulk species, filament, motors, linkers and branchers.
 class Chemistry : public Output {

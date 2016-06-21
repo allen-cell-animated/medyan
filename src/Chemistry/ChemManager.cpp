@@ -1130,6 +1130,8 @@ void ChemManager::genFilBindingReactions() {
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
                 
+                cout << reactants.size() << " " << products.size() << endl;
+                
                 //Checks on number of reactants, products
                 if(reactants.size() != BRANCHINGREACTANTS ||
                    products.size() != BRANCHINGPRODUCTS) {
@@ -1898,6 +1900,8 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                 auto products = get<1>(rb);
 
                 auto sb_bound = products[0].substr(0, products[0].find(":"));
+                
+                cout << reactants.size() << " " << products.size() << endl;
                 
                 //basic check because we have not yet checked reactions
                 if(reactants.size() != BRANCHINGREACTANTS ||

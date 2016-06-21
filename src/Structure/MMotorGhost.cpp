@@ -18,15 +18,21 @@
 
 using namespace mathfunc;
 
-MMotorGhost::MMotorGhost(int motorType, int numHeads, double position1, double position2,
+MMotorGhost::MMotorGhost(int motorType, int numBoundHeads, double position1, double position2,
                         const vector<double>& coord11, const vector<double>& coord12,
                         const vector<double>& coord21, const vector<double>& coord22) {
     
     if(!SysParams::Mechanics().MStretchingK.empty())
-        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numHeads;
+        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
     
     auto m1 = midPointCoordinate(coord11, coord12, position1);
     auto m2 = midPointCoordinate(coord21, coord22, position2);
     _eqLength = twoPointDistance(m1, m2);
+}
+
+void MMotorGhost::setStretchingConstant(int motorType, double numBoundHeads) {
+    
+    if(!SysParams::Mechanics().MStretchingK.empty())
+        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
 }
 

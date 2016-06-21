@@ -469,6 +469,9 @@ bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
         else if(changer == "LOWDUTYCATCH") {
             numCharForces += 1;
         }
+        else if(changer == "HIGHDUTYCATCH") {
+            numCharForces += 1;
+        }
         
     }
     if(numCharForces != SysParams::DynamicRates().
