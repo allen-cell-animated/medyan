@@ -57,8 +57,8 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
         
         //check if within cutoff of boundary
         bool outsideCutoff = false;
-        if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff ||
-           b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff ) {
+        if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
+           b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
             outsideCutoff = true;
         }
         

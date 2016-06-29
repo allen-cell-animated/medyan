@@ -165,7 +165,7 @@ public:
     int getID() {return _ID;}
     
     /// Get type
-    short getType() {return _filType;}
+    virtual int getType() {return _filType;}
     
     //@{
     /// Get end cylinder

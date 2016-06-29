@@ -86,6 +86,13 @@ void BoundaryFF::computeForcesAux() {
         interaction->computeForcesAux();
 }
 
+
+void BoundaryFF::computeLoadForces() {
+    
+    for (auto &interaction : _boundaryInteractionVector)
+        interaction->computeLoadForces();
+}
+
 vector<NeighborList*> BoundaryFF::getNeighborLists() {
     
     vector<NeighborList*> neighborLists;

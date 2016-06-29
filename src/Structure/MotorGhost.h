@@ -127,7 +127,7 @@ public:
     
     //@{
     ///Parameter management
-    short getType() {return _motorType;}
+    virtual int getType() {return _motorType;}
     int getID() {return _motorID;}
     //@}
     

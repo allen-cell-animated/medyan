@@ -43,6 +43,10 @@ public:
     /// Bead auxiliary forces accordingly.
     virtual void computeForcesAux() = 0;
     
+    ///Compute all load forces on beads in this system.
+    ///Updates all Bead's load force components for Reaction updating.
+    virtual void computeLoadForces() = 0;
+    
     /// In the case of a calculation error, print the culprit of the FF error.
     /// Typically, will just print the Trackable element where the error came from.
     virtual void whoIsCulprit() = 0;

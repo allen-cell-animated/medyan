@@ -46,6 +46,9 @@ public:
     virtual void computeForces();
     virtual void computeForcesAux();
     
+    /// BoundaryFF can compute load forces from all boundaries.
+    virtual void computeLoadForces();
+    
     virtual vector<NeighborList*> getNeighborLists();
 };
 

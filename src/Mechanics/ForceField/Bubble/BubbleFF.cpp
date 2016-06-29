@@ -101,6 +101,12 @@ void BubbleFF::computeForcesAux() {
         interaction->computeForcesAux();
 }
 
+void BubbleFF::computeLoadForces() {
+    
+    for (auto &interaction : _bubbleInteractionVector)
+        interaction->computeLoadForces();
+}
+
 vector<NeighborList*> BubbleFF::getNeighborLists() {
     
     vector<NeighborList*> neighborLists;

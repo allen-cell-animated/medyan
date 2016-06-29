@@ -111,6 +111,9 @@ public:
     }
     
     virtual void printSelf();
+    
+    //GetType implementation just returns zero (no boundary element types yet)
+    virtual int getType() {return 0;}
 };
 
 #endif

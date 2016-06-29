@@ -20,10 +20,11 @@
 #include "common.h"
 
 #include "Database.h"
-#include "Component.h"
+#include "Composite.h"
 #include "Trackable.h"
 #include "Movable.h"
 #include "DynamicNeighbor.h"
+#include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -45,7 +46,10 @@ class Filament;
  */
 
 class Bead : public Component, public Trackable, public Movable{
+    
 public:
+    ///@note - all vectors are in x,y,z coordinates.
+    
     vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
     vector<double> coordinateB; ///< Prev coordinate of bead before CG minimization
@@ -55,8 +59,17 @@ public:
     vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
     vector<double> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
-    double loadForce = 0.0; ///< The force on this bead due to an external load
-                            ///< Usually a boundary element
+    vector<double> loadForcesP;
+    vector<double> loadForcesM;
+    ///< The force on this bead due to an external load
+    ///< This is not a vector (x,y,z) value, but a list of
+    ///< force magnitudes in the direction of polymerization with
+    ///< monomer increments (future values).
+    ///< These are then used to propagate load forces in between
+    ///< mechanical force calculations.
+    
+    short lfip = 0; 
+    short lfim = 0;  ///< Index which saves which load force to use
     
     ///Main constructor
     Bead (vector<double> v, Composite* parent, int position);
@@ -94,6 +107,8 @@ public:
     
     virtual void printSelf();
     
+    //GetType implementation just returns type of parent
+    virtual int getType() {return getParent()->getType();}
     //@{
     /// Auxiliary method for CG minimization
     inline double FDotF() {
@@ -119,6 +134,36 @@ public:
                forceAux[2]*forceAuxP[2];
     }
     //@}
+    
+    ///Helper functions for load forces
+    
+    double getLoadForcesP();
+    
+    void printLoadForcesP() {
+        
+        cout << "loadP =";
+        
+        for (int i = 0; i < loadForcesP.size(); i++) {
+            
+            cout << " " << loadForcesP[i] << " ";
+            
+        }
+        cout << endl;
+    }
+    
+    double getLoadForcesM();
+ 
+    void printLoadForcesM()  {
+        
+        cout << "loadM =";
+        
+        for (int i = 0; i < loadForcesM.size(); i++) {
+            
+            cout << " " << loadForcesM[i] << " ";
+            
+        }
+        cout << endl;
+    }
     
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in

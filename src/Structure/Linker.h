@@ -113,7 +113,7 @@ public:
     
     //@{
     /// Get linker parameter
-    short getType() {return _linkerType;}
+    virtual int getType() {return _linkerType;}
     int getID() {return _linkerID;}
     //@}
     

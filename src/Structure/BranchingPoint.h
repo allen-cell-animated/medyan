@@ -93,7 +93,7 @@ public:
     
     //@{
     /// Get branch parameter
-    short getType() {return _branchType;}
+    virtual int getType() {return _branchType;}
     int getID() {return _branchID;}
     //@}
     
