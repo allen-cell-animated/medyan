@@ -98,6 +98,16 @@ public:
     virtual void print(int snapshot);
 };
 
+// Qin, 07/05/2016
+class PlusEnd : public Output {
+    
+public:
+    PlusEnd(string outputFileName): Output(outputFileName) {}
+    ~PlusEnd() {}
+    
+    virtual void print(int snapshot);
+};
+
 /// Print all chemical species in the system, including diffusing
 /// and bulk species, filament, motors, linkers and branchers.
 class Chemistry : public Output {

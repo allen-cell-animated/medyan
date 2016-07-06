@@ -390,6 +390,49 @@ void Tensions::print(int snapshot) {
     _outputFile <<endl;
 }
 
+// Qin, 07/25/2016
+
+void PlusEnd::print(int snapshot) {
+    
+    _outputFile.precision(10);
+    
+    // print first line (snapshot number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << snapshot << " " << tau() << " " <<
+    Filament::numFilaments() << " " <<
+    Linker::numLinkers() << " " <<
+    MotorGhost::numMotorGhosts() << " " <<
+    BranchingPoint::numBranchingPoints() << " " <<
+    Bubble::numBubbles() <<endl;;
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        //print first line (Filament ID, type, length, left_delta, right_delta)
+        _outputFile <<"FILAMENT " << filament->getID() << " " <<
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+        
+        //print plus end
+        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
+        
+    }
+    
+    _outputFile <<"PLUSEND" << endl;
+    
+    for (auto c : Cylinder::getCylinders()) {
+        for (int i = 0; i<c->getCCylinder()->getSize(); i++) {
+            int out=c->getCCylinder()->getCMonomer(i)->activeSpeciesPlusEnd();
+            if(out !=-1) { _outputFile<<out<<" ";}
+        }
+        
+    }
+    
+    _outputFile <<" \n"<< endl;
+    
+}
+
 void Chemistry::print(int snapshot) {
     
     // print first line (snapshot number, time)
