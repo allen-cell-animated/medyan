@@ -27,11 +27,18 @@
 /// Elastic Brownian Ratchet Model (by Peskin et al, Biophys J 1993):
 ///
 ///                 k = k_0 * exp(-f * x / kT)
+///
+/// @note - We note that we have implemented a load force ceiling of 100pN
+///         such that recalculated reaction rates are not excessively small.
+///         This would produce problems in the chemical simulation algorithm.
+///         A 100pN load force ensures that the polymerization rate produced
+///         will be small enough such that polymerization events are VERY rare (factor = 1E-29).
 
 class BrownianRatchet : public FilamentRateChanger {
     
 private:
     double _x; ///< The characteristic length for this function
+    const double _max_f = 100; ///< 100pN ceiling
     
 public:
     BrownianRatchet(double charLength) : _x(charLength) {}

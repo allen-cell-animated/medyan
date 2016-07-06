@@ -180,7 +180,7 @@ void Cylinder::updateReactionRates() {
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
                 float newRate =  _polyChanger[_type]->changeRate(r->getBareRate(), force);
-
+                
                 r->setRate(newRate);
                 r->updatePropensity();
             }

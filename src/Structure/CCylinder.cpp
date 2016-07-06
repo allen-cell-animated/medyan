@@ -90,7 +90,7 @@ void CCylinder::addInternalReaction(ReactionBase* r) {
     _internalReactions.insert(r);
     
     //activate reaction
-    r->activateReaction();
+    if(!r->isPassivated()) r->activateReaction();
 }
 
 
@@ -122,7 +122,7 @@ void CCylinder::addCrossCylinderReaction(CCylinder* other,
     other->addReactingCylinder(this);
     
     //activate reaction
-    r->activateReaction();
+    if(!r->isPassivated()) r->activateReaction();
 }
 
 void CCylinder::addReactingCylinder(CCylinder* other) {
