@@ -46,6 +46,11 @@ public:
     /// Compute forcesAuxP of all force fields
     void computeForcesAuxP();
     
+    /// Compute the load forces on the beads. This does not update the force (xyz) vector
+    /// contained by Bead, but updates the loadForce vector which contains precalculated
+    /// load values based on the bead's directionality of growth in a filament.
+    void computeLoadForces();
+    
     /// Reset the forces of all objects
     void resetForces();
     /// Reset the forcesAux of all objects

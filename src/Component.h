@@ -127,6 +127,9 @@ public:
     
     /// Prints information about this node. Useful for debugging.
     virtual void printSelf() = 0;
+    
+    /// Return the type of this element as an integer index
+    virtual int getType() = 0;
 };
 
 

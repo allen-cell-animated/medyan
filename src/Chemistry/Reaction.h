@@ -295,7 +295,7 @@ public:
     
         //if averaging, update dependency marker
         if(_averaging) {
-
+            
             bool newAvgR = ((RSpeciesAvg*)_rspecies[0])->newAverage();
             bool newAvgP = ((RSpeciesAvg*)_rspecies[1])->newAverage();
         
@@ -305,6 +305,10 @@ public:
 
     ///This implementation returns the kept boolean value
     virtual bool updateDependencies() {return _dependencies;}
+    
+    virtual void updatePropensityImpl();
+    
+    
 };
 
 #endif

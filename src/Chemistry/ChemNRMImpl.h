@@ -151,6 +151,12 @@ public:
     /// seprately.
     void generateNewRandTau();
     
+    
+    /// This method reuses a previous tau to generate a new tau based on a change
+    /// in reaction propensity.@note This methods modifies tau which is stored in the associated
+    /// PQNode object. However, it does not update the heap - this needs to be done seperately.
+    void generateNewTau();
+    
     /// Returns a pointer to the Reaction which corresponds to this RNodeNRM.
     inline ReactionBase* getReaction() const {return _react;};
     

@@ -31,6 +31,8 @@ public:
     
     void forces(Bead*, Bead*, double, double, double);
     void forcesAux(Bead*, Bead*, double, double, double);
+    
+    double loadForces(Bead*, Bead*, double, double, double);
 };
 
 #endif

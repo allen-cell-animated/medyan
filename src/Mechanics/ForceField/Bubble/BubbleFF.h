@@ -45,6 +45,9 @@ public:
     virtual void computeForces();
     virtual void computeForcesAux();
     
+    /// BubbleFF can compute load forces on all Bead from Bubble elements
+    virtual void computeLoadForces();
+    
     virtual vector<NeighborList*> getNeighborLists();
 };
 

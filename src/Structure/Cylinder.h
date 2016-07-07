@@ -106,7 +106,7 @@ public:
     void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
     
     /// Get cylinder type
-    short getType();
+    virtual int getType();
                                        
     //@{
     /// Get beads

@@ -20,6 +20,8 @@
 
 float BrownianRatchet::changeRate(float bareRate, double force) {
     
+    force = min(force, 100.0);
+    
     double newRate = bareRate * exp( - force * _x / kT);
     
     return newRate;

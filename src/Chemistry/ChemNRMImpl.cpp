@@ -162,6 +162,8 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
     
+    double t_prev = _t;
+    
     _t=tau_top;
     syncGlobalTime();
     
@@ -210,17 +212,20 @@ bool ChemNRMImpl::makeStep() {
             ///DEBUG
             if(tau_new < _t) {
                 
-                cout << "ERROR: Generated tau is incorrect. " << endl;
+                cout << "WARNING: Generated tau may be incorrect. " << endl;
                 
                 cout << "Tau new = " << tau_new << endl;
                 cout << "Tau old = " << tau_old << endl;
-                cout << "Tau current = " << _t << endl;
+                cout << "Current global t = " << _t << endl;
+                cout << "Previous global t = " << t_prev << endl;
                 cout << "a_old = " << a_old << endl;
                 cout << "a_new = " << a_new << endl;
                 
-                cout << "We have a problem. " << endl;
                 cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
+                
+                
                 rn->printSelf();
+                rn_other->printSelf();
             }
             
             rn_other->setTau(tau_new);

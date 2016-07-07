@@ -620,5 +620,8 @@ public:
         printReactions();
     }
 
+    //GetType implementation just returns zero (no Compartment types yet)
+    virtual int getType() {return 0;}
+    
 };
 #endif

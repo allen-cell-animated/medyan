@@ -82,7 +82,7 @@ Cylinder::~Cylinder() noexcept {
 }
 
 /// Get filament type
-short Cylinder::getType() {return _type;}
+int Cylinder::getType() {return _type;}
 
 void Cylinder::updatePosition() {
 
@@ -153,7 +153,7 @@ void Cylinder::updateReactionRates() {
     if(_plusEnd) {
         
         //get force of front bead
-        force = _b2->loadForce;
+        force = _b2->getLoadForcesP();
         
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
@@ -169,10 +169,10 @@ void Cylinder::updateReactionRates() {
     }
     
     //load force from back (affects minus end polymerization)
-    else if(_minusEnd) {
+    if(_minusEnd) {
         
         //get force of front bead
-        force = _b1->loadForce;
+        force = _b1->getLoadForcesM();
         
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
@@ -180,7 +180,7 @@ void Cylinder::updateReactionRates() {
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
                 float newRate =  _polyChanger[_type]->changeRate(r->getBareRate(), force);
-
+                
                 r->setRate(newRate);
                 r->updatePropensity();
             }

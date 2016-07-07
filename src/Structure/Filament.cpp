@@ -192,7 +192,8 @@ void Filament::extendPlusEnd(short plusEnd) {
 #ifdef MECHANICS
     //transfer the same load force to new bead
     //(approximation until next minimization)
-    bNew->loadForce = b2->loadForce;
+    bNew->loadForcesP = b2->loadForcesP;
+    bNew->lfip = b2->lfip + 1;
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
@@ -236,7 +237,8 @@ void Filament::extendMinusEnd(short minusEnd) {
 #ifdef MECHANICS
     //transfer the same load force to new bead
     //(approximation until next minimization)
-    bNew->loadForce = b2->loadForce;
+    bNew->loadForcesM = b2->loadForcesM;
+    bNew->lfim = b2->lfim + 1;
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
@@ -267,6 +269,13 @@ void Filament::retractPlusEnd() {
     Cylinder* retCylinder = _cylinderVector.back();
     _cylinderVector.pop_back();
     
+#ifdef MECHANICS
+    //transfer load forces
+    Bead* bd = _cylinderVector.back()->getSecondBead();
+    bd->loadForcesP = retCylinder->getSecondBead()->loadForcesP;
+    bd->lfip = retCylinder->getSecondBead()->lfip - 1;
+#endif
+    
     _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
     removeChild(retCylinder->getSecondBead());
     
@@ -275,6 +284,7 @@ void Filament::retractPlusEnd() {
     
     _cylinderVector.back()->setPlusEnd(true);
 
+    
 #ifdef DYNAMICRATES
     //update rates of new front
     _cylinderVector.back()->updateReactionRates();
@@ -287,6 +297,13 @@ void Filament::retractMinusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.front();
     _cylinderVector.pop_front();
+    
+#ifdef MECHANICS
+    //transfer load forces
+    Bead* bd = _cylinderVector.back()->getFirstBead();
+    bd->loadForcesM = retCylinder->getFirstBead()->loadForcesM;
+    bd->lfim = retCylinder->getFirstBead()->lfim - 1;
+#endif
     
     _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());
     removeChild(retCylinder->getFirstBead());
@@ -325,11 +342,20 @@ void Filament::polymerizePlusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
+    //increment load
+    b2->lfip++;
+    
     //increase eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
+    
+#ifdef DYNAMICRATES
+    //update rates of new back
+    _cylinderVector.back()->updateReactionRates();
+#endif
+    
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -345,10 +371,19 @@ void Filament::polymerizeMinusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
 
 #ifdef MECHANICS
+    
+    //increment load
+    b1->lfim++;
+    
     //increase eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
+#endif
+    
+#ifdef DYNAMICRATES
+    //update rates of new back
+    _cylinderVector.front()->updateReactionRates();
 #endif
 }
 
@@ -365,11 +400,21 @@ void Filament::depolymerizePlusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
+    
+    //increment load
+    b2->lfip--;
+    
     //decrease eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
+#ifdef DYNAMICRATES
+    //update rates of new back
+    _cylinderVector.front()->updateReactionRates();
+#endif
+    
+    
 }
 
 void Filament::depolymerizeMinusEnd() {
@@ -385,10 +430,18 @@ void Filament::depolymerizeMinusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
+    
+    b1->lfim--;
+    
     //decrease eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
+#endif
+    
+#ifdef DYNAMICRATES
+    //update rates of new back
+    _cylinderVector.front()->updateReactionRates();
 #endif
 }
 

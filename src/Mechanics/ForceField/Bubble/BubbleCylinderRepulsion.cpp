@@ -20,6 +20,10 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
+#include "MathFunctions.h"
+
+using namespace mathfunc;
+
 template <class BRepulsionInteractionType>
 double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
     
@@ -157,7 +161,92 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux() {
     }
 }
 
+template <class BRepulsionInteractionType>
+void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
+    
+    for (auto bb : Bubble::getBubbles()) {
+        
+        for(auto &c : _neighborList->getNeighbors(bb)) {
+            
+            //if part of an MTOC, skip
+            if(bb->isMTOC()) {
+                
+                auto mtoc = (MTOC*)bb->getParent();
+                auto filaments = mtoc->getFilaments();
+                
+                auto f = (Filament*)c->getParent();
+                
+                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+                    continue;
+            }
+            
+            double kRep = bb->getRepulsionConst();
+            double screenLength = bb->getScreeningLength();
+            
+            double radius = bb->getRadius();
+            
+            Bead* bd1 = bb->getBead();
+            
+            //potential acts on second bead unless this is a minus end
+            Bead* bd2;
+            Bead* bo;
+            if(c->isPlusEnd()) {
+                bd2 = c->getSecondBead();
+                bo = c->getFirstBead();
+                
+                ///this normal is in the direction of polymerization
+                auto normal = normalizedVector(twoPointDirection(bo->coordinate, bd2->coordinate));
+                
+                //array of coordinate values to update
+                auto monSize = SysParams::Geometry().monomerSize[bd2->getType()];
+                auto cylSize = SysParams::Geometry().cylinderNumMon[bd2->getType()];
+                
+                bd2->lfip = 0;
+                for (int i = 0; i < cylSize; i++) {
+                    
+                    auto newCoord = vector<double>{bd2->coordinate[0] + i * normal[0] * monSize,
+                        bd2->coordinate[1] + i * normal[1] * monSize,
+                        bd2->coordinate[2] + i * normal[2] * monSize};
+                    
+                    double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
+                    bd2->loadForcesP[bd2->lfip++] += loadForce;
+                }
+                //reset lfi
+                bd2->lfip = 0;
+                
+            }
+            if(c->isMinusEnd()) {
+                bd2 = c->getFirstBead();
+                bo = c->getSecondBead();
+                
+                ///this normal is in the direction of polymerization
+                auto normal = normalizedVector(twoPointDirection(bo->coordinate, bd2->coordinate));
+                
+                //array of coordinate values to update
+                auto monSize = SysParams::Geometry().monomerSize[bd2->getType()];
+                auto cylSize = SysParams::Geometry().cylinderNumMon[bd2->getType()];
+                
+                bd2->lfim = 0;
+                for (int i = 0; i < cylSize; i++) {
+                    
+                    auto newCoord = vector<double>{bd2->coordinate[0] + i * normal[0] * monSize,
+                        bd2->coordinate[1] + i * normal[1] * monSize,
+                        bd2->coordinate[2] + i * normal[2] * monSize};
+                    
+                    double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
+                    bd2->loadForcesM[bd2->lfim++] += loadForce;
+                }
+                //reset lfi
+                bd2->lfim = 0;
+            }
+            
+        }
+    }
+}
+
+
 ///Template specializations
 template double BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(double d);
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForces();
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForcesAux();
+template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeLoadForces();

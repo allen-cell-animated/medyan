@@ -45,6 +45,8 @@ public:
     virtual void computeForces();
     virtual void computeForcesAux();
     
+    virtual void computeLoadForces();
+    
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}
     

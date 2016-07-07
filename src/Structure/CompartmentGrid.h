@@ -149,6 +149,9 @@ public:
     species_copy_t countDiffusingSpecies(const string& name);
     /// Count the number of bulk species with a given name
     species_copy_t  countBulkSpecies(const string& name);
+    
+    //GetType implementation just returns zero (no CompartmentGrid types yet)
+    virtual int getType() {return 0;}
 };
 
 #endif

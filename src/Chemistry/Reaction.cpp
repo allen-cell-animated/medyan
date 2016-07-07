@@ -101,6 +101,13 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     newReaction->_reactionType = _reactionType;
     return newReaction;
 }
+
+void DiffusionReaction::updatePropensityImpl() {
+    
+    //just update the rnode if not passivated
+    if(_rnode!=nullptr && !_passivated) _rnode->activateReaction();
+}
+
     
 #ifdef BOOST_MEM_POOL
 template <unsigned short M, unsigned short N>

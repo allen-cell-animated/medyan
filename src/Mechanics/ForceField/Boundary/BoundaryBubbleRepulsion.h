@@ -42,12 +42,11 @@ public:
     }
     
     virtual double computeEnergy(double d);
-    //@{
-    /// This repulsive force calculation also updates load forces
-    /// on beads within the interaction range.
+   
     virtual void computeForces();
     virtual void computeForcesAux();
-    //@}
+    
+    virtual void computeLoadForces() {return;}
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}

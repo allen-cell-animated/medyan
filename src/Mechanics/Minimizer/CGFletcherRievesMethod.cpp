@@ -86,4 +86,5 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     //final force calculation
     FFM.computeForces();
+    FFM.computeLoadForces();
 }

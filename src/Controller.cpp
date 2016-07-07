@@ -66,8 +66,8 @@ void Controller::initialize(string inputFile,
 #endif
     
     //init input directory
-    _inputDirectory  = inputDirectory;
-    _outputDirectory = outputDirectory;
+    _inputDirectory  = inputDirectory + "/";
+    _outputDirectory = outputDirectory + "/";
     
     //Parse input, get parameters
     SystemParser p(inputFile);

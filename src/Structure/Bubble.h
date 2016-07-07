@@ -70,7 +70,7 @@ public:
     Bead* getBead() {return _bead;}
     
     int getID() {return _ID;}
-    short getType() {return _type;}
+    virtual int getType() {return _type;}
     //@}
     
     void setAsMTOC() {_isMTOC = true;}

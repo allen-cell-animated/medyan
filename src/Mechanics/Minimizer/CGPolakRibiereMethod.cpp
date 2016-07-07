@@ -92,4 +92,5 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     //final force calculation
     FFM.computeForces();
+    FFM.computeLoadForces();
 }

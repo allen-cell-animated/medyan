@@ -77,11 +77,25 @@ void ForceFieldManager::computeForcesAuxP() {
         b->forceAuxP = b->forceAux;
 }
 
+void ForceFieldManager::computeLoadForces() {
+    
+    for(auto &f : _forceFields)
+        f->computeLoadForces();
+    
+    //reset lfi as well
+    for(auto b: Bead::getBeads()) {
+        b->lfip = 0;
+        b->lfim = 0;
+    }
+}
+
+
 void ForceFieldManager::resetForces() {
     
     for(auto b: Bead::getBeads()) {
         b->force.assign (3, 0); //Set force to zero;
-        b->loadForce = 0;       //Set load force to zero;
+        std::memset((void*)(&b->loadForcesP[0]), 0, sizeof(b->loadForcesP));  //Set load force to zero;
+        std::memset((void*)(&b->loadForcesM[0]), 0, sizeof(b->loadForcesM));  //Set load force to zero;
     }
 }
 
