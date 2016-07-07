@@ -449,6 +449,22 @@ public:
         return _bindingManagers;
     }
     
+    
+    /// Get a specific motor binding manager from this compartment
+    MotorBindingManager* getMotorBindingManager(int motorType) {
+        
+        MotorBindingManager* mp;
+        
+        for(auto it = _bindingManagers.begin(); it != _bindingManagers.end(); it++) {
+            
+            //find the correct manager and type
+            if((mp = dynamic_cast<MotorBindingManager*>((*it).get())) && (*it)->getBoundInt() == motorType)
+                return mp;
+        }
+        
+        return nullptr;
+    }
+    
     ///Add a boundary element to this compartment
     void addBoundaryElement(BoundaryElement* be) {_boundaryElements.insert(be);}
     

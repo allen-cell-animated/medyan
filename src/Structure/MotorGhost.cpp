@@ -47,8 +47,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     : Trackable(true, true),
       _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _motorType(motorType), _motorID(_motorGhosts.getID()),
-      _birthTime(tau()) {
+      _motorType(motorType), _birthTime(tau()) {
           
     //find compartment
     updateCoordinate();
@@ -148,12 +147,7 @@ void MotorGhost::updatePosition() {
     
     //update number of bound heads
     _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(force, _numHeads);
-    
-    cout << "Num bound heads = " << _numBoundHeads << endl;
-    
     _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
-    
-    cout << "New Stretcing constant = " << _mMotorGhost->getStretchingConstant() << endl;
 
 #endif
     
