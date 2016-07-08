@@ -136,6 +136,29 @@ struct UpdateMotorBindingCallback {
     }
 };
 
+struct UpdateMotorIDCallback{
+    
+    MotorBindingManager* _mManager; ///< Motor binding manager
+    
+    //Constructor, sets members
+    UpdateMotorIDCallback(MotorBindingManager* mManager) : _mManager(mManager){};
+    
+    //callback
+    void operator() (RSpecies *r, int delta) {
+        
+        if(delta == +1) {
+            //pull from motorDB of transferred ID's
+            _mManager->addUnboundID(MotorGhost::_motorGhosts.getTransferID());
+        }
+        
+        else{ /* -1 */
+            //add to the motorDB of transferred ID's
+            MotorGhost::_motorGhosts.setTransferID(_mManager->getUnboundID());
+        }
+    }
+};
+
+
 #endif
 
 #ifdef REACTION_SIGNALING
@@ -452,9 +475,20 @@ struct MotorUnbindingCallback {
     SubSystem* _ps;
     MotorGhost* _motor;
     
-    MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) : _ps(ps), _motor(m) {}
+    MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) :
+    
+        _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
+        
+        //find the motor binding manager associated with this species
+        _motor->updateCoordinate();
+        Compartment* c = GController::getCompartment(_motor->coordinate);
+        
+        auto mManager = c->getMotorBindingManager(_motor->getType());
+        
+        //re-add unbound ID to motor binding manager
+        mManager->addUnboundID(_motor->getID());
         
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
@@ -498,6 +532,9 @@ struct MotorBindingCallback {
         double pos2 = double(get<1>(site[1])) / cylinderSize;
         
         MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2);
+        
+        //attach an ID to the motor based on the binding manager
+        m->setID(_mManager->getUnboundID());
 
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();

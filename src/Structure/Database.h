@@ -37,6 +37,9 @@ protected:
     vector<T> _elems;  ///< The elements in the collection
     
     int _ID = 0; ///< Running unique index of each element
+    
+    int _transferID = 0; ///< index of an ID to transfer
+                         ///< for now, this is used only in the case of motors.
 public:
     
     /// Add an element to the collection
@@ -64,6 +67,13 @@ public:
     
     ///Return a unique id
     int getID() { return _ID++;}
+    
+    //@{
+    ///Setters and getters for transfer ID
+    void setTransferID(int ID) {_transferID = ID;}
+    int getTransferID() {return _transferID;}
+    
+    //@}
 };
 
 
