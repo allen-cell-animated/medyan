@@ -1086,7 +1086,7 @@
 		F763ECFD1548FFC70069DA61 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "University of Maryland";
 			};
 			buildConfigurationList = F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "MEDYAN" */;
@@ -1244,6 +1244,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1341,10 +1342,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-lboost_system",
-					"-lgsl",
-				);
+				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1408,10 +1406,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-lboost_system",
-					"-lgsl",
-				);
+				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1444,10 +1439,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lgsl",
-					"-lboost_system",
-				);
+				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Debug;
@@ -1482,10 +1474,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lgsl",
-					"-lboost_system",
-				);
+				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Release;
@@ -1522,7 +1511,6 @@
 					"-lboost_system",
 					"-lgtest",
 					"-lgtest_main",
-					"-lgsl",
 				);
 				PRODUCT_NAME = TestSuite;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -1562,7 +1550,6 @@
 					"-lboost_system",
 					"-lgtest",
 					"-lgtest_main",
-					"-lgsl",
 				);
 				PRODUCT_NAME = TestSuite;
 				USER_HEADER_SEARCH_PATHS = "";
