@@ -107,7 +107,7 @@ template <unsigned short M, unsigned short N>
             return vector<ReactionBase*>(rxns.begin(),rxns.end());
         }
         
-        virtual void updatePropensityImpl();
+        virtual void updatePropensityImpl() override;
         
     protected:
         /// An implementation method used by the constructor.
@@ -241,7 +241,7 @@ template <unsigned short M, unsigned short N>
         virtual Reaction<M,N>* cloneImpl(
             const SpeciesPtrContainerVector &spcv) override;
         
-        virtual bool updateDependencies() {return true;}
+        virtual bool updateDependencies() override {return true;}
     };
 
 
@@ -304,7 +304,7 @@ public:
     }
 
     ///This implementation returns the kept boolean value
-    virtual bool updateDependencies() {return _dependencies;}
+    virtual bool updateDependencies() override {return _dependencies;}
 };
 
 #endif

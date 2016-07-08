@@ -81,7 +81,7 @@ public:
     virtual void clear() override {_species.clear();}
     
     /// Add species to the container. The memory of species is owned by the container
-    virtual Species* addSpecies(Species *species) {
+    virtual Species* addSpecies(Species *species) override {
         _species.emplace_back(unique_ptr<Species>(species));
         return _species.back().get();
     }

@@ -99,7 +99,7 @@ public:
     
     /// Returns the number of immediate children of this node.
     /// @note Species and reactions and not included in this tally
-    virtual size_t numberOfChildren() const {return children().size();}
+    virtual size_t numberOfChildren() const override {return children().size();}
 
     /// Returns the number of Species being immediately managed by this node (i.e. not
     /// counting Species belonging to children nodes, etc.)
