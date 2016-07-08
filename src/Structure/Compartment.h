@@ -621,7 +621,7 @@ public:
     }
 
     //GetType implementation just returns zero (no Compartment types yet)
-    virtual int getType() {return 0;}
+    virtual int getType() override {return 0;}
     
 };
 #endif
