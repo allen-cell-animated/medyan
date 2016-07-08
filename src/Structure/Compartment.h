@@ -199,20 +199,20 @@ public:
     }
     
     /// This is a species container
-    virtual bool isSpeciesContainer() const {return true;}
+    virtual bool isSpeciesContainer() const override {return true;}
     /// This is a reaction container
-    virtual bool isReactionsContainer() const {return true;}
+    virtual bool isReactionsContainer() const override {return true;}
     /// Returns compartment name
-    virtual string getFullName() const {return "Compartment";};
+    virtual string getFullName() const override {return "Compartment";};
     /// Returns the number of species in this compartment
-    size_t numberOfSpecies() const {return _species.species().size();}
+    size_t numberOfSpecies() const override {return _species.species().size();}
     /// Returns the number of internal reactions in this compartment
     size_t numberOfInternalReactions() const {
         return _internal_reactions.reactions().size();
     }
     /// Returns the total number of reactions in this compartment, diffusing and
     /// internal
-    size_t numberOfReactions() const {
+    size_t numberOfReactions() const override {
         return _internal_reactions.reactions().size() +
                _diffusion_reactions.reactions().size();
     }
@@ -612,7 +612,7 @@ public:
     }
     
     /// Print properties of this compartment
-    virtual void printSelf() {
+    virtual void printSelf() override {
         cout << this->getFullName() << "\n"
         << "Number of neighbors: " << numberOfNeighbours() << endl;
         printSpecies();
