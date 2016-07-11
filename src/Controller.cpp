@@ -76,11 +76,11 @@ void Controller::initialize(string inputFile,
     cout << endl;
     
     //trajectory-style data
-    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj"));
-    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
-    _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
-    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj"));
-    _outputs.push_back(new Types(_outputDirectory + "types.traj"));
+    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj", _subSystem));
+    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
+    _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
+    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
+    _outputs.push_back(new Types(_outputDirectory + "types.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -163,7 +163,7 @@ void Controller::initialize(string inputFile,
     
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
-    _outputs.push_back(new Chemistry(chemsnapname, ChemData,
+    _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
 #endif
     
@@ -586,3 +586,4 @@ void Controller::run() {
     cout << "Total simulation time: dt=" << tau() << endl;
     cout << "Done with simulation!" << endl;
 }
+

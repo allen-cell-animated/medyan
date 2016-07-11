@@ -97,6 +97,7 @@ private:
     /// Execute any special protocols needed, for example,
     /// making Linker and Filament species static
     void executeSpecialProtocols();
+
     
 public:
     Controller(SubSystem* s);
@@ -108,7 +109,6 @@ public:
                     string outputDirectory);
     ///Run the simulation
     void run();
-    
 };
 
 #endif

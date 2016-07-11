@@ -22,6 +22,7 @@
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;
+class SubSystem;
 
 /// To print a specified output into a file
 /*!
@@ -34,9 +35,11 @@ class Output {
 protected:
     ofstream _outputFile; ///< The output file being used
     
+    SubSystem* _subSystem = nullptr;
+    
 public:
     /// Constructor, which opens the output file
-    Output(string outputFileName) {
+    Output(string outputFileName, SubSystem* s) {
         _outputFile.open(outputFileName);
         if(!_outputFile.is_open()) {
             cout << "There was an error opening file " << outputFileName
@@ -44,6 +47,8 @@ public:
             exit(EXIT_FAILURE);
         }
         cout << "Opening file " << outputFileName << endl;
+        
+        _subSystem = s;
     }
     /// Destructor, which closes the output file
     ~Output() {_outputFile.close();}
@@ -57,7 +62,7 @@ public:
 class BasicSnapshot : public Output {
 
 public:
-    BasicSnapshot(string outputFileName) : Output(outputFileName) {}
+    BasicSnapshot(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~BasicSnapshot() {}
     
     virtual void print(int snapshot);
@@ -68,7 +73,7 @@ public:
 class BirthTimes : public Output {
     
 public:
-    BirthTimes(string outputFileName) : Output(outputFileName) {}
+    BirthTimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~BirthTimes() {}
     
     virtual void print(int snapshot);
@@ -78,7 +83,7 @@ public:
 class Forces : public Output {
     
 public:
-    Forces(string outputFileName) : Output(outputFileName) {}
+    Forces(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~Forces() {}
     
     virtual void print(int snapshot);
@@ -92,7 +97,7 @@ public:
 class Tensions : public Output {
     
 public:
-    Tensions(string outputFileName) : Output(outputFileName) {}
+    Tensions(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~Tensions() {}
     
     virtual void print(int snapshot);
@@ -102,7 +107,7 @@ public:
 class Types : public Output {
     
 public:
-    Types(string outputFileName) : Output(outputFileName) {}
+    Types(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~Types() {}
     
     virtual void print(int snapshot);
@@ -117,10 +122,10 @@ ChemistryData _chemData; ///< chemistry data of this system
 CompartmentGrid* _grid; ///< compartment grid of the system
     
 public:
-    Chemistry(string outputFileName, ChemistryData chemData,
-                                     CompartmentGrid* grid)
+    Chemistry(string outputFileName, SubSystem* s,
+              ChemistryData chemData, CompartmentGrid* grid)
     
-        : Output(outputFileName),
+        : Output(outputFileName, s),
          _chemData(chemData), _grid(grid) {}
     
     ~Chemistry() {}
@@ -133,7 +138,7 @@ public:
 class MotorLifetimes : public Output {
     
 public:
-    MotorLifetimes(string outputFileName) : Output(outputFileName) {}
+    MotorLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~MotorLifetimes() {}
     
     virtual void print(int snapshot);
@@ -143,7 +148,7 @@ public:
 class MotorWalkLengths : public Output {
     
 public:
-    MotorWalkLengths(string outputFileName) : Output(outputFileName) {}
+    MotorWalkLengths(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~MotorWalkLengths() {}
     
     virtual void print(int snapshot);
@@ -153,7 +158,7 @@ public:
 class LinkerLifetimes : public Output {
     
 public:
-    LinkerLifetimes(string outputFileName) : Output(outputFileName) {}
+    LinkerLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~LinkerLifetimes() {}
     
     virtual void print(int snapshot);
@@ -163,7 +168,7 @@ public:
 class FilamentTurnoverTimes : public Output {
     
 public:
-    FilamentTurnoverTimes(string outputFileName) : Output(outputFileName) {}
+    FilamentTurnoverTimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~FilamentTurnoverTimes() {}
     
     virtual void print(int snapshot);

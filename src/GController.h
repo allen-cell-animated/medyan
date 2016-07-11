@@ -54,6 +54,8 @@ class SubSystem;
  *  @note - The geometry controller currently only supports three-dimensional grids.
  */
 class GController {
+
+friend class Output;
     
 private:
     static short _nDim; ///< Number of dimensions in the system
@@ -86,6 +88,9 @@ public:
     /// Set compartments in compartment grid as active based on boundary.
     /// Used at system initialization.
     void setActiveCompartments();
+    
+    /// Get the SubSystem ptr
+    const SubSystem* getSubSystem() const {return _subSystem;}
     
     //@{
     /// Get a compartment based on coordinates or indices

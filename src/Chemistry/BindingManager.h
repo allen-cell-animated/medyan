@@ -378,7 +378,9 @@ public:
     /// Get a random ID from the container, and remove the ID
     int getUnboundID() {
         
-        int ri = Rand::randInteger(0, _unboundIDs.size());
+        assert(_unboundIDs.size() != 0 && "Major bug: No unbound IDs, but non-zero copy numbers.");
+        
+        int ri = Rand::randInteger(0, _unboundIDs.size() - 1);
         int ID = _unboundIDs[ri];
         
         //delete and return
@@ -386,6 +388,9 @@ public:
         
         return ID;
     }
+    
+    ///Get all unbound ID's, but do not change container
+    const vector<int>& getAllUnboundIDs() const { return _unboundIDs; }
 
 };
 
