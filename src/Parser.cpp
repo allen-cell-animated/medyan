@@ -1058,7 +1058,7 @@ void SystemParser::readBoundParams() {
             }
             else {}
         }
-        else if (line.find("BOUNDARYMOVESPEED") != string::npos) {
+        else if (line.find("BMOVESPEED") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
@@ -1074,7 +1074,7 @@ void SystemParser::readBoundParams() {
             }
             else {}
         }
-        else if (line.find("BOUNDARYMOVEENDTIME") != string::npos) {
+        else if (line.find("BMOVEENDTIME") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             if (lineVector.size() == 2) {
