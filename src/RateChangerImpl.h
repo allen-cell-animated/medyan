@@ -170,7 +170,7 @@ class HighDutyMotorCatch : public MotorCatch {
 public:
     HighDutyMotorCatch(short motorType, double charForce)
     
-    : MotorCatch(motorType, charForce, 0.33, 0.8){}
+    : MotorCatch(motorType, charForce, 0.33, 0.5){}
 };
 
 
