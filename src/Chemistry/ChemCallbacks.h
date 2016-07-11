@@ -166,31 +166,18 @@ struct UpdateMotorIDCallback{
             int ID = MotorGhost::_motorGhosts.getTransferID();
             
             if(ID != -1) {
-                
-                cout << "Diffusion transfer event +1. Manager = " << mManager << ", ID = " << ID << endl;
-                
-                
                 mManager->addUnboundID(ID);
                 
                 //we can only check this assertion of it is a diffusion event
                 assert(r->getN() == mManager->getAllUnboundIDs().size() &&
                        "Major bug: number of unbound ID's and copy number does not match");
             }
-            else {
-                
-                cout << "Unbinding event transfer. Manager = " << mManager << ", type = " << _motorType << endl;
-                
-            }
         }
         
         else{ /* -1 */
             //add to the motorDB of transferred ID's
             
-            cout << "Transfer event -1. Manager = " << mManager << ", type = " << _motorType;
-            
             int ID = mManager->getUnboundID();
-            
-            cout << ", ID = " << ID << endl;
             MotorGhost::_motorGhosts.setTransferID(ID);
             
             assert(r->getN() == mManager->getAllUnboundIDs().size() &&
@@ -523,10 +510,10 @@ struct MotorUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //find the motor binding manager associated with this species
-        Compartment* c = static_cast<Compartment*>(r->getParent());
-        auto mManager = c->getMotorBindingManager(_motor->getType());
+        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
-        cout << "Motor unbinding event. Manager = " << mManager << ", ID = " << _motor->getID() << ", type = " << _motor->getType() << endl;
+        Compartment* c = static_cast<Compartment*>(sd->getParent());
+        auto mManager = c->getMotorBindingManager(_motor->getType());
         
         //re-add unbound ID to motor binding manager
         mManager->addUnboundID(_motor->getID());
@@ -576,8 +563,6 @@ struct MotorBindingCallback {
         
         //attach an ID to the motor based on the transfer ID
         m->setID(MotorGhost::_motorGhosts.getTransferID());
-        
-        cout << "Motor binding event. Manager = " << _mManager << ", ID = " << m->getID() << endl;
 
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
