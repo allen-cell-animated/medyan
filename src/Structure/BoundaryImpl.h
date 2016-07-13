@@ -55,7 +55,7 @@ public:
     virtual double distance(const vector<double>& coordinates);
     
     ///@note - not yet implemented.
-    virtual void move(double dist) {}
+    virtual void move(double dist);
 };
 
 /// A capsule Boundary implementation.

@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 
 #include "BoundaryImpl.h"
+#include "BoundaryElementImpl.h"
 
 #include "BoundarySurfaceImpl.h"
 #include "BoundaryElement.h"
@@ -218,6 +219,27 @@ double BoundarySpherical::distance(const vector<double>& coordinates) {
     if(dist > 0) return dist;
     else return numeric_limits<double>::infinity();
 }
+
+//added by jl135
+void BoundarySpherical::move(double dist) {
+
+	cout << "I am inside BoundarySpherical Move"<<endl;
+	//doesn;t come here, pass test: fail
+    //do nothing
+    if(_move == BoundaryMove::None) return;
+
+    else if(_move == BoundaryMove::All) {
+
+        for(auto &bs : _boundarySurfaces) {
+
+            auto be =(SphereBoundaryElement*) bs->boundaryElements()[0].get();
+
+            be->updateRads({be->_radius + dist});
+            cout << be->_radius <<endl;
+        }
+    }
+}
+
 
 
 BoundaryCapsule::BoundaryCapsule(SubSystem* s, double diameter, BoundaryMove move)

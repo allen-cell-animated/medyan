@@ -350,24 +350,29 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 
 void Controller::moveBoundary(double deltaTau) {
     
-    //calculate distance to move
+	//calculate distance to move
     double dist = SysParams::Boundaries().moveSpeed * deltaTau;
     
     //move it
     if(tau() >= SysParams::Boundaries().moveStartTime &&
        tau() <= SysParams::Boundaries().moveEndTime)
         _subSystem->getBoundary()->move(dist);
-    
+    //spherical test = pass
     //activate, deactivate necessary compartments
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
         
+
+
         if(_subSystem->getBoundary()->within(C)) {
             
             if(C->isActivated()) continue;
             else _cController->activate(C);
+
+
         }
         else {
-            if(!C->isActivated()) continue;
+
+        	if(!C->isActivated()) continue;
             else _cController->deactivate(C);
         }
     }

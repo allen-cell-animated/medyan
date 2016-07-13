@@ -74,6 +74,10 @@ public:
     
     ///update the coordinates of the boundary element
     virtual void updateCoords(const vector<double> newCoords) = 0;
+
+    ///update the radius of the spherical boundary element, added by jl135, not right:
+    ///error: invalid new-expression of abstract class type ‘PlaneBoundaryElement’
+    ///virtual void updateRads(const double newRads) = 0;
     
     /// Implement for all boundary elements
     /// Returns the distance from a given point to this boundary element

@@ -42,6 +42,7 @@ public:
                          double screenLength)
     
         : BoundaryElement(coords, repulsConst, screenLength) {
+    	cout << "I am 0"<<endl;
         
         ///set parameters
         _a = normal[0]; _b = normal[1]; _c = normal[2];
@@ -96,11 +97,19 @@ public:
                           double screenLength)
     
         : BoundaryElement(coords, repulsConst, screenLength),
-          _radius(radius) {}
+          _radius(radius) {cout << "I am 1"<<endl;} //doesnt get called: pass test: fail
     
+
+    ///update the radius of the spherical boundary element, added by jl135
+    virtual void updateRads(const double newRads) {
+    	_radius= newRads;
+    	cout << "I am inside virtual void updateRads"<<endl;
+    }
+
     virtual double distance(const vector<double>& point) {
         
         return _radius - twoPointDistance(_coords, point);
+        cout << "I am inside virtual double distance"<<endl;
     }
     
     virtual double stretchedDistance(const vector<double>& point,

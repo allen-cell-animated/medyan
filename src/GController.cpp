@@ -243,14 +243,7 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
     
     else if(BTypes.boundaryShape == "SPHERICAL") {
         
-        if(move != BoundaryMove::None) {
-            
-            cout << "Moving boundaries for a spherical shape "
-                 << "not yet implemented. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        
-        _boundary = new BoundarySpherical(_subSystem,
+                _boundary = new BoundarySpherical(_subSystem,
                     SysParams::Boundaries().diameter, move);
     }
     
