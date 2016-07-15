@@ -84,6 +84,10 @@ bool CController::run(double time) {
     return _chemSim->run(time);
 }
 
+//aravind June 29,2016.
+void CController::restart(){
+ _chemSim->initialize();
+}
 bool CController::runSteps(int steps) {
     
     //update copy numbers

@@ -218,19 +218,28 @@ CCylinder::~CCylinder() {
     }
 }
 
-void CCylinder::passivatePolyReactions() {
-    
-    for(auto r : getAllReactions()) {
-        
-        if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND   ||
-           r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND  ||
-           r->getReactionType() == ReactionType::DEPOLYMERIZATIONPLUSEND ||
-           r->getReactionType() == ReactionType::DEPOLYMERIZATIONMINUSEND) {
-            
-            r->passivateReaction();
-        }
-    }
-}
+//James' suggestion. passivatepolyreactions written by Aravind July 11, 2016.
+void CCylinder::passivatefilreactions(){
+    for(auto &it: _internalReactions){
+        if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
+           ||it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
+           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
+           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
+           ||it->getReactionType() ==ReactionType::SEVERING
+           ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
+           ||it->getReactionType() ==ReactionType::AGING)
+        {it->passivateReaction();}}}
+void CCylinder::activatefilreactions(){
+    for(auto &it: _internalReactions){
+        if(it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
+           ||it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
+           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
+           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
+           ||it->getReactionType() ==ReactionType::SEVERING
+           ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
+           ||it->getReactionType() ==ReactionType::AGING)
+        {it->activateReaction();}}}
+//aravind.. END
 
 vector<ReactionBase*> CCylinder::getAllReactions() {
     

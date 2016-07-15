@@ -86,6 +86,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
     //arc projection
     else if(projectionType == "ARC")
         tmpBeadsCoord = arcFilamentProjection(position, numBeads);
+        //predefined projection aravind sep 9, 15
+    else if(projectionType == "PREDEFINED")
+        tmpBeadsCoord = predefinedFilamentProjection(position, numBeads);
    
     //create beads
     auto direction = twoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
@@ -133,10 +136,10 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
     Bead* b2 = cBack->getSecondBead();
     
     //create a new bead
-    auto direction = twoPointDirection(b2->coordinate, coordinates);
-    auto newBeadCoords = nextPointProjection(b2->coordinate,
-    SysParams::Geometry().cylinderSize[_filType], direction);
-    
+//    auto direction = twoPointDirection(b2->coordinate, coordinates);
+//    auto newBeadCoords = nextPointProjection(b2->coordinate,
+//    twoPointDistance(b2->coordinate, coordinates), direction);
+    auto newBeadCoords=coordinates;
     //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
     Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
@@ -792,8 +795,11 @@ vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v
     matrix_mul(X,Y,Z,x,y,z,numBeads,coordinates);
     return coordinates;
 }
-
-
+// predefined projection
+vector<vector<double>> Filament::predefinedFilamentProjection(vector<vector<double>>& v, int numBeads) {
+    return v;
+}
+//@
 void Filament::printSelf() {
     
     cout << endl;

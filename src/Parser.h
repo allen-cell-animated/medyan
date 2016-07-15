@@ -297,6 +297,8 @@ struct FilamentSetup {
     int filamentLength = 1;
     ///Filament type to create
     short filamentType = 0;
+    ///Filament projection type.
+    string projectionType="STRAIGHT";
 };
 
 /// Struct to hold Bubble setup information
@@ -383,7 +385,7 @@ public:
     /// Reads filament input file. Returns a vector of tuples containing
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-    vector<tuple<short, vector<double>, vector<double>>> readFilaments();
+     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.

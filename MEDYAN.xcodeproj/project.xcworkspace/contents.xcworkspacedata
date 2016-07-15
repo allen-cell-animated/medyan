@@ -4,4 +4,754 @@
    <FileRef
       location = "self:/Users/jameskomianos/Code/M3SYM/MEDYAN.xcodeproj">
    </FileRef>
+   <Group
+      location = "group:../src"
+      name = "src">
+      <FileRef
+         location = "group:BubbleInitializer.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:BubbleInitializer.h">
+      </FileRef>
+      <FileRef
+         location = "group:CController.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:CController.h">
+      </FileRef>
+      <Group
+         location = "group:Chemistry"
+         name = "Chemistry">
+         <FileRef
+            location = "group:BindingManager.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:BindingManager.h">
+         </FileRef>
+         <FileRef
+            location = "group:ChemCallbacks.h">
+         </FileRef>
+         <FileRef
+            location = "group:ChemGillespieImpl.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:ChemGillespieImpl.h">
+         </FileRef>
+         <FileRef
+            location = "group:ChemManager.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:ChemManager.h">
+         </FileRef>
+         <FileRef
+            location = "group:ChemNRMImpl.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:ChemNRMImpl.h">
+         </FileRef>
+         <FileRef
+            location = "group:ChemRNode.h">
+         </FileRef>
+         <FileRef
+            location = "group:ChemSim.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:ChemSim.h">
+         </FileRef>
+         <FileRef
+            location = "group:ChemSimImpl.h">
+         </FileRef>
+         <FileRef
+            location = "group:ChemSimpleGillespieImpl.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:ChemSimpleGillespieImpl.h">
+         </FileRef>
+         <FileRef
+            location = "group:Reaction.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Reaction.h">
+         </FileRef>
+         <FileRef
+            location = "group:ReactionBase.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:ReactionBase.h">
+         </FileRef>
+         <FileRef
+            location = "group:ReactionContainer.h">
+         </FileRef>
+         <FileRef
+            location = "group:ReactionTemplate.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:ReactionTemplate.h">
+         </FileRef>
+         <FileRef
+            location = "group:RSpecies.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:RSpecies.h">
+         </FileRef>
+         <FileRef
+            location = "group:Species.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Species.h">
+         </FileRef>
+         <FileRef
+            location = "group:SpeciesContainer.h">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:common.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:common.h">
+      </FileRef>
+      <FileRef
+         location = "group:Component.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:Component.h">
+      </FileRef>
+      <FileRef
+         location = "group:Composite.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:Composite.h">
+      </FileRef>
+      <FileRef
+         location = "group:Controller.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:Controller.h">
+      </FileRef>
+      <FileRef
+         location = "group:DRController.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:DRController.h">
+      </FileRef>
+      <FileRef
+         location = "group:FilamentInitializer.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:FilamentInitializer.h">
+      </FileRef>
+      <FileRef
+         location = "group:GController.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:GController.h">
+      </FileRef>
+      <FileRef
+         location = "group:Histogram.h">
+      </FileRef>
+      <FileRef
+         location = "group:Makefile">
+      </FileRef>
+      <FileRef
+         location = "group:MathFunctions.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:MathFunctions.h">
+      </FileRef>
+      <FileRef
+         location = "group:MController.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:MController.h">
+      </FileRef>
+      <Group
+         location = "group:Mechanics"
+         name = "Mechanics">
+         <Group
+            location = "group:ForceField"
+            name = "ForceField">
+            <Group
+               location = "group:Boundary"
+               name = "Boundary">
+               <FileRef
+                  location = "group:BoundaryBubbleRepulsion.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryBubbleRepulsion.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryBubbleRepulsionExp.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryBubbleRepulsionExp.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryCylinderRepulsion.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryCylinderRepulsion.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryCylinderRepulsionExp.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryCylinderRepulsionExp.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryFF.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryFF.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BoundaryInteractions.h">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:Branching"
+               name = "Branching">
+               <FileRef
+                  location = "group:BranchingBending.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingBending.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingBendingCosine.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingBendingCosine.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingDihedral.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingDihedral.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingDihedralCosine.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingDihedralCosine.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingFF.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingFF.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingInteractions.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingPosition.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingPosition.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingPositionCosine.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingPositionCosine.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingStretching.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingStretching.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingStretchingHarmonic.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BranchingStretchingHarmonic.h">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:Bubble"
+               name = "Bubble">
+               <FileRef
+                  location = "group:BubbleBubbleRepulsion.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleBubbleRepulsion.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleBubbleRepulsionExp.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleBubbleRepulsionExp.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleCylinderRepulsion.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleCylinderRepulsion.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleCylinderRepulsionExp.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleCylinderRepulsionExp.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleFF.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleFF.h">
+               </FileRef>
+               <FileRef
+                  location = "group:BubbleInteractions.h">
+               </FileRef>
+               <FileRef
+                  location = "group:MTOCAttachment.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:MTOCAttachment.h">
+               </FileRef>
+               <FileRef
+                  location = "group:MTOCAttachmentHarmonic.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:MTOCAttachmentHarmonic.h">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:Filament"
+               name = "Filament">
+               <FileRef
+                  location = "group:FilamentBending.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentBending.h">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentBendingCosine.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentBendingCosine.h">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentBendingHarmonic.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentBendingHarmonic.h">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentFF.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentFF.h">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentInteractions.h">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentStretching.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentStretching.h">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentStretchingHarmonic.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:FilamentStretchingHarmonic.h">
+               </FileRef>
+            </Group>
+            <FileRef
+               location = "group:ForceField.h">
+            </FileRef>
+            <FileRef
+               location = "group:ForceFieldManager.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:ForceFieldManager.h">
+            </FileRef>
+            <Group
+               location = "group:Linker"
+               name = "Linker">
+               <FileRef
+                  location = "group:LinkerFF.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:LinkerFF.h">
+               </FileRef>
+               <FileRef
+                  location = "group:LinkerInteractions.h">
+               </FileRef>
+               <FileRef
+                  location = "group:LinkerStretching.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:LinkerStretching.h">
+               </FileRef>
+               <FileRef
+                  location = "group:LinkerStretchingHarmonic.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:LinkerStretchingHarmonic.h">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:MotorGhost"
+               name = "MotorGhost">
+               <FileRef
+                  location = "group:MotorGhostFF.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:MotorGhostFF.h">
+               </FileRef>
+               <FileRef
+                  location = "group:MotorGhostInteractions.h">
+               </FileRef>
+               <FileRef
+                  location = "group:MotorGhostStretching.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:MotorGhostStretching.h">
+               </FileRef>
+               <FileRef
+                  location = "group:MotorGhostStretchingHarmonic.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:MotorGhostStretchingHarmonic.h">
+               </FileRef>
+            </Group>
+            <Group
+               location = "group:Volume"
+               name = "Volume">
+               <FileRef
+                  location = "group:CylinderExclVolRepulsion.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:CylinderExclVolRepulsion.h">
+               </FileRef>
+               <FileRef
+                  location = "group:CylinderExclVolume.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:CylinderExclVolume.h">
+               </FileRef>
+               <FileRef
+                  location = "group:CylinderVolumeFF.cpp">
+               </FileRef>
+               <FileRef
+                  location = "group:CylinderVolumeFF.h">
+               </FileRef>
+               <FileRef
+                  location = "group:CylinderVolumeInteractions.h">
+               </FileRef>
+            </Group>
+         </Group>
+         <Group
+            location = "group:Minimizer"
+            name = "Minimizer">
+            <FileRef
+               location = "group:CGFletcherRievesMethod.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:CGFletcherRievesMethod.h">
+            </FileRef>
+            <FileRef
+               location = "group:CGMethod.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:CGMethod.h">
+            </FileRef>
+            <FileRef
+               location = "group:CGPolakRibiereMethod.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:CGPolakRibiereMethod.h">
+            </FileRef>
+            <FileRef
+               location = "group:CGSteepestDescent.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:CGSteepestDescent.h">
+            </FileRef>
+            <FileRef
+               location = "group:ConjugateGradient.h">
+            </FileRef>
+            <FileRef
+               location = "group:Minimizer.h">
+            </FileRef>
+         </Group>
+      </Group>
+      <FileRef
+         location = "group:MEDYAN.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:Output.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:Output.h">
+      </FileRef>
+      <FileRef
+         location = "group:Parser.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:Parser.h">
+      </FileRef>
+      <FileRef
+         location = "group:Rand.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:Rand.h">
+      </FileRef>
+      <FileRef
+         location = "group:RateChanger.h">
+      </FileRef>
+      <FileRef
+         location = "group:RateChangerImpl.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:RateChangerImpl.h">
+      </FileRef>
+      <Group
+         location = "group:Structure"
+         name = "Structure">
+         <FileRef
+            location = "group:Bead.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Bead.h">
+         </FileRef>
+         <FileRef
+            location = "group:Boundary.h">
+         </FileRef>
+         <FileRef
+            location = "group:BoundaryElement.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:BoundaryElement.h">
+         </FileRef>
+         <FileRef
+            location = "group:BoundaryElementImpl.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:BoundaryElementImpl.h">
+         </FileRef>
+         <FileRef
+            location = "group:BoundaryImpl.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:BoundaryImpl.h">
+         </FileRef>
+         <FileRef
+            location = "group:BoundarySurface.h">
+         </FileRef>
+         <FileRef
+            location = "group:BoundarySurfaceImpl.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:BoundarySurfaceImpl.h">
+         </FileRef>
+         <FileRef
+            location = "group:BranchingPoint.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:BranchingPoint.h">
+         </FileRef>
+         <FileRef
+            location = "group:Bubble.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Bubble.h">
+         </FileRef>
+         <FileRef
+            location = "group:CBound.h">
+         </FileRef>
+         <FileRef
+            location = "group:CBranchingPoint.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:CBranchingPoint.h">
+         </FileRef>
+         <FileRef
+            location = "group:CCylinder.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:CCylinder.h">
+         </FileRef>
+         <FileRef
+            location = "group:CLinker.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:CLinker.h">
+         </FileRef>
+         <FileRef
+            location = "group:CMonomer.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:CMonomer.h">
+         </FileRef>
+         <FileRef
+            location = "group:CMotorGhost.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:CMotorGhost.h">
+         </FileRef>
+         <FileRef
+            location = "group:Compartment.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Compartment.h">
+         </FileRef>
+         <FileRef
+            location = "group:CompartmentGrid.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:CompartmentGrid.h">
+         </FileRef>
+         <FileRef
+            location = "group:Cylinder.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Cylinder.h">
+         </FileRef>
+         <FileRef
+            location = "group:Database.h">
+         </FileRef>
+         <FileRef
+            location = "group:DynamicNeighbor.h">
+         </FileRef>
+         <FileRef
+            location = "group:Filament.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Filament.h">
+         </FileRef>
+         <FileRef
+            location = "group:Linker.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Linker.h">
+         </FileRef>
+         <FileRef
+            location = "group:MBranchingPoint.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:MBranchingPoint.h">
+         </FileRef>
+         <FileRef
+            location = "group:MCylinder.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:MCylinder.h">
+         </FileRef>
+         <FileRef
+            location = "group:MLinker.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:MLinker.h">
+         </FileRef>
+         <FileRef
+            location = "group:MMotorGhost.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:MMotorGhost.h">
+         </FileRef>
+         <FileRef
+            location = "group:MotorGhost.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:MotorGhost.h">
+         </FileRef>
+         <FileRef
+            location = "group:Movable.h">
+         </FileRef>
+         <FileRef
+            location = "group:Neighbor.h">
+         </FileRef>
+         <FileRef
+            location = "group:NeighborList.h">
+         </FileRef>
+         <FileRef
+            location = "group:NeighborListImpl.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:NeighborListImpl.h">
+         </FileRef>
+         <FileRef
+            location = "group:Reactable.h">
+         </FileRef>
+         <Group
+            location = "group:Special"
+            name = "Special">
+            <FileRef
+               location = "group:MTOC.cpp">
+            </FileRef>
+            <FileRef
+               location = "group:MTOC.h">
+            </FileRef>
+         </Group>
+         <FileRef
+            location = "group:SubSystem.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:SubSystem.h">
+         </FileRef>
+         <FileRef
+            location = "group:Trackable.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:Trackable.h">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:SysParams.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:SysParams.h">
+      </FileRef>
+      <Group
+         location = "group:TESTS"
+         name = "TESTS">
+         <FileRef
+            location = "group:Makefile">
+         </FileRef>
+         <FileRef
+            location = "group:test_boundaries.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_compartments.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_composite.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_geometry.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_gillespie.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_gillespie_cross.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_nrm.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_reactions.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_simple_gillespie.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:test_species.cpp">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:utility.cpp">
+      </FileRef>
+      <FileRef
+         location = "group:utility.h">
+      </FileRef>
+      <FileRef
+         location = "group:Visitor.h">
+      </FileRef>
+   </Group>
 </Workspace>

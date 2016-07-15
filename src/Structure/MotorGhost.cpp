@@ -201,6 +201,8 @@ void MotorGhost::updateReactionRates() {
                            _cMotorGhost->getOffRate(),
                            _numHeads, max(0.0, -forceDotDirectionC1));
                 
+                if(SysParams::RUNSTATE==false)
+                    newRate=0.0;
                 r->setRate(newRate);
                 r->updatePropensity();
             }
@@ -214,6 +216,8 @@ void MotorGhost::updateReactionRates() {
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
                            _numHeads, max(0.0, forceDotDirectionC2));
+                if(SysParams::RUNSTATE==false)
+                { newRate=0.0;}
                 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -225,7 +229,8 @@ void MotorGhost::updateReactionRates() {
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
                            _numHeads, max(0.0, -forceDotDirectionC2));
-                
+                if(SysParams::RUNSTATE==false)
+                { newRate=0.0;}
                 r->setRate(newRate);
                 r->updatePropensity();
             }

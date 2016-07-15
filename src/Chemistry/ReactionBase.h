@@ -132,7 +132,13 @@ public:
     /// size() to determine the iteration limits). The corresponding array<RSpecies*> is
     /// defined by the derived classes.
     virtual RSpecies** rspecies() = 0;
-    
+    //aravind, June 30, 2016.
+    vector<string> getreactantspecies(){
+        vector<string> returnvector;
+        for(int i=0;i<2;i++)
+        {returnvector.push_back((*(rspecies()+i))->getSpecies().getName());}
+        return returnvector;
+    }
     ///Set reaction type
     void setReactionType(ReactionType rxnType) {_reactionType = rxnType;}
     
@@ -159,6 +165,8 @@ public:
     /// Returns the bare rate associated with this ReactionBase
     float getBareRate() const {return _rate_bare;}
     
+    ///aravind June 24, 2016
+    void setBareRate(float a) {_rate_bare=a;}
     /// Returns a pointer to the RNode associated with this ReactionBase.
     RNode* getRnode() const {return _rnode;}
     

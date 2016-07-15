@@ -312,7 +312,7 @@ struct BranchingCallback {
       _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-        
+        BranchingPoint* b;
         short branchType = _bManager->getBoundInt();
         
         //choose a random binding site from manager
@@ -320,11 +320,10 @@ struct BranchingCallback {
         
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
-        
         short filType = c1->getType();
         
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
-        
+        if(SysParams::RUNSTATE==true){
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
         auto x2 = c1->getSecondBead()->coordinate;
@@ -337,7 +336,6 @@ struct BranchingCallback {
 #ifdef MECHANICS
         //use mechanical parameters
         double l, t;
-        
         if(SysParams::Mechanics().BrStretchingL.size() != 0) {
             l = SysParams::Mechanics().BrStretchingL[branchType];
             t = SysParams::Mechanics().BrBendingTheta[branchType];
@@ -369,13 +367,33 @@ struct BranchingCallback {
         c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
-        BranchingPoint* b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+        b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+        }
+        else
+        {
+        CCylinder* c;
+        vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
+            for(auto T:BrT){
+                CCylinder* cx=get<0>(get<0>(T));
+                double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
+                if(cx->getCylinder()->getID()==c1->getID() && p==pos){
+                    c=get<0>(get<1>(T));
+                    break;
+                }}
+            b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
+            CMonomer* x=c->getCMonomer(0);
+            x->speciesMinusEnd(0)->down();
+            x->speciesFilament(0)->up();
+
+        _offRate=0.0;
+        }
         
         //create off reaction
         auto cBrancher = b->getCBranchingPoint();
         
         cBrancher->setRates(_onRate, _offRate);
         cBrancher->createOffReaction(r, _ps);
+        cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
     }
 };
 
@@ -436,11 +454,18 @@ struct LinkerBindingCallback {
         //create off reaction
         auto cLinker = l->getCLinker();
         
+        //aravind June 24, 2016.
+        if(SysParams::RUNSTATE==false)
+            _offRate=0.0;
+        //@
         cLinker->setRates(_onRate, _offRate);
         cLinker->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
+        //aravind june 24, 2016
+        cLinker->getOffReaction()->setBareRate(SysParams::LUBBareRate[linkerType]);
+        //@
         l->updateReactionRates();
 #endif
     }
@@ -501,13 +526,20 @@ struct MotorBindingCallback {
 
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
-        
+        //aravind June 24, 2016.
+        if(SysParams::RUNSTATE==false)
+        _offRate=0.0;
+        //@
         cMotorGhost->setRates(_onRate, _offRate);
         cMotorGhost->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions
         m->updateReactionRates();
+        //aravind June 24,2016.
+        cMotorGhost->getOffReaction()->setBareRate(SysParams::MUBBareRate[motorType]);
+        //@
+
 #endif
         
     }

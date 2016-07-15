@@ -34,6 +34,7 @@ class SubSystem;
 class ReactionBase;
 class CCylinder;
 class Compartment;
+class Cylinder;
 
 ///Enumeration for nucleation zone type. Used by BranchingManager.
 enum NucleationZoneType {
@@ -156,6 +157,14 @@ public:
     ///Check consistency and correctness of binding sites. Used for debugging.
     virtual bool isConsistent() = 0;
     
+    ///get the filament that the species binds to aravind June 30, 2016.
+    short getfilamentType() {return _filamentType;}
+    
+    /// ARAVIND ADDED FEB 17 2016. append possible bindings.
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2)=0;
+    ///aravind, June 30,2016.
+    vector<string> getrxnspecies(){return _bindingReaction->getreactantspecies();}
+    virtual void clearpossibleBindings()=0;
 };
 
 
@@ -173,7 +182,7 @@ private:
     
     ///possible bindings at current state
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
-    
+    vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _branchrestarttuple; //Used only during restart conditions.
 public:
     BranchingManager(ReactionBase* reaction,
                      Compartment* compartment,
@@ -219,6 +228,22 @@ public:
     }
     
     virtual bool isConsistent();
+    /// ARAVIND ADDED FEB 17 2016. append possible bindings.
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
+        double oldN=numBindingSites();
+        _possibleBindings.insert(t1);
+        _branchrestarttuple.push_back(make_tuple(t1,t2));
+//        _branchCylinder=(get<0>(t2));
+        double newN=numBindingSites();
+        updateBindingReaction(oldN,newN);}
+    virtual void clearpossibleBindings() {
+        double oldN=numBindingSites();
+        _possibleBindings.clear();
+        updateBindingReaction(oldN,0);
+    }
+    vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
+        return _branchrestarttuple;
+    }
 };
 
 /// Manager for Linker binding.
@@ -269,7 +294,24 @@ public:
         
         return _possibleBindings.size();
     }
+    /// ARAVIND ADDED FEB 17 2016. append possible bindings.
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
+        double oldN=numBindingSites();
+         _possibleBindings.emplace(t1,t2);
+         double newN=numBindingSites();
+        updateBindingReaction(oldN,newN);
+    }
+    //get possible bindings.
+    virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
+        return _possibleBindings;
+    }
     
+    /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
+    virtual void clearpossibleBindings() {
+        double oldN=numBindingSites();
+        _possibleBindings.clear();
+        updateBindingReaction(oldN,0);
+    }
     //@{
     /// Getters for distances
     float getRMin() {return _rMin;}
@@ -342,7 +384,25 @@ public:
         
         return _possibleBindings.size();
     }
+    /// ARAVIND ADDED FEB 22 2016. append possible bindings.
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
+        double oldN=numBindingSites();
+        _possibleBindings.emplace(t1,t2);
+        double newN=numBindingSites();
+        updateBindingReaction(oldN,newN);
+    }
+    //get possible bindings.
+    virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
+        return _possibleBindings;
+    }
     
+    /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
+    virtual void clearpossibleBindings() {
+        double oldN=numBindingSites();
+        _possibleBindings.clear();
+        updateBindingReaction(oldN,0);
+    }
+
     //@{
     /// Getters for distances
     float getRMin() {return _rMin;}

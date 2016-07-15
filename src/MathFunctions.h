@@ -237,7 +237,7 @@ namespace mathfunc {
     }
     
     /// Returns coordinates of a point v located on a line between v1 and v2.
-    /// |v-v1|/|v2-v| = alpha.
+    /// |v-v1|/|v2-v1| = alpha.
     inline vector<double> midPointCoordinate(const vector<double>& v1,
                                              const vector<double>& v2, double alpha) {
         vector<double> v;

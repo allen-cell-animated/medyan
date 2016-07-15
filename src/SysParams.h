@@ -240,6 +240,12 @@ public:
 public:
     //@{
     ///Const getter
+    static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
+    //aravind July11,2016
+    static vector<float> MUBBareRate;
+    static vector<float> LUBBareRate;
+    static vector<float> BUBBareRate;
+    //@
     static const MechParams& Mechanics() {return MParams;}
     static const ChemParams& Chemistry() {return CParams;}
     static const GeoParams& Geometry() {return GParams;}

@@ -1523,6 +1523,17 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.filamentType = atoi(lineVector[1].c_str());
             else {}
         }
+        else if (line.find("RESTARTPHASE") != string::npos){SysParams::RUNSTATE=false;}
+        else if(line.find("PROJECTIONTYPE")!=string::npos){
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "Error reading filament projection type. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                FSetup.projectionType = lineVector[1];
+            else {}
+        }
     }
     return FSetup;
 }
@@ -1576,36 +1587,73 @@ BubbleSetup SystemParser::readBubbleSetup() {
     }
     return BSetup;
 }
-
-vector<tuple<short, vector<double>, vector<double>>> FilamentParser::readFilaments() {
-    
+    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > FilamentParser::readFilaments() {
     _inputFile.clear();
     _inputFile.seekg(0);
-    
-    vector<tuple<short, vector<double>, vector<double>>> returnVector;
-    string line;
+     vector<tuple<short, vector<double>, vector<double>>> filamentVector;
+     vector<vector<vector<double>>> linkerVector;
+     vector<vector<vector<double>>> motorVector;
+     vector<vector<double>> staticVector;
+     vector<tuple<string, short, vector<vector<double>>>> boundVector;
+     vector<tuple<string, short, vector<double>>> branchVector;
+     string line;
     
     while(getline(_inputFile, line)) {
         
         if(line.find("#") != string::npos) { continue; }
         
         vector<string> lineVector = split<string>(line);
-        if(lineVector.size() == 8) {
+        if(lineVector.size() >= 8) {
             vector<double> coord1;
             vector<double> coord2;
-            
-            short type = atoi((*(lineVector.begin() + 1)).c_str());
-            
+            vector<vector<double>> coord3;
+            short type;
+            //aravind parse linkers, motors. June 30,2016.
+            if(lineVector[0]=="FILAMENT"){
+            type = atoi((*(lineVector.begin() + 1)).c_str());
             for(auto it = lineVector.begin() + 2; it != lineVector.begin() + 5; it++) {
                 coord1.push_back(atof(((*it).c_str())));
             }
             for(auto it = lineVector.begin() + 5; it != lineVector.end(); it++) {
                 coord2.push_back(atof(((*it).c_str())));
+                
             }
-            
-            returnVector.emplace_back(type, coord1, coord2);
+                filamentVector.emplace_back(type, coord1, coord2);}
+            else
+            {
+                type = atoi((*(lineVector.begin() + 1)).c_str());
+                string boundType=lineVector[0];
+                for(auto it = lineVector.begin() + 2; it != lineVector.begin() + 5; it++) {
+                    coord1.push_back(atof(((*it).c_str())));
+                }
+                for(auto it = lineVector.begin() + 5; it != lineVector.end(); it++) {
+                    coord2.push_back(atof(((*it).c_str())));
+                }
+                coord3.push_back(coord1);
+                coord3.push_back(coord2);
+                boundVector.emplace_back(boundType, type, coord3);
+            }
+        }
+        //aravind Feb 19, 2016. Parase Linkers, Motors.
+        else if(lineVector.size()==5) {
+            vector<double> coord1;
+            vector<vector<double>> coord3;
+            if(lineVector[0]=="STATIC"){
+                for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 5; it++) {
+                    coord1.push_back(atof(((*it).c_str()))); //FORMAT FILAMENTTYPE COORDx COORDy COORDz.
+                }
+                staticVector.push_back({coord1});}
+            else{ // BRANCHER
+                short type = atoi((*(lineVector.begin() + 1)).c_str()); //FILAMENT TYPE THAT IT BINDS TO.
+                string boundType=lineVector[0];//BRANCHER BOUND NAME
+                for(auto it = lineVector.begin() + 2; it != lineVector.begin() + 5; it++) {
+                    coord1.push_back(atof(((*it).c_str())));
+                }
+                branchVector.emplace_back(boundType,type,coord1);
+            }
         }
     }
+      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, staticVector);
     return returnVector;
 }
 

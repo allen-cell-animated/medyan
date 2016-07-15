@@ -20,6 +20,7 @@
 #include "common.h"
 
 #include "Database.h"
+#include "Component.h"
 #include "Composite.h"
 #include "Trackable.h"
 #include "Movable.h"
@@ -53,7 +54,7 @@ public:
     vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
     vector<double> coordinateB; ///< Prev coordinate of bead before CG minimization
-    
+    int _ID; ///<Bead IDs
 	vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
     vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
@@ -68,9 +69,9 @@ public:
     ///< These are then used to propagate load forces in between
     ///< mechanical force calculations.
     
-    short lfip = 0; 
+    short lfip = 0;
     short lfim = 0;  ///< Index which saves which load force to use
-    
+    bool isStatic = false;
     ///Main constructor
     Bead (vector<double> v, Composite* parent, int position);
     
@@ -109,6 +110,12 @@ public:
     
     //GetType implementation just returns type of parent
     virtual int getType() {return getParent()->getType();}
+    //Aravind get ID
+    int getID() {return _ID;}
+    //Aravind return static
+    bool getstaticstate() {return isStatic;}
+    //Aravind set static
+    void setstaticstate(bool index) {isStatic = index;}
     //@{
     /// Auxiliary method for CG minimization
     inline double FDotF() {
