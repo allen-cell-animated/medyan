@@ -125,6 +125,189 @@
       <FileRef
          location = "group:Controller.cpp">
       </FileRef>
+      <Group
+         location = "group:../analysis"
+         name = "analysis">
+         <FileRef
+            location = "group:AnalyzeTrajectory.py">
+         </FileRef>
+         <Group
+            location = "group:Bundles"
+            name = "Bundles">
+            <FileRef
+               location = "group:datacoordinates.m">
+            </FileRef>
+            <FileRef
+               location = "group:DistBetween2Segment.m">
+            </FileRef>
+            <FileRef
+               location = "group:fit_3D_data.m">
+            </FileRef>
+            <FileRef
+               location = "group:license.txt">
+            </FileRef>
+            <FileRef
+               location = "group:license2.txt">
+            </FileRef>
+            <FileRef
+               location = "group:license3.txt">
+            </FileRef>
+            <FileRef
+               location = "group:networkComponents.m">
+            </FileRef>
+            <FileRef
+               location = "group:skew_pair.m">
+            </FileRef>
+            <FileRef
+               location = "group:snapshottrial.traj">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:../c++tutorials"
+         name = "c++tutorials">
+         <FileRef
+            location = "group:C++ optimizations.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:C++11-Move-Semantics.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:Machine_Architecture_-_NWCPP.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:TBB-Design_Patterns.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:TBB-Reference.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:TBB-Tutorial.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:Thrust - A Productivity-Oriented Library for CUDA.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:Thrust Introduction.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:Thrust_Quick_Start_Guide.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:What is C++0x.pdf">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:../docs"
+         name = "docs">
+         <FileRef
+            location = "group:ExampleGuide.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:InstallGuide.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:UsageGuide.pdf">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:../docsdev"
+         name = "docsdev">
+         <Group
+            location = "group:ExampleGuide"
+            name = "ExampleGuide">
+            <FileRef
+               location = "group:ExampleGuide.aux">
+            </FileRef>
+            <FileRef
+               location = "group:ExampleGuide.log">
+            </FileRef>
+            <FileRef
+               location = "group:ExampleGuide.pdf">
+            </FileRef>
+            <FileRef
+               location = "group:ExampleGuide.synctex.gz">
+            </FileRef>
+            <FileRef
+               location = "group:ExampleGuide.tex">
+            </FileRef>
+            <FileRef
+               location = "group:ExampleGuide.toc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:InstallGuide"
+            name = "InstallGuide">
+            <FileRef
+               location = "group:InstallGuide.aux">
+            </FileRef>
+            <FileRef
+               location = "group:InstallGuide.log">
+            </FileRef>
+            <FileRef
+               location = "group:InstallGuide.pdf">
+            </FileRef>
+            <FileRef
+               location = "group:InstallGuide.synctex.gz">
+            </FileRef>
+            <FileRef
+               location = "group:InstallGuide.tex">
+            </FileRef>
+            <FileRef
+               location = "group:InstallGuide.toc">
+            </FileRef>
+            <FileRef
+               location = "group:missfont.log">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:UsageGuide"
+            name = "UsageGuide">
+            <FileRef
+               location = "group:UsageGuide.aux">
+            </FileRef>
+            <FileRef
+               location = "group:UsageGuide.log">
+            </FileRef>
+            <FileRef
+               location = "group:UsageGuide.pdf">
+            </FileRef>
+            <FileRef
+               location = "group:UsageGuide.synctex.gz">
+            </FileRef>
+            <FileRef
+               location = "group:UsageGuide.tex">
+            </FileRef>
+            <FileRef
+               location = "group:UsageGuide.toc">
+            </FileRef>
+         </Group>
+      </Group>
+      <FileRef
+         location = "group:../doxygen.config">
+      </FileRef>
+      <FileRef
+         location = "group:../LamellipodiaModel.png">
+      </FileRef>
+      <FileRef
+         location = "group:../license.txt">
+      </FileRef>
+      <FileRef
+         location = "group:../MEDYAN.xcodeproj">
+      </FileRef>
+      <Group
+         location = "group:../papers"
+         name = "papers">
+         <FileRef
+            location = "group:MEDYAN-2016-preprint.pdf">
+         </FileRef>
+         <FileRef
+            location = "group:Petzold-JCP-2004.pdf">
+         </FileRef>
+      </Group>
+      <FileRef
+         location = "group:../README.md">
+      </FileRef>
       <FileRef
          location = "group:Controller.h">
       </FileRef>
