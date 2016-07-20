@@ -56,11 +56,13 @@ protected:
     double _r0; ///< Screening length
     
 public:
+
     /// Default constructor
     BoundaryElement(vector<double> coords, double kRepuls, double screenLength)
     
         : Trackable(false, false, false, true),
-          _coords(coords), _kRep(kRepuls), _r0(screenLength) {}
+          _coords(coords), _kRep(kRepuls), _r0(screenLength) {
+    }
     
     /// Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
@@ -118,6 +120,24 @@ public:
     
     //GetType implementation just returns zero (no boundary element types yet)
     virtual int getType() {return 0;}
+
+    /// Magnitude of initial boundary force #added by jl135
+    double boundary_tension;
+
+    //Define kTension (for now, later can be added in the system input by editing Parser) #added by jl135
+    double kTension = 90;
+
+    /// Magnitude of iterative boundary force #added by jl135
+    double boundary_tensionaux;
+
+    ///Magnitude of iterative force caused by actin #added by jl135
+    double forceonboundary;
+
+    ///Magnitude of iterative force caused by actin #added by jl135
+    double forceonboundaryAux;
+
+
+
 };
 
 #endif

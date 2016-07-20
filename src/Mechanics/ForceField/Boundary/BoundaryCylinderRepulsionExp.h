@@ -17,6 +17,8 @@
 #include <vector>
 #include <cmath>
 
+#include <BoundaryElement.h>
+
 #include "common.h"
 
 //FORWARD DECLARATIONS
@@ -27,8 +29,8 @@ class BoundaryCylinderRepulsionExp {
     
 public:
     double energy(Bead*, double, double, double);
-    void forces(Bead*, double, vector<double>& norm, double, double);
-    void forcesAux(Bead*, double, vector<double>& norm, double, double);
+    void forces(Bead*, double, vector<double>& norm, double, double, BoundaryElement*);
+    void forcesAux(Bead*, double, vector<double>& norm, double, double, BoundaryElement*); //edited by jl135
     double loadForces(double, double, double);
 };
 

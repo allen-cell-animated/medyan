@@ -22,7 +22,7 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
     
     double U = 0;
     double U_i;
-    
+
     for (auto f: Filament::getFilaments()) {
         
         U_i = 0;

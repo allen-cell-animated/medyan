@@ -22,7 +22,7 @@ double BoundaryCylinderRepulsionExp::energy(Bead* b, double r,
 }
 
 void BoundaryCylinderRepulsionExp::forces(Bead* b, double r, vector<double>& norm,
-                                          double kRep, double screenLength) {
+                                          double kRep, double screenLength, BoundaryElement* be) {
     
     double R = -r/screenLength;
     double f0 = kRep * exp(R)/screenLength;
@@ -31,10 +31,14 @@ void BoundaryCylinderRepulsionExp::forces(Bead* b, double r, vector<double>& nor
     b->force[1] += f0 *norm[1];
     b->force[2] += f0 *norm[2];
     
+    be->forceonboundary += f0 ;
+    cout<<"Total force exerted by all actin filaments " << be->forceonboundary<<endl;
+
 }
 
+//need to add BoundaryElement as input, edited by jl135
 void BoundaryCylinderRepulsionExp::forcesAux(Bead* b, double r, vector<double>& norm,
-                                             double kRep, double screenLength) {
+                                             double kRep, double screenLength, BoundaryElement* be) {
     
     double R = -r/screenLength;
     double f0 = kRep * exp(R)/screenLength;
@@ -43,6 +47,12 @@ void BoundaryCylinderRepulsionExp::forcesAux(Bead* b, double r, vector<double>& 
     b->forceAux[1] += f0 *norm[1];
     b->forceAux[2] += f0 *norm[2];
     
+
+    //save the total forces on boundary #added by jl135
+    be->forceonboundaryAux += f0 ;
+    cout<<"Total force exerted by all actin filaments " << be->forceonboundaryAux<<endl;
+
+
 }
 
 double BoundaryCylinderRepulsionExp::loadForces(double r, double kRep, double screenLength) {

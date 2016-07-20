@@ -22,6 +22,7 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Bubble.h"
+#include "BoundaryElement.h" //added by jl135
 
 #include "CompartmentGrid.h"
 
@@ -293,6 +294,14 @@ void Forces::print(int snapshot) {
     }
     
     _outputFile <<endl;
+
+    //added by jl135
+    for (auto &be: BoundaryElement::getBoundaryElements()) {
+
+    	//print first line
+    	_outputFile << "TOTAL EXERTED FORCE BY ACTIN = " <<be->forceonboundaryAux<<endl;
+
+    }
 }
 
 
@@ -508,3 +517,14 @@ void FilamentTurnoverTimes::print(int snapshot) {
     Filament::getTurnoverTimes()->print(_outputFile);
     _outputFile << endl << endl;
 }
+/*//added by jl135, making a new class
+void ForceOnBoundaryByActin::print(int snapshot) {
+
+    _outputFile.precision(3);
+
+    // print first line (step number, time)
+    _outputFile << snapshot << " " << tau() << " " << endl;
+
+    BoundaryElement::getBoundaryElements()->print(_outputFile);
+    _outputFile << endl << endl;
+}*/

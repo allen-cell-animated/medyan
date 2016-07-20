@@ -85,7 +85,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
                 bd = c->getSecondBead();
             
             auto normal = be->normal(bd->coordinate);
-            _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+            _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength, be);
             
         }
     }
@@ -110,7 +110,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux() {
                 bd = c->getSecondBead();
             
             auto normal = be->normal(bd->coordinate);
-            _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+            _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength, be);
             
         }
     }

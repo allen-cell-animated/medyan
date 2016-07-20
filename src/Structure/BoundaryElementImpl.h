@@ -97,19 +97,17 @@ public:
                           double screenLength)
     
         : BoundaryElement(coords, repulsConst, screenLength),
-          _radius(radius) {cout << "I am 1"<<endl;} //doesnt get called: pass test: fail
+          _radius(radius) {cout << "Sphere mode is activated"<<endl;}
     
 
     ///update the radius of the spherical boundary element, added by jl135
     virtual void updateRads(const double newRads) {
     	_radius= newRads;
-    	cout << "I am inside virtual void updateRads"<<endl;
     }
 
     virtual double distance(const vector<double>& point) {
         
         return _radius - twoPointDistance(_coords, point);
-        cout << "I am inside virtual double distance"<<endl;
     }
     
     virtual double stretchedDistance(const vector<double>& point,
@@ -132,6 +130,9 @@ public:
     
         _coords = newCoords;
     }
+
+    //Get _radius (radius of the sphere) %added by jl135
+    virtual double getSphereRadius() {return _radius;}
 };
 
 /// A cylinder implementation of a BoundaryElement.

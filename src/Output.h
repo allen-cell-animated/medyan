@@ -158,4 +158,15 @@ public:
     virtual void print(int snapshot);
 };
 
+/*/// Print Forces Exerted by All Actin Filaments #added by jl135, if new class is needed
+class ForceOnBoundaryByActin : public Output {
+
+public:
+	ForceOnBoundaryByActin(string outputFileName) : Output(outputFileName) {}
+    ~ForceOnBoundaryByActin() {}
+
+    virtual void print(int snapshot);
+};*/
+
+
 #endif

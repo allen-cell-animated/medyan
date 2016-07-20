@@ -223,9 +223,6 @@ double BoundarySpherical::distance(const vector<double>& coordinates) {
 //added by jl135
 void BoundarySpherical::move(double dist) {
 
-	cout << "I am inside BoundarySpherical Move"<<endl;
-	//doesn;t come here, pass test: fail
-    //do nothing
     if(_move == BoundaryMove::None) return;
 
     else if(_move == BoundaryMove::All) {
