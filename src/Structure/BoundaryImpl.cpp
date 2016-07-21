@@ -229,10 +229,12 @@ void BoundarySpherical::move(double dist) {
 
         for(auto &bs : _boundarySurfaces) {
 
-            auto be =(SphereBoundaryElement*) bs->boundaryElements()[0].get();
+            auto be =(SphereBoundaryElement*) (bs->boundaryElements()[0].get());
 
-            be->updateRads({be->_radius + dist});
-            cout << be->_radius <<endl;
+            cout <<"Be radius" <<  be->_radius <<endl;
+            cout <<"Dist"<< dist <<endl;
+            be->updateRads(be->_radius + dist);
+
         }
     }
 }

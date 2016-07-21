@@ -13,6 +13,8 @@
 
 #include "ForceFieldManager.h"
 
+#include "BoundaryElement.h"
+
 double ForceFieldManager::computeEnergy(double d, bool verbose) {
     
     double energy = 0;
@@ -58,6 +60,10 @@ void ForceFieldManager::computeForces() {
     //copy to auxs
     for(auto b: Bead::getBeads())
         b->forceAux = b->forceAuxP = b->force;
+
+    for(auto be: BoundaryElement::getBoundaryElements())
+    	be->boundary_forceAux = be->boundary_forceAuxP = be->boundary_force;
+
 }
 
 void ForceFieldManager::computeForcesAux() {
@@ -68,6 +74,7 @@ void ForceFieldManager::computeForcesAux() {
     //recompute
     for(auto &f : _forceFields)
         f->computeForcesAux();
+
 }
 
 void ForceFieldManager::computeForcesAuxP() {
@@ -75,6 +82,11 @@ void ForceFieldManager::computeForcesAuxP() {
     //copy to auxp
     for(auto b: Bead::getBeads())
         b->forceAuxP = b->forceAux;
+
+    //added by jl135, for storing previous boundary_forceAux
+    for(auto be: BoundaryElement::getBoundaryElements())
+    	be->boundary_forceAuxP = be->boundary_forceAux;
+
 }
 
 void ForceFieldManager::computeLoadForces() {
@@ -97,10 +109,21 @@ void ForceFieldManager::resetForces() {
         std::memset((void*)(&b->loadForcesP[0]), 0, sizeof(b->loadForcesP));  //Set load force to zero;
         std::memset((void*)(&b->loadForcesM[0]), 0, sizeof(b->loadForcesM));  //Set load force to zero;
     }
+
+    //set boundary force to zero, added by jl135
+    for(auto be: BoundaryElement::getBoundaryElements())
+    	be->boundary_force = 0;
 }
 
 void ForceFieldManager::resetForcesAux() {
     
     for(auto b: Bead::getBeads())
         b->forceAux.assign (3, 0); //Set forceAux to zero;
+
+    //added by jl135, reset force field for boundary
+    for(auto be: BoundaryElement::getBoundaryElements())
+    	be->boundary_forceAux = 0;
 }
+
+
+

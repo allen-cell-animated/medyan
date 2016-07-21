@@ -9,32 +9,32 @@
 #include "BoundaryTensionHarmonic.h"
 
 
-double BoundaryTensionHarmonic::energy(double kTension, double radius){
+double BoundaryTensionHarmonic::energy(double kTension, double d_radius){
 
-	return 0.5 * kTension * radius * radius;
+	return 0.5 * kTension * d_radius * d_radius;
 }
 
-double BoundaryTensionHarmonic::energy(double kTension, double radius, double d){
+double BoundaryTensionHarmonic::energy(double kTension, double d_radius, double d){
 
-	return 0.5 * kTension * (radius + d) * (radius + d);
-
-}
-
-void BoundaryTensionHarmonic::forces(SphereBoundaryElement* b2, double kTension, double radius){
-
-	double f0 = kTension * radius;
-
-	//initial boundary tension
-	b2->boundary_tension +=  f0;
+	return 0.5 * kTension * (d_radius + d) * (d_radius + d);
 
 }
 
-void BoundaryTensionHarmonic::forcesAux(SphereBoundaryElement* b2,double kTension, double radius){
+void BoundaryTensionHarmonic::forces(SphereBoundaryElement* b2, double kTension, double d_radius){
 
-	double f0 = kTension * radius;
+	double f0 = - kTension * d_radius;
 
-	//changing boundary tension
-	b2->boundary_tensionaux +=  f0;
+	//initial total force on the boundary (boundary tension and exerted force by actins)
+	b2->boundary_force +=  f0;
+
+}
+
+void BoundaryTensionHarmonic::forcesAux(SphereBoundaryElement* b2,double kTension, double d_radius){
+
+	double f0 = - kTension * d_radius;
+
+	//changing total force on the boundary
+	b2->boundary_forceAux +=  f0;
 }
 
 

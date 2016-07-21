@@ -299,7 +299,7 @@ void Forces::print(int snapshot) {
     for (auto &be: BoundaryElement::getBoundaryElements()) {
 
     	//print first line
-    	_outputFile << "TOTAL EXERTED FORCE BY ACTIN = " <<be->forceonboundaryAux<<endl;
+    	_outputFile << "TOTAL EXERTED FORCE BY ACTIN = " <<be->actin_force<<endl;
 
     }
 }

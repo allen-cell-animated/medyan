@@ -37,8 +37,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     double curGrad = CGMethod::allFDotF();
     
 	int numIter = 0;
-    while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  maxF() > GRADTOL) {
+    double BOUNDTOL = 10; //added by jl135, need more research/running simulation multiple times to know what is a good boundary tension tolerance
+
+	while (/* Iteration criterion */  numIter < N &&
+           /* Gradient tolerance  */  maxF() > GRADTOL &&
+		   /*Boundary tolerance */	  maxFb() > BOUNDTOL) {
 
 		numIter++;
 		double lambda, beta, newGrad, prevGrad;

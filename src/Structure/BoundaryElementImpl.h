@@ -42,7 +42,6 @@ public:
                          double screenLength)
     
         : BoundaryElement(coords, repulsConst, screenLength) {
-    	cout << "I am 0"<<endl;
         
         ///set parameters
         _a = normal[0]; _b = normal[1]; _c = normal[2];
@@ -85,10 +84,14 @@ public:
 class SphereBoundaryElement : public BoundaryElement {
     
 friend class BoundarySpherical;
+friend class CGMethod;
     
 private:
     double _radius; ///< Radius of sphere
-    
+    double init_radius; ///Initial radius of sphere, added by jl135
+    double _radiusP; ///Previous radius of sphere during CG
+    double _radiusB; ///Previous radius of sphere before CG
+
 public:
     /// Constructor, sets parameters of equation
     SphereBoundaryElement(vector<double> coords,
@@ -97,11 +100,17 @@ public:
                           double screenLength)
     
         : BoundaryElement(coords, repulsConst, screenLength),
-          _radius(radius) {cout << "Sphere mode is activated"<<endl;}
+          _radius(radius) {
+
+    	init_radius = radius; //define init_radius, added by jl135
+    	cout << _radius <<endl;
+    	cout << "Sphere mode is activated"<<endl;
+
+    }
     
 
     ///update the radius of the spherical boundary element, added by jl135
-    virtual void updateRads(const double newRads) {
+    virtual void updateRads(double newRads) {
     	_radius= newRads;
     }
 
@@ -131,8 +140,13 @@ public:
         _coords = newCoords;
     }
 
-    //Get _radius (radius of the sphere) %added by jl135
-    virtual double getSphereRadius() {return _radius;}
+/*    //Get _radius (radius of the sphere) %added by jl135
+    virtual double getSphereRadius() {return _radius;}*/
+
+    //Get d_radius (difference in initial radius and current radius), added by jl135
+    virtual double getDeltaSphereRadius() {return init_radius-_radius;}
+
+
 };
 
 /// A cylinder implementation of a BoundaryElement.

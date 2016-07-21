@@ -29,16 +29,16 @@ double BoundaryTension<BTensionType>::computeEnergy(double d) {
     	U_i = 0;
     	if (d == 0.0){
 
-        		double radius = sb->getSphereRadius();
+        		double d_radius = sb->getDeltaSphereRadius();
         		double kTension = be->kTension;
-                U_i += _FFType.energy(kTension, radius);
+                U_i += _FFType.energy(kTension, d_radius);
 
         }
         else {
 
-        		double radius = sb->getSphereRadius();
+        		double d_radius = sb->getDeltaSphereRadius();
         		double kTension =be->kTension;
-                U_i += _FFType.energy(kTension, radius, d);
+                U_i += _FFType.energy(kTension, d_radius, d);
             }
         }
 
@@ -60,11 +60,11 @@ void BoundaryTension<BTensionType>::computeForces() {
 
     for (auto be: BoundaryElement::getBoundaryElements()) {
     		SphereBoundaryElement* sb = (SphereBoundaryElement*)be;
-            double radius = sb->getSphereRadius();
+            double d_radius = sb->getDeltaSphereRadius();
     		double kTension = be->kTension;
 
 
-            _FFType.forces(sb, kTension, radius);
+            _FFType.forces(sb, kTension, d_radius);
 
     }
 }
@@ -76,12 +76,12 @@ void BoundaryTension<BTensionType>::computeForcesAux() {
 	for (auto be: BoundaryElement::getBoundaryElements()) {
 		SphereBoundaryElement* sb = (SphereBoundaryElement*)be;
 
-		double radius = sb->getSphereRadius();
+		double d_radius = sb->getDeltaSphereRadius();
 		double kTension = be->kTension;
 
 
 
-            _FFType.forcesAux(sb, kTension, radius);
+            _FFType.forcesAux(sb, kTension, d_radius);
         }
 }
 

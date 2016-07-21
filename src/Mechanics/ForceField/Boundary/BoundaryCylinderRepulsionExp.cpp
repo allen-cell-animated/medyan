@@ -31,8 +31,12 @@ void BoundaryCylinderRepulsionExp::forces(Bead* b, double r, vector<double>& nor
     b->force[1] += f0 *norm[1];
     b->force[2] += f0 *norm[2];
     
-    be->forceonboundary += f0 ;
-    cout<<"Total force exerted by all actin filaments " << be->forceonboundary<<endl;
+    ///added by jl135, to calculate forces on boundary
+    be->boundary_force += f0 ;
+    be->actin_force += f0;
+
+    //Print total force by actins
+    cout<<"Total force exerted by actins are: "<< be->actin_force<<endl;
 
 }
 
@@ -49,8 +53,7 @@ void BoundaryCylinderRepulsionExp::forcesAux(Bead* b, double r, vector<double>& 
     
 
     //save the total forces on boundary #added by jl135
-    be->forceonboundaryAux += f0 ;
-    cout<<"Total force exerted by all actin filaments " << be->forceonboundaryAux<<endl;
+    be->boundary_forceAux += f0 ;
 
 
 }

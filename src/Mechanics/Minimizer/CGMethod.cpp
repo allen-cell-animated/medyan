@@ -16,12 +16,23 @@
 #include "ForceFieldManager.h"
 #include "Bead.h"
 
+#include "BoundaryElement.h"
+
+#include "BoundaryElementImpl.h" //added by jl135 to accomodate CG for spherical
+
+
 
 double CGMethod::allFDotF()
 {
     double g = 0;
     for(auto b: Bead::getBeads())
         g += b->FDotF();
+
+    //added by jl135, no need to dot product because there is no normal vector involved
+    for(auto be: BoundaryElement::getBoundaryElements()){
+    	g+= be->boundary_force * be->boundary_force;
+    }
+
     return g;
 }
 
@@ -31,6 +42,11 @@ double CGMethod::allFADotFA()
 	for(auto b: Bead::getBeads())
         g += b->FADotFA();
     
+	//added by jl135, no need to dot product because there is no normal vector involved
+	for(auto be: BoundaryElement::getBoundaryElements()){
+		g+= be->boundary_forceAux * be->boundary_forceAux;
+	}
+
     return g;
 }
 
@@ -40,6 +56,14 @@ double CGMethod::allFADotFAP()
     for(auto b: Bead::getBeads())
         g += b->FADotFAP();
     
+    //added by jl135, no need to dot product because there is no normal vector involved
+
+    for(auto be: BoundaryElement::getBoundaryElements()){
+    	g+= be->boundary_forceAux * be->boundary_forceAuxP;
+
+    }
+
+
     return g;
 }
 
@@ -49,6 +73,11 @@ double CGMethod::allFDotFA()
 	for(auto b: Bead::getBeads())
         g += b->FDotFA();
     
+	//added by jl135, no need to dot product because there is no normal vector involved
+	for(auto be: BoundaryElement::getBoundaryElements()){
+		g+= be->boundary_force * be->boundary_forceAux;
+	}
+
     return g;
 }
 
@@ -56,11 +85,27 @@ double CGMethod::maxF() {
     
     double maxF = 0;
     
+
     //calc max force
     for(auto b: Bead::getBeads())
         maxF = max(maxF, sqrt(b->FADotFA()));
 
     return maxF;
+}
+
+//added by jl135, maxFb is to calculate the maximum boundary tension
+double CGMethod::maxFb() {
+
+    double maxFb = 0;
+
+	//calc max boundary tension
+	for(auto be: BoundaryElement::getBoundaryElements())
+
+		maxFb = max(maxFb, abs(be->boundary_force));
+		//abs is needed since boundary_tension will be negative after passing down the equilibrium radius (shrinking)
+
+
+	    return maxFb;
 }
 
 Bead* CGMethod::maxBead() {
@@ -82,11 +127,20 @@ Bead* CGMethod::maxBead() {
     return retbead;
 }
 
+
+
 void CGMethod::startMinimization() {
 
     for(auto b: Bead::getBeads())
         b->coordinateB = b->coordinateP = b->coordinate;
+
+    //added by jl135, to minimize the total force on boundary
+    for(auto be: BoundaryElement::getBoundaryElements()) {
+    	SphereBoundaryElement* bs = (SphereBoundaryElement*)be;
+    	bs->_radiusB = bs->_radiusP = bs->_radius;
+    }
 }
+
 
 
 void CGMethod::moveBeads(double d)
@@ -97,20 +151,40 @@ void CGMethod::moveBeads(double d)
         b->coordinate[1] = b->coordinate[1] + d * b->force[1];
         b->coordinate[2] = b->coordinate[2] + d * b->force[2];
 	}
+
+	//added by jl135, to minimize the total force on boundary
+    for(auto be: BoundaryElement::getBoundaryElements()){
+
+    	SphereBoundaryElement* bs = (SphereBoundaryElement*)be;
+    	bs->_radius = bs->_radius + d* be->boundary_force; ///
+    }
 }
 
 void CGMethod::resetBeads() {
     
     for(auto b: Bead::getBeads())
         b->coordinate = b->coordinateP;
-}
 
+    //added by jl135, to minimize the total force on boundary
+    for(auto be: BoundaryElement::getBoundaryElements()){
+
+    	SphereBoundaryElement* bs = (SphereBoundaryElement*)be;
+    	bs->_radius = bs->_radiusP;
+    }
+}
 void CGMethod::setBeads() {
     
     for(auto b: Bead::getBeads())
         b->coordinateP = b->coordinate;
-}
 
+    //added by jl135, to minimize the total force on boundary
+    for(auto be: BoundaryElement::getBoundaryElements()){
+
+        SphereBoundaryElement* bs = (SphereBoundaryElement*)be;
+        bs->_radiusP = bs->_radius;
+
+    }
+}
 
 void CGMethod::shiftGradient(double d)
 {
@@ -120,6 +194,11 @@ void CGMethod::shiftGradient(double d)
         b->force[1] = b->forceAux[1] + d * b->force[1];
         b->force[2] = b->forceAux[2] + d * b->force[2];
 	}
+
+    //added by jl135, to minimize the total force on boundary
+    for(auto be: BoundaryElement::getBoundaryElements())
+    	be->boundary_force = be->boundary_forceAux + d * be->boundary_force;
+
 }
 
 void CGMethod::printForces()
@@ -132,6 +211,11 @@ void CGMethod::printForces()
                     b->force[i] <<"  "<<b->forceAux[i]<<endl;
 	}
     cout << "End of Print Forces" << endl;
+
+    cout << "Print Boundary Forces" << endl;
+    for(auto be: BoundaryElement::getBoundaryElements())
+    	cout << ((SphereBoundaryElement*) be)->_radius << "   "<< be->boundary_force << "   "<<be->boundary_forceAux <<endl;
+    cout << "End of Print Boundary Forces" <<endl;
 }
 
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
@@ -143,7 +227,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
     if(f == 0.0) return 0.0;
     
     //calculate first lambda
-    double lambda = min(LAMBDAMAX, MAXDIST / f);
+    double lambda = min(LAMBDAMAX, MAXDIST / f); //CG method at least the line search, depends on bead not boundary tension,
     double currentEnergy = FFM.computeEnergy(0.0);
     
     //backtracking loop
@@ -194,4 +278,6 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
         if(lambda <= 0.0 || lambda <= LAMBDATOL)
             return MAXDIST / maxF();
     }
+
+
 }

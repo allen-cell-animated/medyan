@@ -121,22 +121,20 @@ public:
     //GetType implementation just returns zero (no boundary element types yet)
     virtual int getType() {return 0;}
 
-    /// Magnitude of initial boundary force #added by jl135
-    double boundary_tension;
-
     //Define kTension (for now, later can be added in the system input by editing Parser) #added by jl135
-    double kTension = 90;
+    double kTension = 10;
 
-    /// Magnitude of iterative boundary force #added by jl135
-    double boundary_tensionaux;
+    /// Magnitude of total force on boundary (boundary tension and exerted force by actins)
+    double boundary_force;
 
-    ///Magnitude of iterative force caused by actin #added by jl135
-    double forceonboundary;
+    /// Magnitude of iterative total force on boundary, mainly for CG minimization (n)
+    double boundary_forceAux;
 
-    ///Magnitude of iterative force caused by actin #added by jl135
-    double forceonboundaryAux;
+    /// Magnitude of previous iterative total force on boundary, mainly for CG minimization (n-1)
+    double boundary_forceAuxP;
 
-
+    /// Magnitude of total exerted force by actins
+    double actin_force;
 
 };
 

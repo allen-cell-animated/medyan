@@ -62,6 +62,9 @@ protected:
     /// Get the max force in the system
     double maxF();
     
+    /// Get the max boundary tension in the system #added by jl135
+    double maxFb();
+
     /// Get bead with the max force in the system
     Bead* maxBead();
     
