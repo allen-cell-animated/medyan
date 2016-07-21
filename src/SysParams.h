@@ -77,6 +77,13 @@ struct MechParams {
     ///If using more than one bubble
     short numBubbleTypes = 1;
     //@}
+    
+    
+    ///To pin filaments on boundary via an attractive potential
+    bool pinBoundaryFilaments = false;
+    double pinDistance = 50; ///< 50nm pinning distance for now
+    double pinK = 0.0;       ///< Tethered stiffness
+    
 };
 
 /// Struct to hold chemistry parameters for the system

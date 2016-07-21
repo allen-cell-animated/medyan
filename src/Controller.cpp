@@ -392,6 +392,11 @@ void Controller::executeSpecialProtocols() {
         for(auto l: Linker::getLinkers())
             l->getCLinker()->getOffReaction()->passivateReaction();
     }
+    
+    
+    if(SysParams::Mechanics().pinBoundaryFilaments && areEqual(tau(), 0.0)) {
+        pinBoundaryFilaments();
+    }
 }
 
 void Controller::updatePositions() {
@@ -419,6 +424,20 @@ void Controller::updateNeighborLists() {
     _subSystem->updateBindingManagers();
 #endif
 }
+
+void Controller::pinBoundaryFilaments() {
+
+    //loop through beads, check if within pindistance
+    for(auto b : Bead::getBeads()) {
+        
+        if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+            
+            b->_pinnedPosition = b->coordinate;
+            b->addAsPinned();
+        }
+    }
+}
+
 
 void Controller::run() {
     

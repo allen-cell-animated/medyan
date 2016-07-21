@@ -926,6 +926,25 @@ void SystemParser::readMechParams() {
             }
         }
         
+        if (line.find("SPECIALPROTOCOL") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if(lineVector.size() > 3) {
+                cout <<
+                "There was an error parsing input file at Chemistry parameters. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 3) {
+                
+                if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
+                    
+                    MParams.pinBoundaryFilaments = true;
+                    MParams.pinK = atof(lineVector[2].c_str());
+                }
+            }
+        }
         else {}
     }
     //Set system parameters

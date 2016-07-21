@@ -98,6 +98,9 @@ private:
     /// making Linker and Filament species static
     void executeSpecialProtocols();
     
+    ///Helper function to pin filaments near the boundary
+    void pinBoundaryFilaments();
+    
 public:
     Controller(SubSystem* s);
     ~Controller() {};

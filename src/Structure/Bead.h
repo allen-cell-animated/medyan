@@ -71,6 +71,12 @@ public:
     short lfip = 0; 
     short lfim = 0;  ///< Index which saves which load force to use
     
+    /// The bead can be pinned to a certain position in the simulation volume.
+    /// These parameters describe the pinning. Adding the Bead to the list of pinned
+    /// Beads is done by the corresponding special protocol. (see executeSpecialProtocols() in Controller)
+    
+    vector<double> _pinnedPosition;
+    
     ///Main constructor
     Bead (vector<double> v, Composite* parent, int position);
     
@@ -97,6 +103,18 @@ public:
     static const vector<Bead*>& getBeads() {
         return _beads.getElements();
     }
+    
+    /// Add this bead as a pinned bead
+    void addAsPinned() {
+        _pinnedBeads.addElement(this);
+    }
+    
+    /// Get all pinned beads from subsystem
+    static const vector<Bead*>& getPinnedBeads() {
+        
+        return _pinnedBeads.getElements();
+    }
+    
     /// Get the number of beads in this system
     static int numBeads() {
         return _beads.countElements();
@@ -172,6 +190,7 @@ private:
     float _birthTime;  ///< Time of birth
     
     static Database<Bead*> _beads; ///< Collection of beads in SubSystem
+    static Database<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem (attached to some element in SubSystem)
 };
 
 

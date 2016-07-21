@@ -23,6 +23,7 @@
 using namespace mathfunc;
 
 Database<Bead*> Bead::_beads;
+Database<Bead*> Bead::_pinnedBeads;
 
 Bead::Bead (vector<double> v, Composite* parent, int position)
 
