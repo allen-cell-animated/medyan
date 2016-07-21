@@ -13,6 +13,10 @@
 		BF9A59381B0B72C300ADF902 /* Trackable.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9A59361B0B72C300ADF902 /* Trackable.h */; };
 		BF9A593A1B0B90C200ADF902 /* BoundaryElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF9A59391B0B90C200ADF902 /* BoundaryElement.cpp */; };
 		BF9A593E1B0BA75B00ADF902 /* DynamicNeighbor.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9A593C1B0BA75A00ADF902 /* DynamicNeighbor.h */; };
+		F713BEA51D416996005386E0 /* BoundaryCylinderAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F713BEA31D416996005386E0 /* BoundaryCylinderAttachment.cpp */; };
+		F713BEA61D416996005386E0 /* BoundaryCylinderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = F713BEA41D416996005386E0 /* BoundaryCylinderAttachment.h */; };
+		F713BEA91D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F713BEA71D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp */; };
+		F713BEAA1D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F713BEA81D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.h */; };
 		F7199B2A1A30B8F700CD5DCC /* BranchingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */; };
 		F7199B2B1A30B8F700CD5DCC /* BranchingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = F7199B291A30B8F700CD5DCC /* BranchingPoint.h */; };
 		F7199B361A30C84600CD5DCC /* MBranchingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7199B341A30C84600CD5DCC /* MBranchingPoint.cpp */; };
@@ -267,6 +271,10 @@
 		BF9A59361B0B72C300ADF902 /* Trackable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trackable.h; sourceTree = "<group>"; };
 		BF9A59391B0B90C200ADF902 /* BoundaryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = BoundaryElement.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		BF9A593C1B0BA75A00ADF902 /* DynamicNeighbor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicNeighbor.h; sourceTree = "<group>"; };
+		F713BEA31D416996005386E0 /* BoundaryCylinderAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryCylinderAttachment.cpp; path = Boundary/BoundaryCylinderAttachment.cpp; sourceTree = "<group>"; };
+		F713BEA41D416996005386E0 /* BoundaryCylinderAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryCylinderAttachment.h; path = Boundary/BoundaryCylinderAttachment.h; sourceTree = "<group>"; };
+		F713BEA71D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryCylinderAttachmentHarmonic.cpp; path = Boundary/BoundaryCylinderAttachmentHarmonic.cpp; sourceTree = "<group>"; };
+		F713BEA81D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryCylinderAttachmentHarmonic.h; path = Boundary/BoundaryCylinderAttachmentHarmonic.h; sourceTree = "<group>"; };
 		F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BranchingPoint.cpp; sourceTree = "<group>"; };
 		F7199B291A30B8F700CD5DCC /* BranchingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BranchingPoint.h; sourceTree = "<group>"; };
 		F7199B341A30C84600CD5DCC /* MBranchingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MBranchingPoint.cpp; sourceTree = "<group>"; };
@@ -696,6 +704,10 @@
 				F764F0891BD6D57300E2BBB8 /* BoundaryBubbleRepulsion.h */,
 				F764F08C1BD7D31900E2BBB8 /* BoundaryBubbleRepulsionExp.cpp */,
 				F764F08D1BD7D31900E2BBB8 /* BoundaryBubbleRepulsionExp.h */,
+				F713BEA31D416996005386E0 /* BoundaryCylinderAttachment.cpp */,
+				F713BEA41D416996005386E0 /* BoundaryCylinderAttachment.h */,
+				F713BEA71D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp */,
+				F713BEA81D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.h */,
 			);
 			name = Boundary;
 			sourceTree = "<group>";
@@ -913,6 +925,7 @@
 				F7C9CFF41A2D165D0087434A /* BoundaryImpl.h in Headers */,
 				F735B7B51A2D173F00AE21D1 /* CGFletcherRievesMethod.h in Headers */,
 				F764F09C1BD7E35100E2BBB8 /* BubbleInteractions.h in Headers */,
+				F713BEAA1D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.h in Headers */,
 				F764F0AC1BD7EC2B00E2BBB8 /* BubbleCylinderRepulsion.h in Headers */,
 				F7C9D0181A2D165D0087434A /* MotorGhost.h in Headers */,
 				F7C9D01B1A2D165D0087434A /* Movable.h in Headers */,
@@ -954,6 +967,7 @@
 				F7525A081A7023A4007A4E9F /* BoundaryCylinderRepulsionExp.h in Headers */,
 				F71F29C11BE2721600F08420 /* MTOCAttachmentHarmonic.h in Headers */,
 				F7525A041A7023A4007A4E9F /* BoundaryInteractions.h in Headers */,
+				F713BEA61D416996005386E0 /* BoundaryCylinderAttachment.h in Headers */,
 				F7525A7A1A702431007A4E9F /* FilamentInteractions.h in Headers */,
 				F735B7B71A2D173F00AE21D1 /* CGMethod.h in Headers */,
 				F7C9CFF81A2D165D0087434A /* CBound.h in Headers */,
@@ -1135,6 +1149,7 @@
 				F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */,
 				F735B79A1A2D172800AE21D1 /* ChemGillespieImpl.cpp in Sources */,
 				F764F0B31BD81E6C00E2BBB8 /* BubbleCylinderRepulsionExp.cpp in Sources */,
+				F713BEA51D416996005386E0 /* BoundaryCylinderAttachment.cpp in Sources */,
 				F7525A631A70241E007A4E9F /* BranchingStretchingHarmonic.cpp in Sources */,
 				F735B8081A2D175800AE21D1 /* ForceFieldManager.cpp in Sources */,
 				F7C9CFF91A2D165D0087434A /* CCylinder.cpp in Sources */,
@@ -1158,6 +1173,7 @@
 				F7C9CFF11A2D165D0087434A /* BoundaryElementImpl.cpp in Sources */,
 				F7C9CFFF1A2D165D0087434A /* CMotorGhost.cpp in Sources */,
 				F735B7771A2D16F200AE21D1 /* GController.cpp in Sources */,
+				F713BEA91D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp in Sources */,
 				F735B7751A2D16F200AE21D1 /* Controller.cpp in Sources */,
 				F764F0BD1BD960B000E2BBB8 /* MTOC.cpp in Sources */,
 				F735B7711A2D16F200AE21D1 /* Component.cpp in Sources */,
