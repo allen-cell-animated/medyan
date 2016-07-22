@@ -175,7 +175,7 @@ void SystemParser::readChemParams() {
             
             vector<string> lineVector = split<string>(line);
             
-            if(lineVector.size() > 3) {
+            if(lineVector.size() > 4) {
                 cout <<
                 "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
@@ -930,7 +930,7 @@ void SystemParser::readMechParams() {
             
             vector<string> lineVector = split<string>(line);
             
-            if(lineVector.size() > 3) {
+            if(lineVector.size() > 4) {
                 cout <<
                 "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;

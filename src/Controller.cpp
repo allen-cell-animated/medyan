@@ -436,10 +436,12 @@ void Controller::pinBoundaryFilaments() {
     for(auto b : Bead::getBeads()) {
         
         //pin only beads who are at the front of a plus end cylinder or back of a minus end cylinder
-        Cylinder* c = (Cylinder*) b->getParent();
+        Filament* f = (Filament*) b->getParent();
+        Cylinder* plusEndC = f->getPlusEndCylinder();
+        Cylinder* minusEndC = f->getMinusEndCylinder();
         
-        if(c->isPlusEnd() && c->getSecondBead() == b ||
-           c->isMinusEnd() && c->getFirstBead() == b) {
+        if((plusEndC->getSecondBead() == b) ||
+           (minusEndC->getFirstBead() == b)) {
             
             //if within dist to boundary, add
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {

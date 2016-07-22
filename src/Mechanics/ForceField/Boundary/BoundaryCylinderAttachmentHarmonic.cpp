@@ -35,12 +35,12 @@ double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr, double 
 
 void BoundaryCylinderAttachmentHarmonic::forces(Bead* b, double kAttr) {
     
+    
+    double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
+    if(areEqual(dist, 0.0)) return;
+    
     auto dir = normalizedVector(twoPointDirection(b->coordinate, b->pinnedPosition));
-    
-    double f0 = kAttr * twoPointDistance(b->coordinate, b->pinnedPosition);
-    
-    cout << "Boundary attachment force = " << f0 << endl;
-    
+    double f0 = kAttr * dist;
     
     b->force[0] += f0 * dir[0];
     b->force[1] += f0 * dir[1];
@@ -49,9 +49,11 @@ void BoundaryCylinderAttachmentHarmonic::forces(Bead* b, double kAttr) {
 
 void BoundaryCylinderAttachmentHarmonic::forcesAux(Bead* b, double kAttr) {
     
-    auto dir = normalizedVector(twoPointDirection(b->coordinate, b->pinnedPosition));
+    double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
+    if(areEqual(dist, 0.0)) return;
     
-    double f0 = kAttr * twoPointDistance(b->coordinate, b->pinnedPosition);
+    auto dir = normalizedVector(twoPointDirection(b->coordinate, b->pinnedPosition));
+    double f0 = kAttr * dist;
     
     b->forceAux[0] += f0 * dir[0];
     b->forceAux[1] += f0 * dir[1];
