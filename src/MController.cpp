@@ -77,18 +77,27 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     //add to the subsystem's database of neighbor lists.
     auto volumeFF = new CylinderVolumeFF(forceFields.VolumeFFType);
     _FFManager._forceFields.push_back(volumeFF);
-    for(auto nl : volumeFF->getNeighborLists())
-        _subSystem->addNeighborList(nl);
+    for(auto nl : volumeFF->getNeighborLists()) {
+        
+        if(nl != nullptr)
+            _subSystem->addNeighborList(nl);
+    }
     
     auto boundaryFF = new BoundaryFF(forceFields.BoundaryFFType);
     _FFManager._forceFields.push_back(boundaryFF);
-    for(auto nl : boundaryFF->getNeighborLists())
-        _subSystem->addNeighborList(nl);
+    for(auto nl : boundaryFF->getNeighborLists()) {
+        
+        if(nl != nullptr)
+            _subSystem->addNeighborList(nl);
+    }
     
     auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,
                                  forceFields.MTOCFFType);
     _FFManager._forceFields.push_back(bubbleFF);
-    for(auto nl : bubbleFF->getNeighborLists())
-        _subSystem->addNeighborList(nl);  
+    for(auto nl : bubbleFF->getNeighborLists()) {
+        
+        if(nl != nullptr)
+            _subSystem->addNeighborList(nl);
+    }
 }
 

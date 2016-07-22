@@ -28,7 +28,7 @@ friend class BranchingFF;
     
 protected:
     /// The branching point in the case of an error
-    BranchingPoint* _branchingCulprit;
+    BranchingPoint* _branchingCulprit = nullptr;
     
 public:
     /// Compute the energy of this interaction

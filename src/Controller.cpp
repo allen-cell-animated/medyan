@@ -394,7 +394,9 @@ void Controller::executeSpecialProtocols() {
     }
     
     
-    if(SysParams::Mechanics().pinBoundaryFilaments && areEqual(tau(), 0.0)) {
+    if(SysParams::Mechanics().pinBoundaryFilaments &&
+       tau() >= SysParams::Mechanics().pinTime) {
+        
         pinBoundaryFilaments();
     }
 }
@@ -427,13 +429,24 @@ void Controller::updateNeighborLists() {
 
 void Controller::pinBoundaryFilaments() {
 
+    //if we've already added pinned filaments, return
+    if(Bead::getPinnedBeads().size() != 0) return;
+    
     //loop through beads, check if within pindistance
     for(auto b : Bead::getBeads()) {
         
-        if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+        //pin only beads who are at the front of a plus end cylinder or back of a minus end cylinder
+        Cylinder* c = (Cylinder*) b->getParent();
+        
+        if(c->isPlusEnd() && c->getSecondBead() == b ||
+           c->isMinusEnd() && c->getFirstBead() == b) {
             
-            b->_pinnedPosition = b->coordinate;
-            b->addAsPinned();
+            //if within dist to boundary, add
+            if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+                
+                b->pinnedPosition = b->coordinate;
+                b->addAsPinned();
+            }
         }
     }
 }

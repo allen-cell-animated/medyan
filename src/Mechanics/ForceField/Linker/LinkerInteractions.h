@@ -26,7 +26,7 @@ friend class LinkerFF;
     
 protected:
     /// The linker in the case of an error
-    Linker* _linkerCulprit;
+    Linker* _linkerCulprit = nullptr;
     
 public:
     /// Compute the energy of this interaction

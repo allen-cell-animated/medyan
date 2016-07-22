@@ -73,9 +73,8 @@ public:
     
     /// The bead can be pinned to a certain position in the simulation volume.
     /// These parameters describe the pinning. Adding the Bead to the list of pinned
-    /// Beads is done by the corresponding special protocol. (see executeSpecialProtocols() in Controller)
-    
-    vector<double> _pinnedPosition;
+    /// Beads is done by a corresponding special protocol. (see executeSpecialProtocols() in Controller)
+    vector<double> pinnedPosition;
     
     ///Main constructor
     Bead (vector<double> v, Composite* parent, int position);
@@ -190,7 +189,8 @@ private:
     float _birthTime;  ///< Time of birth
     
     static Database<Bead*> _beads; ///< Collection of beads in SubSystem
-    static Database<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem (attached to some element in SubSystem)
+    static Database<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
+                                         ///< (attached to some element in SubSystem)
 };
 
 

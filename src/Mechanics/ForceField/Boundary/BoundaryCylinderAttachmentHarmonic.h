@@ -30,7 +30,7 @@ public:
     double energy(Bead*, double, double);
     
     void forces(Bead*, double);
-    void forcesAux(Bead*);
+    void forcesAux(Bead*, double);
 };
 
 #endif

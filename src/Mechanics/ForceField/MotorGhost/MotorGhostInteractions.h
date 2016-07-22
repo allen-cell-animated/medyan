@@ -27,7 +27,7 @@ friend class MotorGhostFF;
     
 protected:
     /// The motor ghost in the case of an error
-    MotorGhost* _motorCulprit;
+    MotorGhost* _motorCulprit = nullptr;
     
 public:
     /// Compute the energy of this interaction

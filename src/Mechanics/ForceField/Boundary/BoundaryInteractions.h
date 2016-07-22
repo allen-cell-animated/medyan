@@ -30,8 +30,8 @@ friend class BoundaryFF;
 protected:
     //@{
     /// In the case of an error
-    BoundaryElement* _boundaryElementCulprit;
-    Component* _otherCulprit;
+    BoundaryElement* _boundaryElementCulprit = nullptr;
+    Component* _otherCulprit = nullptr;
     //@}
     
 public:

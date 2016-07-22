@@ -936,12 +936,14 @@ void SystemParser::readMechParams() {
                 << endl;
                 exit(EXIT_FAILURE);
             }
-            else if (lineVector.size() == 3) {
+            else if (lineVector.size() == 4) {
                 
                 if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
                     
                     MParams.pinBoundaryFilaments = true;
                     MParams.pinK = atof(lineVector[2].c_str());
+                    MParams.pinTime = atof(lineVector[3].c_str());
+                    
                 }
             }
         }

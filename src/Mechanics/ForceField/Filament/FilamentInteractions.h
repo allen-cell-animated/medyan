@@ -28,7 +28,7 @@ friend class FilamentFF;
     
 protected:
     /// The filament in the case of an error
-    Filament* _filamentCulprit;
+    Filament* _filamentCulprit = nullptr;
 
 public:
     /// Compute the energy of this interaction

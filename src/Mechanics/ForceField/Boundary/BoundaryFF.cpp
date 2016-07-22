@@ -19,6 +19,9 @@
 #include "BoundaryBubbleRepulsion.h"
 #include "BoundaryBubbleRepulsionExp.h"
 
+#include "BoundaryCylinderAttachment.h"
+#include "BoundaryCylinderAttachmentHarmonic.h"
+
 #include "BoundaryElement.h"
 #include "Bead.h"
 #include "Composite.h"
@@ -36,6 +39,11 @@ BoundaryFF::BoundaryFF (string type) {
         cout << "Boundary FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
+    //if pinning to boundaries
+    if(SysParams::Mechanics().pinBoundaryFilaments) {
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
+    }
 }
 
 void BoundaryFF::whoIsCulprit() {
@@ -45,10 +53,13 @@ void BoundaryFF::whoIsCulprit() {
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
     cout << "Printing the culprit boundary element..." << endl;
-    _culpritInteraction->_boundaryElementCulprit->printSelf();
+    
+    if(_culpritInteraction->_boundaryElementCulprit != nullptr)
+        _culpritInteraction->_boundaryElementCulprit->printSelf();
     
     cout << "Printing the other culprit structure..." << endl;
-    _culpritInteraction->_otherCulprit->printSelf();
+    if(_culpritInteraction->_otherCulprit != nullptr)
+        _culpritInteraction->_otherCulprit->printSelf();
     
     cout << endl;
 }

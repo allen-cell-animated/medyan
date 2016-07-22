@@ -29,8 +29,8 @@ friend class BubbleFF;
 protected:
     //@{
     /// In the case of an error
-    Bubble* _bubbleCulprit;
-    Component* _otherCulprit;
+    Bubble* _bubbleCulprit = nullptr;
+    Component* _otherCulprit = nullptr;
     //@}
     
 public:

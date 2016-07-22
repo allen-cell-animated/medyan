@@ -27,10 +27,11 @@ class BoundaryElement;
 class Bead;
 
 /// Represents an attractive interaction between a cylinder and its pin point near a boundary.
-/// @note - This BoundaryInteractions implementation really does not involve Boundaries at all. The pinned position
-///         of the beads is preset by the special protocol in which Bead elements are chosen with the criteria of
-///         being a certain distance away from the Boundary. In reality, any Bead could be pinned at a certain position,
-///         but for now associating this potential with a Boundary makes more sense.
+/// @note - This BoundaryInteractions implementation really does not involve Boundaries at all.
+///         The pinned position of the beads is preset by the special protocol in which Bead
+///         elements are chosen with the criteria of being a certain distance away from the Boundary.
+///         In reality, any Bead could be pinned at a certain position, but for now associating
+///         this potential with a Boundary makes more sense.
 
 template <class BAttachmentInteractionType>
 class BoundaryCylinderAttachment : public BoundaryInteractions {
@@ -47,7 +48,10 @@ public:
     virtual void computeForces();
     virtual void computeForcesAux();
     
-    virtual void computeLoadForces();
+    virtual void computeLoadForces() {}
+    
+    /// Just return null - no neighbor list here
+    virtual NeighborList* getNeighborList() {return nullptr;}
     
     virtual const string getName() {return "Boundary-Cylinder Attachment";}
 };

@@ -28,8 +28,8 @@ friend class CylinderVolumeFF;
 protected:
     //@{
     /// The cylinder culprits in the case of an error
-    Cylinder* _cylinderCulprit1;
-    Cylinder* _cylinderCulprit2;
+    Cylinder* _cylinderCulprit1 = nullptr;
+    Cylinder* _cylinderCulprit2 = nullptr;
     //@}
     
 public:
