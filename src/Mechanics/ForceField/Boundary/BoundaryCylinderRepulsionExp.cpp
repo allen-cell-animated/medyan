@@ -35,8 +35,8 @@ void BoundaryCylinderRepulsionExp::forces(Bead* b, double r, vector<double>& nor
     be->boundary_force += f0 ;
     be->actin_force += f0;
 
-    //Print total force by actins
-    cout<<"Total force exerted by actins are: "<< be->actin_force<<endl;
+    //Print total force by actins, not printing right now for confirmation
+   /* cout<<"Total force exerted by actins are:  pN"<< be->actin_force<<endl;*/
 
 }
 

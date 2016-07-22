@@ -122,7 +122,7 @@ public:
     virtual int getType() {return 0;}
 
     //Define kTension (for now, later can be added in the system input by editing Parser) #added by jl135
-    double kTension = 10;
+    double kTension = 100000;
 
     /// Magnitude of total force on boundary (boundary tension and exerted force by actins)
     double boundary_force;

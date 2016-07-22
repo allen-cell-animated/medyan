@@ -54,7 +54,7 @@ public:
     
     virtual double distance(const vector<double>& coordinates);
     
-    ///@note - not yet implemented.
+    ///Implemented by jl135
     virtual void move(double dist);
 };
 

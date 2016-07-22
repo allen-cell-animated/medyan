@@ -85,7 +85,7 @@ class SphereBoundaryElement : public BoundaryElement {
     
 friend class BoundarySpherical;
 friend class CGMethod;
-    
+friend class PolakRibiere;
 private:
     double _radius; ///< Radius of sphere
     double init_radius; ///Initial radius of sphere, added by jl135

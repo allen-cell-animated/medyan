@@ -17,6 +17,9 @@
 #include "Composite.h"
 #include "Output.h"
 
+#include "BoundaryElement.h"
+#include "BoundaryElementImpl.h"
+
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
                             double MAXDIST, double LAMBDAMAX, bool steplimit){
     
@@ -33,6 +36,14 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 	FFM.computeForces();
     startMinimization();
 
+    //added by jl135, print out initial forces (boundary forces and bead forces)
+    for (auto be: BoundaryElement::getBoundaryElements()){
+    	SphereBoundaryElement* sb = (SphereBoundaryElement*)be;
+    	cout << "Initial Boundary Force = " << be->boundary_force << endl;
+    	cout << "Initial Forces Exerted by Actin = " << be->actin_force <<endl;
+    	cout << "Initial Radius = " <<sb->_radius<<endl;
+    }
+
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
     
@@ -40,8 +51,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     double BOUNDTOL = 10; //added by jl135, need more research/running simulation multiple times to know what is a good boundary tension tolerance
 
 	while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  maxF() > GRADTOL &&
-		   /*Boundary tolerance */	  maxFb() > BOUNDTOL) {
+           /* Gradient tolerance  */  (maxF() > GRADTOL ||  /*Boundary tolerance */	  maxFb() > BOUNDTOL)) {
 
 		numIter++;
 		double lambda, beta, newGrad, prevGrad;
@@ -55,6 +65,16 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //compute new forces
         FFM.computeForcesAux();
         
+
+        //print iterative forces (boundary force and beads forces), added by jl135
+        for (auto be: BoundaryElement::getBoundaryElements()){
+        	SphereBoundaryElement* sb = (SphereBoundaryElement*)be;
+        	cout << "Iterative Boundary Force = " << be->boundary_forceAux << endl;
+        	/*cout << "Iterative Forces Exerted by Actin = " << be->actin_force <<endl;*/
+        	cout << "Iterative Radius = " <<sb->_radius<<endl;
+        }
+
+
         //compute direction
         newGrad = CGMethod::allFADotFA();
         prevGrad = CGMethod::allFADotFAP();
@@ -96,4 +116,12 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     //final force calculation
     FFM.computeForces();
     FFM.computeLoadForces();
+
+    //print final iterative forces (boundary force and beads forces), added by jl135
+    for (auto be: BoundaryElement::getBoundaryElements()){
+    	SphereBoundaryElement* sb = (SphereBoundaryElement*)be;
+    	cout << "Final Iterative Boundary Force = " << be->boundary_force << endl;
+    	/*cout << "Iterative Forces Exerted by Actin = " << be->actin_force <<endl;*/
+    	cout << "Final Iterative Radius = " <<sb->_radius<<endl;
+    }
 }

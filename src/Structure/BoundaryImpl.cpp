@@ -231,8 +231,10 @@ void BoundarySpherical::move(double dist) {
 
             auto be =(SphereBoundaryElement*) (bs->boundaryElements()[0].get());
 
-            cout <<"Be radius" <<  be->_radius <<endl;
-            cout <<"Dist"<< dist <<endl;
+
+            //Uncomment this part to see current radius and distance for every second not snapshot
+/*            cout <<"Current radius = " <<  be->_radius <<" nm" <<endl;
+            cout <<"Distance = "<< dist << " nm" <<endl;*/
             be->updateRads(be->_radius + dist);
 
         }
