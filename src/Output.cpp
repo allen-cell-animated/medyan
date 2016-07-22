@@ -22,7 +22,8 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Bubble.h"
-#include "BoundaryElement.h" //added by jl135
+#include "BoundaryElement.h" //added by jl135 for force_actin
+#include "BoundaryElementImpl.h" //added by jl135 for _radius
 
 #include "CompartmentGrid.h"
 
@@ -297,10 +298,11 @@ void Forces::print(int snapshot) {
 
     //added by jl135
     for (auto &be: BoundaryElement::getBoundaryElements()) {
+    	SphereBoundaryElement* sb = (SphereBoundaryElement*) be;
 
-    	//print first line
+    	//print total exerted force by actin and current radius
     	_outputFile << "TOTAL EXERTED FORCE BY ACTIN = " <<be->actin_force<<endl;
-
+    	_outputFile << "Current Radius = " <<sb->_radius<<endl;
     }
 }
 
