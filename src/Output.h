@@ -109,12 +109,30 @@ class WallTensions : public Output {
 private:
     SubSystem* _subSystem; ///< To access boundaries
     
+    
 public:
-    WallTensions(string outputFileName, SubSystem* s) : Output(outputFileName), _subSystem(s) {}
+    WallTensions(string outputFileName, SubSystem* s) :
+                Output(outputFileName), _subSystem(s) {}
     ~WallTensions() {}
+    
     
     virtual void print(int snapshot);
 };
+
+    
+/// Print type of each species
+class Types : public Output {
+
+private:
+    SubSystem* _subSystem; ///< To access types
+    
+public:
+    Types(string outputFileName, SubSystem* s) : Output(outputFileName), _subSystem(s) {}
+    ~Types() {}
+        
+    virtual void print(int snapshot);
+};
+
 
 /// Print all chemical species in the system, including diffusing
 /// and bulk species, filament, motors, linkers and branchers.

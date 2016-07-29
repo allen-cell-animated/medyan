@@ -424,7 +424,7 @@ void WallTensions::print(int snapshot) {
             if(b->isPinned()) {
                 auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
                 auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
-            
+                
                 double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
                 
                 
@@ -488,6 +488,99 @@ void WallTensions::print(int snapshot) {
         
         //Nothing for bubbles
         _outputFile << 0.0 << endl;
+    }
+    
+    _outputFile <<endl;
+}
+
+
+void Types::print(int snapshot) {
+    
+    _outputFile.precision(10);
+    
+    // print first line (snapshot number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << snapshot << " " << tau() << " " <<
+    Filament::numFilaments() << " " <<
+    Linker::numLinkers() << " " <<
+    MotorGhost::numMotorGhosts() << " " <<
+    BranchingPoint::numBranchingPoints() << " " <<
+    Bubble::numBubbles() << endl;;
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        //print first line (Filament ID, type, length, left_delta, right_delta)
+        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+        
+        //print
+        for (auto cylinder : filament->getCylinderVector()){
+            
+            _outputFile<< cylinder->getType() << " ";
+            
+        }
+        //print last
+        Cylinder* cylinder = filament->getCylinderVector().back();
+        _outputFile<< cylinder->getType();
+        
+        _outputFile << endl;
+    }
+    
+    for(auto &linker : Linker::getLinkers()) {
+        
+        //print first line
+        _outputFile << "LINKER " << linker->getID()<< " " <<
+        linker->getType() << endl;
+        
+        _outputFile << linker->getType() << " " <<
+        linker->getType() << endl;
+    }
+    
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
+        
+        //print first line
+        //also contains a Bound(1) or unbound(0) qualifier
+        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+        
+        _outputFile << motor->getType() << " " <<
+        motor->getType() << endl;
+    }
+    
+    //collect diffusing motors
+    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
+        
+        int ID   = get<0>(md);
+        int type = get<1>(md);
+        
+        auto firstPoint = get<2>(md);
+        auto secondPoint = get<3>(md);
+        
+        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
+        
+        //print coordinates
+        //print birth times
+        _outputFile << type << " " << type << endl;
+    }
+    
+    for(auto &branch : BranchingPoint::getBranchingPoints()) {
+        
+        //print first line
+        _outputFile << "BRANCHER " << branch->getID() << " " <<
+        branch->getType() << endl;
+        
+        //Nothing for branchers
+        _outputFile << branch->getType() << endl;
+    }
+    for(auto &bubble : Bubble::getBubbles()) {
+        
+        //print first line
+        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+        bubble->getType() << endl;
+        
+        //Nothing for bubbles
+        _outputFile << bubble->getType() << endl;
     }
     
     _outputFile <<endl;
