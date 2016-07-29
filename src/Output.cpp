@@ -15,6 +15,7 @@
 
 #include "Output.h"
 
+#include "SubSystem.h"
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
@@ -23,8 +24,10 @@
 #include "BranchingPoint.h"
 #include "Bubble.h"
 
+#include "Boundary.h"
 #include "CompartmentGrid.h"
 
+#include "SysParams.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
@@ -389,6 +392,107 @@ void Tensions::print(int snapshot) {
     
     _outputFile <<endl;
 }
+
+
+void WallTensions::print(int snapshot) {
+    
+    _outputFile.precision(10);
+    
+    // print first line (snapshot number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << snapshot << " " << tau() << " " <<
+    Filament::numFilaments() << " " <<
+    Linker::numLinkers() << " " <<
+    MotorGhost::numMotorGhosts() << " " <<
+    BranchingPoint::numBranchingPoints() << " " <<
+    Bubble::numBubbles() << endl;;
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        //print first line (Filament ID, type, length, left_delta, right_delta)
+        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+        
+        //print
+        for (auto cylinder : filament->getCylinderVector()){
+            
+            double k = SysParams::Mechanics().pinK;
+            Bead* b = cylinder->getFirstBead();
+            
+            if(b->isPinned()) {
+                auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
+                auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+            
+                double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+                
+                
+                _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
+            }
+            else
+                _outputFile << 0.0 << " ";
+            
+        }
+        //print last
+        Cylinder* cylinder = filament->getCylinderVector().back();
+        double k = SysParams::Mechanics().pinK;
+        Bead* b = cylinder->getSecondBead();
+        
+        if(b->isPinned()) {
+            auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
+            auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+            
+            double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+            
+            _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
+        }
+        else
+            _outputFile << 0.0 << " ";
+        
+        _outputFile << endl;
+    }
+    
+    for(auto &linker : Linker::getLinkers()) {
+        
+        //print first line
+        _outputFile << "LINKER " << linker->getID()<< " " <<
+        linker->getType() << endl;
+        
+        _outputFile << 0.0 << " " << 0.0 << endl;
+    }
+    
+    for(auto &motor : MotorGhost::getMotorGhosts()) {
+        
+        //print first line
+        _outputFile << "MOTOR " << motor->getID() << " " <<
+        motor->getType() << endl;
+        
+        _outputFile << 0.0 << " " << 0.0 << endl;
+    }
+    
+    for(auto &branch : BranchingPoint::getBranchingPoints()) {
+        
+        //print first line
+        _outputFile << "BRANCHER " << branch->getID() << " " <<
+        branch->getType() << endl;
+        
+        //Nothing for branchers
+        _outputFile << 0.0 << endl;
+    }
+    for(auto &bubble : Bubble::getBubbles()) {
+        
+        //print first line
+        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+        bubble->getType() << endl;
+        
+        //Nothing for bubbles
+        _outputFile << 0.0 << endl;
+    }
+    
+    _outputFile <<endl;
+}
+
 
 void Chemistry::print(int snapshot) {
     

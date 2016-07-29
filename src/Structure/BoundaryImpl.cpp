@@ -110,6 +110,29 @@ double BoundaryCubic::distance(const vector<double>& coordinates) {
     return smallestDist;
 }
 
+vector<double> BoundaryCubic::normal(vector<double>& coordinates) {
+    
+    // loop through, get smallest non-negative distance
+    BoundaryElement* closestPlane = nullptr;
+    double smallestDist = numeric_limits<double>::infinity();
+    
+    for(auto &bs : _boundarySurfaces) {
+        
+        auto be = bs->boundaryElements()[0].get();
+        
+        double dist = be->distance(coordinates);
+        
+        if(dist < 0) continue;
+        if(dist < smallestDist) {
+            smallestDist = dist;
+            closestPlane = be;
+        }
+        
+    }
+    //return normal of plane
+    return closestPlane->normal(coordinates);
+}
+
 void BoundaryCubic::move(double dist) {
     
     //do nothing
@@ -217,6 +240,13 @@ double BoundarySpherical::distance(const vector<double>& coordinates) {
     
     if(dist > 0) return dist;
     else return numeric_limits<double>::infinity();
+}
+
+
+vector<double> BoundarySpherical::normal(vector<double>& coordinates) {
+    
+    auto be = _boundarySurfaces[0]->boundaryElements()[0].get();
+    return be->normal(coordinates);
 }
 
 

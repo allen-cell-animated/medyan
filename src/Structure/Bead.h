@@ -105,6 +105,7 @@ public:
     
     /// Add this bead as a pinned bead
     void addAsPinned() {
+        _isPinned = true;
         _pinnedBeads.addElement(this);
     }
     
@@ -113,6 +114,8 @@ public:
         
         return _pinnedBeads.getElements();
     }
+    
+    bool isPinned() {return _isPinned;}
     
     /// Get the number of beads in this system
     static int numBeads() {
@@ -187,6 +190,8 @@ private:
     
     int _position;     ///< Position on structure
     float _birthTime;  ///< Time of birth
+    
+    bool _isPinned = false;
     
     static Database<Bead*> _beads; ///< Collection of beads in SubSystem
     static Database<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem

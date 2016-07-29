@@ -22,6 +22,7 @@
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;
+class SubSystem;
 
 /// To print a specified output into a file
 /*!
@@ -94,6 +95,23 @@ class Tensions : public Output {
 public:
     Tensions(string outputFileName) : Output(outputFileName) {}
     ~Tensions() {}
+    
+    virtual void print(int snapshot);
+};
+
+/// Print wall tension for each pinned filament:
+///                 k * l * nhat
+/// where k is the stretching force constant of the pin, l is the current
+/// vector distance away from the pin position for the pinned bead.
+/// @note - nhat is a vector pointing from the direction of the boundary normal.
+class WallTensions : public Output {
+    
+private:
+    SubSystem* _subSystem; ///< To access boundaries
+    
+public:
+    WallTensions(string outputFileName, SubSystem* s) : Output(outputFileName), _subSystem(s) {}
+    ~WallTensions() {}
     
     virtual void print(int snapshot);
 };

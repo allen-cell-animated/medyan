@@ -76,6 +76,10 @@ public:
     ///Move a given part of a boundary a given distance
     ///@note a negative distance denotes movement towards the center of the grid.
     virtual void move(double dist) = 0;
+    
+    //Give a normal to the plane (pointing inward) at a given point
+    virtual vector<double> normal(vector<double>& coordinates) = 0;
+    
 };
 
 
