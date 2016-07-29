@@ -47,8 +47,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     : Trackable(true, true),
       _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _motorType(motorType), _motorID(_motorGhosts.getID()),
-      _birthTime(tau()) {
+      _motorType(motorType), _birthTime(tau()) {
           
     //find compartment
     updateCoordinate();
@@ -69,6 +68,8 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     //set number of heads by picking random int between maxheads and minheads
     _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
                                   SysParams::Chemistry().motorNumHeadsMax[_motorType]);
+          
+    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(0, _numHeads);
     
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
@@ -83,7 +84,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     auto x4 = _c2->getSecondBead()->coordinate;
           
     _mMotorGhost = unique_ptr<MMotorGhost>(
-    new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
+    new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
@@ -139,6 +140,15 @@ void MotorGhost::updatePosition() {
     auto m2 = midPointCoordinate(x3, x4, _position2);
     
     _mMotorGhost->setLength(twoPointDistance(m1, m2));
+    
+    //update the spring constant, based on numboundheads
+    //current force
+    double force = max(0.0, _mMotorGhost->stretchForce);
+    
+    //update number of bound heads
+    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(force, _numHeads);
+    _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
+
 #endif
     
 }
@@ -153,6 +163,9 @@ void MotorGhost::updateReactionRates() {
 
     //current force
     double force = max(0.0, _mMotorGhost->stretchForce);
+    
+    //update number of bound heads
+    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(force, _numHeads);
     
     //walking rate changer
     if(!_walkingChangers.empty()) {
@@ -241,7 +254,7 @@ void MotorGhost::updateReactionRates() {
         //change the rate
         float newRate =
         _unbindingChangers[_motorType]->
-        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numHeads, force);
+        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numBoundHeads, force);
         
         offRxn->setRate(newRate);
         offRxn->activateReaction();

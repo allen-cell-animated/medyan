@@ -43,7 +43,7 @@ public:
     /// Main constructor
     /// @param position - position on cylinder 1 and 2, respectively
     /// @param coord - coordinates of cylinder1's bead 1, bead 2, etc
-    MMotorGhost(int motorType, int numHeads, double position1, double position2,
+    MMotorGhost(int motorType, int numBoundHeads, double position1, double position2,
                 const vector<double>& coord11, const vector<double>& coord12,
                 const vector<double>& coord21, const vector<double>& coord22);
     
@@ -52,6 +52,9 @@ public:
     double getStretchingConstant(){return _kStretch;}
     double getEqLength(){return _eqLength;}
     //@}
+    
+    /// Reset the spring constant of the motor based on number of bound heads
+    void setStretchingConstant(int motorType, double numBoundHeads);
     
     /// Set parent
     void setMotorGhost(MotorGhost* motor) {_pMotorGhost = motor;}

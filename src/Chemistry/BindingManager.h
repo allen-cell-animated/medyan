@@ -65,7 +65,9 @@ protected:
     
     Compartment* _compartment; ///< Compartment this is in
     
-    short _boundInt; ///< Integer index in CMonomer of bound chemical value
+    short _boundInt; ///< Integer index in CMonomer of bound chemical value.
+                     ///< @note - THIS ALSO REPRESENTS THE SPECIES TYPE THAT IS MANAGED.
+    
     string _boundName; ///< String name of bound chemical value
     
     short _filamentType; ///< The filament type to operate on
@@ -304,6 +306,10 @@ class MotorBindingManager : public FilamentBindingManager {
 friend class ChemManager;
     
 private:
+    vector<int> _unboundIDs = {};
+    ///< A vector of unbound motor ID's that are contained in this compartment. This is used
+    ///< for tracking binding/unbinding and movement of specific motors.
+    
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
     
@@ -365,6 +371,22 @@ public:
     }
     
     virtual bool isConsistent();
+    
+    /// Adds an unbound ID to the container
+    void addUnboundID(int ID) {_unboundIDs.push_back(ID);}
+    
+    /// Get a random ID from the container, and remove the ID
+    int getUnboundID() {
+        
+        int ri = Rand::randInteger(0, _unboundIDs.size());
+        int ID = _unboundIDs[ri];
+        
+        //delete and return
+        _unboundIDs.erase(_unboundIDs.begin() + ri);
+        
+        return ID;
+    }
+
 };
 
 #endif

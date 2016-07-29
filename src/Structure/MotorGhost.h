@@ -48,6 +48,9 @@ class MotorGhost : public Component, public Trackable, public Movable, public Re
    
 friend class Controller;
 friend class DRController;
+    
+friend class MotorBindingManager;
+friend struct UpdateMotorIDCallback;
 
 private:
     unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to mech motor ghost
@@ -68,6 +71,8 @@ private:
     Compartment* _compartment; ///< Where this motorghost is
     
     int _numHeads = 1; ///< Number of heads that this motor contains
+    double _numBoundHeads = 1; ///< Number of bound heads in the ensemble,
+                               ///< which is force-dependent
     
     static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
     
@@ -81,9 +86,6 @@ private:
     static vector<MotorRateChanger*> _unbindingChangers;
     ///For dynamic rate walking
     static vector<MotorRateChanger*> _walkingChangers;
-    
-    ///Helper to get coordinate
-    void updateCoordinate();
 
 public:
     vector<double> coordinate;
@@ -93,6 +95,9 @@ public:
                double position1 = 0.5, double position2 = 0.5);
     
     virtual ~MotorGhost() noexcept;
+    
+    ///Helper to get coordinate
+    void updateCoordinate();
     
     //@{
     /// Get cylinder
@@ -129,6 +134,8 @@ public:
     ///Parameter management
     virtual int getType() {return _motorType;}
     int getID() {return _motorID;}
+    
+    void setID(int ID) {_motorID = ID;}
     //@}
     
     /// Get the birth time

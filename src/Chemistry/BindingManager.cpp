@@ -18,10 +18,13 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
+#include "MotorGhost.h"
+
 #include "SubSystem.h"
 #include "Boundary.h"
 #include "CompartmentGrid.h"
 
+#include "ChemCallbacks.h"
 #include "MathFunctions.h"
 #include "GController.h"
 #include "SysParams.h"
@@ -512,6 +515,19 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
     string name = rs[ML_RXN_INDEX]->getSpecies().getName();
     
     _bindingSpecies = _compartment->findSpeciesByName(name);
+         
+    //initialize ID's based on number of species in compartment
+    int numSpecies = rs[ML_RXN_INDEX + 1]->getSpecies().getN();
+    for(int i = 0; i < numSpecies; i++)
+        _unboundIDs.push_back(MotorGhost::_motorGhosts.getID());
+         
+         
+    //attach an rspecies callback to this species
+    Species* sd = &(rs[ML_RXN_INDEX + 1]->getSpecies());
+         
+    UpdateMotorIDCallback mcallback(this);
+    ConnectionBlock rcb(sd->connect(mcallback,false));
+         
 }
 
 
