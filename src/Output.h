@@ -116,7 +116,7 @@ private:
     
 public:
     WallTensions(string outputFileName, SubSystem* s) :
-                Output(outputFileName), _subSystem(s) {}
+                Output(outputFileName, s) {}
     ~WallTensions() {}
     
     
@@ -131,7 +131,7 @@ private:
     SubSystem* _subSystem; ///< To access types
     
 public:
-    Types(string outputFileName, SubSystem* s) : Output(outputFileName), _subSystem(s) {}
+    Types(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~Types() {}
         
     virtual void print(int snapshot);

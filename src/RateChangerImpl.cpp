@@ -36,7 +36,7 @@ float LinkerCatchSlip::changeRate(float bareRate, double force) {
 float LinkerSlip::changeRate(float bareRate, double force) {
     
     double newRate = bareRate * exp( force * _x / kT);
-
+    
     return newRate;
 }
 
@@ -72,4 +72,3 @@ float MotorStall::changeRate(float onRate, float offRate,
     
     return newRate;
 }
-

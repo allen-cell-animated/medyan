@@ -76,12 +76,12 @@ void Controller::initialize(string inputFile,
     cout << endl;
     
     //trajectory-style data
-    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj"));
-    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
-    _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
-    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj"));
+    _outputs.push_back(new BasicSnapshot(_outputDirectory + "snapshot.traj", _subSystem));
+    _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
+    _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
+    _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
     _outputs.push_back(new WallTensions(_outputDirectory + "walltensions.traj", _subSystem));
-    _outputs.push_back(new Types(_outputDirectory + "types.traj"));
+    _outputs.push_back(new Types(_outputDirectory + "types.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();

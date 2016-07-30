@@ -70,9 +70,9 @@ public:
                     double amplitude1, double amplitude2,
                     double charLength1, double charLength2)
     
-        : LinkerRateChanger(linkerType),
-          _a1(amplitude1),  _a2(amplitude2),
-          _x1(charLength1), _x2(charLength2) {}
+    : LinkerRateChanger(linkerType),
+    _a1(amplitude1),  _a2(amplitude2),
+    _x1(charLength1), _x2(charLength2) {}
     
     virtual float changeRate(float bareRate, double force);
 };
@@ -95,7 +95,7 @@ private:
 public:
     LinkerSlip(short linkerType, double charLength)
     
-        : LinkerRateChanger(linkerType), _x(charLength) {}
+    : LinkerRateChanger(linkerType), _x(charLength) {}
     
     virtual float changeRate(float bareRate, double force);
 };
@@ -138,7 +138,7 @@ public:
                double dutyRatio, double alpha)
     
     : MotorRateChanger(motorType), _F0(charForce),
-      _dutyRatio(dutyRatio),_alpha(alpha) {}
+    _dutyRatio(dutyRatio),_alpha(alpha) {}
     
     /// Set the number of bound heads based on force
     virtual float numBoundHeads(double force, int numHeads);
@@ -157,7 +157,7 @@ class LowDutyMotorCatch : public MotorCatch {
 public:
     LowDutyMotorCatch(short motorType, double charForce)
     
-        : MotorCatch(motorType, charForce, 0.1, 0.8){}
+    : MotorCatch(motorType, charForce, 0.1, 0.8){}
 };
 
 ///A high duty catch bond implementation of the MotorRateChanger
@@ -220,14 +220,14 @@ public:
     MotorStall(short motorType, short filamentType, double charForce,
                double dutyRatio, double beta)
     
-        : MotorRateChanger(motorType), _F0(charForce),
-          _dutyRatio(dutyRatio), _beta(beta) {
-    
+    : MotorRateChanger(motorType), _F0(charForce),
+    _dutyRatio(dutyRatio), _beta(beta) {
+        
         //calculate rate based on step fraction
         double d_step = SysParams::Chemistry().motorStepSize[_motorType];
         
         double d_total = (double)SysParams::Geometry().cylinderSize[filamentType] /
-                                 SysParams::Chemistry().numBindingSites[filamentType];
+        SysParams::Chemistry().numBindingSites[filamentType];
         
         _stepFrac = d_step / d_total;
     }
@@ -244,7 +244,7 @@ public:
 ///
 class LowDutyMotorStall : public MotorStall {
     
-
+    
 public:
     LowDutyMotorStall(short motorType, short filamentType, double charForce)
     

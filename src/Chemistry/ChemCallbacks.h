@@ -58,7 +58,7 @@ struct UpdateBrancherBindingCallback {
     //Constructor, sets members
     UpdateBrancherBindingCallback(Cylinder* cylinder, short bindingSite)
     
-        : _cylinder(cylinder), _bindingSite(bindingSite) {}
+    : _cylinder(cylinder), _bindingSite(bindingSite) {}
     
     //callback
     void operator() (RSpecies *r, int delta) {
@@ -201,7 +201,7 @@ struct FilamentExtensionPlusEndCallback {
     
     //Constructor, sets members
     FilamentExtensionPlusEndCallback(Cylinder* cylinder, short plusEnd)
-        : _cylinder(cylinder), _plusEnd(plusEnd){};
+    : _cylinder(cylinder), _plusEnd(plusEnd){};
     
     //Callback
     void operator() (ReactionBase *r){
@@ -221,7 +221,7 @@ struct FilamentExtensionMinusEndCallback {
     
     //Constructor, sets members
     FilamentExtensionMinusEndCallback(Cylinder* cylinder, short minusEnd)
-        : _cylinder(cylinder), _minusEnd(minusEnd){};
+    : _cylinder(cylinder), _minusEnd(minusEnd){};
     //Callback
     void operator() (ReactionBase *r){
         //extend the back
@@ -238,7 +238,7 @@ struct FilamentRetractionPlusEndCallback {
     
     //Constructor, sets members
     FilamentRetractionPlusEndCallback(Cylinder* cylinder)
-        : _cylinder(cylinder) {};
+    : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f =(Filament*)( _cylinder->getParent());
@@ -254,7 +254,7 @@ struct FilamentRetractionMinusEndCallback {
     
     //Constructor, sets members
     FilamentRetractionMinusEndCallback(Cylinder* cylinder)
-        : _cylinder(cylinder) {};
+    : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -270,7 +270,7 @@ struct FilamentPolymerizationPlusEndCallback {
     
     //Constructor, sets members
     FilamentPolymerizationPlusEndCallback(Cylinder* cylinder)
-        : _cylinder(cylinder) {};
+    : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -286,7 +286,7 @@ struct FilamentPolymerizationMinusEndCallback {
     
     //Constructor, sets members
     FilamentPolymerizationMinusEndCallback(Cylinder* cylinder)
-        : _cylinder(cylinder) {};
+    : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -302,7 +302,7 @@ struct FilamentDepolymerizationPlusEndCallback {
     
     //Constructor, sets members
     FilamentDepolymerizationPlusEndCallback(Cylinder* cylinder)
-        : _cylinder(cylinder) {};
+    : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -318,7 +318,7 @@ struct FilamentDepolymerizationMinusEndCallback {
     
     //Constructor, sets members
     FilamentDepolymerizationMinusEndCallback(Cylinder* cylinder)
-        : _cylinder(cylinder) {};
+    : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -333,7 +333,7 @@ struct BranchingPointUnbindingCallback {
     BranchingPoint* _branchingPoint;
     
     BranchingPointUnbindingCallback(BranchingPoint* b, SubSystem* ps)
-        : _ps(ps), _branchingPoint(b) {}
+    : _ps(ps), _branchingPoint(b) {}
     
     void operator() (ReactionBase *r) {
         
@@ -360,7 +360,7 @@ struct BranchingCallback {
                       float onRate, float offRate, SubSystem* ps)
     
     : _ps(ps), _bManager(bManager),
-      _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
+    _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
@@ -395,15 +395,15 @@ struct BranchingCallback {
         }
         else {
             cout << "Branching initialization cannot occur unless mechanical parameters are specified."
-                 << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-                 << endl;
+            << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+            << endl;
             l = 10.0;
             t = 1.22;
         }
 #else
         cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
-             << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-             << endl;
+        << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+        << endl;
         double l = 10.0;
         double t = 1.22;
 #endif
@@ -457,11 +457,11 @@ struct LinkerBindingCallback {
     
     float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
-
+    
     LinkerBindingCallback(LinkerBindingManager* lManager,
                           float onRate, float offRate, SubSystem* ps)
     
-        : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
+    : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
@@ -505,7 +505,7 @@ struct MotorUnbindingCallback {
     
     MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) :
     
-        _ps(ps), _motor(m) {}
+    _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
         
@@ -563,7 +563,7 @@ struct MotorBindingCallback {
         
         //attach an ID to the motor based on the transfer ID
         m->setID(MotorGhost::_motorGhosts.getTransferID());
-
+        
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
         
@@ -592,14 +592,14 @@ struct MotorWalkingCallback {
     SubSystem* _ps;      ///< Ptr to subsystem
     
     MotorWalkingCallback(Cylinder* c,
-                        short oldPosition, short newPosition,
-                        short motorType, short boundType, SubSystem* ps)
+                         short oldPosition, short newPosition,
+                         short motorType, short boundType, SubSystem* ps)
     
-        :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
-         _motorType(motorType), _boundType(boundType), _ps(ps) {}
+    :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
+    _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-
+        
         //get species
         CCylinder* cc = _c->getCCylinder();
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
@@ -641,8 +641,8 @@ struct MotorMovingCylinderCallback {
                                 short oldPosition, short newPosition,
                                 short motorType, short boundType, SubSystem* ps)
     
-        :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
-         _motorType(motorType), _boundType(boundType), _ps(ps) {}
+    :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
+    _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
         
@@ -678,7 +678,7 @@ struct FilamentCreationCallback {
     short _minusEnd;
     short _filament;
     //@}
-
+    
     ///Filament type to create
     short _filType;
     
@@ -688,11 +688,11 @@ struct FilamentCreationCallback {
     FilamentCreationCallback(short plusEnd, short minusEnd, short filament,
                              short filType, SubSystem* ps, Compartment* c = nullptr)
     
-        : _plusEnd(plusEnd), _minusEnd(minusEnd), _filament(filament),
-          _filType(filType), _compartment(c), _ps(ps) {}
+    : _plusEnd(plusEnd), _minusEnd(minusEnd), _filament(filament),
+    _filType(filType), _compartment(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-
+        
         Compartment* c;
         
         //no compartment was set, pick a random one
@@ -713,7 +713,7 @@ struct FilamentCreationCallback {
             normalize(direction);
             
             auto npp = nextPointProjection(position,
-            SysParams::Geometry().cylinderSize[_filType], direction);
+                                           SysParams::Geometry().cylinderSize[_filType], direction);
             
             //check if within boundary
             if(_ps->getBoundary()->within(position) &&

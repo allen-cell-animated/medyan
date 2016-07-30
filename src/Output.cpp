@@ -16,6 +16,8 @@
 #include "Output.h"
 
 #include "SubSystem.h"
+#include "CompartmentGrid.h"
+
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
@@ -26,6 +28,7 @@
 
 #include "Boundary.h"
 #include "CompartmentGrid.h"
+#include "GController.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
