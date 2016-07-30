@@ -108,19 +108,13 @@ public:
 /// @note - This function updates unbinding rates of a
 /// Myosin II ensemble based on the following exponential form:
 ///
-///    k_unbinding,eff = k_0 * exp(-F / (N_b / N_t) * F_0)
+///    k_unbinding,eff = k_0 * exp(-F / (rho * N_t) * F_0)
 ///
 /// where k_0 is the unbinding rate under zero load,
 ///
 ///    k_0 = k_on * (N_t) / (exp(log((k_on + k_off) / k_off) * N_t) - 1)
 ///
-/// F_0 is the characteristic force defining this catch,
-/// and N_b is the number of bound motor heads in the ensemble,
-/// approximated by Erdmann et al. 2013 to be:
-///
-///             N_b = p * N_t + (F * alpha / N_t),
-///
-/// where p is the duty ratio of the motor.
+/// F_0 is the characteristic force defining this catch.
 
 class MotorCatch : public MotorRateChanger {
     
@@ -180,7 +174,7 @@ public:
 
 /// @note - This function updates walking rates based on the Hill form:
 ///
-///   k_eff = k_0 * (F_0 - F / N_t) / (F_0 + (F / (N_t * beta)))
+///   k_eff = k_0 * (F_0 - F) / (F_0 + (F / (beta)))
 ///
 /// where F_0 is the characteristic force defining this stall,
 /// beta is a dimensionless parameter defining the steepness of the curve,
@@ -240,7 +234,7 @@ public:
 
 ///A low duty stall force implementation of the MotorRateChanger.
 ///
-///         dutyRatio = 0.1, beta = 0.1
+///         dutyRatio = 0.1, beta = 0.2
 ///
 class LowDutyMotorStall : public MotorStall {
     
@@ -248,7 +242,7 @@ class LowDutyMotorStall : public MotorStall {
 public:
     LowDutyMotorStall(short motorType, short filamentType, double charForce)
     
-    : MotorStall(motorType, filamentType, charForce, 0.1, 0.1){}
+    : MotorStall(motorType, filamentType, charForce, 0.1, 0.2){}
 };
 
 ///A high duty stall force implementation of the MotorRateChanger.
