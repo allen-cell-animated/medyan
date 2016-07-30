@@ -50,7 +50,10 @@ friend class Controller;
 friend class DRController;
     
 friend class MotorBindingManager;
+    
 friend struct UpdateMotorIDCallback;
+friend struct MotorBindingCallback;
+friend struct MotorUnbindingCallback;
 
 private:
     unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to mech motor ghost
@@ -91,6 +94,7 @@ public:
     vector<double> coordinate;
         ///< coordinate of midpoint, updated with updatePosition()
     
+    ///Standard constructor
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
                double position1 = 0.5, double position2 = 0.5);
     

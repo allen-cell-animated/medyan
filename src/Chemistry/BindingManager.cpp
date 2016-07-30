@@ -518,6 +518,7 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
          
     //initialize ID's based on number of species in compartment
     int numSpecies = rs[ML_RXN_INDEX + 1]->getSpecies().getN();
+         
     for(int i = 0; i < numSpecies; i++)
         _unboundIDs.push_back(MotorGhost::_motorGhosts.getID());
          
@@ -525,7 +526,7 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
     //attach an rspecies callback to this species
     Species* sd = &(rs[ML_RXN_INDEX + 1]->getSpecies());
          
-    UpdateMotorIDCallback mcallback(this);
+    UpdateMotorIDCallback mcallback(boundInt);
     ConnectionBlock rcb(sd->connect(mcallback,false));
          
 }

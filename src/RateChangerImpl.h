@@ -103,23 +103,24 @@ public:
 
 ///A catch bond implementation of the MotorRateChanger
 ///Used for a motor unbinding when under stress
-///Adopted from Erdmann et al. 2013.
+///Adopted from the results of Erdmann et al. 2013.
 
 /// @note - This function updates unbinding rates of a
 /// Myosin II ensemble based on the following exponential form:
 ///
-///      k_unbinding,eff = beta * (k_0 / N_b) * exp(-F / (N_b * F_0))
+///    k_unbinding,eff = k_0 * exp(-F / (N_b / N_t) * F_0)
 ///
 /// where k_0 is the unbinding rate under zero load,
+///
+///    k_0 = k_on * (N_t) / (exp(log((k_on + k_off) / k_off) * N_t) - 1)
+///
 /// F_0 is the characteristic force defining this catch,
-/// beta is a dimensionless parameter,
 /// and N_b is the number of bound motor heads in the ensemble,
 /// approximated by Erdmann et al. 2013 to be:
 ///
-///             N_b = p * N_t + (F * gamma)
+///             N_b = p * N_t + (F * alpha / N_t),
 ///
-/// where gamma has units heads / pN.
-/// p is the duty ratio of the motor.
+/// where p is the duty ratio of the motor.
 
 class MotorCatch : public MotorRateChanger {
     
@@ -129,27 +130,26 @@ private:
     //@{
     ///Constant parameters
     double _dutyRatio;
-    double _beta;
-    double _gamma;
+    double _alpha;
     //@}
     
 public:
     MotorCatch(short motorType, double charForce,
-               double dutyRatio, double beta, double gamma)
+               double dutyRatio, double alpha)
     
-    : MotorRateChanger(motorType), _F0(charForce), _dutyRatio(dutyRatio),
-                                   _beta(beta), _gamma(gamma) {}
+    : MotorRateChanger(motorType), _F0(charForce),
+      _dutyRatio(dutyRatio),_alpha(alpha) {}
     
     /// Set the number of bound heads based on force
     virtual float numBoundHeads(double force, int numHeads);
     
     virtual float changeRate(float onRate, float offRate,
-                             double numBoundHeads, double force);
+                             double numHeads, double force);
 };
 
 ///A low duty catch bond implementation of the MotorRateChanger
 ///
-///  p = 0.1, beta = 0.2, gamma = 0.1
+///  p = 0.1, alpha = 0.8
 ///
 
 class LowDutyMotorCatch : public MotorCatch {
@@ -157,12 +157,12 @@ class LowDutyMotorCatch : public MotorCatch {
 public:
     LowDutyMotorCatch(short motorType, double charForce)
     
-        : MotorCatch(motorType, charForce, 0.1, 0.2, 0.1){}
+        : MotorCatch(motorType, charForce, 0.1, 0.8){}
 };
 
 ///A high duty catch bond implementation of the MotorRateChanger
 ///
-///  p = 0.33, beta = 0.2, gamma = 0.4
+///  p = 0.33, alpha = 0.5
 ///
 
 class HighDutyMotorCatch : public MotorCatch {
@@ -170,62 +170,7 @@ class HighDutyMotorCatch : public MotorCatch {
 public:
     HighDutyMotorCatch(short motorType, double charForce)
     
-    : MotorCatch(motorType, charForce, 0.33, 0.2, 0.4){}
-};
-
-
-///A catch-slip bond implementation of the MotorRateChanger
-///Used for a motor unbinding when under stress
-///Adopted from Erdmann et al. 2013, Stam et al. 2015.
-
-/// @note - This function updates unbinding rates of a
-/// Myosin II ensemble based on the following exponential form:
-///
-///      k_unbinding,eff = beta * (k_0 / N_b) *
-///                        (_a1 * exp(-F / (N_b * _FCatch)) +
-///                         _a2 * exp( F / (N_b * _FSlip))))
-///
-/// where k_0 is the unbinding rate under zero load,
-/// _FCatch and _FSlip are the characteristic forces,
-/// _a1 and _a2 are the amplitudes of each part, taken
-/// as 0.92 and 0.08 respectively (Stam et al, 2015),
-/// beta is a dimensionless parameter
-/// and N_b is the number of bound motor heads in the ensemble,
-/// approximated by Erdmann et al. 2013 to be:
-///
-///             N_b = p * N_t + (F * gamma)
-///
-/// where gamma has units heads / pN.
-/// p is the duty ratio of the motor.
-
-class MotorCatchSlip : public MotorRateChanger {
-    
-private:
-    double _FCatch;  ///< characteristic catch force
-    double _FSlip;   ///< characteristic slip force
-    
-    //@{
-    ///Constant parameters
-    double _dutyRatio;
-    double _beta;
-    double _gamma;
-    
-    const double _a1 = 0.92;   ///< catch amplitude
-    const double _a2 = 0.08;   ///< slip amplitude
-    //@}
-    
-public:
-    MotorCatchSlip(short motorType, double charCatchForce, double charSlipForce,
-                   double dutyRatio, double beta, double gamma)
-    
-    : MotorRateChanger(motorType), _FCatch(charCatchForce), _FSlip(charSlipForce),
-                                   _dutyRatio(dutyRatio), _beta(beta), _gamma(gamma) {}
-    
-    /// Get the number of bound heads based on force
-    virtual float numBoundHeads(double force, int numHeads);
-    
-    virtual float changeRate(float onRate, float offRate,
-                             double numBoundHeads, double force);
+    : MotorCatch(motorType, charForce, 0.33, 0.5){}
 };
 
 
@@ -235,10 +180,10 @@ public:
 
 /// @note - This function updates walking rates based on the Hill form:
 ///
-///   k_eff = k_0 * (F_0 - F / N_t) / (F_0 + (F / (N_t * zeta)))
+///   k_eff = k_0 * (F_0 - F / N_t) / (F_0 + (F / (N_t * beta)))
 ///
 /// where F_0 is the characteristic force defining this stall,
-/// zeta is a dimensionless parameter defining the steepness of the curve,
+/// beta is a dimensionless parameter defining the steepness of the curve,
 /// k_0 is the walking rate under zero load, which was approximated
 /// by Erdmann et al. 2013 to be:
 ///
@@ -267,16 +212,16 @@ private:
     //@{
     ///Constant parameters
     double _dutyRatio;
-    double _zeta;
+    double _beta;
     //@}
     
     
 public:
     MotorStall(short motorType, short filamentType, double charForce,
-               double dutyRatio, double zeta)
+               double dutyRatio, double beta)
     
         : MotorRateChanger(motorType), _F0(charForce),
-          _dutyRatio(dutyRatio), _zeta(zeta) {
+          _dutyRatio(dutyRatio), _beta(beta) {
     
         //calculate rate based on step fraction
         double d_step = SysParams::Chemistry().motorStepSize[_motorType];
@@ -295,7 +240,7 @@ public:
 
 ///A low duty stall force implementation of the MotorRateChanger.
 ///
-///         dutyRatio = 0.1, zeta = 0.1
+///         dutyRatio = 0.1, beta = 0.1
 ///
 class LowDutyMotorStall : public MotorStall {
     
@@ -308,7 +253,7 @@ public:
 
 ///A high duty stall force implementation of the MotorRateChanger.
 ///
-///         dutyRatio = 0.33, zeta = 0.2
+///         dutyRatio = 0.33, beta = 0.3
 ///
 class HighDutyMotorStall : public MotorStall {
     
@@ -316,7 +261,7 @@ class HighDutyMotorStall : public MotorStall {
 public:
     HighDutyMotorStall(short motorType, short filamentType, double charForce)
     
-    : MotorStall(motorType, filamentType, charForce, 0.33, 0.2){}
+    : MotorStall(motorType, filamentType, charForce, 0.33, 0.3){}
 };
 
 

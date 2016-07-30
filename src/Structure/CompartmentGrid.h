@@ -150,8 +150,16 @@ public:
     /// Count the number of bulk species with a given name
     species_copy_t  countBulkSpecies(const string& name);
     
-    //GetType implementation just returns zero (no CompartmentGrid types yet)
+    ///GetType implementation just returns zero (no CompartmentGrid types yet)
     virtual int getType() {return 0;}
+    
+    
+    ///This function gets all diffusing motor species and creates a virtual position within
+    ///the simulation volume (dependent on the compartment). This is used for analyzing motor
+    ///gradients when species can either be bound or unbound.
+    ///@return - a tuple of the motor ID, the type, and two coordinates defining its end positions
+    vector<tuple<int, int, vector<double>, vector<double>>> getDiffusingMotors();
+    
 };
 
 #endif

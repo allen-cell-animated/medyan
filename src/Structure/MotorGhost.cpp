@@ -254,7 +254,7 @@ void MotorGhost::updateReactionRates() {
         //change the rate
         float newRate =
         _unbindingChangers[_motorType]->
-        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numBoundHeads, force);
+        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numHeads, force);
         
         offRxn->setRate(newRate);
         offRxn->activateReaction();

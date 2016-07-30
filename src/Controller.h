@@ -97,6 +97,7 @@ private:
     /// Execute any special protocols needed, for example,
     /// making Linker and Filament species static
     void executeSpecialProtocols();
+
     
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
@@ -111,7 +112,6 @@ public:
                     string outputDirectory);
     ///Run the simulation
     void run();
-    
 };
 
 #endif

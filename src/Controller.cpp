@@ -164,7 +164,7 @@ void Controller::initialize(string inputFile,
     
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
-    _outputs.push_back(new Chemistry(chemsnapname, ChemData,
+    _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
 #endif
     
@@ -621,3 +621,4 @@ void Controller::run() {
     cout << "Total simulation time: dt=" << tau() << endl;
     cout << "Done with simulation!" << endl;
 }
+

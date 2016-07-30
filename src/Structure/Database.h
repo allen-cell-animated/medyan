@@ -27,6 +27,10 @@
  *  mechanical minimization uses all beads for its Minimizer methods,
  *  ForceField uses the collections to calculate forces and energy, etc.
  *  
+ *  The Database also contains a holder for a transfer ID of any species.
+ *  This is used when diffusing species ID's must be tracked, and these
+ *  ID's are accessed by the respective binding managers.
+ *
  *  @param T - class to hold
  *
  */
@@ -38,8 +42,9 @@ protected:
     
     int _ID = 0; ///< Running unique index of each element
     
-    int _transferID = 0; ///< index of an ID to transfer
-                         ///< for now, this is used only in the case of motors.
+    int _transferID = -1; ///< index of a species ID to transfer
+                          ///< for now, this is used only in the case of motors.
+                          ///< If there is no transfer, the tag is marked as -1.
 public:
     
     /// Add an element to the collection
@@ -71,7 +76,13 @@ public:
     //@{
     ///Setters and getters for transfer ID
     void setTransferID(int ID) {_transferID = ID;}
-    int getTransferID() {return _transferID;}
+    
+    int getTransferID() {
+        
+        int retID = _transferID;
+        _transferID = -1;
+        return retID;
+    }
     
     //@}
 };
