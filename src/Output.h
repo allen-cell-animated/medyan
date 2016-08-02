@@ -110,10 +110,6 @@ public:
 /// @note - nhat is a vector pointing from the direction of the boundary normal.
 class WallTensions : public Output {
     
-private:
-    SubSystem* _subSystem; ///< To access boundaries
-    
-    
 public:
     WallTensions(string outputFileName, SubSystem* s) :
                 Output(outputFileName, s) {}
@@ -126,9 +122,6 @@ public:
     
 /// Print type of each species
 class Types : public Output {
-
-private:
-    SubSystem* _subSystem; ///< To access types
     
 public:
     Types(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
