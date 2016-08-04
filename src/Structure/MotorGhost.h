@@ -77,6 +77,12 @@ private:
     double _numBoundHeads = 1; ///< Number of bound heads in the ensemble,
                                ///< which is force-dependent
     
+    //@{
+    ///Kinetic rates of individual motor heads
+    double _onRate = 0.0;
+    double _offRate = 0.0;
+    //@}
+    
     static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
     
     //@{
@@ -96,7 +102,8 @@ public:
     
     ///Standard constructor
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-               double position1 = 0.5, double position2 = 0.5);
+               double position1 = 0.5, double position2 = 0.5,
+               double onRate = 0.0, double offRate = 0.0);
     
     virtual ~MotorGhost() noexcept;
     

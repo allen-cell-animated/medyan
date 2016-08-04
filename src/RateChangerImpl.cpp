@@ -40,9 +40,10 @@ float LinkerSlip::changeRate(float bareRate, double force) {
     return newRate;
 }
 
-float MotorCatch::numBoundHeads(double force, int numHeads) {
+float MotorCatch::numBoundHeads(float onRate, float offRate,
+                                double force, int numHeads) {
     
-    return _dutyRatio * numHeads;
+    return numHeads * (onRate / (offRate * exp(-force/_F0) + onRate));
     
 }
 
@@ -52,7 +53,7 @@ float MotorCatch::changeRate(float onRate, float offRate,
     //calculate new rate
     double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads) - 1);
     
-    double newRate = k_0 * exp(-force / ((_dutyRatio * numHeads) * _F0));
+    double newRate = k_0 * exp(-force / (numBoundHeads(onRate, offRate, numHeads,force) * _F0));
     
     return newRate;
 }
@@ -66,7 +67,7 @@ float MotorStall::changeRate(float onRate, float offRate,
     
     //calculate new rate
     double newRate =  max(0.0, k_0 * (_F0 - force)
-                          / (_F0 + (force / (_beta))));
+                          / (_F0 + (force / (_alpha))));
     
     return newRate;
 }

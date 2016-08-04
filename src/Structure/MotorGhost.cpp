@@ -42,12 +42,14 @@ void MotorGhost::updateCoordinate() {
 
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                       double position1, double position2)
+                       double position1, double position2,
+                       double onRate, double offRate)
 
     : Trackable(true, true),
       _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _motorType(motorType), _birthTime(tau()) {
+      _motorType(motorType), _birthTime(tau()),
+      _onRate(onRate), _offRate(offRate) {
           
     //find compartment
     updateCoordinate();
@@ -69,7 +71,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
                                   SysParams::Chemistry().motorNumHeadsMax[_motorType]);
           
-    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(0, _numHeads);
+    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
     
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
@@ -146,7 +148,7 @@ void MotorGhost::updatePosition() {
     double force = max(0.0, _mMotorGhost->stretchForce);
     
     //update number of bound heads
-    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(force, _numHeads);
+    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
     _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
 
 #endif
@@ -165,7 +167,7 @@ void MotorGhost::updateReactionRates() {
     double force = max(0.0, _mMotorGhost->stretchForce);
     
     //update number of bound heads
-    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(force, _numHeads);
+    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
     
     //walking rate changer
     if(!_walkingChangers.empty()) {

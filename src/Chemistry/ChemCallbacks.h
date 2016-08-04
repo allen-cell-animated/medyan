@@ -559,7 +559,7 @@ struct MotorBindingCallback {
         double pos1 = double(get<1>(site[0])) / cylinderSize;
         double pos2 = double(get<1>(site[1])) / cylinderSize;
         
-        MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2);
+        MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2, _onRate, _offRate);
         
         //attach an ID to the motor based on the transfer ID
         m->setID(MotorGhost::_motorGhosts.getTransferID());
