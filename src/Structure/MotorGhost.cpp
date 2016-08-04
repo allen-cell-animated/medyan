@@ -70,8 +70,11 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     //set number of heads by picking random int between maxheads and minheads
     _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
                                   SysParams::Chemistry().motorNumHeadsMax[_motorType]);
-          
-    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
+    
+    if(!_unbindingChangers.empty())
+        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
+    else
+        _numBoundHeads = _numHeads;
     
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
@@ -148,7 +151,12 @@ void MotorGhost::updatePosition() {
     double force = max(0.0, _mMotorGhost->stretchForce);
     
     //update number of bound heads
-    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
+    if(!_unbindingChangers.empty())
+        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
+    else
+        _numBoundHeads = _numHeads;
+    
+    
     _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
 
 #endif
@@ -167,7 +175,10 @@ void MotorGhost::updateReactionRates() {
     double force = max(0.0, _mMotorGhost->stretchForce);
     
     //update number of bound heads
-    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
+    if(!_unbindingChangers.empty())
+        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
+    else
+        _numBoundHeads = _numHeads;
     
     //walking rate changer
     if(!_walkingChangers.empty()) {

@@ -389,6 +389,18 @@ public:
         return ID;
     }
     
+    // remove a specific ID from the list
+    void removeUnboundID(int ID) {
+        
+        for (auto IDit = _unboundIDs.begin(); IDit != _unboundIDs.end(); IDit++) {
+            
+            if(*IDit == ID) {
+                _unboundIDs.erase(IDit);
+                return;
+            }
+        }
+    }
+    
     ///Get all unbound ID's, but do not change container
     const vector<int>& getAllUnboundIDs() const { return _unboundIDs; }
 

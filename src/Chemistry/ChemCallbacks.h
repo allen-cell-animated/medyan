@@ -172,6 +172,10 @@ struct UpdateMotorIDCallback{
                 assert(r->getN() == mManager->getAllUnboundIDs().size() &&
                        "Major bug: number of unbound ID's and copy number does not match");
             }
+            //else - create an ID. This is an addition at runtime
+            else{
+                mManager->addUnboundID(MotorGhost::_motorGhosts.getID());
+            }
         }
         
         else{ /* -1 */
@@ -514,6 +518,8 @@ struct MotorUnbindingCallback {
         
         Compartment* c = static_cast<Compartment*>(sd->getParent());
         auto mManager = c->getMotorBindingManager(_motor->getType());
+        
+        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
         
         //re-add unbound ID to motor binding manager
         mManager->addUnboundID(_motor->getID());

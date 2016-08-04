@@ -73,6 +73,9 @@ public:
     ///Return a unique id
     int getID() { return _ID++;}
     
+    ///Used for a deletion of ID
+    int deleteID() {return --_ID;}
+    
     //@{
     ///Setters and getters for transfer ID
     void setTransferID(int ID) {_transferID = ID;}
