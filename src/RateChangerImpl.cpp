@@ -43,7 +43,7 @@ float LinkerSlip::changeRate(float bareRate, double force) {
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 double force, int numHeads) {
     
-    return numHeads * (onRate / (offRate * exp(-force/(numHeads * _F0)) + onRate));
+    return numHeads * _dutyRatio + _beta * force / numHeads;
     
 }
 

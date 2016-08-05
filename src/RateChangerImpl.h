@@ -116,9 +116,11 @@ public:
 ///
 /// F_0 is the characteristic force defining this catch, and
 ///
-///    N_b(F) = rho(F) * N_t = k_on N_t / (k_off*exp(F/F0) + k_on)
+///    N_b(F) = rho * N_t + beta * F / N_t
 ///
-/// is the number of bound heads in the ensemble.
+/// is the number of bound heads in the ensemble, beta is an emperical parameter
+/// which determines the rate of increase for the number of bound heads with
+/// respect to applied forces.
 
 class MotorCatch : public MotorRateChanger {
     
@@ -128,12 +130,13 @@ private:
     //@{
     ///Constant parameters
     double _dutyRatio;
+    double _beta;
     //@}
     
 public:
-    MotorCatch(short motorType, double charForce, double dutyRatio)
+    MotorCatch(short motorType, double charForce, double dutyRatio, double beta)
     
-    : MotorRateChanger(motorType), _F0(charForce), _dutyRatio(dutyRatio) {}
+    : MotorRateChanger(motorType), _F0(charForce), _dutyRatio(dutyRatio), _beta(beta) {}
     
     /// Set the number of bound heads based on force
     virtual float numBoundHeads(float onRate, float offRate,
@@ -145,7 +148,7 @@ public:
 
 ///A low duty catch bond implementation of the MotorRateChanger
 ///
-///  p = 0.1
+///  p = 0.1, beta = 2.0
 ///
 
 class LowDutyMotorCatch : public MotorCatch {
@@ -153,12 +156,12 @@ class LowDutyMotorCatch : public MotorCatch {
 public:
     LowDutyMotorCatch(short motorType, double charForce)
     
-    : MotorCatch(motorType, charForce, 0.1){}
+    : MotorCatch(motorType, charForce, 0.1, 2.0){}
 };
 
 ///A high duty catch bond implementation of the MotorRateChanger
 ///
-///  p = 0.33, alpha = 0.5
+///  p = 0.33, alpha = 1.0
 ///
 
 class HighDutyMotorCatch : public MotorCatch {
@@ -166,7 +169,7 @@ class HighDutyMotorCatch : public MotorCatch {
 public:
     HighDutyMotorCatch(short motorType, double charForce)
     
-    : MotorCatch(motorType, charForce, 0.33){}
+    : MotorCatch(motorType, charForce, 0.33, 1.0){}
 };
 
 
