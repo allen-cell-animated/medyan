@@ -78,9 +78,6 @@ void Controller::initialize(string inputFile,
     //Parse input, get parameters
     SystemParser p(inputFile);
     
-    //read output types
-    OutputTypes oTypes = p.readOutputTypes();
-    
     //snapshot type output
     cout << endl;
     
@@ -308,9 +305,9 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                 coords.push_back({coord2[id*3],coord2[id*3+1],coord2[id*3+2]});
             
             if (numSegment == 0)
-                _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2);
+                _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2, FSetup.projectionType);
             else
-                _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1);
+                _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
         }
     }
     cout << "Done. " << fil.size() << " filaments created." << endl;
@@ -403,7 +400,7 @@ void Controller::executeSpecialProtocols() {
         
         //loop through all cylinders, passivate (de)polymerization
         for(auto c : Cylinder::getCylinders())
-            c->getCCylinder()->passivatePolyReactions();
+            c->getCCylinder()->passivatefilreactions();
     }
     
     //making linkers static
@@ -470,7 +467,7 @@ void Controller::run() {
         _restart->addtoHeapbranchers();
         cout<<"Bound species added to reaction heap."<<endl;
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
-        std::cout<<_restart->getnumchemsteps()<<endl;
+        std::cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController->runSteps(_restart->getnumchemsteps());
         cout<<"Reactions fired! Displaying heap"<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
@@ -481,9 +478,8 @@ void Controller::run() {
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
 //Step 5. run mcontroller, update system, turn off restart state.
     cout<<"Minimizing energy"<<endl;
-    _mController->run();
+    _mController->run(false);
     SysParams::RUNSTATE=true;
-        delete filaments,_chemData;
     //reupdate positions and neighbor lists
     updatePositions();
     updateNeighborLists();
@@ -512,7 +508,8 @@ void Controller::run() {
 //STEP 7: Get cylinders, activate filament reactions.
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
-                x->getCCylinder()->activatefilreactions();}}
+                x->getCCylinder()->activatefilreactions();
+            }}
         cout<<"Unbinding rates of bound species restored. filament reactions activated"<<endl;
 //@
 #ifdef CHEMISTRY
@@ -531,8 +528,8 @@ void Controller::run() {
     //restart phase ends
     }
 #ifdef CHEMISTRY
-    double tauLastSnapshot = tau();
-    double oldTau = 0;
+    tauLastSnapshot = tau();
+    oldTau = 0;
 #endif
     for(auto o: _outputs) o->print(0);
     

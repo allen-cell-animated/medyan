@@ -129,8 +129,9 @@ public:
     void removeReactingCylinder(CCylinder* other);
     void removeAllReactingCylinders();
     
-    void passivatePolyReactions();
+    void passivatefilreactions();
     void activatefilreactions();
+    
     //@}
     
     /// Get all reactions that this CCylinder has ownership of

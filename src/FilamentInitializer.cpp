@@ -69,7 +69,7 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             filamentCounter++;
         }
     }
-    return filaments;
+    return make_tuple(filaments, dummy, dummy2, dummy3);
 }
 
 FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilaments,
@@ -79,7 +79,10 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
     ///SET THIS SPACING PARAMETER
     double maxSpacing = 50;
     
-    FilamentData filaments;
+    vector<tuple<short, vector<double>, vector<double>>> filaments;
+    vector<tuple<string, short, vector<vector<double>>>> dummy;
+    vector<tuple<string, short, vector<double>>> dummy2;
+    vector<vector<double>> dummy3;
     
     ///First filament as normal
     //Create a random filament vector one cylinder long

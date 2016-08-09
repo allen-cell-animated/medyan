@@ -126,6 +126,16 @@
          location = "group:Controller.cpp">
       </FileRef>
       <Group
+         location = "group:Special"
+         name = "Special">
+         <FileRef
+            location = "group:MTOC.cpp">
+         </FileRef>
+         <FileRef
+            location = "group:MTOC.h">
+         </FileRef>
+      </Group>
+      <Group
          location = "group:../analysis"
          name = "analysis">
          <FileRef

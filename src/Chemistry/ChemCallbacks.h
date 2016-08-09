@@ -527,8 +527,9 @@ struct MotorBindingCallback {
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
         //aravind June 24, 2016.
-        if(SysParams::RUNSTATE==false)
+        if(SysParams::RUNSTATE==false){
         _offRate=0.0;
+        }
         //@
         cMotorGhost->setRates(_onRate, _offRate);
         cMotorGhost->createOffReaction(r, _ps);
@@ -617,7 +618,6 @@ struct MotorMovingCylinderCallback {
         CCylinder* oldCC = _oldC->getCCylinder();
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
-        
         short filType = _oldC->getType();
         
         //get motor

@@ -165,7 +165,7 @@ public:
     int getID() {return _ID;}
     
     /// Get type
-    short getType() {return _filType;}
+    int getType() {return _filType;}
     
     //@{
     /// Get end cylinder
@@ -187,6 +187,8 @@ public:
     static int numFilaments() {
         return _filaments.countElements();
     }
+    /// Get the turnover times
+    static Histogram* getTurnoverTimes() {return _turnoverTimes;}
     
     //@{
     /// Projection function, returns a vector of coordinates for bead creation
