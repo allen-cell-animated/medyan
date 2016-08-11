@@ -17,6 +17,7 @@
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
+    #include <boost/math/special_functions/fpclassify.hpp>
 #endif
 
 #include "ChemNRMImpl.h"
@@ -144,6 +145,13 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
     RNodeNRM *rn = _heap.top()._rn;
+//    rn->printSelf();
+//    for(auto &n : _heap) {
+//        (n._rn)->printSelf();
+//    }
+//    std::cout<<"==========================="<<endl;
+    if(rn->getReaction()->getReactionType()==ReactionType::MOTORUNBINDING)
+        int iii=0;
     double tau_top = rn->getTau();
     if(tau_top==numeric_limits<double>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
@@ -207,7 +215,7 @@ bool ChemNRMImpl::makeStep() {
                 tau_new = (a_old/a_new)*(tau_old-_t)+_t;
             }
 #endif
-            if(std::isnan(tau_new)){tau_new=INFINITY;}
+            if(boost::math::isnan(tau_new)){tau_new=numeric_limits<double>::infinity();}
             ///DEBUG
             if(tau_new < _t) {
                 

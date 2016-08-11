@@ -194,6 +194,7 @@ void MotorGhost::updateReactionRates() {
                     newRate=0.0;}
                 r->setRate(newRate);
                 r->updatePropensity();
+//                std::cout<<"walk "<<r->getRate();
             }
             else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
                 float newRate =
@@ -205,6 +206,7 @@ void MotorGhost::updateReactionRates() {
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
                 r->setRate(newRate);
+//                std::cout<<" walk rate "<<r->getRate();
                 r->updatePropensity();
             }
         }
@@ -221,6 +223,7 @@ void MotorGhost::updateReactionRates() {
                 { newRate=0.0;}
                 
                 r->setRate(newRate);
+//                std::cout<<" walk rate "<<r->getRate();
                 r->updatePropensity();
             }
             else if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
@@ -233,6 +236,7 @@ void MotorGhost::updateReactionRates() {
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
                 r->setRate(newRate);
+//                std::cout<<" walk rate "<<r->getRate();
                 r->updatePropensity();
             }
         }
@@ -252,6 +256,7 @@ void MotorGhost::updateReactionRates() {
         offRxn->setRate(newRate);
         offRxn->activateReaction();
     }
+//    std::cout<<" off rate "<<_cMotorGhost->getOffReaction()->getRate()<<" "<<_cMotorGhost->getOffRate()<<" "<<endl;
 }
 
 void MotorGhost::moveMotorHead(Cylinder* c,

@@ -489,6 +489,7 @@ void Controller::run() {
         {
             LL->getCLinker()->setOffRate(LL->getCLinker()->getOffReaction()->getBareRate());
             LL->getCLinker()->getOffReaction()->setRate(LL->getCLinker()->getOffReaction()->getBareRate());
+            LL->updateReactionRates();
             LL->getCLinker()->getOffReaction()->updatePropensity();
             
         }
@@ -496,6 +497,7 @@ void Controller::run() {
         {
             MM->getCMotorGhost()->setOffRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
             MM->getCMotorGhost()->getOffReaction()->setRate(MM->getCMotorGhost()->getOffReaction()->getBareRate());
+            MM->updateReactionRates();
             MM->getCMotorGhost()->getOffReaction()->updatePropensity();
         }
     int dummy=0;
@@ -518,7 +520,8 @@ void Controller::run() {
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
-    
+        for(auto MM : MotorGhost::getMotorGhosts())
+        {std::cout<<" off rate "<<MM->getCMotorGhost()->getOffReaction()->getRate()<<" "<<MM->getCMotorGhost()->getOffRate()<<" "<<endl;}
 //    for(auto o: _outputs) o->print(_numChemSteps);
     cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
     cout << "---" << endl;
