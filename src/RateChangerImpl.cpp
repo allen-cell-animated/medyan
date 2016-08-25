@@ -53,7 +53,9 @@ float MotorCatch::changeRate(float onRate, float offRate,
     //calculate new rate
     double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads) - 1);
     
-    double newRate = k_0 * exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0));
+    double factor = min(10.0, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
+    
+    double newRate = k_0 * factor;
     return newRate;
 }
 
