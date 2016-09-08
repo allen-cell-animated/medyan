@@ -372,37 +372,39 @@ public:
     
     virtual bool isConsistent();
     
-    /// Adds an unbound ID to the container
-    void addUnboundID(int ID) {_unboundIDs.push_back(ID);}
     
-    /// Get a random ID from the container, and remove the ID
-    int getUnboundID() {
-        
-        assert(_unboundIDs.size() != 0 && "Major bug: No unbound IDs, but non-zero copy numbers.");
-        
-        int ri = Rand::randInteger(0, _unboundIDs.size() - 1);
-        int ID = _unboundIDs[ri];
-        
-        //delete and return
-        _unboundIDs.erase(_unboundIDs.begin() + ri);
-        
-        return ID;
-    }
-    
-    // remove a specific ID from the list
-    void removeUnboundID(int ID) {
-        
-        for (auto IDit = _unboundIDs.begin(); IDit != _unboundIDs.end(); IDit++) {
-            
-            if(*IDit == ID) {
-                _unboundIDs.erase(IDit);
-                return;
-            }
-        }
-    }
-    
-    ///Get all unbound ID's, but do not change container
-    const vector<int>& getAllUnboundIDs() const { return _unboundIDs; }
+    //DEPRECATED AS OF 9/8/16
+//    /// Adds an unbound ID to the container
+//    void addUnboundID(int ID) {_unboundIDs.push_back(ID);}
+//    
+//    /// Get a random ID from the container, and remove the ID
+//    int getUnboundID() {
+//        
+//        assert(_unboundIDs.size() != 0 && "Major bug: No unbound IDs, but non-zero copy numbers.");
+//        
+//        int ri = Rand::randInteger(0, _unboundIDs.size() - 1);
+//        int ID = _unboundIDs[ri];
+//        
+//        //delete and return
+//        _unboundIDs.erase(_unboundIDs.begin() + ri);
+//        
+//        return ID;
+//    }
+//    
+//    // remove a specific ID from the list
+//    void removeUnboundID(int ID) {
+//        
+//        for (auto IDit = _unboundIDs.begin(); IDit != _unboundIDs.end(); IDit++) {
+//            
+//            if(*IDit == ID) {
+//                _unboundIDs.erase(IDit);
+//                return;
+//            }
+//        }
+//    }
+//    
+//    ///Get all unbound ID's, but do not change container
+//    const vector<int>& getAllUnboundIDs() const { return _unboundIDs; }
 
 };
 

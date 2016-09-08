@@ -155,38 +155,39 @@ struct UpdateMotorIDCallback{
     //callback
     void operator() (RSpecies *r, int delta) {
         
-        //find compartment and binding manager
-        Compartment *c = static_cast<Compartment*>(r->getSpecies().getParent());
-        MotorBindingManager* mManager = c->getMotorBindingManager(_motorType);
-        
-        if(delta == +1) {
-            //pull from motorDB of transferred ID's
-            //note that if there is no transfer ID, we are experiencing an unbinding event. The specific
-            //motor will give its ID to the corresponding binding manager.
-            int ID = MotorGhost::_motorGhosts.getTransferID();
-            
-            if(ID != -1) {
-                mManager->addUnboundID(ID);
-                
-                //we can only check this assertion of it is a diffusion event
-                assert(r->getN() == mManager->getAllUnboundIDs().size() &&
-                       "Major bug: number of unbound ID's and copy number does not match");
-            }
-            //else - create an ID. This is an addition at runtime
-            else{
-                mManager->addUnboundID(MotorGhost::_motorGhosts.getID());
-            }
-        }
-        
-        else{ /* -1 */
-            //add to the motorDB of transferred ID's
-            
-            int ID = mManager->getUnboundID();
-            MotorGhost::_motorGhosts.setTransferID(ID);
-            
-            assert(r->getN() == mManager->getAllUnboundIDs().size() &&
-                   "Major bug: number of unbound ID's and copy number does not match");
-        }
+    //DEPRECATED AS OF 9/8/16
+//        //find compartment and binding manager
+//        Compartment *c = static_cast<Compartment*>(r->getSpecies().getParent());
+//        MotorBindingManager* mManager = c->getMotorBindingManager(_motorType);
+//        
+//        if(delta == +1) {
+//            //pull from motorDB of transferred ID's
+//            //note that if there is no transfer ID, we are experiencing an unbinding event. The specific
+//            //motor will give its ID to the corresponding binding manager.
+//            int ID = MotorGhost::_motorGhosts.getTransferID();
+//            
+//            if(ID != -1) {
+//                mManager->addUnboundID(ID);
+//                
+//                //we can only check this assertion of it is a diffusion event
+//                assert(r->getN() == mManager->getAllUnboundIDs().size() &&
+//                       "Major bug: number of unbound ID's and copy number does not match");
+//            }
+//            //else - create an ID. This is an addition at runtime
+//            else{
+//                mManager->addUnboundID(MotorGhost::_motorGhosts.getID());
+//            }
+//        }
+//        
+//        else{ /* -1 */
+//            //add to the motorDB of transferred ID's
+//            
+//            int ID = mManager->getUnboundID();
+//            MotorGhost::_motorGhosts.setTransferID(ID);
+//            
+//            assert(r->getN() == mManager->getAllUnboundIDs().size() &&
+//                   "Major bug: number of unbound ID's and copy number does not match");
+//        }
     }
 };
 
@@ -519,10 +520,12 @@ struct MotorUnbindingCallback {
         Compartment* c = static_cast<Compartment*>(sd->getParent());
         auto mManager = c->getMotorBindingManager(_motor->getType());
         
-        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
-        
-        //re-add unbound ID to motor binding manager
-        mManager->addUnboundID(_motor->getID());
+        //DEPRECATED AS OF 9/8/16
+//        
+//        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
+//        
+//        //re-add unbound ID to motor binding manager
+//        mManager->addUnboundID(_motor->getID());
         
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);

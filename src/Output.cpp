@@ -117,23 +117,24 @@ void BasicSnapshot::print(int snapshot) {
         _outputFile << endl;
     }
     
-    //collect diffusing motors
-    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-        
-        int ID   = get<0>(md);
-        int type = get<1>(md);
-        
-        auto firstPoint = get<2>(md);
-        auto secondPoint = get<3>(md);
-        
-        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-        
-        //print coordinates
-        _outputFile<<firstPoint[0]<<" "<<firstPoint[1]<<" "<<firstPoint[2] << " ";
-        _outputFile<<secondPoint[0]<<" "<<secondPoint[1]<<" "<<secondPoint[2];
-        
-        _outputFile << endl;
-    }
+    //DEPRECATED AS OF 9/8/16
+//    //collect diffusing motors
+//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
+//        
+//        int ID   = get<0>(md);
+//        int type = get<1>(md);
+//        
+//        auto firstPoint = get<2>(md);
+//        auto secondPoint = get<3>(md);
+//        
+//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
+//        
+//        //print coordinates
+//        _outputFile<<firstPoint[0]<<" "<<firstPoint[1]<<" "<<firstPoint[2] << " ";
+//        _outputFile<<secondPoint[0]<<" "<<secondPoint[1]<<" "<<secondPoint[2];
+//        
+//        _outputFile << endl;
+//    }
     
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
@@ -215,21 +216,23 @@ void BirthTimes::print(int snapshot) {
                        motor->getBirthTime() << endl;
     }
     
-    //collect diffusing motors
-    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-        
-        int ID   = get<0>(md);
-        int type = get<1>(md);
-        
-        auto firstPoint = get<2>(md);
-        auto secondPoint = get<3>(md);
-        
-        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-        
-        //print coordinates
-        //print birth times
-        _outputFile << 0 << " " << 0 << endl;
-    }
+    //DEPRECATED AS OF 9/8/16
+//    
+//    //collect diffusing motors
+//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
+//        
+//        int ID   = get<0>(md);
+//        int type = get<1>(md);
+//        
+//        auto firstPoint = get<2>(md);
+//        auto secondPoint = get<3>(md);
+//        
+//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
+//        
+//        //print coordinates
+//        //print birth times
+//        _outputFile << 0 << " " << 0 << endl;
+//    }
     
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
@@ -313,21 +316,22 @@ void Forces::print(int snapshot) {
                        motor->getMMotorGhost()->stretchForce << endl;
     }
     
-    //collect diffusing motors
-    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-        
-        int ID   = get<0>(md);
-        int type = get<1>(md);
-        
-        auto firstPoint = get<2>(md);
-        auto secondPoint = get<3>(md);
-        
-        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-        
-        //print coordinates
-        //print birth times
-        _outputFile << 0 << " " << 0 << endl;
-    }
+    //DEPRECATED AS OF 9/8/16
+//    //collect diffusing motors
+//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
+//        
+//        int ID   = get<0>(md);
+//        int type = get<1>(md);
+//        
+//        auto firstPoint = get<2>(md);
+//        auto secondPoint = get<3>(md);
+//        
+//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
+//        
+//        //print coordinates
+//        //print birth times
+//        _outputFile << 0 << " " << 0 << endl;
+//    }
     
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
@@ -424,21 +428,22 @@ void Tensions::print(int snapshot) {
                        abs(k * deltaL) << endl;
     }
     
-    //collect diffusing motors
-    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-        
-        int ID   = get<0>(md);
-        int type = get<1>(md);
-        
-        auto firstPoint = get<2>(md);
-        auto secondPoint = get<3>(md);
-        
-        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-        
-        //print coordinates
-        //print birth times
-        _outputFile << 0 << " " << 0 << endl;
-    }
+    //DEPRECATED AS OF 9/8/16
+//    //collect diffusing motors
+//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
+//        
+//        int ID   = get<0>(md);
+//        int type = get<1>(md);
+//        
+//        auto firstPoint = get<2>(md);
+//        auto secondPoint = get<3>(md);
+//        
+//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
+//        
+//        //print coordinates
+//        //print birth times
+//        _outputFile << 0 << " " << 0 << endl;
+//    }
     
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
@@ -617,21 +622,22 @@ void Types::print(int snapshot) {
         motor->getType() << endl;
     }
     
-    //collect diffusing motors
-    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
-        
-        int ID   = get<0>(md);
-        int type = get<1>(md);
-        
-        auto firstPoint = get<2>(md);
-        auto secondPoint = get<3>(md);
-        
-        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
-        
-        //print coordinates
-        //print birth times
-        _outputFile << type << " " << type << endl;
-    }
+    //DEPRECATED AS OF 9/8/16
+//    //collect diffusing motors
+//    for(auto md: _subSystem->getCompartmentGrid()->getDiffusingMotors()) {
+//        
+//        int ID   = get<0>(md);
+//        int type = get<1>(md);
+//        
+//        auto firstPoint = get<2>(md);
+//        auto secondPoint = get<3>(md);
+//        
+//        _outputFile << "MOTOR " << ID << " " << type << " " << 0 << endl;
+//        
+//        //print coordinates
+//        //print birth times
+//        _outputFile << type << " " << type << endl;
+//    }
     
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
