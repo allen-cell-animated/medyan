@@ -79,8 +79,16 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #endif
 }
 
-///@note - nothing for now, but could record data here
-Linker::~Linker() noexcept {}
+///@note - tracks lifetime data here
+Linker::~Linker() noexcept {
+
+    double lifetime = tau() - _birthTime;
+    
+    if(_lifetimes->getMax() > lifetime &&
+       _lifetimes->getMin() < lifetime)
+        _lifetimes->addValue(lifetime);
+
+}
 
 
 void Linker::updatePosition() {

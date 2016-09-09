@@ -76,6 +76,9 @@ public:
             bin++;
         }
     }
+    double getMin() {return _histMin;}
+    double getMax() {return _histMax;}
+    
 };
 
 

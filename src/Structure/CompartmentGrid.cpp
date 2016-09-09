@@ -53,53 +53,54 @@ species_copy_t CompartmentGrid::countBulkSpecies(const string& name) {
     return s->getN();
 }
 
+//DEPRECATED AS OF 9/8/16
 
-vector<tuple<int, int, vector<double>, vector<double>>> CompartmentGrid::getDiffusingMotors() {
-    
-    vector<tuple<int, int, vector<double>, vector<double>>> output;
-
-    //for all motor types, get compartment binding managers
-    //@note - this is for filament type 0 only. For multiple filament types, this would require a fix.
-    for(int type = 0; type < SysParams::Chemistry().numMotorSpecies[0]; type++) {
-        
-        for(Compartment* c: getCompartments()) {
-            
-            MotorBindingManager* mm = c->getMotorBindingManager(type);
-            
-            for(int ID : mm->getAllUnboundIDs()) {
-            
-                bool found = false;
-                
-                while(!found) {
-                
-                    //pick random two points in compartment
-                    double dist = (mm->getRMax() + mm->getRMin()) / 2.0;
-                
-                    vector<double> midpoint = GController::getRandomCoordinates(c);
-                
-                    double directionX = Rand::randDouble(-1,1);
-                    double directionY = Rand::randDouble(-1,1);
-                    double directionZ = Rand::randDouble(-1,1);
-                    vector<double> direction = normalizedVector({directionX, directionY, directionZ});
-                
-                    vector<double> firstPoint  = nextPointProjection(midpoint, dist / 2.0, direction);
-                    vector<double> secondPoint = nextPointProjection(midpoint, dist / 2.0,
-                                                 vector<double>{-direction[0], -direction[1], -direction[2]});
-                    
-                    try {
-                        GController::getCompartment(firstPoint);
-                        GController::getCompartment(secondPoint);
-                        
-                        //add to output and switch flag
-                        output.emplace_back(ID, type, firstPoint, secondPoint);
-                        found = true;
-                    }
-                    catch (exception& e) {/*just repeat loop*/}
-                }
-                
-            }
-        }
-    }
-    return output;
-}
+//vector<tuple<int, int, vector<double>, vector<double>>> CompartmentGrid::getDiffusingMotors() {
+//    
+//    vector<tuple<int, int, vector<double>, vector<double>>> output;
+//
+//    //for all motor types, get compartment binding managers
+//    //@note - this is for filament type 0 only. For multiple filament types, this would require a fix.
+//    for(int type = 0; type < SysParams::Chemistry().numMotorSpecies[0]; type++) {
+//        
+//        for(Compartment* c: getCompartments()) {
+//            
+//            MotorBindingManager* mm = c->getMotorBindingManager(type);
+//            
+//            for(int ID : mm->getAllUnboundIDs()) {
+//            
+//                bool found = false;
+//                
+//                while(!found) {
+//                
+//                    //pick random two points in compartment
+//                    double dist = (mm->getRMax() + mm->getRMin()) / 2.0;
+//                
+//                    vector<double> midpoint = GController::getRandomCoordinates(c);
+//                
+//                    double directionX = Rand::randDouble(-1,1);
+//                    double directionY = Rand::randDouble(-1,1);
+//                    double directionZ = Rand::randDouble(-1,1);
+//                    vector<double> direction = normalizedVector({directionX, directionY, directionZ});
+//                
+//                    vector<double> firstPoint  = nextPointProjection(midpoint, dist / 2.0, direction);
+//                    vector<double> secondPoint = nextPointProjection(midpoint, dist / 2.0,
+//                                                 vector<double>{-direction[0], -direction[1], -direction[2]});
+//                    
+//                    try {
+//                        GController::getCompartment(firstPoint);
+//                        GController::getCompartment(secondPoint);
+//                        
+//                        //add to output and switch flag
+//                        output.emplace_back(ID, type, firstPoint, secondPoint);
+//                        found = true;
+//                    }
+//                    catch (exception& e) {/*just repeat loop*/}
+//                }
+//                
+//            }
+//        }
+//    }
+//    return output;
+//}
 
