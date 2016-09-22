@@ -48,7 +48,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     : Trackable(true, true),
       _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _motorType(motorType), _birthTime(tau()),
+      _motorType(motorType), _motorID(_motorGhosts.getID()), _birthTime(tau()),
       _onRate(onRate), _offRate(offRate) {
           
     //find compartment

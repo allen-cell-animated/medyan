@@ -571,7 +571,8 @@ struct MotorBindingCallback {
         MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2, _onRate, _offRate);
         
         //attach an ID to the motor based on the transfer ID
-        m->setID(MotorGhost::_motorGhosts.getTransferID());
+        //DEPRECATED AS OF 9/22/16
+//        m->setID(MotorGhost::_motorGhosts.getTransferID());
         
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();

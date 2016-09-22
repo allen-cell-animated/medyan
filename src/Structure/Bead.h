@@ -81,7 +81,6 @@ public:
     
     ///Default constructor
     Bead(Composite* parent, int position);
-    ~Bead() {}
     
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
@@ -95,7 +94,10 @@ public:
     //@{
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _beads.addElement(this);}
-    virtual void removeFromSubSystem() {_beads.removeElement(this);}
+    virtual void removeFromSubSystem() {
+        _beads.removeElement(this);
+        if(_isPinned) removeAsPinned();
+    }
     //@}
     
     /// Get all instances of this class from the SubSystem
@@ -108,6 +110,15 @@ public:
         _isPinned = true;
         _pinnedBeads.addElement(this);
     }
+    
+    /// Remove this bead as pinned. Will remove from pinnedBeads DB
+    /// @note - only usually called upon the destruction of a Bead.
+    void removeAsPinned() {
+        
+        _isPinned = false;
+        _pinnedBeads.removeElement(this);
+    }
+    
     
     /// Get all pinned beads from subsystem
     static const vector<Bead*>& getPinnedBeads() {

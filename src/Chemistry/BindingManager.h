@@ -306,7 +306,8 @@ class MotorBindingManager : public FilamentBindingManager {
 friend class ChemManager;
     
 private:
-    vector<int> _unboundIDs = {};
+        //DEPRECATED AS OF 9/22/16
+//    vector<int> _unboundIDs = {};
     ///< A vector of unbound motor ID's that are contained in this compartment. This is used
     ///< for tracking binding/unbinding and movement of specific motors.
     

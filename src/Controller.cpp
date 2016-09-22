@@ -441,7 +441,10 @@ void Controller::updateNeighborLists() {
 void Controller::pinBoundaryFilaments() {
 
     //if we've already added pinned filaments, return
-    if(Bead::getPinnedBeads().size() != 0) return;
+    
+    cout << Bead::getPinnedBeads().size() << endl;
+    if(Bead::getPinnedBeads().size() != 0)
+        return;
     
     //loop through beads, check if within pindistance
     for(auto b : Bead::getBeads()) {
@@ -453,6 +456,10 @@ void Controller::pinBoundaryFilaments() {
         
         if((plusEndC->getSecondBead() == b) ||
            (minusEndC->getFirstBead() == b)) {
+            
+            cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
+            cout << SysParams::Mechanics().pinDistance << endl;
+            
             
             //if within dist to boundary, add
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
