@@ -441,8 +441,6 @@ void Controller::updateNeighborLists() {
 void Controller::pinBoundaryFilaments() {
 
     //if we've already added pinned filaments, return
-    
-    cout << Bead::getPinnedBeads().size() << endl;
     if(Bead::getPinnedBeads().size() != 0)
         return;
     
