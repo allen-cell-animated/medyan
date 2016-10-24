@@ -194,6 +194,11 @@ int  _numChemSteps=0;
                     events++;
                 }}
             CopyNumbers[counter]=CopyNumbers[counter]-events;
+            if(CopyNumbers[counter]<0)
+            {cout <<
+                "Restart file reaction numbers do not match with diffusing species number."
+                << endl;
+                exit(EXIT_FAILURE);}
             events=events+(c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
             (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
 //          std::cout<<get<0>(sd)<<" "<<(c1->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN()<<endl;

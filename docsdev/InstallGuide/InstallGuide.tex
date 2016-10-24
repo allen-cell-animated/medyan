@@ -55,8 +55,15 @@ MEDYAN is a C++ program that can be compiled with the following C++11 compilers:
 
 \subsubsection{Compiler and library choices}
 
-The Makefile can be edited to include a compiler or library in a non-default directory by changing the \texttt{CXX}, \texttt{CPPFLAGS}, and \texttt{LDLIBS} variables within the Makefile. 
-
+The Makefile can be edited to include a compiler or library in a non-default directory by changing the \texttt{CXX}, \texttt{CPPFLAGS}, and \texttt{LDLIBS} variables within the Makefile. To modify the default directory: \\
+\textbullet~Change g++ directory \texttt{CXX} = /usr/bin/g++ -std=c++11 to
+ 	    CXX = /your g++ directory/g++ -std=c++11 or		CXX = g++ -std=c++11\\
+You may need to load g++ module manually.\\
+ \textbullet~Change library directory \texttt{LDLIBS} = -L/usr/local/lib/ -lboost $\textunderscore$ system -lgsl to 
+		LDLIBS =-L/usr/local/lib/ -lboost$\textunderscore$system -L/your boost library directory/lib/ 
+		For some reasons, -lgsl may cause error and remove this command does not affect installation. \\
+\textbullet~Change third line in \texttt{CPPFLAGS} -I/usr/local/include -I/usr/include/boost to
+		-I/your library header directory/include -I/your library header directory/include/boost 
 \subsubsection{Optimization flags}
 
 The code can be compiled with either \texttt{DEBUG} flags, which specifies the default debugging flags for compatibility with GDB and other debugger tools. For optimal performance, compile with the \texttt{FAST} flag, which gives a number of optimization flags. This can be edited for the system specifications.

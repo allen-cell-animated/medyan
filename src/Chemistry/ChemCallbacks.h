@@ -313,6 +313,7 @@ struct BranchingCallback {
     
     void operator() (ReactionBase *r) {
         BranchingPoint* b;
+        float frate;
         short branchType = _bManager->getBoundInt();
         
         //choose a random binding site from manager
@@ -368,6 +369,7 @@ struct BranchingCallback {
         
         //create new branch
         b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+        frate=_offRate;
         }
         else
         {
@@ -384,14 +386,13 @@ struct BranchingCallback {
             CMonomer* x=c->getCMonomer(0);
             x->speciesMinusEnd(0)->down();
             x->speciesFilament(0)->up();
-
-        _offRate=0.0;
+            frate=0.0;
         }
         
         //create off reaction
         auto cBrancher = b->getCBranchingPoint();
         
-        cBrancher->setRates(_onRate, _offRate);
+        cBrancher->setRates(_onRate, frate);
         cBrancher->createOffReaction(r, _ps);
         cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
     }
@@ -434,6 +435,7 @@ struct LinkerBindingCallback {
         
         //get a random binding
         short linkerType = _lManager->getBoundInt();
+        float f;
         
         //choose a random binding site from manager
         auto site = _lManager->chooseBindingSites();
@@ -453,12 +455,13 @@ struct LinkerBindingCallback {
         
         //create off reaction
         auto cLinker = l->getCLinker();
-        
         //aravind June 24, 2016.
         if(SysParams::RUNSTATE==false)
-            _offRate=0.0;
+            f=0.0;
+        else
+            f=_offRate;
         //@
-        cLinker->setRates(_onRate, _offRate);
+        cLinker->setRates(_onRate, f);
         cLinker->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
@@ -507,7 +510,7 @@ struct MotorBindingCallback {
         
         //get a random binding
         short motorType = _mManager->getBoundInt();
-        
+        float f;
         //choose a random binding site from manager
         auto site = _mManager->chooseBindingSites();
         
@@ -528,10 +531,12 @@ struct MotorBindingCallback {
         auto cMotorGhost = m->getCMotorGhost();
         //aravind June 24, 2016.
         if(SysParams::RUNSTATE==false){
-        _offRate=0.0;
+        f=0.0;
         }
+        else
+            f=_offRate;
         //@
-        cMotorGhost->setRates(_onRate, _offRate);
+        cMotorGhost->setRates(_onRate, f);
         cMotorGhost->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
@@ -587,6 +592,7 @@ struct MotorWalkingCallback {
 #ifdef DYNAMICRATES
         //reset the associated reactions
         m->updateReactionRates();
+
 #endif
     }
 };

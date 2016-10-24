@@ -145,13 +145,6 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
     RNodeNRM *rn = _heap.top()._rn;
-//    rn->printSelf();
-//    for(auto &n : _heap) {
-//        (n._rn)->printSelf();
-//    }
-//    std::cout<<"==========================="<<endl;
-    if(rn->getReaction()->getReactionType()==ReactionType::MOTORUNBINDING)
-        int iii=0;
     double tau_top = rn->getTau();
     if(tau_top==numeric_limits<double>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;

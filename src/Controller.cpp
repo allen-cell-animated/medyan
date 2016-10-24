@@ -520,8 +520,6 @@ void Controller::run() {
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
-        for(auto MM : MotorGhost::getMotorGhosts())
-        {std::cout<<" off rate "<<MM->getCMotorGhost()->getOffReaction()->getRate()<<" "<<MM->getCMotorGhost()->getOffRate()<<" "<<endl;}
 //    for(auto o: _outputs) o->print(_numChemSteps);
     cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
     cout << "---" << endl;
@@ -561,7 +559,7 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
-                
+
                 tauLastMinimization = 0.0;
             }
             

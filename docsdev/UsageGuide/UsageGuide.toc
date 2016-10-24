@@ -1,37 +1,43 @@
-\contentsline {section}{\numberline {1}Introduction}{3}
-\contentsline {section}{\numberline {2}Overview of Features}{3}
-\contentsline {subsection}{\numberline {2.1}Chemical capabilities}{3}
-\contentsline {subsection}{\numberline {2.2}Mechanical capabilities}{4}
-\contentsline {subsection}{\numberline {2.3}Mechanochemical coupling}{4}
-\contentsline {section}{\numberline {3}Running MEDYAN}{4}
-\contentsline {section}{\numberline {4}Input}{4}
-\contentsline {subsection}{\numberline {4.1}System file}{4}
-\contentsline {subsubsection}{\numberline {4.1.1}Geometry}{5}
-\contentsline {subsubsection}{\numberline {4.1.2}Mechanics}{6}
-\contentsline {subsubsection}{\numberline {4.1.3}Chemistry}{8}
-\contentsline {subsubsection}{\numberline {4.1.4}Dynamic rates}{10}
-\contentsline {subsubsection}{\numberline {4.1.5}Starting filament configuration}{10}
-\contentsline {subsubsection}{\numberline {4.1.6}Starting bubble configuration}{11}
-\contentsline {subsubsection}{\numberline {4.1.7}Special setup}{11}
-\contentsline {subsubsection}{\numberline {4.1.8}Special protocols}{12}
-\contentsline {subsubsection}{\numberline {4.1.9}Output formats}{12}
-\contentsline {subsection}{\numberline {4.2}Chemistry input file}{12}
-\contentsline {subsubsection}{\numberline {4.2.1}Species}{12}
-\contentsline {subsubsection}{\numberline {4.2.2}Binding sites}{14}
-\contentsline {subsubsection}{\numberline {4.2.3}Reactions}{14}
-\contentsline {subsection}{\numberline {4.3}Filament input file}{19}
-\contentsline {subsection}{\numberline {4.4}Bubble input file}{19}
-\contentsline {section}{\numberline {5}Output}{19}
-\contentsline {subsection}{\numberline {5.1}Types of output files}{20}
-\contentsline {subsubsection}{\numberline {5.1.1}snapshot.traj}{20}
-\contentsline {subsubsection}{\numberline {5.1.2}forces.traj, stresses.traj, and birthtimes.traj}{20}
-\contentsline {subsubsection}{\numberline {5.1.3}chemistry.traj}{21}
-\contentsline {subsection}{\numberline {5.2}Visualization of output}{21}
-\contentsline {subsubsection}{\numberline {5.2.1}Installation of MayaVi}{21}
-\contentsline {subsubsection}{\numberline {5.2.2}Running the visualization script, AnimateTrajectory.py}{22}
-\contentsline {section}{\numberline {6}Developer guide}{22}
-\contentsline {subsection}{\numberline {6.1}Analysis of output}{22}
-\contentsline {subsection}{\numberline {6.2}Repository requests}{22}
-\contentsline {subsection}{\numberline {6.3}Coding style}{23}
-\contentsline {subsection}{\numberline {6.4}Other information}{23}
-\contentsline {section}{\numberline {7}References}{23}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {section}{\numberline {2}Overview of Features}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Chemical capabilities}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Mechanical capabilities}{4}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Mechanochemical coupling}{4}{subsection.2.3}
+\contentsline {section}{\numberline {3}Running MEDYAN}{4}{section.3}
+\contentsline {section}{\numberline {4}Input}{4}{section.4}
+\contentsline {subsection}{\numberline {4.1}System file}{4}{subsection.4.1}
+\contentsline {subsubsection}{\numberline {4.1.1}Geometry}{5}{subsubsection.4.1.1}
+\contentsline {subsubsection}{\numberline {4.1.2}Mechanics}{6}{subsubsection.4.1.2}
+\contentsline {subsubsection}{\numberline {4.1.3}Chemistry}{8}{subsubsection.4.1.3}
+\contentsline {subsubsection}{\numberline {4.1.4}Dynamic rates}{10}{subsubsection.4.1.4}
+\contentsline {subsubsection}{\numberline {4.1.5}Starting filament configuration}{10}{subsubsection.4.1.5}
+\contentsline {subsubsection}{\numberline {4.1.6}Starting bubble configuration}{11}{subsubsection.4.1.6}
+\contentsline {subsubsection}{\numberline {4.1.7}Special setup}{11}{subsubsection.4.1.7}
+\contentsline {subsubsection}{\numberline {4.1.8}Special protocols}{12}{subsubsection.4.1.8}
+\contentsline {subsubsection}{\numberline {4.1.9}Output formats}{12}{subsubsection.4.1.9}
+\contentsline {subsection}{\numberline {4.2}Chemistry input file}{12}{subsection.4.2}
+\contentsline {subsubsection}{\numberline {4.2.1}Species}{12}{subsubsection.4.2.1}
+\contentsline {subsubsection}{\numberline {4.2.2}Binding sites}{14}{subsubsection.4.2.2}
+\contentsline {subsubsection}{\numberline {4.2.3}Reactions}{14}{subsubsection.4.2.3}
+\contentsline {subsection}{\numberline {4.3}Filament input file}{19}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Bubble input file}{19}{subsection.4.4}
+\contentsline {section}{\numberline {5}Output}{19}{section.5}
+\contentsline {subsection}{\numberline {5.1}Types of output files}{20}{subsection.5.1}
+\contentsline {subsubsection}{\numberline {5.1.1}snapshot.traj}{20}{subsubsection.5.1.1}
+\contentsline {subsubsection}{\numberline {5.1.2}forces.traj, stresses.traj, and birthtimes.traj}{20}{subsubsection.5.1.2}
+\contentsline {subsubsection}{\numberline {5.1.3}chemistry.traj}{21}{subsubsection.5.1.3}
+\contentsline {subsection}{\numberline {5.2}Visualization of output}{21}{subsection.5.2}
+\contentsline {subsubsection}{\numberline {5.2.1}VMD based visualization}{21}{subsubsection.5.2.1}
+\contentsline {subsubsection}{\numberline {5.2.2}MayaVi based visualization}{22}{subsubsection.5.2.2}
+\contentsline {paragraph}{\numberline {5.2.2.1}Running the visualization script, AnimateTrajectory.py}{22}{paragraph.5.2.2.1}
+\contentsline {section}{\numberline {6}Restart trajectories}{23}{section.6}
+\contentsline {subsection}{\numberline {6.1}Parse the last snapshot from snapshot.traj}{23}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Convert to Medyan readable format}{24}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Modify system input file}{24}{subsection.6.3}
+\contentsline {subsection}{\numberline {6.4}Merge snapshot, chemistry output files}{25}{subsection.6.4}
+\contentsline {section}{\numberline {7}Developer guide}{25}{section.7}
+\contentsline {subsection}{\numberline {7.1}Analysis of output}{25}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}Repository requests}{25}{subsection.7.2}
+\contentsline {subsection}{\numberline {7.3}Coding style}{25}{subsection.7.3}
+\contentsline {subsection}{\numberline {7.4}Other information}{26}{subsection.7.4}
+\contentsline {section}{\numberline {8}References}{26}{section.8}
