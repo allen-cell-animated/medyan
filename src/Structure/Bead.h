@@ -77,6 +77,8 @@ public:
     /// Beads is done by a corresponding special protocol. (see executeSpecialProtocols() in Controller)
     vector<double> pinnedPosition;
     
+    bool isStatic = false;
+    
     ///Main constructor
     Bead (vector<double> v, Composite* parent, int position);
     
