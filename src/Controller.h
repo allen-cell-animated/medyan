@@ -24,6 +24,8 @@
 
 //FORWARD DECLARATIONS
 class SubSystem;
+class Cylinder;
+class FilamentBindingManager;
 
 /// Used to initialize, manage, and run an entire simulation.
 
@@ -65,6 +67,10 @@ private:
     
     double _minimizationSteps;
     double _neighborListSteps;
+    ChemistryData _chemData;
+    ChemistryAlgorithm _cAlgorithm;
+    vector<tuple<short, vector<double>, vector<double>>> fil;
+    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
     //@}
     
     ///INITIALIZATION HELPER FUNCTIONS

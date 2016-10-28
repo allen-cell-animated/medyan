@@ -305,7 +305,7 @@ public:
 
     ///This implementation returns the kept boolean value
     virtual bool updateDependencies() override {return _dependencies;}
-    
+
     virtual void updatePropensityImpl() override;
 };
 

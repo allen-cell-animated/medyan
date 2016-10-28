@@ -28,7 +28,7 @@ const species_copy_t max_ulim = 1000000;
 extern double global_time;
 
 inline double tau() {return global_time;}
-
+inline void resetglobaltime() {global_time=0.0;}
 ///Some constants
 const double kT = 4.1; //in pN * nm
 

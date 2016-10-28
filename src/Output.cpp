@@ -718,7 +718,7 @@ void Chemistry::print(int snapshot) {
         
         for(auto sb : _chemData.speciesBrancher[filType]) {
             
-            auto copyNum = MotorGhost::countSpecies(sb);
+            auto copyNum = BranchingPoint::countSpecies(sb);
             _outputFile << sb << ":BRANCHER " << copyNum << endl;
         }
     }

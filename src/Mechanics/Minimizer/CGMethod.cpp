@@ -92,10 +92,12 @@ void CGMethod::startMinimization() {
 void CGMethod::moveBeads(double d)
 {
 	for(auto b: Bead::getBeads()) {
-        
+        if(!b->getstaticstate()){
         b->coordinate[0] = b->coordinate[0] + d * b->force[0];
         b->coordinate[1] = b->coordinate[1] + d * b->force[1];
         b->coordinate[2] = b->coordinate[2] + d * b->force[2];
+        }
+
 	}
 }
 

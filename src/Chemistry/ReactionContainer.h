@@ -97,6 +97,10 @@ public:
             _reactions.erase(child_iter);
         }
     }
+   //aravind June 24, 2016.
+    virtual void updatePropensityComprtment()
+    {        for(auto &it: _reactions)
+        it->updatePropensity();    }
     
     /// Remove all reactions that contain a certain species from this container
     virtual void removeReactions (Species* s)

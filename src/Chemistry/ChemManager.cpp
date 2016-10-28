@@ -1328,7 +1328,12 @@ void ChemManager::genFilBindingReactions() {
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
-                
+                auto temp=SysParams::BUBBareRate;
+                if(temp.size()>0)
+                    temp[brancherInt]=offRate;
+                else
+                    temp.push_back(offRate);
+                SysParams::BUBBareRate=temp;
                 //get nucleation zone
                 string nzstr = get<4>(r);
                 NucleationZoneType nucleationZone;
@@ -1562,7 +1567,13 @@ void ChemManager::genFilBindingReactions() {
             
                 double onRate = get<2>(r);
                 double offRate = get<3>(r);
-                
+                //aravind 24, June, 2016.
+                auto temp=SysParams::LUBBareRate;
+                if(temp.size()>0)
+                    temp[linkerInt]=offRate;
+                else
+                    temp.push_back(offRate);
+                SysParams::LUBBareRate=temp;
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 
@@ -1782,7 +1793,13 @@ void ChemManager::genFilBindingReactions() {
                 
                 double onRate = get<2>(r);
                 double offRate = get<3>(r);
-                
+                //aravind June 24, 2016.
+                auto temp=SysParams::MUBBareRate;
+                if(temp.size()>0)
+                    temp[motorInt]=offRate;
+                else
+                    temp.push_back(offRate);
+                SysParams::MUBBareRate=temp;
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 

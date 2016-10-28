@@ -368,7 +368,8 @@ struct BranchingCallback {
     _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-        
+        BranchingPoint* b;
+        float frate;
         short branchType = _bManager->getBoundInt();
         
         //choose a random binding site from manager
@@ -376,11 +377,10 @@ struct BranchingCallback {
         
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
-        
         short filType = c1->getType();
         
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
-        
+        if(SysParams::RUNSTATE==true){
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
         auto x2 = c1->getSecondBead()->coordinate;
@@ -393,7 +393,6 @@ struct BranchingCallback {
 #ifdef MECHANICS
         //use mechanical parameters
         double l, t;
-        
         if(SysParams::Mechanics().BrStretchingL.size() != 0) {
             l = SysParams::Mechanics().BrStretchingL[branchType];
             t = SysParams::Mechanics().BrBendingTheta[branchType];
@@ -425,13 +424,33 @@ struct BranchingCallback {
         c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
-        BranchingPoint* b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+        b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+        frate=_offRate;
+        }
+        else
+        {
+        CCylinder* c;
+        vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
+            for(auto T:BrT){
+                CCylinder* cx=get<0>(get<0>(T));
+                double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
+                if(cx->getCylinder()->getID()==c1->getID() && p==pos){
+                    c=get<0>(get<1>(T));
+                    break;
+                }}
+            b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
+            CMonomer* x=c->getCMonomer(0);
+            x->speciesMinusEnd(0)->down();
+            x->speciesFilament(0)->up();
+            frate=0.0;
+        }
         
         //create off reaction
         auto cBrancher = b->getCBranchingPoint();
         
-        cBrancher->setRates(_onRate, _offRate);
+        cBrancher->setRates(_onRate, frate);
         cBrancher->createOffReaction(r, _ps);
+        cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
     }
 };
 
@@ -472,6 +491,7 @@ struct LinkerBindingCallback {
         
         //get a random binding
         short linkerType = _lManager->getBoundInt();
+        float f;
         
         //choose a random binding site from manager
         auto site = _lManager->chooseBindingSites();
@@ -491,12 +511,20 @@ struct LinkerBindingCallback {
         
         //create off reaction
         auto cLinker = l->getCLinker();
-        
-        cLinker->setRates(_onRate, _offRate);
+        //aravind June 24, 2016.
+        if(SysParams::RUNSTATE==false)
+            f=0.0;
+        else
+            f=_offRate;
+        //@
+        cLinker->setRates(_onRate, f);
         cLinker->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
+        //aravind june 24, 2016
+        cLinker->getOffReaction()->setBareRate(SysParams::LUBBareRate[linkerType]);
+        //@
         l->updateReactionRates();
 #endif
     }
@@ -553,7 +581,7 @@ struct MotorBindingCallback {
         
         //get a random binding
         short motorType = _mManager->getBoundInt();
-        
+        float f;
         //choose a random binding site from manager
         auto site = _mManager->chooseBindingSites();
         
@@ -576,13 +604,23 @@ struct MotorBindingCallback {
         
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
-        
-        cMotorGhost->setRates(_onRate, _offRate);
+        //aravind June 24, 2016.
+        if(SysParams::RUNSTATE==false){
+        f=0.0;
+        }
+        else
+            f=_offRate;
+        //@
+        cMotorGhost->setRates(_onRate, f);
         cMotorGhost->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions
         m->updateReactionRates();
+        //aravind June 24,2016.
+        cMotorGhost->getOffReaction()->setBareRate(SysParams::MUBBareRate[motorType]);
+        //@
+
 #endif
         
     }
@@ -629,6 +667,7 @@ struct MotorWalkingCallback {
 #ifdef DYNAMICRATES
         //reset the associated reactions
         m->updateReactionRates();
+
 #endif
     }
 };
@@ -660,7 +699,6 @@ struct MotorMovingCylinderCallback {
         CCylinder* oldCC = _oldC->getCCylinder();
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
-        
         short filType = _oldC->getType();
         
         //get motor

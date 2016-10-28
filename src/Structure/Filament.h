@@ -90,7 +90,7 @@ public:
     /// determined by position vector.
     Filament(SubSystem* s, short filamentType,
              vector<vector<double>>& position, int numBeads,
-             string projectionType = "STRAIGHT");
+             string projectionType = "PREDEFINED");
     
     /// This constructor is called when a filament is severed. It creates a filament
     /// that initially has no cylinders.
@@ -165,7 +165,7 @@ public:
     int getID() {return _ID;}
     
     /// Get type
-    virtual int getType() {return _filType;}
+    int getType() {return _filType;}
     
     //@{
     /// Get end cylinder
@@ -187,7 +187,6 @@ public:
     static int numFilaments() {
         return _filaments.countElements();
     }
-    
     /// Get the turnover times
     static Histogram* getTurnoverTimes() {return _turnoverTimes;}
     
@@ -198,6 +197,8 @@ public:
     vector<vector<double>> straightFilamentProjection(vector<vector<double>>& v, int numBeads);
     vector<vector<double>> zigZagFilamentProjection(vector<vector<double>>& v, int numBeads);
     vector<vector<double>> arcFilamentProjection(vector<vector<double>>& v, int numBeads);
+    //Aravind 18 Feb 2016.
+    vector<vector<double>> predefinedFilamentProjection(vector<vector<double>>& v, int numBeads);
     //@}
     
     virtual void printSelf();

@@ -15,8 +15,8 @@
 #define MEDYAN_FilamentInitializer_h
 
 #include "common.h"
-
-typedef vector<tuple<short, vector<double>, vector<double>>> FilamentData;
+typedef vector<tuple<short, vector<double>, vector<double>>> filamentData;
+typedef  tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  FilamentData;
 
 ///FORWARD DECLARATIONS
 class Boundary;

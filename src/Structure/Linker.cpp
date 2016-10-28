@@ -157,7 +157,8 @@ void Linker::updateReactionRates() {
 
     //change the rate
     float newRate = _unbindingChangers[_linkerType]->changeRate(offRxn->getBareRate(), force);
-    
+    if(SysParams::RUNSTATE==false)
+    {newRate=0.0;}
     offRxn->setRate(newRate);
     offRxn->updatePropensity();
 }
