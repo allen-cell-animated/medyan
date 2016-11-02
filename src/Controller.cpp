@@ -86,17 +86,6 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
-    _outputs.push_back(new WallTensions(_outputDirectory + "walltensions.traj", _subSystem));
-    _outputs.push_back(new Types(_outputDirectory + "types.traj", _subSystem));
-    
-    
-    _outputs.push_back(new MotorLifetimes(_outputDirectory + "motorlifetimes.traj",_subSystem));
-    _outputs.push_back(new LinkerLifetimes(_outputDirectory + "linkerlifetimes.traj",_subSystem));
-    _outputs.push_back(new MotorWalkLengths(_outputDirectory + "motorwalklengths.traj",_subSystem));
-    
-    MotorGhost::_lifetimes = new Histogram(100,0,100);
-    MotorGhost::_walkLengths = new Histogram(500,0,500);
-    Linker::_lifetimes = new Histogram(10000,0,1000);
     
     //Always read geometry, check consistency
     p.readGeoParams();
