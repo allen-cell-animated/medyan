@@ -6,6 +6,6 @@
 \contentsline {subsection}{\numberline {2.2}Running simulation}{4}
 \contentsline {subsection}{\numberline {2.3}Visualization and analysis}{4}
 \contentsline {subsubsection}{\numberline {2.3.1}Running visualizer}{4}
-\contentsline {subsubsection}{\numberline {2.3.2}Simple analysis: $R_g$ and $S$}{4}
+\contentsline {subsubsection}{\numberline {2.3.2}Simple analysis: $R_g$ and $S$}{5}
 \contentsline {subsection}{\numberline {2.4}Other exercises}{5}
-\contentsline {section}{\numberline {3}References}{7}
+\contentsline {section}{\numberline {3}References}{5}

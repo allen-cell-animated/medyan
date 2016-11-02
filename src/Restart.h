@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.0
+//               Dynamics of Active Networks, v3.1
 //
-//  Copyright (2015)  Papoian Lab, University of Maryland
+//  Copyright (2015-2016)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef M3SYM_Restart_h
-#define M3SYM_Restart_h
+#ifndef MEDYAN_Restart_h
+#define MEDYAN_Restart_h
 
 #include "common.h"
 
@@ -62,7 +62,8 @@ class Restart {
 private:
 SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
 vector<double> temp_diffrate_vector; ///vector of diffusion rates
-tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>>,
+       vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
 ChemistryData _chemData;
 vector<double> CopyNumbers;
 unordered_multimap<int, tuple<CCylinder*, short>> _unsortedpairings;
@@ -201,12 +202,13 @@ int  _numChemSteps=0;
                 exit(EXIT_FAILURE);}
             events=events+(c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
             (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
-//          std::cout<<get<0>(sd)<<" "<<(c1->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN()<<endl;
             c->getCompartment()->getDiffusionReactionContainer().updatePropensityComprtment();
             counter++;
     }}
 public:
-    Restart(SubSystem* s, tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > f, ChemistryData _cd) : _subSystem(s), filaments(f), _chemData(_cd) {}
+    Restart(SubSystem* s, tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short,
+            vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > f, ChemistryData _cd)
+            : _subSystem(s), filaments(f), _chemData(_cd) {}
     int getnumchemsteps(){return _numChemSteps;}
     void settorestartphase(){
 //STEP #1: Get a copy of diffusion rate and set diffusion rate to 0, reset linker motor and branching managers.
@@ -216,7 +218,6 @@ public:
             it->setRate(0.0);}
         C->getDiffusionReactionContainer().updatePropensityComprtment();
         for(auto &Mgr:C->getFilamentBindingManagers()){Mgr->clearpossibleBindings();
-            //            std::cout<<Mgr->numBindingSites()<<endl;
         }}
     
 //STEP #1a: Get cylinders, passivate filament reactions.
@@ -299,7 +300,8 @@ public:
                 }//@for brows
             }}//@Cylinders
         //STEP #2A . updating _possbileBindings of Linkers in each compartment.
-        //Filter through probable sites in unsortedpairings by making sure the distance between binding sites in them is the same as bound species bond length
+        //Filter through probable sites in unsortedpairings by making sure the distance between binding sites
+        //in them is the same as bound species bond length
         crosschecklinkermotor();
         }
     
@@ -394,7 +396,7 @@ public:
             auto c11=get<0>(map[one])->getCylinder()->getFirstBead()->coordinate;
             auto c1=get<0>(map[one])->getCylinder();
             auto c21=get<0>(map[two])->getCylinder()->getFirstBead()->coordinate;
-            //            std::cout<<c11[0]<<" "<<c11[1]<<" "<<c11[2]<<" & "<<c21[0]<<" "<<c21[1]<<" "<<c21[2]<<" pos "<<p1<<" & "<<p2<<endl;
+            
             for(auto &Mgr:c1->getCompartment()->getFilamentBindingManagers()){
                 if(dynamic_cast<BranchingManager*>(Mgr.get())) {
                     if(Mgr->getBoundName().compare(boundName)==0){
@@ -407,17 +409,14 @@ public:
                                 if((rxnspecies.at(it2)).compare(get<0>(sd))==0){
                                     events++;
                                 }}
-                            //                            std::cout<<rxnspecies.at(1)<<" "<<get<0>(sd)<<" "<<((rxnspecies.at(1).compare(get<0>(sd))))<<endl;
                             if((rxnspecies.at(1).compare(get<0>(sd)))!=0)
                                 CopyNumbers[counter]=CopyNumbers[counter]-events;
                             events=events+(c1->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
                             (c1->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
-                            //                        std::cout<<get<0>(sd)<<" "<<(c1->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN()<<endl;
                             c1->getCompartment()->getDiffusionReactionContainer().updatePropensityComprtment();
                             counter++;
                         }
                         Mgr->appendpossibleBindings(map[one],map[two]);
-                        //                        _cController->run(1);
                         _numChemSteps++;
                     }}}
         } //@brows
@@ -436,13 +435,11 @@ public:
                     CopyNumbers[counter]=CopyNumbers[counter]-eventVec[counter];}
                 else
                     (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);
-                //                std::cout<<get<0>(sd)<<" "<<(C->findSpeciesByName(get<0>(sd)))->getRSpecies().getN()<<endl;
                 counter++;}}
         counter=0;
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
             for(auto &it: C->getDiffusionReactionContainer().reactions())
             {it->setRate(temp_diffrate_vector[counter]);
-                //            std::cout<<it->getRate()<<endl;
                 counter++;}
             C->getDiffusionReactionContainer().updatePropensityComprtment();}
     }

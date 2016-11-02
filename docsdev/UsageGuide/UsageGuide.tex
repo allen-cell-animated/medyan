@@ -22,8 +22,8 @@
 \setcounter{tocdepth}{5}
 \def\Z{\vphantom{\parbox[c]{1cm}{\Huge Something Long}}}
 
-\title{Usage Guide for MEDYAN v3.0}
-\author{Papoian Lab, University of Maryland \\ Written by James Komianos}
+\title{Usage Guide for MEDYAN \textbf{v3.1}}
+\author{Papoian Lab, University of Maryland}
 \date{}							% Activate to display a given date or no date
 
 \begin{document}
@@ -35,7 +35,32 @@
 
 \tableofcontents
 
-\newpage
+\newpage	
+
+\section {Overview of new features and bug fixes in v3.1}
+
+We have addressed the following issues in MEDYAN v3.0:
+
+\begin{itemize}
+
+\item Mechanochemical side-effects producing heap mis-sorting in NRM reaction-diffusion algorithm
+\item Mechanical equilibration failures due to complexity of filament excluded volume
+\item Various parsing errors for input files and fixed output
+\item Detailed output in the case of a fatal run error
+
+\end{itemize} 
+
+\noindent We have also added the following new features in MEDYAN v3.1:
+
+\begin{itemize}
+
+\item System restart ability from last output trajectory in the case of a stopped run
+\item Dynamic filament mechanochemistry between mechanical equilibration steps 
+\item Ability to make simulation elements static at any point during runtime
+\item Visualization capability via VMD
+
+\end{itemize}
+
 \section {Introduction}
 
  The cell cytoskeleton plays a key role in human biology and disease, contributing ubiquitously
@@ -663,16 +688,18 @@ The chemistry trajectory file gives the copy numbers of all species in the syste
 
 \subsection{Visualization of output}
 \subsubsection{VMD based visualization}
-Visual Molecular Dynamics (VMD) can be downloaded from \url{http://www.ks.uiuc.edu/Research/vmd/}. To convert snapshot.traj into VMD compatible pdb format, use the MATLAB function \texttt{Medyan2VMD.m} in \texttt{InstallDirectory/VMDvisualization}.
-Function call in MATLAB is given as,\\
-\indent \texttt{Medyan2VMD(path,outputfile)}
+Visual Molecular Dynamics (VMD) can be downloaded from \url{http://www.ks.uiuc.edu/Research/vmd/}. To convert snapshot.traj into VMD compatible pdb format, use the MATLAB function \texttt{Medyan2VMD.m} in \texttt{InstallDirectory/visual}.
+Function call in MATLAB is given as \\ \newline
+\texttt{> Medyan2VMD(path,outputfile)}
 \begin{itemize}
 \item path - path to snapshot.traj.
 \item outputfile - desired outputfile name.
 \end{itemize}
-Once the PDB file is obtained, load it in VMD using \texttt{File $\rightarrow$ New Molecule} to choose the  .pdb file and hit \texttt{Load}. 
-The trajectories are best visualized when \texttt{Graphics $\rightarrow$ Representations} window is used to set \texttt{Coloring Method} to \texttt{Chain} and \texttt{Drawing Method} to \texttt{Trace}. Linkers will have chain IDs l,m,n, ... etc while Motor chain IDs will be L,M,N,... . Actin filaments have chain ID F.  Trajectory can be looped through using the slider on the bottom of \texttt{VMD Main} window.\\
-\textbf{Note. Although very powerful, this method can currently handle just one kind of linker, motor.}
+
+\noindent Once the PDB file is obtained, load it in VMD using \texttt{File $\rightarrow$ New Molecule} to choose the  .pdb file and click \texttt{Load}. 
+The trajectories are best visualized when \texttt{Graphics $\rightarrow$ Representations} window is used to set \texttt{Coloring Method} to \texttt{Chain} and \texttt{Drawing Method} to \texttt{Trace}. Linkers will have chain IDs l, m, n, ... etc. while Motor chain IDs will be L, M, N, ... . Actin filaments have chain ID F.  Trajectory can be looped through using the slider on the bottom of \texttt{VMD Main} window. \\ \newline
+\textbf{Note -  Although very powerful, this method can currently handle just one kind of linker and motor.}
+
 \subsubsection{MayaVi based visualization}
 The output described in the previous section can be visualized using a python script found in \texttt{InstallDirectory/visual}, named \texttt{AnimateTrajectory.py}. This script uses MayaVi (http://mayavi.sourceforge.net) to produce a visualization of trajectory frames, as well as an animation of an entire simulation.
 The following python-related dependencies for MayaVi should be installed:
@@ -715,9 +742,10 @@ The visualization script must be edited by the user on lines 6-8 to include the 
 If the simulation does not reach completion and you would like to restart it from the last snapshot, you can use MATLAB scripts found in \texttt{InstallDirectory/restart}. The following steps are needed to prepare the last snapshot for restart.
 \subsection{Parse the last snapshot from snapshot.traj}
 The following set of commands can be used in terminal to parse through snapshot.traj and extract the snapshot from which you would like to restart the simulation. Windows users are encouraged to use Notepad++ or similar text processors. 
-In order to get the last but one snapshot, type the following in terminal.\newline
-\indent \texttt{\$ tail -10 chemistry.traj}\\
-Shown below is a sample output from a particular trajectory.
+In order to get the last but one snapshot, type the following in terminal. \\ \newline
+\texttt{> tail -10 chemistry.traj} \newline
+
+Shown below each command is a sample output from a particular trajectory. \\
 \indent 121189600 1502.71 \\
 \indent AD:DIFFUSING 0\\
 \indent MD:DIFFUSING 0\\
@@ -727,17 +755,22 @@ Shown below is a sample output from a particular trajectory.
 \indent MA:MINUSEND 30\\
 \indent LA:LINKER 403\\
 \indent MOA:MOTOR 48\\
-\\
-\indent \texttt{ \$ grep -n -E $``\wedge{}[0-9]+ 1502*"$ snapshot.traj}  \\ \\
-Shown below is a sample output from a particular trajectory.
-\indent 259043:121189600 1502.71252 30 403 48 0 0 \\ \\
-\indent \texttt{\$ wc -l snapshot.traj}  \\ \\
-\indent 260006 snapshot.traj \\ \\
-\indent \texttt{\$ sed -n ``259044,260006p" snapshot.traj $>$ restartinput.txt} \\ \\
+
+\noindent \texttt{> grep -n -E $``\wedge{}[0-9]+ 1502*"$ snapshot.traj}  \\ 
+
+\indent 259043:121189600 1502.71252 30 403 48 0 0 \\ 
+
+\noindent \texttt{> wc -l snapshot.traj}  \\ 
+
+\indent 260006 snapshot.traj \\ 
+
+\noindent \texttt{> sed -n ``259044,260006p" snapshot.traj $>$ restartinput.txt} \\ 
 Thus the last snapshot is parsed into \texttt{restartinput.txt}.
+
 \subsection{Convert to Medyan readable format}
-To convert the parsed snapshot to Medyan compatible format, you will need the list of linker, motors and brancher names along with a list of filament IDs that they bind with. The MATLAB script \texttt{InstallDirectory/restart/createinputfile.m} can be used for this purpose.\\ \\
-\texttt{>> createinputfile(Ifile,Ofile,L,Lf,M,Mf,B,Bf)}\\ 
+To convert the parsed snapshot to Medyan compatible format, you will need the list of linker, motors and branchers names along with a list of filament IDs that they bind with. The MATLAB script \texttt{InstallDirectory/restart/createinputfile.m} can be used for this purpose.\\
+
+\noindent \texttt{> createinputfile(Ifile,Ofile,L,Lf,M,Mf,B,Bf)}\\ 
 \begin{itemize}
 \item Ifile - input file eg. `restartinput.txt'
  \item Ofile - output file eg. `restartoutput.txt'
@@ -749,17 +782,19 @@ To convert the parsed snapshot to Medyan compatible format, you will need the li
  \item Bf -list of filament IDs corresponding to B eg. [1,1]
 \end{itemize}
 \subsection{Modify system input file}
-Edit the following lines in the system input file. \\
+Edit the following lines in the system input file. \\ \newline
 \indent .......\\
  \indent FILAMENTFILE:           restartoutput.txt \\
 \indent PROJECTIONTYPE:         PREDEFINED \\
 \indent RESTARTPHASE \\
-\indent .........\\
+\indent .........\newline \newline
 You can now run the simulation to desired time. Make sure to save trajectories in a different folder.\\
-\textbf{Note. If your restart files were initialized properly, the stack of reactions listed after "Reactions fired! Displaying heap" should only consist of zeros. Any non zero number indicates failure}
+\textbf{Note - If your restart files were initialized properly, the stack of reactions listed after "Reactions fired! Displaying heap" should only consist of zeros. Any non zero number indicates an initialization failure.}
+
+
 \subsection{Merge snapshot, chemistry output files}
 Once the restarted simulation completes successfully, you can concatenate the two trajectories through the following MATLAB function call. The relevant files are in \texttt{InstallDirectory/restart}.  \\ \\
-\indent \texttt{>> concatenatefiles(frame1,time\textunderscore limit,file1dir,file2dir,outputdir)}\\
+\noindent \texttt{> concatenatefiles(frame1,time\textunderscore limit,file1dir,file2dir,outputdir)}\\
 \begin{itemize}
 \item frame1 - is the last time step to consider in file1. Any frame with time stamp lesser or equal will be written. eg. 1502.37
 \item time\textunderscore limit - desired time duration of simulation eg. 2000.

@@ -10,9 +10,8 @@
 								% TeX will automatically convert eps --> pdf in pdflatex		
 \usepackage{amssymb}
 
-\title{Example Guide for MEDYAN v3.0}
-\author{Papoian Lab, University of Maryland \\
-	   Written by James Komianos}
+\title{Example Guide for MEDYAN \textbf{v3.1}}
+\author{Papoian Lab, University of Maryland}
 \date{}							% Activate to display a given date or no date
 
 \begin{document}
@@ -61,9 +60,9 @@ This file contains key parameters defining the system's specific chemical config
 
 \begin{itemize}
 
-\item \texttt{\textbf{SPECIES}} - All chemical species, regardless of type, are initialized in this file. This system contains diffusing actin = 20 $\mu m$ (\texttt{AD}) as well as diffusing $\alpha$-actinin ($R_{\alpha:a}=0.1$) and NMIIA  ($R_{m:a}=0.02$) (\texttt{LD} and \texttt{MD}) with specified copy number in the simulation volume, as well as diffusion rates and release times as defined in the usage guide. Copy numbers can be converted to molar concentrations using the known system volume. The qualifier \texttt{REG} tells the program to not use any special counting of these species that may optimize the reaction-diffusion simulation. Besides diffusing species, filament species for each filament desired must be defined, as well as plus and minus end species. These species names are eventually used in the reaction section below. Lastly, for binding molecules, a binding site must be specified which is an empty bound site for that species on a given filament.
+\item \texttt{\textbf{SPECIES}} - All chemical species, regardless of type, are initialized in this file. This system contains diffusing actin = 20 $\mu M$ (\texttt{AD}) as well as diffusing $\alpha$-actinin ($R_{\alpha:a}=0.1$) and NMIIA  ($R_{m:a}=0.02$) (\texttt{LD} and \texttt{MD}) with specified copy number in the simulation volume, as well as diffusion rates and release times as defined in the usage guide. Copy numbers can be converted to molar concentrations using the known system volume. The qualifier \texttt{REG} tells the program to not use any special counting of these species that may optimize the reaction-diffusion simulation. Besides diffusing species, filament species for each filament desired must be defined, as well as plus and minus end species. These species names are eventually used in the reaction section below. Lastly, for binding molecules, a binding site must be specified which is an empty bound site for that species on a given filament.
 
-\item \texttt{\textbf{REACTIONS}} - All chemical reactions in the system including the (de)polymerization of actin filaments at both ends, as well as $alpha$-actinin and NMIIA binding, as well as NMIIA walking, are listed here as defined in the usage guide. Each reaction has its own kinetic rate constant and characteristic distances; for example, $\alpha$-actinin binding occurs at 0.009 $s^{-1}$ between distances of 30 and 40 $nm$. Binding reactions, including $\alpha$-actinin and NMIIA, have both a binding and unbinding rate defined, as well as binding ranges.
+\item \texttt{\textbf{REACTIONS}} - All chemical reactions in the system including the (de)polymerization of actin filaments at both ends, as well as $\alpha$-actinin and NMIIA binding, as well as NMIIA walking, are listed here as defined in the usage guide. Each reaction has its own kinetic rate constant and characteristic distances; for example, $\alpha$-actinin binding occurs at 0.009 $s^{-1}$ between distances of 30 and 40 $nm$. Binding reactions, including $\alpha$-actinin and NMIIA, have both a binding and unbinding rate defined, as well as binding ranges.
 
 \end{itemize}
 
@@ -95,7 +94,7 @@ This output can then be shown by using the \texttt{show\_snapshot()} and \texttt
 \begin{figure}[h]
 \caption{A sample trajectory snapshot visualized with \texttt{AnimateTrajectory.py}}
 \centering
-\includegraphics[width=0.8\textwidth]{SampleTraj}
+%\includegraphics[width=0.8\textwidth]{SampleTraj}
 \end{figure}
 
 \subsubsection{Simple analysis: $R_g$ and $S$}
@@ -123,7 +122,7 @@ To see this dependence, multiple trajectories may be required for each $\alpha$-
 \begin{figure}[h]
 \caption{Figure 8 from [1], showing transition to contractile structures above $R_{\alpha:a}=0.05$.}
 \centering
-\includegraphics[width=0.8\textwidth]{Fig8}
+%\includegraphics[width=0.8\textwidth]{Fig8}
 \end{figure}
 
 \section{References}
