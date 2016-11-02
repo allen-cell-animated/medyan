@@ -1,0 +1,14 @@
+digraph "src/Mechanics/Minimizer" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_4c4b18bfeb750a5f08684159b3ab4c25 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="Mechanics" fontname="Helvetica", fontsize="10", URL="dir_4c4b18bfeb750a5f08684159b3ab4c25.html"]
+  dir_84339e9d75b44a49572080c25a84e2c6 [shape=box, label="Minimizer", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_84339e9d75b44a49572080c25a84e2c6.html"];
+  }
+  dir_1e943b2a5906122ddf396bc604857988 [shape=box label="Structure" fillcolor="white" style="filled" color="red" URL="dir_1e943b2a5906122ddf396bc604857988.html"];
+  dir_9a4c1534bd494106f026bdbe76d3e12c [shape=box label="ForceField" fillcolor="white" style="filled" color="red" URL="dir_9a4c1534bd494106f026bdbe76d3e12c.html"];
+  dir_84339e9d75b44a49572080c25a84e2c6->dir_1e943b2a5906122ddf396bc604857988 [headlabel="1", labeldistance=1.5 headhref="dir_000011_000012.html"];
+  dir_84339e9d75b44a49572080c25a84e2c6->dir_9a4c1534bd494106f026bdbe76d3e12c [headlabel="4", labeldistance=1.5 headhref="dir_000011_000003.html"];
+  dir_9a4c1534bd494106f026bdbe76d3e12c->dir_1e943b2a5906122ddf396bc604857988 [headlabel="75", labeldistance=1.5 headhref="dir_000003_000012.html"];
+}

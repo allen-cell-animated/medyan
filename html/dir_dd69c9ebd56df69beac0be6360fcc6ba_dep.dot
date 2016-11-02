@@ -1,0 +1,9 @@
+digraph "src/Structure/Special" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_1e943b2a5906122ddf396bc604857988 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="Structure" fontname="Helvetica", fontsize="10", URL="dir_1e943b2a5906122ddf396bc604857988.html"]
+  dir_dd69c9ebd56df69beac0be6360fcc6ba [shape=box, label="Special", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_dd69c9ebd56df69beac0be6360fcc6ba.html"];
+  }
+}

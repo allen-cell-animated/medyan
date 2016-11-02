@@ -1,0 +1,15 @@
+digraph "MotorGhost"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node0 [label="MotorGhost",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="Component",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classComponent.html",tooltip="The base class for the Composite pattern hieararchy. "];
+  Node2 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Trackable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classTrackable.html",tooltip="An abstract base class for a trackable object in the SubSystem. "];
+  Node3 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Movable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classMovable.html",tooltip="An abstract base class for a movable element in the SubSystem. "];
+  Node4 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Reactable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classReactable.html",tooltip="An abstract base class for a reactable element in the SubSystem. "];
+}

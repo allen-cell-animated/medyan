@@ -1,0 +1,17 @@
+digraph "src" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_68267d1309a1af8e8297ef4c3efbcdba {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_68267d1309a1af8e8297ef4c3efbcdba.html"];
+    dir_68267d1309a1af8e8297ef4c3efbcdba [shape=plaintext label="src"];
+    dir_400cfe33e5b80c06f15a3edb696f8c55 [shape=box label="Chemistry" color="black" fillcolor="white" style="filled" URL="dir_400cfe33e5b80c06f15a3edb696f8c55.html"];
+    dir_4c4b18bfeb750a5f08684159b3ab4c25 [shape=box label="Mechanics" color="red" fillcolor="white" style="filled" URL="dir_4c4b18bfeb750a5f08684159b3ab4c25.html"];
+    dir_1e943b2a5906122ddf396bc604857988 [shape=box label="Structure" color="red" fillcolor="white" style="filled" URL="dir_1e943b2a5906122ddf396bc604857988.html"];
+    dir_c04c1e9978a4918695441716382727fe [shape=box label="TESTS" color="black" fillcolor="white" style="filled" URL="dir_c04c1e9978a4918695441716382727fe.html"];
+  }
+  dir_1e943b2a5906122ddf396bc604857988->dir_400cfe33e5b80c06f15a3edb696f8c55 [headlabel="18", labeldistance=1.5 headhref="dir_000012_000001.html"];
+  dir_68267d1309a1af8e8297ef4c3efbcdba->dir_400cfe33e5b80c06f15a3edb696f8c55 [headlabel="22", labeldistance=1.5 headhref="dir_000000_000001.html"];
+  dir_400cfe33e5b80c06f15a3edb696f8c55->dir_1e943b2a5906122ddf396bc604857988 [headlabel="22", labeldistance=1.5 headhref="dir_000001_000012.html"];
+  dir_4c4b18bfeb750a5f08684159b3ab4c25->dir_1e943b2a5906122ddf396bc604857988 [headlabel="76", labeldistance=1.5 headhref="dir_000002_000012.html"];
+}

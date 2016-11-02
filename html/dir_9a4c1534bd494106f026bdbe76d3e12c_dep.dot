@@ -1,0 +1,27 @@
+digraph "src/Mechanics/ForceField" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_4c4b18bfeb750a5f08684159b3ab4c25 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="Mechanics" fontname="Helvetica", fontsize="10", URL="dir_4c4b18bfeb750a5f08684159b3ab4c25.html"]
+  subgraph clusterdir_9a4c1534bd494106f026bdbe76d3e12c {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_9a4c1534bd494106f026bdbe76d3e12c.html"];
+    dir_9a4c1534bd494106f026bdbe76d3e12c [shape=plaintext label="ForceField"];
+    dir_ae4a66a3f55262d91bc14013ed0f0757 [shape=box label="Boundary" color="black" fillcolor="white" style="filled" URL="dir_ae4a66a3f55262d91bc14013ed0f0757.html"];
+    dir_621c4990e276af7bf45521764774eda1 [shape=box label="Branching" color="black" fillcolor="white" style="filled" URL="dir_621c4990e276af7bf45521764774eda1.html"];
+    dir_d710ac36824271de4fd9195214ba8a7c [shape=box label="Bubble" color="black" fillcolor="white" style="filled" URL="dir_d710ac36824271de4fd9195214ba8a7c.html"];
+    dir_8f945c7524d51752a12700b7d7a55446 [shape=box label="Filament" color="black" fillcolor="white" style="filled" URL="dir_8f945c7524d51752a12700b7d7a55446.html"];
+    dir_14c5d43d30a7f4e883b37a01a71b70e6 [shape=box label="Linker" color="black" fillcolor="white" style="filled" URL="dir_14c5d43d30a7f4e883b37a01a71b70e6.html"];
+    dir_c9879a2310669418a865551afb895331 [shape=box label="MotorGhost" color="black" fillcolor="white" style="filled" URL="dir_c9879a2310669418a865551afb895331.html"];
+    dir_3abcdf2f7017e4150665d9d19aa422df [shape=box label="Volume" color="black" fillcolor="white" style="filled" URL="dir_3abcdf2f7017e4150665d9d19aa422df.html"];
+  }
+  }
+  dir_1e943b2a5906122ddf396bc604857988 [shape=box label="Structure" fillcolor="white" style="filled" color="red" URL="dir_1e943b2a5906122ddf396bc604857988.html"];
+  dir_621c4990e276af7bf45521764774eda1->dir_1e943b2a5906122ddf396bc604857988 [headlabel="17", labeldistance=1.5 headhref="dir_000005_000012.html"];
+  dir_d710ac36824271de4fd9195214ba8a7c->dir_1e943b2a5906122ddf396bc604857988 [headlabel="18", labeldistance=1.5 headhref="dir_000006_000012.html"];
+  dir_ae4a66a3f55262d91bc14013ed0f0757->dir_1e943b2a5906122ddf396bc604857988 [headlabel="16", labeldistance=1.5 headhref="dir_000004_000012.html"];
+  dir_8f945c7524d51752a12700b7d7a55446->dir_1e943b2a5906122ddf396bc604857988 [headlabel="8", labeldistance=1.5 headhref="dir_000007_000012.html"];
+  dir_c9879a2310669418a865551afb895331->dir_1e943b2a5906122ddf396bc604857988 [headlabel="5", labeldistance=1.5 headhref="dir_000009_000012.html"];
+  dir_3abcdf2f7017e4150665d9d19aa422df->dir_1e943b2a5906122ddf396bc604857988 [headlabel="5", labeldistance=1.5 headhref="dir_000010_000012.html"];
+  dir_14c5d43d30a7f4e883b37a01a71b70e6->dir_1e943b2a5906122ddf396bc604857988 [headlabel="5", labeldistance=1.5 headhref="dir_000008_000012.html"];
+}

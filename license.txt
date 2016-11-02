@@ -1,7 +1,7 @@
 
 MEDYAN LICENSE
 
-Copyright 2015, Papoian Lab
+Copyright 2015-2016, Papoian Lab
 
 Unless expressly written in this license, MEDYAN, which includes the source code files for all past and current distributions provided by the Papoian lab, is under standard copyright law. This license refers to the MEDYAN source code as the full set of source code files to compile and run the MEDYAN software package in past and previous MEDYAN versions, which is provided solely by the Papoian lab (www.medyan.org). The user refers to the party downloading, compiling, and running MEDYAN.
 

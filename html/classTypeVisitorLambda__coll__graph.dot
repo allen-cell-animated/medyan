@@ -1,0 +1,11 @@
+digraph "TypeVisitorLambda&lt; ComponentType &gt;"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node3 [label="TypeVisitorLambda\<\l ComponentType \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="VisitorLambda",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classVisitorLambda.html",tooltip="Allows using C++11 lambda expressions to set the action to be performed on each node, and also check via a lambda predicate whether the given node needs to be acted upon. "];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Visitor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classVisitor.html",tooltip="An abstract interface to traverse those nodes in the Composite pattern which fulfill a certain predic..."];
+}

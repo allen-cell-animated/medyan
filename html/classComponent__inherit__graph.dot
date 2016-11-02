@@ -1,0 +1,40 @@
+digraph "Component"
+{
+ // INTERACTIVE_SVG=YES
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="Component",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node0 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="Bead",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classBead.html",tooltip="Represents a single coordinate between Cylinders, and holds forces needed for mechanical equilibratio..."];
+  Node0 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="BoundaryElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classBoundaryElement.html",tooltip="Represents an element of a BoundarySurface. "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="CylindricalZBoundaryElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classCylindricalZBoundaryElement.html",tooltip="A cylinder implementation of a BoundaryElement. "];
+  Node2 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="HalfSphereZBoundaryElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classHalfSphereZBoundaryElement.html",tooltip="A half-sphere implementation of a BoundaryElement. "];
+  Node2 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="PlaneBoundaryElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classPlaneBoundaryElement.html",tooltip="A plane implementation of a BoundaryElement. "];
+  Node2 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="SphereBoundaryElement",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classSphereBoundaryElement.html",tooltip="A spherical implementation of a BoundaryElement. "];
+  Node0 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="BranchingPoint",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classBranchingPoint.html",tooltip="A container to store a MBranchingPoint and CBranchingPoint. "];
+  Node0 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Composite",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classComposite.html",tooltip="The aggregating class for the Composite pattern. "];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="Bubble",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classBubble.html",tooltip="Represents a dummy point potential that is involved in mechanical equilibration. "];
+  Node8 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Compartment",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classCompartment.html",tooltip="A container or holding Species and Reactions. "];
+  Node8 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="CompartmentGrid",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classCompartmentGrid.html",tooltip="A simple n-dimensional grid of Compartment objects. "];
+  Node8 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="Filament",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classFilament.html",tooltip="Used to store data about connectivity of Cylinders and Beads. "];
+  Node8 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="MTOC",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classMTOC.html",tooltip="A class to represent the structure of a microtubule organizing center (MTOC) "];
+  Node0 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="Cylinder",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classCylinder.html",tooltip="A container to store a MCylinder and CCylinder. "];
+  Node0 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="Linker",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classLinker.html",tooltip="A container to store a MLinker and CLinker. "];
+  Node0 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="MotorGhost",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classMotorGhost.html",tooltip="A container to store a MMotorGhost and CMotorGhost. "];
+}
