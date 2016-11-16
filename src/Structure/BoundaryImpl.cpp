@@ -26,9 +26,9 @@ BoundaryCubic::BoundaryCubic(SubSystem* s, BoundaryMove move)
     : Boundary(s, 3, BoundaryShape::Cube, move){
     
     //Get full system size (want planes to be slightly inside compartment grid)
-    double zeroX = 10;
-    double zeroY = 10;
-    double zeroZ = 10;
+    double zeroX = 25;
+    double zeroY = 25;
+    double zeroZ = 25;
     
     double sysX = GController::getSize()[0] - zeroX;
     double sysY = GController::getSize()[1] - zeroY;
