@@ -2367,18 +2367,18 @@ ChemistryData ChemistryParser::readChemistryInput() {
 
 void PinRestartParser::resetPins() {
     
-    _inputFile.clear();
-    _inputFile.seekg(0);
-    
     //loop through filaments
     for(auto &f: Filament::getFilaments()) {
     
+        _inputFile.clear();
+        _inputFile.seekg(0);
+        
         // Get minus end bead
         auto b1 = f->getMinusEndCylinder()->getFirstBead();
         auto b2 = f->getPlusEndCylinder()->getSecondBead();
         
         int filID = f->getID();
-        string searchID = "FILAMENT " + std::to_string(filID);
+        string searchID = "FILAMENT " + std::to_string(filID) + ":";
         
         string line;
         
@@ -2398,11 +2398,19 @@ void PinRestartParser::resetPins() {
                     b1->pinnedPosition = vector<double>{atof(lineVector[2].c_str()), atof(lineVector[3].c_str()), atof(lineVector[4].c_str())};
                     b2->pinnedPosition = vector<double>{atof(lineVector[5].c_str()), atof(lineVector[6].c_str()), atof(lineVector[7].c_str())};
                     
-                    if(!areEqual(b1->pinnedPosition[0],0.0) && !areEqual(b1->pinnedPosition[1],0.0) && !areEqual(b1->pinnedPosition[2],0.0))
+                    if(!areEqual(b1->pinnedPosition[0],0.0) && !areEqual(b1->pinnedPosition[1],0.0) && !areEqual(b1->pinnedPosition[2],0.0)) {
                         b1->addAsPinned();
                     
-                    if(!areEqual(b2->pinnedPosition[0],0.0) && !areEqual(b2->pinnedPosition[1],0.0) && !areEqual(b2->pinnedPosition[2],0.0))
+//                        cout << "Pinned filament! coordinates = " << b1->coordinate[0] << " " << b1->coordinate[1] << " " << b1->coordinate[2] << endl;
+//                        cout << "Pin position = " << b1->pinnedPosition[0] << " " << b1->pinnedPosition[1] << " " << b1->pinnedPosition[2] << endl;                        
+                    }
+                    
+                    if(!areEqual(b2->pinnedPosition[0],0.0) && !areEqual(b2->pinnedPosition[1],0.0) && !areEqual(b2->pinnedPosition[2],0.0)) {
                         b2->addAsPinned();
+                       
+//                        cout << "Pinned filament! coordinates = " << b2->coordinate[0] << " " << b2->coordinate[1] << " " << b2->coordinate[2] << endl;
+//                        cout << "Pin position = " << b2->pinnedPosition[0] << " " << b2->pinnedPosition[1] << " " << b2->pinnedPosition[2] << endl;
+                    }
                 }
             }
         }
