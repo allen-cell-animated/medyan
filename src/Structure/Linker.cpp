@@ -82,11 +82,11 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 ///@note - tracks lifetime data here
 Linker::~Linker() noexcept {
 
-    double lifetime = tau() - _birthTime;
-    
-    if(_lifetimes->getMax() > lifetime &&
-       _lifetimes->getMin() < lifetime)
-        _lifetimes->addValue(lifetime);
+//    double lifetime = tau() - _birthTime;
+//    
+//    if(_lifetimes->getMax() > lifetime &&
+//       _lifetimes->getMin() < lifetime)
+//        _lifetimes->addValue(lifetime);
 
 }
 

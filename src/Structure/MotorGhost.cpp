@@ -98,16 +98,16 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 ///@note - record lifetime data here
 MotorGhost::~MotorGhost() noexcept {
 
-    double lifetime = tau() - _birthTime;
-    
-    if(_lifetimes->getMax() > lifetime &&
-       _lifetimes->getMin() < lifetime)
-        _lifetimes->addValue(lifetime);
-        
-    
-    if(_walkLengths->getMax() > _walkLength &&
-       _walkLengths->getMin() < _walkLength)
-        _walkLengths->addValue(_walkLength);
+//    double lifetime = tau() - _birthTime;
+//    
+//    if(_lifetimes->getMax() > lifetime &&
+//       _lifetimes->getMin() < lifetime)
+//        _lifetimes->addValue(lifetime);
+//        
+//    
+//    if(_walkLengths->getMax() > _walkLength &&
+//       _walkLengths->getMin() < _walkLength)
+//        _walkLengths->addValue(_walkLength);
     
 }
 
