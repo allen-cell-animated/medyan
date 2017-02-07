@@ -303,7 +303,7 @@ void Filament::retractMinusEnd() {
     
 #ifdef MECHANICS
     //transfer load forces
-    Bead* bd = _cylinderVector.back()->getFirstBead();
+    Bead* bd = _cylinderVector.front()->getFirstBead();
     bd->loadForcesM = retCylinder->getFirstBead()->loadForcesM;
     bd->lfim = retCylinder->getFirstBead()->lfim - 1;
 #endif
