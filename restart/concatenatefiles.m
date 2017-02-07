@@ -17,6 +17,8 @@ for i=1:size(list,1)
             catchemtraj(file1dir,file2dir,catfile,frame1,time_limit);
         elseif(strcmp(list(i).name(1:end-5),'snapshot'))
             catsnaptraj(file1dir,file2dir,catfile,frame1,time_limit);
+        elseif(strcmp(list(i).name(1:end-5),'walltensions'))
+            catwalltraj(file1dir,file2dir,catfile,frame1,time_limit);
         end
     end
     end

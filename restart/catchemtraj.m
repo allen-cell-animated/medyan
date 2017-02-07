@@ -9,7 +9,7 @@ fprintf(cfile,'%s\n',line);
 stop=0;
 while(~feof(file1)&& ~stop)
     line=fgetl(file1);
-    if(isempty(line))
+    if(isempty(line)&&~feof(file1))
       line=fgetl(file1);
         curr_time=str2num(line);
         curr_time=curr_time(2);
