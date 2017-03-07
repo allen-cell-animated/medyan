@@ -150,6 +150,25 @@ public:
     virtual void print(int snapshot);
 };
 
+/// Print all chemical species in the system PER COMPARTMENT, including diffusing
+/// and bulk species, filament, motors, linkers and branchers.
+class ChemistryLocalized : public Output {
+    
+    ChemistryData _chemData; ///< chemistry data of this system
+    CompartmentGrid* _grid; ///< compartment grid of the system
+    
+public:
+    ChemistryLocalized(string outputFileName, SubSystem* s,
+             ChemistryData chemData, CompartmentGrid* grid)
+    
+    : Output(outputFileName, s),
+    _chemData(chemData), _grid(grid) {}
+    
+    ~ChemistryLocalized() {}
+    
+    virtual void print(int snapshot);
+};
+
 
 /// Print MotorGhost binding lifetimes
 class MotorLifetimes : public Output {

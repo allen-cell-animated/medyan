@@ -726,6 +726,13 @@ void Chemistry::print(int snapshot) {
     _outputFile <<endl;
 }
 
+void ChemistryLocalized::print(int snapshot) {
+    
+   //not yet implemented
+}
+
+
+
 void MotorLifetimes::print(int snapshot) {
     
     _outputFile.precision(3);

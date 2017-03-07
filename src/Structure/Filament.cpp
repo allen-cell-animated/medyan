@@ -197,6 +197,14 @@ void Filament::extendPlusEnd(short plusEnd) {
     //(approximation until next minimization)
     bNew->loadForcesP = b2->loadForcesP;
     bNew->lfip = b2->lfip + 1;
+    
+    //if pinned, transfer the pin
+    if(b2->isPinned()) {
+        bNew->pinnedPosition = b2->pinnedPosition;
+        b2->removeAsPinned();
+        bNew->addAsPinned();
+    }
+    
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
@@ -242,6 +250,14 @@ void Filament::extendMinusEnd(short minusEnd) {
     //(approximation until next minimization)
     bNew->loadForcesM = b2->loadForcesM;
     bNew->lfim = b2->lfim + 1;
+    
+    //if pinned, transfer the pin
+    if(b2->isPinned()) {
+        bNew->pinnedPosition = b2->pinnedPosition;
+        b2->removeAsPinned();
+        bNew->addAsPinned();
+    }
+    
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
@@ -277,6 +293,13 @@ void Filament::retractPlusEnd() {
     Bead* bd = _cylinderVector.back()->getSecondBead();
     bd->loadForcesP = retCylinder->getSecondBead()->loadForcesP;
     bd->lfip = retCylinder->getSecondBead()->lfip - 1;
+    
+    //if pinned, transfer the pin
+    if(retCylinder->getSecondBead()->isPinned()) {
+        bd->pinnedPosition = retCylinder->getSecondBead()->pinnedPosition;
+        retCylinder->getSecondBead()->removeAsPinned();
+        bd->addAsPinned();
+    }
 #endif
     
     _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
@@ -306,6 +329,13 @@ void Filament::retractMinusEnd() {
     Bead* bd = _cylinderVector.front()->getFirstBead();
     bd->loadForcesM = retCylinder->getFirstBead()->loadForcesM;
     bd->lfim = retCylinder->getFirstBead()->lfim - 1;
+    
+    //if pinned, transfer the pin
+    if(retCylinder->getFirstBead()->isPinned()) {
+        bd->pinnedPosition = retCylinder->getFirstBead()->pinnedPosition;
+        retCylinder->getFirstBead()->removeAsPinned();
+        bd->addAsPinned();
+    }
 #endif
     
     _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());

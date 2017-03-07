@@ -213,9 +213,10 @@ private:
     double _dutyRatio;
     double _alpha;
     //@}
-    
-    
 public:
+    //FOR MYOSIN-ISOFORMS
+    float v_0;
+    
     MotorStall(short motorType, short filamentType, double charForce,
                double dutyRatio, double alpha)
     
@@ -223,12 +224,12 @@ public:
     _dutyRatio(dutyRatio), _alpha(alpha) {
         
         //calculate rate based on step fraction
-        double d_step = SysParams::Chemistry().motorStepSize[_motorType];
+        //double d_step = SysParams::Chemistry().motorStepSize[_motorType];
         
         double d_total = (double)SysParams::Geometry().cylinderSize[filamentType] /
         SysParams::Chemistry().numBindingSites[filamentType];
         
-        _stepFrac = d_step / d_total;
+        _stepFrac = d_total;
     }
     
     virtual float numBoundHeads(float onRate, float offRate,
@@ -244,11 +245,10 @@ public:
 ///
 class LowDutyMotorStall : public MotorStall {
     
-    
 public:
     LowDutyMotorStall(short motorType, short filamentType, double charForce)
     
-    : MotorStall(motorType, filamentType, charForce, 0.1, 0.2){}
+    : MotorStall(motorType, filamentType, charForce, 0.1, 0.2){v_0 = 50;}
 };
 
 ///A high duty stall force implementation of the MotorRateChanger.
@@ -257,11 +257,10 @@ public:
 ///
 class HighDutyMotorStall : public MotorStall {
     
-    
 public:
     HighDutyMotorStall(short motorType, short filamentType, double charForce)
     
-    : MotorStall(motorType, filamentType, charForce, 0.33, 0.3){}
+    : MotorStall(motorType, filamentType, charForce, 0.33, 0.3){v_0 = 20;}
 };
 
 
