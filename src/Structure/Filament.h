@@ -21,6 +21,7 @@
 
 #include "common.h"
 
+#include "ChemManager.h"
 #include "Database.h"
 #include "Histogram.h"
 #include "Trackable.h"

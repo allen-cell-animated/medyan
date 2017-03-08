@@ -248,6 +248,32 @@ void MotorGhost::updateReactionRates() {
 
                 r->updatePropensity();
             }
+            else if(r->getReactionType() == ReactionType::MOTORWOFORWARD) {
+                float newRate =
+                _walkingChangers[_motorType]->
+                changeRate(_cMotorGhost->getOnRate(),
+                           _cMotorGhost->getOffRate(),
+                           _numHeads, max(0.0, forceDotDirectionC1));
+                
+                if(SysParams::RUNSTATE==false){
+                    newRate=0.0;}
+                r->setRate(newRate);
+                
+                r->updatePropensity();
+            }
+            else if(r->getReactionType() == ReactionType::MOTORWOBACKWARD) {
+                float newRate =
+                _walkingChangers[_motorType]->
+                changeRate(_cMotorGhost->getOnRate(),
+                           _cMotorGhost->getOffRate(),
+                           _numHeads, max(0.0, -forceDotDirectionC1));
+                
+                if(SysParams::RUNSTATE==false){
+                    newRate=0.0;}
+                r->setRate(newRate);
+                
+                r->updatePropensity();
+            }
         }
         for(auto r : s2->getRSpecies().reactantReactions()) {
             
@@ -264,7 +290,31 @@ void MotorGhost::updateReactionRates() {
                 r->setRate(newRate);
                 r->updatePropensity();
             }
-            else if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+            else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
+                
+                float newRate =
+                _walkingChangers[_motorType]->
+                changeRate(_cMotorGhost->getOnRate(),
+                           _cMotorGhost->getOffRate(),
+                           _numHeads, max(0.0, -forceDotDirectionC2));
+                if(SysParams::RUNSTATE==false)
+                { newRate=0.0;}
+                r->setRate(newRate);
+                r->updatePropensity();
+            }
+            else if(r->getReactionType() == ReactionType::MOTORWOFORWARD) {
+                
+                float newRate =
+                _walkingChangers[_motorType]->
+                changeRate(_cMotorGhost->getOnRate(),
+                           _cMotorGhost->getOffRate(),
+                           _numHeads, max(0.0, forceDotDirectionC2));
+                if(SysParams::RUNSTATE==false)
+                { newRate=0.0;}
+                r->setRate(newRate);
+                r->updatePropensity();
+            }
+            else if(r->getReactionType() == ReactionType::MOTORWOBACKWARD) {
                 
                 float newRate =
                 _walkingChangers[_motorType]->

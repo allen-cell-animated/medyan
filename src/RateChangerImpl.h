@@ -248,7 +248,7 @@ class LowDutyMotorStall : public MotorStall {
 public:
     LowDutyMotorStall(short motorType, short filamentType, double charForce)
     
-    : MotorStall(motorType, filamentType, charForce, 0.1, 0.2){v_0 = 50;}
+    : MotorStall(motorType, filamentType, charForce, 0.1, 0.2){v_0 = 10;}
 };
 
 ///A high duty stall force implementation of the MotorRateChanger.

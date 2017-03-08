@@ -72,6 +72,10 @@ public:
                                      bool extensionBack,
                                      bool initialization);
     
+    ///Transfer function for chem cylinders, based on the given simulation
+    ///NOTE: This is currently only used to transfer motor walk-off reactions.
+    virtual void transferCCylinderRxns(CCylinder* cc1, CCylinder* cc2);
+    
     /// Update the copy numbers of all species in the chemical network
     /// @note - this only sets the copy number if the simulation time
     ///         tau has passed the release time of the molecule. This

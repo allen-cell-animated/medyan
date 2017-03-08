@@ -132,6 +132,8 @@ void DiffusionReaction::operator delete(void* ptr) noexcept {
 #endif
     
 #ifdef BOOST_MEM_POOL
+template void* Reaction<1,0>::operator new(size_t size);
+template void Reaction<1,0>::operator delete(void* ptr);
 template void* Reaction<1,1>::operator new(size_t size);
 template void Reaction<1,1>::operator delete(void* ptr);
 template void* Reaction<2,1>::operator new(size_t size);
@@ -163,6 +165,11 @@ template void Reaction<5,2>::operator delete(void* ptr);
 template void* Reaction<4,2>::operator new(size_t size);
 template void Reaction<4,2>::operator delete(void* ptr);
 #endif
+
+template void Reaction<1,0>::updatePropensityImpl();
+template void Reaction<1,0>::activateReactionUnconditionalImpl();
+template void Reaction<1,0>::passivateReactionImpl();
+template Reaction<1,0>* Reaction<1,0>::cloneImpl(const SpeciesPtrContainerVector &spcv);
 
 template void Reaction<1,1>::updatePropensityImpl();
 template void Reaction<1,1>::activateReactionUnconditionalImpl();

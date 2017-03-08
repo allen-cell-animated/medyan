@@ -544,6 +544,46 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc) {
     }
 }
 
+void MotorWalkPTemplate::transferReaction(CCylinder *cc1, CCylinder *cc2){
+    
+    //add reaction to new plus end
+    auto it = SysParams::Chemistry().bindingSites[_filamentType].end() - 1;
+        
+    int site1 = *(it);
+        
+    CMonomer* m1 = cc2->getCMonomer(site1);
+    vector<Species*> reactantSpecies;
+    vector<Species*> productSpecies;
+        
+    //loop through reactants, products. find all species
+    auto r = _reactants[0];
+    int motorType = getInt(r);
+        
+    reactantSpecies.push_back(m1->speciesMotor(getInt(r)));
+    //productSpecies.push_back(m1->speciesMotor(getInt(r)));
+        
+    //Add the ghost reaction, which will signal a call to the unbinding reaction.
+    vector<Species*> species = reactantSpecies;
+    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+    ReactionBase* rxn =
+    new Reaction<1, 0>(species, _rate);
+        
+    //callbacks and add reaction
+#ifdef REACTION_SIGNALING
+    MotorWalkingOffCallback
+    motorWalkOffCallback(cc2->getCylinder(), site1, motorType, _ps);
+    ConnectionBlock rcb(rxn->connect(motorWalkOffCallback, false));
+#endif
+    cc2->addInternalReaction(rxn);
+    rxn->setReactionType(ReactionType::MOTORWOFORWARD);
+    
+    //Remove reaction from old plus end
+    for(auto r : cc1->getInternalReactions()) {
+        if(r->getReactionType() == ReactionType::MOTORWOFORWARD)
+            cc1->removeInternalReaction(r);
+    }
+}
+
 void MotorWalkPTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc1->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].back());
@@ -590,7 +630,6 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
-
 }
 
 void MotorWalkMTemplate::addReaction(CCylinder* cc) {
@@ -647,6 +686,46 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc) {
     }
 }
 
+void MotorWalkMTemplate::transferReaction(CCylinder *cc1, CCylinder *cc2){
+    
+    //add reaction to new plus end
+    auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+    
+    int site1 = *(it);
+    
+    CMonomer* m1 = cc2->getCMonomer(site1);
+    vector<Species*> reactantSpecies;
+    vector<Species*> productSpecies;
+    
+    //loop through reactants, products. find all species
+    auto r = _reactants[0];
+    int motorType = getInt(r);
+    
+    reactantSpecies.push_back(m1->speciesMotor(getInt(r)));
+    productSpecies.push_back(m1->speciesMotor(getInt(r)));
+    
+    //Add the ghost reaction, which will signal a call to the unbinding reaction.
+    vector<Species*> species = reactantSpecies;
+    species.insert(species.end(), productSpecies.begin(), productSpecies.end());
+    ReactionBase* rxn =
+    new Reaction<1, 1>(species, _rate);
+    
+    //callbacks and add reaction
+#ifdef REACTION_SIGNALING
+    MotorWalkingOffCallback
+    motorWalkOffCallback(cc2->getCylinder(), site1, motorType, _ps);
+    ConnectionBlock rcb(rxn->connect(motorWalkOffCallback, false));
+#endif
+    cc2->addInternalReaction(rxn);
+    rxn->setReactionType(ReactionType::MOTORWOBACKWARD);
+    
+    //Remove reaction from old plus end
+    for(auto r : cc1->getInternalReactions()) {
+        if(r->getReactionType() == ReactionType::MOTORWOBACKWARD)
+            cc1->removeInternalReaction(r);
+    }
+}
+
 void MotorWalkMTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     CMonomer* m1 = cc2->getCMonomer(SysParams::Chemistry().bindingSites[_filamentType].front());
@@ -693,6 +772,11 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+    
+    
+    
+    
+    
 }
 
 void AgingTemplate::addReaction(CCylinder* cc) {

@@ -81,6 +81,11 @@ public:
     /// @note assumes cc1 and cc2 are in order, that is, cc2 is the next
     /// cylinder after cc1
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) = 0;
+    
+    /// Transfer a special reaction from one filament to another. This is currently only
+    /// used in the case of motor walking, where a walk-off reaction has to be transfered
+    /// upon creation of a new cylinder end on the filament.
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) = 0;
 };
 
 /// Template for polymerization at plus end of Filament
@@ -96,6 +101,7 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
 /// Template for polymerization at minus end of Filament
@@ -111,6 +117,8 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
+
 };
 
 
@@ -127,6 +135,8 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
+
 };
 
 /// Template for depolymerization at minus end of Filament
@@ -142,6 +152,8 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
+
 };
 
 /// Template for MotorGhost walking
@@ -158,6 +170,11 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+
+    
+    ///A special function which reassigns the "walking off" motor reaction
+    ///to a new plus end cylinder from the old.
+    void transferReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 /// Template for MotorGhost walking
@@ -174,6 +191,11 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
+    
+    ///A special function which reassigns the "walking off" motor reaction
+    ///to a new minus end cylinder from the old.
+    ///cc2 is the new minus end, cc1 is old.
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2);
 };
 
 
@@ -190,6 +212,9 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
+    
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
+
 };
 
 /// Template for Filament destruction
@@ -207,6 +232,9 @@ public:
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
     
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
+
+    
 };
 
 /// Template for severing a Filament
@@ -222,6 +250,8 @@ public:
     
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2) {}
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
+
 };
 
 

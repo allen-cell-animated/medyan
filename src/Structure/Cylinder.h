@@ -49,7 +49,8 @@ class Compartment;
  */
 class Cylinder : public Component, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor {
-    
+
+friend class Filament;
 friend class CController;
 friend class DRController;
     

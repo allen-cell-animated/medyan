@@ -165,7 +165,6 @@ bool ChemNRMImpl::makeStep() {
     
     _t=tau_top;
     syncGlobalTime();
-    
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
@@ -177,7 +176,7 @@ bool ChemNRMImpl::makeStep() {
 #endif
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
-    
+
     if(r->updateDependencies()) {
     
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){

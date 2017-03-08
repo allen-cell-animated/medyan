@@ -2689,3 +2689,11 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
     for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
 }
 
+void ChemManager::transferCCylinderRxns(CCylinder* cc1, CCylinder* cc2) {
+    Cylinder* c = cc1->getCylinder();
+    
+    Filament* f = (Filament*)(c->getParent());
+    short filType = f->getType();
+    
+    for(auto &r : _filRxnTemplates[filType]) { r->transferReaction(cc1, cc2); }
+}
