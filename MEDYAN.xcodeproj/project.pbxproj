@@ -1281,6 +1281,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lgst",
+				);
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -1299,6 +1303,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lgst",
+				);
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -1357,12 +1365,15 @@
 				GCC_WARN_UNUSED_LABEL = NO;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					/opt/local/include,
 					"./**",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lgsl",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1421,12 +1432,15 @@
 				GCC_WARN_UNUSED_LABEL = NO;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					/opt/local/include,
 					"./**",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lgsl",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1454,12 +1468,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					/opt/local/include,
 					"$(inherited)",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lgsl",
+				);
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Debug;
@@ -1489,12 +1506,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					/opt/local/include,
 					"$(inherited)",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = (
+					"-lboost_system-mt",
+					"-lgsl",
+				);
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Release;

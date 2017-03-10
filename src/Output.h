@@ -191,4 +191,28 @@ public:
     virtual void print(int snapshot);
 };
 
+/// Print Filament plusend types
+class PlusEnd : public Output {
+    
+public:
+    PlusEnd(string outputFileName, SubSystem* s): Output(outputFileName, s) {}
+    ~PlusEnd() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+/// Print reactions for each filament
+class ReactionOut : public Output {
+    
+public:
+    ReactionOut(string outputFileName, SubSystem* s): Output(outputFileName, s) {}
+    ~ReactionOut() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+
+
 #endif
