@@ -542,15 +542,6 @@ struct MotorUnbindingCallback {
     
     void operator() (ReactionBase *r) {
         
-        
-        cout << "MOTOR UNBINDING" << endl;
-        
-        //find the motor binding manager associated with this species
-        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
-        
-        Compartment* c = static_cast<Compartment*>(sd->getParent());
-        auto mManager = c->getMotorBindingManager(_motor->getType());
-        
         //DEPRECATED AS OF 9/8/16
 //        
 //        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
@@ -581,8 +572,6 @@ struct MotorBindingCallback {
     : _ps(ps), _mManager(mManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-        
-        cout << "MOTOR BINDING" << endl;
         
         //get a random binding
         short motorType = _mManager->getBoundInt();
@@ -652,8 +641,6 @@ struct MotorWalkingCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        
-        cout << "MOTOR WALKING" << endl;
         
         //get species
         CCylinder* cc = _c->getCCylinder();
@@ -749,7 +736,6 @@ struct MotorWalkingOffCallback {
         //retag
         sm1->up();
         
-        short filType = _c->getType();
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
