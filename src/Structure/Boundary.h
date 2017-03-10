@@ -22,7 +22,7 @@
 class SubSystem;
 
 /// BoundaryShape is a shape enumeration.
-enum class BoundaryShape {Cube, Capsule, Sphere};
+enum class BoundaryShape {Cube, Capsule, Sphere, Cylinder};
 
 /// BoundaryMove is a enum describing the movement of a boundary.
 enum class BoundaryMove {None, Top, All};

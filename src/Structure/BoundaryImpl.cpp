@@ -306,3 +306,58 @@ double BoundaryCapsule::distance(const vector<double>& coordinates) {
     return smallestDist;
 }
 
+///Qin------------------
+
+
+BoundaryCylinder::BoundaryCylinder(SubSystem* s, double diameter, BoundaryMove move)
+
+    : Boundary(s, 3, BoundaryShape::Cylinder, move) {
+    
+    double sysX = GController::getSize()[0];
+    double sysY = GController::getSize()[1];
+    double sysZ = GController::getSize()[2];
+    
+    double height = sysZ;
+    
+    _boundarySurfaces.emplace_back(
+                                   new CylinderZ(s, {sysX / 2, sysY / 2, sysZ / 2}, diameter / 2, height));
+
+}
+
+bool BoundaryCylinder::within(Compartment* C) {
+    
+    //just calls regular within for now
+    return within(C->coordinates());
+}
+
+
+bool BoundaryCylinder::within(const vector<double>& coordinates) {
+    
+    //check if the boundary elements return a positive distance
+    for(auto &bs : _boundarySurfaces) {
+        
+        auto be = bs->boundaryElements()[0].get();
+        
+        double dist = be->distance(coordinates);
+        if(dist <= 0) return false;
+    }
+    return true;
+}
+
+double BoundaryCylinder::distance(const vector<double>& coordinates) {
+    
+    // loop through, get smallest non-negative distance
+    double smallestDist = numeric_limits<double>::infinity();
+    
+    for(auto &bs : _boundarySurfaces) {
+        
+        auto be = bs->boundaryElements()[0].get();
+        
+        double dist = be->distance(coordinates);
+        
+        if(dist < 0) continue;
+        if(dist < smallestDist) smallestDist = dist;
+        
+    }
+    return smallestDist;
+}

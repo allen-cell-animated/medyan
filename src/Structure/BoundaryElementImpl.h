@@ -129,6 +129,7 @@ public:
 class CylindricalZBoundaryElement : public BoundaryElement {
     
 friend class BoundaryCapsule;
+friend class BoundaryCylinder;
     
 private:
     double _radius; ///< Radius of cylinder

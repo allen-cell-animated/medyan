@@ -43,6 +43,7 @@ class BoundaryElement : public Component, public Trackable, public Neighbor {
 friend class BoundaryCubic;
 friend class BoundarySpherical;
 friend class BoundaryCapsule;
+friend class BoundaryCylinder;
     
 private:
     static Database<BoundaryElement*> _boundaryElements;

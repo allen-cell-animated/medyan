@@ -265,6 +265,19 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
         _boundary = new BoundaryCapsule(_subSystem,
                     SysParams::Boundaries().diameter, move);
     }
+
+    else if(BTypes.boundaryShape == "CYLINDER") {
+        
+        if(move != BoundaryMove::None) {
+            
+            cout << "Moving boundaries for a cylinder shape "
+            << "not yet implemented. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        _boundary = new BoundaryCylinder(_subSystem,
+                                        SysParams::Boundaries().diameter, move);
+    }
+    
     else{
         cout << endl << "Given boundary shape not yet implemented. Exiting." <<endl;
         exit(EXIT_FAILURE);
