@@ -578,9 +578,14 @@ void MotorWalkPTemplate::transferReaction(CCylinder *cc1, CCylinder *cc2){
     rxn->setReactionType(ReactionType::MOTORWOFORWARD);
     
     //Remove reaction from old plus end
+    vector<ReactionBase*> toDelete;
     for(auto r : cc1->getInternalReactions()) {
         if(r->getReactionType() == ReactionType::MOTORWOFORWARD)
-            cc1->removeInternalReaction(r);
+            toDelete.push_back(r);
+    }
+    //delete
+    for (auto r : toDelete) {
+        cc1->removeInternalReaction(r);
     }
 }
 
@@ -720,9 +725,14 @@ void MotorWalkMTemplate::transferReaction(CCylinder *cc1, CCylinder *cc2){
     rxn->setReactionType(ReactionType::MOTORWOBACKWARD);
     
     //Remove reaction from old plus end
+    vector<ReactionBase*> toDelete;
     for(auto r : cc1->getInternalReactions()) {
         if(r->getReactionType() == ReactionType::MOTORWOBACKWARD)
-            cc1->removeInternalReaction(r);
+            toDelete.push_back(r);
+    }
+    //delete
+    for (auto r : toDelete) {
+        cc1->removeInternalReaction(r);
     }
 }
 
