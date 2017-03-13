@@ -41,7 +41,8 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
         
         double directionX = Rand::randDouble(-1,1);
         double directionY = Rand::randDouble(-1,1);
-        double directionZ = Rand::randDouble(-1,1);
+        //Qin
+        double directionZ = 0;
         vector<double> direction = normalizedVector({directionX, directionY, directionZ});
         
         vector<double> secondPoint =

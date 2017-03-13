@@ -338,7 +338,6 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     //get coordinates of compartment
     auto coordsCompartment = c->coordinates();
     vector<double> coords;
-    
     coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randDouble(-1,1) / 2);

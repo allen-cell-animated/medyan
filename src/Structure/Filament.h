@@ -96,7 +96,7 @@ public:
     /// determined by position vector.
     Filament(SubSystem* s, short filamentType,
              vector<vector<double>>& position, int numBeads,
-             string projectionType = "PREDEFINED");
+             string projectionType = "STRAIGHT");
     
     /// This constructor is called when a filament is severed. It creates a filament
     /// that initially has no cylinders.
