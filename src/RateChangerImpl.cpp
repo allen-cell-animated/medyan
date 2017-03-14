@@ -64,7 +64,7 @@ float MotorStall::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
     
     //determine k_0 (FOR MYOSIN-ISOFORMS)
-    float k_0 = v_0 * _stepFrac;
+    float k_0 = v_0 / _stepFrac;
     
     //float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
     
