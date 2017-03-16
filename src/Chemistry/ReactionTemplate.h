@@ -171,10 +171,7 @@ public:
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
 
-    
-    ///A special function which reassigns the "walking off" motor reaction
-    ///to a new plus end cylinder from the old.
-    void transferReaction(CCylinder* cc1, CCylinder* cc2);
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
 /// Template for MotorGhost walking
@@ -192,10 +189,7 @@ public:
     virtual void addReaction(CCylinder* cc);
     virtual void addReaction(CCylinder* cc1, CCylinder* cc2);
     
-    ///A special function which reassigns the "walking off" motor reaction
-    ///to a new minus end cylinder from the old.
-    ///cc2 is the new minus end, cc1 is old.
-    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2);
+    virtual void transferReaction(CCylinder* cc1, CCylinder* cc2) {}
 };
 
 

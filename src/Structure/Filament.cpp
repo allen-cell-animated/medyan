@@ -223,10 +223,6 @@ void Filament::extendPlusEnd(short plusEnd) {
     //get last cylinder, mark species
     CMonomer* m = _cylinderVector.back()->getCCylinder()->getCMonomer(0);
     m->speciesPlusEnd(plusEnd)->up();
-    
-    //transfer any special reactions
-    Cylinder::_chemManager->transferCCylinderRxns(cBack->getCCylinder(),
-                                                  c0->getCCylinder());
 #endif
     
 #ifdef DYNAMICRATES
@@ -267,7 +263,6 @@ void Filament::extendMinusEnd(short minusEnd) {
         b2->removeAsPinned();
         bNew->addAsPinned();
     }
-    
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
@@ -282,10 +277,6 @@ void Filament::extendMinusEnd(short minusEnd) {
     CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
     
     m->speciesMinusEnd(minusEnd)->up();
-    
-    //transfer any special reactions
-    Cylinder::_chemManager->transferCCylinderRxns(cFront->getCCylinder(),
-                                                  c0->getCCylinder());
 #endif
     
 #ifdef DYNAMICRATES
@@ -315,12 +306,6 @@ void Filament::retractPlusEnd() {
         bd->addAsPinned();
     }
 #endif
-#ifdef CHEMISTRY
-    //transfer any special reactions
-    Cylinder::_chemManager->transferCCylinderRxns(retCylinder->getCCylinder(),
-                                                  _cylinderVector.back()->getCCylinder());
-#endif
-    
     _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
     removeChild(retCylinder->getSecondBead());
     
@@ -355,12 +340,6 @@ void Filament::retractMinusEnd() {
         retCylinder->getFirstBead()->removeAsPinned();
         bd->addAsPinned();
     }
-#endif
-    
-#ifdef CHEMISTRY
-    //transfer any special reactions
-    Cylinder::_chemManager->transferCCylinderRxns(retCylinder->getCCylinder(),
-                                                  _cylinderVector.front()->getCCylinder());
 #endif
     
     _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());
