@@ -14,7 +14,9 @@
 #include "BoundaryFF.h"
 
 #include "BoundaryCylinderRepulsion.h"
+#include "BoundaryCylinderRepulsionIn.h"
 #include "BoundaryCylinderRepulsionExp.h"
+#include "BoundaryCylinderRepulsionExpIn.h"
 
 #include "BoundaryBubbleRepulsion.h"
 #include "BoundaryBubbleRepulsionExp.h"
@@ -34,7 +36,12 @@ BoundaryFF::BoundaryFF (string type) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
-    else if(type == "") {}
+    else if(type == "REPULSIONEXPIN") {
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+    }
     else {
         cout << "Boundary FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
