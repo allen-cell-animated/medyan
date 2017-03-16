@@ -20,16 +20,16 @@ HEADERS := $(shell find . -name '*.h')
 OBJECTS := $(SOURCES:.cpp=.o)
 
 #CPP COMPILER CHOICE AND FLAGS
-CXX = /usr/bin/g++ -std=c++11
+CXX = g++ -std=c++11
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
-LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl  
+LDLIBS = -L/usr/local/lib/ -lboost_system -L/a/fs-3/export/home/deepthought2/qni/local/lib/
 LDFLAGS = $(FAST)
 
 CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -Wno-uninitialized -Wno-unknown-warning-option \
--I/usr/local/include -I/usr/include/boost \
+-I/a/fs-3/export/home/deepthought2/qni/local/include -I/a/fs-3/export/home/deepthought2/qni/local/include/boost \
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
 -IMechanics/Minimizer                     \
@@ -96,7 +96,7 @@ CPPFLAGS += -DRSPECIES_SIGNALING
 all: MEDYAN
 
 MEDYAN: $(OBJECTS)
-    $(CXX) $(LDFLAGS) -o MEDYAN $(OBJECTS) $(LDLIBS)
+	$(CXX) $(LDFLAGS) -o MEDYAN $(OBJECTS) $(LDLIBS)
 
 %.o: %.cpp 
 	$(CXX) $(CPPFLAGS) -c $< -o $@

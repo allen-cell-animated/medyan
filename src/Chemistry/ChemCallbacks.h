@@ -757,7 +757,8 @@ struct FilamentCreationCallback {
             position = GController::getRandomCoordinates(c);
             
             //getting random numbers between -1 and 1
-            direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), Rand::randDouble(-1,1)};
+	    //Qin
+            direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), 0};
             normalize(direction);
             
             auto npp = nextPointProjection(position,

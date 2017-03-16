@@ -326,7 +326,8 @@ Compartment* GController::getRandomCompartment() {
         vector<double> coord =
         {_grid[0] * _compartmentSize[0] * Rand::randDouble(0,0.999),
          _grid[1] * _compartmentSize[1] * Rand::randDouble(0,0.999),
-         _grid[2] * _compartmentSize[2] * Rand::randDouble(0,0.999)};
+	 //Qin
+         _grid[2] * _compartmentSize[2] * Rand::randDouble(0.3,0.7)};
         
         Compartment* c = getCompartment(coord);
         if(c->isActivated()) return c;
@@ -340,7 +341,8 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     vector<double> coords;
     coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randDouble(-1,1) / 2);
-    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randDouble(-1,1) / 2);
+    //Qin
+    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randDouble(-0.5,0.5) / 2);
     
     return coords;
 }
@@ -351,7 +353,8 @@ vector<double> GController::getRandomCoordinates() {
     
     coords.push_back(Rand::randDouble(0,1) * _grid[0] * _compartmentSize[0]);
     coords.push_back(Rand::randDouble(0,1) * _grid[1] * _compartmentSize[1]);
-    coords.push_back(Rand::randDouble(0,1) * _grid[2] * _compartmentSize[2]);
+    //Qin
+    coords.push_back(Rand::randDouble(0.3,0.7) * _grid[2] * _compartmentSize[2]);
     
     return coords;
 }
