@@ -114,7 +114,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
                 
                 //add the rate changer
-                MotorGhost::_unbindingChangers.push_back(new LowDutyMotorCatch(motorIndex, f));
+                MotorGhost::_unbindingChangers.push_back(new MotorACatch(motorIndex));
                 forceIndex++;
             }
             else if(changer == "HIGHDUTYCATCH") {
@@ -127,7 +127,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
                 
                 //add the rate changer
-                MotorGhost::_unbindingChangers.push_back(new HighDutyMotorCatch(motorIndex, f));
+                MotorGhost::_unbindingChangers.push_back(new MotorBCatch(motorIndex));
                 forceIndex++;
             }
 
@@ -157,7 +157,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
                 
                 //add the rate changer
-                MotorGhost::_walkingChangers.push_back(new LowDutyMotorStall(motorIndex, 0, f));
+                MotorGhost::_walkingChangers.push_back(new MotorAStall(motorIndex, 0));
                 forceIndex++;
             }
             else if(changer == "HIGHDUTYSTALL") {
@@ -170,7 +170,7 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
                 
                 //add the rate changer
-                MotorGhost::_walkingChangers.push_back(new HighDutyMotorStall(motorIndex, 0, f));
+                MotorGhost::_walkingChangers.push_back(new MotorBStall(motorIndex, 0));
                 forceIndex++;
             }
             

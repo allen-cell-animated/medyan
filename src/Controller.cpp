@@ -91,12 +91,16 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new Types(_outputDirectory + "types.traj", _subSystem));
     
     
-    _outputs.push_back(new MotorLifetimes(_outputDirectory + "motorlifetimes.traj",_subSystem));
+    _outputs.push_back(new MotorLifetimes(_outputDirectory + "motorlifetimesA.traj",_subSystem, 0));
+    _outputs.push_back(new MotorLifetimes(_outputDirectory + "motorlifetimesB.traj",_subSystem, 1));
     _outputs.push_back(new LinkerLifetimes(_outputDirectory + "linkerlifetimes.traj",_subSystem));
-    _outputs.push_back(new MotorWalkLengths(_outputDirectory + "motorwalklengths.traj",_subSystem));
+    _outputs.push_back(new MotorWalkLengths(_outputDirectory + "motorwalklengthsA.traj",_subSystem, 0));
+    _outputs.push_back(new MotorWalkLengths(_outputDirectory + "motorwalklengthsB.traj",_subSystem, 1));
     
-    MotorGhost::_lifetimes = new Histogram(1000,0,100);
-    MotorGhost::_walkLengths = new Histogram(5000,0,500);
+    MotorGhost::_lifetimesA = new Histogram(1000,0,100);
+    MotorGhost::_lifetimesB = new Histogram(1000,0,100);
+    MotorGhost::_walkLengthsA = new Histogram(5000,0,500);
+    MotorGhost::_walkLengthsB = new Histogram(5000,0,500);
     Linker::_lifetimes = new Histogram(10000,0,1000);
     
     //Always read geometry, check consistency
@@ -474,10 +478,6 @@ void Controller::pinBoundaryFilaments() {
         
         if((plusEndC->getSecondBead() == b) ||
            (minusEndC->getFirstBead() == b)) {
-            
-            cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
-            cout << SysParams::Mechanics().pinDistance << endl;
-            
             
             //if within dist to boundary, add
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {

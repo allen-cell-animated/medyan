@@ -71,10 +71,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
                                   SysParams::Chemistry().motorNumHeadsMax[_motorType]);
     
-    if(!_unbindingChangers.empty())
-        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
-    else
-        _numBoundHeads = _numHeads;
+   // if(!_unbindingChangers.empty())
+   //     _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
+   // else
+    _numBoundHeads = _numHeads;
     
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
@@ -99,16 +99,28 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 MotorGhost::~MotorGhost() noexcept {
 
     double lifetime = tau() - _birthTime;
+ 
+    if(_motorType == 0) {
+        if(_lifetimesA->getMax() > lifetime &&
+           _lifetimesA->getMin() < lifetime)
+            _lifetimesA->addValue(lifetime);
+    }
+    else {
+        if(_lifetimesB->getMax() > lifetime &&
+           _lifetimesB->getMin() < lifetime)
+            _lifetimesB->addValue(lifetime);
+    }
     
-    if(_lifetimes->getMax() > lifetime &&
-       _lifetimes->getMin() < lifetime)
-        _lifetimes->addValue(lifetime);
-        
-    
-    if(_walkLengths->getMax() > _walkLength &&
-       _walkLengths->getMin() < _walkLength)
-        _walkLengths->addValue(_walkLength);
-    
+    if(_motorType == 0) {
+        if(_walkLengthsA->getMax() > _walkLength &&
+           _walkLengthsA->getMin() < _walkLength)
+            _walkLengthsA->addValue(_walkLength);
+    }
+    else {
+        if(_walkLengthsB->getMax() > _walkLength &&
+           _walkLengthsB->getMin() < _walkLength)
+            _walkLengthsB->addValue(_walkLength);
+    }
 }
 
 void MotorGhost::updatePosition() {
@@ -164,10 +176,10 @@ void MotorGhost::updatePosition() {
     double force = max(0.0, _mMotorGhost->stretchForce);
     
     //update number of bound heads
-    if(!_unbindingChangers.empty())
-        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
-    else
-        _numBoundHeads = _numHeads;
+    //if(!_unbindingChangers.empty())
+    //    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
+    //else
+    _numBoundHeads = _numHeads;
     
     
     _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
@@ -188,10 +200,10 @@ void MotorGhost::updateReactionRates() {
     double force = max(0.0, _mMotorGhost->stretchForce);
     
     //update number of bound heads
-    if(!_unbindingChangers.empty())
-        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
-    else
-        _numBoundHeads = _numHeads;
+    //if(!_unbindingChangers.empty())
+    //    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
+    //else
+    _numBoundHeads = _numHeads;
     
     //walking rate changer
     if(!_walkingChangers.empty()) {
@@ -228,7 +240,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, forceDotDirectionC1));
+                           max(0.0, forceDotDirectionC1));
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
                 r->setRate(newRate);
@@ -240,7 +252,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, -forceDotDirectionC1));
+                           max(0.0, -forceDotDirectionC1));
                 
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
@@ -253,7 +265,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, forceDotDirectionC1));
+                           max(0.0, forceDotDirectionC1));
                 
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
@@ -266,7 +278,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, -forceDotDirectionC1));
+                           max(0.0, -forceDotDirectionC1));
                 
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
@@ -283,7 +295,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, forceDotDirectionC2));
+                           max(0.0, forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
                 
@@ -296,7 +308,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, -forceDotDirectionC2));
+                           max(0.0, -forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
                 r->setRate(newRate);
@@ -308,7 +320,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, forceDotDirectionC2));
+                           max(0.0, forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
                 r->setRate(newRate);
@@ -320,7 +332,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, -forceDotDirectionC2));
+                           max(0.0, -forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
                 r->setRate(newRate);
@@ -338,7 +350,7 @@ void MotorGhost::updateReactionRates() {
         //change the rate
         float newRate =
         _unbindingChangers[_motorType]->
-        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numHeads, force);
+        changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), force);
         
         offRxn->setRate(newRate);
         offRxn->activateReaction();
@@ -456,6 +468,9 @@ vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
 vector<MotorRateChanger*> MotorGhost::_walkingChangers;
 
 Database<MotorGhost*> MotorGhost::_motorGhosts;
-Histogram* MotorGhost::_lifetimes;
-Histogram* MotorGhost::_walkLengths;
+Histogram* MotorGhost::_lifetimesA;
+Histogram* MotorGhost::_lifetimesB;
+Histogram* MotorGhost::_walkLengthsA;
+Histogram* MotorGhost::_walkLengthsB;
+
 

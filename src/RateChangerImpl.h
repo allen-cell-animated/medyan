@@ -108,123 +108,74 @@ public:
 /// @note - This function updates unbinding rates of a
 /// Myosin II ensemble based on the following exponential form:
 ///
-///    k_unbinding,eff = k_0 * exp(-F / (N_b(F) * F_0))
+///    k_unbinding,eff = k_0 * exp(-F / F_0)
 ///
-/// where k_0 is the unbinding rate under zero load,
-///
-///    k_0 = k_on * (N_t) / (exp(log((k_on + k_off) / k_off) * N_t) - 1)
-///
-/// F_0 is the characteristic force defining this catch, and
-///
-///    N_b(F) = rho * N_t + beta * F / N_t
-///
-/// is the number of bound heads in the ensemble, beta is an emperical parameter
-/// which determines the rate of increase for the number of bound heads with
-/// respect to applied forces.
+/// where k_0 is the unbinding rate under zero load, F_0 is the characteristic
+/// force defining this catch.
 
 class MotorCatch : public MotorRateChanger {
     
 private:
-    double _F0;  ///< characteristic force
-    
-    //@{
-    ///Constant parameters
-    double _dutyRatio;
-    double _beta;
-    //@}
+    double _k_0 = 0.2; ///< unbinding rate bare (/s)
+    double _F0_slip = 100; ///< slip force
     
 public:
-    MotorCatch(short motorType, double charForce, double dutyRatio, double beta)
+    double _F0_catch = 25;  ///< catch force
     
-    : MotorRateChanger(motorType), _F0(charForce), _dutyRatio(dutyRatio), _beta(beta) {}
+    MotorCatch(short motorType)
     
-    /// Set the number of bound heads based on force
-    virtual float numBoundHeads(float onRate, float offRate,
-                                double force, int numHeads);
+    : MotorRateChanger(motorType) {}
     
-    virtual float changeRate(float onRate, float offRate,
-                             double numHeads, double force);
+    virtual float changeRate(float onRate, float offRate, double force);
 };
 
-///A low duty catch bond implementation of the MotorRateChanger
-///
-///  p = 0.1, beta = 2.0
-///
-
-class LowDutyMotorCatch : public MotorCatch {
+///Implementation1
+class MotorACatch : public MotorCatch {
     
 public:
-    LowDutyMotorCatch(short motorType, double charForce)
+    MotorACatch(short motorType)
     
-    : MotorCatch(motorType, charForce, 0.1, 2.0){}
+    : MotorCatch(motorType){
+        _F0_catch = _F0_catch * SysParams::Chemistry().sigma;
+    }
+    
+    
 };
 
-///A high duty catch bond implementation of the MotorRateChanger
-///
-///  p = 0.33, alpha = 1.0
-///
-
-class HighDutyMotorCatch : public MotorCatch {
+///Implementation2
+class MotorBCatch : public MotorCatch {
     
 public:
-    HighDutyMotorCatch(short motorType, double charForce)
+    MotorBCatch(short motorType)
     
-    : MotorCatch(motorType, charForce, 0.33, 1.0){}
+    : MotorCatch(motorType){}
 };
 
 
 ///A stall force implementation of the MotorRateChanger.
 ///Used for a motor walking when under stress.
-///Adopted from Hill et al. 1937, and Erdmann et al. 2013.
+///Adopted from Hill et al. 1937
 
-/// @note - This function updates walking rates based on the Hill form:
+/// @note - This function updates walking rates based on a simplified Hill form:
 ///
-///   k_eff = k_0 * (F_0 - F) / (F_0 + (F / (alpha)))
+///   k_eff = k_0 * (1 - F/F_0)
 ///
 /// where F_0 is the characteristic force defining this stall,
-/// beta is a dimensionless parameter defining the steepness of the curve,
-/// k_0 is the walking rate under zero load, which was approximated
-/// by Erdmann et al. 2013 to be:
-///
-///        k_0 = ((N_t - N_b) / N_b) * k_on
-///
-/// where k_on is the binding rate of a single motor, d_step is
-/// the size of a single motor step, d_total is the total step size
-/// of the ensemble in simulation, and N_t is the total number of heads.
-///
-/// It is noted that the true k_0 is also multipilied by a fractional
-/// step size corresponding to the step size in simulation,
-/// d_step / d_total where d_total is the total step size in simulation,
-/// based on the number of binding sites per cylinder.
-///
-/// N_b is the number of bound motor heads under zero load,
-///
-///             N_b = p * Nt
+/// k_0 is the walking rate under zero load
 ///
 class MotorStall : public MotorRateChanger  {
     
 private:
-    double _F0;            ///< characteristic force
-    float _stepFrac = 1.0; ///< step size of a single head relative to sim
+    double _F0 = 20;       ///< characteristic force in pN
+    double _stepFrac = 1.0; ///< step size of a single head relative to sim
     
-    
-    //@{
-    ///Constant parameters
-    double _dutyRatio;
-    double _alpha;
-    //@}
 public:
     //FOR MYOSIN-ISOFORMS
-    float v_0;
+    double v_0 = 20;
     
-    MotorStall(short motorType, short filamentType, double charForce,
-               double dutyRatio, double alpha)
+    MotorStall(short motorType, short filamentType)
     
-    : MotorRateChanger(motorType), _F0(charForce),
-    _dutyRatio(dutyRatio), _alpha(alpha) {
-        
-        //calculate rate based on step fraction
-        //double d_step = SysParams::Chemistry().motorStepSize[_motorType];
+    : MotorRateChanger(motorType) {
         
         double d_total = (double)SysParams::Geometry().cylinderSize[filamentType] /
         SysParams::Chemistry().numBindingSites[filamentType];
@@ -232,35 +183,30 @@ public:
         _stepFrac = d_total;
     }
     
-    virtual float numBoundHeads(float onRate, float offRate,
-                                double force, int numHeads) {return 0.0;}
+    //virtual float numBoundHeads(float onRate, float offRate,
+    //                            double force, int numHeads) {return 0.0;}
     
-    virtual float changeRate(float onRate, float offRate,
-                             double numHeads, double force);
+    virtual float changeRate(float onRate, float offRate, double force);
 };
 
-///A low duty stall force implementation of the MotorRateChanger.
-///
-///         dutyRatio = 0.1, alpha = 0.2
-///
-class LowDutyMotorStall : public MotorStall {
+///Implementation1
+class MotorAStall : public MotorStall {
     
 public:
-    LowDutyMotorStall(short motorType, short filamentType, double charForce)
+    MotorAStall(short motorType, short filamentType)
     
-    : MotorStall(motorType, filamentType, charForce, 0.1, 0.2){v_0 = 11;}
+    : MotorStall(motorType, filamentType){
+        v_0 = v_0 * SysParams::Chemistry().lambda;
+    }
 };
 
-///A high duty stall force implementation of the MotorRateChanger.
-///
-///         dutyRatio = 0.33, alpha = 0.3
-///
-class HighDutyMotorStall : public MotorStall {
+///Implementation2
+class MotorBStall : public MotorStall {
     
 public:
-    HighDutyMotorStall(short motorType, short filamentType, double charForce)
+    MotorBStall(short motorType, short filamentType)
     
-    : MotorStall(motorType, filamentType, charForce, 0.33, 0.3){v_0 = 3;}
+    : MotorStall(motorType, filamentType){}
 };
 
 

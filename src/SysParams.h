@@ -160,6 +160,12 @@ struct ChemParams {
     double makeLinkersStaticTime = 0.0;
     
     //@}
+    
+    //@{
+    /// MOTOR PHASE PARAMTERS
+    double lambda = 1.0; ///< Motor velocity adjustment parameter
+    double sigma = 1.0; ///< Motor mechanosensitivity adjustment parameter
+    //@}
 };
 
 /// Struct to hold geometry parameters for the system

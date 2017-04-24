@@ -740,11 +740,11 @@ void MotorLifetimes::print(int snapshot) {
     // print first line (snapshot number, time)
     _outputFile << snapshot << " " << tau() << " " << endl;
     
-    MotorGhost::getLifetimes()->print(_outputFile);
+    MotorGhost::getLifetimes(_motorType)->print(_outputFile);
     _outputFile << endl << endl;
     
     //clear list
-    MotorGhost::getLifetimes()->clearValues();
+    MotorGhost::getLifetimes(_motorType)->clearValues();
 }
 
 void MotorWalkLengths::print(int snapshot) {
@@ -754,11 +754,11 @@ void MotorWalkLengths::print(int snapshot) {
     // print first line (snapshot number, time)
     _outputFile << snapshot << " " << tau() << " " << endl;
     
-    MotorGhost::getWalkLengths()->print(_outputFile);
+    MotorGhost::getWalkLengths(_motorType)->print(_outputFile);
     _outputFile << endl << endl;
     
     //clear list
-    MotorGhost::getWalkLengths()->clearValues();
+    MotorGhost::getWalkLengths(_motorType)->clearValues();
 }
 
 

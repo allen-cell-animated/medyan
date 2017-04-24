@@ -173,6 +173,22 @@ void SystemParser::readChemParams() {
                     CParams.motorStepSize.push_back(atof(lineVector[i].c_str()));
             }
         }
+        if (line.find("LAMBDAVEL") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() == 2) {
+                CParams.lambda = atof(lineVector[1].c_str());
+            }
+        }
+        if (line.find("SIGMAMECH") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() == 2) {
+                CParams.sigma = atof(lineVector[1].c_str());
+            }
+        }
         
         if (line.find("SPECIALPROTOCOL") != string::npos) {
             

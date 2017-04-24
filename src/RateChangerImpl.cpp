@@ -40,37 +40,23 @@ float LinkerSlip::changeRate(float bareRate, double force) {
     return newRate;
 }
 
-float MotorCatch::numBoundHeads(float onRate, float offRate,
-                                double force, int numHeads) {
-    
-    return numHeads * _dutyRatio + _beta * force / numHeads;
-    
-}
-
-float MotorCatch::changeRate(float onRate, float offRate,
-                             double numHeads, double force) {
+float MotorCatch::changeRate(float onRate, float offRate, double force) {
     
     //calculate new rate
-    double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads) - 1);
+    double factor = 0.9 * exp(-force / _F0_catch) + 0.1 * exp(force/ _F0_slip);
     
-    double factor = min(10.0, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
-    
-    double newRate = k_0 * factor;
+    double newRate = _k_0 * factor;
     return newRate;
 }
 
 
-float MotorStall::changeRate(float onRate, float offRate,
-                             double numHeads, double force) {
+float MotorStall::changeRate(float onRate, float offRate, double force) {
     
     //determine k_0 (FOR MYOSIN-ISOFORMS)
-    float k_0 = v_0 * _stepFrac;
-    
-    //float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
+    float k_0 = v_0 / _stepFrac;
     
     //calculate new rate
-    double newRate =  max(0.0, k_0 * (_F0 - force)
-                          / (_F0 + (force / (_alpha))));
+    double newRate =  max(0.0, k_0 * (1 - force / _F0));
     
     return newRate;
 }

@@ -173,8 +173,12 @@ public:
 /// Print MotorGhost binding lifetimes
 class MotorLifetimes : public Output {
     
+    int _motorType = 0;
+    
 public:
-    MotorLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    MotorLifetimes(string outputFileName, SubSystem* s, int motorType) : Output(outputFileName, s) {
+        _motorType = motorType;
+    }
     ~MotorLifetimes() {}
     
     virtual void print(int snapshot);
@@ -183,8 +187,12 @@ public:
 /// Print MotorGhost walk lengths
 class MotorWalkLengths : public Output {
     
+    int _motorType = 0;
+    
 public:
-    MotorWalkLengths(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    MotorWalkLengths(string outputFileName, SubSystem* s, int motorType) : Output(outputFileName, s) {
+        _motorType = motorType;
+    }
     ~MotorWalkLengths() {}
     
     virtual void print(int snapshot);

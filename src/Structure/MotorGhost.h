@@ -87,8 +87,11 @@ private:
     
     //@{
     ///Histogram data
-    static Histogram* _lifetimes;
-    static Histogram* _walkLengths;
+    static Histogram* _lifetimesA;
+    static Histogram* _lifetimesB;
+    
+    static Histogram* _walkLengthsA;
+    static Histogram* _walkLengthsB;
     //@}
     
     ///For dynamic rate unbinding
@@ -168,10 +171,10 @@ public:
     }
 
     /// Get the lifetimes
-    static Histogram* getLifetimes() {return _lifetimes;}
+    static Histogram* getLifetimes(int motorType) {return motorType == 0 ? _lifetimesA : _lifetimesB;}
     
     /// Get walk lengths
-    static Histogram* getWalkLengths() {return _walkLengths;}
+    static Histogram* getWalkLengths(int motorType) {return motorType == 0 ? _walkLengthsA : _walkLengthsB;}
     
     /// Update the position, inherited from Movable
     /// @note - changes compartment if needed
