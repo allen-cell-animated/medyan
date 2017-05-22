@@ -188,6 +188,26 @@ void BranchingPoint::updatePosition() {
     }
 }
             
+//Qin ----
+void BranchingPoint::updateReactionRates() {
+                
+        //if no rate changers were defined, skip
+        if(_unbindingChangers.empty()) return;
+                
+        //current force on linker
+        double force = max(0.0, _mBranchingPoint->stretchForce);
+                
+        //get the unbinding reaction
+        ReactionBase* offRxn = _cBranchingPoint->getOffReaction();
+                
+        //change the rate
+        float newRate = _unbindingChangers[_branchType]->changeRate(offRxn->getBareRate(), force);
+        if(SysParams::RUNSTATE==false)
+        {newRate=0.0;}
+        offRxn->setRate(newRate);
+        offRxn->updatePropensity();
+}
+            
 void BranchingPoint::printSelf() {
     
     cout << endl;
@@ -216,6 +236,9 @@ void BranchingPoint::printSelf() {
     cout << endl;
 }
             
+            
+
+            
 species_copy_t BranchingPoint::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
@@ -230,5 +253,8 @@ species_copy_t BranchingPoint::countSpecies(const string& name) {
     }
     return copyNum;
 }
+            
+vector<BranchRateChanger*> BranchingPoint::_unbindingChangers;
 
 Database<BranchingPoint*> BranchingPoint::_branchingPoints;
+            

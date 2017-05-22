@@ -262,6 +262,9 @@ struct DynamicRateType {
     ///Motor rate changing
     vector<string> dMUnbindingType = {};
     vector<string> dMWalkingType = {};
+
+    //Qin----
+    vector<string> dBUnbindingType = {};
     //@}
 };
 

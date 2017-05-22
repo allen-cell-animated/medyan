@@ -451,6 +451,9 @@ struct BranchingCallback {
         cBrancher->setRates(_onRate, frate);
         cBrancher->createOffReaction(r, _ps);
         cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
+        
+        //Qin ----------------
+        b -> updateReactionRates();
     }
 };
 

@@ -1182,6 +1182,18 @@ void SystemParser::readDyRateParams() {
             }
             else {}
         }
+        else if (line.find("DBUNBINDINGAMP") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dBranchUnbindingCharLength.push_back(
+                                        atof((lineVector[i].c_str())));
+            }
+            else {}
+            
+            
+        }
     }
     
     //set system parameters
@@ -1239,6 +1251,18 @@ DynamicRateType SystemParser::readDynamicRateType() {
                     DRType.dLUnbindingType.push_back(lineVector[i]);
             }
         }
+        
+        // Qin, adding branching dy type
+        else if (line.find("DBUNBINDINGTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRType.dBUnbindingType.push_back(lineVector[i]);
+            }
+        }
+        
     }
     return DRType;
 }
