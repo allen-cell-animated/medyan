@@ -38,7 +38,7 @@ class Cylinder;
  *  Extending the Movable class, the positions of all instances 
  *  can be updated by the SubSystem.
  */
-class BranchingPoint : public Component, public Trackable, public Movable {
+class BranchingPoint : public Component, public Trackable, public Movable, public Reactable {
     
     friend class Controller;
     friend class DRController;

@@ -346,6 +346,8 @@ struct BranchingPointUnbindingCallback {
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
         delete _branchingPoint;
     }
+    
+    
 };
 
 
@@ -451,9 +453,10 @@ struct BranchingCallback {
         cBrancher->setRates(_onRate, frate);
         cBrancher->createOffReaction(r, _ps);
         cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
-        
+#ifdef DYNAMICRATES
         //Qin ----------------
         b -> updateReactionRates();
+#endif
     }
 };
 

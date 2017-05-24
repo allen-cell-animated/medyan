@@ -1182,7 +1182,7 @@ void SystemParser::readDyRateParams() {
             }
             else {}
         }
-        else if (line.find("DBUNBINDINGAMP") != string::npos) {
+        else if (line.find("DBUNBINDINGLEN") != string::npos) {
             vector<string> lineVector = split<string>(line);
             
             if (lineVector.size() >= 2) {

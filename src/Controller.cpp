@@ -435,7 +435,8 @@ void Controller::updatePositions() {
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+    for(auto r : _subSystem->getReactables()) { r->updateReactionRates();
+    }
 }
 #endif
 

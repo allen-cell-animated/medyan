@@ -37,7 +37,7 @@ void BranchingPoint::updateCoordinate() {
 BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                short branchType, double position)
 
-    : Trackable(true), _c1(c1), _c2(c2), _position(position),
+    : Trackable(true,true), _c1(c1), _c2(c2), _position(position),
       _branchType(branchType), _branchID(_branchingPoints.getID()), _birthTime(tau()) {
     
     //Find compartment
@@ -194,8 +194,12 @@ void BranchingPoint::updateReactionRates() {
         //if no rate changers were defined, skip
         if(_unbindingChangers.empty()) return;
                 
-        //current force on linker
-        double force = max(0.0, _mBranchingPoint->stretchForce);
+        //current force on branching point, use the total force
+        double fs = _mBranchingPoint->stretchForce;
+        double fb = _mBranchingPoint->bendingForce;
+        double fd = _mBranchingPoint->dihedralForce;
+        double ft = fs + fb + fd;
+        double force = max(0.0, ft);
                 
         //get the unbinding reaction
         ReactionBase* offRxn = _cBranchingPoint->getOffReaction();
@@ -206,6 +210,8 @@ void BranchingPoint::updateReactionRates() {
         {newRate=0.0;}
         offRxn->setRate(newRate);
         offRxn->updatePropensity();
+    cout << newRate << endl;
+    
 }
             
 void BranchingPoint::printSelf() {

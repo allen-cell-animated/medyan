@@ -54,7 +54,9 @@ public:
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
     
     //Qin -----
-    double stretchForce = 0.0; ///< Stretching force of brancher at current state
+    double stretchForce = 0.0;
+    double bendingForce = 0.0;
+    double dihedralForce = 0.0;
     
 private:
     double _eqLength;  ///< Equilibrium length

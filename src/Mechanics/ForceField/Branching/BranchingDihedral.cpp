@@ -69,7 +69,11 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces() {
         
         double position = b->getPosition();
         
-        _FFType.forces(b1, b2, b3, b4, kDihedr, position);
+        //Qin
+        //_FFType.forces(b1, b2, b3, b4, kDihedr, position);
+        double f0 = _FFType.forces(b1, b2, b3, b4, kDihedr, position);
+        b->getMBranchingPoint()->dihedralForce = f0;
+        
     }
 }
 
