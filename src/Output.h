@@ -213,6 +213,17 @@ public:
 };
 
 
+// Print boundary repulsion force
+class BRForces : public Output {
+    
+public:
+    BRForces(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    ~BRForces() {}
+    
+    virtual void print(int snapshot);
+};
+
+
 
 
 #endif

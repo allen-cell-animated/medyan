@@ -89,6 +89,8 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
     _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
+    //Qin add br force out
+    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
