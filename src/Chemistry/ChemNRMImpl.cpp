@@ -163,7 +163,7 @@ bool ChemNRMImpl::makeStep() {
     
     if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
         
-        cout << "Stopping to check linker rxn." << endl;
+      // cout << "Stopping to check linker rxn." << endl;
     }
     
     double t_prev = _t;
