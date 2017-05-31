@@ -63,6 +63,12 @@ private:
     short _deltaMinusEnd = 0;  ///< Change in filament's cylinders
                                ///< at minus end since last snapshot
     
+    short _polyPlusEnd = 0; //Qin
+    short _polyMinusEnd = 0;
+    short _depolyPlusEnd = 0;
+    short _depolyMinusEnd = 0;
+    short _nucleationReaction = 0;
+    
     int _plusEndPosition   = 0;  ///< Position of plus end bead at last turnover
     double _turnoverTime   = 0;  ///< Time since last turnover
     
@@ -161,6 +167,22 @@ public:
     short getDeltaMinusEnd() {return _deltaMinusEnd;}
     //@}
     
+    // Qin
+    short getPolyPlusEnd() {return _polyPlusEnd;}
+    void resetPolyPlusEnd() { _polyPlusEnd = 0;}
+    
+    short getPolyMinusEnd() {return _polyMinusEnd;}
+    void resetPolyMinusEnd() { _polyMinusEnd = 0;}
+    
+    short getDepolyPlusEnd() {return _depolyPlusEnd;}
+    void resetDepolyPlusEnd() { _depolyPlusEnd = 0;}
+    
+    short getDepolyMinusEnd() {return _depolyMinusEnd;}
+    void resetDepolyMinusEnd() { _depolyMinusEnd = 0;}
+    
+    short getNucleation() {return _nucleationReaction;}
+    void resetNucleation() { _nucleationReaction = 0;}
+    
     /// Get ID
     int getID() {return _ID;}
     
@@ -208,6 +230,10 @@ public:
     
     /// Count the number of filament species with a given name in the system
     static species_copy_t countSpecies(short filamentType, const string& name);
+    
 };
+
+
+
 
 #endif

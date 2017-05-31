@@ -356,6 +356,9 @@ void Filament::polymerizePlusEnd() {
     _cylinderVector.back()->updateReactionRates();
 #endif
     
+    
+    _polyPlusEnd++; //Qin
+    
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -385,6 +388,9 @@ void Filament::polymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
+
+    _polyMinusEnd++; //Qin
+    
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -414,6 +420,7 @@ void Filament::depolymerizePlusEnd() {
     _cylinderVector.front()->updateReactionRates();
 #endif
     
+    _depolyPlusEnd++; //Qin
     
 }
 
@@ -443,6 +450,9 @@ void Filament::depolymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
+    
+    _depolyMinusEnd++; //Qin
+    
 }
 
 
@@ -469,6 +479,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
 #endif
+    
+    _nucleationReaction++;//Qin
+    
 }
 
 
@@ -913,6 +926,5 @@ species_copy_t Filament::countSpecies(short filamentType, const string& name) {
     }
     return copyNum;
 }
-
 
 

@@ -64,8 +64,7 @@ void BasicSnapshot::print(int snapshot) {
         _outputFile << endl;
         
         //Reset deltas for this filament
-        filament->resetDeltaPlusEnd();
-        filament->resetDeltaMinusEnd();
+
     }
     
     
@@ -446,7 +445,7 @@ void Chemistry::print(int snapshot) {
         
         for(auto sb : _chemData.speciesBrancher[filType]) {
             
-            auto copyNum = MotorGhost::countSpecies(sb);
+            auto copyNum = BranchingPoint::countSpecies(sb);
             _outputFile << sb << ":BRANCHER " << copyNum << endl;
         }
     }
@@ -508,3 +507,101 @@ void FilamentTurnoverTimes::print(int snapshot) {
     Filament::getTurnoverTimes()->print(_outputFile);
     _outputFile << endl << endl;
 }
+
+
+// QIN, 07/06/2016-----------------------------------------------------------
+
+void PlusEnd::print(int snapshot) {
+    
+    _outputFile.precision(10);
+    
+    // print first line (snapshot number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << snapshot << " " << tau() << " " <<
+    Filament::numFilaments() << " " <<
+    Linker::numLinkers() << " " <<
+    MotorGhost::numMotorGhosts() << " " <<
+    BranchingPoint::numBranchingPoints() << " " <<
+    Bubble::numBubbles() <<endl;;
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        //print first line (Filament ID, type, length, left_delta, right_delta)
+        _outputFile <<"FILAMENT " << filament->getID() << " " <<
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+        
+        //print plus end
+        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
+        
+        
+        for (int i=0; i<filament->getCylinderVector().back()->getCCylinder()->getSize(); i++) {
+            int out=filament->getCylinderVector().back()->getCCylinder()->getCMonomer(i)->activeSpeciesPlusEnd();
+            if(out !=-1) {_outputFile << "PLUSEND: " << out << endl;}
+            
+        }
+        
+    }
+    
+    _outputFile << endl;
+    
+}
+
+// END-------------------------------------------------------------------------
+
+// QIN, 08/11/2016-----------------------------------------------------------
+
+void ReactionOut::print(int snapshot) {
+    
+    _outputFile.precision(10);
+    
+    // print first line (snapshot number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << snapshot << " " << tau() << " " <<
+    Filament::numFilaments() << " " <<
+    Linker::numLinkers() << " " <<
+    MotorGhost::numMotorGhosts() << " " <<
+    BranchingPoint::numBranchingPoints() << " " <<
+    Bubble::numBubbles() <<endl;;
+    
+    for(auto &filament : Filament::getFilaments()) {
+        
+        int numMonomer = 2; // 2 for plus/minus end
+        for (auto c : filament->getCylinderVector()) {
+            for (int i=0; i < c->getCCylinder()->getSize(); i++) {
+                auto FilamentMonomer = c->getCCylinder()-> getCMonomer(i)->activeSpeciesFilament();
+                if(FilamentMonomer != -1) {numMonomer ++;}
+                
+            }
+            
+        }
+        
+        //print first line (Filament ID, type, length, left_delta, right_delta)
+        _outputFile <<"FILAMENT " << filament->getID() << " " <<
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << "\n"<<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << " " <<
+        filament->getPolyMinusEnd() << " " << filament->getPolyPlusEnd() << " " <<
+        filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
+        filament->getNucleation() << " " << numMonomer << endl;
+        
+        
+        filament->resetPolyMinusEnd();
+        filament->resetPolyPlusEnd();
+        filament->resetDepolyMinusEnd();
+        filament->resetDepolyPlusEnd();
+        filament->resetNucleation();
+        filament->resetDeltaPlusEnd();
+        filament->resetDeltaMinusEnd();
+    }
+    
+    _outputFile << endl;
+    
+}
+
+// END-------------------------------------------------------------------------
+
+

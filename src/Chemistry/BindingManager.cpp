@@ -132,7 +132,9 @@ void BranchingManager::updateAllPossibleBindings() {
     for(auto &c : _compartment->getCylinders()) {
     
         if(c->getType() != _filamentType) continue;
-        
+	// Qin, 2016/12/5
+	//if(tau() > 1000.0) continue;
+	
         auto cc = c->getCCylinder();
         
         //now re add valid binding sites

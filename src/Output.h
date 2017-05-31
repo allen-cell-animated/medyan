@@ -158,4 +158,30 @@ public:
     virtual void print(int snapshot);
 };
 
+// QIN, 07/05/2016-----------------------------------------------
+class PlusEnd : public Output {
+    
+public:
+    PlusEnd(string outputFileName): Output(outputFileName) {}
+    ~PlusEnd() {}
+    
+    virtual void print(int snapshot);
+};
+
+// END -----------------------------------------------------
+
+// QIN, 08/11/2016-----------------------------------------------
+class ReactionOut : public Output {
+    
+public:
+    ReactionOut(string outputFileName): Output(outputFileName) {}
+    ~ReactionOut() {}
+    
+    virtual void print(int snapshot);
+};
+
+// END -----------------------------------------------------
+
+
+
 #endif

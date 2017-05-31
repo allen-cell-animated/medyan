@@ -80,6 +80,9 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj"));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj"));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj"));
+    // Qin, 06/29/2016 ----------------------------------------------
+    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj"));
+    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj"));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -392,6 +395,17 @@ void Controller::executeSpecialProtocols() {
         for(auto l: Linker::getLinkers())
             l->getCLinker()->getOffReaction()->passivateReaction();
     }
+
+    //making brancher static, Qin 12/01/2016
+    if(SysParams::Chemistry().makeBranchersStatic &&
+       SysParams::Chemistry().makeBranchersStaticTime <= tau()) {
+
+      // loop through all branchers, passivate unbinding
+      for(auto b: BranchingPoint::getBranchingPoints())
+	b->getCBranchingPoint()->getOffReaction()->passivateReaction();
+    }
+
+
 }
 
 void Controller::updatePositions() {
