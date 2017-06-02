@@ -159,7 +159,15 @@ struct ChemParams {
     bool makeLinkersStatic = false;
     double makeLinkersStaticTime = 0.0;
     
-    //@}
+  // Qin, 12/07/2016
+    /// Option to make Brancher objects static after a certain time.
+    /// This passivates any brancher unding and unbinding reactions, resulting in permanently
+    /// bound brancher for the rest of simulation.
+    bool makeBranchersStatic = false;
+    double makeBranchersStaticTime = 0.0;
+
+  //@}
+
 };
 
 /// Struct to hold geometry parameters for the system

@@ -70,8 +70,7 @@ void BasicSnapshot::print(int snapshot) {
         _outputFile << endl;
         
         //Reset deltas for this filament
-        filament->resetDeltaPlusEnd();
-        filament->resetDeltaMinusEnd();
+
     }
     
     
