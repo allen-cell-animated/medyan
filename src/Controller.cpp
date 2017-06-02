@@ -408,6 +408,15 @@ void Controller::executeSpecialProtocols() {
             c->getCCylinder()->passivatefilreactions();
     }
     
+    //Qin,making only depolymerization (TM) static
+    if(SysParams::Chemistry().makeTreadmillStatic &&
+       SysParams::Chemistry().makeTreadmillStaticTime <= tau()) {
+        
+        //loop through all cylinders, passivate (de)polymerization
+        for(auto c : Cylinder::getCylinders())
+            c->getCCylinder()->passivatepereactions();
+    }
+    
     //making linkers static
     if(SysParams::Chemistry().makeLinkersStatic &&
        SysParams::Chemistry().makeLinkersStaticTime <= tau()) {

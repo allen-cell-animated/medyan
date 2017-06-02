@@ -229,6 +229,13 @@ void CCylinder::passivatefilreactions(){
            ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
            ||it->getReactionType() ==ReactionType::AGING)
         {it->passivateReaction();}}}
+//Qin
+void CCylinder::passivatepereactions(){
+    for(auto &it: _internalReactions){
+        if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
+           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND)
+        {it->passivateReaction();}}}
+           
 void CCylinder::activatefilreactions(){
     for(auto &it: _internalReactions){
         if(it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND

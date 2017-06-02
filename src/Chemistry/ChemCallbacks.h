@@ -764,7 +764,7 @@ struct FilamentCreationCallback {
             
             //getting random numbers between -1 and 1
 	    //Qin
-            direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), 0};
+            direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), Rand::randDouble(-1,1)};
             normalize(direction);
             
             auto npp = nextPointProjection(position,

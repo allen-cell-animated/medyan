@@ -131,6 +131,8 @@ public:
     
     void passivatefilreactions();
     void activatefilreactions();
+    //Qin
+    void passivatepereactions();
     
     //@}
     
