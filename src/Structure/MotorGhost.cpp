@@ -71,10 +71,8 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
                                   SysParams::Chemistry().motorNumHeadsMax[_motorType]);
     
-    if(!_unbindingChangers.empty())
-        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
-    else
-        _numBoundHeads = _numHeads;
+    //as of 6/8/17
+    _numBoundHeads = _numHeads;
     
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
@@ -159,16 +157,8 @@ void MotorGhost::updatePosition() {
     
     _mMotorGhost->setLength(twoPointDistance(m1, m2));
     
-    //update the spring constant, based on numboundheads
-    //current force
-    double force = max(0.0, _mMotorGhost->stretchForce);
-    
-    //update number of bound heads
-    if(!_unbindingChangers.empty())
-        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
-    else
-        _numBoundHeads = _numHeads;
-    
+    //as of 6/8/17
+    _numBoundHeads = _numHeads;
     
     _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
 
@@ -188,10 +178,7 @@ void MotorGhost::updateReactionRates() {
     double force = max(0.0, _mMotorGhost->stretchForce);
     
     //update number of bound heads
-    if(!_unbindingChangers.empty())
-        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
-    else
-        _numBoundHeads = _numHeads;
+    _numBoundHeads = _numHeads;
     
     //walking rate changer
     if(!_walkingChangers.empty()) {

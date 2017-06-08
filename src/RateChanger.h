@@ -65,14 +65,10 @@ protected:
 public:
     MotorRateChanger(short motorType) : _motorType(motorType) {}
     
-    /// Calculate the number of bound heads in the ensemble, dependent on force
-    virtual float numBoundHeads(float onRate, float offRate,
-                                double force, int numHeads) = 0;
-    
     /// Change the reaction rate based on an on rate, off rate,
     /// number of heads, and given force.
     virtual float changeRate(float onRate, float offRate,
-                             double numBoundHeads, double force) = 0;
+                             double numHeads, double force) = 0;
 };
 
 #endif

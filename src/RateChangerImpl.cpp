@@ -20,55 +20,62 @@
 
 float BrownianRatchet::changeRate(float bareRate, double force) {
     
-    force = min(force, 100.0); //ceiling
+    force = min(force, 100.0);
     
     double newRate = bareRate * exp( - force * _x / kT);
     
     return newRate;
 }
 
-float LinkerCatchSlip::changeRate(float bareRate, double force) {
+float CatchSlip::changeRate(float bareRate, double force) {
     
     return bareRate * (_a1 * exp(- force * _x1 / kT) +
                        _a2 * exp(  force * _x2 / kT));
 }
 
-float LinkerSlip::changeRate(float bareRate, double force) {
+float Slip::changeRate(float bareRate, double force) {
     
     double newRate = bareRate * exp( force * _x / kT);
     
     return newRate;
 }
 
-float MotorCatch::numBoundHeads(float onRate, float offRate,
-                                double force, int numHeads) {
+float LowDutyCatch::changeRate(float onRate, float offRate,
+                               double numHeads, double force) {
     
-    return numHeads * _dutyRatio + _beta * force / numHeads;
-    
-}
-
-float MotorCatch::changeRate(float onRate, float offRate,
-                             double numHeads, double force) {
+    //determine N_b
+    float N_b = min(double(numHeads), dutyRatio * numHeads + (force * gamma));
     
     //calculate new rate
-    double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads) - 1);
+    double newRate = beta * (offRate / N_b) * exp(-force / (N_b * _F0));
     
-    double factor = min(10.0, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
-    
-    double newRate = k_0 * factor;
     return newRate;
 }
 
-
-float MotorStall::changeRate(float onRate, float offRate,
-                             double numHeads, double force) {
+float LowDutyCatchSlip::changeRate(float onRate, float offRate,
+                                   double numHeads, double force) {
     
-    //determine k_0
-    float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
+    //determine N_b
+    float N_b = min(double(numHeads), dutyRatio * numHeads + (force * gamma));
     
     //calculate new rate
-    double newRate =  max(0.0, k_0 * (_F0 - force)
-                          / (_F0 + (force / (_alpha))));
+    double newRate = beta * (offRate / N_b) *
+    (_a1 * exp(-force / (N_b * _FCatch)) +
+     _a2 * exp( force / (N_b * _FSlip)));
+    
+    return newRate;
+    
+}
+
+float LowDutyStall::changeRate(float onRate, float offRate,
+                               double numHeads, double force) {
+    
+    //determine k_0
+    float k_0 = ((1 - dutyRatio) / dutyRatio) * onRate * _stepFrac;
+    
+    //calculate new rate
+    double newRate =  max(0.0, k_0 * (_F0 - force / numHeads)
+                          / (_F0 + (force / (zeta * numHeads))));
     
     return newRate;
 }
