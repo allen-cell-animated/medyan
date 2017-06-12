@@ -69,9 +69,10 @@ void BasicSnapshot::print(int snapshot) {
         
         _outputFile << endl;
         
-        //Reset deltas for this filament
-        filament->resetDeltaPlusEnd();
-        filament->resetDeltaMinusEnd();
+        //Reset deltas only at the last output, otherwise all the other outputs will not
+        //have accurate DeltaPlusEnd and DeltaMinus results
+        //filament->resetDeltaPlusEnd();
+        //filament->resetDeltaMinusEnd();
     }
     
     
