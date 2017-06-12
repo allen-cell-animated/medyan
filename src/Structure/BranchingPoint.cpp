@@ -209,9 +209,7 @@ void BranchingPoint::updateReactionRates() {
         if(SysParams::RUNSTATE==false)
         {newRate=0.0;}
         offRxn->setRate(newRate);
-        offRxn->updatePropensity();
-    cout << newRate << endl;
-    
+        offRxn->updatePropensity();    
 }
             
 void BranchingPoint::printSelf() {
