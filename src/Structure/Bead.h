@@ -124,6 +124,13 @@ public:
         _pinnedBeads.removeElement(this);
     }
     
+    //Qin
+    // Remove all pinned beads.
+    void resetAllPinned() {
+        
+        _isPinned = false;
+        _pinnedBeads.clearElements();
+    }
     
     /// Get all pinned beads from subsystem
     static const vector<Bead*>& getPinnedBeads() {

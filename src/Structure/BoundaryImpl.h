@@ -36,6 +36,9 @@ public:
     
     virtual double distance(const vector<double>& coordinates);
     
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
+    
     virtual void move(double dist);
     
     ///Returns the normal inward at this coordinate
@@ -57,6 +60,9 @@ public:
     virtual bool within(const vector<double>& coordinates);
     
     virtual double distance(const vector<double>& coordinates);
+    
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
     
     ///@note - not yet implemented.
     virtual void move(double dist) {}
@@ -82,6 +88,9 @@ public:
     
     virtual double distance(const vector<double>& coordinates);
     
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
+    
     ///@note - Not yet implemented.
     virtual void move(double dist) {}
     
@@ -106,6 +115,9 @@ public:
     virtual bool within(const vector<double>& coordinates);
     
     virtual double distance(const vector<double>& coordinates);
+    
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
     
     ///@note - Not yet implemented.
     virtual void move(double dist) {}

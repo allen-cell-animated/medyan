@@ -51,6 +51,12 @@ BoundaryFF::BoundaryFF (string type) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }
+    
+    //Qin, don't change it for now
+    if(SysParams::Mechanics().pinLowerBoundaryFilaments) {
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
+    }
 }
 
 void BoundaryFF::whoIsCulprit() {

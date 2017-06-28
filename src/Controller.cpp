@@ -423,6 +423,13 @@ void Controller::executeSpecialProtocols() {
         
         pinBoundaryFilaments();
     }
+    
+    //Qin
+    if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
+       tau() >= SysParams::Mechanics().pinTime) {
+        
+        pinLowerBoundaryFilaments();
+    }
 }
 
 void Controller::updatePositions() {
@@ -475,6 +482,38 @@ void Controller::pinBoundaryFilaments() {
             
             //if within dist to boundary, add
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+                
+                b->pinnedPosition = b->coordinate;
+                b->addAsPinned();
+            }
+        }
+    }
+}
+
+//Qin, pin all beads for now
+void Controller::pinLowerBoundaryFilaments() {
+    
+    //renew pinned filament list everytime
+    
+    //loop through beads, check if within pindistance
+    for(auto b : Bead::getBeads()) {
+        
+        //pin all beads besides plus end and minus end cylinder
+        Filament* f = (Filament*) b->getParent();
+        Cylinder* plusEndC = f->getPlusEndCylinder();
+        Cylinder* minusEndC = f->getMinusEndCylinder();
+        
+        if((plusEndC->getSecondBead() != b) ||
+           (minusEndC->getFirstBead() != b)) {
+            
+            //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
+            //cout << SysParams::Mechanics().pinDistance << endl;
+            
+            auto index = Rand::randDouble(0,1);
+            //cout << index <<endl;
+            //if within dist to boundary and index > 0.5, add
+            if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
+               && index > SysParams::Mechanics().pinFraction) {
                 
                 b->pinnedPosition = b->coordinate;
                 b->addAsPinned();

@@ -110,6 +110,25 @@ double BoundaryCubic::distance(const vector<double>& coordinates) {
     return smallestDist;
 }
 
+//Qin
+double BoundaryCubic::lowerdistance(const vector<double>& coordinates) {
+    
+    // loop through, get smallest non-negative distance
+    double smallestDist = numeric_limits<double>::infinity();
+    
+    for(auto &bs : _boundarySurfaces) {
+        
+        auto be = bs->boundaryElements()[0].get();
+        
+        double dist = be->distance(coordinates);
+        
+        if(dist < 0) continue;
+        if(dist < smallestDist) smallestDist = dist;
+        
+    }
+    return smallestDist;
+}
+
 vector<double> BoundaryCubic::normal(vector<double>& coordinates) {
     
     // loop through, get smallest non-negative distance
@@ -242,6 +261,17 @@ double BoundarySpherical::distance(const vector<double>& coordinates) {
     else return numeric_limits<double>::infinity();
 }
 
+//Qin, do not use it
+double BoundarySpherical::lowerdistance(const vector<double>& coordinates) {
+    
+    auto be = _boundarySurfaces[0]->boundaryElements()[0].get();
+    
+    double dist = be->distance(coordinates);
+    
+    if(dist > 0) return dist;
+    else return numeric_limits<double>::infinity();
+}
+
 
 vector<double> BoundarySpherical::normal(vector<double>& coordinates) {
     
@@ -289,6 +319,25 @@ bool BoundaryCapsule::within(const vector<double>& coordinates) {
 }
 
 double BoundaryCapsule::distance(const vector<double>& coordinates) {
+    
+    // loop through, get smallest non-negative distance
+    double smallestDist = numeric_limits<double>::infinity();
+    
+    for(auto &bs : _boundarySurfaces) {
+        
+        auto be = bs->boundaryElements()[0].get();
+        
+        double dist = be->distance(coordinates);
+        
+        if(dist < 0) continue;
+        if(dist < smallestDist) smallestDist = dist;
+        
+    }
+    return smallestDist;
+}
+
+//Qin, do not use it
+double BoundaryCapsule::lowerdistance(const vector<double>& coordinates) {
     
     // loop through, get smallest non-negative distance
     double smallestDist = numeric_limits<double>::infinity();
@@ -360,4 +409,15 @@ double BoundaryCylinder::distance(const vector<double>& coordinates) {
         
     }
     return smallestDist;
+}
+
+//lower distance should only return the distance between beads and the lower boundary
+double BoundaryCylinder::lowerdistance(const vector<double>& coordinates) {
+    
+    auto be = _boundarySurfaces[0]->boundaryElements()[0].get();
+    
+    double dist = be->lowerdistance(coordinates);
+    
+    if(dist > 0) return dist;
+    else return numeric_limits<double>::infinity();
 }

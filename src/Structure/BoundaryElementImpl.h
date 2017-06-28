@@ -53,6 +53,13 @@ public:
         return (_a * point[0] + _b * point[1] + _c * point[2] + _d) /
                 sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
     }
+
+    //Qin, the same as distance
+    virtual double lowerdistance(const vector<double>& point) {
+        
+        return (_a * point[0] + _b * point[1] + _c * point[2] + _d) /
+        sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
+    }
     
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force,
@@ -99,6 +106,12 @@ public:
           _radius(radius) {}
     
     virtual double distance(const vector<double>& point) {
+        
+        return _radius - twoPointDistance(_coords, point);
+    }
+    
+    //Qin, the same as distance
+    virtual double lowerdistance(const vector<double>& point) {
         
         return _radius - twoPointDistance(_coords, point);
     }
@@ -179,6 +192,22 @@ public:
 	//                                {  point[0],  point[1], 0});
     }
     
+    //Qin, find the distance for the lower boundary
+    virtual double lowerdistance(const vector<double>& point) {
+        
+        
+        ///check z coordinate. If outside, return infinity
+        if(point[2] > (_coords[2] + _height / 2) ||
+           point[2] < (_coords[2] - _height / 2)) {
+            
+            return numeric_limits<double>::infinity();
+        }        
+        else {
+            return point[2];
+        }
+    }
+
+    
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force,
                                      double d) {
@@ -253,6 +282,17 @@ public:
         // check z coordinate. If outside, return infinity
         if((_up && (point[2] > _coords[2])) ||
           (!_up && (point[2] < _coords[2])))
+            return numeric_limits<double>::infinity();
+        
+        return _radius - twoPointDistance(_coords, point);
+    }
+    
+    //Qin, the same as distance
+    virtual double lowerdistance(const vector<double>& point) {
+        
+        // check z coordinate. If outside, return infinity
+        if((_up && (point[2] > _coords[2])) ||
+           (!_up && (point[2] < _coords[2])))
             return numeric_limits<double>::infinity();
         
         return _radius - twoPointDistance(_coords, point);

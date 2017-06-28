@@ -83,6 +83,9 @@ public:
     ///           3) Infinity if point is not in domain of this boundary element
     virtual double distance(const vector<double>& point) = 0;
     
+    //Qin
+    virtual double lowerdistance(const vector<double>& point) = 0;
+    
     /// Returns stretched distance, similar to distance above
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force, double d) = 0;

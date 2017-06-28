@@ -82,11 +82,16 @@ struct MechParams {
     //@{
     /// SPECIAL MECHANICAL PROTOCOLS
     
+    //Qin
+    bool pinLowerBoundaryFilaments = false;
+    double pinFraction = 1.0; //test 
+    
     ///To pin filaments on boundary via an attractive potential
     bool pinBoundaryFilaments = false;
     double pinDistance = 250; ///< 250nm pinning distance for now
     double pinK = 0.0;       ///< Tethered stiffness
     double pinTime = 0.0;    ///< Time at which to pin the filaments
+
     
     //@}
     

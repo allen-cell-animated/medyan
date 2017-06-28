@@ -73,6 +73,10 @@ public:
     /// Will return infinity if outside of the boundary.
     virtual double distance(const vector<double>& coordinates) = 0;
     
+    //Qin
+    // Returns the distance from the boundary element in the lower boundary
+    virtual double lowerdistance(const vector<double>& coordinates) = 0;
+    
     ///Move a given part of a boundary a given distance
     ///@note a negative distance denotes movement towards the center of the grid.
     virtual void move(double dist) = 0;

@@ -933,7 +933,7 @@ void SystemParser::readMechParams() {
             
             vector<string> lineVector = split<string>(line);
             
-            if(lineVector.size() > 4) {
+            if(lineVector.size() > 5) {
                 cout <<
                 "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
@@ -947,6 +947,18 @@ void SystemParser::readMechParams() {
                     MParams.pinK = atof(lineVector[2].c_str());
                     MParams.pinTime = atof(lineVector[3].c_str());
                     
+                }
+            }
+            
+            else if (lineVector.size() == 5) {
+
+                //Qin
+                if(lineVector[1] == "PINLOWERBOUNDARYFILAMENTS") {
+                    
+                    MParams.pinLowerBoundaryFilaments = true;
+                    MParams.pinK = atof(lineVector[2].c_str());
+                    MParams.pinTime = atof(lineVector[3].c_str());
+                    MParams.pinFraction = atof(lineVector[4].c_str());
                 }
             }
         }
