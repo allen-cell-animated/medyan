@@ -177,8 +177,9 @@ void SystemParser::readChemParams() {
         if (line.find("SPECIALPROTOCOL") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            
-            if(lineVector.size() > 4) {
+            //Qin
+            //the vector size can be 5 for PINLOWERBOUNDARYFILAMENTS
+            if(lineVector.size() > 5) {
                 cout <<
                 "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
