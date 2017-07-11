@@ -42,9 +42,9 @@ public:
     virtual string getName() {return "Linker";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double d, double *coord);
+    virtual void computeForces(double *coord, double *f);
+    virtual void computeForcesAux(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     

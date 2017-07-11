@@ -17,6 +17,7 @@
 #include "common.h"
 
 #include "LinkerInteractions.h"
+#include "Linker.h"
 
 //FORWARD DECLARATIONS
 class Linker;
@@ -30,10 +31,30 @@ private:
     
     ///Array describing indexed set of interactions
     ///For linkers, this is a 4-bead potential
+    const int n = 4;
+    int *beadSet;
     
-    
+    ///Array describing the constants in calculation
+    double *kstr;
+    double *eql;
+    double *pos1;
+    double *pos2;
     
 public:
+    
+    ///< Constructor initializes data
+    LinkerStretching () {
+        beadSet = new int[n * Linker::getLinkers().size()];
+        kstr = new double[Linker::getLinkers().size()];
+        eql = new double[Linker::getLinkers().size()];
+        pos1 = new double[Linker::getLinkers().size()];
+        pos2 = new double[Linker::getLinkers().size()];
+    }
+    
+    ~LinkerStretching () { delete beadSet; }
+    
+    virtual void vectorizeInteractions();
+    
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();

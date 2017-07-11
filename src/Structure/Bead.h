@@ -54,6 +54,8 @@ public:
     vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
     int _ID; ///<Bead IDs
+    int _dbIndex; ///<Position in database vector
+    
 	vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
     vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.

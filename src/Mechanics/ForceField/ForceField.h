@@ -35,13 +35,13 @@ public:
     /// Compute total energy of this forcefield in the system
     /// @return  the energy value if valid. If an inf or NaN value has been
     /// calculated, return -1.
-    virtual double computeEnergy(double d) = 0;
+    virtual double computeEnergy(double d, double *coord) = 0;
     /// Compute forces of this forcefield in the system. Update Bead
     /// forces accordingly.
-    virtual void computeForces() = 0;
+    virtual void computeForces(double *coord, double *f) = 0;
     /// Compute auxiliary forces of this forcefield in the system. Update
     /// Bead auxiliary forces accordingly.
-    virtual void computeForcesAux() = 0;
+    virtual void computeForcesAux(double *coord, double *fa) = 0;
     
     ///Compute all load forces on beads in this system.
     ///Updates all Bead's load force components for Reaction updating.

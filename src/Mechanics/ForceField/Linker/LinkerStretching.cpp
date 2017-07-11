@@ -20,6 +20,34 @@
 #include "Bead.h"
 
 template <class LStretchingInteractionType>
+void LinkerStretching<LStretchingInteractionType>::vectorizeInteractions() {
+    
+    int i = 0;
+    for(auto b: Bead::getBeads()) {
+        b->_dbIndex = i;
+        i++;
+    }
+    i = 0;
+    
+    for (auto l: Linker::getLinkers()) {
+        
+        beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->_dbIndex;
+        beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i + 3] = l->getSecondCylinder()->getSecondBead()->_dbIndex;
+        
+        kstr[i] = l->getMLinker()->getStretchingConstant();
+        eql[i] = l->getMLinker()->getEqLength();
+        pos1[i] = l->getFirstPosition();
+        pos2[i] = l->getSecondPosition();
+        
+        i++;
+    }
+}
+
+
+
+template <class LStretchingInteractionType>
 double LinkerStretching<LStretchingInteractionType>::computeEnergy(double d){
     
     double U = 0;

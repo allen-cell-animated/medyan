@@ -29,6 +29,10 @@ protected:
     Linker* _linkerCulprit = nullptr;
     
 public:
+    
+    ///Vectorize the bead interactions for minimization
+    virtual void vectorizeInteractions() = 0;
+    
     /// Compute the energy of this interaction
     virtual double computeEnergy(double d) = 0;
     /// Compute the forces of this interaction
