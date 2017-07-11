@@ -17,111 +17,83 @@
 #include "Bead.h"
 
 
-double CGMethod::allFDotF()
+inline double CGMethod::allFDotF()
 {
     double g = 0;
-    for(auto b: Bead::getBeads())
-        g += b->FDotF();
+    for(int i = 0; i < N; i++)
+        g += force[i] * force[i];
     return g;
 }
 
-double CGMethod::allFADotFA()
+inline double CGMethod::allFADotFA()
 {
     double g = 0;
-	for(auto b: Bead::getBeads())
-        g += b->FADotFA();
-    
+    for(int i = 0; i < N; i++)
+        g += forceAux[i] * forceAux[i];
     return g;
 }
 
-double CGMethod::allFADotFAP()
+inline double CGMethod::allFADotFAP()
 {
     double g = 0;
-    for(auto b: Bead::getBeads())
-        g += b->FADotFAP();
-    
+    for(int i = 0; i < N; i++)
+        g += forceAux[i] * forceAuxPrev[i];
     return g;
 }
 
-double CGMethod::allFDotFA()
+inline double CGMethod::allFDotFA()
 {
     double g = 0;
-	for(auto b: Bead::getBeads())
-        g += b->FDotFA();
-    
+    for(int i = 0; i < N; i++)
+        g += force[i] * forceAux[i];
     return g;
 }
 
-double CGMethod::maxF() {
+inline double CGMethod::maxF() {
     
     double maxF = 0;
+    double mag;
     
-    //calc max force
-    for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FADotFA()));
-
+    for(int i = 0; i < N; i++) {
+        mag = sqrt(forceAux[i]*forceAux[i]);
+        if(mag > maxF) maxF = mag;
+    }
+    
     return maxF;
 }
 
 Bead* CGMethod::maxBead() {
     
     double maxF = 0;
-    double force;
-    Bead* retbead = nullptr;
+    double currentF;
+    long index = 0;
     
-    //calc max force
-    for(auto b: Bead::getBeads()) {
+    for (int i = 0; i < N; i++) {
         
-        force = b->FADotFA();
-        
-        if(force >= maxF) {
-            retbead = b;
-            maxF = force;
+        currentF = forceAux[i] * forceAux[i];
+        if(currentF > maxF) {
+            index = i;
+            maxF = currentF;
         }
     }
-    return retbead;
+    return Bead::getBeads()[index];
 }
 
-void CGMethod::startMinimization() {
-
-    for(auto b: Bead::getBeads())
-        b->coordinateB = b->coordinateP = b->coordinate;
-}
-
-
-void CGMethod::moveBeads(double d)
+inline void CGMethod::moveBeads(double d)
 {
-	for(auto b: Bead::getBeads()) {
-        if(!b->getstaticstate()){
-        b->coordinate[0] = b->coordinate[0] + d * b->force[0];
-        b->coordinate[1] = b->coordinate[1] + d * b->force[1];
-        b->coordinate[2] = b->coordinate[2] + d * b->force[2];
-        }
-
-	}
-}
-
-void CGMethod::resetBeads() {
+    ///<NOTE: Ignores static beads for now.
+    //if(!b->getstaticstate())
     
-    for(auto b: Bead::getBeads())
-        b->coordinate = b->coordinateP;
-}
-
-void CGMethod::setBeads() {
+    for (int i = 0; i < N; i++) {
+        coord[i] = coord[i] + d * force[i];
+    }
     
-    for(auto b: Bead::getBeads())
-        b->coordinateP = b->coordinate;
 }
 
-
-void CGMethod::shiftGradient(double d)
+inline void CGMethod::shiftGradient(double d)
 {
-	for(auto b: Bead::getBeads()) {
-        
-        b->force[0] = b->forceAux[0] + d * b->force[0];
-        b->force[1] = b->forceAux[1] + d * b->force[1];
-        b->force[2] = b->forceAux[2] + d * b->force[2];
-	}
+    for (int i = 0; i < N; i ++)
+        force[i] = forceAux[i] + d * force[i];
 }
 
 void CGMethod::printForces()
@@ -135,6 +107,49 @@ void CGMethod::printForces()
 	}
     cout << "End of Print Forces" << endl;
 }
+
+void CGMethod::startMinimization() {
+ 
+    //COPY BEAD DATA
+    N = 3 * Bead::getBeads().size();
+    allocate(N);
+
+    //coord management
+    long i = 0;
+    long index = 0;
+    for(auto b: Bead::getBeads()) {
+        
+        //flatten indices
+        index = 3 * i;
+        coord[index] = b->coordinate[0];
+        coord[index + 1] = b->coordinate[1];
+        coord[index + 2] = b->coordinate[2];
+        
+        b->coordinateP = b->coordinate;
+        i++;
+    }
+}
+
+void CGMethod::endMinimization() {
+    
+    ///RECOPY BEAD DATA
+    //coord management
+    long i = 0;
+    long index = 0;
+    for(auto b: Bead::getBeads()) {
+        
+        //flatten indices
+        index = 3 * i;
+        b->coordinate[0] = coord[index];
+        b->coordinate[1] = coord[index + 1];
+        b->coordinate[2] = coord[index + 2];
+        
+        i++;
+    }
+    
+    deallocate();
+}
+
 
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                                 double LAMBDAMAX) {

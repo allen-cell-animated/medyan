@@ -28,7 +28,7 @@ Database<Bead*> Bead::_pinnedBeads;
 Bead::Bead (vector<double> v, Composite* parent, int position)
 
     : Trackable(true),
-      coordinate(v), coordinateP(v), coordinateB(v),
+      coordinate(v), coordinateP(v),
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
       _position(position), _birthTime(tau()) {
     
@@ -56,7 +56,7 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
 Bead::Bead(Composite* parent, int position)
 
     : Trackable(true),
-    coordinate(3, 0), coordinateP(3, 0), coordinateB(3, 0),
+    coordinate(3, 0), coordinateP(3, 0),
     force(3, 0), forceAux(3, 0), forceAuxP(3, 0),  _position(position) {
     
     parent->addChild(unique_ptr<Component>(this));
@@ -86,8 +86,7 @@ void Bead::printSelf() {
     
     cout << "Bead: ptr = " << this << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
-    cout << "Previous coordinates in minimization = " << coordinateP[0] << ", " << coordinateP[1] << ", " << coordinateP[2] << endl;
-    cout << "Previous coordinates before minimization = " << coordinateB[0] << ", " << coordinateB[1] << ", " << coordinateB[2] << endl;
+    cout << "Previous coordinates before minimization = " << coordinateP[0] << ", " << coordinateP[1] << ", " << coordinateP[2] << endl;
     cout << "Forces = " << force[0] << ", " << force[1] << ", " << force[2] << endl;
     cout << "Auxiliary forces = " << forceAux[0] << ", " << forceAux[1] << ", " << forceAux[2] << endl;
 

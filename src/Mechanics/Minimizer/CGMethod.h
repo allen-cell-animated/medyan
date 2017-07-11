@@ -34,6 +34,15 @@ class CGMethod {
 
 protected:
     
+    ///< Data vectors for calculation
+    double *coord;  ///<bead coordinates (length 3*N)
+    
+    double *force; ///< bead forces (length 3*N)
+    double *forceAux; ///< auxiliary force calculations (length 3*N)
+    double *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
+    
+    long N;
+    
     /// Safe mode which chooses the safe backtracking search if the
     /// minimizer got itself into trouble.
     bool _safeMode = false;
@@ -54,29 +63,29 @@ protected:
     
     //@{
     /// For use in minimization
-    double allFDotF();
-    double allFADotFA();
-    double allFADotFAP();
-    double allFDotFA();
+    inline double allFDotF();
+    inline double allFADotFA();
+    inline double allFADotFAP();
+    inline double allFDotFA();
     
     /// Get the max force in the system
-    double maxF();
+    inline double maxF();
     
     /// Get bead with the max force in the system
     Bead* maxBead();
     
-    /// Sets coordinates before minimization
-    void startMinimization();
+    /// Transfers data to lightweight arrays for min
+    inline void startMinimization();
+    /// Transfers updated coordinates and force to bead members
+    inline void endMinimization();
     
     /// Move beads in search direction by d
-    void moveBeads(double d);
-    /// Reset to previous position
-    void resetBeads();
+    inline void moveBeads(double d);
     /// Update the previous position
-    void setBeads();
+    inline void setBeads();
     
     /// shift the gradient by d
-    void shiftGradient(double d);
+    inline void shiftGradient(double d);
     //@}
     
     //@{
@@ -94,6 +103,24 @@ protected:
     
     /// Print forces on all beads
     void printForces();
+    
+    /// Initialize data arrays
+    inline void allocate(long numBeads) {
+        
+        coord = new double[3 * numBeads];
+        force = new double[3 * numBeads];
+        forceAux = new double[3 * numBeads];
+        forceAuxPrev = new double[3 * numBeads];
+    }
+    
+    ///Deallocation of CG arrays
+    inline void deallocate() {
+        
+        delete coord;
+        delete force;
+        delete forceAux;
+        delete forceAuxPrev;
+    }
     
 public:
     

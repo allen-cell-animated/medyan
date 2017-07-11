@@ -28,6 +28,11 @@ class LinkerStretching : public LinkerInteractions {
 private:
     LStretchingInteractionType _FFType;
     
+    ///Array describing indexed set of interactions
+    ///For linkers, this is a 4-bead potential
+    
+    
+    
 public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
