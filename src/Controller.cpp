@@ -513,8 +513,8 @@ void Controller::pinLowerBoundaryFilaments() {
             //cout << index <<endl;
             //if within dist to boundary and index > 0.5, add
             if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
-               && index > SysParams::Mechanics().pinFraction) {
-                
+               && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
+                //cout << index << endl;
                 b->pinnedPosition = b->coordinate;
                 b->addAsPinned();
             }
