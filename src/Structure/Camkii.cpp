@@ -72,8 +72,8 @@ Camkii::Camkii(Composite* parent, int position,
     //set eqLength according to cylinder size
     double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
         
-    _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
-    _mCylinder->setCylinder(this);
+    _mCamkii = unique_ptr<MCylinder>(new MCamkii(_type, eqLength));
+    _mCamkii->setCamkii(this);
 #endif
         
 }
@@ -112,13 +112,14 @@ void Camkii::updatePosition() {
 #endif
         
         //remove from old compartment, add to new
-        _compartment->removeCylinder(this);
+        _compartment->removeCamkii(this);
         _compartment = c;
-        _compartment->addCylinder(this);
+        _compartment->addCamkii(this);
         
 #ifdef CHEMISTRY
-        auto oldCCylinder = _cCylinder.get();
+        auto oldCCylinder = _cCamkii.get();
         
+        //TODO camkii
         //Remove old ccylinder from binding managers
         for(auto &manager : oldCompartment->getFilamentBindingManagers())
             manager->removePossibleBindings(oldCCylinder);
