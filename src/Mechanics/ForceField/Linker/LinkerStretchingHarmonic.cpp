@@ -19,97 +19,141 @@
 
 using namespace mathfunc;
 
-double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                        double position1, double position2,
-                                        double kStretch, double eqLength) {
+double LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
+                                        double *kstr, double *eql, double *pos1, double *pos2) {
     
-    auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
-    auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
+    int n = LinkerStretching<LinkerStretchingHarmonic>::n;
+    int nint = sizeof(beadSet);
     
-    double dist = twoPointDistance(v1, v2) - eqLength;
-    return 0.5 * kStretch * dist * dist;
+    double *coord1, *coord2, *coord3, *coord4, dist, U_i;
+    double *v1 = new double[3];
+    double *v2 = new double[3];
+
+    double U = 0;
+    
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord4 = &coord[3 * beadSet[n * i + 3]];
+        
+        midPointCoordinate(v1, coord1, coord2, pos1[i]);
+        midPointCoordinate(v2, coord3, coord4, pos2[i]);
+        
+        dist = twoPointDistance(v1, v2) - eql[i];
+        U_i = 0.5 * kstr[i] * dist * dist;
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            _linkerCulprit = Linker::getLinkers()[i];
+            
+            return -1;
+        }
+        
+        U += U_i;
+    }
+    delete v1;
+    delete v2;
+    
+    return U;
 }
 
-double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                        double position1, double position2,
-                                        double kStretch, double eqLength, double d ){
+double LinkerStretchingHarmonic::energy(double *coord, double * f, int *beadSet,
+                                        double *kstr, double *eql, double *pos1, double *pos2, double d){
     
-    auto v1 = midPointCoordinateStretched(b1->coordinate, b1->force,
-                                          b2->coordinate, b2->force, position1, d);
-    auto v2 = midPointCoordinateStretched(b3->coordinate, b3->force,
-                                          b4->coordinate, b4->force, position2, d);
+    int n = LinkerStretching<LinkerStretchingHarmonic>::n;
+    int nint = sizeof(beadSet);
     
-    double distStretched = twoPointDistance(v1, v2) - eqLength;
-    return 0.5 * kStretch * distStretched * distStretched ;
+    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist;
+    double *v1 = new double[3];
+    double *v2 = new double[3];
+    
+    double U = 0;
+    
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord4 = &coord[3 * beadSet[n * i + 3]];
+        
+        f1 = &f[3 * beadSet[n * i]];
+        f2 = &f[3 * beadSet[n * i + 1]];
+        f3 = &f[3 * beadSet[n * i + 2]];
+        f4 = &f[3 * beadSet[n * i + 3]];
+        
+        midPointCoordinateStretched(v1, coord1, f1, coord2, f2, pos1[i], d);
+        midPointCoordinateStretched(v2, coord3, f3, coord4, f4, pos2[i], d);
+        
+        dist = twoPointDistance(v1,  v2) - eql[i];
+        U += 0.5 * kstr[i] * dist * dist;
+    }
+    delete v1;
+    delete v2;
+    
+    return U;
 
 }
-double LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                        double position1, double position2,
-                                        double kStretch, double eqLength){
+void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
+                                      double *kstr, double *eql, double *pos1, double *pos2){
     
-    auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
-    auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
     
-    double dist = twoPointDistance( v1, v2);
+    int n = LinkerStretching<LinkerStretchingHarmonic>::n;
+    int nint = sizeof(beadSet);
     
-    double invL = 1 / dist;
+    double *coord1, *coord2, *coord3, *coord4, dist, invL;
+    double *v1 = new double[3];
+    double *v2 = new double[3];
     
-    double f0 = kStretch * ( dist - eqLength ) * invL;
-
-    //force on i
-    b1->force[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - position1);
-    b1->force[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - position1);
-    b1->force[2] +=   -f0 * ( v1[2] - v2[2] ) * (1 - position1);
+    double f0, *f1, *f2, *f3, *f4;
     
-    // force i+1
-    b2->force[0] +=   -f0 * ( v1[0] - v2[0] ) * (position1);
-    b2->force[1] +=   -f0 * ( v1[1] - v2[1] ) * (position1);
-    b2->force[2] +=   -f0 * ( v1[2] - v2[2] ) * (position1);
-
-    //force on j
-    b3->force[0] +=   f0 * ( v1[0] - v2[0] ) * (1 - position2);
-    b3->force[1] +=   f0 * ( v1[1] - v2[1] ) * (1 - position2);
-    b3->force[2] +=   f0 * ( v1[2] - v2[2] ) * (1 - position2);
-
-    // force j+1
-    b4->force[0] +=   f0 * ( v1[0] - v2[0] ) * (position2);
-    b4->force[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
-    b4->force[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
-    
-    return f0;
-}
-
-double LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                           double position1, double position2,
-                                           double kStretch, double eqLength){
-    
-    auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
-    auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
-    
-    double dist = twoPointDistance( v1, v2);
-    double invL = 1 / dist;
-    double f0 = kStretch * ( dist - eqLength ) * invL;
-    
-    //force on i
-    b1->forceAux[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - position1);
-    b1->forceAux[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - position1);
-    b1->forceAux[2] +=   -f0 * ( v1[2] - v2[2] ) * (1 - position1);
-    
-    // force i+1
-    b2->forceAux[0] +=   -f0 * ( v1[0] - v2[0] ) * (position1);
-    b2->forceAux[1] +=   -f0 * ( v1[1] - v2[1] ) * (position1);
-    b2->forceAux[2] +=   -f0 * ( v1[2] - v2[2] ) * (position1);
-    
-    //force on j
-    b3->forceAux[0] +=   f0 * ( v1[0] - v2[0] ) * (1 - position2);
-    b3->forceAux[1] +=   f0 * ( v1[1] - v2[1] ) * (1 - position2);
-    b3->forceAux[2] +=   f0 * ( v1[2] - v2[2] ) * (1 - position2);
-
-    // force j+1
-    b4->forceAux[0] +=   f0 * ( v1[0] - v2[0] ) * (position2);
-    b4->forceAux[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
-    b4->forceAux[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
-    
-    return f0;
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord4 = &coord[3 * beadSet[n * i + 3]];
+        
+        midPointCoordinate(v1, coord1, coord2, pos1[i]);
+        midPointCoordinate(v2, coord3, coord4, pos2[i]);
+        
+        dist = twoPointDistance(v1, v2) - eql[i];
+        invL = 1 / dist;
+        
+        f0 = kstr[i] * ( dist - eql[i] ) * invL;
+        
+        f1 = &f[3 * beadSet[n * i]];
+        f2 = &f[3 * beadSet[n * i + 1]];
+        f3 = &f[3 * beadSet[n * i + 2]];
+        f4 = &f[3 * beadSet[n * i + 3]];
+        
+        //force on i
+        f1[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - pos1[i]);
+        f1[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - pos1[i]);
+        f1[2] +=   -f0 * ( v1[2] - v2[2] ) * (1 - pos1[i]);
+        
+        // force i+1
+        f2[0] +=   -f0 * ( v1[0] - v2[0] ) * (pos1[i]);
+        f2[1] +=   -f0 * ( v1[1] - v2[1] ) * (pos1[i]);
+        f2[2] +=   -f0 * ( v1[2] - v2[2] ) * (pos1[i]);
+        
+        //force on j
+        f3[0] +=   f0 * ( v1[0] - v2[0] ) * (1 - pos2[i]);
+        f3[1] +=   f0 * ( v1[1] - v2[1] ) * (1 - pos2[i]);
+        f3[2] +=   f0 * ( v1[2] - v2[2] ) * (1 - pos2[i]);
+        
+        // force j+1
+        f4[0] +=   f0 * ( v1[0] - v2[0] ) * (pos2[i]);
+        f4[1] +=   f0 * ( v1[1] - v2[1] ) * (pos2[i]);
+        f4[2] +=   f0 * ( v1[2] - v2[2] ) * (pos2[i]);
+        
+        //assign stretch force
+        Linker::getLinkers()[i]->getMLinker()->stretchForce = f0;
+    }
+    delete v1;
+    delete v2;
 }
 

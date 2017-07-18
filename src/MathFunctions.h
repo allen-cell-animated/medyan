@@ -57,6 +57,14 @@ namespace mathfunc {
                     (v2[1]-v1[1])*(v2[1]-v1[1]) +
                     (v2[2]-v1[2])*(v2[2]-v1[2]));
     }
+    /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
+    /// ARRAY VERSION
+    inline double twoPointDistance(double *v1, double *v2) {
+        
+        return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
+                    (v2[1]-v1[1])*(v2[1]-v1[1]) +
+                    (v2[2]-v1[2])*(v2[2]-v1[2]));
+    }
     
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
@@ -64,6 +72,21 @@ namespace mathfunc {
                                             const vector<double>& p1,
                                             const vector<double>& v2,
                                             const vector<double>& p2, double d){
+        
+        return sqrt(((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) *
+                    ((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) +
+                    ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) *
+                    ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) +
+                    ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])) *
+                    ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
+    }
+    /// Compute distance between two points with coordinates
+    /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
+    /// ARRAY VERSION
+    inline double twoPointDistanceStretched(double* v1,
+                                            double* p1,
+                                            double* v2,
+                                            double *p2, double d){
         
         return sqrt(((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) *
                     ((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) +
@@ -246,7 +269,15 @@ namespace mathfunc {
         v.push_back(v1[2]*(1.0 - alpha) + alpha*v2[2]);
         return v;
     }
-    
+    /// Returns coordinates of a point v located on a line between v1 and v2.
+    /// |v-v1|/|v2-v1| = alpha. ARRAY VERSION
+    inline void midPointCoordinate(double *v, double *v1, double *v2, double alpha) {
+
+        v[0] = (v1[0]*(1.0 - alpha) + alpha*v2[0]);
+        v[1] = (v1[1]*(1.0 - alpha) + alpha*v2[1]);
+        v[2] = (v1[2]*(1.0 - alpha) + alpha*v2[2]);
+    }
+
     
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
@@ -261,6 +292,20 @@ namespace mathfunc {
         v.push_back((v1[1] + d*p1[1])*(1.0 - alpha) + alpha*(v2[1] + d*p2[1]));
         v.push_back((v1[2] + d*p1[2])*(1.0 - alpha) + alpha*(v2[2] + d*p2[2]));
         return v;
+    }
+    /// Returns coordinates of a point v located on a line between v1 and v2.
+    /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
+    /// ARRAY VERSION
+    inline void midPointCoordinateStretched(double *v,
+                                            double *v1,
+                                            double *p1,
+                                            double *v2,
+                                            double *p2,
+                                            double alpha, double d) {
+        
+        v[0] = (v1[0] + d*p1[0])*(1.0 - alpha) + alpha*(v2[0] + d*p2[0]);
+        v[1] = ((v1[1] + d*p1[1])*(1.0 - alpha) + alpha*(v2[1] + d*p2[1]));
+        v[2] = ((v1[2] + d*p1[2])*(1.0 - alpha) + alpha*(v2[2] + d*p2[2]));
     }
     
     /// Returns true if two vectors (p1->p2 and p3->p4) are parallel

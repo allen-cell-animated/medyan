@@ -28,10 +28,7 @@ class LinkerStretching : public LinkerInteractions {
     
 private:
     LStretchingInteractionType _FFType;
-    
-    ///Array describing indexed set of interactions
-    ///For linkers, this is a 4-bead potential
-    const int n = 4;
+
     int *beadSet;
     
     ///Array describing the constants in calculation
@@ -42,6 +39,10 @@ private:
     
 public:
     
+    ///Array describing indexed set of interactions
+    ///For linkers, this is a 4-bead potential
+    const static int n = 4;
+    
     ///< Constructor initializes data
     LinkerStretching () {
         beadSet = new int[n * Linker::getLinkers().size()];
@@ -51,13 +52,13 @@ public:
         pos2 = new double[Linker::getLinkers().size()];
     }
     
-    ~LinkerStretching () { delete beadSet; }
+    ~LinkerStretching () { delete beadSet; delete kstr;
+                           delete eql; delete pos1; delete pos2;}
     
     virtual void vectorizeInteractions();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
     
     virtual const string getName() {return "Linker Stretching";}
 };

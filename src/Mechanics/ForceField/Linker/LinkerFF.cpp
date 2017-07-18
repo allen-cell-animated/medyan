@@ -42,14 +42,14 @@ void LinkerFF::whoIsCulprit() {
     cout << endl;
 }
 
-double LinkerFF::computeEnergy(double d) {
+double LinkerFF::computeEnergy(double *coord, double *f, double d) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _linkerInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(coord, f, d);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -62,15 +62,10 @@ double LinkerFF::computeEnergy(double d) {
     return U;
 }
 
-void LinkerFF::computeForces() {
+void LinkerFF::computeForces(double *coord, double *f) {
     
     for (auto &interaction : _linkerInteractionVector)
-        interaction->computeForces();
+        interaction->computeForces(coord, f);
 }
 
-void LinkerFF::computeForcesAux() {
-    
-    for (auto &interaction : _linkerInteractionVector)
-        interaction->computeForcesAux();
-}
 
