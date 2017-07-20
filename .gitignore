@@ -19,3 +19,10 @@ build/
 
 # Backup files
 *~.nib
+
+# Eclipse
+.project
+.cproject
+.project
+.settings
+
