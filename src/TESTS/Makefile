@@ -1,3 +1,8 @@
+PWD = $(shell pwd)
+$(info $(PWD))
+MEDYAN_HEADERS := $(shell find .. -name '*.h')
+MEDYAN_SOURCES := $(shell find .. -name '*.cpp' ! -path './TESTS/*')
+
 # A sample Makefile for building Google Test and using it in user
 # tests.  Please tweak it to suit your environment and project.  You
 # may want to move it to your project's root directory.
@@ -14,25 +19,27 @@
 
 # Points to the root of Google Test, relative to where this file is.
 # Remember to tweak this if you move this file.
-GTEST_DIR = ..
+GTEST_DIR = /home/zozo123/repos/googletest/googletest
 
 # Where to find user code.
-USER_DIR = ../samples
+USER_DIR = ./
 
 # Flags passed to the preprocessor.
 CPPFLAGS += -I$(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra
+CXXFLAGS += -g -Wall -Wextra -std=c++11
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample1_unittest
+TESTS = test_all
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
+
+
 
 # House-keeping build targets.
 
@@ -69,12 +76,14 @@ gtest_main.a : gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-sample1.o : $(USER_DIR)/sample1.cc $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1.cc
+$(info ddddd $(USER_DIR)/test_all.cpp $(GTEST_HEADERS))
+$(info 22222 $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_all.cpp)
 
-sample1_unittest.o : $(USER_DIR)/sample1_unittest.cc \
-                     $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1_unittest.cc
-
-sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+test_all.o: $(USER_DIR)/test_all.cpp $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_all.cpp -lpthread
+	
+	
+test_all: test_all.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@ -lpthread
+	
+	
