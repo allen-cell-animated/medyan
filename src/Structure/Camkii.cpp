@@ -1,3 +1,4 @@
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -255,3 +256,4 @@ bool Camkii::isConsistent() {
 vector<FilamentRateChanger*> Cylinder::_polyChanger;
 ChemManager* Camkii::_chemManager = 0;
 Database<Cylinder*> Cylinder::_cylinders;
+#endif //CAMKII

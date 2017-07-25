@@ -1,4 +1,4 @@
-
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -292,3 +292,4 @@ short CCylinder::getType() {
     return _pCylinder->getType();
 }
 
+#endif
