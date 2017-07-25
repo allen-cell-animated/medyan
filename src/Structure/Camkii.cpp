@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -27,21 +26,18 @@
 
 using namespace mathfunc;
 
+// TODO how to implement Camkii::updateCoordinate?
 void Camkii::updateCoordinate() {
-    
     coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
 }
 
-
-Camkii::Camkii(Composite* parent, int position,
-             bool extensionFront = false,
-             bool extensionBack  = false,
-             bool initialization = false)
-
+Camkii::Camkii(Composite* parent, int position, bool initialization = false)
     : Trackable(true, true, true, false),
       _cylinders(), _position(position), _ID(_camkiiDB.getID()) {
     
-    // init cylinders
+    // TODO init cylinders
+
+    // TODO do we need this?
     parent->addChild(unique_ptr<Component>(this));
           
     //Set coordinate
@@ -56,15 +52,16 @@ Camkii::Camkii(Composite* parent, int position,
         exit(EXIT_FAILURE);
     }
                    
+   // TODO implement addCamkii                
    //add to compartment TODO add camkii or all the cylinders indivdually? 
-   _compartment->addCylinder(this);
+   _compartment->addCamkii(this);
     
 #ifdef CHEMISTRY
     _cCamkii = unique_ptr<CCamkii>(new CCamkii(_compartment, this));
-    _cCamkii->setCylinder(this);
+    _cCamkii->setCamkii(this);
           
     //init using chem manager
-    _chemManager->initializeCCylinder(_cCamkii.get(), extensionFront,
+    _chemManager->initializeCCamkii(_cCamkii.get(), extensionFront,
                                       extensionBack, initialization);
 #endif
 
@@ -78,15 +75,13 @@ Camkii::Camkii(Composite* parent, int position,
         
 }
 
-Camkii::~Camkii() noexcept {
+Camkii::~Camkii() {
     
     //remove from compartment
-    _compartment->removeCylinder(this);
+    _compartment->removeCamkii(this);
+    // TODO free all the cylinders
     
 }
-
-/// Get filament type
-int Camkii::getType() {return _type;}
 
 void Camkii::updatePosition() {
 
@@ -138,6 +133,7 @@ void Camkii::updatePosition() {
     
 #ifdef MECHANICS
     //update length
+    // TODO what to do here
     _mCylinder->setLength(twoPointDistance(_b1->coordinate,
                                            _b2->coordinate));
 #endif
@@ -148,7 +144,7 @@ void Camkii::updatePosition() {
 /// If there is no force on the beads the reaction rates are set to the bare.
 
 void Camkii::updateReactionRates() {
-    
+    // TODO what to do here???
     double force;
     
     //if no rate changer was defined, skip
@@ -193,6 +189,7 @@ void Camkii::updateReactionRates() {
     }
 }
 
+// TODO what's that
 bool Camkii::isFullLength() {
     
 #ifdef MECHANICS
@@ -211,22 +208,21 @@ void Camkii::printSelf() {
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
-    if(_plusEnd) cout << "Is a plus end." << endl;
-    if(_minusEnd) cout << "Is a minus end." << endl;
-    
-    if(_branchingCylinder != nullptr) cout << "Has a branching cylinder." << endl;
-    
     cout << "Position = " << _position << endl;
     
     cout << endl;
     
 #ifdef CHEMISTRY
     cout << "Chemical composition of cylinder:" << endl;
-    _cCylinder->printCCylinder();
+    _cCylinder->printCCamkii();
 #endif
     
     cout << endl;
-    
+
+    cout << "Print cylinders..." << endl;
+    for (const auto& c: _cylinders)
+        c->printSelf();
+
     cout << "Bead information..." << endl;
     
     _b1->printSelf();
@@ -235,8 +231,9 @@ void Camkii::printSelf() {
     cout << endl;
 }
 
-bool Camkii::within(Cylinder* other, double dist) {
+bool Camkii::within(Filament* other, double dist) {
     
+    // TODO
     //check midpoints
     if(twoPointDistance(coordinate, other->coordinate) <= dist)
         return true;
@@ -250,7 +247,11 @@ bool Camkii::within(Cylinder* other, double dist) {
 }
 
 // TODO
-vector<FilamentRateChanger*> Cylinder::_polyChanger;
-ChemManager* Cylinder::_chemManager = 0;
+bool Camkii::isConsistent() {
+    return false;
+}
 
+// TODO ????
+vector<FilamentRateChanger*> Cylinder::_polyChanger;
+ChemManager* Camkii::_chemManager = 0;
 Database<Cylinder*> Cylinder::_cylinders;

@@ -15,7 +15,8 @@
 #define MEDYAN_Camkii_h
 
 #include <iostream>
-
+#include "Trackable.h"
+#include "Composite.h"
 #include "common.h"
 
 #include "Cylinder.h"
@@ -55,14 +56,17 @@ class Camkii : public Component, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor {
     
 friend class CController;
-friend class DRController;
-    
+friend class DRController; // TODO do we need it?
+friend class Controller;
+
 private:
     ///For dynamic polymerization rate
     array<Cylinder*, 6> _cylinders;
     
     unique_ptr<MCylinder> _mCamkii; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCamkii; ///< Pointer to chem cylinder
+
+    SubSystem* _subSystem; ///< SubSystem pointer
 
     int _ID; ///< Unique ID of cylinder, managed by Database
     
@@ -100,19 +104,7 @@ public:
     
     /// Get cylinder type
     virtual int getType();
-                                       
-    //@{
-    /// Get beads
-    Bead* getFirstBead() {return _b1;}
-    Bead* getSecondBead() {return _b2;}
-    //@}
-    
-    //@{
-    /// Set beads
-    void setFirstBead(Bead* b) {_b1 = b;}
-    void setSecondBead(Bead* b) {_b2 = b;}
-    //@}
-    
+
     /// Get compartment
     Compartment* getCompartment() {return _compartment;}
     
@@ -121,6 +113,7 @@ public:
     
     int getPosition() {return _position;}
     
+    // TODO do we need?
     //@{
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _camkiiDB.addElement(this);}
