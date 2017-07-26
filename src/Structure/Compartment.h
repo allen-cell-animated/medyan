@@ -26,6 +26,7 @@
 #include "BindingManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
+#include "Camkii.h"
 
 //FORWARD DECLARATIONS
 class BoundaryElement;
@@ -70,6 +71,8 @@ protected:
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
     
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
+    
+    unordered_set<Camkii*> _camkiis; ///< Set of cylinders that are in this compartment
     
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
     
@@ -493,6 +496,18 @@ public:
     }
     ///get the cylinders in this compartment
    unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
+    
+    ///Add a cylinder to this compartment
+    void addCamkii(Camkii* c) {_camkiis.insert(c);}
+    
+    ///Remove a cylinder from this compartment
+    ///@note does nothing if cylinder is not in compartment already
+    void removeCamkii(Camkii* c) {
+        auto it = _camkiis.find(c);
+        if(it != _camkiis.end()) _camkiis.erase(it);
+    }
+    ///get the cylinders in this compartment
+    unordered_set<Camkii*>& getCamkiis() {return _camkiis;}
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

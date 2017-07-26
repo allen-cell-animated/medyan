@@ -185,6 +185,8 @@
 		F7A520161A8BBF24003C49E0 /* DRController.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520141A8BBF24003C49E0 /* DRController.h */; };
 		F7A520191AA0DA07003C49E0 /* RateChangerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7A520171AA0DA07003C49E0 /* RateChangerImpl.cpp */; };
 		F7A5201A1AA0DA07003C49E0 /* RateChangerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520181AA0DA07003C49E0 /* RateChangerImpl.h */; };
+		F7B1C58C1F28DC1A00840D65 /* Camkii.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7B1C58A1F28DC1A00840D65 /* Camkii.cpp */; };
+		F7B1C58D1F28DC1A00840D65 /* Camkii.h in Headers */ = {isa = PBXBuildFile; fileRef = F7B1C58B1F28DC1A00840D65 /* Camkii.h */; };
 		F7C7A0FB15FFBA9700DF9838 /* libmedyan.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libmedyan.dylib */; };
 		F7C9CF911A2D16290087434A /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF831A2D16290087434A /* test_boundaries.cpp */; };
 		F7C9CF931A2D16290087434A /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF851A2D16290087434A /* test_compartments.cpp */; };
@@ -446,6 +448,8 @@
 		F7A520141A8BBF24003C49E0 /* DRController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DRController.h; sourceTree = "<group>"; };
 		F7A520171AA0DA07003C49E0 /* RateChangerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RateChangerImpl.cpp; sourceTree = "<group>"; };
 		F7A520181AA0DA07003C49E0 /* RateChangerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateChangerImpl.h; sourceTree = "<group>"; };
+		F7B1C58A1F28DC1A00840D65 /* Camkii.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camkii.cpp; sourceTree = "<group>"; };
+		F7B1C58B1F28DC1A00840D65 /* Camkii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camkii.h; sourceTree = "<group>"; };
 		F7C7A0F315FFBA3D00DF9838 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9CF831A2D16290087434A /* test_boundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_boundaries.cpp; sourceTree = "<group>"; };
 		F7C9CF851A2D16290087434A /* test_compartments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_compartments.cpp; sourceTree = "<group>"; };
@@ -535,6 +539,8 @@
 		B52F64BE19BA230000A2B9FD /* Structure */ = {
 			isa = PBXGroup;
 			children = (
+				F7B1C58A1F28DC1A00840D65 /* Camkii.cpp */,
+				F7B1C58B1F28DC1A00840D65 /* Camkii.h */,
 				F7C9CFE71A2D165D0087434A /* SubSystem.cpp */,
 				F7C9CFE81A2D165D0087434A /* SubSystem.h */,
 				BF9A59321B0B68DE00ADF902 /* Database.h */,
@@ -1022,6 +1028,7 @@
 				F7525A3C1A7023EF007A4E9F /* CylinderVolumeInteractions.h in Headers */,
 				F764F0871BD56DD300E2BBB8 /* Bubble.h in Headers */,
 				F735B7BA1A2D173F00AE21D1 /* ConjugateGradient.h in Headers */,
+				F7B1C58D1F28DC1A00840D65 /* Camkii.h in Headers */,
 				F7525A591A70241E007A4E9F /* BranchingDihedralCosine.h in Headers */,
 				F735B7841A2D16F200AE21D1 /* SysParams.h in Headers */,
 				F764F08F1BD7D31900E2BBB8 /* BoundaryBubbleRepulsionExp.h in Headers */,
@@ -1166,6 +1173,7 @@
 				F7199B2A1A30B8F700CD5DCC /* BranchingPoint.cpp in Sources */,
 				F7401C3B1AF9388D00BA97A5 /* RSpecies.cpp in Sources */,
 				F7401C3D1AF9388D00BA97A5 /* Species.cpp in Sources */,
+				F7B1C58C1F28DC1A00840D65 /* Camkii.cpp in Sources */,
 				F735B7831A2D16F200AE21D1 /* SysParams.cpp in Sources */,
 				F7525A021A7023A4007A4E9F /* BoundaryFF.cpp in Sources */,
 				BF365D871ABC728F006EE099 /* NeighborListImpl.cpp in Sources */,
@@ -1333,6 +1341,7 @@
 					"REACTION_SIGNALING=1",
 					"RSPECIES_SIGNALING=1",
 					"DYNAMICRATES=1",
+					"CAMKII=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -1397,6 +1406,7 @@
 					"REACTION_SIGNALING=1",
 					"RSPECIES_SIGNALING=1",
 					"DYNAMICRATES=1",
+					"CAMKII=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

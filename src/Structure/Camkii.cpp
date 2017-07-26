@@ -11,23 +11,24 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "Camkii.h"
+
 
 #include "SubSystem.h"
 #include "CController.h"
 #include "ChemManager.h"
 #include "ChemRNode.h"
 
-#include <Cylinder.h>
+#include "Cylinder.h"
 #include "Filament.h"
 #include "Bead.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
+#include "Camkii.h"
 
 using namespace mathfunc;
 
-Database<Camkii*> _camkiis; ///< Collection in SubSystem
+Database<Camkii*> Camkii::_camkiiDB; ///< Collection in SubSystem
 void Camkii::updateCoordinate() {
     auto itr1 = _cylinders.begin();
     auto itr2 = _cylinders.begin() + 3;
@@ -44,10 +45,28 @@ void Camkii::updateCoordinate() {
     coordinate[2] = avgMidpoint[2]/3.0;
 }
 
-Camkii::Camkii(Composite* parent, int position, bool initialization)
-    : Trackable(true, true, true, false), _cylinders(), _position(position), _ID(_camkiiDB.getID()) {
+Camkii::Camkii(SubSystem* subsystem, int position, bool initialization)
+    : _subSystem(subsystem), Trackable(true, true, true, false), _cylinders(), _position(position) {
     // TODO init cylinders
-
+        
+    vector<vector<double>> tmpBeadsCoord;
+        
+    Bead* b1 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[0], this, 0);
+    Bead* b2 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[1], this, 1);
+        
+    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0,
+                                                          false, false, true);
+        
+    c0->setPlusEnd(true);
+    c0->setMinusEnd(true);
+    _cylinderVector.push_back(c0);
+        
+    for (int i = 2; i<numBeads; i++)
+        extendPlusEnd(tmpBeadsCoord[i]);
+        
+        
+    _ID = _camkiiDB.getID();
+        
     if (initialization)
         cout<<"dddd";
     // TODO do we need this?
@@ -64,31 +83,45 @@ Camkii::Camkii(Composite* parent, int position, bool initialization)
         
         exit(EXIT_FAILURE);
     }
-// TODO verify with James this isn't needed
-//   _compartment->addCamkii(this);
-//
-//#ifdef CHEMISTRY
-//    _cCamkii = unique_ptr<CCamkii>(new CCamkii(_compartment, this));
-//    _cCamkii->setCamkii(this);
-//
-//    //init using chem manager
-//    _chemManager->initializeCCamkii(_cCamkii.get(), extensionFront,
-//                                      extensionBack, initialization);
-//#endif
-//
-//#ifdef MECHANICS
-//    //set eqLength according to cylinder size
-//    double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
-//
-//    _mCamkii = unique_ptr<MCylinder>(new MCamkii(_type, eqLength));
-//    _mCamkii->setCamkii(this);
-//#endif
         
+    _compartment->addCamkii(this);
+        
+}
+
+vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
+    
+    vector<vector<double>> coordinate;
+    vector<double> tmpVec (3, 0);
+    vector<double> tau (3, 0);
+    double invD = 1/twoPointDistance(v[1], v[0]);
+    tau[0] = invD * ( v[1][0] - v[0][0] );
+    tau[1] = invD * ( v[1][1] - v[0][1] );
+    tau[2] = invD * ( v[1][2] - v[0][2] );
+    
+    vector<double> perptau = {-tau[1], tau[0], tau[2]};
+    
+    
+    for (int i = 0; i<numBeads; i++) {
+        
+        if(i%2 == 0) {
+            tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
+            tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
+            tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * tau[2];
+        }
+        else {
+            tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[0];
+            tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[1];
+            tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[2];
+        }
+        
+        coordinate.push_back(tmpVec);
+    }
+    return coordinate;
 }
 
 Camkii::~Camkii() {
     //remove from compartment
-    //_compartment->removeCamkii(this);
+    _compartment->removeCamkii(this);
     // TODO verify with James we need this
     for (auto &c: _cylinders){
         c->getCompartment()->removeCylinder(c);

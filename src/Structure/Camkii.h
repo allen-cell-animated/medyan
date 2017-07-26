@@ -72,7 +72,7 @@ private:
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
-    static Database<Camkii*> _camkiis; ///< Collection in SubSystem
+    static Database<Camkii*> _camkiiDB; ///< Collection in SubSystem
                                           
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
@@ -86,7 +86,7 @@ public:
     ///< Coordinates of midpoint, updated with updatePosition()
                                        
     /// Constructor, initializes a Camkii
-    Camkii(Composite* parent, int position, bool initialization = false);
+    Camkii(SubSystem* s, int position, bool initialization = false);
                                        
     virtual ~Camkii();
 
@@ -99,18 +99,18 @@ public:
 
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _camkiis.addElement(this);}
-    virtual void removeFromSubSystem() {_camkiis.removeElement(this);}
+    virtual void addToSubSystem() { _camkiiDB.addElement(this);}
+    virtual void removeFromSubSystem() {_camkiiDB.removeElement(this);}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<Camkii*>& getCamkiis() {
-        return _camkiis.getElements();
+        return _camkiiDB.getElements();
     }
 
     /// Get the number of Camkii in this system
     static int numCamkiis() {
-        return _camkiis.countElements();
+        return _camkiiDB.countElements();
     }
     
     /// Update the position, inherited from Movable
