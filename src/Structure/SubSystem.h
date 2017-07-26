@@ -28,6 +28,7 @@
 #include "DynamicNeighbor.h"
 
 #include "SysParams.h"
+#include "Camkii.h"
 
 //FORWARD DECLARATIONS
 class Boundary;
@@ -36,6 +37,10 @@ class Cylinder;
 class Linker;
 class MotorGhost;
 class BranchingPoint;
+
+#ifdef CAMKII
+class Camkii;
+#endif
 
 class CompartmentGrid;
 

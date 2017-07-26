@@ -32,6 +32,8 @@
 class BoundaryElement;
 class Bead;
 class Cylinder;
+class Camkii;
+
 
 /// A container or holding Species and [Reactions](@ref Reactions).
 
