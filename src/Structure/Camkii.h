@@ -62,9 +62,8 @@ friend class Controller;
 private:
     ///For dynamic polymerization rate // TODO use unique pointers
     array<Cylinder*, 6> _cylinders;
-    
-    unique_ptr<MCylinder> _mCamkii; ///< Pointer to mech cylinder
-    unique_ptr<CCylinder> _cCamkii; ///< Pointer to chem cylinder
+
+    short _type; ///< Filament type
 
     SubSystem* _subSystem; ///< SubSystem pointer
 
@@ -76,8 +75,7 @@ private:
                                           
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
-    
-    int _position;          ///< Position on structure
+
     ///Helper to get coordinate
     void updateCoordinate();
     
@@ -86,7 +84,7 @@ public:
     ///< Coordinates of midpoint, updated with updatePosition()
                                        
     /// Constructor, initializes a Camkii
-    Camkii(SubSystem* s, int position, bool initialization = false);
+    Camkii(SubSystem* s, short type, vector<double>& filamentInterfacePoint, bool initialization = false);
                                        
     virtual ~Camkii();
 

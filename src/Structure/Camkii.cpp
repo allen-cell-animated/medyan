@@ -25,6 +25,7 @@
 #include "GController.h"
 #include "MathFunctions.h"
 #include "Camkii.h"
+#include "SysParams.h"
 
 using namespace mathfunc;
 
@@ -45,51 +46,8 @@ void Camkii::updateCoordinate() {
     coordinate[2] = avgMidpoint[2]/3.0;
 }
 
-Camkii::Camkii(SubSystem* subsystem, int position, bool initialization)
-    : _subSystem(subsystem), Trackable(true, true, true, false), _cylinders(), _position(position) {
-    // TODO init cylinders
-        
-    vector<vector<double>> tmpBeadsCoord;
-        
-    Bead* b1 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[0], this, 0);
-    Bead* b2 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[1], this, 1);
-        
-    Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0,
-                                                          false, false, true);
-        
-    c0->setPlusEnd(true);
-    c0->setMinusEnd(true);
-    _cylinderVector.push_back(c0);
-        
-    for (int i = 2; i<numBeads; i++)
-        extendPlusEnd(tmpBeadsCoord[i]);
-        
-        
-    _ID = _camkiiDB.getID();
-        
-    if (initialization)
-        cout<<"dddd";
-    // TODO do we need this?
-    parent->addChild(unique_ptr<Component>(this));
-          
-    //Set coordinate
-    updateCoordinate();
+vector<vector<double>> Camkii::hexagonProjection(vector<vector<double>>& v, int numBeads){
 
-    try {_compartment = GController::getCompartment(coordinate);}
-    catch (exception& e) {
-        cout << e.what() << endl;
-        
-        printSelf();
-        
-        exit(EXIT_FAILURE);
-    }
-        
-    _compartment->addCamkii(this);
-        
-}
-
-vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
-    
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
     vector<double> tau (3, 0);
@@ -97,12 +55,12 @@ vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>
     tau[0] = invD * ( v[1][0] - v[0][0] );
     tau[1] = invD * ( v[1][1] - v[0][1] );
     tau[2] = invD * ( v[1][2] - v[0][2] );
-    
+
     vector<double> perptau = {-tau[1], tau[0], tau[2]};
-    
-    
+
+
     for (int i = 0; i<numBeads; i++) {
-        
+
         if(i%2 == 0) {
             tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
             tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
@@ -113,10 +71,103 @@ vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>
             tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[1];
             tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[2];
         }
-        
+
         coordinate.push_back(tmpVec);
     }
     return coordinate;
+}
+
+Camkii::Camkii(SubSystem* subsystem, short type, vector<double>& filamentInterfacePoint, bool initialization)
+    : _subSystem(subsystem), _type(type),Trackable(true, true, true, false), _cylinders() {
+    // TODO init cylinders
+
+    vector<vector<double>> tmpBeadsCoord;
+    double monoSize = SysParams::Geometry().monomerSize[_type];
+
+    // pick random point which is within a certain distance away
+    double directionX = Rand::randDouble(-1,1);
+    double directionY = Rand::randDouble(-1,1);
+    double directionZ = Rand::randDouble(-1,1);
+    vector<double> randDirection1 = normalizedVector({directionX, directionY, directionZ});
+
+    tmpBeadsCoord[0] = nextPointProjection(filamentInterfacePoint, monoSize/2, randDirection1);
+
+    //switch rand direction and create second point
+    randDirection1[0] = - randDirection1[0];
+    randDirection1[1] = - randDirection1[1];
+    randDirection1[2] = - randDirection1[2];
+
+    tmpBeadsCoord[1] = nextPointProjection(tmpBeadsCoord[0], monoSize, randDirection1);
+
+    directionX = Rand::randDouble(-1,1);
+    directionY = Rand::randDouble(-1,1);
+    directionZ = Rand::randDouble(-1,1);
+
+    vector<double> randDirection2 = normalizedVector({directionX, directionY, directionZ});
+
+    // sin(30) = sqrt(3)/2
+    auto midPointParallelEdge = nextPointProjection(filamentInterfacePoint, sqrt(3)*monoSize, randDirection2);
+    tmpBeadsCoord[4] = nextPointProjection(midPointParallelEdge, monoSize/2, randDirection1);
+
+    //switch rand direction and create second point
+    randDirection1[0] = - randDirection1[0];
+    randDirection1[1] = - randDirection1[1];
+    randDirection1[2] = - randDirection1[2];
+
+    tmpBeadsCoord[4] = nextPointProjection(midPointParallelEdge, monoSize/2, randDirection1);
+    tmpBeadsCoord[3] = nextPointProjection(tmpBeadsCoord[4], monoSize, randDirection1);
+
+    tmpBeadsCoord[2] = nextPointProjection(midPointCoordinate(tmpBeadsCoord[3],tmpBeadsCoord[1], 0.5), monoSize/2,randDirection1);
+
+    //switch rand direction and create second point
+    randDirection1[0] = - randDirection1[0];
+    randDirection1[1] = - randDirection1[1];
+    randDirection1[2] = - randDirection1[2];
+
+    tmpBeadsCoord[5] = nextPointProjection(midPointCoordinate(tmpBeadsCoord[4],tmpBeadsCoord[0], 0.5), monoSize/2,randDirection1);
+
+
+    Bead* first = _subSystem->addTrackable<Bead>(tmpBeadsCoord[0], this, 0);
+    Bead* curr = first;
+    for (int i=0; i < tmpBeadsCoord.size() - 1; i++) {
+        auto nextBeadCoord = tmpBeadsCoord[i+1];
+        Bead* next = _subSystem->addTrackable<Bead>(nextBeadCoord, this, i+1);
+
+        Cylinder* c = _subSystem->addTrackable<Cylinder>(this, curr, next, _type, 0,
+                                                          false, false, true);
+        c->setPlusEnd(false);
+        c->setMinusEnd(false);
+        _cylinders[i] = c;
+        curr = next;
+    }
+
+    // Creating and adding the last cylinder
+    Cylinder* c = _subSystem->addTrackable<Cylinder>(this, curr, first, _type, 0,
+                                                     false, false, true);
+    c->setPlusEnd(false);
+    c->setMinusEnd(false);
+    _cylinders[tmpBeadsCoord.size()-1] = c;
+
+    _ID = _camkiiDB.getID();
+        
+    if (initialization)
+        cout<<"dddd";
+    // TODO do we need this? do we need Composite?
+    parent->addChild(unique_ptr<Component>(this));
+          
+    //Set coordinate
+    updateCoordinate();
+
+    try {_compartment = GController::getCompartment(coordinate);}
+    catch (exception& e) {
+        cout << e.what() << endl;
+        
+        printSelf();
+        exit(EXIT_FAILURE);
+    }
+        
+    _compartment->addCamkii(this);
+        
 }
 
 Camkii::~Camkii() {

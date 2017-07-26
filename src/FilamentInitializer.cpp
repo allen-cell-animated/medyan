@@ -112,13 +112,13 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
         double randomSeg = Rand::randDouble(0, len);
         
         vector<double> randomPoint = nextPointProjection(firstPoint, randomSeg, direction);
-        
+
         //now pick another random point which is within a certain distance away
         double directionX = Rand::randDouble(-1,1);
         double directionY = Rand::randDouble(-1,1);
         double directionZ = Rand::randDouble(-1,1);
         vector<double> randDirection = normalizedVector({directionX, directionY, directionZ});
-        
+
         double randomDist = Rand::randDouble(0, maxSpacing);
         vector<double> nextRandomPoint = nextPointProjection(randomPoint, randomDist, randDirection);
         

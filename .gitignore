@@ -32,3 +32,6 @@ cmake-build-debug
 
 # Test
 output
+
+# Buid
+Makefile.dep
