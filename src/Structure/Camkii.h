@@ -19,8 +19,9 @@
 #include "Composite.h"
 #include "common.h"
 
-#include "Cylinder.h"
+#include "SubSystem.h"
 #include "Bead.h"
+#include "Cylinder.h"
 #include "RateChanger.h"
 
 #include "Database.h"
@@ -29,6 +30,7 @@
 #include "Reactable.h"
 #include "DynamicNeighbor.h"
 #include "Component.h"
+#include "ChemManager.h"
 
 #include <array>
 
@@ -76,6 +78,7 @@ private:
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
 
+    void hexagonProjection(vector<double>& filamentInterfacePoint);
     ///Helper to get coordinate
     void updateCoordinate();
     

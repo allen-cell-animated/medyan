@@ -13,7 +13,6 @@
 
 
 
-#include "SubSystem.h"
 #include "CController.h"
 #include "ChemManager.h"
 #include "ChemRNode.h"
@@ -46,40 +45,7 @@ void Camkii::updateCoordinate() {
     coordinate[2] = avgMidpoint[2]/3.0;
 }
 
-vector<vector<double>> Camkii::hexagonProjection(vector<vector<double>>& v, int numBeads){
-
-    vector<vector<double>> coordinate;
-    vector<double> tmpVec (3, 0);
-    vector<double> tau (3, 0);
-    double invD = 1/twoPointDistance(v[1], v[0]);
-    tau[0] = invD * ( v[1][0] - v[0][0] );
-    tau[1] = invD * ( v[1][1] - v[0][1] );
-    tau[2] = invD * ( v[1][2] - v[0][2] );
-
-    vector<double> perptau = {-tau[1], tau[0], tau[2]};
-
-
-    for (int i = 0; i<numBeads; i++) {
-
-        if(i%2 == 0) {
-            tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * tau[0];
-            tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * tau[1];
-            tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * tau[2];
-        }
-        else {
-            tmpVec[0] = v[0][0] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[0];
-            tmpVec[1] = v[0][1] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[1];
-            tmpVec[2] = v[0][2] + SysParams::Geometry().cylinderSize[_filType] * i * perptau[2];
-        }
-
-        coordinate.push_back(tmpVec);
-    }
-    return coordinate;
-}
-
-Camkii::Camkii(SubSystem* subsystem, short type, vector<double>& filamentInterfacePoint, bool initialization)
-    : _subSystem(subsystem), _type(type),Trackable(true, true, true, false), _cylinders() {
-    // TODO init cylinders
+void Camkii::hexagonProjection(vector<double>& filamentInterfacePoint){
 
     vector<vector<double>> tmpBeadsCoord;
     double monoSize = SysParams::Geometry().monomerSize[_type];
@@ -134,7 +100,7 @@ Camkii::Camkii(SubSystem* subsystem, short type, vector<double>& filamentInterfa
         Bead* next = _subSystem->addTrackable<Bead>(nextBeadCoord, this, i+1);
 
         Cylinder* c = _subSystem->addTrackable<Cylinder>(this, curr, next, _type, 0,
-                                                          false, false, true);
+                                                         false, false, true);
         c->setPlusEnd(false);
         c->setMinusEnd(false);
         _cylinders[i] = c;
@@ -148,12 +114,19 @@ Camkii::Camkii(SubSystem* subsystem, short type, vector<double>& filamentInterfa
     c->setMinusEnd(false);
     _cylinders[tmpBeadsCoord.size()-1] = c;
 
+}
+
+Camkii::Camkii(SubSystem* subsystem, short type, vector<double>& filamentInterfacePoint, bool initialization)
+    : _subSystem(subsystem), _type(type),Trackable(true, true, true, false), _cylinders() {
+    // TODO init cylinders
+    hexagonProjection(filamentInterfacePoint);
+
     _ID = _camkiiDB.getID();
         
-    if (initialization)
+    if (initialization) // TODO what about initalization?
         cout<<"dddd";
     // TODO do we need this? do we need Composite?
-    parent->addChild(unique_ptr<Component>(this));
+    //parent->addChild(unique_ptr<Component>(this));
           
     //Set coordinate
     updateCoordinate();
@@ -254,8 +227,6 @@ void Camkii::printSelf() {
     cout << "Camkii ID = " << _ID << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
-    
-    cout << "Position = " << _position << endl;
     cout << endl;
 
     cout << "Print cylinders..." << endl;
@@ -270,7 +241,7 @@ bool Camkii::isConsistent() {
     return true;
 }
 
-// TODO ????
+// TODO in the future.
 // ChemManager* Camkii::_chemManager = 0; TODO what about that
 
 
