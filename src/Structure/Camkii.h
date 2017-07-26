@@ -60,7 +60,7 @@ friend class DRController; // TODO do we need it?
 friend class Controller;
 
 private:
-    ///For dynamic polymerization rate
+    ///For dynamic polymerization rate // TODO use unique pointers
     array<Cylinder*, 6> _cylinders;
     
     unique_ptr<MCylinder> _mCamkii; ///< Pointer to mech cylinder
@@ -68,11 +68,11 @@ private:
 
     SubSystem* _subSystem; ///< SubSystem pointer
 
-    int _ID; ///< Unique ID of cylinder, managed by Database
+    int _ID; ///< Unique ID of camkii, managed by Database
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
-    static Database<Camkii*> _camkiiDB; ///< Collection in SubSystem
+    static Database<Camkii*> _camkiis; ///< Collection in SubSystem
                                           
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
@@ -86,47 +86,31 @@ public:
     ///< Coordinates of midpoint, updated with updatePosition()
                                        
     /// Constructor, initializes a Camkii
-    Camkii(Composite* parent, int position,
-             bool extensionFront = false,
-             bool extensionBack  = false,
-             bool initialization = false);
+    Camkii(Composite* parent, int position, bool initialization = false);
                                        
-    virtual ~Camkii() noexcept;
-    
-    /// Get mech cylinder
-    MCamkii* getMCamkii() {return _mCamkii.get();}
-    
-    /// Get chem cylinder
-    CCamkii* getCCamkii() {return _cCamkii.get();}
-    /// set chem cylinder
-    /// @note: since this is a unique ptr, will implicitly delete old chem cylinder
-    void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
-    
-    /// Get cylinder type
-    virtual int getType();
+    virtual ~Camkii();
+
 
     /// Get compartment
     Compartment* getCompartment() {return _compartment;}
     
     /// Get ID
     int getID() {return _ID;}
-    
-    int getPosition() {return _position;}
-    
-    // TODO do we need?
+
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _camkiiDB.addElement(this);}
-    virtual void removeFromSubSystem() {_camkiiDB.removeElement(this);}
+    virtual void addToSubSystem() { _camkiis.addElement(this);}
+    virtual void removeFromSubSystem() {_camkiis.removeElement(this);}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<Camkii*>& getCamkiis() {
-        return _camkiiDB.getElements();
+        return _camkiis.getElements();
     }
-    /// Get the number of cylinders in this system
+
+    /// Get the number of Camkii in this system
     static int numCamkiis() {
-        return _camkiiDB.countElements();
+        return _camkiis.countElements();
     }
     
     /// Update the position, inherited from Movable
@@ -135,15 +119,11 @@ public:
     
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
-                                       
-    /// Check if this cylinder is grown to full length
-    bool isFullLength();
-                                       
+
     virtual void printSelf();
-                                       
-    /// Returns whether a CaMKII is within a certain distance from 2 cylinders
-    /// Uses the closest point between the two cylinders
-    virtual bool within(Cylinder* a, Cylinder* b, ,double dist);
+
+    ///Check consistency and correctness of binding sites. Used for debugging.
+    virtual bool isConsistent() = 0;
 };
 
 #endif

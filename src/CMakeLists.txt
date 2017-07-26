@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 project(MEDYAN)
 
-# add_definitions(-DCAMKII)
+add_definitions(-DCAMKII)
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -173,8 +173,6 @@ set(SOURCE_FILES
         Structure/CBound.h
         Structure/CBranchingPoint.cpp
         Structure/CBranchingPoint.h
-        Structure/CCamkii.cpp
-        Structure/CCamkii.h
         Structure/CCylinder.cpp
         Structure/CCylinder.h
         Structure/CLinker.cpp

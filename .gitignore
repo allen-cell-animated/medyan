@@ -29,3 +29,6 @@ build/
 # Clion
 cmake-build-debug
 .idea
+
+# Test
+output
