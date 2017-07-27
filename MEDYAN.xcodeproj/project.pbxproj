@@ -187,6 +187,8 @@
 		F7A5201A1AA0DA07003C49E0 /* RateChangerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F7A520181AA0DA07003C49E0 /* RateChangerImpl.h */; };
 		F7B1C58C1F28DC1A00840D65 /* Camkii.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7B1C58A1F28DC1A00840D65 /* Camkii.cpp */; };
 		F7B1C58D1F28DC1A00840D65 /* Camkii.h in Headers */ = {isa = PBXBuildFile; fileRef = F7B1C58B1F28DC1A00840D65 /* Camkii.h */; };
+		F7B1C5901F2A2BD000840D65 /* TestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7B1C58E1F2A2BD000840D65 /* TestController.cpp */; };
+		F7B1C5911F2A2BD000840D65 /* TestController.h in Headers */ = {isa = PBXBuildFile; fileRef = F7B1C58F1F2A2BD000840D65 /* TestController.h */; };
 		F7C7A0FB15FFBA9700DF9838 /* libmedyan.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F771ADBB15655CD70010B123 /* libmedyan.dylib */; };
 		F7C9CF911A2D16290087434A /* test_boundaries.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF831A2D16290087434A /* test_boundaries.cpp */; };
 		F7C9CF931A2D16290087434A /* test_compartments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F7C9CF851A2D16290087434A /* test_compartments.cpp */; };
@@ -450,6 +452,8 @@
 		F7A520181AA0DA07003C49E0 /* RateChangerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateChangerImpl.h; sourceTree = "<group>"; };
 		F7B1C58A1F28DC1A00840D65 /* Camkii.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camkii.cpp; sourceTree = "<group>"; };
 		F7B1C58B1F28DC1A00840D65 /* Camkii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camkii.h; sourceTree = "<group>"; };
+		F7B1C58E1F2A2BD000840D65 /* TestController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestController.cpp; sourceTree = "<group>"; };
+		F7B1C58F1F2A2BD000840D65 /* TestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestController.h; sourceTree = "<group>"; };
 		F7C7A0F315FFBA3D00DF9838 /* TestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestSuite; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7C9CF831A2D16290087434A /* test_boundaries.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_boundaries.cpp; sourceTree = "<group>"; };
 		F7C9CF851A2D16290087434A /* test_compartments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_compartments.cpp; sourceTree = "<group>"; };
@@ -858,6 +862,8 @@
 		F7954C4A197D98BE00074A12 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				F7B1C58E1F2A2BD000840D65 /* TestController.cpp */,
+				F7B1C58F1F2A2BD000840D65 /* TestController.h */,
 				F77745911BCEE9FA00F3AB4C /* common.cpp */,
 				F735B7561A2D16F200AE21D1 /* common.h */,
 				F777458F1BCD404000F3AB4C /* utility.cpp */,
@@ -971,6 +977,7 @@
 				F735B7741A2D16F200AE21D1 /* Composite.h in Headers */,
 				F7525A7E1A702431007A4E9F /* FilamentStretchingHarmonic.h in Headers */,
 				F735B7B91A2D173F00AE21D1 /* CGPolakRibiereMethod.h in Headers */,
+				F7B1C5911F2A2BD000840D65 /* TestController.h in Headers */,
 				F7C9D00A1A2D165D0087434A /* Filament.h in Headers */,
 				F7C9D0161A2D165D0087434A /* MMotorGhost.h in Headers */,
 				F764F0A41BD7E53900E2BBB8 /* BubbleBubbleRepulsionExp.h in Headers */,
@@ -1230,6 +1237,7 @@
 				F7525A3A1A7023EF007A4E9F /* CylinderExclVolume.cpp in Sources */,
 				F7525A721A702431007A4E9F /* FilamentBending.cpp in Sources */,
 				F764F0B71BD9349600E2BBB8 /* BubbleInitializer.cpp in Sources */,
+				F7B1C5901F2A2BD000840D65 /* TestController.cpp in Sources */,
 				F71F29C01BE2721600F08420 /* MTOCAttachmentHarmonic.cpp in Sources */,
 				F7525A7B1A702431007A4E9F /* FilamentStretching.cpp in Sources */,
 				F7A520191AA0DA07003C49E0 /* RateChangerImpl.cpp in Sources */,

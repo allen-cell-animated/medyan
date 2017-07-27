@@ -169,6 +169,7 @@ void Camkii::updatePosition() {
 void Camkii::updateReactionRates() {
     // TODO double check if should be left empty
     // SEE MOTOR GHOST
+    cout << "testing" << endl;
 }
 
 void Camkii::printSelf() {

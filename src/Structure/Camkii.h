@@ -120,7 +120,9 @@ public:
     virtual void printSelf();
 
     ///Check consistency and correctness of binding sites. Used for debugging.
-    virtual bool isConsistent() = 0;
+    virtual bool isConsistent();
+                                       
+    virtual int getType() {return _type;}
 };
 
 #endif

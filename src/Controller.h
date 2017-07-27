@@ -39,7 +39,7 @@ class FilamentBindingManager;
  */
 class Controller {
 
-private:
+protected:
     string _inputFile; ///< System input file
     
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
@@ -72,7 +72,8 @@ private:
     ChemistryData _chemData;
     ChemistryAlgorithm _cAlgorithm;
     vector<tuple<short, vector<double>, vector<double>>> fil;
-    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> ,
+           vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
     //@}
     
     ///INITIALIZATION HELPER FUNCTIONS
@@ -119,7 +120,7 @@ public:
                     string inputDirectory,
                     string outputDirectory);
     ///Run the simulation
-    void run();
+    virtual void run();
 };
 
 #endif

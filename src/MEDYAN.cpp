@@ -70,6 +70,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "common.h"
 
 #include "Controller.h"
+#include "TestController.h"
 #include "SubSystem.h"
 
 void printUsage() {
@@ -89,8 +90,13 @@ int main(int argc, char **argv) {
     
     //create subsystem and controller to run it
     SubSystem* s = nullptr;
+    
+#ifdef CAMKII
+    TestController c(s);
+#else
     Controller c(s);
-
+#endif
+    
     string inputFile, inputDirectory, outputDirectory;
     int option;
     

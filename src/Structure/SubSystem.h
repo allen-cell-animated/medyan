@@ -28,7 +28,6 @@
 #include "DynamicNeighbor.h"
 
 #include "SysParams.h"
-#include "Camkii.h"
 
 //FORWARD DECLARATIONS
 class Boundary;
