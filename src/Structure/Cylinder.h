@@ -31,6 +31,7 @@
 
 //FORWARD DECLARATIONS
 class Filament;
+class Bead;
 class Compartment;
 
 /// A container to store a MCylinder and CCylinder.

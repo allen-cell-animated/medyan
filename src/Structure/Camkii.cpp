@@ -19,6 +19,7 @@
 
 #include "Cylinder.h"
 #include "Filament.h"
+#include "SubSystem.h"
 #include "Bead.h"
 
 #include "GController.h"
@@ -101,6 +102,7 @@ void Camkii::hexagonProjection(vector<double>& filamentInterfacePoint){
 
         Cylinder* c = _subSystem->addTrackable<Cylinder>(this, curr, next, _type, 0,
                                                          false, false, true);
+        
         c->setPlusEnd(false);
         c->setMinusEnd(false);
         _cylinders[i] = c;
@@ -116,16 +118,17 @@ void Camkii::hexagonProjection(vector<double>& filamentInterfacePoint){
 
 }
 
-Camkii::Camkii(SubSystem* subsystem, short type, vector<double>& filamentInterfacePoint, bool initialization)
+Camkii::Camkii(SubSystem* subsystem, short type, vector<double>& filamentInterfacePoint)
     : _subSystem(subsystem), _type(type),Trackable(true, true, true, false), _cylinders() {
-    // TODO init cylinders
+    // init cylinders
     hexagonProjection(filamentInterfacePoint);
+
+    for(auto c: _cylinders)
+        addChild(unique_ptr<Component>(c));
 
     _ID = _camkiiDB.getID();
         
-    if (initialization) // TODO what about initalization?
-        cout<<"dddd";
-    // TODO do we need this? do we need Composite?
+    // TODO do we need this? do we need Composite? DECIDE WHO IS PARENT
     //parent->addChild(unique_ptr<Component>(this));
           
     //Set coordinate
@@ -150,6 +153,7 @@ Camkii::~Camkii() {
     for (auto &c: _cylinders){
         c->getCompartment()->removeCylinder(c);
     }
+    //REMOVE BEADS TOO (see filament)
 }
 
 // TODO verify that's all we need with James.
@@ -157,59 +161,6 @@ void Camkii::updatePosition() {
 
     //check if were still in same compartment, set new position
     updateCoordinate();
-
-    // TODO check if I need to update the binding manager
-//
-//    Compartment* c;
-//
-//    try {c = GController::getCompartment(coordinate);}
-//    catch (exception& e) {
-//        cout << e.what();
-//
-//        printSelf();
-//
-//        exit(EXIT_FAILURE);
-//    }
-//
-//    if(c != _compartment) {
-//
-//#ifdef CHEMISTRY
-//        auto oldCompartment = _compartment;
-//        auto newCompartment = c;
-//#endif
-//
-//        //remove from old compartment, add to new
-//        _compartment->removeCamkii(this);
-//        _compartment = c;
-//        _compartment->addCamkii(this);
-//
-//#ifdef CHEMISTRY
-//        auto oldCCylinder = _cCamkii.get();
-//
-//        //TODO camkii
-//        //Remove old ccylinder from binding managers
-//        for(auto &manager : oldCompartment->getFilamentBindingManagers())
-//            manager->removePossibleBindings(oldCCylinder);
-//
-//        //clone and set new ccylinder
-//        CCylinder* clone = _cCylinder->clone(c);
-//        setCCylinder(clone);
-//
-//        auto newCCylinder = _cCylinder.get();
-//
-//        //Add new ccylinder to binding managers
-//        for(auto &manager : newCompartment->getFilamentBindingManagers())
-//            manager->addPossibleBindings(newCCylinder);
-//    }
-//#endif
-//
-//#ifdef MECHANICS
-//    //update length
-//    // TODO what to do here
-//    _mCylinder->setLength(twoPointDistance(_b1->coordinate,
-//                                           _b2->coordinate));
-//#endif
-
 }
 
 /// @note -  The function uses the bead load force to calculate this changed rate.
@@ -217,6 +168,7 @@ void Camkii::updatePosition() {
 
 void Camkii::updateReactionRates() {
     // TODO double check if should be left empty
+    // SEE MOTOR GHOST
 }
 
 void Camkii::printSelf() {
@@ -238,6 +190,8 @@ void Camkii::printSelf() {
 
 // TODO
 bool Camkii::isConsistent() {
+    // SEE FILAMENT
+    // FOR DEBUGGING PURPOSES
     return true;
 }
 

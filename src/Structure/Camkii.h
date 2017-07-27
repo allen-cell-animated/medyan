@@ -19,17 +19,12 @@
 #include "Composite.h"
 #include "common.h"
 
-#include "SubSystem.h"
-#include "Bead.h"
-#include "Cylinder.h"
-#include "RateChanger.h"
-
 #include "Database.h"
 #include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
 #include "DynamicNeighbor.h"
-#include "Component.h"
+
 #include "ChemManager.h"
 
 #include <array>
@@ -39,6 +34,7 @@ class Filament;
 class Compartment;
 class Cylinder;
 class Bead;
+class SubSystem;
 
 /// A container to store a MCamkii and CCamkii.
 /*!
@@ -54,7 +50,7 @@ class Bead;
  *  Extending the DynamicNeighbor class, all instances can be 
  *  kept in [NeighborLists](@ref NeighborList).
  */
-class Camkii : public Component, public Trackable, public Movable,
+class Camkii : public Composite, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor {
     
 friend class CController;
@@ -87,7 +83,7 @@ public:
     ///< Coordinates of midpoint, updated with updatePosition()
                                        
     /// Constructor, initializes a Camkii
-    Camkii(SubSystem* s, short type, vector<double>& filamentInterfacePoint, bool initialization = false);
+    Camkii(SubSystem* s, short type, vector<double>& filamentInterfacePoint);
                                        
     virtual ~Camkii();
 
