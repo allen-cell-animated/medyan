@@ -225,6 +225,8 @@ set(SOURCE_FILES
         Composite.h
         Controller.cpp
         Controller.h
+        TestController.cpp
+        TestController.h
         DRController.cpp
         DRController.h
         FilamentInitializer.cpp
