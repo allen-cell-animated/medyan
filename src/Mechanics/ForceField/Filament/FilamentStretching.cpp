@@ -14,92 +14,66 @@
 #include "FilamentStretching.h"
 
 #include "FilamentStretchingHarmonic.h"
+
 #include "Filament.h"
 #include "Cylinder.h"
+#include "Bead.h"
 
 template <class FStretchingInteractionType>
-double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
+void FilamentStretching<FStretchingInteractionType>::vectorize() {
     
-    double U = 0;
+    beadSet = new int[n * Cylinder::getCylinders().size()];
+    kstr = new double[Cylinder::getCylinders().size()];
+    eql = new double[Cylinder::getCylinders().size()];
+    
+    int i = 0;
+    for(auto b: Bead::getBeads()) {
+        b->_dbIndex = i;
+        i++;
+    }
+    i = 0;
+    
+    for (auto c: Cylinder::getCylinders()) {
+        
+        beadSet[n * i] = c->getFirstBead()->_dbIndex;
+        beadSet[n * i + 1] = c->getSecondBead()->_dbIndex;
+        
+        kstr[i] = c->getMCylinder()->getStretchingConst();
+        eql[i] = c->getMCylinder()->getEqLength();
+        
+        i++;
+    }
+}
+
+template<class FStretchingInteractionType>
+void FilamentStretching<FStretchingInteractionType>::deallocate() {
+    
+    delete beadSet;
+    delete kstr;
+    delete eql;
+}
+
+
+template <class FStretchingInteractionType>
+double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coord, double *f, double d){
+    
     double U_i;
     
-    for (auto f: Filament::getFilaments()) {
-        
-        U_i = 0;
-        
-        if (d == 0.0){
-            for(auto it : f->getCylinderVector()){
-                
-                Bead* b1 = it->getFirstBead();
-                Bead* b2 = it->getSecondBead();
-                double kStretch = it->getMCylinder()->getStretchingConst();
-                double eqLength = it->getMCylinder()->getEqLength();
-                
-                U_i += _FFType.energy(b1, b2, kStretch, eqLength);
-            }
-        }
-        else {
-            for(auto it : f->getCylinderVector()){
-                Bead* b1 = it->getFirstBead();
-                Bead* b2 = it->getSecondBead();
-                double kStretch =it->getMCylinder()->getStretchingConst();
-                double eqLength = it->getMCylinder()->getEqLength();
-                
-                U_i += _FFType.energy(b1, b2, kStretch, eqLength, d);
-            }
-        }
-        
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-            
-            //set culprit and return
-            _filamentCulprit = f;
-            
-            return -1;
-        }
-        else
-            U += U_i;
-    }
+    if (d == 0.0)
+        U_i = _FFType.energy(coord, f, beadSet, kstr, eql);
+    else
+        U_i = _FFType.energy(coord, f, beadSet, kstr, eql, d);
     
-    return U;
+    return U_i;
 }
 
 template <class FStretchingInteractionType>
-void FilamentStretching<FStretchingInteractionType>::computeForces() {
+void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord, double *f) {
     
-    for (auto f: Filament::getFilaments()) {
-    
-        for(auto it : f->getCylinderVector()){
-            
-            Bead* b1 = it->getFirstBead();
-            Bead* b2 = it->getSecondBead();
-            double kStretch =it->getMCylinder()->getStretchingConst();
-            double eqLength = it->getMCylinder()->getEqLength();
-           
-            _FFType.forces(b1, b2, kStretch, eqLength);
-        }
-    }
+    _FFType.forces(coord, f, beadSet, kstr, eql);
 }
 
 
-template <class FStretchingInteractionType>
-void FilamentStretching<FStretchingInteractionType>::computeForcesAux() {
-    
-    for (auto f: Filament::getFilaments()) {
-        
-        for(auto it : f->getCylinderVector()){
-            
-            Bead* b1 = it->getFirstBead();
-            Bead* b2 = it->getSecondBead();
-            double kStretch =it->getMCylinder()->getStretchingConst();
-            double eqLength = it->getMCylinder()->getEqLength();
-            
-            _FFType.forcesAux(b1, b2, kStretch, eqLength);
-        }
-    }
-}
-
-///Template specializations
-template double FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(double d);
-template void FilamentStretching<FilamentStretchingHarmonic>::computeForces();
-template void FilamentStretching<FilamentStretchingHarmonic>::computeForcesAux();
+///Temlate specializations
+template double FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
+template void FilamentStretching<FilamentStretchingHarmonic>::computeForces(double *coord, double *f);

@@ -31,7 +31,9 @@ private:
     vector<unique_ptr<FilamentInteractions>>
     _filamentInteractionVector; ///< Vector of initialized filament interactions
     
-    FilamentInteractions* _culpritInteraction; ///< Culprit in case of error
+protected:
+    static FilamentInteractions* _culpritInteraction; ///< Culprit in case of error
+    
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
     FilamentFF(string& stretching, string& bending, string& twisting);
@@ -39,9 +41,8 @@ public:
     virtual string getName() {return "Filament";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     

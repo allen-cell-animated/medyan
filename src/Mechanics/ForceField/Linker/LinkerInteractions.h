@@ -24,14 +24,14 @@ class LinkerInteractions {
     
 friend class LinkerFF;
     
-protected:
-    /// The linker in the case of an error
-    Linker* _linkerCulprit = nullptr;
-    
 public:
+    /// The linker in the case of an error
+    static Linker* _linkerCulprit;
     
     ///Vectorize the bead interactions for minimization
-    virtual void vectorizeInteractions() = 0;
+    virtual void vectorize() = 0;
+    ///Deallocate the vectorized data
+    virtual void deallocate() = 0;
     
     /// Compute the energy of this interaction
     virtual double computeEnergy(double *coord, double *f, double d) = 0;

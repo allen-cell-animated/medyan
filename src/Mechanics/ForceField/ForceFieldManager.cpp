@@ -13,14 +13,16 @@
 
 #include "ForceFieldManager.h"
 
-double ForceFieldManager::computeEnergy(double d, bool verbose) {
+#include "CGMethod.h"
+
+double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool verbose) {
     
     double energy = 0;
-    for(auto &f : _forceFields) {
+    for(auto &ff : _forceFields) {
         
-        auto tempEnergy = f->computeEnergy(d);
+        auto tempEnergy = ff->computeEnergy(coord, f, d);
         
-        if(verbose) cout << f->getName() << " energy = " << tempEnergy << endl;
+        if(verbose) cout << ff->getName() << " energy = " << tempEnergy << endl;
         
         //if energy is infinity, exit with infinity.
         if(tempEnergy <= -1) {
@@ -31,10 +33,10 @@ double ForceFieldManager::computeEnergy(double d, bool verbose) {
                 cout << "Energy = " << tempEnergy << endl;
                 
                 cout << "Energy of system became infinite. Try adjusting minimization parameters." << endl;
-                cout << "The culprit was ... " << f->getName() << endl;
+                cout << "The culprit was ... " << ff->getName() << endl;
                 
                 //get the culprit in output
-                f->whoIsCulprit();
+                ff->whoIsCulprit();
                 
                 exit(EXIT_FAILURE);
             }
@@ -47,34 +49,15 @@ double ForceFieldManager::computeEnergy(double d, bool verbose) {
     return energy;
 }
 
-void ForceFieldManager::computeForces() {
+void ForceFieldManager::computeForces(double *coord, double *f) {
     
     //reset
     resetForces();
     
     //recompute
-    for(auto &f : _forceFields) f->computeForces();
-    
-    //copy to auxs
-    for(auto b: Bead::getBeads())
-        b->forceAux = b->forceAuxP = b->force;
-}
+    for(auto &ff : _forceFields) ff->computeForces(coord, f);
 
-void ForceFieldManager::computeForcesAux() {
-    
-    //reset just aux
-    resetForcesAux();
-    
-    //recompute
-    for(auto &f : _forceFields)
-        f->computeForcesAux();
-}
-
-void ForceFieldManager::computeForcesAuxP() {
-    
-    //copy to auxp
-    for(auto b: Bead::getBeads())
-        b->forceAuxP = b->forceAux;
+    //WILL HAVE TO COPY AUXS AFTER THIS CALL
 }
 
 void ForceFieldManager::computeLoadForces() {
@@ -89,7 +72,6 @@ void ForceFieldManager::computeLoadForces() {
     }
 }
 
-
 void ForceFieldManager::resetForces() {
     
     for(auto b: Bead::getBeads()) {
@@ -103,4 +85,10 @@ void ForceFieldManager::resetForcesAux() {
     
     for(auto b: Bead::getBeads())
         b->forceAux.assign (3, 0); //Set forceAux to zero;
+}
+
+void ForceFieldManager::copyForces(double *fprev, double *f) {
+    
+    for (int i = 0; i < CGMethod::N; i++)
+        fprev[i] = f[i];
 }

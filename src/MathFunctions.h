@@ -59,7 +59,7 @@ namespace mathfunc {
     }
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     /// ARRAY VERSION
-    inline double twoPointDistance(double *v1, double *v2) {
+    inline double twoPointDistance(double const *v1, double const *v2) {
         
         return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
                     (v2[1]-v1[1])*(v2[1]-v1[1]) +
@@ -83,10 +83,10 @@ namespace mathfunc {
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
     /// ARRAY VERSION
-    inline double twoPointDistanceStretched(double* v1,
-                                            double* p1,
-                                            double* v2,
-                                            double *p2, double d){
+    inline double twoPointDistanceStretched(double const *v1,
+                                            double const *p1,
+                                            double const *v2,
+                                            double const *p2, double d){
         
         return sqrt(((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) *
                     ((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) +
@@ -123,6 +123,18 @@ namespace mathfunc {
     }
     
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
+    /// (x4-x3,y4-y3,z4-z3)
+    /// ARRAY VERSION
+    inline double scalarProduct(double const *v1, double const *v2,
+                                double const *v3, double const *v4) {
+        
+        return ((v2[0] - v1[0])*(v4[0] - v3[0]) +
+                (v2[1] - v1[1])*(v4[1] - v3[1]) +
+                (v2[2] - v1[2])*(v4[2] - v3[2]));
+    }
+    
+    
+    /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
     inline double scalarProductStretched(const vector<double>& v1,
                                          const vector<double>& p1,
@@ -132,6 +144,28 @@ namespace mathfunc {
                                          const vector<double>& p3,
                                          const vector<double>& v4,
                                          const vector<double>& p4,
+                                         double d){
+        
+        double xx = ((v2[0] + d*p2[0]) - (v1[0] + d*p1[0]))*
+                    ((v4[0] + d*p4[0]) - (v3[0] + d*p3[0]));
+        double yy = ((v2[1] + d*p2[1]) - (v1[1] + d*p1[1]))*
+                    ((v4[1] + d*p4[1]) - (v3[1] + d*p3[1]));
+        double zz = ((v2[2] + d*p2[2]) - (v1[2] + d*p1[2]))*
+                    ((v4[2] + d*p4[2]) - (v3[2] + d*p3[2]));
+        return xx + yy + zz;
+        
+    }
+    /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
+    /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
+    ///
+    inline double scalarProductStretched(double const *v1,
+                                         double const *p1,
+                                         double const *v2,
+                                         double const *p2,
+                                         double const *v3,
+                                         double const *p3,
+                                         double const *v4,
+                                         double const *p4,
                                          double d){
         
         double xx = ((v2[0] + d*p2[0]) - (v1[0] + d*p1[0]))*
@@ -271,7 +305,7 @@ namespace mathfunc {
     }
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v1| = alpha. ARRAY VERSION
-    inline void midPointCoordinate(double *v, double *v1, double *v2, double alpha) {
+    inline void midPointCoordinate(double const *v, double const *v1, double const *v2, double alpha) {
 
         v[0] = (v1[0]*(1.0 - alpha) + alpha*v2[0]);
         v[1] = (v1[1]*(1.0 - alpha) + alpha*v2[1]);
@@ -296,11 +330,11 @@ namespace mathfunc {
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
     /// ARRAY VERSION
-    inline void midPointCoordinateStretched(double *v,
-                                            double *v1,
-                                            double *p1,
-                                            double *v2,
-                                            double *p2,
+    inline void midPointCoordinateStretched(double const *v,
+                                            double const *v1,
+                                            double const *p1,
+                                            double const *v2,
+                                            double const *p2,
                                             double alpha, double d) {
         
         v[0] = (v1[0] + d*p1[0])*(1.0 - alpha) + alpha*(v2[0] + d*p2[0]);

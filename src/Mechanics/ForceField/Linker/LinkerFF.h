@@ -32,8 +32,9 @@ private:
     vector<unique_ptr<LinkerInteractions>>
     _linkerInteractionVector; ///< Vector of initialized linker interactions
     
+protected:
     /// The culprit in the case of an error
-    LinkerInteractions* _culpritInteraction;
+    static LinkerInteractions* _culpritInteraction;
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces

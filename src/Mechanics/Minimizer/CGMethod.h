@@ -31,7 +31,9 @@ class Bead;
  *  parameters for tolerance criterion and other helpful parameters.
  */
 class CGMethod {
-
+    
+    
+    
 protected:
     
     ///< Data vectors for calculation
@@ -40,8 +42,6 @@ protected:
     double *force; ///< bead forces (length 3*N)
     double *forceAux; ///< auxiliary force calculations (length 3*N)
     double *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
-    
-    long N;
     
     /// Safe mode which chooses the safe backtracking search if the
     /// minimizer got itself into trouble.
@@ -123,6 +123,7 @@ protected:
     }
     
 public:
+    static long N; ///< Number of beads in the system, set before each minimization
     
     virtual ~CGMethod() {};
     

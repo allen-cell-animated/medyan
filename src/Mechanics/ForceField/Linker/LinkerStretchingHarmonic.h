@@ -22,9 +22,6 @@ class Bead;
 
 /// A harmonic potential used by the LinkerStretching template.
 class LinkerStretchingHarmonic {
-
-friend class LinkerStretching<LinkerStretchingHarmonic>;
-friend class LinkerInteractions;
     
 public:
     inline double energy(double *coord, double *f, int *beadSet,

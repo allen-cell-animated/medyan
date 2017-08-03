@@ -23,11 +23,14 @@ class Bead;
 class FilamentStretchingHarmonic {
     
 public:
-    double energy(Bead*, Bead*, double, double);
-    double energy(Bead*, Bead*, double, double, double);
+    inline double energy(double *coord, double *f, int *beadSet,
+                         double *kstr, double *eql);
     
-    void forces(Bead*, Bead*, double, double);
-    void forcesAux(Bead*, Bead*, double, double);
+    inline double energy(double *coord, double * f, int *beadSet,
+                         double *kstr, double *eql, double d);
+    
+    inline void forces(double *coord, double *f, int *beadSet,
+                       double *kstr, double *eql);
 };
 
 #endif

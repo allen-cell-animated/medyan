@@ -18,112 +18,75 @@
 
 #include "Filament.h"
 #include "Cylinder.h"
+#include "Bead.h"
 
-template <class FBendingInteractionType>
-double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
+template <class FStretchingInteractionType>
+void FilamentBending<FStretchingInteractionType>::vectorize() {
     
-    double U = 0;
-    double U_i;
+    int numInteractions = Bead::getBeads().size() - 2 * Filament::getFilaments().size();
     
+    beadSet = new int[n * numInteractions];
+    kbend = new double[numInteractions];
+    eqt = new double[numInteractions];
+    
+    int i = 0;
+    for(auto b: Bead::getBeads()) {
+        b->_dbIndex = i;
+        i++;
+    }
+    
+    i = 0;
     for (auto f: Filament::getFilaments()) {
-        
-        U_i = 0;
         
         if (f->getCylinderVector().size() > 1){
-            
-            if (d == 0.0){
-                for (auto it = f->getCylinderVector().begin()+1;
-                          it != f->getCylinderVector().end(); it++){
-                    
-                    auto it2 = it - 1;
-                    Bead* b1 = (*it2)->getFirstBead();
-                    Bead* b2 = (*it)->getFirstBead();
-                    Bead* b3 = (*it)->getSecondBead();
-                    double kBend = (*it)->getMCylinder()->getBendingConst();
-                    double eqTheta = (*it)->getMCylinder()->getEqTheta();
-                    
-                    U_i += _FFType.energy(b1, b2, b3, kBend, eqTheta);
-                }
-            }
-            else {
-                for (auto it = f->getCylinderVector().begin()+1;
-                          it != f->getCylinderVector().end(); it++){
-                    
-                    auto it2 = it - 1;
-                    Bead* b1 = (*it2)->getFirstBead();
-                    Bead* b2 = (*it)->getFirstBead();
-                    Bead* b3 = (*it)->getSecondBead();
-                    double kBend = (*it)->getMCylinder()->getBendingConst();
-                    double eqTheta = (*it)->getMCylinder()->getEqTheta();
-                    
-                    U_i += _FFType.energy(b1, b2, b3, kBend, eqTheta, d);
-                }
-            }
-        }
         
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-            
-            //set culprit and return
-            _filamentCulprit = f;
-            
-            return -1;
+            for (auto it = f->getCylinderVector().begin()+1;
+                     it != f->getCylinderVector().end(); it++){
+        
+                auto it2 = it - 1;
+                beadSet[n * i] = (*it2)->getFirstBead()->_dbIndex;
+                beadSet[n * i + 1] = (*it)->getFirstBead()->_dbIndex;;
+                beadSet[n * i + 2] = (*it)->getSecondBead()->_dbIndex;;
+                
+                kbend[i] = (*it)->getMCylinder()->getBendingConst();
+                eqt[i]  = (*it)->getMCylinder()->getEqTheta();
+                
+                i++;
+            }
         }
-        else
-            U += U_i;
     }
+}
+
+template<class FStretchingInteractionType>
+void FilamentBending<FStretchingInteractionType>::deallocate() {
     
-    return U;
+    delete beadSet;
+    delete kbend;
+    delete eqt;
 }
 
-template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::computeForces()
-{
-    for (auto f: Filament::getFilaments()) {
-        
-        if (f->getCylinderVector().size()>1){
-            for (auto it = f->getCylinderVector().begin()+1;
-                      it != f->getCylinderVector().end(); it++){
-                
-                auto it2 = it - 1;
-                Bead* b1 = (*it2)->getFirstBead();
-                Bead* b2 = (*it)->getFirstBead();
-                Bead* b3 = (*it)->getSecondBead();
-                double kBend = (*it)->getMCylinder()->getBendingConst();
-                double eqTheta = (*it)->getMCylinder()->getEqTheta();
-                
-                _FFType.forces(b1, b2, b3, kBend, eqTheta);
-            }
-        }
-    }
+
+template <class FStretchingInteractionType>
+double FilamentBending<FStretchingInteractionType>::computeEnergy(double *coord, double *f, double d){
+    
+    double U_i;
+    
+    if (d == 0.0)
+        U_i = _FFType.energy(coord, f, beadSet, kbend, eqt);
+    else
+        U_i = _FFType.energy(coord, f, beadSet, kbend, eqt, d);
+    
+    return U_i;
 }
 
-template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::computeForcesAux()
-{
-    for (auto f: Filament::getFilaments()) {
-        
-        if (f->getCylinderVector().size()>1){
-            for (auto it = f->getCylinderVector().begin()+1;
-                 it != f->getCylinderVector().end(); it++){
-                
-                auto it2 = it - 1;
-                Bead* b1 = (*it2)->getFirstBead();
-                Bead* b2 = (*it)->getFirstBead();
-                Bead* b3 = (*it)->getSecondBead();
-                double kBend = (*it)->getMCylinder()->getBendingConst();
-                double eqTheta = (*it)->getMCylinder()->getEqTheta();
-                
-                _FFType.forcesAux(b1, b2, b3, kBend, eqTheta);
-            }
-        }
-    }
+template <class FStretchingInteractionType>
+void FilamentBending<FStretchingInteractionType>::computeForces(double *coord, double *f) {
+    
+    _FFType.forces(coord, f, beadSet, kbend, eqt);
 }
 
 ///Template specializations
-template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(double d);
-template void FilamentBending<FilamentBendingHarmonic>::computeForces();
-template void FilamentBending<FilamentBendingHarmonic>::computeForcesAux();
-template double FilamentBending<FilamentBendingCosine>::computeEnergy(double d);
-template void FilamentBending<FilamentBendingCosine>::computeForces();
-template void FilamentBending<FilamentBendingCosine>::computeForcesAux();
+template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(double *coord, double *f, double d);
+template void FilamentBending<FilamentBendingHarmonic>::computeForces(double *coord, double *f);
+template double FilamentBending<FilamentBendingCosine>::computeEnergy(double *coord, double *f, double d);
+template void FilamentBending<FilamentBendingCosine>::computeForces(double *coord, double *f);

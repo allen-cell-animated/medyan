@@ -28,12 +28,26 @@ class FilamentBending : public FilamentInteractions {
 private:
     FBendingInteractionType _FFType;
     
-public:
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    int *beadSet;
     
-    virtual const string getName() {return "Filament Bending";}
+    ///Array describing the constants in calculation
+    double *kbend;
+    double *eqt;
+    
+public:
+    
+    ///Array describing indexed set of interactions
+    ///For filaments, this is a 3-bead potential
+    const static int n = 3;
+    
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
+    
+    virtual const string getName() {return "Filament Stretching";}
 };
+
 
 #endif

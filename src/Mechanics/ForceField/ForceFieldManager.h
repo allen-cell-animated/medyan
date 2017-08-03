@@ -29,6 +29,8 @@
  */
 class ForceFieldManager {
     
+friend class CGMethod;
+    
 public:
      vector<ForceField*> _forceFields; ///< All forcefields in the system
     
@@ -37,14 +39,13 @@ public:
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
     /// @param print - prints detailed info about energies
-    double computeEnergy(double d, bool verbose = false);
+    double computeEnergy(double *coord, double *f, double d, bool verbose = false);
     
     /// Compute the forces of all force fields 
-    void computeForces();
-    /// Compute the forcesAux of all force fields
-    void computeForcesAux();
-    /// Compute forcesAuxP of all force fields
-    void computeForcesAuxP();
+    void computeForces(double *coord, double *f);
+    
+    /// Copy forces from f to fprev
+    void copyForces(double *f, double *fprev);
     
     /// Compute the load forces on the beads. This does not update the force (xyz) vector
     /// contained by Bead, but updates the loadForce vector which contains precalculated

@@ -20,7 +20,13 @@
 #include "Bead.h"
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::vectorizeInteractions() {
+void LinkerStretching<LStretchingInteractionType>::vectorize() {
+    
+    beadSet = new int[n * Linker::getLinkers().size()];
+    kstr = new double[Linker::getLinkers().size()];
+    eql = new double[Linker::getLinkers().size()];
+    pos1 = new double[Linker::getLinkers().size()];
+    pos2 = new double[Linker::getLinkers().size()];
     
     int i = 0;
     for(auto b: Bead::getBeads()) {
@@ -45,6 +51,15 @@ void LinkerStretching<LStretchingInteractionType>::vectorizeInteractions() {
     }
 }
 
+template<class LStretchingInteractionType>
+void LinkerStretching<LStretchingInteractionType>::deallocate() {
+    
+    delete beadSet;
+    delete kstr;
+    delete eql;
+    delete pos1;
+    delete pos2;
+}
 
 
 template <class LStretchingInteractionType>

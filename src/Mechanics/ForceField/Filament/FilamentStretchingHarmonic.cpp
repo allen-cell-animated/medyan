@@ -12,64 +12,110 @@
 //------------------------------------------------------------------
 
 #include "FilamentStretchingHarmonic.h"
+#include "FilamentStretching.h"
 
+#include "Cylinder.h"
 #include "Bead.h"
 
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
-                                          double kStretch, double eqLength){
+double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
+                                          double *kstr, double *eql){
 
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate) - eqLength;
-    return 0.5 * kStretch* dist * dist;
     
+    int n = FilamentStretching<FilamentStretchingHarmonic>::n;
+    int nint = n * Cylinder::getCylinders().size();
+    
+    double *coord1, *coord2, *coord3, *coord4, dist, U_i;
+    
+    double U = 0;
+    
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        
+        dist = twoPointDistance(coord1, coord2) - eql[i];
+        U_i = 0.5 * kstr[i] * dist * dist;
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            FilamentInteractions::_filamentCulprit = (Filament*)(Cylinder::getCylinders()[i]->getParent());
+            
+            return -1;
+        }
+        
+        U += U_i;
+    }
+    
+    return U;
 }
 
-double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
-                                          double kStretch, double eqLength, double d){
-
-    double distStretched = twoPointDistanceStretched(b1->coordinate,
-                                                     b1->force, b2->coordinate,
-                                                     b2->force, d) - eqLength;
-    return 0.5 * kStretch * distStretched * distStretched;
+double FilamentStretchingHarmonic::energy(double *coord, double * f, int *beadSet,
+                                          double *kstr, double *eql, double d){
+    
+    int n = FilamentStretching<FilamentStretchingHarmonic>::n;
+    int nint = n * Cylinder::getCylinders().size();
+    
+    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist;
+    double *v1 = new double[3];
+    double *v2 = new double[3];
+    
+    double U = 0;
+    
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        
+        f1 = &f[3 * beadSet[n * i]];
+        f2 = &f[3 * beadSet[n * i + 1]];
+        
+        dist = twoPointDistanceStretched(coord1, f1,  coord2, f2, d) - eql[i];
+        U += 0.5 * kstr[i] * dist * dist;
+    }
+    delete v1;
+    delete v2;
+    
+    return U;
 }
 
-void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
-                                        double kStretch, double eqLength ){
+void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
+                                        double *kstr, double *eql){
     
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate);
-    double invL = 1 / dist;
     
-    double f0 = kStretch * ( dist - eqLength ) * invL;
+    int n = FilamentStretching<FilamentStretchingHarmonic>::n;
+    int nint = n * Cylinder::getCylinders().size();
     
-    //force on i
-    b2->force[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );
-    b2->force[1] +=  f0 * ( b1->coordinate[1] - b2->coordinate[1] );
-    b2->force[2] +=  f0 * ( b1->coordinate[2] - b2->coordinate[2] );
+    double *coord1, *coord2, *coord3, *coord4, dist, invL;
+    double f0, *f1, *f2, *f3, *f4;
     
-    // force i-1
-    b1->force[0] +=  f0 * ( b2->coordinate[0] - b1->coordinate[0] );
-    b1->force[1] +=  f0 * ( b2->coordinate[1] - b1->coordinate[1] );
-    b1->force[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        
+        dist = twoPointDistance(coord1, coord2) - eql[i];
+        invL = 1 / dist;
+        
+        f0 = kstr[i] * ( dist - eql[i] ) * invL;
+        
+        f1 = &f[3 * beadSet[n * i]];
+        f2 = &f[3 * beadSet[n * i + 1]];
+        
+        f1[0] +=  f0 * ( coord1[0] - coord2[0] );
+        f1[1] +=  f0 * ( coord1[1] - coord2[1] );
+        f1[2] +=  f0 * ( coord1[2] - coord2[2] );
+        
+        // force i-1
+        f2[0] +=  f0 * ( coord2[0] - coord1[0] );
+        f2[1] +=  f0 * ( coord2[1] - coord1[1] );
+        f2[2] +=  f0 * ( coord2[2] - coord1[2] );
+    }
 }
 
-void FilamentStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
-                                           double kStretch, double eqLength ){
-    
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate);
-    double invL = 1 / dist;
-    double f0 = kStretch * ( dist - eqLength ) * invL;
-
-    //force on i
-    b2->forceAux[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );
-    b2->forceAux[1] +=  f0 * ( b1->coordinate[1] - b2->coordinate[1] );
-    b2->forceAux[2] +=  f0 * ( b1->coordinate[2] - b2->coordinate[2] );
-    
-    // force i-1
-    b1->forceAux[0] +=  f0 * ( b2->coordinate[0] - b1->coordinate[0] );
-    b1->forceAux[1] +=  f0 * ( b2->coordinate[1] - b1->coordinate[1] );
-    b1->forceAux[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
-}
 

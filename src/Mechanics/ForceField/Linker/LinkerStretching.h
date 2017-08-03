@@ -43,19 +43,13 @@ public:
     ///For linkers, this is a 4-bead potential
     const static int n = 4;
     
-    ///< Constructor initializes data
-    LinkerStretching () {
-        beadSet = new int[n * Linker::getLinkers().size()];
-        kstr = new double[Linker::getLinkers().size()];
-        eql = new double[Linker::getLinkers().size()];
-        pos1 = new double[Linker::getLinkers().size()];
-        pos2 = new double[Linker::getLinkers().size()];
-    }
+    ///< Constructor
+    LinkerStretching () {}
+    ~LinkerStretching () {}
+
+    virtual void vectorize();
+    virtual void deallocate();
     
-    ~LinkerStretching () { delete beadSet; delete kstr;
-                           delete eql; delete pos1; delete pos2;}
-    
-    virtual void vectorizeInteractions();
     
     virtual double computeEnergy(double *coord, double *f, double d);
     virtual void computeForces(double *coord, double *f);
