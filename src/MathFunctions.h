@@ -305,7 +305,7 @@ namespace mathfunc {
     }
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v1| = alpha. ARRAY VERSION
-    inline void midPointCoordinate(double const *v, double const *v1, double const *v2, double alpha) {
+    inline void midPointCoordinate(double *v, double const *v1, double const *v2, double alpha) {
 
         v[0] = (v1[0]*(1.0 - alpha) + alpha*v2[0]);
         v[1] = (v1[1]*(1.0 - alpha) + alpha*v2[1]);
@@ -330,7 +330,7 @@ namespace mathfunc {
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
     /// ARRAY VERSION
-    inline void midPointCoordinateStretched(double const *v,
+    inline void midPointCoordinateStretched(double *v,
                                             double const *v1,
                                             double const *p1,
                                             double const *v2,
