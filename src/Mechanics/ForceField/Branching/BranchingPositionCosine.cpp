@@ -15,6 +15,9 @@
 #include <math.h>
 
 #include "BranchingPositionCosine.h"
+#include "BranchingPosition.h"
+
+#include "BranchingPoint.h"
 
 #include "Bead.h"
 
@@ -23,171 +26,173 @@
 
 using namespace mathfunc;
 
-double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
-                                       double kPosition, double position){
+double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
+                                       double *kpos, double *pos){
     
-    double X = sqrt(scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
     
-    double D = sqrt(scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
+    int n = BranchingPosition<BranchingPositionCosine>::n;
+    int nint = n * BranchingPoint::getBranchingPoints().size();
     
-    double XD = X*D;
+    double *coord1, *coord2, *coord3, X, D, XD, xd, theta, eqTheta, dTheta, U_i;
+    double *mp = new double[3];
     
-    double xd = scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    double U = 0;
     
-    double theta = safeacos(xd / XD);
-    double eqTheta = 0.5*M_PI;
-    double dtheta = theta-eqTheta;
-    
-    double U = kPosition * ( 1 - cos(dtheta) );
-    
-    return U;
-    
-}
-
-double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
-                                       double kPosition, double position, double d){
-    
-    vector<double> zero (3,0); //Aux zero vector;
-    
-    double X = sqrt(scalarProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-                                zero, b2->coordinate,b2->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-                                zero,b2->coordinate,b2->force, d));
-    
-    double D = sqrt(scalarProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-                                zero, b3->coordinate,b3->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-                                zero, b3->coordinate,b3->force, d));
-    
-    double XD = X*D;
-    
-    double xd = scalarProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-                                zero ,b2->coordinate,b2->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d),
-                                zero, b3->coordinate,b3->force, d);
-    
-    double theta = safeacos(xd / XD);
-    double eqTheta = 0.5*M_PI;
-    double dtheta = theta-eqTheta;
-    
-    double U = kPosition * ( 1 - cos(dtheta) );
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        
+        midPointCoordinate(mp, coord1, coord2, pos[i]);
+        X = sqrt(scalarProduct(mp, coord2, mp, coord2));
+        D = sqrt(scalarProduct(mp, coord3, mp, coord3));
+        
+        XD = X * D;
+        
+        xd = sqrt(scalarProduct(mp, coord2, mp, coord3));
+        
+        theta = safeacos(xd / XD);
+        eqTheta = 0.5*M_PI;
+        dTheta = theta-eqTheta;
+        
+        U_i = kpos[i] * ( 1 - cos(dTheta) );
+        
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
+            
+            return -1;
+        }
+        
+        U += U_i;
+    }
     
     return U;
-    
 }
 
-void BranchingPositionCosine::forces(Bead* b1, Bead* b2, Bead* b3,
-                                     double kPosition, double position ){
+double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
+                                       double *kpos, double *pos, double d){
     
-    double X = sqrt(scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
+    int n = BranchingPosition<BranchingPositionCosine>::n;
+    int nint = n * BranchingPoint::getBranchingPoints().size();
     
-    double D = sqrt(scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
+    double *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, theta, eqTheta, dTheta, U_i;
+    double *mp = new double[3];
+    double *vzero = new double[3]; vzero[0] = 0; vzero[1] = 0; vzero[2] = 0;
     
-    double xd = scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    double U = 0;
     
-    //invL = 1/L;
-    double invX = 1/X;
-    double invD = 1/D;
-    double A = invX*invD;
-    double B = invX*invX;
-    double C = invD*invD;
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        f1 = &f[3 * beadSet[n * i]];
+        f2 = &f[3 * beadSet[n * i + 1]];
+        f3 = &f[3 * beadSet[n * i + 2]];
     
-    double theta = safeacos(xd * A);
-    double eqTheta = 0.5*M_PI;
-    double dtheta = theta-eqTheta;
-    
-    double k =  kPosition * A * sin(dtheta)/sin(theta);
-    
-    //
-    
-    b1->force[0] +=  k * (1-position)* (- (1-position)*(b2->coordinate[0] - b1->coordinate[0]) - (b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) + xd *(B*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) + C*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0])) );
-    
-    b1->force[1] +=  k * (1-position)* (- (1-position)*(b2->coordinate[1] - b1->coordinate[1]) - (b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) + xd *(B*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) + C*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1])) );
-    
-    b1->force[2] +=  k * (1-position)* (- (1-position)*(b2->coordinate[2] - b1->coordinate[2]) - (b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) + xd *(B*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) + C*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2])) );
-    
-    //
-    
-    b2->force[0] +=  k * (- position*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) + (1-position)*(b3->coordinate[0]- (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) + xd *( (1-position)*B*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) - position*C*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0])) );
-    
-    b2->force[1] +=  k * (- position*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) + (1-position)*(b3->coordinate[1]- (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) + xd *( (1-position)*B*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) - position*C*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1])) );
-    
-    b2->force[2] +=  k * (- position*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) + (1-position)*(b3->coordinate[2]- (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) + xd *( (1-position)*B*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) - position*C*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2])) );
-    
-    //
-    
-    b3->force[0] +=  k * ( (1-position)*(b2->coordinate[0] - b1->coordinate[0]) - xd * C*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) );
-    b3->force[1] +=  k * ( (1-position)*(b2->coordinate[1] - b1->coordinate[1]) - xd * C*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) );
-    b3->force[2] +=  k * ( (1-position)*(b2->coordinate[2] - b1->coordinate[2]) - xd * C*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) );
 
+        midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
+        X = sqrt(scalarProductStretched(mp, vzero, coord2, f2, mp, vzero, coord2, f2, d));
+        D = sqrt(scalarProductStretched(mp, vzero, coord3, f3, mp, vzero, coord3, f3, d));
+        
+        XD = X * D;
+        
+        xd = sqrt(scalarProductStretched(mp, vzero, coord2, f2, mp, vzero, coord3, f3, d));
+        
+        theta = safeacos(xd / XD);
+        eqTheta = 0.5*M_PI;
+        dTheta = theta-eqTheta;
+        
+        U_i = kpos[i] * ( 1 - cos(dTheta) );
+        
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
+            
+            return -1;
+        }
+        
+        U += U_i;
+    }
     
+    return U;
 }
 
-void BranchingPositionCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
-                                     double kPosition, double position ){
+void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
+                                     double *kpos, double *pos){
     
-    double X = sqrt(scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
+    int n = BranchingPosition<BranchingPositionCosine>::n;
+    int nint = n * BranchingPoint::getBranchingPoints().size();
     
-    double D = sqrt(scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
-    
-    double xd = scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    //invL = 1/L;
-    double invX = 1/X;
-    double invD = 1/D;
-    double A = invX*invD;
-    double B = invX*invX;
-    double C = invD*invD;
-    
-    double theta = safeacos(xd * A);
-    double eqTheta = 0.5*M_PI;
-    double dtheta = theta-eqTheta;
-    
-    double k =  kPosition * A * sin(dtheta)/sin(theta);
-    
-    //
-    
-    b1->forceAux[0] +=  k * (1-position)* (- (1-position)*(b2->coordinate[0] - b1->coordinate[0]) - (b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) + xd *(B*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) + C*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0])) );
-    
-    b1->forceAux[1] +=  k * (1-position)* (- (1-position)*(b2->coordinate[1] - b1->coordinate[1]) - (b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) + xd *(B*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) + C*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1])) );
-    
-    b1->forceAux[2] +=  k * (1-position)* (- (1-position)*(b2->coordinate[2] - b1->coordinate[2]) - (b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) + xd *(B*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) + C*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2])) );
-    
-    //
-    
-    b2->forceAux[0] +=  k * (- position*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) + (1-position)*(b3->coordinate[0]- (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) + xd *( (1-position)*B*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) - position*C*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0])) );
-    
-    b2->forceAux[1] +=  k * (- position*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) + (1-position)*(b3->coordinate[1]- (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) + xd *( (1-position)*B*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) - position*C*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1])) );
-    
-    b2->forceAux[2] +=  k * (- position*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) + (1-position)*(b3->coordinate[2]- (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) + xd *( (1-position)*B*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) - position*C*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2])) );
-    
-    //
-    
-    b3->forceAux[0] +=  k * ( (1-position)*(b2->coordinate[0] - b1->coordinate[0]) - xd * C*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) );
-    b3->forceAux[1] +=  k * ( (1-position)*(b2->coordinate[1] - b1->coordinate[1]) - xd * C*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) );
-    b3->forceAux[2] +=  k * ( (1-position)*(b2->coordinate[2] - b1->coordinate[2]) - xd * C*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) );
+    double *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, eqTheta, dTheta, U_i;
+    double *mp = new double[3];
     
     
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        f1 = &f[3 * beadSet[n * i]];
+        f2 = &f[3 * beadSet[n * i + 1]];
+        f3 = &f[3 * beadSet[n * i + 2]];
+        
+        midPointCoordinate(mp, coord1, coord2, pos[i]);
+        X = sqrt(scalarProduct(mp, coord2, mp, coord2));
+        D = sqrt(scalarProduct(mp, coord3, mp, coord3));
+        
+        XD = X * D;
+        
+        xd = sqrt(scalarProduct(mp, coord2, mp, coord3));
+        
+        invX = 1/X;
+        invD = 1/D;
+        A = invX*invD;
+        B = invX*invX;
+        C = invD*invD;
+        
+        theta = safeacos(xd / XD);
+        eqTheta = 0.5*M_PI;
+        dTheta = theta-eqTheta;
+        
+        position = pos[i];
+        
+        k =  kpos[i] * A * sin(dTheta)/sin(theta);
+        
+        f1[0] +=  k * (1-position)* (- (1-position)*(coord2[0] - coord1[0]) - (coord3[0] - (1-position)*coord1[0] - position*coord2[0])
+                            + xd *(B*(1-position)*(coord2[0] - coord1[0]) + C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0])) );
+        
+        f1[1] +=  k * (1-position)* (- (1-position)*(coord2[1] - coord1[1]) - (coord3[1] - (1-position)*coord1[1] - position*coord2[1])
+                            + xd *(B*(1-position)*(coord2[1] - coord1[1]) + C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1])) );
+        
+        f1[2] +=  k * (1-position)* (- (1-position)*(coord2[2] - coord1[2]) - (coord3[2] - (1-position)*coord1[2] - position*coord2[2])
+                            + xd *(B*(1-position)*(coord2[2] - coord1[2]) + C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2])) );
+        
+            //
+        
+        f2[0] +=  k * (- position*(1-position)*(coord2[0] - coord1[0]) + (1-position)*(coord3[0]- (1-position)*coord1[0] - position*coord2[0])
+            + xd *( (1-position)*B*(1-position)*(coord2[0] - coord1[0]) - position*C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0])) );
+        
+        f2[1] +=  k * (- position*(1-position)*(coord2[1] - coord1[1]) + (1-position)*(coord3[1]- (1-position)*coord1[1] - position*coord2[1])
+            + xd *( (1-position)*B*(1-position)*(coord2[1] - coord1[1]) - position*C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1])) );
+        
+        f2[2] +=  k * (- position*(1-position)*(coord2[2] - coord1[2]) + (1-position)*(coord3[2]- (1-position)*coord1[2] - position*coord2[2])
+            + xd *( (1-position)*B*(1-position)*(coord2[2] - coord1[2]) - position*C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2])) );
+        
+            //
+        
+        f3[0] +=  k * ( (1-position)*(coord2[0] - coord1[0]) - xd * C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
+        f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
+        f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
+        
+        
+    }
 }
-

@@ -81,14 +81,14 @@ void BranchingFF::whoIsCulprit() {
 }
 
 
-double BranchingFF::computeEnergy(double d) {
+double BranchingFF::computeEnergy(double *coord, double *f, double d) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _branchingInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(coord, f, d);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -101,14 +101,8 @@ double BranchingFF::computeEnergy(double d) {
     return U;
 }
 
-void BranchingFF::computeForces() {
+void BranchingFF::computeForces(double *coord, double *f) {
     
     for (auto &interaction : _branchingInteractionVector)
-        interaction->computeForces();
-}
-
-void BranchingFF::computeForcesAux() {
-    
-    for (auto &interaction : _branchingInteractionVector)
-        interaction->computeForcesAux();
+        interaction->computeForces(coord, f);
 }

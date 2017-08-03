@@ -28,10 +28,24 @@ class BranchingStretching : public BranchingInteractions {
 private:
     BStretchingInteractionType _FFType;
     
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *kstr;
+    double *eql;
+    double *pos;
+    
 public:
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    
+    ///Array describing indexed set of interactions
+    ///For filaments, this is a 4-bead potential
+    const static int n = 3;
+    
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
     
     virtual const string getName() {return "Branching Stretching";}
 };

@@ -32,7 +32,9 @@ private:
     vector<unique_ptr<BranchingInteractions>>
     _branchingInteractionVector; ///< Vector of initialized branching interactions
     
-    BranchingInteractions* _culpritInteraction; ///< Culprit in case of error
+protected:
+    static BranchingInteractions* _culpritInteraction; ///< Culprit in case of error
+    
 public:
     /// Constructor, intializes all interaction at the branching point
     BranchingFF(string& stretching, string& bending,
@@ -41,9 +43,8 @@ public:
     virtual string getName() {return "Branching";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     

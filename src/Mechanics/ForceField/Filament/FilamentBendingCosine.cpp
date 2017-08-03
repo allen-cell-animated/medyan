@@ -56,8 +56,8 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             
-            //set culprit and return
-            FilamentInteractions::_filamentCulprit = Filament::getFilaments()[i];
+            //set culprit and return TODO
+            //FilamentInteractions::_filamentCulprit = Filament::getFilaments()[i];
             
             return -1;
         }
@@ -106,8 +106,8 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             
-            //set culprit and return
-            FilamentInteractions::_filamentCulprit = Filament::getFilaments()[i];
+            //set culprit and return TODO
+            //FilamentInteractions::_filamentCulprit = Filament::getFilaments()[i];
             
             return -1;
         }

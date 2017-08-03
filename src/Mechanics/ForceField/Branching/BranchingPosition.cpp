@@ -20,76 +20,61 @@
 #include "Bead.h"
 
 template <class BPositionInteractionType>
-double BranchingPosition<BPositionInteractionType>::computeEnergy(double d) {
+void BranchingPosition<BPositionInteractionType>::vectorize() {
     
-    double U = 0;
+    beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
+    kpos = new double[BranchingPoint::getBranchingPoints().size()];
+    pos = new double[BranchingPoint::getBranchingPoints().size()];
+
+    int i = 0;
+    for(auto b: Bead::getBeads()) {
+        b->_dbIndex = i;
+        i++;
+    }
+    i = 0;
+    
+    for (auto b: BranchingPoint::getBranchingPoints()) {
+        
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
+        
+        kpos[i] = b->getMBranchingPoint()->getPositionConstant();
+        pos[i] = b->getPosition();
+        
+        i++;
+    }
+}
+
+template<class BPositionInteractionType>
+void BranchingPosition<BPositionInteractionType>::deallocate() {
+    
+    delete beadSet;
+    delete kpos;
+    delete pos;
+}
+
+template <class BPositionInteractionType>
+double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord, double *f, double d) {
+    
     double U_i;
     
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-        
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        
-        double kPosition = b->getMBranchingPoint()->getPositionConstant();
-        double position = b->getPosition();
-        
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, kPosition, position);
-        else
-            U_i = _FFType.energy(b1, b2, b3, kPosition, position, d);
-        
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-            
-            //set culprit and return
-            _branchingCulprit = b;
-            
-            return -1;
-        }
-        else
-            U += U_i;
-    }
+    if (d == 0.0)
+        U_i = _FFType.energy(coord, f, beadSet, kpos, pos);
+    else
+        U_i = _FFType.energy(coord, f, beadSet, kpos, pos, d);
     
-    return U;
+    return U_i;
 }
 
 template <class BPositionInteractionType>
-void BranchingPosition<BPositionInteractionType>::computeForces() {
+void BranchingPosition<BPositionInteractionType>::computeForces(double *coord, double *f) {
     
-    for (auto b: BranchingPoint::getBranchingPoints()) {
+    _FFType.energy(coord, f, beadSet, kpos, pos);
     
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        
-        double kPosition = b->getMBranchingPoint()->getPositionConstant();
-        double position = b->getPosition();
-        
-        _FFType.forces(b1, b2, b3, kPosition, position);
-    }
-    
-}
-
-
-template <class BPositionInteractionType>
-void BranchingPosition<BPositionInteractionType>::computeForcesAux() {
-    
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-        
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        
-        double kPosition = b->getMBranchingPoint()->getPositionConstant();
-        double position = b->getPosition();
-        
-        _FFType.forcesAux(b1, b2, b3, kPosition, position);
-    }
 }
 
 
 ///Template specializations
-template double BranchingPosition<BranchingPositionCosine>::computeEnergy(double d);
-template void BranchingPosition<BranchingPositionCosine>::computeForces();
-template void BranchingPosition<BranchingPositionCosine>::computeForcesAux();
+template double BranchingPosition<BranchingPositionCosine>::computeEnergy(double *coord, double *f, double d);
+template void BranchingPosition<BranchingPositionCosine>::computeForces(double *coord, double *f);
