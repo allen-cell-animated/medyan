@@ -223,7 +223,15 @@ public:
     virtual void print(int snapshot);
 };
 
-
+// Print pin  force
+class PinForces : public Output {
+    
+public:
+    PinForces(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    ~PinForces() {}
+    
+    virtual void print(int snapshot);
+};
 
 
 #endif

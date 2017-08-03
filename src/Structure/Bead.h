@@ -61,6 +61,7 @@ public:
     vector<double> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
     vector<double> brforce; //Qin boundary repulsion force
+    vector<double> pinforce;
     
     vector<double> loadForcesP;
     vector<double> loadForcesM;
@@ -187,6 +188,12 @@ public:
         return brforce[0]*brforce[0] +
         brforce[1]*brforce[1] +
         brforce[2]*brforce[2];
+    }
+    //Qin add pinFDotpinF
+    inline double pinFDotpinF() {
+        return pinforce[0]*pinforce[0] +
+        pinforce[1]*pinforce[1] +
+        pinforce[2]*pinforce[2];
     }
     //@}
     
