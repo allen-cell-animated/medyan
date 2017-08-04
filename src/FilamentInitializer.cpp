@@ -42,7 +42,7 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
         double directionX = Rand::randDouble(-1,1);
         double directionY = Rand::randDouble(-1,1);
         double directionZ = Rand::randDouble(-1,1);
-        vector<double> direction = normalizedVector({directionX, directionY, directionZ});
+        vector<double> direction = normalizeVector({directionX, directionY, directionZ});
         
         vector<double> secondPoint =
             nextPointProjection(firstPoint,(double)lenFilaments *
@@ -88,7 +88,7 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
     //Create a random filament vector one cylinder long
     vector<double> firstPoint = {500,1000,1000};
     
-    vector<double> direction = normalizedVector({1, 0, 0});
+    vector<double> direction = normalizeVector({1, 0, 0});
     
     vector<double> secondPoint =
     nextPointProjection(firstPoint,(double)lenFilaments *
@@ -117,7 +117,7 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
         double directionX = Rand::randDouble(-1,1);
         double directionY = Rand::randDouble(-1,1);
         double directionZ = Rand::randDouble(-1,1);
-        vector<double> randDirection = normalizedVector({directionX, directionY, directionZ});
+        vector<double> randDirection = normalizeVector({directionX, directionY, directionZ});
         
         double randomDist = Rand::randDouble(0, maxSpacing);
         vector<double> nextRandomPoint = nextPointProjection(randomPoint, randomDist, randDirection);
@@ -126,7 +126,7 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
         directionX = Rand::randDouble(-1,1);
         directionY = Rand::randDouble(-1,1);
         directionZ = Rand::randDouble(-1,1);
-        randDirection = normalizedVector({directionX, directionY, directionZ});
+        randDirection = normalizeVector({directionX, directionY, directionZ});
     
         //random length spacing for new filament
         double randomLengthSpacing = Rand::randDouble(0, (double)lenFilaments *
@@ -183,7 +183,7 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
         point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
         
         // get projection outward from the MTOC
-        auto dir = normalizedVector(twoPointDirection(_coordMTOC, point1));
+        auto dir = normalizeVector(twoPointDirection(_coordMTOC, point1));
         auto point2 = nextPointProjection(point1,
             SysParams::Geometry().cylinderSize[filamentType]*lenFilaments - 0.01, dir);
         

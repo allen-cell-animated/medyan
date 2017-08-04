@@ -55,7 +55,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         
         U += U_i;
     }
-    
+    delete v1;
     return U;
 }
 
@@ -99,7 +99,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         
         U += U_i;
     }
-    
+    delete v1; vzero;
     return U;
 }
 
@@ -146,4 +146,5 @@ void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         f3[2] +=  -f0 * ( coord3[2] - v1[2] );
         
     }
+    delete v1;
 }

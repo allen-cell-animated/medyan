@@ -38,7 +38,7 @@ private:
 public:
     
     ///Array describing indexed set of interactions
-    ///For filaments, this is a 4-bead potential
+    ///this is a 3-bead potential
     const static int n = 3;
     
     virtual void vectorize();

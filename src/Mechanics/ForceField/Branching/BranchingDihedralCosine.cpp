@@ -12,230 +12,222 @@
 //------------------------------------------------------------------
 
 #include "BranchingDihedralCosine.h"
+#include "BranchingDihedral.h"
 
+#include "BranchingPoint.h"
 #include "Bead.h"
 
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                       double kDihed, double position){
+double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
+                                       double *kdih, double *pos){
     
     
-    vector<double> n1 = vectorProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    int n = BranchingDihedral<BranchingDihedralCosine>::n;
+    int nint = n * BranchingPoint::getBranchingPoints().size();
     
     
-    vector<double> n2 = vectorProduct(b3->coordinate, b4->coordinate,
-                        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    double *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
+    double *mp = new double[3];
+    double *n1 = new double[3];
+    double *n2 = new double[3];
     
-    auto n1_norm = normalizedVector(n1);
-    auto n2_norm = normalizedVector(n2);
+    double U = 0;
     
-    double n1n2 = dotProduct(n1_norm, n2_norm);
-    
-    return kDihed * ( 1 - n1n2 );
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord4 = &coord[3 * beadSet[n * i + 3]];
+        
+        midPointCoordinate(mp, coord1, coord2, pos[i]);
+        
+        vectorProduct(n1, mp, coord2, mp, coord3);
+        vectorProduct(n2, coord3, coord4, mp, coord3);
+        
+        normalizeVector(n1);
+        normalizeVector(n2);
+        n1n2 = dotProduct(n1, n2);
+        
+        U_i = kdih[i] * ( 1 - n1n2 );
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
+            
+            return -1;
+        }
+        
+        U += U_i;
+    }
+    delete mp;
+    delete n1;
+    delete n2;
+
+    return U;
 }
 
 
-double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                       double kDihed, double position, double d){
+double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
+                                       double *kdih, double *pos, double d){
+
+    int n = BranchingDihedral<BranchingDihedralCosine>::n;
+    int nint = n * BranchingPoint::getBranchingPoints().size();
     
-    vector<double> zero (3,0); //Aux zero vector;
     
-    vector<double> n1 = vectorProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero,  b2->coordinate, b2->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero, b3->coordinate, b3->force, d);
+    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, n1n2, U_i;
+    double *mp = new double[3];
+    double *n1 = new double[3];
+    double *n2 = new double[3];
+    double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
     
-    vector<double> n2 = vectorProductStretched(b3->coordinate,b3->force, b4->coordinate, b4->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero, b3->coordinate, b3->force, d);
+    double U = 0;
     
-    auto n1_norm = normalizedVector(n1);
-    auto n2_norm = normalizedVector(n2);
-    
-    double n1n2 = dotProduct(n1_norm, n2_norm);
-    
-    return kDihed * ( 1 - n1n2 );
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord4 = &coord[3 * beadSet[n * i + 3]];
+        
+        f1 = &f[3 * beadSet[n * i]];
+        f2 = &f[3 * beadSet[n * i + 1]];
+        f3 = &f[3 * beadSet[n * i + 2]];
+        f4 = &f[3 * beadSet[n * i + 3]];
+        
+        midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
+        
+        vectorProductStretched(n1, mp, zero, coord2, f2, mp, zero, coord3, f3, d);
+        vectorProductStretched(n2, coord3, f3, coord4, f4, mp, zero, coord3, f3, d);
+        
+        normalizeVector(n1);
+        normalizeVector(n2);
+        n1n2 = dotProduct(n1, n2);
+        
+        U_i = kdih[i] * ( 1 - n1n2 );
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            BranchingInteractions::_branchingCulprit = BranchingPoint::getBranchingPoints()[i];
+            
+            return -1;
+        }
+        
+        U += U_i;
+    }
+    delete mp;
+    delete n1;
+    delete n2;
+    delete zero;
+    return U;
 }
 
-void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                     double kDihed, double position){
-    
-    vector<double> n1 = vectorProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    
-    vector<double> n2 = vectorProduct(b3->coordinate, b4->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    double N1 = sqrt(dotProduct(n1, n1));
-    double N2 = sqrt(dotProduct(n2, n2));
-    double n1n2 = dotProduct(n1, n2);
-    
-    double f0 = kDihed/N1/N2;
-    
-    double NN1 = n1n2/N1/N1;
-    double NN2 = n1n2/N2/N2;
-    
-    double X = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                                  midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate));
-    
-    double D = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-                                  midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
-    
-    double Y = sqrt(scalarProduct(b3->coordinate, b4->coordinate,
-                                  b3->coordinate, b4->coordinate));
-    
-    vector<double> zero (3,0); //Aux zero vector;
-    
-    double n2x = scalarProduct(zero, n2, midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate);
-    
-    double n1y = scalarProduct(zero, n1, b3->coordinate, b4->coordinate);
-    
-    double xd = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                              midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    double yd = scalarProduct(b3->coordinate, b4->coordinate,
-                              midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    double xx = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                              midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate);
-    
-    double xy = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),
-                              b2->coordinate, b3->coordinate, b4->coordinate);
-    
-    double yy = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
-    
-    double XD = n2x/D/X/X/X;
-    double X1 = -NN2*xd/D/X + yd/D/Y + yd/D/D/X/Y;
-    double X2 = xd*yd/D/D/X/X/X/Y;
-    double Y1 = -xd/D/X - xd/D/D/X/Y + NN1*yd/D/Y;
-    double Y2 = xd*yd/D/D/X/Y/Y/Y;
-    double D1 = NN2*xx/D/X - xy/D/X-xy/D/Y - 2*xy/D/D/X/Y + NN1*yy/D/Y;
-    double D2 = xd*xy/D/D/X/X/X/Y;
-    double YD = n1y/D/Y/Y/Y;
-    
-    //force on b1:
-    b1->force[0] += f0*(- (1 - position)*XD*(1-position)*( (b2->coordinate[1] - b1->coordinate[1])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) - (b2->coordinate[2] - b1->coordinate[2])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) + (1 - position)*(X1 - X2)*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) - (1 - position)*Y1*(b4->coordinate[0] - b3->coordinate[0]) + (1 - position)*(D1 + D2)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]));
-    
-    
-    b1->force[1] += f0*(- (1 - position)*XD*(1-position)*( (b2->coordinate[2] - b1->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b2->coordinate[0] - b1->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) + (1 - position)*(X1 - X2)*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) - (1 - position)*Y1*(b4->coordinate[1] - b3->coordinate[1]) + (1 - position)*(D1 + D2)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]));
-    
-    b1->force[2] += f0*(- (1 - position)*XD*(1-position)*( (b2->coordinate[0] - b1->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b2->coordinate[1] - b1->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) + (1 - position)*(X1 - X2)*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) - (1 - position)*Y1*(b4->coordinate[2] - b3->coordinate[2]) + (1 - position)*(D1 + D2)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]));
-    
-    
-    //force on b2:
-    b2->force[0] += f0*( (1 - position)*XD*(1-position)*( (b2->coordinate[1] - b1->coordinate[1])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) - (b2->coordinate[2] - b1->coordinate[2])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) + (X2 + position*(X1 - X2))*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) - position*Y1*(b4->coordinate[0] - b3->coordinate[0]) + (position*(D1 + D2) - D2)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) );
-    
-    b2->force[1] += f0*( (1 - position)*XD*(1-position)*( (b2->coordinate[2] - b1->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b2->coordinate[0] - b1->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) + (X2 + position*(X1 - X2))*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) - position*Y1*(b4->coordinate[1] - b3->coordinate[1]) + (position*(D1 + D2) - D2)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) );
-    
-    b2->force[2] += f0*( (1 - position)*XD*(1-position)*( (b2->coordinate[0] - b1->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b2->coordinate[1] - b1->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) + (X2 + position*(X1 - X2))*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) - position*Y1*(b4->coordinate[2] - b3->coordinate[2]) + (position*(D1 + D2) - D2)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) );
-    
-    //force on b3:
-    b3->force[0] += f0*(-YD*( (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) - (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) - X1*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) + (Y1 - Y2)*(b4->coordinate[0] - b3->coordinate[0]) + (D2 - D1)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]));
-    
-    b3->force[1] += f0*(-YD*( (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) - X1*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) + (Y1 - Y2)*(b4->coordinate[1] - b3->coordinate[1]) + (D2 - D1)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]));
-    
-    b3->force[2] += f0*(-YD*( (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) - X1*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) + (Y1 - Y2)*(b4->coordinate[2] - b3->coordinate[2]) + (D2 - D1)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]));
-    
-    
-    //force on b4:
-    b4->force[0] +=f0*( YD*( (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) - (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) + Y2*(b4->coordinate[0] - b3->coordinate[0]) - D2*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) );
-    
-    b4->force[1] +=f0*( YD*( (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) + Y2*(b4->coordinate[1] - b3->coordinate[1]) - D2*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) );
-    
-    b4->force[2] +=f0*( YD*( (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) + Y2*(b4->coordinate[2] - b3->coordinate[2]) - D2*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) );
-
-    
-}
-
-void BranchingDihedralCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                     double kDihed, double position){
-    
-    
-    vector<double> n1 = vectorProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    
-    vector<double> n2 = vectorProduct(b3->coordinate, b4->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    double N1 = sqrt(dotProduct(n1, n1));
-    double N2 = sqrt(dotProduct(n2, n2));
-    double n1n2 = dotProduct(n1, n2);
-    
-    double f0 = kDihed/N1/N2;
-    
-    double NN1 = n1n2/N1/N1;
-    double NN2 = n1n2/N2/N2;
-    
-    double X = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                                  midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate));
-    
-    double D = sqrt(scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-                                  midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
-    
-    double Y = sqrt(scalarProduct(b3->coordinate, b4->coordinate,
-                                  b3->coordinate, b4->coordinate));
-    
-    vector<double> zero (3,0); //Aux zero vector;
-    
-    double n2x = scalarProduct(zero, n2, midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate);
-    
-    double n1y = scalarProduct(zero, n1, b3->coordinate, b4->coordinate);
-    
-    double xd = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                              midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    double yd = scalarProduct(b3->coordinate, b4->coordinate,
-                              midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
-    
-    double xx = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),
-                              b2->coordinate, midPointCoordinate(b1->coordinate, b2->coordinate, position),
-                              b2->coordinate);
-    
-    double xy = scalarProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position),
-                              b2->coordinate, b3->coordinate, b4->coordinate);
-    
-    double yy = scalarProduct(b3->coordinate, b4->coordinate, b3->coordinate, b4->coordinate);
-    
-    double XD = n2x/D/X/X/X;
-    double X1 = -NN2*xd/D/X + yd/D/Y + yd/D/D/X/Y;
-    double X2 = xd*yd/D/D/X/X/X/Y;
-    double Y1 = -xd/D/X - xd/D/D/X/Y + NN1*yd/D/Y;
-    double Y2 = xd*yd/D/D/X/Y/Y/Y;
-    double D1 = NN2*xx/D/X - xy/D/X-xy/D/Y - 2*xy/D/D/X/Y + NN1*yy/D/Y;
-    double D2 = xd*xy/D/D/X/X/X/Y;
-    double YD = n1y/D/Y/Y/Y;
-    
-    //forceAux on b1:
-    b1->forceAux[0] += f0*(- (1 - position)*XD*(1-position)*( (b2->coordinate[1] - b1->coordinate[1])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) - (b2->coordinate[2] - b1->coordinate[2])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) + (1 - position)*(X1 - X2)*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) - (1 - position)*Y1*(b4->coordinate[0] - b3->coordinate[0]) + (1 - position)*(D1 + D2)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]));
-    
-    b1->forceAux[1] += f0*(- (1 - position)*XD*(1-position)*( (b2->coordinate[2] - b1->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b2->coordinate[0] - b1->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) + (1 - position)*(X1 - X2)*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) - (1 - position)*Y1*(b4->coordinate[1] - b3->coordinate[1]) + (1 - position)*(D1 + D2)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]));
-    
-    b1->forceAux[2] += f0*(- (1 - position)*XD*(1-position)*( (b2->coordinate[0] - b1->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b2->coordinate[1] - b1->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) + (1 - position)*(X1 - X2)*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) - (1 - position)*Y1*(b4->coordinate[2] - b3->coordinate[2]) + (1 - position)*(D1 + D2)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]));
-    
-    
-    //forceAux on b2:
-    b2->forceAux[0] += f0*( (1 - position)*XD*(1-position)*( (b2->coordinate[1] - b1->coordinate[1])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) - (b2->coordinate[2] - b1->coordinate[2])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) + (X2 + position*(X1 - X2))*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) - position*Y1*(b4->coordinate[0] - b3->coordinate[0]) + (position*(D1 + D2) - D2)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) );
-    
-    b2->forceAux[1] += f0*( (1 - position)*XD*(1-position)*( (b2->coordinate[2] - b1->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b2->coordinate[0] - b1->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) + (X2 + position*(X1 - X2))*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) - position*Y1*(b4->coordinate[1] - b3->coordinate[1]) + (position*(D1 + D2) - D2)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) );
-    
-    b2->forceAux[2] += f0*( (1 - position)*XD*(1-position)*( (b2->coordinate[0] - b1->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b2->coordinate[1] - b1->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) + (X2 + position*(X1 - X2))*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) - position*Y1*(b4->coordinate[2] - b3->coordinate[2]) + (position*(D1 + D2) - D2)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) );
-    
-    //forceAux on b3:
-    b3->forceAux[0] += f0*(-YD*( (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) - (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) - X1*(1-position)*(b2->coordinate[0] - b1->coordinate[0]) + (Y1 - Y2)*(b4->coordinate[0] - b3->coordinate[0]) + (D2 - D1)*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]));
-    
-    b3->forceAux[1] += f0*(-YD*( (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) - X1*(1-position)*(b2->coordinate[1] - b1->coordinate[1]) + (Y1 - Y2)*(b4->coordinate[1] - b3->coordinate[1]) + (D2 - D1)*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]));
-    
-    b3->forceAux[2] += f0*(-YD*( (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) - X1*(1-position)*(b2->coordinate[2] - b1->coordinate[2]) + (Y1 - Y2)*(b4->coordinate[2] - b3->coordinate[2]) + (D2 - D1)*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]));
-    
-    
-    //forceAux on b4:
-    b4->forceAux[0] +=f0*( YD*( (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) - (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) ) + Y2*(b4->coordinate[0] - b3->coordinate[0]) - D2*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) );
-    
-    b4->forceAux[1] +=f0*( YD*( (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) + Y2*(b4->coordinate[1] - b3->coordinate[1]) - D2*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) );
-    
-    b4->forceAux[2] +=f0*( YD*( (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) + Y2*(b4->coordinate[2] - b3->coordinate[2]) - D2*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) );
+void BranchingDihedralCosine::forces(double *coord, double *f, int *beadSet,
+                                     double *kdih, double *pos){
+    
+    int n = BranchingDihedral<BranchingDihedralCosine>::n;
+    int nint = n * BranchingPoint::getBranchingPoints().size();
+    
+    
+    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
+    double n2x, n1y, xd, yd, xx, xy, yy, XD, X1, X2, Y1, Y2, D1, D2, YD;
+    double *mp = new double[3];
+    double *n1 = new double[3];
+    double *n2 = new double[3];
+    double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
+    
+    double U = 0;
+    
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        coord2 = &coord[3 * beadSet[n * i + 1]];
+        coord3 = &coord[3 * beadSet[n * i + 2]];
+        coord4 = &coord[3 * beadSet[n * i + 3]];
+        
+        f1 = &f[3 * beadSet[n * i]];
+        f2 = &f[3 * beadSet[n * i + 1]];
+        f3 = &f[3 * beadSet[n * i + 2]];
+        f4 = &f[3 * beadSet[n * i + 3]];
+        
+        midPointCoordinate(mp, coord1, coord2, pos[i]);
+        
+        vectorProduct(n1, mp, coord2, mp, coord3);
+        vectorProduct(n2, coord3, coord4, mp, coord3);
+        
+        N1 = sqrt(dotProduct(n1, n1));
+        N2 = sqrt(dotProduct(n2, n2));
+        n1n2 = dotProduct(n1, n2);
+        
+        f0 = kdih[i]/N1/N2;
+        
+        NN1 = n1n2/N1/N1;
+        NN2 = n1n2/N2/N2;
+        
+        X = sqrt(scalarProduct(mp, coord2, mp, coord2));
+        D = sqrt(scalarProduct(mp, coord3, mp, coord3));
+        Y = sqrt(scalarProduct(coord3, coord4, coord3, coord4));
+        
+        n2x = scalarProduct(zero, n2, mp, coord2);
+        n1y = scalarProduct(zero, n1, coord3, coord4);
+        xd = scalarProduct(mp, coord2, mp, coord3);
+        yd = scalarProduct(coord3, coord4, mp, coord3);
+        
+        xx = scalarProduct(mp, coord2, mp, coord2);
+        xy = scalarProduct(mp, coord2, coord3, coord4);
+        yy = scalarProduct(coord3, coord4, coord3, coord4);
+        
+        XD = n2x/D/X/X/X;
+        X1 = -NN2*xd/D/X + yd/D/Y + yd/D/D/X/Y;
+        X2 = xd*yd/D/D/X/X/X/Y;
+        Y1 = -xd/D/X - xd/D/D/X/Y + NN1*yd/D/Y;
+        Y2 = xd*yd/D/D/X/Y/Y/Y;
+        D1 = NN2*xx/D/X - xy/D/X-xy/D/Y - 2*xy/D/D/X/Y + NN1*yy/D/Y;
+        D2 = xd*xy/D/D/X/X/X/Y;
+        YD = n1y/D/Y/Y/Y;
+        
+        position = pos[i];
+        
+        //force on b1:
+        f1[0] += f0*(- (1 - position)*XD*(1-position)*( (coord2[1] - coord1[1])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) - (coord2[2] - coord1[2])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) ) + (1 - position)*(X1 - X2)*(1-position)*(coord2[0] - coord1[0]) - (1 - position)*Y1*(coord4[0] - coord3[0]) + (1 - position)*(D1 + D2)*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]));
+        
+        
+        f1[1] += f0*(- (1 - position)*XD*(1-position)*( (coord2[2] - coord1[2])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) - (coord2[0] - coord1[0])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) ) + (1 - position)*(X1 - X2)*(1-position)*(coord2[1] - coord1[1]) - (1 - position)*Y1*(coord4[1] - coord3[1]) + (1 - position)*(D1 + D2)*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]));
+        
+        f1[2] += f0*(- (1 - position)*XD*(1-position)*( (coord2[0] - coord1[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord2[1] - coord1[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + (1 - position)*(X1 - X2)*(1-position)*(coord2[2] - coord1[2]) - (1 - position)*Y1*(coord4[2] - coord3[2]) + (1 - position)*(D1 + D2)*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]));
+        
+        
+        //force on b2:
+        f2[0] += f0*( (1 - position)*XD*(1-position)*( (coord2[1] - coord1[1])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) - (coord2[2] - coord1[2])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) ) + (X2 + position*(X1 - X2))*(1-position)*(coord2[0] - coord1[0]) - position*Y1*(coord4[0] - coord3[0]) + (position*(D1 + D2) - D2)*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
+        
+        f2[1] += f0*( (1 - position)*XD*(1-position)*( (coord2[2] - coord1[2])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) - (coord2[0] - coord1[0])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) ) + (X2 + position*(X1 - X2))*(1-position)*(coord2[1] - coord1[1]) - position*Y1*(coord4[1] - coord3[1]) + (position*(D1 + D2) - D2)*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
+        
+        f2[2] += f0*( (1 - position)*XD*(1-position)*( (coord2[0] - coord1[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord2[1] - coord1[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + (X2 + position*(X1 - X2))*(1-position)*(coord2[2] - coord1[2]) - position*Y1*(coord4[2] - coord3[2]) + (position*(D1 + D2) - D2)*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
+        
+        //force on b3:
+        f3[0] += f0*(-YD*( (coord4[1] - coord3[1])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) - (coord4[2] - coord3[2])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) ) - X1*(1-position)*(coord2[0] - coord1[0]) + (Y1 - Y2)*(coord4[0] - coord3[0]) + (D2 - D1)*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]));
+        
+        f3[1] += f0*(-YD*( (coord4[2] - coord3[2])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) - (coord4[0] - coord3[0])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) ) - X1*(1-position)*(coord2[1] - coord1[1]) + (Y1 - Y2)*(coord4[1] - coord3[1]) + (D2 - D1)*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]));
+        
+        f3[2] += f0*(-YD*( (coord4[0] - coord3[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord4[1] - coord3[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) - X1*(1-position)*(coord2[2] - coord1[2]) + (Y1 - Y2)*(coord4[2] - coord3[2]) + (D2 - D1)*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]));
+        
+        
+        //force on b4:
+        f4[0] +=f0*( YD*( (coord4[1] - coord3[1])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) - (coord4[2] - coord3[2])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) ) + Y2*(coord4[0] - coord3[0]) - D2*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
+        
+        f4[1] +=f0*( YD*( (coord4[2] - coord3[2])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) - (coord4[0] - coord3[0])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) ) + Y2*(coord4[1] - coord3[1]) - D2*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
+        
+        f4[2] +=f0*( YD*( (coord4[0] - coord3[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord4[1] - coord3[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + Y2*(coord4[2] - coord3[2]) - D2*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
+    }
+    delete mp;
+    delete n1;
+    delete n2;
+    delete zero;
 }

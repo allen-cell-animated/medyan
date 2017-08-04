@@ -33,7 +33,7 @@ namespace mathfunc {
         v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
         v2 = {p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]};
 
-        norm = normalizedVector(crossProduct(v1, v2));
+        norm = normalizeVector(crossProduct(v1, v2));
         
         //move bead 1
         if (i == 1){

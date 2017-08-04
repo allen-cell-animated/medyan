@@ -81,7 +81,7 @@ species_copy_t CompartmentGrid::countBulkSpecies(const string& name) {
 //                    double directionX = Rand::randDouble(-1,1);
 //                    double directionY = Rand::randDouble(-1,1);
 //                    double directionZ = Rand::randDouble(-1,1);
-//                    vector<double> direction = normalizedVector({directionX, directionY, directionZ});
+//                    vector<double> direction = normalizeVector({directionX, directionY, directionZ});
 //                
 //                    vector<double> firstPoint  = nextPointProjection(midpoint, dist / 2.0, direction);
 //                    vector<double> secondPoint = nextPointProjection(midpoint, dist / 2.0,

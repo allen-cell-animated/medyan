@@ -20,74 +20,61 @@
 #include "Bead.h"
 
 template <class BBendingInteractionType>
-double BranchingBending<BBendingInteractionType>::computeEnergy(double d) {
+void BranchingBending<BBendingInteractionType>::vectorize() {
     
-    double U = 0;
+    beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
+    kbend = new double[BranchingPoint::getBranchingPoints().size()];
+    eqt = new double[BranchingPoint::getBranchingPoints().size()];
+    
+    int i = 0;
+    for(auto b: Bead::getBeads()) {
+        b->_dbIndex = i;
+        i++;
+    }
+    i = 0;
+    
+    for (auto b: BranchingPoint::getBranchingPoints()) {
+        
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
+        
+        kbend[i] = b->getMBranchingPoint()->getStretchingConstant();
+        eqt[i] = b->getMBranchingPoint()->getEqTheta();
+        
+        i++;
+    }
+}
+
+template<class BBendingInteractionType>
+void BranchingBending<BBendingInteractionType>::deallocate() {
+    
+    delete beadSet;
+    delete kbend;
+    delete eqt;
+}
+
+
+
+template <class BBendingInteractionType>
+double BranchingBending<BBendingInteractionType>::computeEnergy(double *coord, double *f, double d) {
+    
     double U_i;
     
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-        
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kBend = b->getMBranchingPoint()->getBendingConstant();
-        double eqTheta = b->getMBranchingPoint()->getEqTheta();
-        
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, b4, kBend, eqTheta);
-        else
-            U_i = _FFType.energy(b1, b2, b3, b4, kBend, eqTheta, d);
-        
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-            
-            //set culprit and return
-            _branchingCulprit = b;
-            
-            return -1;
-        }
-        else
-            U += U_i;
-    }
+    if (d == 0.0)
+        U_i = _FFType.energy(coord, f, beadSet, kbend, eqt);
+    else
+        U_i = _FFType.energy(coord, f, beadSet, kbend, eqt, d);
     
-    return U;
+    return U_i;
 }
 
 template <class BBendingInteractionType>
-void BranchingBending<BBendingInteractionType>::computeForces() {
+void BranchingBending<BBendingInteractionType>::computeForces(double *coord, double *f) {
    
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-    
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kBend = b->getMBranchingPoint()->getBendingConstant();
-        double eqTheta = b->getMBranchingPoint()->getEqTheta();
-      
-        _FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
-    }
+    _FFType.forces(coord, f, beadSet, kbend, eqt);
 }
-
-template <class BBendingInteractionType>
-void BranchingBending<BBendingInteractionType>::computeForcesAux() {
-    
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-        
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kBend = b->getMBranchingPoint()->getBendingConstant();
-        double eqTheta = b->getMBranchingPoint()->getEqTheta();
-        
-        _FFType.forcesAux(b1, b2, b3, b4, kBend, eqTheta);
-    }
-}
-
 
 ///Template specializations
-template double BranchingBending<BranchingBendingCosine>::computeEnergy(double d);
-template void BranchingBending<BranchingBendingCosine>::computeForces();
-template void BranchingBending<BranchingBendingCosine>::computeForcesAux();
+template double BranchingBending<BranchingBendingCosine>::computeEnergy(double *coord, double *f, double d);
+template void BranchingBending<BranchingBendingCosine>::computeForces(double *coord, double *f);

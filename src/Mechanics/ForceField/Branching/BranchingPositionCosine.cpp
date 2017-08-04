@@ -70,7 +70,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
         
         U += U_i;
     }
-    
+    delete mp;
     return U;
 }
 
@@ -122,7 +122,8 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
         
         U += U_i;
     }
-    
+    delete mp;
+    delete vzero;
     return U;
 }
 
@@ -167,6 +168,7 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
         
         k =  kpos[i] * A * sin(dTheta)/sin(theta);
         
+        //bead 1
         f1[0] +=  k * (1-position)* (- (1-position)*(coord2[0] - coord1[0]) - (coord3[0] - (1-position)*coord1[0] - position*coord2[0])
                             + xd *(B*(1-position)*(coord2[0] - coord1[0]) + C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0])) );
         
@@ -176,7 +178,7 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
         f1[2] +=  k * (1-position)* (- (1-position)*(coord2[2] - coord1[2]) - (coord3[2] - (1-position)*coord1[2] - position*coord2[2])
                             + xd *(B*(1-position)*(coord2[2] - coord1[2]) + C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2])) );
         
-            //
+        //bead 2
         
         f2[0] +=  k * (- position*(1-position)*(coord2[0] - coord1[0]) + (1-position)*(coord3[0]- (1-position)*coord1[0] - position*coord2[0])
             + xd *( (1-position)*B*(1-position)*(coord2[0] - coord1[0]) - position*C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0])) );
@@ -187,12 +189,12 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
         f2[2] +=  k * (- position*(1-position)*(coord2[2] - coord1[2]) + (1-position)*(coord3[2]- (1-position)*coord1[2] - position*coord2[2])
             + xd *( (1-position)*B*(1-position)*(coord2[2] - coord1[2]) - position*C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2])) );
         
-            //
+        //bead3
         
         f3[0] +=  k * ( (1-position)*(coord2[0] - coord1[0]) - xd * C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
         f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
         f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
         
-        
     }
+    delete mp;
 }

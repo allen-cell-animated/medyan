@@ -193,7 +193,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bo = c->getFirstBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizedVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -219,7 +219,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bo = c->getSecondBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizedVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd->coordinate));
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];

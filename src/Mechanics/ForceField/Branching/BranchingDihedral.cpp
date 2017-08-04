@@ -20,77 +20,62 @@
 #include "Bead.h"
 
 template <class BDihedralInteractionType>
-double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double d) {
+void BranchingDihedral<BDihedralInteractionType>::vectorize() {
     
-    double U = 0;
+    beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
+    kdih = new double[BranchingPoint::getBranchingPoints().size()];
+    pos = new double[BranchingPoint::getBranchingPoints().size()];
+    
+    int i = 0;
+    for(auto b: Bead::getBeads()) {
+        b->_dbIndex = i;
+        i++;
+    }
+    i = 0;
+    
+    for (auto b: BranchingPoint::getBranchingPoints()) {
+        
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->_dbIndex;
+        
+        kdih[i] = b->getMBranchingPoint()->getDihedralConstant();
+        pos[i] = b->getPosition();
+        
+        i++;
+    }
+}
+
+template<class BDihedralInteractionType>
+void BranchingDihedral<BDihedralInteractionType>::deallocate() {
+    
+    delete beadSet;
+    delete kdih;
+    delete pos;
+}
+
+
+template <class BDihedralInteractionType>
+double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord, double *f, double d) {
+    
     double U_i;
     
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-        
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
-        
-        double position = b->getPosition();
-        
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, b4, kDihedr, position);
-        else
-            U_i = _FFType.energy(b1, b2, b3, b4, kDihedr, position, d);
-        
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-            
-            //set culprit and return
-            _branchingCulprit = b;
-            
-            return -1;
-        }
-        else
-            U += U_i;
-    }
+    if (d == 0.0)
+        U_i = _FFType.energy(coord, f, beadSet, kdih, pos);
+    else
+        U_i = _FFType.energy(coord, f, beadSet, kdih, pos, d);
     
-    return U;
+    return U_i;
     
 }
 
 template <class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::computeForces() {
+void BranchingDihedral<BDihedralInteractionType>::computeForces(double *coord, double *f) {
     
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-    
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
-        
-        double position = b->getPosition();
-        
-        _FFType.forces(b1, b2, b3, b4, kDihedr, position);
-    }
-}
-
-template <class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::computeForcesAux() {
-    
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-        
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
-        
-        double position = b->getPosition();
-        
-        _FFType.forcesAux(b1, b2, b3, b4, kDihedr, position);
-    }
+    _FFType.forces(coord, f, beadSet, kdih, pos);
 }
 
 ///Template specializations
-template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(double d);
-template void BranchingDihedral<BranchingDihedralCosine>::computeForces();
-template void BranchingDihedral<BranchingDihedralCosine>::computeForcesAux();
+template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(double *coord, double *f, double d);
+template void BranchingDihedral<BranchingDihedralCosine>::computeForces(double *coord, double *f);

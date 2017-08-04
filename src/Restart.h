@@ -76,7 +76,7 @@ int  _numChemSteps=0;
         double len1, len2, len3;
         vector<double> v1={site1[0]-leg[0],site1[1]-leg[1],site1[2]-leg[2]};
         vector<double> v2={site2[0]-leg[0],site2[1]-leg[1],site2[2]-leg[2]};
-        returnVector.push_back(1-acos(std::max(dotProduct(normalizedVector(v1),normalizedVector(v2)),-1.0))*7/22);
+        returnVector.push_back(1-acos(std::max(dotProduct(normalizeVector(v1),normalizeVector(v2)),-1.0))*7/22);
         len1=twoPointDistance(leg,site1);
         len2=twoPointDistance(leg,site2);
         len3=twoPointDistance(site1,site2);

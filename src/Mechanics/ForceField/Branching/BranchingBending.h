@@ -21,17 +21,30 @@
 //FORWARD DECLARATIONS
 class BranchingPoint;
 
-/// Represents an interaction maintaining a BranchingPoint angle (~270 for Arp2/3)
+/// Represents an interaction maintaining a BranchingPoint angle (~70 for Arp2/3)
 template <class BBendingInteractionType>
 class BranchingBending : public BranchingInteractions {
     
 private:
     BBendingInteractionType _FFType;
     
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *kbend;
+    double *eqt;
+    
 public:
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    
+    ///Array describing indexed set of interactions
+    ///this is a 4-bead potential
+    const static int n = 4;
+    
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
     
     virtual const string getName() {return "Branching Bending";}
 };

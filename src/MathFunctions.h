@@ -33,7 +33,7 @@ namespace mathfunc {
     }
     
     /// Return normalized vector
-    inline vector<double> normalizedVector(const vector<double>& v) {
+    inline vector<double> normalizeVector(const vector<double>& v) {
         
         double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
         
@@ -42,6 +42,14 @@ namespace mathfunc {
         v1.push_back(v[0]/norm); v1.push_back(v[1]/norm); v1.push_back(v[2]/norm);
         
         return v1;
+    }
+    
+    /// Return normalized vector
+    /// ARRAY VERSION
+    inline void normalizeVector(double *v) {
+        
+        double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+        v[0] = v[0]/norm; v[1] = v[1]/norm; v[2] = v[2]/norm;
     }
     
     /// Get the magnitude of a vector
@@ -109,6 +117,12 @@ namespace mathfunc {
     
     /// Scalar product of two vectors v1(x,y,z) and v2(x,y,z)
     inline double dotProduct(const vector<double>& v1, const vector<double>& v2) {
+        return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
+    }
+    
+    /// Scalar product of two vectors v1(x,y,z) and v2(x,y,z)
+    /// ARRAY VERSION
+    inline double dotProduct(double const *v1, double const *v2) {
         return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
     }
     
@@ -213,20 +227,38 @@ namespace mathfunc {
         return v;
     };
     
+    /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
+    /// (x4-x3,y4-y3,z4-z3). Returns a 3d vector.
+    /// ARRAY VERSION
+    inline void vectorProduct(double *v,
+                                 double const *v1,
+                                 double const *v2,
+                                 double const *v3,
+                                 double const *v4) {
+        
+        double vx = (v2[1]-v1[1])*(v4[2]-v3[2]) - (v2[2]-v1[2])*(v4[1]-v3[1]);
+        double vy = (v2[2]-v1[2])*(v4[0]-v3[0]) - (v2[0]-v1[0])*(v4[2]-v3[2]);
+        double vz = (v2[0]-v1[0])*(v4[1]-v3[1]) - (v2[1]-v1[1])*(v4[0]-v3[0]);
+        
+        v[0] = vx;
+        v[1] = vy;
+        v[2] = vz;
+    };
+    
     
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3), but with v -> v+d*p. Returns a 3d vector.
-    inline vector<double> vectorProductStretched (const vector<double>& v1,
-                                                  const vector<double>& p1,
-                                                  const vector<double>& v2,
-                                                  const vector<double>& p2,
-                                                  const vector<double>& v3,
-                                                  const vector<double>& p3,
-                                                  const vector<double>& v4,
-                                                  const vector<double>& p4,
-                                                  double d){
-        vector<double> v;
-        
+    /// ARRAY VERSION
+    inline void vectorProductStretched (double *v,
+                                        double const *v1,
+                                        double const *p1,
+                                        double const *v2,
+                                        double const *p2,
+                                        double const *v3,
+                                        double const *p3,
+                                        double const *v4,
+                                        double const *p4,
+                                        double d){
         double vx =
         ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]))
          - ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]));
@@ -239,13 +271,9 @@ namespace mathfunc {
         ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]))
         - ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]));
         
-        v.push_back(vx);
-        v.push_back(vy);
-        v.push_back(vz);
-        
-        return v;
-        
-        
+        v[0] = vx;
+        v[1] = vy;
+        v[2] = vz;
     };
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
