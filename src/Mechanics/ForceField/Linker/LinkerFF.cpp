@@ -30,6 +30,18 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
     }
 }
 
+void LinkerFF::vectorize() {
+    
+    for (auto &interaction : _linkerInteractionVector)
+        interaction->vectorize();
+}
+
+void LinkerFF::cleanup() {
+    
+    for (auto &interaction : _linkerInteractionVector)
+        interaction->deallocate();
+}
+
 void LinkerFF::whoIsCulprit() {
     
     cout << endl;

@@ -38,6 +38,9 @@ public:
     /// Constructor, intializes stretching, bending, and twisting forces
     FilamentFF(string& stretching, string& bending, string& twisting);
     
+    virtual void vectorize();
+    virtual void cleanup();
+    
     virtual string getName() {return "Filament";}
     virtual void whoIsCulprit();
     

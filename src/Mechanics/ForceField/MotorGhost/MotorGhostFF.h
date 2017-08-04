@@ -32,17 +32,21 @@ private:
     vector <unique_ptr<MotorGhostInteractions>>
     _motorGhostInteractionVector; ///< Vector of initialized motor interactions
     
+protected:
     MotorGhostInteractions* _culpritInteraction; ///< Culprit in case of error
+    
 public:
     /// Constructor, intializes stretching, bending, and twisting forces
     MotorGhostFF(string& stretching, string& bending, string& twisting);
     
+    virtual void vectorize();
+    virtual void cleanup();
+    
     virtual string getName() {return "MotorGhost";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     

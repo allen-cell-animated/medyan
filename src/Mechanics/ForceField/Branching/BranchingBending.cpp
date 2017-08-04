@@ -27,11 +27,6 @@ void BranchingBending<BBendingInteractionType>::vectorize() {
     eqt = new double[BranchingPoint::getBranchingPoints().size()];
     
     int i = 0;
-    for(auto b: Bead::getBeads()) {
-        b->_dbIndex = i;
-        i++;
-    }
-    i = 0;
     
     for (auto b: BranchingPoint::getBranchingPoints()) {
         

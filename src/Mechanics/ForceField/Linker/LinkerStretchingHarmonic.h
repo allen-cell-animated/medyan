@@ -14,7 +14,6 @@
 #ifndef MEDYAN_LinkerStretchingHarmonic_h
 #define MEDYAN_LinkerStretchingHarmonic_h
 
-#include "LinkerStretching.h"
 #include "common.h"
 
 //FORWARD DECLARATIONS

@@ -81,8 +81,6 @@ protected:
     
     /// Move beads in search direction by d
     inline void moveBeads(double d);
-    /// Update the previous position
-    inline void setBeads();
     
     /// shift the gradient by d
     inline void shiftGradient(double d);

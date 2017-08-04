@@ -119,6 +119,9 @@ void CGMethod::startMinimization() {
     long index = 0;
     for(auto b: Bead::getBeads()) {
         
+        //set bead index
+        b->_dbIndex = i;
+        
         //flatten indices
         index = 3 * i;
         coord[index] = b->coordinate[0];
@@ -161,13 +164,13 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
     
     //calculate first lambda
     double lambda = min(LAMBDAMAX, MAXDIST / f);
-    double currentEnergy = FFM.computeEnergy(0.0);
+    double currentEnergy = FFM.computeEnergy(coord, force, 0.0);
     
     //backtracking loop
     while(true) {
         
         //new energy when moved by lambda
-        double energyLambda = FFM.computeEnergy(lambda);
+        double energyLambda = FFM.computeEnergy(coord, force, lambda);
         
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
         double energyChange = energyLambda - currentEnergy;
@@ -191,13 +194,13 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     
     //calculate first lambda
     double lambda = LAMBDAMAX;
-    double currentEnergy = FFM.computeEnergy(0.0);
+    double currentEnergy = FFM.computeEnergy(coord, force, 0.0);
     
     //backtracking loop
     while(true) {
         
         //new energy when moved by lambda
-        double energyLambda = FFM.computeEnergy(lambda);
+        double energyLambda = FFM.computeEnergy(coord, force, lambda);
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok

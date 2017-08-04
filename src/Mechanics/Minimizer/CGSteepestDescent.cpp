@@ -30,8 +30,11 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         N = numeric_limits<int>::max();
     }
     
-    FFM.computeForces();
     startMinimization();
+    FFM.vectorizeAllForceFields();
+    
+    FFM.computeForces(coord, force);
+    FFM.copyForces(forceAux, force);
     
     int numIter = 0;
     while (/* Iteration criterion */  numIter < N &&
@@ -42,10 +45,10 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //find lambda by line search, move beads
         lambda = backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
-        moveBeads(lambda); setBeads();
+        moveBeads(lambda); 
         
         //compute new forces
-        FFM.computeForcesAux();
+        FFM.computeForces(coord, forceAux);
         
         //shift gradient
         shiftGradient(0.0);
@@ -62,13 +65,17 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         if(b != nullptr) b->getParent()->printSelf();
         
         cout << "System energy..." << endl;
-        FFM.computeEnergy(0.0, true);
+        FFM.computeEnergy(coord, force, 0.0, true);
         
         cout << endl;
     }
     
     //final force calculation
-    FFM.computeForces();
+    FFM.computeForces(coord, force);
+    FFM.copyForces(forceAux, force);
     FFM.computeLoadForces();
+    endMinimization();
+    
+    FFM.cleanupAllForceFields();
 }
 

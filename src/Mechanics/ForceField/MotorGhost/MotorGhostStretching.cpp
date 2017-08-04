@@ -20,85 +20,64 @@
 #include "Bead.h"
 
 template <class MStretchingInteractionType>
-double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double d) {
+void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
     
-    double U = 0;
+    beadSet = new int[n * MotorGhost::getMotorGhosts().size()];
+    kstr = new double[MotorGhost::getMotorGhosts().size()];
+    eql = new double[MotorGhost::getMotorGhosts().size()];
+    pos1 = new double[MotorGhost::getMotorGhosts().size()];
+    pos2 = new double[MotorGhost::getMotorGhosts().size()];
+    
+    int i = 0;
+    
+    for (auto m: MotorGhost::getMotorGhosts()) {
+        
+        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->_dbIndex;
+        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->_dbIndex;
+        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->_dbIndex;
+        
+        kstr[i] = m->getMMotorGhost()->getStretchingConstant();
+        eql[i] = m->getMMotorGhost()->getEqLength();
+        pos1[i] = m->getFirstPosition();
+        pos2[i] = m->getSecondPosition();
+        
+        i++;
+    }
+}
+
+template<class MStretchingInteractionType>
+void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
+    
+    delete beadSet;
+    delete kstr;
+    delete eql;
+    delete pos1;
+    delete pos2;
+}
+
+
+template <class MStretchingInteractionType>
+double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* coord, double *f, double d){
+    
     double U_i;
     
-    for (auto m: MotorGhost::getMotorGhosts()) {
-        
-        Bead* b1 = m->getFirstCylinder()->getFirstBead();
-        Bead* b2 = m->getFirstCylinder()->getSecondBead();
-        Bead* b3 = m->getSecondCylinder()->getFirstBead();
-        Bead* b4 = m->getSecondCylinder()->getSecondBead();
-        double kStretch = m->getMMotorGhost()->getStretchingConstant();
-        double eqLength = m->getMMotorGhost()->getEqLength();
-        
-        double pos1 = m->getFirstPosition();
-        double pos2 = m->getSecondPosition();
-        
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-        else
-            U_i = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, d);
-        
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-            
-            //set culprit and return
-            _motorCulprit = m;
-            
-            return -1;
-        }
-        else
-            U += U_i;
-    }
-    return U;
+    if (d == 0.0)
+        U_i = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2);
+    else
+        U_i = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
+    
+    return U_i;
 }
 
 template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::computeForces() {
+void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coord, double *f) {
     
-    for (auto m: MotorGhost::getMotorGhosts()) {
-    
-        Bead* b1 = m->getFirstCylinder()->getFirstBead();
-        Bead* b2 = m->getFirstCylinder()->getSecondBead();
-        Bead* b3 = m->getSecondCylinder()->getFirstBead();
-        Bead* b4 = m->getSecondCylinder()->getSecondBead();
-        double kStretch = m->getMMotorGhost()->getStretchingConstant();
-        double eqLength = m->getMMotorGhost()->getEqLength();
-        
-        double pos1 = m->getFirstPosition();
-        double pos2 = m->getSecondPosition();
-        
-        double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-        m->getMMotorGhost()->stretchForce = f0;
-    }
+    _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);
 }
 
 
-template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::computeForcesAux() {
-
-    for (auto m: MotorGhost::getMotorGhosts()) {
-    
-        Bead* b1 = m->getFirstCylinder()->getFirstBead();
-        Bead* b2 = m->getFirstCylinder()->getSecondBead();
-        Bead* b3 = m->getSecondCylinder()->getFirstBead();
-        Bead* b4 = m->getSecondCylinder()->getSecondBead();
-        double kStretch = m->getMMotorGhost()->getStretchingConstant();
-        double eqLength = m->getMMotorGhost()->getEqLength();
-        
-        double pos1 = m->getFirstPosition();
-        double pos2 = m->getSecondPosition();
-        
-        double f0 = _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-        m->getMMotorGhost()->stretchForce = f0;
-    }
-}
-
-///Template specializations
-template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(double d);
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces();
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForcesAux();
+///Temlate specializations
+template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
+template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(double *coord, double *f);
 

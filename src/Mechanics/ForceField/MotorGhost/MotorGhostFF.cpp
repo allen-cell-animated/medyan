@@ -42,14 +42,27 @@ void MotorGhostFF::whoIsCulprit() {
     cout << endl;
 }
 
-double MotorGhostFF::computeEnergy(double d) {
+void MotorGhostFF::vectorize() {
+    
+    for (auto &interaction : _motorGhostInteractionVector)
+        interaction->vectorize();
+}
+
+void MotorGhostFF::cleanup() {
+    
+    for (auto &interaction : _motorGhostInteractionVector)
+        interaction->deallocate();
+}
+
+
+double MotorGhostFF::computeEnergy(double *coord, double *f, double d) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _motorGhostInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(coord, f, d);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -60,18 +73,11 @@ double MotorGhostFF::computeEnergy(double d) {
         
     }
     return U;
-
 }
 
-void MotorGhostFF::computeForces() {
+void MotorGhostFF::computeForces(double *coord, double *f) {
     
     for (auto &interaction : _motorGhostInteractionVector)
-        interaction->computeForces();
-}
-
-void MotorGhostFF::computeForcesAux() {
-    
-    for (auto &interaction : _motorGhostInteractionVector)
-        interaction->computeForcesAux();
+        interaction->computeForces(coord, f);
 }
 

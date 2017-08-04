@@ -29,11 +29,6 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
     pos2 = new double[Linker::getLinkers().size()];
     
     int i = 0;
-    for(auto b: Bead::getBeads()) {
-        b->_dbIndex = i;
-        i++;
-    }
-    i = 0;
     
     for (auto l: Linker::getLinkers()) {
         

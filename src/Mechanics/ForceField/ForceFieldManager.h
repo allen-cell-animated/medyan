@@ -34,6 +34,11 @@ friend class CGMethod;
 public:
      vector<ForceField*> _forceFields; ///< All forcefields in the system
     
+    /// Vectorize all interactions involved in calculation
+    void vectorizeAllForceFields();
+    /// Deallocation of vectorized memory
+    void cleanupAllForceFields();
+    
     /// Compute the energy using all available force fields
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
@@ -51,11 +56,6 @@ public:
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
     void computeLoadForces();
-    
-    /// Reset the forces of all objects
-    void resetForces();
-    /// Reset the forcesAux of all objects
-    void resetForcesAux();
 };
 
 #endif

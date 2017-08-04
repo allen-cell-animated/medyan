@@ -68,6 +68,19 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
 
 }
 
+void BranchingFF::vectorize() {
+    
+    for (auto &interaction : _branchingInteractionVector)
+        interaction->vectorize();
+}
+
+void BranchingFF::cleanup() {
+    
+    for (auto &interaction : _branchingInteractionVector)
+        interaction->deallocate();
+}
+
+
 void BranchingFF::whoIsCulprit() {
     
     cout << endl;

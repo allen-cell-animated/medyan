@@ -40,6 +40,9 @@ public:
     BranchingFF(string& stretching, string& bending,
                 string& dihedral, string& position);
     
+    virtual void vectorize();
+    virtual void cleanup();
+    
     virtual string getName() {return "Branching";}
     virtual void whoIsCulprit();
     

@@ -32,6 +32,12 @@ public:
     /// Get the name of this forcefield
     virtual string getName() = 0;
     
+    /// Produce a vectorized version of interaction data
+    /// Could include constants, positions, neighbors list data, etc
+    virtual void vectorize() = 0;
+    /// Cleanup all vectorized data
+    virtual void cleanup() = 0;
+    
     /// Compute total energy of this forcefield in the system
     /// @return  the energy value if valid. If an inf or NaN value has been
     /// calculated, return -1.

@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 
 #include "LinkerStretchingHarmonic.h"
+#include "LinkerStretching.h"
 #include "Linker.h"
 
 #include "Bead.h"
@@ -66,7 +67,7 @@ double LinkerStretchingHarmonic::energy(double *coord, double * f, int *beadSet,
                                         double *kstr, double *eql, double *pos1, double *pos2, double d){
     
     int n = LinkerStretching<LinkerStretchingHarmonic>::n;
-    int nint = sizeof(beadSet);
+    int nint = n * Linker::getLinkers().size();
     
     double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist;
     double *v1 = new double[3];
@@ -103,7 +104,7 @@ void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
     
     
     int n = LinkerStretching<LinkerStretchingHarmonic>::n;
-    int nint = sizeof(beadSet);
+    int nint = n * Linker::getLinkers().size();
     
     double *coord1, *coord2, *coord3, *coord4, dist, invL;
     double *v1 = new double[3];

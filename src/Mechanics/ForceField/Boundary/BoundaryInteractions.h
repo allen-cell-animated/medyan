@@ -27,20 +27,22 @@ class BoundaryInteractions {
     
 friend class BoundaryFF;
     
-protected:
+public:
     //@{
     /// In the case of an error
-    BoundaryElement* _boundaryElementCulprit = nullptr;
-    Component* _otherCulprit = nullptr;
+    static BoundaryElement* _boundaryElementCulprit;
+    static Component* _otherCulprit;
     //@}
     
-public:
-    /// Compute energy of this interaction
-    virtual double computeEnergy(double d) = 0;
-    /// Compute forces of this interaction
-    virtual void computeForces() = 0;
-    /// Compute auxiliary forces of this interaction
-    virtual void computeForcesAux() = 0;
+    ///Vectorize the bead interactions for minimization
+    virtual void vectorize() = 0;
+    ///Deallocate the vectorized data
+    virtual void deallocate() = 0;
+    
+    /// Compute the energy of this interaction
+    virtual double computeEnergy(double *coord, double *f, double d) = 0;
+    /// Compute the forces of this interaction
+    virtual void computeForces(double *coord, double *f) = 0;
     
     /// Compute the load forces on beads from this interaction
     virtual void computeLoadForces() = 0;

@@ -46,6 +46,18 @@ FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
     }
 }
 
+void FilamentFF::vectorize() {
+    
+    for (auto &interaction : _filamentInteractionVector)
+        interaction->vectorize();
+}
+
+void FilamentFF::cleanup() {
+    
+    for (auto &interaction : _filamentInteractionVector)
+        interaction->deallocate();
+}
+
 void FilamentFF::whoIsCulprit() {
     
     cout << endl;

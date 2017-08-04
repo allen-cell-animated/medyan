@@ -27,11 +27,6 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
     eql = new double[Cylinder::getCylinders().size()];
     
     int i = 0;
-    for(auto b: Bead::getBeads()) {
-        b->_dbIndex = i;
-        i++;
-    }
-    i = 0;
     
     for (auto c: Cylinder::getCylinders()) {
         

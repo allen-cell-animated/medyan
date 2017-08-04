@@ -15,6 +15,18 @@
 
 #include "CGMethod.h"
 
+void ForceFieldManager::vectorizeAllForceFields() {
+    
+    for(auto &ff : _forceFields)
+        ff->vectorize();
+}
+
+void ForceFieldManager::cleanupAllForceFields() {
+    
+    for(auto &ff : _forceFields)
+        ff->cleanup();
+}
+
 double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool verbose) {
     
     double energy = 0;
@@ -51,8 +63,9 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 
 void ForceFieldManager::computeForces(double *coord, double *f) {
     
-    //reset
-    resetForces();
+    //reset to zero
+    for (int i = 0; i < CGMethod::N; i++)
+        f[i] = 0.0;
     
     //recompute
     for(auto &ff : _forceFields) ff->computeForces(coord, f);
@@ -62,6 +75,13 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
 
 void ForceFieldManager::computeLoadForces() {
     
+    //reset
+    for (auto b: Bead::getBeads()) {
+        
+        b->loadForcesP.clear();
+        b->loadForcesM.clear();
+    }
+    
     for(auto &f : _forceFields)
         f->computeLoadForces();
     
@@ -70,21 +90,6 @@ void ForceFieldManager::computeLoadForces() {
         b->lfip = 0;
         b->lfim = 0;
     }
-}
-
-void ForceFieldManager::resetForces() {
-    
-    for(auto b: Bead::getBeads()) {
-        b->force.assign (3, 0); //Set force to zero;
-        std::memset((void*)(&b->loadForcesP[0]), 0, sizeof(b->loadForcesP));  //Set load force to zero;
-        std::memset((void*)(&b->loadForcesM[0]), 0, sizeof(b->loadForcesM));  //Set load force to zero;
-    }
-}
-
-void ForceFieldManager::resetForcesAux() {
-    
-    for(auto b: Bead::getBeads())
-        b->forceAux.assign (3, 0); //Set forceAux to zero;
 }
 
 void ForceFieldManager::copyForces(double *fprev, double *f) {
