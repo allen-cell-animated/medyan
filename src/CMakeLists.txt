@@ -103,6 +103,15 @@ set(SOURCE_FILES
         Mechanics/ForceField/Bubble/MTOCAttachment.h
         Mechanics/ForceField/Bubble/MTOCAttachmentHarmonic.cpp
         Mechanics/ForceField/Bubble/MTOCAttachmentHarmonic.h
+
+#        Mechanics/ForceField/Camkii/CamkiiFF.cpp
+#        Mechanics/ForceField/Camkii/CamkiiFF.h
+#        Mechanics/ForceField/Camkii/CamkiiInteractions.h
+#        Mechanics/ForceField/Camkii/CamkiiStretching.h
+#        Mechanics/ForceField/Camkii/CamkiiStretching.cpp
+#        Mechanics/ForceField/Camkii/CamkiiBending.cpp
+#        Mechanics/ForceField/Camkii/CamkiiBending.h
+
         Mechanics/ForceField/Filament/FilamentBending.cpp
         Mechanics/ForceField/Filament/FilamentBending.h
         Mechanics/ForceField/Filament/FilamentBendingCosine.cpp
