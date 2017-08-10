@@ -11,21 +11,21 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "FilamentBending.h"
+#include "CamkiiBending.h"
 
-#include "FilamentBendingHarmonic.h"
-#include "FilamentBendingCosine.h"
+#include "CamkiiBendingHarmonic.h"
+#include "CamkiiBendingCosine.h"
 
-#include "Filament.h"
+#include "Camkii.h"
 #include "Cylinder.h"
 
 template <class FBendingInteractionType>
-double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
+double CamkiiBending<FBendingInteractionType>::computeEnergy(double d) {
     
     double U = 0;
     double U_i;
     
-    for (auto f: Filament::getFilaments()) {
+    for (auto f: Camkii::getCamkiis()) {
         
         U_i = 0;
         
@@ -65,7 +65,7 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
            || U_i != U_i || U_i < -1.0) {
             
             //set culprit and return
-            _filamentCulprit = f;
+            _camkiiCulprit = f;
             
             return -1;
         }
@@ -77,9 +77,9 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
 }
 
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::computeForces()
+void CamkiiCamkiiBending<FBendingInteractionType>::computeForces()
 {
-    for (auto f: Filament::getFilaments()) {
+    for (auto f: Camkii::getCamkiis()) {
         
         if (f->getCylinderVector().size()>1){
             for (auto it = f->getCylinderVector().begin()+1;
@@ -99,9 +99,9 @@ void FilamentBending<FBendingInteractionType>::computeForces()
 }
 
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::computeForcesAux()
+void CamkiiBending<FBendingInteractionType>::computeForcesAux()
 {
-    for (auto f: Filament::getFilaments()) {
+    for (auto f: Camkii::getCamkiis()) {
         
         if (f->getCylinderVector().size()>1){
             for (auto it = f->getCylinderVector().begin()+1;
@@ -121,9 +121,9 @@ void FilamentBending<FBendingInteractionType>::computeForcesAux()
 }
 
 ///Template specializations
-template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(double d);
-template void FilamentBending<FilamentBendingHarmonic>::computeForces();
-template void FilamentBending<FilamentBendingHarmonic>::computeForcesAux();
-template double FilamentBending<FilamentBendingCosine>::computeEnergy(double d);
-template void FilamentBending<FilamentBendingCosine>::computeForces();
-template void FilamentBending<FilamentBendingCosine>::computeForcesAux();
+template double CamkiiBending<CamkiiBendingHarmonic>::computeEnergy(double d);
+template void CamkiiBending<CamkiiBendingHarmonic>::computeForces();
+template void CamkiiBending<CamkiiBendingHarmonic>::computeForcesAux();
+template double CamkiiBending<CamkiiBendingCosine>::computeEnergy(double d);
+template void CamkiiBending<CamkiiBendingCosine>::computeForces();
+template void CamkiiBending<CamkiiBendingCosine>::computeForcesAux();

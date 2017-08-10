@@ -11,14 +11,14 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "FilamentBendingCosine.h"
+#include "CamkiiBendingCosine.h"
 
 #include "MathFunctions.h"
 #include "Bead.h"
 
 using namespace mathfunc;
 
-double FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
+double CamkiiBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
                                      double kBend, double eqTheta){
     
     double L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
@@ -36,7 +36,7 @@ double FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     return kBend * ( 1 - cos(dPhi) );
 }
 
-double FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
+double CamkiiBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
                                      double kBend, double eqTheta, double d ){
     
     double L1 = sqrt(scalarProductStretched(b1->coordinate, b1->force,
@@ -60,7 +60,7 @@ double FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     return kBend * ( 1 - cos(dPhi) );
 }
 
-void FilamentBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3,
+void CamkiiBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3,
                                    double kBend, double eqTheta ){
     
     double k = 0;
@@ -120,7 +120,7 @@ void FilamentBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3,
                           (b3->coordinate[2] - b2->coordinate[2])*C );
 }
 
-void FilamentBendingCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
+void CamkiiBendingCosine::forcesAux(Bead* b1, Bead* b2, Bead* b3,
                                       double kBend, double eqTheta){
     
     double k = 0;

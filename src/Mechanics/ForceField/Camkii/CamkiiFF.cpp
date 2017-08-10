@@ -20,28 +20,28 @@
 #include "CamkiiBendingHarmonic.h"
 #include "CamkiiBendingCosine.h"
 
-#include "Filament.h"
+#include "Camkii.h"
 
 CamkiiFF::CamkiiFF (string& stretching, string& bending) {
     
     if (stretching == "HARMONIC")
-        _filamentInteractionVector.emplace_back(
-        new FilamentStretching<FilamentStretchingHarmonic>());
+        _camkiiInteractionVector.emplace_back(
+        new CamkiiStretching<CamkiiStretchingHarmonic>());
     else if(stretching == "") {}
     else {
-        cout << "Filament stretching FF not recognized. Exiting." << endl;
+        cout << "Camkii stretching FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
     
     if (bending == "HARMONIC")
-        _filamentInteractionVector.emplace_back(
-        new FilamentBending<FilamentBendingHarmonic>());
+        _camkiiInteractionVector.emplace_back(
+        new CamkiiBending<CamkiiBendingHarmonic>());
     else if(bending == "COSINE")
-        _filamentInteractionVector.emplace_back(
-        new FilamentBending<FilamentBendingCosine>());
+        _camkiiInteractionVector.emplace_back(
+        new CamkiiBending<CamkiiBendingCosine>());
     else if(bending == "") {}
     else {
-        cout << "Filament bending FF not recognized. Exiting." << endl;
+        cout << "Camkii bending FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
 }
@@ -52,8 +52,8 @@ void CamkiiFF::whoIsCulprit() {
     
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    cout << "Printing the culprit filament..." << endl;
-    _culpritInteraction->_filamentCulprit->printSelf();
+    cout << "Printing the culprit camkii..." << endl;
+    _culpritInteraction->_camkiiCulprit->printSelf();
     
     cout << endl;
 }
@@ -64,7 +64,7 @@ double CamkiiFF::computeEnergy(double d) {
     double U= 0;
     double U_i;
     
-    for (auto &interaction : _filamentInteractionVector) {
+    for (auto &interaction : _camkiiInteractionVector) {
         
         U_i = interaction->computeEnergy(d);
         
@@ -81,12 +81,12 @@ double CamkiiFF::computeEnergy(double d) {
 
 void CamkiiFF::computeForces() {
     
-    for (auto &interaction : _filamentInteractionVector)
+    for (auto &interaction : _camkiiInteractionVector)
         interaction->computeForces();
 }
 
 void CamkiiFF::computeForcesAux() {
     
-    for (auto &interaction : _filamentInteractionVector)
+    for (auto &interaction : _camkiiInteractionVector)
         interaction->computeForcesAux();
 }

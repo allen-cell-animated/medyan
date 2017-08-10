@@ -11,29 +11,29 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_CamkiiStretching_h
-#define MEDYAN_CamkiiStretching_h
+#ifndef MEDYAN_CamkiiBending_h
+#define MEDYAN_CamkiiBending_h
 
 #include "common.h"
 
 #include "CamkiiInteractions.h"
 
-/// Represents a Camkii stretching interaction
-template <class FStretchingInteractionType>
-class CamkiiStretching : public CamkiiInteractions {
+//FORWARD DECLARATIONS
+class Camkii;
 
-
+/// Represents a Camkii bending interaction
+template <class FBendingInteractionType>
+class CamkiiBending : public CamkiiInteractions {
+    
 private:
-    //TODO
-    FStretchingInteractionType _FFType; 
+    FBendingInteractionType _FFType;
     
 public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
     
-    virtual const string getName() {return "Camkii Stretching";}
+    virtual const string getName() {return "Camkii Bending";}
 };
-
 
 #endif

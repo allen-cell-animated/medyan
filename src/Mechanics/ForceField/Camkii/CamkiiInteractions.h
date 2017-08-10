@@ -22,13 +22,13 @@
 class Filament;
 class Camkii;
 
-/// Represents an internal Filament interaction
+/// Represents an internal Camkii interaction
 class CamkiiInteractions {
     
 friend class CamkiiFF;
     
 protected:
-    /// The filament in the case of an error
+    /// The Camkii in the case of an error
     Camkii* _camkiiCulprit = nullptr;
 
 public:

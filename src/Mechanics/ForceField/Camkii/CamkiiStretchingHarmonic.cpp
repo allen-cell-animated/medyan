@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "FilamentStretchingHarmonic.h"
+#include "CamkiiStretchingHarmonic.h"
 
 #include "Bead.h"
 
@@ -19,7 +19,7 @@
 
 using namespace mathfunc;
 
-double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
+double CamkiiStretchingHarmonic::energy(Bead* b1, Bead* b2,
                                           double kStretch, double eqLength){
 
     double dist = twoPointDistance( b1->coordinate, b2->coordinate) - eqLength;
@@ -27,7 +27,7 @@ double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
     
 }
 
-double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
+double CamkiiStretchingHarmonic::energy(Bead* b1, Bead* b2,
                                           double kStretch, double eqLength, double d){
 
     double distStretched = twoPointDistanceStretched(b1->coordinate,
@@ -36,7 +36,7 @@ double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
     return 0.5 * kStretch * distStretched * distStretched;
 }
 
-void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
+void CamkiiStretchingHarmonic::forces(Bead* b1, Bead* b2,
                                         double kStretch, double eqLength ){
     
     double dist = twoPointDistance( b1->coordinate, b2->coordinate);
@@ -55,7 +55,7 @@ void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
     b1->force[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
 }
 
-void FilamentStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
+void CamkiiStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
                                            double kStretch, double eqLength ){
     
     double dist = twoPointDistance( b1->coordinate, b2->coordinate);

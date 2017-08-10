@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_FilamentStretchingHarmonic_h
-#define MEDYAN_FilamentStretchingHarmonic_h
+#ifndef MEDYAN_CamkiiStretchingHarmonic_h
+#define MEDYAN_CamkiiStretchingHarmonic_h
 
 #include "common.h"
 
@@ -20,7 +20,7 @@
 class Bead;
 
 /// A harmonic potential used by the FilamentStretching and MTOCAttachment template.
-class FilamentStretchingHarmonic {
+class CamkiiStretchingHarmonic {
     
 public:
     double energy(Bead*, Bead*, double, double);

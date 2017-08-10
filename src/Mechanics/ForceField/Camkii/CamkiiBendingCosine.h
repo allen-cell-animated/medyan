@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_FilamentBendingCosine_h
-#define MEDYAN_FilamentBendingCosine_h
+#ifndef MEDYAN_CamkiiBendingCosine_h
+#define MEDYAN_CamkiiBendingCosine_h
 
 #include "common.h"
 
@@ -20,7 +20,7 @@
 class Bead;
 
 /// A cosine potential used by the [FilamentBending](@ref FilamentBending) template.
-class FilamentBendingCosine {
+class CamkiiBendingCosine {
     
 public:
     double energy(Bead*, Bead*, Bead*, double, double);

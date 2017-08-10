@@ -24,12 +24,12 @@
 class CamkiiInteractions;
 class Camkii;
 
-/// An implementation of the ForceField class that calculates Filament interactions.
+/// An implementation of the ForceField class that calculates Camkii interactions.
 class CamkiiFF : public ForceField {
  
 private:
     vector<unique_ptr<CamkiiInteractions>>
-    _interactions; ///< Vector of initialized filament interactions
+    _interactions; ///< Vector of initialized Camkii interactions
     
     CamkiiInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
