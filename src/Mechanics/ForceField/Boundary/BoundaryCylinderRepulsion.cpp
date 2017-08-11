@@ -26,13 +26,41 @@ using namespace mathfunc;
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     
-    int numInteractions = ;
     
-    beadSet = new int[n * numInteractions];
-    kbend = new double[numInteractions];
-    eqt = new double[numInteractions];
+    //count interactions
+    int nint = 0;
+    for (auto be: BoundaryElement::getBoundaryElements())
+        for(auto &c : _neighborList->getNeighbors(be))
+            nint++;
     
+    beadSet = new int[n * nint];
+    krep = new double[nint];
+    slen = new double[nint];
+    
+    
+    int nbe = BoundaryElement::getBoundaryElements().size();
     int i = 0;
+    int ni = 0;
+    int bindex = 0;
+    
+    
+    for (i = 0; i < nbe; i++) {
+
+        auto be = BoundaryElement::getBoundaryElements()[i];
+        auto nn = _neighborList->getNeighbors(be).size();
+        
+        for (ni = 0; ni < nn; ni++) {
+        
+            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
+                bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;
+            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
+            
+            beadSet[n * (i + ni)] = bindex;
+            krep[i + ni] = be->getRepulsionConst();
+            slen[i + ni] = be->getScreeningLength();
+        }
+    }
 }
 
 template<class BRepulsionInteractionType>
@@ -47,15 +75,16 @@ template <class BRepulsionInteractionType>
 double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double *coord, double *f, double d) {
 
     
+    double U_i;
     
+    if (d == 0.0) {
+        U_i = _FFType.energy(coord, f, beadSet, krep, slen);
+    }
+    else {
+        U_i = _FFType.energy(coord, f, beadSet, krep, slen, d);
+    }
     
-    
-    
-    
-    
-    
-    
-    
+    return U_i;
     
     
 //    double U = 0;
@@ -145,7 +174,9 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
     
-//    for (auto be: BoundaryElement::getBoundaryElements()) {
+    _FFType.forces(coord, f, beadSet, krep, slen);
+    
+    //    for (auto be: BoundaryElement::getBoundaryElements()) {
 //        
 //        for(auto &c: _neighborList->getNeighbors(be)) {
 //            
