@@ -103,15 +103,17 @@ set(SOURCE_FILES
         Mechanics/ForceField/Bubble/MTOCAttachment.h
         Mechanics/ForceField/Bubble/MTOCAttachmentHarmonic.cpp
         Mechanics/ForceField/Bubble/MTOCAttachmentHarmonic.h
-
-#        Mechanics/ForceField/Camkii/CamkiiFF.cpp
-#        Mechanics/ForceField/Camkii/CamkiiFF.h
-#        Mechanics/ForceField/Camkii/CamkiiInteractions.h
-#        Mechanics/ForceField/Camkii/CamkiiStretching.h
-#        Mechanics/ForceField/Camkii/CamkiiStretching.cpp
-#        Mechanics/ForceField/Camkii/CamkiiBending.cpp
-#        Mechanics/ForceField/Camkii/CamkiiBending.h
-
+        Mechanics/ForceField/Camkii/CamkiiBendingCosine.cpp
+        Mechanics/ForceField/Camkii/CamkiiBendingCosine.h
+        Mechanics/ForceField/Camkii/CamkiiBending.cpp
+        Mechanics/ForceField/Camkii/CamkiiBending.h
+        Mechanics/ForceField/Camkii/CamkiiFF.cpp
+        Mechanics/ForceField/Camkii/CamkiiFF.h
+        Mechanics/ForceField/Camkii/CamkiiInteractions.h
+        Mechanics/ForceField/Camkii/CamkiiStretching.cpp
+        Mechanics/ForceField/Camkii/CamkiiStretching.h
+        Mechanics/ForceField/Camkii/CamkiiStretchingHarmonic.cpp
+        Mechanics/ForceField/Camkii/CamkiiStretchingHarmonic.h
         Mechanics/ForceField/Filament/FilamentBending.cpp
         Mechanics/ForceField/Filament/FilamentBending.h
         Mechanics/ForceField/Filament/FilamentBendingCosine.cpp
@@ -272,6 +274,7 @@ include_directories( ./Mechanics/ForceField )
 include_directories( ./Mechanics/ForceField/Boundary )
 include_directories( ./Mechanics/ForceField/Branching )
 include_directories( ./Mechanics/ForceField/Bubble )
+include_directories( ./Mechanics/ForceField/Camkii )
 include_directories( ./Mechanics/ForceField/Filament )
 include_directories( ./Mechanics/ForceField/Linker )
 include_directories( ./Mechanics/ForceField/MotorGhost )
