@@ -491,7 +491,7 @@ void Controller::pinBoundaryFilaments() {
     }
 }
 
-//Qin, pin all beads for now
+//Qin
 void Controller::pinLowerBoundaryFilaments() {
     
     //renew pinned filament list everytime
