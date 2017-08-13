@@ -1,4 +1,4 @@
-
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -30,4 +30,5 @@ public:
     void forcesAux(Bead*, Bead*, double, double);
 };
 
+#endif
 #endif

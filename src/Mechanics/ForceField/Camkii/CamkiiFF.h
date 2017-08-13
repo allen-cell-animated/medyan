@@ -1,4 +1,4 @@
-
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -28,8 +28,7 @@ class Camkii;
 class CamkiiFF : public ForceField {
  
 private:
-    vector<unique_ptr<CamkiiInteractions>>
-    _interactions; ///< Vector of initialized Camkii interactions
+    vector<unique_ptr<CamkiiInteractions>> _camkiiInteractionVector; ///< Vector of initialized Camkii interactions
     
     CamkiiInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
@@ -48,4 +47,5 @@ public:
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
 };
 
+#endif
 #endif

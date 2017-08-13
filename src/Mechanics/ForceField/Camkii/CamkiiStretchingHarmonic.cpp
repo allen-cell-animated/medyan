@@ -1,4 +1,4 @@
-
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -73,3 +73,4 @@ void CamkiiStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
     b1->forceAux[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
 }
 
+#endif

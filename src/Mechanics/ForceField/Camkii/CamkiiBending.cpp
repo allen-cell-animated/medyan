@@ -1,4 +1,4 @@
-
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -13,7 +13,6 @@
 
 #include "CamkiiBending.h"
 
-#include "CamkiiBendingHarmonic.h"
 #include "CamkiiBendingCosine.h"
 
 #include "Camkii.h"
@@ -29,11 +28,11 @@ double CamkiiBending<FBendingInteractionType>::computeEnergy(double d) {
         
         U_i = 0;
         
-        if (f->getCylinderVector().size() > 1){
+        if (f->getCylinders().size() > 1){
             
             if (d == 0.0){
-                for (auto it = f->getCylinderVector().begin()+1;
-                          it != f->getCylinderVector().end(); it++){
+                for (auto it = f->getCylinders().begin()+1;
+                          it != f->getCylinders().end(); it++){
                     
                     auto it2 = it - 1;
                     Bead* b1 = (*it2)->getFirstBead();
@@ -46,8 +45,8 @@ double CamkiiBending<FBendingInteractionType>::computeEnergy(double d) {
                 }
             }
             else {
-                for (auto it = f->getCylinderVector().begin()+1;
-                          it != f->getCylinderVector().end(); it++){
+                for (auto it = f->getCylinders().begin()+1;
+                          it != f->getCylinders().end(); it++){
                     
                     auto it2 = it - 1;
                     Bead* b1 = (*it2)->getFirstBead();
@@ -77,13 +76,13 @@ double CamkiiBending<FBendingInteractionType>::computeEnergy(double d) {
 }
 
 template <class FBendingInteractionType>
-void CamkiiCamkiiBending<FBendingInteractionType>::computeForces()
+void CamkiiBending<FBendingInteractionType>::computeForces()
 {
     for (auto f: Camkii::getCamkiis()) {
         
-        if (f->getCylinderVector().size()>1){
-            for (auto it = f->getCylinderVector().begin()+1;
-                      it != f->getCylinderVector().end(); it++){
+        if (f->getCylinders().size()>1){
+            for (auto it = f->getCylinders().begin()+1;
+                      it != f->getCylinders().end(); it++){
                 
                 auto it2 = it - 1;
                 Bead* b1 = (*it2)->getFirstBead();
@@ -103,9 +102,9 @@ void CamkiiBending<FBendingInteractionType>::computeForcesAux()
 {
     for (auto f: Camkii::getCamkiis()) {
         
-        if (f->getCylinderVector().size()>1){
-            for (auto it = f->getCylinderVector().begin()+1;
-                 it != f->getCylinderVector().end(); it++){
+        if (f->getCylinders().size()>1){
+            for (auto it = f->getCylinders().begin()+1;
+                 it != f->getCylinders().end(); it++){
                 
                 auto it2 = it - 1;
                 Bead* b1 = (*it2)->getFirstBead();
@@ -121,9 +120,10 @@ void CamkiiBending<FBendingInteractionType>::computeForcesAux()
 }
 
 ///Template specializations
-template double CamkiiBending<CamkiiBendingHarmonic>::computeEnergy(double d);
-template void CamkiiBending<CamkiiBendingHarmonic>::computeForces();
-template void CamkiiBending<CamkiiBendingHarmonic>::computeForcesAux();
+//template double CamkiiBending<CamkiiBendingHarmonic>::computeEnergy(double d);
+//template void CamkiiBending<CamkiiBendingHarmonic>::computeForces();
+//template void CamkiiBending<CamkiiBendingHarmonic>::computeForcesAux();
 template double CamkiiBending<CamkiiBendingCosine>::computeEnergy(double d);
 template void CamkiiBending<CamkiiBendingCosine>::computeForces();
 template void CamkiiBending<CamkiiBendingCosine>::computeForcesAux();
+#endif

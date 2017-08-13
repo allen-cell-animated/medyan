@@ -1,4 +1,4 @@
-
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -17,7 +17,6 @@
 #include "CamkiiStretchingHarmonic.h"
 
 #include "CamkiiBending.h"
-#include "CamkiiBendingHarmonic.h"
 #include "CamkiiBendingCosine.h"
 
 #include "Camkii.h"
@@ -33,12 +32,8 @@ CamkiiFF::CamkiiFF (string& stretching, string& bending) {
         exit(EXIT_FAILURE);
     }
     
-    if (bending == "HARMONIC")
-        _camkiiInteractionVector.emplace_back(
-        new CamkiiBending<CamkiiBendingHarmonic>());
-    else if(bending == "COSINE")
-        _camkiiInteractionVector.emplace_back(
-        new CamkiiBending<CamkiiBendingCosine>());
+    if(bending == "COSINE")
+        _camkiiInteractionVector.emplace_back(new CamkiiBending<CamkiiBendingCosine>());
     else if(bending == "") {}
     else {
         cout << "Camkii bending FF not recognized. Exiting." << endl;
@@ -90,3 +85,4 @@ void CamkiiFF::computeForcesAux() {
     for (auto &interaction : _camkiiInteractionVector)
         interaction->computeForcesAux();
 }
+#endif

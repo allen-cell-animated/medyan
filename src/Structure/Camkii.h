@@ -79,6 +79,7 @@ private:
     void updateCoordinate();
     
 public:
+    array< Cylinder*, 6 > &getCylinders() { return _cylinders;}
     vector<double> coordinate;
     ///< Coordinates of midpoint, updated with updatePosition()
                                        

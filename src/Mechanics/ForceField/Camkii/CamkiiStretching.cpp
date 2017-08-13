@@ -1,4 +1,4 @@
-
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -16,7 +16,7 @@
 #include "CamkiiStretchingHarmonic.h"
 #include "Filament.h"
 #include "Cylinder.h"
-#include "Camkii"
+#include "Camkii.h"
 
 template <class FStretchingInteractionType>
 double CamkiiStretching<FStretchingInteractionType>::computeEnergy(double d) {
@@ -24,12 +24,12 @@ double CamkiiStretching<FStretchingInteractionType>::computeEnergy(double d) {
     double U = 0;
     double U_i;
     
-    for (auto f: camkii::getCamkiis()) {
+    for (auto f: Camkii::getCamkiis()) {
         
         U_i = 0;
         
         if (d == 0.0){
-            for(auto it : f->getCylinderVector()){
+            for(auto it : f->getCylinders()){
                 
                 Bead* b1 = it->getFirstBead();
                 Bead* b2 = it->getSecondBead();
@@ -40,7 +40,7 @@ double CamkiiStretching<FStretchingInteractionType>::computeEnergy(double d) {
             }
         }
         else {
-            for(auto it : f->getCylinderVector()){
+            for(auto it : f->getCylinders()){
                 Bead* b1 = it->getFirstBead();
                 Bead* b2 = it->getSecondBead();
                 double kStretch =it->getMCylinder()->getStretchingConst();
@@ -70,7 +70,7 @@ void CamkiiStretching<FStretchingInteractionType>::computeForces() {
     
     for (auto f: Camkii::getCamkiis()) {
     
-        for(auto it : f->getCylinderVector()){
+        for(auto it : f->getCylinders()){
             
             Bead* b1 = it->getFirstBead();
             Bead* b2 = it->getSecondBead();
@@ -88,7 +88,7 @@ void CamkiiStretching<FStretchingInteractionType>::computeForcesAux() {
     
     for (auto f: Camkii::getCamkiis()) {
         
-        for(auto it : f->getCylinderVector()){
+        for(auto it : f->getCylinders()){
             
             Bead* b1 = it->getFirstBead();
             Bead* b2 = it->getSecondBead();
@@ -104,3 +104,4 @@ void CamkiiStretching<FStretchingInteractionType>::computeForcesAux() {
 template double CamkiiStretching<CamkiiStretchingHarmonic>::computeEnergy(double d);
 template void CamkiiStretching<CamkiiStretchingHarmonic>::computeForces();
 template void CamkiiStretching<CamkiiStretchingHarmonic>::computeForcesAux();
+#endif

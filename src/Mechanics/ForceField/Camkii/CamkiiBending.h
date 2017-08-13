@@ -1,4 +1,4 @@
-
+#ifdef CAMKII
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -10,7 +10,6 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-
 #ifndef MEDYAN_CamkiiBending_h
 #define MEDYAN_CamkiiBending_h
 
@@ -36,4 +35,5 @@ public:
     virtual const string getName() {return "Camkii Bending";}
 };
 
+#endif
 #endif
