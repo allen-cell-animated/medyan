@@ -1,0 +1,12 @@
+
+############################ SPECIES ###########################
+
+SPECIESFILAMENT: FC 0
+SPECIESPLUSEND: PC 0
+
+SPECIESMINUSEND: MC 0
+
+SPECIESBOUND: EC 0 
+
+########################### REACTIONS ##########################
+

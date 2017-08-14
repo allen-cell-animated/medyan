@@ -1,0 +1,95 @@
+##################################################
+##################### GEOMETRY ###################
+
+NDIM:                        3
+
+NX:                          2
+NY:                          2
+NZ:                          2 
+
+COMPARTMENTSIZEX:            500.0
+COMPARTMENTSIZEY:            500.0
+COMPARTMENTSIZEZ:            500.0
+
+MONOMERSIZE:                 2.0
+ 
+CYLINDERSIZE:                20.0
+
+BOUNDARYSHAPE:               CUBIC
+
+##################################################
+################### MECHANICS ####################
+
+### ALGORITHM ###
+CONJUGATEGRADIENT:           POLAKRIBIERE
+
+GRADIENTTOLERANCE:           1.0
+
+MAXDISTANCE:		       0.05
+LAMBDAMAX:		   	0.005
+
+### FILAMENTS ###
+
+FSTRETCHINGFFTYPE:           HARMONIC
+FSTRETCHINGK:                100.0
+
+FBENDINGFFTYPE:              COSINE
+FBENDINGK:                   672.5
+FBENDINGTHETA:               0.0   	 
+
+VOLUMEFFTYPE:               REPULSION
+VOLUMECUTOFF:               54.0
+
+VOLUMEK:                    1E5
+
+### BOUNDARY ###
+
+BOUNDARYFFTYPE:             REPULSIONEXP
+BOUNDARYCUTOFF:             200.0
+
+BOUNDARYINTERACTIONK:       41.0
+BOUNDARYSCREENLENGTH:       2.7
+
+##################################################
+################### CHEMISTRY ####################
+
+CHEMISTRYFILE:               chemistryinput-3.txt
+
+CALGORITHM:                  NRM
+NUMTOTALSTEPS:		     	 
+RUNTIME:                     100.0
+
+SNAPSHOTTIME:                10.0
+
+MINIMIZATIONTIME: 	     0.05
+NEIGHBORLISTTIME:	     0.05
+
+NUMDIFFUSINGSPECIES: 	     0
+NUMBULKSPECIES:		     0
+
+NUMFILAMENTTYPES:	     1
+
+NUMFILAMENTSPECIES:          1
+NUMPLUSENDSPECIES:           1
+NUMMINUSENDSPECIES:          1
+
+NUMBOUNDSPECIES:             1
+NUMLINKERSPECIES:            0
+NUMMOTORSPECIES:             0
+NUMBRANCHERSPECIES:          0
+
+NUMBINDINGSITES:             1
+
+##################################################
+############## DYNAMIC RATE CHANGING #############	   
+
+
+##################################################
+################# INITIALIZATION #################
+
+#NUMFILAMENTS:                5 
+#FILAMENTLENGTH:              30
+#FILAMENTTYPE: 		         0
+
+
+
