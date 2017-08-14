@@ -72,6 +72,12 @@ namespace mathfunc {
                     (v2[1]-v1[1])*(v2[1]-v1[1]) +
                     (v2[2]-v1[2])*(v2[2]-v1[2]));
     }
+    inline double twoPointDistance(const vector<double>&v1, double const *v2) {
+        
+        return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
+                    (v2[1]-v1[1])*(v2[1]-v1[1]) +
+                    (v2[2]-v1[2])*(v2[2]-v1[2]));
+    }
     //@}
     
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
