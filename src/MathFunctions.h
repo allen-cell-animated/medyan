@@ -58,6 +58,7 @@ namespace mathfunc {
         return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     }
     
+    //@{
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     inline double twoPointDistance(const vector<double>& v1, const vector<double>& v2) {
         
@@ -65,6 +66,14 @@ namespace mathfunc {
                     (v2[1]-v1[1])*(v2[1]-v1[1]) +
                     (v2[2]-v1[2])*(v2[2]-v1[2]));
     }
+    inline double twoPointDistance(double const *v1, const vector<double>&v2) {
+        
+        return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
+                    (v2[1]-v1[1])*(v2[1]-v1[1]) +
+                    (v2[2]-v1[2])*(v2[2]-v1[2]));
+    }
+    //@}
+    
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     /// ARRAY VERSION
     inline double twoPointDistance(double const *v1, double const *v2) {
@@ -104,6 +113,7 @@ namespace mathfunc {
                     ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
     }
     
+    //@{
     /// Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z2)
     inline vector<double> twoPointDirection(const vector<double>& v1,
                                             const vector<double>& v2) {
@@ -114,6 +124,25 @@ namespace mathfunc {
         tau[2] = invD * ( v2[2] - v1[2] );
         return tau;
     }
+    inline vector<double> twoPointDirection(double const *v1,
+                                            const vector<double>& v2) {
+        vector<double> tau (3, 0);
+        double invD = 1/twoPointDistance(v1, v2);
+        tau[0] = invD * ( v2[0] - v1[0] );
+        tau[1] = invD * ( v2[1] - v1[1] );
+        tau[2] = invD * ( v2[2] - v1[2] );
+        return tau;
+    }
+    inline void twoPointDirection(double *tau,
+                                  double const *v1,
+                                  double const *v2) {
+        
+        double invD = 1/twoPointDistance(v1, v2);
+        tau[0] = invD * ( v2[0] - v1[0] );
+        tau[1] = invD * ( v2[1] - v1[1] );
+        tau[2] = invD * ( v2[2] - v1[2] );
+    }
+    //@}
     
     /// Scalar product of two vectors v1(x,y,z) and v2(x,y,z)
     inline double dotProduct(const vector<double>& v1, const vector<double>& v2) {

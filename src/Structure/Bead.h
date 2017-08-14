@@ -123,6 +123,7 @@ public:
         _pinnedBeads.removeElement(this);
     }
     
+    const vector<double>& getPinPosition() { return pinnedPosition;}
     
     /// Get all pinned beads from subsystem
     static const vector<Bead*>& getPinnedBeads() {

@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 
 #include "BoundaryCylinderAttachmentHarmonic.h"
+#include "BoundaryCylinderAttachment.h"
 
 #include "Bead.h"
 
@@ -19,43 +20,97 @@
 
 using namespace mathfunc;
 
-double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr) {
+double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
+                                                  double *kattr, double *pins) {
     
-    double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
-    return 0.5 * kAttr * dist * dist;
+    
+    int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
+    int nint = n * Bead::getPinnedBeads().size();
+    
+    double *coord1, *pin1, dist, U_i;
+    double U = 0;
+    
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        pin1 = &pins[3 * beadSet[n * i]];
+        
+        dist = twoPointDistance(coord1, pin1);
+        U_i = 0.5 * kattr[i] * dist * dist;
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            BoundaryInteractions::_otherCulprit = Bead::getPinnedBeads()[i];
+            
+            return -1;
+        }
+        
+        U += U_i;
+    }
+    return U;
 }
 
-double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr, double d) {
+double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
+                                                  double *kattr, double *pins, double d) {
+
     
-    vector<double> zeros{0,0,0};
+    int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
+    int nint = n * Bead::getPinnedBeads().size();
     
-    double dist = twoPointDistanceStretched(b->coordinate, b->force, b->pinnedPosition, zeros, d);
-    return 0.5 * kAttr * dist * dist;
+    double *coord1, *pin1, *force1, *zero, dist, U_i;
+    double U = 0;
+    zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
+    
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        force1 = &f[3 * beadSet[n * i]];
+        
+        pin1 = &pins[3 * beadSet[n * i]];
+        
+        dist = twoPointDistanceStretched(coord1, force1, pin1, zero, d);
+        U_i = 0.5 * kattr[i] * dist * dist;
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            BoundaryInteractions::_otherCulprit = Bead::getPinnedBeads()[i];
+            
+            return -1;
+        }
+        
+        U += U_i;
+    }
+    return U;
 }
 
-void BoundaryCylinderAttachmentHarmonic::forces(Bead* b, double kAttr) {
+void BoundaryCylinderAttachmentHarmonic::forces(double *coord, double *f, int *beadSet,
+                                                double *kattr, double *pins) {
     
+    int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
+    int nint = n * Bead::getPinnedBeads().size();
     
-    double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
-    if(areEqual(dist, 0.0)) return;
+    double *coord1, *pin1, *force1, *dir, dist, f0;
+    dir = new double[3];
+    double U = 0;
     
-    auto dir = normalizeVector(twoPointDirection(b->coordinate, b->pinnedPosition));
-    double f0 = kAttr * dist;
-    
-    b->force[0] += f0 * dir[0];
-    b->force[1] += f0 * dir[1];
-    b->force[2] += f0 * dir[2];
-}
-
-void BoundaryCylinderAttachmentHarmonic::forcesAux(Bead* b, double kAttr) {
-    
-    double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
-    if(areEqual(dist, 0.0)) return;
-    
-    auto dir = normalizeVector(twoPointDirection(b->coordinate, b->pinnedPosition));
-    double f0 = kAttr * dist;
-    
-    b->forceAux[0] += f0 * dir[0];
-    b->forceAux[1] += f0 * dir[1];
-    b->forceAux[2] += f0 * dir[2];
+    for(int i = 0; i < nint; i += 1) {
+        
+        coord1 = &coord[3 * beadSet[n * i]];
+        force1 = &f[3 * beadSet[n * i]];
+        pin1 = &pins[3 * beadSet[n * i]];
+        
+        dist = twoPointDistance(coord1, pin1);
+        if(areEqual(dist, 0.0)) return;
+        
+        twoPointDirection(dir, coord1, pin1);
+        f0 = kattr[i] * dist;
+        
+        force1[0] = f0 * dir[0];
+        force1[1] = f0 * dir[1];
+        force1[2] = f0 * dir[2];
+    }
 }

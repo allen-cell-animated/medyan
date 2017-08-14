@@ -41,6 +41,10 @@ private:
     double *krep;
     double *slen;
     
+    ///Array describing the number of neighbors for each boundary element (num boundary elements long)
+    int *nneighbors;
+    
+    
 public:
     
     ///Array describing indexed set of interactions

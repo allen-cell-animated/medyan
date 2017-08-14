@@ -75,19 +75,30 @@ public:
     ///update the coordinates of the boundary element
     virtual void updateCoords(const vector<double> newCoords) = 0;
     
+    //@{
     /// Implement for all boundary elements
     /// Returns the distance from a given point to this boundary element
     /// @return - 1) positive number if point is within boundary element
     ///           2) Negative number if point is outside boundary element
     ///           3) Infinity if point is not in domain of this boundary element
     virtual double distance(const vector<double>& point) = 0;
+    virtual double distance(double const *point) = 0;
+    //@}
     
+    //@{
     /// Returns stretched distance, similar to distance above
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force, double d) = 0;
+    virtual double stretchedDistance(double const *point,
+                                     double const *force, double d) = 0;
+    //@}
     
+    
+    //@{
     /// Returns normal vector of point to plane
     virtual const vector<double> normal(const vector<double> &point) = 0;
+    virtual const vector<double> normal(const double *point) = 0;
+    //@}
     
     //@{
     /// Getter for mechanical parameters

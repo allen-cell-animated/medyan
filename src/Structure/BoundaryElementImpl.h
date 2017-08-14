@@ -54,6 +54,12 @@ public:
                 sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
     }
     
+    virtual double distance(double const *point) {
+        
+        return (_a * point[0] + _b * point[1] + _c * point[2] + _d) /
+        sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
+    }
+    
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force,
                                      double d) {
@@ -65,8 +71,23 @@ public:
         return distance(movedPoint);
         
     }
+    virtual double stretchedDistance(double const *point,
+                                     double const *force,
+                                     double d) {
+        
+        
+        vector<double> movedPoint = {point[0] + d*force[0],
+                                     point[1] + d*force[1],
+                                     point[2] + d*force[2]};
+        return distance(movedPoint);
+        
+    }
     
     virtual const vector<double> normal(const vector<double>& point) {
+        
+        return vector<double>{_a, _b, _c};
+    }
+    virtual const vector<double> normal(double const *point) {
         
         return vector<double>{_a, _b, _c};
     }
@@ -102,6 +123,10 @@ public:
         
         return _radius - twoPointDistance(_coords, point);
     }
+    virtual double distance(double const *point) {
+        
+        return _radius - twoPointDistance(_coords, point);
+    }
     
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force,
@@ -114,7 +139,23 @@ public:
         return distance(movedPoint);
         
     }
+    virtual double stretchedDistance(double const *point,
+                                     double const *force,
+                                     double d) {
+        
+        vector<double> movedPoint{point[0] + d * force[0],
+                                  point[1] + d * force[1],
+                                  point[2] + d * force[2]};
+        
+        return distance(movedPoint);
+        
+    }
+    
     virtual const vector<double> normal(const vector<double>& point) {
+        
+        return twoPointDirection(point, _coords);
+    }
+    virtual const vector<double> normal(double const *point) {
         
         return twoPointDirection(point, _coords);
     }
@@ -157,6 +198,8 @@ public:
         return _radius - twoPointDistance({_coords[0],_coords[1], 0},
                                           {  point[0],  point[1], 0});
     }
+    ///TODO
+    virtual double distance(double const *point) { return 0.0; }
     
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force,
@@ -175,12 +218,19 @@ public:
         return distance(movedPoint);
         
     }
+    ///TODO
+    virtual double stretchedDistance(double const *point,
+                                     double const *force,
+                                     double d) {return 0.0;}
     
     virtual const vector<double> normal(const vector<double>& point) {
         
         return twoPointDirection({point[0],  point[1], 0},
                                {_coords[0],_coords[1], 0});
     }
+    
+    ///TODO
+    virtual const vector<double> normal(double const *point) {return vector<double>{};};
     
     virtual void updateCoords(const vector<double> newCoords) {
         
@@ -217,6 +267,9 @@ public:
         return _radius - twoPointDistance(_coords, point);
     }
     
+    ///TODO
+    virtual double distance(double const *point) { return 0.0; }
+    
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force,
                                      double d) {
@@ -234,10 +287,18 @@ public:
         
     }
     
+    ///TODO
+    virtual double stretchedDistance(double const *point,
+                                     double const *force,
+                                     double d) {return 0.0;}
+    
     virtual const vector<double> normal(const vector<double>& point) {
         
         return twoPointDirection(point, _coords);
     }
+    
+    ///TODO
+    virtual const vector<double> normal(double const *point) {return vector<double>{};};
     
     virtual void updateCoords(const vector<double> newCoords) {
         

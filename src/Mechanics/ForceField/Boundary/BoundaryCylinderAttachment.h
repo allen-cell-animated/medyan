@@ -38,19 +38,30 @@ class BoundaryCylinderAttachment : public BoundaryInteractions {
     
 private:
     BAttachmentInteractionType _FFType;
+    
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *kattr;
+    double *pins; ///< coordinates of pins for each bead
+    
 public:
     
-    /// Constructor
-    BoundaryCylinderAttachment() {}
+    ///Array describing indexed set of interactions
+    ///For filaments, this is a 1-point potential (only the active bead is updated)
+    const static int n = 1;
     
-    virtual double computeEnergy(double d);
+    virtual void vectorize();
+    virtual void deallocate();
     
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double *coord, double *f, double d);
+    //@{
+    /// Tepulsive force calculation
+    virtual void computeForces(double *coord, double *f);
+    virtual void computeLoadForces() {};
+    //@}
     
-    virtual void computeLoadForces() {}
-    
-    /// Just return null - no neighbor list here
+    /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return nullptr;}
     
     virtual const string getName() {return "Boundary-Cylinder Attachment";}
