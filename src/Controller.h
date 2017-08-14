@@ -73,6 +73,9 @@ private:
     ChemistryAlgorithm _cAlgorithm;
     vector<tuple<short, vector<double>, vector<double>>> fil;
     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+    vector<Compartment*> activatecompartments;
+     multimap<int,Compartment*> fCompmap;
+     multimap<int,Compartment*> bCompmap;
     //@}
     
     ///INITIALIZATION HELPER FUNCTIONS
@@ -90,7 +93,11 @@ private:
     
     /// Move the boundary based on the timestep
     void moveBoundary(double deltaTau);
-    
+    ///Activate/deactivate compartments based on the longest filament (along Xaxis).
+    void activatedeactivateComp();
+    void ControlfrontEndCompobsolete();
+    void ControlbackEndCompobsolete();
+    void ControlfrontbackEndComp();
     /// Update the positions of all elements in the system
     void updatePositions();
     

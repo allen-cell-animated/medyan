@@ -150,7 +150,8 @@ public:
     /// Transfer all species copy numbers from this compartment to neighboring
     /// active compartments. If no neighboring active compartments are present,
     /// throw an error.
-    virtual void transferSpecies();
+    virtual void transferSpecies(int i);
+    virtual void shareSpecies(int i);
     
     
     /// Removes all reactions from this compartment, diffusing and internal
