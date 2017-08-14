@@ -48,7 +48,7 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
             else {
                 for (auto it = f->getCylinderVector().begin()+1;
                           it != f->getCylinderVector().end(); it++){
-                    
+                        
                     auto it2 = it - 1;
                     Bead* b1 = (*it2)->getFirstBead();
                     Bead* b2 = (*it)->getFirstBead();

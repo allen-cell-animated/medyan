@@ -368,11 +368,264 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     cout << "Done." << endl;
 }
 
+void Controller::activatedeactivateComp(){
+//    std::cout<<"BEFORE UPDATION (CYCLE BEGINS)"<<endl;
+//    auto counter=0;
+//    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+//        counter++;
+//        std::cout<<C->isActivated()<<" ";
+//        if(counter==SysParams::Geometry().NX)
+//            std::cout<<endl;
+//    }
+//    std::cout<<endl;
+    fCompmap.clear();
+    bCompmap.clear();
+    activatecompartments.clear();
+
+    //ControlfrontEndComp();
+    //ControlbackEndComp();
+    ControlfrontbackEndComp();
+        std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+    for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
+    {
+        if(!(*it)->isActivated())
+           _cController->activate(*it);
+    }
+    //deactivate compartments starting from the right extreme
+    for (std::multimap<int,Compartment*>::reverse_iterator it=fCompmap.rbegin(); it!=fCompmap.rend(); ++it)
+        _cController->deactivate(it->second);
+    //deactivate compartments starting from the left extreme
+    for (std::multimap<int,Compartment*>::iterator it=bCompmap.begin(); it!=bCompmap.end(); ++it)
+        _cController->deactivate(it->second);
+    fCompmap.clear();
+    bCompmap.clear();
+        std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+    //std::cout<<"AFTERUPDATION ";
+   // auto counter=0;
+  //  for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+     //   counter++;
+        //std::cout<<C->isActivated()<<" ";
+//        if(counter==SysParams::Geometry().NX)
+//            std::cout<<endl;
+   // }
+  //  std::cout<<endl;
+}
+void Controller::ControlfrontbackEndComp(){
+    Compartment* maxcomp=NULL;
+    Bead* maxbead=NULL;
+    Compartment* mincomp=NULL;
+    Bead* minbead=NULL;
+    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+        auto cyls=C->getCylinders();
+        if(cyls.size()>0){
+            if(maxcomp==NULL)
+                maxcomp=C;
+            else{
+                auto mcoord=maxcomp->coordinates();
+                auto ccord=C->coordinates();
+                if(mcoord[SysParams::Mechanics().transfershareaxis]<ccord[SysParams::Mechanics().transfershareaxis])
+                    maxcomp=C;
+            }
+            if(mincomp==NULL)
+                mincomp=C;
+            else{
+                auto mcoord=mincomp->coordinates();
+                auto ccord=C->coordinates();
+                if(mcoord[SysParams::Mechanics().transfershareaxis]>ccord[SysParams::Mechanics().transfershareaxis])
+                    mincomp=C;
+            }
+        }
+    }
+    // front end
+    auto cmaxcomp=maxcomp->coordinates();
+    for(auto C:maxcomp->getNeighbours()){
+        auto cC=C->coordinates();
+        if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis])
+            maxcomp=C;
+    }
+    cmaxcomp=maxcomp->coordinates();
+    assert((maxcomp!=NULL) && "Non existent maxcomp. Exiting.");
+    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+        auto cC=C->coordinates();
+        //        std::cout<<cC[0]<<" "<<cC[1]<<" "<<cC[2]<<" "<<C->isActivated()<<endl;
+        if(cC[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
+            if(C->isActivated())
+                fCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
+        }
+        else{
+            if(!(C->isActivated()))
+                activatecompartments.push_back(C);
+        }
+    }
+    //back end
+    auto cmincomp=mincomp->coordinates();
+    for(auto C:mincomp->getNeighbours()){
+        auto cC=C->coordinates();
+        if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis])
+            mincomp=C;
+    }
+    cmincomp=mincomp->coordinates();
+    assert(mincomp!=NULL && "Non existent mincomp. Exiting.");
+    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+        auto cC=C->coordinates();
+        if(cC[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
+            auto it = std::find(activatecompartments.begin(), activatecompartments.end(), C);
+            if(it!=activatecompartments.end())
+                activatecompartments.erase(it);
+            if(C->isActivated()){
+                bCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
+            }
+        }
+    }
+    std::cout<<"Maxcomp "<<maxcomp->coordinates()[0]<<" ";
+    std::cout<<"Mincomp "<<mincomp->coordinates()[0]<<endl;
+}
+void Controller::ControlfrontEndCompobsolete(){
+    Compartment* maxcomp=NULL;
+    //Bead* maxbead;
+    Filament* maxfil;
+//    for(auto b:Bead::getBeads()){
+ //       auto comp=b->getCompartment();
+ //       if(maxcomp!=NULL){
+  //          auto ccomp=comp->coordinates();
+   //         auto cmaxcomp=maxcomp->coordinates();
+    //        if(ccomp[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
+     //           maxcomp=comp;
+      //          maxbead=b;
+       //         cmaxcomp=maxcomp->coordinates();
+        //
+         //       for(auto C:comp->getNeighbours()){
+          //          auto cC=C->coordinates();
+           //         if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
+            //            maxcomp=C;
+             //           maxbead=b;
+              //      }
+               // }
+           // }
+
+            
+  //      }
+   //     else{
+    //        maxcomp=comp;
+     //       maxbead=b;
+      //       auto cmaxcomp=maxcomp->coordinates();
+       //     for(auto C:comp->getNeighbours()){
+       //         auto cC=C->coordinates();
+        //        if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
+         //           maxcomp=C;
+          //          maxbead=b;
+           //     }
+
+            // }}}
+    for(auto f:Filament::getFilaments()){
+        auto comp=f->getPlusEndCylinder()->getSecondBead()->getCompartment();
+        if(maxcomp!=NULL){
+            auto ccomp=comp->coordinates();
+            auto cmaxcomp=maxcomp->coordinates();
+            if(ccomp[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
+                maxcomp=comp;
+                maxfil=f;
+                cmaxcomp=maxcomp->coordinates();
+                
+                for(auto C:comp->getNeighbours()){
+                    auto cC=C->coordinates();
+                    if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
+                        maxcomp=C;
+                        maxfil=f;
+                    }
+                }}}
+        
+        else{
+            maxcomp=comp;
+            maxfil=f;
+            auto cmaxcomp=maxcomp->coordinates();
+            for(auto C:comp->getNeighbours()){
+                auto cC=C->coordinates();
+                if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
+                    maxcomp=C;
+                    maxfil=f;
+                }
+            }}
+    }
+    
+//    auto x=maxcomp->coordinates();
+//        std::cout<<"PLUS END "<<maxfil->getPlusEndCylinder()->getSecondBead()->coordinate[0]<<endl;
+//        std::cout<<"MAXCOMP "<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
+    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+        auto cC=C->coordinates();
+//        std::cout<<cC[0]<<" "<<cC[1]<<" "<<cC[2]<<" "<<C->isActivated()<<endl;
+        auto cmaxcomp=maxcomp->coordinates();
+        if(cC[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
+            if(C->isActivated())
+                fCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
+        }
+        
+        else{
+            if(!(C->isActivated()))
+                activatecompartments.push_back(C);
+        }
+    }
+
+}
+
+void Controller::ControlbackEndCompobsolete(){
+    Compartment* mincomp=NULL;
+    Filament* minfil;
+    for(auto f:Filament::getFilaments()){
+        auto comp=f->getMinusEndCylinder()->getFirstBead()->getCompartment();
+        if(mincomp!=NULL){
+            auto ccomp=comp->coordinates();
+            auto cmincomp=mincomp->coordinates();
+            if(ccomp[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
+                mincomp=comp;
+                minfil=f;
+                cmincomp=mincomp->coordinates();
+                
+                for(auto C:comp->getNeighbours()){
+                    auto cC=C->coordinates();
+                    if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis]){
+                        mincomp=C;
+                        minfil=f;
+                    }
+                }}}
+        
+        else{
+            mincomp=comp;
+            minfil=f;
+            auto cmincomp=mincomp->coordinates();
+            for(auto C:comp->getNeighbours()){
+                auto cC=C->coordinates();
+                if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis]){
+                    mincomp=C;
+                    minfil=f;
+                }
+            }}
+    }
+    
+//    auto x=mincomp->coordinates();
+//        std::cout<<"MINUS END "<<minfil->getMinusEndCylinder()->getFirstBead()->coordinate[0]<<endl;
+//        std::cout<<"MINCOMP "<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
+    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+        auto cC=C->coordinates();
+        auto cmincomp=mincomp->coordinates();
+        if(cC[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
+            auto it = std::find(activatecompartments.begin(), activatecompartments.end(), C);
+            if(it!=activatecompartments.end())
+            activatecompartments.erase(it);
+            if(C->isActivated()){
+                    bCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
+            }
+        }
+    }
+    
+}
+
+
 void Controller::moveBoundary(double deltaTau) {
     
     //calculate distance to move
     double dist = SysParams::Boundaries().moveSpeed * deltaTau;
-    
+    if(abs(dist)>0){
     //move it
     if(tau() >= SysParams::Boundaries().moveStartTime &&
        tau() <= SysParams::Boundaries().moveEndTime)
@@ -391,7 +644,10 @@ void Controller::moveBoundary(double deltaTau) {
             else _cController->deactivate(C);
         }
     }
+    }
 }
+
+
 
 void Controller::executeSpecialProtocols() {
     
@@ -592,6 +848,8 @@ void Controller::run() {
     if(!areEqual(_runTime, 0.0)) {
     
 #ifdef CHEMISTRY
+        //activate/deactivate compartments
+        activatedeactivateComp();
         while(tau() <= _runTime) {
             //run ccontroller
             if(!_cController->run(_minimizationTime)) {
@@ -611,6 +869,7 @@ void Controller::run() {
                 updatePositions();
 
                 tauLastMinimization = 0.0;
+
             }
             
             if(tauLastSnapshot >= _snapshotTime) {
@@ -635,12 +894,12 @@ void Controller::run() {
                 tauLastNeighborList = 0.0;
             }
             
+            //activate/deactivate compartments
+            activatedeactivateComp();
             //move the boundary
             moveBoundary(tau() - oldTau);
-            
             //special protocols
             executeSpecialProtocols();
-            
             oldTau = tau();
         }
 #endif
@@ -696,7 +955,8 @@ void Controller::run() {
             
             //move the boundary
             moveBoundary(tau() - oldTau);
-            
+            //activate/deactivate compartments
+            activatedeactivateComp();
             //special protocols
             executeSpecialProtocols();
         }
