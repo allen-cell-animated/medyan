@@ -84,6 +84,7 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
         
         U += U_i;
     }
+    delete zero;
     return U;
 }
 
@@ -95,7 +96,6 @@ void BoundaryCylinderAttachmentHarmonic::forces(double *coord, double *f, int *b
     
     double *coord1, *pin1, *force1, *dir, dist, f0;
     dir = new double[3];
-    double U = 0;
     
     for(int i = 0; i < nint; i += 1) {
         
@@ -113,4 +113,5 @@ void BoundaryCylinderAttachmentHarmonic::forces(double *coord, double *f, int *b
         force1[1] = f0 * dir[1];
         force1[2] = f0 * dir[2];
     }
+    delete dir;
 }
