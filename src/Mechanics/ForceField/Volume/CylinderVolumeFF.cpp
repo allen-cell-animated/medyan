@@ -42,14 +42,28 @@ void CylinderVolumeFF::whoIsCulprit() {
     cout << endl;
 }
 
-double CylinderVolumeFF::computeEnergy(double d) {
+void CylinderVolumeFF::vectorize() {
+    
+    for (auto &interaction : _cylinderVolInteractionVector)
+        interaction->vectorize();
+}
+
+void CylinderVolumeFF::cleanup() {
+    
+    for (auto &interaction : _cylinderVolInteractionVector)
+        interaction->deallocate();
+}
+
+
+
+double CylinderVolumeFF::computeEnergy(double *coord, double *f, double d) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _cylinderVolInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(coord, f, d);
                 
         if(U_i <= -1) {
             //set culprit and return
@@ -62,17 +76,12 @@ double CylinderVolumeFF::computeEnergy(double d) {
     return U;
 }
 
-void CylinderVolumeFF::computeForces() {
+void CylinderVolumeFF::computeForces(double *coord, double *f) {
     
     for (auto &interaction : _cylinderVolInteractionVector)
-        interaction->computeForces();
+        interaction->computeForces(coord, f);
 }
 
-void CylinderVolumeFF::computeForcesAux() {
-    
-    for (auto &interaction : _cylinderVolInteractionVector)
-        interaction->computeForcesAux();
-}
 
 vector<NeighborList*> CylinderVolumeFF::getNeighborLists() {
     

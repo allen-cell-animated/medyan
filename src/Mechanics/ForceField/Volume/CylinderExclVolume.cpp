@@ -18,104 +18,82 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
+#include "MathFunctions.h"
+
+using namespace mathfunc;
+
+
 template <class CVolumeInteractionType>
-double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
+void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     
-    double U = 0;
-    double U_i;
+    //count interactions
+    int nint = 0;
     
     for(auto ci : Cylinder::getCylinders()) {
-        
         //do not calculate exvol for a non full length cylinder
         if(!ci->isFullLength()) continue;
-        
-        for(auto &cn : _neighborList->getNeighbors(ci)) {
-            
-            //do not calculate exvol for a branching cylinder
-            if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci) continue;
-            
-            Bead* b1 = ci->getFirstBead();
-            Bead* b2 = ci->getSecondBead();
-            Bead* b3 = cn->getFirstBead();
-            Bead* b4 = cn->getSecondBead();
-            double kRepuls = ci->getMCylinder()->getExVolConst();
-            
-            if (d == 0.0)
-                U_i = _FFType.energy(b1, b2, b3, b4, kRepuls);
-            else
-                U_i = _FFType.energy(b1, b2, b3, b4, kRepuls, d);
-            
-            if(fabs(U_i) == numeric_limits<double>::infinity()
-               || U_i != U_i || U_i < -1.0) {
-                
-                //set culprits and exit
-                _cylinderCulprit1 = ci;
-                _cylinderCulprit2 = cn;
-                
-                return -1;
-            }
-            else
-                U += U_i;
-        }
+        for(auto &cn : _neighborList->getNeighbors(ci))
+            nint++;
     }
     
-    return U;
-}
-
-template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
-
-    for(auto ci : Cylinder::getCylinders()) {
+    numInteractions = nint;
+    
+    beadSet = new int[n * nint];
+    krep = new double[nint];
+    
+    
+    int nc = Cylinder::getCylinders().size();
+    int i = 0;
+    
+    for (i = 0; i < nc; i++) {
         
-        //do not calculate exvol for a non full length cylinder
-        if(!ci->isFullLength()) continue;
+        auto ci = Cylinder::getCylinders()[i];
+        int nn = _neighborList->getNeighbors(ci).size();
         
-        for(auto &cn : _neighborList->getNeighbors(ci)) {
+        for (int ni = 0; ni < nn; ni++) {
             
-            //do not calculate exvol for a branching cylinder
-            if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci) continue;
+            auto cin = _neighborList->getNeighbors(ci)[ni];
             
-            Bead* b1 = ci->getFirstBead();
-            Bead* b2 = ci->getSecondBead();
-            Bead* b3 = cn->getFirstBead();
-            Bead* b4 = cn->getSecondBead();
-            double kRepuls = ci->getMCylinder()->getExVolConst();
+            beadSet[n * (i + ni)] = ci->getFirstBead()->_dbIndex;
+            beadSet[n * (i + ni) + 1] = ci->getSecondBead()->_dbIndex;
+            beadSet[n * (i + ni) + 2] = cin->getFirstBead()->_dbIndex;
+            beadSet[n * (i + ni) + 3] = cin->getSecondBead()->_dbIndex;
             
-            _FFType.forces(b1, b2, b3, b4, kRepuls);
+            krep[i + ni] = ci->getMCylinder()->getExVolConst();
         }
     }
 }
 
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux() {
+void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
+    
+    delete beadSet;
+    delete krep;
+}
 
-    for(auto ci : Cylinder::getCylinders()) {
-        
-        //do not calculate exvol for a non full length cylinder
-        if(!ci->isFullLength()) continue;
-        
-        for(auto &cn : _neighborList->getNeighbors(ci)) {
-            
-            //do not calculate exvol for a branching cylinder
-            if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci) continue;
-            
-            Bead* b1 = ci->getFirstBead();
-            Bead* b2 = ci->getSecondBead();
-            Bead* b3 = cn->getFirstBead();
-            Bead* b4 = cn->getSecondBead();
-            double kRepuls = ci->getMCylinder()->getExVolConst();
-            
-            _FFType.forcesAux(b1, b2, b3, b4, kRepuls);
-        }
-    }
+
+template <class CVolumeInteractionType>
+double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, double *f, double d) {
+    
+    
+    double U_i = 0;
+    
+    if (d == 0.0)
+        U_i = _FFType.energy(coord, f, beadSet, krep);
+    else
+        U_i = _FFType.energy(coord, f, beadSet, krep, d);
+    
+    return U_i;
+}
+
+template <class CVolumeInteractionType>
+void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, double *f) {
+
+    _FFType.forces(coord, f, beadSet, krep);
 }
 
 ///Template specializations
-template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(double d);
-template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces();
-template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForcesAux();
+template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(double *coord, double *f, double d);
+template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(double *coord, double *f);
 

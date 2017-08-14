@@ -69,7 +69,7 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double * f, int *bead
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
     int nint = n * MotorGhost::getMotorGhosts().size();
     
-    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist;
+    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist, U_i;
     double *v1 = new double[3];
     double *v2 = new double[3];
     
@@ -91,7 +91,18 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double * f, int *bead
         midPointCoordinateStretched(v2, coord3, f3, coord4, f4, pos2[i], d);
         
         dist = twoPointDistance(v1,  v2) - eql[i];
-        U += 0.5 * kstr[i] * dist * dist;
+        U_i = 0.5 * kstr[i] * dist * dist;
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_i != U_i || U_i < -1.0) {
+            
+            //set culprit and return
+            MotorGhostInteractions::_motorCulprit = MotorGhost::getMotorGhosts()[i];
+            
+            return -1;
+        }
+        
+        U += U_i;
     }
     delete v1;
     delete v2;
@@ -151,9 +162,6 @@ void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet
         f4[0] +=   f0 * ( v1[0] - v2[0] ) * (pos2[i]);
         f4[1] +=   f0 * ( v1[1] - v2[1] ) * (pos2[i]);
         f4[2] +=   f0 * ( v1[2] - v2[2] ) * (pos2[i]);
-        
-        //assign stretch force
-        Linker::getLinkers()[i]->getMLinker()->stretchForce = f0;
     }
     delete v1;
     delete v2;

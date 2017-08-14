@@ -32,15 +32,29 @@ private:
     CVolumeInteractionType _FFType;
     CylinderCylinderNL* _neighborList;  ///< Neighbor list of cylinders
     
+    ///Array describing the constants in calculation
+    int *beadSet;
+    double *krep;
+    
 public:
+    ///Array describing indexed set of interactions
+    ///For volume, this is a 4-bead potential
+    const static int n = 4;
+    static int numInteractions;
+    
     ///Constructor
     CylinderExclVolume() {
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
     }
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    virtual double computeEnergy(double *coord, double *f, double d);
+    //@{
+    /// This repulsive force calculation also updates load forces
+    /// on beads within the interaction range.
+    virtual void computeForces(double *coord, double *f);
 
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}

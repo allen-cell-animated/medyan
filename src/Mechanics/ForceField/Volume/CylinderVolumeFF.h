@@ -37,12 +37,14 @@ public:
     /// Initialize the volume forcefields
     CylinderVolumeFF(string& interaction);
     
-    virtual string getName() {return "Cylinder Volume";}
+    virtual void vectorize();
+    virtual void cleanup();
+    
+    virtual string getName() {return "Excluded Volume";}
     virtual void whoIsCulprit();
-
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     

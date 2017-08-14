@@ -25,20 +25,22 @@ class CylinderVolumeInteractions {
 
 friend class CylinderVolumeFF;
     
-protected:
+public:
     //@{
     /// The cylinder culprits in the case of an error
-    Cylinder* _cylinderCulprit1 = nullptr;
-    Cylinder* _cylinderCulprit2 = nullptr;
+    static Cylinder* _cylinderCulprit1;
+    static Cylinder* _cylinderCulprit2;
     //@}
     
-public:
+    ///Vectorize the bead interactions for minimization
+    virtual void vectorize() = 0;
+    ///Deallocate the vectorized data
+    virtual void deallocate() = 0;
+    
     /// Compute the energy of this interaction
-    virtual double computeEnergy(double d) = 0;
+    virtual double computeEnergy(double *coord, double *f, double d) = 0;
     /// Compute the forces of this interaction
-    virtual void computeForces() = 0;
-    /// Compute the auxiliary forces of this interaction
-    virtual void computeForcesAux() = 0;
+    virtual void computeForces(double *coord, double *f) = 0;
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() = 0;
