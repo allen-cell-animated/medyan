@@ -1,3 +1,5 @@
+#ifdef CAMKII
+
 //
 //  TestController.cpp
 //  MEDYAN
@@ -184,3 +186,4 @@ void TestController::run() {
     
     cout << "Done with simulation!" << endl;
 }
+#endif

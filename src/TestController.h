@@ -1,3 +1,4 @@
+#ifdef CAMKII
 //
 //  TestController.hpp
 //  MEDYAN
@@ -25,3 +26,4 @@ public:
 };
 
 #endif /* TestController_hpp */
+#endif
