@@ -32,7 +32,7 @@ namespace mathfunc {
         v[0] /= norm; v[1] /= norm; v[2] /= norm;
     }
     
-    /// Return normalized vector
+    /// Return normalized vector not in place
     inline vector<double> normalizeVector(const vector<double>& v) {
         
         double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
@@ -54,6 +54,11 @@ namespace mathfunc {
     
     /// Get the magnitude of a vector
     inline double magnitude(const vector<double>& v) {
+        
+        return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+    }
+    ///ARRAY VERSION
+    inline double magnitude(double const *v) {
         
         return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     }
@@ -326,6 +331,16 @@ namespace mathfunc {
         
         return v;
     };
+    /// Vector product of two vectors v1[x,y,z] and v2[x,y,z].
+    /// ARRAY VERSION
+    inline void crossProduct(double *cp,
+                             double const *v1,
+                             double const *v2) {
+        
+        cp[0] = v1[1]*v2[2] - v1[2]*v2[1];
+        cp[1] = v1[2]*v2[0] - v1[0]*v2[2];
+        cp[2] = v1[0]*v2[1] - v1[1]*v2[0];
+    };
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
     inline vector<double> crossProductStretched(const vector<double>& v1,
@@ -414,27 +429,166 @@ namespace mathfunc {
 
         return areEqual(magnitude(crossProduct(v1,v2)), 0.0);
     }
+    /// ARRAY VERSION
+    inline bool areParallel(double const *p1, double const *p2,
+                            double const *p3, double const *p4) {
+        
+        double *v1 = new double[3];
+        double *v2 = new double[3];
+        double *cp = new double[3];
+        
+        v1[0] = p2[0] - p1[0];
+        v1[1] = p2[1] - p1[1];
+        v1[2] = p2[2] - p1[2];
+        
+        v2[0] = p4[0] - p3[0];
+        v2[1] = p4[1] - p3[1];
+        v2[2] = p4[2] - p3[2];
+        
+        crossProduct(cp, v1, v2);
+        
+        auto retVal = areEqual(magnitude(cp), 0.0);
+        delete v1, v2, cp;
+        
+        return retVal;
+    }
     
     /// Returns true if two vectors (p1->p2 and p3->p4) are in the same plane
-    inline bool areInPlane(const vector<double>& p1, const vector<double>& p2,
-                           const vector<double>& p3, const vector<double>& p4) {
+    /// ARRAY VERSION
+    inline bool areInPlane(double const *p1, double const *p2,
+                           double const *p3, double const *p4) {
         
-        auto v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
-        auto v2 = {p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]};
-        auto v3 = {p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2]};
+        double *v1 = new double[3];
+        double *v2 = new double[3];
+        double *v3 = new double[3];
+        double *cp = new double[3];
         
-        auto cp = crossProduct(v1, v2);
+        v1[0] = p2[0] - p1[0];
+        v1[1] = p2[1] - p1[1];
+        v1[2] = p2[2] - p1[2];
         
-        return areEqual(dotProduct(v3, cp), 0.0);
+        v2[0] = p3[0] - p1[0];
+        v2[1] = p3[1] - p1[1];
+        v2[2] = p3[2] - p1[2];
+        
+        v3[0] = p4[0] - p1[0];
+        v3[1] = p4[1] - p1[1];
+        v3[2] = p4[2] - p1[2];
+        
+        crossProduct(cp, v1, v2);
+        
+        auto retVal = areEqual(dotProduct(v3, cp), 0.0);
+        delete v1, v2, cp;
+        
+        return retVal;
     }
     
     /// Function to move bead out of plane by specified amount
-    vector<double> movePointOutOfPlane(const vector<double>& p1,
-                                       const vector<double>& p2,
-                                       const vector<double>& p3,
-                                       const vector<double>& p4,
-                                       int i, double d);
+    inline vector<double> movePointOutOfPlane(const vector<double>& p1,
+                                              const vector<double>& p2,
+                                              const vector<double>& p3,
+                                              const vector<double>& p4,
+                                              int i, double d) {
+        vector<double> norm;
+        vector<double> v1;
+        vector<double> v2;
+        
+        //get plane
+        v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
+        v2 = {p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]};
+        
+        norm = normalizeVector(crossProduct(v1, v2));
+        
+        //move bead 1
+        if (i == 1){
+            vector<double> newP1;
+            newP1.push_back(p1[0] + norm[0]*d);
+            newP1.push_back(p1[1] + norm[1]*d);
+            newP1.push_back(p1[2] + norm[2]*d);
+            return newP1;
+        }
+        
+        //move bead 2
+        else if (i == 2){
+            vector<double> newP2;
+            newP2.push_back(p2[0] + norm[0]*d);
+            newP2.push_back(p2[1] + norm[1]*d);
+            newP2.push_back(p2[2] + norm[2]*d);
+            return newP2;
+        }
+        
+        //move bead 3
+        else if (i == 3){
+            vector<double> newP3;
+            newP3.push_back(p3[0] + norm[0]*d);
+            newP3.push_back(p3[1] + norm[1]*d);
+            newP3.push_back(p3[2] + norm[2]*d);
+            return newP3;
+        }
+        
+        //move bead 4
+        else {
+            vector<double> newP4;
+            newP4.push_back(p4[0] + norm[0]*d);
+            newP4.push_back(p4[1] + norm[1]*d);
+            newP4.push_back(p4[2] + norm[2]*d);
+            return newP4;
+        }
+    }
     
+    ///IN-PLACE ARRAY VERSION
+    inline void movePointOutOfPlane(double *p1,
+                                    double *p2,
+                                    double *p3,
+                                    double *p4,
+                                    int i, double d) {
+        
+        double *norm = new double[3];
+        double *v1 = new double[3];
+        double *v2 = new double[3];
+        
+        //get plane
+        v1[0] = p2[0] - p1[0];
+        v1[1] = p2[1] - p1[1];
+        v1[2] = p2[2] - p1[2];
+        
+        v2[0] = p3[0] - p2[0];
+        v2[1] = p3[1] - p2[1];
+        v2[2] = p3[2] - p2[2];
+        
+        crossProduct(norm,v1,v2);
+        normalizeVector(norm);
+        
+        //move bead 1
+        if (i == 1){
+
+            p1[0] = (p1[0] + norm[0]*d);
+            p1[1] = (p1[1] + norm[1]*d);
+            p1[2] = (p1[2] + norm[2]*d);
+        }
+        
+        //move bead 2
+        else if (i == 2){
+            p2[0] = (p2[0] + norm[0]*d);
+            p2[1] = (p2[1] + norm[1]*d);
+            p2[2] = (p2[2] + norm[2]*d);
+        }
+        
+        //move bead 3
+        else if (i == 3){
+            p3[0] = (p3[0] + norm[0]*d);
+            p3[1] = (p3[1] + norm[1]*d);
+            p3[2] = (p3[2] + norm[2]*d);
+        }
+        
+        //move bead 4
+        else {
+            p4[0] = (p4[0] + norm[0]*d);
+            p4[1] = (p4[1] + norm[1]*d);
+            p4[2] = (p4[2] + norm[2]*d);
+        }
+        delete norm, v1, v2;
+    }
     
     /// Function to create a initial branching point and direction, given an
     /// initial normal vector and point.

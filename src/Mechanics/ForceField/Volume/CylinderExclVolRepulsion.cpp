@@ -80,7 +80,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
         if(areInPlane(c1, c2, c3, c4)) {
     
             //slightly move point
-            c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
+            movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
         }
     
         a = scalarProduct(c1, c2, c1, c2);
@@ -186,7 +186,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, 
         if(areInPlane(c1, c2, c3, c4)) {
             
             //slightly move point
-            c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
+            movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
         }
         
         a = scalarProduct(c1, c2, c1, c2);
@@ -233,7 +233,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
    
     
     double *c1, *c2, *c3, *c4, d, invDSquare, U, *f1, *f2, *f3, *f4;
-    double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+    double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
     double ATG1, ATG2, ATG3, ATG4;
     double A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
     double E11, E12, E13, E14, B11, B12, B13, B14, F11, F12, F13, F14;
@@ -268,7 +268,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         if(areInPlane(c1, c2, c3, c4)) {
             
             //slightly move point
-            c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
+            movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
         }
         
         a = scalarProduct(c1, c2, c1, c2);
@@ -291,6 +291,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - F*CC;
         
+        invJJ = 1/JJ;
         
         ATG1 = atan( (a + e)/AA) - atan(e/AA);
         ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);

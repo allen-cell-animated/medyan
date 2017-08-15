@@ -26,16 +26,16 @@ class Bead;
 class BoundaryCylinderRepulsionExp {
     
 public:
-    inline double energy(double *coord, double *f, int *beadSet,
-                         double *krep, double *slen, int *nneighbors);
+    double energy(double *coord, double *f, int *beadSet,
+                  double *krep, double *slen, int *nneighbors);
     
-    inline double energy(double *coord, double *f, int *beadSet,
-                         double *krep, double *slen, int *nnneighbors, double d);
+    double energy(double *coord, double *f, int *beadSet,
+                  double *krep, double *slen, int *nnneighbors, double d);
     
-    inline void forces(double *coord, double *f, int *beadSet,
-                       double *krep, double *slen, int *nneighbors);
+    void forces(double *coord, double *f, int *beadSet,
+                double *krep, double *slen, int *nneighbors);
     
-    inline double loadForces(double r, double krep , double slen);
+    double loadForces(double r, double krep , double slen);
 };
 
 #endif

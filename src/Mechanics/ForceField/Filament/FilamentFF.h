@@ -32,7 +32,7 @@ private:
     _filamentInteractionVector; ///< Vector of initialized filament interactions
     
 protected:
-    static FilamentInteractions* _culpritInteraction; ///< Culprit in case of error
+    FilamentInteractions* _culpritInteraction; ///< Culprit in case of error
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces

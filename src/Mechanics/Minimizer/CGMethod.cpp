@@ -16,8 +16,9 @@
 #include "ForceFieldManager.h"
 #include "Bead.h"
 
+long CGMethod::N = 0;
 
-inline double CGMethod::allFDotF()
+double CGMethod::allFDotF()
 {
     double g = 0;
     for(int i = 0; i < N; i++)
@@ -25,7 +26,7 @@ inline double CGMethod::allFDotF()
     return g;
 }
 
-inline double CGMethod::allFADotFA()
+double CGMethod::allFADotFA()
 {
     double g = 0;
     for(int i = 0; i < N; i++)
@@ -33,7 +34,7 @@ inline double CGMethod::allFADotFA()
     return g;
 }
 
-inline double CGMethod::allFADotFAP()
+double CGMethod::allFADotFAP()
 {
     double g = 0;
     for(int i = 0; i < N; i++)
@@ -41,7 +42,7 @@ inline double CGMethod::allFADotFAP()
     return g;
 }
 
-inline double CGMethod::allFDotFA()
+double CGMethod::allFDotFA()
 {
     double g = 0;
     for(int i = 0; i < N; i++)
@@ -49,7 +50,7 @@ inline double CGMethod::allFDotFA()
     return g;
 }
 
-inline double CGMethod::maxF() {
+double CGMethod::maxF() {
     
     double maxF = 0;
     double mag;
@@ -79,7 +80,7 @@ Bead* CGMethod::maxBead() {
     return Bead::getBeads()[index];
 }
 
-inline void CGMethod::moveBeads(double d)
+void CGMethod::moveBeads(double d)
 {
     ///<NOTE: Ignores static beads for now.
     //if(!b->getstaticstate())
@@ -90,7 +91,7 @@ inline void CGMethod::moveBeads(double d)
     
 }
 
-inline void CGMethod::shiftGradient(double d)
+void CGMethod::shiftGradient(double d)
 {
     for (int i = 0; i < N; i ++)
         force[i] = forceAux[i] + d * force[i];

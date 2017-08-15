@@ -35,7 +35,7 @@ private:
     
 protected:
     /// The culprit in the case of an error
-    static BoundaryInteractions* _culpritInteraction;
+    BoundaryInteractions* _culpritInteraction;
     
 public:
     /// Initialize the forcefields (repulsion, attraction, etc)

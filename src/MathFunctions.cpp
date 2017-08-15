@@ -20,59 +20,6 @@
 
 namespace mathfunc {
     
-    vector<double> movePointOutOfPlane(const vector<double>& p1,
-                                       const vector<double>& p2,
-                                       const vector<double>& p3,
-                                       const vector<double>& p4,
-                                       int i, double d) {
-        vector<double> norm;
-        vector<double> v1;
-        vector<double> v2;
-        
-        //get plane
-        v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
-        v2 = {p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]};
-
-        norm = normalizeVector(crossProduct(v1, v2));
-        
-        //move bead 1
-        if (i == 1){
-            vector<double> newP1;
-            newP1.push_back(p1[0] + norm[0]*d);
-            newP1.push_back(p1[1] + norm[1]*d);
-            newP1.push_back(p1[2] + norm[2]*d);
-            return newP1;
-        }
-        
-        //move bead 2
-        else if (i == 2){
-            vector<double> newP2;
-            newP2.push_back(p2[0] + norm[0]*d);
-            newP2.push_back(p2[1] + norm[1]*d);
-            newP2.push_back(p2[2] + norm[2]*d);
-            return newP2;
-        }
-        
-        //move bead 3
-        else if (i == 3){
-            vector<double> newP3;
-            newP3.push_back(p3[0] + norm[0]*d);
-            newP3.push_back(p3[1] + norm[1]*d);
-            newP3.push_back(p3[2] + norm[2]*d);
-            return newP3;
-        }
-        
-        //move bead 4
-        else {
-            vector<double> newP4;
-            newP4.push_back(p4[0] + norm[0]*d);
-            newP4.push_back(p4[1] + norm[1]*d);
-            newP4.push_back(p4[2] + norm[2]*d);
-            return newP4;
-        }
-    }
-    
-    
     tuple<vector<double>, vector<double>> branchProjection(const vector<double>& n,
                                                            const vector<double>& p,
                                                            double l, double m, double theta){

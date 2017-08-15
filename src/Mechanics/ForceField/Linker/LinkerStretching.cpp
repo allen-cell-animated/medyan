@@ -80,3 +80,6 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, 
 ///Temlate specializations
 template double LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
 template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(double *coord, double *f);
+template void LinkerStretching<LinkerStretchingHarmonic>::vectorize();
+template void LinkerStretching<LinkerStretchingHarmonic>::deallocate();
+

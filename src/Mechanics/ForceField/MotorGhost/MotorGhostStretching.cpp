@@ -80,4 +80,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
 ///Temlate specializations
 template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(double *coord, double *f);
+template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize();
+template void MotorGhostStretching<MotorGhostStretchingHarmonic>::deallocate();
+
 

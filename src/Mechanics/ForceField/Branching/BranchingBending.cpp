@@ -73,3 +73,5 @@ void BranchingBending<BBendingInteractionType>::computeForces(double *coord, dou
 ///Template specializations
 template double BranchingBending<BranchingBendingCosine>::computeEnergy(double *coord, double *f, double d);
 template void BranchingBending<BranchingBendingCosine>::computeForces(double *coord, double *f);
+template void BranchingBending<BranchingBendingCosine>::vectorize();
+template void BranchingBending<BranchingBendingCosine>::deallocate();

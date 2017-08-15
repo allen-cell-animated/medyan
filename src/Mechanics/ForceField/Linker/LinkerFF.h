@@ -34,7 +34,7 @@ private:
     
 protected:
     /// The culprit in the case of an error
-    static LinkerInteractions* _culpritInteraction;
+    LinkerInteractions* _culpritInteraction;
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces

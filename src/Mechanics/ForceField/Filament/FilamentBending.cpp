@@ -83,5 +83,11 @@ void FilamentBending<FStretchingInteractionType>::computeForces(double *coord, d
 ///Template specializations
 template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(double *coord, double *f, double d);
 template void FilamentBending<FilamentBendingHarmonic>::computeForces(double *coord, double *f);
+template void FilamentBending<FilamentBendingHarmonic>::vectorize();
+template void FilamentBending<FilamentBendingHarmonic>::deallocate();
+
+
 template double FilamentBending<FilamentBendingCosine>::computeEnergy(double *coord, double *f, double d);
 template void FilamentBending<FilamentBendingCosine>::computeForces(double *coord, double *f);
+template void FilamentBending<FilamentBendingCosine>::vectorize();
+template void FilamentBending<FilamentBendingCosine>::deallocate();

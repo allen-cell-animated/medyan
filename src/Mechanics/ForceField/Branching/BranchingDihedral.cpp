@@ -74,3 +74,5 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(double *coord, d
 ///Template specializations
 template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(double *coord, double *f, double d);
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces(double *coord, double *f);
+template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
+template void BranchingDihedral<BranchingDihedralCosine>::deallocate();

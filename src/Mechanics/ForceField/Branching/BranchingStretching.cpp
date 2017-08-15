@@ -80,3 +80,5 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(double *coor
 template double
 BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
 template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(double *coord, double *f);
+template void BranchingStretching<BranchingStretchingHarmonic>::vectorize();
+template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();

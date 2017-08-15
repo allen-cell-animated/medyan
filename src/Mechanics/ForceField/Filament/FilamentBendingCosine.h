@@ -23,14 +23,14 @@ class Bead;
 class FilamentBendingCosine {
     
 public:
-    inline double energy(double *coord, double *f, int *beadSet,
-                         double *kstr, double *eqt);
+    double energy(double *coord, double *f, int *beadSet,
+                  double *kstr, double *eqt);
     
-    inline double energy(double *coord, double * f, int *beadSet,
-                         double *kstr, double *eqt, double d);
+    double energy(double *coord, double * f, int *beadSet,
+                  double *kstr, double *eqt, double d);
     
-    inline void forces(double *coord, double *f, int *beadSet,
-                       double *kstr, double *eqt);
+    void forces(double *coord, double *f, int *beadSet,
+                double *kstr, double *eqt);
 };
 
 #endif

@@ -63,27 +63,27 @@ protected:
     
     //@{
     /// For use in minimization
-    inline double allFDotF();
-    inline double allFADotFA();
-    inline double allFADotFAP();
-    inline double allFDotFA();
+    double allFDotF();
+    double allFADotFA();
+    double allFADotFAP();
+    double allFDotFA();
     
     /// Get the max force in the system
-    inline double maxF();
+    double maxF();
     
     /// Get bead with the max force in the system
     Bead* maxBead();
     
     /// Transfers data to lightweight arrays for min
-    inline void startMinimization();
+    void startMinimization();
     /// Transfers updated coordinates and force to bead members
-    inline void endMinimization();
+    void endMinimization();
     
     /// Move beads in search direction by d
-    inline void moveBeads(double d);
+    void moveBeads(double d);
     
     /// shift the gradient by d
-    inline void shiftGradient(double d);
+    void shiftGradient(double d);
     //@}
     
     //@{

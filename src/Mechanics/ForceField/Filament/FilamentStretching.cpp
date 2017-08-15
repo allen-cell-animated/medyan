@@ -72,3 +72,6 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord
 ///Temlate specializations
 template double FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
 template void FilamentStretching<FilamentStretchingHarmonic>::computeForces(double *coord, double *f);
+template void FilamentStretching<FilamentStretchingHarmonic>::vectorize();
+template void FilamentStretching<FilamentStretchingHarmonic>::deallocate();
+

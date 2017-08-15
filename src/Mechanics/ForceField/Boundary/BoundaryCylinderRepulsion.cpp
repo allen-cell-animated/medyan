@@ -43,7 +43,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     int ni = 0;
     int bindex = 0;
     
-    nneighbors = new double[nbe];
+    nneighbors = new int[nbe];
     
     for (i = 0; i < nbe; i++) {
 
@@ -172,4 +172,6 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 template double BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeEnergy(double *coord, double *f, double d);
 template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeForces(double *coord, double *f);
 template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeLoadForces();
+template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::vectorize();
+template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::deallocate();
 

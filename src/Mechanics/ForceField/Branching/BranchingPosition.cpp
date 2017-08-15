@@ -73,3 +73,5 @@ void BranchingPosition<BPositionInteractionType>::computeForces(double *coord, d
 ///Template specializations
 template double BranchingPosition<BranchingPositionCosine>::computeEnergy(double *coord, double *f, double d);
 template void BranchingPosition<BranchingPositionCosine>::computeForces(double *coord, double *f);
+template void BranchingPosition<BranchingPositionCosine>::vectorize();
+template void BranchingPosition<BranchingPositionCosine>::deallocate();

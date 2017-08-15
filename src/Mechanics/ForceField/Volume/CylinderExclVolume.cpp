@@ -22,6 +22,8 @@
 
 using namespace mathfunc;
 
+template <class CVolumeInteractionType>
+int CylinderExclVolume<CVolumeInteractionType>::numInteractions;
 
 template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
@@ -96,4 +98,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
 ///Template specializations
 template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(double *coord, double *f, double d);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(double *coord, double *f);
+template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize();
+template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();
+
 

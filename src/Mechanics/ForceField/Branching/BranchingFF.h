@@ -33,7 +33,7 @@ private:
     _branchingInteractionVector; ///< Vector of initialized branching interactions
     
 protected:
-    static BranchingInteractions* _culpritInteraction; ///< Culprit in case of error
+    BranchingInteractions* _culpritInteraction; ///< Culprit in case of error
     
 public:
     /// Constructor, intializes all interaction at the branching point

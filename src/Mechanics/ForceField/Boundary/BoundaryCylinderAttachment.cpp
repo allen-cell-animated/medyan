@@ -71,3 +71,5 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces(doubl
 ///Template specializations
 template double BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(double *coord, double *f, double d);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces(double *coord, double *f);
+template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize();
+template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::deallocate();
