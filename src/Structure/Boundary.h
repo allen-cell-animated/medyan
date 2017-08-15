@@ -76,6 +76,8 @@ public:
     //Qin
     // Returns the distance from the boundary element in the lower boundary
     virtual double lowerdistance(const vector<double>& coordinates) = 0;
+    // Returns the distance from the boundary element in the side boundary
+    virtual double sidedistance(const vector<double>& coordinates) = 0;
     
     ///Move a given part of a boundary a given distance
     ///@note a negative distance denotes movement towards the center of the grid.

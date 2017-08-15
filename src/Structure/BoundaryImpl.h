@@ -38,6 +38,7 @@ public:
     
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
     
     virtual void move(double dist);
     
@@ -63,6 +64,7 @@ public:
     
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
     
     ///@note - not yet implemented.
     virtual void move(double dist) {}
@@ -90,6 +92,7 @@ public:
     
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
     
     ///@note - Not yet implemented.
     virtual void move(double dist) {}
@@ -118,6 +121,7 @@ public:
     
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
     
     ///@note - Not yet implemented.
     virtual void move(double dist) {}

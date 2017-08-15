@@ -85,6 +85,7 @@ public:
     
     //Qin
     virtual double lowerdistance(const vector<double>& point) = 0;
+    virtual double sidedistance(const vector<double>& point) = 0;
     
     /// Returns stretched distance, similar to distance above
     virtual double stretchedDistance(const vector<double>& point,
