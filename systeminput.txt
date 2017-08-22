@@ -53,7 +53,7 @@ BOUNDARYSCREENLENGTH:       2.7
 ##################################################
 ################### CHEMISTRY ####################
 
-CHEMISTRYFILE:               chemistryinput-3.txt
+CHEMISTRYFILE:               chemistryinput.txt
 
 CALGORITHM:                  NRM
 NUMTOTALSTEPS:		     	 

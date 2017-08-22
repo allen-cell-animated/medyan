@@ -48,15 +48,15 @@ void Camkii::updateCoordinate() {
 
 void Camkii::hexagonProjection(vector<double>& filamentInterfacePoint){
 
-    vector<vector<double>> tmpBeadsCoord;
+    array<vector<double>,6> tmpBeadsCoord;
     double monoSize = SysParams::Geometry().monomerSize[_type];
 
     // pick random point which is within a certain distance away
     double directionX = Rand::randDouble(-1,1);
     double directionY = Rand::randDouble(-1,1);
     double directionZ = Rand::randDouble(-1,1);
-    vector<double> randDirection1 = normalizedVector({directionX, directionY, directionZ});
 
+    vector<double> randDirection1 = normalizedVector({directionX, directionY, directionZ});
     tmpBeadsCoord[0] = nextPointProjection(filamentInterfacePoint, monoSize/2, randDirection1);
 
     //switch rand direction and create second point
@@ -119,7 +119,7 @@ void Camkii::hexagonProjection(vector<double>& filamentInterfacePoint){
 }
 
 Camkii::Camkii(SubSystem* subsystem, short type, vector<double>& filamentInterfacePoint)
-    : _subSystem(subsystem), _type(type),Trackable(true, true, true, false), _cylinders() {
+    : _subSystem(subsystem), _type(type),Trackable(true, true, true, false), _cylinders(), coordinate() {
     // init cylinders
     hexagonProjection(filamentInterfacePoint);
 
@@ -179,12 +179,15 @@ void Camkii::printSelf() {
     cout << "Camkii: ptr = " << this << endl;
     cout << "Camkii ID = " << _ID << endl;
     cout << "Parent ptr = " << getParent() << endl;
-    cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
+    cout << "Coordinates = " << coordinate.size() << endl;
     cout << endl;
 
     cout << "Print cylinders..." << endl;
-    for (const auto& c: _cylinders)
-        c->printSelf();
+    for (const auto& c: _cylinders) {
+        if (c)
+            c->printSelf();
+    }
+
 
     cout << endl;
 }
