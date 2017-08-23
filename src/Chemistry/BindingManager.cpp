@@ -592,13 +592,13 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
                     
-                    //Qin, check if binding site is within 3/4 of the boundary
+                    //Qin, check if binding site is within 90% of the boundary
                     auto diameter =SysParams::Boundaries().diameter;
                     auto r1 = sqrt((m1[0] - diameter/2) * (m1[0] - diameter/2)
                                    + (m1[1] - diameter/2) * (m1[1] - diameter/2));
                     auto r2 = sqrt((m2[0] - diameter/2) * (m2[0] - diameter/2)
                                    + (m2[1] - diameter/2) * (m2[1] - diameter/2));
-                    auto inzone = 0.75 * diameter / 2;
+                    auto inzone = 0.90 * diameter / 2;
                     
                     if(r1 > inzone || r2 > inzone) continue;
 
@@ -772,13 +772,13 @@ void MotorBindingManager::updateAllPossibleBindings() {
                             auto m1 = midPointCoordinate(x1, x2, mp1);
                             auto m2 = midPointCoordinate(x3, x4, mp2);
                             
-                            //Qin, check if binding site is within 3/4 of the boundary
+                            //Qin, check if binding site is within 90% of the boundary
                             auto diameter =SysParams::Boundaries().diameter;
                             auto r1 = sqrt((m1[0] - diameter/2) * (m1[0] - diameter/2)
                                            + (m1[1] - diameter/2) * (m1[1] - diameter/2));
                             auto r2 = sqrt((m2[0] - diameter/2) * (m2[0] - diameter/2)
                                            + (m2[1] - diameter/2) * (m2[1] - diameter/2));
-                            auto inzone = 0.75 * diameter / 2;
+                            auto inzone = 0.90 * diameter / 2;
                         
                             if(r1 > inzone || r2 > inzone) continue;
                             
