@@ -56,7 +56,7 @@ void TestController::run() {
 
     //MAKE NEW CAMKII
     //PERFORM MECHANICAL MINIMIZATION
-    vector<double> coord = {0,0,0};
+    vector<double> coord = {100,100,100};
     //Bead* next = _subSystem->addTrackable<Bead>(coord, this, 1);
     Camkii* c = _subSystem->addTrackable<Camkii>(_subSystem, 0, coord);
     
