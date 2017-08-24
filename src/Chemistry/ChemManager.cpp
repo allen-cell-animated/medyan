@@ -2586,7 +2586,8 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                                       bool extensionFront,
                                       bool extensionBack,
                                       bool initialization) {
-    
+//TODO fix it filament and CAMKII
+#ifndef CAMKII
     //get some related objects
     Compartment* C = cc->getCompartment();
     Cylinder* c = cc->getCylinder();
@@ -2687,5 +2688,6 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
     }
     //Add all reaction templates to this cylinder
     for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
+#endif
 }
 

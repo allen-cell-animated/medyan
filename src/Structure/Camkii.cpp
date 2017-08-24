@@ -41,9 +41,9 @@ void Camkii::updateCoordinate() {
         avgMidpoint[2] += mp[2];
     }
 
-    coordinate[0] = avgMidpoint[0]/3.0;
-    coordinate[1] = avgMidpoint[1]/3.0;
-    coordinate[2] = avgMidpoint[2]/3.0;
+    coordinate.insert(coordinate.begin()+0, avgMidpoint[0]/3.0);
+    coordinate.insert(coordinate.begin()+1, avgMidpoint[1]/3.0);
+    coordinate.insert(coordinate.begin()+2, avgMidpoint[2]/3.0);
 }
 
 void Camkii::hexagonProjection(vector<double>& filamentInterfacePoint){
