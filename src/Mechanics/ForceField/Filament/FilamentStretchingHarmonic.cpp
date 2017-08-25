@@ -93,13 +93,13 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
     
     double *coord1, *coord2, *coord3, *coord4, dist, invL;
     double f0, *f1, *f2, *f3, *f4;
-    
+//    auto xxx=Cylinder::getCylinders();
     for(int i = 0; i < nint; i += 1) {
-        
+//        std::cout<<xxx.size()<<" "<<beadSet[n*i]<<" "<<beadSet[n*i+1]<<endl;
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
         
-        dist = twoPointDistance(coord1, coord2);
+        dist = twoPointDistance(coord1, coord2) - eql[i];
         invL = 1 / dist;
         
         f0 = kstr[i] * ( dist - eql[i] ) * invL;
@@ -115,7 +115,6 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         f2[0] +=  f0 * ( coord2[0] - coord1[0] );
         f2[1] +=  f0 * ( coord2[1] - coord1[1] );
         f2[2] +=  f0 * ( coord2[2] - coord1[2] );
-//        std::cout<<"STRETCHING "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
     }
 }
 

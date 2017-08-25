@@ -105,8 +105,8 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
-    std::cout<<"BOUNDARY REPULSION DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
-//    for (auto be: BoundaryElement::getBoundaryElements()) {
+//    std::cout<<"BOUNDARY REPULSION DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
+    for (auto be: BoundaryElement::getBoundaryElements()) {
         
         for(auto &c : _neighborList->getNeighbors(be)) {
             

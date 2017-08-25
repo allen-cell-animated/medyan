@@ -11,7 +11,7 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-
+    
 #include "CGPolakRibiereMethod.h"
 
 #include "ForceFieldManager.h"

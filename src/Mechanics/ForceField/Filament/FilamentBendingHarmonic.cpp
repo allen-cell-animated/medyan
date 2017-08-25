@@ -177,6 +177,6 @@ void FilamentBendingHarmonic::forces(double *coord, double *f, int *beadSet,
         
         force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                           (coord3[2] - coord2[2])*C );
-                
+        
     }
 }

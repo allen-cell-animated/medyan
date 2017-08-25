@@ -191,6 +191,6 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
             
             force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                                (coord3[2] - coord2[2])*C );
-//      std::cout<<"BENDING "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<force2[0]<<" "<<force2[1]<<" "<<force2[2]<<" "<<force3[0]<<" "<<force3[1]<<" "<<force3[2]<<endl;  
+        //      std::cout<<"BENDING "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<force2[0]<<" "<<force2[1]<<" "<<force2[2]<<" "<<force3[0]<<" "<<force3[1]<<" "<<force3[2]<<endl; 
     }
 }

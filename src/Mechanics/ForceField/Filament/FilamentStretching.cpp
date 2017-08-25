@@ -29,10 +29,9 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
     int i = 0;
     
     for (auto c: Cylinder::getCylinders()) {
-        
         beadSet[n * i] = c->getFirstBead()->_dbIndex;
         beadSet[n * i + 1] = c->getSecondBead()->_dbIndex;
-        
+//        std::cout<<beadSet[n*i]<<" "<<beadSet[n*i+1]<<endl;
         kstr[i] = c->getMCylinder()->getStretchingConst();
         eql[i] = c->getMCylinder()->getEqLength();
         
