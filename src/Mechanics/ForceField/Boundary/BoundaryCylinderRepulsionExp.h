@@ -36,6 +36,11 @@ public:
                 double *krep, double *slen, int *nneighbors);
     
     double loadForces(double r, double krep , double slen);
+#ifdef CROSSCHECK
+    double energy(Bead*, double, double, double);
+    void forces(Bead*, double, vector<double>& norm, double, double);
+    void forcesAux(Bead*, double, vector<double>& norm, double, double);
+#endif
 };
 
 #endif

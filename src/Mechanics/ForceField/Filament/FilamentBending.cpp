@@ -10,7 +10,6 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-
 #include "FilamentBending.h"
 
 #include "FilamentBendingHarmonic.h"
@@ -19,9 +18,9 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
-
-template <class FStretchingInteractionType>
-void FilamentBending<FStretchingInteractionType>::vectorize() {
+#include "cross_check.h"
+template <class FBendingInteractionType>
+void FilamentBending<FBendingInteractionType>::vectorize() {
     
     int numInteractions = Bead::getBeads().size() - 2 * Filament::getFilaments().size();
     
@@ -52,8 +51,8 @@ void FilamentBending<FStretchingInteractionType>::vectorize() {
     }
 }
 
-template<class FStretchingInteractionType>
-void FilamentBending<FStretchingInteractionType>::deallocate() {
+template<class FBendingInteractionType>
+void FilamentBending<FBendingInteractionType>::deallocate() {
     
     delete beadSet;
     delete kbend;
@@ -61,8 +60,8 @@ void FilamentBending<FStretchingInteractionType>::deallocate() {
 }
 
 
-template <class FStretchingInteractionType>
-double FilamentBending<FStretchingInteractionType>::computeEnergy(double *coord, double *f, double d){
+template <class FBendingInteractionType>
+double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord, double *f, double d){
     
     double U_i;
     
@@ -74,10 +73,31 @@ double FilamentBending<FStretchingInteractionType>::computeEnergy(double *coord,
     return U_i;
 }
 
-template <class FStretchingInteractionType>
-void FilamentBending<FStretchingInteractionType>::computeForces(double *coord, double *f) {
+template <class FBendingInteractionType>
+void FilamentBending<FBendingInteractionType>::computeForces(double *coord, double *f) {
     
     _FFType.forces(coord, f, beadSet, kbend, eqt);
+#ifdef CROSSCHECK
+    for (auto f: Filament::getFilaments()) {
+        
+        if (f->getCylinderVector().size()>1){
+            for (auto it = f->getCylinderVector().begin()+1;
+                 it != f->getCylinderVector().end(); it++){
+                
+                auto it2 = it - 1;
+                Bead* b1 = (*it2)->getFirstBead();
+                Bead* b2 = (*it)->getFirstBead();
+                Bead* b3 = (*it)->getSecondBead();
+                double kBend = (*it)->getMCylinder()->getBendingConst();
+                double eqTheta = (*it)->getMCylinder()->getEqTheta();
+                
+                _FFType.forces(b1, b2, b3, kBend, eqTheta);
+            }
+        }
+    }
+    auto state=cross_check::crosscheckforces(f);
+    std::cout<<"F S+B YES "<<state<<endl;
+#endif
 }
 
 ///Template specializations

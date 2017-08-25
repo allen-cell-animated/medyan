@@ -18,7 +18,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
-
+#include "cross_check.h"
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::vectorize() {
     
@@ -65,6 +65,23 @@ template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord, double *f) {
     
     _FFType.forces(coord, f, beadSet, kstr, eql);
+#ifdef CROSSCHECK
+    for (auto f: Filament::getFilaments()) {
+        
+        for(auto it : f->getCylinderVector()){
+            
+            Bead* b1 = it->getFirstBead();
+            Bead* b2 = it->getSecondBead();
+            double kStretch =it->getMCylinder()->getStretchingConst();
+            double eqLength = it->getMCylinder()->getEqLength();
+            
+            _FFType.forcesAux(b1, b2, kStretch, eqLength);
+        }
+    }
+    auto state=cross_check::crosscheckforces(f);
+    std::cout<<"F S YES "<<state<<endl;
+#endif
+
 }
 
 

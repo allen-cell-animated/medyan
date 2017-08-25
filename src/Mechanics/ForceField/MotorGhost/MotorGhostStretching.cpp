@@ -18,6 +18,7 @@
 #include "MotorGhost.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "cross_check.h"
 
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
@@ -74,6 +75,25 @@ template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coord, double *f) {
     
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);
+#ifdef CROSSCHECK
+    for (auto m: MotorGhost::getMotorGhosts()) {
+        
+        Bead* b1 = m->getFirstCylinder()->getFirstBead();
+        Bead* b2 = m->getFirstCylinder()->getSecondBead();
+        Bead* b3 = m->getSecondCylinder()->getFirstBead();
+        Bead* b4 = m->getSecondCylinder()->getSecondBead();
+        double kStretch = m->getMMotorGhost()->getStretchingConstant();
+        double eqLength = m->getMMotorGhost()->getEqLength();
+        
+        double pos1 = m->getFirstPosition();
+        double pos2 = m->getSecondPosition();
+        
+        double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+        m->getMMotorGhost()->stretchForce = f0;
+    }
+    auto state=cross_check::crosscheckforces(f);
+    std::cout<<"F S+B+L+M YES "<<state<<endl;
+#endif
 }
 
 

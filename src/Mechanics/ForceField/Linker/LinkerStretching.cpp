@@ -18,7 +18,7 @@
 #include "Cylinder.h"
 #include "Linker.h"
 #include "Bead.h"
-
+#include "cross_check.h"
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::vectorize() {
     
@@ -74,6 +74,25 @@ template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, double *f) {
     
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);
+#ifdef CROSSCHECK
+    for (auto l: Linker::getLinkers()) {
+        
+        Bead* b1 = l->getFirstCylinder()->getFirstBead();
+        Bead* b2 = l->getFirstCylinder()->getSecondBead();
+        Bead* b3 = l->getSecondCylinder()->getFirstBead();
+        Bead* b4 = l->getSecondCylinder()->getSecondBead();
+        double kStretch = l->getMLinker()->getStretchingConstant();
+        double eqLength = l->getMLinker()->getEqLength();
+        
+        double pos1 = l->getFirstPosition();
+        double pos2 = l->getSecondPosition();
+        
+        double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+        l->getMLinker()->stretchForce = f0;
+    }
+    auto state = cross_check::crosscheckforces(f);
+    std::cout<<"F S+B+L YES "<<state<<endl;
+#endif
 }
 
 

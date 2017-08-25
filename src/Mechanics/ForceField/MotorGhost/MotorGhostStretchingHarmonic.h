@@ -31,6 +31,21 @@ public:
     
     void forces(double *coord, double *f, int *beadSet,
                 double *kstr, double *eql, double *pos1, double *pos2);
+#ifdef CROSSCHECK
+    double energy(Bead*, Bead*, Bead*, Bead*,
+                  double position1, double position2,
+                  double kStretch, double eqLength);
+    double energy(Bead*, Bead*, Bead*, Bead*,
+                  double position1, double position2,
+                  double kStretch, double eqLength, double d);
+    
+    double forces(Bead*, Bead*, Bead*, Bead*,
+                  double position1, double position2,
+                  double kStretch, double eqLength);
+    double forcesAux(Bead*, Bead*, Bead*, Bead*,
+                     double position1, double position2,
+                     double kStretch, double eqLength);
+#endif
 };
 
 #endif

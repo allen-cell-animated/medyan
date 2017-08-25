@@ -17,7 +17,6 @@
 #include "common.h"
 
 #include "FilamentInteractions.h"
-
 //FORWARD DECLARATIONS
 class Filament;
 

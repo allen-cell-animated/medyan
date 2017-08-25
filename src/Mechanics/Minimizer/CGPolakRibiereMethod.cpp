@@ -48,7 +48,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     FFM.computeForces(coord, force);
     FFM.copyForces(forceAux, force);
-    std::cout<<"FORCES"<<endl;
+//    std::cout<<"FORCES"<<endl;
     
 //    index=0; i=0;
 //    for(auto b: Bead::getBeads()) {
@@ -138,7 +138,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         cout << endl;
     }
     
-    cout << "Minimized." << endl;
+//    cout << "Minimized." << endl;
     
     //final force calculation
     FFM.computeForces(coord, force);

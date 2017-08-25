@@ -20,6 +20,7 @@
 #include "Cylinder.h"
 
 #include "MathFunctions.h"
+#include "cross_check.h"
 
 using namespace mathfunc;
 
@@ -101,6 +102,36 @@ template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
     
     _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
+#ifdef CROSSCHECK
+    for (auto be: BoundaryElement::getBoundaryElements()) {
+        
+        for(auto &c: _neighborList->getNeighbors(be)) {
+            
+            double kRep = be->getRepulsionConst();
+            double screenLength = be->getScreeningLength();
+            
+            //potential acts on second cylinder bead unless this is a minus end
+            Bead* bd;
+            if(c->isMinusEnd()) {
+                bd = c->getFirstBead();
+                auto normal = be->normal(bd->coordinate);
+                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+                
+                bd = c->getSecondBead();
+                normal = be->normal(bd->coordinate);
+                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+            }
+            else {
+                bd = c->getSecondBead();
+                auto normal = be->normal(bd->coordinate);
+                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+            }
+            
+        }
+    }
+    auto state=cross_check::crosscheckforces(f);
+    std::cout<<"F S+B+L+M+ +V+B YES "<<state<<endl;
+#endif
 }
 
 template <class BRepulsionInteractionType>

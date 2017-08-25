@@ -13,14 +13,28 @@
 		BF9A59381B0B72C300ADF902 /* Trackable.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9A59361B0B72C300ADF902 /* Trackable.h */; };
 		BF9A593A1B0B90C200ADF902 /* BoundaryElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF9A59391B0B90C200ADF902 /* BoundaryElement.cpp */; };
 		BF9A593E1B0BA75B00ADF902 /* DynamicNeighbor.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9A593C1B0BA75A00ADF902 /* DynamicNeighbor.h */; };
-		F2291E771F50CAC800494109 /* FilamentBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E5B1F50CAC800494109 /* FilamentBending.cpp */; };
-		F2291E781F50CAC800494109 /* FilamentBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E5D1F50CAC800494109 /* FilamentBendingCosine.cpp */; };
-		F2291E791F50CAC800494109 /* FilamentBendingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E5F1F50CAC800494109 /* FilamentBendingHarmonic.cpp */; };
-		F2291E7A1F50CAC800494109 /* FilamentFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E611F50CAC800494109 /* FilamentFF.cpp */; };
-		F2291E7B1F50CAC800494109 /* FilamentInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E631F50CAC800494109 /* FilamentInteractions.cpp */; };
-		F2291E7C1F50CAC800494109 /* FilamentStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E651F50CAC800494109 /* FilamentStretching.cpp */; };
-		F2291E7D1F50CAC800494109 /* FilamentStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E671F50CAC800494109 /* FilamentStretchingHarmonic.cpp */; };
 		F25568D01F507C6200176DD0 /* cross_check.h in Headers */ = {isa = PBXBuildFile; fileRef = F25568CE1F507C6200176DD0 /* cross_check.h */; };
+		F2A4A1591F50D26300326562 /* FilamentBending.h in Headers */ = {isa = PBXBuildFile; fileRef = F2291E5C1F50CAC800494109 /* FilamentBending.h */; };
+		F2A4A15A1F50D26B00326562 /* FilamentBendingCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = F2291E5E1F50CAC800494109 /* FilamentBendingCosine.h */; };
+		F2A4A15B1F50D27A00326562 /* FilamentBendingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F2291E601F50CAC800494109 /* FilamentBendingHarmonic.h */; };
+		F2A4A15C1F50D28500326562 /* FilamentFF.h in Headers */ = {isa = PBXBuildFile; fileRef = F2291E621F50CAC800494109 /* FilamentFF.h */; };
+		F2A4A15D1F50D28C00326562 /* FilamentInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = F2291E641F50CAC800494109 /* FilamentInteractions.h */; };
+		F2A4A15E1F50D29200326562 /* FilamentStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = F2291E661F50CAC800494109 /* FilamentStretching.h */; };
+		F2A4A15F1F50D2A400326562 /* FilamentStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = F2291E681F50CAC800494109 /* FilamentStretchingHarmonic.h */; };
+		F2A4A1601F50D2BB00326562 /* FilamentBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E5B1F50CAC800494109 /* FilamentBending.cpp */; };
+		F2A4A1611F50D2C100326562 /* FilamentBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E5D1F50CAC800494109 /* FilamentBendingCosine.cpp */; };
+		F2A4A1621F50D2C800326562 /* FilamentStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E671F50CAC800494109 /* FilamentStretchingHarmonic.cpp */; };
+		F2A4A1631F50D2CE00326562 /* FilamentBendingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E5F1F50CAC800494109 /* FilamentBendingHarmonic.cpp */; };
+		F2A4A1641F50D2D500326562 /* FilamentFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E611F50CAC800494109 /* FilamentFF.cpp */; };
+		F2A4A1651F50D2DB00326562 /* FilamentInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E631F50CAC800494109 /* FilamentInteractions.cpp */; };
+		F2A4A1661F50D2E000326562 /* FilamentStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2291E651F50CAC800494109 /* FilamentStretching.cpp */; };
+		F2A4A1681F50D6A600326562 /* FilamentStretchingHarmoniccrosscheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2A4A1671F50D6A600326562 /* FilamentStretchingHarmoniccrosscheck.cpp */; };
+		F2A4A16A1F50D78700326562 /* FilamentBendingCosinecrosscheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2A4A1691F50D78700326562 /* FilamentBendingCosinecrosscheck.cpp */; };
+		F2A4A16C1F50D7FA00326562 /* FilamentBendingHarmoniccrosscheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2A4A16B1F50D7FA00326562 /* FilamentBendingHarmoniccrosscheck.cpp */; };
+		F2A4A16E1F50E23100326562 /* LinkerStretchingHarmoniccrosscheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2A4A16D1F50E23100326562 /* LinkerStretchingHarmoniccrosscheck.cpp */; };
+		F2A4A1701F50E2EA00326562 /* MotorGhostStretchingHarmoniccrosscheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2A4A16F1F50E2EA00326562 /* MotorGhostStretchingHarmoniccrosscheck.cpp */; };
+		F2A4A1721F50E5D100326562 /* CylinderExclVolRepulsioncrosscheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2A4A1711F50E5D100326562 /* CylinderExclVolRepulsioncrosscheck.cpp */; };
+		F2A4A1741F50E86B00326562 /* BoundaryCylinderRepulsionExpcrosscheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2A4A1731F50E86B00326562 /* BoundaryCylinderRepulsionExpcrosscheck.cpp */; };
 		F713BEA51D416996005386E0 /* BoundaryCylinderAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F713BEA31D416996005386E0 /* BoundaryCylinderAttachment.cpp */; };
 		F713BEA61D416996005386E0 /* BoundaryCylinderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = F713BEA41D416996005386E0 /* BoundaryCylinderAttachment.h */; };
 		F713BEA91D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F713BEA71D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp */; };
@@ -268,6 +282,13 @@
 		F2291E671F50CAC800494109 /* FilamentStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentStretchingHarmonic.cpp; sourceTree = "<group>"; };
 		F2291E681F50CAC800494109 /* FilamentStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentStretchingHarmonic.h; sourceTree = "<group>"; };
 		F25568CE1F507C6200176DD0 /* cross_check.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cross_check.h; sourceTree = "<group>"; };
+		F2A4A1671F50D6A600326562 /* FilamentStretchingHarmoniccrosscheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentStretchingHarmoniccrosscheck.cpp; sourceTree = "<group>"; };
+		F2A4A1691F50D78700326562 /* FilamentBendingCosinecrosscheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBendingCosinecrosscheck.cpp; sourceTree = "<group>"; };
+		F2A4A16B1F50D7FA00326562 /* FilamentBendingHarmoniccrosscheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBendingHarmoniccrosscheck.cpp; sourceTree = "<group>"; };
+		F2A4A16D1F50E23100326562 /* LinkerStretchingHarmoniccrosscheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkerStretchingHarmoniccrosscheck.cpp; sourceTree = "<group>"; };
+		F2A4A16F1F50E2EA00326562 /* MotorGhostStretchingHarmoniccrosscheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotorGhostStretchingHarmoniccrosscheck.cpp; sourceTree = "<group>"; };
+		F2A4A1711F50E5D100326562 /* CylinderExclVolRepulsioncrosscheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CylinderExclVolRepulsioncrosscheck.cpp; path = Volume/CylinderExclVolRepulsioncrosscheck.cpp; sourceTree = "<group>"; };
+		F2A4A1731F50E86B00326562 /* BoundaryCylinderRepulsionExpcrosscheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundaryCylinderRepulsionExpcrosscheck.cpp; sourceTree = "<group>"; };
 		F713BEA31D416996005386E0 /* BoundaryCylinderAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryCylinderAttachment.cpp; path = Boundary/BoundaryCylinderAttachment.cpp; sourceTree = "<group>"; };
 		F713BEA41D416996005386E0 /* BoundaryCylinderAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryCylinderAttachment.h; path = Boundary/BoundaryCylinderAttachment.h; sourceTree = "<group>"; };
 		F713BEA71D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryCylinderAttachmentHarmonic.cpp; path = Boundary/BoundaryCylinderAttachmentHarmonic.cpp; sourceTree = "<group>"; };
@@ -586,6 +607,9 @@
 				F2291E661F50CAC800494109 /* FilamentStretching.h */,
 				F2291E671F50CAC800494109 /* FilamentStretchingHarmonic.cpp */,
 				F2291E681F50CAC800494109 /* FilamentStretchingHarmonic.h */,
+				F2A4A1671F50D6A600326562 /* FilamentStretchingHarmoniccrosscheck.cpp */,
+				F2A4A1691F50D78700326562 /* FilamentBendingCosinecrosscheck.cpp */,
+				F2A4A16B1F50D7FA00326562 /* FilamentBendingHarmoniccrosscheck.cpp */,
 			);
 			path = Filament;
 			sourceTree = "<group>";
@@ -619,6 +643,7 @@
 				F7525A911A702461007A4E9F /* LinkerStretching.h */,
 				F7525A921A702461007A4E9F /* LinkerStretchingHarmonic.cpp */,
 				F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */,
+				F2A4A16D1F50E23100326562 /* LinkerStretchingHarmoniccrosscheck.cpp */,
 			);
 			name = Linker;
 			sourceTree = "<group>";
@@ -634,6 +659,7 @@
 				F7525A831A70244D007A4E9F /* MotorGhostStretching.h */,
 				F7525A841A70244D007A4E9F /* MotorGhostStretchingHarmonic.cpp */,
 				F7525A851A70244D007A4E9F /* MotorGhostStretchingHarmonic.h */,
+				F2A4A16F1F50E2EA00326562 /* MotorGhostStretchingHarmoniccrosscheck.cpp */,
 			);
 			name = MotorGhost;
 			sourceTree = "<group>";
@@ -680,6 +706,7 @@
 				F713BEA41D416996005386E0 /* BoundaryCylinderAttachment.h */,
 				F713BEA71D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp */,
 				F713BEA81D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.h */,
+				F2A4A1731F50E86B00326562 /* BoundaryCylinderRepulsionExpcrosscheck.cpp */,
 			);
 			name = Boundary;
 			sourceTree = "<group>";
@@ -695,6 +722,7 @@
 				F7525A321A7023EF007A4E9F /* CylinderExclVolRepulsion.h */,
 				F7525A331A7023EF007A4E9F /* CylinderExclVolume.cpp */,
 				F7525A341A7023EF007A4E9F /* CylinderExclVolume.h */,
+				F2A4A1711F50E5D100326562 /* CylinderExclVolRepulsioncrosscheck.cpp */,
 			);
 			name = Volume;
 			sourceTree = "<group>";
@@ -865,6 +893,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2A4A15F1F50D2A400326562 /* FilamentStretchingHarmonic.h in Headers */,
+				F2A4A15E1F50D29200326562 /* FilamentStretching.h in Headers */,
+				F2A4A15D1F50D28C00326562 /* FilamentInteractions.h in Headers */,
+				F2A4A15C1F50D28500326562 /* FilamentFF.h in Headers */,
+				F2A4A15B1F50D27A00326562 /* FilamentBendingHarmonic.h in Headers */,
+				F2A4A15A1F50D26B00326562 /* FilamentBendingCosine.h in Headers */,
+				F2A4A1591F50D26300326562 /* FilamentBending.h in Headers */,
 				F748D6FB1DCA3F0000D52588 /* Restart.h in Headers */,
 				F735B7721A2D16F200AE21D1 /* Component.h in Headers */,
 				F7525A9A1A702461007A4E9F /* LinkerStretchingHarmonic.h in Headers */,
@@ -1064,6 +1099,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2A4A1681F50D6A600326562 /* FilamentStretchingHarmoniccrosscheck.cpp in Sources */,
+				F2A4A1661F50D2E000326562 /* FilamentStretching.cpp in Sources */,
+				F2A4A1651F50D2DB00326562 /* FilamentInteractions.cpp in Sources */,
+				F2A4A1721F50E5D100326562 /* CylinderExclVolRepulsioncrosscheck.cpp in Sources */,
+				F2A4A1641F50D2D500326562 /* FilamentFF.cpp in Sources */,
+				F2A4A16A1F50D78700326562 /* FilamentBendingCosinecrosscheck.cpp in Sources */,
+				F2A4A1741F50E86B00326562 /* BoundaryCylinderRepulsionExpcrosscheck.cpp in Sources */,
+				F2A4A1631F50D2CE00326562 /* FilamentBendingHarmonic.cpp in Sources */,
+				F2A4A1621F50D2C800326562 /* FilamentStretchingHarmonic.cpp in Sources */,
+				F2A4A1611F50D2C100326562 /* FilamentBendingCosine.cpp in Sources */,
+				F2A4A1601F50D2BB00326562 /* FilamentBending.cpp in Sources */,
 				F735B7B81A2D173F00AE21D1 /* CGPolakRibiereMethod.cpp in Sources */,
 				F735B7A51A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp in Sources */,
 				F7C9CFFD1A2D165D0087434A /* CMonomer.cpp in Sources */,
@@ -1073,6 +1119,7 @@
 				F768ACEE1BC8158A00B838AD /* Rand.cpp in Sources */,
 				F735B79C1A2D172800AE21D1 /* ChemManager.cpp in Sources */,
 				F7525A541A70241E007A4E9F /* BranchingBendingCosine.cpp in Sources */,
+				F2A4A1701F50E2EA00326562 /* MotorGhostStretchingHarmoniccrosscheck.cpp in Sources */,
 				F7C9D0051A2D165D0087434A /* Cylinder.cpp in Sources */,
 				F7525A611A70241E007A4E9F /* BranchingStretching.cpp in Sources */,
 				F764F0861BD56DD300E2BBB8 /* Bubble.cpp in Sources */,
@@ -1099,6 +1146,7 @@
 				F735B7831A2D16F200AE21D1 /* SysParams.cpp in Sources */,
 				F7525A021A7023A4007A4E9F /* BoundaryFF.cpp in Sources */,
 				BF365D871ABC728F006EE099 /* NeighborListImpl.cpp in Sources */,
+				F2A4A16C1F50D7FA00326562 /* FilamentBendingHarmoniccrosscheck.cpp in Sources */,
 				F7525A5F1A70241E007A4E9F /* BranchingPositionCosine.cpp in Sources */,
 				F7525A8B1A70244D007A4E9F /* MotorGhostStretchingHarmonic.cpp in Sources */,
 				F7525A891A70244D007A4E9F /* MotorGhostStretching.cpp in Sources */,
@@ -1108,6 +1156,7 @@
 				F7C9CFFF1A2D165D0087434A /* CMotorGhost.cpp in Sources */,
 				F735B7771A2D16F200AE21D1 /* GController.cpp in Sources */,
 				F713BEA91D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp in Sources */,
+				F2A4A16E1F50E23100326562 /* LinkerStretchingHarmoniccrosscheck.cpp in Sources */,
 				F735B7751A2D16F200AE21D1 /* Controller.cpp in Sources */,
 				F735B7711A2D16F200AE21D1 /* Component.cpp in Sources */,
 				F7C9CFE91A2D165D0087434A /* Bead.cpp in Sources */,
@@ -1158,14 +1207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F2291E7B1F50CAC800494109 /* FilamentInteractions.cpp in Sources */,
-				F2291E7C1F50CAC800494109 /* FilamentStretching.cpp in Sources */,
-				F2291E791F50CAC800494109 /* FilamentBendingHarmonic.cpp in Sources */,
-				F2291E7D1F50CAC800494109 /* FilamentStretchingHarmonic.cpp in Sources */,
 				F735B7AB1A2D172D00AE21D1 /* MEDYAN.cpp in Sources */,
-				F2291E771F50CAC800494109 /* FilamentBending.cpp in Sources */,
-				F2291E781F50CAC800494109 /* FilamentBendingCosine.cpp in Sources */,
-				F2291E7A1F50CAC800494109 /* FilamentFF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

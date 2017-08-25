@@ -607,6 +607,36 @@ namespace mathfunc {
                                                            double l, double m, double theta);
     
     
+    /// Returns true if two vectors (p1->p2 and p3->p4) are in the same plane
+    inline bool areInPlane(const vector<double>& p1, const vector<double>& p2,
+                           const vector<double>& p3, const vector<double>& p4) {
+        
+        auto v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
+        auto v2 = {p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]};
+        auto v3 = {p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2]};
+        
+        auto cp = crossProduct(v1, v2);
+        
+        return areEqual(dotProduct(v3, cp), 0.0);
+    }
+    
+    /// Function to move bead out of plane by specified amount
+    vector<double> movePointOutOfPlane(const vector<double>& p1,
+                                       const vector<double>& p2,
+                                       const vector<double>& p3,
+                                       const vector<double>& p4,
+                                       int i, double d);
+    
+    
+    /// Function to create a initial branching point and direction, given an
+    /// initial normal vector and point.
+    /// @param l - the distance of the branch from the original point
+    /// @param m - the size of the branch projection
+    /// @param theta - the angle of branching
+    /// @return a vector describing the initial branching direction and point
+    tuple<vector<double>, vector<double>> branchProjection(const vector<double>& n,
+                                                           const vector<double>& p,
+                                                           double l, double m, double theta);
 }
 
 #endif

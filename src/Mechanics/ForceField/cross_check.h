@@ -17,10 +17,8 @@
 #include "Bead.h"
 #include "Filament.h"
 #include <stdio.h>
-
-
-
-bool crosscheckforces(double* force){
+namespace cross_check{
+inline bool crosscheckforces(double* force){
     bool state=false;
     for(auto b: Bead::getBeads()) {
         
@@ -36,5 +34,6 @@ bool crosscheckforces(double* force){
         }
     }
     return state;
+}
 }
 #endif /* cross_check_h */

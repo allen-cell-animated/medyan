@@ -19,6 +19,7 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+#include "cross_check.h"
 
 using namespace mathfunc;
 
@@ -93,6 +94,30 @@ template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, double *f) {
 
     _FFType.forces(coord, f, beadSet, krep);
+#ifdef CROSSCHECK
+    for(auto ci : Cylinder::getCylinders()) {
+        
+        //do not calculate exvol for a non full length cylinder
+        if(!ci->isFullLength()) continue;
+        
+        for(auto &cn : _neighborList->getNeighbors(ci)) {
+            
+            //do not calculate exvol for a branching cylinder
+            if(!cn->isFullLength() ||
+               cn->getBranchingCylinder() == ci) continue;
+            
+            Bead* b1 = ci->getFirstBead();
+            Bead* b2 = ci->getSecondBead();
+            Bead* b3 = cn->getFirstBead();
+            Bead* b4 = cn->getSecondBead();
+            double kRepuls = ci->getMCylinder()->getExVolConst();
+            
+            _FFType.forces(b1, b2, b3, b4, kRepuls);
+        }
+    }
+    auto state = cross_check::crosscheckforces(f);
+    std::cout<<"F S+B+L+M+ +V YES "<<state<<endl;
+#endif
 }
 
 ///Template specializations

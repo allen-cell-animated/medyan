@@ -608,7 +608,7 @@ void Controller::run() {
             //run mcontroller, update system
 //            std::cout<<endl;
 //            std::cout<<"TIME "<<tau()<<endl;
-            std::cout<<endl;
+//            std::cout<<endl;
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();

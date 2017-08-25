@@ -29,6 +29,13 @@ public:
     double energy(double *coord, double *f, int *beadSet, double *krep, double d);
     
     void forces(double *coord, double *f, int *beadSet, double *krep);
+#ifdef CROSSCHECK
+    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, double d);
+    
+    void forces(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+    void forcesAux(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+#endif
 };
 
 
