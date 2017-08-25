@@ -56,6 +56,10 @@ public:
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
     void computeLoadForces();
+#ifdef CROSSCHECK
+    /// Reset the forces of all objects
+    void resetForces();
+#endif
 };
 
 #endif

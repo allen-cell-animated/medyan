@@ -61,8 +61,20 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
     return energy;
 }
 
-void ForceFieldManager::computeForces(double *coord, double *f) {
+#ifdef CROSSCHECK
+void ForceFieldManager::resetForces() {
     
+    for(auto b: Bead::getBeads()) {
+        b->force.assign (3, 0); //Set force to zero;
+        std::memset((void*)(&b->loadForcesP[0]), 0, sizeof(b->loadForcesP));  //Set load force to zero;
+        std::memset((void*)(&b->loadForcesM[0]), 0, sizeof(b->loadForcesM));  //Set load force to zero;
+    }
+}
+#endif
+void ForceFieldManager::computeForces(double *coord, double *f) {
+#ifdef CROSSCHECK
+    resetForces();
+#endif
     //reset to zero
     for (int i = 0; i < CGMethod::N; i++)
         f[i] = 0.0;
