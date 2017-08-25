@@ -55,7 +55,6 @@ public:
     }
     
     virtual double distance(double const *point) {
-        
         return (_a * point[0] + _b * point[1] + _c * point[2] + _d) /
         sqrt(pow(_a, 2) + pow(_b, 2) + pow(_c, 2));
     }

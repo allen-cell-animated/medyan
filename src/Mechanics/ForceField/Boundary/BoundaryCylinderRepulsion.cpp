@@ -32,7 +32,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     for (auto be: BoundaryElement::getBoundaryElements())
         for(auto &c : _neighborList->getNeighbors(be))
             nint++;
-    
+//    std::cout<<"value of n "<<n<<endl;
     beadSet = new int[n * nint];
     krep = new double[nint];
     slen = new double[nint];
@@ -44,7 +44,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     int bindex = 0;
     
     nneighbors = new int[nbe];
-    
+    auto cumnn=0;
     for (i = 0; i < nbe; i++) {
 
         auto be = BoundaryElement::getBoundaryElements()[i];
@@ -52,17 +52,23 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         
         nneighbors[i] = nn;
         
+        
         for (ni = 0; ni < nn; ni++) {
         
             if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
                 bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;
             else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
                 bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
-            
-            beadSet[n * (i + ni)] = bindex;
-            krep[i + ni] = be->getRepulsionConst();
-            slen[i + ni] = be->getScreeningLength();
+//            std::cout<<cumnn+ni<<" "<<n*(ni+i)<<" "<<i+ni<<endl;
+            beadSet[cumnn+ni] = bindex;
+            krep[cumnn+ni] = be->getRepulsionConst();
+            slen[cumnn+ni] = be->getScreeningLength();
+
+//            beadSet[n * (i + ni)] = bindex;
+//            krep[i + ni] = be->getRepulsionConst();
+//            slen[i + ni] = be->getScreeningLength();
         }
+        cumnn+=nn;
     }
 }
 
@@ -99,8 +105,8 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
-    
-    for (auto be: BoundaryElement::getBoundaryElements()) {
+    std::cout<<"BOUNDARY REPULSION DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
+//    for (auto be: BoundaryElement::getBoundaryElements()) {
         
         for(auto &c : _neighborList->getNeighbors(be)) {
             
@@ -165,6 +171,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
             }
             
         }
+        
     }
 }
 

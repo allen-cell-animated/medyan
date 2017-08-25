@@ -1470,7 +1470,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = /opt/local/Library/Frameworks/gtest.framework/;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"TESTING=1",
 					"MECHANICS=1",
@@ -1489,8 +1489,8 @@
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
+					/opt/local/Library/Frameworks/gtest.framework/,
 					/usr/local/lib,
-					/Users/jameskomianos/Code/googletest/,
 				);
 				OTHER_CFLAGS = "-DTESTING";
 				OTHER_LDFLAGS = (
@@ -1508,7 +1508,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				FRAMEWORK_SEARCH_PATHS = /Users/jameskomianos/Code/googletest;
+				FRAMEWORK_SEARCH_PATHS = /opt/local/Library/Frameworks/gtest.framework/;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"TESTING=1",
@@ -1528,8 +1528,8 @@
 				GCC_WARN_SIGN_COMPARE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
+					/opt/local/Library/Frameworks/gtest.framework/,
 					/usr/local/lib,
-					/Users/jameskomianos/Code/googletest/,
 				);
 				OTHER_CFLAGS = "-DTESTING";
 				OTHER_LDFLAGS = (

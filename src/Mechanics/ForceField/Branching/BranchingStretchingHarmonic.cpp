@@ -25,7 +25,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
                                            double *kstr, double *eql, double *pos){
     
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, dist, U_i;
     double *v1 = new double[3];
@@ -63,7 +63,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
                                            double *kstr, double *eql, double *pos, double d){
     
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, *f1, *f2, *f3, dist, U_i;
     double *v1 = new double[3];
@@ -108,7 +108,7 @@ void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
     
     
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, *f1, *f2, *f3, dist, invL, f0;
     double *v1 = new double[3];

@@ -48,8 +48,8 @@ namespace mathfunc {
     /// ARRAY VERSION
     inline void normalizeVector(double *v) {
         
-        double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
-        v[0] = v[0]/norm; v[1] = v[1]/norm; v[2] = v[2]/norm;
+        double norm = sqrt((*(v))*(*(v)) + (*(v+1))*(*(v+1)) + (*(v+2))*(*(v+2)));
+        *(v)= *(v)/norm; *(v+1) = *(v+1)/norm; *(v+2) = *(v+2)/norm;
     }
     
     /// Get the magnitude of a vector
@@ -60,7 +60,7 @@ namespace mathfunc {
     ///ARRAY VERSION
     inline double magnitude(double const *v) {
         
-        return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+        return sqrt((*(v))*(*(v)) + (*(v+1))*(*(v+1)) + (*(v+2))*(*(v+2)));
     }
     
     //@{
@@ -73,25 +73,26 @@ namespace mathfunc {
     }
     inline double twoPointDistance(double const *v1, const vector<double>&v2) {
         
-        return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
-                    (v2[1]-v1[1])*(v2[1]-v1[1]) +
-                    (v2[2]-v1[2])*(v2[2]-v1[2]));
+        return sqrt((v2[0]-*(v1))*(v2[0]-*(v1)) +
+                    (v2[1]-*(v1+1))*(v2[1]-*(v1+1)) +
+                    (v2[2]-*(v1+2))*(v2[2]-*(v1+2)));
     }
     inline double twoPointDistance(const vector<double>&v1, double const *v2) {
         
-        return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
-                    (v2[1]-v1[1])*(v2[1]-v1[1]) +
-                    (v2[2]-v1[2])*(v2[2]-v1[2]));
+        return sqrt((*(v2)-v1[0])*(*(v2)-v1[0]) +
+                    (*(v2+1)-v1[1])*(*(v2+1)-v1[1]) +
+                    (*(v2+2)-v1[2])*(*(v2+2)-v1[2]));
     }
     //@}
     
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     /// ARRAY VERSION
     inline double twoPointDistance(double const *v1, double const *v2) {
-        
-        return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) +
-                    (v2[1]-v1[1])*(v2[1]-v1[1]) +
-                    (v2[2]-v1[2])*(v2[2]-v1[2]));
+        //std::cout<<*v2<<" "<<*(v2+1)<<" "<<*(v2+2)<<endl;
+        //std::cout<<*v1<<" "<<*(v1+1)<<" "<<*(v1+2)<<endl;
+        //std::cout<<sqrt((*v2-*v1)*(*v2-*v1)+(*(v2+1)-*(v1+1))*(*(v2+1)-*(v1+1))+(*(v2+2)-*(v1+2))*(*(v2+2)-*(v1+2)))<<endl;
+        return sqrt((*v2-*v1)*(*v2-*v1)+(*(v2+1)-*(v1+1))*(*(v2+1)-*(v1+1))+(*(v2+2)-*(v1+2))*(*(v2+2)-*(v1+2)));
+        //return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) + (v2[1]-v1[1])*(v2[1]-v1[1]) +(v2[2]-v1[2])*(v2[2]-v1[2]));
     }
     
     /// Compute distance between two points with coordinates
@@ -115,13 +116,18 @@ namespace mathfunc {
                                             double const *p1,
                                             double const *v2,
                                             double const *p2, double d){
-        
-        return sqrt(((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) *
-                    ((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) +
-                    ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) *
-                    ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) +
-                    ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])) *
-                    ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
+        return sqrt(*(v2)+d*(*(p2))-*(v1)+d*(*(p1)) *
+                    *(v2)+d*(*(p2))-*(v1)+d*(*(p1)) +
+                    *(v2+1)+d*(*(p2+1))-*(v1+1)+d*(*(p1+1)) *
+                    *(v2+1)+d*(*(p2+1))-*(v1+1)+d*(*(p1+1)) +
+                    *(v2+2)+d*(*(p2+2))-*(v1+2)+d*(*(p1+2)) *
+                    *(v2+2)+d*(*(p2+2))-*(v1+2)+d*(*(p1+2)));
+        //        return sqrt(((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) *
+        //                    ((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) +
+        //                    ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) *
+        //                    ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) +
+        //                    ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])) *
+        //                    ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
     }
     
     //@{
@@ -149,9 +155,9 @@ namespace mathfunc {
                                   double const *v2) {
         
         double invD = 1/twoPointDistance(v1, v2);
-        tau[0] = invD * ( v2[0] - v1[0] );
-        tau[1] = invD * ( v2[1] - v1[1] );
-        tau[2] = invD * ( v2[2] - v1[2] );
+        tau[0] = invD * ( *(v2)-  *(v1) );
+        tau[1] = invD * ( *(v2+1)-*(v1+1));
+        tau[2] = invD * ( *(v2+2)-*(v1+2));
     }
     //@}
     
@@ -163,6 +169,8 @@ namespace mathfunc {
     /// Scalar product of two vectors v1(x,y,z) and v2(x,y,z)
     /// ARRAY VERSION
     inline double dotProduct(double const *v1, double const *v2) {
+        return (*(v1))*(*(v2)) + (*(v1+1))*(*(v2+1)) + (*(v1+2))*(*(v2+2));
+        
         return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
     }
     
@@ -181,10 +189,12 @@ namespace mathfunc {
     /// ARRAY VERSION
     inline double scalarProduct(double const *v1, double const *v2,
                                 double const *v3, double const *v4) {
-        
-        return ((v2[0] - v1[0])*(v4[0] - v3[0]) +
-                (v2[1] - v1[1])*(v4[1] - v3[1]) +
-                (v2[2] - v1[2])*(v4[2] - v3[2]));
+        return((*(v2)-*(v1))*(*(v4)-*(v3))
+               +(*(v2+1)-*(v1+1))*(*(v4+1)-*(v3+1))
+               +(*(v2+2)-*(v1+2))*(*(v4+2)-*(v3+2)));
+        //        return ((v2[0] - v1[0])*(v4[0] - v3[0]) +
+        //                (v2[1] - v1[1])*(v4[1] - v3[1]) +
+        //                (v2[2] - v1[2])*(v4[2] - v3[2]));
     }
     
     
@@ -201,11 +211,11 @@ namespace mathfunc {
                                          double d){
         
         double xx = ((v2[0] + d*p2[0]) - (v1[0] + d*p1[0]))*
-                    ((v4[0] + d*p4[0]) - (v3[0] + d*p3[0]));
+        ((v4[0] + d*p4[0]) - (v3[0] + d*p3[0]));
         double yy = ((v2[1] + d*p2[1]) - (v1[1] + d*p1[1]))*
-                    ((v4[1] + d*p4[1]) - (v3[1] + d*p3[1]));
+        ((v4[1] + d*p4[1]) - (v3[1] + d*p3[1]));
         double zz = ((v2[2] + d*p2[2]) - (v1[2] + d*p1[2]))*
-                    ((v4[2] + d*p4[2]) - (v3[2] + d*p3[2]));
+        ((v4[2] + d*p4[2]) - (v3[2] + d*p3[2]));
         return xx + yy + zz;
         
     }
@@ -221,13 +231,12 @@ namespace mathfunc {
                                          double const *v4,
                                          double const *p4,
                                          double d){
-        
-        double xx = ((v2[0] + d*p2[0]) - (v1[0] + d*p1[0]))*
-                    ((v4[0] + d*p4[0]) - (v3[0] + d*p3[0]));
-        double yy = ((v2[1] + d*p2[1]) - (v1[1] + d*p1[1]))*
-                    ((v4[1] + d*p4[1]) - (v3[1] + d*p3[1]));
-        double zz = ((v2[2] + d*p2[2]) - (v1[2] + d*p1[2]))*
-                    ((v4[2] + d*p4[2]) - (v3[2] + d*p3[2]));
+        double xx = ((*(v2) + d*(*(p2))) - (*(v1) + d*(*(p1)))) *
+        ((*(v4)) + d*(*(p4))) - ((*(v3)) + d*(*(p3)));
+        double yy = ((*(v2+1) + d*(*(p2+1))) - (*(v1+1) + d*(*(p1+1))))*
+        ((*(v4+1) + d*(*(p4+1))) - (v3[1] + d*(*(p3+1))));
+        double zz = ((*(v2+2) + d*(*(p2+2))) - (*(v1+2) + d*(*(p1+2))))*
+        ((*(v4+2) + d*(*(p4+2))) - (*(v3+2) + d*(*(p3+2))));
         return xx + yy + zz;
         
     }
@@ -271,14 +280,13 @@ namespace mathfunc {
     /// (x4-x3,y4-y3,z4-z3). Returns a 3d vector.
     /// ARRAY VERSION
     inline void vectorProduct(double *v,
-                                 double const *v1,
-                                 double const *v2,
-                                 double const *v3,
-                                 double const *v4) {
-        
-        double vx = (v2[1]-v1[1])*(v4[2]-v3[2]) - (v2[2]-v1[2])*(v4[1]-v3[1]);
-        double vy = (v2[2]-v1[2])*(v4[0]-v3[0]) - (v2[0]-v1[0])*(v4[2]-v3[2]);
-        double vz = (v2[0]-v1[0])*(v4[1]-v3[1]) - (v2[1]-v1[1])*(v4[0]-v3[0]);
+                              double const *v1,
+                              double const *v2,
+                              double const *v3,
+                              double const *v4) {
+        double vx = (*(v2+1)-*(v1+1))*(*(v4+2)-*(v3+2)) - (*(v2+2)-*(v1+2))*(*(v4+1)-*(v3+1));
+        double vy = (*(v2+2)-*(v1+2))*(*(v4)-*(v3)) - (*(v2)-*(v1))*(*(v4+2)-*(v3+2));
+        double vz = (*(v2)-*(v1))*(*(v4+1)-*(v3+1)) - (*(v2+1)-*(v1+1))*(*(v4)-*(v3));
         
         v[0] = vx;
         v[1] = vy;
@@ -300,16 +308,16 @@ namespace mathfunc {
                                         double const *p4,
                                         double d){
         double vx =
-        ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]))
-         - ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]));
+        ((*(v2+1)+d*(*(p2+1)))-(*(v1+1)+d*(*(p1+1))))*((*(v4+2)+d*(*(p4+2))-(*(v3+2)+d*(*(p3+2)))))
+        - ((*(v2+2)+d*(*(p2+2)))-(*(v1+2)+d*(*(p1+2))))*((*(v4+1)+d*(*(p4+1)))-(*(v3+1)+d*(*(p3+1))));
         
         double vy =
-        ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]))
-        - ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]));
+        ((*(v2+2)+d*(*(p2+2)))-(*(v1+2)+d*(*(p1+2))))*((*(v4)+d*(*(p4)))-(*(v3)+d*(*p3)))
+        - ((*(v2)+d*(*p2))-(*(v1)+d*(*p1)))*((*(v4+2)+d*(*(p4+2)))-(*(v3+2)+d*(*(p3+2))));
         
         double vz =
-        ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]))
-        - ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]));
+        ((*(v2)+d*(*p2))-(*v1+d*(*p1)))*((*(v4+1)+d*(*(p4+1)))-(*(v3+1)+d*(*(p3+1))))
+        - ((*(v2+1)+d*(*(p2+1)))-(*(v1+1)+d*(*(p1+1))))*((*(v4)+d*(*p4))-(*v3+d*(*p3)));
         
         v[0] = vx;
         v[1] = vy;
@@ -336,10 +344,9 @@ namespace mathfunc {
     inline void crossProduct(double *cp,
                              double const *v1,
                              double const *v2) {
-        
-        cp[0] = v1[1]*v2[2] - v1[2]*v2[1];
-        cp[1] = v1[2]*v2[0] - v1[0]*v2[2];
-        cp[2] = v1[0]*v2[1] - v1[1]*v2[0];
+        *(cp)   = *(v1+1)*(*(v2+2)) - *(v1+2)*(*(v2+1));
+        *(cp+1) = *(v1+2)*(*(v2)) - *(v1)*(*(v2+2));
+        *(cp+2) = *(v1)*(*(v2+1)) - *(v1+1)*(*(v2));
     };
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
@@ -384,12 +391,12 @@ namespace mathfunc {
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v1| = alpha. ARRAY VERSION
     inline void midPointCoordinate(double *v, double const *v1, double const *v2, double alpha) {
-
-        v[0] = (v1[0]*(1.0 - alpha) + alpha*v2[0]);
-        v[1] = (v1[1]*(1.0 - alpha) + alpha*v2[1]);
-        v[2] = (v1[2]*(1.0 - alpha) + alpha*v2[2]);
+        
+        *(v) = ((*v1)*(1.0 - alpha) + alpha*(*(v2)));
+        *(v+1) = (*(v1+1)*(1.0 - alpha) + alpha*(*(v2+1)));
+        *(v+2) = (*(v1+2)*(1.0 - alpha) + alpha*(*(v2+2)));
     }
-
+    
     
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
@@ -415,9 +422,9 @@ namespace mathfunc {
                                             double const *p2,
                                             double alpha, double d) {
         
-        v[0] = (v1[0] + d*p1[0])*(1.0 - alpha) + alpha*(v2[0] + d*p2[0]);
-        v[1] = ((v1[1] + d*p1[1])*(1.0 - alpha) + alpha*(v2[1] + d*p2[1]));
-        v[2] = ((v1[2] + d*p1[2])*(1.0 - alpha) + alpha*(v2[2] + d*p2[2]));
+        *(v) = *(v) + d*(*p1)*(1.0 - alpha) + alpha*(*(v2) + d*(*p2));
+        *(v+1) = *(v+1) + d*(*p1+1)*(1.0 - alpha) + alpha*(*(v2+1) + d*(*p2+1));
+        *(v+2) = *(v+2) + d*(*p1+2)*(1.0 - alpha) + alpha*(*(v2+2) + d*(*p2+2));
     }
     
     /// Returns true if two vectors (p1->p2 and p3->p4) are parallel
@@ -426,7 +433,7 @@ namespace mathfunc {
         
         auto v1 = {p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]};
         auto v2 = {p4[0] - p3[0], p4[1] - p3[1], p4[2] - p3[2]};
-
+        
         return areEqual(magnitude(crossProduct(v1,v2)), 0.0);
     }
     /// ARRAY VERSION
@@ -437,13 +444,13 @@ namespace mathfunc {
         double *v2 = new double[3];
         double *cp = new double[3];
         
-        v1[0] = p2[0] - p1[0];
-        v1[1] = p2[1] - p1[1];
-        v1[2] = p2[2] - p1[2];
+        *(v1) = *(p2) - *(p1);
+        *(v1+1) = *(p2+1) - *(p1+1);
+        *(v1+2) = *(p2+2) - *(p1+2);
         
-        v2[0] = p4[0] - p3[0];
-        v2[1] = p4[1] - p3[1];
-        v2[2] = p4[2] - p3[2];
+        *(v2) = *(p4) - *(p3);
+        *(v2+1) = *(p4+1) - *(p3+1);
+        *(v2+2) = *(p4+2) - *(p3+2);
         
         crossProduct(cp, v1, v2);
         
@@ -463,17 +470,17 @@ namespace mathfunc {
         double *v3 = new double[3];
         double *cp = new double[3];
         
-        v1[0] = p2[0] - p1[0];
-        v1[1] = p2[1] - p1[1];
-        v1[2] = p2[2] - p1[2];
+        *(v1) = *(p2) - *(p1);
+        *(v1+1) = *(p2+1) - *(p1+1);
+        *(v1+2) = *(p2+2) - *(p1+2);
         
-        v2[0] = p3[0] - p1[0];
-        v2[1] = p3[1] - p1[1];
-        v2[2] = p3[2] - p1[2];
+        *(v2) = *(p3) - *(p1);
+        *(v2+1) = *(p3+1) - *(p1+1);
+        *(v2+2) = *(p3+2) - *(p1+2);
         
-        v3[0] = p4[0] - p1[0];
-        v3[1] = p4[1] - p1[1];
-        v3[2] = p4[2] - p1[2];
+        *(v3) = *(p4) - *(p1);
+        *(v3+1) = *(p4+1) - *(p1+1);
+        *(v3+2) = *(p4+2) - *(p1+2);
         
         crossProduct(cp, v1, v2);
         
@@ -548,44 +555,43 @@ namespace mathfunc {
         double *v2 = new double[3];
         
         //get plane
-        v1[0] = p2[0] - p1[0];
-        v1[1] = p2[1] - p1[1];
-        v1[2] = p2[2] - p1[2];
+        *(v1)=*(p2)     - *(p1);
+        *(v1+1)=*(p2+1) - *(p1+1);
+        *(v1+2)=*(p2+2) - *(p1+2);
         
-        v2[0] = p3[0] - p2[0];
-        v2[1] = p3[1] - p2[1];
-        v2[2] = p3[2] - p2[2];
+        *(v2)=*(p3) - *(p2);
+        *(v2+1) = *(p3+1) - *(p2+1);
+        *(v2+2) = *(p3+2) - *(p2+2);
         
         crossProduct(norm,v1,v2);
         normalizeVector(norm);
         
         //move bead 1
         if (i == 1){
-
-            p1[0] = (p1[0] + norm[0]*d);
-            p1[1] = (p1[1] + norm[1]*d);
-            p1[2] = (p1[2] + norm[2]*d);
+            *(p1)   =*(p1) + norm[0]*d;
+            *(p1+1) =*(p1+1) + norm[1]*d;
+            *(p1+2) =*(p1+2) + norm[2]*d;
         }
         
         //move bead 2
         else if (i == 2){
-            p2[0] = (p2[0] + norm[0]*d);
-            p2[1] = (p2[1] + norm[1]*d);
-            p2[2] = (p2[2] + norm[2]*d);
+            *(p2)   =*(p2) + norm[0]*d;
+            *(p2+1) =*(p2+1) + norm[1]*d;
+            *(p2+2) =*(p2+2) + norm[2]*d;
         }
         
         //move bead 3
         else if (i == 3){
-            p3[0] = (p3[0] + norm[0]*d);
-            p3[1] = (p3[1] + norm[1]*d);
-            p3[2] = (p3[2] + norm[2]*d);
+            *(p3)   =*(p3) + norm[0]*d;
+            *(p3+1) =*(p3+1) + norm[1]*d;
+            *(p3+2) =*(p3+2) + norm[2]*d;
         }
         
         //move bead 4
         else {
-            p4[0] = (p4[0] + norm[0]*d);
-            p4[1] = (p4[1] + norm[1]*d);
-            p4[2] = (p4[2] + norm[2]*d);
+            *(p4)   =*(p4) + norm[0]*d;
+            *(p4+1) =*(p4+1) + norm[1]*d;
+            *(p4+2) =*(p4+2) + norm[2]*d;
         }
         delete norm, v1, v2;
     }
@@ -601,6 +607,6 @@ namespace mathfunc {
                                                            double l, double m, double theta);
     
     
-    }
+}
 
 #endif

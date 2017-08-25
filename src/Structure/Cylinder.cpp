@@ -90,7 +90,7 @@ void Cylinder::updatePosition() {
     updateCoordinate();
 
     Compartment* c;
-    
+//    std::cout<<coordinate[0]<<" "<<coordinate[1]<<" "<<coordinate[2]<<endl;
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what();

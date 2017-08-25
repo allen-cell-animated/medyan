@@ -26,7 +26,7 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
                                        double *kbend, double *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = n * (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
     
     double *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
     
@@ -68,7 +68,7 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
                                        double *kbend, double *eqt, double d ){
     
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = n * (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
     
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist, U_i, L1, L2, L1L2, l1l2;
     
@@ -115,7 +115,7 @@ void FilamentBendingHarmonic::forces(double *coord, double *f, int *beadSet,
                                      double *kbend, double *eqt){
     
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = n * (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
     
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist,
            L1, L2, l1l2, invL1, invL2, A,B,C, k;
@@ -177,6 +177,6 @@ void FilamentBendingHarmonic::forces(double *coord, double *f, int *beadSet,
         
         force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                           (coord3[2] - coord2[2])*C );
-        
+                
     }
 }

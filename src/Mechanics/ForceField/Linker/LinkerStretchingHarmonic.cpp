@@ -25,7 +25,7 @@ double LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                         double *kstr, double *eql, double *pos1, double *pos2) {
     
     int n = LinkerStretching<LinkerStretchingHarmonic>::n;
-    int nint = n * Linker::getLinkers().size();
+    int nint = Linker::getLinkers().size();
     
     double *coord1, *coord2, *coord3, *coord4, dist, U_i;
     double *v1 = new double[3];
@@ -67,7 +67,7 @@ double LinkerStretchingHarmonic::energy(double *coord, double * f, int *beadSet,
                                         double *kstr, double *eql, double *pos1, double *pos2, double d){
     
     int n = LinkerStretching<LinkerStretchingHarmonic>::n;
-    int nint = n * Linker::getLinkers().size();
+    int nint = Linker::getLinkers().size();
     
     double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist;
     double *v1 = new double[3];
@@ -104,7 +104,7 @@ void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
     
     
     int n = LinkerStretching<LinkerStretchingHarmonic>::n;
-    int nint = n * Linker::getLinkers().size();
+    int nint = Linker::getLinkers().size();
     
     double *coord1, *coord2, *coord3, *coord4, dist, invL;
     double *v1 = new double[3];
@@ -122,7 +122,7 @@ void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         midPointCoordinate(v1, coord1, coord2, pos1[i]);
         midPointCoordinate(v2, coord3, coord4, pos2[i]);
         
-        dist = twoPointDistance(v1, v2) - eql[i];
+        dist = twoPointDistance(v1, v2) ;
         invL = 1 / dist;
         
         f0 = kstr[i] * ( dist - eql[i] ) * invL;
@@ -154,6 +154,7 @@ void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         
         //assign stretch force
         Linker::getLinkers()[i]->getMLinker()->stretchForce = f0;
+//        std::cout<<"LINKER "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
     }
     delete v1;
     delete v2;

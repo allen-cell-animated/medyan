@@ -31,7 +31,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
     
     
     int n = BranchingPosition<BranchingPositionCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, X, D, XD, xd, theta, eqTheta, dTheta, U_i;
     double *mp = new double[3];
@@ -78,7 +78,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
                                        double *kpos, double *pos, double d){
     
     int n = BranchingPosition<BranchingPositionCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, theta, eqTheta, dTheta, U_i;
     double *mp = new double[3];
@@ -131,7 +131,7 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
                                      double *kpos, double *pos){
     
     int n = BranchingPosition<BranchingPositionCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, eqTheta, dTheta, U_i;
     double *mp = new double[3];

@@ -27,7 +27,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
                                      double *kbend, double *eqt){
     
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint = n * (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
     
     double *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
     
@@ -72,7 +72,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
                                      double *kbend, double *eqt, double d ){
     
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint = n * (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
     
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
     
@@ -122,7 +122,7 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
                                    double *kbend, double *eqt){
     
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint = n * (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
     
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist,
            L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
@@ -191,6 +191,6 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
             
             force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                                (coord3[2] - coord2[2])*C );
-        
+//      std::cout<<"BENDING "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<force2[0]<<" "<<force2[1]<<" "<<force2[2]<<" "<<force3[0]<<" "<<force3[1]<<" "<<force3[2]<<endl;  
     }
 }

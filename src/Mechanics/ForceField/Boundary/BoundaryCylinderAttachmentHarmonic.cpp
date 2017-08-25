@@ -25,7 +25,7 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
     
     
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
-    int nint = n * Bead::getPinnedBeads().size();
+    int nint = Bead::getPinnedBeads().size();
     
     double *coord1, *pin1, dist, U_i;
     double U = 0;
@@ -57,7 +57,7 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
 
     
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
-    int nint = n * Bead::getPinnedBeads().size();
+    int nint = Bead::getPinnedBeads().size();
     
     double *coord1, *pin1, *force1, *zero, dist, U_i;
     double U = 0;
@@ -92,7 +92,7 @@ void BoundaryCylinderAttachmentHarmonic::forces(double *coord, double *f, int *b
                                                 double *kattr, double *pins) {
     
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
-    int nint = n * Bead::getPinnedBeads().size();
+    int nint = Bead::getPinnedBeads().size();
     
     double *coord1, *pin1, *force1, *dir, dist, f0;
     dir = new double[3];

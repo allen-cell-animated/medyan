@@ -26,7 +26,7 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
     
     
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     
     double *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
@@ -77,7 +77,7 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
                                        double *kdih, double *pos, double d){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     
     double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, n1n2, U_i;
@@ -133,7 +133,7 @@ void BranchingDihedralCosine::forces(double *coord, double *f, int *beadSet,
                                      double *kdih, double *pos){
     
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     
     double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;

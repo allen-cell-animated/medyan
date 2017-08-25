@@ -66,7 +66,7 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
     //reset to zero
     for (int i = 0; i < CGMethod::N; i++)
         f[i] = 0.0;
-    
+    int i=0;
     //recompute
     for(auto &ff : _forceFields) ff->computeForces(coord, f);
 

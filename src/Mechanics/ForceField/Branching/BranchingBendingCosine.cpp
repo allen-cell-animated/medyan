@@ -27,7 +27,7 @@ double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt){
 
     int n = BranchingBending<BranchingBendingCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, *coord4, dist, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
     
@@ -73,7 +73,7 @@ double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, double d){
     
     int n = BranchingBending<BranchingBendingCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, *coord4, *force1, *force2, *force3, *force4, dist, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
     
@@ -126,7 +126,7 @@ void BranchingBendingCosine::forces(double *coord, double *f, int *beadSet,
     
    
     int n = BranchingBending<BranchingBendingCosine>::n;
-    int nint = n * BranchingPoint::getBranchingPoints().size();
+    int nint = BranchingPoint::getBranchingPoints().size();
     
     double *coord1, *coord2, *coord3, *coord4, *force1, *force2, *force3, *force4;
     double dist, U_i, L1, L2, L1L2, l1l2, phi, dPhi, A, B, C, invL1, invL2, k;

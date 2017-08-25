@@ -88,7 +88,6 @@ void CGMethod::moveBeads(double d)
     for (int i = 0; i < N; i++) {
         coord[i] = coord[i] + d * force[i];
     }
-    
 }
 
 void CGMethod::shiftGradient(double d)
@@ -128,7 +127,7 @@ void CGMethod::startMinimization() {
         coord[index] = b->coordinate[0];
         coord[index + 1] = b->coordinate[1];
         coord[index + 2] = b->coordinate[2];
-        
+
         b->coordinateP = b->coordinate;
         i++;
     }
@@ -141,13 +140,12 @@ void CGMethod::endMinimization() {
     long i = 0;
     long index = 0;
     for(auto b: Bead::getBeads()) {
-        
+       
         //flatten indices
         index = 3 * i;
         b->coordinate[0] = coord[index];
         b->coordinate[1] = coord[index + 1];
-        b->coordinate[2] = coord[index + 2];
-        
+        b->coordinate[2] = coord[index + 2];        
         i++;
     }
     

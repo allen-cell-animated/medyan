@@ -424,7 +424,7 @@ void Controller::executeSpecialProtocols() {
 void Controller::updatePositions() {
     
     //NEED TO UPDATE CYLINDERS FIRST
-    for(auto c : Cylinder::getCylinders()) c->updatePosition();
+     for(auto c : Cylinder::getCylinders()) {c->updatePosition();}
     
     //update all other moveables
     for(auto m : _subSystem->getMovables()) m->updatePosition();
@@ -507,7 +507,7 @@ void Controller::run() {
         _restart->addtoHeapbranchers();
         cout<<"Bound species added to reaction heap."<<endl;
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
-        std::cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
+        cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController->runSteps(_restart->getnumchemsteps());
         cout<<"Reactions fired! Displaying heap"<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
@@ -606,6 +606,9 @@ void Controller::run() {
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
+//            std::cout<<endl;
+//            std::cout<<"TIME "<<tau()<<endl;
+            std::cout<<endl;
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();

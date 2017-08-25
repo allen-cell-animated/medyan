@@ -25,8 +25,8 @@ namespace mathfunc {
                                                            double l, double m, double theta){
         //get random permutation from p
         vector<double> r = {p[0] + Rand::randDouble(-1, 1),
-                            p[1] + Rand::randDouble(-1, 1),
-                            p[2] + Rand::randDouble(-1, 1)};
+            p[1] + Rand::randDouble(-1, 1),
+            p[2] + Rand::randDouble(-1, 1)};
         
         //construct vector z which is r-p
         auto z = twoPointDirection(p, r);
@@ -56,7 +56,7 @@ namespace mathfunc {
         bp2.push_back(newP[0] + newL * (u[0] * cos(thetaRandom) + v[0] * sin(thetaRandom)));
         bp2.push_back(newP[1] + newL * (u[1] * cos(thetaRandom) + v[1] * sin(thetaRandom)));
         bp2.push_back(newP[2] + newL * (u[2] * cos(thetaRandom) + v[2] * sin(thetaRandom)));
-            
+        
         //get direction
         auto direction = twoPointDirection(bp1, bp2);
         
