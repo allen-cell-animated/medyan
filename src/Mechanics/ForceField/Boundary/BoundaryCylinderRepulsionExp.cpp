@@ -130,6 +130,9 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
             R = -r / slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R);
             
+            std::cout<<"new "<<beadSet[ Cumnc + ic]<<" "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<slen[Cumnc+ic]<<" "
+            <<krep[Cumnc+ic]<<" "<<f0<<endl;
+            
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
