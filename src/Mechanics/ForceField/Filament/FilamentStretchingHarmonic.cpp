@@ -39,7 +39,7 @@ double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet
         
         dist = twoPointDistance(coord1, coord2) - eql[i];
         U_i = 0.5 * kstr[i] * dist * dist;
-        
+        std::cout<<dist<<endl;
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             
@@ -51,7 +51,7 @@ double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet
         
         U += U_i;
     }
-    
+    std::cout<<endl;
     return U;
 }
 
@@ -76,6 +76,7 @@ double FilamentStretchingHarmonic::energy(double *coord, double * f, int *beadSe
         f2 = &f[3 * beadSet[n * i + 1]];
         
         dist = twoPointDistanceStretched(coord1, f1,  coord2, f2, d) - eql[i];
+        std::cout<<dist<<endl;
         U += 0.5 * kstr[i] * dist * dist;
     }
     delete v1;
@@ -93,12 +94,10 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
     
     double *coord1, *coord2, *coord3, *coord4, dist, invL;
     double f0, *f1, *f2, *f3, *f4;
-//    auto xxx=Cylinder::getCylinders();
+    
     for(int i = 0; i < nint; i += 1) {
-//        std::cout<<xxx.size()<<" "<<beadSet[n*i]<<" "<<beadSet[n*i+1]<<endl;
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
-        
         dist = twoPointDistance(coord1, coord2);
         invL = 1 / dist;
         
@@ -106,15 +105,15 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         
         f1 = &f[3 * beadSet[n * i]];
         f2 = &f[3 * beadSet[n * i + 1]];
-        
-        f1[0] +=  f0 * ( coord1[0] - coord2[0] );
-        f1[1] +=  f0 * ( coord1[1] - coord2[1] );
-        f1[2] +=  f0 * ( coord1[2] - coord2[2] );
+
+        f2[0] +=  f0 * ( coord1[0] - coord2[0] );
+        f2[1] +=  f0 * ( coord1[1] - coord2[1] );
+        f2[2] +=  f0 * ( coord1[2] - coord2[2] );
         
         // force i-1
-        f2[0] +=  f0 * ( coord2[0] - coord1[0] );
-        f2[1] +=  f0 * ( coord2[1] - coord1[1] );
-        f2[2] +=  f0 * ( coord2[2] - coord1[2] );
+        f1[0] +=  f0 * ( coord2[0] - coord1[0] );
+        f1[1] +=  f0 * ( coord2[1] - coord1[1] );
+        f1[2] +=  f0 * ( coord2[2] - coord1[2] );
 //        std::cout<<"STRETCHING "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
     }
 }

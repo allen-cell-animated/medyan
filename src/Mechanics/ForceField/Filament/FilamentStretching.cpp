@@ -19,6 +19,9 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "cross_check.h"
+#include <limits>
+typedef std::numeric_limits< double > dbl;
+
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::vectorize() {
     
@@ -31,7 +34,7 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
     for (auto c: Cylinder::getCylinders()) {
         beadSet[n * i] = c->getFirstBead()->_dbIndex;
         beadSet[n * i + 1] = c->getSecondBead()->_dbIndex;
-//        std::cout<<beadSet[n*i]<<" "<<beadSet[n*i+1]<<endl;
+
         kstr[i] = c->getMCylinder()->getStretchingConst();
         eql[i] = c->getMCylinder()->getEqLength();
         
@@ -50,14 +53,64 @@ void FilamentStretching<FStretchingInteractionType>::deallocate() {
 
 template <class FStretchingInteractionType>
 double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coord, double *f, double d){
-    
+    cout.precision(dbl::max_digits10);
     double U_i;
     
     if (d == 0.0)
         U_i = _FFType.energy(coord, f, beadSet, kstr, eql);
     else
         U_i = _FFType.energy(coord, f, beadSet, kstr, eql, d);
+    std::cout<<"===="<<endl;
+#ifdef CROSSCHECK
+    double U2 = 0;
+    double U_ii;
     
+    for (auto f: Filament::getFilaments()) {
+        
+        U_ii = 0;
+        
+        if (d == 0.0){
+            for(auto it : f->getCylinderVector()){
+                
+                Bead* b1 = it->getFirstBead();
+                Bead* b2 = it->getSecondBead();
+                double kStretch = it->getMCylinder()->getStretchingConst();
+                double eqLength = it->getMCylinder()->getEqLength();
+                
+                U_ii += _FFType.energy(b1, b2, kStretch, eqLength);
+            }
+        }
+        else {
+            for(auto it : f->getCylinderVector()){
+                Bead* b1 = it->getFirstBead();
+                Bead* b2 = it->getSecondBead();
+                double kStretch =it->getMCylinder()->getStretchingConst();
+                double eqLength = it->getMCylinder()->getEqLength();
+                
+                U_ii += _FFType.energy(b1, b2, kStretch, eqLength, d);
+            }
+        }
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_ii != U_ii || U_ii < -1.0) {
+            
+            //set culprit and return
+            _filamentCulprit = f;
+            
+            return -1;
+        }
+        else
+            U2 += U_ii;
+    }
+    std::cout<<endl;
+    std::cout<<U_i<<" "<<U2<<endl;
+    if(U_i==U2)
+        std::cout<<"E S YES "<<endl;
+    else
+    {   std::cout<<U_i<<" "<<U2<<endl;
+        exit(EXIT_FAILURE);
+    }
+#endif
     return U_i;
 }
 
@@ -65,6 +118,11 @@ template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord, double *f) {
     
     _FFType.forces(coord, f, beadSet, kstr, eql);
+//    for(int i =0;i< Bead::getBeads().size();i++){
+//        std::cout<<f[3*i]<<" "<<f[3*i+1]<<" "<<f[3*i+2]<<" ";
+//    }
+//    std::cout<<endl;
+
 #ifdef CROSSCHECK
     for (auto f: Filament::getFilaments()) {
         
@@ -75,9 +133,12 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord
             double kStretch =it->getMCylinder()->getStretchingConst();
             double eqLength = it->getMCylinder()->getEqLength();
             
-            _FFType.forcesAux(b1, b2, kStretch, eqLength);
+            _FFType.forces(b1, b2, kStretch, eqLength);
         }
     }
+//    for(auto bd:Bead::getBeads())
+//        std::cout<<bd->force[0]<<" "<<bd->force[1]<<" "<<bd->force[2]<<" ";
+//    std::cout<<endl;
     auto state=cross_check::crosscheckforces(f);
     std::cout<<"F S YES "<<state<<endl;
 #endif

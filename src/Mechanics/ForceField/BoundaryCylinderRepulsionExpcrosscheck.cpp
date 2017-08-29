@@ -27,8 +27,7 @@ void BoundaryCylinderRepulsionExp::forces(Bead* b, double r, vector<double>& nor
     double R = -r/screenLength;
     double f0 = kRep * exp(R);
     
-    std::cout<<"old "<<b->_dbIndex<<" "<<b->force[0]<<" "<<b->force[1]<<" "<<b->force[2]<<" "<<screenLength<<" "
-    <<kRep<<" "<<f0<<endl;
+//    std::cout<<"old "<<b->_dbIndex<<" "<<b->force[0]<<" "<<b->force[1]<<" "<<b->force[2]<<" "<<screenLength<<" "<<kRep<<" "<<f0<<endl;
     
     b->force[0] += f0 *norm[0];
     b->force[1] += f0 *norm[1];

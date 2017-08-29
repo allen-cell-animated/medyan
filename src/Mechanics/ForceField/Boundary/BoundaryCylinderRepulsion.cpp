@@ -26,8 +26,7 @@ using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
-    
-    
+
     //count interactions
     int nint = 0;
     for (auto be: BoundaryElement::getBoundaryElements())
@@ -51,25 +50,25 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         auto be = BoundaryElement::getBoundaryElements()[i];
         auto nn = _neighborList->getNeighbors(be).size();
         
-        nneighbors[i] = nn;
-        
+        nneighbors[i] = 0;
+        auto idx=0;
         
         for (ni = 0; ni < nn; ni++) {
-        
-            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
-                bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;
-            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
-                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
-//            std::cout<<cumnn+ni<<" "<<n*(ni+i)<<" "<<i+ni<<endl;
-            beadSet[cumnn+ni] = bindex;
-            krep[cumnn+ni] = be->getRepulsionConst();
-            slen[cumnn+ni] = be->getScreeningLength();
+            auto check=false;
 
-//            beadSet[n * (i + ni)] = bindex;
-//            krep[i + ni] = be->getRepulsionConst();
-//            slen[i + ni] = be->getScreeningLength();
+            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
+            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;check=true;}
+            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
+            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;check=true;}
+                if(check){
+                    beadSet[cumnn+idx] = bindex;
+                    krep[cumnn+idx] = be->getRepulsionConst();
+                    slen[cumnn+idx] = be->getScreeningLength();
+                    idx++;
+                }
         }
-        cumnn+=nn;
+        nneighbors[i]=idx;
+        cumnn+=idx;
     }
 }
 
@@ -103,10 +102,31 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
     
     _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
 #ifdef CROSSCHECK
+//    std::cout<<"old adjacency list"<<endl;
+//    for (auto be: BoundaryElement::getBoundaryElements()) {
+//        int count=0;
+//        vector<int> b;
+//        for(auto &c: _neighborList->getNeighbors(be)) {
+//            if(c->isMinusEnd()) {count++; b.push_back(c->getFirstBead()->_dbIndex);}
+//            if(c->isPlusEnd()) {count++;b.push_back(c->getSecondBead()->_dbIndex);}
+//            }
+//        std::cout<<count<<" ";
+//        for(auto i=0;i<count;i++)
+//            std::cout<<b[i]<<" ";
+//        std::cout<<endl;
+//    }
+//    for (auto be: BoundaryElement::getBoundaryElements()) {
+//        for(auto &c: _neighborList->getNeighbors(be)) {
+//            if(c->isMinusEnd()) {std::cout<<"old way "<<_neighborList->getNeighbors(be).size()<<" "<<c->getFirstBead()->_dbIndex<<" ";}
+//            else if(c->isPlusEnd()) {std::cout<<"old way "<<_neighborList->getNeighbors(be).size()<<" "<<c->getFirstBead()->_dbIndex<<" ";}
+//            std::cout<<endl;
+//        }
+//    }
+    
     for (auto be: BoundaryElement::getBoundaryElements()) {
         
         for(auto &c: _neighborList->getNeighbors(be)) {
-            
+
             double kRep = be->getRepulsionConst();
             double screenLength = be->getScreeningLength();
             
@@ -117,13 +137,14 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
                 auto normal = be->normal(bd->coordinate);
                 _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
                 
-                bd = c->getSecondBead();
-                normal = be->normal(bd->coordinate);
-                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+//                bd = c->getSecondBead();
+//                normal = be->normal(bd->coordinate);
+//                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
             }
-            else {
+            else if(c->isPlusEnd()) {
                 bd = c->getSecondBead();
                 auto normal = be->normal(bd->coordinate);
+               
                 _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
             }
             

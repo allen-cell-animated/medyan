@@ -48,23 +48,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     FFM.computeForces(coord, force);
     FFM.copyForces(forceAux, force);
-//    std::cout<<"FORCES"<<endl;
     
-//    index=0; i=0;
-//    for(auto b: Bead::getBeads()) {
-//        
-//        //flatten indices
-//        index = 3 * i;
-//        std::cout<<force[index]<<" "<<force[index+1]<<" "<<force[index+2]<<" ";
-//        
-//        i++;
-//    }
-//    std::cout<<endl;
-    //compute first gradient
     double curGrad = CGMethod::allFDotF();
   
 	int numIter = 0;
-//            std::cout<<"CONDITION "<< numIter<<" "<<maxF()<<" "<<GRADTOL<<endl;
+    
     while (/* Iteration criterion */  numIter < N &&
            /* Gradient tolerance  */  maxF() > GRADTOL) {
 //        std::cout<<"CONDITION "<< numIter<<" "<<maxF()<<" "<<GRADTOL<<endl;
@@ -74,21 +62,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //find lambda by line search, move beads
         lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
-
-//        std::cout<<endl;
-//        std::cout<<"MOVEBEADS"<<endl;
         moveBeads(lambda);
-//        index = 0;
-//        i = 0;
-//        for(auto b: Bead::getBeads()) {
-//            
-//            //flatten indices
-//            index = 3 * i;
-//            std::cout<<coord[index]<<" "<<coord[index+1]<<" "<<coord[index+2]<<" ";
-//            
-//            i++;
-//        }
-//        std::cout<<endl;
         //compute new forces
         FFM.computeForces(coord, forceAux);
         
@@ -109,16 +83,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
             _safeMode = true;
         }
         curGrad = newGrad;
-//         index = 0;
-//         i = 0;
-//        for(auto b: Bead::getBeads()) {
-//            
-//            //flatten indices
-//            index = 3 * i;
-//            std::cout<<coord[index]<<" "<<coord[index+1]<<" "<<coord[index+2]<<" ";
-//            
-//            i++;
-//        }
 
     }
     

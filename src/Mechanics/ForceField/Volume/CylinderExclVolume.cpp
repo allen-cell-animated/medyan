@@ -47,7 +47,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     
     int nc = Cylinder::getCylinders().size();
     int i = 0;
-    
+    int Cumnc=0;
     for (i = 0; i < nc; i++) {
         
         auto ci = Cylinder::getCylinders()[i];
@@ -56,14 +56,15 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
         for (int ni = 0; ni < nn; ni++) {
             
             auto cin = _neighborList->getNeighbors(ci)[ni];
+            beadSet[n * (Cumnc + ni)] = ci->getFirstBead()->_dbIndex;
+            beadSet[n * (Cumnc + ni) + 1] = ci->getSecondBead()->_dbIndex;
+            beadSet[n * (Cumnc + ni) + 2] = cin->getFirstBead()->_dbIndex;
+            beadSet[n * (Cumnc + ni) + 3] = cin->getSecondBead()->_dbIndex;
             
-            beadSet[n * (i + ni)] = ci->getFirstBead()->_dbIndex;
-            beadSet[n * (i + ni) + 1] = ci->getSecondBead()->_dbIndex;
-            beadSet[n * (i + ni) + 2] = cin->getFirstBead()->_dbIndex;
-            beadSet[n * (i + ni) + 3] = cin->getSecondBead()->_dbIndex;
+            krep[Cumnc + ni] = ci->getMCylinder()->getExVolConst();
             
-            krep[i + ni] = ci->getMCylinder()->getExVolConst();
         }
+        Cumnc+=nn;
     }
 }
 

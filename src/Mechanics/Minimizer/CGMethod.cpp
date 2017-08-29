@@ -88,6 +88,14 @@ void CGMethod::moveBeads(double d)
     for (int i = 0; i < N; i++) {
         coord[i] = coord[i] + d * force[i];
     }
+#ifdef CROSSCHECK
+    for(auto bd:Bead::getBeads())
+    {
+        bd->coordinate[0]=bd->coordinate[0]+d*bd->force[0];
+        bd->coordinate[1]=bd->coordinate[1]+d*bd->force[1];
+        bd->coordinate[2]=bd->coordinate[2]+d*bd->force[2];
+    }
+#endif
 }
 
 void CGMethod::shiftGradient(double d)

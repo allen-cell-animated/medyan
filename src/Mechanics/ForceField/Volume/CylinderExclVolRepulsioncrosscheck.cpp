@@ -36,6 +36,7 @@
 #include "MathFunctions.h"
 #include "SysParams.h"
 
+
 using namespace mathfunc;
 
 #ifdef CROSSCHECK
@@ -71,6 +72,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     double d = scalarProduct(c1, c2, c3, c4);
     double e = scalarProduct(c1, c2, c3, c1);
     double f = scalarProduct(c3, c4, c3, c1);
+
     
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
@@ -148,6 +150,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     double e = scalarProduct(c1Stretched, c2Stretched, c3Stretched, c1Stretched);
     double f = scalarProduct(c3Stretched, c4Stretched, c3Stretched, c1Stretched);
     
+    
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
     
@@ -176,6 +179,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
                                       Bead* b3, Bead* b4,
                                       double kRepuls) {
     
+
     auto c1 = b1->coordinate;
     auto c2 = b2->coordinate;
     auto c3 = b3->coordinate;
@@ -220,7 +224,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
     double d = scalarProduct(c1, c2, c3, c4);
     double e = scalarProduct(c1, c2, c3, c1);
     double f = scalarProduct(c3, c4, c3, c1);
-    
+//    std::cout<<"O "<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<f<<endl;
     double AA = sqrt(a*c - e*e);
     double BB = sqrt(b*c - f*f);
     
@@ -236,13 +240,13 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
     double JJ = c*(GG + CC) + e*DD - f*CC;
     
     double invJJ = 1/JJ;
-    
+//    std::cout<<"O2 "<<AA<<" "<<BB<<" "<<CC<<" "<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<endl;
     double ATG1 = atan( (a + e)/AA) - atan(e/AA);
     double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
     double ATG3 = atan((f)/BB) - atan((f - b)/BB);
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
-    
-    double U = 0.5*kRepuls*invJJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
+//    std::cout<<"O3 "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
+    double U = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
     
     double A1 = AA*AA/(AA*AA + e*e);
     double A2 = AA*AA/(AA*AA + (a + e)*(a + e));
@@ -255,7 +259,7 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
     
     double F1 = FF*FF/(FF*FF + (d + f - b)*(d + f - b));
     double F2 = FF*FF/(FF*FF + (d + f)*(d + f));
-    
+//    std::cout<<"O4 "<<U<<" "<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<endl;
     
     double A11 = ATG1/AA;
     double A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) -

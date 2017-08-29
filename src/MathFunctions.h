@@ -91,8 +91,8 @@ namespace mathfunc {
         //std::cout<<*v2<<" "<<*(v2+1)<<" "<<*(v2+2)<<endl;
         //std::cout<<*v1<<" "<<*(v1+1)<<" "<<*(v1+2)<<endl;
         //std::cout<<sqrt((*v2-*v1)*(*v2-*v1)+(*(v2+1)-*(v1+1))*(*(v2+1)-*(v1+1))+(*(v2+2)-*(v1+2))*(*(v2+2)-*(v1+2)))<<endl;
-        return sqrt((*v2-*v1)*(*v2-*v1)+(*(v2+1)-*(v1+1))*(*(v2+1)-*(v1+1))+(*(v2+2)-*(v1+2))*(*(v2+2)-*(v1+2)));
-        //return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) + (v2[1]-v1[1])*(v2[1]-v1[1]) +(v2[2]-v1[2])*(v2[2]-v1[2]));
+//        return sqrt((*v2-*v1)*(*v2-*v1)+(*(v2+1)-*(v1+1))*(*(v2+1)-*(v1+1))+(*(v2+2)-*(v1+2))*(*(v2+2)-*(v1+2)));
+        return sqrt((v2[0]-v1[0])*(v2[0]-v1[0]) + (v2[1]-v1[1])*(v2[1]-v1[1]) +(v2[2]-v1[2])*(v2[2]-v1[2]));
     }
     
     /// Compute distance between two points with coordinates
@@ -116,18 +116,18 @@ namespace mathfunc {
                                             double const *p1,
                                             double const *v2,
                                             double const *p2, double d){
-        return sqrt(*(v2)+d*(*(p2))-*(v1)+d*(*(p1)) *
-                    *(v2)+d*(*(p2))-*(v1)+d*(*(p1)) +
-                    *(v2+1)+d*(*(p2+1))-*(v1+1)+d*(*(p1+1)) *
-                    *(v2+1)+d*(*(p2+1))-*(v1+1)+d*(*(p1+1)) +
-                    *(v2+2)+d*(*(p2+2))-*(v1+2)+d*(*(p1+2)) *
-                    *(v2+2)+d*(*(p2+2))-*(v1+2)+d*(*(p1+2)));
-        //        return sqrt(((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) *
-        //                    ((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) +
-        //                    ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) *
-        //                    ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) +
-        //                    ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])) *
-        //                    ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
+//        return sqrt(*(v2)+d*(*(p2))-*(v1)+d*(*(p1)) *
+//                    *(v2)+d*(*(p2))-*(v1)+d*(*(p1)) +
+//                    *(v2+1)+d*(*(p2+1))-*(v1+1)+d*(*(p1+1)) *
+//                    *(v2+1)+d*(*(p2+1))-*(v1+1)+d*(*(p1+1)) +
+//                    *(v2+2)+d*(*(p2+2))-*(v1+2)+d*(*(p1+2)) *
+//                    *(v2+2)+d*(*(p2+2))-*(v1+2)+d*(*(p1+2)));
+                return sqrt(((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) *
+                            ((v2[0] + d*p2[0])-(v1[0] + d*p1[0])) +
+                            ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) *
+                            ((v2[1] + d*p2[1])-(v1[1] + d*p1[1])) +
+                            ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])) *
+                            ((v2[2] + d*p2[2])-(v1[2] + d*p1[2])));
     }
     
     //@{
@@ -444,22 +444,22 @@ namespace mathfunc {
         double *v2 = new double[3];
         double *cp = new double[3];
         
-        *(v1) = *(p2) - *(p1);
-        *(v1+1) = *(p2+1) - *(p1+1);
-        *(v1+2) = *(p2+2) - *(p1+2);
+                v1[0] = p2[0] - p1[0];
+                v1[1] = p2[1] - p1[1];
+                v1[2] = p2[2] - p1[2];
         
-        *(v2) = *(p4) - *(p3);
-        *(v2+1) = *(p4+1) - *(p3+1);
-        *(v2+2) = *(p4+2) - *(p3+2);
+                v2[0] = p4[0] - p3[0];
+                v2[1] = p4[1] - p3[1];
+                v2[2] = p4[2] - p3[2];
         
-        crossProduct(cp, v1, v2);
+                crossProduct(cp, v1, v2);
         
-        auto retVal = areEqual(magnitude(cp), 0.0);
-        delete v1, v2, cp;
+                auto retVal = areEqual(magnitude(cp), 0.0);
+               delete v1, v2, cp;
         
-        return retVal;
+               return retVal;
     }
-    
+ 
     /// Returns true if two vectors (p1->p2 and p3->p4) are in the same plane
     /// ARRAY VERSION
     inline bool areInPlane(double const *p1, double const *p2,

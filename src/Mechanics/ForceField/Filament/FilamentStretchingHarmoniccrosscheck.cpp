@@ -23,8 +23,9 @@ double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
                                           double kStretch, double eqLength){
     
     double dist = twoPointDistance( b1->coordinate, b2->coordinate) - eqLength;
+        std::cout<<dist<<endl;
     return 0.5 * kStretch* dist * dist;
-    
+
 }
 
 double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
@@ -33,12 +34,12 @@ double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
     double distStretched = twoPointDistanceStretched(b1->coordinate,
                                                      b1->force, b2->coordinate,
                                                      b2->force, d) - eqLength;
+    std::cout<<distStretched<<endl;
     return 0.5 * kStretch * distStretched * distStretched;
 }
 
 void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
                                         double kStretch, double eqLength ){
-    
     double dist = twoPointDistance( b1->coordinate, b2->coordinate);
     double invL = 1 / dist;
     

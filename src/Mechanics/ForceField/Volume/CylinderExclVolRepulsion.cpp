@@ -36,6 +36,8 @@
 
 #include "MathFunctions.h"
 #include "SysParams.h"
+#include <limits>
+typedef std::numeric_limits< double > dbl;
 
 using namespace mathfunc;
 
@@ -52,7 +54,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
     
     U_i = 0;
     
-    for (int i = 0; i < nint; nint++) {
+    for (int i = 0; i < nint; i++) {
         
         c1 = &coord[3 * beadSet[n * i]];
         c2 = &coord[3 * beadSet[n * i + 1]];
@@ -140,7 +142,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, 
     
     U_i = 0;
     
-    for (int i = 0; i < nint; nint++) {
+    for (int i = 0; i < nint; i++) {
         
         memcpy(c1, &coord[3 * beadSet[n * i]], 3 * sizeof(double));
         memcpy(c2, &coord[3 * beadSet[n * i + 1]], 3 * sizeof(double));
@@ -232,6 +234,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, 
 void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, double *krep) {
    
     
+    cout.precision(dbl::max_digits10);
     double *c1, *c2, *c3, *c4, d, invDSquare, U, *f1, *f2, *f3, *f4;
     double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
     double ATG1, ATG2, ATG3, ATG4;
@@ -241,7 +244,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
     
-    for (int i = 0; i < nint; nint++) {
+    for (int i = 0; i < nint; i++) {
         
         c1 = &coord[3 * beadSet[n * i]];
         c2 = &coord[3 * beadSet[n * i + 1]];
@@ -277,7 +280,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         d = scalarProduct(c1, c2, c3, c4);
         e = scalarProduct(c1, c2, c3, c1);
         F = scalarProduct(c3, c4, c3, c1);
-        
+//        std::cout<<"N "<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<endl;
         AA = sqrt(a*c - e*e);
         BB = sqrt(b*c - F*F);
         
@@ -290,15 +293,16 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - F*CC;
-        
+//        std::cout<<"N2 "<<AA<<" "<<BB<<" "<<CC<<" "<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<endl;
         invJJ = 1/JJ;
         
         ATG1 = atan( (a + e)/AA) - atan(e/AA);
         ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
         ATG3 = atan((F)/BB) - atan((F - b)/BB);
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
-        
+//        std::cout<<"N3 "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
         U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+//        U = 0.5 * krep[i]*invJJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
         
         A1 = AA*AA/(AA*AA + e*e);
         A2 = AA*AA/(AA*AA + (a + e)*(a + e));
@@ -311,7 +315,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         
         F1 = FF*FF/(FF*FF + (d + F - b)*(d + F - b));
         F2 = FF*FF/(FF*FF + (d + F)*(d + F));
-        
+//        std::cout<<"N4 "<<U<<" "<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<endl;
         A11 = ATG1/AA;
         A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) -
                 (A2*CC*(a + e))/(AA*AA*AA);
@@ -361,6 +365,6 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         f4[1] +=  - invJJ*( 0.5*(c2[1] - c1[1] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[1] - c3[1])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[1] - c3[1] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
     
         f4[2] +=  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
-        std::cout<<"EXCLUDED VOLUME "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+//        std::cout<<"EXCLUDED VOLUME "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
     }
 }

@@ -71,6 +71,7 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord, do
         U_i = _FFType.energy(coord, f, beadSet, kbend, eqt, d);
     
     return U_i;
+    
 }
 
 template <class FBendingInteractionType>
