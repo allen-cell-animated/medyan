@@ -176,7 +176,7 @@ void BranchingManager::updateAllPossibleBindings() {
                     else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
                         if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance){
                             inZone = true;
-                            cout << "x= " << coord[1] << "y= " << coord[2] << endl;
+                            //cout << "x= " << coord[1] << "y= " << coord[2] << endl;
                         }
                         
                         
