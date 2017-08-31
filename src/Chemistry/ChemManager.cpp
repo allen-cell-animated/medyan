@@ -2568,6 +2568,7 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
     //will copy all general and bulk reactions
     for(auto C : grid->getCompartments())
         *C = cProto;
+    
     for(auto C : grid->getCompartments())
         C->generateAllDiffusionReactions();
     

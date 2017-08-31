@@ -201,6 +201,8 @@ struct BoundaryType {
     
     string boundaryShape = "";
     string boundaryMove = "";
+    //Qin
+    //string scaleDiffusion = "";
 };
 
 /// Struct to hold the ForceField types

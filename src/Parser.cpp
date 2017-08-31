@@ -1315,6 +1315,18 @@ BoundaryType SystemParser::readBoundaryType() {
                 BType.boundaryMove = lineVector[1];
             }
         }
+        //Qin, add Compartment Scaling
+        //else if (line.find("DIFFUSIONSCALE") != string::npos) {
+            
+          //  vector<string> lineVector = split<string>(line);
+          //  if(lineVector.size() != 2) {
+          //      cout << "Diffusion scaling needs to be specified. Exiting." << endl;
+          //      exit(EXIT_FAILURE);
+          //  }
+          //  else if (lineVector.size() == 2) {
+          //      BType.scaleDiffusion = lineVector[1];
+          //  }
+        //}
     }
     return BType;
 }
