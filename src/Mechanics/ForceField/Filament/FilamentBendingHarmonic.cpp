@@ -47,6 +47,7 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
         l1l2 = scalarProduct(coord1, coord2,
                              coord2, coord3);
         
+
         U_i = kbend[i] * ( 1 - l1l2 / L1L2 );
         
         if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -94,6 +95,7 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
         l1l2 = scalarProductStretched(coord1, force1, coord2, force2,
                                       coord2, force2, coord3, force3, d);
         
+
         U_i = kbend[i] * ( 1 - l1l2 / L1L2);
         
         if(fabs(U_i) == numeric_limits<double>::infinity()

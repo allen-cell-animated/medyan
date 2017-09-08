@@ -30,7 +30,7 @@ double FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
     double L1L2 = L1*L2;
     double l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
                                 b2->coordinate, b3->coordinate);
-    
+
     return kBend * ( 1 - l1l2 / L1L2 );
     
 }
@@ -52,7 +52,7 @@ double FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
                                          b2->coordinate, b2->force,
                                          b2->coordinate, b2->force,
                                          b3->coordinate, b3->force, d);
-    
+
     return kBend * ( 1 - l1l2 / L1L2 );
     
 }

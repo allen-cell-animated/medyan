@@ -45,6 +45,7 @@ double LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
         
         dist = twoPointDistance(v1, v2) - eql[i];
         U_i = 0.5 * kstr[i] * dist * dist;
+//        std::cout<<dist<<endl;
         
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
@@ -91,6 +92,7 @@ double LinkerStretchingHarmonic::energy(double *coord, double * f, int *beadSet,
         midPointCoordinateStretched(v2, coord3, f3, coord4, f4, pos2[i], d);
         
         dist = twoPointDistance(v1,  v2) - eql[i];
+//        std::cout<<dist<<endl;
         U += 0.5 * kstr[i] * dist * dist;
     }
     delete v1;

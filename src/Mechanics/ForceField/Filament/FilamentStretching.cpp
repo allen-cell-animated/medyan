@@ -60,11 +60,10 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
         U_i = _FFType.energy(coord, f, beadSet, kstr, eql);
     else
         U_i = _FFType.energy(coord, f, beadSet, kstr, eql, d);
-    std::cout<<"===="<<endl;
+
 #ifdef CROSSCHECK
     double U2 = 0;
     double U_ii;
-    
     for (auto f: Filament::getFilaments()) {
         
         U_ii = 0;
@@ -76,7 +75,6 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
                 Bead* b2 = it->getSecondBead();
                 double kStretch = it->getMCylinder()->getStretchingConst();
                 double eqLength = it->getMCylinder()->getEqLength();
-                
                 U_ii += _FFType.energy(b1, b2, kStretch, eqLength);
             }
         }
@@ -84,6 +82,8 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
             for(auto it : f->getCylinderVector()){
                 Bead* b1 = it->getFirstBead();
                 Bead* b2 = it->getSecondBead();
+                
+//                std::cout<<b1->coordinate[0]<<" "<<b1->coordinate[1]<<" "<<b1->coordinate[2]<<" "<<b2->coordinate[0]<<" "<<b2->coordinate[1]<<" "<<b2->coordinate[2]<<" ";
                 double kStretch =it->getMCylinder()->getStretchingConst();
                 double eqLength = it->getMCylinder()->getEqLength();
                 
@@ -97,14 +97,13 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
             //set culprit and return
             _filamentCulprit = f;
             
-            return -1;
+            U2=-1;
+            break;
         }
         else
             U2 += U_ii;
     }
-    std::cout<<endl;
-    std::cout<<U_i<<" "<<U2<<endl;
-    if(U_i==U2)
+    if(abs(U_i-U2)<=U2/100000000000)
         std::cout<<"E S YES "<<endl;
     else
     {   std::cout<<U_i<<" "<<U2<<endl;
@@ -133,14 +132,24 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord
             double kStretch =it->getMCylinder()->getStretchingConst();
             double eqLength = it->getMCylinder()->getEqLength();
             
-            _FFType.forces(b1, b2, kStretch, eqLength);
+            
+            if(cross_checkclass::Aux)
+                _FFType.forcesAux(b1, b2, kStretch, eqLength);
+            else
+                _FFType.forces(b1, b2, kStretch, eqLength);
+
+            
         }
     }
 //    for(auto bd:Bead::getBeads())
 //        std::cout<<bd->force[0]<<" "<<bd->force[1]<<" "<<bd->force[2]<<" ";
 //    std::cout<<endl;
-    auto state=cross_check::crosscheckforces(f);
-    std::cout<<"F S YES "<<state<<endl;
+
+     if(cross_checkclass::Aux)
+     {auto state=cross_check::crosscheckAuxforces(f);    std::cout<<"F S YES "<<state<<endl;}
+     else
+     { auto state=cross_check::crosscheckforces(f);     std::cout<<"F S YES "<<state<<endl;}
+
 #endif
 
 }

@@ -70,6 +70,66 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord, do
     else
         U_i = _FFType.energy(coord, f, beadSet, kbend, eqt, d);
     
+#ifdef CROSSCHECK
+    double U2 = 0;
+    double U_ii;
+    
+    for (auto f: Filament::getFilaments()) {
+        
+        U_ii = 0;
+        
+        if (f->getCylinderVector().size() > 1){
+            
+            if (d == 0.0){
+                for (auto it = f->getCylinderVector().begin()+1;
+                     it != f->getCylinderVector().end(); it++){
+                    
+                    auto it2 = it - 1;
+                    Bead* b1 = (*it2)->getFirstBead();
+                    Bead* b2 = (*it)->getFirstBead();
+                    Bead* b3 = (*it)->getSecondBead();
+
+                    double kBend = (*it)->getMCylinder()->getBendingConst();
+                    double eqTheta = (*it)->getMCylinder()->getEqTheta();
+                    
+                    U_ii += _FFType.energy(b1, b2, b3, kBend, eqTheta);
+                }
+            }
+            else {
+                for (auto it = f->getCylinderVector().begin()+1;
+                     it != f->getCylinderVector().end(); it++){
+                    
+                    auto it2 = it - 1;
+                    Bead* b1 = (*it2)->getFirstBead();
+                    Bead* b2 = (*it)->getFirstBead();
+                    Bead* b3 = (*it)->getSecondBead();
+
+                    double kBend = (*it)->getMCylinder()->getBendingConst();
+                    double eqTheta = (*it)->getMCylinder()->getEqTheta();
+                    
+                    U_ii += _FFType.energy(b1, b2, b3, kBend, eqTheta, d);
+                    
+                }
+            }
+        }
+        
+        if(fabs(U_ii) == numeric_limits<double>::infinity()
+           || U_ii != U_ii || U_ii < -1.0) {
+            
+            U2=-1;
+            break;
+        }
+        else
+            U2 += U_ii;
+    }
+    if(abs(U_i-U2)<=U2/100000000000)
+        std::cout<<"E B YES "<<endl;
+    else
+    {   std::cout<<U_i<<" "<<U2<<endl;
+        exit(EXIT_FAILURE);
+    }
+#endif
+    
     return U_i;
     
 }
@@ -91,13 +151,21 @@ void FilamentBending<FBendingInteractionType>::computeForces(double *coord, doub
                 Bead* b3 = (*it)->getSecondBead();
                 double kBend = (*it)->getMCylinder()->getBendingConst();
                 double eqTheta = (*it)->getMCylinder()->getEqTheta();
-                
-                _FFType.forces(b1, b2, b3, kBend, eqTheta);
+
+                if(cross_checkclass::Aux)
+                    _FFType.forcesAux(b1, b2, b3, kBend, eqTheta);
+                else
+                    _FFType.forces(b1, b2, b3, kBend, eqTheta);
             }
         }
     }
-    auto state=cross_check::crosscheckforces(f);
-    std::cout<<"F S+B YES "<<state<<endl;
+    if(cross_checkclass::Aux){
+    auto state=cross_check::crosscheckAuxforces(f);
+        std::cout<<"F S+B YES "<<state<<endl;}
+    else{
+        auto state=cross_check::crosscheckforces(f);
+    std::cout<<"F S+B YES "<<state<<endl;}
+
 #endif
 }
 

@@ -85,15 +85,14 @@ void CGMethod::moveBeads(double d)
     ///<NOTE: Ignores static beads for now.
     //if(!b->getstaticstate())
     
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++)
         coord[i] = coord[i] + d * force[i];
-    }
 #ifdef CROSSCHECK
     for(auto bd:Bead::getBeads())
     {
-        bd->coordinate[0]=bd->coordinate[0]+d*bd->force[0];
-        bd->coordinate[1]=bd->coordinate[1]+d*bd->force[1];
-        bd->coordinate[2]=bd->coordinate[2]+d*bd->force[2];
+        bd->coordinate[0]=bd->coordinate[0]+d * bd->force[0];
+        bd->coordinate[1]=bd->coordinate[1]+d * bd->force[1];
+        bd->coordinate[2]=bd->coordinate[2]+d * bd->force[2];
     }
 #endif
 }
@@ -102,6 +101,13 @@ void CGMethod::shiftGradient(double d)
 {
     for (int i = 0; i < N; i ++)
         force[i] = forceAux[i] + d * force[i];
+
+    
+#ifdef CROSSCHECK
+    for(auto b:Bead::getBeads())
+        for(auto id=0;id<3;id++)
+            b->force[id] = b->forceAux[id] + d * b->force[id];
+#endif
 }
 
 void CGMethod::printForces()

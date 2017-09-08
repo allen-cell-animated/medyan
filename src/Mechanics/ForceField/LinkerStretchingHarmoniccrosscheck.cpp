@@ -27,6 +27,7 @@ double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
     
     double dist = twoPointDistance(v1, v2) - eqLength;
+//    std::cout<<dist<<endl;
     return 0.5 * kStretch * dist * dist;
 }
 
@@ -40,6 +41,7 @@ double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                           b4->coordinate, b4->force, position2, d);
     
     double distStretched = twoPointDistance(v1, v2) - eqLength;
+//    std::cout<<distStretched<<endl;
     return 0.5 * kStretch * distStretched * distStretched ;
     
 }

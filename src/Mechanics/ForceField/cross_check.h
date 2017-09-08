@@ -19,6 +19,11 @@
 #include <stdio.h>
 #include <limits>
 typedef std::numeric_limits< double > dbl;
+class cross_checkclass{
+    public:
+    static bool Aux;
+};
+
 namespace cross_check{
 inline bool crosscheckforces(double* force){
     bool state=false;
@@ -45,5 +50,30 @@ inline bool crosscheckforces(double* force){
     }
     return state;
 }
+    inline bool crosscheckAuxforces(double* force){
+        bool state=false;
+        for(auto b: Bead::getBeads()) {
+            
+            //set bead index
+            auto idx=3*b->_dbIndex;
+            cout.precision(dbl::max_digits10);
+            //        if(force[idx]!=b->force[0])
+            //            std::cout<<"0"<<endl;
+            //        if(force[idx+1]!=b->force[1])
+            //            std::cout<<"1"<<endl;
+            //        if(force[idx+2]!=b->force[2])
+            //            std::cout<<"2"<<endl;
+            
+            if(force[idx]==b->forceAux[0] && force[idx+1]==b->forceAux[1] && force[idx+2]==b->forceAux[2])
+                state=true;
+            else{
+                state=false;
+                std::cout<<"vectorized "<<force[idx]<<" "<<force[idx+1]<<" "<<force[idx+2]<<endl;
+                std::cout<<"old way "<<b->forceAux[0]<<" "<<b->forceAux[1]<<" "<<b->forceAux[2]<<endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        return state;
+    }
 }
 #endif /* cross_check_h */

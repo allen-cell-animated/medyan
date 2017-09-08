@@ -53,6 +53,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
     
     U_i = 0;
+    U = 0;
     
     for (int i = 0; i < nint; i++) {
         
@@ -68,7 +69,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
             d = twoPointDistance(c1, c3);
             invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
-    
+//            std::cout<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
@@ -112,7 +113,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
         
         U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-        
+//        std::cout<<U_i<<endl;
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             
@@ -141,6 +142,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, 
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
     
     U_i = 0;
+    U = 0;
     
     for (int i = 0; i < nint; i++) {
         
@@ -167,14 +169,14 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, 
         c4[0] = c4[0] + z * f4[0];
         c4[1] = c4[1] + z * f4[1];
         c4[2] = c4[2] + z * f4[2];
-        
+
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
             
             d = twoPointDistance(c1, c3);
             invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
-            
+//            std::cout<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
@@ -218,7 +220,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, 
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
         
         U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-        
+//        std::cout<<U_i<<endl;
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             
@@ -303,7 +305,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
 //        std::cout<<"N3 "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
         U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 //        U = 0.5 * krep[i]*invJJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-        
+//        std::cout<<U<<endl;
         A1 = AA*AA/(AA*AA + e*e);
         A2 = AA*AA/(AA*AA + (a + e)*(a + e));
         
@@ -365,6 +367,6 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         f4[1] +=  - invJJ*( 0.5*(c2[1] - c1[1] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[1] - c3[1])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[1] - c3[1] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
     
         f4[2] +=  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
-//        std::cout<<"EXCLUDED VOLUME "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+//        std::cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
     }
 }

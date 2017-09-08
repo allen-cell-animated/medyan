@@ -14,6 +14,7 @@
 #include "ForceFieldManager.h"
 
 #include "CGMethod.h"
+#include "cross_check.h"
 
 void ForceFieldManager::vectorizeAllForceFields() {
     
@@ -65,6 +66,9 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 void ForceFieldManager::resetForces() {
     
     for(auto b: Bead::getBeads()) {
+        if(cross_checkclass::Aux)
+        b->forceAux.assign (3,0);
+        else
         b->force.assign (3, 0); //Set force to zero;
         std::memset((void*)(&b->loadForcesP[0]), 0, sizeof(b->loadForcesP));  //Set load force to zero;
         std::memset((void*)(&b->loadForcesM[0]), 0, sizeof(b->loadForcesM));  //Set load force to zero;

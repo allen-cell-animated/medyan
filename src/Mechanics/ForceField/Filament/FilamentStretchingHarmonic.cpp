@@ -36,10 +36,9 @@ double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet
         
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
-        
         dist = twoPointDistance(coord1, coord2) - eql[i];
+
         U_i = 0.5 * kstr[i] * dist * dist;
-        std::cout<<dist<<endl;
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             
@@ -51,7 +50,6 @@ double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet
         
         U += U_i;
     }
-    std::cout<<endl;
     return U;
 }
 
@@ -76,7 +74,6 @@ double FilamentStretchingHarmonic::energy(double *coord, double * f, int *beadSe
         f2 = &f[3 * beadSet[n * i + 1]];
         
         dist = twoPointDistanceStretched(coord1, f1,  coord2, f2, d) - eql[i];
-        std::cout<<dist<<endl;
         U += 0.5 * kstr[i] * dist * dist;
     }
     delete v1;
@@ -98,6 +95,7 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
     for(int i = 0; i < nint; i += 1) {
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
+
         dist = twoPointDistance(coord1, coord2);
         invL = 1 / dist;
         

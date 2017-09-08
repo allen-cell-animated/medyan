@@ -17,7 +17,7 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
-
+#include "cross_check.h"
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
                             double MAXDIST, double LAMBDAMAX, bool steplimit){
     
@@ -45,7 +45,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 //    std::cout<<endl;
     
     FFM.vectorizeAllForceFields();
-    
+#ifdef CROSSCHECK
+    cross_checkclass::Aux=false;
+#endif
     FFM.computeForces(coord, force);
     FFM.copyForces(forceAux, force);
     
@@ -59,10 +61,17 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 		numIter++;
 		double lambda, beta, newGrad, prevGrad;
         
+            auto state=cross_check::crosscheckforces(force);
+        
         //find lambda by line search, move beads
         lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
         moveBeads(lambda);
+        
+#ifdef CROSSCHECK
+        cross_checkclass::Aux=true;
+#endif
+        
         //compute new forces
         FFM.computeForces(coord, forceAux);
         
@@ -104,20 +113,16 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     
 //    cout << "Minimized." << endl;
     
+#ifdef CROSSCHECK
+    cross_checkclass::Aux=false;
+#endif
+    
     //final force calculation
     FFM.computeForces(coord, force);
+    auto state=cross_check::crosscheckforces(force);
+    
     FFM.copyForces(forceAux, force);
-//    index = 0;
-//    i = 0;
-//    for(auto b: Bead::getBeads()) {
-//        
-//        //flatten indices
-//        index = 3 * i;
-//        std::cout<<coord[index]<<" "<<coord[index+1]<<" "<<coord[index+2]<<" ";
-//        
-//        i++;
-//    }
-//    std::cout<<endl;
+
     endMinimization();
     FFM.computeLoadForces();
 

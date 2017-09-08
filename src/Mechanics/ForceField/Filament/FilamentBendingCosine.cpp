@@ -52,7 +52,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         dPhi = phi-eqt[i];
             
         U_i = kbend[i] * ( 1 - cos(dPhi) );
-        
+
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             
@@ -83,7 +83,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
         coord3 = &coord[3 * beadSet[n * i + 2]];
-        
+
         force1 = &f[3 * beadSet[n * i]];
         force2 = &f[3 * beadSet[n * i + 1]];
         force3 = &f[3 * beadSet[n * i + 2]];
@@ -102,7 +102,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         dPhi = phi-eqt[i];
         
         U_i = kbend[i] * ( 1 - cos(dPhi) );
-        
+
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             

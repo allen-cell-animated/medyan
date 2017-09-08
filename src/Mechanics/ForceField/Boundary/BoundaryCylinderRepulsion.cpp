@@ -32,7 +32,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     for (auto be: BoundaryElement::getBoundaryElements())
         for(auto &c : _neighborList->getNeighbors(be))
             nint++;
-//    std::cout<<"value of n "<<n<<endl;
+//    std::cout<<"value of nint "<<nint<<endl;
     beadSet = new int[n * nint];
     krep = new double[nint];
     slen = new double[nint];
@@ -93,7 +93,56 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
     else {
         U_i = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
     }
+//    std::cout<<"=================="<<endl;
+#ifdef CROSSCHECK
+    double U2 = 0;
+    double U_ii;
     
+    for (auto be: BoundaryElement::getBoundaryElements()) {
+//        std::cout<<"neighbors "<<_neighborList->getNeighbors(be).size()<<endl;
+        for(auto &c : _neighborList->getNeighbors(be)) {
+            
+            double kRep = be->getRepulsionConst();
+            double screenLength = be->getScreeningLength();
+            
+            //potential acts on second bead unless this is a minus end
+            Bead* bd; bool calcstate=false;
+            if(c->isMinusEnd())
+            {bd = c->getFirstBead();calcstate=true;}
+            else if(c->isPlusEnd())
+            {bd = c->getSecondBead();calcstate=true;}
+                if(calcstate){
+            if (d == 0.0)
+            {U_ii =  _FFType.energy(
+                                      bd, be->distance(bd->coordinate), kRep, screenLength);
+//                std::cout<<be->distance(bd->coordinate)<<" "<<U_ii<<" ";
+            }
+            else
+            {
+                U_ii = _FFType.energy(
+                                     bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
+//                std::cout<<be->stretchedDistance(bd->coordinate, bd->force, d)<<" "<<U_ii<<" ";
+            }
+                
+            if(fabs(U_ii) == numeric_limits<double>::infinity()
+               || U_ii != U_ii || U_ii < -1.0) {
+                
+                
+                U2=-1;
+            }
+            else
+                U2 += U_ii;
+                }
+        }
+    }
+    if(abs(U_i-U2)<=U2/100000000000)
+        std::cout<<"E B YES "<<endl;
+    else
+    {   std::cout<<U_i<<" "<<U2<<endl;
+        exit(EXIT_FAILURE);
+    }
+
+#endif
     return U_i;
 }
 
@@ -135,7 +184,11 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
             if(c->isMinusEnd()) {
                 bd = c->getFirstBead();
                 auto normal = be->normal(bd->coordinate);
-                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+                
+                if(cross_checkclass::Aux)
+                    _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+                else
+                    _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
                 
 //                bd = c->getSecondBead();
 //                normal = be->normal(bd->coordinate);
@@ -144,14 +197,23 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
             else if(c->isPlusEnd()) {
                 bd = c->getSecondBead();
                 auto normal = be->normal(bd->coordinate);
-               
-                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+                
+                if(cross_checkclass::Aux)
+                    _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+                else
+                    _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
             }
             
         }
     }
-    auto state=cross_check::crosscheckforces(f);
-    std::cout<<"F S+B+L+M+ +V+B YES "<<state<<endl;
+    if(cross_checkclass::Aux)
+        {    auto state=cross_check::crosscheckAuxforces(f);
+            std::cout<<"F S+B+L+M+ +V+B YES "<<state<<endl;}
+    else
+    {    auto state=cross_check::crosscheckforces(f);
+        std::cout<<"F S+B+L+M+ +V+B YES "<<state<<endl;}
+
+    
 #endif
 }
 

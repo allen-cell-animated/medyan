@@ -18,6 +18,7 @@
 double BoundaryCylinderRepulsionExp::energy(Bead* b, double r,
                                             double kRep, double screenLength) {
     double R = -r/screenLength;
+//    std::cout<<r<<" "<<kRep*exp(R)<<endl;
     return kRep * exp(R);
 }
 
@@ -39,7 +40,7 @@ void BoundaryCylinderRepulsionExp::forcesAux(Bead* b, double r, vector<double>& 
                                              double kRep, double screenLength) {
     
     double R = -r/screenLength;
-    double f0 = kRep * exp(R)/screenLength;
+    double f0 = kRep * exp(R);
     
     b->forceAux[0] += f0 *norm[0];
     b->forceAux[1] += f0 *norm[1];

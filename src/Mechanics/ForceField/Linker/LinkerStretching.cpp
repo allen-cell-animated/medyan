@@ -66,6 +66,44 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord
         U_i = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2);
     else
         U_i = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
+//    std::cout<<"================="<<endl;
+#ifdef CROSSCHECK
+    double U2 = 0;
+    double U_ii;
+//    std::cout<<"NL "<<(Linker::getLinkers()).size()<<endl;
+    for (auto l: Linker::getLinkers()) {
+        
+        Bead* b1 = l->getFirstCylinder()->getFirstBead();
+        Bead* b2 = l->getFirstCylinder()->getSecondBead();
+        Bead* b3 = l->getSecondCylinder()->getFirstBead();
+        Bead* b4 = l->getSecondCylinder()->getSecondBead();
+        double kStretch = l->getMLinker()->getStretchingConstant();
+        double eqLength = l->getMLinker()->getEqLength();
+        double pos1 = l->getFirstPosition();
+        double pos2 = l->getSecondPosition();
+        
+        if (d == 0.0)
+            U_ii = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+        else
+            U_ii = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, d);
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_ii != U_ii || U_ii < -1.0) {
+            
+            U2=-1;
+            break;
+        }
+        else
+            U2 += U_ii;
+    }
+    if(abs(U_i-U2)<=U2/100000000000)
+        std::cout<<"E L YES "<<endl;
+    else
+    {   std::cout<<U_i<<" "<<U2<<endl;
+        exit(EXIT_FAILURE);
+    }
+
+#endif
     
     return U_i;
 }
@@ -87,11 +125,21 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, 
         double pos1 = l->getFirstPosition();
         double pos2 = l->getSecondPosition();
         
-        double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-        l->getMLinker()->stretchForce = f0;
+        if(cross_checkclass::Aux)
+        {double f0 = _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+//            l->getMLinker()->stretchForce = f0;
+        }
+        else
+        {double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+//            l->getMLinker()->stretchForce = f0;
+        }
     }
-    auto state = cross_check::crosscheckforces(f);
-    std::cout<<"F S+B+L YES "<<state<<endl;
+    if(cross_checkclass::Aux){
+        auto state=cross_check::crosscheckAuxforces(f);
+        std::cout<<"F S+B+L YES "<<state<<endl;}
+    else{
+        auto state=cross_check::crosscheckforces(f);
+        std::cout<<"F S+B+L YES "<<state<<endl;}
 #endif
 }
 

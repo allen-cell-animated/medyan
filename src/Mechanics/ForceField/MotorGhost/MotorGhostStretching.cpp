@@ -68,6 +68,50 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
     else
         U_i = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
     
+#ifdef CROSSCHECK
+    double U2 = 0;
+    double U_ii;
+    
+    for (auto m: MotorGhost::getMotorGhosts()) {
+        
+        Bead* b1 = m->getFirstCylinder()->getFirstBead();
+        Bead* b2 = m->getFirstCylinder()->getSecondBead();
+        Bead* b3 = m->getSecondCylinder()->getFirstBead();
+        Bead* b4 = m->getSecondCylinder()->getSecondBead();
+        
+        double kStretch = m->getMMotorGhost()->getStretchingConstant();
+        double eqLength = m->getMMotorGhost()->getEqLength();
+        
+        double pos1 = m->getFirstPosition();
+        double pos2 = m->getSecondPosition();
+        
+        if (d == 0.0)
+            U_ii = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+        else
+            U_ii = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, d);
+        
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+           || U_ii != U_ii || U_ii < -1.0) {
+            
+            //set culprit and return
+            _motorCulprit = m;
+            
+            U2=-1;
+            break;
+        }
+        else
+            U2 += U_ii;
+    }
+    if(abs(U_i-U2)<=U2/100000000000)
+        std::cout<<"E M YES "<<endl;
+    else
+    {   std::cout<<U_i<<" "<<U2<<endl;
+        exit(EXIT_FAILURE);
+    }
+
+    
+#endif
+    
     return U_i;
 }
 
@@ -88,11 +132,21 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
         double pos1 = m->getFirstPosition();
         double pos2 = m->getSecondPosition();
         
-        double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-        m->getMMotorGhost()->stretchForce = f0;
+        if(cross_checkclass::Aux)
+        {double f0 = _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+//            m->getMMotorGhost()->stretchForce = f0;
+        }
+        else
+        {double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
+//            m->getMMotorGhost()->stretchForce = f0;
+        }
     }
-    auto state=cross_check::crosscheckforces(f);
-    std::cout<<"F S+B+L+M YES "<<state<<endl;
+    if(cross_checkclass::Aux){
+        auto state=cross_check::crosscheckAuxforces(f);
+        std::cout<<"F S+B+L+M YES "<<state<<endl;}
+    else{
+        auto state=cross_check::crosscheckforces(f);
+        std::cout<<"F S+B+L+M YES "<<state<<endl;}
 #endif
 }
 

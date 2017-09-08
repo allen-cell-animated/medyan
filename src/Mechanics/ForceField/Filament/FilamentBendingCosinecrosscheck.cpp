@@ -32,7 +32,7 @@ double FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     
     double phi = safeacos(l1l2 / L1L2);
     double dPhi = phi-eqTheta;
-    
+
     return kBend * ( 1 - cos(dPhi) );
 }
 
@@ -56,7 +56,7 @@ double FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
     
     double phi = safeacos(l1l2 / L1L2);
     double dPhi = phi-eqTheta;
-    
+
     return kBend * ( 1 - cos(dPhi) );
 }
 

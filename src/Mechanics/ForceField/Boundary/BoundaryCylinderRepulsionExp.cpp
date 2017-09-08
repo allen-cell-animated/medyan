@@ -40,7 +40,7 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
             R = -r / slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
             
-            
+//            std::cout<<r<<" "<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
@@ -81,6 +81,8 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
             r = be->stretchedDistance(coord1, force1, d);
             
             R = -r / slen[Cumnc + ic];
+            
+//            std::cout<<r<<" "<<krep[Cumnc+ic]<<endl;
             U_i = krep[Cumnc + ic] * exp(R);
             
             
@@ -111,11 +113,6 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
     auto Cumnc=0;
-//    auto cum=0;
-//    std::cout<<"adjacency list"<<endl;
-//    for(int ib = 0; ib < nb; ib++) {std::cout<<nneighbors[ib]<<" ";nc=nneighbors[ib];
-//        for(int ic = 0; ic < nc; ic++) {std::cout<<beadSet[cum + ic]<<" ";}std::cout<<endl;cum+=nc;}std::cout<<endl;
-
     
     for (int ib = 0; ib < nb; ib++) {
         
