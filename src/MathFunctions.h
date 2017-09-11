@@ -558,43 +558,44 @@ namespace mathfunc {
         double *v2 = new double[3];
         
         //get plane
-        *(v1)=*(p2)     - *(p1);
-        *(v1+1)=*(p2+1) - *(p1+1);
-        *(v1+2)=*(p2+2) - *(p1+2);
+        v1[0] = p2[0] - p1[0];
+        v1[1] = p2[1] - p1[1];
+        v1[2] = p2[2] - p1[2];
         
-        *(v2)=*(p3) - *(p2);
-        *(v2+1) = *(p3+1) - *(p2+1);
-        *(v2+2) = *(p3+2) - *(p2+2);
+        v2[0] = p3[0] - p2[0];
+        v2[1] = p3[1] - p2[1];
+        v2[2] = p3[2] - p2[2];
         
         crossProduct(norm,v1,v2);
         normalizeVector(norm);
         
         //move bead 1
         if (i == 1){
-            *(p1)   =*(p1) + norm[0]*d;
-            *(p1+1) =*(p1+1) + norm[1]*d;
-            *(p1+2) =*(p1+2) + norm[2]*d;
+            
+            p1[0] = (p1[0] + norm[0]*d);
+            p1[1] = (p1[1] + norm[1]*d);
+            p1[2] = (p1[2] + norm[2]*d);
         }
         
         //move bead 2
         else if (i == 2){
-            *(p2)   =*(p2) + norm[0]*d;
-            *(p2+1) =*(p2+1) + norm[1]*d;
-            *(p2+2) =*(p2+2) + norm[2]*d;
+            p2[0] = (p2[0] + norm[0]*d);
+            p2[1] = (p2[1] + norm[1]*d);
+            p2[2] = (p2[2] + norm[2]*d);
         }
         
         //move bead 3
         else if (i == 3){
-            *(p3)   =*(p3) + norm[0]*d;
-            *(p3+1) =*(p3+1) + norm[1]*d;
-            *(p3+2) =*(p3+2) + norm[2]*d;
+            p3[0] = (p3[0] + norm[0]*d);
+            p3[1] = (p3[1] + norm[1]*d);
+            p3[2] = (p3[2] + norm[2]*d);
         }
         
         //move bead 4
         else {
-            *(p4)   =*(p4) + norm[0]*d;
-            *(p4+1) =*(p4+1) + norm[1]*d;
-            *(p4+2) =*(p4+2) + norm[2]*d;
+            p4[0] = (p4[0] + norm[0]*d);
+            p4[1] = (p4[1] + norm[1]*d);
+            p4[2] = (p4[2] + norm[2]*d);
         }
         delete norm, v1, v2;
     }

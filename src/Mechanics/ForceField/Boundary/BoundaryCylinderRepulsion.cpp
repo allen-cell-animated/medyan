@@ -30,8 +30,11 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     //count interactions
     int nint = 0;
     for (auto be: BoundaryElement::getBoundaryElements())
+    {
+//        std::cout<<BoundaryElement::getBoundaryElements().size()<<" "<<_neighborList->getNeighbors(be).size()<<endl;
         for(auto &c : _neighborList->getNeighbors(be))
             nint++;
+    }
 //    std::cout<<"value of nint "<<nint<<endl;
     beadSet = new int[n * nint];
     krep = new double[nint];

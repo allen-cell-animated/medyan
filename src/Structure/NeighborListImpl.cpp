@@ -185,7 +185,6 @@ void BoundaryCylinderNL::reset() {
 }
 
 vector<Cylinder*> BoundaryCylinderNL::getNeighbors(BoundaryElement* be) {
-    
     return _list[be];
 }
 

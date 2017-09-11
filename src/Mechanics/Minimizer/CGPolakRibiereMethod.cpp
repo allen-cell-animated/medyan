@@ -61,8 +61,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 		numIter++;
 		double lambda, beta, newGrad, prevGrad;
         
+#ifdef CROSSCHECK
             auto state=cross_check::crosscheckforces(force);
-        
+#endif
         //find lambda by line search, move beads
         lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
@@ -99,11 +100,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         cout << endl;
         
         cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
-        cout << "Maximum force in system = " << maxF() << endl;
+//        cout << "Maximum force in system = " << maxF() << endl;
         
-        cout << "Culprit ..." << endl;
-        auto b = maxBead();
-        if(b != nullptr) b->getParent()->printSelf();
+//        cout << "Culprit ..." << endl;
+//        auto b = maxBead();
+//        if(b != nullptr) b->getParent()->printSelf();
         
         cout << "System energy..." << endl;
         FFM.computeEnergy(coord, force, 0.0, true);
@@ -119,7 +120,10 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     //final force calculation
     FFM.computeForces(coord, force);
+    
+#ifdef CROSSCHECK
     auto state=cross_check::crosscheckforces(force);
+#endif
     
     FFM.copyForces(forceAux, force);
 

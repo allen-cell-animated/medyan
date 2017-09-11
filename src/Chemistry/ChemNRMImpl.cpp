@@ -165,7 +165,7 @@ bool ChemNRMImpl::makeStep() {
     
     _t=tau_top;
     syncGlobalTime();
-    
+//    std::cout<<rn->getReaction()->getReactionType()<<endl;
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
