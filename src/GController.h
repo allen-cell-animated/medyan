@@ -101,7 +101,8 @@ public:
     /// Get the center of the grid space
     static const vector<double>& getCenter() {return _centerGrid;}
     static const vector<double>& getSize() {return _size;}
-
+     static const vector<double>& getCompartmentSize() {return _compartmentSize;}
+    
     /// Get all compartments within a given range from the specified coordinate
     /// @param ccheck - Compartment to check when initially calling this function
     /// @param compartments - List of compartments that are within range. This will be

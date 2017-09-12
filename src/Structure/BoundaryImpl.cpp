@@ -421,9 +421,25 @@ BoundaryCylinder::BoundaryCylinder(SubSystem* s, double diameter, BoundaryMove m
 }
 
 bool BoundaryCylinder::within(Compartment* C) {
+    // mark
+    // project compartment to a 2D cylinderical coordinate
+    double comX = GController::getCompartmentSize()[0];
+    double comY = GController::getCompartmentSize()[1];
+    auto r = SysParams::Boundaries().diameter / 2;
+    auto x = C->coordinates()[0] - r;
+    auto y = C->coordinates()[1] - r;
+
+    auto r1 = sqrt((x - comX / 2) * (x - comX / 2) + (y - comY / 2) * (y - comY / 2));
+    auto r2 = sqrt((x + comX / 2) * (x + comX / 2) + (y - comY / 2) * (y - comY / 2));
+    auto r3 = sqrt((x - comX / 2) * (x - comX / 2) + (y + comY / 2) * (y + comY / 2));
+    auto r4 = sqrt((x + comX / 2) * (x + comX / 2) + (y + comY / 2) * (y + comY / 2));
     
-    //just calls regular within for now
-    return within(C->coordinates());
+    cout << "x= " << C->coordinates()[0] << " y = " << C->coordinates()[1] << endl;
+    
+    if (r1 < r || r2 < r || r3 < r || r4 < r) return true;
+    else return false;
+    
+    //return within(C->coordinates());
 }
 
 
@@ -433,7 +449,7 @@ bool BoundaryCylinder::within(const vector<double>& coordinates) {
     for(auto &bs : _boundarySurfaces) {
         
         auto be = bs->boundaryElements()[0].get();
-        
+
         double dist = be->distance(coordinates);
         if(dist <= 0) return false;
     }
