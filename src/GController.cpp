@@ -289,9 +289,13 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
 
 void GController::setActiveCompartments() {
 
+    //mark
     //initialize all compartments equivalent to cproto
     for(auto C : _compartmentGrid->getCompartments())
-        if(_boundary->within(C))  C->setAsActive();
+        if(_boundary->within(C))  {
+            C->setAsActive();
+            cout << "yes" << endl;
+        }
 }
 
 void GController::findCompartments(const vector<double>& coords,

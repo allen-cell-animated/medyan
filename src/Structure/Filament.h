@@ -68,6 +68,7 @@ private:
     short _depolyPlusEnd = 0;
     short _depolyMinusEnd = 0;
     short _nucleationReaction = 0;
+    short _severingReaction = 0;
     
     int _plusEndPosition   = 0;  ///< Position of plus end bead at last turnover
     double _turnoverTime   = 0;  ///< Time since last turnover
@@ -183,6 +184,10 @@ public:
     
     short getNucleation() {return _nucleationReaction;}
     void resetNucleation() { _nucleationReaction = 0;}
+    //@}
+    
+    short getSevering() {return _severingReaction;}
+    void resetSevering() { _severingReaction = 0;}
     //@}
     
     /// Get ID

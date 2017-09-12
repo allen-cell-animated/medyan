@@ -856,7 +856,8 @@ void ReactionOut::print(int snapshot) {
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << " " <<
         filament->getPolyMinusEnd() << " " << filament->getPolyPlusEnd() << " " <<
         filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
-        filament->getNucleation() << " " << numMonomer << endl;
+        filament->getNucleation() << " " << numMonomer << " " <<
+        filament->getSevering() << endl;
         
         
         filament->resetPolyMinusEnd();
@@ -866,6 +867,7 @@ void ReactionOut::print(int snapshot) {
         filament->resetNucleation();
         filament->resetDeltaPlusEnd();
         filament->resetDeltaMinusEnd();
+        filament->resetSevering();
     }
     
     _outputFile << endl;
