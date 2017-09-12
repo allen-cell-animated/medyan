@@ -631,6 +631,9 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
+#ifdef DYNAMICRATES
+                updateReactionRates();
+#endif
 
                 tauLastMinimization = 0.0;
             }
@@ -644,10 +647,6 @@ void Controller::run() {
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
             i++;
-#endif
-
-#ifdef DYNAMICRATES
-            updateReactionRates();
 #endif
             
 #ifdef CHEMISTRY
@@ -690,7 +689,9 @@ void Controller::run() {
             if(stepsLastMinimization >= _minimizationSteps) {
                 _mController->run();
                 updatePositions();
-                
+#ifdef DYNAMICRATES
+                updateReactionRates();
+#endif
                 stepsLastMinimization = 0;
             }
             
@@ -703,10 +704,6 @@ void Controller::run() {
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
             i++;
-#endif
-            
-#ifdef DYNAMICRATES
-            updateReactionRates();
 #endif
             
 #ifdef CHEMISTRY
