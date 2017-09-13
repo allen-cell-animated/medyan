@@ -434,7 +434,7 @@ bool BoundaryCylinder::within(Compartment* C) {
     auto r3 = sqrt((x - comX / 2) * (x - comX / 2) + (y + comY / 2) * (y + comY / 2));
     auto r4 = sqrt((x + comX / 2) * (x + comX / 2) + (y + comY / 2) * (y + comY / 2));
     
-    cout << "x= " << C->coordinates()[0] << " y = " << C->coordinates()[1] << endl;
+    //cout << "x= " << C->coordinates()[0] << " y = " << C->coordinates()[1] << endl;
     
     if (r1 < r || r2 < r || r3 < r || r4 < r) return true;
     else return false;

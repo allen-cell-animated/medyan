@@ -23,6 +23,8 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 
+#include "Boundary.h"
+
 using namespace mathfunc;
 
 void ChemManager::setupBindingSites() {
@@ -2569,8 +2571,16 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
     for(auto C : grid->getCompartments())
         *C = cProto;
     
-    for(auto C : grid->getCompartments())
-        C->generateAllDiffusionReactions();
+    //auto shape = _subSystem->getBoundary()->getShape();
+    if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder) {
+        for(auto C : grid->getCompartments())
+            C->generateAllScaleDiffusionReactions();
+    }
+    
+    else {
+        for(auto C : grid->getCompartments())
+            C->generateAllDiffusionReactions();
+    }
     
     //try initial copy number setting
     updateCopyNumbers();

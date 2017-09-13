@@ -14,7 +14,6 @@
 #include "Compartment.h"
 
 #include "Visitor.h"
-//Qin, include Parser.h
 #include "Parser.h"
 
 
@@ -225,8 +224,21 @@ vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
 
     if(_activated) {
         for (auto &C: _neighbours) {
-            //auto newRxns = generateDiffusionReactions(C);
-            //Qin
+            
+            auto newRxns = generateDiffusionReactions(C);
+            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+        }
+    }
+    return vector<ReactionBase*>(rxns.begin(), rxns.end());
+}
+
+vector<ReactionBase*> Compartment::generateAllScaleDiffusionReactions() {
+    
+    vector<ReactionBase*> rxns;
+    
+    if(_activated) {
+        for (auto &C: _neighbours) {
+
             cout << "current: x = " << _coords[0] << ", y = " << _coords [1] << endl;
             auto newRxns = generateScaleDiffusionReactions(C);
             rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());

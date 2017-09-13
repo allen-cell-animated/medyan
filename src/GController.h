@@ -119,6 +119,13 @@ public:
     
     /// Get random coordinates from entire grid
     static vector<double> getRandomCoordinates();
+    
+    //Qin, add getRandomCenterCoordinates for flat cylinder
+    /// Get random coordinates in the center of a given compartment
+    static vector<double> getRandomCenterCoordinates(Compartment* c);
+    
+    /// Get random coordinates from the center of entire grid
+    static vector<double> getRandomCenterCoordinates();
 };
 
 #endif

@@ -584,6 +584,8 @@ public:
     /// Generate all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateAllDiffusionReactions();
+    //Qin
+    vector<ReactionBase*> generateAllScaleDiffusionReactions();
     
     /// Remove diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just removed
