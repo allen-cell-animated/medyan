@@ -44,7 +44,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     }
     
     numInteractions = nint;
-    std::cout<<"NINT1 "<<nint<<endl;
+//    std::cout<<"NINT1 "<<nint<<endl;
     beadSet = new int[n * nint];
     krep = new double[nint];
     
@@ -71,7 +71,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->_dbIndex;
             beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->_dbIndex;
             beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->_dbIndex;
-            std::cout<<Cumnc<<" "<<ni<<" "<<n * (Cumnc + ni)<<" "<<beadSet[n * (Cumnc + ni)]<<" "<<beadSet[n * (Cumnc + ni)+1]<<" "<<beadSet[n * (Cumnc + ni)+2]<<" "<<beadSet[n * (Cumnc + ni)+3]<<endl;
+//            std::cout<<Cumnc<<" "<<ni<<" "<<n * (Cumnc + ni)<<" "<<beadSet[n * (Cumnc + ni)]<<" "<<beadSet[n * (Cumnc + ni)+1]<<" "<<beadSet[n * (Cumnc + ni)+2]<<" "<<beadSet[n * (Cumnc + ni)+3]<<endl;
 //            std::cout<<(Cumnc + ni)<<" "<<(Cumnc + ni)+1<<" "<<(Cumnc + ni)+2<<" "<<(Cumnc + ni)+3<<endl;
             krep[Cumnc] = ci->getMCylinder()->getExVolConst();
             Cumnc++;
@@ -136,7 +136,7 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
                 U2 += U_ii;
         }
     }
-    std::cout<<"NINT2 "<<nint<<endl;
+//    std::cout<<"NINT2 "<<nint<<endl;
     if(abs(U_i-U2)<=U2/100000000000)
         std::cout<<"E V YES "<<endl;
     else
@@ -152,7 +152,7 @@ template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, double *f) {
 
     _FFType.forces(coord, f, beadSet, krep);
-    std::cout<<"==================="<<endl;
+//    std::cout<<"==================="<<endl;
 #ifdef CROSSCHECK
     double nint=0;
     for(auto ci : Cylinder::getCylinders()) {
@@ -181,7 +181,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
 
         }
     }
-    std::cout<<"NINT2 "<<nint<<endl;
+//    std::cout<<"NINT2 "<<nint<<endl;
         if(cross_checkclass::Aux){
             auto state=cross_check::crosscheckAuxforces(f);
             std::cout<<"F S+B+L+M+ +V YES "<<state<<endl;}

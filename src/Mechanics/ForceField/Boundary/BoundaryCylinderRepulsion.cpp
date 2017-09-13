@@ -31,9 +31,11 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     int nint = 0;
     for (auto be: BoundaryElement::getBoundaryElements())
     {
-//        std::cout<<BoundaryElement::getBoundaryElements().size()<<" "<<_neighborList->getNeighbors(be).size()<<endl;
         for(auto &c : _neighborList->getNeighbors(be))
+        {
+            if(c->isMinusEnd()) nint++;
             nint++;
+        }
     }
 //    std::cout<<"value of nint "<<nint<<endl;
     beadSet = new int[n * nint];
@@ -57,18 +59,32 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         auto idx=0;
         
         for (ni = 0; ni < nn; ni++) {
-            auto check=false;
-
-            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
-            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;check=true;}
-            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
-            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;check=true;}
-                if(check){
-                    beadSet[cumnn+idx] = bindex;
-                    krep[cumnn+idx] = be->getRepulsionConst();
-                    slen[cumnn+idx] = be->getScreeningLength();
-                    idx++;
-                }
+//            auto check=false;
+            if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
+            {
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;
+                beadSet[cumnn+idx] = bindex;
+                krep[cumnn+idx] = be->getRepulsionConst();
+                slen[cumnn+idx] = be->getScreeningLength();
+                idx++;
+            }
+                bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;
+                beadSet[cumnn+idx] = bindex;
+                krep[cumnn+idx] = be->getRepulsionConst();
+                slen[cumnn+idx] = be->getScreeningLength();
+                idx++;
+            
+            
+//            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
+//            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->_dbIndex;check=true;}
+//            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
+//            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;check=true;}
+//                if(check){
+//                    beadSet[cumnn+idx] = bindex;
+//                    krep[cumnn+idx] = be->getRepulsionConst();
+//                    slen[cumnn+idx] = be->getScreeningLength();
+//                    idx++;
+//                }
         }
         nneighbors[i]=idx;
         cumnn+=idx;
@@ -109,12 +125,10 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
             double screenLength = be->getScreeningLength();
             
             //potential acts on second bead unless this is a minus end
-            Bead* bd; bool calcstate=false;
-            if(c->isMinusEnd())
-            {bd = c->getFirstBead();calcstate=true;}
-            else if(c->isPlusEnd())
-            {bd = c->getSecondBead();calcstate=true;}
-                if(calcstate){
+            Bead* bd;
+            if(c->isMinusEnd()){
+            bd = c->getFirstBead();
+            
             if (d == 0.0)
             {U_ii =  _FFType.energy(
                                       bd, be->distance(bd->coordinate), kRep, screenLength);
@@ -126,18 +140,43 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
                                      bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
 //                std::cout<<be->stretchedDistance(bd->coordinate, bd->force, d)<<" "<<U_ii<<" ";
             }
-                
+            
             if(fabs(U_ii) == numeric_limits<double>::infinity()
                || U_ii != U_ii || U_ii < -1.0) {
-                
+
+                U2=-1;
+                break;
+            }
+            else
+                U2 += U_ii;
+            }
+            //---------------------------
+            bd = c->getSecondBead();
+            
+            if (d == 0.0)
+            {U_ii =  _FFType.energy(
+                                    bd, be->distance(bd->coordinate), kRep, screenLength);
+                //                std::cout<<be->distance(bd->coordinate)<<" "<<U_ii<<" ";
+            }
+            else
+            {
+                U_ii = _FFType.energy(
+                                      bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
+                //                std::cout<<be->stretchedDistance(bd->coordinate, bd->force, d)<<" "<<U_ii<<" ";
+            }
+            
+            
+            if(fabs(U_ii) == numeric_limits<double>::infinity()
+               || U_ii != U_ii || U_ii < -1.0) {
                 
                 U2=-1;
             }
             else
                 U2 += U_ii;
-                }
+            
+        
         }
-    }
+            }
     if(abs(U_i-U2)<=U2/100000000000)
         std::cout<<"E B YES "<<endl;
     else
@@ -151,8 +190,31 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
-    
+    for(auto b:Bead::getBeads())
+        std::cout<<b->getID()<<" "<<b->_dbIndex<<endl;
+    std::cout<<"====================="<<endl;
+    for (auto be: BoundaryElement::getBoundaryElements()) {
+        
+        for(auto &c: _neighborList->getNeighbors(be)) {
+            
+            double kRep = be->getRepulsionConst();
+            double screenLength = be->getScreeningLength();
+            
+            //potential acts on second cylinder bead unless this is a minus end
+            if(c->isMinusEnd()) {
+                std::cout<<"M "<<c->getFirstBead()->getID()<<" "<<c->getFirstBead()->_dbIndex<<" "<<
+                c->getSecondBead()->_dbIndex<<" "<<c->getSecondBead()->getID()<<" "<<c->getMCylinder()->getLength()<<endl;
+            }
+            else if(c->isPlusEnd()) {
+                std::cout<<"P "<<c->getFirstBead()->getID()<<" "<<c->getFirstBead()->_dbIndex<<" "<<
+                c->getSecondBead()->_dbIndex<<" "<<c->getSecondBead()->getID()<<" "<<c->getMCylinder()->getLength()<<endl;
+            }
+            
+        }
+    }
+    std::cout<<"++++++++++++++++++++++"<<endl;
     _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
+    std::cout<<"====================="<<endl;
 #ifdef CROSSCHECK
 //    std::cout<<"old adjacency list"<<endl;
 //    for (auto be: BoundaryElement::getBoundaryElements()) {
@@ -160,9 +222,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
 //        vector<int> b;
 //        for(auto &c: _neighborList->getNeighbors(be)) {
 //            if(c->isMinusEnd()) {count++; b.push_back(c->getFirstBead()->_dbIndex);}
-//            if(c->isPlusEnd()) {count++;b.push_back(c->getSecondBead()->_dbIndex);}
+//            else if(c->isPlusEnd()) {count++;b.push_back(c->getSecondBead()->_dbIndex);}
 //            }
-//        std::cout<<count<<" ";
+//        std::cout<<count<<endl;
 //        for(auto i=0;i<count;i++)
 //            std::cout<<b[i]<<" ";
 //        std::cout<<endl;
@@ -187,26 +249,18 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
             if(c->isMinusEnd()) {
                 bd = c->getFirstBead();
                 auto normal = be->normal(bd->coordinate);
-                
-                if(cross_checkclass::Aux)
-                    _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-                else
-                    _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-                
-//                bd = c->getSecondBead();
-//                normal = be->normal(bd->coordinate);
-//                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-            }
-            else if(c->isPlusEnd()) {
-                bd = c->getSecondBead();
-                auto normal = be->normal(bd->coordinate);
-                
                 if(cross_checkclass::Aux)
                     _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
                 else
                     _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
             }
             
+                bd = c->getSecondBead();
+                auto normal = be->normal(bd->coordinate);
+                if(cross_checkclass::Aux)
+                    _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+                else
+                    _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
         }
     }
     if(cross_checkclass::Aux)

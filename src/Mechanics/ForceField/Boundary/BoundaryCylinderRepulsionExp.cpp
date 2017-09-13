@@ -113,30 +113,38 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
     auto Cumnc=0;
+//     for (int ib = 0; ib < nb; ib++) {
+//         auto be = beList[ib];
+//         nc = nneighbors[ib];
+//         std::cout<<ib<<" "<<nc<<endl;
+//          for(int ic = 0; ic < nc; ic++) {
+//              std::cout<<beadSet[ Cumnc + ic]<<" ";
+//          }
+//         std::cout<<endl;
+//         Cumnc+=nc;
+//
+//     }
     
     for (int ib = 0; ib < nb; ib++) {
         
         auto be = beList[ib];
         nc = nneighbors[ib];
-//        std::cout<<"new "<<nb<<" "<<nc<<endl;
         for(int ic = 0; ic < nc; ic++) {
-            
             coord1 = &coord[3 * beadSet[ Cumnc + ic]];
             force1 = &f[3 * beadSet[ Cumnc + ic]];
-//            std::cout<<beadSet[0]<<" "<<beadSet[Cumnc + ic]<<endl;
             r = be->distance(coord1);
             auto norm = be->normal(coord1);
             
             R = -r / slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R);
             
-//            std::cout<<"new "<<beadSet[ Cumnc + ic]<<" "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<slen[Cumnc+ic]<<" "
-//            <<krep[Cumnc+ic]<<" "<<f0<<endl;
-            
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
-//            std::cout<<"BOUNDARY REPULSION EXP "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<endl;
+            std::cout<<beadSet[Cumnc+ic]<<" "<<norm[0]<<" "<<norm[1]<<" "<<norm[2]<<" "<<f0<<endl;
+//                        std::cout<<beadSet[ Cumnc + ic]<<" "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<slen[Cumnc+ic]<<" "
+//                        <<krep[Cumnc+ic]<<" "<<f0<<endl;
+        
         }
         Cumnc+=nc;
     }

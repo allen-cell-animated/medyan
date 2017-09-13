@@ -247,7 +247,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
     
     for (int i = 0; i < nint; i++) {
-        std::cout<<beadSet[n * i]<<" "<<beadSet[n * i+1]<<" "<<beadSet[n * i+2]<<" "<<beadSet[n * i+3]<<endl;
+//        std::cout<<beadSet[n * i]<<" "<<beadSet[n * i+1]<<" "<<beadSet[n * i+2]<<" "<<beadSet[n * i+3]<<endl;
         c1 = &coord[3 * beadSet[n * i]];
         c2 = &coord[3 * beadSet[n * i + 1]];
         c3 = &coord[3 * beadSet[n * i + 2]];
@@ -265,6 +265,24 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
             d = twoPointDistance(c1, c3);
             invDSquare =  1 / (d * d);
             U = krep[i] * invDSquare * invDSquare;
+            
+            double f0 = 4 * krep[i] * invDSquare * invDSquare * invDSquare;
+            
+            f1[0] += - f0 * (c3[0] - c1[0]);
+            f1[1] += - f0 * (c3[1] - c1[1]);
+            f1[2] += - f0 * (c3[2] - c1[2]);
+            
+            f2[0] += - f0 * (c4[0] - c2[0]);
+            f2[1] += - f0 * (c4[1] - c2[1]);
+            f2[2] += - f0 * (c4[2] - c2[2]);
+            
+            f3[0] += f0 * (c3[0] - c1[0]);
+            f3[1] += f0 * (c3[1] - c1[1]);
+            f3[2] += f0 * (c3[2] - c1[2]);
+            
+            f4[0] += f0 * (c4[0] - c2[0]);
+            f4[1] += f0 * (c4[1] - c2[1]);
+            f4[2] += f0 * (c4[2] - c2[2]);
             
             continue;
         }
@@ -295,14 +313,14 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         GG = d*d - a*b - CC;
         HH = CC + GG - DD;
         JJ = c*(GG + CC) + e*DD - F*CC;
-        std::cout<<"N2 "<<AA<<" "<<BB<<" "<<CC<<" "<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<endl;
+//        std::cout<<"N2 "<<AA<<" "<<BB<<" "<<CC<<" "<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<endl;
         invJJ = 1/JJ;
         
         ATG1 = atan( (a + e)/AA) - atan(e/AA);
         ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
         ATG3 = atan((F)/BB) - atan((F - b)/BB);
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
-        std::cout<<"N3 "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
+//        std::cout<<"N3 "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
         U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 //        U = 0.5 * krep[i]*invJJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 //        std::cout<<U<<endl;
@@ -317,7 +335,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         
         F1 = FF*FF/(FF*FF + (d + F - b)*(d + F - b));
         F2 = FF*FF/(FF*FF + (d + F)*(d + F));
-        std::cout<<"N4 "<<U<<" "<<krep[i]<<" "<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<endl;
+//        std::cout<<"N4 "<<U<<" "<<krep[i]<<" "<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<endl;
         A11 = ATG1/AA;
         A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) -
                 (A2*CC*(a + e))/(AA*AA*AA);
