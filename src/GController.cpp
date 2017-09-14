@@ -292,10 +292,7 @@ void GController::setActiveCompartments() {
     //mark
     //initialize all compartments equivalent to cproto
     for(auto C : _compartmentGrid->getCompartments())
-        if(_boundary->within(C))  {
-            C->setAsActive();
-            cout << "yes" << endl;
-        }
+        if(_boundary->within(C)) C->setAsActive();
 }
 
 void GController::findCompartments(const vector<double>& coords,
