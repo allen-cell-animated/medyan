@@ -856,9 +856,19 @@ void ReactionOut::print(int snapshot) {
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << " " <<
         filament->getPolyMinusEnd() << " " << filament->getPolyPlusEnd() << " " <<
         filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
-        filament->getNucleation() << " " << numMonomer << " " <<
-        filament->getSevering() << endl;
+        filament->getNucleation() << " " << numMonomer << endl;
         
+        _outputFile << "SEVERING " << filament->getSevering() << endl;
+        if (filament->getNewID().size() == 0) {
+            _outputFile << "-1";
+        }
+        else {
+            for (int i = 0; i < filament->getNewID().size(); ++i) {
+                _outputFile << filament->getNewID()[i] << " ";
+            }
+        }
+        
+        _outputFile << endl;
         
         filament->resetPolyMinusEnd();
         filament->resetPolyPlusEnd();

@@ -588,8 +588,9 @@ Filament* Filament::sever(int cylinderPosition) {
 #endif
     
     //Qin
-    _severingReaction++;
     
+    _severingReaction++;
+    _severingID.push_back(newFilament->getID());
     return newFilament;
 }
 
