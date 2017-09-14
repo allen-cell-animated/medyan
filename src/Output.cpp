@@ -878,6 +878,7 @@ void ReactionOut::print(int snapshot) {
         filament->resetDeltaPlusEnd();
         filament->resetDeltaMinusEnd();
         filament->resetSevering();
+        filament->resetSeveringID();
     }
     
     _outputFile << endl;

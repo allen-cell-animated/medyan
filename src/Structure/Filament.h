@@ -191,6 +191,7 @@ public:
     short getSevering() {return _severingReaction;}
     void resetSevering() { _severingReaction = 0;}
     vector<int> getNewID() {return _severingID;};
+    void resetSeveringID() {_severingID.clear();}
     //@}
     
     /// Get ID
