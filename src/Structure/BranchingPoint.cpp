@@ -134,8 +134,7 @@ BranchingPoint::~BranchingPoint() noexcept {
         else {
             cout << "In unbranching reaction, could not find corresponding " <<
                     "diffusing species of filament species " << speciesName <<
-                    ". Exiting." << endl;
-            exit(EXIT_FAILURE);
+                    ". Skipping." << endl;
         }
             
         //remove the filament from the system
