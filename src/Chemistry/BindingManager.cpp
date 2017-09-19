@@ -144,6 +144,7 @@ void BranchingManager::updateAllPossibleBindings() {
     
         if(c->getType() != _filamentType) continue;
         
+        
         auto cc = c->getCCylinder();
         
         //now re add valid binding sites
@@ -555,6 +556,7 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
 void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
     if(cc->getType() != _filamentType) return;
+    if(tau() > 1000.0) return;
     
     //if we change other managers copy number
     vector<MotorBindingManager*> affectedManagers;
@@ -725,6 +727,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
     for(auto c : _compartment->getCylinders()) {
         
         if(c->getType() != _filamentType) continue;
+        if(tau() > 1000.0) continue;
         
         auto cc = c->getCCylinder();
         
