@@ -70,8 +70,7 @@ vector<ReactionBase*> Compartment::generateScaleDiffusionReactions(Compartment* 
 {
     vector<ReactionBase*> rxns;
 
-    //cout << "current, x = " << _coords[0] << "y" << _coords[1] <<endl;
-    cout << "x = " << C->_coords[0] << "y" << C->_coords[1] <<endl;
+    cout << "neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] <<endl;
     auto factor = generateScaleFactor(C);
     cout << "factor = " << factor << endl;
     
@@ -137,8 +136,6 @@ float Compartment::generateScaleFactor(Compartment* C)
             else c1 = x + lx/2;
   
             c2 = r - sqrt(r * r - (c1 - r) * (c1 - r));
-            cout << c1 << endl;
-            cout << c2 << endl;
             
             //3. calculate scaling factor
             //check if interaction is within compartment
@@ -157,8 +154,7 @@ float Compartment::generateScaleFactor(Compartment* C)
             else c1 = x + lx/2; //right
             
             c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
-            cout << c1 << endl;
-            cout << c2 << endl;
+
             
             //3. calculate scaling factor
             if(c2 < (y + ly/2) && c2 > (y - ly/2)) {
@@ -181,8 +177,6 @@ float Compartment::generateScaleFactor(Compartment* C)
             else c1 = y + ly/2;
             
             c2 = r - sqrt(r * r - (c1 - r) * (c1 - r));
-            cout << c1 << endl;
-            cout << c2 << endl;
             
             //3. calculate scaling factor
             //check if interaction is within compartment
@@ -201,8 +195,6 @@ float Compartment::generateScaleFactor(Compartment* C)
             else auto c1 = y + ly/2; //right
             
             auto c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
-            cout << c1 << endl;
-            cout << c2 << endl;
             
             //3. calculate scaling factor
             if(c2 < (x + lx/2) && c2 > (x - lx/2)) {
