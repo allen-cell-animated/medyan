@@ -223,15 +223,32 @@ public:
     virtual void print(int snapshot);
 };
 
-// Print pin  force
-class PinForces : public Output {
+
+// Print concentration in each compartment
+
+class Concentrations : public Output {
+    
+    ChemistryData _chemData; ///< chemistry data of this system
+    SubSystem* _subSystem;///< SubSystem ptr
     
 public:
-    PinForces(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
-    ~PinForces() {}
+    Concentrations(string outputFileName, SubSystem* s,
+                   ChemistryData chemData)
+    : Output(outputFileName, s), _subSystem(s), _chemData(chemData) {}
+    ~Concentrations() {}
     
     virtual void print(int snapshot);
 };
+
+//// Print pin  force
+//class PinForces : public Output {
+//    
+//public:
+//    PinForces(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+//    ~PinForces() {}
+//    
+//    virtual void print(int snapshot);
+//};
 
 
 #endif

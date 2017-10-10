@@ -27,7 +27,7 @@
 #include "Bubble.h"
 
 #include "Boundary.h"
-#include "CompartmentGrid.h"
+#include "Compartment.h"
 #include "GController.h"
 
 #include "SysParams.h"
@@ -948,65 +948,95 @@ void BRForces::print(int snapshot) {
     
 }
 
-void PinForces::print(int snapshot) {
+void Concentrations::print(int snapshot) {
     
-    _outputFile.precision(10);
+    _outputFile << snapshot << " " << tau() << endl;
     
-    // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
-    _outputFile << snapshot << " " << tau() << " " <<
-    Filament::numFilaments() << " " <<
-    Linker::numLinkers() << " " <<
-    MotorGhost::numMotorGhosts() << " " <<
-    BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() << endl;
-    
-    for(auto &filament : Filament::getFilaments()) {
+    for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
         
-        //print first line (Filament ID, type, length, left_delta, right_delta
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
-        filament->getType() << " " <<
-        filament->getCylinderVector().size() + 1 << " " <<
-        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
-        
-        //print force
-        for (auto cylinder : filament->getCylinderVector()){
+        if(c->isActivated()) {
             
-            double forceMag= cylinder->getFirstBead()->pinFDotpinF();
-            forceMag = sqrt(forceMag);
-            _outputFile<<forceMag << " ";
+            _outputFile << "COMPARTMENT: " << c->coordinates()[0] << " "
+            << c->coordinates()[1] << " " << c->coordinates()[2] << endl;
             
+            for(auto sd : _chemData.speciesDiffusing) {
+                
+                string name = get<0>(sd);
+                auto s = c->findSpeciesByName(name);
+                auto copyNum = s->getN();
+                
+                _outputFile << name << ":DIFFUSING " << copyNum << endl;
+            }
         }
-        //print last bead force
-        double forceMag = filament->getCylinderVector().back()->
-        getSecondBead()->pinFDotpinF();
-        forceMag = sqrt(forceMag);
-        _outputFile<<forceMag;
-        
-        _outputFile << endl;
     }
     
-    for(auto &linker : Linker::getLinkers()) {
-        
-        //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
-        linker->getType() << endl;
-        
-        //print stretch force
-        _outputFile << linker->getMLinker()->stretchForce << " " <<
-        linker->getMLinker()->stretchForce << endl;
-    }
-    
-    for(auto &motor : MotorGhost::getMotorGhosts()) {
-        
-        //print first line
-        //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
-        
-        //print stretch force
-        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
-        motor->getMMotorGhost()->stretchForce << endl;
-    }
+ 
+    _outputFile << endl;
     
 }
 
+
+//Don't use now
+
+//void PinForces::print(int snapshot) {
+//    
+//    _outputFile.precision(10);
+//    
+//    // print first line (snapshot number, time, number of filaments,
+//    // linkers, motors, branchers)
+//    _outputFile << snapshot << " " << tau() << " " <<
+//    Filament::numFilaments() << " " <<
+//    Linker::numLinkers() << " " <<
+//    MotorGhost::numMotorGhosts() << " " <<
+//    BranchingPoint::numBranchingPoints() << " " <<
+//    Bubble::numBubbles() << endl;
+//    
+//    for(auto &filament : Filament::getFilaments()) {
+//        
+//        //print first line (Filament ID, type, length, left_delta, right_delta
+//        _outputFile << "FILAMENT " << filament->getID() << " " <<
+//        filament->getType() << " " <<
+//        filament->getCylinderVector().size() + 1 << " " <<
+//        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+//        
+//        //print force
+//        for (auto cylinder : filament->getCylinderVector()){
+//            
+//            double forceMag= cylinder->getFirstBead()->pinFDotpinF();
+//            forceMag = sqrt(forceMag);
+//            _outputFile<<forceMag << " ";
+//            
+//        }
+//        //print last bead force
+//        double forceMag = filament->getCylinderVector().back()->
+//        getSecondBead()->pinFDotpinF();
+//        forceMag = sqrt(forceMag);
+//        _outputFile<<forceMag;
+//        
+//        _outputFile << endl;
+//    }
+//    
+//    for(auto &linker : Linker::getLinkers()) {
+//        
+//        //print first line
+//        _outputFile << "LINKER " << linker->getID()<< " " <<
+//        linker->getType() << endl;
+//        
+//        //print stretch force
+//        _outputFile << linker->getMLinker()->stretchForce << " " <<
+//        linker->getMLinker()->stretchForce << endl;
+//    }
+//    
+//    for(auto &motor : MotorGhost::getMotorGhosts()) {
+//        
+//        //print first line
+//        //also contains a Bound(1) or unbound(0) qualifier
+//        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+//        
+//        //print stretch force
+//        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
+//        motor->getMMotorGhost()->stretchForce << endl;
+//    }
+//    
+//}
+//

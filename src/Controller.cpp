@@ -89,9 +89,9 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
     _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
-    //Qin add br force out and pin force out
+    //Qin add br force out and local diffussing species concentration
     _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
-    _outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
+    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -177,6 +177,10 @@ void Controller::initialize(string inputFile,
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
+    
+    string concenname = _outputDirectory + "concentration.traj";
+    _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
+    
 #endif
     
 #ifdef DYNAMICRATES
