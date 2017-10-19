@@ -13,6 +13,7 @@
 		BF9A59381B0B72C300ADF902 /* Trackable.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9A59361B0B72C300ADF902 /* Trackable.h */; };
 		BF9A593A1B0B90C200ADF902 /* BoundaryElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF9A59391B0B90C200ADF902 /* BoundaryElement.cpp */; };
 		BF9A593E1B0BA75B00ADF902 /* DynamicNeighbor.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9A593C1B0BA75A00ADF902 /* DynamicNeighbor.h */; };
+		C1BB4F901F2E5E5400981ED2 /* DissipationTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = C1BB4F8F1F2E5E5400981ED2 /* DissipationTracker.h */; };
 		F713BEA51D416996005386E0 /* BoundaryCylinderAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F713BEA31D416996005386E0 /* BoundaryCylinderAttachment.cpp */; };
 		F713BEA61D416996005386E0 /* BoundaryCylinderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = F713BEA41D416996005386E0 /* BoundaryCylinderAttachment.h */; };
 		F713BEA91D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F713BEA71D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp */; };
@@ -272,6 +273,7 @@
 		BF9A59361B0B72C300ADF902 /* Trackable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trackable.h; sourceTree = "<group>"; };
 		BF9A59391B0B90C200ADF902 /* BoundaryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = BoundaryElement.cpp; sourceTree = "<group>"; };
 		BF9A593C1B0BA75A00ADF902 /* DynamicNeighbor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicNeighbor.h; sourceTree = "<group>"; };
+		C1BB4F8F1F2E5E5400981ED2 /* DissipationTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DissipationTracker.h; sourceTree = "<group>"; };
 		F713BEA31D416996005386E0 /* BoundaryCylinderAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryCylinderAttachment.cpp; path = Boundary/BoundaryCylinderAttachment.cpp; sourceTree = "<group>"; };
 		F713BEA41D416996005386E0 /* BoundaryCylinderAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryCylinderAttachment.h; path = Boundary/BoundaryCylinderAttachment.h; sourceTree = "<group>"; };
 		F713BEA71D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryCylinderAttachmentHarmonic.cpp; path = Boundary/BoundaryCylinderAttachmentHarmonic.cpp; sourceTree = "<group>"; };
@@ -762,6 +764,7 @@
 				F735B7911A2D172800AE21D1 /* ChemSim.h */,
 				F735B7921A2D172800AE21D1 /* ChemSimImpl.h */,
 				F735B7931A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp */,
+				C1BB4F8F1F2E5E5400981ED2 /* DissipationTracker.h */,
 				F735B7941A2D172800AE21D1 /* ChemSimpleGillespieImpl.h */,
 				F7401C2C1AF9388D00BA97A5 /* Reaction.cpp */,
 				F7401C2D1AF9388D00BA97A5 /* Reaction.h */,
@@ -1033,6 +1036,7 @@
 				F7C9D0041A2D165D0087434A /* CompartmentGrid.h in Headers */,
 				F7525A551A70241E007A4E9F /* BranchingBendingCosine.h in Headers */,
 				F7525A3E1A7023EF007A4E9F /* CylinderVolumeFF.h in Headers */,
+				C1BB4F901F2E5E5400981ED2 /* DissipationTracker.h in Headers */,
 				F7401C3F1AF9388D00BA97A5 /* SpeciesContainer.h in Headers */,
 				F7C9CFEE1A2D165D0087434A /* BoundaryElement.h in Headers */,
 				F735B7761A2D16F200AE21D1 /* Controller.h in Headers */,
