@@ -15,6 +15,9 @@
 #define MEDYAN_ChemSimImpl_h
 
 #include "common.h"
+#include "Histogram.h"
+#include "DissipationTracker.h"
+#include <fstream>
 
 //FORWARD DECLARATIONS
 class ReactionBase;
@@ -52,6 +55,9 @@ public:
     /// Mainly used for debugging: print chemical reactions in the network at
     /// this moment
     virtual void printReactions() const = 0;
+    
+    DissipationTracker * _dt = nullptr;
+    
 };
 
 #endif

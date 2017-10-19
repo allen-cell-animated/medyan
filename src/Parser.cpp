@@ -12,9 +12,6 @@
 //------------------------------------------------------------------
 
 #include "Parser.h"
-#include "Filament.h"
-#include "Cylinder.h"
-#include "Bead.h"
 
 #include "SysParams.h"
 
@@ -1558,16 +1555,6 @@ FilamentSetup SystemParser::readFilamentSetup() {
                 FSetup.projectionType = lineVector[1];
             else {}
         }
-        else if(line.find("PINRESTARTFILE")!=string::npos){
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() > 2) {
-                cout << "Error reading filament projection type. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 2)
-                FSetup.pinRestartFile = lineVector[1];
-            else {}
-        }
     }
     return FSetup;
 }
@@ -2005,10 +1992,13 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> products;
             
             vector<string> lineVector = split<string>(line);
+           
+            string rev = lineVector[1];
+            float revnum = atof(lineVector[2].c_str());
    
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
-                for(auto it  = lineVector.begin() + 1; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 3; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 for(auto it = arrowIt + 1; it != lineVector.end() - 1; it++) {
@@ -2016,8 +2006,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.genReactions.push_back(
-                tuple<vector<string>, vector<string>, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                tuple<vector<string>, vector<string>, double, string, double>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),rev,revnum));
                 
             }
             else {
@@ -2093,12 +2083,14 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
-            int filType = atoi(lineVector[1].c_str());
+            int filType = atoi(lineVector[3].c_str());
+            string rev = lineVector[1];
+            double revnum = atof(lineVector[2].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 4; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -2107,8 +2099,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.depolymerizationReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                tuple<vector<string>, vector<string>, double,string,double>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),rev,revnum));
                 
             }
             else {
@@ -2124,12 +2116,14 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
-            int filType = atoi(lineVector[1].c_str());
+            int filType = atoi(lineVector[3].c_str());
+            string rev = lineVector[1];
+            double revnum = atof(lineVector[2].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 4; it != arrowIt; it++) {
                     
                     if(*it != "+") reactants.push_back((*it));
                 }
@@ -2140,8 +2134,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.polymerizationReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                tuple<vector<string>, vector<string>, double,string,double>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),rev,revnum));
                 
             }
             else {
@@ -2254,12 +2248,14 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
             
-            int filType = atoi(lineVector[1].c_str());
+            int filType = atoi(lineVector[3].c_str());
+            string rev = lineVector[1];
+            double revnum = atof(lineVector[2].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
                 
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
+                for(auto it  = lineVector.begin() + 4; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
                 }
                 
@@ -2268,8 +2264,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.agingReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
+                tuple<vector<string>, vector<string>, double, string,double>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),rev,revnum));
                 
             }
             else {
@@ -2364,56 +2360,3 @@ ChemistryData ChemistryParser::readChemistryInput() {
     }
     return chem;
 }
-
-void PinRestartParser::resetPins() {
-    
-    //loop through filaments
-    for(auto &f: Filament::getFilaments()) {
-    
-        _inputFile.clear();
-        _inputFile.seekg(0);
-        
-        // Get minus end bead
-        auto b1 = f->getMinusEndCylinder()->getFirstBead();
-        auto b2 = f->getPlusEndCylinder()->getSecondBead();
-        
-        int filID = f->getID();
-        string searchID = "FILAMENT " + std::to_string(filID) + ":";
-        
-        string line;
-        
-        while(getline(_inputFile, line)) {
-            
-            if(line.find("#") != string::npos) { continue; }
-            
-            else if(line.find(searchID) != string::npos) {
-                
-                vector<string> lineVector = split<string>(line);
-                if(lineVector.size() !=  8) {
-                    cout << "Error reading a restart pin position. Exiting." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                else if (lineVector.size() == 8) {
-                    
-                    b1->pinnedPosition = vector<double>{atof(lineVector[2].c_str()), atof(lineVector[3].c_str()), atof(lineVector[4].c_str())};
-                    b2->pinnedPosition = vector<double>{atof(lineVector[5].c_str()), atof(lineVector[6].c_str()), atof(lineVector[7].c_str())};
-                    
-                    if(!areEqual(b1->pinnedPosition[0],0.0) && !areEqual(b1->pinnedPosition[1],0.0) && !areEqual(b1->pinnedPosition[2],0.0)) {
-                        b1->addAsPinned();
-                    
-//                        cout << "Pinned filament! coordinates = " << b1->coordinate[0] << " " << b1->coordinate[1] << " " << b1->coordinate[2] << endl;
-//                        cout << "Pin position = " << b1->pinnedPosition[0] << " " << b1->pinnedPosition[1] << " " << b1->pinnedPosition[2] << endl;                        
-                    }
-                    
-                    if(!areEqual(b2->pinnedPosition[0],0.0) && !areEqual(b2->pinnedPosition[1],0.0) && !areEqual(b2->pinnedPosition[2],0.0)) {
-                        b2->addAsPinned();
-                       
-//                        cout << "Pinned filament! coordinates = " << b2->coordinate[0] << " " << b2->coordinate[1] << " " << b2->coordinate[2] << endl;
-//                        cout << "Pin position = " << b2->pinnedPosition[0] << " " << b2->pinnedPosition[1] << " " << b2->pinnedPosition[2] << endl;
-                    }
-                }
-            }
-        }
-    }
-}
-

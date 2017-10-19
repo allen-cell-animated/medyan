@@ -76,7 +76,6 @@ void Controller::initialize(string inputFile,
     _outputDirectory = outputDirectory + "/";
     
     //Parse input, get parameters
-    _inputFile = inputFile;
     SystemParser p(inputFile);
     
     //snapshot type output
@@ -165,13 +164,27 @@ void Controller::initialize(string inputFile,
         cout << "Need to specify a chemical input file. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
-    _cController->initialize(CAlgorithm.algorithm, ChemData);
+    
+    _dt = new DissipationTracker(_subSystem, ChemData, _subSystem->getCompartmentGrid(),_mController);
+    _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
     cout << "Done." << endl;
     
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
+    
+    ChemSim* _cs = _cController->getCS();
+
+    
+    
+    
+    
+    //Set up reactions output if any
+    string reactsnapname = _outputDirectory + "dissipation.traj";
+    _outputs.push_back(new Dissipation(reactsnapname, _subSystem, _cs));
+    
+    
 #endif
     
 #ifdef DYNAMICRATES
@@ -516,24 +529,13 @@ void Controller::run() {
         cout<<endl;
         _restart->redistributediffusingspecies();
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
-        
-//Step 4.5. re-add pin positions
-        SystemParser p(_inputFile);
-        FilamentSetup filSetup = p.readFilamentSetup();
-        PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
-        ppin.resetPins();
-        
 //Step 5. run mcontroller, update system, turn off restart state.
-        updatePositions();
-        updateNeighborLists();
-        
-        cout<<"Minimizing energy"<<endl;
-        _mController->run(false);
-        SysParams::RUNSTATE=true;
-        
-        //reupdate positions and neighbor lists
-        updatePositions();
-        updateNeighborLists();
+    cout<<"Minimizing energy"<<endl;
+    _mController->run(false);
+    SysParams::RUNSTATE=true;
+    //reupdate positions and neighbor lists
+    updatePositions();
+    updateNeighborLists();
     
 //Step 6. Set Off rates back to original value.
     for(auto LL : Linker::getLinkers())
@@ -571,6 +573,7 @@ void Controller::run() {
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
+//    for(auto o: _outputs) o->print(_numChemSteps);
     cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
     cout << "---" << endl;
     resetglobaltime();
@@ -592,6 +595,7 @@ void Controller::run() {
     if(!areEqual(_runTime, 0.0)) {
     
 #ifdef CHEMISTRY
+        _dt->setG1();
         while(tau() <= _runTime) {
             //run ccontroller
             if(!_cController->run(_minimizationTime)) {
@@ -605,13 +609,17 @@ void Controller::run() {
             tauLastNeighborList += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
-            //run mcontroller, update system
+            
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
 
                 tauLastMinimization = 0.0;
             }
+            _dt->setG2();
+            _dt->updateCumDissEn();
+            _dt->resetAfterStep();
+            
             
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;

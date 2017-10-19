@@ -385,10 +385,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add polymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r),get<4>(r)));
             else
                 _filRxnTemplates[filType].emplace_back(
-                new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r),get<4>(r)));
         }
         
         //set up reaction templates
@@ -589,10 +589,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add depolymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r),get<4>(r)));
             else
                 _filRxnTemplates[filType].emplace_back(
-                new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r),get<4>(r)));
         }
         
         for(auto &r: _chemData.motorWalkingReactions[filType]) {
@@ -938,7 +938,7 @@ void ChemManager::genFilReactionTemplates() {
             }
             
             //add reaction
-            _filRxnTemplates[filType].emplace_back(new AgingTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+            _filRxnTemplates[filType].emplace_back(new AgingTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r),get<4>(r)));
         }
         
         
@@ -1579,6 +1579,8 @@ void ChemManager::genFilBindingReactions() {
                 
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
+                
+                rxn->setLinkerRates(onRate,offRate);
                 
                 C->addInternalReaction(rxn);
                 
@@ -2250,9 +2252,16 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
             exit(EXIT_FAILURE);
         }
         
+        
         //add to compartment
         protoCompartment.addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::REGULAR);
+        if(get<3>(r)=="IRR"){
+            rxn->setRevMarker(RevMType::IRR);
+        }else if(get<3>(r)=="REV"){
+            rxn->setRevMarker(RevMType::REV);
+        };
+        rxn->setRevNumber(get<4>(r));
     }
 }
 

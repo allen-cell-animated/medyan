@@ -19,6 +19,8 @@
 #include "common.h"
 
 #include "Parser.h"
+#include "DissipationTracker.h"
+
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;
@@ -187,6 +189,22 @@ class FilamentTurnoverTimes : public Output {
 public:
     FilamentTurnoverTimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~FilamentTurnoverTimes() {}
+    
+    virtual void print(int snapshot);
+};
+
+/// Print all chemical species in the system, including diffusing
+/// and bulk species, filament, motors, linkers and branchers.
+class Dissipation : public Output {
+
+ChemSim* _cs;
+    
+public:
+    Dissipation(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~Dissipation() {}
     
     virtual void print(int snapshot);
 };

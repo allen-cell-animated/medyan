@@ -21,6 +21,7 @@
 #include "GController.h"
 #include "CController.h"
 #include "DRController.h"
+#include "DissipationTracker.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -40,8 +41,6 @@ class FilamentBindingManager;
 class Controller {
 
 private:
-    string _inputFile; ///< System input file
-    
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
 
     MController* _mController;   ///< Chemical controller used
@@ -60,6 +59,8 @@ private:
     
     double _minimizationTime;  ///< Frequency of mechanical minimization
     double _neighborListTime;  ///< Frequency of neighbor list updates
+    
+    DissipationTracker* _dt;  
     
     //@{
     /// Same parameter set as timestep, but in terms of chemical
@@ -109,6 +110,7 @@ private:
     
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
+    
     
 public:
     Controller(SubSystem* s);

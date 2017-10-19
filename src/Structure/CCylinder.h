@@ -103,6 +103,7 @@ public:
     /// @note no check on index
     CMonomer* getCMonomer(int index) {return _monomers[index].get();}
     
+    
     ///Get list of reactions associated
     const unordered_set<ReactionBase*>& getInternalReactions() {return _internalReactions;}
     
@@ -149,6 +150,8 @@ public:
     
     /// Get the type
     short getType();
+    
+    
     
 };
 

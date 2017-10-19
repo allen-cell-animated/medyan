@@ -30,6 +30,7 @@
 #include "Reaction.h"
 #include "ChemSimImpl.h"
 #include "ChemRNode.h"
+#include "CMonomer.h"
 
 #ifdef BOOST_MEM_POOL
 #include <boost/pool/pool.hpp>
@@ -220,6 +221,7 @@ public:
     void* operator new(size_t size);
     
     void operator delete(void* ptr) noexcept;
+    
 #endif
 #endif
 private:
@@ -247,7 +249,7 @@ public:
     /// of reactions to 0
     ChemNRMImpl() : 
     ChemSimImpl(), _eng(rdtsc()),
-    _exp_distr(0.0), _n_reacts(0) { resetTime(); }
+    _exp_distr(0.0), _n_reacts(0) { resetTime();}
     
     /// Copying is not allowed
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
@@ -261,6 +263,7 @@ public:
     /// pointer of the Reaction object to null. At the end, the heap itself will go out
     /// of scope.
     virtual ~ChemNRMImpl();
+    
     
     /// Return the number of reactions in the network.
     inline size_t getSize() const {return _n_reacts;}
@@ -326,6 +329,10 @@ public:
     /// Prints all RNodes in the reaction network
     virtual void printReactions() const;
     
+    // Get the second argument for getDelGChem, will decide if reversible or irreversible
+    float getDissArgument(ReactionBase*);
+
+
 private:
     /// This is a somewhat complex subroutine which implements the main part of the
     /// Gibson-Bruck NRM algoritm. See the implementation for details. After this method

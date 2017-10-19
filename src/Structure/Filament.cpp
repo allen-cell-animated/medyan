@@ -303,7 +303,7 @@ void Filament::retractMinusEnd() {
     
 #ifdef MECHANICS
     //transfer load forces
-    Bead* bd = _cylinderVector.front()->getFirstBead();
+    Bead* bd = _cylinderVector.back()->getFirstBead();
     bd->loadForcesM = retCylinder->getFirstBead()->loadForcesM;
     bd->lfim = retCylinder->getFirstBead()->lfim - 1;
 #endif
@@ -508,10 +508,6 @@ Filament* Filament::sever(int cylinderPosition) {
         
         newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
-        
-        //Add beads to new parent
-        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
-        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
@@ -537,9 +533,7 @@ Filament* Filament::sever(int cylinderPosition) {
     newB->coordinate[1] += -offsetCoord[1];
     newB->coordinate[2] += -offsetCoord[2];
     
-    //add bead
     c1->setSecondBead(newB);
-    newFilament->addChild(unique_ptr<Component>(newB));
     
     //set plus and minus ends
     c1->setPlusEnd(true);
@@ -924,6 +918,45 @@ species_copy_t Filament::countSpecies(short filamentType, const string& name) {
         }
     }
     return copyNum;
+}
+
+species_copy_t Filament::countTipComplexes(string whichEnd, const string& tipName, const string& filName){
+    
+    species_copy_t copyNum = 0;
+    
+    if(whichEnd=="PLUS"){
+    
+        for(auto f : getFilaments()) {
+            Cylinder* cyl = f->getPlusEndCylinder();
+            CCylinder* ccyl = cyl->getCCylinder();
+            // CMonomer* end = ccyl->getCMonomer(ccyl->getLastIndex());
+            CMonomer* adj = ccyl->getCMonomer(0);
+            
+            // end->print();
+            cout<<"   ";
+            adj->print();
+            cout<<endl;
+
+        }
+        return copyNum;
+        
+    } else if (whichEnd=="MINUS"){
+        
+        for(auto f : _filaments.getElements()) {
+            
+        }
+        return copyNum;
+        
+    }
+    
+    else{
+        cout<<"Invalid end identifier"<<endl;
+        return copyNum;
+    }
+    
+    
+    
+    
 }
 
 

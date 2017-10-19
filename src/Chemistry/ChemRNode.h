@@ -39,6 +39,7 @@ public:
     
     /// Return true if the Reaction is currently passivated
     virtual bool isPassivated() const = 0;
+    
 };
 
 #endif

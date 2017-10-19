@@ -304,6 +304,14 @@ namespace mathfunc {
                                                            const vector<double>& p,
                                                            double l, double m, double theta);
     
+   
+    float delGRevChem(float aplus, float amin, float v, int sigma, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+    
+    float delGIrrChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+    
+    float delGDifChem(species_copy_t reacN ,species_copy_t prodN);
+    
+    float delGPolyRev(float aplus, float amin, float v, species_copy_t reacN, string whichWay);
     
     }
 

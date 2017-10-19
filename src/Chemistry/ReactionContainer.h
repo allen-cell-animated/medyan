@@ -17,7 +17,7 @@
 #include "common.h"
 
 #include "Reaction.h"
-    
+
 /// An abstract interface for a container of pointers to reaction objects
 class ReactionPtrContainerIFace {
 public:
@@ -52,7 +52,7 @@ public:
     
     /// Assignment not allowed
     ReactionPtrContainerVector& operator=(ReactionPtrContainerVector &) = delete;
-
+    
     friend void swap(ReactionPtrContainerVector& first,
                      ReactionPtrContainerVector& second) // nothrow
     {
@@ -60,10 +60,10 @@ public:
         using std::swap;
         swap(first._reactions, second._reactions);
     }
-
+    
     /// Clear the container
     virtual void clear() {_reactions.clear();}
-
+    
     /// Add a unique reaction ptr to this container
     virtual ReactionBase* addReactionUnique (unique_ptr<ReactionBase> &&Reaction) {
         _reactions.push_back(move(Reaction));
@@ -75,13 +75,13 @@ public:
     ReactionBase* addReaction( Args&& ...args )
     {
         _reactions.push_back(unique_ptr<ReactionBase>(
-            new Reaction<M,N>( forward<Args>(args)...) ));
+             new Reaction<M,N>( forward<Args>(args)...) ));
         return _reactions.back().get();
     }
     
     /// Add a general reaction class to this container
     template<template <unsigned short M, unsigned short N> class RXN,
-                       unsigned short M, unsigned short N>
+    unsigned short M, unsigned short N>
     ReactionBase* add(initializer_list<Species*> species, float rate)
     {
         _reactions.push_back(unique_ptr<ReactionBase>( new RXN<M,N>(species,rate)));
@@ -91,13 +91,13 @@ public:
     /// Remove a reaction from this container
     virtual void removeReaction (ReactionBase* R) {
         auto child_iter = find_if(_reactions.begin(),_reactions.end(),
-                [R](const unique_ptr<ReactionBase> &element) {
-                    return element.get()==R ? true : false; });
+                                  [R](const unique_ptr<ReactionBase> &element) {
+                                      return element.get()==R ? true : false; });
         if(child_iter!=_reactions.end()) {
             _reactions.erase(child_iter);
         }
     }
-   //aravind June 24, 2016.
+    //aravind June 24, 2016.
     virtual void updatePropensityComprtment()
     {        for(auto &it: _reactions)
         it->updatePropensity();    }
@@ -134,10 +134,10 @@ public:
     /// @note returns the first similar reaction found
     virtual ReactionBase* findSimilarReaction (const ReactionBase &r) {
         auto it = find_if(_reactions.begin(),_reactions.end(),
-                               [&r](const unique_ptr<ReactionBase> &element)
-                               {return r==(*element);});
+                          [&r](const unique_ptr<ReactionBase> &element)
+                          {return r==(*element);});
         if(it==_reactions.end()) throw out_of_range(
-        "Reaction::findSimilarReaction(): The analogous Reaction was not found");
+                                                    "Reaction::findSimilarReaction(): The analogous Reaction was not found");
         return it->get();
     }
 };

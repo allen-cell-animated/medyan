@@ -42,3 +42,14 @@ void ChemSim::initialize() {
 void ChemSim::printReactions() {
     return _pimpl->printReactions();
 }
+
+int ChemSim::getEnergy(){
+    return _pimpl->_dt->getEnergy();
+}
+
+DissipationTracker* ChemSim::getDT(){
+    return _pimpl->_dt;
+}
+
+
+

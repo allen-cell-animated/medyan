@@ -21,6 +21,7 @@
 #endif
 
 #include "ChemNRMImpl.h"
+#include "CController.h"
 
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
@@ -166,7 +167,35 @@ bool ChemNRMImpl::makeStep() {
     _t=tau_top;
     syncGlobalTime();
     
+    
+    ReactionBase* react = rn->getReaction();
+
+    _dt->updateDelGChem(react);
+    
+//    if(react->getReactionType()==2){
+//        cout <<"Plus end poly"<<endl;
+//        rn->printSelf();
+//        vector<string> reacs=react->getReactantSpecies();
+//        vector<string> reacp=react->getProductSpecies();
+//        for(auto i=0; i< reacs.size();i++){
+//        cout<<reacs[i]<<endl;
+//        }
+//        for(auto i=0; i< reacp.size();i++){
+//            cout<<reacp[i]<<endl;
+//        }
+//        vector<species_copy_t> reacN = react->getReactantCopyNumbers();
+//        cout<< reacN[0]<<endl;
+//        cout<<endl<<_dt->getDelGChem(react)<<endl<<endl;
+//    }
+//
+//    rn->printSelf();
+//    cout<<endl<<_dt->getGChemEn()<<endl<<endl;
+    
     rn->makeStep();
+   
+    
+    
+    
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
@@ -253,5 +282,30 @@ void ChemNRMImpl::printReactions() const {
     for (auto &x : _map_rnodes){
         auto rn = x.second.get();
         rn->printSelf();
+    }
+}
+
+float ChemNRMImpl::getDissArgument(ReactionBase* rthis) {
+    if(rthis->getRevMarker()==0){
+        float thisrevnumber = rthis->getRevNumber();
+        
+        for(auto &x : _map_rnodes){
+            auto rn = x.second.get();
+            ReactionBase* rcheck = rn->getReaction();
+            if(rcheck->getRevNumber()==thisrevnumber && rcheck!=rthis){
+                return rcheck->getBareRate();
+            }
+        }
+        cout<<"No reverse reaction defined for a REV reaction"<<endl;
+        return 1.0;
+        
+    } else if (rthis->getRevMarker()==1){
+        //fill this in
+        return rthis->getRevNumber();
+        
+    } else {
+        //fill this in
+    return 1.0;
+        
     }
 }

@@ -33,6 +33,9 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 
+#include "CController.h"
+#include "ChemSimImpl.h"
+
 using namespace mathfunc;
 
 void BasicSnapshot::print(int snapshot) {
@@ -780,3 +783,13 @@ void FilamentTurnoverTimes::print(int snapshot) {
     Filament::getTurnoverTimes()->print(_outputFile);
     _outputFile << endl << endl;
 }
+
+void Dissipation::print(int snapshot) {
+    
+    // print first line (snapshot number, time)
+    _outputFile << snapshot << " " << tau() << endl;
+    _outputFile << _cs->getEnergy();
+    
+    _outputFile <<endl;
+}
+

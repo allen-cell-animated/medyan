@@ -23,7 +23,6 @@
 #include <ios>
 
 #include "common.h"
-#include "utility.h"
 
 /// Struct to hold output types;
 struct OutputTypes {
@@ -91,7 +90,7 @@ struct ChemistryAlgorithm {
 struct ChemistryData {
     
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
-    vector<tuple<vector<string>, vector<string>, double>> genReactions = {};
+    vector<tuple<vector<string>, vector<string>, double, string, double>> genReactions = {};
     
     /// Reaction happening between SpeciesBulk ONLY
     vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
@@ -106,11 +105,11 @@ struct ChemistryData {
      *  string of reactants, string of products, and the reaction rate.
      */
     /// Polymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> polymerizationReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, string, double>>> polymerizationReactions;
     /// Depolymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> depolymerizationReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, string, double>>> depolymerizationReactions;
     /// Aging reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> agingReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, string, double>>> agingReactions;
     /// Destruction reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> destructionReactions;
     
@@ -300,9 +299,6 @@ struct FilamentSetup {
     short filamentType = 0;
     ///Filament projection type.
     string projectionType="STRAIGHT";
-    
-    ///For resetting pin positions in restart phase
-    string pinRestartFile = "";
 };
 
 /// Struct to hold Bubble setup information
@@ -389,8 +385,7 @@ public:
     /// Reads filament input file. Returns a vector of tuples containing
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> ,
-            vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
+     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.
@@ -420,19 +415,6 @@ public:
     ///         sanity check here is that there are no duplicate species names.
     ChemistryData readChemistryInput();
 };
-
-
-/// Used to parse pin positions if needed upon restart
-class PinRestartParser: public Parser {
-    
-public:
-    PinRestartParser(string inputFileName) : Parser(inputFileName) {}
-    ~PinRestartParser() {}
-    
-    /// Reads pin positions from file, and sets filaments
-    void resetPins();
-};
-
 
 
 #endif

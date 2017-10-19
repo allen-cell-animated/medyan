@@ -63,6 +63,10 @@ public:
     /// Run a minimization on the system using the chosen algorithm
     void run(bool steplimit = true) {  _minimizerAlgorithms[0]->equlibrate(_FFManager, steplimit); }
     
+    double getEnergy(){
+        return _FFManager.computeEnergy(0.0);
+    }
+    
 };
 
 #endif

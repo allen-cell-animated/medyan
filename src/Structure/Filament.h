@@ -209,6 +209,9 @@ public:
     
     /// Count the number of filament species with a given name in the system
     static species_copy_t countSpecies(short filamentType, const string& name);
+    
+    // Count the number of complexes at either end with tipName on the tip and filName adjacent
+    static species_copy_t countTipComplexes(string whichEnd, const string& tipName, const string& filName);
 };
 
 #endif

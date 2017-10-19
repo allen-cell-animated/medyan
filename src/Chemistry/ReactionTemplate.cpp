@@ -86,6 +86,13 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
+        if(_rev=="IRR"){
+            rxn->setRevMarker(RevMType::IRR);
+        }else if(_rev=="REV"){
+            rxn->setRevMarker(RevMType::REV);
+        };
+        rxn->setRevNumber(_revnum);
+        
     }
     
     //add extension callback reaction
@@ -137,6 +144,13 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
+    if(_rev=="IRR"){
+        rxn->setRevMarker(RevMType::IRR);
+    }else if(_rev=="REV"){
+        rxn->setRevMarker(RevMType::REV);
+    };
+    rxn->setRevNumber(_revnum);
+
 }
 
 void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
@@ -197,6 +211,11 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
 #endif
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
+        if(_rev=="IRR"){
+            rxn->setRevMarker(RevMType::IRR);
+        }else if(_rev=="REV"){
+            rxn->setRevMarker(RevMType::REV);
+        };
     }
     
     //add the extension callback
@@ -248,6 +267,12 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
     cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
+    if(_rev=="IRR"){
+        rxn->setRevMarker(RevMType::IRR);
+    }else if(_rev=="REV"){
+        rxn->setRevMarker(RevMType::REV);
+    };
+    rxn->setRevNumber(_revnum);
 }
 
 void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
@@ -311,6 +336,12 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
+        if(_rev=="IRR"){
+            rxn->setRevMarker(RevMType::IRR);
+        }else if(_rev=="REV"){
+            rxn->setRevMarker(RevMType::REV);
+        };
+        rxn->setRevNumber(_revnum);
     }
 }
 
@@ -375,6 +406,12 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
+        if(_rev=="IRR"){
+            rxn->setRevMarker(RevMType::IRR);
+        }else if(_rev=="REV"){
+            rxn->setRevMarker(RevMType::REV);
+        };
+        rxn->setRevNumber(_revnum);
     }
 }
 
@@ -432,6 +469,12 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc2->addCrossCylinderReaction(cc1, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
+    if(_rev=="IRR"){
+        rxn->setRevMarker(RevMType::IRR);
+    }else if(_rev=="REV"){
+        rxn->setRevMarker(RevMType::REV);
+    };
+    rxn->setRevNumber(_revnum);
 }
 
 void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
@@ -488,6 +531,12 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
+    if(_rev=="IRR"){
+        rxn->setRevMarker(RevMType::IRR);
+    }else if(_rev=="REV"){
+        rxn->setRevMarker(RevMType::REV);
+    };
+    rxn->setRevNumber(_revnum);
 }
 
 void MotorWalkPTemplate::addReaction(CCylinder* cc) {
@@ -733,6 +782,13 @@ void AgingTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::AGING);
+        if(_rev=="IRR"){
+            rxn->setRevMarker(RevMType::IRR);
+        }else if(_rev=="REV"){
+            rxn->setRevMarker(RevMType::REV);
+        };
+        rxn->setRevNumber(_revnum);
+        
     }
 }
 
