@@ -22,6 +22,9 @@
 #include <sstream>
 #include <iterator>
 
+// Defines alternative operators for non-conforming compilers like MSVC. No use otherwise.
+#include <ciso646>
+
 using namespace std;
 
 //to test for zero values
