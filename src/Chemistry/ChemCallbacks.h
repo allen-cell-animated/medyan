@@ -428,7 +428,7 @@ struct BranchingCallback {
             frate=_offRate;
         }
         else {
-            CCylinder* c;
+            CCylinder* c = nullptr;
             vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
             for(auto T:BrT) {
                 CCylinder* cx=get<0>(get<0>(T));
@@ -437,6 +437,9 @@ struct BranchingCallback {
                     c=get<0>(get<1>(T));
                     break;
                 }
+            }
+            if(c == nullptr){
+                cout << "The cylinder for branching is not found.";
             }
             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
             CMonomer* x=c->getCMonomer(0);
