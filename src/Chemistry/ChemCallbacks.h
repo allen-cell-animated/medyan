@@ -380,64 +380,64 @@ struct BranchingCallback {
         short filType = c1->getType();
         
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
-        if(SysParams::RUNSTATE==true){
-        //Get a position and direction of a new filament
-        auto x1 = c1->getFirstBead()->coordinate;
-        auto x2 = c1->getSecondBead()->coordinate;
-        
-        //get original direction of cylinder
-        auto p= midPointCoordinate(x1, x2, pos);
-        vector<double> n = twoPointDirection(x1, x2);
-        
-        //get branch projection
+        if(SysParams::RUNSTATE == true) {
+            //Get a position and direction of a new filament
+            auto x1 = c1->getFirstBead()->coordinate;
+            auto x2 = c1->getSecondBead()->coordinate;
+            
+            //get original direction of cylinder
+            auto p= midPointCoordinate(x1, x2, pos);
+            vector<double> n = twoPointDirection(x1, x2);
+            
+            //get branch projection
 #ifdef MECHANICS
-        //use mechanical parameters
-        double l, t;
-        if(SysParams::Mechanics().BrStretchingL.size() != 0) {
-            l = SysParams::Mechanics().BrStretchingL[branchType];
-            t = SysParams::Mechanics().BrBendingTheta[branchType];
+            //use mechanical parameters
+            double l, t;
+            if(SysParams::Mechanics().BrStretchingL.size() != 0) {
+                l = SysParams::Mechanics().BrStretchingL[branchType];
+                t = SysParams::Mechanics().BrBendingTheta[branchType];
+            }
+            else {
+                cout << "Branching initialization cannot occur unless mechanical parameters are specified."
+                << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+                << endl;
+                l = 10.0;
+                t = 1.22;
+            }
+#else
+            cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
+            << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+            << endl;
+            double l = 10.0;
+            double t = 1.22;
+#endif
+            double s = SysParams::Geometry().monomerSize[filType];
+            
+            auto branchPosDir = branchProjection(n, p, l, s, t);
+            auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
+            
+            //create a new filament
+            Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
+            
+            //mark first cylinder
+            Cylinder* c = f->getCylinderVector().front();
+            c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+            
+            //create new branch
+            b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+            frate=_offRate;
         }
         else {
-            cout << "Branching initialization cannot occur unless mechanical parameters are specified."
-            << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-            << endl;
-            l = 10.0;
-            t = 1.22;
-        }
-#else
-        cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
-        << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-        << endl;
-        double l = 10.0;
-        double t = 1.22;
-#endif
-        double s = SysParams::Geometry().monomerSize[filType];
-        
-        auto branchPosDir = branchProjection(n, p, l, s, t);
-        auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
-        
-        //create a new filament
-        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
-        
-        //mark first cylinder
-        Cylinder* c = f->getCylinderVector().front();
-        c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
-        
-        //create new branch
-        b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
-        frate=_offRate;
-        }
-        else
-        {
-        CCylinder* c;
-        vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
-            for(auto T:BrT){
+            CCylinder* c;
+            vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
+            for(auto T:BrT) {
                 CCylinder* cx=get<0>(get<0>(T));
-                double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
-                if(cx->getCylinder()->getID()==c1->getID() && p==pos){
+                double p = double(get<1>(get<0>(T))) / double(SysParams::Geometry().cylinderNumMon[filType]);
+                if(cx->getCylinder()->getID()==c1->getID() && p==pos) {
                     c=get<0>(get<1>(T));
                     break;
-                }}
+                }
+            }
             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
             CMonomer* x=c->getCMonomer(0);
             x->speciesMinusEnd(0)->down();
