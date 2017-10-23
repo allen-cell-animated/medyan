@@ -41,6 +41,8 @@ class FilamentBindingManager;
 class Controller {
 
 private:
+    string _inputFile; ///< System input file
+    
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
 
     MController* _mController;   ///< Chemical controller used
@@ -110,7 +112,6 @@ private:
     
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
-    
     
 public:
     Controller(SubSystem* s);

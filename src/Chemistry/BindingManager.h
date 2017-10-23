@@ -165,7 +165,7 @@ public:
     /// ARAVIND ADDED FEB 17 2016. append possible bindings.
     virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2)=0;
     ///aravind, June 30,2016.
-    vector<string> getrxnspecies(){return _bindingReaction->getReactantSpecies();}
+    vector<string> getrxnspecies(){return _bindingReaction->getreactantspecies();}
     virtual void clearpossibleBindings()=0;
 };
 

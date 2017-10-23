@@ -284,28 +284,3 @@ void ChemNRMImpl::printReactions() const {
         rn->printSelf();
     }
 }
-
-float ChemNRMImpl::getDissArgument(ReactionBase* rthis) {
-    if(rthis->getRevMarker()==0){
-        float thisrevnumber = rthis->getRevNumber();
-        
-        for(auto &x : _map_rnodes){
-            auto rn = x.second.get();
-            ReactionBase* rcheck = rn->getReaction();
-            if(rcheck->getRevNumber()==thisrevnumber && rcheck!=rthis){
-                return rcheck->getBareRate();
-            }
-        }
-        cout<<"No reverse reaction defined for a REV reaction"<<endl;
-        return 1.0;
-        
-    } else if (rthis->getRevMarker()==1){
-        //fill this in
-        return rthis->getRevNumber();
-        
-    } else {
-        //fill this in
-    return 1.0;
-        
-    }
-}

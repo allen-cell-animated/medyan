@@ -23,6 +23,7 @@
 #include <ios>
 
 #include "common.h"
+#include "utility.h"
 
 /// Struct to hold output types;
 struct OutputTypes {
@@ -299,6 +300,9 @@ struct FilamentSetup {
     short filamentType = 0;
     ///Filament projection type.
     string projectionType="STRAIGHT";
+    
+    ///For resetting pin positions in restart phase
+    string pinRestartFile = "";
 };
 
 /// Struct to hold Bubble setup information
@@ -415,6 +419,19 @@ public:
     ///         sanity check here is that there are no duplicate species names.
     ChemistryData readChemistryInput();
 };
+
+
+/// Used to parse pin positions if needed upon restart
+class PinRestartParser: public Parser {
+    
+public:
+    PinRestartParser(string inputFileName) : Parser(inputFileName) {}
+    ~PinRestartParser() {}
+    
+    /// Reads pin positions from file, and sets filaments
+    void resetPins();
+};
+
 
 
 #endif

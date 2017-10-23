@@ -303,7 +303,7 @@ void Filament::retractMinusEnd() {
     
 #ifdef MECHANICS
     //transfer load forces
-    Bead* bd = _cylinderVector.back()->getFirstBead();
+    Bead* bd = _cylinderVector.front()->getFirstBead();
     bd->loadForcesM = retCylinder->getFirstBead()->loadForcesM;
     bd->lfim = retCylinder->getFirstBead()->lfim - 1;
 #endif
@@ -508,6 +508,10 @@ Filament* Filament::sever(int cylinderPosition) {
         
         newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
+        
+        //Add beads to new parent
+        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
+        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
@@ -533,7 +537,9 @@ Filament* Filament::sever(int cylinderPosition) {
     newB->coordinate[1] += -offsetCoord[1];
     newB->coordinate[2] += -offsetCoord[2];
     
+    //add bead
     c1->setSecondBead(newB);
+    newFilament->addChild(unique_ptr<Component>(newB));
     
     //set plus and minus ends
     c1->setPlusEnd(true);

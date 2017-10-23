@@ -22,25 +22,25 @@
 #endif
 
 template<unsigned short M, unsigned short N>
-void Reaction<M,N>::updatePropensityImpl() {
-    
+    void Reaction<M,N>::updatePropensityImpl() {
+
     //just update the rnode if not passivated
     if(_rnode!=nullptr && !_passivated) _rnode->activateReaction();
 }
 
 
 template <unsigned short M, unsigned short N>
-void Reaction<M,N>::activateReactionUnconditionalImpl(){
+    void Reaction<M,N>::activateReactionUnconditionalImpl(){
 #ifdef TRACK_DEPENDENTS
     for(auto i=0U; i<M; ++i)
     {
         RSpecies *s = _rspecies[i];
         for(auto r = s->beginReactantReactions();
-            r!= s->endReactantReactions(); ++r){
+                 r!= s->endReactantReactions(); ++r){
             if(this!=(*r)) (*r)->registerNewDependent(this);
         }
         for(auto r = s->beginProductReactions();
-            r!= s->endProductReactions(); ++r){
+                 r!= s->endProductReactions(); ++r){
             if(this!=(*r)) (*r)->registerNewDependent(this);
         }
     }
@@ -59,11 +59,11 @@ void Reaction<M,N>::passivateReactionImpl() {
     {
         RSpecies *s = _rspecies[i];
         for(auto r = s->beginReactantReactions();
-            r!=s->endReactantReactions(); ++r){
+                 r!=s->endReactantReactions(); ++r){
             (*r)->unregisterDependent(this);
         }
         for(auto r = s->beginProductReactions();
-            r!=s->endProductReactions(); ++r){
+                 r!=s->endProductReactions(); ++r){
             (*r)->unregisterDependent(this);
         }
     }
@@ -73,7 +73,7 @@ void Reaction<M,N>::passivateReactionImpl() {
 #endif
     if(_rnode!=nullptr) _rnode->passivateReaction();
 }
-
+  
 template <unsigned short M, unsigned short N>
 Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 {
@@ -83,7 +83,7 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
         
         //check if that species exists in the compartment
         auto vit = find_if(spcv.species().cbegin(),spcv.species().cend(),
-                           [molec](const unique_ptr<Species> &us){return us->getMolecule()==molec;});
+           [molec](const unique_ptr<Species> &us){return us->getMolecule()==molec;});
         
         //if we didn't find it, use the old species
         if(vit==spcv.species().cend()) species.push_back(&rs->getSpecies());
@@ -110,7 +110,7 @@ void DiffusionReaction::updatePropensityImpl() {
     if(_rnode!=nullptr && !_passivated) _rnode->activateReaction();
 }
 
-
+    
 #ifdef BOOST_MEM_POOL
 template <unsigned short M, unsigned short N>
 void* Reaction<M,N>::operator new(size_t size) {
@@ -129,10 +129,10 @@ void* DiffusionReaction::operator new(size_t size) {
 }
 
 void DiffusionReaction::operator delete(void* ptr) noexcept {
-    boost::fast_pool_allocator<DiffusionReaction>::deallocate((DiffusionReaction*)ptr);
+     boost::fast_pool_allocator<DiffusionReaction>::deallocate((DiffusionReaction*)ptr);
 }
 #endif
-
+    
 #ifdef BOOST_MEM_POOL
 template void* Reaction<1,1>::operator new(size_t size);
 template void Reaction<1,1>::operator delete(void* ptr);

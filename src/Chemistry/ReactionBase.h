@@ -60,34 +60,34 @@ typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
 /// Represents an abstract interface for simple chemical reactions of the form
 /// A + B -> C.
 
-/*! ReactionBase provides an interface for managing a chemical reaction. It is an
- *  abstract interface, so it cannot be directly instantiated, but other concrete
- *  classes may be derived from it. ReactionBase may have a composite object as a
- *  parent. A signaling interface may be used to make callbacks when some event, such
+/*! ReactionBase provides an interface for managing a chemical reaction. It is an 
+ *  abstract interface, so it cannot be directly instantiated, but other concrete 
+ *  classes may be derived from it. ReactionBase may have a composite object as a 
+ *  parent. A signaling interface may be used to make callbacks when some event, such 
  *  as a single reaction step, has been executed.
- *  The ReactionBase indicates a forward process only. For processes in both directions,
- *  e.g. A <-> B, two ReactionBases objects need to be defined, corresponding to A->B
+ *  The ReactionBase indicates a forward process only. For processes in both directions, 
+ *  e.g. A <-> B, two ReactionBases objects need to be defined, corresponding to A->B 
  *  and B->A.
- *  A ReactionBase tracks other ReactionBase objects that are affected if this
- *  ReactionBase is executed. A ReactionBase may be set up such that it "signals" when a
+ *  A ReactionBase tracks other ReactionBase objects that are affected if this 
+ *  ReactionBase is executed. A ReactionBase may be set up such that it "signals" when a 
  *  ReactionBase event happens, in which case the corresponding callbacks are called.
  */
 class ReactionBase {
 protected:
     unordered_set<ReactionBase*>  _dependents; ///< Pointers to ReactionBase objects that depend
-    ///< on this ReactionBase being executed
+                                               ///< on this ReactionBase being executed
     
     RNode* _rnode; ///< A pointer to an RNode object which is used
-    ///< to implement a Gillespie-like algorithm (e.g. NRM)
+                   ///< to implement a Gillespie-like algorithm (e.g. NRM)
     
     Composite *_parent; ///< A pointer to a Composite object to which
-    ///< this Reaction belongs
+                        ///< this Reaction belongs
     
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
-    ///< associated with this ReactionBase
+                                            ///< associated with this ReactionBase
 #endif
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     bool _passivated; ///< Indicates whether the ReactionBase is currently passivated
@@ -145,6 +145,15 @@ public:
     virtual RSpecies** rspecies() = 0;
     
     //aravind, June 30, 2016.
+    vector<string> getreactantspecies(){
+        vector<string> returnvector;
+        for(int i=0;i<2;i++){
+            returnvector.push_back((*(rspecies()+i))->getSpecies().getName());
+        }
+        return returnvector;
+    }
+
+    
     vector<string> getReactantSpecies() {
         vector<string> returnvector;
         for(auto i=0U;i<getM();++i){
@@ -321,7 +330,7 @@ public:
     /// @return a connection object which can be used to later disconnect this
     /// particular slot or temporarily block it
     boost::signals2::connection
-    connect(function<void (ReactionBase *)> const &react_callback, int priority=5);
+        connect(function<void (ReactionBase *)> const &react_callback, int priority=5);
     
     /// Broadcasts signal indicating that the ReactionBase event has taken place
     /// This method is only called by the code which runs the chemical dynamics (i.e.
@@ -354,7 +363,6 @@ public:
     /// (Private) implementation of the operator==(...) method to be elaborated
     /// in derived classes.
     virtual bool is_equal(const ReactionBase& b) const = 0;
-    
     
     /// Return true if two ReactionBase are not equal.
     /// @see operator ==(const ReactionBase& a, const ReactionBase& b) above
@@ -407,12 +415,12 @@ public:
     void activateReaction() {
 #ifdef TRACK_ZERO_COPY_N
         if(areEqual(getProductOfReactants(), 0.0)) // One of the reactants is still at zero copy n,
-            // no need to activate yet...
+                                                   // no need to activate yet...
             return;
 #endif
 #ifdef TRACK_UPPER_COPY_N
         if(areEqual(getProductOfProducts(), 0.0)) // One of the products is at the maximum allowed
-            //copy number, no need to activate yet...
+                                                  //copy number, no need to activate yet...
             return;
 #endif
         activateReactionUnconditional();
@@ -456,15 +464,7 @@ public:
     
     ///Whether the dependencies should be updated
     virtual bool updateDependencies() = 0;
-    
-
-    
-
-    
-    
 };
-
-
 
 
 

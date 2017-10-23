@@ -60,7 +60,6 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     }
     _chemSim->setInstance(csi);
     
-    
     //Create manager, intialize
     _chemManager = new ChemManager(_subSystem, chem);
     _chemManager->initializeSystem(_chemSim);
@@ -88,6 +87,7 @@ bool CController::run(double time) {
     //run the steps
     return _chemSim->run(time);
 }
+
 //aravind June 29,2016.
 void CController::restart(){
  _chemSim->initialize();

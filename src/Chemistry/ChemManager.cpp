@@ -1580,8 +1580,6 @@ void ChemManager::genFilBindingReactions() {
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
                 
-                rxn->setLinkerRates(onRate,offRate);
-                
                 C->addInternalReaction(rxn);
                 
                 //create manager

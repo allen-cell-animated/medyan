@@ -16,8 +16,8 @@
 #include "Composite.h"
 
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment)
-: _rnode(nullptr), _parent(nullptr), _rate(rate),
-_rate_bare(rate), _isProtoCompartment(isProtoCompartment) {
+    : _rnode(nullptr), _parent(nullptr), _rate(rate), 
+      _rate_bare(rate), _isProtoCompartment(isProtoCompartment) {
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif
@@ -46,7 +46,7 @@ void ReactionBase::stopSignaling () {
 }
 
 boost::signals2::connection ReactionBase::connect(
-                                                  function<void (ReactionBase *)> const &react_callback, int priority) {
+    function<void (ReactionBase *)> const &react_callback, int priority) {
     if (!isSignaling())
         startSignaling();
     return _signal->connect(priority, react_callback);

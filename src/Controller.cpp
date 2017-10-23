@@ -76,6 +76,7 @@ void Controller::initialize(string inputFile,
     _outputDirectory = outputDirectory + "/";
     
     //Parse input, get parameters
+    _inputFile = inputFile;
     SystemParser p(inputFile);
     
     //snapshot type output
@@ -529,13 +530,24 @@ void Controller::run() {
         cout<<endl;
         _restart->redistributediffusingspecies();
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
+        
+//Step 4.5. re-add pin positions
+        SystemParser p(_inputFile);
+        FilamentSetup filSetup = p.readFilamentSetup();
+        PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
+        ppin.resetPins();
+        
 //Step 5. run mcontroller, update system, turn off restart state.
-    cout<<"Minimizing energy"<<endl;
-    _mController->run(false);
-    SysParams::RUNSTATE=true;
-    //reupdate positions and neighbor lists
-    updatePositions();
-    updateNeighborLists();
+        updatePositions();
+        updateNeighborLists();
+        
+        cout<<"Minimizing energy"<<endl;
+        _mController->run(false);
+        SysParams::RUNSTATE=true;
+        
+        //reupdate positions and neighbor lists
+        updatePositions();
+        updateNeighborLists();
     
 //Step 6. Set Off rates back to original value.
     for(auto LL : Linker::getLinkers())
@@ -573,7 +585,6 @@ void Controller::run() {
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
-//    for(auto o: _outputs) o->print(_numChemSteps);
     cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
     cout << "---" << endl;
     resetglobaltime();
