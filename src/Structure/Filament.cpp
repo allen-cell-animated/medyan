@@ -361,6 +361,9 @@ void Filament::polymerizePlusEnd() {
    
     _polyPlusEnd++;
     
+    
+    _polyPlusEnd++; //Qin
+    
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -941,6 +944,5 @@ species_copy_t Filament::countSpecies(short filamentType, const string& name) {
     }
     return copyNum;
 }
-
 
 

@@ -195,6 +195,11 @@ void SystemParser::readChemParams() {
                     CParams.makeFilamentsStatic = true;
                     CParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
                 }
+                //Qin
+                if(lineVector[1] == "MAKETREADMILLSTATIC") {
+                    CParams.makeTreadmillStatic = true;
+                    CParams.makeTreadmillStaticTime = atof(lineVector[2].c_str());
+                }
             }
         }
     }
