@@ -288,8 +288,6 @@ void MotorGhost::updateReactionRates() {
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
                 
-                //cout << "New walking rate = " << newRate << endl;
-                
                 r->setRate(newRate);
                 r->updatePropensity();
             }

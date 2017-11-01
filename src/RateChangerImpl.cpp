@@ -56,10 +56,6 @@ float MotorCatch::changeRate(float onRate, float offRate,
     double factor = max(1.0/10.0, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
     
     double newRate = k_0 * factor;
-    
-    cout << "Unbinding time = " << 1 / newRate << endl;
-    cout << "Force = " << force << endl;
-    
     return newRate;
 }
 
