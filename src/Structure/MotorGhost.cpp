@@ -71,10 +71,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
                                   SysParams::Chemistry().motorNumHeadsMax[_motorType]);
     
-   // if(!_unbindingChangers.empty())
-   //     _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
-   // else
-    _numBoundHeads = _numHeads;
+//    if(!_unbindingChangers.empty())
+//        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, 0, _numHeads);
+//    else
+//        _numBoundHeads = _numHeads;
     
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
@@ -176,20 +176,6 @@ void MotorGhost::updatePosition() {
     auto m2 = midPointCoordinate(x3, x4, _position2);
     
     _mMotorGhost->setLength(twoPointDistance(m1, m2));
-    
-    //update the spring constant, based on numboundheads
-    //current force
-    double force = max(0.0, _mMotorGhost->stretchForce);
-    
-    //update number of bound heads
-    //if(!_unbindingChangers.empty())
-    //    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
-    //else
-    _numBoundHeads = _numHeads;
-    
-    
-    _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
-
 #endif
     
 }
@@ -207,10 +193,10 @@ void MotorGhost::updateReactionRates() {
     double numBoundHeadsOld = _numBoundHeads;
     
     //update number of bound heads
-    //if(!_unbindingChangers.empty())
-    //    _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
-    //else
-    _numBoundHeads = _numHeads;
+//    if(!_unbindingChangers.empty())
+//        _numBoundHeads = _unbindingChangers[_motorType]->numBoundHeads(_onRate, _offRate, force, _numHeads);
+//    else
+//        _numBoundHeads = _numHeads;
     
     //rescale by new number of bound heads
     force *= _numBoundHeads / numBoundHeadsOld;
@@ -256,8 +242,6 @@ void MotorGhost::updateReactionRates() {
                            max(0.0, forceDotDirectionC1));
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
-                
-                
                 r->setRate(newRate);
                 r->updatePropensity();
 

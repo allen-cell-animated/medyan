@@ -48,12 +48,12 @@ float MotorCatch::changeRate(float onRate, float offRate, double force) {
     double newRate = _k_0 * factor;
     return newRate;
 }
-
-
 float MotorStall::changeRate(float onRate, float offRate, double force) {
+
     
     //determine k_0 (FOR MYOSIN-ISOFORMS)
     float k_0 = v_0 / _stepFrac;
+    
     
     //calculate new rate
     double newRate =  max(0.0, k_0 * (1 - force / _F0));
