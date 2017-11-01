@@ -314,6 +314,12 @@ void Forces::print(int snapshot) {
         //print stretch force
         _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
                        motor->getMMotorGhost()->stretchForce << endl;
+        
+        
+        //print properties
+        double k = motor->getMMotorGhost()->getStretchingConstant();
+        double eqLen = motor->getMMotorGhost()->getEqLength();
+        double deltaL = motor->getMMotorGhost()->stretchForce / k;
     }
     
     //DEPRECATED AS OF 9/8/16
@@ -404,13 +410,9 @@ void Tensions::print(int snapshot) {
                                linker->getType() << endl;
         
         //print
-        double k = linker->getMLinker()->getStretchingConstant();
-        double deltaL = linker->getMLinker()->getLength() -
-                        linker->getMLinker()->getEqLength();
-        
-        
-        _outputFile << abs(k * deltaL) << " " <<
-                       abs(k * deltaL) << endl;
+        //print stretch force
+        _outputFile << linker->getMLinker()->stretchForce << " " <<
+                       linker->getMLinker()->stretchForce << endl;
     }
     
     for(auto &motor : MotorGhost::getMotorGhosts()) {
@@ -420,12 +422,9 @@ void Tensions::print(int snapshot) {
         _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
         
         //print
-        double k = motor->getMMotorGhost()->getStretchingConstant();
-        double deltaL = motor->getMMotorGhost()->getLength() -
-                        motor->getMMotorGhost()->getEqLength();
-        
-        _outputFile << abs(k * deltaL) << " " <<
-                       abs(k * deltaL) << endl;
+        //print stretch force
+        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
+                       motor->getMMotorGhost()->stretchForce << endl;
     }
     
     //DEPRECATED AS OF 9/8/16
@@ -496,13 +495,13 @@ void WallTensions::print(int snapshot) {
             Bead* b = cylinder->getFirstBead();
             
             if(b->isPinned()) {
-                auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
-                auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+                //auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
+                //auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
                 
                 double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
                 
                 
-                _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
+                _outputFile<< k * deltaL << " ";
             }
             else
                 _outputFile << 0.0 << " ";
