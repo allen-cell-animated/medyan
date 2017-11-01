@@ -40,7 +40,7 @@ protected:
     
     /// Minimum number of minimization steps, in the case of a
     /// small number of beads in the system
-    const int _MINNUMSTEPS = 1E4;
+    const int _MINNUMSTEPS = 1E5;
     
     //@{
     /// Parameter used in backtracking line search

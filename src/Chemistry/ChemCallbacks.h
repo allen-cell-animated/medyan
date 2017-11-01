@@ -661,8 +661,21 @@ struct MotorWalkingCallback {
 #ifdef DYNAMICRATES
         //reset the associated reactions
         m->updateReactionRates();
-
 #endif
+        //If the motor has reached the end of a filament, trigger unbinding
+        if(_c->isPlusEnd() || _c->isMinusEnd()) {
+            
+            //fire the unbinding reaction, execute callback
+            ReactionBase* offRxn = m->getCMotorGhost()->getOffReaction();
+            offRxn->makeStep();
+            
+            //manually update dependents of unbinding reaction
+            for (auto r : offRxn->getAffectedReactions())
+                r->updatePropensity();
+            
+            //emit mechanical unbinding
+            offRxn->emitSignal();
+        }
     }
 };
 
@@ -708,50 +721,23 @@ struct MotorMovingCylinderCallback {
         //reset the associated reactions
         m->updateReactionRates();
 #endif
+        
+        //If the motor has reached the end of a filament, trigger unbinding
+        if(_newC->isPlusEnd() || _newC->isMinusEnd()) {
+            
+            //fire the unbinding reaction, execute callback
+            ReactionBase* offRxn = m->getCMotorGhost()->getOffReaction();
+            offRxn->makeStep();
+            
+            //manually update dependents of unbinding reaction
+            for (auto r : offRxn->getAffectedReactions())
+                r->updatePropensity();
+            
+            //emit mechanical unbinding
+            offRxn->emitSignal();
+        }
     }
 };
-
-/// Callback to walk a MotorGhost off a Filament, which triggers an unbinding event
-struct MotorWalkingOffCallback {
-    
-    Cylinder* _c;        ///< Cylinder this callback is attached to
-    
-    short _position;     ///< Position of the motor
-    
-    short _motorType;    ///< Type of motor
-    SubSystem* _ps;      ///< Ptr to subsystem
-    
-    MotorWalkingOffCallback(Cylinder* c, short position,
-                            short motorType, SubSystem* ps)
-    
-    :_c(c), _position(position), _motorType(motorType), _ps(ps) {}
-    
-    void operator() (ReactionBase* r) {
-        
-        //get species
-        CCylinder* cc = _c->getCCylinder();
-        CMonomer* monomer = cc->getCMonomer(_position);
-        SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
-        
-        //retag
-        sm1->up();
-        
-        //get motor
-        MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
-        
-        //fire the unbinding reaction, execute callback
-        ReactionBase* offRxn = m->getCMotorGhost()->getOffReaction();
-        offRxn->makeStep();
-        
-        //manually update dependents of unbinding reaction
-        for (auto r : offRxn->getAffectedReactions())
-            r->updatePropensity();
-        
-        //emit mechanical unbinding
-        offRxn->emitSignal();
-    }
-};
-
 
 /// Struct to create a new filament based on a given reaction
 struct FilamentCreationCallback {

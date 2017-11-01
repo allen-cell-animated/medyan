@@ -32,7 +32,8 @@ MMotorGhost::MMotorGhost(int motorType, int numBoundHeads, double position1, dou
 
 void MMotorGhost::setStretchingConstant(int motorType, double numBoundHeads) {
     
+    //to account for bipolar nature of effective spring, divide by 2.
     if(!SysParams::Mechanics().MStretchingK.empty())
-        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads;
+        _kStretch = SysParams::Mechanics().MStretchingK[motorType] * numBoundHeads / 2.0;
 }
 

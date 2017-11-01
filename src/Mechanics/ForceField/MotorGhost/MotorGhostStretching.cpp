@@ -89,6 +89,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForcesAux() {
         double kStretch = m->getMMotorGhost()->getStretchingConstant();
         double eqLength = m->getMMotorGhost()->getEqLength();
         
+        
         double pos1 = m->getFirstPosition();
         double pos2 = m->getSecondPosition();
         

@@ -55,6 +55,7 @@ double MotorGhostStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* 
     double invL = 1 / dist;
     double f0 = kStretch * ( dist - eqLength ) * invL;
     
+    
     //force on i
     b1->force[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - position1);
     b1->force[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - position1);
@@ -75,7 +76,7 @@ double MotorGhostStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* 
     b4->force[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->force[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
     
-    return f0;
+    return f0 / invL;
 }
 
 double MotorGhostStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
@@ -111,5 +112,5 @@ double MotorGhostStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bea
     b4->forceAux[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->forceAux[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
     
-    return f0;
+    return f0 / invL;
 }
