@@ -255,7 +255,8 @@ LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
     if(cc->getType() != _filamentType) return;
-    if(tau() > 1000.0) return;
+    //double passivate = Rand::randDouble(0, 1);
+    //if(tau() > 1000.0 && passivate <0.9) return;
     
     //if we change other managers copy number
     vector<LinkerBindingManager*> affectedManagers;
@@ -422,7 +423,9 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     for(auto c : _compartment->getCylinders()) {
     
         if(c->getType() != _filamentType) continue;
-        if(tau() > 1000.0) continue;
+        
+        //double passivate = Rand::randDouble(0, 1);
+        //if(tau() > 1000.0 && passivate <0.9) continue;
         
         auto cc = c->getCCylinder();
     
@@ -558,7 +561,8 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
 void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
     if(cc->getType() != _filamentType) return;
-    if(tau() > 1000.0) return;
+    double passivate = Rand::randDouble(0, 1);
+    if(tau() > 1000.0 && passivate <0.9) return;
     
     //if we change other managers copy number
     vector<MotorBindingManager*> affectedManagers;
@@ -729,7 +733,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
     for(auto c : _compartment->getCylinders()) {
         
         if(c->getType() != _filamentType) continue;
-        if(tau() > 1000.0) continue;
+        double passivate = Rand::randDouble(0, 1);
+        if(tau() > 1000.0 && passivate <0.9) continue;
         
         auto cc = c->getCCylinder();
         
