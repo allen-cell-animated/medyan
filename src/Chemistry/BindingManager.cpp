@@ -562,7 +562,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
     
     if(cc->getType() != _filamentType) return;
     double passivate = Rand::randDouble(0, 1);
-    if(tau() > 1000.0 && passivate <0.9) return;
+    if(tau() > 1000.0 && passivate > 0.9) return;
     
     //if we change other managers copy number
     vector<MotorBindingManager*> affectedManagers;
@@ -734,7 +734,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
         
         if(c->getType() != _filamentType) continue;
         double passivate = Rand::randDouble(0, 1);
-        if(tau() > 1000.0 && passivate <0.9) continue;
+        if(tau() > 1000.0 && passivate > 0.9) continue;
         
         auto cc = c->getCCylinder();
         
