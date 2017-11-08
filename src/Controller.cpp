@@ -480,7 +480,8 @@ void Controller::pinBoundaryFilaments() {
            (minusEndC->getFirstBead() == b)) {
             
             //if within dist to boundary, add
-            if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+            if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance &&
+               b->coordinate[2] > 750.0) {
                 
                 b->pinnedPosition = b->coordinate;
                 b->addAsPinned();
