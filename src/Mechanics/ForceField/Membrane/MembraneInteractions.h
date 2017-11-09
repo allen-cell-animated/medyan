@@ -1,23 +1,26 @@
 #ifndef MEDYAN_MembraneInteractions_h
 #define MEDYAN_MembraneInteractions_h
 
-/* TODO: Write it
+#include "common.h"
 
 //FORWARD DECLARATIONS
-class Filament;
+class Membrane;
 
 /// Represents an internal Filament interaction
-class FilamentInteractions {
+class MembraneInteractions {
     
-friend class FilamentFF;
+// TODO: friend class FilamentFF;
     
 protected:
+    // TODO: what is it?
+    /*
     /// The filament in the case of an error
     Filament* _filamentCulprit = nullptr;
+    */
 
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(double d) = 0;
+    virtual double computeEnergy(double d) = 0; // TODO: what id d?
     /// Compute forces of this interaction
     virtual void computeForces() = 0;
     /// Compute auxiliary forces of this interaction
@@ -27,6 +30,5 @@ public:
     virtual const string getName() = 0;
 };
 
-*/
 
 #endif
