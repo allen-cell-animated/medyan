@@ -3,6 +3,8 @@
 
 #include <array>
 
+#include "common.h"
+
 #include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
@@ -10,6 +12,7 @@
 #include "Component.h"
 
 #include "Bead.h"
+#include "MTriangle.h"
 
 class Triangle:
     public Component,
@@ -21,6 +24,12 @@ class Triangle:
 private:
     // Pointers to 3 beads. The rotation of beads must be pointing outside.
     std::array<Bead*, 3> _b;
+
+    unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
+
+    // ptr to neighbor triangles
+    // For each vertex, the neighbor is the nearest triangle in the counter-clockwise direction
+    std::array<Triangle*, 3> _neighborTriangle;
 
 public:
     Triangle(Composite *parent, Bead *b1, Bead *b2, Bead *b3);
