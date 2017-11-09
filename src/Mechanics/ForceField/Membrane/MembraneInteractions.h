@@ -20,7 +20,7 @@ protected:
 
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(double d) = 0; // TODO: what id d?
+    virtual double computeEnergy(double d) = 0; // d is the stretching parameter along the force
     /// Compute forces of this interaction
     virtual void computeForces() = 0;
     /// Compute auxiliary forces of this interaction
