@@ -9,5 +9,3 @@ double MembraneStretching::computeEnergy(double d) {
 
     return U;
 }
-
-#endif

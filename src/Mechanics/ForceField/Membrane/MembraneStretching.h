@@ -7,6 +7,7 @@ template <class MembraneStretchingInteractionType>
 class MembraneStretching: public MembraneInteractions {
 private:
     MembraneStretchingInteractionType _FFType;
+    
 public:
     virtual double computeEnergy(double d);
     virtual void computeForces();

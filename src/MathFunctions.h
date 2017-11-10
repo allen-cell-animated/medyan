@@ -225,6 +225,26 @@ namespace mathfunc {
         
         return v;
     };
+
+    /// Returns the area of a triangle with vertices at point v1, v2 and v3.
+    inline double areaTriangle(const vector<double>& v1,
+                               const vector<double>& v2,
+                               const vector<double>& v3) {
+        
+        return 0.5 * magnitude(vectorProduct(v1, v2, v1, v3));
+    }
+
+    /// The area of a triangle with vertices at point v1 + d*p1, v2 + d*p2 and v3 + d*p3
+    inline double areaTriangleStretched(const vector<double>& v1,
+                                        const vector<double>& p1,
+                                        const vector<double>& v2,
+                                        const vector<double>& p2,
+                                        const vector<double>& v3,
+                                        const vector<double>& p3,
+                                        double d) {
+        return 0.5 * magnitude(vectorProductStretched(v1, p1, v2, p2, v1, p1, v3, p3, d));
+
+    }
     
     /// Projection of a new point based on a given direction and starting point
     inline vector<double> nextPointProjection(const vector<double>& coordinate,
