@@ -6,14 +6,13 @@
 
 using namespace mathfunc;
 
-double MembraneStretchingHarmonic::energy(const std::array<Bead*, 3>& beads,
-                                          double kStretch, double eqArea){
-    // kStretch is dependent on the actual eqArea!
+double MembraneStretchingHarmonic::energy(const std::array<Bead*, 3>& b,
+                                          double kElastic, double eqArea){
+    // kElastic is the elastic modulus, which is independent of the actual eqArea
 
-    double dist // TODO: calc area...
+    double dist = areaTriangle(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate) - eqArea;
     
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate) - eqLength;
-    return 0.5 * kStretch* dist * dist;
+    return 0.5 * kStretch* dist * dist / eqArea;
     
 }
 
