@@ -12,17 +12,18 @@ double MembraneStretchingHarmonic::energy(const std::array<Bead*, 3>& b,
 
     double dist = areaTriangle(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate) - eqArea;
     
-    return 0.5 * kStretch* dist * dist / eqArea;
+    return 0.5 * kElastic * dist * dist / eqArea;
     
 }
 
-double MembraneStretchingHarmonic::energy(Bead* b1, Bead* b2,
-                                          double kStretch, double eqLength, double d){
+double MembraneStretchingHarmonic::energy(const std::array<Bead*, 3>& b,
+                                          double kElastic, double eqArea, double d){
 
-    double distStretched = twoPointDistanceStretched(b1->coordinate,
-                                                     b1->force, b2->coordinate,
-                                                     b2->force, d) - eqLength;
-    return 0.5 * kStretch * distStretched * distStretched;
+    double distStretched = areaTriangleStretched(b[0]->coordinate, b[0]->force,
+                                        b[1]->coordinate, b[1]->force,
+                                        b[2]->coordinate, b[2]->force,
+                                        d) - eqArea;
+    return 0.5 * kElastic * distStretched * distStretched / eqArea;
 }
 
 void MembraneStretchingHarmonic::forces(Bead* b1, Bead* b2,
