@@ -30,40 +30,32 @@ void MembraneStretchingHarmonic::forces(const std::array<Bead*, 3>& b,
                                         double kElastic, double eqArea ){
     
     double area = areaTriangle(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
+    double f0 = kElastic * (area - eqArea) / eqArea;
 
-    // TODO: force = kElastic * (area - eqArea) / eqArea * d_A
-    // Determine d_A for all three beads!!  9 numbers in total!!!!!!!!!!!!!!!!!!!!!!!
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate);
-    double invL = 1 / dist;
-    
-    double f0 = kStretch * ( dist - eqLength ) * invL;
-    
-    //force on i
-    b2->force[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );
-    b2->force[1] +=  f0 * ( b1->coordinate[1] - b2->coordinate[1] );
-    b2->force[2] +=  f0 * ( b1->coordinate[2] - b2->coordinate[2] );
-    
-    // force i-1
-    b1->force[0] +=  f0 * ( b2->coordinate[0] - b1->coordinate[0] );
-    b1->force[1] +=  f0 * ( b2->coordinate[1] - b1->coordinate[1] );
-    b1->force[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
+    // Actually area is calculated again in areaGradient function. There might be a way to optimize it...
+    auto areaGradient = areaTriangleGradient(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
+    // force = kElastic * (area - eqArea) / eqArea * d_A
+
+    for(int idxBead = 0; idxBead < 3; ++idxBead) {
+        for(int idxCoord = 0; idxCoord < 3; ++idxCoord) {
+            b[idxBead]->force[idxCoord] += f0 * areaGradient[idxBead][idxCoord];
+        }
+    }
+    // TODO: test the results
 }
 
-void MembraneStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
+void MembraneStretchingHarmonic::forcesAux(const std::array<Bead*, 3>& b,
                                            double kStretch, double eqLength ){
     
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate);
-    double invL = 1 / dist;
-    double f0 = kStretch * ( dist - eqLength ) * invL;
+    double area = areaTriangle(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
+    double f0 = kElastic * (area - eqArea) / eqArea;
 
-    //force on i
-    b2->forceAux[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );
-    b2->forceAux[1] +=  f0 * ( b1->coordinate[1] - b2->coordinate[1] );
-    b2->forceAux[2] +=  f0 * ( b1->coordinate[2] - b2->coordinate[2] );
-    
-    // force i-1
-    b1->forceAux[0] +=  f0 * ( b2->coordinate[0] - b1->coordinate[0] );
-    b1->forceAux[1] +=  f0 * ( b2->coordinate[1] - b1->coordinate[1] );
-    b1->forceAux[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
+    auto areaGradient = areaTriangleGradient(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
+
+    for(int idxBead = 0; idxBead < 3; ++idxBead) {
+        for(int idxCoord = 0; idxCoord < 3; ++idxCoord) {
+            b[idxBead]->forceAux[idxCoord] += f0 * areaGradient[idxBead][idxCoord];
+        }
+    }
 }
 
