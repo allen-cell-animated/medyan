@@ -13,10 +13,10 @@ class MembraneStretchingHarmonic {
     
 public:
     double energy(const std::array<Bead*, 3>, double, double);
-    double energy(Bead*, Bead*, double, double, double);
+    double energy(const std::array<Bead*, 3>, double, double, double);
     
-    void forces(Bead*, Bead*, double, double);
-    void forcesAux(Bead*, Bead*, double, double);
+    void forces(const std::array<Bead*, 3>, double, double);
+    void forcesAux(const std::array<Bead*, 3>, double, double);
 };
 
 #endif

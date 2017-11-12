@@ -20,15 +20,19 @@ double MembraneStretchingHarmonic::energy(const std::array<Bead*, 3>& b,
                                           double kElastic, double eqArea, double d){
 
     double distStretched = areaTriangleStretched(b[0]->coordinate, b[0]->force,
-                                        b[1]->coordinate, b[1]->force,
-                                        b[2]->coordinate, b[2]->force,
-                                        d) - eqArea;
+                                                 b[1]->coordinate, b[1]->force,
+                                                 b[2]->coordinate, b[2]->force,
+                                                 d) - eqArea;
     return 0.5 * kElastic * distStretched * distStretched / eqArea;
 }
 
-void MembraneStretchingHarmonic::forces(Bead* b1, Bead* b2,
-                                        double kStretch, double eqLength ){
+void MembraneStretchingHarmonic::forces(const std::array<Bead*, 3>& b,
+                                        double kElastic, double eqArea ){
     
+    double area = areaTriangle(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
+
+    // TODO: force = kElastic * (area - eqArea) / eqArea * d_A
+    // Determine d_A for all three beads!!  9 numbers in total!!!!!!!!!!!!!!!!!!!!!!!
     double dist = twoPointDistance( b1->coordinate, b2->coordinate);
     double invL = 1 / dist;
     
