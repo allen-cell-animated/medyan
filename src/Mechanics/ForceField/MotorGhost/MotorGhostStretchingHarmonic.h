@@ -31,6 +31,17 @@ public:
     
     void forces(double *coord, double *f, int *beadSet,
                 double *kstr, double *eql, double *pos1, double *pos2);
+#ifdef CUDAACCL
+    double energy(double *coord, double *f, int *beadSet, double *kstr, double *eql,
+                  double *pos1, double *pos2, int *params, vector<int> blocksnthreads);
+
+    double energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2,
+           double *z, int *params, vector<int> blocksnthreads);
+
+    void forces(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2, int
+    *params, vector<int> blocksnthreads);
+
+#endif
 #ifdef CROSSCHECK
     double energy(Bead*, Bead*, Bead*, Bead*,
                   double position1, double position2,

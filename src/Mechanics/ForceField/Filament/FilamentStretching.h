@@ -30,7 +30,8 @@ private:
     ///Array describing the constants in calculation
     double *kstr;
     double *eql;
-    
+
+
 public:
     
     ///Array describing indexed set of interactions

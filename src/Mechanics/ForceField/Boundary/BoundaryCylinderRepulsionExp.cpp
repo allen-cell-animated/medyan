@@ -141,7 +141,7 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
-            std::cout<<beadSet[Cumnc+ic]<<" "<<norm[0]<<" "<<norm[1]<<" "<<norm[2]<<" "<<f0<<endl;
+//            std::cout<<beadSet[Cumnc+ic]<<" "<<norm[0]<<" "<<norm[1]<<" "<<norm[2]<<" "<<f0<<endl;
 //                        std::cout<<beadSet[ Cumnc + ic]<<" "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<slen[Cumnc+ic]<<" "
 //                        <<krep[Cumnc+ic]<<" "<<f0<<endl;
         

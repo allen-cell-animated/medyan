@@ -190,31 +190,30 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
-    for(auto b:Bead::getBeads())
-        std::cout<<b->getID()<<" "<<b->_dbIndex<<endl;
-    std::cout<<"====================="<<endl;
-    for (auto be: BoundaryElement::getBoundaryElements()) {
-        
-        for(auto &c: _neighborList->getNeighbors(be)) {
-            
-            double kRep = be->getRepulsionConst();
-            double screenLength = be->getScreeningLength();
-            
-            //potential acts on second cylinder bead unless this is a minus end
-            if(c->isMinusEnd()) {
-                std::cout<<"M "<<c->getFirstBead()->getID()<<" "<<c->getFirstBead()->_dbIndex<<" "<<
-                c->getSecondBead()->_dbIndex<<" "<<c->getSecondBead()->getID()<<" "<<c->getMCylinder()->getLength()<<endl;
-            }
-            else if(c->isPlusEnd()) {
-                std::cout<<"P "<<c->getFirstBead()->getID()<<" "<<c->getFirstBead()->_dbIndex<<" "<<
-                c->getSecondBead()->_dbIndex<<" "<<c->getSecondBead()->getID()<<" "<<c->getMCylinder()->getLength()<<endl;
-            }
-            
-        }
-    }
-    std::cout<<"++++++++++++++++++++++"<<endl;
+//    for(auto b:Bead::getBeads())
+//        std::cout<<b->getID()<<" "<<b->_dbIndex<<endl;
+//    std::cout<<"====================="<<endl;
+//    for (auto be: BoundaryElement::getBoundaryElements()) {
+//        for(auto &c: _neighborList->getNeighbors(be)) {
+//
+//            double kRep = be->getRepulsionConst();
+//            double screenLength = be->getScreeningLength();
+//
+//            //potential acts on second cylinder bead unless this is a minus end
+//            if(c->isMinusEnd()) {
+//                std::cout<<"M "<<c->getFirstBead()->getID()<<" "<<c->getFirstBead()->_dbIndex<<" "<<
+//                c->getSecondBead()->_dbIndex<<" "<<c->getSecondBead()->getID()<<" "<<c->getMCylinder()->getLength()<<endl;
+//            }
+//            else if(c->isPlusEnd()) {
+//                std::cout<<"P "<<c->getFirstBead()->getID()<<" "<<c->getFirstBead()->_dbIndex<<" "<<
+//                c->getSecondBead()->_dbIndex<<" "<<c->getSecondBead()->getID()<<" "<<c->getMCylinder()->getLength()<<endl;
+//            }
+//
+//        }
+//    }
+//    std::cout<<"++++++++++++++++++++++"<<endl;
     _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
-    std::cout<<"====================="<<endl;
+//    std::cout<<"====================="<<endl;
 #ifdef CROSSCHECK
 //    std::cout<<"old adjacency list"<<endl;
 //    for (auto be: BoundaryElement::getBoundaryElements()) {

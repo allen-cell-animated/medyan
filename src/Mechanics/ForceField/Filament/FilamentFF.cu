@@ -23,22 +23,22 @@
 #include "Filament.h"
 
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
-    
+
     if (stretching == "HARMONIC")
         _filamentInteractionVector.emplace_back(
-        new FilamentStretching<FilamentStretchingHarmonic>());
+                new FilamentStretching<FilamentStretchingHarmonic>());
     else if(stretching == "") {}
     else {
         cout << "Filament stretching FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
-    
+
     if (bending == "HARMONIC")
         _filamentInteractionVector.emplace_back(
-        new FilamentBending<FilamentBendingHarmonic>());
+                new FilamentBending<FilamentBendingHarmonic>());
     else if(bending == "COSINE")
         _filamentInteractionVector.emplace_back(
-        new FilamentBending<FilamentBendingCosine>());
+                new FilamentBending<FilamentBendingCosine>());
     else if(bending == "") {}
     else {
         cout << "Filament bending FF not recognized. Exiting." << endl;
@@ -47,52 +47,52 @@ FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
 }
 
 void FilamentFF::vectorize() {
-    
+
     for (auto &interaction : _filamentInteractionVector)
         interaction->vectorize();
 }
 
 void FilamentFF::cleanup() {
-    
+
     for (auto &interaction : _filamentInteractionVector)
         interaction->deallocate();
 }
 
 void FilamentFF::whoIsCulprit() {
-    
+
     cout << endl;
-    
+
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
-    
+
     cout << "Printing the culprit filament..." << endl;
     _culpritInteraction->_filamentCulprit->printSelf();
-    
+
     cout << endl;
 }
 
 
 double FilamentFF::computeEnergy(double *coord, double *f, double d) {
-    
+
     double U= 0;
     double U_i;
-    
+
     for (auto &interaction : _filamentInteractionVector) {
-        
+
         U_i = interaction->computeEnergy(coord, f, d);
-        
+
         if(U_i <= -1) {
             //set culprit and return
             _culpritInteraction = interaction.get();
             return -1;
         }
         else U += U_i;
-        
+
     }
     return U;
 }
 
 void FilamentFF::computeForces(double *coord, double *f) {
-    
+
     for (auto &interaction : _filamentInteractionVector)
         interaction->computeForces(coord, f);
 }

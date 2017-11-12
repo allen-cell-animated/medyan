@@ -20,6 +20,19 @@
 
 #include "utility.h"
 
+#ifdef CUDAACCL
+#include <cuda.h>
+#include <cuda_runtime.h>
+#ifdef __CUDACC__
+#define CUDA_HOSTDEV __host__ __device__
+#else
+#define CUDA_HOSTDEV
+#endif
+#ifndef THREADSPERBLOCK
+#define THREADSPERBLOCK 512
+#endif
+#endif
+
 ///Species constants
 typedef unsigned int species_copy_t;
 const species_copy_t max_ulim = 1000000;

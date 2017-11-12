@@ -24,7 +24,7 @@ typedef std::numeric_limits< double > dbl;
 
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::vectorize() {
-    
+
     beadSet = new int[n * Cylinder::getCylinders().size()];
     kstr = new double[Cylinder::getCylinders().size()];
     eql = new double[Cylinder::getCylinders().size()];

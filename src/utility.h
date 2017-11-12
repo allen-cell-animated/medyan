@@ -21,6 +21,18 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+#ifdef CUDAACCL
+#include <cuda.h>
+#include <cuda_runtime.h>
+#ifdef __CUDACC__
+#define CUDA_HOSTDEV __host__ __device__
+#else
+#define CUDA_HOSTDEV
+#endif
+#ifndef THREADSPERBLOCK
+#define THREADSPERBLOCK 512
+#endif
+#endif
 
 using namespace std;
 
@@ -31,6 +43,7 @@ const double ZERO_PREC = 1E-6;
 extern unsigned long long rdtsc();
 
 ///Check equaility of doubles
+__host__ __device__
 inline bool areEqual(double d1, double d2) {
     
     return fabs(d1 - d2) < ZERO_PREC;

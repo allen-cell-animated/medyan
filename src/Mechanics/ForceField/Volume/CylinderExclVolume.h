@@ -20,7 +20,7 @@
 #include "NeighborListImpl.h"
 
 #include "SysParams.h"
-
+#include "CUDAcommon.h"
 //FORWARD DECLARATIONS
 class Cylinder;
 
@@ -31,11 +31,17 @@ class CylinderExclVolume : public CylinderVolumeInteractions {
 private:
     CVolumeInteractionType _FFType;
     CylinderCylinderNL* _neighborList;  ///< Neighbor list of cylinders
-    
+
     ///Array describing the constants in calculation
     int *beadSet;
     double *krep;
-    
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_krep;
+    int * gpu_params;
+    vector<int> blocksnthreads;
+    CUDAvars cvars;
+#endif
 public:
     ///Array describing indexed set of interactions
     ///For volume, this is a 4-bead potential

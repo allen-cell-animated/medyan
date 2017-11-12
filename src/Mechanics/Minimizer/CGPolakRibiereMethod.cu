@@ -11,7 +11,7 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-    
+
 #include "CGPolakRibiereMethod.h"
 
 #include "ForceFieldManager.h"
@@ -20,7 +20,7 @@
 #include "cross_check.h"
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
                             double MAXDIST, double LAMBDAMAX, bool steplimit){
-    
+
     //number of steps
     int N;
     if(steplimit) {
@@ -30,106 +30,121 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     else {
         N = numeric_limits<int>::max();
     }
-    
+
     startMinimization();
 //    long index = 0;
 //    long i = 0;
 //    for(auto b: Bead::getBeads()) {
-//        
+//
 //        //flatten indices
 //        index = 3 * i;
 //        std::cout<<coord[index]<<" "<<coord[index+1]<<" "<<coord[index+2]<<" ";
-//        
+//
 //        i++;
 //    }
 //    std::cout<<endl;
-    
+
     FFM.vectorizeAllForceFields();
-#ifdef CROSSCHECK
+#if defined(CROSSCHECK) || defined(CUDAENABLED) ||defined(CUDACROSSCHECK)
     cross_checkclass::Aux=false;
 #endif
     FFM.computeForces(coord, force);
     FFM.copyForces(forceAux, force);
-    
+
+    int cparams[2];
+    cudaMemcpy(cparams, CUDAcommon::getCUDAvars().motorparams, 2*sizeof(int), cudaMemcpyDeviceToHost);
+    std::cout<<cparams[0]<<" "<<cparams[1]<<endl;
+    //TODO write the following function in CUDA
     double curGrad = CGMethod::allFDotF();
-  
-	int numIter = 0;
-    
+
+    int numIter = 0;
+
     while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  maxF() > GRADTOL) {
+                                      /* Gradient tolerance  */  maxF() > GRADTOL) {
 //        std::cout<<"CONDITION "<< numIter<<" "<<maxF()<<" "<<GRADTOL<<endl;
-		numIter++;
-		double lambda, beta, newGrad, prevGrad;
-        
-#ifdef CROSSCHECK
-            auto state=cross_check::crosscheckforces(force);
+        numIter++;
+        double lambda, beta, newGrad, prevGrad;
+
+#if defined(CROSSCHECK)
+        auto state=cross_check::crosscheckforces(force);
 #endif
+        int cparams[2];
+        cudaMemcpy(cparams, CUDAcommon::getCUDAvars().motorparams, 2*sizeof(int), cudaMemcpyDeviceToHost);
+        std::cout<<cparams[0]<<" "<<cparams[1]<<endl;
+
         //find lambda by line search, move beads
         lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
+
+#ifdef CUDAACCL
+
+        // TODO change endif to else so that moveBeads affects gpu_coord.
+#endif
         moveBeads(lambda);
-        
-#ifdef CROSSCHECK
+
+
+#if defined(CROSSCHECK) || defined(CUDAENABLED) ||defined(CUDACROSSCHECK)
         cross_checkclass::Aux=true;
 #endif
-        
+
         //compute new forces
         FFM.computeForces(coord, forceAux);
-        
+
         //compute direction
+        //TODO write the following function in CUDA
         newGrad = CGMethod::allFADotFA();
         prevGrad = CGMethod::allFADotFAP();
-        
+
         //Polak-Ribieri update
         beta = max(0.0, (newGrad - prevGrad) / curGrad);
-        
+
         //shift gradient
         shiftGradient(beta);
-        
+
         //direction reset if not downhill, or no progress made
         if(CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad)) {
-            
+
             shiftGradient(0.0);
             _safeMode = true;
         }
         curGrad = newGrad;
 
     }
-    
+
     if (numIter >= N) {
         cout << endl;
-        
+
         cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
 //        cout << "Maximum force in system = " << maxF() << endl;
-        
+
 //        cout << "Culprit ..." << endl;
 //        auto b = maxBead();
 //        if(b != nullptr) b->getParent()->printSelf();
-        
+
         cout << "System energy..." << endl;
         FFM.computeEnergy(coord, force, 0.0, true);
-        
+
         cout << endl;
     }
-    
+
 //    cout << "Minimized." << endl;
-    
-#ifdef CROSSCHECK
+
+#if defined(CROSSCHECK) || defined(CUDAENABLED) || defined(CUDACROSSCHECK)
     cross_checkclass::Aux=false;
 #endif
-    
+
     //final force calculation
     FFM.computeForces(coord, force);
-    
-#ifdef CROSSCHECK
-    auto state=cross_check::crosscheckforces(force);
+
+#if defined(CROSSCHECK)
+        auto state=cross_check::crosscheckforces(force);
 #endif
-    
+
     FFM.copyForces(forceAux, force);
 
     endMinimization();
     FFM.computeLoadForces();
+std::cout<<"-----------------"<<endl;
 
-    
     FFM.cleanupAllForceFields();
 }
