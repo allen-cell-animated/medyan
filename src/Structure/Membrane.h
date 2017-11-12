@@ -17,11 +17,18 @@ class Membrane: public Composite, public Trackable {
 
 private:
 
+    vector<Triangle*> _triangleVector; // collection of triangles
+
     SubSystem* _subSystem; // SubSystem pointer
 
     static Database<Membrane*> _membranes; // Collection in SubSystem
 
 public:
+    // TODO: constructors
+
+    /// Get vector of triangles that this membrane contains.
+    vector<Triangle*>& getTriangleVector() {return _triangleVector;}
+
     // SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _membranes.addElement(this); }
     virtual void removeFromSubSystem() { _membranes.removeElement(this); }

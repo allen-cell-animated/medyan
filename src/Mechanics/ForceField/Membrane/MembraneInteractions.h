@@ -12,11 +12,8 @@ class MembraneInteractions {
 // TODO: friend class FilamentFF;
     
 protected:
-    // TODO: what is it?
-    /*
-    /// The filament in the case of an error
-    Filament* _filamentCulprit = nullptr;
-    */
+    /// The membrane in the case of an error
+    Membrane* _membraneCulprit = nullptr;
 
 public:
     /// Compute the energy of this interaction

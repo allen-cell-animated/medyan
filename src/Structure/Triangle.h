@@ -23,7 +23,7 @@ class Triangle:
 
 private:
     // Pointers to 3 beads. The rotation of beads must be pointing outside.
-    std::array<Bead*, 3> _b;
+    array<Bead*, 3> _b;
 
     unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
 
@@ -33,6 +33,13 @@ private:
 
 public:
     Triangle(Composite *parent, Bead *b1, Bead *b2, Bead *b3);
+
+    // Get Beads
+    array<Bead*, 3>& getBeads() { return _b; }
+    
+    // Get mech triangle
+    MTriangle* getMTriangle() {return _mTriangle.get();}
+
 
 };
 
