@@ -45,7 +45,7 @@ void MembraneStretchingHarmonic::forces(const std::array<Bead*, 3>& b,
 }
 
 void MembraneStretchingHarmonic::forcesAux(const std::array<Bead*, 3>& b,
-                                           double kStretch, double eqLength ){
+                                           double kElastic, double eqArea ){
     
     double area = areaTriangle(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
     double f0 = kElastic * (area - eqArea) / eqArea;
