@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "Database.h"
 #include "Trackable.h"
 #include "Composite.h"
 
