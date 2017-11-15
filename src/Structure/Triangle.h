@@ -18,7 +18,7 @@ class Triangle:
     public Component,
     public Trackable,
     public Movable,
-    public Reactable,
+    public Reactable, // TODO: is it reactable?
     public DynamicNeighbor {
 
 private:
