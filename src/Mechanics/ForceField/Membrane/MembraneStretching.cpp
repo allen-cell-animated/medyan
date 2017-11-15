@@ -4,12 +4,14 @@
 #include "Membrane.h"
 #include "Triangle.h"
 
+#include "MembraneStretchingHarmonic.h"
+
 template <class MembraneStretchingInteractionType>
 double MembraneStretching<MembraneStretchingInteractionType>::computeEnergy(double d) {
     double U = 0;
     double U_i;
 
-    for(auto m: Membrane::GetMembranes()) {
+    for(auto m: Membrane::getMembranes()) {
 
         U_i = 0;
 
@@ -47,4 +49,37 @@ double MembraneStretching<MembraneStretchingInteractionType>::computeEnergy(doub
     return U;
 }
 
-// TODO: implement others
+template <class MembraneStretchingInteractionType>
+void MembraneStretching<MembraneStretchingInteractionType>::computeForces() {
+    
+    for (auto m: Membrane::getMembranes()) {
+    
+        for(Triangle* it : f->getTriangleVector()){
+            
+            double kElastic =it->getMTriangle()->getElasticModulus();
+            double eqArea = it->getMTriangle()->getEqArea();
+           
+            _FFType.forces(it->getBeads(), kElastic, eqArea);
+        }
+    }
+}
+
+template <class MembraneStretchingInteractionType>
+void MembraneStretching<MembraneStretchingInteractionType>::computeForcesAux() {
+    
+    for (auto m: Membrane::getMembranes()) {
+    
+        for(Triangle* it : f->getTriangleVector()){
+            
+            double kElastic =it->getMTriangle()->getElasticModulus();
+            double eqArea = it->getMTriangle()->getEqArea();
+           
+            _FFType.forcesAux(it->getBeads(), kElastic, eqArea);
+        }
+    }
+}
+
+// Template specializations
+template double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d);
+template void MembraneStretching<MembraneStretchingHarmonic>::computeForces();
+template void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux();
