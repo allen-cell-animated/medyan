@@ -12,6 +12,7 @@
 #include "Component.h"
 
 #include "Bead.h"
+#include "Edge.h"
 #include "MTriangle.h"
 
 class Triangle:
@@ -27,9 +28,8 @@ private:
 
     unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
 
-    // ptr to neighbor triangles
-    // For each vertex, the neighbor is the nearest triangle in the counter-clockwise direction
-    std::array<Triangle*, 3> _neighborTriangle;
+    // ptr to 3 edges. Order is (b0, b1), (b1, b2), (b2, b0)
+    std::array<Edge*, 3> _edges;
 
 public:
     Triangle(Composite *parent, Bead *b1, Bead *b2, Bead *b3);
