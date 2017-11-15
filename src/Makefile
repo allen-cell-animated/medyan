@@ -31,6 +31,7 @@ CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -Wno-uninitialized -Wno-unknown-warning-option \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
+-IStructure/SurfaceMesh                   \
 -IChemistry                               \
 -IMechanics/Minimizer                     \
 -IMechanics/ForceField                    \
