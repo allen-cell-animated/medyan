@@ -12,7 +12,7 @@
 #include "Component.h"
 
 #include "Bead.h"
-#include "Edge.h"
+#include "HalfEdge.h"
 #include "MTriangle.h"
 
 class Triangle:
@@ -29,7 +29,7 @@ private:
     unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
 
     // ptr to 3 edges. Order is (b0, b1), (b1, b2), (b2, b0)
-    std::array<Edge*, 3> _edges;
+    std::array<HalfEdge*, 3> _halfEdges;
 
 public:
     Triangle(Composite *parent, Bead *b1, Bead *b2, Bead *b3);

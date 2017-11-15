@@ -3,10 +3,10 @@
 
 /*
  
- This structure defines the shared edge between two
+ This structure defines the shared directional edge between two
  triangular surface patches.
  
- The structure is similar to cylinder
+ The structure is similar to the cylinder.
  
 */
 
@@ -23,14 +23,14 @@
 #include "Triangle.h"
 #include "MTriangle.h"
 
-class Edge:
+class HalfEdge:
     public Component,
     public Trackable,
     public Movable,
     public DynamicNeighbor {
 
 private:
-    // Pointers to the beads. The order is irrelevant.
+    // Pointers to the beads.
     Bead* _b1;
 	Bead* _b2;
 
@@ -38,11 +38,11 @@ private:
     std::array<Triangle*, 2> _neighborTriangle;
 
 public:
-    Edge(Composite *parent, Bead *b1, Bead *b2);
+    HalfEdge(Composite *parent, Bead *b1, Bead *b2);
 
     // Get Beads
-    Bead* getBead1() { return _b1; }
-	Bead* getBead2() { return _b2; }
+    Bead* getFirstBead() { return _b1; }
+	Bead* getSecondBead() { return _b2; }
     
 	// TODO: Add getter and setter for neighbor triangles
 
