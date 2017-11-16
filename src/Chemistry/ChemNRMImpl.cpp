@@ -172,24 +172,25 @@ bool ChemNRMImpl::makeStep() {
 
     _dt->updateDelGChem(react);
     
-//    if(react->getReactionType()==2){
-//        cout <<"Plus end poly"<<endl;
+//    if(react->getReactionType()==12 ){
 //        rn->printSelf();
 //        vector<string> reacs=react->getReactantSpecies();
 //        vector<string> reacp=react->getProductSpecies();
-//        for(auto i=0; i< reacs.size();i++){
-//        cout<<reacs[i]<<endl;
-//        }
-//        for(auto i=0; i< reacp.size();i++){
-//            cout<<reacp[i]<<endl;
-//        }
 //        vector<species_copy_t> reacN = react->getReactantCopyNumbers();
-//        cout<< reacN[0]<<endl;
-//        cout<<endl<<_dt->getDelGChem(react)<<endl<<endl;
-//    }
+//        vector<species_copy_t> prodN = react->getProductCopyNumbers();
+//        cout<<"Number of reacs is "<<reacs.size()<<endl;
+//        for(auto i=0; i< reacs.size();i++){
+//        cout<<reacs[i]<<reacN[i]<<endl;
 //
-//    rn->printSelf();
-//    cout<<endl<<_dt->getGChemEn()<<endl<<endl;
+//        }
+//        cout<<"Number of prods is "<<reacp.size()<<endl;
+//        for(auto i=0; i< reacp.size();i++){
+//            cout<<reacp[i]<<prodN[i]<<endl;
+//        }
+//        cout<<endl<<_dt->getDelGChem(react)<<endl<<endl;
+//        cout<<rn->getProductOfReactants();
+//    }
+    
     
     rn->makeStep();
    

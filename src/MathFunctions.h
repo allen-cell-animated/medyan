@@ -305,13 +305,26 @@ namespace mathfunc {
                                                            double l, double m, double theta);
     
    
-    float delGRevChem(float aplus, float amin, float v, int sigma, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+    float delGRevChem(float aplus, float amin, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
     
     float delGIrrChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
     
     float delGDifChem(species_copy_t reacN ,species_copy_t prodN);
     
-    float delGPolyRev(float aplus, float amin, float v, species_copy_t reacN, string whichWay);
+    float delGPolyRev(float aplus, float amin, species_copy_t reacN, string whichWay);
+    
+    float delGPolyIrr(float delGzero, species_copy_t reacN, string whichWay);
+    
+    
+    float delGRevChemTherm(float aplus, float amin, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+    
+    float delGIrrChemTherm(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+    
+    float delGDifChemTherm(species_copy_t reacN ,species_copy_t prodN);
+    
+    float delGPolyRevTherm(float aplus, float amin, species_copy_t reacN, string whichWay);
+    
+    float delGPolyIrrTherm(float delGzero, species_copy_t reacN, string whichWay);
     
     }
 

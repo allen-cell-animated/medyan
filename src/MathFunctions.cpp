@@ -118,7 +118,7 @@ namespace mathfunc {
     
     
     
-    float delGRevChem(float aplus, float amin, float v, int sigma, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
+    float delGRevChem(float aplus, float amin, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
         
         
         
@@ -156,7 +156,7 @@ namespace mathfunc {
             sumprods += prodNplusNu[i]*log(prodNplusNu[i]) - prodN[i]*log(prodN[i]) ;
         }
         
-        float delG = kT * log( (aplus/amin)* pow(v,sigma)) + kT * sumreacs + kT * sumprods;
+        float delG =  log( (aplus/amin)) +  sumreacs + sumprods;
         
         if(isnan(delG)){
             delG=0;
@@ -203,7 +203,7 @@ namespace mathfunc {
             sumprods += prodNplusNu[i]*log(prodNplusNu[i]) - prodN[i]*log(prodN[i]) ;
         }
         
-        float delG = kT*delGZero + kT * sumreacs + kT * sumprods;
+        float delG = delGZero +  sumreacs +  sumprods;
         
         if(isnan(delG)){
             delG=0;
@@ -214,7 +214,7 @@ namespace mathfunc {
     
     float delGDifChem(species_copy_t reacN, species_copy_t prodN){
         
-        float delG = kT * ( (reacN-1)*log(reacN-1) - reacN*log(reacN) + (prodN+1)*log(prodN+1)-prodN*log(prodN));
+        float delG =  ( (reacN-1)*log(reacN-1) - reacN*log(reacN) + (prodN+1)*log(prodN+1)-prodN*log(prodN));
         
         if(isnan(delG)){
             delG=0;
@@ -223,21 +223,18 @@ namespace mathfunc {
         return delG;
     }
     
-    float delGPolyRev(float aplus, float amin, float v, species_copy_t reacN, string whichWay){
+    float delGPolyRev(float aplus, float amin, species_copy_t reacN, string whichWay){
         
         
         float sumreacs=0;
-        float sig=0;
         
         if(whichWay=="P"){
             sumreacs = (reacN-1) * log(reacN-1) - reacN * log(reacN);
-            sig=1;
         } else if (whichWay=="D"){
             sumreacs = (reacN+1) * log(reacN+1) - reacN * log(reacN);
-            sig=-1;
         }
         
-        float delG = kT * log( (aplus/amin)* pow(v,sig)) + kT * sumreacs ;
+        float delG =  - log((aplus/amin)) +   sumreacs ;
         
         if(isnan(delG)){
             delG=0;
@@ -246,6 +243,173 @@ namespace mathfunc {
         return delG;
     }
     
+    float delGPolyIrr(float delGzero, species_copy_t reacN, string whichWay){
+        
+        
+        float sumreacs=0;
+        
+        if(whichWay=="P"){
+            sumreacs = (reacN-1) * log(reacN-1) - reacN * log(reacN);
+        } else if (whichWay=="D"){
+            sumreacs = (reacN+1) * log(reacN+1) - reacN * log(reacN);
+        }
+        
+        float delG =  delGzero +   sumreacs ;
+        
+        if(isnan(delG)){
+            delG=0;
+        }
+        
+        return delG;
+        
+    }
+    
+    
+    float delGRevChemTherm(float aplus, float amin, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
+        
+        
+        
+        if(reacN.size() != reacNu.size()){
+            cout << "Reactant copy number vector and stoichiometry vector mismatch" << endl;
+            return 0;
+        }
+        
+        if(prodN.size() != prodNu.size()){
+            cout << "Product copy number vector and stoichiometry vector mismatch" << endl;
+            return 0;
+        }
+        
+        vector<int> reacNminNu;
+        
+        for(int i=0; (i<reacN.size()); i++){
+            reacNminNu.push_back(reacN[i]-reacNu[i]);
+        }
+        
+        vector<int> prodNplusNu;
+        
+        for(int i=0; (i<prodN.size()); i++){
+            prodNplusNu.push_back(prodN[i]+prodNu[i]);
+        }
+        
+        float sumreacs = 0;
+        
+        for (int i=0; (i<reacN.size()); i++){
+            sumreacs += reacNminNu[i]*log(reacN[i]) - reacN[i]*log(reacN[i]) ;
+        }
+        
+        float sumprods = 0;
+        
+        for (int i=0; (i<prodN.size()); i++){
+            sumprods += prodNplusNu[i]*log(prodN[i]) - prodN[i]*log(prodN[i]) ;
+        }
+        
+        float delG =  log( (aplus/amin)) +  sumreacs + sumprods;
+        
+        if(isnan(delG)){
+            delG=0;
+        }
+        
+        return delG;
+        
+        
+    }
+    
+    float delGIrrChemTherm(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
+        
+        if(reacN.size() != reacNu.size()){
+            cout << "Reactant copy number vector and stoichiometry vector mismatch" << endl;
+            return 0;
+        }
+        
+        if(prodN.size() != prodNu.size()){
+            cout << "Product copy number vector and stoichiometry vector mismatch" << endl;
+            return 0;
+        }
+        
+        vector<int> reacNminNu;
+        
+        for(int i=0; (i<reacN.size()); i++){
+            reacNminNu.push_back(reacN[i]-reacNu[i]);
+        }
+        
+        vector<int> prodNplusNu;
+        
+        for(int i=0; (i<prodN.size()); i++){
+            prodNplusNu.push_back(prodN[i]+prodNu[i]);
+        }
+        
+        float sumreacs = 0;
+        
+        for (int i=0; (i<reacN.size()); i++){
+            sumreacs += reacNminNu[i]*log(reacN[i]) - reacN[i]*log(reacN[i]) ;
+        }
+        
+        float sumprods = 0;
+        
+        for (int i=0; (i<prodN.size()); i++){
+            sumprods += prodNplusNu[i]*log(prodN[i]) - prodN[i]*log(prodN[i]) ;
+        }
+        
+        float delG = delGZero +  sumreacs +  sumprods;
+        
+        if(isnan(delG)){
+            delG=0;
+        }
+        
+        return delG;
+    }
+    
+    float delGDifChemTherm(species_copy_t reacN, species_copy_t prodN){
+        
+        float delG =  ( (reacN-1)*log(reacN-1) - reacN*log(reacN) + (prodN+1)*log(prodN+1)-prodN*log(prodN));
+        
+        if(isnan(delG)){
+            delG=0;
+        }
+        
+        return delG;
+    }
+    
+    float delGPolyRevTherm(float aplus, float amin, species_copy_t reacN, string whichWay){
+        
+        
+        float sumreacs=0;
+        
+        if(whichWay=="P"){
+            sumreacs = (reacN-1) * log(reacN) - reacN * log(reacN);
+        } else if (whichWay=="D"){
+            sumreacs = (reacN+1) * log(reacN) - reacN * log(reacN);
+        }
+        
+        float delG =  log( (aplus/amin)) +   sumreacs ;
+        
+        if(isnan(delG)){
+            delG=0;
+        }
+        
+        return delG;
+    }
+    
+    float delGPolyIrrTherm(float delGzero, species_copy_t reacN, string whichWay){
+        
+        
+        float sumreacs=0;
+        
+        if(whichWay=="P"){
+            sumreacs = (reacN-1) * log(reacN) - reacN * log(reacN);
+        } else if (whichWay=="D"){
+            sumreacs = (reacN+1) * log(reacN) - reacN * log(reacN);
+        }
+        
+        float delG =  delGzero +   sumreacs ;
+        
+        if(isnan(delG)){
+            delG=0;
+        }
+        
+        return delG;
+        
+    }
 
 
 }
