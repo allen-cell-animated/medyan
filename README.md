@@ -1,7 +1,7 @@
 # README #
 
 Welcome to Papoian Lab’s *Mechanochemical Dynamics of Active Networks* software package. 
-Copyright 2015, Papoian lab at the University of Maryland.
+Copyright 2015-2016, Papoian lab at the University of Maryland.
 
 For more general information about the code, visit the code webpage (http://www.medyan.org) or the Papoian lab page (http://papoian.chem.umd.edu/). 
 
@@ -23,10 +23,11 @@ This MEDYAN distribution (v3.0) has the following files and directories:
 	*File/Dir*				   *Description*
 	README.md				Current file
 	license.txt				Code licensing information
-	src                     All source files
+	src                                     All source files
+        restart					Restart scripts
 	docs					Documentation files
 	examples				A packaged example
-	visual					Visualization script
+	visual					Visualization scripts
 	papers					Relevant papers 
 
 See the following documentation for details:

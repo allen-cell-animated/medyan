@@ -1281,3 +1281,866 @@ def density(Snapshot, grid, compartment):
 
 		compartmentCoords.append(compartmentMap[index])
 		densityValues.append(numCylinders[index])
+
+		##############################################
+#
+#
+#
+#			    PLOTTING ANALYSIS
+#
+#
+#
+###############################################
+
+def calculateRgs(fileDirectory='', snapshot=1):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=16)
+	return radiusOfGyrations(FrameLists, snapshot)
+
+def calculateRgVsT(fileDirectory=''):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=15)
+
+	Rgs1 = []
+
+	for snap in xrange(2, len(FrameLists[0]), 2):
+		Rgs1.append(radiusOfGyrations(FrameLists, snapshot=snap))
+
+	del FrameLists
+
+	return Rgs1
+
+def calculateAllRgVsT():
+
+	rgs = []
+
+	rgs.append(calculateRgVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.125/'))
+	rgs.append(calculateRgVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.25/'))
+	rgs.append(calculateRgVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.5/'))
+	rgs.append(calculateRgVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR2/'))
+	rgs.append(calculateRgVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR4/'))
+	rgs.append(calculateRgVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR8/'))
+
+	return rgs
+
+def calculateMsdVsT(fileDirectory=''):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=15)
+
+	msds0 = meanSquareDisplacements(FrameLists)
+
+	del FrameLists
+
+	return msds0
+
+def calculateAllMsdVsT():
+
+	msds = []
+
+	msds.append(calculateMsdVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.125/'))
+	msds.append(calculateMsdVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.25/'))
+	msds.append(calculateMsdVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.5/'))
+	msds.append(calculateMsdVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/M0.02A0.1/'))
+	msds.append(calculateMsdVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR2/'))
+	msds.append(calculateMsdVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR4/'))
+	msds.append(calculateMsdVsT(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR8/'))
+
+	return msds
+
+def calculateOrderParamVsT(fileDirectory='', numsnapshots=1, optype='apolar'):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=40)
+	ops = []
+
+	for i in xrange(0, len(FrameLists)):
+
+		ops.append([])
+
+		for j in xrange(0, numsnapshots):
+
+			op = orderParameter(FrameLists[i], snapshot=j, optype=optype)
+
+			if(op): 
+				lastOp = op
+				ops[i].append(op)
+				di = 0
+
+			#fill in data that did not run
+			else:
+				ops[i].append((lastOp[0] + 5.0*di, lastOp[1]))
+				di += 1
+
+	del FrameLists
+	return ops
+
+def calculateOrderParamPercentagesVsT(fileDirectory='', numsnapshots=1, optype='apolar'):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=40)
+	ops = []
+
+	for i in xrange(0, len(FrameLists)):
+
+		ops.append([])
+
+		for j in xrange(0, numsnapshots):
+
+			op = orderParameter(FrameLists[i], snapshot=j, optype=optype)
+
+			if(op): 
+				lastOp = op
+				ops[i].append(op)
+				di = 0
+
+			#fill in data that did not run
+			else:
+				ops[i].append((lastOp[0] + 5.0*di, lastOp[1]))
+				di += 1
+
+	del FrameLists
+
+	#loop through runs, get percentages in range
+	q1 = 0.0
+	q2 = 0.33
+	q3 = 0.66
+	q4 = 1.0
+
+	freqs = []
+
+	for i in xrange(0, len(ops[0])):
+
+		freqQ1 = 0
+		freqQ2 = 0
+		freqQ3 = 0
+
+		time = 0
+
+		for j in xrange(0, len(ops)):
+
+			if(ops[j][i][1] >= q1 and ops[j][i][1] < q2):
+				freqQ1 += 1
+
+			if(ops[j][i][1] >= q2 and ops[j][i][1] < q3):
+				freqQ2 += 1
+
+			if(ops[j][i][1] >= q3 and ops[j][i][1] <= q4):
+				freqQ3 += 1
+
+			time += ops[j][i][0]
+
+		freqs.append((time / len(ops), float(freqQ1) / len(ops), \
+			float(freqQ2) / len(ops), float(freqQ3) / len(ops)))
+
+	return freqs
+
+def calculateOrderParamDistribution(fileDirectory='',numsnapshots=1, optype = 'apolar'):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=40)
+	ops = []
+	opsOneSnapshot = []
+
+	for i in xrange(0, len(FrameLists)):
+
+		ops.append([])
+
+		for j in xrange(0, numsnapshots):
+
+			op = orderParameter(FrameLists[i], snapshot=j, optype=optype)
+
+			if(op): 
+				lastOp = op
+				ops[i].append(op)
+				di = 0
+
+			#fill in data that did not run
+			else:
+				ops[i].append((lastOp[0] + 5.0*di, lastOp[1]))
+				di += 1
+
+	del FrameLists
+	for i in xrange(0, len(ops)):
+
+		opsOneSnapshot.append(ops[i][snapshot][1])
+
+	return opsOneSnapshot
+
+def calculateOrderParamAverages(fileDirectory='', numsnapshots=1, optype='apolar'):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=20)
+	ops = []
+
+	for j in xrange(0, numsnapshots):
+
+		ops.append(orderParameters(FrameLists, snapshot=j, optype=optype))
+
+	del FrameLists
+
+	return ops
+
+
+def calculateOrderParamAverage(fileDirectory='', optype = 'polar', snapshot=1):
+
+	FrameLists = readTrajectories('',fileDirectory=fileDirectory, runMin=0, runMax=15)
+
+	op = orderParameters(FrameLists, snapshot=snapshot, optype=optype)
+
+	del FrameLists
+
+	return op
+
+def calculateAllOrderParamAverage():
+
+	ops = []
+
+	ops.append(calculateOrderParamAverage(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.125/', optype='apolar', snapshot=200))
+	ops.append(calculateOrderParamAverage(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.25/', optype='apolar', snapshot=200))
+	ops.append(calculateOrderParamAverage(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR0.5/', optype='apolar', snapshot=200))
+	ops.append(calculateOrderParamAverage(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/M0.02A0.1/', optype='apolar', snapshot=200))
+	ops.append(calculateOrderParamAverage(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR2/', optype='apolar', snapshot=200))
+	ops.append(calculateOrderParamAverage(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR4/', optype='apolar', snapshot=200))
+	ops.append(calculateOrderParamAverage(fileDirectory='/Users/jameskomianos/Desktop/MEDYANData/medyandata/TR8/', optype='apolar', snapshot=200))
+
+	return ops
+
+def plotHistogram(histogramSnapshot, normalize=False):
+
+	numBins = len(histogramSnapshot.hist)
+
+	xfreqs = []
+	xbins  = []
+
+	#get bins and freqs
+	index = 0
+	for bin in sorted(histogramSnapshot.hist):
+
+		binMin, binMax = bin
+
+		xbins.append(binMin)
+		xfreqs.append(histogramSnapshot.hist[bin])
+
+		if(index == numBins):
+			xbins.append(binMax)
+		index += 1
+
+	#normalize if needed
+	if(normalize):
+		maxfreq = max(xfreqs)
+		xfreqs = [x/maxfreq for x in xfreqs]
+
+	pos = np.arange(len(xbins))
+	width = 0.1  # gives histogram aspect to the bar diagram
+
+	ax = plt.axes()
+
+	plt.bar(xbins, xfreqs, width, color='r')
+	plt.show()
+
+def plotRgHeatMap(saveFile=''):
+
+	#read data
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+	mpl.rcParams['xtick.labelsize'] = 8 
+	mpl.rcParams['ytick.labelsize'] = 8 
+
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	x_labels = [0.01,0.02,0.05,0.1,0.2,0.5]
+	y_labels = [0.02, 0.01, 0.005]
+
+	data = np.array([[1.460,1.392,1.199,1.144,1.105,1.120],
+				     [1.600,1.518,1.387,1.332,1.305,1.268],
+			         [1.713,1.652,1.512,1.437,1.449,1.410]])
+
+	fig, ax = plt.subplots(figsize=(5,4))
+	heatmap = ax.pcolor(data, cmap=plt.cm.YlGnBu_r)
+
+	cbar = plt.colorbar(heatmap)
+
+	cbar.ax.get_yaxis().set_ticks([])
+	for j, lab in enumerate([1.0,1.2,1.4,1.6, 1.8]):
+   		 cbar.ax.text(1.0, (1.5 * j) / 6.0, lab, ha='left', va='center', fontsize=9)
+
+	cbar.ax.get_yaxis().labelpad = 30
+	cbar.ax.set_ylabel(r'$\mathsf{R_g\/(\mu m)}$', fontsize=12)
+
+	# put the major ticks at the middle of each cell
+	ax.set_xticks(np.arange(data.shape[1])+0.5, minor=False)
+	ax.set_yticks(np.arange(data.shape[0])+0.5, minor=False)
+
+	# want a more natural, table-like display
+	ax.invert_yaxis()
+
+	ax.set_xticklabels(x_labels, minor=False)
+	ax.set_yticklabels(y_labels, minor=False)
+	plt.show()
+
+	plt.ylabel(r'$\mathsf{R_{m:a}}$', fontsize=12)
+	plt.xlabel(r'$\mathsf{R_{\alpha:a}}$', fontsize=12)
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotRgHeatMapExBind(saveFile=''):
+
+	#read data
+	x_labels = [0.01,0.02,0.05,0.1,0.2,0.5]
+	y_labels = [0.02, 0.01, 0.005]
+
+	data = np.array([[1.518,1.473,1.425,1.453,1.447,1.443],
+				     [1.650,1.583,1.503,1.525,1.500,1.495],
+			         [1.716,1.658,1.573,1.553,1.553,1.537]])
+
+	fig, ax = plt.subplots()
+	heatmap = ax.pcolor(data, cmap=plt.cm.YlGnBu_r)
+
+	cbar = plt.colorbar(heatmap)
+
+	cbar.ax.get_yaxis().set_ticks([])
+	for j, lab in enumerate(['$1.4$','$1.5$','$1.6$','$1.7$','$1.8$']):
+   		 cbar.ax.text(1.0, (1.5 * j) / 6.0, lab, ha='left', va='center')
+	cbar.ax.get_yaxis().labelpad = 15
+	cbar.ax.set_ylabel(r'$\mathrm{R_g\/(\mu m)}$', fontsize=16)
+
+
+	# put the major ticks at the middle of each cell
+	ax.set_xticks(np.arange(data.shape[1])+0.5, minor=False)
+	ax.set_yticks(np.arange(data.shape[0])+0.5, minor=False)
+
+	# want a more natural, table-like display
+	ax.invert_yaxis()
+
+	ax.set_xticklabels(x_labels, minor=False)
+	ax.set_yticklabels(y_labels, minor=False)
+	plt.show()
+
+	plt.ylabel(r'$\mathrm{R_{m:a}}$', fontsize=20)
+	plt.xlabel(r'$\mathrm{R_{\alpha:a}}$', fontsize=20)
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+def plotOPHeatMap(saveFile=''):
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+	mpl.rcParams['xtick.labelsize'] = 8 
+	mpl.rcParams['ytick.labelsize'] = 8 
+
+	#read data
+	x_labels = [0.01,0.02,0.05,0.1,0.2,0.5]
+	y_labels = [0.02, 0.01, 0.005]
+
+	data = np.array([[0.144,0.275,0.527,0.618,0.691,0.637],
+				     [0.153,0.145,0.313,0.389,0.477,0.451],
+			         [0.133,0.139,0.188,0.241,0.276,0.321]])
+
+	fig, ax = plt.subplots(figsize=(5,4))
+	heatmap = ax.pcolor(data, cmap=plt.cm.YlGnBu_r)
+
+	cbar = plt.colorbar(heatmap)
+
+	cbar.ax.get_yaxis().set_ticks([])
+	for j, lab in enumerate([0.1,0.2,0.3,0.4,0.5,0.6,0.7]):
+   		 cbar.ax.text(1.2, (1.3 * j) / 8.0, lab, ha='left', va='center',fontsize=9)
+	cbar.ax.get_yaxis().labelpad = 30
+	cbar.ax.set_ylabel(r'$\mathsf{S}$', fontsize=8)
+
+	# put the major ticks at the middle of each cell
+	ax.set_xticks(np.arange(data.shape[1])+0.5, minor=False)
+	ax.set_yticks(np.arange(data.shape[0])+0.5, minor=False)
+
+	# want a more natural, table-like display
+	ax.invert_yaxis()
+
+	ax.set_xticklabels(x_labels, minor=False)
+	ax.set_yticklabels(y_labels, minor=False)
+	plt.show()
+
+	plt.ylabel(r'$\mathsf{R_{m:a}}$', fontsize=8)
+	plt.xlabel(r'$\mathsf{R_{\alpha:a}}$', fontsize=8)
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotRgRatioVsT(data, saveFile=''):
+
+	numTraj = 16
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+	mpl.rcParams['xtick.labelsize'] = 8 
+	mpl.rcParams['ytick.labelsize'] = 8 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	fig, ax = plt.subplots(figsize=(3.3,3.3))
+
+	#organize data
+	data1 = data[0]
+	data2 = data[1]
+	data3 = data[2]
+	data4 = data[3]
+	data5 = data[4]
+	data6 = data[5]
+
+	time1 = [x[0] for x in data1]
+	time2 = [x[0] for x in data2]
+	time3 = [x[0] for x in data3]
+	time4 = [x[0] for x in data4]
+	time5 = [x[0] for x in data5]
+	time6 = [x[0] for x in data6]
+
+	Rg1_0 = data1[0][1]
+	Rg2_0 = data2[0][1]
+	Rg3_0 = data3[0][1]
+	Rg4_0 = data4[0][1]
+	Rg5_0 = data5[0][1]
+	Rg6_0 = data6[0][1]
+
+	err1_0 = data1[0][2]
+	err2_0 = data2[0][2]
+	err3_0 = data3[0][2]
+	err4_0 = data4[0][2]
+	err5_0 = data5[0][2]
+	err6_0 = data6[0][2]
+
+	Rg1 = [x[1]/Rg1_0 for x in data1]
+	Rg2 = [x[1]/Rg2_0 for x in data2]
+	Rg3 = [x[1]/Rg3_0 for x in data3]
+	Rg4 = [x[1]/Rg4_0 for x in data4]
+	Rg5 = [x[1]/Rg5_0 for x in data5]
+	Rg6 = [x[1]/Rg6_0 for x in data6]
+
+	#with propagation
+	errplus_1 = [x[1]/Rg1_0 + (x[1]/Rg1_0)*sqrt(pow(x[2] / x[1], 2) + pow(err1_0 / Rg1_0, 2)) for x in data1]
+	errminus_1 = [x[1]/Rg1_0 - (x[1]/Rg1_0)*sqrt(pow(x[2] / x[1], 2) + pow(err1_0 / Rg1_0, 2)) for x in data1]
+	errplus_2 = [x[1]/Rg2_0 + (x[1]/Rg2_0)*sqrt(pow(x[2] / x[1], 2) + pow(err2_0 / Rg2_0, 2)) for x in data2]
+	errminus_2 = [x[1]/Rg2_0 - (x[1]/Rg2_0)*sqrt(pow(x[2] / x[1], 2) + pow(err2_0 / Rg2_0, 2)) for x in data2]
+	errplus_3 = [x[1]/Rg3_0 + (x[1]/Rg3_0)*sqrt(pow(x[2] / x[1], 2) + pow(err3_0 / Rg3_0, 2)) for x in data3]
+	errminus_3 = [x[1]/Rg3_0 - (x[1]/Rg3_0)*sqrt(pow(x[2] / x[1], 2) + pow(err3_0 / Rg3_0, 2)) for x in data3]
+	errplus_4 = [x[1]/Rg4_0 + (x[1]/Rg4_0)*sqrt(pow(x[2] / x[1], 2) + pow(err4_0 / Rg4_0, 2)) for x in data4]
+	errminus_4 = [x[1]/Rg4_0 - (x[1]/Rg4_0)*sqrt(pow(x[2] / x[1], 2) + pow(err4_0 / Rg4_0, 2)) for x in data4]
+	errplus_5 = [x[1]/Rg5_0 + (x[1]/Rg5_0)*sqrt(pow(x[2] / x[1], 2) + pow(err5_0 / Rg5_0, 2)) for x in data5]
+	errminus_5 = [x[1]/Rg5_0 - (x[1]/Rg5_0)*sqrt(pow(x[2] / x[1], 2) + pow(err5_0 / Rg5_0, 2)) for x in data5]
+	errplus_6 = [x[1]/Rg6_0 + (x[1]/Rg6_0)*sqrt(pow(x[2] / x[1], 2) + pow(err6_0 / Rg6_0, 2)) for x in data6]
+	errminus_6 = [x[1]/Rg6_0 - (x[1]/Rg6_0)*sqrt(pow(x[2] / x[1], 2) + pow(err6_0 / Rg6_0, 2)) for x in data6]
+
+	plt.plot(time1, Rg1, 'r', label=r'$\mathsf{\chi = 0.125}$', linewidth=2)
+	plt.plot(time2, Rg2, 'g', label=r'$\mathsf{\chi = 0.25}$', linewidth=2)
+	plt.plot(time3, Rg3, 'b', label=r'$\mathsf{\chi = 0.5}$', linewidth=2)
+	plt.plot(time4, Rg4, 'y', label=r'$\mathsf{\chi = 2}$', linewidth=2)
+	plt.plot(time5, Rg5, 'c', label=r'$\mathsf{\chi = 4}$', linewidth=2)
+	plt.plot(time6, Rg6, 'm', label=r'$\mathsf{\chi = 8}$', linewidth=2)
+
+	fill_between(time1, errplus_1, errminus_1, alpha=0.22, linewidth=2, color='r')
+	fill_between(time2, errplus_2, errminus_2, alpha=0.22, linewidth=2, color='g')
+	fill_between(time3, errplus_3, errminus_3, alpha=0.22, linewidth=2, color='b')
+	fill_between(time4, errplus_4, errminus_4, alpha=0.22, linewidth=2, color='y')
+	fill_between(time5, errplus_5, errminus_5, alpha=0.22, linewidth=2, color='c')
+	fill_between(time6, errplus_6, errminus_6, alpha=0.22, linewidth=2, color='m')
+
+	plt.xlabel(r'$\mathsf{Time\/(s)}$', fontsize=12)
+	plt.ylabel(r'$\mathsf{R_{g,f} / R_{g,i}}$', fontsize=12)
+	plt.xlim(0,2000)
+
+	plt.legend(prop={'size':8})
+
+	ax.yaxis.labelpad = 0
+	ax.xaxis.labelpad = 0
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotMsdVsT(data, saveFile=''):
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+	mpl.rcParams['xtick.labelsize'] = 8 
+	mpl.rcParams['ytick.labelsize'] = 8 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	fig, ax = plt.subplots(figsize=(3.3,3.3))
+
+	#organize data
+	data1 = data[0]
+	data2 = data[1]
+	data3 = data[2]
+	data4 = data[3]
+	data5 = data[4]
+	data6 = data[5]
+	data7 = data[6]
+
+	time1 = [x[0] for x in data1]
+	time2 = [x[0] for x in data2]
+	time3 = [x[0] for x in data3]
+	time4 = [x[0] for x in data4]
+	time5 = [x[0] for x in data5]
+	time6 = [x[0] for x in data6]
+	time7 = [x[0] for x in data7]
+
+	msds1 = [x[1] for x in data1]
+	msds2 = [x[1] for x in data2]
+	msds3 = [x[1] for x in data3]
+	msds4 = [x[1] for x in data4]
+	msds5 = [x[1] for x in data5]
+	msds6 = [x[1] for x in data6]
+	msds7 = [x[1] for x in data7]
+
+	plt.plot(time1, msds1,linewidth=4, color='r', label=r'$\mathsf{\chi = 0.125}$')
+	plt.plot(time2, msds2,linewidth=4, color='g', label=r'$\mathsf{\chi = 0.25}$')
+	plt.plot(time3, msds3,linewidth=4, color='b', label=r'$\mathsf{\chi = 0.5}$')
+	plt.plot(time4, msds4,linewidth=4, color='k', label=r'$\mathsf{\chi = 1}$')
+	plt.plot(time5, msds5,linewidth=4, color='y', label=r'$\mathsf{\chi = 2}$')
+	plt.plot(time6, msds6,linewidth=4, color='c', label=r'$\mathsf{\chi = 4}$')
+	plt.plot(time7, msds7,linewidth=4, color='m', label=r'$\mathsf{\chi = 8}$')
+
+	plt.xlabel(r'$\mathsf{Time\/(s)}$', fontsize=12)
+	plt.ylabel(r'$\mathsf{\langle \Delta x ^2 \rangle\/(\mu m^2)}$', fontsize=12)
+	plt.xlim(0,2000)
+	plt.legend(prop={'size':8})
+
+	ax.yaxis.labelpad = 1
+	ax.xaxis.labelpad = 0
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotDiffusionExponents(data, saveFile=''):
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+	mpl.rcParams['xtick.labelsize'] = 8 
+	mpl.rcParams['ytick.labelsize'] = 8 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	fig, ax = plt.subplots(figsize=(3.3,3.3))
+	ax.get_xaxis().get_major_formatter().set_scientific(False)
+
+	#only up to 1000s
+	timeStart = 0
+	timeCutoff = 1000
+
+	#organize data
+	data1 = data[0]
+	data2 = data[1]
+	data3 = data[2]
+	data4 = data[3]
+	data5 = data[4]
+	data6 = data[5]
+	data7 = data[6]
+
+	time1 = [math.log(x[0], 10) for x in data1 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	msds1 = [math.log(x[1], 10) for x in data1 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	time2 = [math.log(x[0], 10) for x in data2 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	msds2 = [math.log(x[1], 10) for x in data2 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	time3 = [math.log(x[0], 10) for x in data3 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	msds3 = [math.log(x[1], 10) for x in data3 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	time4 = [math.log(x[0], 10) for x in data4 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	msds4 = [math.log(x[1], 10) for x in data4 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	time5 = [math.log(x[0], 10) for x in data5 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	msds5 = [math.log(x[1], 10) for x in data5 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	time6 = [math.log(x[0], 10) for x in data6 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	msds6 = [math.log(x[1], 10) for x in data6 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	time7 = [math.log(x[0], 10) for x in data7 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+	msds7 = [math.log(x[1], 10) for x in data7 if x[0] <= timeCutoff and x[0] != 0.0 and x[0] >= timeStart]
+
+	#linear regression for each
+	treadmillingFactors = [0.125, 0.25, 0.5, 1, 2, 4, 8]
+	exponents = []
+
+	#get slopes
+	slope, intercept, r_value, p_value, std_err = linregress(time1,msds1)
+	exponents.append((slope, std_err))
+	slope, intercept, r_value, p_value, std_err = linregress(time2,msds2)
+	exponents.append((slope, std_err))
+	slope, intercept, r_value, p_value, std_err = linregress(time3,msds3)
+	exponents.append((slope, std_err))
+	slope, intercept, r_value, p_value, std_err = linregress(time4,msds4)
+	exponents.append((slope, std_err))
+	slope, intercept, r_value, p_value, std_err = linregress(time5,msds5)
+	exponents.append((slope, std_err))
+	slope, intercept, r_value, p_value, std_err = linregress(time6,msds6)
+	exponents.append((slope, std_err))
+	slope, intercept, r_value, p_value, std_err = linregress(time7,msds7)
+	exponents.append((slope, std_err))
+
+	plt.errorbar(treadmillingFactors, [x[0] for x in exponents], yerr=[x[1] for x in exponents] ,fmt='o-', color='r')
+
+	plt.xlabel(r'$\mathsf{\chi}$', fontsize=12)
+	plt.ylabel(r'$\mathsf{\nu}}$', fontsize=12)
+	#plt.xticks(np.arange(0.1, 10, 1.0))
+	#plt.yticks(np.arange(0.0, 1.5, 0.25))
+
+	ax.set_xscale('log')
+
+	ax.yaxis.labelpad = 1
+	ax.xaxis.labelpad = 0
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+def plotOrderParamVsT(saveFile=''):
+
+	data = calculateOrderParamVsT('')
+
+	afont = {'fontname':'Arial'}
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	for index in xrange(0, len(data)):
+
+		data1 = data[index]
+
+		time1 = [x[0] for x in data1]
+		op1   = [x[1] for x in data1]
+
+		plt.plot(time1, op1,linewidth=1, color='b')
+
+	plt.xlabel('t', fontsize=24,  **afont)
+	plt.ylabel('S', fontsize=24,  **afont)
+	plt.xlim(0,2000)
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotOrderParamPercentagesVsT(saveFile=''):
+
+	data = calculateOrderParamPercentagesVsT('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-MU2-NP', optype = 'polar')
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	colors = ['r', 'g', 'b']
+	labels = [r'$\mathsf{0\/<\/\/S_1<\/1/3}$',r'$\mathsf{1/3\/<\/\/S_1<\/2/3}$', r'$\mathsf{2/3\/<\/\/S_1<\/1}$']
+
+	for i in [0,1,2]:
+
+		times = []
+		percs = []
+
+		for point in data:
+
+			times.append(point[0])
+			percs.append(point[1+i])
+
+		plt.plot(times, percs, linewidth=1, color=colors[i],label=labels[i])
+
+	plt.xlabel(r'$\mathsf{t}$', fontsize=24)
+	plt.ylabel(r'$\mathsf{P(\Delta S_1)}$', fontsize=24)
+	plt.xlim(0,2000)
+	plt.ylim(0,1)
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+def plotOrderParamDistribution(saveFile = ''):
+
+	data = []
+
+	#set data here
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-MU0.25-NP', snapshot=200, optype='apolar'))
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-MU0.25', snapshot=200, optype='apolar'))
+	
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	colors = ['g', 'b']
+	labels = [r'$\mathsf{xT}$',r'$\mathsf{T}$']
+
+	numTrajs = 40.0
+
+	for i in xrange(0, len(data)):
+
+		data0 = data[i]
+
+		normed_value = 1 / numTrajs
+
+		hist, bins = np.histogram(data0, bins=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0])
+
+		widths = np.diff(bins) / len(data)
+		hist = [x*normed_value for x in hist]
+
+		plt.bar(bins[:-1] + (0.1/len(data)) * i, hist, widths, label=labels[i], color=colors[i], alpha=0.7)
+
+	plt.xlabel(r'$\mathsf{S_2}$', fontsize=24)
+	plt.ylabel(r'$\mathsf{P(S_2)}$', fontsize=24)
+
+	plt.xticks([0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0])
+
+	plt.ylim(0,1)
+
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)	
+
+def plotOrderParamBoxes(saveFile = ''):
+
+	data = []
+
+	#set data here
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-C2', snapshot=200, optype='apolar'))
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2', snapshot=200, optype='apolar'))
+	data.append(calculateOrderParamDistribution('/Users/jameskomianos/Desktop/Data/alignmentdata/Small2-C22', snapshot=200, optype='apolar'))
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	#organize data
+	plt.boxplot([data[0],data[1],data[2]], sym='')
+
+	labels = [2,12,22]
+	plt.xticks([1,2,3], labels)
+
+	plt.ylabel(r'$\mathsf{S_2}$', fontsize=24)
+	plt.xlabel(r'$\mathsf{F_0 (pN)}$', fontsize=24)
+
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+def plotOrderParamAverages(saveFile = ''):
+
+	data = []
+
+	#set data here
+	data.append(calculateOrderParamAverages('/Users/jameskomianos/Desktop/Data/alignmentdata/Small4', optype='polar'))
+	data.append(calculateOrderParamAverages('/Users/jameskomianos/Desktop/Data/alignmentdata/Small8', optype='polar'))
+	data.append(calculateOrderParamAverages('/Users/jameskomianos/Desktop/Data/alignmentdata/Small16', optype='polar'))
+
+	print data
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	colors = ['g', 'b', 'r']
+	labels = [r'$\mathsf{N=4}$',r'$\mathsf{N=8}$', r'$\mathsf{N=16}$']
+
+	#organize data
+	for index in xrange(0, len(data)):
+
+		data1 = data[index]
+
+		time1 = [x[0] for x in data1]
+		op1   = [x[1] for x in data1]
+		err1  = [x[2] for x in data1]
+
+		plt.errorbar(time1, op1, yerr=err1, linewidth=1, color=colors[index], label = labels[index])
+
+	plt.xlabel('t', fontsize=24)
+	plt.ylabel(r'$\mathsf{S_1}$', fontsize=24)
+	plt.xlim(0,2000)
+	plt.legend()
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+def plotOPHeatMap2(saveFile=''):
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+
+	#read data
+	x_labels = [10,40,100]
+	y_labels = [1.0, 0.25, 0.1]
+
+	data = np.array([[0.354,0.124,0.215],
+				     [0.263,0.218,0.207],
+			         [0.223,0.193,0.161]])
+
+	fig, ax = plt.subplots()
+	heatmap = ax.pcolor(data, cmap=plt.cm.RdBu_r, vmin=0, vmax=1)
+
+	cbar = plt.colorbar(heatmap)
+
+	cbar.set_clim(0, 1.0)
+
+	cbar.ax.get_yaxis().set_ticks([])
+	for j, lab in enumerate([r'$\mathsf{0}$',r'$\mathsf{0.2}$',r'$\mathsf{0.4}$',r'$\mathsf{0.6}$',r'$\mathsf{0.8}$', r'$\mathsf{1.0}$']):
+   		 cbar.ax.text(1.0, (1.4 * j) / 7.0, lab, ha='left', va='center')
+	cbar.ax.get_yaxis().labelpad = 20
+	cbar.ax.set_ylabel(r'$\mathsf{S_1}$', fontsize=24)
+
+	# put the major ticks at the middle of each cell
+	ax.set_xticks(np.arange(data.shape[1])+0.5, minor=False)
+	ax.set_yticks(np.arange(data.shape[0])+0.5, minor=False)
+
+	# want a more natural, table-like display
+	ax.invert_yaxis()
+
+	ax.set_xticklabels(x_labels, minor=False)
+	ax.set_yticklabels(y_labels, minor=False)
+	plt.show()
+
+	plt.ylabel(r'$\mathsf{k_u (1 / s)}$', fontsize=20)
+	plt.xlabel(r'$\mathsf{V_m (nm / s)}$', fontsize=20)
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
+
+
+def plotOrderParameterVsTreadmill(data, saveFile=''):
+
+	matplotlib.rcParams['font.sans-serif']=["Arial"] 
+	mpl.rcParams['xtick.labelsize'] = 8 
+	mpl.rcParams['ytick.labelsize'] = 8 
+
+	fig = plt.figure(figsize=(10.0,10.0))
+	host = fig.add_subplot(111)
+
+	fig, ax = plt.subplots(figsize=(3.3,3.3))
+	ax.get_xaxis().get_major_formatter().set_scientific(False)
+
+	#organize data
+	ops = [x[1] for x in data]
+	err  = [x[2] for x in data]
+	treadmillingFactors = [0.125, 0.25, 0.5, 1, 2, 4, 8]
+
+	plt.errorbar(treadmillingFactors, ops, yerr=err, fmt='o-', color='r')
+
+	plt.xlabel(r'$\mathsf{\chi}$', fontsize=12)
+	plt.ylabel(r'$\mathsf{\nu}$', fontsize=12)
+
+	ax.set_xscale('log')
+
+	ax.yaxis.labelpad = 5
+	ax.xaxis.labelpad = 0
+
+	#plt.yticks(np.arange(0.2, 0.75, 0.1))
+
+	#if file provided, save
+	if saveFile != '':
+		fig.savefig(saveFile)
