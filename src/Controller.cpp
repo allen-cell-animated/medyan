@@ -87,8 +87,6 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
-    _outputs.push_back(new WallTensions(_outputDirectory + "walltensions.traj", _subSystem));
-    _outputs.push_back(new Types(_outputDirectory + "types.traj", _subSystem));
     
     
     _outputs.push_back(new MotorLifetimes(_outputDirectory + "motorlifetimesA.traj",_subSystem, 0));
