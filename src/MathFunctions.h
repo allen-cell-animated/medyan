@@ -393,9 +393,9 @@ namespace mathfunc {
     inline void crossProduct(double *cp,
                              double const *v1,
                              double const *v2) {
-        *(cp) = *(v1 + 1) * (*(v2 + 2)) - *(v1 + 2) * (*(v2 + 1));
-        *(cp + 1) = *(v1 + 2) * (*(v2)) - *(v1) * (*(v2 + 2));
-        *(cp + 2) = *(v1) * (*(v2 + 1)) - *(v1 + 1) * (*(v2));
+        cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
+        cp[1] = v1[2] * v2[0] - v1[0] * v2[2];
+        cp[2] = v1[0] * v2[1] - v1[1] * v2[0];
     };
 
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
@@ -498,6 +498,7 @@ namespace mathfunc {
         v[0] = (v1[id] + d * p1[id]) * (1.0 - alpha) + alpha * (v2[id] + d * p2[id]);
         v[1] = ((v1[id + 1] + d * p1[id + 1]) * (1.0 - alpha) + alpha * (v2[id + 1] + d * p2[id + 1]));
         v[2] = ((v1[id + 2] + d * p1[id + 2]) * (1.0 - alpha) + alpha * (v2[id + 2] + d * p2[id + 2]));
+//        printf("%f \n",(v1[id] + d * p1[id]) * (1.0 - alpha) + alpha * (v2[id] + d * p2[id]));
     }
 
     /// Returns true if two vectors (p1->p2 and p3->p4) are parallel
@@ -540,9 +541,9 @@ namespace mathfunc {
     inline bool areParallel(double const *p1, double const *p2,
                             double const *p3, double const *p4, int id) {
 
-        double *v1 = new double[3];
-        double *v2 = new double[3];
-        double *cp = new double[3];
+        double v1[3];
+        double v2[3];
+        double cp[3];
 
 
         v1[0] = p2[id] - p1[id];
@@ -596,10 +597,10 @@ namespace mathfunc {
     inline bool areInPlane(double const *p1, double const *p2,
                            double const *p3, double const *p4, int const id) {
 
-        double *v1 = new double[3];
-        double *v2 = new double[3];
-        double *v3 = new double[3];
-        double *cp = new double[3];
+        double v1[3];
+        double v2[3];
+        double v3[3];
+        double cp[3];
 
         v1[0] = p2[id] - p1[id];
         v1[1] = p2[id + 1] - p1[id + 1];
@@ -612,24 +613,16 @@ namespace mathfunc {
         v3[0] = p4[id] - p1[id];
         v3[1] = p4[id + 1] - p1[id + 1];
         v3[2] = p4[id + 2] - p1[id + 2];
-//
-//        *(v1) = *(p2) - *(p1);
-//        *(v1+1) = *(p2+1) - *(p1+1);
-//        *(v1+2) = *(p2+2) - *(p1+2);
-//
-//        *(v2) = *(p3) - *(p1);
-//        *(v2+1) = *(p3+1) - *(p1+1);
-//        *(v2+2) = *(p3+2) - *(p1+2);
-//
-//        *(v3) = *(p4) - *(p1);
-//        *(v3+1) = *(p4+1) - *(p1+1);
-//        *(v3+2) = *(p4+2) - *(p1+2);
+
+//        printf("%f %f %f %f %f %f %f %f %f\n",v1[0],v1[1],v1[2],v2[0],v2[1],v2[2],v3[0],v3[1],v3[2]);
+//        cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
+//        cp[1] = v1[2] * v2[0] - v1[0] * v2[2];
+//        cp[2] = v1[0] * v2[1] - v1[1] * v2[0];
 
         crossProduct(cp, v1, v2);
-
+        auto xxx=dotProduct(v3, cp);
         auto retVal = areEqual(dotProduct(v3, cp), 0.0);
-        delete v1, v2, cp;
-
+//        delete v1, v2, cp;
         return retVal;
     }
 
@@ -748,9 +741,9 @@ namespace mathfunc {
                                     double *p4,
                                     int i, double d, int id) {
 
-        double *norm = new double[3];
-        double *v1 = new double[3];
-        double *v2 = new double[3];
+        double norm[3];
+        double v1[3];
+        double v2[3];
 
         //get plane
         v1[0] = p2[id] - p1[id];

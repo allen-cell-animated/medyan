@@ -216,6 +216,18 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
     int n = params[0];
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
+    printf("%i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f "
+                   "%.16f %.16f %.16f %.16f %.16f %.16f %.16f\n",thread_idx, coord[3 * beadSet[n * thread_idx] ],
+           coord[3 * beadSet[n * thread_idx] +1 ], coord[3 * beadSet[n * thread_idx] +2 ],
+           coord[3 * beadSet[n * thread_idx +1] ], coord[3 * beadSet[n * thread_idx +1] +1 ], coord[3 * beadSet[n * thread_idx +1] +2 ],
+           coord[3 * beadSet[n * thread_idx +2]], coord[3 * beadSet[n * thread_idx +2] +1 ], coord[3 * beadSet[n *
+                                                                                                                     thread_idx +2] +2 ],
+           coord[3 * beadSet[n * thread_idx +3]], coord[3 * beadSet[n * thread_idx +3] +1 ], coord[3 * beadSet[n *
+                                                                                                                     thread_idx +3] +2 ],
+    f[3 * beadSet[n * thread_idx] ], f[3 * beadSet[n * thread_idx] +1 ], f[3 * beadSet[n * thread_idx] +2 ],
+    f[3 * beadSet[n * thread_idx +1] ], f[3 * beadSet[n * thread_idx +1] +1 ], f[3 * beadSet[n * thread_idx +1] +2 ],
+    f[3 * beadSet[n * thread_idx +2]], f[3 * beadSet[n * thread_idx +2] +1 ], f[3 * beadSet[n * thread_idx +2] +2 ],
+    f[3 * beadSet[n * thread_idx +3]], f[3 * beadSet[n * thread_idx +3] +1 ], f[3 * beadSet[n * thread_idx +3] +2 ]);
     if(thread_idx<nint) {
         for(auto i=0;i<3;i++){
             c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i]
@@ -248,16 +260,31 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 //                    U[i] = 0.0;
 //                assert(0);
             }
+            printf("%i 1.0 %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f\n"
+                           ".16f ",thread_idx, c1[3 * threadIdx.x], c1[3 * threadIdx.x + 1], c1[3 * threadIdx.x + 2]
+                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
+                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2],U_i[thread_idx]);
         }
 
         else{
+            auto jj=3;
             //check if in same plane
         if(areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
-
+            jj=2;
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
+            printf("%i %i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f \n",thread_idx, jj,
+                           c1[3 * threadIdx.x], c1[3 *
+                                                                                                                                       threadIdx.x + 1], c1[3 * threadIdx.x + 2]
+                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
+                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
         }
-
+            else
+            printf("%i %i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f\n"
+                           ,thread_idx, jj, c1[3 * threadIdx.x], c1[3 *
+                                                                                                                                       threadIdx.x + 1], c1[3 * threadIdx.x + 2]
+                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
+                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
         a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
         b = scalarProduct(c3, c4, c3, c4, 3 * threadIdx.x);
         c = scalarProduct(c3, c1, c3, c1, 3 * threadIdx.x);
@@ -286,10 +313,10 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 
         U_i[thread_idx] = 0.5 * krep[thread_idx]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 //        U_i[thread_idx] =a;
-        for(auto j=0; j<3; j++) {
-            gc1[3 * threadIdx.x + j] = f[3 * beadSet[n * thread_idx] + j];
-            gc2[3 * threadIdx.x + j] = f[3 * beadSet[n * thread_idx + 1] + j];
-        }
+//        for(auto j=0; j<3; j++) {
+//            gc1[3 * threadIdx.x + j] = f[3 * beadSet[n * thread_idx] + j];
+//            gc2[3 * threadIdx.x + j] = f[3 * beadSet[n * thread_idx + 1] + j];
+//        }
 
         if(U_i[thread_idx]==__longlong_as_double( 0x7ff0000000000000)
            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
@@ -300,6 +327,10 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 //                U[i] = 0.0;
 //            assert(0);
         }
+            printf("%i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %"
+                           ".16f %.16f %.16f %.16f %.16f \n", thread_idx, U_i[thread_idx], a,b,c,d,e,F,
+                   AA,BB,CC,DD,
+                   EE,FF,GG,HH,JJ,ATG1,ATG2,ATG3,ATG4);
         }
  }
     else {

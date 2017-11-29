@@ -45,7 +45,7 @@ extern unsigned long long rdtsc();
 ///Check equaility of doubles
 __host__ __device__
 inline bool areEqual(double d1, double d2) {
-    
+    const double ZERO_PREC = 1E-6;
     return fabs(d1 - d2) < ZERO_PREC;
 }
 

@@ -89,14 +89,16 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
 #ifdef CUDAACCL
     double* gpu_force;
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_force, CGMethod::N * sizeof(double)));
-    cudaMemcpy(gpu_force, f, CGMethod::N * sizeof(double), cudaMemcpyHostToDevice);
+    CUDAcommon::handleerror(cudaMemcpy(gpu_force, f, CGMethod::N * sizeof(double), cudaMemcpyHostToDevice));
     CUDAvars cvars=CUDAcommon::getCUDAvars();
     if(cross_checkclass::Aux) {
-        cudaFree(cvars.gpu_forceAux);
+        if(cvars.gpu_forceAux != NULL )
+        CUDAcommon::handleerror(cudaFree(cvars.gpu_forceAux));
         cvars.gpu_forceAux = gpu_force;
     }
     else{
-        cudaFree(cvars.gpu_force);
+        if(cvars.gpu_forceAux != NULL )
+        CUDAcommon::handleerror(cudaFree(cvars.gpu_force));
         cvars.gpu_force = gpu_force;
     }
     CUDAcommon::cudavars=cvars;
@@ -147,7 +149,7 @@ void ForceFieldManager::copyForces(double *fprev, double *f) {
 #ifdef CUDAACCL
     //TODO Change so that the pointers to forceAux and force are exchanged and pointer to force is flushed.
 
-    cudaFree(CUDAcommon::getCUDAvars().gpu_forceAux);
+    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_forceAux));
     double* gpu_forceAux;
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_forceAux, CGMethod::N * sizeof(double)));
     CUDAvars cvars=CUDAcommon::getCUDAvars();
@@ -157,13 +159,13 @@ void ForceFieldManager::copyForces(double *fprev, double *f) {
     vector<int> blocksnthreads;
     int *gpu_nint; int nint[1]; nint[0]=CGMethod::N/3;
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_nint, sizeof(int)));
-    cudaMemcpy(gpu_nint, nint, sizeof(int), cudaMemcpyHostToDevice);
+    CUDAcommon::handleerror(cudaMemcpy(gpu_nint, nint, sizeof(int), cudaMemcpyHostToDevice));
     blocksnthreads.push_back(CGMethod::N/(3*THREADSPERBLOCK) + 1);
     if(blocksnthreads[0]==1) blocksnthreads.push_back(CGMethod::N/3);
     else blocksnthreads.push_back(THREADSPERBLOCK);
     std::cout<<"Copyforces Number of Blocks: "<<blocksnthreads[0]<<endl;
     std::cout<<"Threads per block: "<<blocksnthreads[1]<<endl;
     copyForcesCUDA<<<blocksnthreads[0],blocksnthreads[1]>>>(cvars.gpu_force, cvars.gpu_forceAux, gpu_nint);
-    cudaFree(gpu_nint);
+    CUDAcommon::handleerror(cudaFree(gpu_nint));
 #endif
 }

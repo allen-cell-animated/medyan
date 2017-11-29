@@ -14,16 +14,18 @@
 ##################################################
 
 TESTS	:= $(shell find ./TESTS -name 'test_*')
-SOURCES := $(shell find . -name '*.cpp' ! -path './TESTS/*')
+SOURCES := $(shell find . -name '*.cpp' -o -name "*.cu" ! -path './TESTS/*')
 HEADERS := $(shell find . -name '*.h')
 
 OBJECTS := $(SOURCES:.cpp=.o)
+CU_OBJECTS := $(SOURCES:.cu=.o)
 
 #CPP COMPILER CHOICE AND FLAGS
 CXX = /usr/bin/g++ -std=c++11
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
-
+NVCC = nvcc
+CUDAFLAGS= -std=c++11 -c -arch=sm_20 -lineinfo
 LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl
 LDFLAGS = $(FAST)
 
@@ -58,7 +60,7 @@ CPPFLAGS += -DMECHANICS
 #Use dynamic rate changing 
 CPPFLAGS += -DDYNAMICRATES
 CPPFLAGS += -DCROSSCHECK
-
+CPPFLAGS += -DCUDAACCL
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
@@ -108,7 +110,7 @@ clean:
 
 Makefile.dep: $(SOURCES) $(HEADERS)
 	@echo "Updating the dependency file: Makefile.dep"
-	$(SHELL) -ec '$(CXX) -MM $(CPPFLAGS) $(INCLUDES)  $(filter %.cpp,$^) \
+	$(SHELL) -ec '$(CXX) -MM $(CPPFLAGS) $(INCLUDES)  $(filter %.cpp,$^) $(filter %.cu,$^) \
 	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 	[ -s $@ ] || rm -f $@'
 

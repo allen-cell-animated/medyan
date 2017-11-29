@@ -36,9 +36,9 @@ private:
     int *beadSet;
     double *krep;
 #ifdef CUDAACCL
-    int * gpu_beadSet;
-    double * gpu_krep;
-    int * gpu_params;
+    int * gpu_beadSet = NULL;
+    double * gpu_krep = NULL;
+    int * gpu_params = NULL;
     vector<int> blocksnthreads;
     CUDAvars cvars;
 #endif
