@@ -11,7 +11,7 @@
 #include "DynamicNeighbor.h"
 #include "Component.h"
 
-#include "Bead.h"
+#include "Vertex.h"
 #include "HalfEdge.h"
 #include "MTriangle.h"
 
@@ -23,8 +23,8 @@ class Triangle:
     public DynamicNeighbor {
 
 private:
-    // Pointers to 3 beads. The rotation of beads must be pointing outside.
-    array<Bead*, 3> _b;
+    // Pointers to 3 vertices. The rotation of vertices must be pointing outside.
+    array<Vertex*, 3> _v;
 
     unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
 
@@ -32,10 +32,10 @@ private:
     std::array<HalfEdge*, 3> _halfEdges;
 
 public:
-    Triangle(Composite *parent, Bead *b1, Bead *b2, Bead *b3);
+    Triangle(Composite *parent, Vertex *v1, Vertex *v2, Vertex *v3);
 
     // Get Beads
-    array<Bead*, 3>& getBeads() { return _b; }
+    array<Vertex*, 3>& getVertices() { return _v; }
     
     // Get mech triangle
     MTriangle* getMTriangle() {return _mTriangle.get();}

@@ -20,7 +20,7 @@
 
 #include "HalfEdge.h"
 
-class HalfEdge:
+class Edge:
     public Component,
     public Trackable,
     public Movable,
@@ -28,15 +28,16 @@ class HalfEdge:
 
 private:
     // Pointers to the halfedges.
-    HalfEdge* _he1;
-	HalfEdge* _he2;
+    std::array<HalfEdge*, 2> _he;
+
+    unique_ptr<MEdge> _mEdge; // pointer to mech edge
+
 
 public:
     Edge(Composite *parent, HalfEdge* he1, HalfEdge* he2);
 
     // Get Beads
-    Bead* getFirstHalfEdge() { return _he1; }
-	Bead* getSecondHalfEdge() { return _he2; }
+    std::array<HalfEdge*, 2>& getHalfEdges() { return _he; }
 
 };
 

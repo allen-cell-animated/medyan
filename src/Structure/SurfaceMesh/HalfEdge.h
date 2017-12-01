@@ -31,8 +31,7 @@ class HalfEdge:
 
 private:
     // Pointers to the beads.
-    Bead* _b1;
-	Bead* _b2;
+    std::array<Bead*, 2> _b;
 
     // ptr to neighbor triangles (_b1, _b2, other1) and (_b2, _b1, other2) <- counter-clockwise dir
     std::array<Triangle*, 2> _neighborTriangle;
@@ -41,8 +40,7 @@ public:
     HalfEdge(Composite *parent, Bead *b1, Bead *b2);
 
     // Get Beads
-    Bead* getFirstBead() { return _b1; }
-	Bead* getSecondBead() { return _b2; }
+    std::array<Bead*, 2> getBeads() { return _b; }
     
 	// TODO: Add getter and setter for neighbor triangles
 
