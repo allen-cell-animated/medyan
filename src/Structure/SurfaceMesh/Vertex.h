@@ -37,6 +37,7 @@ private:
 
     unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
 
+    // The following vectors on neighbor vertices, triangles, edges must have the same size
     std::vector<Vertex*> _tethered; // tethered neighbors in counter-clockwise direction
     std::vector<Triangle*> _triangles; // triangles around the vertex. each index i corresponds to
                                        // the triangle (this, _tethered[i], _tethered[i+1])
@@ -51,6 +52,10 @@ public:
     // Get mech Voronoi cell
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 
+    // Get number of tethered neighbors
+    size_t getNeighborNum() { return _tethered.size(); }
+
+    // Get tethered neighbor vertices
     std::vector<Vertex*>& getTetheredNeighbors() { return _tethered; }
 };
 
