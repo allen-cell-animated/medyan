@@ -17,6 +17,7 @@ public:
     MEdge() {}
 
     double getLength() { return _currentLength; }
+    std::array<std::array<double, 3>, 2>& getDLength() { return _dCurrentLength; }
     void calcLength();
 };
 

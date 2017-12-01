@@ -44,7 +44,12 @@ public:
     void calcArea();
 
     std::array<double, 3>& getTheta() { return _theta; }
-    void calcTheta();
+    std::array<double, 3>& getSinTheta() { return _sinTheta; }
+    std::array<double, 3>& getCotTheta() { return _cotTheta; }
+    std::array<std::array<std::array<double, 3>, 3>, 3>& getDTheta() { return _dTheta; }
+    std::array<std::array<std::array<double, 3>, 3>, 3>& getDSinTheta() { return _dSinTheta; }
+    std::array<std::array<std::array<double, 3>, 3>, 3>& getDCotTheta() { return _dCotTheta; }
+    void calcTheta(); // would calculate all variables related to theta
 
 };
 
