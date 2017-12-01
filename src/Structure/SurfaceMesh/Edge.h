@@ -18,7 +18,8 @@
 #include "DynamicNeighbor.h"
 #include "Component.h"
 
-#include "HalfEdge.h"
+#include "Vertex.h"
+#include "MEdge.h"
 
 class Edge:
     public Component,
@@ -26,18 +27,23 @@ class Edge:
     public Movable,
     public DynamicNeighbor {
 
+    friend class MEdge;
+
 private:
-    // Pointers to the halfedges.
-    std::array<HalfEdge*, 2> _he;
+    // Pointers to the vertices.
+    std::array<Vertex*, 2> _v;
 
     unique_ptr<MEdge> _mEdge; // pointer to mech edge
 
 
 public:
-    Edge(Composite *parent, HalfEdge* he1, HalfEdge* he2);
+    Edge(Composite *parent, Vertex* v1, Vertex* v2);
 
-    // Get Beads
-    std::array<HalfEdge*, 2>& getHalfEdges() { return _he; }
+    // Get vertices
+    std::array<Vertex*, 2>& getVertices() { return _v; }
+
+    // Get mech edge
+    MEdge* getMEdge() {return _mEdge.get();}
 
 };
 

@@ -13,7 +13,7 @@
 
 #include "Bead.h"
 
-#include "HalfEdge.h"
+#include "Edge.h"
 #include "MVoronoiCell.h"
 #include "Triangle.h"
 
@@ -40,6 +40,7 @@ private:
     std::vector<Vertex*> _tethered; // tethered neighbors in counter-clockwise direction
     std::vector<Triangle*> _triangles; // triangles around the vertex. each index i corresponds to
                                        // the triangle (this, _tethered[i], _tethered[i+1])
+    std::vector<Edge*> _edges; // The tethers, with the same order as neighbor vertices.
 
 public:
     Vertex(Composite *parent, Bead *b);

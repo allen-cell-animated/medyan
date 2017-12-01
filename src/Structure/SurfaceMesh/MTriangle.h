@@ -39,8 +39,9 @@ public:
     void setElasticModulus(double kElastic) { _kElastic = kElastic; }
     double getElasticModulus() { return _kElastic; }
 
-    void setArea(double area) { _currentArea = area; }
+    // Not allowing setting the area: void setArea(double area) { _currentArea = area; }
     double getArea() { return _currentArea; }
+    void calcArea();
 
     std::array<double, 3>& getTheta() { return _theta; }
     void calcTheta();
