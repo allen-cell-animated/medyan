@@ -101,7 +101,7 @@ bool CController::runSteps(int steps) {
     return _chemSim->runSteps(steps);
 }
 
-int CController::getEnergy(){
+vector<double> CController::getEnergy(){
     return _chemSim->getEnergy();};
 
 ChemSim* CController::getCS(){

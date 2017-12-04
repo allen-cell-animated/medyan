@@ -788,7 +788,9 @@ void Dissipation::print(int snapshot) {
     
     // print first line (snapshot number, time)
     _outputFile << snapshot << " " << tau() << endl;
-    _outputFile << _cs->getEnergy();
+    vector<double> energies;
+    energies = _cs->getEnergy();
+    _outputFile << energies[0] << "     " << energies[1] << "     "<< energies[2]<<"     ";
     
     _outputFile <<endl;
 }

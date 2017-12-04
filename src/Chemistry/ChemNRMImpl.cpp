@@ -172,7 +172,7 @@ bool ChemNRMImpl::makeStep() {
 
     _dt->updateDelGChem(react);
     
-//    if(react->getReactionType()==12 ){
+//    if(react->getReactionType()==7 || react->getReactionType()==9){
 //        rn->printSelf();
 //        vector<string> reacs=react->getReactantSpecies();
 //        vector<string> reacp=react->getProductSpecies();
@@ -188,9 +188,9 @@ bool ChemNRMImpl::makeStep() {
 //            cout<<reacp[i]<<prodN[i]<<endl;
 //        }
 //        cout<<endl<<_dt->getDelGChem(react)<<endl<<endl;
-//        cout<<rn->getProductOfReactants();
+//        cout<<rn->getProductOfReactants()<<endl;;
 //    }
-    
+//
     
     rn->makeStep();
    

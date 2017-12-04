@@ -91,7 +91,7 @@ struct ChemistryAlgorithm {
 struct ChemistryData {
     
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
-    vector<tuple<vector<string>, vector<string>, double, string, double>> genReactions = {};
+    vector<tuple<vector<string>, vector<string>, double, double>> genReactions = {};
     
     /// Reaction happening between SpeciesBulk ONLY
     vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
@@ -106,11 +106,11 @@ struct ChemistryData {
      *  string of reactants, string of products, and the reaction rate.
      */
     /// Polymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, string, double>>> polymerizationReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double>>> polymerizationReactions;
     /// Depolymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, string, double>>> depolymerizationReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double>>> depolymerizationReactions;
     /// Aging reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, string, double>>> agingReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double>>> agingReactions;
     /// Destruction reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> destructionReactions;
     
@@ -131,13 +131,13 @@ struct ChemistryData {
      *  range.
      */
     /// Linker reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> linkerReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double, double>>> linkerReactions;
     /// MotorGhost reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double, double>>> motorReactions;
     //@}
     
     /// MotorGhost walking reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double>>> motorWalkingReactions;
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, release time, removal time, and CONST/REG qualifier

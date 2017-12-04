@@ -51,12 +51,20 @@ private:
     // Mechanical energy before checmial simulation
     double G1;
     
-    // Mechanical energy after chemical simulation, and subsequent mechanical equilibration
+    // Mechanical energy after chemical simulation
+    double GMid;
+    
+    // Mechanical energy after subsequent mechanical equilibration
     double G2;
     
-    // Dissipated chemical free energy
+    // Change in chemical free energy after chemical simulation
     double GChem;
     
+    // cumulative dissiapted chemical energy
+    double cumDissChemEnergy;
+    
+    // cumulative dissiapted mechanical energy
+    double cumDissMechEnergy;
 
     
     
@@ -67,8 +75,11 @@ public:
     DissipationTracker(SubSystem* subsystem, ChemistryData chemdata, CompartmentGrid* grid, MController* mcon = NULL): _subSystem(subsystem), _chemData(chemdata), _grid(grid), _mcon(mcon) {
        count = 0;
        cumDissEnergy=0;
+       cumDissChemEnergy=0;
+       cumDissMechEnergy=0;
        G1=0;
        G2=0;
+       GMid=0;
        GChem=0;
     };
 
@@ -90,14 +101,18 @@ public:
     int nz = SysParams::Geometry().NZ;
     float v = (float)(nx*ny*nz);
     
+    // get the stepFrac parameter for myosin walking, assume all fil and motor are type 0
+    double d_step = SysParams::Chemistry().motorStepSize[0];
+    double d_total = (double)SysParams::Geometry().cylinderSize[0] /
+    SysParams::Chemistry().numBindingSites[0];
+    double _stepFrac = d_step / d_total;
+    
     // Find the Gibbs free energy change for a reaction using its ReactionBase representation
     double getDelGChem(ReactionBase* re){
         
         // get the type of reaction
         ReactionType reType = re->getReactionType();
         
-        // get the marker for whether it is rev, irrev, or diff
-        RevMType revM = re->getRevMarker();
         
         // get the number of reactants
         int M = re->getM();
@@ -133,135 +148,84 @@ public:
         
         if(reType==0) {
             // Regular Reaction
-            if(revM==0){
-                // Irreversible
-                delGZero =  re->getRevNumber();
-                delG = delGIrrChemTherm(delGZero, reacN, reacNu, prodN, prodNu);
-                
-            } else {
-                // Reversible
-                aMin = re->getRevNumber();
-                delG = delGRevChemTherm(aPlus, aMin, reacN, reacNu,  prodN, prodNu);
-        
-            }
+            delGZero =  re->getRevNumber();
+            delG = delGIrrChemTherm(delGZero, reacN, reacNu, prodN, prodNu);
              
         } else if(reType==1){
              // Diffusion Reaction
-             //   delG = delGDifChemTherm(reacN[0],prodN[0]);
+                delG = delGDifChemTherm(reacN[0],prodN[0]);
              
         } else if(reType==2){
             // Polymerization Plus End
-            if(revM==0){
-                // Irreversible
-                delGZero = re->getRevNumber();
-                species_copy_t nMon = reacN[0];
-                delG = delGPolyIrrTherm(delGZero,nMon,"P");
-                
-            } else {
-                // Reversible
-                aMin = re->getRevNumber();
-                species_copy_t nMon;
-                nMon = reacN[0];
-                delG = delGPolyRevTherm(aPlus,aMin,nMon,"P");
-                
-            }
+
+            delGZero = re->getRevNumber();
+            species_copy_t nMon = reacN[0];
+            delG = delGPolyIrrTherm(delGZero,nMon,"P");
+
 
         } else if(reType==3){
             // Polymerization Minus End
-            if(revM==0){
-                // Irreversible
-                delGZero = re->getRevNumber();
-                species_copy_t nMon = reacN[0];
-                delG = delGPolyIrrTherm(delGZero,nMon,"P");
-                
-            } else {
-                // Reversible
-                aMin = re->getRevNumber();
-                species_copy_t nMon = reacN[0];
-                delG = delGPolyRevTherm(aPlus,aMin,nMon,"P");
-            }
+
+            delGZero = re->getRevNumber();
+            species_copy_t nMon = reacN[0];
+            delG = delGPolyIrrTherm(delGZero,nMon,"P");
+
 
         } else if(reType==4){
             // Depolymerization Plus End
-            if(revM==0){
-                // Irreversible
-                delGZero = re->getRevNumber();
-                species_copy_t nMon = prodN[0];
-                delG = delGPolyIrrTherm(delGZero,nMon,"D");
-                
-            } else {
-                // Reversible
-                
-                aMin = re->getRevNumber();
-                species_copy_t nMon = prodN[0];
-                delG = delGPolyRevTherm(aPlus,aMin,nMon,"D");
-            }
+
+            delGZero = re->getRevNumber();
+            species_copy_t nMon = prodN[0];
+            delG = delGPolyIrrTherm(delGZero,nMon,"D");
+
         } else if(reType==5){
             // Depolymerization Minus End
-            if(revM==0){
-                // Irreversible
-                delGZero = re->getRevNumber();
-                species_copy_t nMon = prodN[0];
-                delG = delGPolyIrrTherm(delGZero,nMon,"D");
-                
-            } else {
-                // Reversible
-                aMin = re->getRevNumber();
-                species_copy_t nMon = prodN[0];
-                delG = delGPolyRevTherm(aPlus,aMin,nMon,"D");
-            }
+
+            delGZero = re->getRevNumber();
+            species_copy_t nMon = prodN[0];
+            delG = delGPolyIrrTherm(delGZero,nMon,"D");
+
         } else if(reType==6){
             // Linker Binding
-            vector<float> vecRates;
-            vecRates = re->getLinkerRates();
-            aPlus = vecRates[0];
-            aMin = vecRates[1];
+            delGZero=re->getRevNumber();
+            species_copy_t nMon = reacN[1];
+            delG = delGPolyIrrTherm(delGZero,nMon,"P");
+            
             
         } else if(reType==7){
             // Motor Binding
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            delGZero=re->getRevNumber();
+            species_copy_t nMon = reacN[1];
+            delG = delGPolyIrrTherm(delGZero,nMon,"P");
+
+        
         } else if(reType==8){
             // Linker Unbinding
-            
-            vector<float> vecRates;
-            vecRates = re->getLinkerRates();
-            aPlus = vecRates[1];
-            aMin = vecRates[0];
+            delGZero=re->getRevNumber();
+            species_copy_t nMon = prodN[0];
+            delG = delGPolyIrrTherm(delGZero,nMon,"D");
+
             
         } else if(reType==9){
             // Motor Unbinding
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            delGZero=re->getRevNumber();
+            species_copy_t nMon = prodN[0];
+            delG = delGPolyIrrTherm(delGZero,nMon,"D");
+
+            
         } else if(reType==10){
             // Motor Walking Forward
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            delG = re->getRevNumber();
+            delG = delG*(1/_stepFrac);
+            
         } else if(reType==11){
             // Motor Walking Backward
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            delG = -(re->getRevNumber());
+            delG = delG*(1/_stepFrac);
+            
         } else if(reType==12){
             // Filmanet Aging
-            if(revM==0){
-                // Irreversible
-                
+ 
                 vector<species_copy_t> numR;
                 numR.push_back(Filament::countSpecies(0,reacNames[0]));
                 
@@ -270,64 +234,23 @@ public:
                 
                 delGZero = (re->getRevNumber());
                 delG = delGIrrChemTherm(delGZero, numR, reacNu, numP, prodNu);
-//                cout<<numR[0]<<endl;
-//                cout<<numP[0]<<endl;
-                
-            } else {
-                // Reversible
-                aMin = re->getRevNumber();
-                delG = delGRevChemTherm(aPlus, aMin, reacN, reacNu,  prodN, prodNu);
-                
-            }
+            
         } else if(reType==13){
             // Filament Creation
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            
         } else if(reType==14){
             // Filament Destruction
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            
         } else if(reType==15){
             // Branching
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            
         } else if(reType==16){
             // Branch Unbinding
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            
         } else if(reType==17){
             // Severing
-            if(revM==0){
-                // Irreversible
-                
-            } else {
-                // Reversible
-            }
+            
         }
-        
-//        if(delG>0.01){
-//            if(reType!=1){
-//                cout<<reType<<endl;
-//                cout<<delG<<endl;
-//                cout<<GChem<<endl;
-//            }
-//        }
         
         return delG;
         
@@ -344,12 +267,23 @@ public:
 
     // return the mechanical energy of the system
     double getMechEnergy(){
-        return _mcon->getEnergy()/kT;
+        double ret = _mcon->getEnergy();
+        return float(ret/kT);
     }
     
     // return the cumulative dissipated Gibbs free energy
-    double getEnergy(){
+    double getCumDissEnergy(){
         return cumDissEnergy;
+    }
+    
+    // return the cumulative dissipated chemical Gibbs free energy
+    double getCumDissChemEnergy(){
+        return cumDissChemEnergy;
+    }
+    
+    // return the cumulative dissipated mechanical Gibbs free energy
+    double getCumDissMechEnergy(){
+        return cumDissMechEnergy;
     }
     
     double getGChemEn(){
@@ -358,14 +292,20 @@ public:
     
     // set the value of G1
     void setG1(){
-        G1=getMechEnergy()/kT;
+        G1=getMechEnergy();
 
     }
     
     // set the value of G2
     void setG2(){
-        G2=getMechEnergy()/kT;
+        G2=getMechEnergy();
+//        cout<<"G1 is "<<G1<<endl;
+//        cout<<"G2 is "<<G2<<endl;
         
+    }
+    
+    void setGMid(){
+        GMid=getMechEnergy();
     }
     
     // increment cumDissEn after an iteration step has occured
@@ -373,11 +313,22 @@ public:
         cumDissEnergy += GChem + G2 - G1;
     }
     
+    // increment cumDissChemEnergy
+    void updateCumDissChemEnergy(){
+        cumDissChemEnergy += GChem - (G1-GMid);
+    }
+    
+    // increment cumDissMechEnergy
+    void updateCumDissMechEnergy(){
+        cumDissMechEnergy += G2-GMid;
+    }
+    
+    
     // set new values of energy trackers after an iteration step has occured
     void resetAfterStep(){
         GChem=0;
+        GMid=0;
         G1=G2;
-        G2=0;
     };
 
     

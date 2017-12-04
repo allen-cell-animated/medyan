@@ -75,7 +75,7 @@ public:
     ///Remove set of reactions at runtime, specified by input
     void removeReactions();
     
-    int getEnergy();
+    vector<double> getEnergy();
     
     ChemSim* getCS();
     

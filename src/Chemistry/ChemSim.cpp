@@ -43,8 +43,12 @@ void ChemSim::printReactions() {
     return _pimpl->printReactions();
 }
 
-int ChemSim::getEnergy(){
-    return _pimpl->_dt->getEnergy();
+vector<double> ChemSim::getEnergy(){
+    vector<double> returnvec;
+    returnvec.push_back(_pimpl->_dt->getCumDissEnergy());
+    returnvec.push_back(_pimpl->_dt->getCumDissChemEnergy());
+    returnvec.push_back(_pimpl->_dt->getCumDissMechEnergy());
+    return returnvec;
 }
 
 DissipationTracker* ChemSim::getDT(){

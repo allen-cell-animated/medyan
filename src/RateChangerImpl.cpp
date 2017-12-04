@@ -65,6 +65,7 @@ float MotorStall::changeRate(float onRate, float offRate,
     
     //determine k_0
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
+
     
     //calculate new rate
     double newRate =  max(0.0, k_0 * (_F0 - force)

@@ -613,7 +613,8 @@ void Controller::run() {
                 for(auto o: _outputs) o->print(i);
                 break;
             }
-            
+            _dt->setGMid();
+            _dt->updateCumDissChemEnergy();
             //add the last step
             tauLastSnapshot += tau() - oldTau;
             tauLastMinimization += tau() - oldTau;
@@ -628,6 +629,7 @@ void Controller::run() {
                 tauLastMinimization = 0.0;
             }
             _dt->setG2();
+            _dt->updateCumDissMechEnergy();
             _dt->updateCumDissEn();
             _dt->resetAfterStep();
             

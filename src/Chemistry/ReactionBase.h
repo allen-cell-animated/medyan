@@ -49,9 +49,7 @@ enum ReactionType {
     AGING, FILAMENTCREATION, FILAMENTDESTRUCTION,
     BRANCHING, BRANCHUNBINDING, SEVERING
 };
-enum RevMType {
-    IRR, REV, DIF, NA
-};
+
 /// This is a ReactionBase signal object that may be called by a ReactionBase
 /// simulation algorithm
 typedef boost::signals2::signal<void (ReactionBase *)> ReactionEventSignal;
@@ -99,7 +97,6 @@ protected:
     
     CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
     
-    RevMType _revmarker = RevMType::NA;
     
     float _revnum = 1.0;
     
@@ -196,9 +193,7 @@ public:
     ///Get reaction type
     ReactionType getReactionType() {return _reactionType;}
     
-    void setRevMarker(RevMType rev) {_revmarker = rev;};
     
-    RevMType getRevMarker() {return _revmarker;};
     
     void setRevNumber(double revnum) {_revnum = revnum;};
     

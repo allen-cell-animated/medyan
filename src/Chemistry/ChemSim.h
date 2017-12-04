@@ -61,7 +61,7 @@ public:
     /// this moment
     void printReactions();
     
-    int getEnergy();
+    vector<double> getEnergy();
     
     DissipationTracker* getDT();
     
