@@ -227,6 +227,131 @@ namespace mathfunc {
         return v;
     };
 
+    /// Get the negative of the vector
+    inline vector<double> vectorNegative(const vector<double>& v){
+        size_t d = v.size();
+        vector<double> res(d);
+        for(size_t idx = 0; idx < d; ++idx){
+            res[idx] = -v[idx];
+        }
+        return res;
+    }
+    /// Vector sum. MUST have same dimension
+    inline vector<double> vectorSum(const vector<double>& v1,
+                                    const vector<double>& v2) {
+        size_t d1 = v1.size();
+        // Assume d1 == v2.size()
+
+        vector<double> res(d1);
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            res[idx1] = v1[idx1] + v2[idx2];
+        }
+
+        return res;
+    }
+    /// Vector difference. MUST have same dimension
+    inline vector<double> vectorDifference(const vector<double>& v1,
+                                           const vector<double>& v2){
+        size_t d1 = v1.size();
+        // Assume d1 == v2.size()
+
+        vector<double> res(d1);
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            res[idx1] = v1[idx1] - v2[idx2];
+        }
+
+        return res;
+    }
+
+    /// Get the negative of the matrix
+    inline vector<vector<double>> matrixNegative(const vector<vector<double>>& m){
+        size_t d1 = m.size();
+        if(d1 == 0) return vector<vector<double>>();
+
+        size_t d2 = m[0].size();
+        vector<vector<double>> res(d1, vector<double>(d2));
+
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+                res[idx1][idx2] = -m[idx1][idx2];
+            }
+        }
+        return res;
+    }
+    /// Matrix sum. MUST have same dimension
+    inline vector<vector<double>> matrixSum(const vector<vector<double>>& m1,
+                                            const vector<vector<double>>& m2) {
+        size_t d1 = m1.size();
+        if(d1 == 0) return vector<vector<double>>();
+        size_t d2 = m1[0].size();
+        // Assume d1 == m2.size(), d2 == m2[0].size()
+
+        vector<vector<double>> res(d1, vector<double>(d2));
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+                res[idx1][idx2] = m1[idx1][idx2] + m2[idx1][idx2];
+            }
+        }
+        return res;
+    }
+    /// Matrix difference. MUST have same dimension
+    inline vector<vector<double>> matrixDifference(const vector<vector<double>>& m1,
+                                                   const vector<vector<double>>& m2) {
+        size_t d1 = m1.size();
+        if(d1 == 0) return vector<vector<double>>();
+        size_t d2 = m1[0].size();
+        // Assume d1 == m2.size(), d2 == m2[0].size()
+
+        vector<vector<double>> res(d1, vector<double>(d2));
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+                res[idx1][idx2] = m1[idx1][idx2] - m2[idx1][idx2];
+            }
+        }
+        return res;
+    }
+
+    /// Identity matrix 3x3. Internal linkage applied implicitly by using "const".
+    const vector<vector<double>> Eye3 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+
+    /// Tensor product of two vectors, notated as a matrix with size dim(v1) x dim(v2)
+    inline vector<vector<double>> tensorProduct(const vector<double>& v1,
+                                                const vector<double>& v2) {
+        size_t d1 = v1.size();
+        size_t d2 = v2.size();
+        vector<vector<double>> res(d1, vector<double>(d2));
+
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+                res[idx1][idx2] = v1[idx1] * v2[idx2];
+            }
+        }
+
+        return res;
+    }
+
+    /// Matrix (d1*d2) times vector
+    // Currently, user MUST ensure that d2(m) == dim(v)
+    // returns a vector with dimension d1
+    inline vector<double> matrixMultiply(const vector<vector<double>>& m,
+                                         const vector<double>& v) {
+        size_t d1 = m.size();
+        if(d1 == 0) return vector<double>();
+
+        size_t d2 = m[0].size();
+        // Assume d2 == v.size()
+
+        vector<double> res(d1, 0.0);
+        
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+                res[idx1] += m[idx1][idx2] * v[idx2];
+            }
+        }
+
+        return res;
+    }
+
     /// Returns the area of a triangle with vertices at point v1, v2 and v3.
     inline double areaTriangle(const vector<double>& v1,
                                const vector<double>& v2,
