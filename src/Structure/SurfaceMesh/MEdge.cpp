@@ -2,7 +2,7 @@
 
 #include "MathFunctions.h"
 
-using namespace mathfunc
+using namespace mathfunc;
 
 void MEdge::calcLength() {
     auto& b0 = _pEdge->_v[0]->_b;
