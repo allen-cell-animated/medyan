@@ -2,6 +2,8 @@
 
 #include "MathFunctions.h"
 
+using namespace mathfunc
+
 void MEdge::calcLength() {
     auto& b0 = _pEdge->_v[0]->_b;
     auto& b1 = _pEdge->_v[1]->_b;

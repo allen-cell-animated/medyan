@@ -292,6 +292,12 @@ namespace mathfunc {
         }
         return res;
     }
+    /// Vector expand
+    inline vector<double>& vectorExpand(vector<double>& v,
+                                        const double k) {
+        for(auto& it: v) it *= k;
+        return v;
+    }
 
     /// Get the negative of the matrix
     inline vector<vector<double>> matrixNegative(const vector<vector<double>>& m){
@@ -360,7 +366,7 @@ namespace mathfunc {
                                                  const double k) {
         size_t d1 = m.size();
         if(d1 == 0) return vector<vector<double>>();
-        size_t d2 = m1[0].size();
+        size_t d2 = m[0].size();
 
         vector<vector<double>> res(d1, vector<double>(d2));
         for(size_t idx1 = 0; idx1 < d1; ++idx1){

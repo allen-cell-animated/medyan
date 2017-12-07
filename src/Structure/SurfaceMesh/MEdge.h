@@ -3,6 +3,8 @@
 
 #include <array>
 
+#include "Edge.h"
+
 class Edge; // Forward declaration
 
 class MEdge {

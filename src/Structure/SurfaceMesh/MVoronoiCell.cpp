@@ -5,6 +5,8 @@
 
 #include "MathFunctions.h"
 
+using namespace mathfunc;
+
 void MVoronoiCell::calcArea() {
     /**************************************************************************
     This calculation depends on the result of
@@ -120,7 +122,7 @@ void MVoronoiCell::calcCurv() {
     for(size_t nIdx = 0; nIdx < n; ++nIdx) {
         dTetheredK[nIdx] = matrixMultiply(matrixDifference(matrixMultiply(dTetheredK[nIdx], _currentArea), tensorProduct(array2Vector<double, 3>(_dTetheredCurrentArea[nIdx]), k)), 0.5 / _currentArea / _currentArea);
     }
-    k /= 2 * _currentArea;
+    vectorExpand(k, 0.5 / _currentArea);
 
     // Calculate mean curvature
     _currentCurv = magnitude(k) / 2;

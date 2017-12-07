@@ -12,7 +12,7 @@
 #include "Component.h"
 
 #include "Vertex.h"
-#include "HalfEdge.h"
+#include "Edge.h"
 #include "MTriangle.h"
 
 class Triangle:

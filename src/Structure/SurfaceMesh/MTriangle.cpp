@@ -2,6 +2,8 @@
 
 #include "MathFunctions.h"
 
+using namespace mathfunc;
+
 MTriangle::MTriangle(double eqArea) {
 
     setEqArea(eqArea);

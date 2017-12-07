@@ -4,6 +4,8 @@
 #include <array>
 #include <vector>
 
+#include "Vertex.h"
+
 class Vertex; // Forward declaration
 
 class MVoronoiCell {
