@@ -10,6 +10,7 @@
 // FORWARD DECLARATIONS
 class SubSystem;
 class Triangle;
+class Edge;
 class Vertex;
 
 class Membrane: public Composite, public Trackable {
@@ -19,6 +20,7 @@ class Membrane: public Composite, public Trackable {
 private:
 
     vector<Triangle*> _triangleVector; // collection of triangles
+    vector<Edge*> _edgeVector; // collection of edges
     vector<Vertex*> _vertexVector; // collection of vertices
 
     SubSystem* _subSystem; // SubSystem pointer
@@ -28,9 +30,9 @@ private:
 public:
     // TODO: constructors
 
-    /// Get vector of triangles that this membrane contains.
+    /// Get vector of triangles/edges/vertices that this membrane contains.
     vector<Triangle*>& getTriangleVector() {return _triangleVector;}
-    /// Get vector of vertices that this membrane contains.
+    vector<Edge*>& getEdgeVector() { return _edgeVector; }
     vector<Vertex*>& getVertexVector() { return _vertexVector; }
 
     // SubSystem management, inherited from Trackable
