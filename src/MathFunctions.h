@@ -227,6 +227,26 @@ namespace mathfunc {
         return v;
     };
 
+    /// Vector and array converter. Need to ensure the vector has size of _Size
+    // No need for move semantics because normally we use this for copying integers or doubles
+    template<class _Ty, size_t _Size>
+    inline array<_Ty, _Size> vector2Array(const vector<_Ty>& v) {
+        // Assert v.size() == _Size
+        array<_Ty, _Size> res;
+        for(size_t idx = 0; idx < _Size; ++idx){
+            res[idx] = v[idx];
+        }
+        return res;
+    }
+    template<class _Ty, size_t _Size>
+    inline vector<_Ty> array2Vector(const array<_Ty, _Size>& a) {
+        vector<_Ty> res(_Size);
+        for(size_t idx = 0; idx < _Size; ++idx){
+            res[idx] = a[idx];
+        }
+        return res;
+    }
+
     /// Get the negative of the vector
     inline vector<double> vectorNegative(const vector<double>& v){
         size_t d = v.size();
@@ -303,6 +323,21 @@ namespace mathfunc {
             }
         }
         return res;
+    }
+    /// Add matrix2 to matrix1. MUST have the same dimension
+    // returns a reference to the modified vector
+    inline vector<vector<double>>& matrixIncrease(vector<vector<double>>& m1,
+                                                  const vector<vector<double>>& m2) {
+        size_t d1 = m1.size();
+        if(d1 == 0) return m1;
+        size_t d2 = m1[0].size();
+
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+                m1[idx1][idx2] += m2[idx1][idx2];
+            }
+        }
+        return m1;
     }
     /// Matrix difference. MUST have same dimension
     inline vector<vector<double>> matrixDifference(const vector<vector<double>>& m1,
