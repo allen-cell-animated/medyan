@@ -244,7 +244,7 @@ namespace mathfunc {
 
         vector<double> res(d1);
         for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            res[idx1] = v1[idx1] + v2[idx2];
+            res[idx1] = v1[idx1] + v2[idx1];
         }
 
         return res;
@@ -257,9 +257,19 @@ namespace mathfunc {
 
         vector<double> res(d1);
         for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            res[idx1] = v1[idx1] - v2[idx2];
+            res[idx1] = v1[idx1] - v2[idx1];
         }
 
+        return res;
+    }
+    /// Vector multiply.
+    inline vector<double> vectorMultiply(const vector<double>& v,
+                                         const double k) {
+        size_t d = v.size();
+        vector<double> res(d);
+        for(size_t idx = 0; idx < d; ++idx){
+            res[idx] = v[idx] * k;
+        }
         return res;
     }
 
@@ -310,6 +320,21 @@ namespace mathfunc {
         }
         return res;
     }
+    /// Matrix multiply.
+    inline vector<vector<double>> matrixMultiply(const vector<vector<double>>& m,
+                                                 const double k) {
+        size_t d1 = m.size();
+        if(d1 == 0) return vector<vector<double>>();
+        size_t d2 = m1[0].size();
+
+        vector<vector<double>> res(d1, vector<double>(d2));
+        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+                res[idx1][idx2] = m[idx1][idx2] * k;
+            }
+        }
+        return res;
+    }
 
     /// Identity matrix 3x3. Internal linkage applied implicitly by using "const".
     const vector<vector<double>> Eye3 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
@@ -333,7 +358,7 @@ namespace mathfunc {
     /// Matrix (d1*d2) times vector
     // Currently, user MUST ensure that d2(m) == dim(v)
     // returns a vector with dimension d1
-    inline vector<double> matrixMultiply(const vector<vector<double>>& m,
+    inline vector<double> matrixProduct(const vector<vector<double>>& m,
                                          const vector<double>& v) {
         size_t d1 = m.size();
         if(d1 == 0) return vector<double>();
