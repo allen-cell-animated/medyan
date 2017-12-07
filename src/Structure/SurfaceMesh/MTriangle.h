@@ -3,8 +3,6 @@
 
 #include <array>
 
-#include "Triangle.h"
-
 class Triangle; // Forward declaration
 
 /*

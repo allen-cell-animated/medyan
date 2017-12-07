@@ -1,3 +1,4 @@
+#include "Edge.h"
 #include "MEdge.h"
 
 #include "MathFunctions.h"

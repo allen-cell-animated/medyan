@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <functional>
 
+#include "Vertex.h"
 #include "MVoronoiCell.h"
 
 #include "MathFunctions.h"

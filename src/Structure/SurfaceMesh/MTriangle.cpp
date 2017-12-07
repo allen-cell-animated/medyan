@@ -1,3 +1,4 @@
+#include "Triangle.h"
 #include "MTriangle.h"
 
 #include "MathFunctions.h"

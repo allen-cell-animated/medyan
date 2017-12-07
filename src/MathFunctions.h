@@ -229,7 +229,7 @@ namespace mathfunc {
 
     /// Vector and array converter. Need to ensure the vector has size of _Size
     // No need for move semantics because normally we use this for copying integers or doubles
-    template<class _Ty, size_t _Size>
+    template<typename _Ty, size_t _Size>
     inline array<_Ty, _Size> vector2Array(const vector<_Ty>& v) {
         // Assert v.size() == _Size
         array<_Ty, _Size> res;
@@ -238,13 +238,9 @@ namespace mathfunc {
         }
         return res;
     }
-    template<class _Ty, size_t _Size>
+    template<typename _Ty, size_t _Size>
     inline vector<_Ty> array2Vector(const array<_Ty, _Size>& a) {
-        vector<_Ty> res(_Size);
-        for(size_t idx = 0; idx < _Size; ++idx){
-            res[idx] = a[idx];
-        }
-        return res;
+        return vector<_Ty>(a.begin(), a.end());
     }
 
     /// Get the negative of the vector
