@@ -19,22 +19,17 @@
 
 /*
 
-The vertex class is just a container that wraps a bead,
+The vertex class extends bead,
 but it is exclusively used in 2D surface meshwork, and contains
 information of its neighbors.
 
 */
 
 class Vertex:
-    public Component,
-    public Trackable,
-    public Movable,
-    public DynamicNeighbor { // TODO: inherit bead
+    public DynamicNeighbor,
+    public Bead {
 
 private:
-    // Pointers to the bead.
-    Bead* _b;
-
     unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
 
     // The following vectors on neighbor vertices, triangles, edges must have the same size
@@ -49,11 +44,12 @@ private:
                                    // ...[2] = 0 means the 2nd edge has 0th vertex at center
 
 public:
-    Vertex(Composite *parent, Bead *b);
-
-    // Get Beads
-    Bead* getBead() { return _b; }
+    ///Main constructor
+    Vertex(vector<double> v, Composite* parent, int position);
     
+    ///Default constructor
+    Vertex(Composite* parent, int position);
+
     // Get mech Voronoi cell
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 

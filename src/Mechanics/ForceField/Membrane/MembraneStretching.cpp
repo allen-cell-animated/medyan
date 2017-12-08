@@ -8,6 +8,7 @@
 #include "MembraneStretchingHarmonic.h"
 #include "MembraneStretchingVoronoiHarmonic.h"
 
+// Using the area of the Voronoi cells
 template double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(double d) {
     double U = 0;
     double U_i;
@@ -49,6 +50,7 @@ template double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEn
     return U;
 }
 
+// Using the areas of the triangles
 template double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
     double U = 0;
     double U_i;

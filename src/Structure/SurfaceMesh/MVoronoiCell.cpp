@@ -101,7 +101,7 @@ void MVoronoiCell::calcCurv() {
         std::vector<double> diff(3);
         double sumCotTheta = mTriangleL->getCotTheta()[triLIdx1] + mTriangleR->getCotTheta()[triRIdx2];
         for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-            diff[coordIdx] = _pVertex->getBead()->coordinate[coordIdx] - _pVertex->getNeighborVertices()[nIdx]->getBead()->coordinate[coordIdx];
+            diff[coordIdx] = _pVertex->coordinate[coordIdx] - _pVertex->getNeighborVertices()[nIdx]->coordinate[coordIdx];
             k[coordIdx] += sumCotTheta * diff[coordIdx];
         }
 

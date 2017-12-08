@@ -1,8 +1,7 @@
 #include "Vertex.h"
 
-Vertex::Vertex(Composite* parent, Bead* b):
-    _b(b) {
-    
-    parent -> addChild(unique_ptr<Component>(this));
+Vertex::Vertex(vector<double> v, Composite* parent, int position):
+    Bead(v, parent, position) {}
 
-}
+Vertex::Vertex(Composite* parent, int position):
+    Bead(parent, position) {}

@@ -16,9 +16,9 @@ void MTriangle::calcArea() {
         This calculation depends on the result of the length calculation of edges.
     */
     
-    auto& v0 = _pTriangle->getVertices()[0]->getBead()->coordinate;
-    auto& v1 = _pTriangle->getVertices()[1]->getBead()->coordinate;
-    auto& v2 = _pTriangle->getVertices()[2]->getBead()->coordinate;
+    auto& v0 = _pTriangle->getVertices()[0]->coordinate;
+    auto& v1 = _pTriangle->getVertices()[1]->coordinate;
+    auto& v2 = _pTriangle->getVertices()[2]->coordinate;
 
     double l0 = _pTriangle->getEdges()[0]->getMEdge()->getLength(); // length v0 - v1
     double l1 = _pTriangle->getEdges()[1]->getMEdge()->getLength(); // length v1 - v2
@@ -50,9 +50,9 @@ void MTriangle::calcTheta() {
 
         // Start from this vertex notated temporarily as v0, and go counter-clockwise
         // All the temporary variables are indexed RELATIVELY, i.e. starting from 0, NOT from angleIdx.
-        auto& v0 = _pTriangle->getVertices()[angleIdx]->getBead()->coordinate;
-        auto& v1 = _pTriangle->getVertices()[(angleIdx+1) % 3]->getBead()->coordinate;
-        auto& v2 = _pTriangle->getVertices()[(angleIdx+2) % 3]->getBead()->coordinate;
+        auto& v0 = _pTriangle->getVertices()[angleIdx]->coordinate;
+        auto& v1 = _pTriangle->getVertices()[(angleIdx+1) % 3]->coordinate;
+        auto& v2 = _pTriangle->getVertices()[(angleIdx+2) % 3]->coordinate;
 
         auto& m0 = _pTriangle->getEdges()[angleIdx]->getMEdge();
         auto& m1 = _pTriangle->getEdges()[(angleIdx+1) % 3]->getMEdge();
