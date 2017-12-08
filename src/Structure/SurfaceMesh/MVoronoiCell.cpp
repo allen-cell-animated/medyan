@@ -34,8 +34,8 @@ void MVoronoiCell::calcArea() {
 
     for(int nIdx = 0; nIdx < n; ++nIdx){
         // Think about the triangle (center, nIdx, nIdx+1)
-        auto& mTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getMTriangle();
-        auto& mTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getMTriangle();
+        auto mTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getMTriangle();
+        auto mTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getMTriangle();
         int triRIdx0 = (3 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx1 = (4 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx2 = (5 - _pVertex->getTriangleHead()[nIdx]) % 3;
@@ -43,7 +43,7 @@ void MVoronoiCell::calcArea() {
         int triLIdx1 = (4 - _pVertex->getTriangleHead()[(nIdx + n - 1) % n]) % 3;
         int triLIdx2 = (5 - _pVertex->getTriangleHead()[(nIdx + n - 1) % n]) % 3;
         // Think about the edge (center, nIdx)
-        auto& mEdge = _pVertex->getNeighborEdges()[nIdx]->getMEdge();
+        auto mEdge = _pVertex->getNeighborEdges()[nIdx]->getMEdge();
         int edgeIdx0 = (2 - _pVertex->getEdgeHead()[nIdx]) % 2;
         int edgeIdx1 = (3 - _pVertex->getEdgeHead()[nIdx]) % 2;
 
@@ -51,7 +51,7 @@ void MVoronoiCell::calcArea() {
         double sumCotTheta = mTriangleL->getCotTheta()[triLIdx1] + mTriangleR->getCotTheta()[triRIdx2];
         _currentArea += sumCotTheta * dist2;
         for(int coordIdx = 0; coordIdx < 3; ++coordIdx){
-            _dCurrentArea += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx0][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx0][coordIdx]) * dist2
+            _dCurrentArea[coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx0][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx0][coordIdx]) * dist2
                 + sumCotTheta * 2 * mEdge->getLength() * mEdge->getDLength()[edgeIdx0][coordIdx]) / 8;
             _dNeighborCurrentArea[nIdx][coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx2][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx1][coordIdx]) * dist2
                 + sumCotTheta * 2 * mEdge->getLength() * mEdge->getDLength()[edgeIdx1][coordIdx]) / 8;
@@ -84,8 +84,8 @@ void MVoronoiCell::calcCurv() {
 
     for(size_t nIdx = 0; nIdx < n; ++nIdx){
         // Think about the triangle (center, nIdx, nIdx+1)
-        auto& mTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getMTriangle();
-        auto& mTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getMTriangle();
+        auto mTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getMTriangle();
+        auto mTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getMTriangle();
         int triRIdx0 = (3 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx1 = (4 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx2 = (5 - _pVertex->getTriangleHead()[nIdx]) % 3;
@@ -93,11 +93,11 @@ void MVoronoiCell::calcCurv() {
         int triLIdx1 = (4 - _pVertex->getTriangleHead()[(nIdx + n - 1) % n]) % 3;
         int triLIdx2 = (5 - _pVertex->getTriangleHead()[(nIdx + n - 1) % n]) % 3;
         // Think about the edge (center, nIdx)
-        auto& mEdge = _pVertex->getNeighborEdges()[nIdx]->getMEdge();
+        auto mEdge = _pVertex->getNeighborEdges()[nIdx]->getMEdge();
         int edgeIdx0 = (2 - _pVertex->getEdgeHead()[nIdx]) % 2;
         int edgeIdx1 = (3 - _pVertex->getEdgeHead()[nIdx]) % 2;
 
-        std::vector<double> diff(3);
+        std::array<double, 3> diff;
         double sumCotTheta = mTriangleL->getCotTheta()[triLIdx1] + mTriangleR->getCotTheta()[triRIdx2];
         for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
             diff[coordIdx] = _pVertex->coordinate[coordIdx] - _pVertex->getNeighborVertices()[nIdx]->coordinate[coordIdx];

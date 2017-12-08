@@ -6,8 +6,8 @@
 using namespace mathfunc;
 
 void MEdge::calcLength() {
-    auto& v0 = _pEdge->_v[0];
-    auto& v1 = _pEdge->_v[1];
+    auto& v0 = _pEdge->getVertices()[0];
+    auto& v1 = _pEdge->getVertices()[1];
 
     _currentLength = twoPointDistance(v0->coordinate, v1->coordinate);
     for(int coordIdx = 0; coordIdx < 3; ++coordIdx) {

@@ -30,8 +30,6 @@ class Edge:
     public Movable,
     public DynamicNeighbor {
 
-    friend class MEdge;
-
 private:
     // Pointers to the vertices.
     std::array<Vertex*, 2> _v;

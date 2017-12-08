@@ -54,9 +54,9 @@ void MTriangle::calcTheta() {
         auto& v1 = _pTriangle->getVertices()[(angleIdx+1) % 3]->coordinate;
         auto& v2 = _pTriangle->getVertices()[(angleIdx+2) % 3]->coordinate;
 
-        auto& m0 = _pTriangle->getEdges()[angleIdx]->getMEdge();
-        auto& m1 = _pTriangle->getEdges()[(angleIdx+1) % 3]->getMEdge();
-        auto& m2 = _pTriangle->getEdges()[(angleIdx+2) % 3]->getMEdge();
+        auto m0 = _pTriangle->getEdges()[angleIdx]->getMEdge();
+        auto m1 = _pTriangle->getEdges()[(angleIdx+1) % 3]->getMEdge();
+        auto m2 = _pTriangle->getEdges()[(angleIdx+2) % 3]->getMEdge();
 
         double l0 = m0->getLength(); // length v0 - v1
         double l1 = m1->getLength(); // length v1 - v2
