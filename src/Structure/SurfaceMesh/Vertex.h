@@ -29,7 +29,7 @@ class Vertex:
     public Component,
     public Trackable,
     public Movable,
-    public DynamicNeighbor {
+    public DynamicNeighbor { // TODO: inherit bead
 
 private:
     // Pointers to the bead.
@@ -38,10 +38,10 @@ private:
     unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
 
     // The following vectors on neighbor vertices, triangles, edges must have the same size
-    std::vector<Vertex*> _tethered; // tethered neighbors in counter-clockwise direction
+    std::vector<Vertex*> _tethered; // tethered neighbors in counter-clockwise direction // TODO: change name
     std::vector<Triangle*> _triangles; // triangles around the vertex. each index i corresponds to
                                        // the triangle (this, _tethered[i], _tethered[i+1])
-    std::vector<size_t> _triangleHead; // The index of triangle 0th vertex
+    std::vector<size_t> _triangleHead; // The index of triangle 0th vertex // TODO: hashmaps
                                        // ...[2] = 1 means the 2nd triangle has vertices at (2, 3, center)
                                        // ...[4] = 2 means the 4th triangle has vertices at (5, center, 4)
     std::vector<Edge*> _edges; // The tethers, with the same order as neighbor vertices.

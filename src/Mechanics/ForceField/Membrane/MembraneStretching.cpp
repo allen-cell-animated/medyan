@@ -3,11 +3,53 @@
 
 #include "Membrane.h"
 #include "Triangle.h"
+#include "Vertex.h"
 
 #include "MembraneStretchingHarmonic.h"
+#include "MembraneStretchingVoronoiHarmonic.h"
 
-template <class MembraneStretchingInteractionType>
-double MembraneStretching<MembraneStretchingInteractionType>::computeEnergy(double d) {
+template double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(double d) {
+    double U = 0;
+    double U_i;
+
+    for(auto m: Membrane::getMembranes()) {
+        U_i = 0;
+
+        if(d == 0.0) {
+            for(Vertex* v: m->getVertexVector()) {
+                double kElastic = v->getMVoronoiCell()->getElasticModulus();
+                double eqArea = v->getMVoronoiCell()->getEqArea();
+
+                // The calculation requires that the current area has already been calculated
+                double area = v->getMVoronoiCell()->getArea();
+
+                U_i += _FFType.energy(area, kElastic, eqArea); 
+            }
+        } else {
+            for(Vertex *v: m->getVertexVector()) {
+                double kElastic = v->getMVoronoiCell()->getElasticModulus();
+                double eqArea = v->getMVoronoiCell()->getEqArea();
+
+                // The calculation requires that the current stretched area has already been calculated
+                double area = v->getMVoronoiCell()->getTempArea(); // TODO: implement this function
+
+                U_i += _FFType.energy(area, kElastic, eqArea, d);
+            }
+        }
+
+        if(fabs(U_i) == numeric_limits<double>::infinity()
+            || U_i != U_i || U_i < -1.0) {
+            _membraneCulprit = m;
+            return -1;
+        } else
+            U += U_i;
+        
+    }
+
+    return U;
+}
+
+template double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
     double U = 0;
     double U_i;
 

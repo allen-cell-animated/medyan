@@ -1,4 +1,4 @@
-#include "MembraneStretchingHarmonic.h"
+#include "MembraneStretchingVoronoiHarmonic.h"
 
 #include "Bead.h"
 
