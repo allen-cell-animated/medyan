@@ -14,16 +14,20 @@
 #include "Bead.h"
 
 #include "Edge.h"
-#include "MVoronoiCell.h"
 #include "Triangle.h"
+#include "MVoronoiCell.h"
 
-/*
+// Forward declarations
+class Edge;
+class Triangle;
+
+/******************************************************************************
 
 The vertex class extends bead,
 but it is exclusively used in 2D surface meshwork, and contains
 information of its neighbors.
 
-*/
+******************************************************************************/
 
 class Vertex:
     public DynamicNeighbor,

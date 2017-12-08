@@ -15,6 +15,10 @@
 #include "Edge.h"
 #include "MTriangle.h"
 
+// Forward declarations
+class Edge;
+class Vertex;
+
 class Triangle:
     public Component,
     public Trackable,

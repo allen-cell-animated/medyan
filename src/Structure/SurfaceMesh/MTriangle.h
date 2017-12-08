@@ -5,11 +5,11 @@
 
 class Triangle; // Forward declaration
 
-/*
+/******************************************************************************
 
-    Storing some mechanical properties of the triangle patches
+Storing some mechanical properties of the triangle patches
 
-*/
+******************************************************************************/
 
 class MTriangle {
 

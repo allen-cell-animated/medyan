@@ -21,6 +21,9 @@
 #include "Vertex.h"
 #include "MEdge.h"
 
+// Forward declarations
+class Vertex;
+
 class Edge:
     public Component,
     public Trackable,
@@ -32,6 +35,7 @@ class Edge:
 private:
     // Pointers to the vertices.
     std::array<Vertex*, 2> _v;
+    // For simplicity, currently the neighbor triangles are not recorded.
 
     unique_ptr<MEdge> _mEdge; // pointer to mech edge
 

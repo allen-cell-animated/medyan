@@ -381,7 +381,7 @@ namespace mathfunc {
     }
 
     /// Identity matrix 3x3. Internal linkage applied implicitly by using "const".
-    const array<array<double, 3>, 3> Eye3 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    const array<array<double, 3>, 3> Eye3 = {1, 0, 0, 0, 1, 0, 0, 0, 1};
 
     /// Tensor product of two vectors, notated as a matrix with size dim(v1) x dim(v2)
     template<size_t Dim1, size_t Dim2>
