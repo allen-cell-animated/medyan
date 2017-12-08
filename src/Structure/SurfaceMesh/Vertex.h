@@ -33,13 +33,13 @@ private:
     unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
 
     // The following vectors on neighbor vertices, triangles, edges must have the same size
-    std::vector<Vertex*> _tethered; // tethered neighbors in counter-clockwise direction // TODO: change name
-    std::vector<Triangle*> _triangles; // triangles around the vertex. each index i corresponds to
-                                       // the triangle (this, _tethered[i], _tethered[i+1])
+    std::vector<Vertex*> _neighborVertices; // tethered neighbors in counter-clockwise direction
+    std::vector<Triangle*> _neighborTriangles; // triangles around the vertex. each index i corresponds to
+                                       // the triangle (this, _neighborVertices[i], _neighborVertices[i+1])
     std::vector<size_t> _triangleHead; // The index of triangle 0th vertex // TODO: hashmaps
                                        // ...[2] = 1 means the 2nd triangle has vertices at (2, 3, center)
                                        // ...[4] = 2 means the 4th triangle has vertices at (5, center, 4)
-    std::vector<Edge*> _edges; // The tethers, with the same order as neighbor vertices.
+    std::vector<Edge*> _neighborEdges; // The tethers, with the same order as neighbor vertices.
     std::vector<size_t> _edgeHead; // The index of edge head vertex
                                    // ...[2] = 0 means the 2nd edge has 0th vertex at center
 
@@ -54,12 +54,12 @@ public:
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 
     // Get number of tethered neighbors
-    size_t getNeighborNum() { return _tethered.size(); }
+    size_t getNeighborNum() { return _neighborVertices.size(); }
 
     // Get tethered neighbors
-    std::vector<Vertex*>& getNeighborVertices() { return _tethered; }
-    std::vector<Edge*>& getNeighborEdges() { return _edges; }
-    std::vector<Triangle*>& getNeighborTriangles() { return _triangles; }
+    std::vector<Vertex*>& getNeighborVertices() { return _neighborVertices; }
+    std::vector<Edge*>& getNeighborEdges() { return _neighborEdges; }
+    std::vector<Triangle*>& getNeighborTriangles() { return _neighborTriangles; }
     std::vector<size_t>& getEdgeHead() { return _edgeHead; }
     std::vector<size_t>& getTriangleHead() { return _triangleHead; }
 };

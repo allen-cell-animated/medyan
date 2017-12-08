@@ -19,10 +19,10 @@ private:
     // Note: vectors must 
     double _currentArea; // Current area
     std::array<double, 3> _dCurrentArea; // Derivative of area on the central vertex
-    std::vector<std::array<double, 3>> _dTetheredCurrentArea; // Derivative of the area on the neighboring vertices
+    std::vector<std::array<double, 3>> _dNeighborCurrentArea; // Derivative of the area on the neighboring vertices
     double _currentCurv; // Current mean curvature
     std::array<double, 3> _dCurrentCurv;
-    std::vector<std::array<double, 3>> _dTetheredCurrentCurv; // Derivative of the mean curv on the neighboring vertices
+    std::vector<std::array<double, 3>> _dNeighborCurrentCurv; // Derivative of the mean curv on the neighboring vertices
 
 public:
     MVoronoiCell(double eqArea) {
