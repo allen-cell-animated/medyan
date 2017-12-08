@@ -55,8 +55,8 @@ void MVoronoiCell::calcArea() {
                 + sumCotTheta * 2 * mEdge->getLength() * mEdge->getDLength()[edgeIdx0][coordIdx]) / 8;
             _dNeighborCurrentArea[nIdx][coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx2][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx1][coordIdx]) * dist2
                 + sumCotTheta * 2 * mEdge->getLength() * mEdge->getDLength()[edgeIdx1][coordIdx]) / 8;
-            _dNeighborCurrentArea[(nIdx + n - 1) % n][coordIdx] += mTriangleL->getDCotTheta()[triLIdx1][triLIdx1] * dist2 / 8;
-            _dNeighborCurrentArea[(nIdx + 1) % n][coordIdx] += mTriangleR->getDCotTheta()[triRIdx2][triRIdx2] * dist2 / 8;
+            _dNeighborCurrentArea[(nIdx + n - 1) % n][coordIdx] += mTriangleL->getDCotTheta()[triLIdx1][triLIdx1][coordIdx] * dist2 / 8;
+            _dNeighborCurrentArea[(nIdx + 1) % n][coordIdx] += mTriangleR->getDCotTheta()[triRIdx2][triRIdx2][coordIdx] * dist2 / 8;
         }
         
     }
@@ -80,7 +80,8 @@ void MVoronoiCell::calcCurv() {
 
     std::array<double, 3> k = {}; // Result of Laplace-Beltrami operator
     std::array<std::array<double, 3>, 3> dK = {};
-    std::vector<std::array<std::array<double, 3>, 3>> dNeighborK(n, {});
+    std::vector<std::array<std::array<double, 3>, 3>> dNeighborK(n, {{}}); // Use {{}} instead of {} here to ensure it's not an allocator type
+                                                                           // For forward compatibility starting from C++14
 
     for(size_t nIdx = 0; nIdx < n; ++nIdx){
         // Think about the triangle (center, nIdx, nIdx+1)
