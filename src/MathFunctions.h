@@ -297,7 +297,7 @@ namespace mathfunc {
     }
 
     /// Get the negative of the matrix
-    template<size_t Dim1, size_t Dim2>
+    template<size_t Dim1, size_t Dim2=Dim1>
     inline array<array<double, Dim2>, Dim1> matrixNegative(const array<array<double, Dim2>, Dim1>& m){
         array<array<double, Dim2>, Dim1> res;
 
@@ -308,12 +308,8 @@ namespace mathfunc {
         }
         return res;
     }
-    template<size_t Dim>
-    inline array<array<double, Dim>, Dim> matrixNegative(const array<array<double, Dim>, Dim>& m) {
-        return matrixNegative<Dim, Dim>(m);
-    }
     /// Matrix sum. MUST have same dimension
-    template<size_t Dim1, size_t Dim2>
+    template<size_t Dim1, size_t Dim2=Dim1>
     inline array<array<double, Dim2>, Dim1> matrixSum(const array<array<double, Dim2>, Dim1>& m1,
                                                       const array<array<double, Dim2>, Dim1>& m2) {
         array<array<double, Dim2>, Dim1> res;
@@ -324,13 +320,8 @@ namespace mathfunc {
         }
         return res;
     }
-    template<size_t Dim>
-    inline array<array<double, Dim>, Dim> matrixSum(const array<array<double, Dim>, Dim>& m1,
-                                                    const array<array<double, Dim>, Dim>& m2) {
-        return matrixSum<Dim, Dim>(m1, m2);
-    }
     /// Add matrix2 to matrix1. Returns a reference to the modified vector
-    template<size_t Dim1, size_t Dim2>
+    template<size_t Dim1, size_t Dim2=Dim1>
     inline array<array<double, Dim2>, Dim1>& matrixIncrease(array<array<double, Dim2>, Dim1>& m1,
                                                       const array<array<double, Dim2>, Dim1>& m2) {
         for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
@@ -340,13 +331,8 @@ namespace mathfunc {
         }
         return m1;
     }
-    template<size_t Dim>
-    inline array<array<double, Dim>, Dim>& matrixIncrease(array<array<double, Dim>, Dim>& m1,
-                                                    const array<array<double, Dim>, Dim>& m2) {
-        return matrixIncrease<Dim, Dim>(m1, m2);
-    }
     /// Matrix difference. MUST have same dimension
-    template<size_t Dim1, size_t Dim2>
+    template<size_t Dim1, size_t Dim2=Dim1>
     inline array<array<double, Dim2>, Dim1> matrixDifference(const array<array<double, Dim2>, Dim1>& m1,
                                                              const array<array<double, Dim2>, Dim1>& m2) {
         array<array<double, Dim2>, Dim1> res;
@@ -357,13 +343,8 @@ namespace mathfunc {
         }
         return res;
     }
-    template<size_t Dim>
-    inline array<array<double, Dim>, Dim> matrixDifference(const array<array<double, Dim>, Dim>& m1,
-                                                           const array<array<double, Dim>, Dim>& m2) {
-        return matrixDifference<Dim, Dim>(m1, m2);
-    }
     /// Matrix multiply.
-    template<size_t Dim1, size_t Dim2>
+    template<size_t Dim1, size_t Dim2=Dim1>
     inline array<array<double, Dim2>, Dim1> matrixMultiply(const array<array<double, Dim2>, Dim1>& m,
                                                            const double k) {
         array<array<double, Dim2>, Dim1> res;
@@ -374,17 +355,12 @@ namespace mathfunc {
         }
         return res;
     }
-    template<size_t Dim>
-    inline array<array<double, Dim>, Dim> matrixMultiply(const array<array<double, Dim>, Dim>& m,
-                                                         const double k) {
-        return matrixMultiply<Dim, Dim>(m, k);
-    }
 
     /// Identity matrix 3x3. Internal linkage applied implicitly by using "const".
     const array<array<double, 3>, 3> Eye3 = {1, 0, 0, 0, 1, 0, 0, 0, 1};
 
     /// Tensor product of two vectors, notated as a matrix with size dim(v1) x dim(v2)
-    template<size_t Dim1, size_t Dim2>
+    template<size_t Dim1, size_t Dim2=Dim1>
     inline array<array<double, Dim2>, Dim1> tensorProduct(const array<double, Dim1>& v1,
                                                           const array<double, Dim2>& v2) {
         array<array<double, Dim2>, Dim1> res;
@@ -395,14 +371,9 @@ namespace mathfunc {
         }
         return res;
     }
-    template<size_t Dim>
-    inline array<array<double, Dim>, Dim> tensorProduct(const array<double, Dim>& v1,
-                                                        const array<double, Dim>& v2) {
-        return tensorProduct<Dim, Dim>(v1, v2);
-    }
 
     /// Matrix (d1*d2) times vector (d2). Returns a vector with dimension d1
-    template<size_t Dim1, size_t Dim2>
+    template<size_t Dim1, size_t Dim2=Dim1>
     inline array<double, Dim1> matrixProduct(const array<array<double, Dim2>, Dim1>& m,
                                              const array<double, Dim2>& v) {
         array<double, Dim1> res = {};
@@ -414,11 +385,6 @@ namespace mathfunc {
         }
 
         return res;
-    }
-    template<size_t Dim>
-    inline array<double, Dim> matrixProduct(const array<array<double, Dim>, Dim>& m,
-                                            const array<double, Dim>& v) {
-        return matrixProduct<Dim, Dim>(m, v);
     }
 
     /// Returns the area of a triangle with vertices at point v1, v2 and v3.
