@@ -50,6 +50,12 @@ namespace mathfunc {
         
         return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     }
+    template<size_t Dim>
+    inline double magnitude(const array<double, Dim>& v) {
+        double mag2 = 0;
+        for(auto it: v) mag2 += it * it;
+        return sqrt(mag2);
+    }
     
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     inline double twoPointDistance(const vector<double>& v1, const vector<double>& v2) {
@@ -229,189 +235,190 @@ namespace mathfunc {
 
     /// Vector and array converter. Need to ensure the vector has size of _Size
     // No need for move semantics because normally we use this for copying integers or doubles
-    template<typename _Ty, size_t _Size>
-    inline array<_Ty, _Size> vector2Array(const vector<_Ty>& v) {
-        // Assert v.size() == _Size
-        array<_Ty, _Size> res;
-        for(size_t idx = 0; idx < _Size; ++idx){
+    template<typename Ty, size_t Size>
+    inline array<Ty, Size> vector2Array(const vector<Ty>& v) {
+        // Assert v.size() == Size
+        array<Ty, Size> res;
+        for(size_t idx = 0; idx < Size; ++idx){
             res[idx] = v[idx];
         }
         return res;
     }
-    template<typename _Ty, size_t _Size>
-    inline vector<_Ty> array2Vector(const array<_Ty, _Size>& a) {
-        return vector<_Ty>(a.begin(), a.end());
+    template<typename Ty, size_t Size>
+    inline vector<Ty> array2Vector(const array<Ty, Size>& a) {
+        return vector<Ty>(a.begin(), a.end());
     }
 
     /// Get the negative of the vector
-    inline vector<double> vectorNegative(const vector<double>& v){
-        size_t d = v.size();
-        vector<double> res(d);
-        for(size_t idx = 0; idx < d; ++idx){
+    template<size_t Dim>
+    inline array<double, Dim> vectorNegative(const array<double, Dim>& v){
+        array<double, Dim> res;
+        for(size_t idx = 0; idx < Dim; ++idx){
             res[idx] = -v[idx];
         }
         return res;
     }
-    /// Vector sum. MUST have same dimension
-    inline vector<double> vectorSum(const vector<double>& v1,
-                                    const vector<double>& v2) {
-        size_t d1 = v1.size();
-        // Assume d1 == v2.size()
-
-        vector<double> res(d1);
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+    /// Vector sum.
+    template<size_t Dim>
+    inline array<double, Dim> vectorSum(const array<double, Dim>& v1,
+                                        const array<double, Dim>& v2) {
+        array<double, Dim> res;
+        for(size_t idx1 = 0; idx1 < Dim; ++idx1) {
             res[idx1] = v1[idx1] + v2[idx1];
         }
-
         return res;
     }
-    /// Vector difference. MUST have same dimension
-    inline vector<double> vectorDifference(const vector<double>& v1,
-                                           const vector<double>& v2){
-        size_t d1 = v1.size();
-        // Assume d1 == v2.size()
-
-        vector<double> res(d1);
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
+    /// Vector difference.
+    template<size_t Dim>
+    inline array<double, Dim> vectorDifference(const array<double, Dim>& v1,
+                                               const array<double, Dim>& v2) {
+        array<double, Dim> res;
+        for(size_t idx1 = 0; idx1 < Dim; ++idx1) {
             res[idx1] = v1[idx1] - v2[idx1];
         }
-
         return res;
     }
     /// Vector multiply.
-    inline vector<double> vectorMultiply(const vector<double>& v,
-                                         const double k) {
-        size_t d = v.size();
-        vector<double> res(d);
-        for(size_t idx = 0; idx < d; ++idx){
+    template<size_t Dim>
+    inline array<double, Dim> vectorMultiply(const array<double, Dim>& v,
+                                             const double k) {
+        array<double, Dim> res;
+        for(size_t idx = 0; idx < Dim; ++idx){
             res[idx] = v[idx] * k;
         }
         return res;
     }
     /// Vector expand
-    inline vector<double>& vectorExpand(vector<double>& v,
-                                        const double k) {
+    template<size_t Dim>
+    inline array<double, Dim>& vectorExpand(array<double, Dim>& v,
+                                            const double k) {
         for(auto& it: v) it *= k;
         return v;
     }
 
     /// Get the negative of the matrix
-    inline vector<vector<double>> matrixNegative(const vector<vector<double>>& m){
-        size_t d1 = m.size();
-        if(d1 == 0) return vector<vector<double>>();
+    template<size_t Dim1, size_t Dim2>
+    inline array<array<double, Dim2>, Dim1> matrixNegative(const array<array<double, Dim2>, Dim1>& m){
+        array<array<double, Dim2>, Dim1> res;
 
-        size_t d2 = m[0].size();
-        vector<vector<double>> res(d1, vector<double>(d2));
-
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+        for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
+            for(size_t idx2 = 0; idx2 < Dim2; ++idx2){
                 res[idx1][idx2] = -m[idx1][idx2];
             }
         }
         return res;
     }
+    template<size_t Dim>
+    inline array<array<double, Dim>, Dim> matrixNegative(const array<array<double, Dim>, Dim>& m) {
+        return matrixNegative<Dim, Dim>(m);
+    }
     /// Matrix sum. MUST have same dimension
-    inline vector<vector<double>> matrixSum(const vector<vector<double>>& m1,
-                                            const vector<vector<double>>& m2) {
-        size_t d1 = m1.size();
-        if(d1 == 0) return vector<vector<double>>();
-        size_t d2 = m1[0].size();
-        // Assume d1 == m2.size(), d2 == m2[0].size()
-
-        vector<vector<double>> res(d1, vector<double>(d2));
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+    template<size_t Dim1, size_t Dim2>
+    inline array<array<double, Dim2>, Dim1> matrixSum(const array<array<double, Dim2>, Dim1>& m1,
+                                                      const array<array<double, Dim2>, Dim1>& m2) {
+        array<array<double, Dim2>, Dim1> res;
+        for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
+            for(size_t idx2 = 0; idx2 < Dim2; ++idx2){
                 res[idx1][idx2] = m1[idx1][idx2] + m2[idx1][idx2];
             }
         }
         return res;
     }
-    /// Add matrix2 to matrix1. MUST have the same dimension
-    // returns a reference to the modified vector
-    inline vector<vector<double>>& matrixIncrease(vector<vector<double>>& m1,
-                                                  const vector<vector<double>>& m2) {
-        size_t d1 = m1.size();
-        if(d1 == 0) return m1;
-        size_t d2 = m1[0].size();
-
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+    template<size_t Dim>
+    inline array<array<double, Dim>, Dim> matrixSum(const array<array<double, Dim>, Dim>& m1,
+                                                    const array<array<double, Dim>, Dim>& m2) {
+        return matrixSum<Dim, Dim>(m1, m2);
+    }
+    /// Add matrix2 to matrix1. Returns a reference to the modified vector
+    template<size_t Dim1, size_t Dim2>
+    inline array<array<double, Dim2>, Dim1>& matrixIncrease(array<array<double, Dim2>, Dim1>& m1,
+                                                      const array<array<double, Dim2>, Dim1>& m2) {
+        for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
+            for(size_t idx2 = 0; idx2 < Dim2; ++idx2){
                 m1[idx1][idx2] += m2[idx1][idx2];
             }
         }
         return m1;
     }
+    template<size_t Dim>
+    inline array<array<double, Dim>, Dim>& matrixIncrease(array<array<double, Dim>, Dim>& m1,
+                                                    const array<array<double, Dim>, Dim>& m2) {
+        return matrixIncrease<Dim, Dim>(m1, m2);
+    }
     /// Matrix difference. MUST have same dimension
-    inline vector<vector<double>> matrixDifference(const vector<vector<double>>& m1,
-                                                   const vector<vector<double>>& m2) {
-        size_t d1 = m1.size();
-        if(d1 == 0) return vector<vector<double>>();
-        size_t d2 = m1[0].size();
-        // Assume d1 == m2.size(), d2 == m2[0].size()
-
-        vector<vector<double>> res(d1, vector<double>(d2));
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+    template<size_t Dim1, size_t Dim2>
+    inline array<array<double, Dim2>, Dim1> matrixDifference(const array<array<double, Dim2>, Dim1>& m1,
+                                                             const array<array<double, Dim2>, Dim1>& m2) {
+        array<array<double, Dim2>, Dim1> res;
+        for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
+            for(size_t idx2 = 0; idx2 < Dim2; ++idx2){
                 res[idx1][idx2] = m1[idx1][idx2] - m2[idx1][idx2];
             }
         }
         return res;
     }
+    template<size_t Dim>
+    inline array<array<double, Dim>, Dim> matrixDifference(const array<array<double, Dim>, Dim>& m1,
+                                                           const array<array<double, Dim>, Dim>& m2) {
+        return matrixDifference<Dim, Dim>(m1, m2);
+    }
     /// Matrix multiply.
-    inline vector<vector<double>> matrixMultiply(const vector<vector<double>>& m,
-                                                 const double k) {
-        size_t d1 = m.size();
-        if(d1 == 0) return vector<vector<double>>();
-        size_t d2 = m[0].size();
-
-        vector<vector<double>> res(d1, vector<double>(d2));
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+    template<size_t Dim1, size_t Dim2>
+    inline array<array<double, Dim2>, Dim1> matrixMultiply(const array<array<double, Dim2>, Dim1>& m,
+                                                           const double k) {
+        array<array<double, Dim2>, Dim1> res;
+        for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
+            for(size_t idx2 = 0; idx2 < Dim2; ++idx2){
                 res[idx1][idx2] = m[idx1][idx2] * k;
             }
         }
         return res;
     }
+    template<size_t Dim>
+    inline array<array<double, Dim>, Dim> matrixMultiply(const array<array<double, Dim>, Dim>& m,
+                                                         const double k) {
+        return matrixMultiply<Dim, Dim>(m, k);
+    }
 
     /// Identity matrix 3x3. Internal linkage applied implicitly by using "const".
-    const vector<vector<double>> Eye3 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    const array<array<double, 3>, 3> Eye3 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
     /// Tensor product of two vectors, notated as a matrix with size dim(v1) x dim(v2)
-    inline vector<vector<double>> tensorProduct(const vector<double>& v1,
-                                                const vector<double>& v2) {
-        size_t d1 = v1.size();
-        size_t d2 = v2.size();
-        vector<vector<double>> res(d1, vector<double>(d2));
-
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+    template<size_t Dim1, size_t Dim2>
+    inline array<array<double, Dim2>, Dim1> tensorProduct(const array<double, Dim1>& v1,
+                                                          const array<double, Dim2>& v2) {
+        array<array<double, Dim2>, Dim1> res;
+        for(size_t idx1 = 0; idx1 < Dim1; ++idx1) {
+            for(size_t idx2 = 0; idx2 < Dim2; ++idx2) {
                 res[idx1][idx2] = v1[idx1] * v2[idx2];
             }
         }
-
         return res;
     }
+    template<size_t Dim>
+    inline array<array<double, Dim>, Dim> tensorProduct(const array<double, Dim>& v1,
+                                                        const array<double, Dim>& v2) {
+        return tensorProduct<Dim, Dim>(v1, v2);
+    }
 
-    /// Matrix (d1*d2) times vector
-    // Currently, user MUST ensure that d2(m) == dim(v)
-    // returns a vector with dimension d1
-    inline vector<double> matrixProduct(const vector<vector<double>>& m,
-                                         const vector<double>& v) {
-        size_t d1 = m.size();
-        if(d1 == 0) return vector<double>();
-
-        size_t d2 = m[0].size();
-        // Assume d2 == v.size()
-
-        vector<double> res(d1, 0.0);
+    /// Matrix (d1*d2) times vector (d2). Returns a vector with dimension d1
+    template<size_t Dim1, size_t Dim2>
+    inline array<double, Dim1> matrixProduct(const array<array<double, Dim2>, Dim1>& m,
+                                             const array<double, Dim2>& v) {
+        array<double, Dim1> res = {};
         
-        for(size_t idx1 = 0; idx1 < d1; ++idx1){
-            for(size_t idx2 = 0; idx2 < d2; ++idx2){
+        for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
+            for(size_t idx2 = 0; idx2 < Dim2; ++idx2){
                 res[idx1] += m[idx1][idx2] * v[idx2];
             }
         }
 
         return res;
+    }
+    template<size_t Dim>
+    inline array<double, Dim> matrixProduct(const array<array<double, Dim>, Dim>& m,
+                                            const array<double, Dim>& v) {
+        return matrixProduct<Dim, Dim>(m, v);
     }
 
     /// Returns the area of a triangle with vertices at point v1, v2 and v3.

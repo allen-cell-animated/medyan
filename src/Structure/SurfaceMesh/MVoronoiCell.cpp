@@ -78,10 +78,9 @@ void MVoronoiCell::calcCurv() {
 
     size_t n = _pVertex -> getNeighborNum();
 
-    // Use vector instead of array here for tensor product templates.
-    std::vector<double> k(3, 0.0); // Result of Laplace-Beltrami operator
-    std::vector<std::vector<double>> dK(3, std::vector<double>(3, 0.0));
-    std::vector<std::vector<std::vector<double>>> dNeighborK(n, std::vector<std::vector<double>>(3, std::vector<double>(3, 0.0)));
+    std::array<double, 3> k = {}; // Result of Laplace-Beltrami operator
+    std::array<std::array<double, 3>, 3> dK = {};
+    std::vector<std::array<std::array<double, 3>, 3>> dNeighborK(n, {});
 
     for(size_t nIdx = 0; nIdx < n; ++nIdx){
         // Think about the triangle (center, nIdx, nIdx+1)
@@ -106,29 +105,29 @@ void MVoronoiCell::calcCurv() {
         }
 
         // Now, dDiff is Eye3, and dNDiff is -Eye3
-        std::vector<std::vector<double>> tensorTmp0 = tensorProduct(vectorSum(mTriangleL->getDCotTheta[triLIdx1][triLIdx0], mTriangleR->getDCotTheta[triRIdx2][triRIdx0]), diff);
-        std::vector<std::vector<double>> tensorTmp1 = tensorProduct(vectorSum(mTriangleL->getDCotTheta[triLIdx1][triLIdx2], mTriangleR->getDCotTheta[triRIdx2][triRIdx1]), diff);
-        std::vector<std::vector<double>> tensorTmpL = tensorProduct(mTriangleL->getDCotTheta[triLIdx1][triLIdx1], diff);
-        std::vector<std::vector<double>> tensorTmpR = tensorProduct(mTriangleR->getDCotTheta[triRIdx2][triRIdx2], diff);
+        std::array<std::array<double, 3>, 3> tensorTmp0 = tensorProduct<3>(vectorSum<3>(mTriangleL->getDCotTheta[triLIdx1][triLIdx0], mTriangleR->getDCotTheta[triRIdx2][triRIdx0]), diff);
+        std::array<std::array<double, 3>, 3> tensorTmp1 = tensorProduct<3>(vectorSum<3>(mTriangleL->getDCotTheta[triLIdx1][triLIdx2], mTriangleR->getDCotTheta[triRIdx2][triRIdx1]), diff);
+        std::array<std::array<double, 3>, 3> tensorTmpL = tensorProduct<3>(mTriangleL->getDCotTheta[triLIdx1][triLIdx1], diff);
+        std::array<std::array<double, 3>, 3> tensorTmpR = tensorProduct<3>(mTriangleR->getDCotTheta[triRIdx2][triRIdx2], diff);
 
-        matrixIncrease(dK, matrixSum(tensorTmp0, matrixMultiply(Eye3, sumCotTheta)));
-        matrixIncrease(dNeighborK[nIdx], matrixDifference(tensorTmp1, matrixMultiply(Eye3, sumCotTheta)));
-        matrixIncrease(dNeighborK[(nIdx + n - 1) % n], tensorTmpL);
-        matrixIncrease(dNeighborK[(nIdx + 1) % n], tensorTmpR);
+        matrixIncrease<3>(dK, matrixSum<3>(tensorTmp0, matrixMultiply<3>(Eye3, sumCotTheta)));
+        matrixIncrease<3>(dNeighborK[nIdx], matrixDifference<3>(tensorTmp1, matrixMultiply<3>(Eye3, sumCotTheta)));
+        matrixIncrease<3>(dNeighborK[(nIdx + n - 1) % n], tensorTmpL);
+        matrixIncrease<3>(dNeighborK[(nIdx + 1) % n], tensorTmpR);
 
     }
 
     // Convert K to K/2A
-    dK = matrixMultiply(matrixDifference(matrixMultiply(dK, _currentArea), tensorProduct(array2Vector<double, 3>(_dCurrentArea), k)), 0.5 / _currentArea / _currentArea);
+    dK = matrixMultiply<3>(matrixDifference<3>(matrixMultiply<3>(dK, _currentArea), tensorProduct<3>(_dCurrentArea, k)), 0.5 / _currentArea / _currentArea);
     for(size_t nIdx = 0; nIdx < n; ++nIdx) {
-        dNeighborK[nIdx] = matrixMultiply(matrixDifference(matrixMultiply(dNeighborK[nIdx], _currentArea), tensorProduct(array2Vector<double, 3>(_dNeighborCurrentArea[nIdx]), k)), 0.5 / _currentArea / _currentArea);
+        dNeighborK[nIdx] = matrixMultiply<3>(matrixDifference<3>(matrixMultiply<3>(dNeighborK[nIdx], _currentArea), tensorProduct<3>(_dNeighborCurrentArea[nIdx], k)), 0.5 / _currentArea / _currentArea);
     }
-    vectorExpand(k, 0.5 / _currentArea);
+    vectorExpand<3>(k, 0.5 / _currentArea);
 
     // Calculate mean curvature
-    _currentCurv = magnitude(k) / 2;
-    _dCurrentCurv = vectorMultiply(matrixProduct(dK, k), 1.0 / 4 / _currentCurv);
+    _currentCurv = magnitude<3>(k) / 2;
+    _dCurrentCurv = vectorMultiply<3>(matrixProduct<3>(dK, k), 1.0 / 4 / _currentCurv);
     for(size_t nIdx = 0; nIdx < n; ++nIdx) {
-        _dNeighborCurrentCurv[nIdx] = vectorMultiply(matrixProduct(dNeighborK[nIdx], k), 1.0 / 4 / _currentCurv);
+        _dNeighborCurrentCurv[nIdx] = vectorMultiply<3>(matrixProduct<3>(dNeighborK[nIdx], k), 1.0 / 4 / _currentCurv);
     }
 }
