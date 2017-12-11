@@ -53,6 +53,8 @@ public:
                                       // Does not calculate the derivatives.
 
     double getCurv() { return _currentCurv; }
+    std::array<double, 3>& getDCurv() { return _dCurrentCurv; }
+    std::vector<std::array<double, 3>>& getDNeighborCurv() { return _dNeighborCurrentCurv; }
     void calcCurv();
     double getStretchedCurv() { return _stretchedCurv; }
     void calcStretchedCurv(double d); // Calculates the stretched mean curvature, and store the result in _stretchedCurv.

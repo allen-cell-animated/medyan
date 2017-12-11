@@ -39,7 +39,7 @@ void MembraneStretchingVoronoiHarmonic::forces(Vertex* vCenter, const std::vecto
 
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
         vCenter->force[coordIdx] += coeff * dArea[coordIdx];
-        for(size_t nIdx = 0; nIdx < 3; ++nIdx) {
+        for(size_t nIdx = 0; nIdx < n; ++nIdx) {
             v[nIdx]->force[coordIdx] += coeff * dNeighborArea[nIdx][coordIdx];
         }
     }
@@ -56,7 +56,7 @@ void MembraneStretchingVoronoiHarmonic::forcesAux(Vertex* vCenter, const std::ve
 
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
         vCenter->forceAux[coordIdx] += coeff * dArea[coordIdx];
-        for(size_t nIdx = 0; nIdx < 3; ++nIdx) {
+        for(size_t nIdx = 0; nIdx < n; ++nIdx) {
             v[nIdx]->forceAux[coordIdx] += coeff * dNeighborArea[nIdx][coordIdx];
         }
     }
