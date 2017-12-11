@@ -97,7 +97,7 @@ void MVoronoiCell::calcStretchedArea(double d) {
 
         double dist2Stretched = mEdge->getStretchedLength() * mEdge->getStretchedLength();
         double sumCotThetaStretched = mTriangleL->getStretchedCotTheta()[triLIdx1] + mTriangleR->getStretchedCotTheta()[triRIdx2];
-        _strethcedArea += sumCotThetaStretched * dist2Stretched;        
+        _stretchedArea += sumCotThetaStretched * dist2Stretched;        
     }
 }
 

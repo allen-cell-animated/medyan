@@ -56,7 +56,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
     
-        for(Vertex* v : f->getVertexVector()){
+        for(Vertex* v : m->getVertexVector()){
             
             double kElastic = v->getMVoronoiCell()->getElasticModulus();
             double eqArea = v->getMVoronoiCell()->getEqArea();
@@ -74,7 +74,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
     
-        for(Vertex* v : f->getVertexVector()){
+        for(Vertex* v : m->getVertexVector()){
             
             double kElastic = v->getMVoronoiCell()->getElasticModulus();
             double eqArea = v->getMVoronoiCell()->getEqArea();
@@ -143,7 +143,7 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
     
-        for(Triangle* it : f->getTriangleVector()){
+        for(Triangle* it : m->getTriangleVector()){
             
             double kElastic = it->getMTriangle()->getElasticModulus();
             double eqArea = it->getMTriangle()->getEqArea();
@@ -160,7 +160,7 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
     
-        for(Triangle* it : f->getTriangleVector()){
+        for(Triangle* it : m->getTriangleVector()){
             
             double kElastic = it->getMTriangle()->getElasticModulus();
             double eqArea = it->getMTriangle()->getEqArea();
