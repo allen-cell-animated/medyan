@@ -16,7 +16,7 @@ private:
     double _kBending; // Local bending modulus
     double _eqCurv; // Local spontaneous curvature
 
-    // Note: vectors must 
+    // Note: vectors must initially be resized to the number of neighbors around the vertex.
     double _currentArea; // Current area
     std::array<double, 3> _dCurrentArea; // Derivative of area on the central vertex
     std::vector<std::array<double, 3>> _dNeighborCurrentArea; // Derivative of the area on the neighboring vertices
@@ -45,6 +45,8 @@ public:
     double getEqCurv() { return _eqCurv; }
 
     double getArea() { return _currentArea; }
+    std::array<double, 3>& getDArea() { return _dCurrentArea; }
+    std::vector<std::array<double, 3>>& getDNeighborArea() { return _dNeighborCurrentArea; }
     void calcArea();
     double getStretchedArea() { return _stretchedArea; }
     void calcStretchedArea(double d); // Calculates the stretched area, and store the result in _stretchedArea.

@@ -52,6 +52,43 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(doub
     return U;
 }
 
+void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
+    
+    for (auto m: Membrane::getMembranes()) {
+    
+        for(Vertex* v : f->getVertexVector()){
+            
+            double kElastic = v->getMVoronoiCell()->getElasticModulus();
+            double eqArea = v->getMVoronoiCell()->getEqArea();
+
+            double area = v->getMVoronoiCell()->getArea();
+            std::array<double, 3>& dArea = v->getMVoronoiCell()->getDArea();
+            std::vector<std::array<double, 3>>& dNeighborArea = v->getMVoronoiCell()->getDNeighborArea();
+           
+            _FFType.forces(v, v->getNeighborVertices(), area, dArea, dNeighborArea, kElastic, eqArea);
+        }
+    }
+}
+
+void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
+    
+    for (auto m: Membrane::getMembranes()) {
+    
+        for(Vertex* v : f->getVertexVector()){
+            
+            double kElastic = v->getMVoronoiCell()->getElasticModulus();
+            double eqArea = v->getMVoronoiCell()->getEqArea();
+
+            double area = v->getMVoronoiCell()->getArea();
+            std::array<double, 3>& dArea = v->getMVoronoiCell()->getDArea();
+            std::vector<std::array<double, 3>>& dNeighborArea = v->getMVoronoiCell()->getDNeighborArea();
+           
+            _FFType.forcesAux(v, v->getNeighborVertices(), area, dArea, dNeighborArea, kElastic, eqArea);
+        }
+    }
+}
+
+
 
 // Using the areas of the triangles
 double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
@@ -102,7 +139,7 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
     return U;
 }
 
-void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
+void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
     
@@ -119,7 +156,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
     }
 }
 
-void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
+void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
     

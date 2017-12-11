@@ -1,63 +1,63 @@
+#include <array>
+#include <vector>
+
 #include "MembraneStretchingVoronoiHarmonic.h"
 
-#include "Bead.h"
+#include "Vertex.h"
 
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-// TODO: implement it
-
-double MembraneStretchingHarmonic::energy(Bead* b, std::vector<Bead*> 
-                                          double kElastic, double eqArea){
+double MembraneStretchingVoronoiHarmonic::energy(double area,
+                                                 double kElastic, double eqArea){
     // kElastic is the elastic modulus, which is independent of the actual eqArea
 
-    double dist = currentArea - eqArea;
+    double dist = area - eqArea;
     
     return 0.5 * kElastic * dist * dist / eqArea;
     
 }
 
-double MembraneStretchingHarmonic::energy(const std::array<Bead*, 3>& b,
-                                          double kElastic, double eqArea, double d){
+double MembraneStretchingVoronoiHarmonic::energy(double areaStretched,
+                                                 double kElastic, double eqArea, double d){
+    // In fact, d is a dummy variable here, as areaStretched is already dependent on d.
 
-    double distStretched = areaTriangleStretched(b[0]->coordinate, b[0]->force,
-                                                 b[1]->coordinate, b[1]->force,
-                                                 b[2]->coordinate, b[2]->force,
-                                                 d) - eqArea;
+    double distStretched = areaStretched - eqArea;
     return 0.5 * kElastic * distStretched * distStretched / eqArea;
 }
 
-void MembraneStretchingHarmonic::forces(const std::array<Bead*, 3>& b,
-                                        double kElastic, double eqArea ){
-    
-    double area = areaTriangle(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
-    double f0 = kElastic * (area - eqArea) / eqArea;
+void MembraneStretchingVoronoiHarmonic::forces(Vertex* vCenter, const std::vector<Vertex*>& v,
+                                               double area, const std::array<double, 3>& dArea, const std::vector<std::array<double, 3>>& dNeighborArea,
+                                               double kElastic, double eqArea) {
+    // F_i = -grad_i U = -k / A_0 * (A - A_0) * grad_i A
+    // A(rea) and grad_i A(rea) are obtained as function parameters
 
-    // Actually area is calculated again in areaGradient function. There might be a way to optimize it...
-    auto areaGradient = areaTriangleGradient(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
-    // force = kElastic * (area - eqArea) / eqArea * d_A
+    size_t n = v.size();
 
-    for(int idxBead = 0; idxBead < 3; ++idxBead) {
-        for(int idxCoord = 0; idxCoord < 3; ++idxCoord) {
-            b[idxBead]->force[idxCoord] += f0 * areaGradient[idxBead][idxCoord];
-        }
-    }
-    // TODO: test the results
-}
+    double coeff = -kElastic / eqArea * (area - eqArea);
 
-void MembraneStretchingHarmonic::forcesAux(const std::array<Bead*, 3>& b,
-                                           double kElastic, double eqArea ){
-    
-    double area = areaTriangle(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
-    double f0 = kElastic * (area - eqArea) / eqArea;
-
-    auto areaGradient = areaTriangleGradient(b[0]->coordinate, b[1]->coordinate, b[2]->coordinate);
-
-    for(int idxBead = 0; idxBead < 3; ++idxBead) {
-        for(int idxCoord = 0; idxCoord < 3; ++idxCoord) {
-            b[idxBead]->forceAux[idxCoord] += f0 * areaGradient[idxBead][idxCoord];
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+        vCenter->force[coordIdx] += coeff * dArea[coordIdx];
+        for(size_t nIdx = 0; nIdx < 3; ++nIdx) {
+            v[nIdx]->force[coordIdx] += coeff * dNeighborArea[nIdx][coordIdx];
         }
     }
 }
 
+void MembraneStretchingVoronoiHarmonic::forcesAux(Vertex* vCenter, const std::vector<Vertex*>& v,
+                                                  double area, const std::array<double, 3>& dArea, const std::vector<std::array<double, 3>>& dNeighborArea,
+                                                  double kElastic, double eqArea) {
+    // Same as force calculation
+
+    size_t n = v.size();
+
+    double coeff = -kElastic / eqArea * (area - eqArea);
+
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+        vCenter->forceAux[coordIdx] += coeff * dArea[coordIdx];
+        for(size_t nIdx = 0; nIdx < 3; ++nIdx) {
+            v[nIdx]->forceAux[coordIdx] += coeff * dNeighborArea[nIdx][coordIdx];
+        }
+    }
+}
