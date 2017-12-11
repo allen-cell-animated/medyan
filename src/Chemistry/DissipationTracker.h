@@ -25,6 +25,7 @@
 #include "common.h"
 #include "SysParams.h"
 #include <fstream>
+#include "MotorGhost.h"
 
 
 
@@ -123,8 +124,7 @@ public:
         // calculate sigma
         // int sig = M-N;
         
-        // get reaction rate
-        float aPlus = re->getBareRate();
+
         
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
         
@@ -139,8 +139,7 @@ public:
         vector<string> prodNames = re->getProductSpecies();
         
         float delGZero;
-        float aMin;
-        
+
         
         // declare delG and set it to 0
         float delG;
@@ -192,25 +191,37 @@ public:
             delG = delGPolyIrrTherm(delGZero,nMon,"P");
             
             
+            
         } else if(reType==7){
             // Motor Binding
-            delGZero=re->getRevNumber();
-            species_copy_t nMon = reacN[1];
-            delG = delGPolyIrrTherm(delGZero,nMon,"P");
-
-        
+            double rn=re->getRevNumber();
+ 
+            double nh1 = SysParams::Chemistry().motorNumHeadsMin[0];
+            double nh2 = SysParams::Chemistry().motorNumHeadsMax[0];
+            double nh = (nh1+nh2)/2.0;
+            
+            delG = delGMyoBind(nh,rn);
+            
+            
         } else if(reType==8){
             // Linker Unbinding
             delGZero=re->getRevNumber();
             species_copy_t nMon = prodN[0];
             delG = delGPolyIrrTherm(delGZero,nMon,"D");
+            
 
             
         } else if(reType==9){
             // Motor Unbinding
-            delGZero=re->getRevNumber();
-            species_copy_t nMon = prodN[0];
-            delG = delGPolyIrrTherm(delGZero,nMon,"D");
+            double rn=re->getRevNumber();
+            
+            CBound* CBound = re->getCBound();
+            SpeciesBound* sm1 = CBound->getFirstSpecies();
+            MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
+            int nh = m->getNumHeads();
+            
+            delG = delGMyoBind(nh,rn);
+            delG = -delG;
 
             
         } else if(reType==10){
@@ -224,11 +235,11 @@ public:
             delG = delG*(1/_stepFrac);
             
         } else if(reType==12){
-            // Filmanet Aging
+            // Filament Aging
  
                 vector<species_copy_t> numR;
                 numR.push_back(Filament::countSpecies(0,reacNames[0]));
-                
+            
                 vector<species_copy_t> numP;
                 numP.push_back(Filament::countSpecies(0,prodNames[0]));
                 
@@ -263,6 +274,7 @@ public:
     // increment the GChem counter when a reaction fires
     void updateDelGChem(ReactionBase* re){
         GChem += getDelGChem(re);
+
     }
 
     // return the mechanical energy of the system
@@ -288,6 +300,10 @@ public:
     
     double getGChemEn(){
         return GChem;
+    }
+    
+    double getGMechEn(){
+        return G2-G1;
     }
     
     // set the value of G1

@@ -170,7 +170,7 @@ bool ChemNRMImpl::makeStep() {
     
     ReactionBase* react = rn->getReaction();
 
-    _dt->updateDelGChem(react);
+    
     
 //    if(react->getReactionType()==7 || react->getReactionType()==9){
 //        rn->printSelf();
@@ -188,12 +188,13 @@ bool ChemNRMImpl::makeStep() {
 //            cout<<reacp[i]<<prodN[i]<<endl;
 //        }
 //        cout<<endl<<_dt->getDelGChem(react)<<endl<<endl;
-//        cout<<rn->getProductOfReactants()<<endl;;
-//    }
 //
+//    }
     
+    //update this BEFORE making the step
+    _dt->updateDelGChem(react);
     rn->makeStep();
-   
+    
     
     
     

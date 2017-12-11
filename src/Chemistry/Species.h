@@ -695,11 +695,15 @@ public:
         return new SpeciesMotor(*this);
     }
     
+    
     /// Return the full name of this Species in a string format (e.g. "Myosin{Motor}"
     virtual string getFullName() const {return getName() + "{Motor}";}
     
     /// Default destructor
     ~SpeciesMotor () noexcept {};
+    
+    CBound* getCBoundd() {return _cBound;}
+    
 };
 
 /// Used for species that can be bound to a Filament.

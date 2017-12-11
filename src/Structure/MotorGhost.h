@@ -152,6 +152,9 @@ public:
     /// Get the birth time
     float getBirthTime() {return _birthTime;}
     
+    // get num heads
+    int getNumHeads(){return _numHeads;}
+    
     //@{
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _motorGhosts.addElement(this);}

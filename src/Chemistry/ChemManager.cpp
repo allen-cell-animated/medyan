@@ -1811,10 +1811,15 @@ void ChemManager::genFilBindingReactions() {
                 
                 //multiply by num heads to get rate
                 ///CHANGED
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+                double nh1 = SysParams::Chemistry().motorNumHeadsMin[motorInt];
+                double nh2 = SysParams::Chemistry().motorNumHeadsMax[motorInt];
+                vector<short> motorNumHeadsMax = {};
+                
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (nh1 + nh2) / 2.0);
                 rxn->setReactionType(ReactionType::MOTORBINDING);
                 
                 rxn->setRevNumber(revnum);
+                SysParams::CParams.dutyRatio = (onRate)/(onRate + offRate);
                 
                 C->addInternalReaction(rxn);
                 

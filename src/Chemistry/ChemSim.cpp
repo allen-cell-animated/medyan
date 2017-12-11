@@ -48,6 +48,8 @@ vector<double> ChemSim::getEnergy(){
     returnvec.push_back(_pimpl->_dt->getCumDissEnergy());
     returnvec.push_back(_pimpl->_dt->getCumDissChemEnergy());
     returnvec.push_back(_pimpl->_dt->getCumDissMechEnergy());
+    returnvec.push_back(_pimpl->_dt->getGChemEn());
+    returnvec.push_back(_pimpl->_dt->getGMechEn());
     return returnvec;
 }
 
