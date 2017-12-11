@@ -46,6 +46,7 @@ public:
 
     // Not allowing setting the area: void setArea(double area) { _currentArea = area; }
     double getArea() { return _currentArea; }
+    std::array<std::array<double, 3>, 3>& getDArea() { return _dCurrentArea; }
     void calcArea();
     double getStretchedArea() { return _stretchedArea; }
     void calcStretchedArea(double d); // Calculates the stretched area, and store the result in _stretchedArea

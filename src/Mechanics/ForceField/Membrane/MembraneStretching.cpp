@@ -1,3 +1,4 @@
+#include <array>
 
 #include "MembraneStretching.h"
 
@@ -32,9 +33,10 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(doub
                 double eqArea = v->getMVoronoiCell()->getEqArea();
 
                 // The calculation requires that the current stretched area has already been calculated
-                double area = v->getMVoronoiCell()->getTempArea(); // TODO: implement this function
+                // As a result, d is just a dummy variable due to its universality
+                double areaStretched = v->getMVoronoiCell()->getStretchedArea();
 
-                U_i += _FFType.energy(area, kElastic, eqArea, d);
+                U_i += _FFType.energy(areaStretched, kElastic, eqArea, d);
             }
         }
 
@@ -50,6 +52,7 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(doub
     return U;
 }
 
+
 // Using the areas of the triangles
 double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
     double U = 0;
@@ -64,8 +67,10 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
                 double kElastic = it->getMTriangle()->getElasticModulus();
                 double eqArea = it->getMTriangle()->getEqArea();
 
-                // TODO: maybe I can calculate area first and store it in MTriangle
-                U_i += _FFType.energy(it->getBeads(), kElastic, eqArea);
+                double area = it->getMTriangle()->getArea();
+
+                // The calculation requires that the current area has already been calculated
+                U_i += _FFType.energy(area, kElastic, eqArea);
             }
 
         } else {
@@ -73,7 +78,11 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
                 double kElastic = it->getMTriangle()->getElasticModulus();
                 double eqArea = it->getMTriangle()->getEqArea();
 
-                U_i += _FFType.energy(it->getBeads(), kElastic, eqArea, d);
+                // The calculation requires that the current stretched area has been calculated
+                double areaStretched = it->getMTriangle()->getStretchedArea();
+
+                // Currently, d is a dummy variable, as the stretched areaStretched is already dependent on d.
+                U_i += _FFType.energy(areaStretched, kElastic, eqArea, d);
             }
         }
 
@@ -93,37 +102,36 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
     return U;
 }
 
-template <class MembraneStretchingInteractionType>
-void MembraneStretching<MembraneStretchingInteractionType>::computeForces() {
+void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
     
         for(Triangle* it : f->getTriangleVector()){
             
-            double kElastic =it->getMTriangle()->getElasticModulus();
+            double kElastic = it->getMTriangle()->getElasticModulus();
             double eqArea = it->getMTriangle()->getEqArea();
+
+            double area = it->getMTriangle()->getArea();
+            std::array<std::array<double, 3>, 3>& dArea = it->getMTriangle()->getDArea();
            
-            _FFType.forces(it->getBeads(), kElastic, eqArea);
+            _FFType.forces(it->getVertices(), area, dArea, kElastic, eqArea);
         }
     }
 }
 
-template <class MembraneStretchingInteractionType>
-void MembraneStretching<MembraneStretchingInteractionType>::computeForcesAux() {
+void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
     
         for(Triangle* it : f->getTriangleVector()){
             
-            double kElastic =it->getMTriangle()->getElasticModulus();
+            double kElastic = it->getMTriangle()->getElasticModulus();
             double eqArea = it->getMTriangle()->getEqArea();
+
+            double area = it->getMTriangle()->getArea();
+            std::array<std::array<double, 3>, 3>& dArea = it->getMTriangle()->getDArea();
            
-            _FFType.forcesAux(it->getBeads(), kElastic, eqArea);
+            _FFType.forcesAux(it->getVertices(), area, dArea, kElastic, eqArea);
         }
     }
 }
-
-// Template specializations
-template double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d);
-template void MembraneStretching<MembraneStretchingHarmonic>::computeForces();
-template void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux();
