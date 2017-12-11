@@ -15,3 +15,11 @@ void MEdge::calcLength() {
         _dCurrentLength[1][coordIdx] = (v1->coordinate[coordIdx] - v0->coordinate[coordIdx]) / _currentLength;
     }
 }
+
+void MEdge::calcStretchedLength(double d) {
+    auto& v0 = _pEdge->getVertices()[0];
+    auto& v1 = _pEdge->getVertices()[1];
+    _stretchedLength = twoPointDistanceStretched(v0->coordinate, v0->force,
+                                                 v1->coordinate, v1->force,
+                                                 d);
+}

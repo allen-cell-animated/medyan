@@ -12,6 +12,7 @@ private:
 
     double _currentLength; // Current length
     std::array<std::array<double, 3>, 2> _dCurrentLength; // The derivative of the length. _dCurrentLength[vtxIdx][xyz]
+    double _stretchedLength; // Temporarily store the stretched length
 
 public:
     MEdge() {}
@@ -19,6 +20,9 @@ public:
     double getLength() { return _currentLength; }
     std::array<std::array<double, 3>, 2>& getDLength() { return _dCurrentLength; }
     void calcLength();
+    double getStretchedLength() { return _stretchedLength; }
+    void calcStretchedLength(double d); // Calculates the stretched length, and store the result in _stretchedLength.
+                                        // Does not calculate the derivatives.
 };
 
 

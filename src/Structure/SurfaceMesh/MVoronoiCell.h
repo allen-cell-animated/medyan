@@ -20,9 +20,12 @@ private:
     double _currentArea; // Current area
     std::array<double, 3> _dCurrentArea; // Derivative of area on the central vertex
     std::vector<std::array<double, 3>> _dNeighborCurrentArea; // Derivative of the area on the neighboring vertices
+    double _stretchedArea; // Temporarily store the stretched area
+
     double _currentCurv; // Current mean curvature
     std::array<double, 3> _dCurrentCurv;
     std::vector<std::array<double, 3>> _dNeighborCurrentCurv; // Derivative of the mean curv on the neighboring vertices
+    double _stretchedCurv; // Temporarily store the stretched mean curvature
 
 public:
     MVoronoiCell(double eqArea) {
@@ -43,9 +46,15 @@ public:
 
     double getArea() { return _currentArea; }
     void calcArea();
+    double getStretchedArea() { return _stretchedArea; }
+    void calcStretchedArea(double d); // Calculates the stretched area, and store the result in _stretchedArea.
+                                      // Does not calculate the derivatives.
 
     double getCurv() { return _currentCurv; }
     void calcCurv();
+    double getStretchedCurv() { return _stretchedCurv; }
+    void calcStretchedCurv(double d); // Calculates the stretched mean curvature, and store the result in _stretchedCurv.
+                                      // Does not calculate the derivatives.
 
 };
 

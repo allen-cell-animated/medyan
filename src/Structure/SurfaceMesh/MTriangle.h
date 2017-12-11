@@ -21,6 +21,7 @@ private:
 
     double _currentArea; // Current area
     std::array<std::array<double, 3>, 3> _dCurrentArea; // The derivative of the area. _dCurrentArea[vtxIdx][xyz]
+    double _stretchedArea; // Temporarily store the stretched area
 
     std::array<double, 3> _theta; // The angles corresponding to each vertex
     std::array<std::array<std::array<double, 3>, 3>, 3> _dTheta; // The derivative of the angles. _dTheta[angleIdx][vtxIdx][xyz]
@@ -29,6 +30,10 @@ private:
     std::array<std::array<std::array<double, 3>, 3>, 3> _dSinTheta;
     std::array<double, 3> _cotTheta;
     std::array<std::array<std::array<double, 3>, 3>, 3> _dCotTheta;
+    // The following variables temporarily store the angles under stretched conditions.
+    std::array<double, 3> _stretchedTheta;
+    std::array<double, 3> _stretchedSinTheta;
+    std::array<double, 3> _stretchedCotTheta;
 
 public:
     MTriangle(double eqArea);
@@ -42,6 +47,9 @@ public:
     // Not allowing setting the area: void setArea(double area) { _currentArea = area; }
     double getArea() { return _currentArea; }
     void calcArea();
+    double getStretchedArea() { return _stretchedArea; }
+    void calcStretchedArea(double d); // Calculates the stretched area, and store the result in _stretchedArea
+                                      // Does not calculate derivatives.
 
     std::array<double, 3>& getTheta() { return _theta; }
     std::array<double, 3>& getSinTheta() { return _sinTheta; }
@@ -50,6 +58,11 @@ public:
     std::array<std::array<std::array<double, 3>, 3>, 3>& getDSinTheta() { return _dSinTheta; }
     std::array<std::array<std::array<double, 3>, 3>, 3>& getDCotTheta() { return _dCotTheta; }
     void calcTheta(); // would calculate all variables related to theta
+    std::array<double, 3>& getStretchedTheta() { return _stretchedTheta; }
+    std::array<double, 3>& getStretchedSinTheta() { return _stretchedSinTheta; }
+    std::array<double, 3>& getStretchedCotTheta() { return _stretchedCotTheta; }
+    void calcStretchedTheta(double d); // Calculates angles under stretched conditions (w/o derivatives)
+                                       // The results are stored in _stretchedXxx variables.
 
 };
 

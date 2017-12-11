@@ -40,6 +40,16 @@ void MTriangle::calcArea() {
 
 }
 
+void MTriangle::calcStretchedArea(double d) {
+    auto& v0 = _pTriangle->getVertices()[0];
+    auto& v1 = _pTriangle->getVertices()[1];
+    auto& v2 = _pTriangle->getVertices()[2];
+
+    _stretchedArea = 0.5 * magnitude(vectorProductStretched(v0->coordinate, v0->force, v1->coordinate, v1->force,
+                                                            v0->coordinate, v0->force, v2->coordinate, v2->force,
+                                                            d));
+}
+
 void MTriangle::calcTheta() {
     /*
         This calculation depends on the result of the length calculation of edges.
@@ -98,5 +108,40 @@ void MTriangle::calcTheta() {
             }
         }
 
+    }
+}
+
+void MTriangle::calcStretchedTheta(double d) {
+    /*
+        This calculation depends on the result of the length calculation of edges.
+    */
+
+    // calculate thetas
+    for(int angleIdx = 0; angleIdx < 3; ++angleIdx) {
+
+        // Start from this vertex notated temporarily as v0, and go counter-clockwise
+        // All the temporary variables are indexed RELATIVELY, i.e. starting from 0, NOT from angleIdx.
+        auto& v0 = _pTriangle->getVertices()[angleIdx];
+        auto& v1 = _pTriangle->getVertices()[(angleIdx+1) % 3];
+        auto& v2 = _pTriangle->getVertices()[(angleIdx+2) % 3];
+
+        auto m0 = _pTriangle->getEdges()[angleIdx]->getMEdge();
+        auto m1 = _pTriangle->getEdges()[(angleIdx+1) % 3]->getMEdge();
+        auto m2 = _pTriangle->getEdges()[(angleIdx+2) % 3]->getMEdge();
+
+        double l0Stretched = m0->getStretchedLength(); // length v0 - v1
+        double l1Stretched = m1->getStretchedLength(); // length v1 - v2
+        double l2Stretched = m2->getStretchedLength(); // length v2 - v0
+
+        double dot12Stretched = scalarProductStretched(v0->coordinate, v0->force, v1->coordinate, v1->force,
+                                                       v0->coordinate, v0->force, v2->coordinate, v2->force,
+                                                       d);
+
+        double cosThetaStretched = dot12Stretched / (l0Stretched * l2Stretched);
+
+        // Calculate sinTheta, theta and cotTheta
+        _stretchedSinTheta[angleIdx] = sqrt(1 - cosThetaStretched*cosThetaStretched);
+        _stretchedTheta[angleIdx] = acos(cosThetaStretched);
+        _stretchedCotTheta[angleIdx] = cosThetaStretched / _stretchedSinTheta[angleIdx];
     }
 }
