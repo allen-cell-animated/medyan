@@ -73,7 +73,7 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
             _FFType.forces(v, v->getNeighborVertices(),
                 mvc->getArea(), mvc->getDArea(), mvc->getDNeighborArea(),
                 mvc->getCurv(), mvc->getDCurv(), mvc->getDNeighborCurv(),
-                kElastic, eqArea);
+                kBending, eqCurv);
         }
     }
 }
@@ -92,7 +92,7 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForcesAux() {
             _FFType.forcesAux(v, v->getNeighborVertices(),
                 mvc->getArea(), mvc->getDArea(), mvc->getDNeighborArea(),
                 mvc->getCurv(), mvc->getDCurv(), mvc->getDNeighborCurv(),
-                kElastic, eqArea);
+                kBending, eqCurv);
         }
     }
 }
