@@ -141,10 +141,10 @@ void MVoronoiCell::calcCurv() {
         }
 
         // Now, dDiff is Eye3, and dNDiff is -Eye3
-        std::array<std::array<double, 3>, 3> tensorTmp0 = tensorProduct<3>(vectorSum<3>(mTriangleL->getDCotTheta[triLIdx1][triLIdx0], mTriangleR->getDCotTheta[triRIdx2][triRIdx0]), diff);
-        std::array<std::array<double, 3>, 3> tensorTmp1 = tensorProduct<3>(vectorSum<3>(mTriangleL->getDCotTheta[triLIdx1][triLIdx2], mTriangleR->getDCotTheta[triRIdx2][triRIdx1]), diff);
-        std::array<std::array<double, 3>, 3> tensorTmpL = tensorProduct<3>(mTriangleL->getDCotTheta[triLIdx1][triLIdx1], diff);
-        std::array<std::array<double, 3>, 3> tensorTmpR = tensorProduct<3>(mTriangleR->getDCotTheta[triRIdx2][triRIdx2], diff);
+        std::array<std::array<double, 3>, 3> tensorTmp0 = tensorProduct<3>(vectorSum<3>(mTriangleL->getDCotTheta()[triLIdx1][triLIdx0], mTriangleR->getDCotTheta()[triRIdx2][triRIdx0]), diff);
+        std::array<std::array<double, 3>, 3> tensorTmp1 = tensorProduct<3>(vectorSum<3>(mTriangleL->getDCotTheta()[triLIdx1][triLIdx2], mTriangleR->getDCotTheta()[triRIdx2][triRIdx1]), diff);
+        std::array<std::array<double, 3>, 3> tensorTmpL = tensorProduct<3>(mTriangleL->getDCotTheta()[triLIdx1][triLIdx1], diff);
+        std::array<std::array<double, 3>, 3> tensorTmpR = tensorProduct<3>(mTriangleR->getDCotTheta()[triRIdx2][triRIdx2], diff);
 
         matrixIncrease<3>(dK, matrixSum<3>(tensorTmp0, matrixMultiply<3>(Eye3, sumCotTheta)));
         matrixIncrease<3>(dNeighborK[nIdx], matrixDifference<3>(tensorTmp1, matrixMultiply<3>(Eye3, sumCotTheta)));
