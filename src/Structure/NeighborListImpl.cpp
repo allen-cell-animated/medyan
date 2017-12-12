@@ -391,6 +391,8 @@ vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
     return _list[bb];
 }
 
+/// Triangle - Cylinder
+
 void TriangleCylinderNL::updateNeighbors(Triangle *t) {
     // clear existing
     _list[t].clear();
@@ -403,3 +405,47 @@ void TriangleCylinderNL::updateNeighbors(Triangle *t) {
         if(dist < _rMax) _list[t].push_back(c);
     }
 }
+
+void TriangleCylinderNL::addNeighbor(Neighbor* n) {
+    
+    Triangle* t; Cylinder* c;
+    if((t = dynamic_cast<Triangle*>(n))) {
+        updateNeighbors(t);
+    }
+    else if((c = dynamic_cast<Cylinder*>(n))) {
+        
+        for(auto it = _list.begin(); it != _list.end(); it++) {
+            
+            //if within range, add it
+            if(twoPointDistance(array2Vector<double, 3>(it->first->coordinate), c->coordinate) < _rMax)
+                it->second.push_back(c);
+        }
+    }
+    else return;
+}
+
+void TriangleCylinderNL::removeNeighbor(Neighbor* n) {
+    
+    Triangle* t; Cylinder* c;
+    if((t = dynamic_cast<Triangle*>(n))) {
+        _list.erase(t);
+    }
+    else if((c = dynamic_cast<Cylinder*>(n))) {
+        for(auto it = _list.begin(); it != _list.end(); it++) {
+            
+            auto cit = find(it->second.begin(), it->second.end(), c);
+            if(cit != it->second.end()) it->second.erase(cit);
+        }
+    }
+    else return;
+}
+
+void TriangleCylinderNL::reset() {
+    
+    _list.clear();
+    
+    //loop through all neighbor keys
+    for(auto t: Triangle::getTriangles())
+        updateNeighbors(t);
+}
+

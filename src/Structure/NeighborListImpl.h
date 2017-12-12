@@ -183,7 +183,23 @@ private:
 
     void updateNeighbors(Triangle* t); // Helper function to update neighbors
 
-    // TODO: other functions
+public:
+    TriangleCylinderNL(double rMax): NeighborList(rMax) {}
+
+    virtual void addNeighbor(Neighbor* n);
+    virtual void removeNeighbor(Neighbor* n);
+
+    //@{
+    /// The implementation of these functions calls the static version,
+    /// all Triangles and Cylinders are dynamic
+    virtual void addDynamicNeighbor(DynamicNeighbor* n) { addNeighbor(n); }
+    virtual void removeDynamicNeighbor(DynamicNeighbor* n) { removeNeighbor(n); }
+    //@}
+
+    virtual void reset();
+
+    /// Get all Cylinder neighbors of a triangle
+    vector<Cylinder*> getNeighbors(Triangle* t) { return _list[t]; }
 };
 
 
