@@ -19,6 +19,9 @@ private:
     double _eqArea; // Length of unstretched area
     double _kElastic; // Elastic modulus of the triangle
 
+    double _kExVol; ///< Local excluded volume constant, which describes
+                    ///< excluded volume interactions between triangles and cylinder tips
+
     double _currentArea; // Current area
     std::array<std::array<double, 3>, 3> _dCurrentArea; // The derivative of the area. _dCurrentArea[vtxIdx][xyz]
     double _stretchedArea; // Temporarily store the stretched area
@@ -43,6 +46,9 @@ public:
 
     void setElasticModulus(double kElastic) { _kElastic = kElastic; }
     double getElasticModulus() { return _kElastic; }
+
+    void getExVolConst(double kExVol) { _kExVol = kExVol; }
+    double getExVolConst() { return _kExVol; }
 
     // Not allowing setting the area: void setArea(double area) { _currentArea = area; }
     double getArea() { return _currentArea; }

@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_TriangleBeadVolumeFF_h
-#define MEDYAN_TriangleBeadVolumeFF_h
+#ifndef MEDYAN_TriangleCylinderVolumeFF_h
+#define MEDYAN_TriangleCylinderVolumeFF_h
 
 #include <vector>
 
@@ -21,24 +21,25 @@
 #include "ForceField.h"
 
 //FORWARD DECLARATIONS
-class TriangleBeadVolumeInteractions;
+class TriangleCylinderVolumeInteractions;
 class Triangle;
+class Cylinder;
 class Bead;
 
 /// An implementation of the ForceField class that calculates
 /// Triangle vs bead volume interactions.
-class TriangleBeadVolumeFF : public ForceField {
+class TriangleCylinderVolumeFF : public ForceField {
     
 private:
-    vector <unique_ptr<TriangleBeadVolumeInteractions>>
-    _triangleBeadVolInteractionVector;  ///< Vector of initialized volume interactions
+    vector <unique_ptr<TriangleCylinderVolumeInteractions>>
+    _triangleCylinderVolInteractionVector;  ///< Vector of initialized volume interactions
     
-    TriangleBeadVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
+    TriangleCylinderVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
     /// Initialize the volume forcefields
-    TriangleBeadVolumeFF(string& interaction);
+    TriangleCylinderVolumeFF(string& interaction);
     
-    virtual string getName() {return "Triangle Volume";}
+    virtual string getName() {return "Triangle Cylinder Volume";}
     virtual void whoIsCulprit();
 
     virtual double computeEnergy(double d);

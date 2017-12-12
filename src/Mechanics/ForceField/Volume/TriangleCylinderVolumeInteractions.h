@@ -3,7 +3,7 @@
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2017-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -11,26 +11,27 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_TriangleBeadVolumeInteractions_h
-#define MEDYAN_TriangleBeadVolumeInteractions_h
+#ifndef MEDYAN_TriangleCylinderVolumeInteractions_h
+#define MEDYAN_TriangleCylinderVolumeInteractions_h
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class NeighborList;
 class Triangle;
+class Cylinder;
 class Bead;
 
 /// Represents a volume interaction between [Cylinders](@ref Cylinder).
-class TriangleBeadVolumeInteractions {
+class TriangleCylinderVolumeInteractions {
 
-friend class TriangleBeadVolumeFF;
+friend class TriangleCylinderVolumeFF;
     
 protected:
     //@{
     /// The triangle and bead culprits in the case of an error
     Triangle* _triangleCulprit = nullptr;
-    Bead* _beadCulprit = nullptr;
+    Cylinder* _cylinderCulprit = nullptr;
     //@}
     
 public:

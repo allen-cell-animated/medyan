@@ -11,9 +11,10 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "TriangleBeadExclVolRepulsion.h"
+#include "TriangleCylinderBeadExclVolRepulsion.h"
 
 #include "Triangle.h"
+#include "Vertex.h"
 #include "Bead.h"
 
 #include "MathFunctions.h"
@@ -21,12 +22,12 @@
 
 using namespace mathfunc;
 
+// The function requires that the area of the triangle has already been calculated
 
 // TODO: Implement this
 
-double TriangleBeadExclVolRepulsion::energy(Bead* b1, Bead* b2,
-                                        Bead* b3, Bead* b4,
-                                        double kRepuls) {
+double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
+                                                    double kExVol) {
     
     auto c1 = b1->coordinate;
     auto c2 = b2->coordinate;
@@ -81,9 +82,8 @@ double TriangleBeadExclVolRepulsion::energy(Bead* b1, Bead* b2,
     return energy;
 }
 
-double TriangleBeadExclVolRepulsion::energy(Bead* b1, Bead* b2,
-                                        Bead* b3, Bead* b4,
-                                        double kRepuls, double z) {
+double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
+                                                    double kExVol, double d) {
     
     auto c1 = b1->coordinate;
     auto c2 = b2->coordinate;
@@ -157,9 +157,8 @@ double TriangleBeadExclVolRepulsion::energy(Bead* b1, Bead* b2,
 
 }
 
-void TriangleBeadExclVolRepulsion::forces(Bead* b1, Bead* b2,
-                                      Bead* b3, Bead* b4,
-                                      double kRepuls) {
+void TriangleCylinderBeadExclVolRepulsion::forces(Triangle* t, Bead* b,
+                                                  double kExVol) {
     
     auto c1 = b1->coordinate;
     auto c2 = b2->coordinate;
@@ -294,9 +293,8 @@ void TriangleBeadExclVolRepulsion::forces(Bead* b1, Bead* b2,
 
 }
 
-void TriangleBeadExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
-                                         Bead* b3, Bead* b4,
-                                         double kRepuls) {
+void TriangleCylinderBeadExclVolRepulsion::forcesAux(Triangle* t, Bead* b,
+                                                     double kExVol) {
     
     auto c1 = b1->coordinate;
     auto c2 = b2->coordinate;

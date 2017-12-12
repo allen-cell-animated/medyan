@@ -11,33 +11,34 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_TriangleBeadExclVolume_h
-#define MEDYAN_TriangleBeadExclVolume_h
+#ifndef MEDYAN_TriangleCylinderExclVolume_h
+#define MEDYAN_TriangleCylinderExclVolume_h
 
 #include "common.h"
 
-#include "TriangleBeadVolumeInteractions.h"
+#include "TriangleCylinderVolumeInteractions.h"
 #include "NeighborListImpl.h"
 
 #include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Triangle;
+class Cylinder;
 class Bead;
 
 /// Represents an excuded volume interaction between two [Cylinders](@ref Cylinder).
-template <class TriangleBeadExclVolumeInteractionType>
-class TriangleBeadExclVolume : public TriangleBeadVolumeInteractions {
+template <class TriangleCylinderExclVolumeInteractionType>
+class TriangleCylinderExclVolume : public TriangleCylinderVolumeInteractions {
     
 private:
-    TriangleBeadExclVolumeInteractionType _FFType;
-    CylinderCylinderNL* _neighborList;  ///< TODO: Change neighbor list.
+    TriangleCylinderExclVolumeInteractionType _FFType;
+    TriangleCylinderNL* _neighborList;  ///< Neighbor list of cylinders
     
 public:
     ///Constructor
-    TriangleBeadExclVolume() {
-        //v TODO: change this.
-        _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
+    TriangleCylinderExclVolume() {
+        //v TODO: maybe change VolumeCutoff?
+        _neighborList = new TriangleCylinderNL(SysParams::Mechanics().VolumeCutoff);
     }
     
     virtual double computeEnergy(double d);
@@ -47,7 +48,7 @@ public:
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() { return _neighborList; }
     
-    virtual const string getName() {return "Triangle Bead Excluded Volume";}
+    virtual const string getName() {return "Triangle Cylinder Excluded Volume";}
 };
 
 #endif

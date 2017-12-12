@@ -3,7 +3,7 @@
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2017-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_TriangleBeadExclVolRepulsion_h
-#define MEDYAN_TriangleBeadExclVolRepulsion_h
+#ifndef MEDYAN_TriangleCylinderBeadExclVolRepulsion_h
+#define MEDYAN_TriangleCylinderBeadExclVolRepulsion_h
 
 #include "common.h"
 
@@ -21,15 +21,15 @@ class Triangle;
 class Bead;
 
 /// Represents a repulsive excluded volume potential used by the
-/// CylinderExclVolume template.
-class TriangleBeadExclVolRepulsion {
+/// TriangleCylinderExclVolume template.
+class TriangleCylinderBeadExclVolRepulsion {
     
 public:
-    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls);
-    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, double d);
+    double energy(Triangle*, Bead*, double kExVol);
+    double energy(Triangle*, Bead*, double kExVol, double d);
     
-    void forces(Bead*, Bead*, Bead*, Bead*, double Krepuls);
-    void forcesAux(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+    void forces(Triangle*, Bead*, double kExVol);
+    void forcesAux(Triangle*, Bead*, double kExVol);
 };
 
 
