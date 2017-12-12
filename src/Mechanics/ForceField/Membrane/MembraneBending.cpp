@@ -1,11 +1,3 @@
-/*
-
-Implementing the "easy" bending force field:
-
-TODO: Implement this
-
-*/
-
 #include "MembraneBending.h"
 
 #include "Membrane.h"
