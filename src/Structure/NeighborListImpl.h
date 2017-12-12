@@ -26,6 +26,7 @@
 class Cylinder;
 class Bubble;
 class BoundaryElement;
+class Triangle;
 
 /// An implementation of NeighborList for Cylinder-Cylinder interactions
 /// This can be a half or full list depending on the usage.
@@ -175,6 +176,15 @@ public:
 };
 
 
+class TriangleCylinderNL: public NeighborList {
+
+private:
+    unordered_map<Triangle*, vector<Cylinder*>> _list; // The neighbors list, as a hash map
+
+    void updateNeighbors(Triangle* t); // Helper function to update neighbors
+
+    // TODO: other functions
+};
 
 
 

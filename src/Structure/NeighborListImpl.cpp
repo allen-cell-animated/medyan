@@ -18,6 +18,7 @@
 #include "Cylinder.h"
 #include "Bubble.h"
 #include "BoundaryElement.h"
+#include "Triangle.h"
 
 #include "GController.h"
 #include "MathFunctions.h"
@@ -390,3 +391,15 @@ vector<Cylinder*> BubbleCylinderNL::getNeighbors(Bubble* bb) {
     return _list[bb];
 }
 
+void TriangleCylinderNL::updateNeighbors(Triangle *t) {
+    // clear existing
+    _list[t].clear();
+
+    // loop through beads, add as neighbor
+    for(auto &c: Cylinder::getCylinders()) {
+        
+        double dist = twoPointDistance(c->coordinate, t->coordinate);
+        //If within range, add it
+        if(dist < _rMax) _list[t].push_back(c);
+    }
+}

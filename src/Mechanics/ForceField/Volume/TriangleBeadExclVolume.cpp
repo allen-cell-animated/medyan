@@ -26,10 +26,7 @@ double TriangleBeadExclVolume<TriangleBeadExclVolumeInteractionType>::computeEne
 
     // TODO: implement this
     
-    for(auto ci : Cylinder::getCylinders()) {
-        
-        //do not calculate exvol for a non full length cylinder
-        if(!ci->isFullLength()) continue;
+    for(auto ti: Triangle::getTriangles()) {
         
         for(auto &cn : _neighborList->getNeighbors(ci)) {
             
