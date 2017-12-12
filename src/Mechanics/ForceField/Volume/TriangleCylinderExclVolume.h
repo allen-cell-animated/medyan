@@ -37,7 +37,7 @@ private:
 public:
     ///Constructor
     TriangleCylinderExclVolume() {
-        //v TODO: maybe change VolumeCutoff?
+        //v TODO: maybe use a different VolumeCutoff?
         _neighborList = new TriangleCylinderNL(SysParams::Mechanics().VolumeCutoff);
     }
     

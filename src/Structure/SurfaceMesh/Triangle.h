@@ -60,6 +60,9 @@ public:
         return _triangles.getElements();
     }
 
+    // Print information
+    virtual void printSelf();
+
 
 };
 
