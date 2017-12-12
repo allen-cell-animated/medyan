@@ -46,6 +46,8 @@ private:
     std::vector<Edge*> _neighborEdges; // The tethers, with the same order as neighbor vertices.
     std::vector<size_t> _edgeHead; // The index of edge head vertex
                                    // ...[2] = 0 means the 2nd edge has 0th vertex at center
+    
+    static Database<Vertex*> _vertices; // Collection of vertices in SubSystem
 
 public:
     ///Main constructor
@@ -66,6 +68,12 @@ public:
     std::vector<Triangle*>& getNeighborTriangles() { return _neighborTriangles; }
     std::vector<size_t>& getEdgeHead() { return _edgeHead; }
     std::vector<size_t>& getTriangleHead() { return _triangleHead; }
+
+    /// Get all instances of this class from the SubSystem
+    static const vector<Vertex*>& getVertices() {
+        return _vertices.getElements();
+    }
+
 };
 
 

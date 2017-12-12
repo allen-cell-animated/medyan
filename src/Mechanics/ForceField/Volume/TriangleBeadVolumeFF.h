@@ -30,15 +30,15 @@ class Bead;
 class TriangleBeadVolumeFF : public ForceField {
     
 private:
-    vector <unique_ptr<CylinderVolumeInteractions>>
-    _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
+    vector <unique_ptr<TriangleBeadVolumeInteractions>>
+    _triangleBeadVolInteractionVector;  ///< Vector of initialized volume interactions
     
-    CylinderVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
+    TriangleBeadVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
     /// Initialize the volume forcefields
-    CylinderVolumeFF(string& interaction);
+    TriangleBeadVolumeFF(string& interaction);
     
-    virtual string getName() {return "Cylinder Volume";}
+    virtual string getName() {return "Triangle Volume";}
     virtual void whoIsCulprit();
 
     virtual double computeEnergy(double d);

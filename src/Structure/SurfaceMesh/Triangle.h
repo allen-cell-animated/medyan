@@ -5,6 +5,7 @@
 
 #include "common.h"
 
+#include "Database.h"
 #include "Trackable.h"
 #include "Movable.h"
 #include "Reactable.h"
@@ -37,6 +38,8 @@ private:
     std::array<size_t, 3> _edgeHead; // The index of edge head vertex.
                                      // e.g. {1, 0, 1} means _edges' heads (Edge->v[0]) are at v1, v1, v0.
 
+    static Database<Triangle*> _triangles; // Collection of triangles in SubSystem
+
 public:
     Triangle(Composite *parent, Vertex *v1, Vertex *v2, Vertex *v3);
 
@@ -47,6 +50,11 @@ public:
     
     // Get mech triangle
     MTriangle* getMTriangle() {return _mTriangle.get();}
+
+    /// Get all instances of this class from the SubSystem
+    static const vector<Triangle*>& getTriangles() {
+        return _triangles.getElements();
+    }
 
 
 };

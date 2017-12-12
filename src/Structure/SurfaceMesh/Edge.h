@@ -37,6 +37,8 @@ private:
 
     unique_ptr<MEdge> _mEdge; // pointer to mech edge
 
+    static Database<Edge*> _edges; // Collection of edges in SubSystem
+
 
 public:
     Edge(Composite *parent, Vertex* v1, Vertex* v2);
@@ -46,6 +48,12 @@ public:
 
     // Get mech edge
     MEdge* getMEdge() {return _mEdge.get();}
+
+    /// Get all instances of this class from the SubSystem
+    static const vector<Edge*>& getEdges() {
+        return _edges.getElements();
+    }
+
 
 };
 

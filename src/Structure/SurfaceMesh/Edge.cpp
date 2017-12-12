@@ -1,5 +1,7 @@
 #include "Edge.h"
 
+Database<Edge*> Edge::_edges;
+
 Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
     _v{v1, v2} {
     
