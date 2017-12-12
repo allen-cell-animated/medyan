@@ -294,14 +294,14 @@ void TriangleCylinderBeadExclVolRepulsion::forces(Triangle* t, Bead* b,
             double dG3 = (BB3*dA3 - A3*dBB3) / B3;
 
             double dNumerator = dG1*(E1 - F1) + G1*(dE1 - dF1) + dG2*(E2 - F2) + G2*(dE2 - dF2) + dG3*(E3 - F3) + G3*(dE3 - dF3);
-            double dDenominator = dBT * D*D + B * 2 * D*dDT + dAT*(-4 * B*C + E*E) + A*(-4 * (dBT*C + B*dCT) + 2 * E*dET) + dFT*(-d*E + C*F) + F*(-(dDT*E + D*dET) + dCT*F + C*dFT);
+            double dDenominator = dBT * D*D + B * 2 * D*dDT + dAT*(-4 * B*C + E*E) + A*(-4 * (dBT*C + B*dCT) + 2 * E*dET) + dFT*(-D*E + C*F) + F*(-(dDT*E + D*dET) + dCT*F + C*dFT);
 
-            dH[nIdx][coordIdx] = (denominator*dNumerator - numerator*dDenominator) / (denominator*denominator);
+            dH[dIdx][coordIdx] = (denominator*dNumerator - numerator*dDenominator) / (denominator*denominator);
         }
     }
 
-    double area = v->getMTriangle()->getArea();
-    auto& dArea = v->getMTriangle()->getDArea();
+    double area = t->getMTriangle()->getArea();
+    auto& dArea = t->getMTriangle()->getDArea();
     
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
         b->force[coordIdx] += kExVol * dH[3][coordIdx] * area;
@@ -443,14 +443,14 @@ void TriangleCylinderBeadExclVolRepulsion::forcesAux(Triangle* t, Bead* b,
             double dG3 = (BB3*dA3 - A3*dBB3) / B3;
 
             double dNumerator = dG1*(E1 - F1) + G1*(dE1 - dF1) + dG2*(E2 - F2) + G2*(dE2 - dF2) + dG3*(E3 - F3) + G3*(dE3 - dF3);
-            double dDenominator = dBT * D*D + B * 2 * D*dDT + dAT*(-4 * B*C + E*E) + A*(-4 * (dBT*C + B*dCT) + 2 * E*dET) + dFT*(-d*E + C*F) + F*(-(dDT*E + D*dET) + dCT*F + C*dFT);
+            double dDenominator = dBT * D*D + B * 2 * D*dDT + dAT*(-4 * B*C + E*E) + A*(-4 * (dBT*C + B*dCT) + 2 * E*dET) + dFT*(-D*E + C*F) + F*(-(dDT*E + D*dET) + dCT*F + C*dFT);
 
-            dH[nIdx][coordIdx] = (denominator*dNumerator - numerator*dDenominator) / (denominator*denominator);
+            dH[dIdx][coordIdx] = (denominator*dNumerator - numerator*dDenominator) / (denominator*denominator);
         }
     }
 
-    double area = v->getMTriangle()->getArea();
-    auto& dArea = v->getMTriangle()->getDArea();
+    double area = t->getMTriangle()->getArea();
+    auto& dArea = t->getMTriangle()->getDArea();
     
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
         b->forceAux[coordIdx] += kExVol * dH[3][coordIdx] * area;
