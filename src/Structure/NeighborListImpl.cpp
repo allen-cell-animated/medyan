@@ -398,7 +398,7 @@ void TriangleCylinderNL::updateNeighbors(Triangle *t) {
     // loop through beads, add as neighbor
     for(auto &c: Cylinder::getCylinders()) {
         
-        double dist = twoPointDistance(c->coordinate, t->coordinate);
+        double dist = twoPointDistance(c->coordinate, array2Vector<double, 3>(t->coordinate));
         //If within range, add it
         if(dist < _rMax) _list[t].push_back(c);
     }

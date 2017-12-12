@@ -40,7 +40,11 @@ private:
 
     static Database<Triangle*> _triangles; // Collection of triangles in SubSystem
 
+    void updateCoordinate(); // helper function to update coordiante of this triangle
+
 public:
+    std::array<double, 3> coordinate; // Coordinate of the center point, updated with updateCoordiante()
+
     Triangle(Composite *parent, Vertex *v1, Vertex *v2, Vertex *v3);
 
     // Get Beads
