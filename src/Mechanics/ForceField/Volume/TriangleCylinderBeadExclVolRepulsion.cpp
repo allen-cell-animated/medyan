@@ -29,55 +29,62 @@ using namespace mathfunc;
 double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
                                                     double kExVol) {
     
-    auto c1 = b1->coordinate;
-    auto c2 = b2->coordinate;
-    auto c3 = b3->coordinate;
-    auto c4 = b4->coordinate;
-    
-    //check if parallel
-    if(areParallel(c1, c2, c3, c4)) {
+    auto& v = t->getVertices();
+
+    auto c0 = v[0]->coordinate;
+    auto c1 = v[1]->coordinate;
+    auto c2 = v[2]->coordinate;
+    auto cb = b->coordinate;
         
-        double d = twoPointDistance(c1, c3);
-        double invDSquare =  1 / (d * d);
-        double energy = kRepuls * invDSquare * invDSquare;
-        
-        return energy;
-    }
-    
     //check if in same plane
-    if(areInPlane(c1, c2, c3, c4)) {
+    if(areInPlane(c0, c1, c2, cb)) {
         
-        //slightly move point
-        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
+        // slightly move point. Using negative number here to move "into the cell".
+        cb = movePointOutOfPlane(c0, c1, c2, cb, 4, -0.01);
     }
     
-    double a = scalarProduct(c1, c2, c1, c2);
-    double b = scalarProduct(c3, c4, c3, c4);
-    double c = scalarProduct(c3, c1, c3, c1);
-    double d = scalarProduct(c1, c2, c3, c4);
-    double e = scalarProduct(c1, c2, c3, c1);
-    double f = scalarProduct(c3, c4, c3, c1);
+    double A = scalarProduct(c0, c1, c0, c1);
+    double B = scalarProduct(c1, c2, c1, c2);
+    double C = scalarProduct(cb, c0, cb, c0);
+    double D = 2 * scalarProduct(c0, c1, cb, c0);
+    double E = 2 * scalarProduct(c1, c2, cb, c0);
+    double F = 2 * scalarProduct(c0, c1, c1, c2);
+
+    double A1 = 2 * A*E - D*F;
+    double A2 = 2 * B*D - 2 * A*E + (D - E)*F;
+    double A3 = -4 * A*B - 2 * B*D + F*(E + F);
+
+    double B1 = 4 * A*C - D*D;
+    double B2 = 4 * A*C - D*D + 4 * B*C - E*E + 4 * C*F - 2 * D*E;
+    double B3 = 4 * B*A - F*F + 4 * B*C - E*E + 4 * B*D - 2 * E*F;
+    double BB1 = sqrt(B1);
+    double BB2 = sqrt(B2);
+	double BB3 = sqrt(B3);
+
+    double C1 = 2 * A + D;
+    double C2 = 2 * A + D + E + 2 * (B + F);
+    double C3 = 2 * B + E + F;
+    double D1 = D;
+    double D2 = D + E;
+    double D3 = E + F;
+
+    double E1 = atan(C1 / BB1);
+    double E2 = atan(C2 / BB2);
+    double E3 = atan(C3 / BB3);
+    double F1 = atan(D1 / BB1);
+    double F2 = atan(D2 / BB2);
+    double F3 = atan(D3 / BB3);
+
+    double G1 = A1 / BB1;
+    double G2 = A2 / BB2;
+    double G3 = A3 / BB3;
+
+    double numerator = G1*(E1 - F1) + G2*(E2 - F2) + G3*(E3 - F3);
+    double denominator = B*D*D + A*(-4 * B*C + E*E) + F*(-D*E + C*F);
+
+    double H = numerator / denominator;
     
-    double AA = sqrt(a*c - e*e);
-    double BB = sqrt(b*c - f*f);
-    
-    double CC = d*e - a*f;
-    double DD = b*e - d*f;
-    
-    double EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
-    double FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
-    
-    double GG = d*d - a*b - CC;
-    double HH = CC + GG - DD;
-    double JJ = c*(GG + CC) + e*DD - f*CC;
-    
-    
-    double ATG1 = atan( (a + e)/AA) - atan(e/AA);
-    double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
-    double ATG3 = atan((f)/BB) - atan((f - b)/BB);
-    double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
-    
-    double energy = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+    double energy = kExVol * t->getMTriangle()->getArea() * H;
     
     return energy;
 }
@@ -85,344 +92,371 @@ double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
 double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
                                                     double kExVol, double d) {
     
-    auto c1 = b1->coordinate;
-    auto c2 = b2->coordinate;
-    auto c3 = b3->coordinate;
-    auto c4 = b4->coordinate;
-    
-    vector<double> zero (3,0); //Aux zero vector;
-    
-    vector<double> c1Stretched = {c1[0] + z * b1->force[0],
-                                  c1[1] + z * b1->force[1],
-                                  c1[2] + z * b1->force[2]};
-    
-    vector<double> c2Stretched = {c2[0] + z * b2->force[0],
-                                  c2[1] + z * b2->force[1],
-                                  c2[2] + z * b2->force[2]};
-    
-    vector<double> c3Stretched = {c3[0] + z * b3->force[0],
-                                  c3[1] + z * b3->force[1],
-                                  c3[2] + z * b3->force[2]};
-    
-    vector<double> c4Stretched = {c4[0] + z * b4->force[0],
-                                  c4[1] + z * b4->force[1],
-                                  c4[2] + z * b4->force[2]};
-    
-    //check if parallel
-    if(areParallel(c1Stretched, c2Stretched,
-                   c3Stretched, c4Stretched)) {
-        
-        double d = twoPointDistance(c1Stretched, c3Stretched);
-        double invDSquare =  1 / (d * d);
-        double energy =  kRepuls * invDSquare * invDSquare;
-        
-        return energy;
-    }
-    
+    auto& v = t->getVertices();
+
+    auto& c0Raw = v[0]->coordinate;
+    auto& c1Raw = v[1]->coordinate;
+    auto& c2Raw = v[2]->coordinate;
+    auto& cbRaw = b->coordinate;
+
+    auto& f0 = v[0]->force;
+    auto& f1 = v[1]->force;
+    auto& f2 = v[2]->force;
+    auto& fb = b->force;
+
+    vector<double> c0 = {c0Raw[0] + d * f0[0], c0Raw[1] + d * f0[1], c0Raw[2] + d * f0[2]};
+    vector<double> c1 = {c1Raw[0] + d * f1[0], c1Raw[1] + d * f1[1], c1Raw[2] + d * f1[2]};
+    vector<double> c2 = {c2Raw[0] + d * f2[0], c2Raw[1] + d * f2[1], c2Raw[2] + d * f2[2]};
+    vector<double> cb = {cbRaw[0] + d * fb[0], cbRaw[1] + d * fb[1], cbRaw[2] + d * fb[2]};
+
     //check if in same plane
-    if(areInPlane(c1Stretched, c2Stretched, c3Stretched, c4Stretched)) {
-        //slightly move point
-        c2Stretched = movePointOutOfPlane(c1Stretched, c2Stretched,
-                                          c3Stretched, c4Stretched, 2, 0.01);
+    if(areInPlane(c0, c1, c2, cb)) {
+        
+        // slightly move point. Using negative number here to move "into the cell".
+        cb = movePointOutOfPlane(c0, c1, c2, cb, 4, -0.01);
     }
     
-    double a = scalarProduct(c1Stretched, c2Stretched, c1Stretched, c2Stretched);
-    double b = scalarProduct(c3Stretched, c4Stretched, c3Stretched, c4Stretched);
-    double c = scalarProduct(c3Stretched, c1Stretched, c3Stretched, c1Stretched);
-    double d = scalarProduct(c1Stretched, c2Stretched, c3Stretched, c4Stretched);
-    double e = scalarProduct(c1Stretched, c2Stretched, c3Stretched, c1Stretched);
-    double f = scalarProduct(c3Stretched, c4Stretched, c3Stretched, c1Stretched);
+    double A = scalarProduct(c0, c1, c0, c1);
+    double B = scalarProduct(c1, c2, c1, c2);
+    double C = scalarProduct(cb, c0, cb, c0);
+    double D = 2 * scalarProduct(c0, c1, cb, c0);
+    double E = 2 * scalarProduct(c1, c2, cb, c0);
+    double F = 2 * scalarProduct(c0, c1, c1, c2);
+
+    double A1 = 2 * A*E - D*F;
+    double A2 = 2 * B*D - 2 * A*E + (D - E)*F;
+    double A3 = -4 * A*B - 2 * B*D + F*(E + F);
+
+    double B1 = 4 * A*C - D*D;
+    double B2 = 4 * A*C - D*D + 4 * B*C - E*E + 4 * C*F - 2 * D*E;
+    double B3 = 4 * B*A - F*F + 4 * B*C - E*E + 4 * B*D - 2 * E*F;
+    double BB1 = sqrt(B1);
+    double BB2 = sqrt(B2);
+	double BB3 = sqrt(B3);
+
+    double C1 = 2 * A + D;
+    double C2 = 2 * A + D + E + 2 * (B + F);
+    double C3 = 2 * B + E + F;
+    double D1 = D;
+    double D2 = D + E;
+    double D3 = E + F;
+
+    double E1 = atan(C1 / BB1);
+    double E2 = atan(C2 / BB2);
+    double E3 = atan(C3 / BB3);
+    double F1 = atan(D1 / BB1);
+    double F2 = atan(D2 / BB2);
+    double F3 = atan(D3 / BB3);
+
+    double G1 = A1 / BB1;
+    double G2 = A2 / BB2;
+    double G3 = A3 / BB3;
+
+    double numerator = G1*(E1 - F1) + G2*(E2 - F2) + G3*(E3 - F3);
+    double denominator = B*D*D + A*(-4 * B*C + E*E) + F*(-D*E + C*F);
+
+    double H = numerator / denominator;
     
-    double AA = sqrt(a*c - e*e);
-    double BB = sqrt(b*c - f*f);
-    
-    double CC = d*e - a*f;
-    double DD = b*e - d*f;
-    
-    double EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
-    double FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
-    
-    double GG = d*d - a*b - CC;
-    double HH = CC + GG - DD;
-    double JJ = c*(GG + CC) + e*DD - f*CC;
-    
-    double ATG1 = atan( (a + e)/AA) - atan(e/AA);
-    double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
-    double ATG3 = atan((f)/BB) - atan((f - b)/BB);
-    double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
-    
-    double energy = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+    double energy = kExVol * t->getMTriangle()->getStretchedArea() * H;
     
     return energy;
-
 }
 
 void TriangleCylinderBeadExclVolRepulsion::forces(Triangle* t, Bead* b,
                                                   double kExVol) {
     
-    auto c1 = b1->coordinate;
-    auto c2 = b2->coordinate;
-    auto c3 = b3->coordinate;
-    auto c4 = b4->coordinate;
-    
-    //check if parallel
-    if(areParallel(c1, c2, c3, c4)) {
+    auto& v = t->getVertices();
+
+    auto c0 = v[0]->coordinate;
+    auto c1 = v[1]->coordinate;
+    auto c2 = v[2]->coordinate;
+    auto cb = b->coordinate;
         
-        double d = twoPointDistance(c1, c3);
-        double invDSquare =  1/ (d * d);
-        double f0 = 4 * kRepuls * invDSquare * invDSquare * invDSquare;
-        
-        b1->force[0] += - f0 * (c3[0] - c1[0]);
-        b1->force[1] += - f0 * (c3[1] - c1[1]);
-        b1->force[2] += - f0 * (c3[2] - c1[2]);
-        
-        b2->force[0] += - f0 * (c4[0] - c2[0]);
-        b2->force[1] += - f0 * (c4[1] - c2[1]);
-        b2->force[2] += - f0 * (c4[2] - c2[2]);
-        
-        b3->force[0] += f0 * (c3[0] - c1[0]);
-        b3->force[1] += f0 * (c3[1] - c1[1]);
-        b3->force[2] += f0 * (c3[2] - c1[2]);
-        
-        b4->force[0] += f0 * (c4[0] - c2[0]);
-        b4->force[1] += f0 * (c4[1] - c2[1]);
-        b4->force[2] += f0 * (c4[2] - c2[2]);
-        
-        return;
-    }
-    
     //check if in same plane
-    if(areInPlane(c1, c2, c3, c4)) {
+    if(areInPlane(c0, c1, c2, cb)) {
         
-        //slightly move point
-        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
+        // slightly move point. Using negative number here to move "into the cell".
+        cb = movePointOutOfPlane(c0, c1, c2, cb, 4, -0.01);
+    }
+    
+    double A = scalarProduct(c0, c1, c0, c1);
+    double B = scalarProduct(c1, c2, c1, c2);
+    double C = scalarProduct(cb, c0, cb, c0);
+    double D = 2 * scalarProduct(c0, c1, cb, c0);
+    double E = 2 * scalarProduct(c1, c2, cb, c0);
+    double F = 2 * scalarProduct(c0, c1, c1, c2);
+
+    // Derivative index is 0, 1, 2, b
+    array<array<double, 3>, 4> dA = {{
+        {{ 2 * (c0[0] - c1[0]), 2 * (c0[1] - c1[1]), 2 * (c0[2] - c1[2]) }},
+        {{ 2 * (c1[0] - c0[0]), 2 * (c1[1] - c0[1]), 2 * (c1[2] - c0[2]) }}
+    }};
+    array<array<double, 3>, 4> dB = {{
+        {{ 0, 0, 0 }},
+        {{ 2 * (c1[0] - c2[0]), 2 * (c1[1] - c2[1]), 2 * (c1[2] - c2[2]) }},
+        {{ 2 * (c2[0] - c1[0]), 2 * (c2[1] - c1[1]), 2 * (c2[2] - c1[2]) }}
+    }};
+    array<array<double, 3>, 4> dC = {{
+        {{ 2 * (c0[0] - cb[0]), 2 * (c0[1] - cb[1]), 2 * (c0[2] - cb[2]) }},
+        {{ 0, 0, 0 }},
+        {{ 0, 0, 0 }},
+        {{ 2 * (cb[0] - c0[0]), 2 * (cb[1] - c0[1]), 2 * (cb[2] - c0[2]) }}
+    }};
+    array<array<double, 3>, 4> dD = {{
+        {{ 2 * (c1[0] + cb[0] - 2*c0[0]), 2 * (c1[1] + cb[1] - 2*c0[1]), 2 * (c1[2] + cb[2] - 2*c0[2]) }},
+        {{ 2 * (c0[0] - cb[0]), 2 * (c0[1] - cb[1]), 2 * (c0[2] - cb[2]) }},
+        {{ 0, 0, 0 }},
+        {{ 2 * (c0[0] - c1[0]), 2 * (c0[1] - c1[1]), 2 * (c0[2] - c1[2]) }}
+    }};
+    array<array<double, 3>, 4> dE = {{
+        {{ 2 * (c2[0] - c1[0]), 2 * (c2[1] - c1[1]), 2 * (c2[2] - c1[2]) }},
+        {{ 2 * (cb[0] - c0[0]), 2 * (cb[1] - c0[1]), 2 * (cb[2] - c0[2]) }},
+        {{ 2 * (c0[0] - cb[0]), 2 * (c0[1] - cb[1]), 2 * (c0[2] - cb[2]) }},
+        {{ 2 * (c1[0] - c2[0]), 2 * (c1[1] - c2[1]), 2 * (c1[2] - c2[2]) }}
+    }};
+    array<array<double, 3>, 4> dF = {{
+        {{ 2 * (c1[0] - c2[0]), 2 * (c1[1] - c2[1]), 2 * (c1[2] - c2[2]) }},
+        {{ 2 * (c0[0] + c2[0] - 2*c1[0]), 2 * (c0[1] + c2[1] - 2*c1[1]), 2 * (c0[2] + c2[2] - 2*c1[2]) }},
+        {{ 2 * (c1[0] - c0[0]), 2 * (c1[1] - c0[1]), 2 * (c1[2] - c0[2]) }}
+    }};
+
+    double A1 = 2 * A*E - D*F;
+    double A2 = 2 * B*D - 2 * A*E + (D - E)*F;
+    double A3 = -4 * A*B - 2 * B*D + F*(E + F);
+
+    double B1 = 4 * A*C - D*D;
+    double B2 = 4 * A*C - D*D + 4 * B*C - E*E + 4 * C*F - 2 * D*E;
+    double B3 = 4 * B*A - F*F + 4 * B*C - E*E + 4 * B*D - 2 * E*F;
+    double BB1 = sqrt(B1);
+    double BB2 = sqrt(B2);
+	double BB3 = sqrt(B3);
+
+    double C1 = 2 * A + D;
+    double C2 = 2 * A + D + E + 2 * (B + F);
+    double C3 = 2 * B + E + F;
+    double D1 = D;
+    double D2 = D + E;
+    double D3 = E + F;
+
+    double E1 = atan(C1 / BB1);
+    double E2 = atan(C2 / BB2);
+    double E3 = atan(C3 / BB3);
+    double F1 = atan(D1 / BB1);
+    double F2 = atan(D2 / BB2);
+    double F3 = atan(D3 / BB3);
+
+    double G1 = A1 / BB1;
+    double G2 = A2 / BB2;
+    double G3 = A3 / BB3;
+
+    double numerator = G1*(E1 - F1) + G2*(E2 - F2) + G3*(E3 - F3);
+    double denominator = B*D*D + A*(-4 * B*C + E*E) + F*(-D*E + C*F);
+
+    double H = numerator / denominator;
+    
+    array<array<double, 3>, 4> dH = {};
+    for(size_t dIdx = 0; dIdx < 4; ++dIdx) {
+        for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+            double dAT = dA[dIdx][coordIdx];
+            double dBT = dB[dIdx][coordIdx];
+            double dCT = dC[dIdx][coordIdx];
+            double dDT = dD[dIdx][coordIdx];
+            double dET = dE[dIdx][coordIdx];
+            double dFT = dF[dIdx][coordIdx];
+
+            double dA1 = 2 * (dAT*E + A*dET) - (dDT*F + D*dFT);
+            double dA2 = 2 * (dBT*D + B*dDT) - 2 * (dAT*E + A*dET) + ((dDT - dET)*F + (D - E)*dFT);
+            double dA3 = -4 * (dAT*B + A*dBT) - 2 * (dBT*D + B*dDT) + (dFT*(E + F) + F*(dET + dFT));
+
+            double dB1 = 4 * (dAT*C + A*dCT) - 2 * D*dDT;
+            double dB2 = 4 * (dAT*C + A*dCT) - 2 * D*dDT + 4 * (dBT*C + B*dCT) - 2 * E*dET + 4 * (dCT*F + C*dFT) - 2 * (dDT*E + D*dET);
+            double dB3 = 4 * (dBT*A + B*dAT) - 2 * F*dFT + 4 * (dBT*C + B*dCT) - 2 * E*dET + 4 * (dBT*D + B*dDT) - 2 * (dET*F + E*dFT);
+            double dBB1 = dB1 / 2 / BB1;
+            double dBB2 = dB2 / 2 / BB2;
+            double dBB3 = dB3 / 2 / BB3;
+
+            double dC1 = 2 * dAT + dDT;
+            double dC2 = 2 * dAT + dDT + dET + 2 * (dBT + dFT);
+            double dC3 = 2 * dBT + dET + dFT;
+            double dD1 = dDT;
+            double dD2 = dDT + dET;
+            double dD3 = dET + dFT;
+
+            double dE1 = (BB1*dC1 - C1*dBB1) / (B1 + C1*C1);
+            double dE2 = (BB2*dC2 - C2*dBB2) / (B2 + C2*C2);
+            double dE3 = (BB3*dC3 - C3*dBB3) / (B3 + C3*C3);
+            double dF1 = (BB1*dD1 - D1*dBB1) / (B1 + D1*D1);
+            double dF2 = (BB2*dD2 - D2*dBB2) / (B2 + D2*D2);
+            double dF3 = (BB3*dD3 - D3*dBB3) / (B3 + D3*D3);
+
+            double dG1 = (BB1*dA1 - A1*dBB1) / B1;
+            double dG2 = (BB2*dA2 - A2*dBB2) / B2;
+            double dG3 = (BB3*dA3 - A3*dBB3) / B3;
+
+            double dNumerator = dG1*(E1 - F1) + G1*(dE1 - dF1) + dG2*(E2 - F2) + G2*(dE2 - dF2) + dG3*(E3 - F3) + G3*(dE3 - dF3);
+            double dDenominator = dBT * D*D + B * 2 * D*dDT + dAT*(-4 * B*C + E*E) + A*(-4 * (dBT*C + B*dCT) + 2 * E*dET) + dFT*(-d*E + C*F) + F*(-(dDT*E + D*dET) + dCT*F + C*dFT);
+
+            dH[nIdx][coordIdx] = (denominator*dNumerator - numerator*dDenominator) / (denominator*denominator);
+        }
     }
 
-    double a = scalarProduct(c1, c2, c1, c2);
-    double b = scalarProduct(c3, c4, c3, c4);
-    double c = scalarProduct(c3, c1, c3, c1);
-    double d = scalarProduct(c1, c2, c3, c4);
-    double e = scalarProduct(c1, c2, c3, c1);
-    double f = scalarProduct(c3, c4, c3, c1);
+    double area = v->getMTriangle()->getArea();
+    auto& dArea = v->getMTriangle()->getDArea();
     
-    double AA = sqrt(a*c - e*e);
-    double BB = sqrt(b*c - f*f);
-    
-    double CC = d*e - a*f;
-    double DD = b*e - d*f;
-    
-    double EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
-    double FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
-    
-    
-    double GG = d*d - a*b - CC;
-    double HH = CC + GG - DD;
-    double JJ = c*(GG + CC) + e*DD - f*CC;
-    
-    double invJJ = 1/JJ;
-    
-    double ATG1 = atan( (a + e)/AA) - atan(e/AA);
-    double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
-    double ATG3 = atan((f)/BB) - atan((f - b)/BB);
-    double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
-    
-    double U = 0.5*kRepuls*invJJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
-    
-    double A1 = AA*AA/(AA*AA + e*e);
-    double A2 = AA*AA/(AA*AA + (a + e)*(a + e));
-    
-    double E1 = EE*EE/(EE*EE + (a + e - d)*(a + e - d));
-    double E2 = EE*EE/(EE*EE + (e - d)*(e - d));
-    
-    double B1 = BB*BB/(BB*BB + (f - b)*(f - b));;
-    double B2 = BB*BB/(BB*BB + f*f);
-    
-    double F1 = FF*FF/(FF*FF + (d + f - b)*(d + f - b));
-    double F2 = FF*FF/(FF*FF + (d + f)*(d + f));
-    
-    
-    double A11 = ATG1/AA;
-    double A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) -
-                (A2*CC*(a + e))/(AA*AA*AA);
-    double A13 = -((A1*CC)/(AA*AA)) + (A2*CC)/(AA*AA);
-    double A14 = (A2*CC)/(AA*AA);
-    
-    double E11 = ATG2/EE;
-    double E12 = (E2*(-a + d - e)*GG)/(EE*EE*EE) + (E1*(-d + e)*GG)/(EE*EE*EE) -
-                 (ATG2*GG)/(EE*EE);
-    double E13 = -((E1*GG)/(EE*EE)) + (E2*GG)/(EE*EE);
-    double E14 = (E2*GG)/(EE*EE);
-    
-    double B11 = ATG3/BB;
-    double B12 = -((ATG3*DD)/(BB*BB)) - (B2*DD*f)/(BB*BB*BB) +
-                (B1*DD*(-b + f))/(BB*BB*BB);
-    double B13 = -((B1*DD)/(BB*BB)) + (B2*DD)/(BB*BB);
-    double B14 = (B1*DD)/(BB*BB);
-    
-    double F11 = ATG4/FF;
-    double F12 = (F2*(-d - f)*HH)/(FF*FF*FF) + (F1*(-b + d + f)*HH)/(FF*FF*FF) -
-                 (ATG4*HH)/(FF*FF);
-    double F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
-    double F14 = (F1*HH)/(FF*FF);
-
-    b1->force[0] +=  - 0.5*invJJ*( (c2[0] - c1[0] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (c4[0] - c3[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (c1[0] - c3[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    b1->force[1] +=  - 0.5*invJJ*( (c2[1] - c1[1] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (c4[1] - c3[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (c1[1] - c3[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    b1->force[2] +=  - 0.5*invJJ*( (c2[2] - c1[2] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (c4[2] - c3[2] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (c1[2] - c3[2] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    
-    b2->force[0] +=  - invJJ*( (c2[0] - c1[0] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(c4[0] - c3[0])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(c1[0] - c3[0] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
-    
-    b2->force[1] += - invJJ*( (c2[1] - c1[1] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(c4[1] - c3[1])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(c1[1] - c3[1] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
-    
-    b2->force[2] += - invJJ*( (c2[2] - c1[2] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(c4[2] - c3[2])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(c1[2] - c3[2] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
-    
-    b3->force[0] +=  - 0.5*invJJ*( (c2[0] - c1[0] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (c4[0] - c3[0] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[0] - c3[0] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    b3->force[1] +=  - 0.5*invJJ*( (c2[1] - c1[1] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (c4[1] - c3[1] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[1] - c3[1] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) ) ;
-    
-    b3->force[2] +=  - 0.5*invJJ*( (c2[2] - c1[2] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (c4[2] - c3[2] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[2] - c3[2] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    
-    b4->force[0] +=  - invJJ*( 0.5*(c2[0] - c1[0] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[0] - c3[0])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[0] - c3[0] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) )  ;
-    
-    b4->force[1] +=  - invJJ*( 0.5*(c2[1] - c1[1] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[1] - c3[1])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[1] - c3[1] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;
-    
-    b4->force[2] +=  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;
-
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+        b->force[coordIdx] += kExVol * dH[3][coordIdx] * area;
+        for(size_t vtxIdx = 0; vtxIdx < 3; ++vtxIdx) {
+            v[vtxIdx]->force[coordIdx] += kExVol * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
+        }
+    }
 }
 
 void TriangleCylinderBeadExclVolRepulsion::forcesAux(Triangle* t, Bead* b,
                                                      double kExVol) {
     
-    auto c1 = b1->coordinate;
-    auto c2 = b2->coordinate;
-    auto c3 = b3->coordinate;
-    auto c4 = b4->coordinate;
-    
-    //check if parallel
-    if(areParallel(c1, c2, c3, c4)) {
+    auto& v = t->getVertices();
+
+    auto c0 = v[0]->coordinate;
+    auto c1 = v[1]->coordinate;
+    auto c2 = v[2]->coordinate;
+    auto cb = b->coordinate;
         
-        double d = twoPointDistance(c1, c3);
-        double invDSquare =  1/ (d * d);
-        double f0 = 4 * kRepuls * invDSquare * invDSquare * invDSquare;
-        
-        b1->forceAux[0] += - f0 * (c3[0] - c1[0]);
-        b1->forceAux[1] += - f0 * (c3[1] - c1[1]);
-        b1->forceAux[2] += - f0 * (c3[2] - c1[2]);
-        
-        b2->forceAux[0] += - f0 * (c4[0] - c2[0]);
-        b2->forceAux[1] += - f0 * (c4[1] - c2[1]);
-        b2->forceAux[2] += - f0 * (c4[2] - c2[2]);
-        
-        b3->forceAux[0] += f0 * (c3[0] - c1[0]);
-        b3->forceAux[1] += f0 * (c3[1] - c1[1]);
-        b3->forceAux[2] += f0 * (c3[2] - c1[2]);
-        
-        b4->forceAux[0] += f0 * (c4[0] - c2[0]);
-        b4->forceAux[1] += f0 * (c4[1] - c2[1]);
-        b4->forceAux[2] += f0 * (c4[2] - c2[2]);
-        
-        return;
-    }
-    
     //check if in same plane
-    if(areInPlane(c1, c2, c3, c4)) {
+    if(areInPlane(c0, c1, c2, cb)) {
         
-        //slightly move point
-        c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
+        // slightly move point. Using negative number here to move "into the cell".
+        cb = movePointOutOfPlane(c0, c1, c2, cb, 4, -0.01);
     }
     
-    double a = scalarProduct(c1, c2, c1, c2);
-    double b = scalarProduct(c3, c4, c3, c4);
-    double c = scalarProduct(c3, c1, c3, c1);
-    double d = scalarProduct(c1, c2, c3, c4);
-    double e = scalarProduct(c1, c2, c3, c1);
-    double f = scalarProduct(c3, c4, c3, c1);
+    double A = scalarProduct(c0, c1, c0, c1);
+    double B = scalarProduct(c1, c2, c1, c2);
+    double C = scalarProduct(cb, c0, cb, c0);
+    double D = 2 * scalarProduct(c0, c1, cb, c0);
+    double E = 2 * scalarProduct(c1, c2, cb, c0);
+    double F = 2 * scalarProduct(c0, c1, c1, c2);
+
+    // Derivative index is 0, 1, 2, b
+    array<array<double, 3>, 4> dA = {{
+        {{ 2 * (c0[0] - c1[0]), 2 * (c0[1] - c1[1]), 2 * (c0[2] - c1[2]) }},
+        {{ 2 * (c1[0] - c0[0]), 2 * (c1[1] - c0[1]), 2 * (c1[2] - c0[2]) }}
+    }};
+    array<array<double, 3>, 4> dB = {{
+        {{ 0, 0, 0 }},
+        {{ 2 * (c1[0] - c2[0]), 2 * (c1[1] - c2[1]), 2 * (c1[2] - c2[2]) }},
+        {{ 2 * (c2[0] - c1[0]), 2 * (c2[1] - c1[1]), 2 * (c2[2] - c1[2]) }}
+    }};
+    array<array<double, 3>, 4> dC = {{
+        {{ 2 * (c0[0] - cb[0]), 2 * (c0[1] - cb[1]), 2 * (c0[2] - cb[2]) }},
+        {{ 0, 0, 0 }},
+        {{ 0, 0, 0 }},
+        {{ 2 * (cb[0] - c0[0]), 2 * (cb[1] - c0[1]), 2 * (cb[2] - c0[2]) }}
+    }};
+    array<array<double, 3>, 4> dD = {{
+        {{ 2 * (c1[0] + cb[0] - 2*c0[0]), 2 * (c1[1] + cb[1] - 2*c0[1]), 2 * (c1[2] + cb[2] - 2*c0[2]) }},
+        {{ 2 * (c0[0] - cb[0]), 2 * (c0[1] - cb[1]), 2 * (c0[2] - cb[2]) }},
+        {{ 0, 0, 0 }},
+        {{ 2 * (c0[0] - c1[0]), 2 * (c0[1] - c1[1]), 2 * (c0[2] - c1[2]) }}
+    }};
+    array<array<double, 3>, 4> dE = {{
+        {{ 2 * (c2[0] - c1[0]), 2 * (c2[1] - c1[1]), 2 * (c2[2] - c1[2]) }},
+        {{ 2 * (cb[0] - c0[0]), 2 * (cb[1] - c0[1]), 2 * (cb[2] - c0[2]) }},
+        {{ 2 * (c0[0] - cb[0]), 2 * (c0[1] - cb[1]), 2 * (c0[2] - cb[2]) }},
+        {{ 2 * (c1[0] - c2[0]), 2 * (c1[1] - c2[1]), 2 * (c1[2] - c2[2]) }}
+    }};
+    array<array<double, 3>, 4> dF = {{
+        {{ 2 * (c1[0] - c2[0]), 2 * (c1[1] - c2[1]), 2 * (c1[2] - c2[2]) }},
+        {{ 2 * (c0[0] + c2[0] - 2*c1[0]), 2 * (c0[1] + c2[1] - 2*c1[1]), 2 * (c0[2] + c2[2] - 2*c1[2]) }},
+        {{ 2 * (c1[0] - c0[0]), 2 * (c1[1] - c0[1]), 2 * (c1[2] - c0[2]) }}
+    }};
+
+    double A1 = 2 * A*E - D*F;
+    double A2 = 2 * B*D - 2 * A*E + (D - E)*F;
+    double A3 = -4 * A*B - 2 * B*D + F*(E + F);
+
+    double B1 = 4 * A*C - D*D;
+    double B2 = 4 * A*C - D*D + 4 * B*C - E*E + 4 * C*F - 2 * D*E;
+    double B3 = 4 * B*A - F*F + 4 * B*C - E*E + 4 * B*D - 2 * E*F;
+    double BB1 = sqrt(B1);
+    double BB2 = sqrt(B2);
+	double BB3 = sqrt(B3);
+
+    double C1 = 2 * A + D;
+    double C2 = 2 * A + D + E + 2 * (B + F);
+    double C3 = 2 * B + E + F;
+    double D1 = D;
+    double D2 = D + E;
+    double D3 = E + F;
+
+    double E1 = atan(C1 / BB1);
+    double E2 = atan(C2 / BB2);
+    double E3 = atan(C3 / BB3);
+    double F1 = atan(D1 / BB1);
+    double F2 = atan(D2 / BB2);
+    double F3 = atan(D3 / BB3);
+
+    double G1 = A1 / BB1;
+    double G2 = A2 / BB2;
+    double G3 = A3 / BB3;
+
+    double numerator = G1*(E1 - F1) + G2*(E2 - F2) + G3*(E3 - F3);
+    double denominator = B*D*D + A*(-4 * B*C + E*E) + F*(-D*E + C*F);
+
+    double H = numerator / denominator;
     
-    double AA = sqrt(a*c - e*e);
-    double BB = sqrt(b*c - f*f);
+    array<array<double, 3>, 4> dH = {};
+    for(size_t dIdx = 0; dIdx < 4; ++dIdx) {
+        for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+            double dAT = dA[dIdx][coordIdx];
+            double dBT = dB[dIdx][coordIdx];
+            double dCT = dC[dIdx][coordIdx];
+            double dDT = dD[dIdx][coordIdx];
+            double dET = dE[dIdx][coordIdx];
+            double dFT = dF[dIdx][coordIdx];
+
+            double dA1 = 2 * (dAT*E + A*dET) - (dDT*F + D*dFT);
+            double dA2 = 2 * (dBT*D + B*dDT) - 2 * (dAT*E + A*dET) + ((dDT - dET)*F + (D - E)*dFT);
+            double dA3 = -4 * (dAT*B + A*dBT) - 2 * (dBT*D + B*dDT) + (dFT*(E + F) + F*(dET + dFT));
+
+            double dB1 = 4 * (dAT*C + A*dCT) - 2 * D*dDT;
+            double dB2 = 4 * (dAT*C + A*dCT) - 2 * D*dDT + 4 * (dBT*C + B*dCT) - 2 * E*dET + 4 * (dCT*F + C*dFT) - 2 * (dDT*E + D*dET);
+            double dB3 = 4 * (dBT*A + B*dAT) - 2 * F*dFT + 4 * (dBT*C + B*dCT) - 2 * E*dET + 4 * (dBT*D + B*dDT) - 2 * (dET*F + E*dFT);
+            double dBB1 = dB1 / 2 / BB1;
+            double dBB2 = dB2 / 2 / BB2;
+            double dBB3 = dB3 / 2 / BB3;
+
+            double dC1 = 2 * dAT + dDT;
+            double dC2 = 2 * dAT + dDT + dET + 2 * (dBT + dFT);
+            double dC3 = 2 * dBT + dET + dFT;
+            double dD1 = dDT;
+            double dD2 = dDT + dET;
+            double dD3 = dET + dFT;
+
+            double dE1 = (BB1*dC1 - C1*dBB1) / (B1 + C1*C1);
+            double dE2 = (BB2*dC2 - C2*dBB2) / (B2 + C2*C2);
+            double dE3 = (BB3*dC3 - C3*dBB3) / (B3 + C3*C3);
+            double dF1 = (BB1*dD1 - D1*dBB1) / (B1 + D1*D1);
+            double dF2 = (BB2*dD2 - D2*dBB2) / (B2 + D2*D2);
+            double dF3 = (BB3*dD3 - D3*dBB3) / (B3 + D3*D3);
+
+            double dG1 = (BB1*dA1 - A1*dBB1) / B1;
+            double dG2 = (BB2*dA2 - A2*dBB2) / B2;
+            double dG3 = (BB3*dA3 - A3*dBB3) / B3;
+
+            double dNumerator = dG1*(E1 - F1) + G1*(dE1 - dF1) + dG2*(E2 - F2) + G2*(dE2 - dF2) + dG3*(E3 - F3) + G3*(dE3 - dF3);
+            double dDenominator = dBT * D*D + B * 2 * D*dDT + dAT*(-4 * B*C + E*E) + A*(-4 * (dBT*C + B*dCT) + 2 * E*dET) + dFT*(-d*E + C*F) + F*(-(dDT*E + D*dET) + dCT*F + C*dFT);
+
+            dH[nIdx][coordIdx] = (denominator*dNumerator - numerator*dDenominator) / (denominator*denominator);
+        }
+    }
+
+    double area = v->getMTriangle()->getArea();
+    auto& dArea = v->getMTriangle()->getDArea();
     
-    double CC = d*e - a*f;
-    double DD = b*e - d*f;
-    
-    double EE = sqrt( a*(b + c - 2*f) - (d - e)*(d - e) );
-    double FF = sqrt( b*(a + c + 2*e) - (d + f)*(d + f) );
-    
-    
-    double GG = d*d - a*b - CC;
-    double HH = CC + GG - DD;
-    double JJ = c*(GG + CC) + e*DD - f*CC;
-        
-    double invJJ = 1/JJ;
-    
-    double ATG1 = atan( (a + e)/AA) - atan(e/AA);
-    double ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
-    double ATG3 = atan((f)/BB) - atan((f - b)/BB);
-    double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
-    
-    double U = 0.5*kRepuls*invJJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
-    
-    double A1 = AA*AA/(AA*AA + e*e);
-    double A2 = AA*AA/(AA*AA + (a + e)*(a + e));
-    
-    double E1 = EE*EE/(EE*EE + (a + e - d)*(a + e - d));
-    double E2 = EE*EE/(EE*EE + (e - d)*(e - d));
-    
-    double B1 = BB*BB/(BB*BB + (f - b)*(f - b));;
-    double B2 = BB*BB/(BB*BB + f*f);
-    
-    double F1 = FF*FF/(FF*FF + (d + f - b)*(d + f - b));
-    double F2 = FF*FF/(FF*FF + (d + f)*(d + f));
-    
-    
-    double A11 = ATG1/AA;
-    double A12 = -((ATG1*CC)/(AA*AA)) + (A1*CC*e)/(AA*AA*AA) -
-                 (A2*CC*(a + e))/(AA*AA*AA);
-    double A13 = -((A1*CC)/(AA*AA)) + (A2*CC)/(AA*AA);
-    double A14 = (A2*CC)/(AA*AA);
-    
-    double E11 = ATG2/EE;
-    double E12 = (E2*(-a + d - e)*GG)/(EE*EE*EE) + (E1*(-d + e)*GG)/(EE*EE*EE) -
-                 (ATG2*GG)/(EE*EE);
-    double E13 = -((E1*GG)/(EE*EE)) + (E2*GG)/(EE*EE);
-    double E14 = (E2*GG)/(EE*EE);
-    
-    double B11 = ATG3/BB;
-    double B12 = -((ATG3*DD)/(BB*BB)) - (B2*DD*f)/(BB*BB*BB) +
-                 (B1*DD*(-b + f))/(BB*BB*BB);
-    double B13 = -((B1*DD)/(BB*BB)) + (B2*DD)/(BB*BB);
-    double B14 = (B1*DD)/(BB*BB);
-    
-    double F11 = ATG4/FF;
-    double F12 = (F2*(-d - f)*HH)/(FF*FF*FF) + (F1*(-b + d + f)*HH)/(FF*FF*FF) -
-                 (ATG4*HH)/(FF*FF);
-    double F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
-    double F14 = (F1*HH)/(FF*FF);
-    
-    b1->forceAux[0] +=  - 0.5*invJJ*( (c2[0] - c1[0] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (c4[0] - c3[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (c1[0] - c3[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    b1->forceAux[1] +=  - 0.5*invJJ*( (c2[1] - c1[1] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (c4[1] - c3[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (c1[1] - c3[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    b1->forceAux[2] +=  - 0.5*invJJ*( (c2[2] - c1[2] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (c4[2] - c3[2] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (c1[2] - c3[2] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    b2->forceAux[0] +=  - invJJ*( (c2[0] - c1[0] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(c4[0] - c3[0])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(c1[0] - c3[0] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
-    
-    b2->forceAux[1] += - invJJ*( (c2[1] - c1[1] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(c4[1] - c3[1])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(c1[1] - c3[1] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
-    
-    b2->forceAux[2] += - invJJ*( (c2[2] - c1[2] )*( A14+E14-E11*b-F11*b+2*U*b*c+(A12*c)/(2*AA)+(E12*(b+c-2*f))/(2*EE)-A11*f+E11*f-2*U*f*f+(F12*b)/(2*FF) ) + 0.5*(c4[2] - c3[2])*(-E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f + 4*U*e*f - (F12*(d + f))/FF)  + 0.5*(c1[2] - c3[2] )* (A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF) );
-    
-    b3->forceAux[0] +=  - 0.5*invJJ*( (c2[0] - c1[0] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (c4[0] - c3[0] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[0] - c3[0] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    b3->forceAux[1] +=  - 0.5*invJJ*( (c2[1] - c1[1] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (c4[1] - c3[1] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[1] - c3[1] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) ) / 2;
-    
-    b3->forceAux[2] +=  - 0.5*invJJ*( (c2[2] - c1[2] )*(-A13 - F13 - B11*b + F11*b - A11*d - E11*d - 2*F11*d + 4*U*c*d - A11*e + E11*e + 2*U*b*e + (A12*e)/AA + B11*f - F11*f - 2*U*d*f - 4*U*e*f + 2*U*(b*e - d*f) - (F12*b)/FF + (F12*(d + f))/FF) + (c4[2] - c3[2] )*(-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))) + (c1[2] - c3[2] ) * (-B13 - F13 + A11*a - E11*a + B11*d - F11*d - 2*U*d*e + (E12*a)/EE + 2*U*a*f - 2*U*(d*e - a*f) + (B12*f)/BB + (F12*(d + f))/FF - 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12* a)/(2*EE) + (B12*b)/(2*BB) + (F12*b)/(2*FF))) );
-    
-    b4->forceAux[0] +=  - invJJ*( 0.5*(c2[0] - c1[0] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[0] - c3[0])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[0] - c3[0] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;
-    
-    b4->forceAux[1] +=  - invJJ*( 0.5*(c2[1] - c1[1] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[1] - c3[1])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[1] - c3[1] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;
-    
-    b4->forceAux[2] +=  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) );
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+        b->forceAux[coordIdx] += kExVol * dH[3][coordIdx] * area;
+        for(size_t vtxIdx = 0; vtxIdx < 3; ++vtxIdx) {
+            v[vtxIdx]->forceAux[coordIdx] += kExVol * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
+        }
+    }
 }
 
