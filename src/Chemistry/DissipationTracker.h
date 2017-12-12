@@ -67,6 +67,9 @@ private:
     // cumulative dissiapted mechanical energy
     double cumDissMechEnergy;
 
+    double GChemEn;
+    
+    double GMechEn;
     
     
 public:
@@ -78,6 +81,8 @@ public:
        cumDissEnergy=0;
        cumDissChemEnergy=0;
        cumDissMechEnergy=0;
+       GChemEn=0;
+       GMechEn=0;
        G1=0;
        G2=0;
        GMid=0;
@@ -299,11 +304,11 @@ public:
     }
     
     double getGChemEn(){
-        return GChem;
+        return GChemEn;
     }
     
     double getGMechEn(){
-        return G2-G1;
+        return GMechEn;
     }
     
     // set the value of G1
@@ -339,6 +344,15 @@ public:
         cumDissMechEnergy += G2-GMid;
     }
     
+    // increment cumDissMechEnergy
+    void updateGChemEn(){
+        GChemEn += GChem;
+    }
+    
+    // increment cumDissMechEnergy
+    void updateGMechEn(){
+        GMechEn += G2-G1;
+    }
     
     // set new values of energy trackers after an iteration step has occured
     void resetAfterStep(){

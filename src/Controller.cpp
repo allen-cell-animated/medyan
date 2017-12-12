@@ -631,6 +631,8 @@ void Controller::run() {
             _dt->setG2();
             _dt->updateCumDissMechEnergy();
             _dt->updateCumDissEn();
+            _dt->updateGChemEn();
+            _dt->updateGMechEn();
             _dt->resetAfterStep();
             
             
@@ -640,6 +642,7 @@ void Controller::run() {
                 i++;
                 tauLastSnapshot = 0.0;
             }
+            
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
             i++;
