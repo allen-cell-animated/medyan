@@ -48,6 +48,9 @@ public:
         return _membranes.countElements();
     }
 
+    // Print self information
+    virtual void printSelf();
+
 
 };
 
