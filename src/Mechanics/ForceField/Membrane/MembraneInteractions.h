@@ -9,7 +9,7 @@ class Membrane;
 /// Represents an internal Filament interaction
 class MembraneInteractions {
     
-// TODO: friend class MembraneFF;
+friend class MembraneFF;
     
 protected:
     /// The membrane in the case of an error

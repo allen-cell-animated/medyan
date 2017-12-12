@@ -20,7 +20,7 @@ void Triangle::printSelf() {
     cout << endl;
     
     cout << "Triangle: ptr = " << this << endl;
-    cout << "Triangle ID = " << _ID << endl;
+    //cout << "Triangle ID = " << _ID << endl; //< TODO: Implement this.
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     

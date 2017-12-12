@@ -28,7 +28,7 @@ MembraneFF::MembraneFF (string& stretching, string& bending) {
         _membraneInteractionVector.emplace_back(
             new MembraneStretching<MembraneStretchingHarmonic>()
         );
-    else if(streching == "VORONOI")
+    else if(stretching == "VORONOI")
         _membraneInteractionVector.emplace_back(
             new MembraneStretching<MembraneStretchingVoronoiHarmonic>()
         );

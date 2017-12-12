@@ -1,5 +1,7 @@
 #include "Membrane.h"
 
+#include "Triangle.h"
+
 Database<Membrane*> Membrane::_membranes;
 
 void Membrane::printSelf() {
