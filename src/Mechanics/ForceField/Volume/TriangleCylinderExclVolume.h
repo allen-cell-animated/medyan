@@ -26,7 +26,7 @@ class Triangle;
 class Cylinder;
 class Bead;
 
-/// Represents an excuded volume interaction between two [Cylinders](@ref Cylinder).
+/// Represents an excuded volume interaction between a triangle and a cylinder (bead).
 template <class TriangleCylinderExclVolumeInteractionType>
 class TriangleCylinderExclVolume : public TriangleCylinderVolumeInteractions {
     
@@ -37,8 +37,7 @@ private:
 public:
     ///Constructor
     TriangleCylinderExclVolume() {
-        //v TODO: maybe use a different VolumeCutoff?
-        _neighborList = new TriangleCylinderNL(SysParams::Mechanics().VolumeCutoff);
+        _neighborList = new TriangleCylinderNL(SysParams::Mechanics().MemCylinderVolumeCutoff);
     }
     
     virtual double computeEnergy(double d);
