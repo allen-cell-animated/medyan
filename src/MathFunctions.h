@@ -387,54 +387,6 @@ namespace mathfunc {
         return res;
     }
 
-    /// Returns the area of a triangle with vertices at point v1, v2 and v3.
-    inline double areaTriangle(const vector<double>& v1,
-                               const vector<double>& v2,
-                               const vector<double>& v3) {
-        
-        return 0.5 * magnitude(vectorProduct(v1, v2, v1, v3));
-    }
-
-    /// The area of a triangle with vertices at point v1 + d*p1, v2 + d*p2 and v3 + d*p3
-    inline double areaTriangleStretched(const vector<double>& v1,
-                                        const vector<double>& p1,
-                                        const vector<double>& v2,
-                                        const vector<double>& p2,
-                                        const vector<double>& v3,
-                                        const vector<double>& p3,
-                                        double d) {
-        return 0.5 * magnitude(vectorProductStretched(v1, p1, v2, p2, v1, p1, v3, p3, d));
-
-    }
-
-    /// The gradient on the area of a (triangle with vertices at point v1, v2 and v3)
-    /// with regard to coordinate v1, v2 and v3
-    inline array<array<double, 3>, 3> areaTriangleGradient(const vector<double>& v1,
-                                                           const vector<double>& v2,
-                                                           const vector<double>& v3) {
-        double area = areaTriangle(v1, v2, v3);
-
-        array<array<double, 3>, 3> result;
-
-        double dot23 = scalarProduct(v1, v2, v1, v3);
-        double r12 = twoPointDistance(v1, v2), r23 = twoPointDistance(v1, v3);
-
-        result[0][0] = (-r12*r12*(v3[0] - v1[0]) - r23*r23*(v2[0] - v1[0]) + dot23*(v2[0] + v3[0] - 2*v1[0])) / area / 4;
-        result[0][1] = (-r12*r12*(v3[1] - v1[1]) - r23*r23*(v2[1] - v1[1]) + dot23*(v2[1] + v3[1] - 2*v1[1])) / area / 4;
-        result[0][2] = (-r12*r12*(v3[2] - v1[2]) - r23*r23*(v2[2] - v1[2]) + dot23*(v2[2] + v3[2] - 2*v1[2])) / area / 4;
-        
-        result[1][0] = (r23*r23*(v2[0] - v1[0]) - dot23*(v3[0] - v1[0])) / area / 4;
-        result[1][1] = (r23*r23*(v2[1] - v1[1]) - dot23*(v3[1] - v1[1])) / area / 4;
-        result[1][2] = (r23*r23*(v2[2] - v1[2]) - dot23*(v3[2] - v1[2])) / area / 4;
-
-        result[2][0] = (r12*r12*(v3[0] - v1[0]) - dot23*(v2[0] - v1[0])) / area / 4;
-        result[2][1] = (r12*r12*(v3[1] - v1[1]) - dot23*(v2[1] - v1[1])) / area / 4;
-        result[2][2] = (r12*r12*(v3[2] - v1[2]) - dot23*(v2[2] - v1[2])) / area / 4;        
-
-        return result;
-        // TODO: Test the result!!!!!!!!
-    }
-    
     /// Projection of a new point based on a given direction and starting point
     inline vector<double> nextPointProjection(const vector<double>& coordinate,
                                               double d, const vector<double>& tau) {
