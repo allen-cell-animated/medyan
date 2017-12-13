@@ -898,7 +898,6 @@ void SystemParser::readMechParams() {
                     MParams.VolumeK.push_back(atof((lineVector[i].c_str())));
             }
         }
-        
         else if (line.find("VOLUMECUTOFF") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -909,6 +908,26 @@ void SystemParser::readMechParams() {
             }
             else if (lineVector.size() == 2) {
                 MParams.VolumeCutoff = atoi(lineVector[1].c_str());
+            }
+        }
+        else if (line.find("MEM_CYLINDER_VOLUME_K") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.MemCylinderVolumeK.push_back(atof(lineVector[i].c_str()));
+            }
+        }
+        else if (line.find("MEM_CYLINDER_VOLUME_CUTOFF") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "Error reading Volume cutoff. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MParams.MemCylinderVolumeCutoff = atoi(lineVector[1].c_str());
             }
         }
         

@@ -62,8 +62,10 @@ struct MechParams {
     
     //@{
     /// Volume parameter
-    vector<double> VolumeK = {};
-    double VolumeCutoff = 0.0;
+    vector<double> VolumeK                 = {};
+    double         VolumeCutoff            = 0.0;
+    vector<double> MemCylinderVolumeK      = {};
+    double         MemCylinderVolumeCutoff = 0.0;
     //@}
     
     //@{

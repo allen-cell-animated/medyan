@@ -334,11 +334,11 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     if(mech.MemCylinderVolumeFFType != "" &&
-       MParams.VolumeK.size() != CParams.numMembranes) { // TODO: temp use volume const
+       MParams.MemCylinderVolumeK.size() != CParams.numMembranes) {
         cout << "Must set a membrane-cylinder volume force constant for every membrane type. Exiting." << endl;
         return false;
     }
-    if(mech.MemCylinderVolumeFFType != "" && areEqual(MParams.VolumeCutoff, 0.0)) { // TODO: temp use volume const
+    if(mech.MemCylinderVolumeFFType != "" && areEqual(MParams.MemCylinderVolumeCutoff, 0.0)) {
         cout << "Must set a membrane-cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
@@ -370,7 +370,7 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     
-    // Membrane // TODO: Implement this
+    // Membrane
     if(mech.MemStretchingFFType != "" &&
        MParams.MemElasticK.size() != CParams.numMembranes) {
         cout << "Must set a membrane elastic modulus for all membranes. Exiting." << endl;
@@ -379,6 +379,11 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     if(mech.MemBendingFFType != "" &&
        MParams.MemBendingK.size() != CParams.numMembranes) {
         cout << "Must set a membrane bending modulus for all membranes. Exiting." << endl;
+        return false;
+    }
+    if(mech.MemBendingFFType != "" &&
+       MParams.MemEqCurv.size() != CParams.numMembranes) {
+        cout << "Must set a membrane spontaneous curvature for all membranes. Exiting." << endl;
         return false;
     }
     
