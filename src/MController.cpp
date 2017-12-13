@@ -73,12 +73,23 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                         forceFields.BrDihedralType,
                         forceFields.BrPositionType));
     
+    _FFManager._forceFields.push_back(
+        new MembraneFF(forceFields.MemStretchingFFType,
+                       forceFields.MemBendingFFType));
+    
     //These FF's have a neighbor list associated with them
     //add to the subsystem's database of neighbor lists.
     auto volumeFF = new CylinderVolumeFF(forceFields.VolumeFFType);
     _FFManager._forceFields.push_back(volumeFF);
     for(auto nl : volumeFF->getNeighborLists()) {
         
+        if(nl != nullptr)
+            _subSystem->addNeighborList(nl);
+    }
+
+    auto triangleCylinderVolumeFF = new TriangleCylinderVolumeFF(forceFields.MemCylinderVolumeFFType);
+    _FFManager._forceFields.push_back(triangleCylinderVolumeFF);
+    for(auto nl : triangleCylinderVolumeFF->getNeighborLists()) {
         if(nl != nullptr)
             _subSystem->addNeighborList(nl);
     }
