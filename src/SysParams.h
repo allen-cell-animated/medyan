@@ -78,6 +78,13 @@ struct MechParams {
     short numBubbleTypes = 1;
     //@}
     
+    //@{
+    /// Membrane parameter
+    vector<double> MemElasticK  = {};
+    vector<double> MemBendingK  = {};
+    vector<double> MemEqCurv    = {};
+    //@}
+
     
     //@{
     /// SPECIAL MECHANICAL PROTOCOLS
@@ -143,6 +150,9 @@ struct ChemParams {
     vector<vector<short>> bindingIndices = vector<vector<short>>(MAX_FILAMENT_TYPES);
     //@}
     
+    /// Number of different membrane types
+    short numMembranes = 1;
+
     
     //@{
     /// SPECIAL CHEMICAL PROTOCOLS

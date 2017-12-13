@@ -625,6 +625,39 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MType.MTOCFFType = lineVector[1];
             }
         }
+        else if(line.find("MEM_STRETCHING_FF_TYPE") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at membrane stretching FF type. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2) {
+                MType.MemStretchingFFType = lineVector[1];
+            }
+        }
+        else if(line.find("MEM_BENDING_FF_TYPE") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at membrane bending FF type. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2) {
+                MType.MemBendingFFType = lineVector[1];
+            }
+        }
+        else if(line.find("MEM_CYLINDER_VOLUME_FF_TYPE") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at membrane cylinder volume FF type. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2) {
+                MType.MemCylinderVolumeFFType = lineVector[1];
+            }
+        }
         
         else {}
     }
@@ -926,6 +959,29 @@ void SystemParser::readMechParams() {
             }
             else if (lineVector.size() == 2) {
                 MParams.numBubbleTypes = atoi(lineVector[1].c_str());
+            }
+        }
+
+        // Membrane parameter
+        else if (line.find("MEM_ELASTIC_K") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() >= 2) {
+                for(size_t i = 1; i < lineVector.size(); ++i)
+                    MParams.MemElasticK.push_back(atof(lineVector[i].c_str()));
+            }
+        }
+        else if (line.find("MEM_BENDING_K") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() >= 2) {
+                for(size_t i = 1; i < lineVector.size(); ++i)
+                    MParams.MemBendingK.push_back(atof(lineVector[i].c_str()));
+            }
+        }
+        else if (line.find("MEM_EQ_CURV") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() >= 2) {
+                for(size_t i = 1; i < lineVector.size(); ++i)
+                    MParams.MemEqCurv.push_back(atof(lineVector[i].c_str()));
             }
         }
         

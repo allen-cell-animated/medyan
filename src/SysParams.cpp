@@ -333,6 +333,15 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         cout << "Must set a cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
         return false;
     }
+    if(mech.MemCylinderVolumeFFType != "" &&
+       MParams.VolumeK.size() != CParams.numMembranes) { // TODO: temp use volume const
+        cout << "Must set a membrane-cylinder volume force constant for every membrane type. Exiting." << endl;
+        return false;
+    }
+    if(mech.MemCylinderVolumeFFType != "" && areEqual(MParams.VolumeCutoff, 0.0)) { // TODO: temp use volume const
+        cout << "Must set a membrane-cylinder volume cutoff for mechanical equilibration. Exiting." << endl;
+        return false;
+    }
     
     //Boundary
     if(mech.BoundaryFFType != "" && areEqual(BParams.BoundaryK, 0.0)) {
@@ -361,6 +370,17 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     
+    // Membrane // TODO: Implement this
+    if(mech.MemStretchingFFType != "" &&
+       MParams.MemElasticK.size() != CParams.numMembranes) {
+        cout << "Must set a membrane elastic modulus for all membranes. Exiting." << endl;
+        return false;
+    }
+    if(mech.MemBendingFFType != "" &&
+       MParams.MemBendingK.size() != CParams.numMembranes) {
+        cout << "Must set a membrane bending modulus for all membranes. Exiting." << endl;
+        return false;
+    }
     
     ///Cylinder and monomer lengths specified
     if(GParams.cylinderSize.size() != CParams.numFilaments) {

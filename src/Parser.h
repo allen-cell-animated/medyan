@@ -246,6 +246,11 @@ struct MechanicsFFType {
     
     /// MTOC Type
     string MTOCFFType = "";
+
+    /// MembraneFF type
+    string MemStretchingFFType     = "";
+    string MemBendingFFType        = "";
+    string MemCylinderVolumeFFType = "";
     
 };
 
