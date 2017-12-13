@@ -398,6 +398,22 @@ public:
             vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
 };
 
+/// Used to parse initial membrane information, initialized by the Controller.
+class MembraneParser : public Parser {
+    
+public:
+    MembraneParser(string inputFileName) : Parser(inputFileName) {}
+    ~MembraneParser() {}
+    
+    /// Reads membrane input file.
+    // TODO: Implement this.
+    // Returns a vector of tuples containing
+    /// filament type and positions (start and end points).
+    /// @note - Does not check for coordinate correctness.
+     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> ,
+            vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
+};
+
 /// Used to parse initial Bubble information, initialized by the Controller.
 class BubbleParser : public Parser {
     
