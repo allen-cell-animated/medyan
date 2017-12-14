@@ -38,9 +38,7 @@ class DissipationTracker{
     
 private:
     
-    SubSystem* _subSystem;   ///< A pointer to subsytem for creation of callbacks, etc.
-    ChemistryData _chemData; ///<The chemistry data for the system
-    CompartmentGrid* _grid ;
+
     MController* _mcon;
     
     // reaction counter - not used
@@ -67,22 +65,24 @@ private:
     // cumulative dissiapted mechanical energy
     double cumDissMechEnergy;
 
-    double GChemEn;
+    // cumulative change in chemical energy
+    double cumGChemEn;
     
-    double GMechEn;
+    // cumulative change in mechanical energy
+    double cumGMechEn;
     
     
 public:
     
     // Constructor, allow access to objects that information is needed from, set all energy
     // tracking variables to zero
-    DissipationTracker(SubSystem* subsystem, ChemistryData chemdata, CompartmentGrid* grid, MController* mcon = NULL): _subSystem(subsystem), _chemData(chemdata), _grid(grid), _mcon(mcon) {
+    DissipationTracker(MController* mcon = NULL):  _mcon(mcon) {
        count = 0;
        cumDissEnergy=0;
        cumDissChemEnergy=0;
        cumDissMechEnergy=0;
-       GChemEn=0;
-       GMechEn=0;
+       cumGChemEn=0;
+       cumGMechEn=0;
        G1=0;
        G2=0;
        GMid=0;
@@ -125,11 +125,8 @@ public:
         
         // get the number of products
         int N = re->getN();
+ 
         
-        // calculate sigma
-        // int sig = M-N;
-        
-
         
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
         
@@ -152,91 +149,90 @@ public:
         
         if(reType==0) {
             // Regular Reaction
-            delGZero =  re->getRevNumber();
-            delG = delGIrrChemTherm(delGZero, reacN, reacNu, prodN, prodNu);
+            delGZero =  re->getGNumber();
+            delG = delGGenChem(delGZero, reacN, reacNu, prodN, prodNu);
              
         } else if(reType==1){
              // Diffusion Reaction
-                delG = delGDifChemTherm(reacN[0],prodN[0]);
+                delG = delGDifChem(reacN[0],prodN[0]);
              
         } else if(reType==2){
             // Polymerization Plus End
 
-            delGZero = re->getRevNumber();
+            delGZero = re->getGNumber();
             species_copy_t nMon = reacN[0];
-            delG = delGPolyIrrTherm(delGZero,nMon,"P");
+            delG = delGPolyChem(delGZero,nMon,"P");
 
 
         } else if(reType==3){
             // Polymerization Minus End
 
-            delGZero = re->getRevNumber();
+            delGZero = re->getGNumber();
             species_copy_t nMon = reacN[0];
-            delG = delGPolyIrrTherm(delGZero,nMon,"P");
+            delG = delGPolyChem(delGZero,nMon,"P");
 
 
         } else if(reType==4){
             // Depolymerization Plus End
 
-            delGZero = re->getRevNumber();
+            delGZero = re->getGNumber();
             species_copy_t nMon = prodN[0];
-            delG = delGPolyIrrTherm(delGZero,nMon,"D");
+            delG = delGPolyChem(delGZero,nMon,"D");
 
         } else if(reType==5){
             // Depolymerization Minus End
 
-            delGZero = re->getRevNumber();
+            delGZero = re->getGNumber();
             species_copy_t nMon = prodN[0];
-            delG = delGPolyIrrTherm(delGZero,nMon,"D");
+            delG = delGPolyChem(delGZero,nMon,"D");
 
         } else if(reType==6){
             // Linker Binding
-            delGZero=re->getRevNumber();
+            delGZero=re->getGNumber();
             species_copy_t nMon = reacN[1];
-            delG = delGPolyIrrTherm(delGZero,nMon,"P");
-            
+            delG = delGPolyChem(delGZero,nMon,"P");
             
             
         } else if(reType==7){
             // Motor Binding
-            double rn=re->getRevNumber();
+            double rn=re->getGNumber();
  
             double nh1 = SysParams::Chemistry().motorNumHeadsMin[0];
             double nh2 = SysParams::Chemistry().motorNumHeadsMax[0];
             double nh = (nh1+nh2)/2.0;
             
-            delG = delGMyoBind(nh,rn);
+            delG = delGMyoChem(nh,rn);
             
             
         } else if(reType==8){
             // Linker Unbinding
-            delGZero=re->getRevNumber();
+            delGZero=re->getGNumber();
             species_copy_t nMon = prodN[0];
-            delG = delGPolyIrrTherm(delGZero,nMon,"D");
+            delG = delGPolyChem(delGZero,nMon,"D");
             
 
             
         } else if(reType==9){
             // Motor Unbinding
-            double rn=re->getRevNumber();
+            double rn=re->getGNumber();
             
             CBound* CBound = re->getCBound();
             SpeciesBound* sm1 = CBound->getFirstSpecies();
             MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
             int nh = m->getNumHeads();
             
-            delG = delGMyoBind(nh,rn);
+            delG = delGMyoChem(nh,rn);
             delG = -delG;
 
             
         } else if(reType==10){
             // Motor Walking Forward
-            delG = re->getRevNumber();
+            delG = re->getGNumber();
             delG = delG*(1/_stepFrac);
             
         } else if(reType==11){
             // Motor Walking Backward
-            delG = -(re->getRevNumber());
+            delG = -(re->getGNumber());
             delG = delG*(1/_stepFrac);
             
         } else if(reType==12){
@@ -248,8 +244,8 @@ public:
                 vector<species_copy_t> numP;
                 numP.push_back(Filament::countSpecies(0,prodNames[0]));
                 
-                delGZero = (re->getRevNumber());
-                delG = delGIrrChemTherm(delGZero, numR, reacNu, numP, prodNu);
+                delGZero = (re->getGNumber());
+                delG = delGGenChem(delGZero, numR, reacNu, numP, prodNu);
             
         } else if(reType==13){
             // Filament Creation
@@ -303,12 +299,12 @@ public:
         return cumDissMechEnergy;
     }
     
-    double getGChemEn(){
-        return GChemEn;
+    double getCumGChemEn(){
+        return cumGChemEn;
     }
     
-    double getGMechEn(){
-        return GMechEn;
+    double getCumGMechEn(){
+        return cumGMechEn;
     }
     
     // set the value of G1
@@ -345,13 +341,13 @@ public:
     }
     
     // increment cumDissMechEnergy
-    void updateGChemEn(){
-        GChemEn += GChem;
+    void updateCumGChemEn(){
+        cumGChemEn += cumGChemEn;
     }
     
     // increment cumDissMechEnergy
-    void updateGMechEn(){
-        GMechEn += G2-G1;
+    void updateCumGMechEn(){
+        cumGMechEn += G2-G1;
     }
     
     // set new values of energy trackers after an iteration step has occured

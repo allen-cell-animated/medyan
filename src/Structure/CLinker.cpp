@@ -74,9 +74,9 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     offRxn->setReactionType(ReactionType::LINKERUNBINDING);
     
-    //set revnum of offreaction
-    double revnum = onRxn->getRevNumber();
-    offRxn->setRevNumber(-revnum);
+    //set gnum of offreaction
+    double gnum = onRxn->getGNumber();
+    offRxn->setGNumber(-gnum);
     
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);

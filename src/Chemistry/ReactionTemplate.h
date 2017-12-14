@@ -57,15 +57,15 @@ protected:
     vector<tuple<int,SpeciesType>> _products; ///< Products in this reaction
     
     float _rate; ///< Rate of reaction
-    double _revnum;
+    double _gnum;
     
 public:
     FilamentReactionTemplate(short filamentType,
                              vector<tuple<int, SpeciesType>> reactants,
                              vector<tuple<int, SpeciesType>> products,
-                             float rate, double revnum = 0.0)
+                             float rate, double gnum = 0.0)
         : _filamentType(filamentType),
-          _reactants(reactants), _products(products), _rate(rate) , _revnum(revnum) {
+          _reactants(reactants), _products(products), _rate(rate) , _gnum(gnum) {
 
 #if !defined(REACTION_SIGNALING) || !defined(RSPECIES_SIGNALING)
         cout << "Any filament reaction relies on reaction and species signaling. Please"
@@ -91,8 +91,8 @@ public:
     PolyPlusEndTemplate(short filamentType,
                         vector<tuple<int, SpeciesType>> reactants,
                         vector<tuple<int, SpeciesType>> products,
-                        float rate, double revnum)
-    : FilamentReactionTemplate(filamentType, reactants, products, rate, revnum) {}
+                        float rate, double gnum)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum) {}
     ~PolyPlusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -106,8 +106,8 @@ public:
     PolyMinusEndTemplate(short filamentType,
                          vector<tuple<int, SpeciesType>> reactants,
                          vector<tuple<int, SpeciesType>> products,
-                         float rate, double revnum)
-    : FilamentReactionTemplate(filamentType, reactants, products, rate, revnum) {}
+                         float rate, double gnum)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum) {}
     ~PolyMinusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -122,8 +122,8 @@ public:
     DepolyPlusEndTemplate(short filamentType,
                           vector<tuple<int, SpeciesType>> reactants,
                           vector<tuple<int, SpeciesType>> products,
-                          float rate,  double revnum)
-    : FilamentReactionTemplate(filamentType, reactants, products, rate, revnum) {}
+                          float rate,  double gnum)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum) {}
     ~DepolyPlusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -137,8 +137,8 @@ public:
     DepolyMinusEndTemplate(short filamentType,
                            vector<tuple<int, SpeciesType>> reactants,
                            vector<tuple<int, SpeciesType>> products,
-                           float rate,  double revnum)
-    : FilamentReactionTemplate(filamentType, reactants, products, rate, revnum) {}
+                           float rate,  double gnum)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum) {}
     ~DepolyMinusEndTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -153,8 +153,8 @@ public:
     MotorWalkPTemplate(short filamentType,
                        vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
-                       float rate, double revnum)
-    : FilamentReactionTemplate(filamentType, reactants, products, rate, revnum) {}
+                       float rate, double gnum)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum) {}
     ~MotorWalkPTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -169,8 +169,8 @@ public:
     MotorWalkMTemplate(short filamentType,
                        vector<tuple<int, SpeciesType>> reactants,
                        vector<tuple<int, SpeciesType>> products,
-                       float rate, double revnum)
-    : FilamentReactionTemplate(filamentType, reactants, products, rate, revnum) {}
+                       float rate, double gnum)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum) {}
     ~MotorWalkMTemplate() {}
     
     virtual void addReaction(CCylinder* cc);
@@ -185,8 +185,8 @@ public:
     AgingTemplate(short filamentType,
                   vector<tuple<int, SpeciesType>> reactants,
                   vector<tuple<int, SpeciesType>> products,
-                  float rate, double revnum)
-    : FilamentReactionTemplate(filamentType, reactants, products, rate, revnum) {}
+                  float rate, double gnum)
+    : FilamentReactionTemplate(filamentType, reactants, products, rate, gnum) {}
     ~AgingTemplate() {}
     
     virtual void addReaction(CCylinder* cc);

@@ -166,7 +166,7 @@ void Controller::initialize(string inputFile,
         exit(EXIT_FAILURE);
     }
     
-    _dt = new DissipationTracker(_subSystem, ChemData, _subSystem->getCompartmentGrid(),_mController);
+    _dt = new DissipationTracker(_mController);
     _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
     cout << "Done." << endl;
     
@@ -631,8 +631,8 @@ void Controller::run() {
             _dt->setG2();
             _dt->updateCumDissMechEnergy();
             _dt->updateCumDissEn();
-            _dt->updateGChemEn();
-            _dt->updateGMechEn();
+            _dt->updateCumGChemEn();
+            _dt->updateCumGMechEn();
             _dt->resetAfterStep();
             
             

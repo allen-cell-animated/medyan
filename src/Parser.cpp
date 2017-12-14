@@ -2006,7 +2006,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
            
-            float revnum = atof(lineVector[1].c_str());
+            float gnum = atof(lineVector[1].c_str());
    
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2019,7 +2019,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
                 chem.genReactions.push_back(
                 tuple<vector<string>, vector<string>, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),revnum));
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
                 
             }
             else {
@@ -2096,7 +2096,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double revnum = atof(lineVector[1].c_str());
+            double gnum = atof(lineVector[1].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2111,7 +2111,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
                 chem.depolymerizationReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double,double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),revnum));
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
                 
             }
             else {
@@ -2128,7 +2128,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double revnum = atof(lineVector[1].c_str());
+            double gnum = atof(lineVector[1].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2145,7 +2145,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
                 chem.polymerizationReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double,double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),revnum));
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
                 
             }
             else {
@@ -2161,7 +2161,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
-            double revnum = atoi(lineVector[1].c_str());
+            double gnum = atoi(lineVector[1].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
@@ -2179,7 +2179,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                       atof(lineVector[lineVector.size() - 2].c_str()),
-                                      atof(lineVector[lineVector.size() - 1].c_str()),revnum));
+                                      atof(lineVector[lineVector.size() - 1].c_str()),gnum));
                 
             }
             else {
@@ -2195,7 +2195,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double revnum = atof(lineVector[1].c_str());
+            double gnum = atof(lineVector[1].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
@@ -2213,7 +2213,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                       atof(lineVector[lineVector.size() - 2].c_str()),
-                                      atof(lineVector[lineVector.size() - 1].c_str()),revnum));
+                                      atof(lineVector[lineVector.size() - 1].c_str()),gnum));
                 
             }
             else {
@@ -2230,7 +2230,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double revnum = atoi(lineVector[1].c_str());
+            double gnum = atoi(lineVector[1].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2245,7 +2245,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
                 chem.motorWalkingReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),revnum));
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
                 
             }
             else {
@@ -2262,7 +2262,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double revnum = atof(lineVector[1].c_str());
+            double gnum = atof(lineVector[1].c_str());
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2277,7 +2277,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
                 chem.agingReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),revnum));
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
                 
             }
             else {

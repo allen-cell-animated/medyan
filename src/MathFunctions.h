@@ -306,14 +306,14 @@ namespace mathfunc {
     
    
     
-    float delGIrrChemTherm(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+    float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
     
-    float delGDifChemTherm(species_copy_t reacN ,species_copy_t prodN);
+    float delGDifChem(species_copy_t reacN ,species_copy_t prodN);
     
 
-    float delGPolyIrrTherm(float delGzero, species_copy_t reacN, string whichWay);
+    float delGPolyChem(float delGzero, species_copy_t reacN, string whichWay);
     
-    float delGMyoBind(float nh, float rn);
+    float delGMyoChem(float nh, float rn);
     
     }
 

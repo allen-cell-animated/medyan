@@ -313,7 +313,7 @@
 		F735B7871A2D172800AE21D1 /* ChemCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemCallbacks.h; sourceTree = "<group>"; };
 		F735B7881A2D172800AE21D1 /* ChemGillespieImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemGillespieImpl.cpp; sourceTree = "<group>"; };
 		F735B7891A2D172800AE21D1 /* ChemGillespieImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemGillespieImpl.h; sourceTree = "<group>"; };
-		F735B78A1A2D172800AE21D1 /* ChemManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemManager.cpp; sourceTree = "<group>"; };
+		F735B78A1A2D172800AE21D1 /* ChemManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ChemManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F735B78B1A2D172800AE21D1 /* ChemManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemManager.h; sourceTree = "<group>"; };
 		F735B78D1A2D172800AE21D1 /* ChemNRMImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChemNRMImpl.cpp; sourceTree = "<group>"; };
 		F735B78E1A2D172800AE21D1 /* ChemNRMImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChemNRMImpl.h; sourceTree = "<group>"; };
@@ -473,11 +473,11 @@
 		F7C9CFB11A2D165D0087434A /* CBound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBound.h; sourceTree = "<group>"; };
 		F7C9CFB21A2D165D0087434A /* CCylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCylinder.cpp; sourceTree = "<group>"; };
 		F7C9CFB31A2D165D0087434A /* CCylinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCylinder.h; sourceTree = "<group>"; };
-		F7C9CFB41A2D165D0087434A /* CLinker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CLinker.cpp; sourceTree = "<group>"; };
+		F7C9CFB41A2D165D0087434A /* CLinker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CLinker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F7C9CFB51A2D165D0087434A /* CLinker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLinker.h; sourceTree = "<group>"; };
 		F7C9CFB61A2D165D0087434A /* CMonomer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CMonomer.cpp; sourceTree = "<group>"; };
 		F7C9CFB71A2D165D0087434A /* CMonomer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMonomer.h; sourceTree = "<group>"; };
-		F7C9CFB81A2D165D0087434A /* CMotorGhost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CMotorGhost.cpp; sourceTree = "<group>"; };
+		F7C9CFB81A2D165D0087434A /* CMotorGhost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CMotorGhost.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F7C9CFB91A2D165D0087434A /* CMotorGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMotorGhost.h; sourceTree = "<group>"; };
 		F7C9CFBA1A2D165D0087434A /* Compartment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compartment.cpp; sourceTree = "<group>"; };
 		F7C9CFBB1A2D165D0087434A /* Compartment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compartment.h; sourceTree = "<group>"; };

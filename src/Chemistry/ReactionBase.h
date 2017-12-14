@@ -98,7 +98,7 @@ protected:
     CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
     
     
-    float _revnum = 1.0;
+    float _gnum = 1.0;
     
     float _linkRateForward = 0.0;
     
@@ -195,20 +195,9 @@ public:
     
     
     
-    void setRevNumber(double revnum) {_revnum = revnum;};
+    void setGNumber(double gnum) {_gnum = gnum;};
     
-    void setLinkerRates(float ratefor, float rateback) {
-        _linkRateForward = ratefor;
-        _linkRateBackward = rateback;};
-    
-    vector<float> getLinkerRates(){
-        vector<float> returnvec;
-        returnvec.push_back(_linkRateForward);
-        returnvec.push_back(_linkRateBackward);
-        return returnvec;
-    }
-    
-    double getRevNumber() {return _revnum;};
+    double getGNumber() {return _gnum;};
     
     ///Set CBound
     void setCBound(CBound* cBound) {_cBound = cBound;}

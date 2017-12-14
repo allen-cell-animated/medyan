@@ -118,7 +118,7 @@ namespace mathfunc {
     
 
     
-    float delGIrrChemTherm(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
+    float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
         
         if(reacN.size() != reacNu.size()){
             cout << "Reactant copy number vector and stoichiometry vector mismatch" << endl;
@@ -163,9 +163,9 @@ namespace mathfunc {
         return delG;
     }
     
-    float delGDifChemTherm(species_copy_t reacN, species_copy_t prodN){
+    float delGDifChem(species_copy_t reacN, species_copy_t prodN){
         
-        float delG =  (reacN-1)*log(reacN) - reacN*log(reacN) + (prodN+1)*log(prodN)-prodN*log(prodN);
+        float delG =  - reacN*log(reacN) + prodN*log(prodN);
         
         if(isnan(delG)){
             delG=0;
@@ -176,15 +176,15 @@ namespace mathfunc {
     
     
     
-    float delGPolyIrrTherm(float delGzero, species_copy_t reacN, string whichWay){
+    float delGPolyChem(float delGzero, species_copy_t reacN, string whichWay){
         
         
         float sumreacs=0;
         
         if(whichWay=="P"){
-            sumreacs = (reacN-1) * log(reacN) - reacN * log(reacN);
+            sumreacs = - log(reacN);
         } else if (whichWay=="D"){
-            sumreacs = (reacN+1) * log(reacN) - reacN * log(reacN);
+            sumreacs =  log(reacN);
         }
         
         float delG =  delGzero +   sumreacs ;
@@ -197,9 +197,9 @@ namespace mathfunc {
         
     }
     
-    float delGMyoBind(float nh, float rn){
+    float delGMyoChem(float nh, float rn){
         float delG;
-        delG = -log(pow(rn,nh)-1);
+        delG = - log(pow(rn,nh)-1);
         return delG;
     }
 

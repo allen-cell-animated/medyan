@@ -1374,7 +1374,7 @@ void ChemManager::genFilBindingReactions() {
                 
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
-                double revnum = get<6>(r);
+                double gnum = get<6>(r);
                 
                 //Checks on number of reactants, products
                 if(reactants.size() != LMBINDINGREACTANTS ||
@@ -1581,7 +1581,7 @@ void ChemManager::genFilBindingReactions() {
                 
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
-                rxn->setRevNumber(revnum);
+                rxn->setGNumber(gnum);
                 
                 C->addInternalReaction(rxn);
                 
@@ -1606,7 +1606,7 @@ void ChemManager::genFilBindingReactions() {
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
                 
-                double revnum = get<6>(r);
+                double gnum = get<6>(r);
                 
                 //Checks on number of reactants, products
                 if(reactants.size() != LMBINDINGREACTANTS ||
@@ -1818,7 +1818,7 @@ void ChemManager::genFilBindingReactions() {
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (nh1 + nh2) / 2.0);
                 rxn->setReactionType(ReactionType::MOTORBINDING);
                 
-                rxn->setRevNumber(revnum);
+                rxn->setGNumber(gnum);
                 SysParams::CParams.dutyRatio = (onRate)/(onRate + offRate);
                 
                 C->addInternalReaction(rxn);
@@ -2268,7 +2268,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         protoCompartment.addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::REGULAR);
         
-        rxn->setRevNumber(get<3>(r));
+        rxn->setGNumber(get<3>(r));
     }
 }
 

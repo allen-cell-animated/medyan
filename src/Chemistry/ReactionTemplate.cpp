@@ -87,7 +87,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
 
-        rxn->setRevNumber(_revnum);
+        rxn->setGNumber(_gnum);
         
     }
     
@@ -140,7 +140,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
-    rxn->setRevNumber(_revnum);
+    rxn->setGNumber(_gnum);
 
 }
 
@@ -255,7 +255,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
 
-    rxn->setRevNumber(_revnum);
+    rxn->setGNumber(_gnum);
 }
 
 void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
@@ -319,7 +319,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
-        rxn->setRevNumber(_revnum);
+        rxn->setGNumber(_gnum);
     }
 }
 
@@ -385,7 +385,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
 
-        rxn->setRevNumber(_revnum);
+        rxn->setGNumber(_gnum);
     }
 }
 
@@ -443,7 +443,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc2->addCrossCylinderReaction(cc1, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
-    rxn->setRevNumber(_revnum);
+    rxn->setGNumber(_gnum);
 }
 
 void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
@@ -500,7 +500,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
-    rxn->setRevNumber(_revnum);
+    rxn->setGNumber(_gnum);
 }
 
 void MotorWalkPTemplate::addReaction(CCylinder* cc) {
@@ -746,7 +746,7 @@ void AgingTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::AGING);
-        rxn->setRevNumber(_revnum);
+        rxn->setGNumber(_gnum);
         
     }
 }
