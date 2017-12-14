@@ -73,6 +73,7 @@ private:
     ChemistryAlgorithm _cAlgorithm;
     vector<tuple<short, vector<double>, vector<double>>> fil;
     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+    vector<vector<tuple<array<double, 3>, vector<size_t>>>> membranes;
     //@}
     
     ///INITIALIZATION HELPER FUNCTIONS

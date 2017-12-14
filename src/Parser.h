@@ -310,6 +310,16 @@ struct FilamentSetup {
     string pinRestartFile = "";
 };
 
+/// Struct to hold membrane setup information
+struct MembraneSetup {
+    string inputFile = "";
+
+    /// Random generation of membrane is currently not allowed
+    int numMembranes = 0;
+    /// Membrane type to create
+    short membraneType = 0;
+};
+
 /// Struct to hold Bubble setup information
 struct BubbleSetup {
     
@@ -398,20 +408,24 @@ public:
             vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
 };
 
-/// Used to parse initial membrane information, initialized by the Controller.
+/// Used to parse initial membrane vertex and neighbor information, initialized by the Controller.
 class MembraneParser : public Parser {
     
 public:
     MembraneParser(string inputFileName) : Parser(inputFileName) {}
     ~MembraneParser() {}
     
-    /// Reads membrane input file.
+    typedef array<double, 3>                  positionInfo;
+    typedef vector<size_t>                    neighborInfo;
+    typedef tuple<positionInfo, neighborInfo> vertexInfo;
+    typedef vector<vertexInfo>                membraneInfo;
+
+    /// Reads membrane vertex input file.
     // TODO: Implement this.
     // Returns a vector of tuples containing
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> ,
-            vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
+    vector<membraneInfo> readMembranes();
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.

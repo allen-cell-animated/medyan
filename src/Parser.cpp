@@ -1647,6 +1647,34 @@ FilamentSetup SystemParser::readFilamentSetup() {
     return FSetup;
 }
 
+MembraneSetup SystemParser::readMembraneSetup() {
+    
+    _inputFile.clear();
+    _inputFile.seekg(0);
+    
+    MembraneSetup MemSetup;
+    
+    string line;
+    while(getline(_inputFile, line)) {
+        
+        if(line.find("#") != string::npos) { continue; }
+        
+        if(line.find("MEMBRANE_FILE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout << "Error reading membrane input file. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2)
+                MemSetup.inputFile = lineVector[1];
+        }
+        // number of membranes will be automatically inferred from the input file
+    }
+    return MemSetup;
+}
+
+
 BubbleSetup SystemParser::readBubbleSetup() {
     
     _inputFile.clear();
@@ -1764,6 +1792,62 @@ BubbleSetup SystemParser::readBubbleSetup() {
     }
       tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, staticVector);
     return returnVector;
+}
+
+vector<MembraneParser::membraneInfo> MembraneParser::readMembranes() {
+
+    vector<membraneInfo> res;
+    
+    bool wasEmpty = true;
+    
+    while(getline(_inputFile, line)) {
+        
+        bool isEmpty = (line.empty() || line.find("#") != string::npos); // empty line or line with '#'
+
+        if(wasEmpty && !isEmpty) { // New membrane
+            res.emplace_back(membraneInfo());
+        }
+
+        wasEmpty = isEmpty;
+        if(isEmpty) continue;
+
+        if(res.empty()) {
+            cout << "This line should never be executed. Something is wrong when reading membrane information. "
+                 << "Exiting." <<endl;
+            exit(EXIT_FAILURE);
+        }
+
+        auto& activeMem = res.back();
+
+        vector<string> lineVector = split<string>(line);
+        size_t lineVectorSize = lineVector.size();
+
+        if(lineVectorSize < 3) {
+            cout << "Error occured when reading membrane files. "
+                 << "Each vertex should have 3 doubles for position. "
+                 << "Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        else {
+            activeMem.emplace_back(vertexInfo());
+            auto& activeVertex = activeMem.back();
+            auto& activePosition = get<0>(activeVertex);
+            auto& activeNeighbor = get<1>(activeVertex);
+
+            // Parse coordinate information
+            for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+                activePosition[coordIdx] = lineVector[coordIdx];
+            }
+
+            // Parse neighbor indices
+            activeNeighbor.reserve(lineVectorSize - 3);
+            for(size_t nIdx = 0; nIdx < lineVectorSize - 3; ++nIdx) {
+                activeNeighbor.push_back((size_t)atoi(lineVector[nIdx + 3].c_str()));
+            }
+        }
+    }
+
+    return res;
 }
 
 vector<tuple<short, vector<double>>> BubbleParser::readBubbles() {
