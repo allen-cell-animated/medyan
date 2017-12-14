@@ -48,19 +48,17 @@ private:
                                    // ...[2] = 0 means the 2nd edge has 0th vertex at center
     
     static Database<Vertex*> _vertices; // Collection of vertices in SubSystem
+    int _Id; // Unique integer id of this vertex
 
 public:
     ///Main constructor
-    Vertex(vector<double> v, Composite* parent, int position);
+    Vertex(vector<double> v, Composite* parent, size_t numNeighbors);
     
-    ///Default constructor
-    Vertex(Composite* parent, int position);
-
     // Get mech Voronoi cell
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 
     // Get number of tethered neighbors
-    size_t getNeighborNum() { return _neighborVertices.size(); }
+    size_t getNeighborNum()const { return _neighborVertices.size(); }
 
     // Get tethered neighbors
     std::vector<Vertex*>& getNeighborVertices() { return _neighborVertices; }
@@ -73,6 +71,15 @@ public:
     static const vector<Vertex*>& getVertices() {
         return _vertices.getElements();
     }
+    /// Get ID
+    int getId()const { return _Id; }
+
+    //@{
+    /// SubSystem management, inherited from Bead: Trackable
+    virtual void addToSubSystem()override { _vertices.addElement(this); }
+    virtual void removeFromSubSystem()override { _vertices.removeElement(this); }
+    //@}
+
 
 };
 

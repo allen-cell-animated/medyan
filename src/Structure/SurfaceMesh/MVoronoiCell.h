@@ -28,9 +28,13 @@ private:
     double _stretchedCurv; // Temporarily store the stretched mean curvature
 
 public:
-    MVoronoiCell(double eqArea) {
-        setEqArea(eqArea);
-    }
+    MVoronoiCell(size_t numNeighbors):
+        _dNeighborCurrentArea(numNeighbors, {}),
+        _dNeighborCurrentCurv(numNeighbors, {}) {}
+
+    /// Set parent 
+    void setVertex(Vertex* v) { _pVertex = v; }
+    Vertex* getVertex() { return _pVertex; }
 
     void setEqArea(double eqArea) { _eqArea = eqArea; }
     double getEqArea() { return _eqArea; }

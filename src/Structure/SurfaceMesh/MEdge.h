@@ -17,6 +17,10 @@ private:
 public:
     MEdge() {}
 
+    /// Set parent 
+    void setEdge(Edge* e) { _pEdge = e; }
+    Edge* getEdge() { return _pEdge; }
+
     double getLength() { return _currentLength; }
     std::array<std::array<double, 3>, 2>& getDLength() { return _dCurrentLength; }
     void calcLength();
