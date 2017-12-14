@@ -313,7 +313,9 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
     cout << "Done. " << fil.size() << " filaments created." << endl;
 
-    // Now starting to add the membrane into the network.
+    /**************************************************************************
+    Now starting to add the membrane into the network.
+    **************************************************************************/
     MembraneSetup MemSetup = p.readMembraneSetup();
     
     cout << "---" << endl;
@@ -323,56 +325,22 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         MembraneParser memp(_inputDirectory + MemSetup.inputFile);
         membranes = memp.readMembranes();
     }
-    fil=get<0>(filaments);
-    //add other filaments if specified
-    FilamentInitializer* fInit = new RandomFilamentDist();
+    // Membrane auto initializer is currently not provided,
+    // which means that the input file is the only source of membrane information.
     
-    auto filamentsGen = fInit->createFilaments(_subSystem->getBoundary(),
-                                               FSetup.numFilaments,
-                                               FSetup.filamentType,
-                                               FSetup.filamentLength);
-    auto filGen=get<0>(filamentsGen);
-    fil.insert(fil.end(), filGen.begin(), filGen.end());
-    delete fInit;
-    
-    //add filaments
-    for (auto it: fil) {
+    // add membranes
+    for (auto& it: membranes) {
         
-        auto coord1 = get<1>(it);
-        auto coord2 = get<2>(it);
-        auto type = get<0>(it);
+        short type = 0; // Currently set as default(0).
         
-        if(type >= SysParams::Chemistry().numFilaments) {
-            cout << "Filament data specified contains an "
-                 <<"invalid filament type. Exiting." << endl;
+        if(type >= SysParams::Chemistry().numMembranes) {
+            cout << "Membrane data specified contains an invalid filament type. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
-        vector<vector<double>> coords = {coord1, coord2};
-        if(coord2.size()==3){
-            
-        double d = twoPointDistance(coord1, coord2);
-        vector<double> tau = twoPointDirection(coord1, coord2);
-        int numSegment = d / SysParams::Geometry().cylinderSize[type];
-        // check how many segments can fit between end-to-end of the filament
-        if (numSegment == 0)
-            _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2, FSetup.projectionType);
-        else
-            _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
-        }
-        else if(coord2.size()>3){
-            int numSegment = coord2.size()/3;
-            vector<vector<double>> coords;
-            coords.push_back(coord1);
-            for(int id=0;id<numSegment;id++)
-                coords.push_back({coord2[id*3],coord2[id*3+1],coord2[id*3+2]});
-            
-            if (numSegment == 0)
-                _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2, FSetup.projectionType);
-            else
-                _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
-        }
+
+        _subSystem->addTrackable<Membrane>(_subSystem, type, it);
     }
-    cout << "Done. " << fil.size() << " filaments created." << endl;
+    cout << "Done. " << membranes.size() << " membranes created." << endl;
 
 }
 

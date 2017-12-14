@@ -421,9 +421,6 @@ public:
     typedef vector<vertexInfo>                membraneInfo;
 
     /// Reads membrane vertex input file.
-    // TODO: Implement this.
-    // Returns a vector of tuples containing
-    /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
     vector<membraneInfo> readMembranes();
 };

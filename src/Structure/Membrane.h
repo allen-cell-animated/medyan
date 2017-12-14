@@ -1,6 +1,8 @@
 #ifndef MEDYAN_Membrane_h
 #define MEDYAN_Membrane_h
 
+#include <array>
+#include <tuple>
 #include <vector>
 
 #include "Database.h"
@@ -23,12 +25,22 @@ private:
     vector<Edge*> _edgeVector; // collection of edges
     vector<Vertex*> _vertexVector; // collection of vertices
 
+    short _memType; // Membrane type
+
     SubSystem* _subSystem; // SubSystem pointer
 
     static Database<Membrane*> _membranes; // Collection in SubSystem
+    int _Id; // Unique integer id of this membrane
 
 public:
-    // TODO: constructors
+    // Constructors
+    // This constructor creates a membrane according to vertex and neighbor data
+    Membrane(SubSystem* s, short membraneType,
+        vector<tuple<array<double, 3>, vector<size_t>>>& membraneData);
+
+    // This destructor is called when a membrane is to be removed from the system.
+    // Removes all vertices, edges and triangles associated with the membrane.
+    ~Membrane();
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
     vector<Triangle*>& getTriangleVector() {return _triangleVector;}
