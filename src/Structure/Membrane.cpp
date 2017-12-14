@@ -1,5 +1,7 @@
 #include "Membrane.h"
 
+#include <stdexcept>
+
 #include "common.h"
 
 #include "SubSystem.h"
@@ -42,12 +44,50 @@ Membrane::Membrane(SubSystem* s, short membraneType,
         Vertex* centerVertex = Vertex::_vertices.getElements()[idx];
         size_t numNeighbors = centerVertex->getNeighborNum();
         for(size_t nIdx = 0; nIdx < numNeighbors; ++nIdx) {
-            centerVertex->getNeighborVertices()[nIdx] = Vertex::_vertices.getElements()[neighborData[nIdx] + firstIdx];
+            Vertex* nVertex = Vertex::_vertices.getElements()[neighborData[nIdx] + firstIdx];
+            centerVertex->getNeighborVertices()[nIdx] = nVertex;
+            centerVertex->getNeighborVertexIndices()[nVertex] = nIdx;
         }
     }
 
     /**************************************************************************
-        Setting up edges and triangles
+        Setting up edges
+    **************************************************************************/
+    for(int idx = firstIdx; idx < futureIdx; ++idx) {
+        Vertex* centerVertex = Vertex::_vertices.getElements()[idx];
+        size_t numNeighbors = centerVertex->getNeighborNum();
+        for(int nIdx = 0; nIdx < numNeighbors; ++nIdx) {
+
+            Vertex* nVertex = centerVertex->getNeighborVertices()[nIdx];
+
+            // Edge registration
+            if(centerVertex->getNeighborEdges()[nIdx] == nullptr) { // Edge not registered
+                _subSystem->addTrackable<Edge>(this, centerVertex, nVertex);
+                Edge* lastAddedEdge = Edge::_edges.getElements().back();
+
+                // Bind the edge to vertices, and check whether neighbor exists
+                size_t backToCenterIdx = 0;
+                try {
+                    backToCenterIdx = nVertex->getNeighborVertexIndices().at(centerVertex);
+                }
+                catch(const std::out_of_range& oor) {
+                    cout << "An error occured when trying to add edges of the meshwork. "
+                         << "Neighbors must pair with each other. Exiting."
+                         << endl;
+                    exit(EXIT_FAILURE);
+                }
+
+                centerVertex->getNeighborEdges()[nIdx] = lastAddedEdge;
+                nVertex->getNeighborEdges()[backToCenterIdx] = lastAddedEdge;
+                
+                centerVertex->getEdgeHead()[nIdx] = 0;
+                nVertex->getEdgeHead()[backToCenterIdx] = 1;
+            }
+        }
+    }
+
+    /**************************************************************************
+        Setting up triangles
     **************************************************************************/
     for(int idx = firstIdx; idx < futureIdx; ++idx) {
         Vertex* centerVertex = Vertex::_vertices.getElements()[idx];
@@ -57,20 +97,46 @@ Membrane::Membrane(SubSystem* s, short membraneType,
             Vertex* nVertex = centerVertex->getNeighborVertices()[nIdx];
             Vertex* nnVertex = centerVertex->getNeighborVertices()[(nIdx + 1) % numNeighbors];
 
-            // Edge registration
-            if(centerVertex->getNeighborEdges()[nIdx] == nullptr) { // Edge not registered
-                _subSystem->addTrackable<Edge>(
-                    this,
-                    centerVertex,
-                    centerVertex->getNeighborVertices()[nIdx]
-                );
-                Edge* lastAddedEdge = Edge::_edges.getElements().back();
-                centerVertex->getNeighborEdges()[nIdx] = lastAddedEdge;
-                nVertex->getNeighborEdges()[nIdx]; // TODO: Neighbor structure
+            // Triangle registration
+            if(centerVertex->getNeighborTriangles()[nIdx] == nullptr) { // Triangle not registered
+                _subSystem->addTrackable<Triangle>(this, centerVertex, nVertex, nnVertex);
+                Triangle* lastAddedTriangle = Triangle::_triangles.getElements().back();
+
+                // Bind the triangle to vertices, and check whether neighbor exists
+                size_t idx12 = 0, idx20 = 0;
+                try {
+                    idx12 = nVertex->getNeighborVertexIndices().at(nnVertex);
+                    idx20 = nnVertex->getNeighborVertexIndices().at(centerVertex);
+                }
+                catch(const std::out_of_range& oor) {
+                    cout << "An error occured when trying to add triangles of the meshwork. "
+                         << "Vertices should be able to form triangles. Exiting."
+                         << endl;
+                    exit(EXIT_FAILURE);
+                }
+
+                centerVertex->getNeighborTriangles()[nIdx] = lastAddedTriangle;
+                nVertex->getNeighborTriangles()[idx12] = lastAddedTriangle;
+                nnVertex->getNeighborTriangles()[idx20] = lastAddedTriangle;
+                
+                centerVertex->getTriangleHead()[nIdx] = 0;
+                nVertex->getTriangleHead()[idx12] = 2;
+                nnVertex->getTriangleHead()[idx20] = 1;
+
+                // Bind edges to the triangle
+                lastAddedTriangle->getEdges() = {
+                    centerVertex->getNeighborEdges()[nIdx],
+                    nVertex->getNeighborEdges()[idx12],
+                    nnVertex->getNeighborEdges()[idx20]
+                };
+                lastAddedTriangle->getEdgeHead() = {
+                    centerVertex->getEdgeHead()[nIdx],
+                    nVertex->getEdgeHead()[idx12],
+                    nnVertex->getEdgeHead()[idx20]
+                };
             }
         }
     }
-    // TODO: Implement this
 
 }
 

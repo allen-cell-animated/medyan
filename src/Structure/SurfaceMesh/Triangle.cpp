@@ -3,7 +3,7 @@
 Database<Triangle*> Triangle::_triangles;
 
 Triangle::Triangle(Composite* parent, Vertex* v1, Vertex* v2, Vertex* v3):
-    _v{v1, v2, v3}, _edges{nullptr, nullptr, nullptr} {
+    _v{v1, v2, v3}, _edges{nullptr, nullptr, nullptr}, _Id(_triangles.getID()) {
     
     parent -> addChild(unique_ptr<Component>(this));
 

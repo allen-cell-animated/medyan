@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Vertex_h
 #define MEDYAN_Vertex_h
 
+#include<unordered_map>
 #include<vector>
 
 #include "common.h"
@@ -38,9 +39,10 @@ private:
 
     // The following vectors on neighbor vertices, triangles, edges must have the same size
     std::vector<Vertex*> _neighborVertices; // tethered neighbors in counter-clockwise direction
+    std::unordered_map<Vertex*, size_t> _neighborVertexIndices; // maps vertex pointers back to indices
     std::vector<Triangle*> _neighborTriangles; // triangles around the vertex. each index i corresponds to
                                        // the triangle (this, _neighborVertices[i], _neighborVertices[i+1])
-    std::vector<size_t> _triangleHead; // The index of triangle 0th vertex // TODO: hashmaps
+    std::vector<size_t> _triangleHead; // The index of triangle 0th vertex
                                        // ...[2] = 1 means the 2nd triangle has vertices at (2, 3, center)
                                        // ...[4] = 2 means the 4th triangle has vertices at (5, center, 4)
     std::vector<Edge*> _neighborEdges; // The tethers, with the same order as neighbor vertices.
@@ -62,6 +64,7 @@ public:
 
     // Get tethered neighbors
     std::vector<Vertex*>& getNeighborVertices() { return _neighborVertices; }
+    std::unordered_map<Vertex*, size_t>& getNeighborVertexIndices() { return _neighborVertexIndices; }
     std::vector<Edge*>& getNeighborEdges() { return _neighborEdges; }
     std::vector<Triangle*>& getNeighborTriangles() { return _neighborTriangles; }
     std::vector<size_t>& getEdgeHead() { return _edgeHead; }
