@@ -10,6 +10,7 @@
 #include "MembraneStretchingVoronoiHarmonic.h"
 
 // Using the area of the Voronoi cells
+template<>
 double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(double d) {
     double U = 0;
     double U_i;
@@ -52,6 +53,7 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(doub
     return U;
 }
 
+template<>
 void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
@@ -70,6 +72,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
     }
 }
 
+template<>
 void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
@@ -91,6 +94,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
 
 
 // Using the areas of the triangles
+template<>
 double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
     double U = 0;
     double U_i;
@@ -139,6 +143,7 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
     return U;
 }
 
+template<>
 void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
@@ -156,6 +161,7 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
     }
 }
 
+template<>
 void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
