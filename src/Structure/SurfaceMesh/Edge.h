@@ -26,9 +26,7 @@ class Vertex;
 
 class Edge:
     public Component,
-    public Trackable,
-    public Movable,
-    public DynamicNeighbor {
+    public Trackable {
 
 private:
     // Pointers to the vertices.
@@ -53,8 +51,14 @@ public:
     static const vector<Edge*>& getEdges() {
         return _edges.getElements();
     }
-    /// Get ID
+    /// Get Id
     int getId()const { return _Id; }
+
+    //@{
+    /// Implements Component
+    virtual int getType() override { return getParent()->getType(); }
+    virtual void printSelf() override;
+    //@}
 
     //@{
     /// SubSystem management, inherited from Trackable

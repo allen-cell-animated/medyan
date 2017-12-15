@@ -24,7 +24,7 @@ class Triangle:
     public Component,
     public Trackable,
     public Movable,
-    public Reactable, // TODO: is it reactable?
+    // public Reactable,
     public DynamicNeighbor {
 
 private:
@@ -69,8 +69,16 @@ public:
     virtual void removeFromSubSystem()override { _triangles.removeElement(this); }
     //@}
 
-    // Print information
-    virtual void printSelf();
+    //@{
+    /// Implements Component
+    virtual int getType() override { return getParent()->getType(); }
+    virtual void printSelf() override;
+    //@}
+
+    //@{
+    /// Implements Movable
+    virtual void updatePosition() override;
+    //@}
 
 
 };

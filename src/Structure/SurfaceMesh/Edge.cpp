@@ -13,3 +13,20 @@ Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
 #endif
 
 }
+
+void Edge::printSelf() {
+    cout << endl;
+    
+    cout << "Edge: ptr = " << this << endl;
+    cout << "Edge ID = " << _Id << endl;
+    cout << "Parent ptr = " << getParent() << endl;
+        
+    cout << endl;
+
+    cout << "Vertex information..." << endl;
+    
+    _v[0]->printSelf();
+    _v[1]->printSelf();
+    
+    cout << endl;
+}

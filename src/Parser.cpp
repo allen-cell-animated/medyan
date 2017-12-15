@@ -1800,6 +1800,7 @@ vector<MembraneParser::membraneInfo> MembraneParser::readMembranes() {
     
     bool wasEmpty = true;
     
+    string line;
     while(getline(_inputFile, line)) {
         
         bool isEmpty = (line.empty() || line.find("#") != string::npos); // empty line or line with '#'
