@@ -5,10 +5,13 @@
 
 using namespace mathfunc;
 
-MTriangle::MTriangle(double eqArea) {
-
-    setEqArea(eqArea);
-
+MTriangle::MTriangle(short membraneType) {
+    if(!SysParams::Mechanics().MemElasticK.empty())
+        _kElastic = SysParams::Mechanics().MemElasticK[membraneType];
+    
+    if(!SysParams::Mechanics().MemCylinderVolumeK.empty())
+        _kExVol = SysParams::Mechanics().MemCylinderVolumeK[membraneType];
+    
 }
 
 void MTriangle::calcArea() {

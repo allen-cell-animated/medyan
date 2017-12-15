@@ -28,9 +28,7 @@ private:
     double _stretchedCurv; // Temporarily store the stretched mean curvature
 
 public:
-    MVoronoiCell(size_t numNeighbors):
-        _dNeighborCurrentArea(numNeighbors, {}),
-        _dNeighborCurrentCurv(numNeighbors, {}) {}
+    MVoronoiCell(short membraneType, size_t numNeighbors);
 
     /// Set parent 
     void setVertex(Vertex* v) { _pVertex = v; }

@@ -39,7 +39,11 @@ private:
     std::array<double, 3> _stretchedCotTheta;
 
 public:
-    MTriangle(double eqArea);
+    MTriangle(short membraneType);
+
+    /// Set parent 
+    void setTriangle(Triangle* t) { _pTriangle = t; }
+    Triangle* getTriangle() { return _pTriangle; }
 
     void setEqArea(double eqArea) { _eqArea = eqArea; }
     double getEqArea() { return _eqArea; }

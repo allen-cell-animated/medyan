@@ -8,6 +8,19 @@
 
 using namespace mathfunc;
 
+MVoronoiCell::MVoronoiCell(short membraneType, size_t numNeighbors):
+    _dNeighborCurrentArea(numNeighbors, {}),
+    _dNeighborCurrentCurv(numNeighbors, {}) {
+    
+    if(!SysParams::Mechanics().MemElasticK.empty())
+        _kElastic = SysParams::Mechanics().MemElasticK[membraneType];
+    
+    if(!SysParams::Mechanics().MemBendingK.empty())
+        _kBending = SysParams::Mechanics().MemBendingK[membraneType];
+    if(!SysParams::Mechanics().MemEqCurv.empty())
+        _kBending = SysParams::Mechanics().MemEqCurv[membraneType];
+}
+
 void MVoronoiCell::calcArea() {
     /**************************************************************************
     This calculation depends on the result of

@@ -7,6 +7,12 @@ Triangle::Triangle(Composite* parent, Vertex* v1, Vertex* v2, Vertex* v3):
     
     parent -> addChild(unique_ptr<Component>(this));
 
+#ifdef MECHANICS
+    // eqArea cannot be obtained at this moment
+    _mTriangle = unique_ptr<MTriangle>(new MTriangle(getType()));
+    _mTriangle->setTriangle(this);
+#endif
+
 }
 
 void Triangle::updateCoordinate() {
@@ -20,7 +26,7 @@ void Triangle::printSelf() {
     cout << endl;
     
     cout << "Triangle: ptr = " << this << endl;
-    //cout << "Triangle ID = " << _ID << endl; //< TODO: Implement this.
+    cout << "Triangle ID = " << _Id << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     

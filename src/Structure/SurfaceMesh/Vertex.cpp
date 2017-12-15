@@ -10,7 +10,7 @@ Vertex::Vertex(vector<double> v, Composite* parent, size_t numNeighbors):
     
 #ifdef MECHANICS
     // eqArea cannot be obtained at this moment
-    _mVoronoiCell = unique_ptr<MVoronoiCell>(new MVoronoiCell(numNeighbors));
+    _mVoronoiCell = unique_ptr<MVoronoiCell>(new MVoronoiCell(getType(), numNeighbors));
     _mVoronoiCell->setVertex(this);
 #endif
 

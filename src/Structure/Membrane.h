@@ -47,6 +47,12 @@ public:
     vector<Edge*>& getEdgeVector() { return _edgeVector; }
     vector<Vertex*>& getVertexVector() { return _vertexVector; }
 
+    // Get Id
+    int getId() { return _Id; }
+    
+    // Get type
+    short getType() { return _memType; }
+    
     // SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _membranes.addElement(this); }
     virtual void removeFromSubSystem() { _membranes.removeElement(this); }
