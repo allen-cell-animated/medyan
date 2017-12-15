@@ -7,6 +7,7 @@
 #include "MembraneBendingVoronoiHelfrich.h"
 
 // Using the Helfrich Hamiltonian of mean curvature in Voronoi cells
+template<>
 double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(double d) {
     double U = 0;
     double U_i;
@@ -51,6 +52,7 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(double d) 
     return U;
 }
 
+template<>
 void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
@@ -70,6 +72,7 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
     }
 }
 
+template<>
 void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
