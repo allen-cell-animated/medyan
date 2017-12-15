@@ -51,7 +51,7 @@ public:
     int getId() { return _Id; }
     
     // Get type
-    short getType() { return _memType; }
+    int getType() { return _memType; }
     
     // SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _membranes.addElement(this); }

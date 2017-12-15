@@ -387,6 +387,9 @@ public:
     /// Read Filament information
     FilamentSetup readFilamentSetup();
     
+    /// Read Membrane information
+    MembraneSetup readMembraneSetup();
+
     /// Read Bubble information
     BubbleSetup readBubbleSetup();
     

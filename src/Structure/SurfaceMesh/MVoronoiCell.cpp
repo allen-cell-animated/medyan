@@ -9,8 +9,8 @@
 using namespace mathfunc;
 
 MVoronoiCell::MVoronoiCell(short membraneType, size_t numNeighbors):
-    _dNeighborCurrentArea(numNeighbors, {}),
-    _dNeighborCurrentCurv(numNeighbors, {}) {
+    _dNeighborCurrentArea(numNeighbors, {{}}),
+    _dNeighborCurrentCurv(numNeighbors, {{}}) {
     
     if(!SysParams::Mechanics().MemElasticK.empty())
         _kElastic = SysParams::Mechanics().MemElasticK[membraneType];

@@ -1836,7 +1836,7 @@ vector<MembraneParser::membraneInfo> MembraneParser::readMembranes() {
 
             // Parse coordinate information
             for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-                activePosition[coordIdx] = lineVector[coordIdx];
+                activePosition[coordIdx] = atof(lineVector[coordIdx].c_str());
             }
 
             // Parse neighbor indices

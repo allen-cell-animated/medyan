@@ -22,6 +22,8 @@
 #include "BranchingFF.h"
 #include "BubbleFF.h"
 #include "CylinderVolumeFF.h"
+#include "MembraneFF.h"
+#include "TriangleCylinderVolumeFF.h"
 
 #include "ConjugateGradient.h"
 

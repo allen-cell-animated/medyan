@@ -38,16 +38,16 @@ Membrane::Membrane(SubSystem* s, short membraneType,
             get<1>(vertexData).size()
         );
     }
-    int futureIdx = Vertex::_vertices.getElements().size();
+    int futureIdx = Vertex::getVertices().size();
     int firstIdx = futureIdx - numVertices;
 
     // Register the neighbors
     for(int idx = firstIdx; idx < futureIdx; ++idx) {
         auto& neighborData = get<1>(membraneData[idx - firstIdx]);
-        Vertex* centerVertex = Vertex::_vertices.getElements()[idx];
+        Vertex* centerVertex = Vertex::getVertices()[idx];
         size_t numNeighbors = centerVertex->getNeighborNum();
         for(size_t nIdx = 0; nIdx < numNeighbors; ++nIdx) {
-            Vertex* nVertex = Vertex::_vertices.getElements()[neighborData[nIdx] + firstIdx];
+            Vertex* nVertex = Vertex::getVertices()[neighborData[nIdx] + firstIdx];
             centerVertex->getNeighborVertices()[nIdx] = nVertex;
             centerVertex->getNeighborVertexIndices()[nVertex] = nIdx;
         }
@@ -57,7 +57,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
         Setting up edges
     **************************************************************************/
     for(int idx = firstIdx; idx < futureIdx; ++idx) {
-        Vertex* centerVertex = Vertex::_vertices.getElements()[idx];
+        Vertex* centerVertex = Vertex::getVertices()[idx];
         size_t numNeighbors = centerVertex->getNeighborNum();
         for(int nIdx = 0; nIdx < numNeighbors; ++nIdx) {
 
@@ -66,7 +66,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
             // Edge registration
             if(centerVertex->getNeighborEdges()[nIdx] == nullptr) { // Edge not registered
                 _subSystem->addTrackable<Edge>(this, centerVertex, nVertex);
-                Edge* lastAddedEdge = Edge::_edges.getElements().back();
+                Edge* lastAddedEdge = Edge::getEdges().back();
 
                 // Bind the edge to vertices, and check whether neighbor exists
                 size_t backToCenterIdx = 0;
@@ -98,7 +98,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
         Setting up triangles
     **************************************************************************/
     for(int idx = firstIdx; idx < futureIdx; ++idx) {
-        Vertex* centerVertex = Vertex::_vertices.getElements()[idx];
+        Vertex* centerVertex = Vertex::getVertices()[idx];
         size_t numNeighbors = centerVertex->getNeighborNum();
         for(int nIdx = 0; nIdx < numNeighbors; ++nIdx) {
 
@@ -108,7 +108,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
             // Triangle registration
             if(centerVertex->getNeighborTriangles()[nIdx] == nullptr) { // Triangle not registered
                 _subSystem->addTrackable<Triangle>(this, centerVertex, nVertex, nnVertex);
-                Triangle* lastAddedTriangle = Triangle::_triangles.getElements().back();
+                Triangle* lastAddedTriangle = Triangle::getTriangles().back();
 
                 // Bind the triangle to vertices, and check whether neighbor exists
                 size_t idx12 = 0, idx20 = 0;
@@ -157,7 +157,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
         Setting up Voronoi cells
     **************************************************************************/
     for(int idx = firstIdx; idx < futureIdx; ++idx) {
-        MVoronoiCell* mvc = Vertex::_vertices.getElements()[idx]->getMVoronoiCell();
+        MVoronoiCell* mvc = Vertex::getVertices()[idx]->getMVoronoiCell();
         // Calculate area and set it as eqArea
         mvc->calcArea();
         mvc->setEqArea(mvc->getArea());

@@ -32,6 +32,7 @@
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
+#include "Membrane.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
