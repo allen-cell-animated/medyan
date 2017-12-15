@@ -15,7 +15,7 @@ double MembraneBendingVoronoiHelfrich::energy(double area, double curv,
 
     double dist = curv - eqCurv;
     
-    return 2 * kBending * dist * dist / area;
+    return 2 * kBending * dist * dist * area;
     
 }
 
@@ -24,7 +24,7 @@ double MembraneBendingVoronoiHelfrich::energy(double areaStretched, double curvS
     // In fact, d is a dummy variable here, as areaStretched is already dependent on d.
 
     double distStretched = curvStretched - eqCurv;
-    return 2 * kBending * distStretched * distStretched / areaStretched;
+    return 2 * kBending * distStretched * distStretched * areaStretched;
 }
 
 void MembraneBendingVoronoiHelfrich::forces(Vertex* vCenter, const std::vector<Vertex*>& v,
@@ -41,9 +41,9 @@ void MembraneBendingVoronoiHelfrich::forces(Vertex* vCenter, const std::vector<V
     double coeff2 = -2 * kBending * dist * dist;
 
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        vCenter->force[coordIdx] += coeff1 * dArea[coordIdx] + coeff2 * dCurv[coordIdx];
+        vCenter->force[coordIdx] += coeff1 * dCurv[coordIdx] + coeff2 * dArea[coordIdx];
         for(size_t nIdx = 0; nIdx < n; ++nIdx) {
-            v[nIdx]->force[coordIdx] += coeff1 * dNeighborArea[nIdx][coordIdx] + coeff2 * dNeighborCurv[nIdx][coordIdx];
+            v[nIdx]->force[coordIdx] += coeff1 * dNeighborCurv[nIdx][coordIdx] + coeff2 * dNeighborArea[nIdx][coordIdx];
         }
     }
 }
@@ -61,9 +61,9 @@ void MembraneBendingVoronoiHelfrich::forcesAux(Vertex* vCenter, const std::vecto
     double coeff2 = -2 * kBending * dist * dist;
 
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        vCenter->forceAux[coordIdx] += coeff1 * dArea[coordIdx] + coeff2 * dCurv[coordIdx];
+        vCenter->forceAux[coordIdx] += coeff1 * dCurv[coordIdx] + coeff2 * dArea[coordIdx];
         for(size_t nIdx = 0; nIdx < n; ++nIdx) {
-            v[nIdx]->forceAux[coordIdx] += coeff1 * dNeighborArea[nIdx][coordIdx] + coeff2 * dNeighborCurv[nIdx][coordIdx];
+            v[nIdx]->forceAux[coordIdx] += coeff1 * dNeighborCurv[nIdx][coordIdx] + coeff2 * dNeighborArea[nIdx][coordIdx];
         }
     }
 }
