@@ -18,7 +18,7 @@ MVoronoiCell::MVoronoiCell(short membraneType, size_t numNeighbors):
     if(!SysParams::Mechanics().MemBendingK.empty())
         _kBending = SysParams::Mechanics().MemBendingK[membraneType];
     if(!SysParams::Mechanics().MemEqCurv.empty())
-        _kBending = SysParams::Mechanics().MemEqCurv[membraneType];
+        _eqCurv = SysParams::Mechanics().MemEqCurv[membraneType];
 }
 
 void MVoronoiCell::calcArea() {

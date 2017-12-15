@@ -9,6 +9,9 @@
 #include "Triangle.h"
 #include "Edge.h"
 #include "Vertex.h"
+#include "MTriangle.h"
+#include "MEdge.h"
+#include "MVoronoiCell.h"
 
 #include "MathFunctions.h"
 using namespace mathfunc;
@@ -82,6 +85,11 @@ Membrane::Membrane(SubSystem* s, short membraneType,
                 
                 centerVertex->getEdgeHead()[nIdx] = 0;
                 nVertex->getEdgeHead()[backToCenterIdx] = 1;
+
+#ifdef MECHANICS
+                // Calculate the length of the edge
+                lastAddedEdge->getMEdge()->calcLength();
+#endif
             }
         }
     }
@@ -134,9 +142,27 @@ Membrane::Membrane(SubSystem* s, short membraneType,
                     nVertex->getEdgeHead()[idx12],
                     nnVertex->getEdgeHead()[idx20]
                 };
+
+#ifdef MECHANICS
+                // Calculate the area of the triangle and set it as eqArea
+                lastAddedTriangle->getMTriangle()->calcArea();
+                lastAddedTriangle->getMTriangle()->setEqArea(lastAddedTriangle->getMTriangle()->getArea());
+#endif
             }
         }
     }
+
+#ifdef MECHANICS
+    /**************************************************************************
+        Setting up Voronoi cells
+    **************************************************************************/
+    for(int idx = firstIdx; idx < futureIdx; ++idx) {
+        MVoronoiCell* mvc = Vertex::_vertices.getElements()[idx]->getMVoronoiCell();
+        // Calculate area and set it as eqArea
+        mvc->calcArea();
+        mvc->setEqArea(mvc->getArea());
+    }
+#endif
 
 }
 
