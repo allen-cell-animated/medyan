@@ -35,7 +35,7 @@ public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ChemSimpleGillespieImpl() :
     ChemSimImpl(), _eng(rdtsc()),
-    _exp_distr(0.0), _uniform_distr() { resetTime(); }
+    _exp_distr(), _uniform_distr() { resetTime(); }
     
     /// Copying is not allowed
     ChemSimpleGillespieImpl(const ChemSimpleGillespieImpl &rhs) = delete;
