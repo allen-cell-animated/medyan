@@ -19,6 +19,9 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
+#include "MathFunctions.h"
+using namespace mathfunc;
+
 template <class BStretchingInteractionType>
 double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d) {
     
@@ -56,13 +59,15 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d) 
 
 template <class BStretchingInteractionType>
 void BranchingStretching<BStretchingInteractionType>::computeForces() {
-    
+    auto i=0;
     for (auto b: BranchingPoint::getBranchingPoints()) {
-    
+        i++;
         Bead* b1 = b->getFirstCylinder()->getFirstBead();
         Bead* b2 = b->getFirstCylinder()->getSecondBead();
         Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        
+        Bead* b4 = b->getSecondCylinder()->getSecondBead();
+        std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+
         double kStretch = b->getMBranchingPoint()->getStretchingConstant();
         double eqLength = b->getMBranchingPoint()->getEqLength();
         double position = b->getPosition();

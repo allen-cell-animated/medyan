@@ -957,7 +957,7 @@ void SystemParser::readMechParams() {
                     }
                     
                     else{
-                        std::cout<<lineVector[2]<<endl;
+                        cout<<"TRANSFERSHARE AXIS "<<lineVector[2]<<endl;
                     if(lineVector[2]=="X")
                         MParams.transfershareaxis=0;
                     else if(lineVector[2]=="Y")
@@ -1789,6 +1789,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
         else if(line.find("SPECIESDIFFUSING") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
+            
+
             if(lineVector.size() >  8 || lineVector.size() < 7) {
                 cout << "Error reading a diffusing species. Exiting." << endl;
                 exit(EXIT_FAILURE);

@@ -94,10 +94,10 @@ private:
     /// Move the boundary based on the timestep
     void moveBoundary(double deltaTau);
     ///Activate/deactivate compartments based on the longest filament (along Xaxis).
-    void activatedeactivateComp();
+    void activatedeactivateComp(double timecheck);
     void ControlfrontEndCompobsolete();
     void ControlbackEndCompobsolete();
-    void ControlfrontbackEndComp();
+    void ControlfrontbackEndComp(double timecheck);
     /// Update the positions of all elements in the system
     void updatePositions();
     

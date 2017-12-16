@@ -262,7 +262,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         CMonomer* m2 = cc->getCMonomer(i-1);
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
-        
+
         //loop through reactants, products. find all species
         
         //FIRST REACTANT  MUST BE FILAMENT
@@ -384,7 +384,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
-    
+
     //loop through reactants, products. find all species
     
     //FIRST REACTANT  MUST BE FILAMENT
