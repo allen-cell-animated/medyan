@@ -124,7 +124,7 @@ void Compartment::transferSpecies(int i) {
     
     for(auto &neighbor : _neighbours){
         auto ncoord=neighbor->coordinates();
-//                    std::cout<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<" "<<ncoord[0]<<" "<<ncoord[1]<<" "<<ncoord[2]<<endl;
+
         if(neighbor->isActivated()){
             if(i==3)
                 activeNeighbors.push_back(neighbor);

@@ -311,7 +311,48 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                 _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
         }
     }
-    cout << "Done. " << fil.size() << " filaments created." << endl;
+        cout << "Done. " << fil.size() << " filaments created." << endl;
+    
+//    for(auto fil:Filament::getFilaments()){
+//        auto it = fil->getCylinderVector().back();
+//        if(it->isPlusEnd()){
+//            std::cout<<"P "<<it->getMCylinder()->getEqLength()<<" ";
+//            bool check = false;
+//            auto ctr = 0;
+//            
+//            while((!check) && ctr < 40)
+//            {
+//                if(it->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
+//                ctr ++;
+//            }
+//            if(check)
+//                std::cout<<(ctr+1)*2.7<<endl;
+//            else
+//                std::cout<<"OOPS"<<endl;
+//        }
+//        else
+//            std::cout<<"CHECK! Cyl not a plus end"<<endl;
+//        //
+//        it = fil->getCylinderVector().front();
+//        if(it->isMinusEnd()){
+//            std::cout<<"M "<<it->getMCylinder()->getEqLength()<<" ";
+//            bool check = false;
+//            auto ctr = 0;
+//            
+//            while((!check) && ctr < 40)
+//            {
+//                if(it->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
+//                ctr ++;
+//            }
+//            if(check)
+//                std::cout<<(40-ctr)*2.7<<endl;
+//            else
+//                std::cout<<"OOPS"<<endl;
+//        }
+//        else
+//            std::cout<<"CHECK! Cyl not a minus end"<<endl;
+//            
+//    }
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {
@@ -368,7 +409,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     cout << "Done." << endl;
 }
 
-void Controller::activatedeactivateComp(){
+void Controller::activatedeactivateComp(double timecheck){
 //    std::cout<<"BEFORE UPDATION (CYCLE BEGINS)"<<endl;
 //    auto counter=0;
 //    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
@@ -378,28 +419,47 @@ void Controller::activatedeactivateComp(){
 //            std::cout<<endl;
 //    }
 //    std::cout<<endl;
-    fCompmap.clear();
-    bCompmap.clear();
-    activatecompartments.clear();
+        if(SysParams::Mechanics().transfershareaxis>=0){
+            fCompmap.clear();
+            bCompmap.clear();
+            activatecompartments.clear();
 
     //ControlfrontEndComp();
     //ControlbackEndComp();
-    ControlfrontbackEndComp();
-        std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
-    for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
-    {
-        if(!(*it)->isActivated())
-           _cController->activate(*it);
-    }
-    //deactivate compartments starting from the right extreme
-    for (std::multimap<int,Compartment*>::reverse_iterator it=fCompmap.rbegin(); it!=fCompmap.rend(); ++it)
-        _cController->deactivate(it->second);
-    //deactivate compartments starting from the left extreme
-    for (std::multimap<int,Compartment*>::iterator it=bCompmap.begin(); it!=bCompmap.end(); ++it)
-        _cController->deactivate(it->second);
-    fCompmap.clear();
-    bCompmap.clear();
-        std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+            ControlfrontbackEndComp(timecheck);
+            
+            if(timecheck>0) {
+                std::cout<<"BEFOREUPDATION "<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;}
+            
+            for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
+            {
+                if(!(*it)->isActivated())
+                    _cController->activate(*it);
+            }
+            //deactivate compartments starting from the right extreme
+            for (std::multimap<int,Compartment*>::reverse_iterator it=fCompmap.rbegin(); it!=fCompmap.rend(); ++it)
+                _cController->deactivate(it->second);
+            //deactivate compartments starting from the left extreme
+            for (std::multimap<int,Compartment*>::iterator it=bCompmap.begin(); it!=bCompmap.end(); ++it)
+                _cController->deactivate(it->second);
+            fCompmap.clear();
+            bCompmap.clear();
+            if(timecheck>0)
+            std::cout<<"AFTERUPDATION "<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+                auto coord=C->coordinates();
+                std::cout<<C->isActivated()<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<" ";
+                            for(auto sd : _chemData.speciesDiffusing) {
+                                std::cout<<C->isActivated()<<" "<<C->coordinates()[0];
+                                    string name = get<0>(sd);
+                                    auto s = C->findSpeciesByName(name);
+                                   auto copyNum = s->getN();
+                    
+                                std::cout << name <<" "<< copyNum;
+                               }
+                std::cout<<endl;
+            }
+        }
     //std::cout<<"AFTERUPDATION ";
    // auto counter=0;
   //  for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
@@ -409,12 +469,14 @@ void Controller::activatedeactivateComp(){
 //            std::cout<<endl;
    // }
   //  std::cout<<endl;
+//        }
 }
-void Controller::ControlfrontbackEndComp(){
+void Controller::ControlfrontbackEndComp(double timecheck){
     Compartment* maxcomp=NULL;
     Bead* maxbead=NULL;
     Compartment* mincomp=NULL;
     Bead* minbead=NULL;
+
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         auto cyls=C->getCylinders();
         if(cyls.size()>0){
@@ -436,6 +498,7 @@ void Controller::ControlfrontbackEndComp(){
             }
         }
     }
+//    std::cout<<maxcomp->coordinates()[0]<<" "<<mincomp->coordinates()[0]<<endl;
     // front end
     auto cmaxcomp=maxcomp->coordinates();
     for(auto C:maxcomp->getNeighbours()){
@@ -477,8 +540,11 @@ void Controller::ControlfrontbackEndComp(){
             }
         }
     }
+    if(timecheck>0) {
     std::cout<<"Maxcomp "<<maxcomp->coordinates()[0]<<" ";
     std::cout<<"Mincomp "<<mincomp->coordinates()[0]<<endl;
+    }
+    
 }
 void Controller::ControlfrontEndCompobsolete(){
     Compartment* maxcomp=NULL;
@@ -756,12 +822,14 @@ void Controller::run() {
         cout<<"RESTART PHASE BEINGS."<<endl;
         Restart* _restart = new Restart(_subSystem, filaments,_chemData);
 //Step 1. Turn off diffusion, passivate filament reactions and empty binding managers.
-        _restart->settorestartphase();
+//        _restart->settorestartphase();
         cout<<"Turned off Diffusion, filament reactions."<<endl;
 //Step 2. Add bound species to their respective binding managers. Turn off unbinding, update propensities.
-        _restart->addtoHeaplinkermotor();
         _restart->addtoHeapbranchers();
+        _restart->addtoHeaplinkermotor();
         cout<<"Bound species added to reaction heap."<<endl;
+//Step 2A. Turn off diffusion, passivate filament reactions and empty binding managers.
+                _restart->settorestartphase();
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         std::cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController->runSteps(_restart->getnumchemsteps());
@@ -776,8 +844,10 @@ void Controller::run() {
 //Step 4.5. re-add pin positions
         SystemParser p(_inputFile);
         FilamentSetup filSetup = p.readFilamentSetup();
+        
+        if(SysParams::Mechanics().pinBoundaryFilaments){
         PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
-        ppin.resetPins();
+            ppin.resetPins();}
         
 //Step 5. run mcontroller, update system, turn off restart state.
         updatePositions();
@@ -818,6 +888,7 @@ void Controller::run() {
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
                 x->getCCylinder()->activatefilreactions();
+                x->getCCylinder()->activatefilcrossreactions();
             }}
         cout<<"Unbinding rates of bound species restored. filament reactions activated"<<endl;
 //@
@@ -827,10 +898,31 @@ void Controller::run() {
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
-    cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
+        auto i=0;
+        for (auto b: BranchingPoint::getBranchingPoints()) {
+            
+            Bead* b1 = b->getFirstCylinder()->getFirstBead();
+            Bead* b2 = b->getFirstCylinder()->getSecondBead();
+            Bead* b3 = b->getSecondCylinder()->getFirstBead();
+            Bead* b4 = b->getSecondCylinder()->getSecondBead();
+            auto c = b->getSecondCylinder();
+            auto filType = c->getType();
+            std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+            i++;
+            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
+                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+                std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+            }
+        }
+    cout<< "Restart procedures completed. Starting Medyan framework"<<endl;
     cout << "---" << endl;
     resetglobaltime();
     _cController->restart();
+        
      cout << "Current simulation time = "<< tau() << endl;
     //restart phase ends
     }
@@ -849,7 +941,7 @@ void Controller::run() {
     
 #ifdef CHEMISTRY
         //activate/deactivate compartments
-        activatedeactivateComp();
+        activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
         while(tau() <= _runTime) {
             //run ccontroller
             if(!_cController->run(_minimizationTime)) {
@@ -867,7 +959,26 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
-
+                auto i=0;
+                for (auto b: BranchingPoint::getBranchingPoints()) {
+                    
+                    Bead* b1 = b->getFirstCylinder()->getFirstBead();
+                    Bead* b2 = b->getFirstCylinder()->getSecondBead();
+                    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+                    Bead* b4 = b->getSecondCylinder()->getSecondBead();
+                    auto c = b->getSecondCylinder();
+                    auto filType = c->getType();
+                    std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+                    i++;
+                    for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
+                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+                        std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+                    }
+                }
                 tauLastMinimization = 0.0;
 
             }
@@ -895,7 +1006,7 @@ void Controller::run() {
             }
             
             //activate/deactivate compartments
-            activatedeactivateComp();
+            activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
             //move the boundary
             moveBoundary(tau() - oldTau);
             //special protocols
@@ -956,7 +1067,7 @@ void Controller::run() {
             //move the boundary
             moveBoundary(tau() - oldTau);
             //activate/deactivate compartments
-            activatedeactivateComp();
+            activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
             //special protocols
             executeSpecialProtocols();
         }

@@ -338,7 +338,6 @@ public:
     ~Parser() {_inputFile.close();}
 };
 
-
 /// To parse a system input file, initialized by the Controller.
 class SystemParser : public Parser{
 public:

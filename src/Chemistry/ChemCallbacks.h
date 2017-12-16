@@ -311,6 +311,7 @@ struct FilamentDepolymerizationPlusEndCallback {
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
+        
         f->depolymerizePlusEnd();
     }
 };
@@ -424,25 +425,66 @@ struct BranchingCallback {
         c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
+            CMonomer* x=c->getCCylinder()->getCMonomer(0);
+            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
+                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+                            }
+            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+            
         b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+            
+            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
+                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+            }
+            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
         frate=_offRate;
         }
         else
         {
-        CCylinder* c;
+            CCylinder* c; auto check = false;
         vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
             for(auto T:BrT){
                 CCylinder* cx=get<0>(get<0>(T));
                 double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
                 if(cx->getCylinder()->getID()==c1->getID() && p==pos){
                     c=get<0>(get<1>(T));
+                    check = true;
                     break;
                 }}
+            if(check){
+                auto cyl = c->getCylinder();
+                std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
+            std::cout<<c->getCylinder()->getID()<<endl;
+                CMonomer* x=c->getCMonomer(0);
+                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
+                    auto zz =c->getCMonomer(p)->speciesFilament(0);
+                    std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+                }
+                std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+                
             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
-            CMonomer* x=c->getCMonomer(0);
-            x->speciesMinusEnd(0)->down();
-            x->speciesFilament(0)->up();
+                
+                x=c->getCMonomer(0);
+                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
+                    auto zz =c->getCMonomer(p)->speciesFilament(0);
+                    std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+                }
+                std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
             frate=0.0;
+            }
+            else
+                cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
+                //exit(EXIT_FAILURE);
         }
         
         //create off reaction

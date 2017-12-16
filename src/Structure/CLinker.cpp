@@ -32,6 +32,18 @@ CLinker::CLinker(short linkerType, Compartment* c,
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     
     //mark species
+//        std::cout<<SysParams::Geometry().cylinderNumMon[_filamentType]<<endl;
+//        for(auto c:Cylinder::getCylinders()){
+//            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[_filamentType];p++){
+//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+//                
+//                                if(xx->getN() !=1.0)
+//                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<endl;
+//                
+//            }
+//        }
+        std::cout<<sl1->getN()<<" "<<sl2->getN()<<" "<<se1->getN()<<" "<<se2->getN()<<endl;
+        
     assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
            "Major bug: Linker binding to an occupied site.");

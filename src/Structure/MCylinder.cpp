@@ -22,7 +22,6 @@ MCylinder::MCylinder(short filamentType, double eqLength){
     
     //Set equilibrium length and constants relative to full cylinder length
     setEqLength(filamentType, eqLength);
-    
     //set excluded volume const
     if(!SysParams::Mechanics().VolumeK.empty())
         _kExVol = SysParams::Mechanics().VolumeK[filamentType];
@@ -39,7 +38,6 @@ void MCylinder::setEqLength(short filamentType, double l) {
     // recalculate other constants
     if(!SysParams::Mechanics().FStretchingK.empty())
         _kStretch = SysParams::Mechanics().FStretchingK[filamentType] * fracCylinderSize;
-    
     if(!SysParams::Mechanics().FBendingK.empty())
         _kBend = SysParams::Mechanics().FBendingK[filamentType] / fracCylinderSize;
 }
