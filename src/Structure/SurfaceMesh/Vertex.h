@@ -32,7 +32,11 @@ information of its neighbors.
 
 class Vertex:
     public DynamicNeighbor,
-    public Bead {
+    public Bead // Inherited from bead to receive full features like coordinate and forces.
+                // But note that in terms of tracking, the vertex is completely independent of the bead,
+                // i.e. a vertex will not be as well stored in the collection of beads,
+                // which requires all the reimplementation of Trackable associated functions.
+    {
 
 private:
     unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
@@ -50,7 +54,11 @@ private:
                                    // ...[2] = 0 means the 2nd edge has 0th vertex at center
     
     static Database<Vertex*> _vertices; // Collection of vertices in SubSystem
-    int _Id; // Unique integer id of this vertex
+    int _id; // Unique integer id of this vertex
+             // Warning: By 2017/12/18 the Bead::_ID attribute is never initialized or used,
+             // but if the beads need to be assigned an ID at construction, one should
+             // know that the vertex id either is DIFFERENT from or OVERRIDES the bead id,
+             // so that the bead id is either NOT USED or IDENTICAL as the id in vertex structure.
 
 public:
     ///Main constructor
@@ -75,10 +83,11 @@ public:
         return _vertices.getElements();
     }
     /// Get ID
-    int getId()const { return _Id; }
+    int getId()const { return _id; }
 
     //@{
     /// SubSystem management, inherited from Bead: Trackable
+    // Overriding the functions in Bead class.
     virtual void addToSubSystem()override { _vertices.addElement(this); }
     virtual void removeFromSubSystem()override { _vertices.removeElement(this); }
     //@}

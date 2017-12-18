@@ -3,7 +3,7 @@
 Database<Vertex*> Vertex::_vertices;
 
 Vertex::Vertex(vector<double> v, Composite* parent, size_t numNeighbors):
-    Bead(v, parent, 0), _Id(_vertices.getID()),
+    Bead(v, parent, 0), _id(_vertices.getID()),
     _neighborVertices(numNeighbors, nullptr),
     _neighborTriangles(numNeighbors, nullptr), _triangleHead(numNeighbors),
     _neighborEdges(numNeighbors, nullptr), _edgeHead(numNeighbors) {
