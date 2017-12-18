@@ -19,7 +19,7 @@ void Edge::printSelf() {
     cout << endl;
     
     cout << "Edge: ptr = " << this << endl;
-    cout << "Edge ID = " << _Id << endl;
+    cout << "Edge ID = " << _id << endl;
     cout << "Parent ptr = " << getParent() << endl;
         
     cout << endl;
