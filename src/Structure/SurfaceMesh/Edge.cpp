@@ -3,7 +3,8 @@
 Database<Edge*> Edge::_edges;
 
 Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
-    _v{v1, v2}, _Id(_edges.getID()) {
+    Trackable(),
+    _v{v1, v2}, _id(_edges.getID()) {
     
     parent -> addChild(unique_ptr<Component>(this));
 
@@ -29,4 +30,12 @@ void Edge::printSelf() {
     _v[1]->printSelf();
     
     cout << endl;
+}
+
+void Edge::updateGeometry(bool calcDerivative, double d) {
+
+#ifdef MECHANICS
+    _mEdge->updateGeometry(calcDerivative, d);
+#endif
+
 }

@@ -20,7 +20,8 @@ Database<Membrane*> Membrane::_membranes;
 
 Membrane::Membrane(SubSystem* s, short membraneType,
     vector<tuple<array<double, 3>, vector<size_t>>>& membraneData):
-    Trackable(), _subSystem(s), _memType(membraneType), _Id(_membranes.getID()) {
+    Trackable(false, false, false, false, true), Geometric(), // Self management of geometric behavior
+    _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
     
     // Build the meshwork using vertex and neighbor information
 
@@ -179,7 +180,7 @@ void Membrane::printSelf() {
     cout << endl;
     
     cout << "Membrane: ptr = " << this << endl;
-    cout << "Membrane Id = " << _Id << endl;
+    cout << "Membrane Id = " << _id << endl;
     cout << "Membrane type = " << _memType << endl;
     
     cout << endl;
@@ -190,4 +191,10 @@ void Membrane::printSelf() {
     
     cout << endl;
     
+}
+
+void Membrane::updateGeometry(bool calcDerivative, double d) {
+    for(auto& e: _edgeVector) e->updateGeometry(calcDerivative, d);
+    for(auto& t: _triangleVector) t->updateGeometry(calcDerivative, d);
+    for(auto& v: _vertexVector) v->updateGeometry(calcDerivative, d);
 }

@@ -4,7 +4,7 @@ Database<Triangle*> Triangle::_triangles;
 
 Triangle::Triangle(Composite* parent, Vertex* v1, Vertex* v2, Vertex* v3):
     Trackable(true, false, true, false),
-    _v{v1, v2, v3}, _edges{nullptr, nullptr, nullptr}, _Id(_triangles.getID()) {
+    _v{v1, v2, v3}, _edges{nullptr, nullptr, nullptr}, _idd(_triangles.getID()) {
     
     parent -> addChild(unique_ptr<Component>(this));
 
@@ -33,7 +33,7 @@ void Triangle::printSelf() {
     cout << endl;
     
     cout << "Triangle: ptr = " << this << endl;
-    cout << "Triangle ID = " << _Id << endl;
+    cout << "Triangle ID = " << _id << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
@@ -59,3 +59,10 @@ void Triangle::printSelf() {
     cout << endl;
 }
 
+void Triangle::updateGeometry(bool calcDerivative, double d) {
+
+#ifdef MECHANICS
+    _mTriangle->updateGeometry(calcDerivative, d);
+#endif
+
+}

@@ -14,7 +14,6 @@
 #include "common.h"
 
 #include "Trackable.h"
-#include "Movable.h"
 #include "DynamicNeighbor.h"
 #include "Component.h"
 
@@ -36,7 +35,7 @@ private:
     unique_ptr<MEdge> _mEdge; // pointer to mech edge
 
     static Database<Edge*> _edges; // Collection of edges in SubSystem
-    int _Id; // Unique integer id of this edge
+    int _id; // Unique integer id of this edge
 
 public:
     Edge(Composite *parent, Vertex* v1, Vertex* v2);
@@ -52,7 +51,7 @@ public:
         return _edges.getElements();
     }
     /// Get Id
-    int getId()const { return _Id; }
+    int getId()const { return _id; }
 
     //@{
     /// Implements Component
@@ -65,6 +64,9 @@ public:
     virtual void addToSubSystem()override { _edges.addElement(this); }
     virtual void removeFromSubSystem()override { _edges.removeElement(this); }
     //@}
+
+    /// Helper function to update geometric
+    void updateGeometry(bool calcDerivative=false, double d=0.0);
 
 
 };

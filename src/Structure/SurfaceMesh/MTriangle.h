@@ -74,6 +74,18 @@ public:
     std::array<double, 3>& getStretchedCotTheta() { return _stretchedCotTheta; }
     void calcStretchedTheta(double d); // Calculates angles under stretched conditions (w/o derivatives)
                                        // The results are stored in _stretchedXxx variables.
+    
+    void updateGeometry(bool calcDerivative=false, double d=0.0) {
+        // Currently, derivative cannot be calculated for d != 0
+        if(calcDerivative) {
+            calcTheta();
+            calcArea();
+        }
+        else {
+            calcStretchedTheta(d);
+            calcStretchedArea(d);
+        }
+    }
 
 };
 

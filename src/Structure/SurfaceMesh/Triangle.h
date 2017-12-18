@@ -39,7 +39,7 @@ private:
                                      // e.g. {1, 0, 1} means _edges' heads (Edge->v[0]) are at v1, v1, v0.
 
     static Database<Triangle*> _triangles; // Collection of triangles in SubSystem
-    int _Id; // Unique integer id of this triangle
+    int _id; // Unique integer id of this triangle
 
     void updateCoordinate(); // helper function to update coordiante of this triangle
 
@@ -61,7 +61,7 @@ public:
         return _triangles.getElements();
     }
     /// Get ID
-    int getId()const { return _Id; }
+    int getId()const { return _id; }
 
     //@{
     /// SubSystem management, inherited from Trackable
@@ -79,6 +79,11 @@ public:
     /// Implements Movable
     virtual void updatePosition() override;
     //@}
+
+    /// Helper function to update geometric
+    void updateGeometry(bool calcDerivative=false, double d=0.0);
+
+
 
 
 };

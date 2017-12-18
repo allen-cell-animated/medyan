@@ -27,6 +27,12 @@ public:
     double getStretchedLength() { return _stretchedLength; }
     void calcStretchedLength(double d); // Calculates the stretched length, and store the result in _stretchedLength.
                                         // Does not calculate the derivatives.
+    
+    void updateGeometry(bool calcDerivative=false, double d=0.0) {
+        // Currently, derivative cannot be calculated for d != 0
+        if(calcDerivative) calcLength();
+        else calcStretchedLength(d);
+    }
 };
 
 

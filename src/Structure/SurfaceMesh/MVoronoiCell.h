@@ -62,6 +62,18 @@ public:
     void calcStretchedCurv(double d); // Calculates the stretched mean curvature, and store the result in _stretchedCurv.
                                       // Does not calculate the derivatives.
 
+    void updateGeometry(bool calcDerivative=false, double d=0.0) {
+        // Currently, derivative cannot be calculated for d != 0
+        if(calcDerivative) {
+            calcArea();
+            calcCurv();
+        }
+        else {
+            calcStretchedArea(d);
+            calcStretchedCurv(d);
+        }
+    }
+
 };
 
 

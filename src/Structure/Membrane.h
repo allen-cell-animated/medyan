@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Database.h"
+#include "Geometric.h"
 #include "Trackable.h"
 #include "Composite.h"
 
@@ -15,7 +16,7 @@ class Triangle;
 class Edge;
 class Vertex;
 
-class Membrane: public Composite, public Trackable {
+class Membrane: public Composite, public Trackable, public Geometric {
 
     friend class Controller;
 
@@ -30,7 +31,7 @@ private:
     SubSystem* _subSystem; // SubSystem pointer
 
     static Database<Membrane*> _membranes; // Collection in SubSystem
-    int _Id; // Unique integer id of this membrane
+    int _id; // Unique integer id of this membrane
 
 public:
     // Constructors
@@ -48,14 +49,12 @@ public:
     vector<Vertex*>& getVertexVector() { return _vertexVector; }
 
     // Get Id
-    int getId() { return _Id; }
+    int getId()const { return _id; }
     
-    // Get type
-    int getType() { return _memType; }
     
     // SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _membranes.addElement(this); }
-    virtual void removeFromSubSystem() { _membranes.removeElement(this); }
+    virtual void addToSubSystem()override { _membranes.addElement(this); }
+    virtual void removeFromSubSystem()override { _membranes.removeElement(this); }
     
     /// Get all instances of this class from the SubSystem
     static const vector<Membrane*>& getMembranes() {
@@ -66,9 +65,18 @@ public:
         return _membranes.countElements();
     }
 
+    //@{
+    /// Implements Component
+    // Get type
+    int getType()override { return _memType; }
     // Print self information
-    virtual void printSelf();
+    virtual void printSelf()override;
+    //@}
 
+    //@{
+    /// Implements Geometric
+    virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
+    //@}
 
 };
 

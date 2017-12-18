@@ -6,12 +6,6 @@
 
 #include "common.h"
 
-#include "Trackable.h"
-#include "Movable.h"
-#include "Reactable.h"
-#include "DynamicNeighbor.h"
-#include "Component.h"
-
 #include "Bead.h"
 
 #include "Edge.h"
@@ -31,7 +25,6 @@ information of its neighbors.
 ******************************************************************************/
 
 class Vertex:
-    public DynamicNeighbor,
     public Bead // Inherited from bead to receive full features like coordinate and forces.
                 // But note that in terms of tracking, the vertex is completely independent of the bead,
                 // i.e. a vertex will not be as well stored in the collection of beads,
@@ -91,6 +84,10 @@ public:
     virtual void addToSubSystem()override { _vertices.addElement(this); }
     virtual void removeFromSubSystem()override { _vertices.removeElement(this); }
     //@}
+
+    /// Helper function to update geometric
+    void updateGeometry(bool calcDerivative=false, double d=0.0);
+
 
 
 };
