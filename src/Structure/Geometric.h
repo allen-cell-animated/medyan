@@ -43,7 +43,7 @@ public:
     /// potentially throwing, which in turn disables move operations by the STL
     /// containers. This behaviour is a gcc bug (as of gcc 4.703), and will presumbaly
     /// be fixed in the future.
-    virtual ~Movable() noexcept {}
+    virtual ~Geometric() noexcept {}
 };
 
 #endif
