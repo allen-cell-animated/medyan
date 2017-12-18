@@ -40,10 +40,12 @@ protected:
     Trackable(bool movable   = false,
               bool reactable = false,
               bool dneighbor = false,
-              bool neighbor  = false)
+              bool neighbor  = false,
+              bool geometric = false)
     
         : _movable(movable), _reactable(reactable),
-          _dneighbor(dneighbor), _neighbor(neighbor) {};
+          _dneighbor(dneighbor), _neighbor(neighbor),
+          _geometric(geometric) {};
     
     static SubSystem* _subSystem; ///< A subsystem pointer for every trackable
     
@@ -53,6 +55,7 @@ protected:
     bool _reactable;
     bool _dneighbor;
     bool _neighbor;
+    bool _geometric;
     //@}
     
 public:
