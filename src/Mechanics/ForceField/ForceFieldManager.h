@@ -21,6 +21,9 @@
 #include "ForceField.h"
 #include "Bead.h"
 
+// Forward declarations
+class SubSystem;
+
 /// A class to store and iterate over all [ForceFields](@ref ForceField).
 /*!
  *  The ForceFieldManager is used to store all [ForceFields](@ref ForceField) 
@@ -30,7 +33,11 @@
 class ForceFieldManager {
     
 public:
-     vector<ForceField*> _forceFields; ///< All forcefields in the system
+    vector<ForceField*> _forceFields; ///< All forcefields in the system
+
+    SubSystem* _subSystem; ///< Pointer to the subsystem
+
+    ForceFieldManager(SubSystem* s) { _subSystem = s; }
     
     /// Compute the energy using all available force fields
     /// @return Returns infinity if there was a problem with a ForceField

@@ -52,7 +52,7 @@ private:
 
 public:
     /// Constructor which sets a subsystem pointer
-    MController(SubSystem* s) {_subSystem = s;}
+    MController(SubSystem* s): _FFManager(s) {_subSystem = s;}
     
     /// Initialze the force fields and minimizers used
     void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers) {
