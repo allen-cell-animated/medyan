@@ -13,6 +13,12 @@
 
 #include "ForceFieldManager.h"
 
+#include "SubSystem.h"
+
+void ForceFieldManager::updateGeometries(bool calcDerivative, double d) {
+    for(auto g : _subSystem->getGeometrics()) g->updateGeometry(calcDerivative, d);
+}
+
 double ForceFieldManager::computeEnergy(double d, bool verbose) {
     
     double energy = 0;

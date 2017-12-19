@@ -461,10 +461,6 @@ void Controller::updatePositions() {
     for(auto m : _subSystem->getMovables()) m->updatePosition();
 }
 
-void Controller::updateGeometries(bool calcDerivative, double d) {
-    for(auto g : _subSystem->getGeometrics()) g->updateGeometry(calcDerivative, d);
-}
-
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables

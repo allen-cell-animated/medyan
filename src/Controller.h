@@ -95,9 +95,6 @@ private:
     /// Update the positions of all elements in the system
     void updatePositions();
 
-    /// Update the geometry of all elements in the system
-    void updateGeometries(bool calcDerivative=false, double d=0.0);
-    
 #ifdef DYNAMICRATES
     /// Update the reaction rates of all elements in the system
     void updateReactionRates();

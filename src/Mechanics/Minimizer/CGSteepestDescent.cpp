@@ -30,7 +30,7 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         N = numeric_limits<int>::max();
     }
     
-    // TODO: update geometry here w/ derivative calculation
+    FFM.updateGeometries(true);
     FFM.computeForces();
     startMinimization();
     
@@ -46,8 +46,7 @@ void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
         moveBeads(lambda); setBeads();
         
         // Update all geometry
-        // TODO: update geometry here w/ derivative calculation
-        
+        FFM.updateGeometries(true);
         // The unstretched local geometries have been calculated,
         // so forces could be calculated safely
         
