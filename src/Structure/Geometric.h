@@ -33,9 +33,10 @@ protected:
     
 public:
     /// Update the geometry of this element
-    /// @note - this update could be due to an updated force minimization,
-    /// a set of chemical steps, or any other event in the SubSystem. This
-    /// function will be called by the SubSystem on all Geometric objects.
+    /// @note - many processes could change the geometric properties of the
+    /// object, but its main purpose is to provide intermediate calculations
+    /// for mechanical relaxation.
+    /// Function will be called by the SubSystem on all Geometric objects.
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0) = 0;
     
     ///Destructor
