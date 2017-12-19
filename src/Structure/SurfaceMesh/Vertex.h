@@ -26,9 +26,10 @@ information of its neighbors.
 
 class Vertex:
     public Bead // Inherited from bead to receive full features like coordinate and forces.
-                // But note that in terms of tracking, the vertex is completely independent of the bead,
-                // i.e. a vertex will not be as well stored in the collection of beads,
-                // which requires all the reimplementation of Trackable associated functions.
+                // But note that in terms of tracking, when the vertex is added to the system,
+                // the base class Bead should also be added to its own collection,
+                // i.e. both the bead and the vertex collection should both have the collection.
+                // So when initialized, this class
     {
 
 private:
@@ -80,9 +81,15 @@ public:
 
     //@{
     /// SubSystem management, inherited from Bead: Trackable
-    // Overriding the functions in Bead class.
-    virtual void addToSubSystem()override { _vertices.addElement(this); }
-    virtual void removeFromSubSystem()override { _vertices.removeElement(this); }
+    // Incremental to the functions in Bead class.
+    virtual void addToSubSystem()override {
+        _vertices.addElement(this);
+        Bead::addToSubSystem();
+    }
+    virtual void removeFromSubSystem()override {
+        _vertices.removeElement(this);
+        Bead::removeFromSubSystem();
+    }
     //@}
 
     /// Helper function to update geometric
