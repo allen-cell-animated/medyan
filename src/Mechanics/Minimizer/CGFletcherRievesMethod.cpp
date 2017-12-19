@@ -30,6 +30,7 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
         N = numeric_limits<int>::max();
     }
     
+    // TODO: update geometry here w/ derivative calculation
     FFM.computeForces();
     startMinimization();
     
@@ -47,6 +48,12 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
         moveBeads(lambda); setBeads();
         
+        // Update all geometry
+        // TODO: update geometry here w/ derivative calculation
+        
+        // The unstretched local geometries have been calculated,
+        // so forces could be calculated safely
+
         //compute new forces
         FFM.computeForcesAux();
         

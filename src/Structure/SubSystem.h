@@ -141,7 +141,7 @@ public:
     
     //@{
     /// Setter functions for Geometric
-    void addGeometric(Geometric* geo) { _geometrics.insert(geo); } // TODO: implement _geometrics
+    void addGeometric(Geometric* geo) { _geometrics.insert(geo); }
     void removeGeometric(Geometric* geo) {
         auto it = _geometrics.find(geo);
         if(it != _geometrics.end()) _geometrics.erase(it);
