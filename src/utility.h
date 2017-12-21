@@ -46,13 +46,17 @@ inline double safeacos (double x) {
     return acos(x);
 }
 
-#if __cplusplus < 201402L // This function is already a standard in C++14
+#ifndef _MSC_VER // MSVC does not comply to the standard regarding __cplusplus value.
+                 // https://connect.microsoft.com/VisualStudio/feedback/details/763051/a-value-of-predefined-macro-cplusplus-is-still-199711l
+                 // One has to make sure the VS version already implements make_unique.
+#  if __cplusplus < 201402L // This function is already a standard in C++14
 /// Make a unique ptr
 template<typename T, typename ...Args>
 unique_ptr<T> make_unique( Args&& ...args )
 {
     return unique_ptr<T>( new T( forward<Args>(args)... ) );
 }
+#  endif
 #endif
 
 /// Compare types
