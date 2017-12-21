@@ -11,10 +11,23 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
+#if defined(_MSC_VER)
+// preprocessors to use __rdtsc() for MSVC only
+#  include <intrin.h>
+#  pragma intrinsic(__rdtsc)
+#endif
+
 #include "utility.h"
 
 unsigned long long rdtsc(){
+
+#if defined(_MSC_VER) // MSVC only
+    return __rdtsc();
+
+#else
     unsigned int lo,hi;
     __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
     return ((unsigned long long)hi << 32) | lo;
+
+#endif
 }
