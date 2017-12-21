@@ -46,12 +46,14 @@ inline double safeacos (double x) {
     return acos(x);
 }
 
+#if __cplusplus < 201402L // This function is already a standard in C++14
 /// Make a unique ptr
 template<typename T, typename ...Args>
 unique_ptr<T> make_unique( Args&& ...args )
 {
     return unique_ptr<T>( new T( forward<Args>(args)... ) );
 }
+#endif
 
 /// Compare types
 template<typename T, typename U>
