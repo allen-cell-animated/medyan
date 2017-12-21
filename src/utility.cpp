@@ -11,13 +11,13 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
+#include "utility.h"
+
 #if defined(_MSC_VER)
 // preprocessors to use __rdtsc() for MSVC only
 #  include <intrin.h>
 #  pragma intrinsic(__rdtsc)
 #endif
-
-#include "utility.h"
 
 unsigned long long rdtsc(){
 
