@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\**\*.cpp" />
+    <ClInclude Include="..\..\..\src\**\*.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{42B694F4-C6FE-4039-8F68-EB063A43ED0F}</ProjectGuid>
+    <RootNamespace>MEDYAN</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>
+        $(SolutionDir)..\..\src\;
+        $(SolutionDir)..\..\src\Structure;
+        $(SolutionDir)..\..\src\Structure\Special;
+        $(SolutionDir)..\..\src\Structure\SurfaceMesh;
+        $(SolutionDir)..\..\src\Chemistry;
+        $(SolutionDir)..\..\src\Mechanics\Minimizer;
+        $(SolutionDir)..\..\src\Mechanics\ForceField;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Volume;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Boundary;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Branching;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Filament;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Linker;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Membrane;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\MotorGhost;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Bubble;
+        $(SolutionDir)External\include\;
+        C:\Users\drels\lib\boost_1_65_1\;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+        CHEMISTRY; MECHANICS; DYNAMICRATES;
+        BOOST_MEM_POOL; BOOL_POOL_NSIZE=65536;
+        TRACK_DEPENDENTS; TRACK_ZERO_COPY_N; TRACK_UPPER_COPY_N;
+        REACTION_SIGNALING; RSPECIES_SIGNALING;
+
+        _USE_MATH_DEFINES;
+        _SCL_SECURE_NO_WARNINGS;
+        _MBCS;%(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
