@@ -64,21 +64,21 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>
-        $(SolutionDir)..\src\;
-        $(SolutionDir)..\src\Structure;
-        $(SolutionDir)..\src\Structure\Special;
-        $(SolutionDir)..\src\Structure\SurfaceMesh;
-        $(SolutionDir)..\src\Chemistry;
-        $(SolutionDir)..\src\Mechanics\Minimizer;
-        $(SolutionDir)..\src\Mechanics\ForceField;
-        $(SolutionDir)..\src\Mechanics\ForceField\Volume;
-        $(SolutionDir)..\src\Mechanics\ForceField\Boundary;
-        $(SolutionDir)..\src\Mechanics\ForceField\Branching;
-        $(SolutionDir)..\src\Mechanics\ForceField\Filament;
-        $(SolutionDir)..\src\Mechanics\ForceField\Linker;
-        $(SolutionDir)..\src\Mechanics\ForceField\Membrane;
-        $(SolutionDir)..\src\Mechanics\ForceField\MotorGhost;
-        $(SolutionDir)..\src\Mechanics\ForceField\Bubble;
+        $(SolutionDir)..\..\src\;
+        $(SolutionDir)..\..\src\Structure;
+        $(SolutionDir)..\..\src\Structure\Special;
+        $(SolutionDir)..\..\src\Structure\SurfaceMesh;
+        $(SolutionDir)..\..\src\Chemistry;
+        $(SolutionDir)..\..\src\Mechanics\Minimizer;
+        $(SolutionDir)..\..\src\Mechanics\ForceField;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Volume;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Boundary;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Branching;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Filament;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Linker;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Membrane;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\MotorGhost;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\Bubble;
         $(SolutionDir)External\include\;
         %USERPROFILE%\lib\boost_1_65_1\;
         %(AdditionalIncludeDirectories)
