@@ -86,6 +86,7 @@
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>
+        TESTING;
         CHEMISTRY; MECHANICS; DYNAMICRATES;
         BOOST_MEM_POOL; BOOL_POOL_NSIZE=65536;
         TRACK_DEPENDENTS; TRACK_ZERO_COPY_N; TRACK_UPPER_COPY_N;
@@ -95,6 +96,7 @@
         _SCL_SECURE_NO_WARNINGS;
         _MBCS;%(PreprocessorDefinitions)
       </PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>%USERPROFILE%\lib\gtest\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
