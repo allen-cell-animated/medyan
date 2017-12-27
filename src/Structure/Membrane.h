@@ -61,7 +61,7 @@ public:
         return _membranes.getElements();
     }
     /// Get the number of membranes in this system
-    static int numFilaments() {
+    static int numMembranes() {
         return _membranes.countElements();
     }
 
