@@ -63,7 +63,7 @@ void MVoronoiCell::calcArea() {
 
         double dist2 = mEdge->getLength() * mEdge->getLength();
         double sumCotTheta = mTriangleL->getCotTheta()[triLIdx1] + mTriangleR->getCotTheta()[triRIdx2];
-        _currentArea += sumCotTheta * dist2;
+        _currentArea += sumCotTheta * dist2 / 8;
         for(int coordIdx = 0; coordIdx < 3; ++coordIdx){
             _dCurrentArea[coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx0][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx0][coordIdx]) * dist2
                 + sumCotTheta * 2 * mEdge->getLength() * mEdge->getDLength()[edgeIdx0][coordIdx]) / 8;
@@ -110,7 +110,7 @@ void MVoronoiCell::calcStretchedArea(double d) {
 
         double dist2Stretched = mEdge->getStretchedLength() * mEdge->getStretchedLength();
         double sumCotThetaStretched = mTriangleL->getStretchedCotTheta()[triLIdx1] + mTriangleR->getStretchedCotTheta()[triRIdx2];
-        _stretchedArea += sumCotThetaStretched * dist2Stretched;        
+        _stretchedArea += sumCotThetaStretched * dist2Stretched / 8;        
     }
 }
 

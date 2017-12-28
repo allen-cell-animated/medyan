@@ -35,7 +35,7 @@ using VertexData = tuple<array<double, 3>, vector<size_t>>;
 using MembraneData = vector<VertexData>;
 
 MembraneData membraneDataOctahedron(double radius) {
-    double c = 1e6;
+    double c = 2 * radius;
 
     return MembraneData{
         VertexData({c, c, c+radius}, {1, 2, 3, 4}),
@@ -49,11 +49,12 @@ MembraneData membraneDataOctahedron(double radius) {
 
 class MembraneGeometryTest: public ::testing::Test {
 public:
+    double radius;
     SubSystem s;
     MembraneData memData;
     Membrane *m;
 
-	MembraneGeometryTest(): memData(membraneDataOctahedron(100)) {
+	MembraneGeometryTest(): radius(100), memData(membraneDataOctahedron(radius)) {
         SysParams::GParams.compartmentSizeX = 1e10;
         SysParams::GParams.compartmentSizeY = 1e10;
         SysParams::GParams.compartmentSizeZ = 1e10;
@@ -83,8 +84,31 @@ TEST_F(MembraneGeometryTest, Topology) {
     EXPECT_EQ(m->getVertexVector().size(), 6);
     EXPECT_EQ(m->getEdgeVector().size(), 12);
     EXPECT_EQ(m->getTriangleVector().size(), 8);
-
     
+}
+
+TEST_F(MembraneGeometryTest, CheckGeometry) {
+
+    m->updateGeometry(true);
+    // Check edge length
+    double exEdgeLen = radius * sqrt(2);
+    for(Edge* it: m->getEdgeVector())
+        EXPECT_DOUBLE_EQ(it->getMEdge()->getLength(), exEdgeLen);
+    // Check triangle area and angle
+    double exTriangleArea = radius * radius * sqrt(3) / 2;
+    double exTriangleAngle = M_PI / 3;
+    for(Triangle* it: m->getTriangleVector()) {
+        EXPECT_DOUBLE_EQ(it->getMTriangle()->getArea(), exTriangleArea);
+        for(double eachTheta: it->getMTriangle()->getTheta())
+            EXPECT_DOUBLE_EQ(eachTheta, exTriangleAngle);
+    }
+    // Check Voronoi cell area and curvature
+    double exVCellArea = radius * radius * sqrt(3) * 2 / 3;
+    double exVCellCurv = 1;
+    for(Vertex* it: m->getVertexVector()) {
+        EXPECT_DOUBLE_EQ(it->getMVoronoiCell()->getArea(), exVCellArea);
+        cout << it->getMVoronoiCell()->getCurv();
+    }
 }
 
 
