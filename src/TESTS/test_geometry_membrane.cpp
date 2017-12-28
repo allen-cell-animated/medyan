@@ -87,9 +87,13 @@ TEST_F(MembraneGeometryTest, Topology) {
     
 }
 
-TEST_F(MembraneGeometryTest, CheckGeometry) {
+TEST_F(MembraneGeometryTest, Geometry) {
 
+    /**************************************************************************
+        Check normal geometry
+    **************************************************************************/
     m->updateGeometry(true);
+
     // Check edge length
     double exEdgeLen = radius * sqrt(2);
     for(Edge* it: m->getEdgeVector())
@@ -104,11 +108,56 @@ TEST_F(MembraneGeometryTest, CheckGeometry) {
     }
     // Check Voronoi cell area and curvature
     double exVCellArea = radius * radius * sqrt(3) * 2 / 3;
-    double exVCellCurv = 1;
+    double exVCellCurv = 1 / radius;
     for(Vertex* it: m->getVertexVector()) {
         EXPECT_DOUBLE_EQ(it->getMVoronoiCell()->getArea(), exVCellArea);
-        cout << it->getMVoronoiCell()->getCurv();
+        EXPECT_DOUBLE_EQ(it->getMVoronoiCell()->getCurv(), exVCellCurv);
     }
+
+    /**************************************************************************
+        Check stretched geometry
+    **************************************************************************/
+    Vertex* v0 = m->getVertexVector()[0];
+    size_t numNeighborV0 = v0->getNeighborNum();
+    ASSERT_EQ(numNeighborV0, 4) << "The 0th vertex does not have the right number of neighbors.";
+
+    // Assign force to 0th vertex
+    v0->force[2] = -radius;
+
+    m->updateGeometry(false, 1.0);
+
+    // Check edge length
+    double exStretchedEdgeLen = radius;
+    for(Edge* it: v0->getNeighborEdges())
+        EXPECT_DOUBLE_EQ(it->getMEdge()->getStretchedLength(), exStretchedEdgeLen);
+    // Check triangle area and angle
+    double exStretchedTriangleArea = radius * radius / 2;
+    double exStretchedTriangleAngleIn = M_PI / 2;
+    double exStretchedTriangleAngleOut = M_PI / 4;
+    for(size_t nIdx = 0; nIdx < numNeighborV0; ++nIdx) {
+        EXPECT_DOUBLE_EQ(v0->getNeighborTriangles()[nIdx]->getMTriangle()->getStretchedArea(), exStretchedTriangleArea);
+        for(size_t angleIdx = 0; angleIdx < 3; ++angleIdx) {
+            if((3 - v0->getTriangleHead()[nIdx]) % 3 == angleIdx)
+                EXPECT_DOUBLE_EQ(
+                    v0->getNeighborTriangles()[nIdx]->getMTriangle()->getStretchedTheta()[angleIdx],
+                    exStretchedTriangleAngleIn
+                );
+            else
+                EXPECT_DOUBLE_EQ(
+                    v0->getNeighborTriangles()[nIdx]->getMTriangle()->getStretchedTheta()[angleIdx],
+                    exStretchedTriangleAngleOut
+                );
+        }
+    }
+    // Check Voronoi cell area and curvature
+    double exStretchedVCellArea = radius * radius;
+    double exStretchedVCellCurv = 0;
+    EXPECT_DOUBLE_EQ(v0->getMVoronoiCell()->getStretchedArea(), exStretchedVCellArea);
+    EXPECT_DOUBLE_EQ(v0->getMVoronoiCell()->getStretchedCurv(), exStretchedVCellCurv);
+
+}
+
+TEST_F(MembraneGeometryTest, Derivative) {
 }
 
 
