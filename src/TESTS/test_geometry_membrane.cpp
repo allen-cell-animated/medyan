@@ -20,6 +20,7 @@
 
 #    include "common.h"
 
+#    include "GController.h"
 #    include "SubSystem.h"
 
 #    include "Vertex.h"
@@ -30,29 +31,58 @@
 #    include "MTriangle.h"
 #    include "Membrane.h"
 
-using vertexData = tuple<array<double, 3>, vector<size_t>>;
-using membraneData = vector<vertexData>;
+using VertexData = tuple<array<double, 3>, vector<size_t>>;
+using MembraneData = vector<VertexData>;
 
-membraneData membraneDataOctahedron(double radius) {
-    return membraneData{
-        vertexData({0, 0, radius}, {1, 2, 3, 4}),
-        vertexData({radius, 0, 0}, {0, 4, 5, 2}),
-        vertexData({0, radius, 0}, {0, 1, 5, 3}),
-        vertexData({-radius, 0, 0}, {0, 2, 5, 4}),
-        vertexData({0, -radius, 0}, {0, 3, 5, 1}),
-        vertexData({0, 0, -radius}, {4, 3, 2, 1})
+MembraneData membraneDataOctahedron(double radius) {
+    double c = 1e6;
+
+    return MembraneData{
+        VertexData({c, c, c+radius}, {1, 2, 3, 4}),
+        VertexData({c+radius, c, c}, {0, 4, 5, 2}),
+        VertexData({c, c+radius, c}, {0, 1, 5, 3}),
+        VertexData({c-radius, c, c}, {0, 2, 5, 4}),
+        VertexData({c, c-radius, c}, {0, 3, 5, 1}),
+        VertexData({c, c, c-radius}, {4, 3, 2, 1})
     };
 }
 
-TEST(TopologyTest, Main) {
+class MembraneGeometryTest: public ::testing::Test {
+public:
     SubSystem s;
-    membraneData memData = membraneDataOctahedron(100);
-    Membrane m(&s, 0, memData);
+    MembraneData memData;
+    Membrane *m;
+
+	MembraneGeometryTest(): memData(membraneDataOctahedron(100)) {
+        SysParams::GParams.compartmentSizeX = 1e10;
+        SysParams::GParams.compartmentSizeY = 1e10;
+        SysParams::GParams.compartmentSizeZ = 1e10;
+        
+        SysParams::GParams.NX = 1;
+        SysParams::GParams.NY = 1;
+        SysParams::GParams.NZ = 1;
+        
+        SysParams::GParams.nDim = 3;
+
+        GController g(&s); // Dummy variable to initialize the compartments
+        g.initializeGrid();
+
+        SysParams::GParams.cylinderNumMon.resize(1, 3);
+        m = new Membrane(&s, 0, memData);
+    }
+    ~MembraneGeometryTest() {
+        SysParams::GParams.cylinderNumMon.resize(0);
+        delete m;
+    }
+
+};
+
+TEST_F(MembraneGeometryTest, Topology) {
 
     // Check that the vertices, edges and triangles are correctly registered.
-    EXPECT_EQ(m.getVertexVector().size(), 6);
-    EXPECT_EQ(m.getEdgeVector().size(), 12);
-    EXPECT_EQ(m.getTriangleVector().size(), 8);
+    EXPECT_EQ(m->getVertexVector().size(), 6);
+    EXPECT_EQ(m->getEdgeVector().size(), 12);
+    EXPECT_EQ(m->getTriangleVector().size(), 8);
 
     
 }
