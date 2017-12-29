@@ -188,7 +188,7 @@ TEST_F(MembraneGeometryTest, Geometry) {
 TEST_F(MembraneGeometryTest, Derivative) {
     m->updateGeometry(true);
     recordCoordinate(m);
-    assignRandomForce(m, radius/100);
+    assignRandomForce(m, radius/200); // Simple test shows that 100 induces a change not small enough
 
     size_t numEdges = m->getEdgeVector().size();
     size_t numTriangles = m->getTriangleVector().size();
@@ -300,7 +300,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
         );
         for(size_t vIdx = 0; vIdx < numNeighbor; ++vIdx) {
             exDiff += 2 * dotProduct(
-                v->getVertices()[vIdx]->force,
+                v->getNeighborVertices()[vIdx]->force,
                 array2Vector<double, 3>(v->getMVoronoiCell()->getDNeighborArea()[vIdx])
             );
         }
@@ -313,7 +313,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
         );
         for(size_t vIdx = 0; vIdx < numNeighbor; ++vIdx) {
             exDiff += 2 * dotProduct(
-                v->getVertices()[vIdx]->force,
+                v->getNeighborVertices()[vIdx]->force,
                 array2Vector<double, 3>(v->getMVoronoiCell()->getDNeighborCurv()[vIdx])
             );
         }
