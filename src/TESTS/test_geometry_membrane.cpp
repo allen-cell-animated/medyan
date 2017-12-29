@@ -240,8 +240,8 @@ TEST_F(MembraneGeometryTest, Derivative) {
     // Compare the results with derivative predictions
     // A(x+h) - A(x-h) = dotProduct(2h, dA/dx)
     for(size_t idx = 0; idx < numEdges; ++idx) {
-        // Length
         Edge* e = m->getEdgeVector()[idx];
+        // Edge length
         double exDiff = 0.0;
         for(size_t vIdx = 0; vIdx < 2; ++vIdx) {
             exDiff += 2 * dotProduct(
@@ -249,7 +249,60 @@ TEST_F(MembraneGeometryTest, Derivative) {
                 array2Vector<double, 3>(e->getMEdge()->getDLength()[vIdx])
             );
         }
-        EXPECT_DOUBLE_EQ(edgeLength1[idx] - edgeLength2[idx], exDiff);
+        EXPECT_NEAR(edgeLength1[idx] - edgeLength2[idx], exDiff, abs(exDiff / 1000));
+    }
+	for(size_t idx = 0; idx < numTriangles; ++idx) {
+        Triangle *t = m->getTriangleVector()[idx];
+        // Triangle area
+        double exDiff = 0.0;
+        for(size_t vIdx = 0; vIdx < 3; ++vIdx) {
+            exDiff += 2 * dotProduct(
+                t->getVertices()[vIdx]->force,
+                array2Vector<double, 3>(t->getMTriangle()->getDArea()[vIdx])
+            );
+        }
+        EXPECT_NEAR(triangleArea1[idx] - triangleArea2[idx], exDiff, abs(exDiff / 1000));
+        // Triangle angles
+        for(size_t aIdx = 0; aIdx < 3; ++aIdx) {
+            exDiff = 0.0;
+            for(size_t vIdx = 0; vIdx < 3; ++vIdx) {
+                exDiff += 2 * dotProduct(
+                    t->getVertices()[vIdx]->force,
+                    array2Vector<double, 3>(t->getMTriangle()->getDTheta()[aIdx][vIdx])
+                );
+            }
+            EXPECT_NEAR(triangleTheta1[idx][aIdx] - triangleTheta2[idx][aIdx], exDiff, abs(exDiff / 1000));
+        }
+    }
+    for(size_t idx = 0; idx < numVertices; ++idx) {
+        Vertex *v = m->getVertexVector()[idx];
+        size_t numNeighbor = v->getNeighborNum();
+        // Voronoi cell area
+        double exDiff = 0.0;
+        exDiff += 2 * dotProduct(
+            v->force,
+            array2Vector<double, 3>(v->getMVoronoiCell()->getDArea())
+        );
+        for(size_t vIdx = 0; vIdx < numNeighbor; ++vIdx) {
+            exDiff += 2 * dotProduct(
+                v->getVertices()[vIdx]->force,
+                array2Vector<double, 3>(v->getMVoronoiCell()->getDNeighborArea()[vIdx])
+            );
+        }
+        EXPECT_NEAR(vCellArea1[idx] - vCellArea2[idx], exDiff, abs(exDiff / 1000));
+        // Voronoi cell curvature
+        exDiff = 0.0;
+        exDiff += 2 * dotProduct(
+            v->force,
+            array2Vector<double, 3>(v->getMVoronoiCell()->getDCurv())
+        );
+        for(size_t vIdx = 0; vIdx < numNeighbor; ++vIdx) {
+            exDiff += 2 * dotProduct(
+                v->getVertices()[vIdx]->force,
+                array2Vector<double, 3>(v->getMVoronoiCell()->getDNeighborCurv()[vIdx])
+            );
+        }
+        EXPECT_NEAR(vCellCurv1[idx] - vCellCurv2[idx], exDiff, abs(exDiff / 1000));
     }
 
 }

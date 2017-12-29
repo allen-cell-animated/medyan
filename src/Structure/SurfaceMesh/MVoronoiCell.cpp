@@ -39,8 +39,9 @@ void MVoronoiCell::calcArea() {
     
     size_t n = _pVertex -> getNeighborNum();
     _currentArea = 0;
-    for(size_t nIdx = 0; nIdx < n; ++nIdx){
-        for(int coordIdx = 0; coordIdx < 3; ++coordIdx){
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx){
+        _dCurrentArea[coordIdx] = 0;
+        for(size_t nIdx = 0; nIdx < n; ++nIdx){
             _dNeighborCurrentArea[nIdx][coordIdx] = 0;
         }
     }
