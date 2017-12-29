@@ -150,6 +150,8 @@ Membrane::Membrane(SubSystem* s, short membraneType,
                 // Calculate the area of the triangle and set it as eqArea
                 lastAddedTriangle->getMTriangle()->calcArea();
                 lastAddedTriangle->getMTriangle()->setEqArea(lastAddedTriangle->getMTriangle()->getArea());
+				// Calculate angles for the use of Voronoi cells
+				lastAddedTriangle->getMTriangle()->calcTheta();
 #endif
             }
         }
