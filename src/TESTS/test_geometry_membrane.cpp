@@ -204,9 +204,11 @@ TEST_F(MembraneGeometryTest, Derivative) {
     }
     vector<double> triangleArea1(numTriangles);
     vector<array<double, 3>> triangleTheta1(numTriangles, {{}});
+    vector<array<double, 3>> triangleCotTheta1(numTriangles, {{}});
     for(size_t idx = 0; idx < numTriangles; ++idx) {
         triangleArea1[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedArea();
         triangleTheta1[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedTheta();
+        triangleCotTheta1[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedCotTheta();
     }
     vector<double> vCellArea1(numVertices);
     vector<double> vCellCurv1(numVertices);
@@ -226,9 +228,11 @@ TEST_F(MembraneGeometryTest, Derivative) {
     }
     vector<double> triangleArea2(numTriangles);
     vector<array<double, 3>> triangleTheta2(numTriangles, {{}});
+    vector<array<double, 3>> triangleCotTheta2(numTriangles, {{}});
     for(size_t idx = 0; idx < numTriangles; ++idx) {
         triangleArea2[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedArea();
         triangleTheta2[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedTheta();
+        triangleCotTheta2[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedCotTheta();
     }
     vector<double> vCellArea2(numVertices);
     vector<double> vCellCurv2(numVertices);
@@ -272,6 +276,17 @@ TEST_F(MembraneGeometryTest, Derivative) {
                 );
             }
             EXPECT_NEAR(triangleTheta1[idx][aIdx] - triangleTheta2[idx][aIdx], exDiff, abs(exDiff / 1000));
+        }
+        // Triangle angles (cot)
+        for(size_t aIdx = 0; aIdx < 3; ++aIdx) {
+            exDiff = 0.0;
+            for(size_t vIdx = 0; vIdx < 3; ++vIdx) {
+                exDiff += 2 * dotProduct(
+                    t->getVertices()[vIdx]->force,
+                    array2Vector<double, 3>(t->getMTriangle()->getDCotTheta()[aIdx][vIdx])
+                );
+            }
+            EXPECT_NEAR(triangleCotTheta1[idx][aIdx] - triangleCotTheta2[idx][aIdx], exDiff, abs(exDiff / 1000));
         }
     }
     for(size_t idx = 0; idx < numVertices; ++idx) {

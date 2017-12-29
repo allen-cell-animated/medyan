@@ -65,7 +65,7 @@ void MVoronoiCell::calcArea() {
         double dist2 = mEdge->getLength() * mEdge->getLength();
         double sumCotTheta = mTriangleL->getCotTheta()[triLIdx1] + mTriangleR->getCotTheta()[triRIdx2];
         _currentArea += sumCotTheta * dist2 / 8;
-        for(int coordIdx = 0; coordIdx < 3; ++coordIdx){
+        for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx){
             _dCurrentArea[coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx0][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx0][coordIdx]) * dist2
                 + sumCotTheta * 2 * mEdge->getLength() * mEdge->getDLength()[edgeIdx0][coordIdx]) / 8;
             _dNeighborCurrentArea[nIdx][coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx2][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx1][coordIdx]) * dist2
