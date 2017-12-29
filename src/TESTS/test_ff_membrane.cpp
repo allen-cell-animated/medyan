@@ -13,8 +13,8 @@
 
 #ifdef TESTING
 
-#  define DO_THIS_GEOMETRY_MEMBRANE_TEST
-#  ifdef DO_THIS_GEOMETRY_MEMBRANE_TEST
+#  define DO_THIS_FF_MEMBRANE_TEST
+#  ifdef DO_THIS_FF_MEMBRANE_TEST
 
 #    include "gtest/gtest.h"
 
@@ -52,14 +52,14 @@ namespace {
         };
     }
 
-    class MembraneGeometryTest: public ::testing::Test {
+    class MembraneFFTest: public ::testing::Test {
     protected:
         double radius;
         SubSystem s;
         MembraneData memData;
         Membrane *m;
 
-        MembraneGeometryTest(): radius(100), memData(membraneDataOctahedron(radius)) {
+		MembraneFFTest(): radius(100), memData(membraneDataOctahedron(radius)) {
             SysParams::GParams.compartmentSizeX = 1e10;
             SysParams::GParams.compartmentSizeY = 1e10;
             SysParams::GParams.compartmentSizeZ = 1e10;
@@ -76,7 +76,7 @@ namespace {
             SysParams::GParams.cylinderNumMon.resize(1, 3);
             m = new Membrane(&s, 0, memData);
         }
-        ~MembraneGeometryTest() {
+        ~MembraneFFTest() {
             SysParams::GParams.cylinderNumMon.resize(0);
             delete m;
         }
@@ -108,7 +108,7 @@ namespace {
     }
 }
 
-TEST_F(MembraneGeometryTest, Topology) {
+TEST_F(MembraneFFTest, Topology) {
 
     // Check that the vertices, edges and triangles are correctly registered.
     EXPECT_EQ(m->getVertexVector().size(), 6);
@@ -117,7 +117,7 @@ TEST_F(MembraneGeometryTest, Topology) {
     
 }
 
-TEST_F(MembraneGeometryTest, Geometry) {
+TEST_F(MembraneFFTest, Geometry) {
 
     /**************************************************************************
         Check normal geometry
@@ -187,7 +187,7 @@ TEST_F(MembraneGeometryTest, Geometry) {
 
 }
 
-TEST_F(MembraneGeometryTest, Derivative) {
+TEST_F(MembraneFFTest, Derivative) {
     m->updateGeometry(true);
     recordCoordinate(m);
     assignRandomForce(m, radius/200); // Simple test shows that 100 induces a change not small enough
