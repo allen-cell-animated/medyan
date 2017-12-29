@@ -9,14 +9,18 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="TestDebug|x64">
+      <Configuration>TestDebug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="TestRelease|x64">
       <Configuration>TestRelease</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Condition="'$(Configuration)'!='TestRelease'" Include="..\..\src\**\*.cpp" Exclude="..\..\src\TESTS\**\*.cpp"/>
-    <ClCompile Condition="'$(Configuration)'=='TestRelease'" Include="..\..\src\**\*.cpp" Exclude="..\..\src\MEDYAN.cpp"/>
+    <ClCompile Condition="'$(Configuration)'!='TestDebug' And '$(Configuration)'!='TestRelease'" Include="..\..\src\**\*.cpp" Exclude="..\..\src\TESTS\**\*.cpp"/>
+    <ClCompile Condition="'$(Configuration)'=='TestDebug' Or '$(Configuration)'=='TestRelease'" Include="..\..\src\**\*.cpp" Exclude="..\..\src\MEDYAN.cpp"/>
     <ClInclude Include="..\..\src\**\*.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -37,6 +41,12 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TestDebug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TestRelease|x64'" Label="Configuration">
@@ -100,7 +110,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)'=='TestRelease'">
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='TestDebug' Or '$(Configuration)'=='TestRelease'">
     <ClCompile>
       <AdditionalIncludeDirectories>
         $(SolutionDir)..\..\src\TESTS;
