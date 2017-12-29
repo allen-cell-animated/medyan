@@ -23,17 +23,18 @@
 #    include "common.h"
 #    include "MathFunctions.h"
 using namespace mathfunc;
+#    include "Rand.h"
 
 #    include "GController.h"
 #    include "SubSystem.h"
 
-#    include "Vertex.h"
-#    include "Edge.h"
-#    include "Triangle.h"
-#    include "MVoronoiCell.h"
-#    include "MEdge.h"
-#    include "MTriangle.h"
 #    include "Membrane.h"
+
+#    include "MembraneStretching.h"
+#    include "MembraneStretchingHarmonic.h"
+#    include "MembraneStretchingVoronoiHarmonic.h"
+#    include "MembraneBending.h"
+#    include "MembraneBendingVoronoi.h"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;
@@ -74,10 +75,22 @@ namespace {
             g.initializeGrid();
 
             SysParams::GParams.cylinderNumMon.resize(1, 3);
+
+            SysParams::MParams.MemElasticK.resize(1, 400);
+            SysParams::MParams.MemBendingK.resize(1, 100);
+            SysParams::MParams.MemEqCurv.resize(1, 0);
+
             m = new Membrane(&s, 0, memData);
+            m.addToSubSystem();
         }
         ~MembraneFFTest() {
             SysParams::GParams.cylinderNumMon.resize(0);
+
+            SysParams::MParams.MemElasticK.resize(0);
+            SysParams::MParams.MemBendingK.resize(0);
+            SysParams::MParams.MemEqCurv.resize(0);
+
+            m.removeFromSubSystem();
             delete m;
         }
 
@@ -90,12 +103,11 @@ namespace {
         for(Vertex* it: m->getVertexVector()) it->coordinate = it->coordinateP;
     }
     void assignRandomForce(Membrane* m, double sigma) {
-        mt19937 gen(0);
         normal_distribution<> nd(0, sigma);
 
         for(Vertex* it: m->getVertexVector()) {
             for(double& eachForce: it->force) {
-                eachForce = nd(gen);
+                eachForce = nd(Rand::engFixed);
             }
         }
     }
@@ -108,13 +120,14 @@ namespace {
     }
 }
 
-TEST_F(MembraneFFTest, Topology) {
+TEST_F(MembraneFFTest, CompareStretchingEnergy) {
 
-    // Check that the vertices, edges and triangles are correctly registered.
-    EXPECT_EQ(m->getVertexVector().size(), 6);
-    EXPECT_EQ(m->getEdgeVector().size(), 12);
-    EXPECT_EQ(m->getTriangleVector().size(), 8);
-    
+    // Check that the two different methods give the same stretching energy.
+    MembraneStretching<MembraneStretchingHarmonic> mSTriangle;
+    MembraneStretching<MembraneStretchingVoronoiHarmonic> mSVoronoi;
+
+    EXPECT_DOUBLE_EQ(mSTriangle.computeEnergy(0.0), mSVoronoi.computeEnergy(0.0));
+
 }
 
 TEST_F(MembraneFFTest, Geometry) {

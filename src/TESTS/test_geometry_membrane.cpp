@@ -23,6 +23,7 @@
 #    include "common.h"
 #    include "MathFunctions.h"
 using namespace mathfunc;
+#    include "Rand.h"
 
 #    include "GController.h"
 #    include "SubSystem.h"
@@ -90,12 +91,11 @@ namespace {
         for(Vertex* it: m->getVertexVector()) it->coordinate = it->coordinateP;
     }
     void assignRandomForce(Membrane* m, double sigma) {
-        mt19937 gen(0);
         normal_distribution<> nd(0, sigma);
 
         for(Vertex* it: m->getVertexVector()) {
             for(double& eachForce: it->force) {
-                eachForce = nd(gen);
+                eachForce = nd(Rand::engFixed);
             }
         }
     }
