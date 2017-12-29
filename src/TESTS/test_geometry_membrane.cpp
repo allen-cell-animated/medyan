@@ -18,7 +18,11 @@
 
 #    include "gtest/gtest.h"
 
+#    include <random>
+
 #    include "common.h"
+#    include "MathFunctions.h"
+using namespace mathfunc;
 
 #    include "GController.h"
 #    include "SubSystem.h"
@@ -48,7 +52,7 @@ MembraneData membraneDataOctahedron(double radius) {
 }
 
 class MembraneGeometryTest: public ::testing::Test {
-public:
+protected:
     double radius;
     SubSystem s;
     MembraneData memData;
@@ -77,6 +81,30 @@ public:
     }
 
 };
+
+void recordCoordinate(Membrane *m) {
+    for(Vertex* it: m->getVertexVector()) it->coordinateP = it->coordinate;
+}
+void resetCoordinate(Membrane *m) {
+    for(Vertex* it: m->getVertexVector()) it->coordinate = it->coordinateP;
+}
+void assignRandomForce(Membrane* m, double sigma) {
+    mt19937 gen(0);
+    normal_distribution<> nd(0, sigma);
+
+    for(Vertex* it: m->getVertexVector()) {
+        for(double& eachForce: it->force) {
+            eachForce = nd(gen);
+        }
+    }
+}
+void moveAlongForce(Membrane* m, double d) {
+    for(Vertex* it: m->getVertexVector()) {
+        for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+            it->coordinate[coordIdx] += it->force[coordIdx] * d;
+        }
+    }
+}
 
 TEST_F(MembraneGeometryTest, Topology) {
 
@@ -124,7 +152,7 @@ TEST_F(MembraneGeometryTest, Geometry) {
     // Assign force to 0th vertex
     v0->force[2] = -radius;
 
-    m->updateGeometry(false, 1.0);
+    m->updateGeometry(false, 1.0); // Moves the 0th vertex to the center of the octahedron.
 
     // Check edge length
     double exStretchedEdgeLen = radius;
@@ -158,6 +186,72 @@ TEST_F(MembraneGeometryTest, Geometry) {
 }
 
 TEST_F(MembraneGeometryTest, Derivative) {
+    m->updateGeometry(true);
+    recordCoordinate(m);
+    assignRandomForce(m, radius/100);
+
+    size_t numEdges = m->getEdgeVector().size();
+    size_t numTriangles = m->getTriangleVector().size();
+    size_t numVertices = m->getVertexVector().size();
+
+    // Then move every vertex a little bit
+    moveAlongForce(m, 1.0);
+    m->updateGeometry(false, 0.0); // use stretched calculation here to speed things up
+    
+    vector<double> edgeLength1(numEdges);
+    for(size_t idx = 0; idx < numEdges; ++idx) {
+        edgeLength1[idx] = m->getEdgeVector()[idx]->getMEdge()->getStretchedLength();
+    }
+    vector<double> triangleArea1(numTriangles);
+    vector<array<double, 3>> triangleTheta1(numTriangles, {{}});
+    for(size_t idx = 0; idx < numTriangles; ++idx) {
+        triangleArea1[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedArea();
+        triangleTheta1[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedTheta();
+    }
+    vector<double> vCellArea1(numVertices);
+    vector<double> vCellCurv1(numVertices);
+    for(size_t idx = 0; idx < numVertices; ++idx) {
+        vCellArea1[idx] = m->getVertexVector()[idx]->getMVoronoiCell()->getStretchedArea();
+        vCellCurv1[idx] = m->getVertexVector()[idx]->getMVoronoiCell()->getStretchedCurv();
+    }
+
+    // Now move every vertex in the opposite direction
+    resetCoordinate(m);
+    moveAlongForce(m, -1.0);
+    m->updateGeometry(false, 0.0);
+
+    vector<double> edgeLength2(numEdges);
+    for(size_t idx = 0; idx < numEdges; ++idx) {
+        edgeLength2[idx] = m->getEdgeVector()[idx]->getMEdge()->getStretchedLength();
+    }
+    vector<double> triangleArea2(numTriangles);
+    vector<array<double, 3>> triangleTheta2(numTriangles, {{}});
+    for(size_t idx = 0; idx < numTriangles; ++idx) {
+        triangleArea2[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedArea();
+        triangleTheta2[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedTheta();
+    }
+    vector<double> vCellArea2(numVertices);
+    vector<double> vCellCurv2(numVertices);
+    for(size_t idx = 0; idx < numVertices; ++idx) {
+        vCellArea2[idx] = m->getVertexVector()[idx]->getMVoronoiCell()->getStretchedArea();
+        vCellCurv2[idx] = m->getVertexVector()[idx]->getMVoronoiCell()->getStretchedCurv();
+    }
+
+    // Compare the results with derivative predictions
+    // A(x+h) - A(x-h) = dotProduct(2h, dA/dx)
+    for(size_t idx = 0; idx < numEdges; ++idx) {
+        // Length
+        Edge* e = m->getEdgeVector()[idx];
+        double exDiff = 0.0;
+        for(size_t vIdx = 0; vIdx < 2; ++vIdx) {
+            exDiff += 2 * dotProduct(
+                e->getVertices()[vIdx]->force,
+                array2Vector<double, 3>(e->getMEdge()->getDLength()[vIdx])
+            );
+        }
+        EXPECT_DOUBLE_EQ(edgeLength1[idx] - edgeLength2[idx], exDiff);
+    }
+
 }
 
 
