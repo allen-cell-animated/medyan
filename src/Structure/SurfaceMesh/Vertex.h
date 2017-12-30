@@ -52,7 +52,7 @@ private:
              // Warning: By 2017/12/18 the Bead::_ID attribute is never initialized or used,
              // but if the beads need to be assigned an ID at construction, one should
              // know that the vertex id either is DIFFERENT from or HIDES the bead id,
-             // so that the bead id is either NOT USED or HIDDEN as the id in vertex structure.
+             // so that the bead id is either NOT USED or HIDDEN by the id in vertex structure.
 
 public:
     ///Main constructor
