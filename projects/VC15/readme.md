@@ -2,14 +2,15 @@
 
 ## Usage
 
-+ Configure BOOST include absolute path in `AdditionalIncludeDirectories` in MEDYAN.vcxproj.
++ Configure BOOST header absolute path in `AdditionalIncludeDirectories` in MEDYAN.vcxproj.
++ See the following instructions for different project configurations.
 
 ### Main project
 + For debugging in VS, you need to configure the command line arguments in MEDYAN.vcxproj.user.
 + Load MEDYAN.sln, choose `Debug` or `Release` configuration to build the MEDYAN project.
 
 ### Test project
-+ Configure googletest include absolute path in `AdditionalIncludeDirectories` in MEDYAN.vcxproj (in `TestDebug` or `TestRelease` configurations only).
++ Configure googletest header absolute path in `AdditionalIncludeDirectories` in MEDYAN.vcxproj (in `TestDebug` or `TestRelease` configurations only).
 + Configure googletest library absolute path in `AdditionalLibraryDirectories` in MEDYAN.vcxproj (in `TestDebug` or `TestRelease` configurations only).
 + Change the name of gtest.lib and gtest_main.lib in `AdditionalDependencies` in MEDYAN.vcxproj if you have different names for those libraries.
 + Load MEDYAN.sln, choose `TestDebug` or `TestRelease` configuration to build MEDYAN project.
