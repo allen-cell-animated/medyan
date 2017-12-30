@@ -6,7 +6,7 @@
 + See the following instructions for different project configurations.
 
 ### Main project
-+ For debugging in VS, you need to configure the command line arguments in MEDYAN.vcxproj.user.
++ For debugging in VS, you need to configure the command line arguments in MEDYAN.vcxproj.user, and of course, prepare the input files. The working directory is currently the same as the executable output directory.
 + Load MEDYAN.sln, choose `Debug` or `Release` configuration to build the MEDYAN project.
 
 ### Test project
