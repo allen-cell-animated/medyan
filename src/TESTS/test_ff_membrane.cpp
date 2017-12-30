@@ -156,9 +156,12 @@ TEST_F(MembraneFFTest, Force) {
     MembraneBending<MembraneBendingVoronoiHelfrich> mBVoronoi;
     vector<MembraneInteractions*> memInteraction = {&mSTriangle, &mSVoronoi, &mBVoronoi};
 
-    recordCoordinate(m);
-    assignRandomForceAuxP(m, radius/200);
+    assignRandomForceAuxP(m, radius/500);
     resizeEqArea(m, 0.9); // This is to shrink the equilibrium area by a little bit to avoid zero forces.
+    moveAlongForceAuxP(m, 2.5); // Also, previous tests show that the right octahedron shape has the minimum
+                                // bending energy, so we also need to distort the shape a little bit, to avoid
+                                // zero force of bending energy.
+    recordCoordinate(m);
 
     // Compare the results with force predictions
     // U(x+h) - U(x-h) = dotProduct(2h, dU/dx) = -dotProduct(2h, F)
