@@ -169,6 +169,8 @@ TEST_F(TriangleCylinderVolumeFFTest, Force) {
     // Update position for neighbor list search
     t->updatePosition();
     c->updatePosition();
+    // Update neighbor list
+    tcv.getNeighborList()->addDynamicNeighbor(t);
     for(Edge* eachE: te) eachE->updateGeometry(true);
     t->updateGeometry(true);
     tcv.computeForces();
