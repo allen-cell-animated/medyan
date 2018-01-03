@@ -149,7 +149,7 @@ TEST_F(TriangleCylinderVolumeFFTest, Force) {
     TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion> tcv;
 
     assignRandomForceAuxP(radius/200);
-    recordCoordinate(m);
+    recordCoordinate();
 
     // Compare the results with force predictions
     // U(x+h) - U(x-h) = dotProduct(2h, dU/dx) = -dotProduct(2h, F)
@@ -163,22 +163,23 @@ TEST_F(TriangleCylinderVolumeFFTest, Force) {
     tcv->computeForces();
 
     // Don't bother updating neighbor list here
-    moveAlongForceAuxP(m, 1.0);
+    moveAlongForceAuxP(1.0);
     t->updateGeometry(true);
     double U1 = tcv->computeEnergy(0.0);
 
-    resetCoordinate(m);
-    moveAlongForceAuxP(m, -1.0);
-    m->updateGeometry(true);
+    resetCoordinate();
+    moveAlongForceAuxP(-1.0);
+    t->updateGeometry(true);
     double U2 = tcv->computeEnergy(0.0);
 
     double exDiff = 0.0;
-    for(Vertex* v: m->getVertexVector())
+    for(Vertex* v: tv)
         exDiff -= 2 * dotProduct(v->forceAuxP, v->force);
+    for(Bead* b: cb)
+        exDiff -= 2 * dotProduct(b->forceAuxP, b->force);
 
     EXPECT_NEAR(U1 - U2, exDiff, abs(exDiff / 1000))
         << tcv->getName() << " force not working properly.";
-    
 
 }
 

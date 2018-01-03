@@ -22,7 +22,7 @@
 
 using namespace mathfunc;
 
-// These functions require that the area of the triangle has already been calculated
+// Note: These functions require that the area of the triangle has already been calculated
 
 double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
                                                     double kExVol) {
