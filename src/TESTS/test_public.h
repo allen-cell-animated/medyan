@@ -21,20 +21,21 @@
 
 #    include "common.h"
 
-#    include "Component.h"
+#    include "CController.h"
+#    include "Composite.h"
 #    include "GController.h"
 #    include "SubSystem.h"
 
 namespace test_public {
 
-    class ComponentDummy: public Component {
+    class CompositeDummy: public Composite {
     public:
         short type;
 
-        ComponentDummy(short newType): type(newType) {}
+        CompositeDummy(short newType): type(newType) {}
 
         virtual void printSelf() override {
-            cout << "This is a dummy component object with type "
+            cout << "This is a dummy composite object with type "
                  << type << endl;
         }
     
@@ -57,8 +58,12 @@ namespace test_public {
 
         GController g(s); // Dummy variable to initialize the compartments
         g.initializeGrid();
+    }
 
-        SysParams::GParams.cylinderNumMon.resize(1, 3);
+    void quickSetupChem(SubSystem* s, string chemAlgorithm="GILLESPIE") {
+        CController c(s);
+        ChemistryData cData; // Dummy data
+        c.initialize(chemAlgorithm, cData);
     }
 
 }

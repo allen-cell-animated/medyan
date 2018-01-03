@@ -28,12 +28,13 @@ using namespace mathfunc;
 #    include "SubSystem.h"
 #    include "Component.h"
 
+#    include "Edge.h"
 #    include "Triangle.h"
 #    include "MTriangle.h"
 #    include "Cylinder.h"
 
 #    include "TriangleCylinderExclVolume.h"
-#    include "TriangleCylinderBeadExclVolume.h"
+#    include "TriangleCylinderBeadExclVolRepulsion.h"
 
 namespace {
 
@@ -41,25 +42,29 @@ namespace {
     protected:
         double radius;
         double height;
-        test_public::ComponentDummy dummyParent;
+        test_public::CompositeDummy dummyParent;
         SubSystem s;
         
         Triangle *t;
         array<Vertex*, 3> tv;
+        array<Edge*, 3> te;
         Cylinder *c;
         array<Bead*, 2> cb;
 
 		TriangleCylinderVolumeFFTest():
             dummyParent(0),
-            radius(100), height(20) {
+            radius(100), height(10) {
             
             test_public::quickSetupPlayground(&s);
+            test_public::quickSetupChem(&s);
 
             SysParams::GParams.cylinderNumMon.resize(1, 3);
+			SysParams::GParams.cylinderSize.resize(1, 1.0);
+			SysParams::GParams.monomerSize.resize(1, 1.0);
+            SysParams::CParams.bindingSites.resize(1); // For CCylinder use
 
-            SysParams::MParams.MemElasticK.resize(1, 400);
-            SysParams::MParams.MemBendingK.resize(1, 100);
-            SysParams::MParams.MemEqCurv.resize(1, 0);
+            SysParams::MParams.MemCylinderVolumeK.resize(1, 1725);
+            SysParams::MParams.MemCylinderVolumeCutoff = 15;
 
             double trans = radius + height; // To ensure that all coordinates of all the beads are greater than 0.
 
@@ -68,8 +73,13 @@ namespace {
             tv[1] = new Vertex({trans - radius/2, trans + sqrt(3)*radius/2, trans}, &dummyParent, 0);
             tv[2] = new Vertex({trans - radius/2, trans - sqrt(3)*radius/2, trans}, &dummyParent, 0);
             for(Vertex* eachV: tv) eachV->addToSubSystem();
+            te[0] = new Edge(&dummyParent, tv[0], tv[1]);
+            te[1] = new Edge(&dummyParent, tv[1], tv[2]);
+            te[2] = new Edge(&dummyParent, tv[2], tv[0]);
+            for(Edge* eachE: te) eachE->addToSubSystem();
             t = new Triangle(&dummyParent, tv[0], tv[1], tv[2]);
             t->addToSubSystem();
+            t->getEdges() = te;
 
             // Add a cylinder
             cb[0] = new Bead({trans + radius/20, trans + radius/20, trans + height}, &dummyParent, 0);
@@ -80,10 +90,11 @@ namespace {
         }
         ~TriangleCylinderVolumeFFTest() {
             SysParams::GParams.cylinderNumMon.resize(0);
+			SysParams::GParams.cylinderSize.resize(0);
+			SysParams::GParams.monomerSize.resize(0);
+            SysParams::CParams.bindingSites.resize(0);
 
-            SysParams::MParams.MemElasticK.resize(0);
-            SysParams::MParams.MemBendingK.resize(0);
-            SysParams::MParams.MemEqCurv.resize(0);
+            SysParams::MParams.MemCylinderVolumeK.resize(0);
 
             // Remove the triangle
             t->removeFromSubSystem();
@@ -91,6 +102,10 @@ namespace {
             for(Vertex* eachV: tv) {
                 eachV->removeFromSubSystem();
                 delete eachV;
+            }
+            for(Edge* eachE: te) {
+                eachE->removeFromSubSystem();
+                delete eachE;
             }
 
             // Remove the cylinder
@@ -159,18 +174,21 @@ TEST_F(TriangleCylinderVolumeFFTest, Force) {
     // Update position for neighbor list search
     t->updatePosition();
     c->updatePosition();
+    for(Edge* eachE: te) eachE->updateGeometry(true);
     t->updateGeometry(true);
-    tcv->computeForces();
+    tcv.computeForces();
 
     // Don't bother updating neighbor list here
     moveAlongForceAuxP(1.0);
+    for(Edge* eachE: te) eachE->updateGeometry(true);
     t->updateGeometry(true);
-    double U1 = tcv->computeEnergy(0.0);
+    double U1 = tcv.computeEnergy(0.0);
 
     resetCoordinate();
     moveAlongForceAuxP(-1.0);
+    for(Edge* eachE: te) eachE->updateGeometry(true);
     t->updateGeometry(true);
-    double U2 = tcv->computeEnergy(0.0);
+    double U2 = tcv.computeEnergy(0.0);
 
     double exDiff = 0.0;
     for(Vertex* v: tv)
@@ -179,7 +197,7 @@ TEST_F(TriangleCylinderVolumeFFTest, Force) {
         exDiff -= 2 * dotProduct(b->forceAuxP, b->force);
 
     EXPECT_NEAR(U1 - U2, exDiff, abs(exDiff / 1000))
-        << tcv->getName() << " force not working properly.";
+        << tcv.getName() << " force not working properly.";
 
 }
 
