@@ -98,22 +98,17 @@ namespace {
 
             // Remove the triangle
             t->removeFromSubSystem();
-            delete t;
             for(Vertex* eachV: tv) {
                 eachV->removeFromSubSystem();
-                delete eachV;
             }
             for(Edge* eachE: te) {
                 eachE->removeFromSubSystem();
-                delete eachE;
             }
 
             // Remove the cylinder
             c->removeFromSubSystem();
-            delete c;
             for(Bead* eachB: cb) {
                 eachB->removeFromSubSystem();
-                delete eachB;
             }
         }
 
