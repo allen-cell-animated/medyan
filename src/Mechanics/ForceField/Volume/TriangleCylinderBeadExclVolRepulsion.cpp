@@ -302,9 +302,9 @@ void TriangleCylinderBeadExclVolRepulsion::forces(Triangle* t, Bead* b,
     auto& dArea = t->getMTriangle()->getDArea();
     
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        b->force[coordIdx] += kExVol * dH[3][coordIdx] * area;
+        b->force[coordIdx] -= kExVol * dH[3][coordIdx] * area;
         for(size_t vtxIdx = 0; vtxIdx < 3; ++vtxIdx) {
-            v[vtxIdx]->force[coordIdx] += kExVol * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
+            v[vtxIdx]->force[coordIdx] -= kExVol * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
         }
     }
 }
@@ -451,9 +451,9 @@ void TriangleCylinderBeadExclVolRepulsion::forcesAux(Triangle* t, Bead* b,
     auto& dArea = t->getMTriangle()->getDArea();
     
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        b->forceAux[coordIdx] += kExVol * dH[3][coordIdx] * area;
+        b->forceAux[coordIdx] -= kExVol * dH[3][coordIdx] * area;
         for(size_t vtxIdx = 0; vtxIdx < 3; ++vtxIdx) {
-            v[vtxIdx]->forceAux[coordIdx] += kExVol * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
+            v[vtxIdx]->forceAux[coordIdx] -= kExVol * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
         }
     }
 }
