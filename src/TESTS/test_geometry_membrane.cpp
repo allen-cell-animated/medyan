@@ -33,7 +33,7 @@ using namespace mathfunc;
 #    include "Triangle.h"
 #    include "MVoronoiCell.h"
 #    include "GEdge.h"
-#    include "MTriangle.h"
+#    include "GTriangle.h"
 #    include "Membrane.h"
 
 namespace {
@@ -132,8 +132,8 @@ TEST_F(MembraneGeometryTest, Geometry) {
     double exTriangleArea = radius * radius * sqrt(3) / 2;
     double exTriangleAngle = M_PI / 3;
     for(Triangle* it: m->getTriangleVector()) {
-        EXPECT_DOUBLE_EQ(it->getMTriangle()->getArea(), exTriangleArea);
-        for(double eachTheta: it->getMTriangle()->getTheta())
+        EXPECT_DOUBLE_EQ(it->getGTriangle()->getArea(), exTriangleArea);
+        for(double eachTheta: it->getGTriangle()->getTheta())
             EXPECT_DOUBLE_EQ(eachTheta, exTriangleAngle);
     }
     // Check Voronoi cell area and curvature
@@ -165,16 +165,16 @@ TEST_F(MembraneGeometryTest, Geometry) {
     double exStretchedTriangleAngleIn = M_PI / 2;
     double exStretchedTriangleAngleOut = M_PI / 4;
     for(size_t nIdx = 0; nIdx < numNeighborV0; ++nIdx) {
-        EXPECT_DOUBLE_EQ(v0->getNeighborTriangles()[nIdx]->getMTriangle()->getStretchedArea(), exStretchedTriangleArea);
+        EXPECT_DOUBLE_EQ(v0->getNeighborTriangles()[nIdx]->getGTriangle()->getStretchedArea(), exStretchedTriangleArea);
         for(size_t angleIdx = 0; angleIdx < 3; ++angleIdx) {
             if((3 - v0->getTriangleHead()[nIdx]) % 3 == angleIdx)
                 EXPECT_DOUBLE_EQ(
-                    v0->getNeighborTriangles()[nIdx]->getMTriangle()->getStretchedTheta()[angleIdx],
+                    v0->getNeighborTriangles()[nIdx]->getGTriangle()->getStretchedTheta()[angleIdx],
                     exStretchedTriangleAngleIn
                 );
             else
                 EXPECT_DOUBLE_EQ(
-                    v0->getNeighborTriangles()[nIdx]->getMTriangle()->getStretchedTheta()[angleIdx],
+                    v0->getNeighborTriangles()[nIdx]->getGTriangle()->getStretchedTheta()[angleIdx],
                     exStretchedTriangleAngleOut
                 );
         }
@@ -208,9 +208,9 @@ TEST_F(MembraneGeometryTest, Derivative) {
     vector<array<double, 3>> triangleTheta1(numTriangles, {{}});
     vector<array<double, 3>> triangleCotTheta1(numTriangles, {{}});
     for(size_t idx = 0; idx < numTriangles; ++idx) {
-        triangleArea1[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedArea();
-        triangleTheta1[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedTheta();
-        triangleCotTheta1[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedCotTheta();
+        triangleArea1[idx] = m->getTriangleVector()[idx]->getGTriangle()->getStretchedArea();
+        triangleTheta1[idx] = m->getTriangleVector()[idx]->getGTriangle()->getStretchedTheta();
+        triangleCotTheta1[idx] = m->getTriangleVector()[idx]->getGTriangle()->getStretchedCotTheta();
     }
     vector<double> vCellArea1(numVertices);
     vector<double> vCellCurv1(numVertices);
@@ -232,9 +232,9 @@ TEST_F(MembraneGeometryTest, Derivative) {
     vector<array<double, 3>> triangleTheta2(numTriangles, {{}});
     vector<array<double, 3>> triangleCotTheta2(numTriangles, {{}});
     for(size_t idx = 0; idx < numTriangles; ++idx) {
-        triangleArea2[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedArea();
-        triangleTheta2[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedTheta();
-        triangleCotTheta2[idx] = m->getTriangleVector()[idx]->getMTriangle()->getStretchedCotTheta();
+        triangleArea2[idx] = m->getTriangleVector()[idx]->getGTriangle()->getStretchedArea();
+        triangleTheta2[idx] = m->getTriangleVector()[idx]->getGTriangle()->getStretchedTheta();
+        triangleCotTheta2[idx] = m->getTriangleVector()[idx]->getGTriangle()->getStretchedCotTheta();
     }
     vector<double> vCellArea2(numVertices);
     vector<double> vCellCurv2(numVertices);
@@ -264,7 +264,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
         for(size_t vIdx = 0; vIdx < 3; ++vIdx) {
             exDiff += 2 * dotProduct(
                 t->getVertices()[vIdx]->force,
-                array2Vector<double, 3>(t->getMTriangle()->getDArea()[vIdx])
+                array2Vector<double, 3>(t->getGTriangle()->getDArea()[vIdx])
             );
         }
         EXPECT_NEAR(triangleArea1[idx] - triangleArea2[idx], exDiff, abs(exDiff / 1000));
@@ -274,7 +274,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
             for(size_t vIdx = 0; vIdx < 3; ++vIdx) {
                 exDiff += 2 * dotProduct(
                     t->getVertices()[vIdx]->force,
-                    array2Vector<double, 3>(t->getMTriangle()->getDTheta()[aIdx][vIdx])
+                    array2Vector<double, 3>(t->getGTriangle()->getDTheta()[aIdx][vIdx])
                 );
             }
             EXPECT_NEAR(triangleTheta1[idx][aIdx] - triangleTheta2[idx][aIdx], exDiff, abs(exDiff / 1000));
@@ -285,7 +285,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
             for(size_t vIdx = 0; vIdx < 3; ++vIdx) {
                 exDiff += 2 * dotProduct(
                     t->getVertices()[vIdx]->force,
-                    array2Vector<double, 3>(t->getMTriangle()->getDCotTheta()[aIdx][vIdx])
+                    array2Vector<double, 3>(t->getGTriangle()->getDCotTheta()[aIdx][vIdx])
                 );
             }
             EXPECT_NEAR(triangleCotTheta1[idx][aIdx] - triangleCotTheta2[idx][aIdx], exDiff, abs(exDiff / 1000));

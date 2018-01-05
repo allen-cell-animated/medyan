@@ -8,12 +8,13 @@
 #include "Database.h"
 #include "Trackable.h"
 #include "Movable.h"
-#include "Reactable.h"
+//#include "Reactable.h"
 #include "DynamicNeighbor.h"
 #include "Component.h"
 
 #include "Vertex.h"
 #include "Edge.h"
+#include "GTriangle.h"
 #include "MTriangle.h"
 
 // Forward declarations
@@ -31,6 +32,7 @@ private:
     // Pointers to 3 vertices. The rotation of vertices must be pointing outside.
     array<Vertex*, 3> _v;
 
+    unique_ptr<GTriangle> _gTriangle; // pointer to geo triangle
     unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
 
     // ptr to 3 edges. Order is (b0, b1), (b1, b2), (b2, b0)
@@ -53,8 +55,10 @@ public:
     array<Edge*, 3>& getEdges() { return _edges; }
     array<size_t, 3>& getEdgeHead() { return _edgeHead; }
     
+    // Get geo triangle
+    GTriangle* getGTriangle() { return _gTriangle.get(); }
     // Get mech triangle
-    MTriangle* getMTriangle() {return _mTriangle.get();}
+    MTriangle* getMTriangle() { return _mTriangle.get(); }
 
     /// Get all instances of this class from the SubSystem
     static const vector<Triangle*>& getTriangles() {

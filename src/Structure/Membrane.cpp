@@ -9,6 +9,7 @@
 #include "Triangle.h"
 #include "Edge.h"
 #include "Vertex.h"
+#include "GTriangle.h"
 #include "MTriangle.h"
 #include "GEdge.h"
 #include "MVoronoiCell.h"
@@ -144,13 +145,13 @@ Membrane::Membrane(SubSystem* s, short membraneType,
                     nnVertex->getEdgeHead()[idx20]
                 };
 
-#ifdef MECHANICS
                 // Calculate the area of the triangle and set it as eqArea
-                lastAddedTriangle->getMTriangle()->calcArea();
-                lastAddedTriangle->getMTriangle()->setEqArea(lastAddedTriangle->getMTriangle()->getArea());
-				// Calculate angles for the use of Voronoi cells
-				lastAddedTriangle->getMTriangle()->calcTheta();
+                lastAddedTriangle->getGTriangle()->calcArea();
+#ifdef MECHANICS
+                lastAddedTriangle->getMTriangle()->setEqArea(lastAddedTriangle->getGTriangle()->getArea());
 #endif
+				// Calculate angles for the use of Voronoi cells
+				lastAddedTriangle->getGTriangle()->calcTheta();
             }
         }
     }

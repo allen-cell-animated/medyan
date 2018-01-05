@@ -82,7 +82,7 @@ double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
 
     double H = numerator / denominator;
     
-    double energy = kExVol * t->getMTriangle()->getArea() * H;
+    double energy = kExVol * t->getGTriangle()->getArea() * H;
     
     return energy;
 }
@@ -155,7 +155,7 @@ double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
 
     double H = numerator / denominator;
     
-    double energy = kExVol * t->getMTriangle()->getStretchedArea() * H;
+    double energy = kExVol * t->getGTriangle()->getStretchedArea() * H;
     
     return energy;
 }
@@ -298,8 +298,8 @@ void TriangleCylinderBeadExclVolRepulsion::forces(Triangle* t, Bead* b,
         }
     }
 
-    double area = t->getMTriangle()->getArea();
-    auto& dArea = t->getMTriangle()->getDArea();
+    double area = t->getGTriangle()->getArea();
+    auto& dArea = t->getGTriangle()->getDArea();
     
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
         b->force[coordIdx] -= kExVol * dH[3][coordIdx] * area;
@@ -447,8 +447,8 @@ void TriangleCylinderBeadExclVolRepulsion::forcesAux(Triangle* t, Bead* b,
         }
     }
 
-    double area = t->getMTriangle()->getArea();
-    auto& dArea = t->getMTriangle()->getDArea();
+    double area = t->getGTriangle()->getArea();
+    auto& dArea = t->getGTriangle()->getDArea();
     
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
         b->forceAux[coordIdx] -= kExVol * dH[3][coordIdx] * area;

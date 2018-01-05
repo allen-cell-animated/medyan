@@ -48,8 +48,8 @@ void MVoronoiCell::calcArea() {
 
     for(size_t nIdx = 0; nIdx < n; ++nIdx){
         // Think about the triangle (center, nIdx, nIdx+1)
-        auto mTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getMTriangle();
-        auto mTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getMTriangle();
+        auto gTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getGTriangle();
+        auto gTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getGTriangle();
         int triRIdx0 = (3 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx1 = (4 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx2 = (5 - _pVertex->getTriangleHead()[nIdx]) % 3;
@@ -63,15 +63,15 @@ void MVoronoiCell::calcArea() {
         int edgeIdx1 = (3 - _pVertex->getEdgeHead()[nIdx]) % 2;
 
         double dist2 = gEdge->getLength() * gEdge->getLength();
-        double sumCotTheta = mTriangleL->getCotTheta()[triLIdx1] + mTriangleR->getCotTheta()[triRIdx2];
+        double sumCotTheta = gTriangleL->getCotTheta()[triLIdx1] + gTriangleR->getCotTheta()[triRIdx2];
         _currentArea += sumCotTheta * dist2 / 8;
         for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx){
-            _dCurrentArea[coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx0][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx0][coordIdx]) * dist2
+            _dCurrentArea[coordIdx] += ((gTriangleL->getDCotTheta()[triLIdx1][triLIdx0][coordIdx] + gTriangleR->getDCotTheta()[triRIdx2][triRIdx0][coordIdx]) * dist2
                 + sumCotTheta * 2 * gEdge->getLength() * gEdge->getDLength()[edgeIdx0][coordIdx]) / 8;
-            _dNeighborCurrentArea[nIdx][coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx2][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx1][coordIdx]) * dist2
+            _dNeighborCurrentArea[nIdx][coordIdx] += ((gTriangleL->getDCotTheta()[triLIdx1][triLIdx2][coordIdx] + gTriangleR->getDCotTheta()[triRIdx2][triRIdx1][coordIdx]) * dist2
                 + sumCotTheta * 2 * gEdge->getLength() * gEdge->getDLength()[edgeIdx1][coordIdx]) / 8;
-            _dNeighborCurrentArea[(nIdx + n - 1) % n][coordIdx] += mTriangleL->getDCotTheta()[triLIdx1][triLIdx1][coordIdx] * dist2 / 8;
-            _dNeighborCurrentArea[(nIdx + 1) % n][coordIdx] += mTriangleR->getDCotTheta()[triRIdx2][triRIdx2][coordIdx] * dist2 / 8;
+            _dNeighborCurrentArea[(nIdx + n - 1) % n][coordIdx] += gTriangleL->getDCotTheta()[triLIdx1][triLIdx1][coordIdx] * dist2 / 8;
+            _dNeighborCurrentArea[(nIdx + 1) % n][coordIdx] += gTriangleR->getDCotTheta()[triRIdx2][triRIdx2][coordIdx] * dist2 / 8;
         }
         
     }
@@ -97,8 +97,8 @@ void MVoronoiCell::calcStretchedArea(double d) {
     for(size_t nIdx = 0; nIdx < n; ++nIdx){
         // Think about the triangle (center, nIdx, nIdx+1)
         // The commented indices are not used, but serve as a reference of what their relations are.
-        auto mTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getMTriangle();
-        auto mTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getMTriangle();
+        auto gTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getGTriangle();
+        auto gTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getGTriangle();
         //int triRIdx0 = (3 - _pVertex->getTriangleHead()[nIdx]) % 3;
         //int triRIdx1 = (4 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx2 = (5 - _pVertex->getTriangleHead()[nIdx]) % 3;
@@ -110,7 +110,7 @@ void MVoronoiCell::calcStretchedArea(double d) {
         auto gEdge = _pVertex->getNeighborEdges()[nIdx]->getGEdge();
 
         double dist2Stretched = gEdge->getStretchedLength() * gEdge->getStretchedLength();
-        double sumCotThetaStretched = mTriangleL->getStretchedCotTheta()[triLIdx1] + mTriangleR->getStretchedCotTheta()[triRIdx2];
+        double sumCotThetaStretched = gTriangleL->getStretchedCotTheta()[triLIdx1] + gTriangleR->getStretchedCotTheta()[triRIdx2];
         _stretchedArea += sumCotThetaStretched * dist2Stretched / 8;        
     }
 }
@@ -138,8 +138,8 @@ void MVoronoiCell::calcCurv() {
 
     for(size_t nIdx = 0; nIdx < n; ++nIdx){
         // Think about the triangle (center, nIdx, nIdx+1)
-        auto mTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getMTriangle();
-        auto mTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getMTriangle();
+        auto gTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getGTriangle();
+        auto gTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getGTriangle();
         int triRIdx0 = (3 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx1 = (4 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx2 = (5 - _pVertex->getTriangleHead()[nIdx]) % 3;
@@ -148,17 +148,17 @@ void MVoronoiCell::calcCurv() {
         int triLIdx2 = (5 - _pVertex->getTriangleHead()[(nIdx + n - 1) % n]) % 3;
 
         std::array<double, 3> diff;
-        double sumCotTheta = mTriangleL->getCotTheta()[triLIdx1] + mTriangleR->getCotTheta()[triRIdx2];
+        double sumCotTheta = gTriangleL->getCotTheta()[triLIdx1] + gTriangleR->getCotTheta()[triRIdx2];
         for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
             diff[coordIdx] = _pVertex->coordinate[coordIdx] - _pVertex->getNeighborVertices()[nIdx]->coordinate[coordIdx];
             k[coordIdx] += sumCotTheta * diff[coordIdx];
         }
 
         // Now, dDiff is Eye3, and dNDiff is -Eye3
-        std::array<std::array<double, 3>, 3> tensorTmp0 = tensorProduct<3>(vectorSum<3>(mTriangleL->getDCotTheta()[triLIdx1][triLIdx0], mTriangleR->getDCotTheta()[triRIdx2][triRIdx0]), diff);
-        std::array<std::array<double, 3>, 3> tensorTmp1 = tensorProduct<3>(vectorSum<3>(mTriangleL->getDCotTheta()[triLIdx1][triLIdx2], mTriangleR->getDCotTheta()[triRIdx2][triRIdx1]), diff);
-        std::array<std::array<double, 3>, 3> tensorTmpL = tensorProduct<3>(mTriangleL->getDCotTheta()[triLIdx1][triLIdx1], diff);
-        std::array<std::array<double, 3>, 3> tensorTmpR = tensorProduct<3>(mTriangleR->getDCotTheta()[triRIdx2][triRIdx2], diff);
+        std::array<std::array<double, 3>, 3> tensorTmp0 = tensorProduct<3>(vectorSum<3>(gTriangleL->getDCotTheta()[triLIdx1][triLIdx0], gTriangleR->getDCotTheta()[triRIdx2][triRIdx0]), diff);
+        std::array<std::array<double, 3>, 3> tensorTmp1 = tensorProduct<3>(vectorSum<3>(gTriangleL->getDCotTheta()[triLIdx1][triLIdx2], gTriangleR->getDCotTheta()[triRIdx2][triRIdx1]), diff);
+        std::array<std::array<double, 3>, 3> tensorTmpL = tensorProduct<3>(gTriangleL->getDCotTheta()[triLIdx1][triLIdx1], diff);
+        std::array<std::array<double, 3>, 3> tensorTmpR = tensorProduct<3>(gTriangleR->getDCotTheta()[triRIdx2][triRIdx2], diff);
 
         matrixIncrease<3>(dK, matrixSum<3>(tensorTmp0, matrixMultiply<3>(Eye3, sumCotTheta)));
         matrixIncrease<3>(dNeighborK[nIdx], matrixDifference<3>(tensorTmp1, matrixMultiply<3>(Eye3, sumCotTheta)));
@@ -198,8 +198,8 @@ void MVoronoiCell::calcStretchedCurv(double d) {
     for(size_t nIdx = 0; nIdx < n; ++nIdx){
         // Think about the triangle (center, nIdx, nIdx+1)
         // The commented indices are not used, but serve as a reference of what their relations are.
-        auto mTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getMTriangle();
-        auto mTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getMTriangle();
+        auto gTriangleR = _pVertex->getNeighborTriangles()[nIdx]->getGTriangle();
+        auto gTriangleL = _pVertex->getNeighborTriangles()[(nIdx + n - 1) % n]->getGTriangle();
         //int triRIdx0 = (3 - _pVertex->getTriangleHead()[nIdx]) % 3;
         //int triRIdx1 = (4 - _pVertex->getTriangleHead()[nIdx]) % 3;
         int triRIdx2 = (5 - _pVertex->getTriangleHead()[nIdx]) % 3;
@@ -208,7 +208,7 @@ void MVoronoiCell::calcStretchedCurv(double d) {
         //int triLIdx2 = (5 - _pVertex->getTriangleHead()[(nIdx + n - 1) % n]) % 3;
 
         std::array<double, 3> diffStretched;
-        double sumCotThetaStretched = mTriangleL->getStretchedCotTheta()[triLIdx1] + mTriangleR->getStretchedCotTheta()[triRIdx2];
+        double sumCotThetaStretched = gTriangleL->getStretchedCotTheta()[triLIdx1] + gTriangleR->getStretchedCotTheta()[triRIdx2];
         for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
             diffStretched[coordIdx] = _pVertex->coordinate[coordIdx] + d * _pVertex->force[coordIdx]
                                     - (_pVertex->getNeighborVertices()[nIdx]->coordinate[coordIdx] + d * _pVertex->getNeighborVertices()[nIdx]->force[coordIdx]);

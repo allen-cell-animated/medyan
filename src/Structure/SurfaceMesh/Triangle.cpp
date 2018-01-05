@@ -8,6 +8,8 @@ Triangle::Triangle(Composite* parent, Vertex* v1, Vertex* v2, Vertex* v3):
     
     parent -> addChild(unique_ptr<Component>(this));
 
+    _gTriangle = unique_ptr<GTriangle>(new GTriangle);
+    _gTriangle->setTriangle(this);
 #ifdef MECHANICS
     // eqArea cannot be obtained at this moment
     _mTriangle = unique_ptr<MTriangle>(new MTriangle(getType()));
@@ -61,8 +63,6 @@ void Triangle::printSelf() {
 
 void Triangle::updateGeometry(bool calcDerivative, double d) {
 
-#ifdef MECHANICS
-    _mTriangle->updateGeometry(calcDerivative, d);
-#endif
+    _gTriangle->updateGeometry(calcDerivative, d);
 
 }

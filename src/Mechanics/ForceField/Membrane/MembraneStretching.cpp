@@ -108,7 +108,7 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
                 double kElastic = it->getMTriangle()->getElasticModulus();
                 double eqArea = it->getMTriangle()->getEqArea();
 
-                double area = it->getMTriangle()->getArea();
+                double area = it->getGTriangle()->getArea();
 
                 // The calculation requires that the current area has already been calculated
                 U_i += _FFType.energy(area, kElastic, eqArea);
@@ -120,7 +120,7 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
                 double eqArea = it->getMTriangle()->getEqArea();
 
                 // The calculation requires that the current stretched area has been calculated
-                double areaStretched = it->getMTriangle()->getStretchedArea();
+                double areaStretched = it->getGTriangle()->getStretchedArea();
 
                 // Currently, d is a dummy variable, as the stretched areaStretched is already dependent on d.
                 U_i += _FFType.energy(areaStretched, kElastic, eqArea, d);
@@ -153,8 +153,8 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
             double kElastic = it->getMTriangle()->getElasticModulus();
             double eqArea = it->getMTriangle()->getEqArea();
 
-            double area = it->getMTriangle()->getArea();
-            std::array<std::array<double, 3>, 3>& dArea = it->getMTriangle()->getDArea();
+            double area = it->getGTriangle()->getArea();
+            std::array<std::array<double, 3>, 3>& dArea = it->getGTriangle()->getDArea();
            
             _FFType.forces(it->getVertices(), area, dArea, kElastic, eqArea);
         }
@@ -171,8 +171,8 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
             double kElastic = it->getMTriangle()->getElasticModulus();
             double eqArea = it->getMTriangle()->getEqArea();
 
-            double area = it->getMTriangle()->getArea();
-            std::array<std::array<double, 3>, 3>& dArea = it->getMTriangle()->getDArea();
+            double area = it->getGTriangle()->getArea();
+            std::array<std::array<double, 3>, 3>& dArea = it->getGTriangle()->getDArea();
            
             _FFType.forcesAux(it->getVertices(), area, dArea, kElastic, eqArea);
         }

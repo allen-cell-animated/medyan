@@ -32,6 +32,7 @@ using namespace mathfunc;
 #    include "Vertex.h"
 #    include "MVoronoiCell.h"
 #    include "Triangle.h"
+#    include "GTriangle.h"
 #    include "MTriangle.h"
 
 #    include "MembraneInteractions.h"
@@ -128,7 +129,7 @@ namespace {
     }
     void resizeEqArea(Membrane *m, double ratio) {
         for(Triangle* t: m->getTriangleVector()) {
-            t->getMTriangle()->setEqArea(t->getMTriangle()->getEqArea() * ratio);
+            t->getMTriangle()->setEqArea(t->getGTriangle()->getEqArea() * ratio);
         }
         for(Vertex* v: m->getVertexVector()) {
             v->getMVoronoiCell()->setEqArea(v->getMVoronoiCell()->getEqArea() * ratio);

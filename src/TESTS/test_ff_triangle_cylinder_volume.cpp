@@ -30,7 +30,6 @@ using namespace mathfunc;
 
 #    include "Edge.h"
 #    include "Triangle.h"
-#    include "MTriangle.h"
 #    include "Cylinder.h"
 
 #    include "TriangleCylinderExclVolume.h"
