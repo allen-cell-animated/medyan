@@ -16,6 +16,7 @@
 #include "Trackable.h"
 #include "DynamicNeighbor.h"
 #include "Component.h"
+#include "Movable.h"
 
 #include "Vertex.h"
 #include "GEdge.h"
@@ -25,6 +26,7 @@ class Vertex;
 
 class Edge:
     public Component,
+    public Movable,
     public Trackable {
 
 private:
@@ -36,6 +38,8 @@ private:
 
     static Database<Edge*> _edges; // Collection of edges in SubSystem
     int _id; // Unique integer id of this edge
+
+    void updateCoordinate(); // helper function to update coordiante of this edge
 
 public:
     Edge(Composite *parent, Vertex* v1, Vertex* v2);
@@ -63,6 +67,11 @@ public:
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem()override { _edges.addElement(this); }
     virtual void removeFromSubSystem()override { _edges.removeElement(this); }
+    //@}
+
+    //@{
+    /// Implements Movable
+    virtual void updatePosition() override;
     //@}
 
     /// Helper function to update geometric

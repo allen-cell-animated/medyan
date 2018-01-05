@@ -13,6 +13,18 @@ Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
 
 }
 
+void Edge::updateCoordinate() {
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+        coordinate[coordIdx] = (_v[0]->coordinate[coordIdx] + _v[1]->coordinate[coordIdx]) / 2;
+    }
+}
+
+void Edge::updatePosition() {
+    updateCoordinate();
+    
+    // If compartments are implemented, they are also updated here.
+}
+
 void Edge::printSelf() {
     cout << endl;
     

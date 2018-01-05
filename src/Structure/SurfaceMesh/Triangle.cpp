@@ -39,8 +39,6 @@ void Triangle::printSelf() {
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
-    //cout << "Position = " << _position << endl; //< TODO: Implement this.
-    
     cout << endl;
     
     /*
