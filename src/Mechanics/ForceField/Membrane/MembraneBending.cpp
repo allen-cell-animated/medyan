@@ -2,6 +2,7 @@
 
 #include "Membrane.h"
 #include "Vertex.h"
+#include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
 
 #include "MembraneBendingVoronoiHelfrich.h"
@@ -21,8 +22,8 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(double d) 
                 double eqCurv = v->getMVoronoiCell()->getEqCurv();
 
                 // The calculation requires that the current area and mean curvature have already been calculated
-                double area = v->getMVoronoiCell()->getArea();
-                double curv = v->getMVoronoiCell()->getCurv();
+                double area = v->getGVoronoiCell()->getArea();
+                double curv = v->getGVoronoiCell()->getCurv();
 
                 U_i += _FFType.energy(area, curv, kBending, eqCurv); 
             }
@@ -33,8 +34,8 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(double d) 
 
                 // The calculation requires that the current stretched area and mean curvature have already been calculated
                 // As a result, d is just a dummy variable due to its universality
-                double areaStretched = v->getMVoronoiCell()->getStretchedArea();
-                double curvStretched = v->getMVoronoiCell()->getStretchedCurv();
+                double areaStretched = v->getGVoronoiCell()->getStretchedArea();
+                double curvStretched = v->getGVoronoiCell()->getStretchedCurv();
 
                 U_i += _FFType.energy(areaStretched, curvStretched, kBending, eqCurv, d);
             }
@@ -60,13 +61,14 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
         for(Vertex* v : m->getVertexVector()){
             
             auto mvc = v->getMVoronoiCell();
+            auto gvc = v->getGVoronoiCell();
 
             double kBending = mvc->getBendingModulus();
             double eqCurv = mvc->getEqCurv();
 
             _FFType.forces(v, v->getNeighborVertices(),
-                mvc->getArea(), mvc->getDArea(), mvc->getDNeighborArea(),
-                mvc->getCurv(), mvc->getDCurv(), mvc->getDNeighborCurv(),
+                gvc->getArea(), gvc->getDArea(), gvc->getDNeighborArea(),
+                gvc->getCurv(), gvc->getDCurv(), gvc->getDNeighborCurv(),
                 kBending, eqCurv);
         }
     }
@@ -80,13 +82,14 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForcesAux() {
         for(Vertex* v : m->getVertexVector()){
             
             auto mvc = v->getMVoronoiCell();
+            auto gvc = v->getGVoronoiCell();
 
             double kBending = mvc->getBendingModulus();
             double eqCurv = mvc->getEqCurv();
            
             _FFType.forcesAux(v, v->getNeighborVertices(),
-                mvc->getArea(), mvc->getDArea(), mvc->getDNeighborArea(),
-                mvc->getCurv(), mvc->getDCurv(), mvc->getDNeighborCurv(),
+                gvc->getArea(), gvc->getDArea(), gvc->getDNeighborArea(),
+                gvc->getCurv(), gvc->getDCurv(), gvc->getDNeighborCurv(),
                 kBending, eqCurv);
         }
     }

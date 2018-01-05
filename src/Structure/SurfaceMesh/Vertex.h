@@ -10,6 +10,7 @@
 
 #include "Edge.h"
 #include "Triangle.h"
+#include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
 
 // Forward declarations
@@ -33,6 +34,7 @@ class Vertex:
     {
 
 private:
+    unique_ptr<GVoronoiCell> _gVoronoiCell; // pointer to Voronoi cell geometric information
     unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
 
     // The following vectors on neighbor vertices, triangles, edges must have the same size
@@ -58,6 +60,8 @@ public:
     ///Main constructor
     Vertex(vector<double> v, Composite* parent, size_t numNeighbors);
     
+    // Get geo Voronoi cell
+    GVoronoiCell* getGVoronoiCell() { return _gVoronoiCell.get(); }
     // Get mech Voronoi cell
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 

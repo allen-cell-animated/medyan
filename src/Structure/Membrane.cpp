@@ -12,6 +12,7 @@
 #include "GTriangle.h"
 #include "MTriangle.h"
 #include "GEdge.h"
+#include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
 
 #include "MathFunctions.h"
@@ -156,17 +157,18 @@ Membrane::Membrane(SubSystem* s, short membraneType,
         }
     }
 
-#ifdef MECHANICS
     /**************************************************************************
         Setting up Voronoi cells
     **************************************************************************/
     for(int idx = 0; idx < numVertices; ++idx) {
+        GVoronoiCell* gvc = _vertexVector[idx]->getGVoronoiCell();
+        gvc->calcArea();
+#ifdef MECHANICS
         MVoronoiCell* mvc = _vertexVector[idx]->getMVoronoiCell();
-        // Calculate area and set it as eqArea
-        mvc->calcArea();
-        mvc->setEqArea(mvc->getArea());
-    }
+        // Set the current area as eqArea
+        mvc->setEqArea(gvc->getArea());
 #endif
+    }
 
 }
 

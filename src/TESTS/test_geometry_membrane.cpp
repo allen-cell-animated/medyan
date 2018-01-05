@@ -31,7 +31,7 @@ using namespace mathfunc;
 #    include "Vertex.h"
 #    include "Edge.h"
 #    include "Triangle.h"
-#    include "MVoronoiCell.h"
+#    include "GVoronoiCell.h"
 #    include "GEdge.h"
 #    include "GTriangle.h"
 #    include "Membrane.h"
@@ -140,8 +140,8 @@ TEST_F(MembraneGeometryTest, Geometry) {
     double exVCellArea = radius * radius * sqrt(3) * 2 / 3;
     double exVCellCurv = 1 / radius;
     for(Vertex* it: m->getVertexVector()) {
-        EXPECT_DOUBLE_EQ(it->getMVoronoiCell()->getArea(), exVCellArea);
-        EXPECT_DOUBLE_EQ(it->getMVoronoiCell()->getCurv(), exVCellCurv);
+        EXPECT_DOUBLE_EQ(it->getGVoronoiCell()->getArea(), exVCellArea);
+        EXPECT_DOUBLE_EQ(it->getGVoronoiCell()->getCurv(), exVCellCurv);
     }
 
     /**************************************************************************
@@ -182,8 +182,8 @@ TEST_F(MembraneGeometryTest, Geometry) {
     // Check Voronoi cell area and curvature
     double exStretchedVCellArea = radius * radius;
     double exStretchedVCellCurv = 0;
-    EXPECT_DOUBLE_EQ(v0->getMVoronoiCell()->getStretchedArea(), exStretchedVCellArea);
-    EXPECT_DOUBLE_EQ(v0->getMVoronoiCell()->getStretchedCurv(), exStretchedVCellCurv);
+    EXPECT_DOUBLE_EQ(v0->getGVoronoiCell()->getStretchedArea(), exStretchedVCellArea);
+    EXPECT_DOUBLE_EQ(v0->getGVoronoiCell()->getStretchedCurv(), exStretchedVCellCurv);
 
 }
 
@@ -215,8 +215,8 @@ TEST_F(MembraneGeometryTest, Derivative) {
     vector<double> vCellArea1(numVertices);
     vector<double> vCellCurv1(numVertices);
     for(size_t idx = 0; idx < numVertices; ++idx) {
-        vCellArea1[idx] = m->getVertexVector()[idx]->getMVoronoiCell()->getStretchedArea();
-        vCellCurv1[idx] = m->getVertexVector()[idx]->getMVoronoiCell()->getStretchedCurv();
+        vCellArea1[idx] = m->getVertexVector()[idx]->getGVoronoiCell()->getStretchedArea();
+        vCellCurv1[idx] = m->getVertexVector()[idx]->getGVoronoiCell()->getStretchedCurv();
     }
 
     // Now move every vertex in the opposite direction
@@ -239,8 +239,8 @@ TEST_F(MembraneGeometryTest, Derivative) {
     vector<double> vCellArea2(numVertices);
     vector<double> vCellCurv2(numVertices);
     for(size_t idx = 0; idx < numVertices; ++idx) {
-        vCellArea2[idx] = m->getVertexVector()[idx]->getMVoronoiCell()->getStretchedArea();
-        vCellCurv2[idx] = m->getVertexVector()[idx]->getMVoronoiCell()->getStretchedCurv();
+        vCellArea2[idx] = m->getVertexVector()[idx]->getGVoronoiCell()->getStretchedArea();
+        vCellCurv2[idx] = m->getVertexVector()[idx]->getGVoronoiCell()->getStretchedCurv();
     }
 
     // Compare the results with derivative predictions
@@ -298,12 +298,12 @@ TEST_F(MembraneGeometryTest, Derivative) {
         double exDiff = 0.0;
         exDiff += 2 * dotProduct(
             v->force,
-            array2Vector<double, 3>(v->getMVoronoiCell()->getDArea())
+            array2Vector<double, 3>(v->getGVoronoiCell()->getDArea())
         );
         for(size_t vIdx = 0; vIdx < numNeighbor; ++vIdx) {
             exDiff += 2 * dotProduct(
                 v->getNeighborVertices()[vIdx]->force,
-                array2Vector<double, 3>(v->getMVoronoiCell()->getDNeighborArea()[vIdx])
+                array2Vector<double, 3>(v->getGVoronoiCell()->getDNeighborArea()[vIdx])
             );
         }
         EXPECT_NEAR(vCellArea1[idx] - vCellArea2[idx], exDiff, abs(exDiff / 1000));
@@ -311,12 +311,12 @@ TEST_F(MembraneGeometryTest, Derivative) {
         exDiff = 0.0;
         exDiff += 2 * dotProduct(
             v->force,
-            array2Vector<double, 3>(v->getMVoronoiCell()->getDCurv())
+            array2Vector<double, 3>(v->getGVoronoiCell()->getDCurv())
         );
         for(size_t vIdx = 0; vIdx < numNeighbor; ++vIdx) {
             exDiff += 2 * dotProduct(
                 v->getNeighborVertices()[vIdx]->force,
-                array2Vector<double, 3>(v->getMVoronoiCell()->getDNeighborCurv()[vIdx])
+                array2Vector<double, 3>(v->getGVoronoiCell()->getDNeighborCurv()[vIdx])
             );
         }
         EXPECT_NEAR(vCellCurv1[idx] - vCellCurv2[idx], exDiff, abs(exDiff / 1000));

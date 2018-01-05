@@ -24,7 +24,7 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(doub
                 double eqArea = v->getMVoronoiCell()->getEqArea();
 
                 // The calculation requires that the current area has already been calculated
-                double area = v->getMVoronoiCell()->getArea();
+                double area = v->getGVoronoiCell()->getArea();
 
                 U_i += _FFType.energy(area, kElastic, eqArea); 
             }
@@ -35,7 +35,7 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(doub
 
                 // The calculation requires that the current stretched area has already been calculated
                 // As a result, d is just a dummy variable due to its universality
-                double areaStretched = v->getMVoronoiCell()->getStretchedArea();
+                double areaStretched = v->getGVoronoiCell()->getStretchedArea();
 
                 U_i += _FFType.energy(areaStretched, kElastic, eqArea, d);
             }
@@ -63,9 +63,9 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
             double kElastic = v->getMVoronoiCell()->getElasticModulus();
             double eqArea = v->getMVoronoiCell()->getEqArea();
 
-            double area = v->getMVoronoiCell()->getArea();
-            std::array<double, 3>& dArea = v->getMVoronoiCell()->getDArea();
-            std::vector<std::array<double, 3>>& dNeighborArea = v->getMVoronoiCell()->getDNeighborArea();
+            double area = v->getGVoronoiCell()->getArea();
+            std::array<double, 3>& dArea = v->getGVoronoiCell()->getDArea();
+            std::vector<std::array<double, 3>>& dNeighborArea = v->getGVoronoiCell()->getDNeighborArea();
            
             _FFType.forces(v, v->getNeighborVertices(), area, dArea, dNeighborArea, kElastic, eqArea);
         }
@@ -82,9 +82,9 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
             double kElastic = v->getMVoronoiCell()->getElasticModulus();
             double eqArea = v->getMVoronoiCell()->getEqArea();
 
-            double area = v->getMVoronoiCell()->getArea();
-            std::array<double, 3>& dArea = v->getMVoronoiCell()->getDArea();
-            std::vector<std::array<double, 3>>& dNeighborArea = v->getMVoronoiCell()->getDNeighborArea();
+            double area = v->getGVoronoiCell()->getArea();
+            std::array<double, 3>& dArea = v->getGVoronoiCell()->getDArea();
+            std::vector<std::array<double, 3>>& dNeighborArea = v->getGVoronoiCell()->getDNeighborArea();
            
             _FFType.forcesAux(v, v->getNeighborVertices(), area, dArea, dNeighborArea, kElastic, eqArea);
         }
