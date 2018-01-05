@@ -1,11 +1,11 @@
-#ifndef MEDYAN_MEdge_h
-#define MEDYAN_MEdge_h
+#ifndef MEDYAN_GEdge_h
+#define MEDYAN_GEdge_h
 
 #include <array>
 
 class Edge; // Forward declaration
 
-class MEdge {
+class GEdge {
 
 private:
     Edge* _pEdge; // Parent edge
@@ -15,7 +15,7 @@ private:
     double _stretchedLength; // Temporarily store the stretched length
 
 public:
-    MEdge() {}
+    GEdge() {}
 
     /// Set parent 
     void setEdge(Edge* e) { _pEdge = e; }

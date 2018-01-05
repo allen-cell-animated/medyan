@@ -8,10 +8,8 @@ Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
     
     parent -> addChild(unique_ptr<Component>(this));
 
-#ifdef MECHANICS
-    _mEdge = unique_ptr<MEdge>(new MEdge);
-    _mEdge->setEdge(this);
-#endif
+    _gEdge = unique_ptr<GEdge>(new GEdge);
+    _gEdge->setEdge(this);
 
 }
 
@@ -35,7 +33,7 @@ void Edge::printSelf() {
 void Edge::updateGeometry(bool calcDerivative, double d) {
 
 #ifdef MECHANICS
-    _mEdge->updateGeometry(calcDerivative, d);
+    _gEdge->updateGeometry(calcDerivative, d);
 #endif
 
 }

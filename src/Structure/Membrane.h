@@ -16,9 +16,19 @@ class Triangle;
 class Edge;
 class Vertex;
 
+/******************************************************************************
+Topologically, the membrane is represented by a 2d surface with 2 sides (which
+means no Klein bottles are allowed!). The surface is constructed by
+interconnected vertices, edges and triangles.
+
+The Membrane class is a container holding all the relative vertices, edges and
+triangles. Meshwork initialization and geometry update are all managed by this
+class.
+******************************************************************************/
+
 class Membrane: public Composite, public Trackable, public Geometric {
 
-    friend class Controller;
+    friend class Controller; // TODO: why friend?
 
 private:
 
@@ -32,6 +42,9 @@ private:
 
     static Database<Membrane*> _membranes; // Collection in SubSystem
     int _id; // Unique integer id of this membrane
+
+    bool _isClosed = true; // Whether the membrane is topologically closed, regardless of genus
+    int _genus = 0; // Genus of the surface. Normally 0, as for a topologically spherical shape
 
 public:
     // Constructors
@@ -77,6 +90,11 @@ public:
     /// Implements Geometric
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
     //@}
+
+    /**************************************************************************
+    Topological
+    **************************************************************************/
+    bool isClosed()const { return _isClosed; }
 
 };
 

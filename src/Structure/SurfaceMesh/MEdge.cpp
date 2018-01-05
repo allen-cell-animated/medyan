@@ -1,11 +1,11 @@
 #include "Edge.h"
-#include "MEdge.h"
+#include "GEdge.h"
 
 #include "MathFunctions.h"
 
 using namespace mathfunc;
 
-void MEdge::calcLength() {
+void GEdge::calcLength() {
     auto& v0 = _pEdge->getVertices()[0];
     auto& v1 = _pEdge->getVertices()[1];
 
@@ -16,7 +16,7 @@ void MEdge::calcLength() {
     }
 }
 
-void MEdge::calcStretchedLength(double d) {
+void GEdge::calcStretchedLength(double d) {
     auto& v0 = _pEdge->getVertices()[0];
     auto& v1 = _pEdge->getVertices()[1];
     _stretchedLength = twoPointDistanceStretched(v0->coordinate, v0->force,

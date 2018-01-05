@@ -23,9 +23,9 @@ void MTriangle::calcArea() {
     auto& v1 = _pTriangle->getVertices()[1]->coordinate;
     auto& v2 = _pTriangle->getVertices()[2]->coordinate;
 
-    double l0 = _pTriangle->getEdges()[0]->getMEdge()->getLength(); // length v0 - v1
-    double l1 = _pTriangle->getEdges()[1]->getMEdge()->getLength(); // length v1 - v2
-    double l2 = _pTriangle->getEdges()[2]->getMEdge()->getLength(); // length v2 - v0
+    double l0 = _pTriangle->getEdges()[0]->getGEdge()->getLength(); // length v0 - v1
+    double l1 = _pTriangle->getEdges()[1]->getGEdge()->getLength(); // length v1 - v2
+    double l2 = _pTriangle->getEdges()[2]->getGEdge()->getLength(); // length v2 - v0
 
     double dot12 = scalarProduct(v0, v1, v0, v2);
 
@@ -67,9 +67,9 @@ void MTriangle::calcTheta() {
         auto& v1 = _pTriangle->getVertices()[(angleIdx+1) % 3]->coordinate;
         auto& v2 = _pTriangle->getVertices()[(angleIdx+2) % 3]->coordinate;
 
-        auto m0 = _pTriangle->getEdges()[angleIdx]->getMEdge();
-        auto m1 = _pTriangle->getEdges()[(angleIdx+1) % 3]->getMEdge();
-        auto m2 = _pTriangle->getEdges()[(angleIdx+2) % 3]->getMEdge();
+        auto m0 = _pTriangle->getEdges()[angleIdx]->getGEdge();
+        auto m1 = _pTriangle->getEdges()[(angleIdx+1) % 3]->getGEdge();
+        auto m2 = _pTriangle->getEdges()[(angleIdx+2) % 3]->getGEdge();
 
         double l0 = m0->getLength(); // length v0 - v1
         double l1 = m1->getLength(); // length v1 - v2
@@ -128,9 +128,9 @@ void MTriangle::calcStretchedTheta(double d) {
         auto& v1 = _pTriangle->getVertices()[(angleIdx+1) % 3];
         auto& v2 = _pTriangle->getVertices()[(angleIdx+2) % 3];
 
-        auto m0 = _pTriangle->getEdges()[angleIdx]->getMEdge();
-        auto m1 = _pTriangle->getEdges()[(angleIdx+1) % 3]->getMEdge();
-        auto m2 = _pTriangle->getEdges()[(angleIdx+2) % 3]->getMEdge();
+        auto m0 = _pTriangle->getEdges()[angleIdx]->getGEdge();
+        auto m1 = _pTriangle->getEdges()[(angleIdx+1) % 3]->getGEdge();
+        auto m2 = _pTriangle->getEdges()[(angleIdx+2) % 3]->getGEdge();
 
         double l0Stretched = m0->getStretchedLength(); // length v0 - v1
         double l1Stretched = m1->getStretchedLength(); // length v1 - v2

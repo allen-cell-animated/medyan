@@ -10,7 +10,7 @@
 #include "Edge.h"
 #include "Vertex.h"
 #include "MTriangle.h"
-#include "MEdge.h"
+#include "GEdge.h"
 #include "MVoronoiCell.h"
 
 #include "MathFunctions.h"
@@ -88,10 +88,8 @@ Membrane::Membrane(SubSystem* s, short membraneType,
                 centerVertex->getEdgeHead()[nIdx] = 0;
                 nVertex->getEdgeHead()[backToCenterIdx] = 1;
 
-#ifdef MECHANICS
                 // Calculate the length of the edge
-                lastAddedEdge->getMEdge()->calcLength();
-#endif
+                lastAddedEdge->getGEdge()->calcLength();
             }
         }
     }

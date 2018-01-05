@@ -58,18 +58,18 @@ void MVoronoiCell::calcArea() {
         int triLIdx2 = (5 - _pVertex->getTriangleHead()[(nIdx + n - 1) % n]) % 3;
 
         // Think about the edge (center, nIdx)
-        auto mEdge = _pVertex->getNeighborEdges()[nIdx]->getMEdge();
+        auto gEdge = _pVertex->getNeighborEdges()[nIdx]->getGEdge();
         int edgeIdx0 = (2 - _pVertex->getEdgeHead()[nIdx]) % 2;
         int edgeIdx1 = (3 - _pVertex->getEdgeHead()[nIdx]) % 2;
 
-        double dist2 = mEdge->getLength() * mEdge->getLength();
+        double dist2 = gEdge->getLength() * gEdge->getLength();
         double sumCotTheta = mTriangleL->getCotTheta()[triLIdx1] + mTriangleR->getCotTheta()[triRIdx2];
         _currentArea += sumCotTheta * dist2 / 8;
         for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx){
             _dCurrentArea[coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx0][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx0][coordIdx]) * dist2
-                + sumCotTheta * 2 * mEdge->getLength() * mEdge->getDLength()[edgeIdx0][coordIdx]) / 8;
+                + sumCotTheta * 2 * gEdge->getLength() * gEdge->getDLength()[edgeIdx0][coordIdx]) / 8;
             _dNeighborCurrentArea[nIdx][coordIdx] += ((mTriangleL->getDCotTheta()[triLIdx1][triLIdx2][coordIdx] + mTriangleR->getDCotTheta()[triRIdx2][triRIdx1][coordIdx]) * dist2
-                + sumCotTheta * 2 * mEdge->getLength() * mEdge->getDLength()[edgeIdx1][coordIdx]) / 8;
+                + sumCotTheta * 2 * gEdge->getLength() * gEdge->getDLength()[edgeIdx1][coordIdx]) / 8;
             _dNeighborCurrentArea[(nIdx + n - 1) % n][coordIdx] += mTriangleL->getDCotTheta()[triLIdx1][triLIdx1][coordIdx] * dist2 / 8;
             _dNeighborCurrentArea[(nIdx + 1) % n][coordIdx] += mTriangleR->getDCotTheta()[triRIdx2][triRIdx2][coordIdx] * dist2 / 8;
         }
@@ -107,9 +107,9 @@ void MVoronoiCell::calcStretchedArea(double d) {
         //int triLIdx2 = (5 - _pVertex->getTriangleHead()[(nIdx + n - 1) % n]) % 3;
 
         // Think about the edge (center, nIdx)
-        auto mEdge = _pVertex->getNeighborEdges()[nIdx]->getMEdge();
+        auto gEdge = _pVertex->getNeighborEdges()[nIdx]->getGEdge();
 
-        double dist2Stretched = mEdge->getStretchedLength() * mEdge->getStretchedLength();
+        double dist2Stretched = gEdge->getStretchedLength() * gEdge->getStretchedLength();
         double sumCotThetaStretched = mTriangleL->getStretchedCotTheta()[triLIdx1] + mTriangleR->getStretchedCotTheta()[triRIdx2];
         _stretchedArea += sumCotThetaStretched * dist2Stretched / 8;        
     }

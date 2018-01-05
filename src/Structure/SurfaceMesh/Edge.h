@@ -18,7 +18,7 @@
 #include "Component.h"
 
 #include "Vertex.h"
-#include "MEdge.h"
+#include "GEdge.h"
 
 // Forward declarations
 class Vertex;
@@ -32,7 +32,7 @@ private:
     std::array<Vertex*, 2> _v;
     // For simplicity, currently the neighbor triangles are not recorded.
 
-    unique_ptr<MEdge> _mEdge; // pointer to mech edge
+    unique_ptr<GEdge> _gEdge; // pointer to mech edge
 
     static Database<Edge*> _edges; // Collection of edges in SubSystem
     int _id; // Unique integer id of this edge
@@ -44,7 +44,7 @@ public:
     std::array<Vertex*, 2>& getVertices() { return _v; }
 
     // Get mech edge
-    MEdge* getMEdge() { return _mEdge.get(); }
+    GEdge* getGEdge() { return _gEdge.get(); }
 
     /// Get all instances of this class from the SubSystem
     static const vector<Edge*>& getEdges() {

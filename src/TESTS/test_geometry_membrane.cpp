@@ -32,7 +32,7 @@ using namespace mathfunc;
 #    include "Edge.h"
 #    include "Triangle.h"
 #    include "MVoronoiCell.h"
-#    include "MEdge.h"
+#    include "GEdge.h"
 #    include "MTriangle.h"
 #    include "Membrane.h"
 
@@ -127,7 +127,7 @@ TEST_F(MembraneGeometryTest, Geometry) {
     // Check edge length
     double exEdgeLen = radius * sqrt(2);
     for(Edge* it: m->getEdgeVector())
-        EXPECT_DOUBLE_EQ(it->getMEdge()->getLength(), exEdgeLen);
+        EXPECT_DOUBLE_EQ(it->getGEdge()->getLength(), exEdgeLen);
     // Check triangle area and angle
     double exTriangleArea = radius * radius * sqrt(3) / 2;
     double exTriangleAngle = M_PI / 3;
@@ -159,7 +159,7 @@ TEST_F(MembraneGeometryTest, Geometry) {
     // Check edge length
     double exStretchedEdgeLen = radius;
     for(Edge* it: v0->getNeighborEdges())
-        EXPECT_DOUBLE_EQ(it->getMEdge()->getStretchedLength(), exStretchedEdgeLen);
+        EXPECT_DOUBLE_EQ(it->getGEdge()->getStretchedLength(), exStretchedEdgeLen);
     // Check triangle area and angle
     double exStretchedTriangleArea = radius * radius / 2;
     double exStretchedTriangleAngleIn = M_PI / 2;
@@ -202,7 +202,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
     
     vector<double> edgeLength1(numEdges);
     for(size_t idx = 0; idx < numEdges; ++idx) {
-        edgeLength1[idx] = m->getEdgeVector()[idx]->getMEdge()->getStretchedLength();
+        edgeLength1[idx] = m->getEdgeVector()[idx]->getGEdge()->getStretchedLength();
     }
     vector<double> triangleArea1(numTriangles);
     vector<array<double, 3>> triangleTheta1(numTriangles, {{}});
@@ -226,7 +226,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
 
     vector<double> edgeLength2(numEdges);
     for(size_t idx = 0; idx < numEdges; ++idx) {
-        edgeLength2[idx] = m->getEdgeVector()[idx]->getMEdge()->getStretchedLength();
+        edgeLength2[idx] = m->getEdgeVector()[idx]->getGEdge()->getStretchedLength();
     }
     vector<double> triangleArea2(numTriangles);
     vector<array<double, 3>> triangleTheta2(numTriangles, {{}});
@@ -252,7 +252,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
         for(size_t vIdx = 0; vIdx < 2; ++vIdx) {
             exDiff += 2 * dotProduct(
                 e->getVertices()[vIdx]->force,
-                array2Vector<double, 3>(e->getMEdge()->getDLength()[vIdx])
+                array2Vector<double, 3>(e->getGEdge()->getDLength()[vIdx])
             );
         }
         EXPECT_NEAR(edgeLength1[idx] - edgeLength2[idx], exDiff, abs(exDiff / 1000));
