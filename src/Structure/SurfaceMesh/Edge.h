@@ -44,6 +44,8 @@ private:
 public:
     Edge(Composite *parent, Vertex* v1, Vertex* v2);
 
+    std::array<double, 3> coordinate; // Coordinate of the mid point, updated with updateCoordiante()
+
     // Get vertices
     std::array<Vertex*, 2>& getVertices() { return _v; }
 
