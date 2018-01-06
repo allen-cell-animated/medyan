@@ -17,3 +17,6 @@
 
 ## When new directories are added:
 + Make sure the directories are added to `AdditionalIncludeDirectories` in MEDYAN.vcxproj if you want to avoid relative paths in the `#include` preprocessor.
+
+## Acknowledgement
+This VS project uses an external "getopt.h" file for Windows. The file is modified from [](https://github.com/skandhurkat/Getopt-for-Visual-Studio).
