@@ -23,3 +23,11 @@ void GEdge::calcStretchedLength(double d) {
                                                  v1->coordinate, v1->force,
                                                  d);
 }
+
+void GEdge::calcPseudoUnitNormal() {
+    // TODO: implement this
+}
+
+void GEdge::calcStretchedPseudoUnitNormal(double d) {
+    // TODO: implement this
+}

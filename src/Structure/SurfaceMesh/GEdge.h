@@ -14,6 +14,9 @@ private:
     std::array<std::array<double, 3>, 2> _dCurrentLength; // The derivative of the length. _dCurrentLength[vtxIdx][xyz]
     double _stretchedLength; // Temporarily store the stretched length
 
+    std::array<double, 3> _pseudoUnitNormal; // The pseudo unit normal vector at the edge pointing outward.
+    std::array<double, 3> _stretchedPseudoUnitNormal; // The pseudo normal under stretch
+
 public:
     GEdge() {}
 
@@ -27,6 +30,11 @@ public:
     double getStretchedLength() { return _stretchedLength; }
     void calcStretchedLength(double d); // Calculates the stretched length, and store the result in _stretchedLength.
                                         // Does not calculate the derivatives.
+    
+    std::array<double, 3>& getPseudoUnitNormal() { return _pseudoUnitNormal; }
+    void calcPseudoUnitNormal(); // Calculates the pseudo unit normal w/o derivatives.
+    std::array<double, 3>& getStretchedPseudoUnitNormal() { return _stretchedPseudoUnitNormal; }
+    void calcStretchedPseudoUnitNormal(double d); // Calculates the pseudo unit normal w/o derivatives.
     
     void updateGeometry(bool calcDerivative=false, double d=0.0) {
         // Currently, derivative cannot be calculated for d != 0

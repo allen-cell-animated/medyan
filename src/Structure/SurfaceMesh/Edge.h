@@ -3,9 +3,7 @@
 
 /*
  
- The edge containes two halfedges in the opposite direction.
- 
- By using collection of edges, the 
+An unordered edge contains 2 vertices.
  
 */
 
