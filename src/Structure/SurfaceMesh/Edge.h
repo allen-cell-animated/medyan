@@ -21,6 +21,7 @@ An unordered edge contains 2 vertices.
 
 // Forward declarations
 class Vertex;
+class Triangle;
 class Compartment;
 
 class Edge:
@@ -31,7 +32,8 @@ class Edge:
 private:
     // Pointers to the vertices.
     std::array<Vertex*, 2> _v;
-    // For simplicity, currently the neighbor triangles are not recorded.
+
+    std::array<Triangle*, 2> _triangles; // Neighbor triangles (v0, v1, other1) and (v1, v0, other2)
 
     unique_ptr<GEdge> _gEdge; // pointer to mech edge
 
@@ -49,6 +51,8 @@ public:
 
     // Get vertices
     std::array<Vertex*, 2>& getVertices() { return _v; }
+    // Get neighbor triangles
+    std::array<Triangle*, 2>& getTriangles() { return _triangles; }
 
     // Get mech edge
     GEdge* getGEdge() { return _gEdge.get(); }
