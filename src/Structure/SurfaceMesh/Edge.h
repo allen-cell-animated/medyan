@@ -23,6 +23,7 @@
 
 // Forward declarations
 class Vertex;
+class Compartment;
 
 class Edge:
     public Component,
@@ -40,6 +41,8 @@ private:
     int _id; // Unique integer id of this edge
 
     void updateCoordinate(); // helper function to update coordiante of this edge
+
+    Compartment* _compartment = nullptr; // The compartment containing this edge
 
 public:
     Edge(Composite *parent, Vertex* v1, Vertex* v2);
@@ -75,6 +78,7 @@ public:
     /// Implements Movable
     virtual void updatePosition() override;
     //@}
+    Compartment* getCompartment() { return _compartment; }
 
     /// Helper function to update geometric
     void updateGeometry(bool calcDerivative=false, double d=0.0);
