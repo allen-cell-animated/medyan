@@ -31,6 +31,8 @@
 class BoundaryElement;
 class Bead;
 class Cylinder;
+class Triangle;
+class Edge;
 
 /// A container or holding Species and [Reactions](@ref Reactions).
 
@@ -70,6 +72,9 @@ protected:
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
     
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
+
+    unordered_set<Triangle*> _triangles; ///< Set of triangles that are in this compartment
+    unordered_set<Edge*> _edges; ///< Set of edges that are in this compartment
     
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
     
@@ -493,6 +498,21 @@ public:
     }
     ///get the cylinders in this compartment
    unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
+
+    /// Add, remove and get triangles
+    void addTriangle(Triangle* t) { _triangles.insert(t); }
+    void removeTriangle(Triangle* t) {
+        auto it = _triangles.find(t);
+        if(it != _triangles.end()) _triangles.erase(it);
+    }
+    unordered_set<Triangles*>& getTriangles() { return _triangles; }
+    /// Add, remove and get edges
+    void addEdge(Edge* e) { _edges.insert(t); }
+    void removeEdge(Edge* e) {
+        auto it = _edges.find(e);
+        if(it != _edges.end()) _edges.erase(it);
+    }
+    unordered_set<Edge*>& getEdges() { return _edges; }
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string

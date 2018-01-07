@@ -20,6 +20,7 @@
 // Forward declarations
 class Edge;
 class Vertex;
+class Compartment;
 
 class Triangle:
     public Component,
@@ -44,6 +45,8 @@ private:
     int _id; // Unique integer id of this triangle
 
     void updateCoordinate(); // helper function to update coordiante of this triangle
+
+    Compartment* _compartment = nullptr; // The compartment containing this triangle
 
 public:
     std::array<double, 3> coordinate; // Coordinate of the center point, updated with updateCoordiante()
@@ -83,10 +86,10 @@ public:
     /// Implements Movable
     virtual void updatePosition() override;
     //@}
+    Compartment* getCompartment() { return _compartment; }
 
     /// Helper function to update geometric
     void updateGeometry(bool calcDerivative=false, double d=0.0);
-
 
 
 

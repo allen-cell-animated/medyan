@@ -1,5 +1,7 @@
 #include "Triangle.h"
 
+#include "GController.h"
+
 Database<Triangle*> Triangle::_triangles;
 
 Triangle::Triangle(Composite* parent, Vertex* v1, Vertex* v2, Vertex* v3):
@@ -27,7 +29,51 @@ void Triangle::updateCoordinate() {
 void Triangle::updatePosition() {
     updateCoordinate();
     
-    // If compartments are implemented, they are also updated here.
+    // Get the current compartment
+    Compartment *c;
+    try { c = GController::getCompartment(coordinate); }
+    catch (exception& e) {
+        cout << e.what();
+        printSelf();
+        exit(EXIT_FAILURE);
+    }
+
+    // Things to do if the comparment changes
+    if(c != _compartment) {
+
+/* TODO:
+#ifdef CHEMISTRY
+        auto oldCompartment = _compartment;
+        auto newCompartment = c;
+#endif
+*/
+        
+        //remove from old compartment, add to new
+        _compartment->removeTriangle(this);
+        _compartment = c;
+        _compartment->addTriangle(this);
+
+/* TODO:
+#ifdef CHEMISTRY
+        auto oldCCylinder = _cCylinder.get();
+        
+        //Remove old ccylinder from binding managers
+        for(auto &manager : oldCompartment->getFilamentBindingManagers())
+            manager->removePossibleBindings(oldCCylinder);
+        
+        //clone and set new ccylinder
+        CCylinder* clone = _cCylinder->clone(c);
+        setCCylinder(clone);
+        
+        auto newCCylinder = _cCylinder.get();
+        
+        //Add new ccylinder to binding managers
+        for(auto &manager : newCompartment->getFilamentBindingManagers())
+            manager->addPossibleBindings(newCCylinder);
+#endif
+*/
+    }
+
 }
 
 void Triangle::printSelf() {
