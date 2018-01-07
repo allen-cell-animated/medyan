@@ -128,8 +128,8 @@ void Cylinder::updatePosition() {
         //Add new ccylinder to binding managers
         for(auto &manager : newCompartment->getFilamentBindingManagers())
             manager->addPossibleBindings(newCCylinder);
-    }
 #endif
+    }
     
 #ifdef MECHANICS
     //update length
