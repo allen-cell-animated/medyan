@@ -139,3 +139,22 @@ void GTriangle::calcStretchedTheta(double d) {
         _stretchedCotTheta[angleIdx] = cosThetaStretched / _stretchedSinTheta[angleIdx];
     }
 }
+
+void GTriangle::calcUnitNormal() {
+    auto& vs = _pTriangle->getVertices();
+    std::vector<double> normal = vectorProduct(vs[0]->coordinate, vs[1]->coordinate,
+                                               vs[0]->coordinate, vs[2]->coordinate);
+    normalize(normal);
+    _unitNormal = vector2Array<double, 3>(normal);
+}
+
+void GTriangle::calcStretchedUnitNormal(double d) {
+    auto& vs = _pTriangle->getVertices();
+    std::vector<double> normalStretched = vectorProductStretched(
+        v[0]->coordinate, v[0]->force, v[1]->coordinate, v[1]->force,
+        v[0]->coordinate, v[0]->force, v[2]->coordinate, v[2]->force,
+        d
+    );
+    normalize(normalStretched);
+    _stretchedUnitNormal = vector2Array<double, 3>(normalStretched);
+}

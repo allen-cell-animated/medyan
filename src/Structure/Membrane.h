@@ -86,10 +86,11 @@ public:
     virtual void printSelf()override;
     //@}
 
-    //@{
+    /**************************************************************************
+    Geometric
+    **************************************************************************/
     /// Implements Geometric
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
-    //@}
 
     /**************************************************************************
     Topological

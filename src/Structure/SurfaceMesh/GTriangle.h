@@ -23,6 +23,7 @@ private:
     std::array<double, 3> _theta; // The angles corresponding to each vertex
     std::array<std::array<std::array<double, 3>, 3>, 3> _dTheta; // The derivative of the angles. _dTheta[angleIdx][vtxIdx][xyz]
                                                           // For example, _dTheta[0][2][1] means d(_theta[0]) / dy for vertex 2.
+
     std::array<double, 3> _sinTheta;
     std::array<std::array<std::array<double, 3>, 3>, 3> _dSinTheta;
     std::array<double, 3> _cotTheta;
@@ -31,6 +32,9 @@ private:
     std::array<double, 3> _stretchedTheta;
     std::array<double, 3> _stretchedSinTheta;
     std::array<double, 3> _stretchedCotTheta;
+
+    std::array<double, 3> _unitNormal; // The unit normal vector pointing outward (since the meshwork is orientable)
+    std::array<double, 3> _stretchedUnitNormal; // Temporarily stores unit normal under stretched conditions.
 
 public:
     GTriangle() {}
@@ -59,6 +63,11 @@ public:
     std::array<double, 3>& getStretchedCotTheta() { return _stretchedCotTheta; }
     void calcStretchedTheta(double d); // Calculates angles under stretched conditions (w/o derivatives)
                                        // The results are stored in _stretchedXxx variables.
+    
+    std::array<double, 3>& getUnitNormal() { return _unitNormal; }
+    void calcUnitNormal(); // Calculates the unit normal of the triangle (w/o derivatives)
+    std::array<double, 3>& getStretchedUnitNormal() { return _stretchedUnitNormal; }
+    void calcStretchedUnitNormal(double d); // Calculates the unit normal under stretched conditions (w/o derivatives)
     
     void updateGeometry(bool calcDerivative=false, double d=0.0) {
         // Currently, derivative cannot be calculated for d != 0
