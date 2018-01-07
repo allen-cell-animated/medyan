@@ -74,10 +74,12 @@ public:
         if(calcDerivative) {
             calcTheta();
             calcArea();
+            calcUnitNormal();
         }
         else {
             calcStretchedTheta(d);
             calcStretchedArea(d);
+            calcStretchedUnitNormal(d);
         }
     }
 
