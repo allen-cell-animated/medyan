@@ -1,6 +1,8 @@
 #include "Edge.h"
 
+#include "Compartment.h"
 #include "GController.h"
+#include "MathFunctions.h"
 
 Database<Edge*> Edge::_edges;
 
@@ -26,7 +28,7 @@ void Edge::updatePosition() {
     
     // Get the current compartment
     Compartment *c;
-    try { c = GController::getCompartment(coordinate); }
+    try { c = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
     catch (exception& e) {
         cout << e.what();
         printSelf();
@@ -67,6 +69,7 @@ void Edge::updatePosition() {
             manager->addPossibleBindings(newCCylinder);
 #endif
 */
+    }
 }
 
 void Edge::printSelf() {

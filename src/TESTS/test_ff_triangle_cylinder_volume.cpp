@@ -170,21 +170,21 @@ TEST_F(TriangleCylinderVolumeFFTest, Force) {
     c->updatePosition();
     // Update neighbor list
     tcv.getNeighborList()->addDynamicNeighbor(t);
-    for(Edge* eachE: te) eachE->updateGeometry(true);
-    t->updateGeometry(true);
-    tcv.computeForces();
+	for (Edge* eachE : te) eachE->getGEdge()->calcLength();
+	t->getGTriangle()->calcArea();
+	tcv.computeForces();
 
     // Don't bother updating neighbor list here
     moveAlongForceAuxP(1.0);
-    for(Edge* eachE: te) eachE->updateGeometry(true);
-    t->updateGeometry(true);
+    for(Edge* eachE: te) eachE->getGEdge()->calcLength();
+    t->getGTriangle()->calcArea();
     double U1 = tcv.computeEnergy(0.0);
 
     resetCoordinate();
     moveAlongForceAuxP(-1.0);
-    for(Edge* eachE: te) eachE->updateGeometry(true);
-    t->updateGeometry(true);
-    double U2 = tcv.computeEnergy(0.0);
+	for (Edge* eachE : te) eachE->getGEdge()->calcLength();
+	t->getGTriangle()->calcArea();
+	double U2 = tcv.computeEnergy(0.0);
 
     double exDiff = 0.0;
     for(Vertex* v: tv)

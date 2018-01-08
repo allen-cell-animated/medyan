@@ -33,7 +33,7 @@ void GEdge::calcPseudoUnitNormal() {
     */
     GTriangle* gt0 = _pEdge->getTriangles()[0]->getGTriangle();
     GTriangle* gt1 = _pEdge->getTriangles()[1]->getGTriangle();
-    _pseudoUnitNormal = vectorMultiply(vectorSum(gt0->getUnitNormal(), get1->getUnitNormal()), 0.5);
+    _pseudoUnitNormal = vectorMultiply(vectorSum(gt0->getUnitNormal(), gt1->getUnitNormal()), 0.5);
 }
 
 void GEdge::calcStretchedPseudoUnitNormal(double d) {
@@ -42,5 +42,5 @@ void GEdge::calcStretchedPseudoUnitNormal(double d) {
     */
     GTriangle* gt0 = _pEdge->getTriangles()[0]->getGTriangle();
     GTriangle* gt1 = _pEdge->getTriangles()[1]->getGTriangle();
-    _stretchedPseudoUnitNormal = vectorMultiply(vectorSum(gt0->getStretchedUnitNormal(), get1->getStretchedUnitNormal()), 0.5);
+    _stretchedPseudoUnitNormal = vectorMultiply(vectorSum(gt0->getStretchedUnitNormal(), gt1->getStretchedUnitNormal()), 0.5);
 }

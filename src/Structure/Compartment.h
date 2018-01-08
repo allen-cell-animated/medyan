@@ -505,9 +505,9 @@ public:
         auto it = _triangles.find(t);
         if(it != _triangles.end()) _triangles.erase(it);
     }
-    unordered_set<Triangles*>& getTriangles() { return _triangles; }
+    unordered_set<Triangle*>& getTriangles() { return _triangles; }
     /// Add, remove and get edges
-    void addEdge(Edge* e) { _edges.insert(t); }
+    void addEdge(Edge* e) { _edges.insert(e); }
     void removeEdge(Edge* e) {
         auto it = _edges.find(e);
         if(it != _edges.end()) _edges.erase(it);

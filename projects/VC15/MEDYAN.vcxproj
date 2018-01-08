@@ -21,7 +21,8 @@
   <ItemGroup>
     <ClCompile Condition="'$(Configuration)'!='TestDebug' And '$(Configuration)'!='TestRelease'" Include="..\..\src\**\*.cpp" Exclude="..\..\src\TESTS\**\*.cpp"/>
     <ClCompile Condition="'$(Configuration)'=='TestDebug' Or '$(Configuration)'=='TestRelease'" Include="..\..\src\**\*.cpp" Exclude="..\..\src\MEDYAN.cpp"/>
-    <ClInclude Include="..\..\src\**\*.h" />
+    <ClInclude Condition="'$(Configuration)'!='TestDebug' And '$(Configuration)'!='TestRelease'" Include="..\..\src\**\*.h" Exclude="..\..\src\TESTS\**\*.h"/>
+    <ClInclude Condition="'$(Configuration)'=='TestDebug' Or '$(Configuration)'=='TestRelease'" Include="..\..\src\**\*.h"/>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

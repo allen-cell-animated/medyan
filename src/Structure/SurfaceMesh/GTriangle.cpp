@@ -151,8 +151,8 @@ void GTriangle::calcUnitNormal() {
 void GTriangle::calcStretchedUnitNormal(double d) {
     auto& vs = _pTriangle->getVertices();
     std::vector<double> normalStretched = vectorProductStretched(
-        v[0]->coordinate, v[0]->force, v[1]->coordinate, v[1]->force,
-        v[0]->coordinate, v[0]->force, v[2]->coordinate, v[2]->force,
+        vs[0]->coordinate, vs[0]->force, vs[1]->coordinate, vs[1]->force,
+        vs[0]->coordinate, vs[0]->force, vs[2]->coordinate, vs[2]->force,
         d
     );
     normalize(normalStretched);

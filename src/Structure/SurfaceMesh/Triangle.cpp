@@ -1,5 +1,7 @@
 #include "Triangle.h"
 
+#include "Compartment.h"
+#include "MathFunctions.h"
 #include "GController.h"
 
 Database<Triangle*> Triangle::_triangles;
@@ -31,7 +33,7 @@ void Triangle::updatePosition() {
     
     // Get the current compartment
     Compartment *c;
-    try { c = GController::getCompartment(coordinate); }
+    try { c = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
     catch (exception& e) {
         cout << e.what();
         printSelf();

@@ -204,22 +204,22 @@ void Membrane::updateGeometry(bool calcDerivative, double d) {
     // Due to the geometry dependencies, the operation order below is important.
 
     for(auto& e: _edgeVector) {
-        auto& ge = e->getGEdge();
+        auto ge = e->getGEdge();
         if(calcDerivative) ge->calcLength(); else ge->calcStretchedLength(d);
     }
     for(auto& t: _triangleVector) {
-        auto& gt = t->getGTriangle();
+        auto gt = t->getGTriangle();
         if(calcDerivative) gt->calcTheta(); else gt->calcStretchedTheta(d);
         if(calcDerivative) gt->calcArea(); else gt->calcStretchedArea(d);
         if(calcDerivative) gt->calcUnitNormal(); else gt->calcStretchedUnitNormal(d);
     }
     for(auto& e: _edgeVector) {
-        auto& ge = e->getGEdge();
+        auto ge = e->getGEdge();
         if(calcDerivative) ge->calcPseudoUnitNormal(); else ge->calcStretchedPseudoUnitNormal(d);
     }
     for(auto& v: _vertexVector) {
-        auto& gv = v->getGVoronoiCell();
-        if(calcDerivative) gv->calcArea(); else gv->calcStertchedArea(d);
+        auto gv = v->getGVoronoiCell();
+        if(calcDerivative) gv->calcArea(); else gv->calcStretchedArea(d);
         if(calcDerivative) gv->calcCurv(); else gv->calcStretchedCurv(d);
         if(calcDerivative) gv->calcPseudoUnitNormal(); else gv->calcStretchedPseudoUnitNormal(d);
     }
