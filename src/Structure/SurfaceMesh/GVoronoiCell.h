@@ -48,9 +48,9 @@ public:
     void calcStretchedCurv(double d); // Calculates the stretched mean curvature, and store the result in _stretchedCurv.
                                       // Does not calculate the derivatives.
     
-    std::array<double, 3>& getPseudoUnitNormal();
+    std::array<double, 3>& getPseudoUnitNormal() { return _pseudoUnitNormal; }
     void calcPseudoUnitNormal(); // Calculates the pseudo unit normal w/o derivatives
-    std::array<double, 3>& getStretchedPseudoUnitNormal();
+    std::array<double, 3>& getStretchedPseudoUnitNormal() { return _stretchedPseudoUnitNormal; }
     void calcStretchedPseudoUnitNormal(double d); // Calculates the pseudo unit normal w/o derivatives
 
 };
