@@ -1,6 +1,9 @@
 #include "Edge.h"
 #include "GEdge.h"
 
+#include "Triangle.h"
+#include "GTriangle.h"
+
 #include "MathFunctions.h"
 
 using namespace mathfunc;
@@ -25,9 +28,19 @@ void GEdge::calcStretchedLength(double d) {
 }
 
 void GEdge::calcPseudoUnitNormal() {
-    // TODO: implement this
+    /*
+    This function depends on the result of triangle unit normal
+    */
+    GTriangle* gt0 = _pEdge->getTriangles()[0]->getGTriangle();
+    GTriangle* gt1 = _pEdge->getTriangles()[1]->getGTriangle();
+    _pseudoUnitNormal = vectorMultiply(vectorSum(gt0->getUnitNormal(), get1->getUnitNormal()), 0.5);
 }
 
 void GEdge::calcStretchedPseudoUnitNormal(double d) {
-    // TODO: implement this
+    /*
+    This function depends on the result of stretched triangle unit normal
+    */
+    GTriangle* gt0 = _pEdge->getTriangles()[0]->getGTriangle();
+    GTriangle* gt1 = _pEdge->getTriangles()[1]->getGTriangle();
+    _stretchedPseudoUnitNormal = vectorMultiply(vectorSum(gt0->getStretchedUnitNormal(), get1->getStretchedUnitNormal()), 0.5);
 }
