@@ -268,6 +268,15 @@ namespace mathfunc {
         }
         return res;
     }
+    /// Increase vector 1 by vector 2.
+    template<size_t Dim>
+    inline array<double, Dim>& vectorIncrease(array<double, Dim>& v1,
+                                        const array<double, Dim>& v2) {
+        for(size_t idx = 0; idx < Dim; ++idx) {
+            v1[idx] += v2[idx];
+        }
+        return v1;
+    }
     /// Vector difference.
     template<size_t Dim>
     inline array<double, Dim> vectorDifference(const array<double, Dim>& v1,

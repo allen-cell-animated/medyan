@@ -202,7 +202,7 @@ void Membrane::printSelf() {
 
 void Membrane::updateGeometry(bool calcDerivative, double d) {
     // Due to the geometry dependencies, the operation order below is important.
-    
+
     for(auto& e: _edgeVector) {
         auto& ge = e->getGEdge();
         if(calcDerivative) ge->calcLength(); else ge->calcStretchedLength(d);
@@ -221,5 +221,6 @@ void Membrane::updateGeometry(bool calcDerivative, double d) {
         auto& gv = v->getGVoronoiCell();
         if(calcDerivative) gv->calcArea(); else gv->calcStertchedArea(d);
         if(calcDerivative) gv->calcCurv(); else gv->calcStretchedCurv(d);
+        if(calcDerivative) gv->calcPseudoUnitNormal(); else gv->calcStretchedPseudoUnitNormal(d);
     }
 }

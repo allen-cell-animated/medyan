@@ -22,6 +22,9 @@ private:
     std::vector<std::array<double, 3>> _dNeighborCurrentCurv; // Derivative of the mean curv on the neighboring vertices
     double _stretchedCurv; // Temporarily store the stretched mean curvature
 
+    std::array<double, 3> _pseudoUnitNormal; // Pseudo unit normal around the vertex
+    std::array<double, 3> _stretchedPseudoUnitNormal; // Pseudo unit normal under stretch
+
 public:
     GVoronoiCell(size_t numNeighbors);
 
@@ -44,6 +47,11 @@ public:
     double getStretchedCurv() { return _stretchedCurv; }
     void calcStretchedCurv(double d); // Calculates the stretched mean curvature, and store the result in _stretchedCurv.
                                       // Does not calculate the derivatives.
+    
+    std::array<double, 3>& getPseudoUnitNormal();
+    void calcPseudoUnitNormal(); // Calculates the pseudo unit normal w/o derivatives
+    std::array<double, 3>& getStretchedPseudoUnitNormal();
+    void calcStretchedPseudoUnitNormal(double d); // Calculates the pseudo unit normal w/o derivatives
 
 };
 

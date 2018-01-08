@@ -213,3 +213,47 @@ void GVoronoiCell::calcStretchedCurv(double d) {
     // Calculate mean curvature
     _stretchedCurv = magnitude<3>(kStretched) / 2;
 }
+
+void GVoronoiCell::calcPseudoUnitNormal() {
+    /**************************************************************************
+    This calculation depends on
+        - the angle calculations of triangles
+        - the unit normal calculations of triangles
+    **************************************************************************/
+    size_t n = _pVertex->getNeighborNum();
+
+    double sumTheta = 0.0;
+    std::fill(_pseudoUnitNormal.begin(), _pseudoUnitNormal.end(), 0.0);
+
+    for(size_t nIdx = 0; nIdx < n; ++nIdx) {
+        auto gTriangle = _pVertex->getNeighborTriangles()[nIdx]->getGTriangle();
+        size_t triIdx0 = (3 - _pVertex->getTriangleHead()[nIdx]) % 3;
+        double theta = gTriangle->getTheta()[triIdx0];
+
+        vectorIncrease(_pseudoUnitNormal, vectorMultiply(gTriangle->getUnitNormal(), theta));
+        sumTheta += theta;
+    }
+    vectorMultiply(_pseudoUnitNormal, 1 / sumTheta);
+}
+
+void GVoronoiCell::calcStretchedPseudoUnitNormal(double d) {
+    /**************************************************************************
+    This calculation depends on
+        - the stretched angle calculations of triangles
+        - the stretched unit normal calculations of triangles
+    **************************************************************************/
+    size_t n = _pVertex->getNeighborNum();
+
+    double sumTheta = 0.0;
+    std::fill(_stretchedPseudoUnitNormal.begin(), _stretchedPseudoUnitNormal.end(), 0.0);
+
+    for(size_t nIdx = 0; nIdx < n; ++nIdx) {
+        auto gTriangle = _pVertex->getNeighborTriangles()[nIdx]->getGTriangle();
+        size_t triIdx0 = (3 - _pVertex->getTriangleHead()[nIdx]) % 3;
+        double theta = gTriangle->getStretchedTheta()[triIdx0];
+
+        vectorIncrease(_stretchedPseudoUnitNormal, vectorMultiply(gTriangle->getStretchedUnitNormal(), theta));
+        sumTheta += theta;
+    }
+    vectorMultiply(_stretchedPseudoUnitNormal, 1 / sumTheta);
+}
