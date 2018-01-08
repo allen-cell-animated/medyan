@@ -32,6 +32,13 @@ namespace mathfunc {
         
         v[0] /= norm; v[1] /= norm; v[2] /= norm;
     }
+    template<size_t Dim>
+    inline void normalize(array<double, Dim>& v) {
+        double norm = 0.0;
+        for(double& it: v) norm += it * it;
+        norm = sqrt(norm);
+        for(double& it: v) it /= norm;
+    }
     
     /// Return normalized vector
     inline vector<double> normalizedVector(const vector<double>& v) {

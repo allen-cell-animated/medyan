@@ -219,10 +219,13 @@ void GVoronoiCell::calcPseudoUnitNormal() {
     This calculation depends on
         - the angle calculations of triangles
         - the unit normal calculations of triangles
+    
+    Strictly speaking the pseudo normal is not a Voronoi cell property but
+    rather a vertex property, but the Voronoi cell is bound to a vertex, so
+    we can calculate the vertex properties in the Voronoi cell for convenience.
     **************************************************************************/
     size_t n = _pVertex->getNeighborNum();
 
-    double sumTheta = 0.0;
     std::fill(_pseudoUnitNormal.begin(), _pseudoUnitNormal.end(), 0.0);
 
     for(size_t nIdx = 0; nIdx < n; ++nIdx) {
@@ -231,9 +234,8 @@ void GVoronoiCell::calcPseudoUnitNormal() {
         double theta = gTriangle->getTheta()[triIdx0];
 
         vectorIncrease(_pseudoUnitNormal, vectorMultiply(gTriangle->getUnitNormal(), theta));
-        sumTheta += theta;
     }
-    vectorMultiply(_pseudoUnitNormal, 1 / sumTheta);
+    normalize(_pseudoUnitNormal);
 }
 
 void GVoronoiCell::calcStretchedPseudoUnitNormal(double d) {
@@ -244,7 +246,6 @@ void GVoronoiCell::calcStretchedPseudoUnitNormal(double d) {
     **************************************************************************/
     size_t n = _pVertex->getNeighborNum();
 
-    double sumTheta = 0.0;
     std::fill(_stretchedPseudoUnitNormal.begin(), _stretchedPseudoUnitNormal.end(), 0.0);
 
     for(size_t nIdx = 0; nIdx < n; ++nIdx) {
@@ -253,7 +254,6 @@ void GVoronoiCell::calcStretchedPseudoUnitNormal(double d) {
         double theta = gTriangle->getStretchedTheta()[triIdx0];
 
         vectorIncrease(_stretchedPseudoUnitNormal, vectorMultiply(gTriangle->getStretchedUnitNormal(), theta));
-        sumTheta += theta;
     }
-    vectorMultiply(_stretchedPseudoUnitNormal, 1 / sumTheta);
+    normalize(_stretchedPseudoUnitNormal);
 }
