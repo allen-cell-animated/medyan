@@ -145,6 +145,10 @@ Membrane::Membrane(SubSystem* s, short membraneType,
                     nVertex->getEdgeHead()[idx12],
                     nnVertex->getEdgeHead()[idx20]
                 };
+                
+                // Bind the triangle to edges
+                for(size_t eIdx = 0; eIdx < 3; ++eIdx)
+                    lastAddedTriangle->getEdges()[eIdx]->getTriangles()[lastAddedTriangle->getEdgeHead()[eIdx]] = lastAddedTriangle;
 
                 // Calculate the area of the triangle and set it as eqArea
                 lastAddedTriangle->getGTriangle()->calcArea();
@@ -160,7 +164,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
     /**************************************************************************
         Setting up Voronoi cells
     **************************************************************************/
-    for(int idx = 0; idx < numVertices; ++idx) {
+    for(size_t idx = 0; idx < numVertices; ++idx) {
         GVoronoiCell* gvc = _vertexVector[idx]->getGVoronoiCell();
         gvc->calcArea();
 #ifdef MECHANICS
