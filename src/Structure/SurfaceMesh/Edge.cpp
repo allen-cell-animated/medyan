@@ -15,6 +15,15 @@ Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
     _gEdge = unique_ptr<GEdge>(new GEdge);
     _gEdge->setEdge(this);
 
+    // Set coordinate and add to compartment
+    updateCoordinate();
+    try { _compartment = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
+    catch (exception& e) {
+        cout << e.what() << endl;
+        printSelf();
+        exit(EXIT_FAILURE);
+    }
+   _compartment->addEdge(this);
 }
 
 void Edge::updateCoordinate() {
@@ -30,7 +39,7 @@ void Edge::updatePosition() {
     Compartment *c;
     try { c = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
     catch (exception& e) {
-        cout << e.what();
+        cout << e.what() << endl;
         printSelf();
         exit(EXIT_FAILURE);
     }
