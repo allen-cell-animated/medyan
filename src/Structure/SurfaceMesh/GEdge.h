@@ -36,11 +36,6 @@ public:
     std::array<double, 3>& getStretchedPseudoUnitNormal() { return _stretchedPseudoUnitNormal; }
     void calcStretchedPseudoUnitNormal(double d); // Calculates the pseudo unit normal w/o derivatives.
     
-    void updateGeometry(bool calcDerivative=false, double d=0.0) {
-        // Currently, derivative cannot be calculated for d != 0
-        if(calcDerivative) calcLength();
-        else calcStretchedLength(d);
-    }
 };
 
 

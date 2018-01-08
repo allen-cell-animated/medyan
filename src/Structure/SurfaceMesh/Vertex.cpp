@@ -17,9 +17,3 @@ Vertex::Vertex(vector<double> v, Composite* parent, size_t numNeighbors):
 #endif
 
 }
-
-void Vertex::updateGeometry(bool calcDerivative, double d) {
-
-    _gVoronoiCell->updateGeometry(calcDerivative, d);
-
-}

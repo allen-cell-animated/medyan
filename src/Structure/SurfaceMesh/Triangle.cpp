@@ -104,9 +104,3 @@ void Triangle::printSelf() {
     
     cout << endl;
 }
-
-void Triangle::updateGeometry(bool calcDerivative, double d) {
-
-    _gTriangle->updateGeometry(calcDerivative, d);
-
-}

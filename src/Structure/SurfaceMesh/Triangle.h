@@ -88,10 +88,6 @@ public:
     //@}
     Compartment* getCompartment() { return _compartment; }
 
-    /// Helper function to update geometric
-    void updateGeometry(bool calcDerivative=false, double d=0.0);
-
-
 
 };
 

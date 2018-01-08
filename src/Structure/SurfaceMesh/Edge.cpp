@@ -85,11 +85,3 @@ void Edge::printSelf() {
     
     cout << endl;
 }
-
-void Edge::updateGeometry(bool calcDerivative, double d) {
-
-#ifdef MECHANICS
-    _gEdge->updateGeometry(calcDerivative, d);
-#endif
-
-}

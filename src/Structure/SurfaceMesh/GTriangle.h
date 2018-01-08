@@ -69,20 +69,6 @@ public:
     std::array<double, 3>& getStretchedUnitNormal() { return _stretchedUnitNormal; }
     void calcStretchedUnitNormal(double d); // Calculates the unit normal under stretched conditions (w/o derivatives)
     
-    void updateGeometry(bool calcDerivative=false, double d=0.0) {
-        // Currently, derivative cannot be calculated for d != 0
-        if(calcDerivative) {
-            calcTheta();
-            calcArea();
-            calcUnitNormal();
-        }
-        else {
-            calcStretchedTheta(d);
-            calcStretchedArea(d);
-            calcStretchedUnitNormal(d);
-        }
-    }
-
 };
 
 
