@@ -124,11 +124,18 @@ TEST_F(MembraneGeometryTest, Geometry) {
     **************************************************************************/
     m->updateGeometry(true);
 
-    // Check edge length
+    // Check edge length and pseudo normal (for edge 0)
     double exEdgeLen = radius * sqrt(2);
     for(Edge* it: m->getEdgeVector())
         EXPECT_DOUBLE_EQ(it->getGEdge()->getLength(), exEdgeLen);
-    // Check triangle area and angle
+
+    auto& edgePseudoUnitNormal0 = m->getEdgeVector()[0]->getGEdge()->getPseudoUnitNormal();
+    array<double, 3> exEdgePseudoUnitNormal0 { 1/sqrt(2), 0, 1/sqrt(2) };
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx)
+        EXPECT_DOUBLE_EQ(edgePseudoUnitNormal0[coordIdx], exEdgePseudoUnitNormal0[coordIdx])
+            << "Edge pseudo unit normal doesn't match at coordinate index " << coordIdx;
+
+    // Check triangle area, angle and unit normal (for triangle 0)
     double exTriangleArea = radius * radius * sqrt(3) / 2;
     double exTriangleAngle = M_PI / 3;
     for(Triangle* it: m->getTriangleVector()) {
@@ -136,13 +143,27 @@ TEST_F(MembraneGeometryTest, Geometry) {
         for(double eachTheta: it->getGTriangle()->getTheta())
             EXPECT_DOUBLE_EQ(eachTheta, exTriangleAngle);
     }
-    // Check Voronoi cell area and curvature
+
+    auto& triangleUnitNormal0 = m->getTriangleVector()[0]->getGTriangle()->getUnitNormal();
+    array<double, 3> exTriangleUnitNormal0 { 1/sqrt(3), 1/sqrt(3), 1/sqrt(3) };
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx)
+        EXPECT_DOUBLE_EQ(triangleUnitNormal0[coordIdx], exTriangleUnitNormal0[coordIdx])
+            << "Triangle unit normal doesn't match at coordinate index " << coordIdx;
+    
+    // Check Voronoi cell area, curvature and unit normal (for vertex 0)
     double exVCellArea = radius * radius * sqrt(3) * 2 / 3;
     double exVCellCurv = 1 / radius;
     for(Vertex* it: m->getVertexVector()) {
         EXPECT_DOUBLE_EQ(it->getGVoronoiCell()->getArea(), exVCellArea);
         EXPECT_DOUBLE_EQ(it->getGVoronoiCell()->getCurv(), exVCellCurv);
     }
+
+    auto& vertexPseudoUnitNormal0 = m->getVertexVector()[0]->getGVoronoiCell()->getPseudoUnitNormal();
+    array<double, 3> exVertexPseudoUnitNormal0 { 0, 0, 1 };
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx)
+        EXPECT_DOUBLE_EQ(vertexPseudoUnitNormal0[coordIdx], exVertexPseudoUnitNormal0[coordIdx])
+            << "Vertex pseudo unit normal doesn't match at coordinate index " << coordIdx;
+    
 
     /**************************************************************************
         Check stretched geometry
@@ -156,11 +177,18 @@ TEST_F(MembraneGeometryTest, Geometry) {
 
     m->updateGeometry(false, 1.0); // Moves the 0th vertex to the center of the octahedron.
 
-    // Check edge length
+    // Check edge length (for edge around vertex 0) and pseudo normal (for edge 0)
     double exStretchedEdgeLen = radius;
     for(Edge* it: v0->getNeighborEdges())
         EXPECT_DOUBLE_EQ(it->getGEdge()->getStretchedLength(), exStretchedEdgeLen);
-    // Check triangle area and angle
+    
+    auto& stretchedEdgePseudoUnitNormal0 = m->getEdgeVector()[0]->getGEdge()->getStretchedPseudoUnitNormal();
+    array<double, 3> exStretchedEdgePseudoUnitNormal0 { 0, 0, 1 };
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx)
+        EXPECT_DOUBLE_EQ(stretchedEdgePseudoUnitNormal0[coordIdx], exStretchedEdgePseudoUnitNormal0[coordIdx])
+            << "Edge stretched pseudo unit normal doesn't match at coordinate index " << coordIdx;
+    
+    // Check triangle area (for triangle around v0), angle (for triangle around v0) and normal vector (for triangle 0)
     double exStretchedTriangleArea = radius * radius / 2;
     double exStretchedTriangleAngleIn = M_PI / 2;
     double exStretchedTriangleAngleOut = M_PI / 4;
@@ -179,11 +207,24 @@ TEST_F(MembraneGeometryTest, Geometry) {
                 );
         }
     }
-    // Check Voronoi cell area and curvature
+
+    auto& stretchedTriangleUnitNormal0 = m->getTriangleVector()[0]->getGTriangle()->getStretchedUnitNormal();
+    array<double, 3> exStretchedTriangleUnitNormal0 { 0, 0, 1 };
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx)
+        EXPECT_DOUBLE_EQ(stretchedTriangleUnitNormal0[coordIdx], exStretchedTriangleUnitNormal0[coordIdx])
+            << "Triangle stretched unit normal doesn't match at coordinate index " << coordIdx;
+    
+    // Check Voronoi cell area (for vertex 0) and curvature (for vertex 0)
     double exStretchedVCellArea = radius * radius;
     double exStretchedVCellCurv = 0;
     EXPECT_DOUBLE_EQ(v0->getGVoronoiCell()->getStretchedArea(), exStretchedVCellArea);
     EXPECT_DOUBLE_EQ(v0->getGVoronoiCell()->getStretchedCurv(), exStretchedVCellCurv);
+
+    auto& stretchedVertexPseudoUnitNormal0 = m->getVertexVector()[0]->getGVoronoiCell()->getStretchedPseudoUnitNormal();
+    array<double, 3> exStretchedVertexPseudoUnitNormal0 { 0, 0, 1 };
+    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx)
+        EXPECT_DOUBLE_EQ(stretchedVertexPseudoUnitNormal0[coordIdx], exStretchedVertexPseudoUnitNormal0[coordIdx])
+            << "Vertex stretched pseudo unit normal doesn't match at coordinate index " << coordIdx;
 
 }
 
