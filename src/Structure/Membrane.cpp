@@ -3,6 +3,8 @@
 #include <stdexcept>
 
 #include "common.h"
+#include "MathFunctions.h"
+using namespace mathfunc;
 
 #include "SubSystem.h"
 
@@ -15,14 +17,11 @@
 #include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
 
-#include "MathFunctions.h"
-using namespace mathfunc;
-
 Database<Membrane*> Membrane::_membranes;
 
 Membrane::Membrane(SubSystem* s, short membraneType,
     vector<tuple<array<double, 3>, vector<size_t>>>& membraneData):
-    Trackable(false, false, false, false, true), Geometric(), // Self management of geometric behavior
+    Trackable(false, false, false, false, true), Geometric(),
     _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
     
     // Build the meshwork using vertex and neighbor information
