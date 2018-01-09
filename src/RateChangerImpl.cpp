@@ -43,7 +43,7 @@ float LinkerSlip::changeRate(float bareRate, double force) {
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 double force, int numHeads) {
     
-    return numHeads * _dutyRatio + _beta * force / numHeads;
+    return min(double(numHeads),numHeads * _dutyRatio + _beta * force / numHeads);
     
 }
 
@@ -51,12 +51,15 @@ float MotorCatch::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
     
     //calculate new rate
-    double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads) - 1);
+    double k_0 = onRate * (numHeads) / (0.2 * (exp(log((onRate + offRate) / offRate) * numHeads) - 1));
+    //double k_0 = 0.2* onRate /(numBoundHeads(onRate, offRate, force, numHeads));
     
     double factor = min(10.0, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
     
     double newRate = k_0 * factor;
+    // cout<<"new rate is "<<newRate<<endl;
     return newRate;
+    
 }
 
 

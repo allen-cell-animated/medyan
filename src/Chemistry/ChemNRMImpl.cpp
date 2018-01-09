@@ -172,7 +172,7 @@ bool ChemNRMImpl::makeStep() {
 
     
     
-//    if(react->getReactionType()==7 || react->getReactionType()==9){
+//    if(react->getReactionType()==ReactionType::MOTORBINDING || react->getReactionType()==ReactionType::MOTORUNBINDING){
 //        rn->printSelf();
 //        vector<string> reacs=react->getReactantSpecies();
 //        vector<string> reacp=react->getProductSpecies();
@@ -191,7 +191,7 @@ bool ChemNRMImpl::makeStep() {
 //
 //    }
     
-    //update this BEFORE making the step
+    //update delG BEFORE making the step
     _dt->updateDelGChem(react);
     rn->makeStep();
     

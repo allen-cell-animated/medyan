@@ -156,21 +156,17 @@ namespace mathfunc {
         
         float delG = delGZero +  sumreacs +  sumprods;
         
-        if(isnan(delG)){
-            delG=0;
-        }
-        
         return delG;
     }
     
     float delGDifChem(species_copy_t reacN, species_copy_t prodN){
         
-        float delG =  - reacN*log(reacN) + prodN*log(prodN);
-        
-        if(isnan(delG)){
-            delG=0;
+        if(prodN==0){
+            prodN=1;
         }
         
+        float delG =  - log(reacN) + log(prodN);
+
         return delG;
     }
     
@@ -189,10 +185,6 @@ namespace mathfunc {
         
         float delG =  delGzero +   sumreacs ;
         
-        if(isnan(delG)){
-            delG=0;
-        }
-        
         return delG;
         
     }
@@ -200,6 +192,7 @@ namespace mathfunc {
     float delGMyoChem(float nh, float rn){
         float delG;
         delG = - log(pow(rn,nh)-1);
+
         return delG;
     }
 

@@ -1808,17 +1808,20 @@ void ChemManager::genFilBindingReactions() {
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 
-                
                 //multiply by num heads to get rate
                 ///CHANGED
                 double nh1 = SysParams::Chemistry().motorNumHeadsMin[motorInt];
                 double nh2 = SysParams::Chemistry().motorNumHeadsMax[motorInt];
-                vector<short> motorNumHeadsMax = {};
+                // vector<short> motorNumHeadsMax = {};
+                
                 
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (nh1 + nh2) / 2.0);
+                
                 rxn->setReactionType(ReactionType::MOTORBINDING);
                 
                 rxn->setGNumber(gnum);
+                
+                // cal edit
                 SysParams::CParams.dutyRatio = (onRate)/(onRate + offRate);
                 
                 C->addInternalReaction(rxn);

@@ -89,7 +89,7 @@ public:
        GChem=0;
     };
 
-    // increment the reaction counter - not used
+    // increment the reaction counter
     void updateCount(){
         count++;
     };
@@ -264,8 +264,27 @@ public:
             
         }
         
-        return delG;
+        // check for nan
         
+        if(delG<-pow(10,7)){
+            cout<<"neg inf"<<endl;
+            cout<<"retype is "<<reType<<endl;
+            delG=0;
+        }
+        
+        if(delG>pow(10,7)){
+            cout<<"pos inf"<<endl;
+            cout<<"retype is "<<reType<<endl;
+            delG=0;
+        }
+        
+        if(delG!=delG){
+            cout<<"nan happened"<<endl;
+            delG=0;
+        }
+        
+        return delG;
+       
         
     }
     
@@ -275,6 +294,7 @@ public:
     // increment the GChem counter when a reaction fires
     void updateDelGChem(ReactionBase* re){
         GChem += getDelGChem(re);
+        updateCount();
 
     }
 
@@ -342,7 +362,7 @@ public:
     
     // increment cumDissMechEnergy
     void updateCumGChemEn(){
-        cumGChemEn += cumGChemEn;
+        cumGChemEn += GChem;
     }
     
     // increment cumDissMechEnergy

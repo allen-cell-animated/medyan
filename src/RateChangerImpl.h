@@ -156,7 +156,7 @@ class LowDutyMotorCatch : public MotorCatch {
 public:
     LowDutyMotorCatch(short motorType, double charForce)
     
-    : MotorCatch(motorType, charForce, SysParams::Chemistry().dutyRatio, 2.0){}
+    : MotorCatch(motorType, charForce, 0.1, 2.0){}
     // SysParams::Chemistry().dutyRatio can be used to calculate p as k_NMAon/(k_NMAon+k_NMAoff)
     
 };
