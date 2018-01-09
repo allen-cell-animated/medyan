@@ -224,6 +224,12 @@ void Membrane::updateGeometry(bool calcDerivative, double d) {
     }
 }
 
+double Membrane::signedDistance(const std::array<double, 3>& p, bool safe) {
+    if(!_isClosed) throw std::logic_error("Membrane is not closed while trying to find distance field.");
+
+    return false; // TODO: Implement it
+}
+
 double Membrane::meshworkQuality() {
     /*
     This function calculates the quality of the meshwork of this membrane, and

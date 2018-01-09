@@ -92,7 +92,16 @@ public:
     /// Implements Geometric
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
 
-    // Helper function to monitor the quality of the meshwork
+    // Use pseudo normal signed distance field method to get the signed distance to a point.
+    // If the point is outside, the result is positive and vice versa.
+    // Throws an exception if the membrane is not closed
+    // The function will search through the whole meshwork, so it might not be efficient.
+    // However, if the "safe" flag is turned off and neighboring compartments happen to contain membrane elements,
+    //   search space will be limited to those compartments to save time. In this case meshwork size should be
+    //   much smaller than the compartment size.
+    double signedDistance(const std::array<double, 3>& p, bool safe=false)const;
+
+    // Function to monitor the quality of the meshwork
     double meshworkQuality()const; // Must be used after updating the geometry
                                    // Returns a value between 0 and 1,
                                    // 1 being best and 0 being worst.
@@ -103,9 +112,6 @@ public:
     bool isClosed()const { return _isClosed; }
 
 };
-
-
-
 
 
 
