@@ -224,3 +224,35 @@ void Membrane::updateGeometry(bool calcDerivative, double d) {
         if(calcDerivative) gv->calcPseudoUnitNormal(); else gv->calcStretchedPseudoUnitNormal(d);
     }
 }
+
+double Membrane::meshworkQuality() {
+    /*
+    This function calculates the quality of the meshwork of this membrane, and
+    the result is represented as a value between 0 and 1, 0 being worst and 1
+    being the best case (all equilateral).
+
+    The criterion used is the minimum angle in each triangle, parametrized and
+    averaged over all triangles. And the calculation requires the result of
+        - The angle calculation of all triangles
+    */
+
+    double res = 0;
+
+    for(Triangle* t: _triangleVector) {
+        auto gt = t->getGTriangle();
+
+        // Find minimum angle
+        double minAngle = M_PI / 3; // The largest possible minimum angle in a triangle
+        for(double eachTheta: gt->getTheta())
+            if(eachTheta < minAngle) minAngle = eachTheta;
+        
+        // Parametrize the minimum angle and add to result
+        double q = minAngle * 3 / M_PI; // Normalize, so that q should be within 0 and 1
+        q *= q; // Small angles get more "emphasized"
+        res += q;
+    }
+
+    res /= _triangleVector.size(); // Average instead of sum
+
+    return res;
+}

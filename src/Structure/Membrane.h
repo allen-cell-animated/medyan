@@ -92,6 +92,11 @@ public:
     /// Implements Geometric
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
 
+    // Helper function to monitor the quality of the meshwork
+    double meshworkQuality()const; // Must be used after updating the geometry
+                                   // Returns a value between 0 and 1,
+                                   // 1 being best and 0 being worst.
+
     /**************************************************************************
     Topological
     **************************************************************************/
