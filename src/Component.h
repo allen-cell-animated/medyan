@@ -76,6 +76,7 @@ public:
     /// Returns the pointer to the parent node. The returned value could be a nullptr if
     /// a parent does not exist.
     Composite* getParent() {return _parent;}
+    const Composite* getParent()const { return _parent; }
     
     /// Sets the parent of this node to other.
     void setParent (Composite *other) {_parent=other;}
