@@ -88,7 +88,7 @@ void Triangle::updatePosition() {
 
 }
 
-void Triangle::printSelf() {
+void Triangle::printSelf()const {
     
     cout << endl;
     

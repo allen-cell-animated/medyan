@@ -122,7 +122,7 @@ public:
     /// @note - changes compartment if needed
     virtual void updatePosition();
     
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     /// Count the number of brancher species with a given name in the system
     static species_copy_t countSpecies(const string& name);

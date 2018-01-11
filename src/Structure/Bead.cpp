@@ -80,7 +80,7 @@ void Bead::updatePosition() {
     }
 }
 
-void Bead::printSelf() {
+void Bead::printSelf()const {
     
     cout << endl;
     

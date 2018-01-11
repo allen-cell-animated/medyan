@@ -197,7 +197,7 @@ bool Cylinder::isFullLength() {
 #endif
 }
 
-void Cylinder::printSelf() {
+void Cylinder::printSelf()const {
     
     cout << endl;
     

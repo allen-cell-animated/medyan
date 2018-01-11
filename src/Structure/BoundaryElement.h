@@ -110,7 +110,7 @@ public:
         return _boundaryElements.countElements();
     }
     
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     //GetType implementation just returns zero (no boundary element types yet)
     virtual int getType() {return 0;}

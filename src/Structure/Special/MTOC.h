@@ -75,7 +75,7 @@ public:
         return _mtocs.countElements();
     }
     
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     //GetType implementation just returns zero (no MTOC types yet)
     virtual int getType() {return 0;}

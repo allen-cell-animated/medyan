@@ -87,7 +87,7 @@ public:
     virtual void addChemSimReactions(ChemSim* chem);
     
     /// Print properties of this grid
-    virtual void printSelf() {
+    virtual void printSelf()const {
         cout << getFullName() << endl;
         cout << "Number of Compartment objects: " << numberOfChildren() << endl;
         for(auto &c : children())

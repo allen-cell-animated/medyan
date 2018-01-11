@@ -83,7 +83,7 @@ public:
     // Get type
     int getType()override { return _memType; }
     // Print self information
-    virtual void printSelf()override;
+    virtual void printSelf()const override;
     //@}
 
     /**************************************************************************

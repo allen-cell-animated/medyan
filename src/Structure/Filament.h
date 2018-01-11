@@ -201,7 +201,7 @@ public:
     vector<vector<double>> predefinedFilamentProjection(vector<vector<double>>& v, int numBeads);
     //@}
     
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     /// Check the consistency of the filament. For now,
     /// Mainly involves checking chemistry of the constituent cylinders.

@@ -188,7 +188,7 @@ void BranchingPoint::updatePosition() {
     }
 }
             
-void BranchingPoint::printSelf() {
+void BranchingPoint::printSelf()const {
     
     cout << endl;
     

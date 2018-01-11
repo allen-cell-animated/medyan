@@ -145,7 +145,7 @@ public:
     /// Update the reaction rates, inherited from Reactable
     virtual void updateReactionRates();
     
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     /// Count the number of linker species with a given name in the system
     static species_copy_t countSpecies(const string& name);

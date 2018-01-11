@@ -77,7 +77,7 @@ public:
     bool isMTOC() {return _isMTOC;}
 
     /// Print bubble information
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     //@{
     /// SubSystem management, inherited from Trackable

@@ -139,7 +139,7 @@ public:
     /// Update the position, inherited from Movable
     virtual void updatePosition();
     
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     //GetType implementation just returns type of parent
     virtual int getType() {return getParent()->getType();}

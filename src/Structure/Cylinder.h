@@ -168,7 +168,7 @@ public:
     /// Check if this cylinder is grown to full length
     bool isFullLength();
                                        
-    virtual void printSelf();
+    virtual void printSelf()const;
                                        
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders

@@ -800,7 +800,7 @@ vector<vector<double>> Filament::predefinedFilamentProjection(vector<vector<doub
     return v;
 }
 //@
-void Filament::printSelf() {
+void Filament::printSelf()const {
     
     cout << endl;
     

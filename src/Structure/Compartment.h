@@ -630,9 +630,9 @@ public:
     const vector<Compartment*>& getNeighbours() const {return _neighbours;}
     
     /// Print the species in this compartment
-    void printSpecies() {_species.printSpecies();}
+    void printSpecies()const {_species.printSpecies();}
     /// Print the reactions in this compartment
-    void printReactions() {
+    void printReactions()const {
         _internal_reactions.printReactions();
         _diffusion_reactions.printReactions();
     }
@@ -648,7 +648,7 @@ public:
     }
     
     /// Print properties of this compartment
-    virtual void printSelf() override {
+    virtual void printSelf()const override {
         cout << this->getFullName() << "\n"
         << "Number of neighbors: " << numberOfNeighbours() << endl;
         printSpecies();

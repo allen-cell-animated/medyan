@@ -37,7 +37,7 @@ void Bubble::updatePosition() {
     coordinate = _bead->coordinate;
 }
 
-void Bubble::printSelf() {
+void Bubble::printSelf()const {
     
     cout << endl;
     

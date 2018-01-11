@@ -164,7 +164,7 @@ void Linker::updateReactionRates() {
 }
 
 
-void Linker::printSelf() {
+void Linker::printSelf()const {
     
     cout << endl;
     

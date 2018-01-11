@@ -79,7 +79,7 @@ public:
     //@{
     /// Implements Component
     virtual int getType() override { return getParent()->getType(); }
-    virtual void printSelf() override;
+    virtual void printSelf()const override;
     //@}
 
     //@{

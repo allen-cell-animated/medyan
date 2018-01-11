@@ -81,7 +81,7 @@ void Edge::updatePosition() {
     }
 }
 
-void Edge::printSelf() {
+void Edge::printSelf()const {
     cout << endl;
     
     cout << "Edge: ptr = " << this << endl;

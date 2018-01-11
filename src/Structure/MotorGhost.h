@@ -191,7 +191,7 @@ public:
                        double oldPosition, double newPosition,
                        short boundType, SubSystem* ps);
     
-    virtual void printSelf();
+    virtual void printSelf()const;
     
     /// Count the number of motor species with a given name in the system
     static species_copy_t countSpecies(const string& name);

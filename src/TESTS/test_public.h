@@ -34,7 +34,7 @@ namespace test_public {
 
         CompositeDummy(short newType): type(newType) {}
 
-        virtual void printSelf() override {
+        virtual void printSelf()const override {
             cout << "This is a dummy composite object with type "
                  << type << endl;
         }

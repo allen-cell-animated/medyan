@@ -184,7 +184,7 @@ Membrane::~Membrane() {
     for(auto& t: _triangleVector) _subSystem->removeTrackable<Triangle>(t);
 }
 
-void Membrane::printSelf() {
+void Membrane::printSelf()const {
     
     cout << endl;
     
