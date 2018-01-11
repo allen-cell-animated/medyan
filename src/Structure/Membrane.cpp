@@ -1,12 +1,15 @@
 #include "Membrane.h"
 
 #include <stdexcept>
+#include <unordered_set>
 
 #include "common.h"
 #include "MathFunctions.h"
 using namespace mathfunc;
 
 #include "SubSystem.h"
+#include "Compartment.h"
+#include "GController.h"
 
 #include "Triangle.h"
 #include "Edge.h"
@@ -200,7 +203,17 @@ void Membrane::printSelf() {
 }
 
 void Membrane::updateGeometry(bool calcDerivative, double d) {
-    // Due to the geometry dependencies, the operation order below is important.
+    /**************************************************************************
+    Updates the geometric properties of all the elements of the membrane. This
+    MUST be called before any energy calculation of the membrane.
+
+    Due to the geometry dependencies, the operation order below is important.
+
+    Some of the geometric properties are not needed in energy computation, so
+    for efficiency, they are not updated in this function. They must be updated
+    manually before use. They are:
+        - <None>
+    **************************************************************************/
 
     for(auto& e: _edgeVector) {
         auto ge = e->getGEdge();
@@ -225,7 +238,59 @@ void Membrane::updateGeometry(bool calcDerivative, double d) {
 }
 
 double Membrane::signedDistance(const std::array<double, 3>& p, bool safe) {
-    if(!_isClosed) throw std::logic_error("Membrane is not closed while trying to find distance field.");
+    if(!_isClosed) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
+
+    /**************************************************************************
+    The functions works in the following procedure.
+
+    - Iterate through a certain amount of triangles, and for each triangle
+        - Find the projection of the point on the triangle plane, and determine
+          which element is responsible for being the closest to the point
+          (which vertex/ which edge/ this triangle).
+        - Find the unsigned distance with the closest element. Record the
+          the value and the element with the smallest such distance found.
+    - With the element with the smallest unsigned distance, use the normal or
+      pesudonormal to find the signed distance.
+    **************************************************************************/
+
+    /**************************************************************************
+    Determine the triangles needed to be looped through
+    **************************************************************************/
+    vector<Triangle*>* loopingTriangles = nullptr;
+
+    unique_ptr<vector<Triangle*>> limitedLoopingTriangles;
+    if(safe) {
+        loopingTriangles = &_triangleVector;
+    }
+    else {
+        // Find the current compartment containing point p
+        Compartment* c = nullptr;
+        try { c = GController::getCompartment(mathfunc::array2Vector(p)); }
+        catch (exception& e) {
+            cout << e.what() << endl;
+            printSelf();
+            exit(EXIT_FAILURE);
+        }
+
+        // TODO: Find those triangles
+
+        // Copy the triangles in the unordered set into a vector
+        limitedLoopingTriangles = unique_ptr<vector<Triangle*>>(new vector<Triangle*>(triSet.begin(), triSet.end()));
+
+        // Make the new vector the vector to be looped
+        loopingTriangles = limitedLoopingTriangles.get();
+    }
+    
+    // Helper matrix for finding the projection point P' on the triangle plane with a given point P
+    // First find the projection of P on two edges 0--1 and 0--2 as a vector in 2D
+    //   b = (dot(r0P, r01), dot(r0P, r02))' = (r01 r02)' * r0P
+    //                                         ^~~~~~~~~~
+    //                                         2x3 matrix
+    // Then apply the _projMat (A) to find vector c: c = A * b
+    // Then r0P' = c[0] * r01 + c[1] * r02 = (r01 r02) * c
+    //                                       ^~~~~~~~~
+    //                                       3x2 matrix
+    std::array<std::array<double, 2>, 2> _projMat; // The helper matrix for finding the
 
     return false; // TODO: Implement it
 }

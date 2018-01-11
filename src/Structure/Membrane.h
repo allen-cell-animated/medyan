@@ -94,7 +94,7 @@ public:
 
     // Use pseudo normal signed distance field method to get the signed distance to a point.
     // If the point is outside, the result is positive and vice versa.
-    // Throws an exception if the membrane is not closed
+    // Throws an exception if the membrane is not closed.
     // The function will search through the whole meshwork, so it might not be efficient.
     // However, if the "safe" flag is turned off and neighboring compartments happen to contain membrane elements,
     //   search space will be limited to those compartments to save time. In this case meshwork size should be
