@@ -237,7 +237,7 @@ void Membrane::updateGeometry(bool calcDerivative, double d) {
     }
 }
 
-double Membrane::signedDistance(const std::array<double, 3>& p, bool safe) {
+double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const {
     if(!_isClosed) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
 
     /**************************************************************************
@@ -256,7 +256,7 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe) {
     /**************************************************************************
     Determine the triangles needed to be looped through
     **************************************************************************/
-    vector<Triangle*>* loopingTriangles = nullptr;
+    const vector<Triangle*>* loopingTriangles = nullptr;
 
     unique_ptr<vector<Triangle*>> limitedLoopingTriangles;
     if(safe) {
@@ -272,6 +272,7 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe) {
             exit(EXIT_FAILURE);
         }
 
+		unordered_set<Triangle*> triSet; // TODO
         // TODO: Find those triangles
 
         // Copy the triangles in the unordered set into a vector
@@ -295,7 +296,7 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe) {
     return false; // TODO: Implement it
 }
 
-double Membrane::meshworkQuality() {
+double Membrane::meshworkQuality()const {
     /*
     This function calculates the quality of the meshwork of this membrane, and
     the result is represented as a value between 0 and 1, 0 being worst and 1
