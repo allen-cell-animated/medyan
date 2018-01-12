@@ -103,6 +103,24 @@ Compartment* GController::getCompartment(const vector<double> &coords)
     }
 }
 
+vector<size_t> GController::getCompartmentIndices(const vector<double>& coords) {
+    /**************************************************************************
+    The function takes the coordinates of a point and return the compartment
+    indices. All related variables must be with dimension _nDim.
+
+    This function checks boundary.
+    **************************************************************************/
+    // Assert coords.size() == _grid.size() == _compartmentSize.size() == _nDim
+    vector<size_t> indices(_nDim);
+    for(size_t coordIdx = 0; coordIdx < _nDim; ++coordIdx) {
+        if(coords[coordIdx] < 0 || coords[coordIdx] >= (_compartmentSize[coordIdx] * _grid[coordIdx]))
+            throw OutOfBoundsException();
+            
+        indices[coordIdx] = int(coords[coordIdx] / _compartmentSize[coordIdx]);
+    }
+    return indices;
+}
+
 void GController::generateConnections()
 {
     for(size_t i=0U; i<_grid[0]; ++i) {

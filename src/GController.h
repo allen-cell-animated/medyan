@@ -72,7 +72,7 @@ private:
     
     ///Generate all neighbors lists for each compartment in the CompartmentGrid
     void generateConnections();
-    
+
 public:
     ///Constructor sets SubSystem
     GController(SubSystem* ps) : _subSystem(ps) {}
@@ -96,6 +96,7 @@ public:
     /// Get a compartment based on coordinates or indices
     static Compartment* getCompartment(const vector<size_t> &indices);
     static Compartment* getCompartment(const vector<double> &coords);
+    static vector<size_t> getCompartmentIndices(const vector<double>& coords);
     //@}
     
     /// Get the center of the grid space

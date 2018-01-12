@@ -251,35 +251,75 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
           the value and the element with the smallest such distance found.
     - With the element with the smallest unsigned distance, use the normal or
       pesudonormal to find the signed distance.
+    
+    Before this function is used, it is required that:
+        - The positions of all the elements are updated
     **************************************************************************/
 
     /**************************************************************************
     Determine the triangles needed to be looped through
+
+    Safe        : Use all triangles
+    Not safe    : Search neighboring 27 compartments for triangles
     **************************************************************************/
     const vector<Triangle*>* loopingTriangles = nullptr;
 
     unique_ptr<vector<Triangle*>> limitedLoopingTriangles;
     if(safe) {
+        // Loop through all the triangles
         loopingTriangles = &_triangleVector;
     }
     else {
-        // Find the current compartment containing point p
-        Compartment* c = nullptr;
-        try { c = GController::getCompartment(mathfunc::array2Vector(p)); }
+        // Find the current compartment indices containing point p
+        vector<size_t> indices;
+        try { indices = GController::getCompartmentIndices(mathfunc::array2Vector(p)); }
         catch (exception& e) {
             cout << e.what() << endl;
             printSelf();
             exit(EXIT_FAILURE);
         }
 
-		unordered_set<Triangle*> triSet; // TODO
-        // TODO: Find those triangles
+        if(indices.size() != 3)
+            throw std::logic_error("Only 3D compartments are allowed in the membrane signed distance calculation.");
+
+		unordered_set<Triangle*> triSet; // Set of triangles to be searched
+
+        // Find all the neighbor compartments and find triangles to be added to search set.
+        // The for loops are written like this for aesthetic reasons. Be very careful with the scope below.
+        for(int v0: {-1, 0, 1}) for(int v1: {-1, 0, 1}) for(int v2: {-1, 0, 1}) {
+
+            vector<size_t> newIndices = {indices[0] + v0, indices[1] + v1, indices[2] + v2};
+            Compartment* c = nullptr;
+            try { c = GController::getCompartment(newIndices); }
+            catch(const OutOfBoundsException& e) {
+                // Compartment not found. Simply ignore it.
+                continue;
+            }
+
+            // Compartment exists
+            const unordered_set<Triangle*>& triSetEach = c->getTriangles();
+            triSet.insert(triSetEach.begin(), triSetEach.end());
+        }
+
+        if(triSet.empty) {
+            cout << "Warning: triangles not found in neighboring compartments. "
+                 << "Getting the result from safe mode."
+                 << endl;
+            return signedDistance(p, true);
+        }
 
         // Copy the triangles in the unordered set into a vector
         limitedLoopingTriangles = unique_ptr<vector<Triangle*>>(new vector<Triangle*>(triSet.begin(), triSet.end()));
 
         // Make the new vector the vector to be looped
         loopingTriangles = limitedLoopingTriangles.get();
+    }
+
+    /**************************************************************************
+     * TODO
+    **************************************************************************/
+    for(Triangle* t: *loopingTriangles) {
+
     }
     
     // Helper matrix for finding the projection point P' on the triangle plane with a given point P
