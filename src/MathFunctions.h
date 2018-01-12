@@ -102,7 +102,29 @@ namespace mathfunc {
     inline double dotProduct(const vector<double>& v1, const vector<double>& v2) {
         return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
     }
+    template<size_t Dim>
+    inline double dotProduct(const array<double, Dim>& v1, const array<double, Dim>& v2) {
+        double res = 0.0;
+        for(size_t idx = 0; idx < Dim; ++idx)
+            res += v1[idx] * v2[idx];
+        return res;
+    }
     
+    /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
+    /// v2[x,y,z] + d*p2[x,y,z]
+    inline double dotProductStretched(const vector<double>& v1,
+                                      const vector<double>& p1,
+                                      const vector<double>& v2,
+                                      const vector<double>& p2,
+                                      double d){
+        
+        double xx = (v1[0] + d*p1[0]) * (v2[0] + d*p2[0]);
+        double yy = (v1[1] + d*p1[1]) * (v2[1] + d*p2[1]);
+        double zz = (v1[2] + d*p1[2]) * (v2[2] + d*p2[2]);
+        return xx + yy + zz;
+        
+    }
+
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3)
     inline double scalarProduct(const vector<double>& v1, const vector<double>& v2,
@@ -134,22 +156,7 @@ namespace mathfunc {
         return xx + yy + zz;
         
     }
-    
-    /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
-    /// v2[x,y,z] + d*p2[x,y,z]
-    inline double dotProductStretched(const vector<double>& v1,
-                                      const vector<double>& p1,
-                                      const vector<double>& v2,
-                                      const vector<double>& p2,
-                                      double d){
         
-        double xx = (v1[0] + d*p1[0]) * (v2[0] + d*p2[0]);
-        double yy = (v1[1] + d*p1[1]) * (v2[1] + d*p2[1]);
-        double zz = (v1[2] + d*p1[2]) * (v2[2] + d*p2[2]);
-        return xx + yy + zz;
-        
-    }
-    
     
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3). Returns a 3d vector.
@@ -168,7 +175,17 @@ namespace mathfunc {
         v.push_back(vz);
         
         return v;
-    };
+    }
+    inline array<double, 3> vectorProduct(const array<double, 3>& v1,
+                                          const array<double, 3>& v2,
+                                          const array<double, 3>& v3,
+                                          const array<double, 3>& v4) {
+        return array<double, 3> {{
+            (v2[1]-v1[1])*(v4[2]-v3[2]) - (v2[2]-v1[2])*(v4[1]-v3[1]),
+            (v2[2]-v1[2])*(v4[0]-v3[0]) - (v2[0]-v1[0])*(v4[2]-v3[2]),
+            (v2[0]-v1[0])*(v4[1]-v3[1]) - (v2[1]-v1[1])*(v4[0]-v3[0])
+        }};
+    }
     
     
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
@@ -220,6 +237,14 @@ namespace mathfunc {
         
         return v;
     };
+    inline array<double, 3> crossProduct(const array<double, 3>& v1,
+                                         const array<double, 3>& v2) {
+        return array<double, 3> {{
+            v1[1]*v2[2] - v1[2]*v2[1],
+            v1[2]*v2[0] - v1[0]*v2[2],
+            v1[0]*v2[1] - v1[1]*v2[0]
+        }};
+    }
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
     inline vector<double> crossProductStretched(const vector<double>& v1,

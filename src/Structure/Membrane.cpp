@@ -241,19 +241,22 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
     if(!_isClosed) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
 
     /**************************************************************************
-    The functions works in the following procedure.
+    The function works in the following procedure:
 
     - Iterate through a certain amount of triangles, and for each triangle
         - Find the projection of the point on the triangle plane, and determine
           which element is responsible for being the closest to the point
           (which vertex/ which edge/ this triangle).
-        - Find the unsigned distance with the closest element. Record the
-          the value and the element with the smallest such distance found.
-    - With the element with the smallest unsigned distance, use the normal or
-      pesudonormal to find the signed distance.
+        - Find the unsigned distance with the closest element, and then find
+          the signed distance using the normal or pseudo normal. Record the
+          value with the smallest unsigned distance.
     
     Before this function is used, it is required that:
         - The positions of all the elements are updated
+    
+    In fact, the signed distance field serves as a good candidate for membrane
+    boundary potential. However, this field is only C0-continuous, so some
+    configurations might result in non-stop situation in CG method.
     **************************************************************************/
 
     /**************************************************************************
@@ -315,10 +318,29 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
         loopingTriangles = limitedLoopingTriangles.get();
     }
 
-    /**************************************************************************
-     * TODO
-    **************************************************************************/
     for(Triangle* t: *loopingTriangles) {
+        /**********************************************************************
+        Calculate the barycentric coordinate of the projection point p'
+
+        See Heidrich 2005, Computing the Barycentric Coordinates of a Projected
+        Point.
+        **********************************************************************/
+        const array<double, 3> v0 = vector2Array(t->getVertices()[0]->coordinate);
+        const array<double, 3> v1 = vector2Array(t->getVertices()[1]->coordinate);
+        const array<double, 3> v2 = vector2Array(t->getVertices()[2]->coordinate);
+
+        array<double, 3> n = vectorProduct(v0, v1, v0, v2);
+        double oneOver4AreaSquared = 1.0 / dotProduct(n, n);
+
+        double b1 = dotProduct(vectorProduct(v0, p, v0, v2), n) * oneOver4AreaSquared;
+        double b2 = dotProduct(vectorProduct(v0, v1, v0, p), n) * oneOver4AreaSquared;
+        double b0 = 1.0 - b1 - b2;
+
+        // Now p' = b0*v0 + b1*v1 + b2*v2
+
+        // b0, b1 and b2 cannot all be negative at the same time, leaving 7 possible combinations
+
+
 
     }
     
