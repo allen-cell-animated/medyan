@@ -71,6 +71,15 @@ namespace mathfunc {
                     (v2[1]-v1[1])*(v2[1]-v1[1]) +
                     (v2[2]-v1[2])*(v2[2]-v1[2]));
     }
+    template<size_t Dim>
+    inline double twoPointDistance(const array<double, Dim>& v1, const array<double, Dim>& v2) {
+        double res = 0.0;
+        for(size_t idx = 0; idx < Dim; ++idx) {
+            res += (v2[idx] - v1[idx]) * (v2[idx] - v1[idx]);
+        }
+        res = sqrt(res);
+        return res;
+    }
     
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)

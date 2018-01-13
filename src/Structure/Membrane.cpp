@@ -1,5 +1,6 @@
 #include "Membrane.h"
 
+#include <limits>
 #include <stdexcept>
 #include <unordered_set>
 
@@ -251,8 +252,10 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
           the signed distance using the normal or pseudo normal. Record the
           value with the smallest unsigned distance.
     
-    Before this function is used, it is required that:
+    Before this function is used, the following must be calculated:
         - The positions of all the elements are updated
+        - The normal and pseudo normal at the triangles, edges and vertices
+        - The length of edges
     
     In fact, the signed distance field serves as a good candidate for membrane
     boundary potential. However, this field is only C0-continuous, so some
@@ -304,7 +307,7 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
             triSet.insert(triSetEach.begin(), triSetEach.end());
         }
 
-        if(triSet.empty) {
+        if(triSet.empty()) {
             cout << "Warning: triangles not found in neighboring compartments. "
                  << "Getting the result from safe mode."
                  << endl;
@@ -318,6 +321,7 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
         loopingTriangles = limitedLoopingTriangles.get();
     }
 
+    double minAbsDistance = numeric_limits<double>::infinity();
     for(Triangle* t: *loopingTriangles) {
         /**********************************************************************
         Calculate the barycentric coordinate of the projection point p'
@@ -338,24 +342,70 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
 
         // Now p' = b0*v0 + b1*v1 + b2*v2
 
+        double d = numeric_limits<double>::infinity();
         // b0, b1 and b2 cannot all be negative at the same time, leaving 7 possible combinations
+        if(b0 >= 0) {
+            if(b1 >= 0) {
+                if(b2 >= 0) {
+                    // Inside triangle
+                    d = dotProduct(t->getGTriangle()->getUnitNormal(), vectorDifference(p, v0));
+                }
+                else {
+                    // On edge 01
+                    auto ge = t->getEdges()[0]->getGEdge();
+                    d = magnitude(vectorProduct(v0, p, v0, v1)) / ge->getLength();
+                    if(dotProduct(ge->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0) d = -d;
+                }
+            }
+            else {
+                if(b2 >= 0) {
+                    // On edge 02
+                    auto ge = t->getEdges()[2]->getGEdge();
+                    d = magnitude(vectorProduct(v0, p, v0, v2)) / ge->getLength();
+                    if(dotProduct(ge->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0) d = -d;
+                }
+                else {
+                    // On vertex 0
+                    d = twoPointDistance(v0, p);
+                    if(dotProduct(t->getVertices()[0]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0)
+                        d = -d;
+                }
+            }
+        }
+        else {
+            if(b1 >= 0) {
+                if(b2 >= 0) {
+                    // On edge 12
+                    auto ge = t->getEdges()[1]->getGEdge();
+                    d = magnitude(vectorProduct(v1, p, v1, v2)) / ge->getLength();
+                    if(dotProduct(ge->getPseudoUnitNormal(), vectorDifference(p, v1)) < 0) d = -d;
+                }
+                else {
+                    // On vertex 1
+                    d = twoPointDistance(v1, p);
+                    if(dotProduct(t->getVertices()[1]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v1)) < 0)
+                        d = -d;
+                }
+            }
+            else {
+                if(b2 >= 0) {
+                    // On vertex 2
+                    d = twoPointDistance(v2, p);
+                    if(dotProduct(t->getVertices()[2]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v2)) < 0)
+                        d = -d;
+                }
+                else {
+                    // The program should never go here
+                    throw logic_error("Hey, you know the barycentric coordinates cannot be all negative. Something has gone terribly wrong.");
+                }
+            }
+        }
 
-
-
+        // Update with distance with less absolute value
+        if(abs(d) < abs(minAbsDistance)) minAbsDistance = d;
     }
     
-    // Helper matrix for finding the projection point P' on the triangle plane with a given point P
-    // First find the projection of P on two edges 0--1 and 0--2 as a vector in 2D
-    //   b = (dot(r0P, r01), dot(r0P, r02))' = (r01 r02)' * r0P
-    //                                         ^~~~~~~~~~
-    //                                         2x3 matrix
-    // Then apply the _projMat (A) to find vector c: c = A * b
-    // Then r0P' = c[0] * r01 + c[1] * r02 = (r01 r02) * c
-    //                                       ^~~~~~~~~
-    //                                       3x2 matrix
-    std::array<std::array<double, 2>, 2> _projMat; // The helper matrix for finding the
-
-    return false; // TODO: Implement it
+    return minAbsDistance;
 }
 
 double Membrane::meshworkQuality()const {
