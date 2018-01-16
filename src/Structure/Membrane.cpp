@@ -329,9 +329,9 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
         See Heidrich 2005, Computing the Barycentric Coordinates of a Projected
         Point.
         **********************************************************************/
-        const array<double, 3> v0 = vector2Array(t->getVertices()[0]->coordinate);
-        const array<double, 3> v1 = vector2Array(t->getVertices()[1]->coordinate);
-        const array<double, 3> v2 = vector2Array(t->getVertices()[2]->coordinate);
+        const array<double, 3> v0 = vector2Array<double, 3>(t->getVertices()[0]->coordinate);
+        const array<double, 3> v1 = vector2Array<double, 3>(t->getVertices()[1]->coordinate);
+        const array<double, 3> v2 = vector2Array<double, 3>(t->getVertices()[2]->coordinate);
 
         array<double, 3> n = vectorProduct(v0, v1, v0, v2);
         double oneOver4AreaSquared = 1.0 / dotProduct(n, n);
