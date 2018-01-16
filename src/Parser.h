@@ -429,7 +429,7 @@ public:
     PinRestartParser(string inputFileName) : Parser(inputFileName) {}
     ~PinRestartParser() {}
     
-    /// Reads pin positions from file, and sets filaments
+    /// Reads pin positions from file, and sets filamen ts
     void resetPins();
 };
 

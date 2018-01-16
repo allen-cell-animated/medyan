@@ -932,21 +932,45 @@ void SystemParser::readMechParams() {
         if (line.find("SPECIALPROTOCOL") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            
-            if(lineVector.size() > 4) {
-                cout <<
-                "There was an error parsing input file at Chemistry parameters. Exiting."
-                << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 4) {
                 
                 if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
-                    
+                    if(lineVector.size() > 4) {
+                        cout <<
+                        "There was an error parsing input file at Chemistry parameters. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
+
+                    else{
                     MParams.pinBoundaryFilaments = true;
                     MParams.pinK = atof(lineVector[2].c_str());
                     MParams.pinTime = atof(lineVector[3].c_str());
+                    }
+                }
+                
+                else if(lineVector[1]=="TRANSFERSHAREAXIS"){
+                    if(lineVector.size() > 3) {
+                        cout <<
+                        "There was an error parsing input file at Chemistry parameters. Exiting."
+                        << endl;
+                        exit(EXIT_FAILURE);
+                    }
                     
+                    else{
+                        std::cout<<lineVector[2]<<endl;
+                    if(lineVector[2]=="X")
+                        MParams.transfershareaxis=0;
+                    else if(lineVector[2]=="Y")
+                        MParams.transfershareaxis=1;
+                    else if(lineVector[2]=="Z")
+                        MParams.transfershareaxis=2;
+                    else if(lineVector[2]=="RADIAL")
+                        MParams.transfershareaxis=3;
+                    else{
+                        cout <<
+                            "There was an error parsing input file at Chemistry parameters. Exiting."
+                            << endl;
+                        exit(EXIT_FAILURE);}
                 }
             }
         }
@@ -1672,6 +1696,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
         else if(lineVector.size()==5) {
             vector<double> coord1;
             vector<vector<double>> coord3;
+            //USED ONLY TO RESTART PINNED TRAJECTORIES.
             if(lineVector[0]=="STATIC"){
                 for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 5; it++) {
                     coord1.push_back(atof(((*it).c_str()))); //FORMAT FILAMENTTYPE COORDx COORDy COORDz.

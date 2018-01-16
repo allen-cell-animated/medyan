@@ -12,8 +12,10 @@
 //------------------------------------------------------------------
 
 #include "Compartment.h"
-
+#include "MathFunctions.h"
 #include "Visitor.h"
+//REMOVE LATER
+#include "ChemNRMImpl.h"
 
 Compartment& Compartment::operator=(const Compartment &other) {
     
@@ -74,21 +76,49 @@ vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
 }
 
+vector<ReactionBase*> Compartment::generateAllpairsDiffusionReactions() {
+    
+    vector<ReactionBase*> rxns;
+    
+    if(_activated) {
+        for (auto &C: _neighbours) {
+            if(C->isActivated()){
+            auto newRxns = generateDiffusionReactions(C);
+                 rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+            newRxns = C->generateDiffusionReactions(this);
+                 rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+
+//            for(auto &r : C->_diffusion_reactions.reactions()) {
+//                auto rs = r.get()->rspecies()[1];
+//                if(rs->getSpecies().getParent() == this) {
+//                    newRxns.push_back(r.get());
+//                }
+//            }
+//                std::cout<<newRxns.size()<<endl;;
+               
+            }
+        }
+    }
+    return vector<ReactionBase*>(rxns.begin(), rxns.end());
+}
+
 void Compartment::removeDiffusionReactions(ChemSim* chem, Compartment* C)
 {
     //look for neighbor's diffusion reactions
     vector<ReactionBase*> to_remove;
-    
+
     for(auto &r : C->_diffusion_reactions.reactions()) {
         
         auto rs = r.get()->rspecies()[1];
         if(rs->getSpecies().getParent() == this) {
-            
+
             r->passivateReaction();
+            
             chem->removeReaction(r.get());
             
             to_remove.push_back(r.get());
         }
+
     }
     
     //remove them
@@ -113,17 +143,31 @@ void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
 }
 
 
-void Compartment::transferSpecies() {
-    
+void Compartment::transferSpecies(int i) {
+    //i axis
+    //0 X
+    //1 Y
+    //2 Z
+    //3 all directions
     //get active neighbors
     vector<Compartment*> activeNeighbors;
     
-    for(auto &neighbor : _neighbours)
-        if(neighbor->isActivated())
-            activeNeighbors.push_back(neighbor);
+    for(auto &neighbor : _neighbours){
+        auto ncoord=neighbor->coordinates();
+//                    std::cout<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<" "<<ncoord[0]<<" "<<ncoord[1]<<" "<<ncoord[2]<<endl;
+        if(neighbor->isActivated()){
+            if(i==3)
+                activeNeighbors.push_back(neighbor);
+            else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
+                activeNeighbors.push_back(neighbor);
+        }}
     
     assert(activeNeighbors.size() != 0
            && "Cannot transfer species to another compartment... no neighbors are active");
+    if(i<3 && activeNeighbors.size()>1){
+        cout<<"Error transferring species along an axis. More than 1 neighbor. Exiting. "<< endl;
+        exit(EXIT_FAILURE);
+    }
     
     //go through species
     Species* sp_neighbor;
@@ -134,33 +178,108 @@ void Compartment::transferSpecies() {
         int copyNumber = sp->getN();
         auto nit = activeNeighbors.begin();
         
-        while(copyNumber > 0) {
-            sp->down();
-            
-            //choose a random active neighbor
-            auto neighbor = *nit;
-            sp_neighbor = neighbor->findSpeciesByName(sp->getName());
-            
-            //add to list if not already
-            auto spit = find(sp_neighbors.begin(),
-                             sp_neighbors.end(),
-                             sp_neighbor);
-            
-            if(spit == sp_neighbors.end())
-                sp_neighbors.push_back(sp_neighbor);
-            
-            //increase copy number
-            sp_neighbor->up();
-            
-            //reset if we've looped through
-            if(++nit == activeNeighbors.end())
-                nit = activeNeighbors.begin();
-            copyNumber--;
+        if(sp->getFullName().find("Bound") == string::npos){
+            while(copyNumber > 0) {
+                sp->down();
+                
+                //choose a random active neighbor
+                auto neighbor = *nit;
+                
+                sp_neighbor = neighbor->findSpeciesByName(sp->getName());
+                
+                //add to list if not already
+                auto spit = find(sp_neighbors.begin(),
+                                 sp_neighbors.end(),
+                                 sp_neighbor);
+                
+                if(spit == sp_neighbors.end())
+                    sp_neighbors.push_back(sp_neighbor);
+                
+                //increase copy number
+                
+                sp_neighbor->up();
+                
+                //reset if we've looped through
+                if(++nit == activeNeighbors.end())
+                    nit = activeNeighbors.begin();
+                copyNumber--;
+                
+            }
         }
         
         //activate all reactions changed
         for(auto spn : sp_neighbors)
             spn->updateReactantPropensities();
+        for(auto &sp : _species.species())
+            sp->updateReactantPropensities();
+    }
+}
+
+void Compartment::shareSpecies(int i) {
+    //i axis
+    //0 X
+    //1 Y
+    //2 Z
+    //3 all directions
+    //get active neighbors
+    vector<Compartment*> activeNeighbors;
+    
+    for(auto &neighbor : _neighbours){
+        auto ncoord=neighbor->coordinates();
+    if(neighbor->isActivated()){
+        if(i==3)
+            activeNeighbors.push_back(neighbor);
+        else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
+        activeNeighbors.push_back(neighbor);
+    }}
+    
+    assert(activeNeighbors.size() != 0
+           && "Cannot share species to another compartment... no neighbors are active");
+    if(i<3 && activeNeighbors.size()>1){
+        cout<<"Error sharing species along an axis. More than 1 neighbor. Exiting."<< endl;
+        exit(EXIT_FAILURE);
+    }
+    //go through species
+    Species* sp_neighbor;
+    vector<Species*> sp_neighbors;
+    
+    for(auto &sp : _species.species()) {
+        auto nit = activeNeighbors.begin();
+        auto neighbor = *nit;
+        sp_neighbor = neighbor->findSpeciesByName(sp->getName());
+        int copyNumber = sp_neighbor->getN();
+        int lowerlimit = (int) sp_neighbor->getN()/2;
+//        std::cout<<copyNumber<<endl;
+        if(sp->getFullName().find("Bound") == string::npos){
+            while(copyNumber > lowerlimit) {
+                sp_neighbor->down();
+                
+                //add to list if not already
+                auto spit = find(sp_neighbors.begin(),
+                                 sp_neighbors.end(),
+                                 sp_neighbor);
+                
+                if(spit == sp_neighbors.end())
+                    sp_neighbors.push_back(sp_neighbor);
+                
+                //increase copy number
+                sp->up();
+                //reset if we've looped through
+                if(++nit == activeNeighbors.end())
+                    nit = activeNeighbors.begin();
+                neighbor = *nit;
+                sp_neighbor = neighbor->findSpeciesByName(sp->getName());
+                copyNumber--;
+                
+            }
+        }
+//        std::cout<<sp->getN()<<" "<<sp_neighbor->getN()<<endl;
+        //activate all reactions changed
+        for(auto spn : sp_neighbors)
+            spn->updateReactantPropensities();
+        for(auto &sp : _species.species())
+            sp->updateReactantPropensities();
+        
     }
 }
 
@@ -170,11 +289,60 @@ void Compartment::activate(ChemSim* chem) {
     
     //set marker
     _activated = true;
-    
     //add all diffusion reactions
-    auto rxns = generateAllDiffusionReactions();
+    auto rxns = generateAllpairsDiffusionReactions();
     for(auto &r : rxns) chem->addReaction(r);
+    shareSpecies(SysParams::Mechanics().transfershareaxis);
+    
+//    for(auto &r : _diffusion_reactions.reactions()) {
+//        //auto rs = r.get()->rspecies();
+//        RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
+//        std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
+//    }
+//    std::cout<<"--"<<endl;
+    for (auto &C: _neighbours){
+        if(C->isActivated()){
+            for(auto &r : C->_diffusion_reactions.reactions()) {
+                auto rs = r.get()->rspecies()[1];
+                if(rs->getSpecies().getParent() == this) {
+                    auto rs1 = r.get()->rspecies()[0];
+                    if(rs1->getN()>0 && r->isPassivated()){
+                        r->activateReaction();
+                    }
+//            RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
+//            std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
+        }
+    }
+//        std::cout<<"-*"<<endl;
+        }
+    }
+    
 
+//    _diffusion_reactions.updatePropensityComprtment();
+//    for (auto &C: _neighbours){
+//        C->_diffusion_reactions.updatePropensityComprtment();
+//    }
+    
+    
+//    std::cout<<"After updation"<<endl;
+//    for(auto &r : _diffusion_reactions.reactions()) {
+//        //auto rs = r.get()->rspecies();
+//        RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
+//        std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
+//    }
+//    std::cout<<"--"<<endl;
+//    for (auto &C: _neighbours){
+//        for(auto &r : C->_diffusion_reactions.reactions()) {
+//            auto rs = r.get()->rspecies()[1];
+//            if(rs->getSpecies().getParent() == this) {
+//                RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
+////                rn->printSelf();
+//                std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
+//            }
+//        }
+//        std::cout<<"-*"<<endl;
+//    }
+    
 }
 
 void Compartment::deactivate(ChemSim* chem) {
@@ -188,7 +356,7 @@ void Compartment::deactivate(ChemSim* chem) {
     //set marker
     _activated = false;
     
-    transferSpecies();
+    transferSpecies(SysParams::Mechanics().transfershareaxis);
     removeAllDiffusionReactions(chem);
 }
 

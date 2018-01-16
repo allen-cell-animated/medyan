@@ -150,7 +150,8 @@ public:
     /// Transfer all species copy numbers from this compartment to neighboring
     /// active compartments. If no neighboring active compartments are present,
     /// throw an error.
-    virtual void transferSpecies();
+    virtual void transferSpecies(int i);
+    virtual void shareSpecies(int i);
     
     
     /// Removes all reactions from this compartment, diffusing and internal
@@ -579,6 +580,10 @@ public:
     ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateAllDiffusionReactions();
     
+    /// Generates all diffusion reactions between this compartment and its neighbors
+    /// in addition to generating reverse reactions
+    ///@return - a vector of reactionbases that was just added
+    vector<ReactionBase*> generateAllpairsDiffusionReactions();
     
     /// Remove diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just removed
