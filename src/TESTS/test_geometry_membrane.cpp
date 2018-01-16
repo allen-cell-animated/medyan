@@ -41,6 +41,7 @@ namespace {
     using MembraneData = vector<VertexData>;
 
     MembraneData membraneDataOctahedron(double radius) {
+        // The center will be located at (2*radius, 2*radius, 2*radius)
         double c = 2 * radius;
 
         return MembraneData{
@@ -226,6 +227,38 @@ TEST_F(MembraneGeometryTest, Geometry) {
         EXPECT_DOUBLE_EQ(stretchedVertexPseudoUnitNormal0[coordIdx], exStretchedVertexPseudoUnitNormal0[coordIdx])
             << "Vertex stretched pseudo unit normal doesn't match at coordinate index " << coordIdx;
 
+}
+
+TEST_F(MembraneGeometryTest, SignedDistance) {
+    // Check the correctness of the signed distance field.
+
+    // Prerequisites
+    m->updateGeometry(true);
+
+    // On triangle
+    EXPECT_DOUBLE_EQ(m->signedDistance({2*radius, 2*radius, 2*radius}, true), -radius / sqrt(3));
+    EXPECT_DOUBLE_EQ(m->signedDistance({2*radius, 2*radius, 2*radius}, false), -radius / sqrt(3));
+
+    EXPECT_DOUBLE_EQ(m->signedDistance({3*radius, 3*radius, 3*radius}, true), radius * 2.0 / sqrt(3));
+    EXPECT_DOUBLE_EQ(m->signedDistance({3*radius, 3*radius, 3*radius}, false), radius * 2.0 / sqrt(3));
+
+    EXPECT_DOUBLE_EQ(m->signedDistance({0.0, 0.0, 0.0}, true), radius * 5.0 / sqrt(3));
+    EXPECT_DOUBLE_EQ(m->signedDistance({0.0, 0.0, 0.0}, false), radius * 5.0 / sqrt(3));
+
+    // On edge
+    EXPECT_DOUBLE_EQ(m->signedDistance({2*radius, 3*radius, 3*radius}, true), radius / sqrt(2));
+    EXPECT_DOUBLE_EQ(m->signedDistance({2*radius, 3*radius, 3*radius}, false), radius / sqrt(2));
+
+    EXPECT_DOUBLE_EQ(m->signedDistance({0, 0, 2*radius}, true), radius * 3.0 / sqrt(2));
+    EXPECT_DOUBLE_EQ(m->signedDistance({0, 0, 2*radius}, false), radius * 3.0 / sqrt(2));
+
+    // On vertex
+    EXPECT_DOUBLE_EQ(m->signedDistance({4*radius, 2*radius, 2*radius}, true), radius);
+    EXPECT_DOUBLE_EQ(m->signedDistance({4*radius, 2*radius, 2*radius}, false), radius);
+
+    EXPECT_DOUBLE_EQ(m->signedDistance({2*radius, 2*radius, 0}, true), radius);
+    EXPECT_DOUBLE_EQ(m->signedDistance({2*radius, 2*radius, 0}, false), radius);
+    
 }
 
 TEST_F(MembraneGeometryTest, Derivative) {
