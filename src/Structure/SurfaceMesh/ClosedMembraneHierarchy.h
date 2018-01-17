@@ -48,11 +48,11 @@ public:
     **************************************************************************/
     // When new membrane is inserted. Must be a closed membrane.
     // This function requires that geometry of the membrane has been updated.
-    static void addMembrane(Membrane* m, const ClosedMembraneHierarchy& root);
+    static void addMembrane(Membrane* m, ClosedMembraneHierarchy& root);
 
     // When a membrane is removed. Must be a closed membrane.
     // Returns whether something is deleted.
-    static bool removeMembrane(Membrane* m, const ClosedMembraneHierarchy& root);
+    static bool removeMembrane(Membrane* m, ClosedMembraneHierarchy& root);
 
 };
 

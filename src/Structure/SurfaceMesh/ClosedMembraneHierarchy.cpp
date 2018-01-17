@@ -4,6 +4,8 @@
 #include <stdexcept>
 
 #include "common.h"
+#include "MathFunctions.h"
+using namespace mathfunc;
 
 #include "Membrane.h"
 #include "Vertex.h"
@@ -42,14 +44,14 @@ void ClosedMembraneHierarchy::printTree(string indent, bool last)const {
 
     size_t n = numberOfChildren();
     for (size_t idx = 0; idx < n; ++idx)
-        children()[idx]->printTree(indent, idx == n - 1);
+        static_cast<ClosedMembraneHierarchy*>(children()[idx].get())->printTree(indent, idx == n - 1);
 }
 
-void ClosedMembraneHierarchy::addMembrane(Membrane* m, const ClosedMembraneHierarchy& root) {
+void ClosedMembraneHierarchy::addMembrane(Membrane* m, ClosedMembraneHierarchy& root) {
     auto& rootChildren = root.children();
 
     // Pick a point on the membrane and check the containing relationship with other membranes
-    array<double, 3> p = vector2Array<double, 3>(m->getVertices().at(0)->coordinate);
+    array<double, 3> p = vector2Array<double, 3>(m->getVertexVector().at(0)->coordinate);
 
     // Recursively search
     for(auto& childPtr: rootChildren) {
@@ -77,7 +79,7 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, const ClosedMembraneHiera
 
         ClosedMembraneHierarchy* hiePtr = static_cast<ClosedMembraneHierarchy*>(childPtr.get());
 
-        array<double, 3> hieP = vector2Array<double, 3>(hiePtr->_membrane->getVertices().at(0)->coordinate);
+        array<double, 3> hieP = vector2Array<double, 3>(hiePtr->_membrane->getVertexVector().at(0)->coordinate);
 
         if(m->signedDistance(hieP, true) < 0) { // The child membrane is inside new membrane
 
@@ -104,7 +106,7 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, const ClosedMembraneHiera
 
 }
 
-bool ClosedMembraneHierarchy::removeMembrane(Membrane* m, const ClosedMembraneHierarchy& root) {
+bool ClosedMembraneHierarchy::removeMembrane(Membrane* m, ClosedMembraneHierarchy& root) {
     // Find the membrane to be removed by recursive search
     // Only 1 node will be deleted
 
