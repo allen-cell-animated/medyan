@@ -1,6 +1,8 @@
 #ifndef MEDYAN_ClosedMembraneHierarchy_h
 #define MEDYAN_ClosedMembraneHierarchy_h
 
+#include <string>
+
 #include "Component.h"
 #include "Composite.h"
 
@@ -26,6 +28,8 @@ private:
 
     Membrane* _membrane = nullptr; // pointer to the membrane of this level
 
+    void printTree(string indent, bool last)const; // helper function for printSelf
+
 public:
 
     /**************************************************************************
@@ -43,10 +47,12 @@ public:
     Operations on a tree structure
     **************************************************************************/
     // When new membrane is inserted. Must be a closed membrane.
+    // This function requires that geometry of the membrane has been updated.
     static void addMembrane(Membrane* m, const ClosedMembraneHierarchy& root);
 
     // When a membrane is removed. Must be a closed membrane.
-    static void removeMembrane(Membrane* m, const ClosedMembraneHierarchy& root);
+    // Returns whether something is deleted.
+    static bool removeMembrane(Membrane* m, const ClosedMembraneHierarchy& root);
 
 };
 

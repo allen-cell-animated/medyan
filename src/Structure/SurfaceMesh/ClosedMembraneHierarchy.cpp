@@ -6,6 +6,7 @@
 #include "common.h"
 
 #include "Membrane.h"
+#include "Vertex.h"
 
 // FORWARD DECLARATIONS
 class Membrane;
@@ -15,7 +16,33 @@ void ClosedMembraneHierarchy::printSelf()const {
 
     cout << "ClosedMembraneHierarchy: ptr = " << this << endl;
 
+    printTree("", true);
+
     cout << endl;
+}
+
+void ClosedMembraneHierarchy::printTree(string indent, bool last)const {
+    cout << indent;
+    if (last) {
+        cout << "\-";
+        indent += "  ";
+    }
+    else {
+        cout << "|-";
+        indent += "| ";
+    }
+    
+    cout << this;
+    if(_membrane)
+        cout << " (Mem Ptr: " << _membrane << " Id: " << _membrane->getId() << ")";
+    else
+        cout << " (No membrane attached)";
+    
+    cout << endl;
+
+    size_t n = numberOfChildren();
+    for (size_t idx = 0; idx < n; ++idx)
+        children()[idx]->printTree(indent, idx == n - 1);
 }
 
 void ClosedMembraneHierarchy::addMembrane(Membrane* m, const ClosedMembraneHierarchy& root) {
@@ -42,7 +69,7 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, const ClosedMembraneHiera
 
     // Now, the new membrane is outside of every child membrane.
 
-    // First create the node under the current root (parent)
+    // First create a new node
     ClosedMembraneHierarchy* newNode = new ClosedMembraneHierarchy(m);
 
     // Then check whether any children is inside this membrane
@@ -55,9 +82,9 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, const ClosedMembraneHiera
         if(m->signedDistance(hieP, true) < 0) { // The child membrane is inside new membrane
 
             // Add child to the new node
-            newNode->addChild(childPtr); // Now the content of childPtr is moved and becomes the new child of the new node.
-                                         // The parent of the child has also been changed.
-                                         // The childPtr now should be nullptr.
+            newNode->addChild(move(childPtr)); // Now the content of childPtr is moved and becomes the new child of the new node.
+                                               // The parent of the child has also been changed.
+                                               // The childPtr now should be nullptr.
             
             // For safety, check the current pointer. Don't think it is needed by standard.
             if(childPtr) {
@@ -73,6 +100,44 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, const ClosedMembraneHiera
     rootChildren.erase(remove(rootChildren.begin(), rootChildren.end(), nullptr), rootChildren.end());
 
     // Finally add the new node to the current root
-    root.addChild(newNode); // Also manages the deletion of newNode
+    root.addChild(unique_ptr<Component>(newNode)); // Also manages the deletion of newNode
+
+}
+
+bool ClosedMembraneHierarchy::removeMembrane(Membrane* m, const ClosedMembraneHierarchy& root) {
+    // Find the membrane to be removed by recursive search
+    // Only 1 node will be deleted
+
+    ClosedMembraneHierarchy* nodeToBeDeleted = nullptr;
+    
+    for(auto& childPtr: root.children()) {
+        
+        ClosedMembraneHierarchy* hiePtr = static_cast<ClosedMembraneHierarchy*>(childPtr.get());
+
+        if(hiePtr->_membrane == m) { // Found the node to be removed
+            nodeToBeDeleted = hiePtr;
+        }
+        else {
+            if(ClosedMembraneHierarchy::removeMembrane(m, *hiePtr)) return true;
+            // else the search continues
+        }
+    }
+
+    if(nodeToBeDeleted) {
+
+        // Bring all its children under its parent.
+        for(auto& childHiePtr: nodeToBeDeleted->children()) {
+            root.addChild(move(childHiePtr));
+        }
+
+        // Remove the node from root and destroy it.
+        root.removeChild(nodeToBeDeleted);
+
+        // Exit function
+        return true;
+
+    } else {
+        return false;
+    }
 
 }
