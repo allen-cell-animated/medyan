@@ -106,6 +106,41 @@ namespace {
             }
         }
     }
+
+    class MembraneHierarchyFlattened {
+    public:
+        int id;
+        vector<MembraneHierarchyFlattened> children;
+        MembraneHierarchyFlattened(int newId): id(newId) {}
+        MembraneHierarchyFlattened(int newId, const vector<MembraneHierarchyFlattened>& newHie):
+            id(newId), children(newHie) {}
+    };
+    bool operator==(const MembraneHierarchyFlattened& o1, const MembraneHierarchyFlattened& o2) {
+        return (o1.id == o2.id) && (o1.children == o2.children);
+    }
+    ostream& operator<<(ostream& os, const MembraneHierarchyFlattened& mhf) {
+        if(mhf.id == -1) os << "root"; else os << mhf.id;
+
+        size_t n = mhf.children.size();
+        if(n) {
+            os << '(';
+            for(size_t idx = 0; idx < n; ++idx) {
+                os << mhf.children[idx];
+                if(idx < n - 1) os << ", ";
+            }
+            os << ')';
+        }
+        return os;
+    }
+    MembraneHierarchyFlattened FlattenMembraneHierarchy(const ClosedMembraneHierarchy& root) {
+        MembraneHierarchyFlattened res(root.getMembrane()? root.getMembrane()->getId(): -1);
+
+        for(auto& child: root.children()) {
+            res.children.push_back(FlattenMembraneHierarchy(*static_cast<ClosedMembraneHierarchy*>(child.get())));
+        }
+
+        return res;
+    }
 }
 
 TEST_F(MembraneGeometryTest, Topology) {
@@ -415,32 +450,72 @@ TEST_F(MembraneGeometryTest, ClosedMembraneHierarchy) {
         ClosedMembraneHierarchy::addMembrane(eachM, root);
     }
 
+    // Check printSelf function manually
     cout << endl << "Testing ClosedMembraneHierarchy output function, it should look nice and correct." << endl
         << "Expected containing relationship: "
-        << "root("
-            << 0 + idShift << "("
-                << 2 + idShift << ", "
-                << 3 + idShift << "("
-                    << 1 + idShift
-                << ")"
-            << "), "
-            << 5 + idShift << "("
-                << 4 + idShift
-            << ")"
-        << ")" << endl;
+        << FlattenMembraneHierarchy(root)
+        << endl;
     root.printSelf();
+
+    // Check hierarchy
+    {
+        MembraneHierarchyFlattened exHie { -1, {
+            { 0 + idShift, {
+                { 2 + idShift },
+                { 3 + idShift, {
+                    { 1 + idShift }
+                }}
+            }},
+            { 5 + idShift, {
+                { 4 + idShift }
+            }}
+        }};
+        EXPECT_EQ(FlattenMembraneHierarchy(root), exHie)
+            << "Membrane hierarchy incorrect.";
+    }
 
     ClosedMembraneHierarchy::removeMembrane(ms[0], root);
-    cout << endl << "After removing membrane with id " << 0 + idShift << endl;
-    root.printSelf();
+    {
+        MembraneHierarchyFlattened exHie { -1, {
+            { 5 + idShift, {
+                { 4 + idShift }
+            }},
+            { 2 + idShift },
+            { 3 + idShift, {
+                { 1 + idShift }
+            }}
+        }};
+        EXPECT_EQ(FlattenMembraneHierarchy(root), exHie)
+            << "Membrane hierarchy incorrect after removing membrane with id " << 0 + idShift;
+    }
 
     ClosedMembraneHierarchy::removeMembrane(ms[3], root);
-    cout << endl << "After removing membrane with id " << 3 + idShift << endl;
-    root.printSelf();
+    {
+        MembraneHierarchyFlattened exHie { -1, {
+            { 5 + idShift, {
+                { 4 + idShift }
+            }},
+            { 2 + idShift },
+            { 1 + idShift }
+        }};
+        EXPECT_EQ(FlattenMembraneHierarchy(root), exHie)
+            << "Membrane hierarchy incorrect after removing membrane with id " << 3 + idShift;
+    }
 
     ClosedMembraneHierarchy::addMembrane(ms[0], root);
-    cout << endl << "After adding back membrane with id " << 0 + idShift << endl;
-    root.printSelf();
+    {
+        MembraneHierarchyFlattened exHie { -1, {
+            { 5 + idShift, {
+                { 4 + idShift }
+            }},
+            { 0 + idShift, {
+                { 2 + idShift },
+                { 1 + idShift }
+            }}
+        }};
+        EXPECT_EQ(FlattenMembraneHierarchy(root), exHie)
+            << "Membrane hierarchy incorrect after adding back membrane with id " << 0 + idShift;
+    }
 
 
     for(auto eachM: ms) delete eachM;
