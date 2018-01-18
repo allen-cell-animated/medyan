@@ -75,32 +75,36 @@ void MembraneHierarchy::addMembrane(Membrane* m, MembraneHierarchy& root) {
     // First create a new node
     MembraneHierarchy* newNode = new MembraneHierarchy(m);
 
-    // Then check whether any children is inside this membrane
-    for(auto& childPtr: rootChildren) {
+    // Then check whether any children is inside this membrane.
+    // Open membranes cannot contain any children.
+    if(m->isClosed()) {
 
-        MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
+        for(auto& childPtr: rootChildren) {
 
-        array<double, 3> hieP = vector2Array<double, 3>(hiePtr->_membrane->getVertexVector().at(0)->coordinate);
+            MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
-        if(m->signedDistance(hieP, true) < 0) { // The child membrane is inside new membrane
+            array<double, 3> hieP = vector2Array<double, 3>(hiePtr->_membrane->getVertexVector().at(0)->coordinate);
 
-            // Add child to the new node
-            newNode->addChild(move(childPtr)); // Now the content of childPtr is moved and becomes the new child of the new node.
-                                               // The parent of the child has also been changed.
-                                               // The childPtr now should be nullptr.
-            
-            // For safety, check the current pointer. Don't think it is needed by standard.
-            if(childPtr) {
-                delete newNode; // To prevent memory leak
-                throw logic_error("Original child pointer not null after being moved.");
+            if(m->signedDistance(hieP, true) < 0) { // The child membrane is inside new membrane
+
+                // Add child to the new node
+                newNode->addChild(move(childPtr)); // Now the content of childPtr is moved and becomes the new child of the new node.
+                                                   // The parent of the child has also been changed.
+                                                   // The childPtr now should be nullptr.
+                
+                // For safety, check the current pointer. Don't think it is needed by standard.
+                if(childPtr) {
+                    delete newNode; // To prevent memory leak
+                    throw logic_error("Original child pointer not null after being moved.");
+                }
+                
             }
-            
         }
-    }
 
-    // Then remove all null children from root using erase-remove idiom.
-    // Good news: unique_ptr can be compared to nullptr_t.
-    rootChildren.erase(remove(rootChildren.begin(), rootChildren.end(), nullptr), rootChildren.end());
+        // Then remove all null children from root using erase-remove idiom.
+        // Good news: unique_ptr can be compared to nullptr_t.
+        rootChildren.erase(remove(rootChildren.begin(), rootChildren.end(), nullptr), rootChildren.end());
+    }
 
     // Finally add the new node to the current root
     root.addChild(unique_ptr<Component>(newNode)); // Also manages the deletion of newNode

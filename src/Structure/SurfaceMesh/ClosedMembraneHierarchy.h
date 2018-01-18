@@ -51,7 +51,7 @@ public:
     /**************************************************************************
     Operations on a tree structure
     **************************************************************************/
-    // When new membrane is inserted. Must be a closed membrane.
+    // When new membrane is inserted.
     // This function requires that geometry of the membrane has been updated.
     static void addMembrane(Membrane* m, MembraneHierarchy& root);
 
