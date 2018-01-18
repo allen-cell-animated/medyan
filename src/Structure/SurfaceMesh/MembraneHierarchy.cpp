@@ -64,7 +64,7 @@ void MembraneHierarchy::addMembrane(Membrane* m, MembraneHierarchy& root) {
             throw runtime_error("The child node does not point to a specific membrane.");
         }
 
-        if(hiePtr->_membrane->signedDistance(p, true) < 0) { // Is inside one of the child nodes
+        if(hiePtr->_membrane->isClosed() && hiePtr->_membrane->signedDistance(p, true) < 0) { // Is inside one of the child nodes
             MembraneHierarchy::addMembrane(m, *hiePtr); // Search that child
             return;
         }
