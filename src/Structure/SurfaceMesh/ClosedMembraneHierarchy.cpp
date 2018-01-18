@@ -45,7 +45,7 @@ void ClosedMembraneHierarchy::printTree(string indent, bool last)const {
 
     size_t n = numberOfChildren();
     for (size_t idx = 0; idx < n; ++idx)
-        static_cast<ClosedMembraneHierarchy*>(children(idx))->printTree(indent, idx == n - 1);
+        static_cast<const ClosedMembraneHierarchy*>(children(idx))->printTree(indent, idx == n - 1);
 }
 
 void ClosedMembraneHierarchy::addMembrane(Membrane* m, ClosedMembraneHierarchy& root) {
