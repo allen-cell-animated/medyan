@@ -1,4 +1,4 @@
-#include "ClosedMembraneHierarchy.h"
+#include "MembraneHierarchy.h"
 
 #include <algorithm>
 #include <stdexcept>
@@ -13,10 +13,10 @@ using namespace mathfunc;
 // FORWARD DECLARATIONS
 class Membrane;
 
-void ClosedMembraneHierarchy::printSelf()const {
+void MembraneHierarchy::printSelf()const {
     cout << endl;
 
-    cout << "ClosedMembraneHierarchy: ptr = " << this << endl;
+    cout << "MembraneHierarchy: ptr = " << this << endl;
 
     cout << endl << "Tree structure:" << endl;
     printTree("", true);
@@ -24,7 +24,7 @@ void ClosedMembraneHierarchy::printSelf()const {
     cout << endl;
 }
 
-void ClosedMembraneHierarchy::printTree(string indent, bool last)const {
+void MembraneHierarchy::printTree(string indent, bool last)const {
     cout << indent;
     if (last) {
         cout << "\\-";
@@ -45,10 +45,10 @@ void ClosedMembraneHierarchy::printTree(string indent, bool last)const {
 
     size_t n = numberOfChildren();
     for (size_t idx = 0; idx < n; ++idx)
-        static_cast<const ClosedMembraneHierarchy*>(children(idx))->printTree(indent, idx == n - 1);
+        static_cast<const MembraneHierarchy*>(children(idx))->printTree(indent, idx == n - 1);
 }
 
-void ClosedMembraneHierarchy::addMembrane(Membrane* m, ClosedMembraneHierarchy& root) {
+void MembraneHierarchy::addMembrane(Membrane* m, MembraneHierarchy& root) {
     auto& rootChildren = root.children();
 
     // Pick a point on the membrane and check the containing relationship with other membranes
@@ -57,7 +57,7 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, ClosedMembraneHierarchy& 
     // Recursively search
     for(auto& childPtr: rootChildren) {
         
-        ClosedMembraneHierarchy* hiePtr = static_cast<ClosedMembraneHierarchy*>(childPtr.get());
+        MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
         if(hiePtr->_membrane == nullptr) {
             hiePtr->printSelf();
@@ -65,7 +65,7 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, ClosedMembraneHierarchy& 
         }
 
         if(hiePtr->_membrane->signedDistance(p, true) < 0) { // Is inside one of the child nodes
-            ClosedMembraneHierarchy::addMembrane(m, *hiePtr); // Search that child
+            MembraneHierarchy::addMembrane(m, *hiePtr); // Search that child
             return;
         }
     }
@@ -73,12 +73,12 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, ClosedMembraneHierarchy& 
     // Now, the new membrane is outside of every child membrane.
 
     // First create a new node
-    ClosedMembraneHierarchy* newNode = new ClosedMembraneHierarchy(m);
+    MembraneHierarchy* newNode = new MembraneHierarchy(m);
 
     // Then check whether any children is inside this membrane
     for(auto& childPtr: rootChildren) {
 
-        ClosedMembraneHierarchy* hiePtr = static_cast<ClosedMembraneHierarchy*>(childPtr.get());
+        MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
         array<double, 3> hieP = vector2Array<double, 3>(hiePtr->_membrane->getVertexVector().at(0)->coordinate);
 
@@ -107,21 +107,21 @@ void ClosedMembraneHierarchy::addMembrane(Membrane* m, ClosedMembraneHierarchy& 
 
 }
 
-bool ClosedMembraneHierarchy::removeMembrane(Membrane* m, ClosedMembraneHierarchy& root) {
+bool MembraneHierarchy::removeMembrane(Membrane* m, MembraneHierarchy& root) {
     // Find the membrane to be removed by recursive search
     // Only 1 node will be deleted
 
-    ClosedMembraneHierarchy* nodeToBeDeleted = nullptr;
+    MembraneHierarchy* nodeToBeDeleted = nullptr;
     
     for(auto& childPtr: root.children()) {
         
-        ClosedMembraneHierarchy* hiePtr = static_cast<ClosedMembraneHierarchy*>(childPtr.get());
+        MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
         if(hiePtr->_membrane == m) { // Found the node to be removed
             nodeToBeDeleted = hiePtr;
         }
         else {
-            if(ClosedMembraneHierarchy::removeMembrane(m, *hiePtr)) return true;
+            if(MembraneHierarchy::removeMembrane(m, *hiePtr)) return true;
             // else the search continues
         }
     }

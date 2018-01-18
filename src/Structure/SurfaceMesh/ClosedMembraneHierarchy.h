@@ -1,5 +1,5 @@
-#ifndef MEDYAN_ClosedMembraneHierarchy_h
-#define MEDYAN_ClosedMembraneHierarchy_h
+#ifndef MEDYAN_MembraneHierarchy_h
+#define MEDYAN_MembraneHierarchy_h
 
 #include <string>
 
@@ -22,7 +22,7 @@ containing the membranes of the children; the membranes of the nodes of the
 same level does not contain each other.
 ******************************************************************************/
 
-class ClosedMembraneHierarchy: public Composite {
+class MembraneHierarchy: public Composite {
 
 private:
 
@@ -35,7 +35,7 @@ public:
     /**************************************************************************
     Ctors and Dtors
     **************************************************************************/
-    ClosedMembraneHierarchy(Membrane* m): _membrane(m) {}
+    MembraneHierarchy(Membrane* m): _membrane(m) {}
 
     /**************************************************************************
     Getters and Setters
@@ -53,11 +53,11 @@ public:
     **************************************************************************/
     // When new membrane is inserted. Must be a closed membrane.
     // This function requires that geometry of the membrane has been updated.
-    static void addMembrane(Membrane* m, ClosedMembraneHierarchy& root);
+    static void addMembrane(Membrane* m, MembraneHierarchy& root);
 
     // When a membrane is removed. Must be a closed membrane.
     // Returns whether something is deleted.
-    static bool removeMembrane(Membrane* m, ClosedMembraneHierarchy& root);
+    static bool removeMembrane(Membrane* m, MembraneHierarchy& root);
 
 };
 
