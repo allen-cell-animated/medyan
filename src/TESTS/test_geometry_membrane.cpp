@@ -35,22 +35,21 @@ using namespace mathfunc;
 #    include "GEdge.h"
 #    include "GTriangle.h"
 #    include "Membrane.h"
+#    include "ClosedMembraneHierarchy.h"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;
     using MembraneData = vector<VertexData>;
 
-    MembraneData membraneDataOctahedron(double radius) {
-        // The center will be located at (2*radius, 2*radius, 2*radius)
-        double c = 2 * radius;
+    MembraneData membraneDataOctahedron(const array<double, 3>& center, double radius) {
 
         return MembraneData{
-            VertexData({c, c, c+radius}, {1, 2, 3, 4}),
-            VertexData({c+radius, c, c}, {0, 4, 5, 2}),
-            VertexData({c, c+radius, c}, {0, 1, 5, 3}),
-            VertexData({c-radius, c, c}, {0, 2, 5, 4}),
-            VertexData({c, c-radius, c}, {0, 3, 5, 1}),
-            VertexData({c, c, c-radius}, {4, 3, 2, 1})
+            VertexData({center[0], center[1], center[2]+radius}, {1, 2, 3, 4}),
+            VertexData({center[0]+radius, center[1], center[2]}, {0, 4, 5, 2}),
+            VertexData({center[0], center[1]+radius, center[2]}, {0, 1, 5, 3}),
+            VertexData({center[0]-radius, center[1], center[2]}, {0, 2, 5, 4}),
+            VertexData({center[0], center[1]-radius, center[2]}, {0, 3, 5, 1}),
+            VertexData({center[0], center[1], center[2]-radius}, {4, 3, 2, 1})
         };
     }
 
@@ -61,7 +60,7 @@ namespace {
         MembraneData memData;
         Membrane *m;
 
-        MembraneGeometryTest(): radius(100), memData(membraneDataOctahedron(radius)) {
+        MembraneGeometryTest(): radius(100), memData(membraneDataOctahedron({2*radius, 2*radius, 2*radius}, radius)) {
             SysParams::GParams.compartmentSizeX = 1e10;
             SysParams::GParams.compartmentSizeY = 1e10;
             SysParams::GParams.compartmentSizeZ = 1e10;
@@ -398,6 +397,54 @@ TEST_F(MembraneGeometryTest, Derivative) {
 
 }
 
+TEST_F(MembraneGeometryTest, ClosedMembraneHierarchy) {
+    vector<Membrane*> ms(6);
+    ms[0] = new Membrane(&s, 0, membraneDataOctahedron({2000, 2000, 2000}, 500));
+    ms[1] = new Membrane(&s, 0, membraneDataOctahedron({1900, 2000, 2000}, 5));
+    ms[2] = new Membrane(&s, 0, membraneDataOctahedron({2100, 2000, 2000}, 50));
+    ms[3] = new Membrane(&s, 0, membraneDataOctahedron({1900, 2000, 2000}, 50));
+    ms[4] = new Membrane(&s, 0, membraneDataOctahedron({4000, 2000, 2000}, 50));
+    ms[5] = new Membrane(&s, 0, membraneDataOctahedron({4000, 2000, 2000}, 500));
+
+    int idShift = ms[0]->getId();
+
+    for(auto eachM: ms) eachM->updateGeometry(true);
+
+    ClosedMembraneHierarchy root(nullptr);
+    for(auto eachM: ms) {
+        ClosedMembraneHierarchy::addMembrane(eachM, root);
+    }
+
+    cout << endl << "Testing ClosedMembraneHierarchy output function, it should look nice and correct." << endl
+        << "Expected containing relationship: "
+        << "root("
+            << 0 + idShift << "("
+                << 2 + idShift << ", "
+                << 3 + idShift << "("
+                    << 1 + idShift
+                << ")"
+            << "), "
+            << 5 + idShift << "("
+                << 4 + idShift
+            << ")"
+        << ")" << endl;
+    root.printSelf();
+
+    ClosedMembraneHierarchy::removeMembrane(ms[0], root);
+    cout << endl << "After removing membrane with id " << 0 + idShift << endl;
+    root.printSelf();
+
+    ClosedMembraneHierarchy::removeMembrane(ms[3], root);
+    cout << endl << "After removing membrane with id " << 3 + idShift << endl;
+    root.printSelf();
+
+    ClosedMembraneHierarchy::addMembrane(ms[0], root);
+    cout << endl << "After adding back membrane with id " << 0 + idShift << endl;
+    root.printSelf();
+
+
+    for(auto eachM: ms) delete eachM;
+}
 
 #  endif //DO_THIS_GEOMETRY_MEMBRANE_TEST
 #endif //TESTING

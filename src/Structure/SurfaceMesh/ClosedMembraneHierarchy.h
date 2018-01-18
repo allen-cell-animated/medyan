@@ -38,6 +38,11 @@ public:
     ClosedMembraneHierarchy(Membrane* m): _membrane(m) {}
 
     /**************************************************************************
+    Getters and Setters
+    **************************************************************************/
+    Membrane* getMembrane()const { return _membrane; }
+
+    /**************************************************************************
     Implements Component
     **************************************************************************/
     virtual int getType()override { return 0; }

@@ -148,7 +148,8 @@ public:
     virtual const vector<unique_ptr<Component>>& children () const {return _children;}
 
     /// Returns a pointer to the i-th Component child of this node
-    virtual Component* children (size_t i) {return _children[i].get();}
+    virtual Component* children(size_t i) { return _children[i].get(); }
+    virtual const Component* children(size_t i)const { return _children[i].get(); }
     
 };
        
