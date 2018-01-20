@@ -51,6 +51,12 @@ namespace mathfunc {
         
         return v1;
     }
+    template<size_t Dim>
+    inline array<double, Dim> normalizedVector(const array<double, Dim>& v) {
+        array<double, Dim> res = v;
+        normalize(res);
+        return res;
+    }
     
     /// Get the magnitude of a vector
     inline double magnitude(const vector<double>& v) {

@@ -14,8 +14,6 @@
 #ifndef MEDYAN_Geometric_h
 #define MEDYAN_Geometric_h
 
-#include "common.h"
-
 /// An abstract base class for a geometric element in the SubSystem.
 
 /*! The main function of the Geometric class is to implement updateGeometry(),
