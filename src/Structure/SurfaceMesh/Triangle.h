@@ -22,6 +22,14 @@ class Edge;
 class Vertex;
 class Compartment;
 
+/******************************************************************************
+Triangles are the only element in the meshwork that has area and act as patches
+that construct the surface.
+
+The triangle patches have geometric and mechanical properties.
+
+The Triangle class has pointers to the vertices and edges.
+******************************************************************************/
 class Triangle:
     public Component,
     public Trackable,

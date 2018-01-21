@@ -9,6 +9,12 @@
 using namespace mathfunc;
 
 void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Triangle* triangle) {
+    /**************************************************************************
+    After slicing, several things will be produced:
+        - Triangles will be sliced and contain 0 or more more 3d polygons
+        - A plane slicing snapshot will be created
+    **************************************************************************/
+    
     // Check whether this triangle can be cut
     auto& v0 = triangle->getVertices()[0]->coordinate;
     auto& v1 = triangle->getVertices()[1]->coordinate;
