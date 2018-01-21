@@ -67,7 +67,8 @@ Assumptions (not checked):
     - all the vertices are on the same plane
     - the polygon does not intersect itself, implying orientability and no hole
 
-For 2D polygon, vertices are connected in the counter-clockwise direction
+For 2D polygon, vertices are connected in the counter-clockwise direction.
+For 3D polygon, the unit normal need to be provided for some calculations.
 ******************************************************************************/
 template<size_t Dim>
 class SimplePolygon: public Geometric {
