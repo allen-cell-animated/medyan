@@ -73,6 +73,8 @@ template<size_t Dim>
 class SimplePolygon: public Geometric {
 private:
     double _area;
+    double _volumeElement; // The signed volume of the pyramid with this polygon as the base and the origin as the vertex
+                           // Only valid when Dim>=3, currently only 3d case is implemented.
 
     std::vector<SimpleVertex<Dim>*> _vertices;
 
@@ -85,6 +87,9 @@ public:
     double getArea()const { return _area; }
     virtual void calcArea();
 
+    double getVolumeElement()const { return _volume; }
+    virtual void calcVolumeElement();
+
     const SimpleVertex<Dim>& vertex(size_t n)const { return *(_vertices[n]); }
 
     void addVertex(const SimpleVertex<Dim>* v, size_t loc=0) {
@@ -93,7 +98,8 @@ public:
 
     // Geometry
     virtual void updateGeometry()override {
-        calcArea();
+        if(Dim <= 3) calcArea();
+        if(Dim == 3) calcVolumeElement();
     }
 }
 
@@ -126,6 +132,21 @@ inline double SimplePolygon<2>::calcArea() {
     }
     _area /= 2;
 
+}
+
+template<>
+inline double SimplePolygon<3>::calcVolumeElement() {
+    // Requires the calculation result of the area
+
+    size_t n = vertices.size();
+    if(n <= 2) { _volumeElement = 0; return; }
+
+    auto normal = normalizedVector(vectorProduct(
+        vertex(0).getCoordinate(), vertex(1).getCoordinate(),
+        vertex(0).getCoordinate(), vertex(2).getCoordinate()
+    ));
+
+    _volumeElement = _area * dotProduct(normal, vertex(0).getCoordinate()) / 3.0;
 }
 
 
