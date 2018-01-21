@@ -75,6 +75,7 @@ private:
     double _area;
     double _volumeElement; // The signed volume of the pyramid with this polygon as the base and the origin as the vertex
                            // Only valid when Dim>=3, currently only 3d case is implemented.
+    std::array<double, 3> _unitNormal; // Normal vector only valid in 3D space
 
     std::vector<SimpleVertex<Dim>*> _vertices;
 
@@ -85,10 +86,14 @@ public:
 
     // Properties
     double getArea()const { return _area; }
-    virtual void calcArea();
+    virtual void calcArea(); // Requires the normal vector in 3D
+
+    const std::array<double, 3>& getUnitNormal()const;
+    virtual void setUnitNormal(const std::array<double, 3>& newUnitNormal);
 
     double getVolumeElement()const { return _volume; }
-    virtual void calcVolumeElement();
+    virtual void calcVolumeElement(); // Requires area calculation
+                                      // Requires the normal vector in 3D
 
     const SimpleVertex<Dim>& vertex(size_t n)const { return *(_vertices[n]); }
 
@@ -108,17 +113,12 @@ inline double SimplePolygon<3>::calcArea() {
     size_t n = vertices.size();
     if(n <= 2) { _area = 0; return; }
 
-    auto normal = normalizedVector(vectorProduct(
-        vertex(0).getCoordinate(), vertex(1).getCoordinate(),
-        vertex(0).getCoordinate(), vertex(2).getCoordinate()
-    ));
-
     std::array<double, 3> tempCross {};
     for(size_t idx = 0; idx < n; ++idx) {
         vectorIncrease(tempCross, crossProduct(vertex(idx).getCoordinate(), vertex((idx + 1) % n).getCoordinate()));
     }
 
-    _area = 0.5 * dotProduct(normal, tempCross);
+    _area = 0.5 * dotProduct(_unitNormal, tempCross);
     
 }
 template<>
@@ -134,19 +134,17 @@ inline double SimplePolygon<2>::calcArea() {
 
 }
 
+template<size_t Dim> inline const std::array<double, 3>& SimplePolygon::getUnitNormal()const = delete;
+template<> inline const std::array<double, 3>& SimplePolygon<3>::getUnitNormal()const { return _unitNormal; }
+template<size_t Dim> inline void SimplePolygon::setUnitNormal(const std::array<double, 3>& newUnitNormal) = delete;
+template<> inline void SimplePolygon<3>::setUnitNormal(const std::array<double, 3>& newUnitNormal) { _unitNormal = newUnitNormal; }
+
 template<>
 inline double SimplePolygon<3>::calcVolumeElement() {
-    // Requires the calculation result of the area
-
     size_t n = vertices.size();
     if(n <= 2) { _volumeElement = 0; return; }
 
-    auto normal = normalizedVector(vectorProduct(
-        vertex(0).getCoordinate(), vertex(1).getCoordinate(),
-        vertex(0).getCoordinate(), vertex(2).getCoordinate()
-    ));
-
-    _volumeElement = _area * dotProduct(normal, vertex(0).getCoordinate()) / 3.0;
+    _volumeElement = _area * dotProduct(_unitNormal, vertex(0).getCoordinate()) / 3.0;
 }
 
 
