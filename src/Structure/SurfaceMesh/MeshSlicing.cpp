@@ -10,9 +10,8 @@ using namespace mathfunc;
 
 void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Triangle* triangle) {
     /**************************************************************************
-    After slicing, several things will be produced:
+    After slicing, what will be produced:
         - Triangles will be sliced and contain 0 or more more 3d polygons
-        - A plane slicing snapshot will be created
     
     The calculation requires
         - The unit normal of the interested triangle
@@ -39,20 +38,97 @@ void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Tr
         auto sv1 = make_unique<SimpleVertex<3>>(vector2Array<double, 3>(v1));
         auto sv2 = make_unique<SimpleVertex<3>>(vector2Array<double, 3>(v2));
         po.emplace_back({{sv0.get(), sv1.get(), sv2.get()}});
+        po.back().setUnitNormal(normal);
 
-        vertices3.push_back(move(sv0));
-        vertices3.push_back(move(sv1));
-        vertices3.push_back(move(sv2));
+        vertices3.insert(move(sv0));
+        vertices3.insert(move(sv1));
+        vertices3.insert(move(sv2));
     }
 
-    for(size_t idx = 0; idx < po.size(); ++idx) { // Note that now size() could change.
-        double refSign = po[idx].vertex(0)[aspect] - otherCoord;
-        double lastSign = refSign;
+    size_t numPolygons = po.size();
+    for(size_t idx = 0; idx < numPolygons; ++idx) {
+        // Note that now po.size() could change, but the new ones are added at the end of the vector
+
+        double firstSign = po[idx].vertex(0)[aspect] - otherCoord;
+        double lastSign = firstSign;
         size_t vIdx = 0;
+        SimplePolygon<3>* lastNewPolygon = nullptr;
+        // Search and find 0 or 2 intersections. Does not work for concave polygons
         while(vIdx < po[idx].getVertexNum()) {
             double nextSign = po[idx].vertex((vIdx + 1) % po[idx].getVertexNum())[aspect] - otherCoord;
-        }
-    }
-    // TODO: implementation
+
+            // Check whether an intersection occurs
+            if(lastSign * nextSign < 0) {
+                // An intersection occurs
+
+                // Find coordinate of intersection
+                double lastShare = lastSign / (lastSign - nextSign);
+                double nextShare = nextSign / (nextSign - lastSign);
+                array<double, 3> vIntersect;
+                for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+                    if(coordIdx == aspect) {
+                        vIntersect[coordIdx] = otherCoord;
+                    } else {
+                        vIntersect[coordIdx] = lastShare * po[idx].vertex(vIdx)[coordIdx]
+                            + nextShare * po[idx].vertex((vIdx + 1) % po[idx].getVertexNum())[coordIdx];
+                    }
+                }
+
+                // New simple vertex at intersection
+                auto sv = make_unique<SimpleVertex<3>>(vIntersect);
+
+                // Check whether this marks the start or the end of the new polygon
+                if(lastNewPolygon) {
+                    // This is the end of the new polygon
+
+                    // Give the vertex to new polygon
+                    lastNewPolygon->addVertex(&(po[idx].vertex(vIdx)), lastNewPolygon->getVertexNum());
+                    po[idx].removeVertex(vIdx);
+
+                    // Insert the new vertex for both polygons
+                    lastNewPolygon->addVertex(sv.get(), lastNewPolygon->getVertexNum());
+                    po[idx].addVertex(sv.get(), vIdx);
+
+                    // Untrack last polygon
+                    lastNewPolygon = nullptr;
+
+                    ++vIdx;
+
+                } else {
+                    // This is the start of the new polygon
+
+                    // Add an empty polygon
+                    po.emplace_back();
+                    lastNewPolygon = &(po.back());
+                    lastNewPolygon->setUnitNormal(normal);
+
+                    // Insert the new vertex for both polygons
+                    lastNewPolygon->addVertex(sv.get());
+                    po[idx].addVertex(sv.get(), vIdx + 1);
+
+                    ++vIdx;
+                }
+
+                // Store the new vertex
+                vertices3.insert(move(sv));
+
+            } else {
+                // No intersection occurs
+
+                if(lastNewPolygon) {
+                    // Give the vertex to new polygon
+                    lastNewPolygon->addVertex(&(po[idx].vertex(vIdx)), lastNewPolygon->getVertexNum());
+                    po[idx].removeVertex(vIdx);
+
+                    // Note that vIdx do not increase in this case!
+                } else {
+                    ++vIdx;
+                }
+            }
+
+            lastSign = nextSign;
+
+        } // End of loop on the vertices of the polygon
+    } // End of loop on several polygons
 }
 

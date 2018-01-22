@@ -103,6 +103,9 @@ public:
     void addVertex(const SimpleVertex<Dim>* v, size_t loc=0) {
         _vertices.insert(_vertices.begin() + loc, v);
     }
+    void removeVertex(size_t loc) {
+        _vertices.erase(_vertices.begin() + loc);
+    }
 
     // Geometry
     virtual void updateGeometry()override {
