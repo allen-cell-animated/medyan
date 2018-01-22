@@ -42,7 +42,7 @@ public:
     
     virtual void vectorize();
     virtual void cleanup();
-    
+
     virtual string getName() {return "Linker";}
     virtual void whoIsCulprit();
     

@@ -51,7 +51,10 @@ public:
     
     /// Copy forces from f to fprev
     void copyForces(double *f, double *fprev);
-    
+
+    /// CUDA Copy forces from f to fprev
+    void CUDAcopyForces(cudaStream_t  stream, double *f, double *fprev);
+
     /// Compute the load forces on the beads. This does not update the force (xyz) vector
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
@@ -59,6 +62,10 @@ public:
 #ifdef CROSSCHECK
     /// Reset the forces of all objects
     void resetForces();
+#endif
+#ifdef CUDAACCL
+    vector<int> blocksnthreads;
+    int *gpu_nint;
 #endif
 };
 

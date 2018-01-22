@@ -41,7 +41,7 @@ public:
     
     virtual void vectorize();
     virtual void cleanup();
-    
+
     virtual string getName() {return "Excluded Volume";}
     virtual void whoIsCulprit();
     

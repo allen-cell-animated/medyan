@@ -43,7 +43,7 @@ public:
     
     virtual void vectorize();
     virtual void cleanup();
-    
+
     virtual string getName() {return "Boundary";}
     virtual void whoIsCulprit();
     

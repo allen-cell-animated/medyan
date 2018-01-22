@@ -34,9 +34,10 @@ class Bead;
 class CGMethod {
     
     
-    
+
 protected:
-    
+
+
     ///< Data vectors for calculation
     double *coord;  ///<bead coordinates (length 3*N)
     
@@ -63,7 +64,56 @@ protected:
     //@}
     
     //@{
+
+#ifdef CUDAACCL
+    vector<int> blocksnthreads;
+    int *gpu_nint;
+    double *gpu_g;
+    double *gSum;
+    double *gpu_fmax;
+    double *g_currentenergy;
+    double *gpu_params = NULL;
+    double *gpu_FDotF;//curGrad
+    double *gpu_FADotFA;//newGrad
+    double *gpu_FADotFAP;//prevGrad
+    double *gpu_FDotFA;
+    bool *gpu_convergencecheck;
+    bool *convergencecheck;
+    double gpuFDotF(double *f1, double *f2);
+    void CUDAinitializeLambda(cudaStream_t stream, bool *check_in, bool *check_out, bool *Polaksafestate);
+    void CUDAfindLambda(cudaStream_t  stream, cudaEvent_t  event, bool *checkin, bool
+            *checkout, bool *gpu_safestate);
+    void CUDAprepforbacktracking(cudaStream_t stream, bool *check_in, bool *check_out);
+    void CUDAprepforsafebacktracking(cudaStream_t stream, bool *check_in, bool *check_out);
+    void CUDAallFDotF(cudaStream_t stream);
+    void CUDAallFADotFA(cudaStream_t stream);
+    void CUDAallFADotFAP(cudaStream_t stream);
+    void CUDAallFDotFA(cudaStream_t stream);
+    void CUDAshiftGradient(cudaStream_t stream, bool *Mcheckin);
+    void CUDAshiftGradientifSafe(cudaStream_t stream, bool *Mcheckin, bool *Scheckin);
+    void CUDAgetPolakvars(bool calc_safestate,cudaStream_t streamcalc, double* gpu_GRADTOL, bool *gminstatein,
+                                    bool *gminstateout, bool *gsafestateout, volatile bool *cminstate);
+    void CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *minstateout, bool *safestatein, bool
+    *safestateout);
+    void CUDAmoveBeads(cudaStream_t stream, bool *gpu_checkin );
+    //PING PONG for backtracking (both normal and safe)
+//    struct backtrackingvars {
+//        double currentEnergy;
+//        double energyLambda;
+//        double lambda;
+//    };
+    volatile bool *cconvergencecheck;
+    bool sconvergencecheck;
+    bool *h_stop, *g_stop1, *g_stop2, *g_s1, *g_s2, *g_ss;
+//    backtrackingvars *bvar, *gpu_bvar1, *gpu_bvar2, *g_b1, *g_b2, *g_bs;
+    cudaStream_t s1, s2, s3, *sp1, *sp2, *sps;
+    cudaEvent_t e1, e2, *ep1, *ep2, *eps;
+    // @PING PONG ENDS
+
+#endif
     /// For use in minimization
+
+
     double allFDotF();
     double allFADotFA();
     double allFADotFAP();
@@ -92,12 +142,12 @@ protected:
     /// A simple backtracking search method that computes an optimal
     /// energy change and compares the backtracked energy to it
     double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
-                                                          double LAMBDAMAX);
+                                                          double LAMBDAMAX, bool *gpu_safestate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
     double safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
-                                                              double LAMBDAMAX);
+                                                              double LAMBDAMAX, bool *gpu_safestate);
     //@}
     
     /// Print forces on all beads

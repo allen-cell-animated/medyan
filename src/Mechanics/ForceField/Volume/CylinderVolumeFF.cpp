@@ -82,7 +82,6 @@ void CylinderVolumeFF::computeForces(double *coord, double *f) {
         interaction->computeForces(coord, f);
 }
 
-
 vector<NeighborList*> CylinderVolumeFF::getNeighborLists() {
     
     vector<NeighborList*> neighborLists;

@@ -40,10 +40,14 @@ private:
     ///Array describing the constants in calculation
     double *krep;
     double *slen;
+    double *U_i;
     
     ///Array describing the number of neighbors for each boundary element (num boundary elements long)
     int *nneighbors;
-    
+#ifdef CUDAACCL
+    double *gU;
+    cudaStream_t  stream;
+#endif
     
 public:
     

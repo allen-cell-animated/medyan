@@ -29,6 +29,7 @@ public:
     double energy(Bead*, double, double, double, double);
     void forces(Bead*, double, double, vector<double>& norm, double, double);
     void forcesAux(Bead*, double, double, vector<double>& norm, double, double);
+
 };
 
 #endif

@@ -41,6 +41,11 @@ public:
     void forces(Bead*, double, vector<double>& norm, double, double);
     void forcesAux(Bead*, double, vector<double>& norm, double, double);
 #endif
+private:
+#ifdef CUDAACCL
+//    double *F_i;
+//    double *forcecopy;
+#endif
 };
 
 #endif

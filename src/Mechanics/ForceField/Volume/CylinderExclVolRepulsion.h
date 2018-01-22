@@ -26,6 +26,7 @@ class CylinderExclVolRepulsion {
     
 public:
 
+
     double energy(double *coord, double *f, int *beadSet, double *krep);
     
     double energy(double *coord, double *f, int *beadSet, double *krep, double d);
@@ -33,11 +34,20 @@ public:
     void forces(double *coord, double *f, int *beadSet, double *krep);
 
 #ifdef CUDAACCL
-    double energy(double *coord, double *f, int *beadSet, double *krep, int *params, vector<int> blocksnthreads);
+    void optimalblocksnthreads(int nint);
+    void deallocate();
+    double* energy(double *coord, double *f, int *beadSet, double *krep, int *params);
 
-    double energy(double *coord, double *f, int *beadSet, double *krep, double *z, int *params, vector<int> blocksnthreads);
+    double* energy(double *coord, double *f, int *beadSet, double *krep, double *z, int *params);
 
-    void forces(double *coord, double *f, int *beadSet, double *krep, int *params, vector<int> blocksnthreads);
+    void forces(double *coord, double *f, int *beadSet, double *krep, int *params);
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+
+    double *gU_i;
+    double *gU_sum;
+    cudaStream_t stream;
 
 #endif
 #ifdef CROSSCHECK

@@ -42,10 +42,10 @@ private:
     double * gpu_kstr;
     double *gpu_eql;
     int * gpu_params;
-    vector<int> blocksnthreads;
     double *gpu_pos1;
     double *gpu_pos2;
     CUDAvars cvars;
+    double *F_i;
 #endif
     
 public:

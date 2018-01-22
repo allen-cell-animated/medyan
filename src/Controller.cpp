@@ -582,8 +582,10 @@ void Controller::run() {
     tauLastSnapshot = tau();
     oldTau = 0;
 #endif
+    cout<<"Minimizing energy"<<endl;
+    _mController->run(false);
     for(auto o: _outputs) o->print(0);
-    
+
     cout << "Starting simulation..." << endl;
     
     int i = 1;

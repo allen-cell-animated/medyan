@@ -555,9 +555,10 @@ namespace mathfunc {
         v2[2] = p4[id + 2] - p3[id + 2];
 
         crossProduct(cp, v1, v2);
-
+//        printf("cp %d %f %f %f\n", id, cp[0], cp[1], cp[2]);
         auto retVal = areEqual(magnitude(cp), 0.0);
-        delete v1, v2, cp;
+//        printf("aE %d %d \n",id, retVal);
+        //delete v1, v2, cp;
 
         return retVal;
     }
@@ -811,6 +812,9 @@ namespace mathfunc {
 
         return areEqual(dotProduct(v3, cp), 0.0);
     }
+
+    inline size_t blockToSmem(int blockSize){return 12 * blockSize * sizeof(double);}
+    inline size_t blockToSmemez(int blockSize){return 24 * blockSize * sizeof(double);}
 
     /// Function to move bead out of plane by specified amount
     vector<double> movePointOutOfPlane(const vector<double> &p1,

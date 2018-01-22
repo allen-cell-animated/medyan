@@ -19,9 +19,11 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "cross_check.h"
+#include "nvToolsExt.h"
 
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
+    F_i = new double[3 * Bead::getBeads().size()];
 
     beadSet = new int[n * MotorGhost::getMotorGhosts().size()];
     kstr = new double[MotorGhost::getMotorGhosts().size()];
@@ -49,13 +51,20 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
     //CUDA
 #ifdef CUDAACCL
-    int numInteractions = MotorGhost::getMotorGhosts().size();
-    blocksnthreads.clear();
-    blocksnthreads.push_back(numInteractions/THREADSPERBLOCK + 1);
+//    cudaEvent_t start, stop;
+//    CUDAcommon::handleerror(cudaEventCreate( &start));
+//    CUDAcommon::handleerror(cudaEventCreate( &stop));
+//    CUDAcommon::handleerror(cudaEventRecord( start, 0));
+    nvtxRangePushA("CVFF");
 
-    if(blocksnthreads[0]==1) blocksnthreads.push_back( numInteractions);
-//    if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
-    else blocksnthreads.push_back(THREADSPERBLOCK);
+    int numInteractions = MotorGhost::getMotorGhosts().size();
+    _FFType.optimalblocksnthreads(numInteractions);
+//    blocksnthreads.clear();
+//    blocksnthreads.push_back(numInteractions/THREADSPERBLOCK + 1);
+//
+//    if(blocksnthreads[0]==1) blocksnthreads.push_back( numInteractions);
+////    if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
+//    else blocksnthreads.push_back(THREADSPERBLOCK);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, n * numInteractions * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * numInteractions * sizeof(int),
                                        cudaMemcpyHostToDevice));
@@ -79,13 +88,25 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
     vector<int> params;
     params.push_back(int(n));
     params.push_back(numInteractions);
-    std::cout<<params[0]<<" "<<params[1]<<endl;
+//    std::cout<<params[0]<<" "<<params[1]<<endl;
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice));
-    CUDAcommon::cudavars.motorparams = gpu_params;
+//    CUDAcommon::cudavars.motorparams = gpu_params;
+
+    nvtxRangePop();
+//    CUDAcommon::handleerror(cudaEventRecord( stop, 0));
+//    CUDAcommon::handleerror(cudaEventSynchronize(stop));
+//    float elapsedtime;
+//    CUDAcommon::handleerror(cudaEventElapsedTime(&elapsedtime, start, stop));
+//    CUDAvars cvars=CUDAcommon::getCUDAvars();
+//    cvars.vectorize += elapsedtime;
+//    CUDAcommon::cudavars=cvars;
+//    CUDAcommon::handleerror(cudaEventDestroy(start));
+//    CUDAcommon::handleerror(cudaEventDestroy(stop));
 
 #endif
+
     //
 }
 
@@ -98,6 +119,7 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
     delete pos1;
     delete pos2;
 #ifdef CUDAACCL
+    _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet));
     CUDAcommon::handleerror(cudaFree(gpu_kstr));
     CUDAcommon::handleerror(cudaFree(gpu_pos1));
@@ -110,13 +132,16 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
 
 template <class MStretchingInteractionType>
 double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* coord, double *f, double d){
-    double U_i, U_ii;
+    double U_i[1], U_ii;
+    double* gU_i;
+    U_ii = NULL;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-    std::cout<<"cuda----"<<endl;
+    nvtxRangePushA("CCEM");
+
     if(d == 0.0){
 
         //CROSSCHECK
@@ -127,7 +152,7 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
 //        }
 //        std::cout<<"---------END-----"<<endl;
         //
-        U_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params, blocksnthreads);
+        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params);
 
     }
     else{
@@ -139,32 +164,47 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
 //        std::cout<<"cparams "<<cparams[0]<<" "<<cparams[1]<<endl;
 
 
-        U_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_d, gpu_params,
-                           blocksnthreads);
+        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_d,
+                            gpu_params);
     }
+    nvtxRangePop();
 #endif
-    std::cout<<"vector----"<<endl;
+    nvtxRangePushA("SCEM");
+
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
 
+    nvtxRangePop();
+    if(gU_i!=NULL) {
+
+        CUDAcommon::handleerror(cudaMemcpy(U_i, gU_i, sizeof(double),
+                                           cudaMemcpyDeviceToHost));
+    }
+    else
+        U_i[0] = 0.0;
     if(fabs(U_ii)>1000000.0) {
-        if (fabs((U_ii - U_i) / U_ii) < 0.0001)
-            std::cout << "E V+M YES" << endl;
-        else {
-            std::cout << "CUDA MSE " << U_i << endl;
+//        if (fabs((U_ii - U_i) / U_ii) < 0.0001)
+//            std::cout << "E V+M YES" << endl;
+//        else {
+//        if (fabs(U_ii - U_i) > 1.0 / 100000000.0){
+        if (fabs((U_ii - U_i[0]) / U_ii) > 0.0001){
+            std::cout<<endl;
+            std::cout << "CUDA MSE " << U_i[0] << endl;
             std::cout << "Vectorized MSE " << U_ii << endl;
-            std::cout << "Precision match %error" << fabs((U_ii - U_i) / U_ii) << endl;
+            std::cout << "Precision match error" << fabs(U_ii - U_i[0]) << endl;
         }
     }
     else {
-        if (fabs(U_ii - U_i) < 1.0 / 100000000.0)
-            std::cout << "E V+M YES" << endl;
-        else {
+//        if (fabs(U_ii - U_i) < 1.0 / 100000000.0)
+//            std::cout << "E V+M YES" << endl;
+//        else {
+        if (fabs(U_ii - U_i[0]) > 1.0 / 100000000.0){
+            std::cout<<endl;
             std::cout << "CUDA MSE " << U_i << endl;
             std::cout << "Vectorized MSE " << U_ii << endl;
-            std::cout << "Precision match " << fabs(U_ii - U_i) << endl;
+            std::cout << "Precision match " << fabs(U_ii - U_i[0]) << endl;
 //        exit(EXIT_FAILURE);
         }
     }
@@ -213,7 +253,7 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
 
 #endif
 
-    return U_i;
+    return U_ii;
 }
 
 template <class MStretchingInteractionType>
@@ -224,7 +264,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
     double * gpu_force;
-
+//
 //    if(cross_checkclass::Aux) {
 //        gpu_force = CUDAcommon::getCUDAvars().gpu_forceAux;
 //    }
@@ -239,29 +279,37 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
 //        std::cout << "C " << F_c[3 * iter] << " " << F_c[3 * iter + 1] << " " << F_c[3 * iter + 2] <<" ";
 //        std::cout << "V "<<f[3 * iter] << " " << f[3 * iter + 1] << " " << f[3 * iter + 2] << endl;
 //    }
-//    std::cout<<"check ends"<<endl;
-
+//    std::cout<<"check ends "<<blocksnthreads[0]<<" "<<blocksnthreads[1]<<endl;
+    std::cout<<"motor stretcing CUDA compute"<<endl;
     if(cross_checkclass::Aux){
+        nvtxRangePushA("CCFM");
+
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
-        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params,
-                       blocksnthreads);
+        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params);
+        nvtxRangePop();
     }
     else {
+        nvtxRangePushA("CCFM");
+
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
-        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params,
-                       blocksnthreads);
+        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params);
+        nvtxRangePop();
     }
 
-    double F_i[3*Bead::getBeads().size()];
+//    std::cout<<3 * Bead::getBeads().size()<<endl;
+    std::cout<<"motor stretching copy to host"<<endl;
     //TODO remove this later need not copy forces back to CPU.
+//    std::cout<<CGMethod::N<<endl;
+//    std::cout<<3 * Bead::getBeads().size()<<endl;
     CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
                                        cudaMemcpyDeviceToHost));
 #endif
-    std::cout<<"vectorized "<<endl;
+    nvtxRangePushA("SCFM");
+    std::cout<<"motor stretcing serial compute"<<endl;
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);
-
+    nvtxRangePop();
 #ifdef CUDAACCL
-    cout.precision(dbl::max_digits10);
+//    cout.precision(dbl::max_digits10);
 //    std::cout<<"M forces"<<endl;
 //    for(int iter=0;iter<Bead::getBeads().size();iter++) {
 //        std::cout << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] <<" ";
@@ -269,12 +317,14 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
 //    }
 
     bool state = false;
-    for(int iter=0;iter<Bead::getBeads().size();iter++) {
+    for(auto iter=0;iter<Bead::getBeads().size();iter++) {
         if (fabs(F_i[3 * iter] - f[3 * iter]) <=1.0/100000000.0 && fabs(F_i[3 * iter + 1] - f[3 * iter + 1])
         <=1.0/100000000.0 && fabs(F_i[3 * iter + 2] - f[3 * iter + 2]) <=1.0/100000000.0)
         {state = true;}
         else {
-//            std::cout<<endl;
+            state = false;
+            std::cout<<endl;
+            std::cout<<"MS Forces"<<endl;
             std::cout << "CUDA       " << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] << endl;
             std::cout << "Vectorized " << f[3 * iter] << " " << f[3 * iter + 1] << " " << f[3 * iter + 2] << endl;
             std::cout<<"Precision match "<<fabs(F_i[3 * iter] - f[3 * iter])<<" "<<fabs(F_i[3 * iter + 1] - f[3 *
@@ -282,9 +332,8 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
 //        exit(EXIT_FAILURE);
         }
     }
-    if(state)
-        std::cout<<endl;
-        std::cout<<"F M YES"<<endl;
+//    if(state)
+//        std::cout<<"F M YES"<<endl;
 #endif
 
 #ifdef CROSSCHECK

@@ -44,10 +44,12 @@ void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
            /* Gradient tolerance  */  maxF() > GRADTOL) {
         numIter++;
         double lambda, beta, newGrad;
-        
+
+        //temporary
+        bool *dummy;
         //find lambda by line search, move beads
-        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
-                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX);
+        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
+                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
         moveBeads(lambda);
         
         //compute new forces

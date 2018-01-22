@@ -330,7 +330,7 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
     
     //check if parallel
     if(areParallel(c1, c2, c3, c4)) {
-        
+        printf("%d %d \n", thread_idx, nint);
         double d = twoPointDistance(c1, c3);
         double invDSquare =  1/ (d * d);
         

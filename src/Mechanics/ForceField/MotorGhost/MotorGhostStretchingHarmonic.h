@@ -32,15 +32,23 @@ public:
     void forces(double *coord, double *f, int *beadSet,
                 double *kstr, double *eql, double *pos1, double *pos2);
 #ifdef CUDAACCL
-    double energy(double *coord, double *f, int *beadSet, double *kstr, double *eql,
-                  double *pos1, double *pos2, int *params, vector<int> blocksnthreads);
+    void optimalblocksnthreads(int nint);
 
-    double energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2,
-           double *z, int *params, vector<int> blocksnthreads);
+    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql,
+                  double *pos1, double *pos2, int *params);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2,
+           double *z, int *params);
 
     void forces(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2, int
-    *params, vector<int> blocksnthreads);
-
+    *params);
+    void deallocate();
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    double *gU_i;
+    double *gU_sum;
+    cudaStream_t stream;
 #endif
 #ifdef CROSSCHECK
     double energy(Bead*, Bead*, Bead*, Bead*,

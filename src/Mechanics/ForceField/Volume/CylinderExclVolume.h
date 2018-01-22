@@ -39,8 +39,8 @@ private:
     int * gpu_beadSet = NULL;
     double * gpu_krep = NULL;
     int * gpu_params = NULL;
-    vector<int> blocksnthreads;
     CUDAvars cvars;
+    double *F_i;
 #endif
 public:
     ///Array describing indexed set of interactions
@@ -64,7 +64,7 @@ public:
 
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}
-    
+
     virtual const string getName() {return "Cylinder Excluded Volume";}
 };
 

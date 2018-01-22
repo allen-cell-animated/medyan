@@ -11,14 +11,28 @@
 #include <assert.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#ifdef CUDAACCL
 
-__global__ void BoundaryCylinderRepulsionadd(double *force, double *forcecopy, int *nint) {
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 
-    if (thread_idx < nint[0]) {
-        for (auto i = 0; i < 3; i++) {
-            force[3 * thread_idx + i] =  force[3 * thread_idx + i] + forcecopy[3 * thread_idx + i];
-        }
-    }
+#else
+static __inline__ __device__ double atomicAdd(double *address, double val) {
+    unsigned long long int* address_as_ull = (unsigned long long int*)address;
+    unsigned long long int old = *address_as_ull, assumed;
+    if (val==0.0)
+      return __longlong_as_double(old);
+    do {
+      assumed = old;
+      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+    } while (assumed != old);
+    return __longlong_as_double(old);
+  }
+
+
+#endif
+__global__ void BoundaryCylinderRepulsionE(double *U_b, double *U_tot) {
+
+    atomicAdd(&U_tot[0], U_b[0]);
 }
+#endif
 #endif //CUDA_VEC_BOUNDARYCYLINDERREPULSIONCUDA_H
