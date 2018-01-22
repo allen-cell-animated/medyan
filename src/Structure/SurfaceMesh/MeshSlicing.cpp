@@ -13,6 +13,11 @@ void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Tr
     After slicing, several things will be produced:
         - Triangles will be sliced and contain 0 or more more 3d polygons
         - A plane slicing snapshot will be created
+    
+    The calculation requires
+        - The unit normal of the interested triangle
+    
+    For simplicity, currently slicing is only valid for CONVEX polygons.
     **************************************************************************/
 
     // Check whether this triangle can be cut
@@ -22,6 +27,9 @@ void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Tr
     if((v0[aspect] - otherCoord) * (v1[aspect] - otherCoord) > 0
         && (v1[aspect] - otherCoord) * (v2[aspect] - otherCoord) > 0)
         return; // No need to cut this triangle
+    
+    // Get normal vector
+    auto& normal = triangle->getGTriangle()->getUnitNormal();
     
     // Check whether this triangle has already been cut
     auto& po = triangle->getGTriangle()->getPolygons();
@@ -38,7 +46,12 @@ void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Tr
     }
 
     for(size_t idx = 0; idx < po.size(); ++idx) { // Note that now size() could change.
-
+        double refSign = po[idx].vertex(0)[aspect] - otherCoord;
+        double lastSign = refSign;
+        size_t vIdx = 0;
+        while(vIdx < po[idx].getVertexNum()) {
+            double nextSign = po[idx].vertex((vIdx + 1) % po[idx].getVertexNum())[aspect] - otherCoord;
+        }
     }
     // TODO: implementation
 }

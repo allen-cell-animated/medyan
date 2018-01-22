@@ -67,8 +67,9 @@ Assumptions (not checked):
     - all the vertices are on the same plane
     - the polygon does not intersect itself, implying orientability and no hole
 
-For 2D polygon, vertices are connected in the counter-clockwise direction.
-For 3D polygon, the unit normal need to be provided for some calculations.
+- For 2D polygon, vertices are connected in the counter-clockwise direction.
+- For 3D polygon, the unit normal need to be provided for some calculations,
+  and the rotation of the vertices should be parallel to the normal vector.
 ******************************************************************************/
 template<size_t Dim>
 class SimplePolygon: public Geometric {
@@ -96,6 +97,7 @@ public:
     virtual void calcVolumeElement(); // Requires area calculation
                                       // Requires the normal vector in 3D
 
+    size_t getVertexNum()const { return _vertices.size(); }
     const SimpleVertex<Dim>& vertex(size_t n)const { return *(_vertices[n]); }
 
     void addVertex(const SimpleVertex<Dim>* v, size_t loc=0) {
