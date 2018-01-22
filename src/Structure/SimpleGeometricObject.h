@@ -93,12 +93,12 @@ public:
     const std::array<double, 3>& getUnitNormal()const;
     virtual void setUnitNormal(const std::array<double, 3>& newUnitNormal);
 
-    double getVolumeElement()const { return _volume; }
+    double getVolumeElement()const { return _volumeElement; }
     virtual void calcVolumeElement(); // Requires area calculation
                                       // Requires the normal vector in 3D
 
     size_t getVertexNum()const { return _vertices.size(); }
-	SimpleVertex<Dim>& vertex(size_t n) { return *(_vertices[n]); }
+	SimpleVertex<Dim>&       vertex(size_t n)      { return *(_vertices[n]); }
     const SimpleVertex<Dim>& vertex(size_t n)const { return *(_vertices[n]); }
 
     void addVertex(SimpleVertex<Dim>* v, size_t loc=0) {
