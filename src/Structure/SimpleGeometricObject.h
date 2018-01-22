@@ -38,7 +38,7 @@ public:
     double& operator[](size_t n) { return _coordinate[n]; }
 
     // Geometry
-    virtual void updateGeometry()override {}
+	virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override {}
 };
 
 inline SimpleVertex<3> changeDimension_2_3(const SimpleVertex<2>& v, size_t aspect, double value) {
@@ -83,7 +83,7 @@ private:
 
 public:
     // Main constructor
-    SimplePolygon();
+	SimplePolygon() {}
     SimplePolygon(const std::vector<SimpleVertex<Dim>*>& newVertices): _vertices(newVertices) {}
 
     // Properties
@@ -98,9 +98,10 @@ public:
                                       // Requires the normal vector in 3D
 
     size_t getVertexNum()const { return _vertices.size(); }
+	SimpleVertex<Dim>& vertex(size_t n) { return *(_vertices[n]); }
     const SimpleVertex<Dim>& vertex(size_t n)const { return *(_vertices[n]); }
 
-    void addVertex(const SimpleVertex<Dim>* v, size_t loc=0) {
+    void addVertex(SimpleVertex<Dim>* v, size_t loc=0) {
         _vertices.insert(_vertices.begin() + loc, v);
     }
     void removeVertex(size_t loc) {
@@ -108,15 +109,15 @@ public:
     }
 
     // Geometry
-    virtual void updateGeometry()override {
+    virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override {
         if(Dim <= 3) calcArea();
         if(Dim == 3) calcVolumeElement();
     }
-}
+};
 
 template<>
-inline double SimplePolygon<3>::calcArea() {
-    size_t n = vertices.size();
+inline void SimplePolygon<3>::calcArea() {
+    size_t n = _vertices.size();
     if(n <= 2) { _area = 0; return; }
 
     std::array<double, 3> tempCross {};
@@ -128,8 +129,8 @@ inline double SimplePolygon<3>::calcArea() {
     
 }
 template<>
-inline double SimplePolygon<2>::calcArea() {
-    size_t n = vertices.size();
+inline void SimplePolygon<2>::calcArea() {
+    size_t n = _vertices.size();
     if(n <= 2) { _area = 0; return; }
 
     _area = 0;
@@ -140,14 +141,12 @@ inline double SimplePolygon<2>::calcArea() {
 
 }
 
-template<size_t Dim> inline const std::array<double, 3>& SimplePolygon::getUnitNormal()const = delete;
 template<> inline const std::array<double, 3>& SimplePolygon<3>::getUnitNormal()const { return _unitNormal; }
-template<size_t Dim> inline void SimplePolygon::setUnitNormal(const std::array<double, 3>& newUnitNormal) = delete;
 template<> inline void SimplePolygon<3>::setUnitNormal(const std::array<double, 3>& newUnitNormal) { _unitNormal = newUnitNormal; }
 
 template<>
-inline double SimplePolygon<3>::calcVolumeElement() {
-    size_t n = vertices.size();
+inline void SimplePolygon<3>::calcVolumeElement() {
+    size_t n = _vertices.size();
     if(n <= 2) { _volumeElement = 0; return; }
 
     _volumeElement = _area * dotProduct(_unitNormal, vertex(0).getCoordinate()) / 3.0;

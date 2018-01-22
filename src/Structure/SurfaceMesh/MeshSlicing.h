@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include <unordered_set>
+
 #include "SimpleGeometricObject.h"
 
 /******************************************************************************
@@ -43,6 +45,6 @@ public:
     unordered_set<unique_ptr<SimpleVertex<2>>> vertices2;
 
     void planeSliceTriangle(size_t aspect, double otherCoord, Triangle* triangle);
-}
+};
 
 #endif

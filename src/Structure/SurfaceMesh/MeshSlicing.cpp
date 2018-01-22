@@ -37,7 +37,7 @@ void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Tr
         auto sv0 = make_unique<SimpleVertex<3>>(vector2Array<double, 3>(v0));
         auto sv1 = make_unique<SimpleVertex<3>>(vector2Array<double, 3>(v1));
         auto sv2 = make_unique<SimpleVertex<3>>(vector2Array<double, 3>(v2));
-        po.emplace_back({{sv0.get(), sv1.get(), sv2.get()}});
+        po.emplace_back(vector<SimpleVertex<3>*>{{sv0.get(), sv1.get(), sv2.get()}});
         po.back().setUnitNormal(normal);
 
         vertices3.insert(move(sv0));
