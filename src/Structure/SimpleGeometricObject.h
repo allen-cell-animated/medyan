@@ -98,7 +98,7 @@ public:
                                       // Requires the normal vector in 3D
 
     size_t getVertexNum()const { return _vertices.size(); }
-	SimpleVertex<Dim>&       vertex(size_t n)      { return *(_vertices[n]); }
+    SimpleVertex<Dim>&       vertex(size_t n)      { return *(_vertices[n]); }
     const SimpleVertex<Dim>& vertex(size_t n)const { return *(_vertices[n]); }
 
     void addVertex(SimpleVertex<Dim>* v, size_t loc=0) {

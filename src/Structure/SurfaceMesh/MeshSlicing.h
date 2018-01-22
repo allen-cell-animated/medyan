@@ -40,11 +40,17 @@ Provides
     - various functions for dealing with slicing
 ******************************************************************************/
 class MeshSlicingManager {
-public:
+private:
     unordered_set<unique_ptr<SimpleVertex<3>>> vertices3;
     unordered_set<unique_ptr<SimpleVertex<2>>> vertices2;
 
     void planeSliceTriangle(size_t aspect, double otherCoord, Triangle* triangle);
+    void restoreSlicedTriangle(Triangle* triangle) {
+        triangle->getGTriangle()->getPolygons().clear();
+        // Vertices would still be hanging around until the manager dies.
+    }
+
+    PlaneSliceSnapshot planeSliceMembrane(size_t aspect, double otherCoord, unordered_set<Triangle*>& triangles);
 };
 
 #endif

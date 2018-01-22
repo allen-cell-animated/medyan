@@ -132,3 +132,15 @@ void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Tr
     } // End of loop on several polygons
 }
 
+PlaneSliceSnapshot MeshSlicingManager::planeSliceMembrane(size_t aspect, double otherCoord, unordered_set<Triangle*>& triangles) {
+    /**************************************************************************
+    This function produces a cut snapshot by iteratively finding triangle cuts
+    from the preset set. Which triangles are needed are decided by the caller
+    of this function.
+
+    If a cut stopped without forming a complete polygon, an exception will be
+    thrown.
+
+    Note that this function is destructive to the original "triangles" set.
+    **************************************************************************/
+}
