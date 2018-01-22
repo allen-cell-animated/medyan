@@ -44,10 +44,13 @@ private:
     unordered_set<unique_ptr<SimpleVertex<3>>> vertices3;
     unordered_set<unique_ptr<SimpleVertex<2>>> vertices2;
 
+    // The plane normal from different aspects.
+    static const array<array<double, 3>, 3> planeNormal {{{{1, 0, 0}}, {{0, 1, 0}}, {{0, 0, 1}}}};
+
     void planeSliceTriangle(size_t aspect, double otherCoord, Triangle* triangle);
     void restoreSlicedTriangle(Triangle* triangle) {
         triangle->getGTriangle()->getPolygons().clear();
-        // Vertices would still be hanging around until the manager dies.
+        // Vertices constructed would still be hanging around until the manager dies.
     }
 
     PlaneSliceSnapshot planeSliceMembrane(size_t aspect, double otherCoord, unordered_set<Triangle*>& triangles);
