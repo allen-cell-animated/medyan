@@ -142,10 +142,11 @@ inline void SimplePolygon<2>::calcArea() {
 }
 
 template<> inline const std::array<double, 3>& SimplePolygon<3>::getUnitNormal()const { return _unitNormal; }
-template<> inline void SimplePolygon<3>::setUnitNormal(const std::array<double, 3>& newUnitNormal) { _unitNormal = newUnitNormal; }
+template<size_t Dim> inline void SimplePolygon<Dim>::setUnitNormal(const std::array<double, 3>& newUnitNormal) { throw runtime_error("Unimplemented function setUnitNormal."); }
+template<>           inline void SimplePolygon<3>  ::setUnitNormal(const std::array<double, 3>& newUnitNormal) { _unitNormal = newUnitNormal; }
 
-template<>
-inline void SimplePolygon<3>::calcVolumeElement() {
+template<size_t Dim> inline void SimplePolygon<Dim>::calcVolumeElement() { throw runtime_error("Unimplemented function calcVolumeElement."); }
+template<>           inline void SimplePolygon<3>  ::calcVolumeElement() {
     size_t n = _vertices.size();
     if(n <= 2) { _volumeElement = 0; return; }
 

@@ -12,6 +12,8 @@
 #include "MathFunctions.h"
 using namespace mathfunc;
 
+const array<array<double, 3>, 3> MeshSlicingManager::planeNormal {{ {{ 1, 0, 0 }}, {{ 0, 1, 0 }}, {{ 0, 0, 1 }} }};
+
 void MeshSlicingManager::planeSliceTriangle(size_t aspect, double otherCoord, Triangle* triangle) {
     /**************************************************************************
     After slicing, what will be produced:
@@ -215,7 +217,10 @@ PlaneSliceSnapshot MeshSlicingManager::planeSliceMembrane(size_t aspect, double 
                     vertices2.insert(move(sv));
                 }
 
-                auto vectorZeroToOne = vectorDifference(np->vertex(1)->getCoordinate(), np->vertex(0)->getCoordinate());
+                auto vectorZeroToOne = vectorDifference(
+                    changeDimension_2_3(np->vertex(1), aspect, 0).getCoordinate(),
+                    changeDimension_2_3(np->vertex(0), aspect, 0).getCoordinate()
+                );
                 auto& triangleNormal = (*curTriangle)->getGTriangle()->getUnitNormal();
 
                 if(dotProduct(crossProduct(triangleNormal, vectorZeroToOne), planeNormal[aspect]) < 0) {

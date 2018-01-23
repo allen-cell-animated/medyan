@@ -7,8 +7,16 @@
 
 #include "SimpleGeometricObject.h"
 
+#include "Triangle.h"
+#include "GTriangle.h"
+
 /******************************************************************************
 Provides classes and functions for slicing through the meshwork.
+
+TODO:
+    Finish the implementation, test it and use it
+        - OR -
+    Delete all of these (including SimpleGeometricObjects.h and stuff)
 ******************************************************************************/
 
 // Forward declarations
@@ -45,7 +53,7 @@ private:
     unordered_set<unique_ptr<SimpleVertex<2>>> vertices2;
 
     // The plane normal from different aspects.
-    static const array<array<double, 3>, 3> planeNormal {{{{1, 0, 0}}, {{0, 1, 0}}, {{0, 0, 1}}}};
+    static const array<array<double, 3>, 3> planeNormal;
 
     void planeSliceTriangle(size_t aspect, double otherCoord, Triangle* triangle);
     void restoreSlicedTriangle(Triangle* triangle) {
