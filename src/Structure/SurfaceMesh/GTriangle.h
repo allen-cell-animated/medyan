@@ -4,15 +4,11 @@
 #include <array>
 #include <vector>
 
-#include "SimpleGeometricObject.h"
-
 // Forward declaration
 class Triangle;
 
 /******************************************************************************
 Storing the geometric properties of the triangle patches.
-
-The GTriangle class can also contain simple polygons from the planar slicings.
 ******************************************************************************/
 
 class GTriangle {
@@ -39,8 +35,6 @@ private:
 
     std::array<double, 3> _unitNormal; // The unit normal vector pointing outward (since the meshwork is orientable)
     std::array<double, 3> _stretchedUnitNormal; // Temporarily stores unit normal under stretched conditions.
-
-    std::vector<SimplePolygon<3>> _polygons; // A list of polygons from planar cuts.
 
 public:
     GTriangle() {}
@@ -74,8 +68,6 @@ public:
     void calcUnitNormal(); // Calculates the unit normal of the triangle (w/o derivatives)
     std::array<double, 3>& getStretchedUnitNormal() { return _stretchedUnitNormal; }
     void calcStretchedUnitNormal(double d); // Calculates the unit normal under stretched conditions (w/o derivatives)
-    
-    std::vector<SimplePolygon<3>>& getPolygons() { return _polygons; }
     
 };
 
