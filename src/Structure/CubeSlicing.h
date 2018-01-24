@@ -91,12 +91,35 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
         double y = signedDistance / flippedNormal[1];
         double z = signedDistance / flippedNormal[2];
 
-        if(x <= 1 && y <= 1 && z <= 1) {
+        size_t numGT1 = 0;
+        if(x > 1) ++numGT1;
+        if(y > 1) ++numGT1;
+        if(z > 1) ++numGT1;
+
+        switch(numGT1) {
+        case 0:
             res.volumeIn = x * y * z / 6;
             res.areaIn[0] = y * z / 2;
             res.areaIn[2] = z * x / 2;
             res.areaIn[4] = x * y / 2;
-        } else if(x > 1 && y <= 1 && z <= 1) {
+            break;
+
+        case 1:
+            if(x > 1) {
+            } else if(y > 1) {
+            } else if(z > 1) {
+            }
+            break;
+
+        case 2:
+            if(x <= 1) {
+            } else if(y <= 1) {
+            } else if(z <= 1) {
+            }
+            break;
+        
+        case 3:
+            break;
             // TODO: implementation
         }
     }
