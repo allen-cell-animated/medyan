@@ -98,14 +98,26 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
 
         switch(numGT1) {
         case 0:
-            res.volumeIn = x * y * z / 6;
-            res.areaIn[0] = y * z / 2;
-            res.areaIn[2] = z * x / 2;
-            res.areaIn[4] = x * y / 2;
+            {
+                res.volumeIn = x * y * z / 6;
+                res.areaIn[0] = y * z / 2;
+                res.areaIn[2] = z * x / 2;
+                res.areaIn[4] = x * y / 2;
+            }
             break;
 
         case 1:
             if(x > 1) {
+                double r = 1 - 1 / x;
+                double y1 = y * r;
+                double z1 = z * r;
+                res.volumeIn = (x == std::numeric_limits<double>::infinity()?
+                    y * z / 2:
+                    (x * y * z - (x - 1) * y1 * z1) / 6
+                );
+                res.areaIn[0] = y * z / 2;  res.areaIn[1] = y1 * z1 / 2;
+                res.areaIn[2] = (z + z1) / 2;
+                res.areaIn[4] = (y + y1) / 2;
             } else if(y > 1) {
             } else if(z > 1) {
             }
@@ -113,14 +125,51 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
 
         case 2:
             if(x <= 1) {
+                double r1 = 1 - 1 / y;
+                double r2 = 1 - 1 / z;
+                double r3 = r1 + r2 - 1;
+
+                double y1 = y * r2;
+                double z1 = z * r1;
+
+                double x1 = x * r1;
+                double x2 = x * r2;
+                if(r3 <= 0) {
+                    // Neither y nor z can be inf
+                    res.volumeIn = (x * y * z - y1 * x2 * (z - 1) - z1 * x1 * (y - 1)) / 6;
+                    res.areaIn[0] = (y * z - y1 * (z - 1) - z1 * (y - 1)) / 2;
+                    res.areaIn[2] = (x + x2) / 2;   res.areaIn[3] = z1 * x1 / 2;
+                    res.areaIn[4] = (x + x1) / 2;   res.areaIn[5] = y1 * x2 / 2;
+                } else {
+                    double x3 = x * r3;
+                    res.volumeIn = (x + x3) / 2;
+                    res.areaIn[0] = 1;
+                    res.areaIn[2] = (x + x2) / 2;   res.areaIn[3] = (x1 + x3) / 2;
+                    res.areaIn[4] = (x + x1) / 2;   res.areaIn[5] = (x2 + x3) / 2;
+                }
             } else if(y <= 1) {
             } else if(z <= 1) {
             }
             break;
         
         case 3:
+            {
+                // no x, y or z can be inf
+                double r1 = 1 - 1 / x;
+                double r2 = 1 - 1 / y;
+                double r3 = 1 - 1 / z;
+
+                double x1 = x * r2, x2 = x * r3;
+                double y1 = y * r3, y2 = y * r1;
+                double z1 = z * r1, z2 = z * r2;
+
+                res.volumeIn = (x * y * z - y2 * z1 * (x - 1) - z2 * x1 * (y - 1) - x2 * y1 * (x - 1)) / 6;
+                res.areaIn[0] = (y * z - y1 * (z - 1) - z2 * (y - 1)) / 2;  res.areaIn[1] = y2 * z1 / 2;
+                res.areaIn[2] = (z * x - z1 * (x - 1) - x2 * (z - 1)) / 2;  res.areaIn[3] = z2 * x1 / 2;
+                res.areaIn[4] = (x * y - x1 * (y - 1) - y2 * (x - 1)) / 2;  res.areaIn[5] = x2 * y1 / 2;
+            }
             break;
-            // TODO: implementation
+            // TODO: other implementation
         }
     }
 
