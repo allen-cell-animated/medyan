@@ -178,7 +178,7 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
                 double y1 = y * r1;
                 double y2 = y * r2;
                 if(r3 <= 0) {
-                    // Neither y nor z can be inf
+                    // Neither z nor x can be inf
                     res.volumeIn = (x * y * z - z1 * y2 * (x - 1) - x1 * y1 * (z - 1)) / 6;
                     res.areaIn[2] = (z * x - z1 * (x - 1) - x1 * (z - 1)) / 2;
                     res.areaIn[4] = (y + y2) / 2;   res.areaIn[5] = x1 * y1 / 2;
@@ -201,7 +201,7 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
                 double z1 = z * r1;
                 double z2 = z * r2;
                 if(r3 <= 0) {
-                    // Neither y nor z can be inf
+                    // Neither x nor y can be inf
                     res.volumeIn = (x * y * z - x1 * z2 * (y - 1) - y1 * z1 * (x - 1)) / 6;
                     res.areaIn[4] = (x * y - x1 * (y - 1) - y1 * (x - 1)) / 2;
                     res.areaIn[0] = (z + z2) / 2;   res.areaIn[1] = y1 * z1 / 2;
