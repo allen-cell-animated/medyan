@@ -119,7 +119,27 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
                 res.areaIn[2] = (z + z1) / 2;
                 res.areaIn[4] = (y + y1) / 2;
             } else if(y > 1) {
+                double r = 1 - 1 / y;
+                double z1 = z * r;
+                double x1 = x * r;
+                res.volumeIn = (y == std::numeric_limits<double>::infinity()?
+                    z * x / 2:
+                    (x * y * z - (y - 1) * z1 * x1) / 6
+                );
+                res.areaIn[2] = z * x / 2;  res.areaIn[3] = z1 * x1 / 2;
+                res.areaIn[4] = (x + x1) / 2;
+                res.areaIn[0] = (z + z1) / 2;
             } else if(z > 1) {
+                double r = 1 - 1 / z;
+                double x1 = x * r;
+                double y1 = y * r;
+                res.volumeIn = (z == std::numeric_limits<double>::infinity()?
+                    x * y / 2:
+                    (x * y * z - (z - 1) * x1 * y1) / 6
+                );
+                res.areaIn[4] = x * y / 2;  res.areaIn[5] = x1 * y1 / 2;
+                res.areaIn[0] = (y + y1) / 2;
+                res.areaIn[2] = (x + x1) / 2;
             }
             break;
 
@@ -148,7 +168,51 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
                     res.areaIn[4] = (x + x1) / 2;   res.areaIn[5] = (x2 + x3) / 2;
                 }
             } else if(y <= 1) {
+                double r1 = 1 - 1 / z;
+                double r2 = 1 - 1 / x;
+                double r3 = r1 + r2 - 1;
+
+                double z1 = z * r2;
+                double x1 = x * r1;
+
+                double y1 = y * r1;
+                double y2 = y * r2;
+                if(r3 <= 0) {
+                    // Neither y nor z can be inf
+                    res.volumeIn = (x * y * z - z1 * y2 * (x - 1) - x1 * y1 * (z - 1)) / 6;
+                    res.areaIn[2] = (z * x - z1 * (x - 1) - x1 * (z - 1)) / 2;
+                    res.areaIn[4] = (y + y2) / 2;   res.areaIn[5] = x1 * y1 / 2;
+                    res.areaIn[0] = (y + y1) / 2;   res.areaIn[1] = z1 * y2 / 2;
+                } else {
+                    double y3 = y * r3;
+                    res.volumeIn = (y + y3) / 2;
+                    res.areaIn[2] = 1;
+                    res.areaIn[4] = (y + y2) / 2;   res.areaIn[5] = (y1 + y3) / 2;
+                    res.areaIn[0] = (y + y1) / 2;   res.areaIn[1] = (y2 + y3) / 2;
+                }
             } else if(z <= 1) {
+                double r1 = 1 - 1 / x;
+                double r2 = 1 - 1 / y;
+                double r3 = r1 + r2 - 1;
+
+                double x1 = x * r2;
+                double y1 = y * r1;
+
+                double z1 = z * r1;
+                double z2 = z * r2;
+                if(r3 <= 0) {
+                    // Neither y nor z can be inf
+                    res.volumeIn = (x * y * z - x1 * z2 * (y - 1) - y1 * z1 * (x - 1)) / 6;
+                    res.areaIn[4] = (x * y - x1 * (y - 1) - y1 * (x - 1)) / 2;
+                    res.areaIn[0] = (z + z2) / 2;   res.areaIn[1] = y1 * z1 / 2;
+                    res.areaIn[2] = (z + z1) / 2;   res.areaIn[3] = x1 * z2 / 2;
+                } else {
+                    double z3 = z * r3;
+                    res.volumeIn = (z + z3) / 2;
+                    res.areaIn[4] = 1;
+                    res.areaIn[0] = (z + z2) / 2;   res.areaIn[1] = (z1 + z3) / 2;
+                    res.areaIn[2] = (z + z1) / 2;   res.areaIn[3] = (z2 + z3) / 2;
+                }
             }
             break;
         
@@ -169,7 +233,6 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
                 res.areaIn[4] = (x * y - x1 * (y - 1) - y2 * (x - 1)) / 2;  res.areaIn[5] = x2 * y1 / 2;
             }
             break;
-            // TODO: other implementation
         }
     }
 
