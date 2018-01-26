@@ -1,0 +1,706 @@
+From 985578ec84cfb93ffcac44ecc13ba66002638ad4 Mon Sep 17 00:00:00 2001
+From: Aravind Chandrasekaran <achansek@umd.edu>
+Date: Mon, 14 Aug 2017 10:29:28 -0400
+Subject: [PATCH 1/2] debugged.
+
+---
+ src/Chemistry/ChemNRMImpl.cpp                      |    8 +-
+ src/Controller.cpp                                 |  268 +++++++++++++++++++-
+ src/Controller.h                                   |    9 +-
+ .../ForceField/Filament/FilamentBending.cpp        |    2 +-
+ src/Parser.cpp                                     |   42 +++-
+ src/Parser.h                                       |    2 +-
+ src/Structure/Compartment.cpp                      |  148 +++++++++---
+ src/Structure/Compartment.h                        |    3 +-
+ src/SysParams.h                                    |    3 +-
+ 9 files changed, 433 insertions(+), 52 deletions(-)
+
+diff --git a/src/Chemistry/ChemNRMImpl.cpp b/src/Chemistry/ChemNRMImpl.cpp
+index d818763..c6a189e 100644
+--- a/src/Chemistry/ChemNRMImpl.cpp
++++ b/src/Chemistry/ChemNRMImpl.cpp
+@@ -161,10 +161,10 @@ bool ChemNRMImpl::makeStep() {
+         return false;
+     }
+     
+-    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
+-        
+-        cout << "Stopping to check linker rxn." << endl;
+-    }
++//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
++//        
++//        cout << "Stopping to check linker rxn." << endl;
++//    }
+     
+     double t_prev = _t;
+     
+diff --git a/src/Controller.cpp b/src/Controller.cpp
+index d797e43..0defdaf 100644
+--- a/src/Controller.cpp
++++ b/src/Controller.cpp
+@@ -368,11 +368,264 @@ void Controller::setupSpecialStructures(SystemParser& p) {
+     cout << "Done." << endl;
+ }
+ 
++void Controller::activatedeactivateComp(){
++//    std::cout<<"BEFORE UPDATION (CYCLE BEGINS)"<<endl;
++//    auto counter=0;
++//    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
++//        counter++;
++//        std::cout<<C->isActivated()<<" ";
++//        if(counter==SysParams::Geometry().NX)
++//            std::cout<<endl;
++//    }
++//    std::cout<<endl;
++    fCompmap.clear();
++    bCompmap.clear();
++    activatecompartments.clear();
++
++    //ControlfrontEndComp();
++    //ControlbackEndComp();
++    ControlfrontbackEndComp();
++        std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
++    for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
++    {
++        if(!(*it)->isActivated())
++           _cController->activate(*it);
++    }
++    //deactivate compartments starting from the right extreme
++    for (std::multimap<int,Compartment*>::reverse_iterator it=fCompmap.rbegin(); it!=fCompmap.rend(); ++it)
++        _cController->deactivate(it->second);
++    //deactivate compartments starting from the left extreme
++    for (std::multimap<int,Compartment*>::iterator it=bCompmap.begin(); it!=bCompmap.end(); ++it)
++        _cController->deactivate(it->second);
++    fCompmap.clear();
++    bCompmap.clear();
++        std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
++    //std::cout<<"AFTERUPDATION ";
++   // auto counter=0;
++  //  for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
++     //   counter++;
++        //std::cout<<C->isActivated()<<" ";
++//        if(counter==SysParams::Geometry().NX)
++//            std::cout<<endl;
++   // }
++  //  std::cout<<endl;
++}
++void Controller::ControlfrontbackEndComp(){
++    Compartment* maxcomp=NULL;
++    Bead* maxbead=NULL;
++    Compartment* mincomp=NULL;
++    Bead* minbead=NULL;
++    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
++        auto cyls=C->getCylinders();
++        if(cyls.size()>0){
++            if(maxcomp==NULL)
++                maxcomp=C;
++            else{
++                auto mcoord=maxcomp->coordinates();
++                auto ccord=C->coordinates();
++                if(mcoord[SysParams::Mechanics().transfershareaxis]<ccord[SysParams::Mechanics().transfershareaxis])
++                    maxcomp=C;
++            }
++            if(mincomp==NULL)
++                mincomp=C;
++            else{
++                auto mcoord=mincomp->coordinates();
++                auto ccord=C->coordinates();
++                if(mcoord[SysParams::Mechanics().transfershareaxis]>ccord[SysParams::Mechanics().transfershareaxis])
++                    mincomp=C;
++            }
++        }
++    }
++    // front end
++    auto cmaxcomp=maxcomp->coordinates();
++    for(auto C:maxcomp->getNeighbours()){
++        auto cC=C->coordinates();
++        if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis])
++            maxcomp=C;
++    }
++    cmaxcomp=maxcomp->coordinates();
++    assert((maxcomp!=NULL) && "Non existent maxcomp. Exiting.");
++    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
++        auto cC=C->coordinates();
++        //        std::cout<<cC[0]<<" "<<cC[1]<<" "<<cC[2]<<" "<<C->isActivated()<<endl;
++        if(cC[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
++            if(C->isActivated())
++                fCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
++        }
++        else{
++            if(!(C->isActivated()))
++                activatecompartments.push_back(C);
++        }
++    }
++    //back end
++    auto cmincomp=mincomp->coordinates();
++    for(auto C:mincomp->getNeighbours()){
++        auto cC=C->coordinates();
++        if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis])
++            mincomp=C;
++    }
++    cmincomp=mincomp->coordinates();
++    assert(mincomp!=NULL && "Non existent mincomp. Exiting.");
++    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
++        auto cC=C->coordinates();
++        if(cC[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
++            auto it = std::find(activatecompartments.begin(), activatecompartments.end(), C);
++            if(it!=activatecompartments.end())
++                activatecompartments.erase(it);
++            if(C->isActivated()){
++                bCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
++            }
++        }
++    }
++    std::cout<<"Maxcomp "<<maxcomp->coordinates()[0]<<" ";
++    std::cout<<"Mincomp "<<mincomp->coordinates()[0]<<endl;
++}
++void Controller::ControlfrontEndCompobsolete(){
++    Compartment* maxcomp=NULL;
++    //Bead* maxbead;
++    Filament* maxfil;
++//    for(auto b:Bead::getBeads()){
++ //       auto comp=b->getCompartment();
++ //       if(maxcomp!=NULL){
++  //          auto ccomp=comp->coordinates();
++   //         auto cmaxcomp=maxcomp->coordinates();
++    //        if(ccomp[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
++     //           maxcomp=comp;
++      //          maxbead=b;
++       //         cmaxcomp=maxcomp->coordinates();
++        //
++         //       for(auto C:comp->getNeighbours()){
++          //          auto cC=C->coordinates();
++           //         if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
++            //            maxcomp=C;
++             //           maxbead=b;
++              //      }
++               // }
++           // }
++
++            
++  //      }
++   //     else{
++    //        maxcomp=comp;
++     //       maxbead=b;
++      //       auto cmaxcomp=maxcomp->coordinates();
++       //     for(auto C:comp->getNeighbours()){
++       //         auto cC=C->coordinates();
++        //        if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
++         //           maxcomp=C;
++          //          maxbead=b;
++           //     }
++
++            // }}}
++    for(auto f:Filament::getFilaments()){
++        auto comp=f->getPlusEndCylinder()->getSecondBead()->getCompartment();
++        if(maxcomp!=NULL){
++            auto ccomp=comp->coordinates();
++            auto cmaxcomp=maxcomp->coordinates();
++            if(ccomp[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
++                maxcomp=comp;
++                maxfil=f;
++                cmaxcomp=maxcomp->coordinates();
++                
++                for(auto C:comp->getNeighbours()){
++                    auto cC=C->coordinates();
++                    if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
++                        maxcomp=C;
++                        maxfil=f;
++                    }
++                }}}
++        
++        else{
++            maxcomp=comp;
++            maxfil=f;
++            auto cmaxcomp=maxcomp->coordinates();
++            for(auto C:comp->getNeighbours()){
++                auto cC=C->coordinates();
++                if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
++                    maxcomp=C;
++                    maxfil=f;
++                }
++            }}
++    }
++    
++//    auto x=maxcomp->coordinates();
++//        std::cout<<"PLUS END "<<maxfil->getPlusEndCylinder()->getSecondBead()->coordinate[0]<<endl;
++//        std::cout<<"MAXCOMP "<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
++    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
++        auto cC=C->coordinates();
++//        std::cout<<cC[0]<<" "<<cC[1]<<" "<<cC[2]<<" "<<C->isActivated()<<endl;
++        auto cmaxcomp=maxcomp->coordinates();
++        if(cC[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
++            if(C->isActivated())
++                fCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
++        }
++        
++        else{
++            if(!(C->isActivated()))
++                activatecompartments.push_back(C);
++        }
++    }
++
++}
++
++void Controller::ControlbackEndCompobsolete(){
++    Compartment* mincomp=NULL;
++    Filament* minfil;
++    for(auto f:Filament::getFilaments()){
++        auto comp=f->getMinusEndCylinder()->getFirstBead()->getCompartment();
++        if(mincomp!=NULL){
++            auto ccomp=comp->coordinates();
++            auto cmincomp=mincomp->coordinates();
++            if(ccomp[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
++                mincomp=comp;
++                minfil=f;
++                cmincomp=mincomp->coordinates();
++                
++                for(auto C:comp->getNeighbours()){
++                    auto cC=C->coordinates();
++                    if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis]){
++                        mincomp=C;
++                        minfil=f;
++                    }
++                }}}
++        
++        else{
++            mincomp=comp;
++            minfil=f;
++            auto cmincomp=mincomp->coordinates();
++            for(auto C:comp->getNeighbours()){
++                auto cC=C->coordinates();
++                if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis]){
++                    mincomp=C;
++                    minfil=f;
++                }
++            }}
++    }
++    
++//    auto x=mincomp->coordinates();
++//        std::cout<<"MINUS END "<<minfil->getMinusEndCylinder()->getFirstBead()->coordinate[0]<<endl;
++//        std::cout<<"MINCOMP "<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
++    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
++        auto cC=C->coordinates();
++        auto cmincomp=mincomp->coordinates();
++        if(cC[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
++            auto it = std::find(activatecompartments.begin(), activatecompartments.end(), C);
++            if(it!=activatecompartments.end())
++            activatecompartments.erase(it);
++            if(C->isActivated()){
++                    bCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
++            }
++        }
++    }
++    
++}
++
++
+ void Controller::moveBoundary(double deltaTau) {
+     
+     //calculate distance to move
+     double dist = SysParams::Boundaries().moveSpeed * deltaTau;
+-    
++    if(abs(dist)>0){
+     //move it
+     if(tau() >= SysParams::Boundaries().moveStartTime &&
+        tau() <= SysParams::Boundaries().moveEndTime)
+@@ -391,8 +644,11 @@ void Controller::moveBoundary(double deltaTau) {
+             else _cController->deactivate(C);
+         }
+     }
++    }
+ }
+ 
++
++
+ void Controller::executeSpecialProtocols() {
+     
+     //making filaments static
+@@ -592,6 +848,8 @@ void Controller::run() {
+     if(!areEqual(_runTime, 0.0)) {
+     
+ #ifdef CHEMISTRY
++        //activate/deactivate compartments
++        activatedeactivateComp();
+         while(tau() <= _runTime) {
+             //run ccontroller
+             if(!_cController->run(_minimizationTime)) {
+@@ -611,6 +869,7 @@ void Controller::run() {
+                 updatePositions();
+ 
+                 tauLastMinimization = 0.0;
++
+             }
+             
+             if(tauLastSnapshot >= _snapshotTime) {
+@@ -635,12 +894,12 @@ void Controller::run() {
+                 tauLastNeighborList = 0.0;
+             }
+             
++            //activate/deactivate compartments
++            activatedeactivateComp();
+             //move the boundary
+             moveBoundary(tau() - oldTau);
+-            
+             //special protocols
+             executeSpecialProtocols();
+-            
+             oldTau = tau();
+         }
+ #endif
+@@ -696,7 +955,8 @@ void Controller::run() {
+             
+             //move the boundary
+             moveBoundary(tau() - oldTau);
+-            
++            //activate/deactivate compartments
++            activatedeactivateComp();
+             //special protocols
+             executeSpecialProtocols();
+         }
+diff --git a/src/Controller.h b/src/Controller.h
+index 33a0a11..07af8c5 100644
+--- a/src/Controller.h
++++ b/src/Controller.h
+@@ -73,6 +73,9 @@ private:
+     ChemistryAlgorithm _cAlgorithm;
+     vector<tuple<short, vector<double>, vector<double>>> fil;
+     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
++    vector<Compartment*> activatecompartments;
++     multimap<int,Compartment*> fCompmap;
++     multimap<int,Compartment*> bCompmap;
+     //@}
+     
+     ///INITIALIZATION HELPER FUNCTIONS
+@@ -90,7 +93,11 @@ private:
+     
+     /// Move the boundary based on the timestep
+     void moveBoundary(double deltaTau);
+-    
++    ///Activate/deactivate compartments based on the longest filament (along Xaxis).
++    void activatedeactivateComp();
++    void ControlfrontEndCompobsolete();
++    void ControlbackEndCompobsolete();
++    void ControlfrontbackEndComp();
+     /// Update the positions of all elements in the system
+     void updatePositions();
+     
+diff --git a/src/Mechanics/ForceField/Filament/FilamentBending.cpp b/src/Mechanics/ForceField/Filament/FilamentBending.cpp
+index 73f9e2e..d2ff0da 100644
+--- a/src/Mechanics/ForceField/Filament/FilamentBending.cpp
++++ b/src/Mechanics/ForceField/Filament/FilamentBending.cpp
+@@ -48,7 +48,7 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
+             else {
+                 for (auto it = f->getCylinderVector().begin()+1;
+                           it != f->getCylinderVector().end(); it++){
+-                    
++                        
+                     auto it2 = it - 1;
+                     Bead* b1 = (*it2)->getFirstBead();
+                     Bead* b2 = (*it)->getFirstBead();
+diff --git a/src/Parser.cpp b/src/Parser.cpp
+index a7bb939..fa027ee 100644
+--- a/src/Parser.cpp
++++ b/src/Parser.cpp
+@@ -932,21 +932,45 @@ void SystemParser::readMechParams() {
+         if (line.find("SPECIALPROTOCOL") != string::npos) {
+             
+             vector<string> lineVector = split<string>(line);
+-            
+-            if(lineVector.size() > 4) {
+-                cout <<
+-                "There was an error parsing input file at Chemistry parameters. Exiting."
+-                << endl;
+-                exit(EXIT_FAILURE);
+-            }
+-            else if (lineVector.size() == 4) {
+                 
+                 if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
+-                    
++                    if(lineVector.size() > 4) {
++                        cout <<
++                        "There was an error parsing input file at Chemistry parameters. Exiting."
++                        << endl;
++                        exit(EXIT_FAILURE);
++                    }
++
++                    else{
+                     MParams.pinBoundaryFilaments = true;
+                     MParams.pinK = atof(lineVector[2].c_str());
+                     MParams.pinTime = atof(lineVector[3].c_str());
++                    }
++                }
++                
++                else if(lineVector[1]=="TRANSFERSHAREAXIS"){
++                    if(lineVector.size() > 3) {
++                        cout <<
++                        "There was an error parsing input file at Chemistry parameters. Exiting."
++                        << endl;
++                        exit(EXIT_FAILURE);
++                    }
+                     
++                    else{
++                        std::cout<<lineVector[2]<<endl;
++                    if(lineVector[2]=="X")
++                        MParams.transfershareaxis=0;
++                    else if(lineVector[2]=="Y")
++                        MParams.transfershareaxis=1;
++                    else if(lineVector[2]=="Z")
++                        MParams.transfershareaxis=2;
++                    else if(lineVector[2]=="RADIAL")
++                        MParams.transfershareaxis=3;
++                    else{
++                        cout <<
++                            "There was an error parsing input file at Chemistry parameters. Exiting."
++                            << endl;
++                        exit(EXIT_FAILURE);}
+                 }
+             }
+         }
+diff --git a/src/Parser.h b/src/Parser.h
+index fbcf33b..26f8d0d 100644
+--- a/src/Parser.h
++++ b/src/Parser.h
+@@ -429,7 +429,7 @@ public:
+     PinRestartParser(string inputFileName) : Parser(inputFileName) {}
+     ~PinRestartParser() {}
+     
+-    /// Reads pin positions from file, and sets filaments
++    /// Reads pin positions from file, and sets filamen ts
+     void resetPins();
+ };
+ 
+diff --git a/src/Structure/Compartment.cpp b/src/Structure/Compartment.cpp
+index 3fe74db..75a523e 100644
+--- a/src/Structure/Compartment.cpp
++++ b/src/Structure/Compartment.cpp
+@@ -12,7 +12,7 @@
+ //------------------------------------------------------------------
+ 
+ #include "Compartment.h"
+-
++#include "MathFunctions.h"
+ #include "Visitor.h"
+ 
+ Compartment& Compartment::operator=(const Compartment &other) {
+@@ -113,17 +113,31 @@ void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
+ }
+ 
+ 
+-void Compartment::transferSpecies() {
+-    
++void Compartment::transferSpecies(int i) {
++    //i axis
++    //0 X
++    //1 Y
++    //2 Z
++    //3 all directions
+     //get active neighbors
+     vector<Compartment*> activeNeighbors;
+     
+-    for(auto &neighbor : _neighbours)
+-        if(neighbor->isActivated())
+-            activeNeighbors.push_back(neighbor);
++    for(auto &neighbor : _neighbours){
++        auto ncoord=neighbor->coordinates();
++//                    std::cout<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<" "<<ncoord[0]<<" "<<ncoord[1]<<" "<<ncoord[2]<<endl;
++        if(neighbor->isActivated()){
++            if(i==3)
++                activeNeighbors.push_back(neighbor);
++            else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
++                activeNeighbors.push_back(neighbor);
++        }}
+     
+     assert(activeNeighbors.size() != 0
+            && "Cannot transfer species to another compartment... no neighbors are active");
++    if(i<3 && activeNeighbors.size()>1){
++        cout<<"Error transferring species along an axis. More than 1 neighbor. Exiting. "<< endl;
++        exit(EXIT_FAILURE);
++    }
+     
+     //go through species
+     Species* sp_neighbor;
+@@ -134,33 +148,106 @@ void Compartment::transferSpecies() {
+         int copyNumber = sp->getN();
+         auto nit = activeNeighbors.begin();
+         
+-        while(copyNumber > 0) {
+-            sp->down();
+-            
+-            //choose a random active neighbor
+-            auto neighbor = *nit;
+-            sp_neighbor = neighbor->findSpeciesByName(sp->getName());
+-            
+-            //add to list if not already
+-            auto spit = find(sp_neighbors.begin(),
+-                             sp_neighbors.end(),
+-                             sp_neighbor);
+-            
+-            if(spit == sp_neighbors.end())
+-                sp_neighbors.push_back(sp_neighbor);
+-            
+-            //increase copy number
+-            sp_neighbor->up();
+-            
+-            //reset if we've looped through
+-            if(++nit == activeNeighbors.end())
+-                nit = activeNeighbors.begin();
+-            copyNumber--;
++        if(sp->getFullName().find("Bound") == string::npos){
++            while(copyNumber > 0) {
++                sp->down();
++                
++                //choose a random active neighbor
++                auto neighbor = *nit;
++                
++                sp_neighbor = neighbor->findSpeciesByName(sp->getName());
++                
++                //add to list if not already
++                auto spit = find(sp_neighbors.begin(),
++                                 sp_neighbors.end(),
++                                 sp_neighbor);
++                
++                if(spit == sp_neighbors.end())
++                    sp_neighbors.push_back(sp_neighbor);
++                
++                //increase copy number
++                
++                sp_neighbor->up();
++                
++                //reset if we've looped through
++                if(++nit == activeNeighbors.end())
++                    nit = activeNeighbors.begin();
++                copyNumber--;
++                
++            }
++        }
++        
++        //activate all reactions changed
++        for(auto spn : sp_neighbors)
++            spn->updateReactantPropensities();
++        for(auto &sp : _species.species())
++            sp->updateReactantPropensities();
++    }
++}
++
++void Compartment::shareSpecies(int i) {
++    //i axis
++    //0 X
++    //1 Y
++    //2 Z
++    //3 all directions
++    //get active neighbors
++    vector<Compartment*> activeNeighbors;
++    
++    for(auto &neighbor : _neighbours){
++        auto ncoord=neighbor->coordinates();
++    if(neighbor->isActivated()){
++        if(i==3)
++            activeNeighbors.push_back(neighbor);
++        else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
++        activeNeighbors.push_back(neighbor);
++    }}
++    
++    assert(activeNeighbors.size() != 0
++           && "Cannot share species to another compartment... no neighbors are active");
++    if(i<3 && activeNeighbors.size()>1){
++        cout<<"Error sharing species along an axis. More than 1 neighbor. Exiting."<< endl;
++        exit(EXIT_FAILURE);
++    }
++    //go through species
++    Species* sp_neighbor;
++    vector<Species*> sp_neighbors;
++    
++    for(auto &sp : _species.species()) {
++        auto nit = activeNeighbors.begin();
++        auto neighbor = *nit;
++        sp_neighbor = neighbor->findSpeciesByName(sp->getName());
++        int copyNumber = sp->getN();
++        int lowerlimit = (int) sp->getN()/2;
++        
++        if(sp->getFullName().find("Bound") == string::npos){
++            while(copyNumber > lowerlimit) {
++                sp_neighbor->down();
++                
++                //add to list if not already
++                auto spit = find(sp_neighbors.begin(),
++                                 sp_neighbors.end(),
++                                 sp_neighbor);
++                
++                if(spit == sp_neighbors.end())
++                    sp_neighbors.push_back(sp_neighbor);
++                
++                //increase copy number
++                sp->up();
++                
++                //reset if we've looped through
++                if(++nit == activeNeighbors.end())
++                    nit = activeNeighbors.begin();
++                copyNumber--;
++                
++            }
+         }
+         
+         //activate all reactions changed
+         for(auto spn : sp_neighbors)
+             spn->updateReactantPropensities();
++        for(auto &sp : _species.species())
++            sp->updateReactantPropensities();
+     }
+ }
+ 
+@@ -170,10 +257,11 @@ void Compartment::activate(ChemSim* chem) {
+     
+     //set marker
+     _activated = true;
+-    
++    shareSpecies(SysParams::Mechanics().transfershareaxis);
+     //add all diffusion reactions
+     auto rxns = generateAllDiffusionReactions();
+     for(auto &r : rxns) chem->addReaction(r);
++    
+ 
+ }
+ 
+@@ -188,7 +276,7 @@ void Compartment::deactivate(ChemSim* chem) {
+     //set marker
+     _activated = false;
+     
+-    transferSpecies();
++    transferSpecies(SysParams::Mechanics().transfershareaxis);
+     removeAllDiffusionReactions(chem);
+ }
+ 
+diff --git a/src/Structure/Compartment.h b/src/Structure/Compartment.h
+index 1a1fc2b..2043922 100644
+--- a/src/Structure/Compartment.h
++++ b/src/Structure/Compartment.h
+@@ -150,7 +150,8 @@ public:
+     /// Transfer all species copy numbers from this compartment to neighboring
+     /// active compartments. If no neighboring active compartments are present,
+     /// throw an error.
+-    virtual void transferSpecies();
++    virtual void transferSpecies(int i);
++    virtual void shareSpecies(int i);
+     
+     
+     /// Removes all reactions from this compartment, diffusing and internal
+diff --git a/src/SysParams.h b/src/SysParams.h
+index 4ddbcb0..d5cd985 100644
+--- a/src/SysParams.h
++++ b/src/SysParams.h
+@@ -87,9 +87,10 @@ struct MechParams {
+     double pinDistance = 250; ///< 250nm pinning distance for now
+     double pinK = 0.0;       ///< Tethered stiffness
+     double pinTime = 0.0;    ///< Time at which to pin the filaments
+-    
++    int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
+     //@}
+     
++    
+ };
+ 
+ /// Struct to hold chemistry parameters for the system
+-- 
+1.7.1
+

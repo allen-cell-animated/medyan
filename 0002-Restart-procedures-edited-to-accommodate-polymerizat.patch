@@ -1,0 +1,1684 @@
+From 4735f672f2d6af7a35a4a946d1f04fc8bd4a7472 Mon Sep 17 00:00:00 2001
+From: Aravind Chandrasekaran <achansek@umd.edu>
+Date: Fri, 15 Dec 2017 20:41:45 -0500
+Subject: [PATCH 2/2] Restart procedures edited to accommodate polymerization of short filaments.
+
+---
+ src/Chemistry/ChemCallbacks.h                      |   50 ++-
+ src/Chemistry/ChemManager.cpp                      |   86 +++-
+ src/Chemistry/ChemNRMImpl.cpp                      |    2 +
+ src/Chemistry/ReactionTemplate.cpp                 |    4 +-
+ src/Chemistry/Species.h                            |    2 +-
+ src/Controller.cpp                                 |  171 ++++++--
+ src/Controller.h                                   |    4 +-
+ .../ForceField/Branching/BranchingStretching.cpp   |   11 +-
+ .../ForceField/Filament/FilamentStretching.cpp     |    8 +-
+ src/Parser.cpp                                     |    4 +-
+ src/Parser.h                                       |    1 -
+ src/Restart.h                                      |  474 +++++++++++++++++---
+ src/Structure/BranchingPoint.cpp                   |    2 +-
+ src/Structure/CCylinder.cpp                        |   53 ++-
+ src/Structure/CCylinder.h                          |    3 +
+ src/Structure/CLinker.cpp                          |   12 +
+ src/Structure/Compartment.cpp                      |    2 +-
+ src/Structure/Cylinder.cpp                         |   49 ++-
+ src/Structure/Filament.cpp                         |   95 ++++-
+ src/Structure/Linker.cpp                           |    9 +
+ src/Structure/MCylinder.cpp                        |    2 -
+ 21 files changed, 909 insertions(+), 135 deletions(-)
+
+diff --git a/src/Chemistry/ChemCallbacks.h b/src/Chemistry/ChemCallbacks.h
+index ee0eda3..5bc633a 100644
+--- a/src/Chemistry/ChemCallbacks.h
++++ b/src/Chemistry/ChemCallbacks.h
+@@ -311,6 +311,7 @@ struct FilamentDepolymerizationPlusEndCallback {
+     //Callback
+     void operator() (ReactionBase *r){
+         Filament* f = (Filament*)(_cylinder->getParent());
++        
+         f->depolymerizePlusEnd();
+     }
+ };
+@@ -424,25 +425,66 @@ struct BranchingCallback {
+         c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+         
+         //create new branch
++            CMonomer* x=c->getCCylinder()->getCMonomer(0);
++            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
++                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
++                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
++                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
++                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
++                            }
++            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
++            
+         b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
++            
++            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
++                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
++                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
++                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
++                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
++            }
++            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+         frate=_offRate;
+         }
+         else
+         {
+-        CCylinder* c;
++            CCylinder* c; auto check = false;
+         vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
+             for(auto T:BrT){
+                 CCylinder* cx=get<0>(get<0>(T));
+                 double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
+                 if(cx->getCylinder()->getID()==c1->getID() && p==pos){
+                     c=get<0>(get<1>(T));
++                    check = true;
+                     break;
+                 }}
++            if(check){
++                auto cyl = c->getCylinder();
++                std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
++            std::cout<<c->getCylinder()->getID()<<endl;
++                CMonomer* x=c->getCMonomer(0);
++                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
++                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
++                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
++                    auto zz =c->getCMonomer(p)->speciesFilament(0);
++                    std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
++                }
++                std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
++                
+             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
+-            CMonomer* x=c->getCMonomer(0);
+-            x->speciesMinusEnd(0)->down();
+-            x->speciesFilament(0)->up();
++                
++                x=c->getCMonomer(0);
++                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
++                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
++                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
++                    auto zz =c->getCMonomer(p)->speciesFilament(0);
++                    std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
++                }
++                std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+             frate=0.0;
++            }
++            else
++                cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
++                //exit(EXIT_FAILURE);
+         }
+         
+         //create off reaction
+diff --git a/src/Chemistry/ChemManager.cpp b/src/Chemistry/ChemManager.cpp
+index 1464d39..2595a6b 100644
+--- a/src/Chemistry/ChemManager.cpp
++++ b/src/Chemistry/ChemManager.cpp
+@@ -2593,7 +2593,6 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
+     
+     Filament* f = (Filament*)(c->getParent());
+     short filType = f->getType();
+-    
+     //add monomers to cylinder
+     for(int i = 0; i < cc->getSize(); i++) {
+         CMonomer* m = new CMonomer(filType);
+@@ -2649,39 +2648,94 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
+             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
+             m1->speciesPlusEnd(0)->down();
+             
+-            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
+-            m2->speciesPlusEnd(0)->up();
+-            
+             //fill last cylinder with default filament value
+             m1->speciesFilament(0)->up();
+             
+             for(auto j : SysParams::CParams.bindingIndices[filType])
+                 m1->speciesBound(j)->up();
+             
+-            //fill new cylinder with default filament value
+-            for(int i = 0; i < cc->getSize() - 1; i++) {
+-                cc->getCMonomer(i)->speciesFilament(0)->up();
++            if(!SysParams::RUNSTATE){
++#ifdef MECHANICS
++                int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
++//                std::cout<<"init "<<c->getMCylinder()->getEqLength()<<endl;
++                CMonomer* m2 = cc->getCMonomer(nummonomers - 1);
++
++                m2->speciesPlusEnd(0)->up();
++                
++//                for(auto i=0;i<40;i++)
++//                    std::cout<<c->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
++//                std::cout<<endl;
++
++                //fill new cylinder with default filament value
++                for(int i = 0; i < nummonomers - 1; i++) {
++                    cc->getCMonomer(i)->speciesFilament(0)->up();
++                    
++                    for(auto j : SysParams::CParams.bindingIndices[filType])
++                        cc->getCMonomer(i)->speciesBound(j)->up();
++                }
++#endif
++            }
++            else{
++            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
++            m2->speciesPlusEnd(0)->up();
+                 
+-                for(auto j : SysParams::CParams.bindingIndices[filType])
+-                    cc->getCMonomer(i)->speciesBound(j)->up();
++                //fill new cylinder with default filament value
++                for(int i = 0; i < cc->getSize() - 1; i++) {
++                    cc->getCMonomer(i)->speciesFilament(0)->up();
++                    
++                    for(auto j : SysParams::CParams.bindingIndices[filType])
++                        cc->getCMonomer(i)->speciesBound(j)->up();
++                }
+             }
++
+             for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
+         }
+         //this is first one
+         else {
++            
+             //set back and front
+             CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
+             m1->speciesPlusEnd(0)->up();
+             
+-            CMonomer* m2 = cc->getCMonomer(0);
+-            m2->speciesMinusEnd(0)->up();
+             
+-            //fill with default filament value
+-            for(int i = 1; i < cc->getSize() - 1; i++) {
+-                cc->getCMonomer(i)->speciesFilament(0)->up();
++            if(SysParams::RUNSTATE){
++                CMonomer* m2 = cc->getCMonomer(0);
++                m2->speciesMinusEnd(0)->up();
++                //fill with default filament value
++                for(int i = 1; i < cc->getSize() - 1; i++) {
++                    cc->getCMonomer(i)->speciesFilament(0)->up();
++                    
++                    for(auto j : SysParams::CParams.bindingIndices[filType])
++                        cc->getCMonomer(i)->speciesBound(j)->up();
++                }
++                
+                 
+-                for(auto j : SysParams::CParams.bindingIndices[filType])
+-                    cc->getCMonomer(i)->speciesBound(j)->up();
++            }
++            else {
++#ifdef MECHANICS
++//                std::cout<<c->getMCylinder()->getEqLength()<<" "<<SysParams::Geometry().cylinderNumMon[filType]<<endl;
++                int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
++                CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
++                m1->speciesMinusEnd(0)->up();
++                //fill with default filament value
++                for(int i = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + 1; i < cc->getSize() - 1; i++) {
++                    cc->getCMonomer(i)->speciesFilament(0)->up();
++                    
++                    for(auto j : SysParams::CParams.bindingIndices[filType])
++                        cc->getCMonomer(i)->speciesBound(j)->up();
++                }
++#else
++                CMonomer* m2 = cc->getCMonomer(0);
++                m2->speciesMinusEnd(0)->up();
++                //fill with default filament value
++                for(int i = 1; i < cc->getSize() - 1; i++) {
++                    cc->getCMonomer(i)->speciesFilament(0)->up();
++                    
++                    for(auto j : SysParams::CParams.bindingIndices[filType])
++                        cc->getCMonomer(i)->speciesBound(j)->up();
++                }
++ 
++#endif
+             }
+         }
+     }
+diff --git a/src/Chemistry/ChemNRMImpl.cpp b/src/Chemistry/ChemNRMImpl.cpp
+index c6a189e..dbb41b8 100644
+--- a/src/Chemistry/ChemNRMImpl.cpp
++++ b/src/Chemistry/ChemNRMImpl.cpp
+@@ -171,6 +171,8 @@ bool ChemNRMImpl::makeStep() {
+     _t=tau_top;
+     syncGlobalTime();
+     
++    rn->printSelf();
++    
+     rn->makeStep();
+ #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
+     if(!rn->isPassivated()){
+diff --git a/src/Chemistry/ReactionTemplate.cpp b/src/Chemistry/ReactionTemplate.cpp
+index 5386077..b494d97 100644
+--- a/src/Chemistry/ReactionTemplate.cpp
++++ b/src/Chemistry/ReactionTemplate.cpp
+@@ -262,7 +262,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
+         CMonomer* m2 = cc->getCMonomer(i-1);
+         vector<Species*> reactantSpecies;
+         vector<Species*> productSpecies;
+-        
++
+         //loop through reactants, products. find all species
+         
+         //FIRST REACTANT  MUST BE FILAMENT
+@@ -384,7 +384,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
+     CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
+     vector<Species*> reactantSpecies;
+     vector<Species*> productSpecies;
+-    
++
+     //loop through reactants, products. find all species
+     
+     //FIRST REACTANT  MUST BE FILAMENT
+diff --git a/src/Chemistry/Species.h b/src/Chemistry/Species.h
+index b336b01..ecdd77d 100644
+--- a/src/Chemistry/Species.h
++++ b/src/Chemistry/Species.h
+@@ -122,7 +122,7 @@ public:
+                 return name.substr(0, i);
+             }
+         }
+-        //if there was no integer, return the name
++        //if there was no integer, retu rn the name
+         return name;
+     }
+     
+diff --git a/src/Controller.cpp b/src/Controller.cpp
+index 0defdaf..fc573ae 100644
+--- a/src/Controller.cpp
++++ b/src/Controller.cpp
+@@ -311,7 +311,48 @@ void Controller::setupInitialNetwork(SystemParser& p) {
+                 _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
+         }
+     }
+-    cout << "Done. " << fil.size() << " filaments created." << endl;
++        cout << "Done. " << fil.size() << " filaments created." << endl;
++    
++//    for(auto fil:Filament::getFilaments()){
++//        auto it = fil->getCylinderVector().back();
++//        if(it->isPlusEnd()){
++//            std::cout<<"P "<<it->getMCylinder()->getEqLength()<<" ";
++//            bool check = false;
++//            auto ctr = 0;
++//            
++//            while((!check) && ctr < 40)
++//            {
++//                if(it->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
++//                ctr ++;
++//            }
++//            if(check)
++//                std::cout<<(ctr+1)*2.7<<endl;
++//            else
++//                std::cout<<"OOPS"<<endl;
++//        }
++//        else
++//            std::cout<<"CHECK! Cyl not a plus end"<<endl;
++//        //
++//        it = fil->getCylinderVector().front();
++//        if(it->isMinusEnd()){
++//            std::cout<<"M "<<it->getMCylinder()->getEqLength()<<" ";
++//            bool check = false;
++//            auto ctr = 0;
++//            
++//            while((!check) && ctr < 40)
++//            {
++//                if(it->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
++//                ctr ++;
++//            }
++//            if(check)
++//                std::cout<<(40-ctr)*2.7<<endl;
++//            else
++//                std::cout<<"OOPS"<<endl;
++//        }
++//        else
++//            std::cout<<"CHECK! Cyl not a minus end"<<endl;
++//            
++//    }
+ }
+ 
+ void Controller::setupSpecialStructures(SystemParser& p) {
+@@ -368,7 +409,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
+     cout << "Done." << endl;
+ }
+ 
+-void Controller::activatedeactivateComp(){
++void Controller::activatedeactivateComp(double timecheck){
+ //    std::cout<<"BEFORE UPDATION (CYCLE BEGINS)"<<endl;
+ //    auto counter=0;
+ //    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+@@ -378,28 +419,47 @@ void Controller::activatedeactivateComp(){
+ //            std::cout<<endl;
+ //    }
+ //    std::cout<<endl;
+-    fCompmap.clear();
+-    bCompmap.clear();
+-    activatecompartments.clear();
++        if(SysParams::Mechanics().transfershareaxis>=0){
++            fCompmap.clear();
++            bCompmap.clear();
++            activatecompartments.clear();
+ 
+     //ControlfrontEndComp();
+     //ControlbackEndComp();
+-    ControlfrontbackEndComp();
+-        std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+-    for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
+-    {
+-        if(!(*it)->isActivated())
+-           _cController->activate(*it);
+-    }
+-    //deactivate compartments starting from the right extreme
+-    for (std::multimap<int,Compartment*>::reverse_iterator it=fCompmap.rbegin(); it!=fCompmap.rend(); ++it)
+-        _cController->deactivate(it->second);
+-    //deactivate compartments starting from the left extreme
+-    for (std::multimap<int,Compartment*>::iterator it=bCompmap.begin(); it!=bCompmap.end(); ++it)
+-        _cController->deactivate(it->second);
+-    fCompmap.clear();
+-    bCompmap.clear();
+-        std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
++            ControlfrontbackEndComp(timecheck);
++            
++            if(timecheck>0) {
++                std::cout<<"BEFOREUPDATION "<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;}
++            
++            for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
++            {
++                if(!(*it)->isActivated())
++                    _cController->activate(*it);
++            }
++            //deactivate compartments starting from the right extreme
++            for (std::multimap<int,Compartment*>::reverse_iterator it=fCompmap.rbegin(); it!=fCompmap.rend(); ++it)
++                _cController->deactivate(it->second);
++            //deactivate compartments starting from the left extreme
++            for (std::multimap<int,Compartment*>::iterator it=bCompmap.begin(); it!=bCompmap.end(); ++it)
++                _cController->deactivate(it->second);
++            fCompmap.clear();
++            bCompmap.clear();
++            if(timecheck>0)
++            std::cout<<"AFTERUPDATION "<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
++            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
++                auto coord=C->coordinates();
++                std::cout<<C->isActivated()<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<" ";
++                            for(auto sd : _chemData.speciesDiffusing) {
++                                std::cout<<C->isActivated()<<" "<<C->coordinates()[0];
++                                    string name = get<0>(sd);
++                                    auto s = C->findSpeciesByName(name);
++                                   auto copyNum = s->getN();
++                    
++                                std::cout << name <<" "<< copyNum;
++                               }
++                std::cout<<endl;
++            }
++        }
+     //std::cout<<"AFTERUPDATION ";
+    // auto counter=0;
+   //  for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+@@ -409,12 +469,14 @@ void Controller::activatedeactivateComp(){
+ //            std::cout<<endl;
+    // }
+   //  std::cout<<endl;
++//        }
+ }
+-void Controller::ControlfrontbackEndComp(){
++void Controller::ControlfrontbackEndComp(double timecheck){
+     Compartment* maxcomp=NULL;
+     Bead* maxbead=NULL;
+     Compartment* mincomp=NULL;
+     Bead* minbead=NULL;
++
+     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+         auto cyls=C->getCylinders();
+         if(cyls.size()>0){
+@@ -436,6 +498,7 @@ void Controller::ControlfrontbackEndComp(){
+             }
+         }
+     }
++//    std::cout<<maxcomp->coordinates()[0]<<" "<<mincomp->coordinates()[0]<<endl;
+     // front end
+     auto cmaxcomp=maxcomp->coordinates();
+     for(auto C:maxcomp->getNeighbours()){
+@@ -477,8 +540,11 @@ void Controller::ControlfrontbackEndComp(){
+             }
+         }
+     }
++    if(timecheck>0) {
+     std::cout<<"Maxcomp "<<maxcomp->coordinates()[0]<<" ";
+     std::cout<<"Mincomp "<<mincomp->coordinates()[0]<<endl;
++    }
++    
+ }
+ void Controller::ControlfrontEndCompobsolete(){
+     Compartment* maxcomp=NULL;
+@@ -756,12 +822,14 @@ void Controller::run() {
+         cout<<"RESTART PHASE BEINGS."<<endl;
+         Restart* _restart = new Restart(_subSystem, filaments,_chemData);
+ //Step 1. Turn off diffusion, passivate filament reactions and empty binding managers.
+-        _restart->settorestartphase();
++//        _restart->settorestartphase();
+         cout<<"Turned off Diffusion, filament reactions."<<endl;
+ //Step 2. Add bound species to their respective binding managers. Turn off unbinding, update propensities.
+-        _restart->addtoHeaplinkermotor();
+         _restart->addtoHeapbranchers();
++        _restart->addtoHeaplinkermotor();
+         cout<<"Bound species added to reaction heap."<<endl;
++//Step 2A. Turn off diffusion, passivate filament reactions and empty binding managers.
++                _restart->settorestartphase();
+ //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
+         std::cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
+         _cController->runSteps(_restart->getnumchemsteps());
+@@ -776,8 +844,10 @@ void Controller::run() {
+ //Step 4.5. re-add pin positions
+         SystemParser p(_inputFile);
+         FilamentSetup filSetup = p.readFilamentSetup();
++        
++        if(SysParams::Mechanics().pinBoundaryFilaments){
+         PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
+-        ppin.resetPins();
++            ppin.resetPins();}
+         
+ //Step 5. run mcontroller, update system, turn off restart state.
+         updatePositions();
+@@ -818,6 +888,7 @@ void Controller::run() {
+     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+             for(auto x : C->getCylinders()) {
+                 x->getCCylinder()->activatefilreactions();
++                x->getCCylinder()->activatefilcrossreactions();
+             }}
+         cout<<"Unbinding rates of bound species restored. filament reactions activated"<<endl;
+ //@
+@@ -827,10 +898,31 @@ void Controller::run() {
+ #ifdef DYNAMICRATES
+     updateReactionRates();
+ #endif
+-    cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
++        auto i=0;
++        for (auto b: BranchingPoint::getBranchingPoints()) {
++            
++            Bead* b1 = b->getFirstCylinder()->getFirstBead();
++            Bead* b2 = b->getFirstCylinder()->getSecondBead();
++            Bead* b3 = b->getSecondCylinder()->getFirstBead();
++            Bead* b4 = b->getSecondCylinder()->getSecondBead();
++            auto c = b->getSecondCylinder();
++            auto filType = c->getType();
++            std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
++            i++;
++            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
++                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
++                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
++                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
++                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
++                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
++                std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
++            }
++        }
++    cout<< "Restart procedures completed. Starting Medyan framework"<<endl;
+     cout << "---" << endl;
+     resetglobaltime();
+     _cController->restart();
++        
+      cout << "Current simulation time = "<< tau() << endl;
+     //restart phase ends
+     }
+@@ -849,7 +941,7 @@ void Controller::run() {
+     
+ #ifdef CHEMISTRY
+         //activate/deactivate compartments
+-        activatedeactivateComp();
++        activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
+         while(tau() <= _runTime) {
+             //run ccontroller
+             if(!_cController->run(_minimizationTime)) {
+@@ -867,7 +959,26 @@ void Controller::run() {
+             if(tauLastMinimization >= _minimizationTime) {
+                 _mController->run();
+                 updatePositions();
+-
++                auto i=0;
++                for (auto b: BranchingPoint::getBranchingPoints()) {
++                    
++                    Bead* b1 = b->getFirstCylinder()->getFirstBead();
++                    Bead* b2 = b->getFirstCylinder()->getSecondBead();
++                    Bead* b3 = b->getSecondCylinder()->getFirstBead();
++                    Bead* b4 = b->getSecondCylinder()->getSecondBead();
++                    auto c = b->getSecondCylinder();
++                    auto filType = c->getType();
++                    std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
++                    i++;
++                    for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
++                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
++                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
++                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
++                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
++                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
++                        std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
++                    }
++                }
+                 tauLastMinimization = 0.0;
+ 
+             }
+@@ -895,7 +1006,7 @@ void Controller::run() {
+             }
+             
+             //activate/deactivate compartments
+-            activatedeactivateComp();
++            activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
+             //move the boundary
+             moveBoundary(tau() - oldTau);
+             //special protocols
+@@ -956,7 +1067,7 @@ void Controller::run() {
+             //move the boundary
+             moveBoundary(tau() - oldTau);
+             //activate/deactivate compartments
+-            activatedeactivateComp();
++            activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
+             //special protocols
+             executeSpecialProtocols();
+         }
+diff --git a/src/Controller.h b/src/Controller.h
+index 07af8c5..2836b29 100644
+--- a/src/Controller.h
++++ b/src/Controller.h
+@@ -94,10 +94,10 @@ private:
+     /// Move the boundary based on the timestep
+     void moveBoundary(double deltaTau);
+     ///Activate/deactivate compartments based on the longest filament (along Xaxis).
+-    void activatedeactivateComp();
++    void activatedeactivateComp(double timecheck);
+     void ControlfrontEndCompobsolete();
+     void ControlbackEndCompobsolete();
+-    void ControlfrontbackEndComp();
++    void ControlfrontbackEndComp(double timecheck);
+     /// Update the positions of all elements in the system
+     void updatePositions();
+     
+diff --git a/src/Mechanics/ForceField/Branching/BranchingStretching.cpp b/src/Mechanics/ForceField/Branching/BranchingStretching.cpp
+index 7031294..fc74198 100644
+--- a/src/Mechanics/ForceField/Branching/BranchingStretching.cpp
++++ b/src/Mechanics/ForceField/Branching/BranchingStretching.cpp
+@@ -19,6 +19,9 @@
+ #include "Cylinder.h"
+ #include "Bead.h"
+ 
++#include "MathFunctions.h"
++using namespace mathfunc;
++
+ template <class BStretchingInteractionType>
+ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d) {
+     
+@@ -56,13 +59,15 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d)
+ 
+ template <class BStretchingInteractionType>
+ void BranchingStretching<BStretchingInteractionType>::computeForces() {
+-    
++    auto i=0;
+     for (auto b: BranchingPoint::getBranchingPoints()) {
+-    
++        i++;
+         Bead* b1 = b->getFirstCylinder()->getFirstBead();
+         Bead* b2 = b->getFirstCylinder()->getSecondBead();
+         Bead* b3 = b->getSecondCylinder()->getFirstBead();
+-        
++        Bead* b4 = b->getSecondCylinder()->getSecondBead();
++        std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
++
+         double kStretch = b->getMBranchingPoint()->getStretchingConstant();
+         double eqLength = b->getMBranchingPoint()->getEqLength();
+         double position = b->getPosition();
+diff --git a/src/Mechanics/ForceField/Filament/FilamentStretching.cpp b/src/Mechanics/ForceField/Filament/FilamentStretching.cpp
+index 471a3fe..06f0816 100644
+--- a/src/Mechanics/ForceField/Filament/FilamentStretching.cpp
++++ b/src/Mechanics/ForceField/Filament/FilamentStretching.cpp
+@@ -17,6 +17,8 @@
+ #include "Filament.h"
+ #include "Cylinder.h"
+ 
++//#include "Bead.h"
++
+ template <class FStretchingInteractionType>
+ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
+     
+@@ -26,7 +28,6 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
+     for (auto f: Filament::getFilaments()) {
+         
+         U_i = 0;
+-        
+         if (d == 0.0){
+             for(auto it : f->getCylinderVector()){
+                 
+@@ -34,7 +35,7 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
+                 Bead* b2 = it->getSecondBead();
+                 double kStretch = it->getMCylinder()->getStretchingConst();
+                 double eqLength = it->getMCylinder()->getEqLength();
+-                
++//                std::cout<<kStretch<<" "<<eqLength<<" "<<b1->coordinate[0]<<" "<<b2->coordinate[0]<<endl;
+                 U_i += _FFType.energy(b1, b2, kStretch, eqLength);
+             }
+         }
+@@ -44,11 +45,10 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
+                 Bead* b2 = it->getSecondBead();
+                 double kStretch =it->getMCylinder()->getStretchingConst();
+                 double eqLength = it->getMCylinder()->getEqLength();
+-                
++//                std::cout<<kStretch<<" "<<eqLength<<" "<<b1->coordinate[0]<<" "<<b2->coordinate[0]<<endl;
+                 U_i += _FFType.energy(b1, b2, kStretch, eqLength, d);
+             }
+         }
+-        
+         if(fabs(U_i) == numeric_limits<double>::infinity()
+            || U_i != U_i || U_i < -1.0) {
+             
+diff --git a/src/Parser.cpp b/src/Parser.cpp
+index fa027ee..12c2d96 100644
+--- a/src/Parser.cpp
++++ b/src/Parser.cpp
+@@ -957,7 +957,7 @@ void SystemParser::readMechParams() {
+                     }
+                     
+                     else{
+-                        std::cout<<lineVector[2]<<endl;
++                        cout<<"TRANSFERSHARE AXIS "<<lineVector[2]<<endl;
+                     if(lineVector[2]=="X")
+                         MParams.transfershareaxis=0;
+                     else if(lineVector[2]=="Y")
+@@ -1789,6 +1789,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
+         else if(line.find("SPECIESDIFFUSING") != string::npos) {
+             
+             vector<string> lineVector = split<string>(line);
++            
++
+             if(lineVector.size() >  8 || lineVector.size() < 7) {
+                 cout << "Error reading a diffusing species. Exiting." << endl;
+                 exit(EXIT_FAILURE);
+diff --git a/src/Parser.h b/src/Parser.h
+index 26f8d0d..889d720 100644
+--- a/src/Parser.h
++++ b/src/Parser.h
+@@ -338,7 +338,6 @@ public:
+     ~Parser() {_inputFile.close();}
+ };
+ 
+-
+ /// To parse a system input file, initialized by the Controller.
+ class SystemParser : public Parser{
+ public:
+diff --git a/src/Restart.h b/src/Restart.h
+index 1321d8d..345deeb 100644
+--- a/src/Restart.h
++++ b/src/Restart.h
+@@ -60,16 +60,20 @@ class Cylinder;
+ class FilamentBindingManager;
+ class Restart {
+ private:
+-SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
+-vector<double> temp_diffrate_vector; ///vector of diffusion rates
+-tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>>,
+-       vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+-ChemistryData _chemData;
+-vector<double> CopyNumbers;
+-unordered_multimap<int, tuple<CCylinder*, short>> _unsortedpairings;
+-vector<LinkerBindingManager*> affectedManagers;
+-vector<tuple<string, short, vector<vector<double>>>> boundVector;
+-int  _numChemSteps=0;
++    SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
++    vector<double> temp_diffrate_vector; ///vector of diffusion rates
++    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>>,
++    vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
++    ChemistryData _chemData;
++    vector<double> CopyNumbers;
++    unordered_multimap<int, tuple<CCylinder*, short>> _unsortedpairings;
++    unordered_multimap<int, tuple<CCylinder*, short>> _bunsortedpairings;
++    unordered_multimap<int, tuple<int, short>> _singlecylfilunsortedpairings;
++    unordered_multimap<int, tuple<int, short>> _bsinglecylfilunsortedpairings;
++    vector<LinkerBindingManager*> affectedManagers;
++    vector<tuple<string, short, vector<vector<double>>>> boundVector;
++    vector<short> branchcylIDs;
++    int  _numChemSteps=0;
+     //gives angle and delta
+     vector<double> getAngleDeltaPos(vector<double>leg, vector<double> site1, vector<double> site2){
+         vector<double> returnVector;
+@@ -85,8 +89,195 @@ int  _numChemSteps=0;
+         returnVector.push_back(len3);
+         return returnVector; }
+     
++    // Goes through single cylinder filaments and decides the appropriate way to activate them.
++    void reassignsinglecylfil(bool flag){ //flag 0 - linker/motor, 1-brancher.
++        for(auto x:Cylinder::getCylinders()){
++            vector<tuple<int, short>> scfmap;
++            typedef unordered_multimap<int, tuple<int, short>>:: iterator umit;
++            pair<umit, umit> range;
++            if(flag ==0)
++                range = _singlecylfilunsortedpairings.equal_range(x->getID());
++            else
++                range = _bsinglecylfilunsortedpairings.equal_range(x->getID());
++
++            vector<int> bVpos; //position in boundVector
++            vector<short> bSite; //binding Sites occupied
++            vector<short> ObSite; //ordered binding Sites occupied
++            vector<short> bSitecyl; //all binding sites available in the cylinder.
++            vector<short> IDs;
++            auto filType = x->getType();
++            short deltaBinding = short (SysParams::Geometry().cylinderNumMon[x->getType()] / SysParams::Chemistry().numBindingSites[x->getType()]);
++            for(auto it1 = SysParams::Chemistry().bindingSites[filType].begin();
++                it1 != SysParams::Chemistry().bindingSites[filType].end(); it1++){
++                bSitecyl.push_back((short) *it1);
++            }
++            for (auto it = range.first; it != range.second; ++it){
++                scfmap.push_back(it->second);}//@FOR it
++//            TODO if(scfmap.size() > SysParams::Chemistry().numBindingSites[x->getType()])
++            //get vectors of bSite
++            auto i = 0;
++            for(int I=0;I<scfmap.size();I++){
++                bVpos.push_back(get<0>(scfmap[I]));
++                bSite.push_back(get<1>(scfmap[I]));
++                IDs.push_back(i);
++                i++;
++            }
++            //sort in ascending order.
++            if(scfmap.size()){
++                //if nummonomers is equal to total number of monomers allowed in a cylinder.
++                auto nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
++                if( nummonomers == SysParams::Geometry().cylinderNumMon[filType]
++                   ){
++                    for(auto i = 0; i < bSite.size(); i++){
++                        std::cout<<bSite[i]<<" "<<twoPointDistance(x->getFirstBead()->coordinate,x->getSecondBead()->coordinate)<<endl;
++                        if(flag ==0)
++                            _unsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
++                        else
++                            _bunsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
++                    }
++                }
++                else{ //in case where there are fewer monomers in the cylinder.
++                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
++                    //If the cylinder is both a branch and branching cylinder (like the shaft in letter I), we need to re-do the binding site position when it is branching cylinder.
++                    if(vecpos != branchcylIDs.end() && flag == 1){
++                          vector<short> posBindingSites=SysParams::Chemistry().bindingSites[filType];
++                        //ASSIGN THE BINDING SITE TO BE THE ONE CLOSEST TO WHAT IS GUESSED.
++                        for(auto i = 0; i < bSite.size(); i++){
++                            int lo=0;
++                            int mm;
++                            vector<short> test;
++                            for(mm=0;mm<posBindingSites.size();mm++){
++                                test.push_back(abs(posBindingSites[mm]-bSite[i]));}
++                            for(mm=0;mm<posBindingSites.size();mm++){
++                                if(test[mm]<test[lo])
++                                    lo=mm;}
++                            bSite[i] = posBindingSites[lo];
++                        }
++                    }
++                    ObSite = bSite;
++                    if(bSite.size()>1){
++                        short temp;
++                        for(i=0;i<ObSite.size();i++){
++                            for(auto j=i;j<ObSite.size();j++){
++                                if(j+1<=ObSite.size()){
++                                    if(ObSite[j]>ObSite[j+1])
++                                    {
++                                        temp = ObSite[j];
++                                        ObSite[j] = ObSite[j+1];
++                                        ObSite[j+1] = temp;
++                                        temp = IDs[j];
++                                        IDs[j] = IDs[j+1];
++                                        IDs[j+1] = temp;
++                                    }
++                                }
++                            }
++                        }
++                    }//IF bSite.size() >1
++                    //append with other binding sites.
++                    while(ObSite.back() < SysParams::Geometry().cylinderNumMon[filType] && ObSite.size() < bSitecyl.size())
++                        ObSite.push_back(ObSite.back() + deltaBinding);
++                    for(auto i = ObSite.size(); i < bSitecyl.size(); i++){
++                        if(ObSite.front() - deltaBinding >0){
++                            ObSite.push_back(ObSite.back());
++                            for(auto i = ObSite.size()-2; i >0; i--){
++                                ObSite.at(i+1)  = ObSite.at(i);
++                            }
++                            ObSite.at(0)  =ObSite.at(0)- deltaBinding;
++                        }
++                    }
++                    
++                    //get COM
++                    short mean1 = 0;short mean2 = 0;
++                    for(auto i = 0; i < bSitecyl.size(); i++)
++                    { mean1 += bSitecyl[i]; mean2 += ObSite[i];}
++                    mean1 = mean1/bSitecyl.size();mean2 = mean2/bSitecyl.size();
++                    //MAKE SURE THAT YOU ARE NOT MOVING A BRANCH CYLINDER.
++                    for(int i = 0; i < x->getCCylinder()->getSize(); i++) {
++                        std::cout<<x->getCCylinder()->getCMonomer(i)->speciesFilament(0)->getN()<<" "<<x->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" "<<x->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<endl;
++                    }
++
++                    if(abs(mean1-mean2)!= 0 &&  vecpos != branchcylIDs.end() ){
++                        cout<<"Cylinder is not compatible to bind both Link/motor and brancher. Cannot restart. Exiting."<<endl;
++                        //exit(EXIT_FAILURE);
++                    }
++                    else if(abs(mean1-mean2)!=0 && vecpos == branchcylIDs.end()){
++                    //move COM to get the necessary translation.
++                    for(auto i = 0; i < bSite.size(); i++){
++                        std::cout<<bSite[i]<<" ";
++                        bSite[i] = bSite[i] + mean1 - mean2;
++                        std::cout<<bSite[i]<<" "<<twoPointDistance(x->getFirstBead()->coordinate,x->getSecondBead()->coordinate)<<endl;
++                        if(flag ==0)
++                            _unsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
++                        else
++                            _bunsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
++                    }
++                    //FIX CCYLINDER
++                    if(flag == 0 && x->getID() == 1629)
++                        std::cout<<x->getID()<<endl;
++                    auto cc = x->getCCylinder();
++                    int nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
++                    //TURN DOWN OLD MINUS AND PLUS END
++                    CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
++                    m1->speciesMinusEnd(0)->down();
++                    m1 = cc->getCMonomer(cc->getSize() - 1);
++                    m1->speciesPlusEnd(0)->down();
++                    //TURN UP NEW MINUS AND PLUS ENDS.
++                    //get the first and last Beads
++                    short minus = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + mean1 - mean2;
++                    short plus  = SysParams::Geometry().cylinderNumMon[filType] -1 + mean1 - mean2;
++                    
++                    m1 = cc->getCMonomer(minus);
++                    m1->speciesMinusEnd(0)->up();
++                    m1 = cc->getCMonomer(plus);
++                    m1->speciesPlusEnd(0)->up();
++                    
++                    for(int i = 0; i < cc->getSize(); i++) {
++                        if(i>minus && i <plus){ //first CMonomer should be MinusEnd
++                            if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 0)
++                                cc->getCMonomer(i)->speciesFilament(0)->up();
++                            for(auto j : SysParams::Chemistry().bindingIndices[filType]){
++                                if(cc->getCMonomer(i)->speciesBound(j)->getN() == 0)
++                                    cc->getCMonomer(i)->speciesBound(j)->up();}
++                        } //@IF
++                        else{
++                             if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 1)
++                                 cc->getCMonomer(i)->speciesFilament(0)->down();
++                            for(auto j : SysParams::Chemistry().bindingIndices[filType]){
++                                if(cc->getCMonomer(i)->speciesBound(j)->getN() == 1)
++                                    cc->getCMonomer(i)->speciesBound(j)->down();}
++                        } //@ELSE
++                    }
++                    for(int i = 0; i < cc->getSize(); i++) {
++                        std::cout<<minus<<" "<<plus<<" "<<cc->getCMonomer(i)->speciesFilament(0)->getN()<<" ";
++                        for(auto j : SysParams::Chemistry().bindingIndices[filType]){
++                            std::cout<<cc->getCMonomer(i)->speciesBound(j)->getN()<<" ";
++                        }
++                        std::cout<<endl;
++                    }
++//                   cc->passivatefilreactions();
++//                    cc->passivatefilcrossreactions();
++                    //FIXED CCYLINDER
++                    }
++                    else if(abs(mean1-mean2)==0){
++                        for(auto i = 0; i < bSite.size(); i++){
++                            if(flag ==0)
++                                _unsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
++                            else
++                                _bunsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
++                        }
++
++                    }
++                    }// ELSE (IF x->Size > = CYLSIZE)
++            }//IF scfmap.size()
++            
++        } //FOR Cylinders
++        
++    }//reassign ENDS.
++    
++    
+     //cross checks to see linker and motor binding sites have the same distance between them as linker, adds to heap.
+     void crosschecklinkermotor(){
++        
+         short brows=boundVector.size();
+         for(int iter=0;iter<=brows-1;iter++){
+             vector<tuple<CCylinder*, short>> map;
+@@ -104,6 +295,7 @@ int  _numChemSteps=0;
+             double one,two;
+             int check2=0;
+             double threshold=0.01;
++            std::cout<<iter<<endl;
+             for(int I=0;I<map.size();I++){
+                 for(int J=I+1;J<map.size();J++){
+                     auto c1=get<0>(map[I])->getCylinder();
+@@ -111,13 +303,20 @@ int  _numChemSteps=0;
+                     auto l1=midPointCoordinate(c1->getFirstBead()->coordinate, c1->getSecondBead()->coordinate,get<1>(map[I])/_numMonPerCyl);
+                     auto l2=midPointCoordinate(c2->getFirstBead()->coordinate, c2->getSecondBead()->coordinate,get<1>(map[J])/_numMonPerCyl);
+                     auto distanceproj=twoPointDistance(l1, l2);
++                    if(c1->getID() == 1629 || c2->getID() == 1629)
++                        std::cout<<c1->getID()<<" "<<c2->getID()<<endl;
++                    bool dummy = abs((distanceproj-distanceactual)/distanceactual) < threshold;
++                    std::cout<<distanceproj<<" "<<distanceactual<<" "<<c1->isMinusEnd()<<" "<<c1->isPlusEnd()<<" "<<c2->isMinusEnd()<<" "<<c2->isPlusEnd()<<" "<<abs((distanceproj-distanceactual)/distanceactual)<<endl;
++                    std::cout<<"bool "<<dummy<<endl;
+                     if(abs((distanceproj-distanceactual)/distanceactual)<threshold)
+                     {one=I;two=J;check2=1;threshold=abs((distanceproj-distanceactual)/distanceactual);}
+                 }}
+             if(!check2)
+             {cout<<"Serious error! Bound Species (Linker/Motor) with the following coordinates is not bound to a legitimate site"<<endl;
+                 cout<<leg1[0]<<" "<<leg1[1]<<" "<<leg1[2]<<endl;
+-                cout<<leg2[0]<<" "<<leg2[1]<<" "<<leg2[2]<<endl;}
++                cout<<leg2[0]<<" "<<leg2[1]<<" "<<leg2[2]<<endl;
++                //exit(EXIT_FAILURE);
++            }
+             auto c1=get<0>(map[one])->getCylinder();
+             auto c2=get<0>(map[two])->getCylinder();
+             //@
+@@ -219,15 +418,19 @@ public:
+         C->getDiffusionReactionContainer().updatePropensityComprtment();
+         for(auto &Mgr:C->getFilamentBindingManagers()){Mgr->clearpossibleBindings();
+         }}
+-    
+ //STEP #1a: Get cylinders, passivate filament reactions.
++//        auto xxx=0;
+     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
++//        xxx=xxx+C->getCylinders().size();
+         for(auto x : C->getCylinders()) {
+             x->getCCylinder()->passivatefilreactions();
++            x->getCCylinder()->passivatefilcrossreactions();
+         }}
++//        std::cout<<xxx<<" "<<Cylinder::getCylinders().size()<<" Cylinders"<<endl;
+ //Step #1b. Get copynumber of diffusing species.
+     for(auto sd : _chemData.speciesDiffusing) {
+         string name = get<0>(sd);
++//        std::cout<<name<<" "<<_subSystem->getCompartmentGrid()->countDiffusingSpecies(name)<<endl;
+         CopyNumbers.push_back(_subSystem->getCompartmentGrid()->countDiffusingSpecies(name));}
+     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+         for(auto sd : _chemData.speciesDiffusing) {
+@@ -245,7 +448,13 @@ public:
+                 if(dis<=0.00001){
+                     b->setstaticstate(true);
+                 }}}
+-}
++        
++//STEP #2 . updating _possbileBindings of Linkers in each compartment.
++        //Filter through probable sites in unsortedpairings by making sure the distance between binding sites
++        //in them is the same as bound species bond length
++        crosschecklinkermotor();
++        crosscheckBranchers();
++    }
+     
+     void addtoHeaplinkermotor(){
+         //STEP #2. ADD bound Linkers And Motors in inputfile into possible bindings.
+@@ -263,8 +472,12 @@ public:
+                     auto b=boundVector.at(iter);
+                     short filamentType=get<1>(b);
+                     if(filamentType==x->getType()){
++                        double _numMonPerCyl=NULL;
++                        if(x->isMinusEnd() || x->isPlusEnd())
++                            _numMonPerCyl=(int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
++                        else
++                            _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
+                         vector<short> posBindingSites=SysParams::Chemistry().bindingSites[filamentType];
+-                        double _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
+                         string boundName=get<0>(b);
+                         vector<vector<double>> coord=get<2>(b);
+                         vector<double> leg1=coord.at(0);
+@@ -272,41 +485,92 @@ public:
+                         //Leg 1
+                         angdeltapos=getAngleDeltaPos(leg1,b1,b2);
+                         if( angdeltapos.at(0)<0.001 && angdeltapos.at(1)<0.001){
+-                            double d=round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
+-                            int lo=0;
+-                            int mm;
+-                            vector<short> test;
+-                            for(mm=0;mm<=posBindingSites.size();mm++){
+-                                test.push_back(abs(posBindingSites[mm]-d));}
+-                            for(mm=0;mm<=posBindingSites.size();mm++){
+-                                if(test[mm]<test[lo])
+-                                    lo=mm;}
+-                            _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});}
++                            if(iter ==5)
++                                std::cout<<x->getID()<<endl;
++                            auto f = (Filament*)(x->getParent());
++                            double d=NULL;
++                            if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
++                                if(x->isMinusEnd()){
++                                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
++                                    if(vecpos!=branchcylIDs.end()) //If it is a branch cylinder, then the CMonomers are re-arranged starting from 0 instead of CMonomer.size().
++                                        d = round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
++                                        //d = round(angdeltapos.at(2)*_numMonPerCyl/SysParams::Geometry().cylinderSize[filamentType]); //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
++                                    else
++                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
++//                                        d = round((1-(angdeltapos.at(3)-angdeltapos.at(2))/SysParams::Geometry().cylinderSize[filamentType])*SysParams::Geometry().cylinderNumMon[filamentType]);
++                                    //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
++                                    }
++                                else
++                                    d = round( angdeltapos.at(2)/SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
++                            }
++                            else
++                                d = round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
++                            std::cout<<f->getCylinderVector().size()<<endl;
++                            if(f->getCylinderVector().size()>1){
++                                int lo=0;
++                                int mm;
++                                vector<short> test;
++                                for(mm=0;mm<posBindingSites.size();mm++){
++                                    test.push_back(abs(posBindingSites[mm]-d));}
++                                for(mm=0;mm<posBindingSites.size();mm++){
++                                    if(test[mm]<test[lo])
++                                        lo=mm;}
++                                _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
++                            }
++                            else{
++                                _singlecylfilunsortedpairings.insert({x->getID(),make_tuple(iter, d)});
++                            }
++                        }
+                         //@Leg1 ENDS & Leg2
+                         angdeltapos=getAngleDeltaPos(leg2,b1,b2);
+                         if( angdeltapos.at(0)<0.001 && angdeltapos.at(1)<0.001){
+-                            double d=round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
+-                            int lo=0;
+-                            int mm;
+-                            vector<short> test;
+-                            for(mm=0;mm<=posBindingSites.size();mm++){
+-                                test.push_back(abs(posBindingSites[mm]-d));}
+-                            for(mm=0;mm<=posBindingSites.size();mm++){
+-                                if(test[mm]<test[lo])
+-                                    lo=mm;}
+-                            _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});}
+-                        //@Leg2 ENDS
++                            if(x->getID() == 5)
++                                std::cout<<x->getID()<<endl;
++                            auto f = (Filament*)(x->getParent());
++                            double d=NULL;
++                            if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
++                                if(x->isMinusEnd()){
++                                    auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
++                                    if(vecpos!=branchcylIDs.end()) //If it is a branch cylinder, then the CMonomers are re-arranged starting from 0 instead of CMonomer.size().
++                                        d = round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
++                                    //d = round(angdeltapos.at(2)*_numMonPerCyl/SysParams::Geometry().cylinderSize[filamentType]); //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
++                                    else
++                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
++                                    //                                        d = round((1-(angdeltapos.at(3)-angdeltapos.at(2))/SysParams::Geometry().cylinderSize[filamentType])*SysParams::Geometry().cylinderNumMon[filamentType]);
++                                    //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
++                                }
++                                else
++                                    d = round( angdeltapos.at(2)/SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
++                            }
++                            else
++                                d = round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
++                            std::cout<<f->getCylinderVector().size()<<endl;
++                            if(f->getCylinderVector().size()>1){
++                                int lo=0;
++                                int mm;
++                                vector<short> test;
++                                for(mm=0;mm<posBindingSites.size();mm++){
++                                    test.push_back(abs(posBindingSites[mm]-d));}
++                                for(mm=0;mm<posBindingSites.size();mm++){
++                                    if(test[mm]<test[lo])
++                                        lo=mm;}
++                                _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
++                            }
++                            else{
++                                _singlecylfilunsortedpairings.insert({x->getID(),make_tuple(iter, d)});
++                            }
++                        }//@Leg2 ENDS
+                     }//@IF
+                 }//@for brows
+             }}//@Cylinders
+-        //STEP #2A . updating _possbileBindings of Linkers in each compartment.
+-        //Filter through probable sites in unsortedpairings by making sure the distance between binding sites
+-        //in them is the same as bound species bond length
+-        crosschecklinkermotor();
++        
++        //STEP #2 Substep. Check single cylinder filaments to make sure CMonomers are activated appropriately.
++        //MinusEnd Cylinders are activated by default with the right most monomer pointing towards the plusEnd.
++        reassignsinglecylfil(0);
+         }
+     
+     void addtoHeapbranchers(){
+-        unordered_multimap<int, tuple<CCylinder*, short>> _bunsortedpairings;
++ 
+         vector<tuple<string, short, vector<double>>> branchVector=get<2>(filaments);
+         int iter;
+         auto brows=branchVector.size();
+@@ -321,32 +585,136 @@ public:
+                     if(filamentType==x->getType()){
+                         double cylsize=SysParams::Geometry().cylinderSize[filamentType];
+                         vector<short> posBindingSites=SysParams::Chemistry().bindingSites[filamentType];
+-                        double _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
++                        double _numMonPerCyl=NULL;
++                        if(x->isMinusEnd() || x->isPlusEnd())
++                            _numMonPerCyl=(int) (x->getMCylinder()->getEqLength()/SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
++                        else
++                            _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
++                        auto filamentType = x->getType();
+                         string boundName=get<0>(b);
+                         vector<double> branch=get<2>(b);
+                         //Find the cylinder the brancher is on
+                         vector<double> angdeltapos=getAngleDeltaPos(branch,b1,b2);
+                         if(angdeltapos.at(0)<0.001 && angdeltapos.at(1)<0.001){
+-                            double d=round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
+-                            int lo=0;
+-                            int mm;
+-                            vector<int> test;
+-                            for(mm=0;mm<=posBindingSites.size();mm++){
+-                                test.push_back(abs(posBindingSites[mm]-d));}
+-                            for(mm=0;mm<=posBindingSites.size();mm++){
+-                                if(test[mm]==0)
+-                                    lo=mm;}
+-                            _bunsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});}
++                            if(x->getID() == 1629)
++                                std::cout<<x->getID()<<endl;
++
++                            auto f = (Filament*)(x->getParent());
++                            double d=NULL;
++                            if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
++                                if(x->isMinusEnd())
++                                    //TODO MIGHT HAVE TO CHANGE THIS.
++                                    d = round((1-(angdeltapos.at(3)-angdeltapos.at(2))/SysParams::Geometry().cylinderSize[filamentType])*SysParams::Geometry().cylinderNumMon[filamentType]);
++                                else
++                                    d = round( angdeltapos.at(2)/SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
++                            }
++                            else
++                                d=round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
++                            if(f->getCylinderVector().size()>1){
++                                int lo=0;
++                                int mm;
++                                vector<int> test;
++                                for(mm=0;mm<posBindingSites.size();mm++){
++                                    test.push_back(abs(posBindingSites[mm]-d));}
++                                for(mm=0;mm<posBindingSites.size();mm++){
++                                    if(test[mm]<test[lo])
++                                        lo=mm;}
++                                _bunsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
++                            }
++                            else{
++
++                                _bsinglecylfilunsortedpairings.insert({x->getID(),make_tuple(iter, d)});
++                            }
++                        }
+                         //Find the closest minus end based on distance alone.
+                         else if(x->isMinusEnd()&& 0.25>=angdeltapos.at(2)/cylsize){
+-                            _bunsortedpairings.insert({iter,make_tuple(x->getCCylinder(),0)});
++                            
++                            if(x->getID() == 1629)
++                                std::cout<<x->getID()<<endl;
++
++                            auto f = (Filament*)(x->getParent());
++                            
++                            if(f->getCylinderVector().size()==1){
++                                _bunsortedpairings.insert({iter,make_tuple(x->getCCylinder(),0)});
++                                branchcylIDs.push_back(x->getID());
++                                
++                                auto cc = x->getCCylinder();
++                                int nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filamentType]),SysParams::Geometry().cylinderNumMon[filamentType]);
++                                //TURN DOWN OLD MINUS AND PLUS END
++                                CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filamentType] - nummonomers);
++                                m1->speciesMinusEnd(0)->down();
++                                m1 = cc->getCMonomer(cc->getSize() - 1);
++                                m1->speciesPlusEnd(0)->down();
++                                //TURN UP NEW MINUS AND PLUS ENDS.
++                                //get the first and last Beads
++                                short minus = 0 ;
++                                short plus  = nummonomers -1 ;
++                                
++                                m1 = cc->getCMonomer(minus);
++                                if(m1->speciesMinusEnd(0)->getN()!=0)
++                                    m1->speciesMinusEnd(0)->down();
++                                m1 = cc->getCMonomer(plus);
++                                m1->speciesPlusEnd(0)->up();
++                            
++                                for(int i = 0; i < cc->getSize(); i++) {
++                                    if(i>=minus && i <plus){ //first CMonomer should be MinusEnd
++                                        if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 0)
++                                            cc->getCMonomer(i)->speciesFilament(0)->up();
++                                        for(auto j : SysParams::Chemistry().bindingIndices[filamentType]){
++                                            if(cc->getCMonomer(i)->speciesBound(j)->getN() == 0)
++                                                cc->getCMonomer(i)->speciesBound(j)->up();}
++                                    } //@IF
++                                    else{
++                                        if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 1)
++                                            cc->getCMonomer(i)->speciesFilament(0)->down();
++                                        for(auto j : SysParams::Chemistry().bindingIndices[filamentType]){
++                                            if(cc->getCMonomer(i)->speciesBound(j)->getN() == 1)
++                                                cc->getCMonomer(i)->speciesBound(j)->down();}
++                                    } //@ELSE
++                                }
++                                for(int i = 0; i < nummonomers; i++) {
++                                    std::cout<<x->getCCylinder()->getCMonomer(i)->speciesFilament(0)->getN()<<" "<<x->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" "<<x->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<endl;
++                                }
++
++                            } //IF filament vector has 1 cylinder.
++                            else{
++                                bool check = false; short sum = 0;
++                                int nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filamentType]),SysParams::Geometry().cylinderNumMon[filamentType]);
++                                for(int i = 0; i < nummonomers; i++) {
++                                    std::cout<<x->getCCylinder()->getCMonomer(i)->speciesFilament(0)->getN()<<" "<<x->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" "<<x->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<endl;
++                                    sum = sum + x->getCCylinder()->getCMonomer(i)->speciesFilament(0)->getN();
++                                }
++                                if(x->isMinusEnd() || x->isPlusEnd())
++                                    sum++;
++                                if(sum == nummonomers )
++                                    check = true;
++                                if(check){
++                                auto m1 = x->getCCylinder()->getCMonomer(0);
++                                if(m1->speciesMinusEnd(0)->getN()!=0)
++                                    m1->speciesMinusEnd(0)->down();
++                                _bunsortedpairings.insert({iter,make_tuple(x->getCCylinder(),0)});
++                                }
++                                else{
++                                    cout<<"A branch filament has more than one cylinder and the minus end is not at CMonomer(0). Cannot restart this file. Exiting."<<endl;
++                                    //exit(EXIT_FAILURE);
++                                }
++                            }
+                         }
+                     }//@ IF
+                 }//@ brows
+             }//@ Cylinders
+         }//@ Compartment
++        
++        //STEP #2 Substep. Check single cylinder filaments to make sure CMonomers are activated appropriately.
++        //MinusEnd Cylinders are activated by default with the right most monomer pointing towards the plusEnd.
++        reassignsinglecylfil(1);
++    }
++    
++    void crosscheckBranchers(){
+         //Step 3A. Sort through, update possible bindings, fire reaction one by one, handle callback.
+-        for(iter=0;iter<brows;iter++){
++        vector<tuple<string, short, vector<double>>> branchVector=get<2>(filaments);
++        auto brows=branchVector.size();
++        for(auto iter=0;iter<brows;iter++){
+             vector<tuple<CCylinder*, short>> map;
+             auto range = _bunsortedpairings.equal_range(iter);
+             for (auto it = range.first; it != range.second; ++it){
+diff --git a/src/Structure/BranchingPoint.cpp b/src/Structure/BranchingPoint.cpp
+index 405df46..d3541e5 100644
+--- a/src/Structure/BranchingPoint.cpp
++++ b/src/Structure/BranchingPoint.cpp
+@@ -53,7 +53,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
+     }
+         
+     int pos = int(position * SysParams::Geometry().cylinderNumMon[c1->getType()]);
+-    
++          //std::cout<<c1->getID()<<" "<<c2->getID()<<" "<<pos<<endl;
+ #ifdef CHEMISTRY
+     _cBranchingPoint = unique_ptr<CBranchingPoint>(
+     new CBranchingPoint(branchType, _compartment, c1->getCCylinder(), c2->getCCylinder(), pos));
+diff --git a/src/Structure/CCylinder.cpp b/src/Structure/CCylinder.cpp
+index 4347477..3fca69b 100644
+--- a/src/Structure/CCylinder.cpp
++++ b/src/Structure/CCylinder.cpp
+@@ -23,7 +23,6 @@ ChemSim* CCylinder::_chemSim = 0;
+ /// Default constructor, sets compartment and cylinder
+ CCylinder::CCylinder(Compartment* C, Cylinder* c)
+     : _compartment(C), _pCylinder(c) {
+-    
+     //set size based on parent cylinder
+     _size = SysParams::Geometry().cylinderSize[c->getType()] /
+             SysParams::Geometry().monomerSize[c->getType()];
+@@ -218,7 +217,53 @@ CCylinder::~CCylinder() {
+     }
+ }
+ 
+-//James' suggestion. passivatepolyreactions written by Aravind July 11, 2016.
++void CCylinder::passivatefilcrossreactions(){
++    
++    for (auto it2=_crossCylinderReactions.begin(); it2!=_crossCylinderReactions.end(); ++it2){
++        auto mySet = it2->second;
++        for (auto it: mySet) {
++            if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
++               ||it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
++               ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
++               ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
++               ||it->getReactionType() ==ReactionType::SEVERING
++               ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
++               ||it->getReactionType() ==ReactionType::AGING)
++            {it->passivateReaction();}
++        
++        }}
++//    auto tempReactions = _crossCylinderReactions[this];
++//    if(this->getCylinder()->isPlusEnd()){
++//        for(auto &it : tempReactions){
++//            std::cout<<it->getReactionType()<<endl;
++//        }
++//    }
++//    for(auto &it : tempReactions){
++//        if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
++//           ||it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
++//           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
++//           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
++//           ||it->getReactionType() ==ReactionType::SEVERING
++//           ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
++//           ||it->getReactionType() ==ReactionType::AGING)
++//        {it->passivateReaction();}
++//    }
++}
++
++void CCylinder::activatefilcrossreactions(){    
++    for (auto it2=_crossCylinderReactions.begin(); it2!=_crossCylinderReactions.end(); ++it2){
++        auto mySet = it2->second;
++        for (auto it: mySet) {
++            if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
++               ||it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
++               ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
++               ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
++               ||it->getReactionType() ==ReactionType::SEVERING
++               ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
++               ||it->getReactionType() ==ReactionType::AGING)
++            {it->activateReaction();}
++            
++        }}}
+ void CCylinder::passivatefilreactions(){
+     for(auto &it: _internalReactions){
+         if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
+@@ -239,9 +284,7 @@ void CCylinder::activatefilreactions(){
+            ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
+            ||it->getReactionType() ==ReactionType::AGING)
+         {it->activateReaction();}}}
+-//aravind.. END
+-//
+-//@
++
+ vector<ReactionBase*> CCylinder::getAllReactions() {
+     
+     vector<ReactionBase*> reactions;
+diff --git a/src/Structure/CCylinder.h b/src/Structure/CCylinder.h
+index dbc4625..3c92fb6 100644
+--- a/src/Structure/CCylinder.h
++++ b/src/Structure/CCylinder.h
+@@ -132,6 +132,9 @@ public:
+     void passivatefilreactions();
+     void activatefilreactions();
+     
++    void passivatefilcrossreactions();
++    void activatefilcrossreactions();
++    
+     //@}
+     
+     /// Get all reactions that this CCylinder has ownership of
+diff --git a/src/Structure/CLinker.cpp b/src/Structure/CLinker.cpp
+index 243526f..09266bd 100644
+--- a/src/Structure/CLinker.cpp
++++ b/src/Structure/CLinker.cpp
+@@ -32,6 +32,18 @@ CLinker::CLinker(short linkerType, Compartment* c,
+                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
+     
+     //mark species
++//        std::cout<<SysParams::Geometry().cylinderNumMon[_filamentType]<<endl;
++//        for(auto c:Cylinder::getCylinders()){
++//            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[_filamentType];p++){
++//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().linkerBoundIndex[_filamentType]);
++//                
++//                                if(xx->getN() !=1.0)
++//                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<endl;
++//                
++//            }
++//        }
++        std::cout<<sl1->getN()<<" "<<sl2->getN()<<" "<<se1->getN()<<" "<<se2->getN()<<endl;
++        
+     assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
+            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
+            "Major bug: Linker binding to an occupied site.");
+diff --git a/src/Structure/Compartment.cpp b/src/Structure/Compartment.cpp
+index 75a523e..44da6c1 100644
+--- a/src/Structure/Compartment.cpp
++++ b/src/Structure/Compartment.cpp
+@@ -124,7 +124,7 @@ void Compartment::transferSpecies(int i) {
+     
+     for(auto &neighbor : _neighbours){
+         auto ncoord=neighbor->coordinates();
+-//                    std::cout<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<" "<<ncoord[0]<<" "<<ncoord[1]<<" "<<ncoord[2]<<endl;
++
+         if(neighbor->isActivated()){
+             if(i==3)
+                 activeNeighbors.push_back(neighbor);
+diff --git a/src/Structure/Cylinder.cpp b/src/Structure/Cylinder.cpp
+index 4f45803..db87be1 100644
+--- a/src/Structure/Cylinder.cpp
++++ b/src/Structure/Cylinder.cpp
+@@ -54,6 +54,47 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
+                    
+    //add to compartment
+    _compartment->addCylinder(this);
++          
++#ifdef MECHANICS
++          //set eqLength according to cylinder size
++          
++              double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
++          if(!SysParams::RUNSTATE) //RESTARTPHASE
++          {
++              int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
++              double tpd = eqLength;
++//              std::cout<<eqLength<<" ";
++              
++              if(nummonomers ==0){
++                  eqLength = SysParams::Geometry().monomerSize[type];
++              }
++              else{
++                  eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
++                  double mindis = abs(tpd - eqLength);
++//                  std::cout<<eqLength<<" ";
++                  for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
++                      if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
++                      {
++                          eqLength = i * SysParams::Geometry().monomerSize[type];
++                          mindis = abs(tpd - eqLength);
++                      }
++                  }
++              }
++              
++              
++//              for(auto i=nummonomers ;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
++//                  if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
++//                  {
++//                      eqLength = i * SysParams::Geometry().monomerSize[type];
++//                      mindis = abs(tpd - eqLength);
++//                  }
++//              }
++              
++//              std::cout<<eqLength<<endl;
++          }
++          _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
++          _mCylinder->setCylinder(this);
++#endif
+     
+ #ifdef CHEMISTRY
+     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
+@@ -64,13 +105,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
+                                       extensionBack, initialization);
+ #endif
+ 
+-#ifdef MECHANICS
+-    //set eqLength according to cylinder size
+-    double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
+-        
+-    _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
+-    _mCylinder->setCylinder(this);
+-#endif
++
+         
+ }
+ 
+diff --git a/src/Structure/Filament.cpp b/src/Structure/Filament.cpp
+index e1e51e7..cadc017 100644
+--- a/src/Structure/Filament.cpp
++++ b/src/Structure/Filament.cpp
+@@ -142,8 +142,10 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
+     auto newBeadCoords=coordinates;
+     //create
+     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
++
+     Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
+                                                        lpf + 1, false, false, true);
++    
+     c0->setPlusEnd(true);
+     _cylinderVector.push_back(c0);
+     
+@@ -168,6 +170,7 @@ void Filament::extendMinusEnd(vector<double>& coordinates) {
+     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() - 1);
+     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
+                                                   lpf - 1, false, false, true);
++    
+     c0->setMinusEnd(true);
+     _cylinderVector.push_front(c0);
+ 
+@@ -201,6 +204,8 @@ void Filament::extendPlusEnd(short plusEnd) {
+     
+     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
+                                                       lpf + 1, true);
++    
++    
+     _cylinderVector.back()->setPlusEnd(false);
+     _cylinderVector.push_back(c0);
+     _cylinderVector.back()->setPlusEnd(true);
+@@ -351,6 +356,27 @@ void Filament::polymerizePlusEnd() {
+     //increase eq length, update
+     double newEqLen = cBack->getMCylinder()->getEqLength() +
+                       SysParams::Geometry().monomerSize[_filType];
++//    bool check = false;
++//    auto ctr = 0;
++//    while((!check) && ctr < 40)
++//    {
++//        if(cBack->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
++//        ctr ++;
++//    }
++//    if(check)
++//        std::cout<<"PP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(ctr + 1)*2.7<<endl;
++//    else
++//        std::cout<<"PP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
++//    
++//        if(abs(newEqLen-(ctr + 1)*2.7)>0.1)
++//        {        Filament *bf = (Filament*)(cBack->getParent());
++//            std::cout<<bf->getID()<<endl;
++//            for(auto i=0;i<40;i++)
++//            std::cout<<cBack->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
++//            std::cout<<endl;
++//            exit(EXIT_FAILURE);
++//        }
++    
+     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
+ #endif
+     
+@@ -381,10 +407,31 @@ void Filament::polymerizeMinusEnd() {
+     //increase eq length, update
+     double newEqLen = cFront->getMCylinder()->getEqLength() +
+                       SysParams::Geometry().monomerSize[_filType];
++//    bool check = false;
++//    auto ctr = 0;
++//    while(!check && ctr < 40)
++//    {
++//        if(cFront->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
++//        ctr ++;
++//    }
++//    if(check)
++//        std::cout<<"PM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(40 - ctr)*2.7<<endl;
++//    else
++//        std::cout<<"PM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
++//    
++//    if(abs(newEqLen-(40 - ctr)*2.7)>0.1){
++//        Filament *bf = (Filament*)(cFront->getParent());
++//        std::cout<<bf->getID()<<endl;
++//        for(auto i=0;i<40;i++)
++//            std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
++//        std::cout<<endl;
++//        exit(EXIT_FAILURE);
++//    }
++
++
+     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
+ #endif
+-    
+-#ifdef DYNAMICRATES
++    #ifdef DYNAMICRATES
+     //update rates of new back
+     _cylinderVector.front()->updateReactionRates();
+ #endif
+@@ -410,7 +457,27 @@ void Filament::depolymerizePlusEnd() {
+     //decrease eq length, update
+     double newEqLen = cBack->getMCylinder()->getEqLength() -
+                       SysParams::Geometry().monomerSize[_filType];
++//    bool check = false;
++//    auto ctr = 0;
++//    while((!check) && ctr < 40)
++//    {
++//        if(cBack->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
++//        ctr ++;
++//    }
++//    if(check)
++//        std::cout<<"DP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(ctr + 1)*2.7<<endl;
++//    else
++//        std::cout<<"DP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
+     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
++    
++//    if(abs(newEqLen-(ctr + 1)*2.7)>0.1){
++//        Filament *bf = (Filament*)(cBack->getParent());
++//        std::cout<<bf->getID()<<endl;
++//        for(auto i=0;i<40;i++)
++//            std::cout<<cBack->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
++//    std::cout<<endl;
++//    exit(EXIT_FAILURE);
++//}
+ #endif
+ #ifdef DYNAMICRATES
+     //update rates of new back
+@@ -439,6 +506,30 @@ void Filament::depolymerizeMinusEnd() {
+     //decrease eq length, update
+     double newEqLen = cFront->getMCylinder()->getEqLength() -
+                       SysParams::Geometry().monomerSize[_filType];
++//    for(auto i=0;i<40;i++)
++//        std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
++//    std::cout<<endl;
++//    bool check = false;
++//    auto ctr = 0;
++//    while(!check && ctr < 40)
++//    {
++//        if(cFront->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
++//        ctr ++;
++//    }
++//    if(check)
++//        std::cout<<"DM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(40 - ctr)*2.7<<endl;
++//    else
++//        std::cout<<"DM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
++//    
++//    if(abs(newEqLen-(40 - ctr)*2.7)>0.1){
++//        Filament *bf = (Filament*)(cFront->getParent());
++//        std::cout<<bf->getID()<<endl;
++//        for(auto i=0;i<40;i++)
++//            std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
++//        std::cout<<endl;
++//        exit(EXIT_FAILURE);
++//    }
++
+     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
+ #endif
+     
+diff --git a/src/Structure/Linker.cpp b/src/Structure/Linker.cpp
+index 0787984..3a94a8d 100644
+--- a/src/Structure/Linker.cpp
++++ b/src/Structure/Linker.cpp
+@@ -59,6 +59,15 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
+           
+     int pos1 = int(position1 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
+     int pos2 = int(position2 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
++          
++          auto coord1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
++          auto coord2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
++          std::cout<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "<<_position2<<endl;
++          std::cout<<_c1->isMinusEnd()<<" "<<_c1->isPlusEnd()<<" "<<_c2->isMinusEnd()<<" "<<_c2->isPlusEnd()<<endl;
++          std::cout<<twoPointDistance(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate)<<" "<<twoPointDistance(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate)<<endl;
++//          std::cout<<_c1->getFirstBead()->coordinate[0]<<" "<<_c1->getFirstBead()->coordinate[1]<<" "<<_c1->getFirstBead()->coordinate[2]<<endl;
++//          std::cout<<_c2->getFirstBead()->coordinate[0]<<" "<<_c2->getFirstBead()->coordinate[1]<<" "<<_c2->getFirstBead()->coordinate[2]<<endl;
++          std::cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+         
+ #ifdef CHEMISTRY
+     _cLinker = unique_ptr<CLinker>(
+diff --git a/src/Structure/MCylinder.cpp b/src/Structure/MCylinder.cpp
+index fa8382c..1988545 100644
+--- a/src/Structure/MCylinder.cpp
++++ b/src/Structure/MCylinder.cpp
+@@ -22,7 +22,6 @@ MCylinder::MCylinder(short filamentType, double eqLength){
+     
+     //Set equilibrium length and constants relative to full cylinder length
+     setEqLength(filamentType, eqLength);
+-    
+     //set excluded volume const
+     if(!SysParams::Mechanics().VolumeK.empty())
+         _kExVol = SysParams::Mechanics().VolumeK[filamentType];
+@@ -39,7 +38,6 @@ void MCylinder::setEqLength(short filamentType, double l) {
+     // recalculate other constants
+     if(!SysParams::Mechanics().FStretchingK.empty())
+         _kStretch = SysParams::Mechanics().FStretchingK[filamentType] * fracCylinderSize;
+-    
+     if(!SysParams::Mechanics().FBendingK.empty())
+         _kBend = SysParams::Mechanics().FBendingK[filamentType] / fracCylinderSize;
+ }
+-- 
+1.7.1
+
