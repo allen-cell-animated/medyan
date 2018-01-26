@@ -27,19 +27,18 @@ namespace {
     }
 }
 
-TEST(CubeSlicingTest, TransitionContinuity) {
+TEST(CubeSlicingTest, UnitCubeTransitionContinuity) {
     /**************************************************************************
     Test continuity under different transitions under the simplified
-    conditions, i.e. normal has all non-neg components and the distance from
-    the origin to the plane is less than or equal to half the max distance (no
-    flip or reverse is required).
+    conditions, i.e. normal has all non-neg components (no normal flip is
+    required, however, the reverse might secretly use a whole flip).
     
     Cube slicing result is obtained by calculating intersections on the axes,
     and the formula are different depending on the positions of the
     intersections.
     **************************************************************************/
 
-    double inEps = 1e-7;
+    double inEps = 1e-6;
     double outEps = 1e-5;
 
     // From 3 points inside, to 2 points inside
@@ -76,6 +75,23 @@ TEST(CubeSlicingTest, TransitionContinuity) {
         EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
 
+    // Transitions between the scenario with 1 point inside
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(0.5, 2 - inEps, 2 - inEps);
+        auto r2 = planeUnitCubeSliceByIntersection(0.5, 2 + inEps, 2 + inEps);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(2 - inEps, 0.5, 2 - inEps);
+        auto r2 = planeUnitCubeSliceByIntersection(2 + inEps, 0.5, 2 + inEps);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(2 - inEps, 2 - inEps, 0.5);
+        auto r2 = planeUnitCubeSliceByIntersection(2 + inEps, 2 + inEps, 0.5);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+
     // From 3 points inside, to no point inside
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 1 - inEps, 1 - inEps);
@@ -83,9 +99,20 @@ TEST(CubeSlicingTest, TransitionContinuity) {
         EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
 
-
-
+    // Check reverse condition
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(1.5 - inEps, 1.5 - inEps, 1.5 - inEps);
+        auto r2 = planeUnitCubeSliceByIntersection(1.5 + inEps, 1.5 + inEps, 1.5 + inEps);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        EXPECT_FALSE(planeCubeSlicingResultEqual(r1, r2, inEps * 1e-5)); // Check actually changed
+    }
     
+}
+
+TEST(CubeSlicingTest, UnitCubeFlipping) {
+    /**************************************************************************
+    Test the flipping of normal vector
+    **************************************************************************/
 }
 
 #  endif
