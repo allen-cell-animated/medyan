@@ -45,7 +45,7 @@ struct PlaneCubeSlicingResult {
 
 inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 1]
     const std::array<double, 3>& point,  // A point on the plane
-    const std::array<double, 3>& normal, // Unit normal of the plane pointing outwards
+    const std::array<double, 3>& normal  // Unit normal of the plane pointing outwards
 ) {
     PlaneCubeSlicingResult res{}; // zero-initiate
 
