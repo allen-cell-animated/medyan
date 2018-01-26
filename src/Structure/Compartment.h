@@ -85,7 +85,7 @@ protected:
     bool _boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
     double _partialVolume; // The volume inside the cell membrane
                            // Might be changed to a list or a map when more membranes are involved
-    array<double, 6> double _partialArea; // The area inside the cell membrane
+    array<double, 6> _partialArea; // The area inside the cell membrane
                         // Might be changed to a list of arrays or a map of arrays when more membranes are involved
     void _getSlicedVolumeArea(); // Helper function for getting the result of geometry from a approximately planar slice
     
