@@ -76,7 +76,7 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
             // Doing a full flip, plus swapping inside/outside,
             // which leaves the normal unchanged.
             reverse = true;
-            flippedPoint ^= ((1 << 3) - 1); // full flip
+            flippedCoords ^= ((1 << 3) - 1); // full flip
             for(size_t idx = 0; idx < 3; ++idx) {
                 flippedPoint[idx] = 1 - flippedPoint[idx];
             }
@@ -87,9 +87,9 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
         // Now the signedDist should be within [0, 0.5 signedDistMax]
 
         // Find the intersections on the axis. The values should be within [0, +inf]
-        double x = signedDistance / flippedNormal[0];
-        double y = signedDistance / flippedNormal[1];
-        double z = signedDistance / flippedNormal[2];
+        double x = signedDist / flippedNormal[0];
+        double y = signedDist / flippedNormal[1];
+        double z = signedDist / flippedNormal[2];
 
         size_t numGT1 = 0;
         if(x > 1) ++numGT1;

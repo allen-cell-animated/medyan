@@ -11,12 +11,13 @@
 using namespace mathfunc;
 
 namespace {
-    planeCubeSlicingResultEqual(const PlaneCubeSlicingResult& r1, const PlaneCubeSlicingResult& r2, double eps) {
+    bool planeCubeSlicingResultEqual(const PlaneCubeSlicingResult& r1, const PlaneCubeSlicingResult& r2, double eps) {
         if(abs(r1.volumeIn - r2.volumeIn) > eps) return false;
         size_t s = r1.areaIn.size();
         for(size_t i = 0; i < r1.areaIn.size(); ++i) {
             if(abs(r1.areaIn[i] - r2.areaIn[i]) > eps) return false;
         }
+        return true;
     }
 
     PlaneCubeSlicingResult planeUnitCubeSliceByIntersection(double x, double y, double z) {
@@ -47,6 +48,41 @@ TEST(CubeSlicingTest, TransitionContinuity) {
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 0.5, 0.5);
         EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(0.5, 1 - inEps, 0.5);
+        auto r2 = planeUnitCubeSliceByIntersection(0.5, 1 + inEps, 0.5);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(0.5, 0.5, 1 - inEps);
+        auto r2 = planeUnitCubeSliceByIntersection(0.5, 0.5, 1 + inEps);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+
+    // From 3 points inside, to 1 point inside
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(0.5, 1 - inEps, 1 - inEps);
+        auto r2 = planeUnitCubeSliceByIntersection(0.5, 1 + inEps, 1 + inEps);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 0.5, 1 - inEps);
+        auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 0.5, 1 + inEps);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 1 - inEps, 0.5);
+        auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 1 + inEps, 0.5);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+
+    // From 3 points inside, to no point inside
+    {
+        auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 1 - inEps, 1 - inEps);
+        auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 1 + inEps, 1 + inEps);
+        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+    }
+
 
 
     
