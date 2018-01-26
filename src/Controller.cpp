@@ -448,14 +448,14 @@ void Controller::activatedeactivateComp(double timecheck){
             std::cout<<"AFTERUPDATION "<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
             for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
                 auto coord=C->coordinates();
-                std::cout<<C->isActivated()<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<" ";
+                //std::cout<<C->isActivated()<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<" ";
                             for(auto sd : _chemData.speciesDiffusing) {
-                                std::cout<<C->isActivated()<<" "<<C->coordinates()[0];
+                                //std::cout<<C->isActivated()<<" "<<C->coordinates()[0];
                                     string name = get<0>(sd);
                                     auto s = C->findSpeciesByName(name);
                                    auto copyNum = s->getN();
                     
-                                std::cout << name <<" "<< copyNum;
+                                //std::cout << name <<" "<< copyNum;
                                }
                 std::cout<<endl;
             }
@@ -907,7 +907,7 @@ void Controller::run() {
             Bead* b4 = b->getSecondCylinder()->getSecondBead();
             auto c = b->getSecondCylinder();
             auto filType = c->getType();
-            std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+            //std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
             i++;
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                 auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
@@ -915,7 +915,7 @@ void Controller::run() {
                 auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
                 auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
                 auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
-                std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+                //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
             }
         }
     cout<< "Restart procedures completed. Starting Medyan framework"<<endl;
@@ -968,7 +968,7 @@ void Controller::run() {
                     Bead* b4 = b->getSecondCylinder()->getSecondBead();
                     auto c = b->getSecondCylinder();
                     auto filType = c->getType();
-                    std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+                    //std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
                     i++;
                     for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                         auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
@@ -976,7 +976,7 @@ void Controller::run() {
                         auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
                         auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
                         auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
-                        std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+                        //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                     }
                 }
                 tauLastMinimization = 0.0;

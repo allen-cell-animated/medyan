@@ -70,14 +70,14 @@ RNodeNRM::~RNodeNRM() noexcept {
 }
 
 void RNodeNRM::printSelf() const {
-    cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() <<
-        ", a=" << _a << ", points to Reaction:\n";
-    cout << (*_react);
+    //cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() <<
+    //    ", a=" << _a << ", points to Reaction:\n";
+    //cout << (*_react);
 }
 
 void RNodeNRM::printDependents() const {
-    cout << "RNodeNRM: ptr=" << this
-    << ", the following RNodeNRM objects are dependents:\n\n";
+    //cout << "RNodeNRM: ptr=" << this
+    //<< ", the following RNodeNRM objects are dependents:\n\n";
     for(auto rit = _react->dependents().begin();
         rit!=_react->dependents().end(); ++rit){
         RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
