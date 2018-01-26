@@ -13,7 +13,50 @@
 
 #include "Compartment.h"
 
+#include "CubeSlicing.h"
+#include "MathFunctions.h"
+using namespace mathfunc;
 #include "Visitor.h"
+
+#include "GTriangle.h"
+#include "Triangle.h"
+
+void Compartment::_getSlicedVolumeArea() {
+    // The calculation requires the
+    //  - The position calculation of triangles
+    //  - The area calculation of triangles
+    //  - The unit normal vector of triangles
+    // ASSUMPTIONS:
+    //  - This compartment is a CUBE
+    size_t numTriangle = _triangles.size();
+    if(numTriangle) {
+        double sumArea = 0.0;
+        array<double, 3> sumNormal {};
+        array<double, 3> sumPos {};
+        for(Triangle* t: _triangles) {
+            double area = t->getGTriangle()->getArea();
+            vectorIncrease(sumNormal, vectorMultiply(t->getGTriangle()->getUnitNormal(), area));
+            vectorIncrease(sumPos, vectorMultiply(t->coordinate, area));
+            sumArea += area;
+        }
+        double oneOverSumArea = 1.0 / sumArea;
+        vectorExpand(sumNormal, oneOverSumArea);
+        vectorExpand(sumPos, oneOverSumArea);
+
+        PlaneCubeSlicingResult res = planeCubeSlice(
+            sumPos, sumNormal,
+            {{
+                _coords[0] - SysParams::Geometry().compartmentSizeX * 0.5,
+                _coords[1] - SysParams::Geometry().compartmentSizeY * 0.5,
+                _coords[2] - SysParams::Geometry().compartmentSizeZ * 0.5
+            }},
+            SysParams::Geometry().compartmentSizeX // Since it is a cube
+        );
+
+        _partialVolume = res.volumeIn;
+        _partialArea = res.areaIn;
+    }
+}
 
 Compartment& Compartment::operator=(const Compartment &other) {
     

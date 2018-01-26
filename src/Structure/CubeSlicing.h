@@ -4,9 +4,6 @@
 #include <array>
 
 #include "MathFunctions.h"
-using namespace mathfunc;
-
-//FORWARD DECLARATIONS
 
 // The result produced by plane intersecting a cube
 struct PlaneCubeSlicingResult {
@@ -61,8 +58,8 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
         }
     }
 
-    double signedDist = dotProduct(flippedPoint, flippedNormal);
-    double signedDistMax = dotProduct(std::array<double, 3>{{1, 1, 1}}, flippedNormal);
+    double signedDist = mathfunc::dotProduct(flippedPoint, flippedNormal);
+    double signedDistMax = mathfunc::dotProduct(std::array<double, 3>{{1, 1, 1}}, flippedNormal);
 
     bool reverse = false;
 
@@ -251,7 +248,7 @@ inline PlaneCubeSlicingResult planeCubeSlice(
 ) {
     PlaneCubeSlicingResult res;
     res = planeUnitCubeSlice(
-        vectorMultiply(vectorDifference(point, r0), 1.0 / a),
+        mathfunc::vectorMultiply(mathfunc::vectorDifference(point, r0), 1.0 / a),
         normal
     );
     res *= a;
