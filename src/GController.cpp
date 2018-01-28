@@ -301,10 +301,11 @@ void GController::setActiveCompartments() {
 }
 
 void GController::updateActiveCompartments() {
-    auto& membranes = Membrane::getMembranes();
+    auto& allMembranes = Membrane::getMembranes();
 
     // Currently only the 0th membrane will be considered
-    if(membranes.size()) {
+    if(allMembranes.size()) {
+        Membrane* theMembrane = allMembranes[0];
         // For non empty compartments, we mark them as interesting and update their status
         // For the "interesting" compartments last round but now empty, we fully activate or deactivate them
         // For the rest we do nothing, assuming that the membranes will NOT move across a whole compartment
@@ -318,8 +319,8 @@ void GController::updateActiveCompartments() {
                 c->boundaryInteresting = true;
             } else if(c->boundaryInteresting) { // Interesting last round but now empty
                 bool inMembrane = (
-                    (!membranes[0].isClosed()) ||
-                    (membranes[0].signedDIstance(vector2Array<double, 3>(c->coordinates()), false) < 0.0)
+                    (!theMembrane->isClosed()) ||
+                    (theMembrane->signedDistance(vector2Array<double, 3>(c->coordinates()), false) < 0.0)
                 );
                 if(inMembrane) {
                     // Fully activate the compartment
