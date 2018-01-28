@@ -17,6 +17,7 @@
 #include "SubSystem.h"
 #include "CompartmentGrid.h"
 #include "BoundaryImpl.h"
+#include "Membrane.h"
 
 #include "MathFunctions.h"
 #include "SysParams.h"
@@ -297,6 +298,42 @@ void GController::setActiveCompartments() {
     //initialize all compartments equivalent to cproto
     for(auto C : _compartmentGrid->getCompartments())
         if(_boundary->within(C))  C->setAsActive();
+}
+
+void GController::updateActiveCompartments() {
+    auto& membranes = Membrane::getMembranes();
+
+    // Currently only the 0th membrane will be considered
+    if(membranes.size()) {
+        // For non empty compartments, we mark them as interesting and update their status
+        // For the "interesting" compartments last round but now empty, we fully activate or deactivate them
+        // For the rest we do nothing, assuming that the membranes will NOT move across a whole compartment
+        for(auto c: _compartmentGrid->getCompartments()) {
+            auto& ts = c->getTriangles();
+            if(!ts.empty()) {
+                // Update partial activate status
+                // TODO
+
+                // No matter whether it is interesting now, mark the compartment as interesting
+                c->boundaryInteresting = true;
+            } else if(c->boundaryInteresting) { // Interesting last round but now empty
+                bool inMembrane = (
+                    (!membranes[0].isClosed()) ||
+                    (membranes[0].signedDIstance(vector2Array<double, 3>(c->coordinates()), false) < 0.0)
+                );
+                if(inMembrane) {
+                    // Fully activate the compartment
+                    // TODO
+                } else {
+                    // Deactivate the compartment
+                    // TODO
+                }
+
+                // Mark the compartment as not interesting
+                c->boundaryInteresting = false;
+            }
+        }
+    }
 }
 
 void GController::findCompartments(const vector<double>& coords,

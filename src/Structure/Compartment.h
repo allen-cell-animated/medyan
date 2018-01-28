@@ -82,7 +82,6 @@ protected:
     vector<double> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
 
-    bool _boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
     double _partialVolume; // The volume inside the cell membrane
                            // Might be changed to a list or a map when more membranes are involved
     array<double, 6> _partialArea; // The area inside the cell membrane
@@ -665,6 +664,9 @@ public:
 
     //GetType implementation just returns zero (no Compartment types yet)
     virtual int getType() override {return 0;}
+
+    // Properties (public variables and getters and setters for private variables)
+    bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
     
 };
 #endif
