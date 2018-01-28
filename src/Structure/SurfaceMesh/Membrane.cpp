@@ -39,12 +39,12 @@ Membrane::Membrane(SubSystem* s, short membraneType,
     // Add the vertices
     _vertexVector.reserve(numVertices);
     for(auto& vertexData : membraneData) {
-        _subSystem->addTrackable<Vertex>(
+        Vertex* lastAddedVertex = _subSystem->addTrackable<Vertex>(
             array2Vector<double, 3>(get<0>(vertexData)),
             this,
             get<1>(vertexData).size()
         );
-        _vertexVector.push_back(Vertex::getVertices().back()); // Add to its own storage
+        _vertexVector.push_back(lastAddedVertex); // Add to its own storage
     }
 
     // Register the neighbors
@@ -71,8 +71,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
 
             // Edge registration
             if(centerVertex->getNeighborEdges()[nIdx] == nullptr) { // Edge not registered
-                _subSystem->addTrackable<Edge>(this, centerVertex, nVertex);
-                Edge* lastAddedEdge = Edge::getEdges().back();
+                Edge* lastAddedEdge = _subSystem->addTrackable<Edge>(this, centerVertex, nVertex);
                 _edgeVector.push_back(lastAddedEdge); // Add to its own storage
 
                 // Bind the edge to vertices, and check whether neighbor exists
@@ -112,8 +111,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
 
             // Triangle registration
             if(centerVertex->getNeighborTriangles()[nIdx] == nullptr) { // Triangle not registered
-                _subSystem->addTrackable<Triangle>(this, centerVertex, nVertex, nnVertex);
-                Triangle* lastAddedTriangle = Triangle::getTriangles().back();
+                Triangle* lastAddedTriangle = _subSystem->addTrackable<Triangle>(this, centerVertex, nVertex, nnVertex);
                 _triangleVector.push_back(lastAddedTriangle); // Add to its own storage
 
                 // Bind the triangle to vertices, and check whether neighbor exists
