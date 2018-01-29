@@ -413,18 +413,18 @@ void Controller::activatedeactivateComp(){
     auto counter=0;
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         counter++;
-        std::cout<<C->isActivated()<<" ";
-        if(counter==SysParams::Geometry().NX)
-            std::cout<<endl;
+//        std::cout<<C->isActivated()<<" ";
+//           if(counter==SysParams::Geometry().NX)
+//            std::cout<<endl;
     }
-    std::cout<<endl;
+//    std::cout<<endl;
     
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-        if(C->isActivated())
-            std::cout<<C->coordinates()[0]<<" ";
-        else
-            std::cout<<"0 ";
-    }
+//    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+//        if(C->isActivated())
+//            std::cout<<C->coordinates()[0]<<" ";
+//        else
+//            std::cout<<"0 ";
+//    }
     std::cout<<endl;
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         for(auto sd : _chemData.speciesDiffusing) {
