@@ -358,6 +358,8 @@ void Filament::polymerizePlusEnd() {
     //update rates of new back
     _cylinderVector.back()->updateReactionRates();
 #endif
+   
+    _polyPlusEnd++;
     
 }
 
@@ -388,6 +390,9 @@ void Filament::polymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
+    
+    _polyMinusEnd++;
+    
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -417,6 +422,7 @@ void Filament::depolymerizePlusEnd() {
     _cylinderVector.front()->updateReactionRates();
 #endif
     
+    _depolyPlusEnd++;;
     
 }
 
@@ -446,6 +452,9 @@ void Filament::depolymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
+    
+    _depolyMinusEnd++;
+    
 }
 
 
@@ -472,6 +481,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
 #endif
+    
+    _nucleationReaction++;
+    
 }
 
 
@@ -508,6 +520,10 @@ Filament* Filament::sever(int cylinderPosition) {
         
         newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
+        
+        //Add beads to new parent
+        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
+        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
@@ -533,7 +549,9 @@ Filament* Filament::sever(int cylinderPosition) {
     newB->coordinate[1] += -offsetCoord[1];
     newB->coordinate[2] += -offsetCoord[2];
     
+    //add bead
     c1->setSecondBead(newB);
+    newFilament->addChild(unique_ptr<Component>(newB));
     
     //set plus and minus ends
     c1->setPlusEnd(true);
@@ -569,6 +587,10 @@ Filament* Filament::sever(int cylinderPosition) {
     cc2->removeCrossCylinderReactions(cc1);
 #endif
     
+    //Qin
+    
+    _severingReaction++;
+    _severingID.push_back(newFilament->getID());
     return newFilament;
 }
 

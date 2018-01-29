@@ -36,6 +36,10 @@ public:
     
     virtual double distance(const vector<double>& coordinates);
     
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
+    
     virtual void move(double dist);
     
     ///Returns the normal inward at this coordinate
@@ -57,6 +61,10 @@ public:
     virtual bool within(const vector<double>& coordinates);
     
     virtual double distance(const vector<double>& coordinates);
+    
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
     
     ///@note - not yet implemented.
     virtual void move(double dist) {}
@@ -81,6 +89,39 @@ public:
     virtual bool within(const vector<double>& coordinates);
     
     virtual double distance(const vector<double>& coordinates);
+    
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
+    
+    ///@note - Not yet implemented.
+    virtual void move(double dist) {}
+    
+    ///Returns the normal inward at this coordinate
+    //@note - Not yet implemented.
+    virtual vector<double> normal(vector<double>& coordinate) {return vector<double>{0,0,0};}
+};
+
+/// A cylinder Boundary implementation.
+class BoundaryCylinder: public Boundary {
+    
+public:
+    /// Default constructor, will create a capsule with given diameter, and height equal
+    /// to current grid.
+    /// @param diameter - diameter of capsule (will set half sphere radii as well as
+    /// cylinder radius)
+    BoundaryCylinder(SubSystem* s, double diameter, BoundaryMove move);
+    
+    ///@note - not yet implemented correctly. Essentially checks
+    ///        if the midpoint of the compartment is within the boundary.
+    virtual bool within(Compartment* C);
+    virtual bool within(const vector<double>& coordinates);
+    
+    virtual double distance(const vector<double>& coordinates);
+    
+    //Qin
+    virtual double lowerdistance(const vector<double>& coordinates);
+    virtual double sidedistance(const vector<double>& coordinates);
     
     ///@note - Not yet implemented.
     virtual void move(double dist) {}

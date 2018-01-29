@@ -1,4 +1,4 @@
-
+ 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -87,6 +87,11 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
+    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
+    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
+    //Qin add br force out and local diffussing species concentration
+    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
+    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -172,6 +177,10 @@ void Controller::initialize(string inputFile,
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
+    
+    string concenname = _outputDirectory + "concentration.traj";
+    _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
+    
 #endif
     
 #ifdef DYNAMICRATES
@@ -708,6 +717,13 @@ void Controller::executeSpecialProtocols() {
         
         pinBoundaryFilaments();
     }
+    
+    //Qin
+    if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
+       tau() >= SysParams::Mechanics().pinTime) {
+        
+        pinLowerBoundaryFilaments();
+    }
 }
 
 void Controller::updatePositions() {
@@ -722,7 +738,8 @@ void Controller::updatePositions() {
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+    for(auto r : _subSystem->getReactables()) { r->updateReactionRates();
+    }
 }
 #endif
 
@@ -760,6 +777,38 @@ void Controller::pinBoundaryFilaments() {
             //if within dist to boundary, add
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
                 
+                b->pinnedPosition = b->coordinate;
+                b->addAsPinned();
+            }
+        }
+    }
+}
+
+//Qin
+void Controller::pinLowerBoundaryFilaments() {
+    
+    //renew pinned filament list everytime
+    
+    //loop through beads, check if within pindistance
+    for(auto b : Bead::getBeads()) {
+        
+        //pin all beads besides plus end and minus end cylinder
+        Filament* f = (Filament*) b->getParent();
+        Cylinder* plusEndC = f->getPlusEndCylinder();
+        Cylinder* minusEndC = f->getMinusEndCylinder();
+        
+        if((plusEndC->getSecondBead() != b) ||
+           (minusEndC->getFirstBead() != b)) {
+            
+            //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
+            //cout << SysParams::Mechanics().pinDistance << endl;
+            
+            auto index = Rand::randDouble(0,1);
+            //cout << index <<endl;
+            //if within dist to boundary and index > 0.5, add
+            if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
+               && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
+                //cout << index << endl;
                 b->pinnedPosition = b->coordinate;
                 b->addAsPinned();
             }

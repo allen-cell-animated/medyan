@@ -23,6 +23,8 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 
+#include "Boundary.h"
+
 using namespace mathfunc;
 
 void ChemManager::setupBindingSites() {
@@ -1343,6 +1345,8 @@ void ChemManager::genFilBindingReactions() {
                     nucleationZone = NucleationZoneType::BOUNDARY;
                 else if(nzstr == "TOPBOUNDARY")
                     nucleationZone = NucleationZoneType::TOPBOUNDARY;
+                else if(nzstr == "SIDEBOUNDARY")
+                nucleationZone = NucleationZoneType::SIDEBOUNDARY;
                 else {
                     cout << "Nucleation zone type specified in a branching reaction not valid. Exiting." << endl;
                     exit(EXIT_FAILURE);
@@ -2566,8 +2570,17 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
     //will copy all general and bulk reactions
     for(auto C : grid->getCompartments())
         *C = cProto;
-    for(auto C : grid->getCompartments())
-        C->generateAllDiffusionReactions();
+    
+    //auto shape = _subSystem->getBoundary()->getShape();
+    if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder) {
+        for(auto C : grid->getCompartments())
+            C->generateAllScaleDiffusionReactions();
+    }
+    
+    else {
+        for(auto C : grid->getCompartments())
+            C->generateAllDiffusionReactions();
+    }
     
     //try initial copy number setting
     updateCopyNumbers();
