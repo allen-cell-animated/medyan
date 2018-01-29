@@ -14,8 +14,11 @@
 #include "Compartment.h"
 #include "MathFunctions.h"
 #include "Visitor.h"
+#include "Parser.h"
 //REMOVE LATER
 #include "ChemNRMImpl.h"
+
+
 
 Compartment& Compartment::operator=(const Compartment &other) {
     
