@@ -247,10 +247,35 @@ void Compartment::activate(ChemSim* chem, bool init) {
 void Compartment::updateActivation(ChemSim* chem) {
     if(_activated) {
         // Update the reaction rates for diffusions in both directions
-        for(auto& c: _neighbours) {
-            if(c->isActivated()) {
-                // TODO
+        for(auto& c: _neighbours) if(c->isActivated()) {
+            // For any activated neighbor
+
+            for(auto &sp_this : _species.species()) {
+                int molecule = sp_this->getMolecule();
+                float baseDiffRate = _diffusion_rates[molecule];
+                if(baseDiffRate<0)  continue;
+
+                Species *sp_neighbor = c->_species.findSpeciesByMolecule(molecule);
+
+                // Scale the diffusion rate according to the contacting areas
+                size_t idxFwd = _neighborIndex.at(c), idxBwd = c->_neighborIndex.at(this);
+                double scaleFactor =
+                    0.5 * (_partialArea[idxFwd] + c->_partialArea[idxBwd]) /
+                    GController::getCompartmentArea()[idxFwd / 2];
+                double actualDiffRate = baseDiffRate * scaleFactor;
+
+                // Update outward reaction rate
+                for(auto& r: _diffusion_reactions.reactions())
+                    if(sp_this.get() == &r->rspecies()[0]->getSpecies() && sp_neighbor == &r->rspecies()[1]->getSpecies()) {
+                        r->setRate(actualDiffRate);
+                    }
+                // Update inward reaction rate
+                for(auto& r: c->_diffusion_reactions.reactions())
+                    if(sp_this.get() == &r->rspecies()[1]->getSpecies() && sp_neighbor == &r->rspecies()[0]->getSpecies()) {
+                        r->setRate(actualDiffRate);
+                    }
             }
+
         }
     } else {
         activate(chem, false);
