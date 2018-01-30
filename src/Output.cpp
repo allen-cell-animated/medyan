@@ -18,13 +18,15 @@
 #include "SubSystem.h"
 #include "CompartmentGrid.h"
 
-#include "Filament.h"
-#include "Cylinder.h"
 #include "Bead.h"
-#include "Linker.h"
-#include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Bubble.h"
+#include "Cylinder.h"
+#include "Filament.h"
+#include "Linker.h"
+#include "Membrane.h"
+#include "MotorGhost.h"
+#include "Vertex.h"
 
 #include "Boundary.h"
 #include "CompartmentGrid.h"
@@ -40,13 +42,14 @@ void BasicSnapshot::print(int snapshot) {
     _outputFile.precision(10);
     
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers, bubbles)
+    // linkers, motors, branchers, bubbles, membranes)
     _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
+        Bubble::numBubbles() << " " <<
+        Membrane::numMembranes() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
         
@@ -158,6 +161,38 @@ void BasicSnapshot::print(int snapshot) {
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
     
+    for(auto &membrane : Membrane::getMembranes()) {
+        
+        //print first line (Membrane ID, type)
+        _outputFile << "MEMBRANE " << membrane->getId() << " " <<
+            membrane->getType() << endl;
+
+        //print coordinates with neighbor indices
+        auto& vertices = membrane->getVertexVector();
+        size_t numVertices = vertices.size();
+        for(size_t idx = 0; idx < numVertices; ++idx) {
+            
+            auto& x = vertices[idx]->coordinate;
+            _outputFile << x[0] << " " << x[1] << " " << x[2] << " ";
+
+            for(auto nVtx: vertices[idx]->getNeighborVertices()) {
+                auto where = std::find(vertices.begin(), vertices.end(), nVtx);
+                if(where == vertices.end()) {
+                    throw std::runtime_error("Neighbor vertex not in membrane.");
+                } else {
+                    int nIdx = std::distance(vertices.begin(), where);
+                    _outputFile << nIdx << " ";
+                }
+            }
+
+            _outputFile << endl;
+            
+        }
+
+        _outputFile << endl;
+        
+    }
+
     _outputFile <<endl;
 }
 
@@ -261,13 +296,14 @@ void Forces::print(int snapshot) {
     _outputFile.precision(10);
     
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
+    // linkers, motors, branchers, membranes)
     _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << endl;
+        Bubble::numBubbles() << " " <<
+        Membrane::numMembranes() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
         
@@ -352,6 +388,22 @@ void Forces::print(int snapshot) {
         _outputFile << 0.0 << endl;
     }
     
+    for(auto &membrane : Membrane::getMembranes()) {
+        
+        //print first line (Membrane ID, type)
+        _outputFile << "Membrane " << membrane->getId() << " " <<
+            membrane->getType() << endl;
+        
+        //print force
+        for(auto vertex : membrane->getVertexVector()) {
+            
+            double forceMag = sqrt(vertex->FDotF());
+            _outputFile << forceMag << " ";
+            
+        }        
+        _outputFile << endl;
+    }
+
     _outputFile <<endl;
 }
 
