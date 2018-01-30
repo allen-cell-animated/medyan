@@ -91,11 +91,6 @@ public:
     /// Used at system initialization.
     void setActiveCompartments();
 
-    // Update compartments activity based on boundary, membrane, etc.
-    // Also update partial volumes and reaction rates
-    // Used after each mechanical minimization
-    void updateActiveCompartments();
-    
     /// Get the SubSystem ptr
     const SubSystem* getSubSystem() const {return _subSystem;}
     

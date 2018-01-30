@@ -424,6 +424,53 @@ void Controller::moveBoundary(double deltaTau) {
     }
 }
 
+void Controller::updateActiveCompartments() {
+    // For this function to work, we must assume that each minimization step
+    // will push the membrane boundary no more than 1 compartment, so that
+    // changes will only happen at the neighborhood of the previous boundary.
+    auto& allMembranes = Membrane::getMembranes();
+
+    // Currently only the 0th membrane will be considered
+    if(allMembranes.size()) {
+        Membrane* theMembrane = allMembranes[0];
+        // For non empty compartments, we mark them as interesting and update their status
+        // For the "interesting" compartments last round but now empty, we fully activate or deactivate them
+        // For the rest we do nothing, assuming that the membranes will NOT move across a whole compartment
+        for(auto c: _compartmentGrid->getCompartments()) {
+            auto& ts = c->getTriangles();
+            if(!ts.empty()) {
+                // Update partial activate status
+                c->getSlicedVolumeArea();
+                _cController->updateActivation(c);
+
+                // No matter whether the compartment is interesting before, mark it as interesting
+                c->boundaryInteresting = true;
+            } else if(c->boundaryInteresting) { // Interesting last round but now empty
+                bool inMembrane = (
+                    (!theMembrane->isClosed()) ||
+                    (theMembrane->signedDistance(vector2Array<double, 3>(c->coordinates()), false) < 0.0)
+                );
+                if(inMembrane) {
+                    // Fully activate the compartment
+                    c->setPartialVolume(_compartmentVolume);
+                    c->setPartialArea({{
+                        _compartmentArea[0], _compartmentArea[0],
+                        _compartmentArea[1], _compartmentArea[1],
+                        _compartmentArea[2], _compartmentArea[2]
+                    }});
+                    _cController->updateActivation(c);
+                } else {
+                    // Deactivate the compartment
+                    _cController->deactivate(c);
+                }
+
+                // Mark the compartment as not interesting
+                c->boundaryInteresting = false;
+            }
+        }
+    }
+}
+
 void Controller::executeSpecialProtocols() {
     
     //making filaments static

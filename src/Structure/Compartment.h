@@ -141,7 +141,8 @@ public:
     ///    species and its neighboring active compartments
     virtual void activate(ChemSim* chem, bool init=true);
     /// Update the activation status of a compartment, having following effects:
-    /// 1) Updates diffusion reaction rates between this and neighbors
+    /// 1) Updates diffusion reaction rates between this and neighbors if not
+    ///    activated. Otherwise activate the compartment additively.
     virtual void updateActivation(ChemSim* chem);
     
     /// Deactivate a compartment. Has the following sid effects:

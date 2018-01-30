@@ -91,6 +91,11 @@ private:
     
     /// Move the boundary based on the timestep
     void moveBoundary(double deltaTau);
+
+    // Update compartments activity based on boundary, membrane, etc.
+    // Also update partial volumes and reaction rates
+    // Used after each mechanical minimization
+    void updateActiveCompartments();
     
     /// Update the positions of all elements in the system
     void updatePositions();
