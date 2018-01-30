@@ -468,7 +468,7 @@ void Controller::updateActiveCompartments() {
                 c->boundaryInteresting = false;
             }
         }
-    }
+    } // Otherwise do nothing
 }
 
 void Controller::executeSpecialProtocols() {
@@ -715,6 +715,9 @@ void Controller::run() {
             
             //move the boundary
             moveBoundary(tau() - oldTau);
+
+            // Update activation of the compartments
+            updateActiveCompartments();
             
             //special protocols
             executeSpecialProtocols();
@@ -774,6 +777,9 @@ void Controller::run() {
             
             //move the boundary
             moveBoundary(tau() - oldTau);
+            
+            // Update activation of the compartments
+            updateActiveCompartments();
             
             //special protocols
             executeSpecialProtocols();
