@@ -680,7 +680,7 @@ public:
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
 
     double getPartialVolume()const { return _partialVolume; }
-    void setPartialVoume(double partialVolume) { _partialVolume = partialVolume; }
+    void setPartialVolume(double partialVolume) { _partialVolume = partialVolume; }
     const array<double, 6>& getPartialArea()const { return _partialArea; }
     void setPartialArea(const array<double, 6>& partialArea) { _partialArea = partialArea; }
     
