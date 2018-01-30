@@ -267,19 +267,14 @@ public:
         // check for nan
         
         if(delG<-pow(10,7)){
-            cout<<"neg inf"<<endl;
-            cout<<"retype is "<<reType<<endl;
             delG=0;
         }
         
         if(delG>pow(10,7)){
-            cout<<"pos inf"<<endl;
-            cout<<"retype is "<<reType<<endl;
             delG=0;
         }
         
         if(delG!=delG){
-            cout<<"nan happened"<<endl;
             delG=0;
         }
         
@@ -326,6 +321,11 @@ public:
     double getCumGMechEn(){
         return cumGMechEn;
     }
+    
+    //  used to determine if minization should proceed
+    double getCurrentStress(){
+        return GMid-G1;
+    };
     
     // set the value of G1
     void setG1(){

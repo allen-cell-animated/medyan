@@ -609,11 +609,22 @@ void Controller::run() {
         _dt->setG1();
         while(tau() <= _runTime) {
             //run ccontroller
-            if(!_cController->run(_minimizationTime)) {
+            
+            // new adaptmin vars
+            double _chemBurstTime = 0.0005;
+            double _stressThreshold = 500;
+            // bool _minHappened = false;
+            
+            // to switch between adaptive and non-adaptive min timing
+            // just take out the second half of the "or" in line 638
+            
+            //if(!_cController->run(_minimizationTime)) {
+            if(!_cController->run(_chemBurstTime)) {
                 for(auto o: _outputs) o->print(i);
                 break;
             }
             _dt->setGMid();
+            
             
             
             //add the last step
@@ -623,20 +634,31 @@ void Controller::run() {
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
             
-            if(tauLastMinimization >= _minimizationTime) {
+            //if(tauLastMinimization >= _minimizationTime) {
+            if(_dt->getCurrentStress()>=_stressThreshold || tauLastMinimization >= _minimizationTime) {
+                cout<<_dt->getCurrentStress()<<endl;
                 _mController->run();
                 updatePositions();
 
                 tauLastMinimization = 0.0;
+                
+                cout<<"Min happened"<<endl;
+                
+                _dt->setG2();
+                _dt->updateCumDissChemEnergy();
+                _dt->updateCumDissMechEnergy();
+                _dt->updateCumDissEn();
+                _dt->updateCumGChemEn();
+                _dt->updateCumGMechEn();
+                _dt->resetAfterStep();
+            //    _minHappened = true;
             }
-            _dt->setG2();
-            _dt->updateCumDissChemEnergy();
-            _dt->updateCumDissMechEnergy();
-            _dt->updateCumDissEn();
-            _dt->updateCumGChemEn();
-            _dt->updateCumGMechEn();
-            _dt->resetAfterStep();
             
+//            if(_minHappened==true){
+//
+//            _minHappened=false;
+//
+//            }
             
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;

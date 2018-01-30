@@ -60,8 +60,8 @@ float MotorCatch::changeRate(float onRate, float offRate,
     // cout<<"new rate is "<<newRate<<endl;
     return newRate;
     
+    
 }
-
 
 float MotorStall::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
