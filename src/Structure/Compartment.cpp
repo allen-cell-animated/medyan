@@ -86,7 +86,7 @@ bool Compartment::apply_impl(ReactionVisitor &v) {
     return true;
 }
 
-vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
+vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bool outwardOnly) {
     // The compartment C and "this" must be neighbors of each other, and
     // "this" must be an active compartment.
 
@@ -103,23 +103,32 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             double scaleFactor =
                 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) /
                 GController::getCompartmentArea()[idxFwd / 2];
+            double actualDiffRate = diff_rate * scaleFactor;
 
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
-            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, diff_rate * scaleFactor);
+
+            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
+
+            if(!outwardOnly) {
+                // Generate inward diffusion reaction
+                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, actualDiffRate);
+                C->addDiffusionReaction(R);
+                rxns.push_back(R);
+            }
         }
     }
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
 }
 
-vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
+vector<ReactionBase*> Compartment::generateAllDiffusionReactions(bool outwardOnly) {
     
     vector<ReactionBase*> rxns;
     
     if(_activated) {
         for (auto &C: _neighbours) {
-            auto newRxns = generateDiffusionReactions(C);
+            auto newRxns = generateDiffusionReactions(C, outwardOnly);
             rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
         }
     }
@@ -216,7 +225,13 @@ void Compartment::transferSpecies() {
     }
 }
 
-void Compartment::activate(ChemSim* chem) {
+void Compartment::activate(ChemSim* chem, bool init) {
+    /**************************************************************************
+    If the function is used in initialization, then only "outward" diffusion-
+    reactions will be created. But if it is an "add-on" activation, then the
+    diffusion-reactions with the already activated neighbors would be added for
+    both directions.
+    **************************************************************************/
     
     assert(!_activated && "Compartment is already activated.");
     
@@ -224,9 +239,22 @@ void Compartment::activate(ChemSim* chem) {
     _activated = true;
     
     //add all diffusion reactions
-    auto rxns = generateAllDiffusionReactions();
+    auto rxns = generateAllDiffusionReactions(init);
     for(auto &r : rxns) chem->addReaction(r);
 
+}
+
+void Compartment::updateActivation(ChemSim* chem) {
+    if(_activated) {
+        // Update the reaction rates for diffusions in both directions
+        for(auto& c: _neighbours) {
+            if(c->isActivated()) {
+                // TODO
+            }
+        }
+    } else {
+        activate(chem, false);
+    }
 }
 
 void Compartment::deactivate(ChemSim* chem) {

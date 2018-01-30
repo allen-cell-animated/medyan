@@ -139,7 +139,10 @@ public:
     /// Activate a compartment. Has the following side effects:
     /// 1) Adds diffusion reactions between this compartment's diffusing
     ///    species and its neighboring active compartments
-    virtual void activate(ChemSim* chem);
+    virtual void activate(ChemSim* chem, bool init=true);
+    /// Update the activation status of a compartment, having following effects:
+    /// 1) Updates diffusion reaction rates between this and neighbors
+    virtual void updateActivation(ChemSim* chem);
     
     /// Deactivate a compartment. Has the following sid effects:
     /// 0) Initially checks that all cylinders are removed
@@ -604,11 +607,11 @@ public:
     
     /// Generate diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just added 
-    vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
+    vector<ReactionBase*> generateDiffusionReactions(Compartment* C, bool outwardOnly=true);
 
     /// Generate all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just added
-    vector<ReactionBase*> generateAllDiffusionReactions();
+    vector<ReactionBase*> generateAllDiffusionReactions(bool outwardOnly=true);
     
     
     /// Remove diffusion reactions between this compartment and another

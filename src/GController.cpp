@@ -327,7 +327,7 @@ void GController::updateActiveCompartments() {
                 c->setAsActive();
                 c->getSlicedVolumeArea();
 
-                // No matter whether it is interesting now, mark the compartment as interesting
+                // No matter whether the compartment is interesting before, mark it as interesting
                 c->boundaryInteresting = true;
             } else if(c->boundaryInteresting) { // Interesting last round but now empty
                 bool inMembrane = (
@@ -353,14 +353,7 @@ void GController::updateActiveCompartments() {
             }
         }
 
-        // Now loop through all the compartments and udpate the diffusion part
-        for(size_t i = 0; i < _grid[0]; ++i) {
-            for(size_t j = 0; j < _grid[1]; ++j) {
-                for(size_t k = 0; k < _grid[2]; ++k) {
-
-                }
-            }
-        }
+        // TODO: update diff_rate after any update on partial activation
     }
 }
 
