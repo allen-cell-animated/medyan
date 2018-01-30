@@ -101,9 +101,12 @@ public:
     static vector<size_t> getCompartmentIndices(const vector<double>& coords);
     //@}
     
+    // Properties (getters and setters)
+    static CompartmentGrid* getCompartmentGrid() { return _compartmentGrid; }
     /// Get the center of the grid space
     static const vector<double>& getCenter() {return _centerGrid;}
     static const vector<double>& getSize() {return _size;}
+    static double getCompartmentVolume() { return _compartmentVolume; }
     static const vector<double>& getCompartmentArea() { return _compartmentArea; }
 
     /// Get all compartments within a given range from the specified coordinate

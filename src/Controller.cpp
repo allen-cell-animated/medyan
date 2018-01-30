@@ -436,7 +436,7 @@ void Controller::updateActiveCompartments() {
         // For non empty compartments, we mark them as interesting and update their status
         // For the "interesting" compartments last round but now empty, we fully activate or deactivate them
         // For the rest we do nothing, assuming that the membranes will NOT move across a whole compartment
-        for(auto c: _compartmentGrid->getCompartments()) {
+        for(auto c: GController::getCompartmentGrid()->getCompartments()) {
             auto& ts = c->getTriangles();
             if(!ts.empty()) {
                 // Update partial activate status
@@ -452,11 +452,12 @@ void Controller::updateActiveCompartments() {
                 );
                 if(inMembrane) {
                     // Fully activate the compartment
-                    c->setPartialVolume(_compartmentVolume);
+                    c->setPartialVolume(GController::getCompartmentVolume());
+					auto& fullArea = GController::getCompartmentArea();
                     c->setPartialArea({{
-                        _compartmentArea[0], _compartmentArea[0],
-                        _compartmentArea[1], _compartmentArea[1],
-                        _compartmentArea[2], _compartmentArea[2]
+                        fullArea[0], fullArea[0],
+						fullArea[1], fullArea[1],
+						fullArea[2], fullArea[2]
                     }});
                     _cController->updateActivation(c);
                 } else {
