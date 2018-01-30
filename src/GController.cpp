@@ -146,7 +146,7 @@ void GController::generateConnections()
                         continue;
                     vector<size_t> currentIndices{size_t(iprime), j, k};
                     Compartment *neighbor = getCompartment(currentIndices);
-                    target->addNeighbour(neighbor);
+                    target->addNeighbour(neighbor, (ii < 0? 0: 1));
                 }
                 for(int jj: {-1,1})
                 {
@@ -155,7 +155,7 @@ void GController::generateConnections()
                         continue;
                     vector<size_t> currentIndices{i, size_t(jprime), k};
                     Compartment *neighbor = getCompartment(currentIndices);
-                    target->addNeighbour(neighbor);
+                    target->addNeighbour(neighbor, (jj < 0? 2: 3));
                 }
                 for(int kk: {-1,1})
                 {
@@ -164,7 +164,7 @@ void GController::generateConnections()
                         continue;
                     vector<size_t> currentIndices{i, j, size_t(kprime)};
                     Compartment *neighbor = getCompartment(currentIndices);
-                    target->addNeighbour(neighbor);
+                    target->addNeighbour(neighbor, (kk < 0? 4: 5));
                 }
             }
         }
@@ -193,6 +193,14 @@ CompartmentGrid* GController::initializeGrid() {
     _centerGrid = {_compartmentSize[0] * _grid[0] / 2,
                    _compartmentSize[1] * _grid[2] / 2,
                    _compartmentSize[2] * _grid[2] / 2};
+    
+    _compartmentVolume = _compartmentSize[0] * _compartmentSize[1] * _compartmentSize[2];
+
+    _compartmentArea = {{
+        _compartmentSize[1] * _compartmentSize[2],
+        _compartmentSize[2] * _compartmentSize[0],
+        _compartmentSize[0] * _compartmentSize[1]
+    }};
     
     //Check that grid and compartmentSize match nDim
     if((_nDim == 3 &&
@@ -301,6 +309,9 @@ void GController::setActiveCompartments() {
 }
 
 void GController::updateActiveCompartments() {
+    // For this function to work, we must assume that each minimization step
+    // will push the membrane boundary no more than 1 compartment, so that
+    // changes will only happen at the neighborhood of the previous boundary.
     auto& allMembranes = Membrane::getMembranes();
 
     // Currently only the 0th membrane will be considered
@@ -313,7 +324,8 @@ void GController::updateActiveCompartments() {
             auto& ts = c->getTriangles();
             if(!ts.empty()) {
                 // Update partial activate status
-                // TODO
+                c->setAsActive();
+                c->getSlicedVolumeArea();
 
                 // No matter whether it is interesting now, mark the compartment as interesting
                 c->boundaryInteresting = true;
@@ -324,14 +336,29 @@ void GController::updateActiveCompartments() {
                 );
                 if(inMembrane) {
                     // Fully activate the compartment
-                    // TODO
+                    c->setAsActive();
+                    c->setPartialVolume(_compartmentVolume);
+                    c->setPartialArea({{
+                        _compartmentArea[0], _compartmentArea[0],
+                        _compartmentArea[1], _compartmentArea[1],
+                        _compartmentArea[2], _compartmentArea[2]
+                    }});
                 } else {
                     // Deactivate the compartment
-                    // TODO
+                    c->setAsInactive();
                 }
 
                 // Mark the compartment as not interesting
                 c->boundaryInteresting = false;
+            }
+        }
+
+        // Now loop through all the compartments and udpate the diffusion part
+        for(size_t i = 0; i < _grid[0]; ++i) {
+            for(size_t j = 0; j < _grid[1]; ++j) {
+                for(size_t k = 0; k < _grid[2]; ++k) {
+
+                }
             }
         }
     }
@@ -406,6 +433,8 @@ vector<int>    GController::_grid = {};
 vector<double> GController::_size = {};
 vector<double> GController::_compartmentSize = {};
 vector<double> GController::_centerGrid = {};
+double         GController::_compartmentVolume = 0;
+vector<double> GController::_compartmentArea = {};
 
 CompartmentGrid* GController::_compartmentGrid = 0;
 

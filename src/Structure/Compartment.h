@@ -77,6 +77,8 @@ protected:
     unordered_set<Edge*> _edges; ///< Set of edges that are in this compartment
     
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
+    unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
+                                                        ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
     
     ///OTHER COMPARTMENT PROPERTIES
     vector<double> _coords;  ///< Coordinates of this compartment
@@ -86,7 +88,6 @@ protected:
                            // Might be changed to a list or a map when more membranes are involved
     array<double, 6> _partialArea; // The area inside the cell membrane
                         // Might be changed to a list of arrays or a map of arrays when more membranes are involved
-    void _getSlicedVolumeArea(); // Helper function for getting the result of geometry from a approximately planar slice
     
 public:
     /// Default constructor, only takes in number of dimensions
@@ -132,7 +133,8 @@ public:
     virtual bool apply_impl(ReactionVisitor &v) override;
     
     ///Set a compartment as active. Used at initialization.
-    virtual void setAsActive() {_activated = true;}
+    virtual void setAsActive() { _activated = true; }
+    virtual void setAsInactive() { _activated = false; }
     
     /// Activate a compartment. Has the following side effects:
     /// 1) Adds diffusion reactions between this compartment's diffusing
@@ -547,10 +549,12 @@ public:
     }
 
     /// Add a neighboring compartment to this compartments list of neighbors
-    void addNeighbour(Compartment *comp) {
+    void addNeighbour(Compartment *comp, size_t spacialIndex) {
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
-        if(nit==_neighbours.end())
+        if(nit==_neighbours.end()) {
             _neighbours.push_back(comp);
+            _neighborIndex[comp] = spacialIndex;
+        }
         else
             throw runtime_error(
             "Compartment::addNeighbour(): Compartment is already a neighbour");
@@ -561,6 +565,7 @@ public:
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit!=_neighbours.end())
             _neighbours.erase(nit);
+        _neighborIndex.erase(comp);
     }
     
     /// Clone the species values of another compartment into this one
@@ -665,8 +670,16 @@ public:
     //GetType implementation just returns zero (no Compartment types yet)
     virtual int getType() override {return 0;}
 
+    // Helper function for getting the result of geometry from a approximately planar slice
+    void getSlicedVolumeArea();
+
     // Properties (public variables and getters and setters for private variables)
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
+
+    double getPartialVolume()const { return _partialVolume; }
+    void setPartialVoume(double partialVolume) { _partialVolume = partialVolume; }
+    const array<double, 6>& getPartialArea()const { return _partialArea; }
+    void setPartialArea(const array<double, 6>& partialArea) { _partialArea = partialArea; }
     
 };
 #endif

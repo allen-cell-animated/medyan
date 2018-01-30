@@ -63,6 +63,8 @@ private:
     static vector<double> _compartmentSize; ///< Compartment size in each dimension
     static vector<double> _centerGrid; ///< The center of the grid
     static vector<double> _size;       ///< The size of the full grid in each dimension
+    static double         _compartmentVolume; ///< The volume of the compartment
+    static vector<double> _compartmentArea; ///< The areas of the compartment (yOz, zOx, xOy)
     
     static CompartmentGrid* _compartmentGrid; ///< The compartment grid
     
@@ -107,6 +109,7 @@ public:
     /// Get the center of the grid space
     static const vector<double>& getCenter() {return _centerGrid;}
     static const vector<double>& getSize() {return _size;}
+    static const vector<double>& GetCompartmentArea() { return _compartmentArea; }
 
     /// Get all compartments within a given range from the specified coordinate
     /// @param ccheck - Compartment to check when initially calling this function

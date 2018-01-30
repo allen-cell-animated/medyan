@@ -14,6 +14,7 @@
 #include "Compartment.h"
 
 #include "CubeSlicing.h"
+#include "GController.h"
 #include "MathFunctions.h"
 using namespace mathfunc;
 #include "Visitor.h"
@@ -21,7 +22,7 @@ using namespace mathfunc;
 #include "GTriangle.h"
 #include "Triangle.h"
 
-void Compartment::_getSlicedVolumeArea() {
+void Compartment::getSlicedVolumeArea() {
     // The calculation requires the
     //  - The position calculation of triangles
     //  - The area calculation of triangles
@@ -85,8 +86,10 @@ bool Compartment::apply_impl(ReactionVisitor &v) {
     return true;
 }
 
-vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
-{
+vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
+    // The compartment C and "this" must be neighbors of each other, and
+    // "this" must be an active compartment.
+
     vector<ReactionBase*> rxns;
     
     for(auto &sp_this : _species.species()) {
@@ -95,8 +98,14 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
         if(diff_rate<0)  continue;
     
         if(C->isActivated()) {
+            // Scale the diffusion rate according to the contacting areas
+            size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
+            double scaleFactor =
+                0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) /
+                GController::getCompartmentArea()[idxFwd / 2];
+
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
-            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate);
+            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, diff_rate * scaleFactor);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
         }
