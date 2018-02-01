@@ -84,7 +84,8 @@ protected:
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 
-    float _volumeFrac = 1.0; ///< Used in compartments to store volume fraction of the compartment
+    float _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
+    float _rateVolumeDepPow; ///< Exponent of rate dependency on volume
 
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
@@ -102,8 +103,8 @@ protected:
     
 public:
     /// The main constructor:
-    /// @param rate - the rate constant for this ReactionBase
-    ReactionBase (float rate, bool isProtoCompartment);
+    /// @param rate - the rate constant (full volume) for this ReactionBase
+    ReactionBase (float rate, bool isProtoCompartment, float volumeFrac=1.0f, int rateVolumeDepPow=0);
     
     /// No copying (including all derived classes)
     ReactionBase (const ReactionBase &rb) = delete;
@@ -154,18 +155,19 @@ public:
     CBound* getCBound() {return _cBound;}
     
     /// Sets the ReactionBase rate to the parameter "rate"
-    void setRate(float rate, int rateVolumeDepPow=0) {
-        // The result might depend on how the rate depend on the compartment volume
+    void setRate(float rate) { _rate = rate; }
+    void setRateScaled(float rate) {
+        // This can automatically set the "_rate" as scaled value of "rate"
 
         // Some possibilities of the exponent are implemented specifically to decrease the use of "pow"
-        switch(rateVolumeDepPow) {
+        switch(_rateVolumeDepPow) {
         case 0:
             _rate = rate; break;
         case -1:
             _rate = rate / _volumeFrac; break;
         default:
             if(_volumeFrac == 1.0f) _rate = rate;
-            else _rate = rate * std::pow(_volumeFrac, rateVolumeDepPow);
+            else _rate = rate * std::pow(_volumeFrac, _rateVolumeDepPow);
             break;
         }
     }
