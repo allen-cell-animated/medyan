@@ -83,6 +83,9 @@ protected:
     
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
+
+    float _volumeFrac = 1.0; ///< Used in compartments to store volume fraction of the compartment
+
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
                                             ///< associated with this ReactionBase
@@ -151,22 +154,39 @@ public:
     CBound* getCBound() {return _cBound;}
     
     /// Sets the ReactionBase rate to the parameter "rate"
-    void setRate(float rate) {_rate=rate;}
-    
-    /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is
-    /// called only by the Gillespie-like algorithms.
-    void setRnode(RNode *rhs) {_rnode=rhs;}
-    /// Get the RNode pointer
-    RNode* getRNode() {return _rnode;}
-    
+    void setRate(float rate, int rateVolumeDepPow=0) {
+        // The result might depend on how the rate depend on the compartment volume
+
+        // Some possibilities of the exponent are implemented specifically to decrease the use of "pow"
+        switch(rateVolumeDepPow) {
+        case 0:
+            _rate = rate; break;
+        case -1:
+            _rate = rate / _volumeFrac; break;
+        default:
+            if(_volumeFrac == 1.0f) _rate = rate;
+            else _rate = rate * std::pow(_volumeFrac, rateVolumeDepPow);
+            break;
+        }
+    }
     /// Returns the rate associated with this ReactionBase.
     float getRate() const {return _rate;}
     
     /// Returns the bare rate associated with this ReactionBase
     float getBareRate() const {return _rate_bare;}
-    
     ///aravind June 24, 2016
     void setBareRate(float a) {_rate_bare=a;}
+
+    /// Getter and setter for compartment volume fraction
+    float getVolumeFrac()const { return _volumeFrac; }
+    void setVolumeFrac(float volumeFrac) { _volumeFrac = volumeFrac; }
+
+    /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is
+    /// called only by the Gillespie-like algorithms.
+    void setRnode(RNode *rhs) {_rnode=rhs;}
+    /// Get the RNode pointer
+    RNode* getRNode() {return _rnode;}
+
     /// Returns a pointer to the RNode associated with this ReactionBase.
     RNode* getRnode() const {return _rnode;}
     

@@ -280,6 +280,19 @@ void Compartment::updateActivation(ChemSim* chem) {
     } else {
         activate(chem, false);
     }
+
+    // Update the internal reaction rates
+    for(auto& r: _internal_reactions.reactions()) {
+        auto rt = r->getReactionType();
+        if(
+            rt == ReactionType::POLYMERIZATIONPLUSEND ||
+            rt == ReactionType::POLYMERIZATIONMINUSEND ||
+            rt == ReactionType::DEPOLYMERIZATIONPLUSEND ||
+            rt == ReactionType::DEPOLYMERIZATIONMINUSEND
+        ) {
+            double newRate = r->get
+        }
+    }
 }
 
 void Compartment::deactivate(ChemSim* chem) {

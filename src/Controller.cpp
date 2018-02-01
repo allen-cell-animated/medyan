@@ -469,7 +469,7 @@ void Controller::updateActiveCompartments() {
                 c->boundaryInteresting = false;
             }
         }
-    } // Otherwise do nothing
+    } // Otherwise, no membrane exists. Do nothing
 }
 
 void Controller::executeSpecialProtocols() {
@@ -724,8 +724,8 @@ void Controller::run() {
             executeSpecialProtocols();
             
             oldTau = tau();
-        }
 #endif
+        }
     }
     //if run steps were specified, use this
     if(_runSteps != 0) {
@@ -784,8 +784,8 @@ void Controller::run() {
             
             //special protocols
             executeSpecialProtocols();
-        }
 #endif
+        }
     }
     
     //print last snapshots
