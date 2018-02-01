@@ -156,6 +156,7 @@ public:
     
     /// Sets the ReactionBase rate to the parameter "rate"
     void setRate(float rate) { _rate = rate; }
+    // Sets the scaled rate based on volume dependence.
     void setRateScaled(float rate) {
         // This can automatically set the "_rate" as scaled value of "rate"
 

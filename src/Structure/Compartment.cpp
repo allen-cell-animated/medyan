@@ -282,16 +282,10 @@ void Compartment::updateActivation(ChemSim* chem) {
     }
 
     // Update the internal reaction rates
+    double volumeFrac = _partialVolume / GController::getCompartmentVolume();
     for(auto& r: _internal_reactions.reactions()) {
-        auto rt = r->getReactionType();
-        if(
-            rt == ReactionType::POLYMERIZATIONPLUSEND ||
-            rt == ReactionType::POLYMERIZATIONMINUSEND ||
-            rt == ReactionType::DEPOLYMERIZATIONPLUSEND ||
-            rt == ReactionType::DEPOLYMERIZATIONMINUSEND
-        ) {
-            double newRate = r->get
-        }
+        r->setVolumeFrac(volumeFrac);
+        r->setRateScaled(r->getBareRate());
     }
 }
 
