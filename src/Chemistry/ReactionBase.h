@@ -182,7 +182,7 @@ public:
     void setBareRate(float a) {_rate_bare=a;}
 
     /// Getter and setter for compartment volume fraction
-    float getVolumeFrac()const { return _volumeFrac; }
+    double getVolumeFrac()const { return _volumeFrac; }
     void setVolumeFrac(float volumeFrac) { _volumeFrac = volumeFrac; }
 
     /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is

@@ -114,7 +114,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bo
 
             if(!outwardOnly) {
                 // Generate inward diffusion reaction
-                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, actualDiffRate, c->getVolumeFrac());
+                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, actualDiffRate, C->getVolumeFrac());
                 C->addDiffusionReaction(R);
                 rxns.push_back(R);
             }
