@@ -104,7 +104,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bo
                 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) /
                 GController::getCompartmentArea()[idxFwd / 2];
             double actualDiffRate = diff_rate * scaleFactor;
-            double volumeFrac = _partialVolume / GController::getCompartmentVolume();
+            double volumeFrac = getVolumeFrac();
 
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
 
@@ -113,9 +113,8 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bo
             rxns.push_back(R);
 
             if(!outwardOnly) {
-                double volumeFracNeighbor = C->_partialVolume / GController::getCompartmentVolume();
                 // Generate inward diffusion reaction
-                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, actualDiffRate, volumeFracNeighbor);
+                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, actualDiffRate, c->getVolumeFrac());
                 C->addDiffusionReaction(R);
                 rxns.push_back(R);
             }
@@ -247,7 +246,7 @@ void Compartment::activate(ChemSim* chem, bool init) {
 }
 
 void Compartment::updateActivation(ChemSim* chem) {
-    double volumeFrac = _partialVolume / GController::getCompartmentVolume();
+    double volumeFrac = getVolumeFrac();
 
     if(_activated) {
         // Update the reaction rates for diffusions in both directions
@@ -278,8 +277,7 @@ void Compartment::updateActivation(ChemSim* chem) {
                 // Update inward reaction rate
                 for(auto& r: c->_diffusion_reactions.reactions())
                     if(sp_this.get() == &r->rspecies()[1]->getSpecies() && sp_neighbor == &r->rspecies()[0]->getSpecies()) {
-                        double volumeFracNeighbor = c->_partialVolume / GController::getCompartmentVolume();
-                        r->setVolumeFrac(volumeFracNeighbor);
+                        r->setVolumeFrac(c->getVolumeFrac());
                         r->setRateScaled(actualDiffRate);
                     }
             }
@@ -339,4 +337,9 @@ bool operator==(const Compartment& a, const Compartment& b) {
         reac_bool=true;
     
     return spec_bool && reac_bool;
+}
+
+// Helper function to get the volume fraction
+double Compartment::getVolumeFrac()const {
+    return _partialVolume / GController::getCompartmentVolume();
 }

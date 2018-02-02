@@ -682,6 +682,7 @@ public:
 
     double getPartialVolume()const { return _partialVolume; }
     void setPartialVolume(double partialVolume) { _partialVolume = partialVolume; }
+    double getVolumeFrac()const;
     const array<double, 6>& getPartialArea()const { return _partialArea; }
     void setPartialArea(const array<double, 6>& partialArea) { _partialArea = partialArea; }
     
