@@ -18,7 +18,7 @@
 ReactionBase::ReactionBase (float rate, bool isProtoCompartment, float volumeFrac, int rateVolumeDepPow)
     : _rnode(nullptr), _parent(nullptr), _rate(rate), 
       _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
-      _volumeFrac(volumeFrac), _rateVolumeDepPow(rateVolumeDepPow) {
+      _volumeFrac(volumeFrac), _rateVolumeDepExp(rateVolumeDepPow) {
     
     // Scale the rate
     if(rateVolumeDepPow) setRateScaled(rate);

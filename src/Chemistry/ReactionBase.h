@@ -85,7 +85,8 @@ protected:
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 
     double _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
-    int _rateVolumeDepPow; ///< Exponent of rate dependency on volume
+    int _rateVolumeDepExp; ///< Exponent of rate dependency on volume
+                           ///< Dependence on bulk properties are NOT considered currently
 
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
@@ -161,14 +162,14 @@ public:
         // This can automatically set the "_rate" as scaled value of "rate"
 
         // Some possibilities of the exponent are implemented specifically to decrease the use of "pow"
-        switch(_rateVolumeDepPow) {
+        switch(_rateVolumeDepExp) {
         case 0:
             _rate = rate; break;
         case -1:
             _rate = rate / _volumeFrac; break;
         default:
             if(_volumeFrac == 1.0f) _rate = rate;
-            else _rate = rate * std::pow(_volumeFrac, _rateVolumeDepPow);
+            else _rate = rate * std::pow(_volumeFrac, _rateVolumeDepExp);
             break;
         }
     }
