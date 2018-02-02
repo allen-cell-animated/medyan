@@ -1349,6 +1349,8 @@ void ChemManager::genFilBindingReactions() {
                     nucleationZone = NucleationZoneType::BOUNDARY;
                 else if(nzstr == "TOPBOUNDARY")
                     nucleationZone = NucleationZoneType::TOPBOUNDARY;
+                else if(nzstr == "MEMBRANE")
+                    nucleationZone = NucleationZoneType::MEMBRANE;
                 else {
                     cout << "Nucleation zone type specified in a branching reaction not valid. Exiting." << endl;
                     exit(EXIT_FAILURE);
