@@ -105,7 +105,7 @@ protected:
 public:
     /// The main constructor:
     /// @param rate - the rate constant (full volume) for this ReactionBase
-    ReactionBase (float rate, bool isProtoCompartment, double volumeFrac=1.0, int rateVolumeDepPow=0);
+    ReactionBase (float rate, bool isProtoCompartment, double volumeFrac=1.0, int rateVolumeDepExp=0);
     
     /// No copying (including all derived classes)
     ReactionBase (const ReactionBase &rb) = delete;

@@ -41,8 +41,8 @@ template <unsigned short M, unsigned short N>
         /// (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
         Reaction(initializer_list<Species*> species,
-                float rate = 0.0, bool isProtoCompartment = false, double volumeFrac=1.0, int rateVolumeDepPow=0)
-            : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepPow) {
+                float rate = 0.0, bool isProtoCompartment = false, double volumeFrac=1.0, int rateVolumeDepExp=0)
+            : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
         }
         
@@ -52,8 +52,8 @@ template <unsigned short M, unsigned short N>
         /// @param rate - the rate constant for this ReactionBase
         template <typename InputContainer>
         Reaction(const InputContainer &species,
-                 float rate = 0.0, bool isProtoCompartment = false)
-            : ReactionBase(rate, isProtoCompartment) {
+                 float rate = 0.0, bool isProtoCompartment = false, double volumeFrac=1.0, int rateVolumeDepExp=0)
+            : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
         }
         

@@ -1200,6 +1200,8 @@ void ChemManager::genFilBindingReactions() {
                     exit(EXIT_FAILURE);
                 }
                 
+                int numDiffusingReactant = 0; // Used in determining volume dependence
+
                 //FIRST AND SECOND REACTANTS MUST BE BULK OR DIFFUSING
                 auto reactant = reactants[0];
                 
@@ -1236,6 +1238,8 @@ void ChemManager::genFilBindingReactions() {
                         exit(EXIT_FAILURE);
                     }
                     reactantSpecies.push_back(C->findSpeciesByName(name));
+
+                    ++numDiffusingReactant;
                 }
                 else {
                     cout <<
@@ -1277,6 +1281,8 @@ void ChemManager::genFilBindingReactions() {
                         exit(EXIT_FAILURE);
                     }
                     reactantSpecies.push_back(C->findSpeciesByName(name));
+
+                    ++numDiffusingReactant;
                 }
                 else {
                     cout <<
@@ -1349,7 +1355,7 @@ void ChemManager::genFilBindingReactions() {
                 }
                 double nucleationDist = get<5>(r);
                 
-                ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate);
+                ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::BRANCHING);
                 
                 C->addInternalReaction(rxn);
@@ -1525,6 +1531,8 @@ void ChemManager::genFilBindingReactions() {
                     exit(EXIT_FAILURE);
                 }
                 
+                int numDiffusingReactant = 0; // Used in determining volume dependence
+                
                 //THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
                 reactant = reactants[2];
                 if(reactant.find("BULK") != string::npos) {
@@ -1558,6 +1566,8 @@ void ChemManager::genFilBindingReactions() {
                         exit(EXIT_FAILURE);
                     }
                     reactantSpecies.push_back(C->findSpeciesByName(name));
+
+                    ++numDiffusingReactant;
                 }
                 else {
                     cout << "Third species listed in a linker reaction must be bulk or diffusing. Exiting."
@@ -1577,7 +1587,7 @@ void ChemManager::genFilBindingReactions() {
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
                 
                 C->addInternalReaction(rxn);
@@ -1750,6 +1760,8 @@ void ChemManager::genFilBindingReactions() {
                     << endl;
                     exit(EXIT_FAILURE);
                 }
+
+                int numDiffusingReactant = 0; // Used in determining volume dependence
                 
                 //THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
                 reactant = reactants[2];
@@ -1784,6 +1796,8 @@ void ChemManager::genFilBindingReactions() {
                         exit(EXIT_FAILURE);
                     }
                     reactantSpecies.push_back(C->findSpeciesByName(name));
+
+                    ++numDiffusingReactant;
                 }
                 else {
                     cout << "Third species listed in a motor reaction must be bulk or diffusing. Exiting."
@@ -1805,7 +1819,7 @@ void ChemManager::genFilBindingReactions() {
                 
                 //multiply by num heads to get rate
                 ///CHANGED
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::MOTORBINDING);
                 
                 C->addInternalReaction(rxn);
@@ -2127,6 +2141,8 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         vector<string> reactants = get<0>(r);
         vector<string> products = get<1>(r);
         
+        int numDiffusingReactant = 0; // Used in determining volume dependence
+        
         for(auto &reactant : reactants) {
             
             if(reactant.find("BULK") != string::npos) {
@@ -2161,6 +2177,8 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                     exit(EXIT_FAILURE);
                 }
                 reactantSpecies.push_back(protoCompartment.findSpeciesByName(name));
+
+                ++numDiffusingReactant;
             }
             else {
                 cout <<
@@ -2221,28 +2239,28 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         
         //<1,1>
         if(reactantSpecies.size() == 1 && productSpecies.size() == 1)
-            rxn = new Reaction<1,1>(species, get<2>(r), true);
+            rxn = new Reaction<1,1>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<2,1>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 1)
-            rxn = new Reaction<2,1>(species, get<2>(r), true);
+            rxn = new Reaction<2,1>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<1,2>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 2)
-            rxn = new Reaction<1,2>(species, get<2>(r), true);
+            rxn = new Reaction<1,2>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<2,0>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 0)
-            rxn = new Reaction<2,0>(species, get<2>(r), true);
+            rxn = new Reaction<2,0>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 2)
-            rxn = new Reaction<2,2>(species, get<2>(r), true);
+            rxn = new Reaction<2,2>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<1,3>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 3)
-            rxn = new Reaction<1,3>(species, get<2>(r), true);
+            rxn = new Reaction<1,3>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 3)
-            rxn = new Reaction<2,3>(species, get<2>(r), true);
+            rxn = new Reaction<2,3>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<3,2>
         else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
-            rxn = new Reaction<3,2>(species, get<2>(r), true);
+            rxn = new Reaction<3,2>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         else {
             cout <<
             "General reaction specified does not match any existing templates. Exiting."
@@ -2393,6 +2411,8 @@ void ChemManager::genNucleationReactions() {
                 }
                 bool diffusing = false;
                 
+                int numDiffusingReactant = 0; // Used in determining volume dependence
+
                 for(auto &reactant : reactants) {
                     if(reactant.find("BULK") != string::npos) {
                         
@@ -2428,6 +2448,8 @@ void ChemManager::genNucleationReactions() {
                         }
                         reactantSpecies.push_back(C->findSpeciesByName(name));
                         diffusing = true;
+
+                        ++numDiffusingReactant;
                     }
                     else {
                         cout <<
@@ -2439,7 +2461,7 @@ void ChemManager::genNucleationReactions() {
                 
                 //add the reaction. The products will only be involved in creating the
                 //callback needed to create a new filament
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, get<2>(r));
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, get<2>(r), false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::FILAMENTCREATION);
                 
                 C->addInternalReaction(rxn);
