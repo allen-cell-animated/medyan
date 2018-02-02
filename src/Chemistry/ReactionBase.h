@@ -84,8 +84,8 @@ protected:
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
 
-    float _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
-    float _rateVolumeDepPow; ///< Exponent of rate dependency on volume
+    double _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
+    int _rateVolumeDepPow; ///< Exponent of rate dependency on volume
 
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
@@ -104,7 +104,7 @@ protected:
 public:
     /// The main constructor:
     /// @param rate - the rate constant (full volume) for this ReactionBase
-    ReactionBase (float rate, bool isProtoCompartment, float volumeFrac=1.0f, int rateVolumeDepPow=0);
+    ReactionBase (float rate, bool isProtoCompartment, double volumeFrac=1.0, int rateVolumeDepPow=0);
     
     /// No copying (including all derived classes)
     ReactionBase (const ReactionBase &rb) = delete;
