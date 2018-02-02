@@ -70,7 +70,7 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
         if(_nucleationZone == NucleationZoneType::MEMBRANE) {
             if(Membrane::getMembranes().size()) {
                 if(cc->getCompartment()->isActivated()) {
-                    if(cc->getCompartment()->getVolumeFrac() < 1.0) // Not fully activated
+                    if(cc->getCOmpartment()->getVolumeFrac() < 1.0) // Not fully activated
                         if(Membrane::getMembranes()[0]->signedDistance(vector2Array<double, 3>(coord), false) >= 0.0)
                             inZone = false;
                 }
@@ -166,7 +166,18 @@ void BranchingManager::updateAllPossibleBindings() {
                 auto coord = midPointCoordinate(x1, x2, mp);
                 
                 //set nucleation zone
-                if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
+                // For membrane acting as boundaries, only the 0th membrane will be considered.
+                if(_nucleationZone == NucleationZoneType::MEMBRANE) {
+                    if(Membrane::getMembranes().size()) {
+                        if(cc->getCompartment()->isActivated()) {
+                            if(cc->getCOmpartment()->getVolumeFrac() < 1.0) // Not fully activated
+                                if(Membrane::getMembranes()[0]->signedDistance(vector2Array<double, 3>(coord), false) >= 0.0)
+                                    inZone = false;
+                        }
+                        else inZone = false;
+                    } // else no membrane exists, always "in zone".
+                }
+                else if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
                     
                     //if top boundary, check if we are above the center coordinate in z
                     if(_nucleationZone == NucleationZoneType::TOPBOUNDARY) {
