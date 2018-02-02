@@ -28,8 +28,6 @@ class.
 
 class Membrane: public Composite, public Trackable, public Geometric {
 
-    friend class Controller; // TODO: why friend?
-
 private:
 
     vector<Triangle*> _triangleVector; // collection of triangles

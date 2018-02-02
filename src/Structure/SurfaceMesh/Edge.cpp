@@ -46,38 +46,11 @@ void Edge::updatePosition() {
 
     // Things to do if the comparment changes
     if(c != _compartment) {
-
-/* TODO:
-#ifdef CHEMISTRY
-        auto oldCompartment = _compartment;
-        auto newCompartment = c;
-#endif
-*/
-        
+     
         //remove from old compartment, add to new
         _compartment->removeEdge(this);
         _compartment = c;
         _compartment->addEdge(this);
-
-/* TODO:
-#ifdef CHEMISTRY
-        auto oldCCylinder = _cCylinder.get();
-        
-        //Remove old ccylinder from binding managers
-        for(auto &manager : oldCompartment->getFilamentBindingManagers())
-            manager->removePossibleBindings(oldCCylinder);
-        
-        //clone and set new ccylinder
-        CCylinder* clone = _cCylinder->clone(c);
-        setCCylinder(clone);
-        
-        auto newCCylinder = _cCylinder.get();
-        
-        //Add new ccylinder to binding managers
-        for(auto &manager : newCompartment->getFilamentBindingManagers())
-            manager->addPossibleBindings(newCCylinder);
-#endif
-*/
     }
 }
 
