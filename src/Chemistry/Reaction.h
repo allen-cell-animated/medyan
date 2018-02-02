@@ -41,8 +41,8 @@ template <unsigned short M, unsigned short N>
         /// (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
         Reaction(initializer_list<Species*> species,
-                float rate = 0.0, bool isProtoCompartment = false)
-            : ReactionBase(rate, isProtoCompartment) {
+                float rate = 0.0, bool isProtoCompartment = false, float volumeFrac=1.0, int rateVolumeDepPow=0)
+            : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepPow) {
             initializeSpecies(species);
         }
         
@@ -266,8 +266,8 @@ private:
 public:
     /// The main constructor
     DiffusionReaction(initializer_list<Species*> species,
-                      float rate = 0.0, bool isProtoCompartment = false)
-    : Reaction(species, rate, isProtoCompartment) {
+                      float rate = 0.0, bool isProtoCompartment = false, float volumeFrac=1.0)
+    : Reaction(species, rate, isProtoCompartment, volumeFrac, -1) { // Inversely dependent on compartment active volume
     
         //set averaging
         if(dynamic_cast<RSpeciesAvg*>(_rspecies[0]))

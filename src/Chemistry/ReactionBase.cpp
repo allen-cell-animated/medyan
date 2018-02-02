@@ -20,7 +20,7 @@ ReactionBase::ReactionBase (float rate, bool isProtoCompartment, float volumeFra
       _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
       _volumeFrac(volumeFrac), _rateVolumeDepPow(rateVolumeDepPow) {
     
-    // Modify rate based volumeFrac and dependence
+    // Scale the rate
     if(rateVolumeDepPow) setRateScaled(rate);
 
 #ifdef REACTION_SIGNALING
