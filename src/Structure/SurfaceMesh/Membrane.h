@@ -4,11 +4,14 @@
 #include <array>
 #include <tuple>
 #include <vector>
+#include <memory>
 
 #include "Database.h"
 #include "Geometric.h"
 #include "Trackable.h"
 #include "Composite.h"
+
+#include "MMembrane.h"
 
 // FORWARD DECLARATIONS
 class SubSystem;
@@ -33,6 +36,8 @@ private:
     vector<Triangle*> _triangleVector; // collection of triangles
     vector<Edge*> _edgeVector; // collection of edges
     vector<Vertex*> _vertexVector; // collection of vertices
+
+    unique_ptr<MMembrane> _mMembrane; // pointer to mechanical membrane object
 
     short _memType; // Membrane type
 
@@ -108,6 +113,13 @@ public:
     Topological
     **************************************************************************/
     bool isClosed()const { return _isClosed; }
+
+    /**************************************************************************
+    Mechanics
+    **************************************************************************/
+    // Get mech membrane
+    MMembrane* getMMembrane() { return _mMembrane.get(); }
+
 
 };
 

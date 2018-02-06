@@ -20,6 +20,7 @@ using namespace mathfunc;
 #include "GEdge.h"
 #include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
+#include "MMembrane.h"
 
 Database<Membrane*> Membrane::_membranes;
 
@@ -174,6 +175,14 @@ Membrane::Membrane(SubSystem* s, short membraneType,
         mvc->setEqArea(gvc->getArea());
 #endif
     }
+
+    /**************************************************************************
+        Setting up MMembrane object and find volume
+    **************************************************************************/
+#ifdef MECHANICS
+    _mMembrane = unique_ptr<MMembrane>(new MMembrane);
+    _mMembrane->setMembrane(this);
+#endif
 
 }
 
