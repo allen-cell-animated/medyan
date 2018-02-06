@@ -11,6 +11,7 @@
 #include "Trackable.h"
 #include "Composite.h"
 
+#include "GMembrane.h"
 #include "MMembrane.h"
 
 // FORWARD DECLARATIONS
@@ -37,6 +38,7 @@ private:
     vector<Edge*> _edgeVector; // collection of edges
     vector<Vertex*> _vertexVector; // collection of vertices
 
+    unique_ptr<GMembrane> _gMembrane; // pointer to geometric membrane object
     unique_ptr<MMembrane> _mMembrane; // pointer to mechanical membrane object
 
     short _memType; // Membrane type

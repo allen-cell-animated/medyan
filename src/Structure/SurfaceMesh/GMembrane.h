@@ -1,33 +1,28 @@
-#ifndef MEDYAN_MMembrane_h
-#define MEDYAN_MMembrane_h
+#ifndef MEDYAN_GMembrane_h
+#define MEDYAN_GMembrane_h
 
 // FORWARD DECLARATIONS
 class Membrane;
 
 /******************************************************************************
-Stores mechanical properties of the membrane.
+Stores geometric properties of the membrane.
 ******************************************************************************/
 
-class MMembrane {
+class GMembrane {
 
 private:
 
     Membrane* _pMembrane; // Parent membrane
 
-    double _kComp; // Compressibility constant
-
     double _volume; // The volume of the enclosed membrane
 
 public:
     // Constructors
-    Membrane();
+    GMembrane() {}
 
     // Getters and setters
     void setMembrane(Membrane* m) { _pMembrane = m; }
     Membrane* getMembrane()const { return _pMembrane; }
-    
-    void setCompConst(double kComp) { _kComp = kComp; }
-    double getCompConst()const { return _kComp; }
 
     double getVolume()const { return _volume; }
     void calcVolume();
