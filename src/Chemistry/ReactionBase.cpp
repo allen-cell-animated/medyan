@@ -15,9 +15,14 @@
 
 #include "Composite.h"
 
-ReactionBase::ReactionBase (float rate, bool isProtoCompartment)
+ReactionBase::ReactionBase (float rate, bool isProtoCompartment, double volumeFrac, int rateVolumeDepExp)
     : _rnode(nullptr), _parent(nullptr), _rate(rate), 
-      _rate_bare(rate), _isProtoCompartment(isProtoCompartment) {
+      _rate_bare(rate), _isProtoCompartment(isProtoCompartment),
+      _volumeFrac(volumeFrac), _rateVolumeDepExp(rateVolumeDepExp) {
+    
+    // Scale the rate
+    if(rateVolumeDepExp) setRateScaled(rate);
+
 #ifdef REACTION_SIGNALING
     _signal=nullptr;
 #endif

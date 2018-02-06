@@ -26,6 +26,7 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Boundary.h"
+#include "Membrane.h"
 
 #include "BindingManager.h"
 
@@ -766,10 +767,15 @@ struct FilamentCreationCallback {
             auto npp = nextPointProjection(position,
                                            SysParams::Geometry().cylinderSize[_filType], direction);
             
-            //check if within boundary
-            if(_ps->getBoundary()->within(position) &&
-               _ps->getBoundary()->within(npp))
-                break;
+            //check if within boundary and membrane[0]
+            if(
+                _ps->getBoundary()->within(position) &&
+                _ps->getBoundary()->within(npp) &&
+                c->isActivated() &&
+                (c->getVolumeFrac() >= 1.0 ||
+                    Membrane::getMembranes()[0]->signedDistance(vector2Array<double, 3>(position)) < 0.0 &&
+                    Membrane::getMembranes()[0]->signedDistance(vector2Array<double, 3>(npp)) < 0.0)
+            ) break;
         }
         
         //create filament, set up ends and filament species
