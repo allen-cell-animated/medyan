@@ -6,40 +6,14 @@
 #include "Vertex.h"
 
 void GMembrane::calcVolume() {
+    auto& vs = _pMembrane->getVertexVector();
+    size_t numVertices = vs.size();
+
+    _dVolume.resize(numVertices);
+    _Volume = 0;
+    std::fill(_dVolume.begin(), _dVolume.end(), 0.0);
+
+    for(Triangle* t: _pMembrane->getTriangleVector()) {
+        // TODO:
+    }
 }
-// TODO
-class MMembrane {
-
-private:
-
-    Membrane* _pMembrane; // Parent membrane
-
-    double _kComp; // Compressibility constant
-    double _eqVolume; // Equilibrium volume
-
-    double _volume; // The volume of the enclosed membrane
-
-public:
-    // Constructors
-    Membrane();
-
-    // Getters and setters
-    void setMembrane(Membrane* m) { _pMembrane = m; }
-    Membrane* getMembrane()const { return _pMembrane; }
-
-    void setCompConst(double kComp) { _kComp = kComp; }
-    double getCompConst()const { return _kComp; }
-
-    void setEqVolume(double eqVolume) { _eqVolume = eqVolume; }
-    double getEqVolume()const { return _eqVolume; }
-
-    double getVolume()const { return _volume; }
-    void calcVolume();
-    
-};
-
-
-
-
-
-#endif

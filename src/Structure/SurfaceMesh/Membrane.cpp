@@ -39,6 +39,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
         Setting up vertices and neighbors
     **************************************************************************/
     // Add the vertices
+    size_t vertexIndex = 0;
     _vertexVector.reserve(numVertices);
     for(auto& vertexData : membraneData) {
         Vertex* lastAddedVertex = _subSystem->addTrackable<Vertex>(
@@ -47,6 +48,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
             get<1>(vertexData).size()
         );
         _vertexVector.push_back(lastAddedVertex); // Add to its own storage
+        lastAddedVertex->_membraneVertexIdx = vertexIndex++;
     }
 
     // Register the neighbors
@@ -186,6 +188,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
 #ifdef MECHANICS
     _mMembrane = unique_ptr<MMembrane>(new MMembrane);
     _mMembrane->setMembrane(this);
+    _mMembrane->setEqVolume(_gMembrane->getVolume());
 #endif
 
 }

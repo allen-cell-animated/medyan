@@ -97,6 +97,9 @@ public:
     /// Implements Geometric
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
 
+    // Get geo membrane
+    GMembrane* getGMembrane() { return _gMembrane.get(); }
+
     // Use pseudo normal signed distance field method to get the signed distance to a point.
     // If the point is outside, the result is positive and vice versa.
     // Throws an exception if the membrane is not closed.
