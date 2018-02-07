@@ -170,7 +170,7 @@ void BranchingManager::updateAllPossibleBindings() {
                 if(_nucleationZone == NucleationZoneType::MEMBRANE) {
                     if(Membrane::getMembranes().size()) {
                         if(cc->getCompartment()->isActivated()) {
-                            if(cc->getCOmpartment()->getVolumeFrac() < 1.0) // Not fully activated
+                            if(cc->getCompartment()->getVolumeFrac() < 1.0) // Not fully activated
                                 if(Membrane::getMembranes()[0]->signedDistance(vector2Array<double, 3>(coord), false) >= 0.0)
                                     inZone = false;
                         }
