@@ -1003,6 +1003,14 @@ void SystemParser::readMechParams() {
                     MParams.MemEqCurv.push_back(atof(lineVector[i].c_str()));
             }
         }
+
+        // Water compressibility
+        else if(line.find("COMP_CONST") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() >= 2) {
+                MParams.CompConst = atof(lineVector[1].c_str());
+            }
+        }
         
         if (line.find("SPECIALPROTOCOL") != string::npos) {
             
