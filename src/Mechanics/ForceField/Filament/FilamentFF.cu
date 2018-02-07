@@ -78,6 +78,7 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
 
     for (auto &interaction : _filamentInteractionVector) {
 
+
         U_i = interaction->computeEnergy(coord, f, d);
 
         if(U_i <= -1) {

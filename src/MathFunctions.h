@@ -17,12 +17,32 @@
 #include <vector>
 
 #include "common.h"
+#include <cuda.h>
+#include <cuda_runtime.h>
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
+#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 
+#else
+    static __inline__ __device__ double atomicAdd(double *address, double val) {
+    unsigned long long int* address_as_ull = (unsigned long long int*)address;
+    unsigned long long int old = *address_as_ull, assumed;
+    if (val==0.0)
+      return __longlong_as_double(old);
+    do {
+      assumed = old;
+      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+    } while (assumed != old);
+    return __longlong_as_double(old);
+  }
+
+#endif
+     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot);
+    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int* culpritID, char* culpritFF,
+                              char* culpritinteraction, char *FF, char *interaction);
     /// Normalize a vector
     inline void normalize(vector<double> &v) {
 
@@ -110,7 +130,12 @@ namespace mathfunc {
         return sqrt((v2[id] - v1[id]) * (v2[id] - v1[id]) + (v2[id + 1] - v1[id + 1]) * (v2[id + 1] - v1[id + 1])
                     + (v2[id + 2] - v1[id + 2]) * (v2[id + 2] - v1[id + 2]));
     }
+    __host__ __device__
+    inline double twoPointDistancemixedID(double const *v1, double const *v2, int const id1, int const id2) {
 
+        return sqrt((v2[id2] - v1[id1]) * (v2[id2] - v1[id1]) + (v2[id2 + 1] - v1[id1 + 1]) * (v2[id2 + 1] - v1[id1 +
+                1]) + (v2[id2 + 2] - v1[id1 + 2]) * (v2[id2 + 2] - v1[id1 + 2]));
+    }
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
     inline double twoPointDistanceStretched(const vector<double> &v1,
@@ -147,6 +172,32 @@ namespace mathfunc {
                     ((v2[2] + d * p2[2]) - (v1[2] + d * p1[2])));
     }
 
+    //CUDA version
+    __host__ __device__
+    inline double twoPointDistanceStretched(double const *v1,
+                                            double const *p1,
+                                            double const *v2,
+                                            double const *p2, double d, int const id) {
+        return sqrt(((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) *
+                    ((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) +
+                    ((v2[id + 1] + d * p2[id + 1]) - (v1[id + 1] + d * p1[id + 1])) *
+                    ((v2[id + 1] + d * p2[id + 1]) - (v1[id + 1] + d * p1[id + 1])) +
+                    ((v2[id + 2] + d * p2[id + 2]) - (v1[id + 2] + d * p1[id + 2])) *
+                    ((v2[id + 2] + d * p2[id + 2]) - (v1[id + 2] + d * p1[id + 2])));
+    }
+    //CUDA version
+    __host__ __device__
+    inline double twoPointDistanceStretchedmixedID(double const *v1,
+                                            double const *p1,
+                                            double const *v2,
+                                            double const *p2, double d, int const id1, const int id2) {
+        return sqrt(((v2[id2] + d * p2[id2]) - (v1[id1] + d * p1[id1])) *
+                    ((v2[id2] + d * p2[id2]) - (v1[id1] + d * p1[id1])) +
+                    ((v2[id2 + 1] + d * p2[id2 + 1]) - (v1[id1 + 1] + d * p1[id1 + 1])) *
+                    ((v2[id2 + 1] + d * p2[id2 + 1]) - (v1[id1 + 1] + d * p1[id1 + 1])) +
+                    ((v2[id2 + 2] + d * p2[id2 + 2]) - (v1[id1 + 2] + d * p1[id1 + 2])) *
+                    ((v2[id2 + 2] + d * p2[id2 + 2]) - (v1[id1 + 2] + d * p1[id1 + 2])));
+    }
     //@{
     /// Calculates a normal to a line starting at (x1,y1,z1) and ending at (x2,y2,z2)
     inline vector<double> twoPointDirection(const vector<double> &v1,
@@ -229,7 +280,15 @@ namespace mathfunc {
                 (v2[id + 1] - v1[id + 1]) * (v4[id + 1] - v3[id + 1]) +
                 (v2[id + 2] - v1[id + 2]) * (v4[id + 2] - v3[id + 2]));
     }
-
+    ///CUDA VERSION
+    __host__ __device__
+    inline double scalarProductmixedID(double const *v1, double const *v2,
+                                double const *v3, double const *v4, int const id1, int const id2, int const id3, int
+                                       const id4) {
+        return ((v2[id2] - v1[id1]) * (v4[id4] - v3[id3]) +
+                (v2[id2 + 1] - v1[id1 + 1]) * (v4[id4 + 1] - v3[id3 + 1]) +
+                (v2[id2 + 2] - v1[id1 + 2]) * (v4[id4 + 2] - v3[id3 + 2]));
+    }
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
     inline double scalarProductStretched(const vector<double> &v1,
@@ -280,7 +339,69 @@ namespace mathfunc {
 //        return xx + yy + zz;
 
     }
+    //CUDA version
+    __host__ __device__
+    inline double scalarProductStretched(double const *v1,
+                                         double const *p1,
+                                         double const *v2,
+                                         double const *p2,
+                                         double const *v3,
+                                         double const *p3,
+                                         double const *v4,
+                                         double const *p4,
+                                         double d,int const id ) {
+        double xx = ((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) *
+                    ((v4[id] + d * p4[id]) - (v3[id] + d * p3[id]));
+        double yy = ((v2[id + 1] + d * p2[id + 1]) - (v1[id + 1] + d * p1[id + 1])) *
+                    ((v4[id + 1] + d * p4[id + 1]) - (v3[id + 1] + d * p3[id + 1]));
+        double zz = ((v2[id + 2] + d * p2[id + 2]) - (v1[id + 2] + d * p1[id + 2])) *
+                    ((v4[id + 2] + d * p4[id + 2]) - (v3[id + 2] + d * p3[id + 2]));
+        return xx + yy + zz;
+    }
 
+    __host__ __device__
+    inline double scalarProductStretchedmixedIDv2(double const *v1,
+
+                                         double const *v2,
+
+                                         double const *v3,
+
+                                         double const *v4,
+
+                                         double d, int const id, double const *p, int const id1, int const id2, int
+                                                  const id3, int const id4) {
+        double xx = ((v2[id] + d * p[id2]) - (v1[id] + d * p[id1])) *
+                    ((v4[id] + d * p[id4]) - (v3[id] + d * p[id3]));
+        double yy = ((v2[id + 1] + d * p[id2 + 1]) - (v1[id + 1] + d * p[id1 + 1])) *
+                    ((v4[id + 1] + d * p[id4 + 1]) - (v3[id + 1] + d * p[id3 + 1]));
+        double zz = ((v2[id + 2] + d * p[id2 + 2]) - (v1[id + 2] + d * p[id1 + 2])) *
+                    ((v4[id + 2] + d * p[id4 + 2]) - (v3[id + 2] + d * p[id3 + 2]));
+        return xx + yy + zz;
+    }
+
+    //CUDA version
+    __host__ __device__
+    inline double scalarProductStretchedmixedID(double const *v1,
+                                         double const *p1,
+                                         double const *v2,
+                                         double const *p2,
+                                         double const *v3,
+                                         double const *p3,
+                                         double const *v4,
+                                         double const *p4,
+                                         double d,
+                                         int const id1,
+                                         int const id2,
+                                         int const id3,
+                                         int const id4) {
+        double xx = ((v2[id2] + d * p2[id2]) - (v1[id1] + d * p1[id1])) *
+                    ((v4[id4] + d * p4[id4]) - (v3[id3] + d * p3[id3]));
+        double yy = ((v2[id2 + 1] + d * p2[id2 + 1]) - (v1[id1 + 1] + d * p1[id1 + 1])) *
+                    ((v4[id4 + 1] + d * p4[id4 + 1]) - (v3[id3 + 1] + d * p3[id3 + 1]));
+        double zz = ((v2[id2 + 2] + d * p2[id2 + 2]) - (v1[id1 + 2] + d * p1[id1 + 2])) *
+                    ((v4[id4 + 2] + d * p4[id4 + 2]) - (v3[id3 + 2] + d * p3[id3 + 2]));
+        return xx + yy + zz;
+    }
     /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
     /// v2[x,y,z] + d*p2[x,y,z]
     inline double dotProductStretched(const vector<double> &v1,
@@ -334,10 +455,73 @@ namespace mathfunc {
         v[2] = vz;
     };
 
+    /// CUDA VERSION
+    __host__ __device__
+    inline void vectorProduct(double *v,
+                              double const *v1,
+                              double const *v2,
+                              double const *v3,
+                              double const *v4, int const id) {
+        double vx =
+                (v2[id+1] - v1[id+1]) * (v4[id+2] - v3[id+2]) - (v2[id+2] - v1[id+2]) * (v4[id+1] - v3[id+1]);
+        double vy = (v2[id+2] - v1[id+2]) * (v4[id] - v3[id]) - (v2[id] - v1[id]) * (v4[id+2] - v3[id+2]);
+        double vz = (v2[id] - v1[id]) * (v4[id+1] - v3[id+1]) - (v2[id+1] - v1[id+1]) * (v4[id] - v3[id]);
 
+        v[0] = vx;
+        v[1] = vy;
+        v[2] = vz;
+    };
+    /// CUDA VERSION
+    __host__ __device__
+    inline void vectorProductmixedID(double *v,
+                              double const *v1,
+                              double const *v2,
+                              double const *v3,
+                              double const *v4, int const id1, int const id2,int const id3, int const id4) {
+        double vx =
+                (v2[id2+1] - v1[id1+1]) * (v4[id4+2] - v3[id3+2]) - (v2[id2+2] - v1[id1+2]) * (v4[id4+1] - v3[id3+1]);
+        double vy = (v2[id2+2] - v1[id1+2]) * (v4[id4] - v3[id3]) - (v2[id2] - v1[id1]) * (v4[id4+2] - v3[id3+2]);
+        double vz = (v2[id2] - v1[id1]) * (v4[id4+1] - v3[id3+1]) - (v2[id2+1] - v1[id1+1]) * (v4[id4] - v3[id3]);
+
+        v[0] = vx;
+        v[1] = vy;
+        v[2] = vz;
+    };
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3), but with v -> v+d*p. Returns a 3d vector.
     /// ARRAY VERSION
+    inline vector<double> vectorProductStretched (const vector<double>& v1,
+                                                  const vector<double>& p1,
+                                                  const vector<double>& v2,
+                                                  const vector<double>& p2,
+                                                  const vector<double>& v3,
+                                                  const vector<double>& p3,
+                                                  const vector<double>& v4,
+                                                  const vector<double>& p4,
+                                                  double d){
+        vector<double> v;
+
+        double vx =
+                ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]))
+                - ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]));
+
+        double vy =
+                ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]))
+                - ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]));
+
+        double vz =
+                ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]))
+                - ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]));
+
+        v.push_back(vx);
+        v.push_back(vy);
+        v.push_back(vz);
+
+        return v;
+
+
+    };
+    //ARRAY VERSION
     inline void vectorProductStretched(double *v,
                                        double const *v1,
                                        double const *p1,
@@ -349,28 +533,88 @@ namespace mathfunc {
                                        double const *p4,
                                        double d) {
         double vx =
-                ((*(v2 + 1) + d * (*(p2 + 1))) - (*(v1 + 1) + d * (*(p1 + 1)))) *
-                ((*(v4 + 2) + d * (*(p4 + 2)) - (*(v3 + 2) + d * (*(p3 + 2)))))
-                - ((*(v2 + 2) + d * (*(p2 + 2))) - (*(v1 + 2) + d * (*(p1 + 2)))) *
-                  ((*(v4 + 1) + d * (*(p4 + 1))) - (*(v3 + 1) + d * (*(p3 + 1))));
+                ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]))
+                - ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]));
 
         double vy =
-                ((*(v2 + 2) + d * (*(p2 + 2))) - (*(v1 + 2) + d * (*(p1 + 2)))) *
-                ((*(v4) + d * (*(p4))) - (*(v3) + d * (*p3)))
-                - ((*(v2) + d * (*p2)) - (*(v1) + d * (*p1))) *
-                  ((*(v4 + 2) + d * (*(p4 + 2))) - (*(v3 + 2) + d * (*(p3 + 2))));
+                ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]))
+                - ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]));
 
         double vz =
-                ((*(v2) + d * (*p2)) - (*v1 + d * (*p1))) *
-                ((*(v4 + 1) + d * (*(p4 + 1))) - (*(v3 + 1) + d * (*(p3 + 1))))
-                - ((*(v2 + 1) + d * (*(p2 + 1))) - (*(v1 + 1) + d * (*(p1 + 1)))) *
-                  ((*(v4) + d * (*p4)) - (*v3 + d * (*p3)));
+                ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]))
+                - ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]));
+        v[0] = vx;
+        v[1] = vy;
+        v[2] = vz;
+    }
+    ///CUDA version
+    __host__ __device__
+    inline void vectorProductStretched(double *v,
+                                       double const *v1,
+                                       double const *p1,
+                                       double const *v2,
+                                       double const *p2,
+                                       double const *v3,
+                                       double const *p3,
+                                       double const *v4,
+                                       double const *p4,
+                                       double d, int const id) {
+        double vx =
+                ((v2[id+1] + d * p2[id+1]) - (v1[id+1] + d * p1[id+1])) *
+                ((v4[id+2] + d * p4[id+2]) - (v3[id+2] + d * (p3[id+2])))
+                - ((v2[id+2] + d * (p2[id+2])) - (v1[id+2] + d * (p1[id+2]))) *
+                  ((v4[id+1] + d * (p4[id+1])) - (v3[id+1] + d * (p3[id+1])));
+
+        double vy =
+                ((v2[id+2] + d * p2[id+2]) - (v1[id+2] + d * p1[id+2])) *
+                (v4[id] + d * p4[id] - (v3[id] + d * p3[id]))
+                - ((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) *
+                  ((v4[id+2] + d * (p4[id+2])) - (v3[id+2] + d * p3[id+2]));
+
+        double vz =
+                ((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) *
+                ((v4[id+1] + d * p4[id+1]) - (v3[id+1] + d * p3[id+1]))
+                - ((v2[id+1] + d * p2[id+1]) - (v1[id+1] + d * p1[id+1])) *
+                  ((v4[id] + d * p4[id]) - (v3[id] + d * p3[id]));
 
         v[0] = vx;
         v[1] = vy;
         v[2] = vz;
     };
+    ///CUDA version
+    __host__ __device__
+    inline void vectorProductStretchedmixedID(double *v,
+                                       double const *v1,
+                                       double const *p1,
+                                       double const *v2,
+                                       double const *p2,
+                                       double const *v3,
+                                       double const *p3,
+                                       double const *v4,
+                                       double const *p4,
+                                       double d, int const id1, int const id2, int const id3, int const id4) {
+        double vx =
+                ((v2[id2+1] + d * p2[id2+1]) - (v1[id1+1] + d * p1[id1+1])) *
+                ((v4[id4+2] + d * p4[id4+2]) - (v3[id3+2] + d * (p3[id3+2])))
+                - ((v2[id2+2] + d * (p2[id2+2])) - (v1[id1+2] + d * (p1[id1+2]))) *
+                  ((v4[id4+1] + d * (p4[id4+1])) - (v3[id3+1] + d * (p3[id3+1])));
 
+        double vy =
+                ((v2[id2+2] + d * p2[id2+2]) - (v1[id1+2] + d * p1[id1+2])) *
+                (v4[id4] + d * p4[id4] - (v3[id3] + d * p3[id3]))
+                - ((v2[id2] + d * p2[id2]) - (v1[id1] + d * p1[id1])) *
+                  ((v4[id4+2] + d * (p4[id4+2])) - (v3[id3+2] + d * p3[id3+2]));
+
+        double vz =
+                ((v2[id2] + d * p2[id2]) - (v1[id1] + d * p1[id1])) *
+                ((v4[id4+1] + d * p4[id4+1]) - (v3[id3+1] + d * p3[id3+1]))
+                - ((v2[id2+1] + d * p2[id2+1]) - (v1[id1+1] + d * p1[id1+1])) *
+                  ((v4[id4] + d * p4[id4]) - (v3[id3] + d * p3[id3]));
+
+        v[0] = vx;
+        v[1] = vy;
+        v[2] = vz;
+    };
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
 
     inline vector<double> crossProduct(const vector<double> &v1,
@@ -454,7 +698,6 @@ namespace mathfunc {
         v[1] = v1[id + 1] * (1.0 - alpha) + alpha * v2[id + 1];
         v[2] = v1[id + 2] * (1.0 - alpha) + alpha * v2[id + 2];
     }
-
 
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
@@ -815,6 +1058,10 @@ namespace mathfunc {
 
     inline size_t blockToSmem(int blockSize){return 12 * blockSize * sizeof(double);}
     inline size_t blockToSmemez(int blockSize){return 24 * blockSize * sizeof(double);}
+    inline size_t blockToSmemF(int blockSize){return 6 * blockSize * sizeof(double);}
+    inline size_t blockToSmemFB(int blockSize){return 9 * blockSize * sizeof(double);}
+    inline size_t blockToSmemFB2(int blockSize){return 18 * blockSize * sizeof(double);}
+
 
     /// Function to move bead out of plane by specified amount
     vector<double> movePointOutOfPlane(const vector<double> &p1,

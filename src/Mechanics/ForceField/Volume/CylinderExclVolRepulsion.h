@@ -41,12 +41,13 @@ public:
     double* energy(double *coord, double *f, int *beadSet, double *krep, double *z, int *params);
 
     void forces(double *coord, double *f, int *beadSet, double *krep, int *params);
+    static void checkforculprit();
+    double *gU_i;
+    double *gU_sum;
+    char *gFF, *ginteraction;
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
-
-    double *gU_i;
-    double *gU_sum;
     cudaStream_t stream;
 
 #endif

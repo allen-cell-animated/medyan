@@ -23,10 +23,21 @@
 #include "nvToolsExt.h"
 
 using namespace mathfunc;
+#ifdef CUDAACCL
 void MotorGhostStretchingHarmonic::deallocate(){
     CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
+    CUDAcommon::handleerror(cudaFree(gFF));
+    CUDAcommon::handleerror(cudaFree(ginteraction));
+}
+void MotorGhostStretchingHarmonic::checkforculprit() {
+    CUDAcommon::printculprit("MotorGhostStretching","MotorGhostStretchingHarmonic");
+    MotorGhost* m;
+    m = MotorGhost::getMotorGhosts()[CUDAcommon::getCUDAvars().culpritID[0]];
+    cout<<"Printing culprit Filament information."<<endl;
+    m->printSelf();
+    exit(EXIT_FAILURE);
 }
 void MotorGhostStretchingHarmonic::optimalblocksnthreads( int nint){
     //CUDA stream create
@@ -66,6 +77,12 @@ void MotorGhostStretchingHarmonic::optimalblocksnthreads( int nint){
 
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
 	    CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        char a[] = "MotorGhostFF";
+        char b[] = "MotorGhost Stretching Harmonic";
+        CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
     }
     else{
         blocksnthreadse.push_back(0);
@@ -77,6 +94,7 @@ void MotorGhostStretchingHarmonic::optimalblocksnthreads( int nint){
     }
 
 }
+#endif
 double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                             double *kstr, double *eql, double *pos1, double *pos2,
                                             int *params) {
@@ -131,16 +149,20 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
 //        cudaEventRecord(event, stream);
         nvtxRangePop();
         nvtxRangePushA("cmseError");
-                CUDAcommon::handleerror( cudaGetLastError() );
+                CUDAcommon::handleerror( cudaGetLastError(), "MotorGhostStretchingHarmonicenergy",
+                                         "MotorGhostStretchingHarmonic.cu");
         nvtxRangePop();
         //    CUDAcommon::handleerror( cudaPeekAtLastError() );
 //    CUDAcommon::handleerror( cudaDeviceSynchronize() );
         nvtxRangePushA("cmseadd");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvectorM<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         nvtxRangePop();
         nvtxRangePushA("cmseError");
-        CUDAcommon::handleerror( cudaGetLastError() );
+        CUDAcommon::handleerror( cudaGetLastError() , "MotorGhostStretchingHarmonicenergy",
+                                 "MotorGhostStretchingHarmonic.cu");
         nvtxRangePop();
 //        nvtxRangePushA("cmsecopy");
 //        double U_i[1];
@@ -302,18 +324,22 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
         CUDAcommon::cudavars = cvars;
         nvtxRangePop();
         nvtxRangePushA("cmsezError");
-        CUDAcommon::handleerror(cudaGetLastError());
+        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicenergyz",
+                                "MotorGhostStretchingHarmonic.cu");
         nvtxRangePop();
 //    CUDAcommon::handleerror( cudaPeekAtLastError() );
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
         nvtxRangePushA("cmsezadd");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
-        addvectorM<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
 //        cudaEventRecord(event, stream);
         nvtxRangePop();
         nvtxRangePushA("cmsezError");
-        CUDAcommon::handleerror(cudaGetLastError());
+        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicenergyz",
+                                "MotorGhostStretchingHarmonic.cu");
         nvtxRangePop();
 
 //        nvtxRangePushA("cmsezcopy");
@@ -519,7 +545,8 @@ void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         //CUDAcommon::handleerror(cudaDeviceSynchronize());
-        CUDAcommon::handleerror(cudaGetLastError());
+        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicforces",
+                                "MotorGhostStretchingHarmonic.cu");
 
 //    CUDAcommon::handleerror( cudaPeekAtLastError() );
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());

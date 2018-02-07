@@ -15,6 +15,7 @@
 #define MEDYAN_BranchingStretching_h
 
 #include "common.h"
+#include "CUDAcommon.h"
 
 #include "BranchingInteractions.h"
 
@@ -34,6 +35,16 @@ private:
     double *kstr;
     double *eql;
     double *pos;
+
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_kstr;
+    double *gpu_eql;
+    double *gpu_pos;
+    int * gpu_params;
+    CUDAvars cvars;
+    double *F_i;
+#endif
     
 public:
     

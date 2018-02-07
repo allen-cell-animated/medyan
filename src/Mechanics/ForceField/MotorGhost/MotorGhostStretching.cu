@@ -23,7 +23,6 @@
 
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
-    F_i = new double[3 * Bead::getBeads().size()];
 
     beadSet = new int[n * MotorGhost::getMotorGhosts().size()];
     kstr = new double[MotorGhost::getMotorGhosts().size()];
@@ -51,6 +50,7 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
     //CUDA
 #ifdef CUDAACCL
+    F_i = new double[3 * Bead::getBeads().size()];
 //    cudaEvent_t start, stop;
 //    CUDAcommon::handleerror(cudaEventCreate( &start));
 //    CUDAcommon::handleerror(cudaEventCreate( &stop));
@@ -305,7 +305,6 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
                                        cudaMemcpyDeviceToHost));
 #endif
     nvtxRangePushA("SCFM");
-    std::cout<<"motor stretcing serial compute"<<endl;
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);
     nvtxRangePop();
 #ifdef CUDAACCL

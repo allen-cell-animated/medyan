@@ -15,7 +15,7 @@
 #define MEDYAN_BranchingDihedral_h
 
 #include "common.h"
-
+#include "CUDAcommon.h"
 #include "BranchingInteractions.h"
 
 //FORWARD DECLARATIONS
@@ -33,7 +33,14 @@ private:
     ///Array describing the constants in calculation
     double *kdih;
     double *pos;
-    
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_kdih;
+    double *gpu_pos;
+    int * gpu_params;
+    CUDAvars cvars;
+    double *F_i;
+#endif
 public:
     
     ///Array describing indexed set of interactions

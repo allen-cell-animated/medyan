@@ -22,7 +22,7 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 {
     if (stretching == "HARMONIC")
         _linkerInteractionVector.emplace_back(
-        new LinkerStretching<LinkerStretchingHarmonic>());
+                new LinkerStretching<LinkerStretchingHarmonic>());
     else if(stretching == "") {}
     else {
         cout << "Linker stretching FF not recognized. Exiting." << endl;
@@ -31,51 +31,51 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 }
 
 void LinkerFF::vectorize() {
-    
+
     for (auto &interaction : _linkerInteractionVector)
         interaction->vectorize();
 }
 
 void LinkerFF::cleanup() {
-    
+
     for (auto &interaction : _linkerInteractionVector)
         interaction->deallocate();
 }
 
 void LinkerFF::whoIsCulprit() {
-    
+
     cout << endl;
-    
+
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
-    
+
     cout << "Printing the culprit linker..." << endl;
     _culpritInteraction->_linkerCulprit->printSelf();
-    
+
     cout << endl;
 }
 
 double LinkerFF::computeEnergy(double *coord, double *f, double d) {
-    
+
     double U= 0;
     double U_i;
-    
+
     for (auto &interaction : _linkerInteractionVector) {
-        
+
         U_i = interaction->computeEnergy(coord, f, d);
-        
+
         if(U_i <= -1) {
             //set culprit and return
             _culpritInteraction = interaction.get();
             return -1;
         }
         else U += U_i;
-        
+
     }
     return U;
 }
 
 void LinkerFF::computeForces(double *coord, double *f) {
-    
+
     for (auto &interaction : _linkerInteractionVector)
         interaction->computeForces(coord, f);
 }

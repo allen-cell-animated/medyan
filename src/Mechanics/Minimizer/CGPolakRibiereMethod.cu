@@ -145,12 +145,12 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 //@CUDA Get minimizaton state{
     //calculate MAXF
     CGMethod::CUDAinitializePolak(*Msp1, Mmg_s1, Mmg_s2, Msg_s1, Msg_s2);
-    CUDAcommon::handleerror(cudaGetLastError());
+    CUDAcommon::handleerror(cudaGetLastError(),"CUDAinitializePolak", "CGPolakRibiereMethod.cu");
 
     nvtxRangePushA("PolakCudacalc");
     CGMethod::CUDAgetPolakvars(false, *Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Msg_s2, Mc_isminimizationstate);
     CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
-    CUDAcommon::handleerror(cudaGetLastError());
+    CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGPolakRibiereMethod.cu");
     nvtxRangePop();
     //Copy to host
     nvtxRangePushA("PolakCudawait");
@@ -277,7 +277,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         std::cout<<"move beads"<<endl;
         CUDAmoveBeads(*Msp1, Mmg_s1);
         CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
-        CUDAcommon::handleerror(cudaGetLastError());
+        CUDAcommon::handleerror(cudaGetLastError(),"CUDAmoveBeads", "CGPolakRibiereMethod.cu");
         //wait for movebeads to finish before calculating forces
         CUDAcommon::handleerror(cudaStreamSynchronize(*Msp1));
 #endif
@@ -353,12 +353,12 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         nvtxRangePushA("Polakcudacalc");
         CGMethod::CUDAgetPolakvars(true, *Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Msg_s2, Mc_isminimizationstate);
         CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
-        CUDAcommon::handleerror(cudaGetLastError());
+        CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGPolakRibiereMethod.cu");
         nvtxRangePop();
         std::cout<<"shift Gradient Safe"<<endl;
         CUDAshiftGradientifSafe(*Msp1, Mmg_s1, Msg_s1);
         CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
-        CUDAcommon::handleerror(cudaGetLastError());
+        CUDAcommon::handleerror(cudaGetLastError(),"CUDAshiftGradientifSafe", "CGPolakRibiereMethod.cu");
 
         if(Mc_isminimizationstate[0]  == true){
             //Copy to host

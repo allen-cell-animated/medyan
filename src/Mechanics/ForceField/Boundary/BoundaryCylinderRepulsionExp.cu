@@ -197,9 +197,9 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
     cudaStream_t  stream;
     CUDAcommon::handleerror(cudaStreamCreate(&stream));
     BoundaryCylinderRepulsionadd << < blocksnthreads[0], blocksnthreads[1],0, stream>> >(gpu_force, gfcopy, gpu_nint);
-    CUDAcommon::handleerror(cudaGetLastError());
-    CUDAcommon::handleerror(cudaStreamSynchronize(stream));
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
+    CUDAcommon::handleerror(cudaGetLastError(),"BoundaryCylinderRepulsionadd", "BoundaryCylinderRepulsionExp.cu");
+    CUDAcommon::handleerror(cudaStreamSynchronize(stream),"BoundaryCylinderRepulsionadd", "BoundaryCylinderRepulsionExp.cu");
+    CUDAcommon::handleerror(cudaStreamDestroy(stream),"BoundaryCylinderRepulsionadd", "BoundaryCylinderRepulsionExp.cu");
 //    CUDAcommon::handleerror( cudaPeekAtLastError() );
 //    CUDAcommon::handleerror(cudaDeviceSynchronize());
     std::cout<<"bdry f cpy 2 hostt"<<endl;

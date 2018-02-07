@@ -36,8 +36,11 @@ void ForceFieldManager::cleanupAllForceFields() {
     for(auto &ff : _forceFields)
         ff->cleanup();
 #ifdef CUDAACCL
-    CUDAcommon::handleerror(cudaFree(gpu_nint));
-    blocksnthreads.clear();
+    std::cout<<CGMethod::N/3<<endl;
+    if(CGMethod::N/3 > 0) {
+        CUDAcommon::handleerror(cudaFree(gpu_nint));
+        blocksnthreads.clear();
+    }
 #endif
 }
 
@@ -56,6 +59,7 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 //    CUDAcommon::handleerror(cudaGetLastError());
 #endif
     for(auto &ff : _forceFields) {
+        std::cout<<ff->getName()<<endl;
         auto tempEnergy = ff->computeEnergy(coord, f, d);
 
 
@@ -108,7 +112,6 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
 #ifdef CROSSCHECK
     resetForces();
 #endif
-    //TODO change so that you don't have to copy a vector every time during minimization.
     //reset to zero
     for (int i = 0; i < CGMethod::N; i++)
         f[i] = 0.0;
@@ -134,7 +137,7 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
     CUDAcommon::handleerror(cudaStreamSynchronize(stream));
     CUDAcommon::handleerror(cudaStreamDestroy(stream));
 
-    CUDAcommon::handleerror( cudaGetLastError() );
+    CUDAcommon::handleerror( cudaGetLastError() ,"resetForcesCUDA", "ForceFieldManager.cu");
     //TODO can be removed as you have rewritten the code to prevent cudaFree everytime force is calculated.
 //    double* gpu_force;
 //    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_force, CGMethod::N * sizeof(double)));
@@ -202,7 +205,6 @@ void ForceFieldManager::copyForces(double *fprev, double *f) {
 
 void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, double *f) {
 #ifdef CUDAACCL
-    //TODO Change so that the pointers to forceAux and force are exchanged and pointer to force is flushed.
 
 //    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_forceAux));
 //    double* gpu_forceAux;
@@ -214,6 +216,6 @@ void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, doubl
 //    std::cout<<"Copyforces Number of Blocks: "<<blocksnthreads[0]<<endl;
 //    std::cout<<"Threads per block: "<<blocksnthreads[1]<<endl;
     copyForcesCUDA<<<blocksnthreads[0],blocksnthreads[1],0,stream>>>(f, fprev, gpu_nint);
-    CUDAcommon::handleerror( cudaGetLastError() );
+    CUDAcommon::handleerror( cudaGetLastError(),"copyForcesCUDA", "ForceFieldManager.cu");
 #endif
 }

@@ -41,7 +41,7 @@ private:
     double *krep;
     double *slen;
     double *U_i;
-    
+    int nint = 0;
     ///Array describing the number of neighbors for each boundary element (num boundary elements long)
     int *nneighbors;
 #ifdef CUDAACCL

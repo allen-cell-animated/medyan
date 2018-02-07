@@ -41,6 +41,7 @@ private:
     int * gpu_params = NULL;
     CUDAvars cvars;
     double *F_i;
+    int nint = 0;
 #endif
 public:
     ///Array describing indexed set of interactions

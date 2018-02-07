@@ -62,5 +62,54 @@ namespace mathfunc {
 
         return tuple<vector<double>, vector<double>>(direction, bp1);
     }
+     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot){
+        U_sum[0] = 0.0;
+        double sum = 0.0;
+        for(auto i=0;i<params[1];i++){
+            if(U[i] == -1.0 && sum != -1.0){
+                U_sum[0] = -1.0;
+                U_tot[0] = -1.0;
+                sum = -1.0;
+                break;
+            }
+            else
+                sum  += U[i];
+        }
+        U_sum[0] = sum;
+        atomicAdd(&U_tot[0], sum);
 
+    }
+    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int *culpritID, char* culpritFF,
+                              char* culpritinteraction, char* FF, char* interaction){
+        U_sum[0] = 0.0;
+        double sum = 0.0;
+        for(auto i=0;i<params[1];i++){
+            if(U[i] == -1.0 && sum != -1.0){
+                U_sum[0] = -1.0;
+                U_tot[0] = -1.0;
+                sum = -1.0;
+                culpritID[0] = i;
+                int j = 0;
+                while(FF[j]!=0){
+                    culpritFF[j] = FF[j];
+                    j++;
+                }
+                j = 0;
+                while(interaction[j]!=0){
+                    culpritinteraction[j] = interaction[j];
+                    j++;
+                }
+                printf("ID %s\n", culpritFF);
+            }
+            else if(sum != -1.0)
+                sum  += U[i];
+        }
+        U_sum[0] = sum;
+        printf("sum %f\n",sum);
+        if(sum != -1.0)
+            atomicAdd(&U_tot[0], sum);
+        else{
+            assert(0);
+        }
+    }
 }

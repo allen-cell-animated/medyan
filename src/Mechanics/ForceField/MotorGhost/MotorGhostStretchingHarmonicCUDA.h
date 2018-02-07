@@ -21,47 +21,42 @@
 using namespace mathfunc;
 
 #ifdef CUDAACCL
+//
+//#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
+//
+//#else
+//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//    unsigned long long int* address_as_ull = (unsigned long long int*)address;
+//    unsigned long long int old = *address_as_ull, assumed;
+//    if (val==0.0)
+//      return __longlong_as_double(old);
+//    do {
+//      assumed = old;
+//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//    } while (assumed != old);
+//    return __longlong_as_double(old);
+//  }
+//
+//
+//#endif
 
-#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
-
-#else
-static __inline__ __device__ double atomicAdd(double *address, double val) {
-    unsigned long long int* address_as_ull = (unsigned long long int*)address;
-    unsigned long long int old = *address_as_ull, assumed;
-    if (val==0.0)
-      return __longlong_as_double(old);
-    do {
-      assumed = old;
-      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
-    } while (assumed != old);
-    return __longlong_as_double(old);
-  }
-
-
-#endif
-
-__global__ void addvectorM(double *U, int *params, double *U_sum, double *U_tot){
-  U_sum[0] = 0.0;
-    double sum = 0.0;
-  for(auto i=0;i<params[1];i++){
-    if(U[i] == -1.0 && sum != -1.0){
-        U_sum[0] = -1.0;
-        U_tot[0] = -1.0;
-        sum = -1.0;
-      break;
-    }
-    else
-      sum  += U[i];
-  }
-    U_sum[0] = sum;
-    atomicAdd(&U_tot[0], sum);
-
-}
-__global__ void testifitworks(double *coord, double* c){
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-    c[thread_idx] = 10.59;
-
-}
+//__global__ void addvectorM(double *U, int *params, double *U_sum, double *U_tot){
+//  U_sum[0] = 0.0;
+//    double sum = 0.0;
+//  for(auto i=0;i<params[1];i++){
+//    if(U[i] == -1.0 && sum != -1.0){
+//        U_sum[0] = -1.0;
+//        U_tot[0] = -1.0;
+//        sum = -1.0;
+//      break;
+//    }
+//    else
+//      sum  += U[i];
+//  }
+//    U_sum[0] = sum;
+//    atomicAdd(&U_tot[0], sum);
+//
+//}
 
 __global__ void MotorGhostStretchingHarmonicenergy(double *coord, double *force, int *beadSet, double *kstr,
                                                    double *eql, double *pos1, double *pos2, int *params,
@@ -296,9 +291,9 @@ __global__ void MotorGhostStretchingHarmonicforces(double *coord, double *f, int
 //    }
 //__syncthreads();
     if(thread_idx<nint) {
-        v1[0] = c1[3 * threadIdx.x] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x];
-        v1[1] = c1[3 * threadIdx.x + 1] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 1];
-        v1[2] = c1[3 * threadIdx.x + 2] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 2];
+//        v1[0] = c1[3 * threadIdx.x] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x];
+//        v1[1] = c1[3 * threadIdx.x + 1] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 1];
+//        v1[2] = c1[3 * threadIdx.x + 2] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 2];
 
         midPointCoordinate(v1, c1, c2, pos1[thread_idx], 3 * threadIdx.x);
         // char ccc='a';

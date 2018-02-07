@@ -15,7 +15,7 @@
 #define MEDYAN_BranchingPosition_h
 
 #include "common.h"
-
+#include "CUDAcommon.h"
 #include "BranchingInteractions.h"
 
 //FORWARD DECLARATIONS
@@ -33,6 +33,14 @@ private:
     ///Array describing the constants in calculation
     double *kpos;
     double *pos;
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_kpos;
+    double *gpu_pos;
+    int * gpu_params;
+    CUDAvars cvars;
+    double *F_i;
+#endif
     
 public:
     

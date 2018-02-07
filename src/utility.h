@@ -50,6 +50,7 @@ inline bool areEqual(double d1, double d2) {
 }
 
 /// Safe arc cos function
+__host__ __device__
 inline double safeacos (double x) {
     if (x < -1.0) x = -1.0;
     else if (x > 1.0) x = 1.0;

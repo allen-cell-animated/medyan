@@ -21,41 +21,23 @@ using namespace mathfunc;
 
 #ifdef CUDAACCL
 
-#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
-
-#else
-static __inline__ __device__ double atomicAdd(double *address, double val) {
-    unsigned long long int* address_as_ull = (unsigned long long int*)address;
-    unsigned long long int old = *address_as_ull, assumed;
-    if (val==0.0)
-      return __longlong_as_double(old);
-    do {
-      assumed = old;
-      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
-    } while (assumed != old);
-    return __longlong_as_double(old);
-  }
-
-
-#endif
-__global__ void addvectorE(double *U, int *params, double *U_sum, double *U_tot){
-    U_sum[0] = 0.0;
-    double sum = 0.0;
-//    printf("P %d \n", params[1]);
-    for(auto i=0;i<params[1];i++){
-        if(U[i] == -1.0 && sum != -1.0){
-            U_sum[0] = -1.0;
-            U_tot[0] = -1.0;
-            sum = -1.0;
-            break;
-        }
-        else
-            sum  += U[i];
-    }
-//    printf("%f\n",sum);
-    U_sum[0] = sum;
-    atomicAdd(&U_tot[0], sum);
-}
+//#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
+//
+//#else
+//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//    unsigned long long int* address_as_ull = (unsigned long long int*)address;
+//    unsigned long long int old = *address_as_ull, assumed;
+//    if (val==0.0)
+//      return __longlong_as_double(old);
+//    do {
+//      assumed = old;
+//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//    } while (assumed != old);
+//    return __longlong_as_double(old);
+//  }
+//
+//
+//#endif
 
 __global__
 void saxpy(int n, float a, float *x, float *y)
@@ -313,7 +295,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 //                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
 //                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
         }
-            else
+           // else
 //            printf("%i %i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f\n"
 //                           ,thread_idx, jj, c1[3 * threadIdx.x], c1[3 *
 //                                                                                                                                       threadIdx.x + 1], c1[3 * threadIdx.x + 2]

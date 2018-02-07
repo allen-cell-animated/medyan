@@ -32,7 +32,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     CUDAcommon::handleerror(cudaStreamCreate(&stream));
 
     //count interactions
-    int nint = 0;
+    nint = 0;
     for (auto be: BoundaryElement::getBoundaryElements())
     {
         for(auto &c : _neighborList->getNeighbors(be))
@@ -109,9 +109,12 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
     delete slen;
     delete nneighbors;
 #ifdef CUDAACCL
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
-    CUDAcommon::handleerror(cudaFreeHost(U_i));
-    CUDAcommon::handleerror(cudaFree(gU));
+    std::cout<<nint<<endl;
+    if(nint>0) {
+        CUDAcommon::handleerror(cudaStreamDestroy(stream));
+        CUDAcommon::handleerror(cudaFreeHost(U_i));
+        CUDAcommon::handleerror(cudaFree(gU));
+    }
 #endif
 }
 

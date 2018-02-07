@@ -42,6 +42,9 @@ public:
     
     /// Get the name of this interaction
     virtual const string getName() = 0;
+
+    /// Get culprit information. Used in CUDA.
+//    virtual void whoisculprit();
 };
 
 #endif

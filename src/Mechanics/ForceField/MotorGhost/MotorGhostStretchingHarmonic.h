@@ -46,8 +46,10 @@ public:
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
+    static void checkforculprit();
     double *gU_i;
     double *gU_sum;
+    char *gFF, *ginteraction;
     cudaStream_t stream;
 #endif
 #ifdef CROSSCHECK
