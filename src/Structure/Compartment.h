@@ -84,26 +84,17 @@ protected:
     vector<double> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
 
-    double _partialVolume = 1.0; // The volume inside the cell membrane
+    double _partialVolume; // The volume inside the cell membrane
                                  // Might be changed to a list or a map when more membranes are involved
     array<double, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; // The area inside the cell membrane
                         // Might be changed to a list of arrays or a map of arrays when more membranes are involved
     
 public:
     /// Default constructor, only takes in number of dimensions
-    Compartment() : _species(), _internal_reactions(), _diffusion_reactions(),
-                    _diffusion_rates(), _neighbours() {}
+    Compartment();
     
     /// Constructor which clones another compartment
-    Compartment(const Compartment &C) : _species(), _internal_reactions(),
-                                        _diffusion_reactions(), _neighbours()
-    {
-        C.cloneSpecies(this);
-        C.cloneReactions(this);
-        _diffusion_rates = C._diffusion_rates;
-        _activated = C._activated;
-        // Should eventually clone beads, cylinders, boundary elements.... not clear yet
-    }
+    Compartment(const Compartment &C);
     
     /// Assignment operator
     Compartment& operator=(const Compartment &other);

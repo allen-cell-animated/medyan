@@ -22,6 +22,20 @@ using namespace mathfunc;
 #include "GTriangle.h"
 #include "Triangle.h"
 
+Compartment::Compartment():
+    _species(), _internal_reactions(), _diffusion_reactions(), _diffusion_rates(), _neighbours(),
+    _partialVolume(GController::getCompartmentVolume()) {}
+    
+Compartment(const Compartment &C): _species(), _internal_reactions(), _diffusion_reactions(), _neighbours(),
+    _partialVolume(GController::getCompartmentVolume()) // full volume
+{
+    C.cloneSpecies(this);
+    C.cloneReactions(this);
+    _diffusion_rates = C._diffusion_rates; // Full volume rate
+    _activated = C._activated;
+    // Should eventually clone beads, cylinders, boundary elements.... not clear yet
+}
+
 void Compartment::getSlicedVolumeArea() {
     // The calculation requires the
     //  - The position calculation of triangles
