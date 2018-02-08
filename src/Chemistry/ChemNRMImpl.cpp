@@ -131,6 +131,14 @@ ChemNRMImpl::~ChemNRMImpl() {
 }
 
 double ChemNRMImpl::generateTau(double a){
+
+#if defined(_MSC_VER) && defined(_DEBUG) // MSVC requires the parameter to be positive
+    if(a == 0.0) {
+        _exp_distr.param(exponential_distribution<double>::param_type(numeric_limits<double>::min()));
+        return numeric_limits<double>::infinity();
+    }
+#endif
+
     exponential_distribution<double>::param_type pm(a);
     
     _exp_distr.param(pm);
