@@ -26,7 +26,7 @@ Compartment::Compartment():
     _species(), _internal_reactions(), _diffusion_reactions(), _diffusion_rates(), _neighbours(),
     _partialVolume(GController::getCompartmentVolume()) {}
     
-Compartment(const Compartment &C): _species(), _internal_reactions(), _diffusion_reactions(), _neighbours(),
+Compartment::Compartment(const Compartment &C): _species(), _internal_reactions(), _diffusion_reactions(), _neighbours(),
     _partialVolume(GController::getCompartmentVolume()) // full volume
 {
     C.cloneSpecies(this);
