@@ -104,8 +104,31 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
     }
 }
 
+template <class TriangleCylinderExclVolumeInteractionType>
+void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeLoadForces() {
+
+    // TODO: content
+    for(auto t: Triangle::getTriangles()) {
+        
+        for(auto &c: _neighborList->getNeighbors(t)) {
+
+            double kExVol = t->getMTriangle()->getExVolConst();
+
+            // Use only 1st bead unless the cylinder is at plus end
+            size_t numBeads = (c->isPlusEnd()? 2: 1);
+
+            for(size_t idx = 0; idx < numBeads; ++idx) {
+                Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
+            
+                _FFType.forcesAux(t, b, kExVol);
+            }
+        }
+    }
+}
+
 ///Template specializations
 template double TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(double d);
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces();
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForcesAux();
+template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeLoadForces();
 

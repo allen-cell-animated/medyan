@@ -41,6 +41,9 @@ public:
     virtual void computeForces() = 0;
     /// Compute the auxiliary forces of this interaction
     virtual void computeForcesAux() = 0;
+
+    /// Compute the load forces on beads from this interaction
+    virtual void computeLoadForces() = 0;
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() = 0;
