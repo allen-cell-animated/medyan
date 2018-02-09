@@ -29,26 +29,32 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
     for(auto t: Triangle::getTriangles()) {
         
         for(auto &c : _neighborList->getNeighbors(t)) {
-                        
-            Bead* b = c->getFirstBead();
+
             double kExVol = t->getMTriangle()->getExVolConst();
-            
-            if (d == 0.0)
-                U_i = _FFType.energy(t, b, kExVol);
-            else
-                U_i = _FFType.energy(t, b, kExVol, d);
-            
-            if(fabs(U_i) == numeric_limits<double>::infinity()
-               || U_i != U_i || U_i < -1.0) {
+
+            // Use only 1st bead unless the cylinder is at plus end
+            size_t numBeads = (c->isPlusEnd()? 2: 1);
+
+            for(size_t idx = 0; idx < numBeads; ++idx) {
+                Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
                 
-                //set culprits and exit
-                _triangleCulprit = t;
-                _cylinderCulprit = c;
+                if (d == 0.0)
+                    U_i = _FFType.energy(t, b, kExVol);
+                else
+                    U_i = _FFType.energy(t, b, kExVol, d);
                 
-                return -1;
+                if(fabs(U_i) == numeric_limits<double>::infinity()
+                || U_i != U_i || U_i < -1.0) {
+                    
+                    //set culprits and exit
+                    _triangleCulprit = t;
+                    _cylinderCulprit = c;
+                    
+                    return -1;
+                }
+                else
+                    U += U_i;
             }
-            else
-                U += U_i;
         }
     }
     
@@ -61,11 +67,17 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
     for(auto t: Triangle::getTriangles()) {
         
         for(auto &c: _neighborList->getNeighbors(t)) {
-            
-            Bead* b = c->getFirstBead();
+
             double kExVol = t->getMTriangle()->getExVolConst();
+
+            // Use only 1st bead unless the cylinder is at plus end
+            size_t numBeads = (c->isPlusEnd()? 2: 1);
+
+            for(size_t idx = 0; idx < numBeads; ++idx) {
+                Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
             
-            _FFType.forces(t, b, kExVol);
+                _FFType.forces(t, b, kExVol);
+            }
         }
     }
 }
@@ -77,11 +89,17 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
     for(auto t: Triangle::getTriangles()) {
         
         for(auto &c: _neighborList->getNeighbors(t)) {
-            
-            Bead* b = c->getFirstBead();
+
             double kExVol = t->getMTriangle()->getExVolConst();
+
+            // Use only 1st bead unless the cylinder is at plus end
+            size_t numBeads = (c->isPlusEnd()? 2: 1);
+
+            for(size_t idx = 0; idx < numBeads; ++idx) {
+                Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
             
-            _FFType.forcesAux(t, b, kExVol);
+                _FFType.forcesAux(t, b, kExVol);
+            }
         }
     }
 }
