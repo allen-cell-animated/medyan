@@ -250,6 +250,7 @@ void Membrane::updateGeometry(bool calcDerivative, double d) {
         if(calcDerivative) gv->calcCurv(); else gv->calcStretchedCurv(d);
         if(calcDerivative) gv->calcPseudoUnitNormal(); else gv->calcStretchedPseudoUnitNormal(d);
     }
+    if(calcDerivative) _gMembrane->calcVolume(); else _gMembrane->calcStretchedVolume(d);
 }
 
 double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const {
