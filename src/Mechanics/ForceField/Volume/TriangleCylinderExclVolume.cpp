@@ -13,6 +13,9 @@
 
 #include "TriangleCylinderExclVolume.h"
 
+#include "MathFunctions.h"
+using namespace mathfunc;
+
 #include "TriangleCylinderBeadExclVolRepulsion.h"
 
 #include "Triangle.h"
