@@ -35,21 +35,18 @@ void VolumeConservationFF::whoIsCulprit() {
     
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-    cout << "Printing the culprit cylinders..." << endl;
-    // TODO: change culprit
-    _culpritInteraction->_cylinderCulprit1->printSelf();
-    _culpritInteraction->_cylinderCulprit2->printSelf();
+    cout << "Printing the culprit membrane..." << endl;
+    _culpritInteraction->_membraneCulprit->printSelf();
     
     cout << endl;
 }
 
-// TODO:
-double CylinderVolumeFF::computeEnergy(double d) {
+double VolumeConservationFF::computeEnergy(double d) {
     
     double U= 0;
     double U_i;
     
-    for (auto &interaction : _cylinderVolInteractionVector) {
+    for (auto &interaction : _volumeConservationInteractionVector) {
         
         U_i = interaction->computeEnergy(d);
                 
@@ -64,25 +61,14 @@ double CylinderVolumeFF::computeEnergy(double d) {
     return U;
 }
 
-void CylinderVolumeFF::computeForces() {
+void VolumeConservationFF::computeForces() {
     
-    for (auto &interaction : _cylinderVolInteractionVector)
+    for (auto &interaction : _volumeConservationInteractionVector)
         interaction->computeForces();
 }
 
-void CylinderVolumeFF::computeForcesAux() {
+void VolumeConservationFF::computeForcesAux() {
     
-    for (auto &interaction : _cylinderVolInteractionVector)
+    for (auto &interaction : _volumeConservationInteractionVector)
         interaction->computeForcesAux();
 }
-
-vector<NeighborList*> CylinderVolumeFF::getNeighborLists() {
-    
-    vector<NeighborList*> neighborLists;
-    
-    for(auto &interaction : _cylinderVolInteractionVector)
-        neighborLists.push_back(interaction->getNeighborList());
-    
-    return neighborLists;
-}
-

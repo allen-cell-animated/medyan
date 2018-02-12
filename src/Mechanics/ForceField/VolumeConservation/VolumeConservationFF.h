@@ -37,7 +37,7 @@ public:
     /// Initialize the volume forcefields
     VolumeConservationFF(string& interaction);
     
-    virtual string getName() {return "Volume conservation";}
+    virtual string getName() { return "Volume conservation"; }
     virtual void whoIsCulprit();
 
     virtual double computeEnergy(double d);
