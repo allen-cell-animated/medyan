@@ -107,23 +107,77 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 template <class TriangleCylinderExclVolumeInteractionType>
 void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeLoadForces() {
 
-    // TODO: content
     for(auto t: Triangle::getTriangles()) {
         
         for(auto &c: _neighborList->getNeighbors(t)) {
 
             double kExVol = t->getMTriangle()->getExVolConst();
 
-            // Use only 1st bead unless the cylinder is at plus end
-            size_t numBeads = (c->isPlusEnd()? 2: 1);
+            // TODO: Corrent content
 
-            for(size_t idx = 0; idx < numBeads; ++idx) {
-                Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
-            
-                _FFType.forcesAux(t, b, kExVol);
+            //potential acts on second cylinder bead unless this is a minus end
+            Bead* bd;
+            Bead* bo;
+            if(c->isPlusEnd()) {
+                
+                bd = c->getSecondBead();
+                bo = c->getFirstBead();
+                
+                ///this normal is in the direction of polymerization
+                auto normal = normalizedVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                
+                //array of coordinate values to update
+                auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
+                auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
+                
+                bd->lfip = 0;
+                for (int i = 0; i < cylSize; i++) {
+                    
+                    array<double, 3> newCoord {{
+                        bd->coordinate[0] + i * normal[0] * monSize,
+                        bd->coordinate[1] + i * normal[1] * monSize,
+                        bd->coordinate[2] + i * normal[2] * monSize
+                    }};
+                    
+                    double loadForce = _FFType.loadForces(t, newCoord, kExVol);
+                    bd->loadForcesP[bd->lfip++] += loadForce;
+                }
+                //reset lfi
+                bd->lfip = 0;
             }
+            
+            if(c->isMinusEnd()) {
+                
+                bd = c->getFirstBead();
+                bo = c->getSecondBead();
+                
+                ///this normal is in the direction of polymerization
+                auto normal = normalizedVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                
+                //array of coordinate values to update
+                auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
+                auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
+                
+                
+                bd->lfim = 0;
+                for (int i = 0; i < cylSize; i++) {
+                    
+                    array<double, 3> newCoord {{
+                        bd->coordinate[0] + i * normal[0] * monSize,
+                        bd->coordinate[1] + i * normal[1] * monSize,
+                        bd->coordinate[2] + i * normal[2] * monSize
+                    }};
+                    
+                    double loadForce = _FFType.loadForces(t, newCoord, kExVol);
+                    bd->loadForcesM[bd->lfim++] += loadForce;
+                }
+                //reset lfi
+                bd->lfim = 0;
+            }
+            
         }
     }
+
 }
 
 ///Template specializations
