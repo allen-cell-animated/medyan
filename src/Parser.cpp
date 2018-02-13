@@ -1005,10 +1005,10 @@ void SystemParser::readMechParams() {
         }
 
         // Water compressibility
-        else if(line.find("COMP_CONST") != string::npos) {
+        else if(line.find("BULK_MODULUS") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() >= 2) {
-                MParams.CompConst = atof(lineVector[1].c_str());
+                MParams.BulkModulus = atof(lineVector[1].c_str());
             }
         }
         

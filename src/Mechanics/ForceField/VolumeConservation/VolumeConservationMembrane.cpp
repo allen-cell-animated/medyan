@@ -18,26 +18,22 @@ double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEn
         U_i = 0;
 
         if(d == 0.0) {
-            double kComp = SysParams::Mechanics().CompConst;
-            // TODO:
-            // Currently kComp is "Compressibility", while we actually need some "incompressibility".
+            double kBulk = SysParams::Mechanics().BulkModulus;
 
             double eqVolume = m->getMMembrane()->getEqVolume();
 
             double volume = m->getGMembrane()->getVolume();
 
-            U_i += _FFTpye.energy(volume, kComp, eqVolume);
+            U_i += _FFTpye.energy(volume, kBulk, eqVolume);
 
         } else {
-            double kComp = SysParams::Mechanics().CompConst;
-            // TODO:
-            // Currently kComp is "Compressibility", while we actually need some "incompressibility".
+            double kBulk = SysParams::Mechanics().BulkModulus;
 
             double eqVolume = m->getMMembrane()->getEqVolume();
 
             double stretchedVolume = m->getGMembrane()->getStretchedVolume();
 
-            U_i += _FFTpye.energy(stretchedVolume, kComp, eqVolume, d);
+            U_i += _FFTpye.energy(stretchedVolume, kBulk, eqVolume, d);
         }
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -57,16 +53,14 @@ void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForc
     
     for (auto m: Membrane::getMembranes()) {
     
-        double kComp = SysParams::Mechanics().CompConst;
-        // TODO:
-        // Currently kComp is "Compressibility", while we actually need some "incompressibility".
+        double kBulk = SysParams::Mechanics().BulkModulus;
 
         double eqVolume = m->getMMembrane()->getEqVolume();
 
         double volume = m->getGMembrane()->getVolume();
         std::vector<std::array<double,3>>& dVolume = m->getGMembrane()->getDVolume();
 
-        _FFType.forces(m->getVertexVector(), volume, dVolume, kComp, eqVolume);
+        _FFType.forces(m->getVertexVector(), volume, dVolume, kBulk, eqVolume);
     }
 }
 
@@ -75,15 +69,13 @@ void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForc
     
     for (auto m: Membrane::getMembranes()) {
     
-        double kComp = SysParams::Mechanics().CompConst;
-        // TODO:
-        // Currently kComp is "Compressibility", while we actually need some "incompressibility".
+        double kBulk = SysParams::Mechanics().BulkModulus;
 
         double eqVolume = m->getMMembrane()->getEqVolume();
 
         double volume = m->getGMembrane()->getVolume();
         std::vector<std::array<double,3>>& dVolume = m->getGMembrane()->getDVolume();
 
-        _FFType.forcesAux(m->getVertexVector(), volume, dVolume, kComp, eqVolume);
+        _FFType.forcesAux(m->getVertexVector(), volume, dVolume, kBulk, eqVolume);
     }
 }

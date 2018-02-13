@@ -87,8 +87,8 @@ struct MechParams {
     vector<double> MemEqCurv    = {};
     //@}
 
-    // Water compressibility
-    double CompConst = 0.0;
+    // Water incompressibility
+    double BulkModulus = 0.0;
 
     
     //@{
