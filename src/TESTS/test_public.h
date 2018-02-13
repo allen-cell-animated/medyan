@@ -50,7 +50,7 @@ namespace test_public {
 
     // Initialize global variables to get a playground for test.
     // There is no need to undo this function to clean the test.
-    void quickSetupPlayground(SubSystem* s, double size=1e10, size_t nx=1, size_t ny=1, size_t nz=1) {
+    inline void quickSetupPlayground(SubSystem* s, double size=1e10, size_t nx=1, size_t ny=1, size_t nz=1) {
         SysParams::GParams.compartmentSizeX = size;
         SysParams::GParams.compartmentSizeY = size;
         SysParams::GParams.compartmentSizeZ = size;
@@ -65,14 +65,14 @@ namespace test_public {
         g.initializeGrid();
     }
 
-    void quickSetupChem(SubSystem* s, string chemAlgorithm="GILLESPIE") {
+    inline void quickSetupChem(SubSystem* s, string chemAlgorithm="GILLESPIE") {
         CController c(s);
         ChemistryData cData; // Dummy data
         c.initialize(chemAlgorithm, cData);
     }
 
     // Test object and data generators
-    MembraneData membraneDataOctahedron(const array<double, 3>& center, double radius) {
+    inline MembraneData membraneDataOctahedron(const array<double, 3>& center, double radius) {
 
         return MembraneData{
             VertexData({center[0], center[1], center[2]+radius}, {1, 2, 3, 4}),
