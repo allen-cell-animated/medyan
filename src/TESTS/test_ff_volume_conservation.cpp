@@ -30,6 +30,7 @@ using namespace mathfunc;
 #    include "SubSystem.h"
 
 #    include "Membrane.h"
+#    include "Vertex.h"
 
 #    include "VolumeConservationInteractions.h"
 #    include "VolumeConservationMembrane.h"
@@ -46,7 +47,10 @@ namespace {
         MembraneData memData;
         Membrane *m;
 
-		VolumeConservationFFTest(): radius(100), memData(test_public::membraneDataOctahedron(radius)) {
+		VolumeConservationFFTest():
+            radius(100),
+            memData(test_public::membraneDataOctahedron({2*radius, 2*radius, 2*radius}, radius))
+        {
             test_public::quickSetupPlayground(&s);
 
             SysParams::GParams.cylinderNumMon.resize(1, 3);
@@ -108,23 +112,23 @@ TEST_F(VolumeConservationFFTest, Force) {
     resetCoordinate(m);
     resetForce(m);
     m->updateGeometry(true);
-    vcmHarmonic->computeForces();
+    vcmHarmonic.computeForces();
 
     moveAlongForceAuxP(m, 1.0);
     m->updateGeometry(true);
-    double U1 = vcmHarmonic->computeEnergy(0.0);
+    double U1 = vcmHarmonic.computeEnergy(0.0);
 
     resetCoordinate(m);
     moveAlongForceAuxP(m, -1.0);
     m->updateGeometry(true);
-    double U2 = vcmHarmonic->computeEnergy(0.0);
+    double U2 = vcmHarmonic.computeEnergy(0.0);
 
     double exDiff = 0.0;
     for(Vertex* v: m->getVertexVector())
         exDiff -= 2 * dotProduct(v->forceAuxP, v->force);
 
     EXPECT_NEAR(U1 - U2, exDiff, abs(exDiff / 1000))
-        << vcmHarmonic->getName() << " force not working properly.";
+        << vcmHarmonic.getName() << " force not working properly.";
 
 }
 
