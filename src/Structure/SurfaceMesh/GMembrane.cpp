@@ -12,9 +12,8 @@ void GMembrane::calcVolume() {
     auto& vs = _pMembrane->getVertexVector();
     size_t numVertices = vs.size();
 
-    _dVolume.resize(numVertices);
+    _dVolume.assign(numVertices, array<double, 3>{});
     _volume = 0.0;
-	std::fill(_dVolume.begin(), _dVolume.end(), array<double, 3>{});
 
     for(Triangle* t: _pMembrane->getTriangleVector()) {
         auto v0 = vector2Array<double, 3>(t->getVertices()[0]->coordinate);
