@@ -24,7 +24,7 @@ double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEn
 
             double volume = m->getGMembrane()->getVolume();
 
-            U_i += _FFTpye.energy(volume, kBulk, eqVolume);
+            U_i += _FFType.energy(volume, kBulk, eqVolume);
 
         } else {
             double kBulk = SysParams::Mechanics().BulkModulus;
@@ -33,7 +33,7 @@ double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEn
 
             double stretchedVolume = m->getGMembrane()->getStretchedVolume();
 
-            U_i += _FFTpye.energy(stretchedVolume, kBulk, eqVolume, d);
+            U_i += _FFType.energy(stretchedVolume, kBulk, eqVolume, d);
         }
 
         if(fabs(U_i) == numeric_limits<double>::infinity()

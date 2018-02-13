@@ -24,7 +24,7 @@ public:
     virtual void computeForcesAux() = 0;
     
     /// Get the name of this interaction
-    virtual const string getName() = 0;
+    virtual const string getName()const = 0;
 };
 
 

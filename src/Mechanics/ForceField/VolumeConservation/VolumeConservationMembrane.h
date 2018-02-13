@@ -13,7 +13,7 @@ public:
     virtual void computeForces();
     virtual void computeForcesAux();
 
-    virtual const string getName() { return "Membrane Volume Conservation"; }
+    virtual const string getName()const { return "Membrane Volume Conservation"; }
 };
 
 
