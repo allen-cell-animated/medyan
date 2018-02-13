@@ -28,6 +28,11 @@
 
 namespace test_public {
 
+    // Data type definition
+    using VertexData    = tuple<array<double, 3>, vector<size_t>>;
+    using MembraneData  = vector<VertexData>;
+
+    // Dummy solid class of Composite
     class CompositeDummy: public Composite {
     public:
         short type;
@@ -64,6 +69,19 @@ namespace test_public {
         CController c(s);
         ChemistryData cData; // Dummy data
         c.initialize(chemAlgorithm, cData);
+    }
+
+    // Test object and data generators
+    MembraneData membraneDataOctahedron(const array<double, 3>& center, double radius) {
+
+        return MembraneData{
+            VertexData({center[0], center[1], center[2]+radius}, {1, 2, 3, 4}),
+            VertexData({center[0]+radius, center[1], center[2]}, {0, 4, 5, 2}),
+            VertexData({center[0], center[1]+radius, center[2]}, {0, 1, 5, 3}),
+            VertexData({center[0]-radius, center[1], center[2]}, {0, 2, 5, 4}),
+            VertexData({center[0], center[1]-radius, center[2]}, {0, 3, 5, 1}),
+            VertexData({center[0], center[1], center[2]-radius}, {4, 3, 2, 1})
+        };
     }
 
 }
