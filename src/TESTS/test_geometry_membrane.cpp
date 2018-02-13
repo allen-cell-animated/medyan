@@ -305,7 +305,7 @@ TEST_F(MembraneGeometryTest, SignedDistance) {
 TEST_F(MembraneGeometryTest, Derivative) {
     m->updateGeometry(true);
     recordCoordinate(m);
-    assignRandomForce(m, radius/200); // Simple test shows that radius/100 induces a change not small enough
+    assignRandomForce(m, radius/1000); // Simple test shows that radius/500 induces a change not small enough
 
     size_t numEdges = m->getEdgeVector().size();
     size_t numTriangles = m->getTriangleVector().size();
