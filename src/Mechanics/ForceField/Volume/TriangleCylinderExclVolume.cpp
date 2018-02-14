@@ -116,9 +116,8 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 
             double kExVol = t->getMTriangle()->getExVolConst();
 
-            // TODO: Corrent content
-
-            //potential acts on second cylinder bead unless this is a minus end
+            // potential acts on second cylinder bead if it is a plus  end
+            // potential acts on first  cylinder bead if it is a minus end
             Bead* bd;
             Bead* bo;
             if(c->isPlusEnd()) {
