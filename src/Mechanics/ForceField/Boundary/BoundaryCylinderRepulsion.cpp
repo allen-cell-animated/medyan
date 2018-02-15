@@ -198,7 +198,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-                
+
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
@@ -206,7 +206,10 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                         bd->coordinate[1] + i * normal[1] * monSize,
                         bd->coordinate[2] + i * normal[2] * monSize};
                     
-                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
+                    // projection magnitude ratio on the direction of the cylinder
+                    double proj = -dotProduct(be->normal(newCoord), normal);
+                
+                    double loadForce = _FFType.loadForces(be->distance(newCoord), proj, kRep, screenLength);
                     bd->loadForcesP[bd->lfip++] += loadForce;
                 }
                 //reset lfi
@@ -233,7 +236,10 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                         bd->coordinate[1] + i * normal[1] * monSize,
                         bd->coordinate[2] + i * normal[2] * monSize};
                     
-                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
+                    // projection magnitude ratio on the direction of the cylinder
+                    double proj = -dotProduct(be->normal(newCoord), normal);
+
+                    double loadForce = _FFType.loadForces(be->distance(newCoord), proj, kRep, screenLength);
                     bd->loadForcesM[bd->lfim++] += loadForce;
                 }
                 //reset lfi
