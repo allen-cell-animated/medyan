@@ -45,9 +45,9 @@ void BoundaryCylinderRepulsionExp::forcesAux(Bead* b, double r, vector<double>& 
     
 }
 
-double BoundaryCylinderRepulsionExp::loadForces(double r, double kRep, double screenLength) {
+double BoundaryCylinderRepulsionExp::loadForces(double r, double proj, double kRep, double screenLength) {
     
     double R = -r/screenLength;
-    return kRep * exp(R)/screenLength;
+    return proj * kRep * exp(R)/screenLength;
 
 }

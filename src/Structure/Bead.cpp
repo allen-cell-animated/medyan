@@ -102,8 +102,8 @@ double Bead::getLoadForcesP() {
     if (lfip < 0)
         return loadForcesP[0];
         
-    if (lfip >= SysParams::Geometry().cylinderNumMon[getType()])
-        return loadForcesP[SysParams::Geometry().cylinderNumMon[getType()] - 1];
+    if (lfip >= loadForcesP.size())
+        return loadForcesP.back();
     
     else return loadForcesP[lfip];
 }
@@ -113,8 +113,8 @@ double Bead::getLoadForcesM() {
     if (lfim < 0)
         return loadForcesM[0];
     
-    if (lfim >= SysParams::Geometry().cylinderNumMon[getType()])
-        return loadForcesM[SysParams::Geometry().cylinderNumMon[getType()] - 1];
+    if (lfim >= loadForcesM.size())
+        return loadForcesM.back();
     
     else return loadForcesM[lfim];
 }
