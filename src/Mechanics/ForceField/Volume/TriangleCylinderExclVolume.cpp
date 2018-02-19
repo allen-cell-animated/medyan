@@ -126,7 +126,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bo = c->getFirstBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizedVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = vector2Array<double, 3>(twoPointDirection(bo->coordinate, bd->coordinate));
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -141,8 +141,8 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                         bd->coordinate[2] + i * normal[2] * monSize
                     }};
                     
-                    double loadForce = _FFType.loadForces(t, newCoord, kExVol);
-                    bd->loadForcesP[bd->lfip++] += loadForce;
+                    array<double, 3> loadForce = _FFType.loadForces(t, newCoord, kExVol);
+                    bd->loadForcesP[bd->lfip++] += -dotProduct(normal, loadForce);
                 }
                 //reset lfi
                 bd->lfip = 0;
@@ -154,7 +154,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bo = c->getSecondBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizedVector(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = vector2Array<double, 3>(twoPointDirection(bo->coordinate, bd->coordinate));
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -170,8 +170,8 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                         bd->coordinate[2] + i * normal[2] * monSize
                     }};
                     
-                    double loadForce = _FFType.loadForces(t, newCoord, kExVol);
-                    bd->loadForcesM[bd->lfim++] += loadForce;
+                    array<double, 3> loadForce = _FFType.loadForces(t, newCoord, kExVol);
+                    bd->loadForcesM[bd->lfim++] += -dotProduct(normal, loadForce);
                 }
                 //reset lfi
                 bd->lfim = 0;

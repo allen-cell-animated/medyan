@@ -46,7 +46,7 @@ public:
     virtual void computeForces();
     virtual void computeForcesAux();
     
-    virtual void computeLoadForces() {return;}
+    virtual void computeLoadForces();
     
     virtual vector<NeighborList*> getNeighborLists();
 };

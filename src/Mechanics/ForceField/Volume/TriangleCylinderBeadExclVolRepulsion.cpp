@@ -458,7 +458,7 @@ void TriangleCylinderBeadExclVolRepulsion::forcesAux(Triangle* t, Bead* b,
     }
 }
 
-double TriangleCylinderBeadExclVolRepulsion::loadForces(Triangle* t, const array<double, 3>& coord, double kExVol) {
+array<double, 3> TriangleCylinderBeadExclVolRepulsion::loadForces(Triangle* t, const array<double, 3>& coord, double kExVol) {
     auto& v = t->getVertices();
 
     auto c0 = v[0]->coordinate;
@@ -573,6 +573,6 @@ double TriangleCylinderBeadExclVolRepulsion::loadForces(Triangle* t, const array
         forceBead[coordIdx] = -kExVol * dH[coordIdx] * area;
     }
 
-    return magnitude(forceBead);
+    return forceBead;
 
 }
