@@ -1,12 +1,5 @@
-#include <algorithm>
-#include <functional>
-
 #include "Vertex.h"
 #include "MVoronoiCell.h"
-
-#include "MathFunctions.h"
-
-using namespace mathfunc;
 
 MVoronoiCell::MVoronoiCell(short membraneType) {
     

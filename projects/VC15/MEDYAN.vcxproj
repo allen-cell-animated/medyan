@@ -82,6 +82,7 @@
         $(SolutionDir)..\..\src\Mechanics\Minimizer;
         $(SolutionDir)..\..\src\Mechanics\ForceField;
         $(SolutionDir)..\..\src\Mechanics\ForceField\Volume;
+        $(SolutionDir)..\..\src\Mechanics\ForceField\VolumeConservation;
         $(SolutionDir)..\..\src\Mechanics\ForceField\Boundary;
         $(SolutionDir)..\..\src\Mechanics\ForceField\Branching;
         $(SolutionDir)..\..\src\Mechanics\ForceField\Filament;

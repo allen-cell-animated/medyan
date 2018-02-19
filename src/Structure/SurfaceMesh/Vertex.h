@@ -16,6 +16,7 @@
 // Forward declarations
 class Edge;
 class Triangle;
+class Membrane;
 
 /******************************************************************************
 
@@ -32,6 +33,8 @@ class Vertex:
                 // i.e. both the bead and the vertex collection should both have the collection.
                 // So when initialized, this class
     {
+    
+    friend class Membrane; // Membrane class can manage id of this vertex
 
 private:
     unique_ptr<GVoronoiCell> _gVoronoiCell; // pointer to Voronoi cell geometric information
@@ -55,6 +58,8 @@ private:
              // but if the beads need to be assigned an ID at construction, one should
              // know that the vertex id either is DIFFERENT from or HIDES the bead id,
              // so that the bead id is either NOT USED or HIDDEN by the id in vertex structure.
+    
+    size_t _membraneVertexIdx; // The index of this in the _vertexVector of the parent membrane
 
 public:
     ///Main constructor
@@ -82,6 +87,7 @@ public:
     }
     /// Get ID
     int getId()const { return _id; }
+    size_t getMembraneVertexIdx()const { return _membraneVertexIdx; }
 
     //@{
     /// SubSystem management, inherited from Bead: Trackable

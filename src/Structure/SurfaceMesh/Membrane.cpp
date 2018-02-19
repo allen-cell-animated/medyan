@@ -20,6 +20,8 @@ using namespace mathfunc;
 #include "GEdge.h"
 #include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
+#include "GMembrane.h"
+#include "MMembrane.h"
 
 Database<Membrane*> Membrane::_membranes;
 
@@ -37,6 +39,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
         Setting up vertices and neighbors
     **************************************************************************/
     // Add the vertices
+    size_t vertexIndex = 0;
     _vertexVector.reserve(numVertices);
     for(auto& vertexData : membraneData) {
         Vertex* lastAddedVertex = _subSystem->addTrackable<Vertex>(
@@ -45,6 +48,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
             get<1>(vertexData).size()
         );
         _vertexVector.push_back(lastAddedVertex); // Add to its own storage
+        lastAddedVertex->_membraneVertexIdx = vertexIndex++;
     }
 
     // Register the neighbors
@@ -175,6 +179,18 @@ Membrane::Membrane(SubSystem* s, short membraneType,
 #endif
     }
 
+    /**************************************************************************
+        Setting up MMembrane object and find volume
+    **************************************************************************/
+    _gMembrane = unique_ptr<GMembrane>(new GMembrane);
+    _gMembrane->setMembrane(this);
+    _gMembrane->calcVolume();
+#ifdef MECHANICS
+    _mMembrane = unique_ptr<MMembrane>(new MMembrane);
+    _mMembrane->setMembrane(this);
+    _mMembrane->setEqVolume(_gMembrane->getVolume());
+#endif
+
 }
 
 Membrane::~Membrane() {
@@ -234,6 +250,7 @@ void Membrane::updateGeometry(bool calcDerivative, double d) {
         if(calcDerivative) gv->calcCurv(); else gv->calcStretchedCurv(d);
         if(calcDerivative) gv->calcPseudoUnitNormal(); else gv->calcStretchedPseudoUnitNormal(d);
     }
+    if(calcDerivative) _gMembrane->calcVolume(); else _gMembrane->calcStretchedVolume(d);
 }
 
 double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const {

@@ -36,6 +36,7 @@ CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -IMechanics/Minimizer                     \
 -IMechanics/ForceField                    \
 -IMechanics/ForceField/Volume             \
+-IMechanics/ForceField/VolumeConservation \
 -IMechanics/ForceField/Boundary           \
 -IMechanics/ForceField/Branching          \
 -IMechanics/ForceField/Filament           \
