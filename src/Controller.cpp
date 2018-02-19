@@ -251,10 +251,42 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         _subSystem->addTrackable<Bubble>(_subSystem, coord, type);
     }
     cout << "Done. " << bubbles.size() << " bubbles created." << endl;
+
+    /**************************************************************************
+    Now starting to add the membrane into the network.
+    **************************************************************************/
+    MembraneSetup MemSetup = p.readMembraneSetup();
     
-    //Read filament setup, parse filament input file if needed
+    cout << "---" << endl;
+    cout << "Initializing membranes...";
+    
+    if(MemSetup.inputFile != "") {
+        MembraneParser memp(_inputDirectory + MemSetup.inputFile);
+        membranes = memp.readMembranes();
+    }
+    // Membrane auto initializer is currently not provided,
+    // which means that the input file is the only source of membrane information.
+    
+    // add membranes
+    for (auto& it: membranes) {
+        
+        short type = 0; // Currently set as default(0).
+        
+        if(type >= SysParams::Chemistry().numMembranes) {
+            cout << "Membrane data specified contains an invalid filament type. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        _subSystem->addTrackable<Membrane>(_subSystem, type, it);
+    }
+    cout << "Done. " << membranes.size() << " membranes created." << endl;
+
+
+    /**************************************************************************
+    Now starting to add the filaments into the network.
+    **************************************************************************/    
+    // Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
-//    FilamentData filaments;
     
     cout << "---" << endl;
     cout << "Initializing filaments...";
@@ -313,35 +345,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
     }
     cout << "Done. " << fil.size() << " filaments created." << endl;
-
-    /**************************************************************************
-    Now starting to add the membrane into the network.
-    **************************************************************************/
-    MembraneSetup MemSetup = p.readMembraneSetup();
-    
-    cout << "---" << endl;
-    cout << "Initializing membranes...";
-    
-    if(MemSetup.inputFile != "") {
-        MembraneParser memp(_inputDirectory + MemSetup.inputFile);
-        membranes = memp.readMembranes();
-    }
-    // Membrane auto initializer is currently not provided,
-    // which means that the input file is the only source of membrane information.
-    
-    // add membranes
-    for (auto& it: membranes) {
-        
-        short type = 0; // Currently set as default(0).
-        
-        if(type >= SysParams::Chemistry().numMembranes) {
-            cout << "Membrane data specified contains an invalid filament type. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-
-        _subSystem->addTrackable<Membrane>(_subSystem, type, it);
-    }
-    cout << "Done. " << membranes.size() << " membranes created." << endl;
 
 }
 
