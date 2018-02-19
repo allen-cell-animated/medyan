@@ -273,14 +273,13 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         short type = 0; // Currently set as default(0).
         
         if(type >= SysParams::Chemistry().numMembranes) {
-            cout << "Membrane data specified contains an invalid filament type. Exiting." << endl;
+            cout << "Membrane data specified contains an invalid membrane type. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
 
         _subSystem->addTrackable<Membrane>(_subSystem, type, it);
     }
     cout << "Done. " << membranes.size() << " membranes created." << endl;
-
 
     /**************************************************************************
     Now starting to add the filaments into the network.
