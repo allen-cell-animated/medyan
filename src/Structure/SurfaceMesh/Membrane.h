@@ -4,11 +4,15 @@
 #include <array>
 #include <tuple>
 #include <vector>
+#include <memory>
 
 #include "Database.h"
 #include "Geometric.h"
 #include "Trackable.h"
 #include "Composite.h"
+
+#include "GMembrane.h"
+#include "MMembrane.h"
 
 // FORWARD DECLARATIONS
 class SubSystem;
@@ -33,6 +37,9 @@ private:
     vector<Triangle*> _triangleVector; // collection of triangles
     vector<Edge*> _edgeVector; // collection of edges
     vector<Vertex*> _vertexVector; // collection of vertices
+
+    unique_ptr<GMembrane> _gMembrane; // pointer to geometric membrane object
+    unique_ptr<MMembrane> _mMembrane; // pointer to mechanical membrane object
 
     short _memType; // Membrane type
 
@@ -90,6 +97,9 @@ public:
     /// Implements Geometric
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
 
+    // Get geo membrane
+    GMembrane* getGMembrane() { return _gMembrane.get(); }
+
     // Use pseudo normal signed distance field method to get the signed distance to a point.
     // If the point is outside, the result is positive and vice versa.
     // Throws an exception if the membrane is not closed.
@@ -108,6 +118,13 @@ public:
     Topological
     **************************************************************************/
     bool isClosed()const { return _isClosed; }
+
+    /**************************************************************************
+    Mechanics
+    **************************************************************************/
+    // Get mech membrane
+    MMembrane* getMMembrane() { return _mMembrane.get(); }
+
 
 };
 
