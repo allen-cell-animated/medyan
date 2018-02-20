@@ -423,6 +423,10 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
     return minAbsDistance;
 }
 
+bool Membrane::contains(const std::array<double, 3>& point)const {
+    return signedDistance(point, true) < 0.0;
+}
+
 double Membrane::meshworkQuality()const {
     /*
     This function calculates the quality of the meshwork of this membrane, and

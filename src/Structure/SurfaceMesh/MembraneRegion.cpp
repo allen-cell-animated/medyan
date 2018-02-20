@@ -4,6 +4,8 @@
 #include "Membrane.h"
 #include "Boundary.h"
 
+#include "MathFunctions.h"
+
 MembraneRegion::MembraneRegion(MembraneHierarchy* hier, bool excludeChilden):
     _hierOut({hier})
 {
@@ -26,13 +28,33 @@ MembraneRegion::MembraneRegion(Boundary* b, MembraneHierarchy* parentOfExcluded)
     }
 }
 
-bool MembraneRegion::contains(const std::array<double, 3>& point) {
+bool MembraneRegion::contains(const std::array<double, 3>& point)const {
     /**************************************************************************
     This function checks whether a certain point is in the region. If a point
     is in the region, it must satisfy all of the following.
         - within _boundary if specified
-        - in any of the membranes in _hierIn
-        - not in any of the membranes in _hierOut
+        - in any of the membranes in _hierOut
+        - not in any of the membranes in _hierIn
     **************************************************************************/
-    // TODO
+    if(_boundary) {
+        auto p = mathfunc::array2Vector(point);
+        if(!_boundary->within(p)) return false;
+    }
+
+    if(!_hierOut.empty()) {
+        bool hierOutGood = false;
+        for(auto eachHier: _hierOut) {
+            if(eachHier->getMembrane()->contains(point)) {
+                hierOutGood = true;
+                break;
+            }
+        }
+        if(!hierOutGood) return false;
+    }
+
+    for(auto eachHier: _hierIn) {
+        if(eachHier->getMembrane()->contains(point)) return false;
+    }
+    
+    return true;
 }

@@ -100,14 +100,21 @@ public:
     // Get geo membrane
     GMembrane* getGMembrane() { return _gMembrane.get(); }
 
-    // Use pseudo normal signed distance field method to get the signed distance to a point.
-    // If the point is outside, the result is positive and vice versa.
-    // Throws an exception if the membrane is not closed.
-    // The function will search through the whole meshwork, so it might not be efficient.
-    // However, if the "safe" flag is turned off and neighboring compartments happen to contain membrane elements,
-    //   search space will be limited to those compartments to save time. In this case meshwork size should be
-    //   much smaller than the compartment size.
+    /**
+     * Use pseudo normal signed distance field method to get the signed distance to a point.
+     * If the point is outside, the result is positive and vice versa.
+     * Throws an exception if the membrane is not closed.
+     * The function will search through the whole meshwork, so it might not be efficient.
+     * However, if the "safe" flag is turned off and neighboring compartments happen to contain membrane elements,
+     *   search space will be limited to those compartments to save time. In this case meshwork size should be
+     *   much smaller than the compartment size.
+     */
     double signedDistance(const std::array<double, 3>& p, bool safe=false)const;
+    /**
+     * Use signed distance or other methods to judge whether a point is inside membrane.
+     * Throws an exception if the membrane is not closed.
+     */
+    bool contains(const std::array<double, 3>& point)const;
 
     // Function to monitor the quality of the meshwork
     double meshworkQuality()const; // Must be used after updating the geometry

@@ -30,7 +30,7 @@ public:
     MembraneRegion(Boundary* b, MembraneHierarchy* parentOfExcluded);
 
     /// Is point inside region
-    bool contains(const std::array<double, 3>& point);
+    bool contains(const std::array<double, 3>& point)const;
 };
 
 #endif
