@@ -26,9 +26,15 @@ class MembraneHierarchy: public Composite {
 
 private:
 
-    Membrane* _membrane = nullptr; // pointer to the membrane of this level
+    Membrane* _membrane = nullptr; ///< pointer to the membrane of this level
 
-    void printTree(string indent, bool last)const; // helper function for printSelf
+    void printTree(string indent, bool last)const; ///< helper function for printSelf
+
+    /**************************************************************************
+    Static members
+    **************************************************************************/
+    static MembraneHierarchy _root; ///< The root hierarchy,
+                                    ///< which should not point to any membrane
 
 public:
 
@@ -43,6 +49,11 @@ public:
     Membrane* getMembrane()const { return _membrane; }
 
     /**************************************************************************
+    Getters and Setters (static)
+    **************************************************************************/
+    static MembraneHierarchy* getRoot() { return _root; }
+
+    /**************************************************************************
     Implements Component
     **************************************************************************/
     virtual int getType()override { return 0; }
@@ -54,10 +65,12 @@ public:
     // When new membrane is inserted.
     // This function requires that geometry of the membrane has been updated.
     static void addMembrane(Membrane* m, MembraneHierarchy& root);
+    static void addMembrane(Membrane* m) { addMembrane(m, _root); }
 
     // When a membrane is removed. Must be a closed membrane.
     // Returns whether something is deleted.
     static bool removeMembrane(Membrane* m, MembraneHierarchy& root);
+    static bool removeMembrane(Membrane* m) { return removeMembrane(m, _root); }
 
 };
 

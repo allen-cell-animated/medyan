@@ -33,6 +33,7 @@
 #include "Bubble.h"
 #include "MTOC.h"
 #include "Membrane.h"
+#include "MembraneHierarchy.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -262,13 +263,13 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     
     if(MemSetup.inputFile != "") {
         MembraneParser memp(_inputDirectory + MemSetup.inputFile);
-        membranes = memp.readMembranes();
+        membraneData = memp.readMembranes();
     }
     // Membrane auto initializer is currently not provided,
     // which means that the input file is the only source of membrane information.
     
     // add membranes
-    for (auto& it: membranes) {
+    for (auto& it: membraneData) {
         
         short type = 0; // Currently set as default(0).
         
@@ -277,9 +278,10 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             exit(EXIT_FAILURE);
         }
 
-        _subSystem->addTrackable<Membrane>(_subSystem, type, it);
+        Membrane* newMembrane = _subSystem->addTrackable<Membrane>(_subSystem, type, it);
+        MembraneHierarchy::addMembrane(newMembrane);
     }
-    cout << "Done. " << membranes.size() << " membranes created." << endl;
+    cout << "Done. " << membraneData.size() << " membranes created." << endl;
 
     /**************************************************************************
     Now starting to add the filaments into the network.
