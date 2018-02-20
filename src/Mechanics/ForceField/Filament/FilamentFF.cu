@@ -21,6 +21,9 @@
 #include "FilamentBendingCosine.h"
 
 #include "Filament.h"
+//TODO remove later
+#include "CGMethod.h"
+#include "cross_check.h"
 
 FilamentFF::FilamentFF (string& stretching, string& bending, string& twisting) {
 
@@ -77,10 +80,9 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
     double U_i;
 
     for (auto &interaction : _filamentInteractionVector) {
-
-
+//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_filamentInteractionVector.size()<<endl;
         U_i = interaction->computeEnergy(coord, f, d);
-
+//        CUDAcommon::handleerror(cudaDeviceSynchronize());
         if(U_i <= -1) {
             //set culprit and return
             _culpritInteraction = interaction.get();
@@ -89,11 +91,38 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
         else U += U_i;
 
     }
+
     return U;
 }
 
 void FilamentFF::computeForces(double *coord, double *f) {
-
-    for (auto &interaction : _filamentInteractionVector)
+    double *F_i = new double[CGMethod::N];
+    for (auto &interaction : _filamentInteractionVector) {
         interaction->computeForces(coord, f);
+//        CUDAcommon::handleerror(cudaDeviceSynchronize());
+//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_filamentInteractionVector.size()<<endl;
+
+//        if(cross_checkclass::Aux)
+//            CUDAcommon::handleerror(
+//                    cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_forceAux, CGMethod::N * sizeof
+//                                       (double),
+//                               cudaMemcpyDeviceToHost));
+//        else
+//            CUDAcommon::handleerror(
+//                    cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_force, CGMethod::N * sizeof
+//                                       (double),
+//                               cudaMemcpyDeviceToHost));
+//        double fmax = 0.0;
+//        int id=0;
+//        for (auto iter = 0; iter < CGMethod::N/3; iter++) {
+//            if(abs(F_i[3 *iter])> fmax) {fmax = abs(F_i[3*iter]);id = iter;}
+//            if(abs(F_i[3 *iter +1])> fmax) {fmax = abs(F_i[3*iter +1]);id = iter;}
+//            if(abs(F_i[3 *iter +2])> fmax) {fmax = abs(F_i[3*iter +2]);id = iter;}
+////            std::cout << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] << endl;
+//        }
+//        std::cout <<"Fmax "<< id<<" "<<fmax<<" "<<F_i[3 * id] << " " << F_i[3 * id + 1] << " " << F_i[3 * id + 2] <<
+//                  endl;
+    }
+    //TODO remove later
+    delete F_i;
 }

@@ -85,46 +85,76 @@ void LinkerStretchingHarmonic::optimalblocksnthreads( int nint){
 double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                          double *kstr, double *eql, double *pos1, double *pos2,
                                          int *params) {
-    if(blocksnthreadse[1]>0) {
-
-        LinkerStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-                (double), stream>>>
-                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i);
-        auto cvars = CUDAcommon::getCUDAvars();
-        cvars.streamvec.push_back(&stream);
-        CUDAcommon::cudavars = cvars;
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
-        return gU_sum;}
-    else
-        return NULL;
+//    if(blocksnthreadse[1]>0) {
+//
+//        LinkerStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
+//                (double), stream>>>
+//                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+//                                  CUDAcommon::getCUDAvars().gculpritFF,
+//                                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
+//        return gU_sum;}
+//    else
+//        return NULL;
 }
 
 
 double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                          double *kstr, double *eql, double *pos1, double *pos2, double *z,
                                          int *params) {
+    if(blocksnthreadse[1]>0) {
+
+        LinkerStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
+                (double), stream>>>
+                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z, CUDAcommon::getCUDAvars()
+                                  .gculpritID,
+                                  CUDAcommon::getCUDAvars().gculpritFF,
+                                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
+//        return gU_sum;
+    }
 
     if(blocksnthreadsez[1]>0) {
         LinkerStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
-                                                                                       sizeof
-                                                                                               (double), stream>> > (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z );
+                                             sizeof(double), stream>> >
+                                            (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z ,
+                                             CUDAcommon::getCUDAvars().gculpritID,
+                                             CUDAcommon::getCUDAvars().gculpritFF,
+                                             CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+        CUDAcommon::handleerror(cudaGetLastError(),"LinkerStretchingHarmonicenergyz", "LinkerStretchingHarmonic.cu");
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror(cudaGetLastError(),"LinkerStretchingHarmonicenergyz", "LinkerStretchingHarmonic.cu");
+//
+//        return gU_sum;
+    }
+    if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
+        return NULL;
+    else{
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        CUDAcommon::handleerror(cudaGetLastError(),"LinkerStretchingHarmonicenergyz", "LinkerStretchingHarmonic.cu");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        CUDAcommon::handleerror(cudaGetLastError(),"LinkerStretchingHarmonicenergyz", "LinkerStretchingHarmonic.cu");
-
+        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
         return gU_sum;
-    }else
-        return NULL;
+    }
 }
 void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
                                       double *kstr, double *eql, double *pos1, double *pos2, int *params) {

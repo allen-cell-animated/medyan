@@ -24,7 +24,7 @@
 #include "MathFunctions.h"
 
 using namespace mathfunc;
-
+// IF USING CUDA VERSION, MAKE SURE TO ADD RELEVANT DISTANCE, STRETCHED DISTANCE AND NORMAL FUNCTIONS IN MATHFUNCTIONS.H
 /// A plane implementation of a BoundaryElement.
 class PlaneBoundaryElement : public BoundaryElement {
     
@@ -90,6 +90,10 @@ public:
         
         return vector<double>{_a, _b, _c};
     }
+
+    virtual const void elementeqn(double* var){
+        var[0] = _a; var[1] = _b; var[2] = _c; var[3] = _d;
+    }
     
     virtual void updateCoords(const vector<double> newCoords) {
         
@@ -126,7 +130,11 @@ public:
         
         return _radius - twoPointDistance(_coords, point);
     }
-    
+
+    virtual const void elementeqn(double* var){
+        var[0] = _radius;
+    }
+
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force,
                                      double d) {
@@ -199,6 +207,10 @@ public:
     }
     ///TODO
     virtual double distance(double const *point) { return 0.0; }
+
+    virtual const void elementeqn(double* var){
+        var[0] = _radius; var[1] = _height;
+    }
     
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force,
@@ -284,6 +296,10 @@ public:
         
         return distance(movedPoint);
         
+    }
+
+    virtual const void elementeqn(double* var){
+        var[0] = _radius;
     }
     
     ///TODO

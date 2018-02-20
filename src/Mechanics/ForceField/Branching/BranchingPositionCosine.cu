@@ -58,6 +58,13 @@ void BranchingPositionCosine::optimalblocksnthreads( int nint){
 
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+
+        char a[] = "BranchingFF";
+        char b[] = "Branching Position Cosine";
+        CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
     }
     else{
         blocksnthreadse.push_back(0);
@@ -73,7 +80,9 @@ double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
                                         double *kpos, double *pos, int *params) {
     if(blocksnthreadse[1]>0) {
         BranchingPositionCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i);
+                (double), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -91,7 +100,10 @@ double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
                                         double *kpos, double *pos, double *z, int *params) {
     if(blocksnthreadsez[1]>0) {
         BranchingPositionCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
-                                                                                      sizeof(double), stream>> > (coord, f, beadSet, kpos, pos, params, gU_i, z );
+                                          sizeof(double), stream>> > (coord, f, beadSet, kpos, pos, params, gU_i, z,
+                CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -116,7 +128,14 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
         CUDAcommon::handleerror(cudaGetLastError(),"BranchingPositionCosineforces", "BranchingPositionCosine.cu");
     }
 }
-
+void BranchingPositionCosine::checkforculprit() {
+    CUDAcommon::printculprit("BranchingPosition","BranchingPositionCosine");
+    BranchingPoint* br;
+    br = (BranchingPoint::getBranchingPoints()[CUDAcommon::getCUDAvars().culpritID[0]]);
+    cout<<"Printing culprit branching point information."<<endl;
+    br->printSelf();
+    exit(EXIT_FAILURE);
+}
 #endif
 
 double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,

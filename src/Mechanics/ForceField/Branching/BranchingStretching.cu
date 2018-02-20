@@ -118,38 +118,14 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *co
                             gpu_params);
     }
     nvtxRangePop();
-#endif
+#else
     nvtxRangePushA("SCEBS");
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos, d);
     nvtxRangePop();
-    if(gU_i!=NULL) {
-
-        CUDAcommon::handleerror(cudaMemcpy(U_i, gU_i, sizeof(double), cudaMemcpyDeviceToHost),"computeEnergy",
-                                "BranchingStretching.cu");
-    }
-    else
-        U_i[0] = 0.0;
-    if(fabs(U_ii)>1000000.0) {
-        if (fabs((U_ii - U_i[0]) / U_ii) > 0.0001){
-            std::cout<<endl;
-            std::cout << "CUDA BSE " << U_i[0] << endl;
-            std::cout << "Vectorized BSE " << U_ii << endl;
-            std::cout << "Precision match error" << fabs(U_ii - U_i[0]) << endl;
-        }
-    }
-    else {
-        if (fabs(U_ii - U_i[0]) > 1.0 / 100000000.0){
-            std::cout<<endl;
-            std::cout << "CUDA BSE " << U_i[0] << endl;
-            std::cout << "Vectorized BSE " << U_ii << endl;
-            std::cout << "Precision match " << fabs(U_ii - U_i[0]) << endl;
-//        exit(EXIT_FAILURE);
-        }
-    }
-
+#endif
     return U_ii;
 }
 
@@ -160,8 +136,6 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(double *coor
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
     double * gpu_force;
-
-
     if(cross_checkclass::Aux){
         nvtxRangePushA("CCFBS");
 
@@ -176,32 +150,11 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(double *coor
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_params);
         nvtxRangePop();
     }
-    //TODO remove this later need not copy forces back to CPU.
-    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, CGMethod::N*sizeof(double),
-                                       cudaMemcpyDeviceToHost));
-#endif
+#else
     nvtxRangePushA("SCFBS");
 
     _FFType.forces(coord, f, beadSet, kstr, eql, pos);
     nvtxRangePop();
-#ifdef CUDAACCL
-
-    bool state = false;
-    for(auto iter=0;iter<Bead::getBeads().size();iter++) {
-        if (fabs(F_i[3 * iter] - f[3 * iter]) <=1.0/100000000.0 && fabs(F_i[3 * iter + 1] - f[3 * iter + 1])
-                                                                   <=1.0/100000000.0 && fabs(F_i[3 * iter + 2] - f[3 * iter + 2]) <=1.0/100000000.0)
-        {state = true;}
-        else {
-            state = false;
-            std::cout<<endl;
-            std::cout<<"BS Forces"<<endl;
-            std::cout<<"Precision match "<<fabs(F_i[3 * iter] - f[3 * iter])<<" "<<fabs(F_i[3 * iter + 1] - f[3 *
-                                                                                                              iter + 1])<<" "<<fabs(F_i[3 * iter + 2] - f[3 * iter + 2])<<endl;
-            std::cout << "CUDA       " << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] << endl;
-            std::cout << "Vectorized " << f[3 * iter] << " " << f[3 * iter + 1] << " " << f[3 * iter + 2] << endl;
-//        exit(EXIT_FAILURE);
-        }
-    }
 #endif
 }
 

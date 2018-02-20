@@ -7,7 +7,8 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "ForceField.h"
-
+#include "MathFunctions.h"
+using namespace mathfunc;
 #ifdef CUDAACCL
 __global__ void setenergytozero(double *U_tot){
     U_tot[0] = 0.0;
@@ -29,6 +30,9 @@ __global__ void resetForcesCUDA(double *f, int* n){
 //    printf("%d \n", n[0]);
     if (thread_idx < n[0]) {
         for (auto i = 0; i < 3; i++) {
+
+//            atomicAdd(&f[3 * thread_idx + i], -f[3 * thread_idx + i]);
+//            atomicExch(&f[3 * thread_idx + i], 0.0);
             f[3 * thread_idx + i] = 0.0;
         }
     }

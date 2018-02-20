@@ -95,15 +95,6 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 //    CUDAcommon::cudavars.motorparams = gpu_params;
 
     nvtxRangePop();
-//    CUDAcommon::handleerror(cudaEventRecord( stop, 0));
-//    CUDAcommon::handleerror(cudaEventSynchronize(stop));
-//    float elapsedtime;
-//    CUDAcommon::handleerror(cudaEventElapsedTime(&elapsedtime, start, stop));
-//    CUDAvars cvars=CUDAcommon::getCUDAvars();
-//    cvars.vectorize += elapsedtime;
-//    CUDAcommon::cudavars=cvars;
-//    CUDAcommon::handleerror(cudaEventDestroy(start));
-//    CUDAcommon::handleerror(cudaEventDestroy(stop));
 
 #endif
 
@@ -142,33 +133,16 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
     nvtxRangePushA("CCEM");
 
-    if(d == 0.0){
-
-        //CROSSCHECK
-//        std::cout<<"Number of beads "<<Bead::getBeads().size()<<endl;
-//        for(auto i=0;i<3 * Bead::getBeads().size();i++){
-//            std::cout<<ccoord[i]<<" ";
-//            if(i%3==2) std::cout<<endl;
-//        }
-//        std::cout<<"---------END-----"<<endl;
-        //
-        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params);
-
-    }
-    else{
-//        double dd[1];
-//        CUDAcommon::handleerror(cudaMemcpy(dd, gpu_d, sizeof(double), cudaMemcpyDeviceToHost));
-//        std::cout<<"d = "<<dd[0]<<" "<<d<<endl;
-//        int cparams[2];
-//        CUDAcommon::handleerror(cudaMemcpy(cparams, gpu_params, 2*sizeof(int), cudaMemcpyDeviceToHost));
-//        std::cout<<"cparams "<<cparams[0]<<" "<<cparams[1]<<endl;
-
-
+//    if(d == 0.0){
+//        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params);
+//
+//    }
+//    else{
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_d,
                             gpu_params);
-    }
+//    }
     nvtxRangePop();
-#endif
+#else
     nvtxRangePushA("SCEM");
 
     if (d == 0.0)
@@ -177,80 +151,6 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
 
     nvtxRangePop();
-    if(gU_i!=NULL) {
-
-        CUDAcommon::handleerror(cudaMemcpy(U_i, gU_i, sizeof(double),
-                                           cudaMemcpyDeviceToHost));
-    }
-    else
-        U_i[0] = 0.0;
-    if(fabs(U_ii)>1000000.0) {
-//        if (fabs((U_ii - U_i) / U_ii) < 0.0001)
-//            std::cout << "E V+M YES" << endl;
-//        else {
-//        if (fabs(U_ii - U_i) > 1.0 / 100000000.0){
-        if (fabs((U_ii - U_i[0]) / U_ii) > 0.0001){
-            std::cout<<endl;
-            std::cout << "CUDA MSE " << U_i[0] << endl;
-            std::cout << "Vectorized MSE " << U_ii << endl;
-            std::cout << "Precision match error" << fabs(U_ii - U_i[0]) << endl;
-        }
-    }
-    else {
-//        if (fabs(U_ii - U_i) < 1.0 / 100000000.0)
-//            std::cout << "E V+M YES" << endl;
-//        else {
-        if (fabs(U_ii - U_i[0]) > 1.0 / 100000000.0){
-            std::cout<<endl;
-            std::cout << "CUDA MSE " << U_i << endl;
-            std::cout << "Vectorized MSE " << U_ii << endl;
-            std::cout << "Precision match " << fabs(U_ii - U_i[0]) << endl;
-//        exit(EXIT_FAILURE);
-        }
-    }
-
-#ifdef CROSSCHECK
-    double U2 = 0;
-    double U_ii;
-
-    for (auto m: MotorGhost::getMotorGhosts()) {
-
-        Bead* b1 = m->getFirstCylinder()->getFirstBead();
-        Bead* b2 = m->getFirstCylinder()->getSecondBead();
-        Bead* b3 = m->getSecondCylinder()->getFirstBead();
-        Bead* b4 = m->getSecondCylinder()->getSecondBead();
-
-        double kStretch = m->getMMotorGhost()->getStretchingConstant();
-        double eqLength = m->getMMotorGhost()->getEqLength();
-
-        double pos1 = m->getFirstPosition();
-        double pos2 = m->getSecondPosition();
-
-        if (d == 0.0)
-            U_ii = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-        else
-            U_ii = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, d);
-
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_ii != U_ii || U_ii < -1.0) {
-
-            //set culprit and return
-            _motorCulprit = m;
-
-            U2=-1;
-            break;
-        }
-        else
-            U2 += U_ii;
-    }
-    if(abs(U_i-U2)<=U2/100000000000)
-        std::cout<<"E M YES "<<endl;
-    else
-    {   std::cout<<U_i<<" "<<U2<<endl;
-        exit(EXIT_FAILURE);
-    }
-
-
 #endif
 
     return U_ii;
@@ -264,23 +164,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
     double * gpu_force;
-//
-//    if(cross_checkclass::Aux) {
-//        gpu_force = CUDAcommon::getCUDAvars().gpu_forceAux;
-//    }
-//    else
-//        gpu_force = CUDAcommon::getCUDAvars().gpu_force;
-//    double F_c[3*Bead::getBeads().size()];
-//    //TODO remove this later need not copy forces back to CPU.
-//    CUDAcommon::handleerror(cudaMemcpy(F_c, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
-//                                       cudaMemcpyDeviceToHost));
-//    cout.precision(dbl::max_digits10);
-//    for(int iter=0;iter<Bead::getBeads().size();iter++) {
-//        std::cout << "C " << F_c[3 * iter] << " " << F_c[3 * iter + 1] << " " << F_c[3 * iter + 2] <<" ";
-//        std::cout << "V "<<f[3 * iter] << " " << f[3 * iter + 1] << " " << f[3 * iter + 2] << endl;
-//    }
-//    std::cout<<"check ends "<<blocksnthreads[0]<<" "<<blocksnthreads[1]<<endl;
-    std::cout<<"motor stretcing CUDA compute"<<endl;
+//    std::cout<<"motor stretcing CUDA compute"<<endl;
     if(cross_checkclass::Aux){
         nvtxRangePushA("CCFM");
 
@@ -296,73 +180,12 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
         nvtxRangePop();
     }
 
-//    std::cout<<3 * Bead::getBeads().size()<<endl;
-    std::cout<<"motor stretching copy to host"<<endl;
-    //TODO remove this later need not copy forces back to CPU.
-//    std::cout<<CGMethod::N<<endl;
-//    std::cout<<3 * Bead::getBeads().size()<<endl;
     CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
                                        cudaMemcpyDeviceToHost));
-#endif
+#else
     nvtxRangePushA("SCFM");
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);
     nvtxRangePop();
-#ifdef CUDAACCL
-//    cout.precision(dbl::max_digits10);
-//    std::cout<<"M forces"<<endl;
-//    for(int iter=0;iter<Bead::getBeads().size();iter++) {
-//        std::cout << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] <<" ";
-//        std::cout <<f[3 * iter] << " " << f[3 * iter + 1] << " " << f[3 * iter + 2] << endl;
-//    }
-
-    bool state = false;
-    for(auto iter=0;iter<Bead::getBeads().size();iter++) {
-        if (fabs(F_i[3 * iter] - f[3 * iter]) <=1.0/100000000.0 && fabs(F_i[3 * iter + 1] - f[3 * iter + 1])
-        <=1.0/100000000.0 && fabs(F_i[3 * iter + 2] - f[3 * iter + 2]) <=1.0/100000000.0)
-        {state = true;}
-        else {
-            state = false;
-            std::cout<<endl;
-            std::cout<<"MS Forces"<<endl;
-            std::cout << "CUDA       " << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] << endl;
-            std::cout << "Vectorized " << f[3 * iter] << " " << f[3 * iter + 1] << " " << f[3 * iter + 2] << endl;
-            std::cout<<"Precision match "<<fabs(F_i[3 * iter] - f[3 * iter])<<" "<<fabs(F_i[3 * iter + 1] - f[3 *
-            iter + 1])<<" "<<fabs(F_i[3 * iter + 2] - f[3 * iter + 2])<<endl;
-//        exit(EXIT_FAILURE);
-        }
-    }
-//    if(state)
-//        std::cout<<"F M YES"<<endl;
-#endif
-
-#ifdef CROSSCHECK
-    for (auto m: MotorGhost::getMotorGhosts()) {
-
-        Bead* b1 = m->getFirstCylinder()->getFirstBead();
-        Bead* b2 = m->getFirstCylinder()->getSecondBead();
-        Bead* b3 = m->getSecondCylinder()->getFirstBead();
-        Bead* b4 = m->getSecondCylinder()->getSecondBead();
-        double kStretch = m->getMMotorGhost()->getStretchingConstant();
-        double eqLength = m->getMMotorGhost()->getEqLength();
-
-        double pos1 = m->getFirstPosition();
-        double pos2 = m->getSecondPosition();
-
-        if(cross_checkclass::Aux)
-        {double f0 = _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-//            m->getMMotorGhost()->stretchForce = f0;
-        }
-        else
-        {double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-//            m->getMMotorGhost()->stretchForce = f0;
-        }
-    }
-    if(cross_checkclass::Aux){
-        auto state=cross_check::crosscheckAuxforces(f);
-        std::cout<<"F S+B+L+M YES "<<state<<endl;}
-    else{
-        auto state=cross_check::crosscheckforces(f);
-        std::cout<<"F S+B+L+M YES "<<state<<endl;}
 #endif
 }
 

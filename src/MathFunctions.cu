@@ -77,6 +77,7 @@ namespace mathfunc {
         }
         U_sum[0] = sum;
         atomicAdd(&U_tot[0], sum);
+//        printf("%f %f\n", U_tot[0], sum);
 
     }
     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int *culpritID, char* culpritFF,
@@ -88,24 +89,12 @@ namespace mathfunc {
                 U_sum[0] = -1.0;
                 U_tot[0] = -1.0;
                 sum = -1.0;
-                culpritID[0] = i;
-                int j = 0;
-                while(FF[j]!=0){
-                    culpritFF[j] = FF[j];
-                    j++;
-                }
-                j = 0;
-                while(interaction[j]!=0){
-                    culpritinteraction[j] = interaction[j];
-                    j++;
-                }
-                printf("ID %s\n", culpritFF);
             }
             else if(sum != -1.0)
                 sum  += U[i];
         }
         U_sum[0] = sum;
-        printf("sum %f\n",sum);
+//        printf("sum %f\n",sum);
         if(sum != -1.0)
             atomicAdd(&U_tot[0], sum);
         else{

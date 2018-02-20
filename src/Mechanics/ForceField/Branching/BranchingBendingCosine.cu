@@ -59,6 +59,13 @@ void BranchingBendingCosine::optimalblocksnthreads( int nint){
 
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+
+        char a[] = "BranchingFF";
+        char b[] = "Branching Bending Cosine";
+        CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
     }
     else{
         blocksnthreadse.push_back(0);
@@ -74,7 +81,9 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
                                        double *kbend, double *eqt, int *params) {
     if(blocksnthreadse[1]>0) {
         BranchingBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i);
+                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -93,7 +102,10 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
     if(blocksnthreadsez[1]>0) {
         nvtxRangePushA("CCEBBzv1");
         BranchingBendingCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
-                                                                                     sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z );
+                                      sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z,
+                CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
         nvtxRangePop();
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
@@ -103,11 +115,11 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
 
         addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror(cudaGetLastError(),"BranchingBendingCosineenergyz", "BranchingBendingCosine.cu");
-        nvtxRangePushA("CCEBBzv2");
-        BranchingBendingCosineenergyz2 << < blocksnthreadsf[0], blocksnthreadsf[1], (12 * blocksnthreadsf[1]) *
-                                                                                     sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z );
-        CUDAcommon::handleerror(cudaGetLastError(),"BranchingBendingCosineenergyz2", "BranchingBendingCosine.cu");
-        nvtxRangePop();
+//        nvtxRangePushA("CCEBBzv2");
+//        BranchingBendingCosineenergyz2 << < blocksnthreadsf[0], blocksnthreadsf[1], (12 * blocksnthreadsf[1]) *
+//                                                                                     sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z );
+//        CUDAcommon::handleerror(cudaGetLastError(),"BranchingBendingCosineenergyz2", "BranchingBendingCosine.cu");
+//        nvtxRangePop();
         return gU_sum;
     }else
         return NULL;
@@ -124,7 +136,14 @@ void BranchingBendingCosine::forces(double *coord, double *f, int *beadSet,
         CUDAcommon::handleerror(cudaGetLastError(),"BranchingBendingCosineforces", "BranchingBendingCosine.cu");
     }
 }
-
+void BranchingBendingCosine::checkforculprit() {
+    CUDAcommon::printculprit("BranchingBending","BranchingBendingCosine");
+    BranchingPoint* br;
+    br = (BranchingPoint::getBranchingPoints()[CUDAcommon::getCUDAvars().culpritID[0]]);
+    cout<<"Printing culprit branching point information."<<endl;
+    br->printSelf();
+    exit(EXIT_FAILURE);
+}
 #endif
 
 double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,

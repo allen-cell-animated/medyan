@@ -27,7 +27,6 @@
 
 #include "BranchingPoint.h"
 #include "Bead.h"
-
 BranchingFF::BranchingFF(string& stretching, string& bending,
                          string& dihedral, string& position)
 {
@@ -103,7 +102,7 @@ double BranchingFF::computeEnergy(double *coord, double *f, double d) {
     for (auto &interaction : _branchingInteractionVector) {
 
         U_i = interaction->computeEnergy(coord, f, d);
-        std::cout<<interaction->getName()<<" "<<U_i<<endl;
+//        std::cout<<interaction->getName()<<" "<<U_i<<endl;
 
         if(U_i <= -1) {
             //set culprit and return

@@ -58,7 +58,9 @@ using namespace mathfunc;
 //}
 
 __global__ void BranchingStretchingHarmonicenergy(double *coord, double *force, int *beadSet, double *kstr,
-                                                 double *eql, double *pos, int *params, double *U_i) {
+                                                 double *eql, double *pos, int *params, double *U_i, int *culpritID,
+                                                  char* culpritFF, char* culpritinteraction, char* FF, char*
+interaction) {
 
     extern __shared__ double s[];
     double *c1 = s;
@@ -88,19 +90,30 @@ __global__ void BranchingStretchingHarmonicenergy(double *coord, double *force, 
 
         if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
             || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-            //TODO set culprit in host after return
-//            FilamentInteractions::_motorCulprit = Filament::getFilaments()[i];
-            U_i[thread_idx]=-1.0;
-//            assert(0);
-        }
-//        printf("%f %f %f \n", dist, kstr[thread_idx], U_i[thread_idx]);
-    }
 
-//    __syncthreads();
+            U_i[thread_idx]=-1.0;
+            culpritID[0] = thread_idx;
+            culpritID[1] = -1;
+            int j = 0;
+            while(FF[j]!=0){
+                culpritFF[j] = FF[j];
+                j++;
+            }
+            j = 0;
+            while(interaction[j]!=0){
+                culpritinteraction[j] = interaction[j];
+                j++;
+            }
+            assert(0);
+            __syncthreads();
+        }
+    }
 }
 
 __global__ void BranchingStretchingHarmonicenergyz(double *coord, double *f, int *beadSet, double *kstr,
-                                                  double *eql, double *pos, int *params, double *U_i, double *z) {
+                                                  double *eql, double *pos, int *params, double *U_i, double *z,
+                                                   int *culpritID, char* culpritFF, char* culpritinteraction, char* FF,
+                                                   char* interaction) {
 
     extern __shared__ double s[];
     double *c1 = s;
@@ -138,13 +151,24 @@ __global__ void BranchingStretchingHarmonicenergyz(double *coord, double *f, int
 
         U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
 
-
         if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
             || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-            //TODO set culprit in host after return
-//            FilamentInteractions::_motorCulprit = Filament::getFilaments()[i];
+
             U_i[thread_idx]=-1.0;
-//            assert(0);
+            culpritID[0] = thread_idx;
+            culpritID[1] = -1;
+            int j = 0;
+            while(FF[j]!=0){
+                culpritFF[j] = FF[j];
+                j++;
+            }
+            j = 0;
+            while(interaction[j]!=0){
+                culpritinteraction[j] = interaction[j];
+                j++;
+            }
+            assert(0);
+            __syncthreads();
         }
 
     }

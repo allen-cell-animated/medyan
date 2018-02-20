@@ -52,8 +52,11 @@ public:
     /// Copy forces from f to fprev
     void copyForces(double *f, double *fprev);
 
+#ifdef CUDAACCL
+        cudaStream_t  stream;
     /// CUDA Copy forces from f to fprev
     void CUDAcopyForces(cudaStream_t  stream, double *f, double *fprev);
+#endif
 
     /// Compute the load forces on the beads. This does not update the force (xyz) vector
     /// contained by Bead, but updates the loadForce vector which contains precalculated

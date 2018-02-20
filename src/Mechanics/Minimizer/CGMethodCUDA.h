@@ -27,6 +27,9 @@ curGrad, bool *Mstate) {
     if(Mstate[0] == false) return;
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
     double d  = fmax(0.0, (newGrad[0] - prevGrad[0]) / curGrad[0]);
+//    if(thread_idx == 0)
+//        printf("Shift Gradient %f %f %f %f\n", d, newGrad[0], prevGrad[0],curGrad[0] );
+
     if (thread_idx < nint[0]) {
         for (auto i = 0; i < 3; i++) {
             f[3 * thread_idx + i] = fAux[3 * thread_idx + i] + d * f[3 * thread_idx + i];
@@ -37,6 +40,8 @@ curGrad, bool *Mstate) {
 __global__ void shiftGradientCUDAifsafe(double *f, double* fAux, int * nint, bool *Mstate, bool *Sstate) {
     if(Mstate[0] == false || Sstate[0] == false) return;//checks for Minimization state and Safe state.
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+//    if(thread_idx == 0)
+//        printf("shiftGradient safe \n");
     if (thread_idx < nint[0]) {
         for (auto i = 0; i < 3; i++) {
             f[3 * thread_idx + i] = fAux[3 * thread_idx + i];
@@ -61,15 +66,17 @@ __global__ void maxFCUDA(double *f, int * nint, double *fmax) {
 
     double mag;
     fmax[0]=0.0;
-
     for(int i = 0; i < 3 * nint[0]; i++) {
         mag = sqrt(f[i]*f[i]);
-        if(mag > fmax[0]) fmax[0] = mag;
+        if(mag > fmax[0]) {fmax[0] = mag;}
     }
+//    id = id -id%3;
+//    printf("Fmax %d %f %f %f %f\n", id, fmax[0], f[id], f[id+1],f[id+2]);
 }
 
 __global__ void addvector(double *U, int *params, double *U_sum){
     U_sum[0] = 0.0;
+//    printf("%d \n", params[0]);
     for(auto i=0;i<params[0];i++){
         U_sum[0]  += U[i];
     }
@@ -95,6 +102,10 @@ __global__ void initializeLambdaCUDA(bool *checkin, bool* checkout, double *curr
             CUDA_lambda[0] = fmin(LAMBDAMAX, MAXDIST / fmax[0]);
     }
 //    printf("CL %f %f\n", LAMBDAMAX, CUDA_lambda[0]);
+}
+
+__global__ void resetlambdaCUDA (double *CUDA_lambda){
+    CUDA_lambda[0] = 0.0;
 }
 //__global__ void prepbacktracking(bool *checkin, bool* checkout, double *currentEnergy, double *energy,
 //                                 double* CUDA_lambda, double* fmax, double* params){
@@ -136,17 +147,26 @@ lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool
     double MAXDIST = params[4];
     double idealEnergyChange = 0.0;
     double energyChange = 0.0;
+//    printf("Energies %f %f\n", energyLambda[0],currentEnergy[0]);
     if(safestate[0] == true){
         energyChange = energyLambda[0] - currentEnergy[0];
+        if (energyChange <= 0.0) {
+            current_convergence[0] = true;
+//            printf("lambda_converged %.8f %.8f\n", lambda[0], LAMBDATOL);
+            return;
+        }
     }
-    else{
+    else {
         double BACKTRACKSLOPE = params[0];
         idealEnergyChange = -BACKTRACKSLOPE * lambda[0] * FDotFA[0];
-        energyChange =  energyLambda[0] - currentEnergy[0];
+        energyChange = energyLambda[0] - currentEnergy[0];
+
+        if (energyChange <= idealEnergyChange) {
+            current_convergence[0] = true;
+//            printf("lambda_converged %.8f %.8f\n", lambda[0], LAMBDATOL);
+            return;
+        }
     }
-    if(energyChange <= idealEnergyChange) {
-        current_convergence[0] = true;
-        return;}
     lambda[0] *= LAMBDAREDUCE;
 
     if(lambda[0] <= 0.0 || lambda[0] <= LAMBDATOL) {
@@ -156,6 +176,7 @@ lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool
         else
             lambda[0] = 0.0;
     }
+//    printf("lambda %.8f %.8f\n", lambda[0], LAMBDATOL);
 }
 //__global__ void CUDAbacktrackingfindlambda(double* energyLambda, double* currentEnergy, double* FDotFA, double*
 //lambda, double *params, bool* prev_convergence, bool*  current_convergence){
@@ -198,6 +219,8 @@ lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool
 //    if(lambda[0] <= 0.0 || lambda[0] <= LAMBDATOL) {current_convergence[0] = true; lambda[0] = MAXDIST / fmax[0];  }
 //}
 
+#ifdef CUDAACCL
+
 __global__ void getsafestateCUDA(double* FDotFA, double* curGrad, double* newGrad, bool* checkout){
     //if(checkin[0] == true) return;
     checkout[0] = false;
@@ -208,11 +231,12 @@ __global__ void getsafestateCUDA(double* FDotFA, double* curGrad, double* newGra
 }
 __global__ void getminimizestateCUDA(double *fmax, double *GRADTOL, bool *checkin, bool *checkout) {
     //maxF() > GRADTOL
-
-    if(checkin[0] == false) return;
+//    printf("minstate %f %f %d %d\n", fmax[0],GRADTOL[0],checkin[0],checkout[0]);
     checkout[0] = false;
+    if(checkin[0] == false) return;
     if(fmax[0] > GRADTOL[0])
         checkout[0] = true;
+//    printf("minstate %f %f %d %d\n", fmax[0],GRADTOL[0],checkin[0],checkout[0]);
 }
 
 __global__ void initializePolak(bool* Mcheckin, bool *Mcheckout, bool *Scheckin, bool *Scheckout){
@@ -221,4 +245,5 @@ __global__ void initializePolak(bool* Mcheckin, bool *Mcheckout, bool *Scheckin,
     Scheckin[0] = false;
     Scheckout[0] = false;
 }
+#endif
 #endif //CUDA_VEC_CGMETHODCUDA_H

@@ -35,7 +35,7 @@ void MotorGhostStretchingHarmonic::checkforculprit() {
     CUDAcommon::printculprit("MotorGhostStretching","MotorGhostStretchingHarmonic");
     MotorGhost* m;
     m = MotorGhost::getMotorGhosts()[CUDAcommon::getCUDAvars().culpritID[0]];
-    cout<<"Printing culprit Filament information."<<endl;
+    cout<<"Printing culprit Motor information."<<endl;
     m->printSelf();
     exit(EXIT_FAILURE);
 }
@@ -94,212 +94,156 @@ void MotorGhostStretchingHarmonic::optimalblocksnthreads( int nint){
     }
 
 }
-#endif
 double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                             double *kstr, double *eql, double *pos1, double *pos2,
                                             int *params) {
-    if(blocksnthreadse[1]>0) {
-//        nvtxRangePushA("cmsestream");
-//        cudaStream_t  stream;
-//        cudaEvent_t event;
-//        CUDAcommon::handleerror(cudaStreamCreate(&stream));
-//        CUDAcommon::handleerror(cudaEventCreate(&event));
+//    if(blocksnthreadse[1]>0) {
+//        nvtxRangePushA("cmse");
+//
+//    MotorGhostStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
+//                                                                                                                  (double), stream>>>
+//            (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+//            CUDAcommon::getCUDAvars().gculpritFF,
+//            CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
 //        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.eventvec.push_back(event);
-//        cvars.streamvec.push_back(stream);
+//        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
+////        cudaEventRecord(event, stream);
 //        nvtxRangePop();
-
-//    double *gU_ii;
-    //double *gU_i;
-//    double *gc1, *gc2, *gcheckU;
-//    double U_ii[blocksnthreads[0] * blocksnthreads[1]];
-//    double c1[3*blocksnthreads[0]*blocksnthreads[1]], c2[3*blocksnthreads[0]*blocksnthreads[1]];
-    //double U_i[blocksnthreadse[0]*blocksnthreadse[1]];
-//    double checkU[blocksnthreads[1]];
-
-//    double ccoord[3*Bead::getBeads().size()];
-//    cudaMemcpy(ccoord, coord, 3*Bead::getBeads().size()*sizeof(double), cudaMemcpyDeviceToHost);
-//    double cforce[3*Bead::getBeads().size()];
-//    cudaMemcpy(cforce, f, 3*Bead::getBeads().size()*sizeof(double), cudaMemcpyDeviceToHost);
-//    for(auto i =0; i < Bead::getBeads().size(); i++)
-//        std::cout<<ccoord[3 * i]<<" "<<ccoord[3 * i +1]<<" "<<ccoord[3 * i +2]<<" "<<cforce[3 * i]<<" "<<cforce[3 * i
-//                                                                                                                +1]<<" "<<cforce[3 * i +2]<<endl;
-//    std::cout<<"C+F---------------------------- "<<endl;
-
-//    std::cout<<"MSE Number of Blocks: "<<blocksnthreads[0]<<endl;
-//    std::cout<<"Threads per block: "<<blocksnthreads[1]<<endl;
-
-    //TODO  since the number of threads needed is constant through out the minimization, consider storing the pointer.
-    //`CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, blocksnthreadse[0]*blocksnthreadse[1]*sizeof(double)));
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gU_ii, blocksnthreads[0]*blocksnthreads[1]*sizeof(double)));
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gc1, 3*blocksnthreads[1]*sizeof(double)));
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gc2, 3*blocksnthreads[1]*sizeof(double)));
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gcheckU, blocksnthreads[1]*sizeof(double)));
-    //
-//    std::cout<<"MSE CUDA"<<endl;
-        nvtxRangePushA("cmse");
-
-    MotorGhostStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-                                                                                                                  (double), stream>>>
-            (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i);
-        auto cvars = CUDAcommon::getCUDAvars();
-        cvars.streamvec.push_back(&stream);
-        CUDAcommon::cudavars = cvars;
-//        cudaEventRecord(event, stream);
-        nvtxRangePop();
-        nvtxRangePushA("cmseError");
-                CUDAcommon::handleerror( cudaGetLastError(), "MotorGhostStretchingHarmonicenergy",
-                                         "MotorGhostStretchingHarmonic.cu");
-        nvtxRangePop();
-        //    CUDAcommon::handleerror( cudaPeekAtLastError() );
-//    CUDAcommon::handleerror( cudaDeviceSynchronize() );
-        nvtxRangePushA("cmseadd");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        nvtxRangePop();
-        nvtxRangePushA("cmseError");
-        CUDAcommon::handleerror( cudaGetLastError() , "MotorGhostStretchingHarmonicenergy",
-                                 "MotorGhostStretchingHarmonic.cu");
-        nvtxRangePop();
-//        nvtxRangePushA("cmsecopy");
-//        double U_i[1];
-//        CUDAcommon::handleerror(cudaMemcpy(U_i, gU_sum, sizeof(double),
-//                                           cudaMemcpyDeviceToHost));
+//        nvtxRangePushA("cmseError");
+//                CUDAcommon::handleerror( cudaGetLastError(), "MotorGhostStretchingHarmonicenergy",
+//                                         "MotorGhostStretchingHarmonic.cu");
 //        nvtxRangePop();
-
-
-//        CUDAcommon::handleerror(cudaMemcpy(U_ii, gU_ii, blocksnthreads[0] * blocksnthreads[1] * sizeof(double),
-//                                           cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(c1, gc1, 3*blocksnthreads[1]*sizeof(double), cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(c2, gc2, 3*blocksnthreads[1]*sizeof(double), cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(checkU, gcheckU, blocksnthreads[1]*sizeof(double), cudaMemcpyDeviceToHost));
-
-//    for(auto j=0;j<blocksnthreads[0]* blocksnthreads[1];j++) {
-//        std::cout << U_ii[j] <<" "<<checkU[j]<<endl;
-//    }
-
-//    for(auto j=0;j<blocksnthreads[0]* blocksnthreads[1];j++) {
-//        std::cout << U_i[j] << endl;
-//    }
-//    CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions
-//    for(auto j=0;j<blocksnthreads[0] * blocksnthreads[1];j++) {
-////        std::cout << c1[3 * j] << " " << c1[3 * j + 1] << " " << c1[3 * j + 2] << " " << c2[3 * j] << " "
-////                  << c2[3 * j + 1] << " " << c2[3 * j + 2] << " ";
-//        std::cout << U_i[j] << endl;
-//    }
-//    std::cout<<"*************"<<endl;
-
-//    auto j=blocksnthreads[1]; int idx=0;
-//    while(j!=1)
-//    {std::cout<<checkU[idx]<<endl;idx=idx+1;j=j/2;}
-//    for (auto i=0;i<blocksnthreads[1];i++)
-//        std::cout<<checkU[i]<<endl;
-//    std::cout<<"----------------"<<endl;
-
-
-//    if(U_i[0]!=-1.0) {
-//        for (auto i = 1; i < blocksnthreadse[0] * blocksnthreadse[1]; i++) {
-////            std::cout<<U_i[i]<<endl;
-//            U_i[0] = U_i[0] + U_i[i];
-//            if (U_i[i] == -1.0) {
-//                U_i[0] = -1.0;
-//                break;
-//            }
-//        }
-//    }
-//    std::cout<<"MS Total energy CUDA   "<<U_i[0]<<endl;
-
-    //CUDAcommon::handleerror(cudaFree(gU_i));
-
-//        CUDAcommon::handleerror(cudaFree(gU_ii));
-//        CUDAcommon::handleerror(cudaFree(gc1));
-//        CUDAcommon::handleerror(cudaFree(gc2));
-//        CUDAcommon::handleerror(cudaFree(gcheckU));
-//    gU_i = NULL;
-//    gU_ii = NULL;
-//    gc1 = NULL;
-//    gc2 = NULL;
-//    gcheckU = NULL;
-//    free(U_i);
-
-
-//        CUDAcommon::handleerror(cudaStreamSynchronize(stream));
-    return gU_sum;}
-    else
-        return NULL;
+//
+//        nvtxRangePushA("cmseadd");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        nvtxRangePop();
+//        nvtxRangePushA("cmseError");
+//        CUDAcommon::handleerror( cudaGetLastError() , "MotorGhostStretchingHarmonicenergy",
+//                                 "MotorGhostStretchingHarmonic.cu");
+//        nvtxRangePop();
+//
+//    return gU_sum;}
+//    else
+//        return NULL;
 }
 
 
 double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                             double *kstr, double *eql, double *pos1, double *pos2, double *z,
                                             int *params) {
+    if(blocksnthreadse[1]>0) {
+        nvtxRangePushA("cmse");
 
-    ///TEST CODE ///
-//    double *gcheckvar;
-//    double checkvar[blocksnthreads[0]*blocksnthreads[1]];
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gcheckvar, blocksnthreads[0] * blocksnthreads[1]*sizeof(double)));
-//    testifitworks<<<blocksnthreads[0], blocksnthreads[1] >>>(coord,gcheckvar);
-//    cudaMemcpy(checkvar, gcheckvar, blocksnthreads[0] * blocksnthreads[1]*sizeof(double), cudaMemcpyDeviceToHost);
-//    for (auto i = 1; i < blocksnthreads[0] * blocksnthreads[1]; i++) {
-//        std::cout<<checkvar[i]<<" ";
-//    }
-//    std::cout<<endl;
-//    cudaFree(gcheckvar);
-//    gcheckvar = NULL;
-    ///@@END@@///
-    if(blocksnthreadsez[1]>0) {
-//        cudaStream_t  stream;
-//        cudaEvent_t event;
-//        CUDAcommon::handleerror(cudaStreamCreate(&stream));
-//        CUDAcommon::handleerror(cudaEventCreate(&event));
+        MotorGhostStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
+                (double), stream>>>
+                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z,
+                                  CUDAcommon::getCUDAvars().gculpritID,
+                                  CUDAcommon::getCUDAvars().gculpritFF,
+                                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+        nvtxRangePop();
 //        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.eventvec.push_back(event);
-//        cvars.streamvec.push_back(stream);
+//        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
-//        double dd[1];
-//        CUDAcommon::handleerror(cudaMemcpy(dd, z, sizeof(double), cudaMemcpyDeviceToHost));
-//        std::cout << "d = " << dd[0] << endl;
+        nvtxRangePushA("cmseError");
+        CUDAcommon::handleerror( cudaGetLastError(), "MotorGhostStretchingHarmonicenergy",
+                                 "MotorGhostStretchingHarmonic.cu");
+        nvtxRangePop();
 
-//        double *gU_ii;
-        //double *gU_i;
-//        double *gc1, *gc2, *gcheckU;
-//        double U_ii[blocksnthreads[0] * blocksnthreads[1]];
-//        double c1[3 * blocksnthreads[0] * blocksnthreads[1]], c2[3 * blocksnthreads[0] * blocksnthreads[1]];
-        //double U_i[blocksnthreadsez[0] * blocksnthreadsez[1]];
-//        double checkU[33 * blocksnthreads[0] * blocksnthreads[1]];
-
-
-
-//    double ccoord[3*Bead::getBeads().size()];
-//    cudaMemcpy(ccoord, coord, 3*Bead::getBeads().size()*sizeof(double), cudaMemcpyDeviceToHost);
-//    double cforce[3*Bead::getBeads().size()];
-//    cudaMemcpy(cforce, f, 3*Bead::getBeads().size()*sizeof(double), cudaMemcpyDeviceToHost);
-//        int cparams[2];
-//        CUDAcommon::handleerror(cudaMemcpy(cparams, params, 2 * sizeof(int), cudaMemcpyDeviceToHost));
-//    for(auto i =0; i < Bead::getBeads().size(); i++)
+//        nvtxRangePushA("cmseadd");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        nvtxRangePop();
+//        nvtxRangePushA("cmseError");
+//        CUDAcommon::handleerror( cudaGetLastError() , "MotorGhostStretchingHarmonicenergy",
+//                                 "MotorGhostStretchingHarmonic.cu");
+//        nvtxRangePop();
 //
-//        std::cout<<ccoord[3 * i]<<" "<<ccoord[3 * i +1]<<" "<<ccoord[3 * i +2]<<" "<<cforce[3 * i]<<" "<<cforce[3 * i
-//                                                                                                                +1]<<" "<<cforce[3 * i +2]<<endl;
-//        std::cout << cparams[0] << " " << cparams[1] << endl;
+//        return gU_sum;
+    }
 
-//    std::cout<<"C+F Z---------------------------- "<<endl;
+    if(blocksnthreadsez[1]>0) {
+        nvtxRangePushA("cmsez");
+        MotorGhostStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
+                                                                                                sizeof
+                (double), stream>> > (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z,
+                 CUDAcommon::getCUDAvars().gculpritID,
+                 CUDAcommon::getCUDAvars().gculpritFF,
+                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
+        nvtxRangePop();
+        nvtxRangePushA("cmsezError");
+        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicenergyz",
+                                "MotorGhostStretchingHarmonic.cu");
+        nvtxRangePop();
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        nvtxRangePushA("cmsezadd");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        nvtxRangePop();
+//        nvtxRangePushA("cmsezError");
+//        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicenergyz",
+//                                "MotorGhostStretchingHarmonic.cu");
+//        nvtxRangePop();
+//
+//        return gU_sum;
+    }
+    if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
+        return NULL;
+    else{
+        auto cvars = CUDAcommon::getCUDAvars();
+        cvars.streamvec.push_back(&stream);
+        CUDAcommon::cudavars = cvars;
+        nvtxRangePushA("cmseadd");
+        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+        nvtxRangePop();
+        nvtxRangePushA("cmseError");
+        CUDAcommon::handleerror( cudaGetLastError() , "MotorGhostStretchingHarmonicenergy",
+                                 "MotorGhostStretchingHarmonic.cu");
+        nvtxRangePop();
+        return gU_sum;
+    }
+}
 
-//        std::cout << "MSEZ Number of Blocks: " << blocksnthreads[0] << endl;
+void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
+                                          double *kstr, double *eql, double *pos1, double *pos2, int *params){
+//    cudaEvent_t start, stop;
+//    CUDAcommon::handleerror(cudaEventCreate( &start));
+//    CUDAcommon::handleerror(cudaEventCreate( &stop));
+//    CUDAcommon::handleerror(cudaEventRecord( start, 0));
+    if(blocksnthreadsf[1]>0) {
+//        double *gU_i;
+//        double *gc1, *gc2, *gcheckU;
+
+//        double c1[3 * blocksnthreads[0] * blocksnthreads[1]], c2[3 * blocksnthreads[0] * blocksnthreads[1]];
+//        double cvar[36 * blocksnthreads[0] * blocksnthreads[1]];
+
+//        std::cout << "MSF Number of Blocks: " << blocksnthreads[0] << endl;
 //        std::cout << "Threads per block: " << blocksnthreads[1] << endl;
 
-
-
         //TODO  since the number of threads needed is constant through out the minimization, consider storing the pointer.
-        //CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, blocksnthreadsez[0] * blocksnthreadsez[1] * sizeof (double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_ii, blocksnthreads[0] * blocksnthreads[1] * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gc1, 3 * blocksnthreads[1] * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gc2, 3 * blocksnthreads[1] * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gcheckU, 33 * blocksnthreads[0] * blocksnthreads[1] * sizeof
-//        (double)));
-        //
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, 36 * blocksnthreads[0] * blocksnthreads[1] * sizeof
+//                                                                                                                (double)));
+
+
+//        double F_c[3*Bead::getBeads().size()];
+//        double C_c[3*Bead::getBeads().size()];
+//        //TODO remove this later need not copy forces back to CPU.
+//        CUDAcommon::handleerror(cudaMemcpy(F_c, f, 3 * Bead::getBeads().size() *sizeof(double),
+//                                           cudaMemcpyDeviceToHost));
+//        CUDAcommon::handleerror(cudaMemcpy(C_c, coord, 3 * Bead::getBeads().size() *sizeof(double),
+//                                           cudaMemcpyDeviceToHost));
+//        for(int iter=0;iter<Bead::getBeads().size();iter++) {
+//            std::cout << C_c[3 * iter] << " " << C_c[3 * iter + 1] << " " << C_c[3 * iter + 2]<<" "<<F_c[3 * iter] <<
+//            " " << F_c[3 * iter + 1] << " " << F_c[3 * iter + 2] <<endl;
+//        }
+//
+//        std::cout<<"check ends "<<blocksnthreads[0]<<" "<<blocksnthreads[1]<<endl;
+//
 //    size_t freeMem, totalMem;
 //
 //    cudaMemGetInfo(&freeMem, &totalMem);
@@ -309,90 +253,45 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
 //        cudaGetDeviceProperties(&properties, 0);
 //        cout << "using " << properties.multiProcessorCount << " multiprocessors" << endl;
 //        cout << "max threads per processor: " << properties.maxThreadsPerMultiProcessor << endl;
-//        std::cout << 24 * blocksnthreads[1] * sizeof(double) << endl;
+//        std::cout << 36 *  blocksnthreads[0] *blocksnthreads[1] * sizeof(double) << endl;
 
-//        if(blocksnthreadsez[1]==THREADSPERBLOCK) {
-//            blocksnthreadsez[0] = 2 * blocksnthreadsez[0];
-//            blocksnthreadsez[1] = 1/2 * blocksnthreadsez[1];
-//        }
-        nvtxRangePushA("cmsez");
-        MotorGhostStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
-                                                                                                sizeof
-                (double), stream>> > (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z );
+        MotorGhostStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 *
+        blocksnthreadsf[1]) * sizeof (double), stream >> > (coord, f, beadSet, kstr, eql, pos1, pos2, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        nvtxRangePop();
-        nvtxRangePushA("cmsezError");
-        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicenergyz",
+        //CUDAcommon::handleerror(cudaDeviceSynchronize());
+        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicforces",
                                 "MotorGhostStretchingHarmonic.cu");
-        nvtxRangePop();
+
 //    CUDAcommon::handleerror( cudaPeekAtLastError() );
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
-        nvtxRangePushA("cmsezadd");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-//        cudaEventRecord(event, stream);
-        nvtxRangePop();
-        nvtxRangePushA("cmsezError");
-        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicenergyz",
-                                "MotorGhostStretchingHarmonic.cu");
-        nvtxRangePop();
-
-//        nvtxRangePushA("cmsezcopy");
-//        double U_i[1];
-//        CUDAcommon::handleerror(cudaMemcpy(U_i, gU_sum, sizeof(double),
+//        CUDAcommon::handleerror(cudaMemcpy(cvar, gU_i, 36 * blocksnthreads[0]*blocksnthreads[1]*sizeof(double),
 //                                           cudaMemcpyDeviceToHost));
-//        nvtxRangePop();
-//
-//        CUDAcommon::handleerror(cudaMemcpy(U_i, gU_i, blocksnthreadsez[0] * blocksnthreadsez[1] * sizeof(double),
-//                                                                                                       cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(U_ii, gU_ii, blocksnthreads[0] * blocksnthreads[1] * sizeof(double),
-//                                           cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(c1, gc1, 3 * blocksnthreads[1] * sizeof(double), cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(c2, gc2, 3 * blocksnthreads[1] * sizeof(double), cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(checkU, gcheckU, 33 * blocksnthreads[0] * blocksnthreads[1] * sizeof(double),
-//                                           cudaMemcpyDeviceToHost));
-//
-//        for(auto i=0;i<blocksnthreads[0] * blocksnthreads[1]; i++) {
-//            for (auto iter = 0; iter < 33; iter++)
-//                std::cout << checkU[33 * i + iter] << " ";
-//            std::cout<<U_i[i]<<endl;
-//        }
-//        if (U_i[0] != -1.0) {
-//            for (auto i = 1; i < blocksnthreadsez[0] * blocksnthreadsez[1]; i++) {
-//                U_i[0] = U_i[0] + U_i[i];
-//                if (U_i[i] == -1.0) {
-//                    U_i[0] = -1.0;
-//                    break;
-//                }
+//        for(auto i=0; i<blocksnthreads[0]*blocksnthreads[1]; i++) {
+//            for(auto iter=0;iter<36;iter++) {
+//                std::cout <<cvar[36 * i + iter]<<" ";
 //            }
+//            std::cout<<endl;
 //        }
-//        std::cout << "MSZ Total energy CUDA   " << U_i[0] << endl;
 
+//    cudaMemcpy(F_i, f, 3 * blocksnthreads[0]*blocksnthreads[1]*sizeof(double), cudaMemcpyDeviceToHost);
 //        CUDAcommon::handleerror(cudaFree(gU_i));
-
-//        CUDAcommon::handleerror(cudaFree(gU_ii));
-//        CUDAcommon::handleerror(cudaFree(gc1));
-//        CUDAcommon::handleerror(cudaFree(gc2));
-//        CUDAcommon::handleerror(cudaFree(gcheckU));
-//    gU_i = NULL;
-//    gU_ii = NULL;
-//    gc1 = NULL;
-//    gc2 = NULL;
-//    gcheckU = NULL;
-//    free(U_i);
-
-
-//        CUDAcommon::handleerror(cudaStreamSynchronize(stream));
-        return gU_sum;
-    }else
-        return NULL;
+    }
+//    CUDAcommon::handleerror(cudaEventRecord( stop, 0));
+//    CUDAcommon::handleerror(cudaEventSynchronize(stop));
+//    float elapsedtime;
+//    CUDAcommon::handleerror(cudaEventElapsedTime(&elapsedtime, start, stop));
+//    CUDAvars cvars=CUDAcommon::getCUDAvars();
+//    cvars.Ccforce += elapsedtime;
+//    std::cout<<"C CFM "<<elapsedtime<<endl;
+//    CUDAcommon::cudavars=cvars;
+//    CUDAcommon::handleerror(cudaEventDestroy(start));
+//    CUDAcommon::handleerror(cudaEventDestroy(stop));
 }
 
+#endif
 double MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                             double *kstr, double *eql, double *pos1, double *pos2) {
 
@@ -491,88 +390,6 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double * f, int *bead
 
     return U;
 
-}
-
-void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                          double *kstr, double *eql, double *pos1, double *pos2, int *params){
-//    cudaEvent_t start, stop;
-//    CUDAcommon::handleerror(cudaEventCreate( &start));
-//    CUDAcommon::handleerror(cudaEventCreate( &stop));
-//    CUDAcommon::handleerror(cudaEventRecord( start, 0));
-    if(blocksnthreadsf[1]>0) {
-//        double *gU_i;
-//        double *gc1, *gc2, *gcheckU;
-
-//        double c1[3 * blocksnthreads[0] * blocksnthreads[1]], c2[3 * blocksnthreads[0] * blocksnthreads[1]];
-//        double cvar[36 * blocksnthreads[0] * blocksnthreads[1]];
-
-//        std::cout << "MSF Number of Blocks: " << blocksnthreads[0] << endl;
-//        std::cout << "Threads per block: " << blocksnthreads[1] << endl;
-
-        //TODO  since the number of threads needed is constant through out the minimization, consider storing the pointer.
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, 36 * blocksnthreads[0] * blocksnthreads[1] * sizeof
-//                                                                                                                (double)));
-
-
-//        double F_c[3*Bead::getBeads().size()];
-//        double C_c[3*Bead::getBeads().size()];
-//        //TODO remove this later need not copy forces back to CPU.
-//        CUDAcommon::handleerror(cudaMemcpy(F_c, f, 3 * Bead::getBeads().size() *sizeof(double),
-//                                           cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(C_c, coord, 3 * Bead::getBeads().size() *sizeof(double),
-//                                           cudaMemcpyDeviceToHost));
-//        for(int iter=0;iter<Bead::getBeads().size();iter++) {
-//            std::cout << C_c[3 * iter] << " " << C_c[3 * iter + 1] << " " << C_c[3 * iter + 2]<<" "<<F_c[3 * iter] <<
-//            " " << F_c[3 * iter + 1] << " " << F_c[3 * iter + 2] <<endl;
-//        }
-//
-//        std::cout<<"check ends "<<blocksnthreads[0]<<" "<<blocksnthreads[1]<<endl;
-//
-//    size_t freeMem, totalMem;
-//
-//    cudaMemGetInfo(&freeMem, &totalMem);
-//
-//    std::cout<<"Memory "<<freeMem<<" "<<totalMem<<endl;
-//        struct cudaDeviceProp properties;
-//        cudaGetDeviceProperties(&properties, 0);
-//        cout << "using " << properties.multiProcessorCount << " multiprocessors" << endl;
-//        cout << "max threads per processor: " << properties.maxThreadsPerMultiProcessor << endl;
-//        std::cout << 36 *  blocksnthreads[0] *blocksnthreads[1] * sizeof(double) << endl;
-
-        MotorGhostStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 *
-        blocksnthreadsf[1]) * sizeof (double), stream >> > (coord, f, beadSet, kstr, eql, pos1, pos2, params);
-        auto cvars = CUDAcommon::getCUDAvars();
-        cvars.streamvec.push_back(&stream);
-        CUDAcommon::cudavars = cvars;
-        //CUDAcommon::handleerror(cudaDeviceSynchronize());
-        CUDAcommon::handleerror(cudaGetLastError(), "MotorGhostStretchingHarmonicforces",
-                                "MotorGhostStretchingHarmonic.cu");
-
-//    CUDAcommon::handleerror( cudaPeekAtLastError() );
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
-
-//        CUDAcommon::handleerror(cudaMemcpy(cvar, gU_i, 36 * blocksnthreads[0]*blocksnthreads[1]*sizeof(double),
-//                                           cudaMemcpyDeviceToHost));
-//        for(auto i=0; i<blocksnthreads[0]*blocksnthreads[1]; i++) {
-//            for(auto iter=0;iter<36;iter++) {
-//                std::cout <<cvar[36 * i + iter]<<" ";
-//            }
-//            std::cout<<endl;
-//        }
-
-//    cudaMemcpy(F_i, f, 3 * blocksnthreads[0]*blocksnthreads[1]*sizeof(double), cudaMemcpyDeviceToHost);
-//        CUDAcommon::handleerror(cudaFree(gU_i));
-    }
-//    CUDAcommon::handleerror(cudaEventRecord( stop, 0));
-//    CUDAcommon::handleerror(cudaEventSynchronize(stop));
-//    float elapsedtime;
-//    CUDAcommon::handleerror(cudaEventElapsedTime(&elapsedtime, start, stop));
-//    CUDAvars cvars=CUDAcommon::getCUDAvars();
-//    cvars.Ccforce += elapsedtime;
-//    std::cout<<"C CFM "<<elapsedtime<<endl;
-//    CUDAcommon::cudavars=cvars;
-//    CUDAcommon::handleerror(cudaEventDestroy(start));
-//    CUDAcommon::handleerror(cudaEventDestroy(stop));
 }
 
 void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet,

@@ -83,15 +83,15 @@ double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, int *params) {
     if(blocksnthreadse[1]>0) {
         FilamentBendingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i);
+                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingHarmonicenergy", "FilamentBendingHarmonic.cu");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingHarmonicenergy", "FilamentBendingHarmonic.cu");
         return gU_sum;}
     else
@@ -103,15 +103,16 @@ double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, double *z, int *params) {
     if(blocksnthreadsez[1]>0) {
         FilamentBendingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
-                                                                                    sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z );
+                                            sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i,
+                                            z, CUDAcommon::getCUDAvars().gculpritID,
+                                            CUDAcommon::getCUDAvars().gculpritFF,
+                                            CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingHarmonicenergyz", "FilamentBendingHarmonic.cu");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingHarmonicenergyz", "FilamentBendingHarmonic.cu");
         return gU_sum;
     }else

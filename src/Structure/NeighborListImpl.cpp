@@ -20,7 +20,7 @@
 #include "BoundaryElement.h"
 
 #include "GController.h"
-#include "MathFunctions.h"l
+#include "MathFunctions.h"
 
 using namespace mathfunc;
 

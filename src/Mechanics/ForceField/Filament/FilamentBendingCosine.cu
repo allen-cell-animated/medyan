@@ -83,42 +83,73 @@ void FilamentBendingCosine::optimalblocksnthreads( int nint){
 }
 double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, int *params) {
-    if(blocksnthreadse[1]>0) {
-        FilamentBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i);
-        auto cvars = CUDAcommon::getCUDAvars();
-        cvars.streamvec.push_back(&stream);
-        CUDAcommon::cudavars = cvars;
-        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
-        return gU_sum;}
-    else
-        return NULL;
+//    if(blocksnthreadse[1]>0) {
+//        FilamentBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
+//                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars()
+//                .gculpritID,
+//                CUDAcommon::getCUDAvars().gculpritFF,
+//                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
+//        return gU_sum;}
+//    else
+//        return NULL;
 }
 
 
 double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, double *z, int *params) {
+    if(blocksnthreadse[1]>0) {
+        FilamentBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
+                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, z, CUDAcommon::getCUDAvars()
+                .gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
+//        return gU_sum;
+    }
+
     if(blocksnthreadsez[1]>0) {
         FilamentBendingCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
-                                                                                    sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z );
+                                          sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z,
+                                          CUDAcommon::getCUDAvars().gculpritID,
+                                          CUDAcommon::getCUDAvars().gculpritFF,
+                                          CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
+//        return gU_sum;
+    }
+    if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
+        return NULL;
+    else{
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         return gU_sum;
-    }else
-        return NULL;
+    }
 }
 
 void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
@@ -328,37 +359,37 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
 
         force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                            (coord3[2] - coord2[2])*C );
-        double f1[3], f2[3], f3[3];
-        f1[0] =  k * ((-coord3[0] + coord2[0])*A +
-                           (coord2[0] - coord1[0])*B );
-        f1[1] =  k * ((-coord3[1] + coord2[1])*A +
-                           (coord2[1] - coord1[1])*B );
-        f1[2] =  k * ((-coord3[2] + coord2[2])*A +
-                           (coord2[2] - coord1[2])*B );
-
-
-        //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
-        f2[0] =  k *( (coord3[0] - 2*coord2[0] + coord1[0])*A -
-                           (coord2[0] - coord1[0])*B +
-                           (coord3[0] - coord2[0])*C );
-
-        f2[1] =  k *( (coord3[1] - 2*coord2[1] + coord1[1])*A -
-                           (coord2[1] - coord1[1])*B +
-                           (coord3[1] - coord2[1])*C );
-
-        f2[2] =  k *( (coord3[2] - 2*coord2[2] + coord1[2])*A -
-                           (coord2[2] - coord1[2])*B +
-                           (coord3[2] - coord2[2])*C );
-
-        //force on i-1, f = k*(A*l - B*l2):
-        f3[0] =  k *( (coord2[0] - coord1[0])*A -
-                           (coord3[0] - coord2[0])*C );
-
-        f3[1] =  k *( (coord2[1] - coord1[1])*A -
-                           (coord3[1] - coord2[1])*C );
-
-        f3[2] =  k *( (coord2[2] - coord1[2])*A -
-                           (coord3[2] - coord2[2])*C );
+//        double f1[3], f2[3], f3[3];
+//        f1[0] =  k * ((-coord3[0] + coord2[0])*A +
+//                           (coord2[0] - coord1[0])*B );
+//        f1[1] =  k * ((-coord3[1] + coord2[1])*A +
+//                           (coord2[1] - coord1[1])*B );
+//        f1[2] =  k * ((-coord3[2] + coord2[2])*A +
+//                           (coord2[2] - coord1[2])*B );
+//
+//
+//        //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
+//        f2[0] =  k *( (coord3[0] - 2*coord2[0] + coord1[0])*A -
+//                           (coord2[0] - coord1[0])*B +
+//                           (coord3[0] - coord2[0])*C );
+//
+//        f2[1] =  k *( (coord3[1] - 2*coord2[1] + coord1[1])*A -
+//                           (coord2[1] - coord1[1])*B +
+//                           (coord3[1] - coord2[1])*C );
+//
+//        f2[2] =  k *( (coord3[2] - 2*coord2[2] + coord1[2])*A -
+//                           (coord2[2] - coord1[2])*B +
+//                           (coord3[2] - coord2[2])*C );
+//
+//        //force on i-1, f = k*(A*l - B*l2):
+//        f3[0] =  k *( (coord2[0] - coord1[0])*A -
+//                           (coord3[0] - coord2[0])*C );
+//
+//        f3[1] =  k *( (coord2[1] - coord1[1])*A -
+//                           (coord3[1] - coord2[1])*C );
+//
+//        f3[2] =  k *( (coord2[2] - coord1[2])*A -
+//                           (coord3[2] - coord2[2])*C );
 //        std::cout<<i<<" "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "
 //                ""<<f3[1]<<" "<<f3[2]<<endl;
 

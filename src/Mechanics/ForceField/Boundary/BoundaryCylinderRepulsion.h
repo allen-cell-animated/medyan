@@ -17,7 +17,7 @@
 #include <vector>
 
 #include "common.h"
-
+#include "CUDAcommon.h"
 #include "BoundaryInteractions.h"
 #include "NeighborListImpl.h"
 
@@ -47,6 +47,15 @@ private:
 #ifdef CUDAACCL
     double *gU;
     cudaStream_t  stream;
+    int *gpu_beadSet;
+    double *gpu_krep;
+    double *gpu_slen;
+    double *gpu_U_i;
+    int *gpu_params;
+    double *gpu_beListplane;
+    int *gpu_nintperbe;
+//    CUDAvars cvars;
+    double *F_i;
 #endif
     
 public:

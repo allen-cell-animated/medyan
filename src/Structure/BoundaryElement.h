@@ -98,6 +98,7 @@ public:
     /// Returns normal vector of point to plane
     virtual const vector<double> normal(const vector<double> &point) = 0;
     virtual const vector<double> normal(const double *point) = 0;
+    virtual const void elementeqn(double* var) = 0;
     //@}
     
     //@{
@@ -125,6 +126,8 @@ public:
     
     //GetType implementation just returns zero (no boundary element types yet)
     virtual int getType() {return 0;}
+
+
 };
 
 #endif

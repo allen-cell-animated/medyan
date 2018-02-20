@@ -35,13 +35,13 @@ private:
     ///Array describing the constants in calculation
     int *beadSet;
     double *krep;
+    int nint = 0;
 #ifdef CUDAACCL
     int * gpu_beadSet = NULL;
     double * gpu_krep = NULL;
     int * gpu_params = NULL;
     CUDAvars cvars;
     double *F_i;
-    int nint = 0;
 #endif
 public:
     ///Array describing indexed set of interactions

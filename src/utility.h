@@ -33,7 +33,6 @@
 #define THREADSPERBLOCK 512
 #endif
 #endif
-
 using namespace std;
 
 //to test for zero values
@@ -43,14 +42,18 @@ const double ZERO_PREC = 1E-6;
 extern unsigned long long rdtsc();
 
 ///Check equaility of doubles
+#ifdef CUDAACCL
 __host__ __device__
+#endif
 inline bool areEqual(double d1, double d2) {
     const double ZERO_PREC = 1E-6;
     return fabs(d1 - d2) < ZERO_PREC;
 }
 
 /// Safe arc cos function
-__host__ __device__
+#ifdef CUDAACCL
+ __host__ __device__
+#endif
 inline double safeacos (double x) {
     if (x < -1.0) x = -1.0;
     else if (x > 1.0) x = 1.0;

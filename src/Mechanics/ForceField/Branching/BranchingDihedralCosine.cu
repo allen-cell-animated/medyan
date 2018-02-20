@@ -68,6 +68,13 @@ void BranchingDihedralCosine::optimalblocksnthreads( int nint){
 
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+
+        char a[] = "BranchingFF";
+        char b[] = "Branching Dihedral Cosine";
+        CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
     }
     else{
         blocksnthreadse.push_back(0);
@@ -85,7 +92,9 @@ double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 
         BranchingDihedralCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
                 (double), stream>>>
-                          (coord, f, beadSet, kdih, pos, params, gU_i);
+                          (coord, f, beadSet, kdih, pos, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+                                  CUDAcommon::getCUDAvars().gculpritFF,
+                                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -106,7 +115,9 @@ double* BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
     if(blocksnthreadsez[1]>0) {
         BranchingDihedralCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
                                             sizeof(double), stream>> > (coord, f, beadSet, kdih, pos,
-                                            params, gU_i, z );
+                                            params, gU_i, z, CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -129,6 +140,15 @@ void BranchingDihedralCosine::forces(double *coord, double *f, int *beadSet,
         CUDAcommon::cudavars = cvars;
         CUDAcommon::handleerror(cudaGetLastError(),"BranchingDihedralCosineforces", "BranchingDihedralCosine.cu");
     }
+}
+
+void BranchingDihedralCosine::checkforculprit() {
+    CUDAcommon::printculprit("BranchingDihedral","BranchingDihedralCosine");
+    BranchingPoint *br;
+    br = (BranchingPoint::getBranchingPoints()[CUDAcommon::getCUDAvars().culpritID[0]]);
+    cout<<"Printing culprit branching point information."<<endl;
+    br->printSelf();
+    exit(EXIT_FAILURE);
 }
 #endif
 double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,

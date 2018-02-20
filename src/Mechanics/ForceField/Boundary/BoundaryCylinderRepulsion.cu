@@ -15,6 +15,7 @@
 
 #include "BoundaryCylinderRepulsionExp.h"
 #include "BoundaryElement.h"
+#include "BoundaryElementImpl.h"
 
 #include "Bead.h"
 #include "Cylinder.h"
@@ -23,13 +24,14 @@
 #include "cross_check.h"
 #include "CUDAcommon.h"
 #include "BoundaryCylinderRepulsionCUDA.h"
+#include "nvToolsExt.h"
 
 using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
-    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+
 
     //count interactions
     nint = 0;
@@ -45,7 +47,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     beadSet = new int[n * nint];
     krep = new double[nint];
     slen = new double[nint];
-
+    auto beList = BoundaryElement::getBoundaryElements();
 
     int nbe = BoundaryElement::getBoundaryElements().size();
     int i = 0;
@@ -53,6 +55,11 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     int bindex = 0;
 
     nneighbors = new int[nbe];
+    double *beListplane;
+    int *nintvec;
+    beListplane = new double[4 * nbe];
+    nintvec = new int[nbe];
+
     auto cumnn=0;
     for (i = 0; i < nbe; i++) {
 
@@ -60,7 +67,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         auto nn = _neighborList->getNeighbors(be).size();
 
         nneighbors[i] = 0;
-        auto idx=0;
+        auto idx = 0;
 
         for (ni = 0; ni < nn; ni++) {
 //            auto check=false;
@@ -92,13 +99,60 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         }
         nneighbors[i]=idx;
         cumnn+=idx;
+        nintvec[i] = cumnn;
+        if(dynamic_cast<PlaneBoundaryElement*>(beList[i])) {
+            double *x = new double[4];
+            beList[i]->elementeqn(x);
+            beListplane[4 * i] = x[0];
+            beListplane[4 * i +1] = x[1];
+            beListplane[4 * i +2] = x[2];
+            beListplane[4 * i +3] = x[3];
+        }
+        else{
+            cout<<"CUDA cannot handle non-plane type boundaries. Exiting..."<<endl;
+            exit(EXIT_FAILURE);
+        }
     }
+//    for (i = 0; i < nbe; i++) {
+//        std::cout<<nintvec[i]<<" "<<nint<<" "<<beListplane[4 *i]<<" "<<beListplane[4 *i +1]<<" "<<beListplane[4 *i
+//                                                                                                            +2]<<" "
+//                ""<<beListplane[4 *i +3]<<endl;
+//    }
 #ifdef CUDAACCL
-    //PINNED memory to accelerate data transfer
-    CUDAcommon::handleerror(cudaHostAlloc((void**)&U_i, sizeof(double), cudaHostAllocDefault));
-    CUDAcommon::handleerror(cudaMalloc((void **) &gU, sizeof(double)));
+    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    F_i = new double[3 * Bead::getBeads().size()];
+    nvtxRangePushA("CVFF");
+    _FFType.optimalblocksnthreads(nint);
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, n * nint * sizeof(int)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * nint * sizeof(int), cudaMemcpyHostToDevice));
 
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_krep, nint * sizeof(double)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_krep, krep, nint * sizeof(double), cudaMemcpyHostToDevice));
+
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_slen, nint * sizeof(double)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_slen, slen, nint * sizeof(double), cudaMemcpyHostToDevice));
+
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_nintperbe, nbe * sizeof(int)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_nintperbe, nintvec, nbe * sizeof(int), cudaMemcpyHostToDevice));
+
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beListplane, 4 * nbe * sizeof(double)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_beListplane, beListplane, 4 * nbe * sizeof(double), cudaMemcpyHostToDevice));
+
+    //PINNED memory to accelerate data transfer speed
+//    CUDAcommon::handleerror(cudaHostAlloc((void**)&U_i, sizeof(double), cudaHostAllocDefault), "cudaHOstAlloc",
+//                            "BoundaryCylinderRepulsion.cu");
+//    CUDAcommon::handleerror(cudaMalloc((void **) &gU, sizeof(double)), "cudaMalloc", "BoundaryCylinderRepulsion.cu");
+    vector<int> params;
+    params.push_back(int(n));
+    params.push_back(nint);
+
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)),"cuda data transfer",
+                            "BoundaryCylinderRepulsion.cu");
+    CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice),
+                            "cuda data transfer", "BoundaryCylinderRepulsion.cu");
+    nvtxRangePop();
 #endif
+    delete beListplane, nintvec;
 }
 
 template<class BRepulsionInteractionType>
@@ -108,211 +162,91 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
     delete krep;
     delete slen;
     delete nneighbors;
+
 #ifdef CUDAACCL
-    std::cout<<nint<<endl;
+    _FFType.deallocate();
     if(nint>0) {
         CUDAcommon::handleerror(cudaStreamDestroy(stream));
-        CUDAcommon::handleerror(cudaFreeHost(U_i));
-        CUDAcommon::handleerror(cudaFree(gU));
+        CUDAcommon::handleerror(cudaFree(gpu_beadSet));
+        CUDAcommon::handleerror(cudaFree(gpu_krep));
+        CUDAcommon::handleerror(cudaFree(gpu_slen));
+        CUDAcommon::handleerror(cudaFree(gpu_beListplane));
+        CUDAcommon::handleerror(cudaFree(gpu_nintperbe));
+//        CUDAcommon::handleerror(cudaFreeHost(U_i));
+//        CUDAcommon::handleerror(cudaFree(gU));
     }
 #endif
 }
 
 template <class BRepulsionInteractionType>
 double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double *coord, double *f, double d) {
-
-
+    double U_i[1], U_ii;
+    double* gU_i;
+    U_ii = NULL;
+#ifdef CUDAACCL
+    //has to be changed to accomodate aux force
+    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
+    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+    nvtxRangePushA("CCBE");
+//    if(d == 0.0){
+//        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
+//                            gpu_params);
+//    }
+//    else{
+        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
+                            gpu_d, gpu_params);
+//    }
+    nvtxRangePop();
+#else
+    nvtxRangePushA("SCBE");
     if (d == 0.0) {
-        U_i[0] = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
+        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
     }
     else {
-        U_i[0] = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
+        U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
     }
-#ifdef CUDAACCL
-//    cudaStream_t  stream;
-//    cudaEvent_t event;
-//    CUDAcommon::handleerror(cudaStreamCreate(&stream));
-//    CUDAcommon::handleerror(cudaEventCreate(&event));
-//    auto cvars = CUDAcommon::getCUDAvars();
-//    cvars.eventvec.push_back(event);
-//    cvars.streamvec.push_back(stream);
-//    CUDAcommon::cudavars = cvars;
-
-
-    CUDAcommon::handleerror(cudaMemcpy(gU, U_i, sizeof(double),
-                                       cudaMemcpyHostToDevice));
-    double * U_tot = CUDAcommon::getCUDAvars().gpu_energy;
-    BoundaryCylinderRepulsionE<<<1,1,0,stream>>>(gU,U_tot);
-    auto cvars = CUDAcommon::getCUDAvars();
-    cvars.streamvec.push_back(&stream);
-    CUDAcommon::cudavars = cvars;
-//    CUDAcommon::handleerror(cudaEventRecord(event, stream));
-//    CUDAcommon::handleerror(cudaStreamSynchronize(stream));
+    nvtxRangePop();
 #endif
-//    std::cout<<"=================="<<endl;
-#ifdef CROSSCHECK
-    double U2 = 0;
-    double U_ii;
-
-    for (auto be: BoundaryElement::getBoundaryElements()) {
-//        std::cout<<"neighbors "<<_neighborList->getNeighbors(be).size()<<endl;
-        for(auto &c : _neighborList->getNeighbors(be)) {
-
-            double kRep = be->getRepulsionConst();
-            double screenLength = be->getScreeningLength();
-
-            //potential acts on second bead unless this is a minus end
-            Bead* bd;
-            if(c->isMinusEnd()){
-            bd = c->getFirstBead();
-
-            if (d == 0.0)
-            {U_ii =  _FFType.energy(
-                                      bd, be->distance(bd->coordinate), kRep, screenLength);
-//                std::cout<<be->distance(bd->coordinate)<<" "<<U_ii<<" ";
-            }
-            else
-            {
-                U_ii = _FFType.energy(
-                                     bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
-//                std::cout<<be->stretchedDistance(bd->coordinate, bd->force, d)<<" "<<U_ii<<" ";
-            }
-
-            if(fabs(U_ii) == numeric_limits<double>::infinity()
-               || U_ii != U_ii || U_ii < -1.0) {
-
-                U2=-1;
-                break;
-            }
-            else
-                U2 += U_ii;
-            }
-            //---------------------------
-            bd = c->getSecondBead();
-
-            if (d == 0.0)
-            {U_ii =  _FFType.energy(
-                                    bd, be->distance(bd->coordinate), kRep, screenLength);
-                //                std::cout<<be->distance(bd->coordinate)<<" "<<U_ii<<" ";
-            }
-            else
-            {
-                U_ii = _FFType.energy(
-                                      bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
-                //                std::cout<<be->stretchedDistance(bd->coordinate, bd->force, d)<<" "<<U_ii<<" ";
-            }
-
-
-            if(fabs(U_ii) == numeric_limits<double>::infinity()
-               || U_ii != U_ii || U_ii < -1.0) {
-
-                U2=-1;
-            }
-            else
-                U2 += U_ii;
-
-
-        }
-            }
-    if(abs(U_i-U2)<=U2/100000000000)
-        std::cout<<"E B YES "<<endl;
-    else
-    {   std::cout<<U_i<<" "<<U2<<endl;
-        exit(EXIT_FAILURE);
-    }
-
-#endif
-    return U_i[0];
+    return U_ii;
 }
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
-//    for(auto b:Bead::getBeads())
-//        std::cout<<b->getID()<<" "<<b->_dbIndex<<endl;
-//    std::cout<<"====================="<<endl;
-//    for (auto be: BoundaryElement::getBoundaryElements()) {
-//        for(auto &c: _neighborList->getNeighbors(be)) {
-//
-//            double kRep = be->getRepulsionConst();
-//            double screenLength = be->getScreeningLength();
-//
-//            //potential acts on second cylinder bead unless this is a minus end
-//            if(c->isMinusEnd()) {
-//                std::cout<<"M "<<c->getFirstBead()->getID()<<" "<<c->getFirstBead()->_dbIndex<<" "<<
-//                c->getSecondBead()->_dbIndex<<" "<<c->getSecondBead()->getID()<<" "<<c->getMCylinder()->getLength()<<endl;
-//            }
-//            else if(c->isPlusEnd()) {
-//                std::cout<<"P "<<c->getFirstBead()->getID()<<" "<<c->getFirstBead()->_dbIndex<<" "<<
-//                c->getSecondBead()->_dbIndex<<" "<<c->getSecondBead()->getID()<<" "<<c->getMCylinder()->getLength()<<endl;
-//            }
-//
-//        }
-//    }
-//    std::cout<<"++++++++++++++++++++++"<<endl;
-    _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
-//    std::cout<<"====================="<<endl;
-#ifdef CROSSCHECK
-    //    std::cout<<"old adjacency list"<<endl;
-//    for (auto be: BoundaryElement::getBoundaryElements()) {
-//        int count=0;
-//        vector<int> b;
-//        for(auto &c: _neighborList->getNeighbors(be)) {
-//            if(c->isMinusEnd()) {count++; b.push_back(c->getFirstBead()->_dbIndex);}
-//            else if(c->isPlusEnd()) {count++;b.push_back(c->getSecondBead()->_dbIndex);}
-//            }
-//        std::cout<<count<<endl;
-//        for(auto i=0;i<count;i++)
-//            std::cout<<b[i]<<" ";
-//        std::cout<<endl;
-//    }
-//    for (auto be: BoundaryElement::getBoundaryElements()) {
-//        for(auto &c: _neighborList->getNeighbors(be)) {
-//            if(c->isMinusEnd()) {std::cout<<"old way "<<_neighborList->getNeighbors(be).size()<<" "<<c->getFirstBead()->_dbIndex<<" ";}
-//            else if(c->isPlusEnd()) {std::cout<<"old way "<<_neighborList->getNeighbors(be).size()<<" "<<c->getFirstBead()->_dbIndex<<" ";}
-//            std::cout<<endl;
-//        }
-//    }
+#ifdef CUDAACCL
+    //has to be changed to accomodate aux force
+    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    double * gpu_force;
 
-    for (auto be: BoundaryElement::getBoundaryElements()) {
+    if(cross_checkclass::Aux){
+        nvtxRangePushA("CCFBE");
 
-        for(auto &c: _neighborList->getNeighbors(be)) {
-
-            double kRep = be->getRepulsionConst();
-            double screenLength = be->getScreeningLength();
-
-            //potential acts on second cylinder bead unless this is a minus end
-            Bead* bd;
-            if(c->isMinusEnd()) {
-                bd = c->getFirstBead();
-                auto normal = be->normal(bd->coordinate);
-                if(cross_checkclass::Aux)
-                    _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-                else
-                    _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-            }
-
-                bd = c->getSecondBead();
-                auto normal = be->normal(bd->coordinate);
-                if(cross_checkclass::Aux)
-                    _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-                else
-                    _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-        }
+        gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
+        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
+                       gpu_params);
+        nvtxRangePop();
     }
-    if(cross_checkclass::Aux)
-        {    auto state=cross_check::crosscheckAuxforces(f);
-            std::cout<<"F S+B+L+M+ +V+B YES "<<state<<endl;}
-    else
-    {    auto state=cross_check::crosscheckforces(f);
-        std::cout<<"F S+B+L+M+ +V+B YES "<<state<<endl;}
+    else {
+        nvtxRangePushA("CCFBE");
 
+        gpu_force = CUDAcommon::getCUDAvars().gpu_force;
+        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
+                       gpu_params);
+        nvtxRangePop();
+    }
 
+    //TODO remove this later need not copy forces back to CPU.
+//    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
+//                                       cudaMemcpyDeviceToHost),"cuda data transfer", "BoundaryCylinderRepulsion.cu");
 #endif
+    nvtxRangePushA("SCFBE");
+    _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
+    nvtxRangePop();
 }
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
-//    std::cout<<"BOUNDARY REPULSION DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
+//    std::cout<<"BOUNDARY REPULSION LOAD FORCES DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
     for (auto be: BoundaryElement::getBoundaryElements()) {
 
         for(auto &c : _neighborList->getNeighbors(be)) {

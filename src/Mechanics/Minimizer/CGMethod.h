@@ -80,6 +80,7 @@ protected:
     bool *gpu_convergencecheck;
     bool *convergencecheck;
     double gpuFDotF(double *f1, double *f2);
+    void CUDAresetlambda(cudaStream_t stream);
     void CUDAinitializeLambda(cudaStream_t stream, bool *check_in, bool *check_out, bool *Polaksafestate);
     void CUDAfindLambda(cudaStream_t  stream, cudaEvent_t  event, bool *checkin, bool
             *checkout, bool *gpu_safestate);
@@ -96,21 +97,22 @@ protected:
     void CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *minstateout, bool *safestatein, bool
     *safestateout);
     void CUDAmoveBeads(cudaStream_t stream, bool *gpu_checkin );
+    void getmaxFCUDA(double *gpu_forceAux, int *gpu_nint, double *gpu_fmax);
     //PING PONG for backtracking (both normal and safe)
 //    struct backtrackingvars {
 //        double currentEnergy;
 //        double energyLambda;
 //        double lambda;
 //    };
-    volatile bool *cconvergencecheck;
-    bool sconvergencecheck;
-    bool *h_stop, *g_stop1, *g_stop2, *g_s1, *g_s2, *g_ss;
+    bool *g_stop1, *g_stop2, *g_s1, *g_s2, *g_ss;
 //    backtrackingvars *bvar, *gpu_bvar1, *gpu_bvar2, *g_b1, *g_b2, *g_bs;
     cudaStream_t s1, s2, s3, *sp1, *sp2, *sps;
     cudaEvent_t e1, e2, *ep1, *ep2, *eps;
     // @PING PONG ENDS
 
 #endif
+    volatile bool *cconvergencecheck;
+    bool *h_stop, sconvergencecheck;
     /// For use in minimization
 
 

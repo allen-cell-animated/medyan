@@ -98,18 +98,19 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+//    std::cout<<"Fil Stretching Forces"<<endl;
     nvtxRangePushA("CCEFS");
 
-    if(d == 0.0){
-        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
-
-    }
-    else{
+//    if(d == 0.0){
+//        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
+//
+//    }
+//    else{
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_d,
                             gpu_params);
-    }
+//    }
     nvtxRangePop();
-#endif
+#else
     nvtxRangePushA("SCEFS");
 
     if (d == 0.0)
@@ -117,80 +118,8 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
     else
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, d);
     nvtxRangePop();
-    if(gU_i!=NULL) {
-
-        CUDAcommon::handleerror(cudaMemcpy(U_i, gU_i, sizeof(double), cudaMemcpyDeviceToHost),
-                                "computeEnergy", "FilamentStretching.cu");
-    }
-    else
-        U_i[0] = 0.0;
-    if(fabs(U_ii)>1000000.0) {
-        if (fabs((U_ii - U_i[0]) / U_ii) > 0.0001){
-            std::cout<<endl;
-            std::cout << "CUDA FSE " << U_i[0] << endl;
-            std::cout << "Vectorized FSE " << U_ii << endl;
-            std::cout << "Precision match error" << fabs(U_ii - U_i[0]) << endl;
-        }
-    }
-    else {
-        if (fabs(U_ii - U_i[0]) > 1.0 / 100000000.0){
-            std::cout << "Precision match " << fabs(U_ii - U_i[0]) << endl;
-            std::cout << "CUDA FSE " << U_i[0] << endl;
-            std::cout << "Vectorized FSE " << U_ii << endl;
-//        exit(EXIT_FAILURE);
-        }
-    }
-
-#ifdef CROSSCHECK
-    double U2 = 0;
-    double U_ii;
-    for (auto f: Filament::getFilaments()) {
-
-        U_ii = 0;
-
-        if (d == 0.0){
-            for(auto it : f->getCylinderVector()){
-
-                Bead* b1 = it->getFirstBead();
-                Bead* b2 = it->getSecondBead();
-                double kStretch = it->getMCylinder()->getStretchingConst();
-                double eqLength = it->getMCylinder()->getEqLength();
-                U_ii += _FFType.energy(b1, b2, kStretch, eqLength);
-            }
-        }
-        else {
-            for(auto it : f->getCylinderVector()){
-                Bead* b1 = it->getFirstBead();
-                Bead* b2 = it->getSecondBead();
-
-//                std::cout<<b1->coordinate[0]<<" "<<b1->coordinate[1]<<" "<<b1->coordinate[2]<<" "<<b2->coordinate[0]<<" "<<b2->coordinate[1]<<" "<<b2->coordinate[2]<<" ";
-                double kStretch =it->getMCylinder()->getStretchingConst();
-                double eqLength = it->getMCylinder()->getEqLength();
-
-                U_ii += _FFType.energy(b1, b2, kStretch, eqLength, d);
-            }
-        }
-
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_ii != U_ii || U_ii < -1.0) {
-
-            //set culprit and return
-            _filamentCulprit = f;
-
-            U2=-1;
-            break;
-        }
-        else
-            U2 += U_ii;
-    }
-    if(abs(U_i-U2)<=U2/100000000000)
-        std::cout<<"E S YES "<<endl;
-    else
-    {   std::cout<<U_i<<" "<<U2<<endl;
-        exit(EXIT_FAILURE);
-    }
 #endif
-    whoisCulprit();
+//    whoisCulprit();
     return U_ii;
 }
 
@@ -201,8 +130,6 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
     double * gpu_force;
-
-
     if(cross_checkclass::Aux){
         nvtxRangePushA("CCFFS");
 
@@ -212,70 +139,15 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord
     }
     else {
         nvtxRangePushA("CCFFS");
-
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
         nvtxRangePop();
     }
 
-
-    //TODO remove this later need not copy forces back to CPU.
-    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
-                                       cudaMemcpyDeviceToHost));
-#endif
+#else
     nvtxRangePushA("SCFFS");
     _FFType.forces(coord, f, beadSet, kstr, eql);
     nvtxRangePop();
-#ifdef CUDAACCL
-
-    bool state = false;
-    for(auto iter=0;iter<Bead::getBeads().size();iter++) {
-        if (fabs(F_i[3 * iter] - f[3 * iter]) <=1.0/100000000.0 && fabs(F_i[3 * iter + 1] - f[3 * iter + 1])
-                                                                   <=1.0/100000000.0 && fabs(F_i[3 * iter + 2] - f[3 * iter + 2]) <=1.0/100000000.0)
-        {state = true;}
-        else {
-            state = false;
-            std::cout<<endl;
-            std::cout<<"FS Forces"<<endl;
-            std::cout<<"Precision match "<<fabs(F_i[3 * iter] - f[3 * iter])<<" "<<fabs(F_i[3 * iter + 1] - f[3 *
-                                                                                                              iter + 1])<<" "<<fabs(F_i[3 * iter + 2] - f[3 * iter + 2])<<endl;
-            std::cout << "CUDA       " << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] << endl;
-            std::cout << "Vectorized " << f[3 * iter] << " " << f[3 * iter + 1] << " " << f[3 * iter + 2] << endl;
-
-//        exit(EXIT_FAILURE);
-        }
-    }
-//    if(state)
-//        std::cout<<"F M YES"<<endl;
-#endif
-#ifdef CROSSCHECK
-    for (auto f: Filament::getFilaments()) {
-
-        for(auto it : f->getCylinderVector()){
-
-            Bead* b1 = it->getFirstBead();
-            Bead* b2 = it->getSecondBead();
-            double kStretch =it->getMCylinder()->getStretchingConst();
-            double eqLength = it->getMCylinder()->getEqLength();
-
-
-            if(cross_checkclass::Aux)
-                _FFType.forcesAux(b1, b2, kStretch, eqLength);
-            else
-                _FFType.forces(b1, b2, kStretch, eqLength);
-
-
-        }
-    }
-//    for(auto bd:Bead::getBeads())
-//        std::cout<<bd->force[0]<<" "<<bd->force[1]<<" "<<bd->force[2]<<" ";
-//    std::cout<<endl;
-
-     if(cross_checkclass::Aux)
-     {auto state=cross_check::crosscheckAuxforces(f);    std::cout<<"F S YES "<<state<<endl;}
-     else
-     { auto state=cross_check::crosscheckforces(f);     std::cout<<"F S YES "<<state<<endl;}
-
 #endif
 
 }

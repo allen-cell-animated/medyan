@@ -59,6 +59,13 @@ void BranchingStretchingHarmonic::optimalblocksnthreads( int nint){
 
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+
+        char a[] = "BranchingFF";
+        char b[] = "Branching Stretching Harmonic";
+        CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
+        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
     }
     else{
         blocksnthreadse.push_back(0);
@@ -74,7 +81,9 @@ double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadS
                                             double *kstr, double *eql, double *pos, int *params) {
     if(blocksnthreadse[1]>0) {
         BranchingStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i);
+                (double), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i, CUDAcommon::getCUDAvars()
+                .gculpritID, CUDAcommon::getCUDAvars().gculpritFF, CUDAcommon::getCUDAvars().gculpritinteraction,
+                gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -93,7 +102,9 @@ double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadS
     if(blocksnthreadsez[1]>0) {
         BranchingStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
                                                                                           sizeof(double), stream>> >
-                (coord, f, beadSet, kstr, eql, pos, params, gU_i, z );
+                (coord, f, beadSet, kstr, eql, pos, params, gU_i, z, CUDAcommon::getCUDAvars().gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -121,7 +132,14 @@ void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         CUDAcommon::cudavars = cvars;
     }
 }
-
+void BranchingStretchingHarmonic::checkforculprit() {
+    CUDAcommon::printculprit("BranchingStretching","BranchingStretchingHarmonic");
+    BranchingPoint* br;
+    br = (BranchingPoint::getBranchingPoints()[CUDAcommon::getCUDAvars().culpritID[0]]);
+    cout<<"Printing culprit branching point information."<<endl;
+    br->printSelf();
+    exit(EXIT_FAILURE);
+}
 #endif
 double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                            double *kstr, double *eql, double *pos){

@@ -110,7 +110,7 @@ double BranchingBending<BBendingInteractionType>::computeEnergy(double *coord, d
         nvtxRangePop();
     }
     nvtxRangePop();
-#endif
+#else
     nvtxRangePushA("SCEBB");
 
     if (d == 0.0)
@@ -118,30 +118,7 @@ double BranchingBending<BBendingInteractionType>::computeEnergy(double *coord, d
     else
         U_ii = _FFType.energy(coord, f, beadSet, kbend, eqt, d);
     nvtxRangePop();
-    if(gU_i!=NULL) {
-
-        CUDAcommon::handleerror(cudaMemcpy(U_i, gU_i, sizeof(double), cudaMemcpyDeviceToHost),"computeEnergy",
-                                "BranchingBending.cu");
-    }
-    else
-        U_i[0] = 0.0;
-    if(fabs(U_ii)>1000000.0) {
-        if (fabs((U_ii - U_i[0]) / U_ii) > 0.0001){
-            std::cout << "Precision match error" << fabs(U_ii - U_i[0]) << endl;
-            std::cout << "CUDA BBE " << U_i[0] << endl;
-            std::cout << "Vectorized BBE " << U_ii << endl;
-
-        }
-    }
-    else {
-        if (fabs(U_ii - U_i[0]) > 1.0 / 100000000.0){
-            std::cout << "Precision match " << fabs(U_ii - U_i[0]) << endl;
-            std::cout << "CUDA BBE " << U_i[0] << endl;
-            std::cout << "Vectorized BBE " << U_ii << endl;
-//        exit(EXIT_FAILURE);
-        }
-    }
-
+#endif
     return U_ii;
 }
 
@@ -167,33 +144,11 @@ void BranchingBending<BBendingInteractionType>::computeForces(double *coord, dou
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kbend, gpu_eqt, gpu_params);
         nvtxRangePop();
     }
-
-    //TODO remove this later need not copy forces back to CPU.
-    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
-                                       cudaMemcpyDeviceToHost));
-#endif
+#else
     nvtxRangePushA("SCFBB");
 
     _FFType.forces(coord, f, beadSet, kbend, eqt);
     nvtxRangePop();
-#ifdef CUDAACCL
-
-    bool state = false;
-    for(auto iter=0;iter<Bead::getBeads().size();iter++) {
-        if (fabs(F_i[3 * iter] - f[3 * iter]) <=1.0/100000000.0 && fabs(F_i[3 * iter + 1] - f[3 * iter + 1])
-                                                                   <=1.0/100000000.0 && fabs(F_i[3 * iter + 2] - f[3 * iter + 2]) <=1.0/100000000.0)
-        {state = true;}
-        else {
-            state = false;
-            std::cout<<endl;
-            std::cout<<"BB Forces"<<endl;
-            std::cout << "CUDA       " << F_i[3 * iter] << " " << F_i[3 * iter + 1] << " " << F_i[3 * iter + 2] << endl;
-            std::cout << "Vectorized " << f[3 * iter] << " " << f[3 * iter + 1] << " " << f[3 * iter + 2] << endl;
-            std::cout<<"Precision match "<<fabs(F_i[3 * iter] - f[3 * iter])<<" "<<fabs(F_i[3 * iter + 1] - f[3 *
-                                                                                                              iter + 1])<<" "<<fabs(F_i[3 * iter + 2] - f[3 * iter + 2])<<endl;
-//        exit(EXIT_FAILURE);
-        }
-    }
 #endif
 }
 

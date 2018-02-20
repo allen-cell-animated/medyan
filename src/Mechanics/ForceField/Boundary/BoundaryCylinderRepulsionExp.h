@@ -36,10 +36,27 @@ public:
                 double *krep, double *slen, int *nneighbors);
     
     double loadForces(double r, double krep , double slen);
-#ifdef CROSSCHECK
-    double energy(Bead*, double, double, double);
-    void forces(Bead*, double, vector<double>& norm, double, double);
-    void forcesAux(Bead*, double, vector<double>& norm, double, double);
+
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint);
+
+    double* energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
+                   int* nintvec, double* beListplane, int *params);
+
+    double* energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
+                   int* nintvec, double* beListplane, double *z, int *params);
+
+    void forces(double *coord, double *f, int *beadSet, double *krep, double *slen,
+                int* nintvec, double* beListplane, int *params);
+    void deallocate();
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    static void checkforculprit();
+    double *gU_i;
+    double *gU_sum;
+    char *gFF, *ginteraction;
+    cudaStream_t stream;
 #endif
 private:
 #ifdef CUDAACCL

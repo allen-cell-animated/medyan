@@ -46,92 +46,103 @@ void saxpy(int n, float a, float *x, float *y)
     if (i < n) y[i] = a*x[i] + y[i];
 }
 __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *beadSet, double *krep,
-                                           int *params, double *U_i) {
+                                           int *params, double *U_i, double *z, int *culpritID,
+                                           char* culpritFF, char* culpritinteraction, char* FField, char*
+                                           interaction) {
 //memory needed: 34*THREADSPERBLOCK*sizeof(double)+2*THREADSPERBLOCK*sizeof(int);
-
-    extern __shared__ double s[];
+    if(z[0] == 0.0) {
+        extern __shared__ double s[];
 //    double *coord_image=s;
 //    double *c1 = &coord_image[3 * blockDim.x];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *c4 = &c3[3 * blockDim.x];
-    double d, invDSquare;
-    double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-    double ATG1, ATG2, ATG3, ATG4;
-    int nint = params[1];
-    int n = params[0];
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+        double *c1 = s;
+        double *c2 = &c1[3 * blockDim.x];
+        double *c3 = &c2[3 * blockDim.x];
+        double *c4 = &c3[3 * blockDim.x];
+        double d, invDSquare;
+        double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+        double ATG1, ATG2, ATG3, ATG4;
+        int nint = params[1];
+        int n = params[0];
+        const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
-    if(thread_idx<nint) {
-        U_i[thread_idx] = 0.0;
-        for(auto i=0;i<3;i++){
-            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
-            c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
-            c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
-            c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
-        }
-
-    }
-    __syncthreads();
-
-    if(thread_idx<nint) {
-        //check if parallel
-        if (areParallel(c1, c2, c3, c4, 3 * threadIdx.x)) {
-
-            d = twoPointDistance(c1, c3, 3 * threadIdx.x);
-            invDSquare = 1 / (d * d);
-            U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
-
-//            gU_i[thread_idx]= U_i[thread_idx];
-            if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000) //infinity
-                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-
-                //set culprit and return TODO
-                U_i[thread_idx] = -1.0;
-//                for (int i = 1; i < gridDim.x; i++)
-//                    U[i] = 0.0;
-//                assert(0);
+        if (thread_idx < nint) {
+            U_i[thread_idx] = 0.0;
+            for (auto i = 0; i < 3; i++) {
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
+                c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
             }
 
         }
+        __syncthreads();
 
-        else {
+        if (thread_idx < nint) {
+            //check if parallel
+            if (areParallel(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
-            //check if in same plane
-        if (areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
+                d = twoPointDistance(c1, c3, 3 * threadIdx.x);
+                invDSquare = 1 / (d * d);
+                U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
 
-            //slightly move point
-            movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
-        }
+                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000) //infinity
+                    || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+                    U_i[thread_idx] = -1.0;
+                    culpritID[0] = beadSet[n * thread_idx];
+                    culpritID[1] = beadSet[n * thread_idx + 1];
+                    culpritID[2] = beadSet[n * thread_idx + 2];
+                    culpritID[3] = beadSet[n * thread_idx + 3];
+                    int j = 0;
+                    while (FField[j] != 0) {
+                        culpritFF[j] = FField[j];
+                        j++;
+                    }
+                    j = 0;
+                    while (interaction[j] != 0) {
+                        culpritinteraction[j] = interaction[j];
+                        j++;
+                    }
+                    assert(0);
+                    __syncthreads();
+                }
 
-        a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
-        b = scalarProduct(c3, c4, c3, c4, 3 * threadIdx.x);
-        c = scalarProduct(c3, c1, c3, c1, 3 * threadIdx.x);
-        d = scalarProduct(c1, c2, c3, c4, 3 * threadIdx.x);
-        e = scalarProduct(c1, c2, c3, c1, 3 * threadIdx.x);
-        F = scalarProduct(c3, c4, c3, c1, 3 * threadIdx.x);
+            } else {
 
-        AA = sqrt(a * c - e * e);
-        BB = sqrt(b * c - F * F);
+                //check if in same plane
+                if (areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
-        CC = d * e - a * F;
-        DD = b * e - d * F;
+                    //slightly move point
+                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
+                }
 
-        EE = sqrt(a * (b + c - 2 * F) - (d - e) * (d - e));
-        FF = sqrt(b * (a + c + 2 * e) - (d + F) * (d + F));
+                a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
+                b = scalarProduct(c3, c4, c3, c4, 3 * threadIdx.x);
+                c = scalarProduct(c3, c1, c3, c1, 3 * threadIdx.x);
+                d = scalarProduct(c1, c2, c3, c4, 3 * threadIdx.x);
+                e = scalarProduct(c1, c2, c3, c1, 3 * threadIdx.x);
+                F = scalarProduct(c3, c4, c3, c1, 3 * threadIdx.x);
 
-        GG = d * d - a * b - CC;
-        HH = CC + GG - DD;
-        JJ = c * (GG + CC) + e * DD - F * CC;
+                AA = sqrt(a * c - e * e);
+                BB = sqrt(b * c - F * F);
+
+                CC = d * e - a * F;
+                DD = b * e - d * F;
+
+                EE = sqrt(a * (b + c - 2 * F) - (d - e) * (d - e));
+                FF = sqrt(b * (a + c + 2 * e) - (d + F) * (d + F));
+
+                GG = d * d - a * b - CC;
+                HH = CC + GG - DD;
+                JJ = c * (GG + CC) + e * DD - F * CC;
 
 
-        ATG1 = atan((a + e) / AA) - atan(e / AA);
-        ATG2 = atan((a + e - d) / EE) - atan((e - d) / EE);
-        ATG3 = atan((F) / BB) - atan((F - b) / BB);
-        ATG4 = atan((d + F) / FF) - atan((d + F - b) / FF);
+                ATG1 = atan((a + e) / AA) - atan(e / AA);
+                ATG2 = atan((a + e - d) / EE) - atan((e - d) / EE);
+                ATG3 = atan((F) / BB) - atan((F - b) / BB);
+                ATG4 = atan((d + F) / FF) - atan((d + F - b) / FF);
 
-        U_i[thread_idx] = 0.5 * krep[thread_idx] / JJ * (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
+                U_i[thread_idx] = 0.5 * krep[thread_idx] / JJ *
+                                  (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
 //        U_i[thread_idx] =a;
 //        gU_i[thread_idx] = U_i[thread_idx];
 //        for(auto j=0; j<3; j++) {
@@ -139,17 +150,28 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
 //            gc2[3 * threadIdx.x + j] = c2[3 * threadIdx.x + j];
 //        }
 
-        if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
-            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-
-            //set culprit and return TODO
-            U_i[thread_idx] = -1.0;
-//            for (int i = 1; i < gridDim.x; i++)
-//                U[i] = 0.0;
-//            assert(0);
+                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
+                    || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+                    U_i[thread_idx] = -1.0;
+                    culpritID[0] = beadSet[n * thread_idx];
+                    culpritID[1] = beadSet[n * thread_idx + 1];
+                    culpritID[2] = beadSet[n * thread_idx + 2];
+                    culpritID[3] = beadSet[n * thread_idx + 3];
+                    int j = 0;
+                    while (FField[j] != 0) {
+                        culpritFF[j] = FField[j];
+                        j++;
+                    }
+                    j = 0;
+                    while (interaction[j] != 0) {
+                        culpritinteraction[j] = interaction[j];
+                        j++;
+                    }
+                    assert(0);
+                    __syncthreads();
+                }
+            }
         }
-    }
-    }
 //    else {
 //        U_i[thread_idx] = 0.0;
 ////        gU_i[thread_idx] = U_i[thread_idx];
@@ -196,27 +218,30 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
 //        U[blockIdx.x] = U_i[0];
 //    }
 //    __syncthreads();
-
+    }
 }
 
 
 __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadSet,
-                                            double *krep, int *params, double *U_i, double *z) {
+                                            double *krep, int *params, double *U_i, double *z, int *culpritID,
+                                            char* culpritFF, char* culpritinteraction, char* FField, char*
+                                            interaction) {
+    if(z[0] != 0.0) {
 
-    extern __shared__ double s[];
+        extern __shared__ double s[];
 
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *c4 = &c3[3 * blockDim.x];
+        double *c1 = s;
+        double *c2 = &c1[3 * blockDim.x];
+        double *c3 = &c2[3 * blockDim.x];
+        double *c4 = &c3[3 * blockDim.x];
 
 
-    double d, invDSquare;
-    double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-    double ATG1, ATG2, ATG3, ATG4;
-    int nint = params[1];
-    int n = params[0];
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+        double d, invDSquare;
+        double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+        double ATG1, ATG2, ATG3, ATG4;
+        int nint = params[1];
+        int n = params[0];
+        const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
 //    printf("%i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f "
 //                   "%.16f %.16f %.16f %.16f %.16f %.16f %.16f\n",thread_idx, coord[3 * beadSet[n * thread_idx] ],
@@ -231,21 +256,21 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 //    f[3 * beadSet[n * thread_idx +2]], f[3 * beadSet[n * thread_idx +2] +1 ], f[3 * beadSet[n * thread_idx +2] +2 ],
 //    f[3 * beadSet[n * thread_idx +3]], f[3 * beadSet[n * thread_idx +3] +1 ], f[3 * beadSet[n * thread_idx +3] +2 ]);
 
-    if(thread_idx<nint) {
-        U_i[thread_idx] = 0.0;
-        for(auto i=0;i<3;i++){
-            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i]
-                                      + z[0] * f[3 * beadSet[n * thread_idx] + i];
-            c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i]
-                                      + z[0] * f[3 * beadSet[n * thread_idx + 1] + i];
-            c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i]
-                                      + z[0] * f[3 * beadSet[n * thread_idx + 2] + i];
-            c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i]
-                                      + z[0] * f[3 * beadSet[n * thread_idx + 3] + i];
-        }
+        if (thread_idx < nint) {
+            U_i[thread_idx] = 0.0;
+            for (auto i = 0; i < 3; i++) {
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i]
+                                          + z[0] * f[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i]
+                                          + z[0] * f[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i]
+                                          + z[0] * f[3 * beadSet[n * thread_idx + 2] + i];
+                c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i]
+                                          + z[0] * f[3 * beadSet[n * thread_idx + 3] + i];
+            }
 
-    }
-    __syncthreads();
+        }
+        __syncthreads();
 
 //    if(thread_idx<nint) {
 //        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx], c1[3 * threadIdx.x], c1[3 * threadIdx.x + 1], c1[3 * threadIdx.x + 2]);
@@ -258,98 +283,109 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 //    }
 //    __syncthreads();
 
-    if(thread_idx<nint) {
-        //check if parallel
-        if(areParallel(c1, c2, c3, c4, 3 * threadIdx.x)) {
+        if (thread_idx < nint) {
+            //check if parallel
+            if (areParallel(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
-            d = twoPointDistance(c1, c3, 3 * threadIdx.x);
-            invDSquare =  1 / (d * d);
-            U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
+                d = twoPointDistance(c1, c3, 3 * threadIdx.x);
+                invDSquare = 1 / (d * d);
+                U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
 
-            if(U_i[thread_idx]==__longlong_as_double( 0x7ff0000000000000) //infinity
-               || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-                //TODO think about outputing culprit interaction.
-
-                //set culprit and return TODO
-                U_i[thread_idx] = -1.0;
-//                for(int i=1; i<gridDim.x; i++)
-//                    U[i] = 0.0;
-//                assert(0);
-            }
-//            printf("%i 1.0 %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f\n"
-//                           ".16f ",thread_idx, c1[3 * threadIdx.x], c1[3 * threadIdx.x + 1], c1[3 * threadIdx.x + 2]
-//                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
-//                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2],U_i[thread_idx]);
-        }
-
-        else{
+                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000) //infinity
+                    || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+                    U_i[thread_idx] = -1.0;
+                    culpritID[0] = beadSet[n * thread_idx];
+                    culpritID[1] = beadSet[n * thread_idx + 1];
+                    culpritID[2] = beadSet[n * thread_idx + 2];
+                    culpritID[3] = beadSet[n * thread_idx + 3];
+                    int j = 0;
+                    while (FField[j] != 0) {
+                        culpritFF[j] = FField[j];
+                        j++;
+                    }
+                    j = 0;
+                    while (interaction[j] != 0) {
+                        culpritinteraction[j] = interaction[j];
+                        j++;
+                    }
+                    assert(0);
+                    __syncthreads();
+                }
+            } else {
 //            auto jj=3;
-            //check if in same plane
-        if(areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
+                //check if in same plane
+                if (areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
 //            jj=2;
-            //slightly move point
-            movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
+                    //slightly move point
+                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
 //            printf("%i %i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f \n",thread_idx, jj,
 //                           c1[3 * threadIdx.x], c1[3 *
 //                                                                                                                                       threadIdx.x + 1], c1[3 * threadIdx.x + 2]
 //                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
 //                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
-        }
-           // else
+                }
+                // else
 //            printf("%i %i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f\n"
 //                           ,thread_idx, jj, c1[3 * threadIdx.x], c1[3 *
 //                                                                                                                                       threadIdx.x + 1], c1[3 * threadIdx.x + 2]
 //                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
 //                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
-        a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
-        b = scalarProduct(c3, c4, c3, c4, 3 * threadIdx.x);
-        c = scalarProduct(c3, c1, c3, c1, 3 * threadIdx.x);
-        d = scalarProduct(c1, c2, c3, c4, 3 * threadIdx.x);
-        e = scalarProduct(c1, c2, c3, c1, 3 * threadIdx.x);
-        F = scalarProduct(c3, c4, c3, c1, 3 * threadIdx.x);
+                a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
+                b = scalarProduct(c3, c4, c3, c4, 3 * threadIdx.x);
+                c = scalarProduct(c3, c1, c3, c1, 3 * threadIdx.x);
+                d = scalarProduct(c1, c2, c3, c4, 3 * threadIdx.x);
+                e = scalarProduct(c1, c2, c3, c1, 3 * threadIdx.x);
+                F = scalarProduct(c3, c4, c3, c1, 3 * threadIdx.x);
 
-        AA = sqrt(a*c - e*e);
-        BB = sqrt(b*c - F*F);
+                AA = sqrt(a * c - e * e);
+                BB = sqrt(b * c - F * F);
 
-        CC = d*e - a*F;
-        DD = b*e - d*F;
+                CC = d * e - a * F;
+                DD = b * e - d * F;
 
-        EE = sqrt( a*(b + c - 2*F) - (d - e)*(d - e) );
-        FF = sqrt( b*(a + c + 2*e) - (d + F)*(d + F) );
+                EE = sqrt(a * (b + c - 2 * F) - (d - e) * (d - e));
+                FF = sqrt(b * (a + c + 2 * e) - (d + F) * (d + F));
 
-        GG = d*d - a*b - CC;
-        HH = CC + GG - DD;
-        JJ = c*(GG + CC) + e*DD - F*CC;
+                GG = d * d - a * b - CC;
+                HH = CC + GG - DD;
+                JJ = c * (GG + CC) + e * DD - F * CC;
 
 
-        ATG1 = atan( (a + e)/AA) - atan(e/AA);
-        ATG2 = atan((a + e - d)/EE) - atan((e - d)/EE);
-        ATG3 = atan((F)/BB) - atan((F - b)/BB);
-        ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
+                ATG1 = atan((a + e) / AA) - atan(e / AA);
+                ATG2 = atan((a + e - d) / EE) - atan((e - d) / EE);
+                ATG3 = atan((F) / BB) - atan((F - b) / BB);
+                ATG4 = atan((d + F) / FF) - atan((d + F - b) / FF);
 
-        U_i[thread_idx] = 0.5 * krep[thread_idx]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+                U_i[thread_idx] = 0.5 * krep[thread_idx] / JJ *
+                                  (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
 //        U_i[thread_idx] =a;
 //        for(auto j=0; j<3; j++) {
 //            gc1[3 * threadIdx.x + j] = f[3 * beadSet[n * thread_idx] + j];
 //            gc2[3 * threadIdx.x + j] = f[3 * beadSet[n * thread_idx + 1] + j];
 //        }
 
-        if(U_i[thread_idx]==__longlong_as_double( 0x7ff0000000000000)
-           || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-
-            //set culprit and return TODO
-            U_i[0] = -1.0;
-//            for(int i=1; i<gridDim.x; i++)
-//                U[i] = 0.0;
-//            assert(0);
+                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
+                    || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+                    U_i[thread_idx] = -1.0;
+                    culpritID[0] = beadSet[n * thread_idx];
+                    culpritID[1] = beadSet[n * thread_idx + 1];
+                    culpritID[2] = beadSet[n * thread_idx + 2];
+                    culpritID[3] = beadSet[n * thread_idx + 3];
+                    int j = 0;
+                    while (FField[j] != 0) {
+                        culpritFF[j] = FField[j];
+                        j++;
+                    }
+                    j = 0;
+                    while (interaction[j] != 0) {
+                        culpritinteraction[j] = interaction[j];
+                        j++;
+                    }
+                    assert(0);
+                    __syncthreads();
+                }
+            }
         }
-            //printf("%.16f \n", U_i[thread_idx]);
-//            printf("%i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %"
-//                           ".16f %.16f %.16f %.16f %.16f \n", thread_idx, U_i[thread_idx], a,b,c,d,e,F,
-//                   AA,BB,CC,DD,
-//                   EE,FF,GG,HH,JJ,ATG1,ATG2,ATG3,ATG4);
-        }
- }
 //    else {
 //        U_i[thread_idx] = 0.0;
 ////        for(auto j=0; j<3; j++) {
@@ -357,7 +393,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 ////            gc2[3 * threadIdx.x + j] = 0.0;
 ////        }
 //    }
-    //printf("%.16f \n", U_i[thread_idx]);
+        //printf("%.16f \n", U_i[thread_idx]);
 
 //    __syncthreads();
 
@@ -384,7 +420,7 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 //        U[blockIdx.x] = U_i[0];
 //    }
 //    __syncthreads();
-
+    }
 }
 
 

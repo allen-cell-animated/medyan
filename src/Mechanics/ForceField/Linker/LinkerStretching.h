@@ -45,7 +45,7 @@ private:
     int * gpu_params;
     double *gpu_pos1;
     double *gpu_pos2;
-    CUDAvars cvars;
+//    CUDAvars cvars;
     double *F_i;
 #endif
     

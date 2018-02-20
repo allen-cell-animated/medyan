@@ -38,7 +38,17 @@ namespace mathfunc {
     } while (assumed != old);
     return __longlong_as_double(old);
   }
-
+    static __inline__ __device__ double atomicExch(double *address, double val) {
+    unsigned long long int* address_as_ull = (unsigned long long int*)address;
+    unsigned long long int old = *address_as_ull, assumed;
+    if (val==0.0)
+      return __longlong_as_double(old);
+    do {
+      assumed = old;
+      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(__longlong_as_double(0.0)));
+    } while (assumed != old);
+    return __longlong_as_double(old);
+  }
 #endif
      __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot);
     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int* culpritID, char* culpritFF,
@@ -90,6 +100,20 @@ namespace mathfunc {
         return sqrt((*(v)) * (*(v)) + (*(v + 1)) * (*(v + 1)) + (*(v + 2)) * (*(v + 2)));
     }
 
+    __host__ __device__
+    inline double getdistancefromplane(double *coord, double * plane,int id){
+        return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
+               sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
+    }
+
+    __host__ __device__
+    inline double getstretcheddistancefromplane(double *coord, double *force, double * plane, double z, int id){
+        double movedPoint[3] = {coord[0] + z*force[0],
+                                     coord[1] + z*force[1],
+                                     coord[2] + z*force[2]};
+        return (plane[0] * movedPoint[0] + plane[1] * movedPoint[1] + plane[2] * movedPoint[2] + plane[3]) /
+               sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
+    }
     //@{
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     inline double twoPointDistance(const vector<double> &v1, const vector<double> &v2) {
@@ -1061,6 +1085,7 @@ namespace mathfunc {
     inline size_t blockToSmemF(int blockSize){return 6 * blockSize * sizeof(double);}
     inline size_t blockToSmemFB(int blockSize){return 9 * blockSize * sizeof(double);}
     inline size_t blockToSmemFB2(int blockSize){return 18 * blockSize * sizeof(double);}
+    inline size_t blockToSmemFB3(int blockSize){return 3 * blockSize * sizeof(double);}
 
 
     /// Function to move bead out of plane by specified amount

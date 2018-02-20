@@ -42,6 +42,7 @@
 #include <vector>
 #include <algorithm>
 #include "Restart.h"
+#include "nvToolsExt.h"
 using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
@@ -438,12 +439,14 @@ void Controller::updateReactionRates() {
 #endif
 
 void Controller::updateNeighborLists() {
-    
+    nvtxRangePushA("neighborlist");
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
-    
+    nvtxRangePop();
 #ifdef CHEMISTRY
+    nvtxRangePushA("bindingmanager");
     _subSystem->updateBindingManagers();
+    nvtxRangePop();
 #endif
 }
 
@@ -528,7 +531,9 @@ void Controller::run() {
         updateNeighborLists();
         
         cout<<"Minimizing energy"<<endl;
+        nvtxRangePushA("mechanics_i");
         _mController->run(false);
+        nvtxRangePop();
         SysParams::RUNSTATE=true;
         
         //reupdate positions and neighbor lists
@@ -583,8 +588,12 @@ void Controller::run() {
     oldTau = 0;
 #endif
     cout<<"Minimizing energy"<<endl;
+    nvtxRangePushA("mechanics_i2");
     _mController->run(false);
+    nvtxRangePop();
+    nvtxRangePushA("output");
     for(auto o: _outputs) o->print(0);
+    nvtxRangePop();
 
     cout << "Starting simulation..." << endl;
     
@@ -596,8 +605,13 @@ void Controller::run() {
 #ifdef CHEMISTRY
         while(tau() <= _runTime) {
             //run ccontroller
-            if(!_cController->run(_minimizationTime)) {
+            nvtxRangePushA("chemistry");
+            auto var = !_cController->run(_minimizationTime);
+            nvtxRangePop();
+            if(var) {
+                nvtxRangePushA("output");
                 for(auto o: _outputs) o->print(i);
+                nvtxRangePop();
                 break;
             }
             
@@ -612,31 +626,42 @@ void Controller::run() {
 //            std::cout<<"TIME "<<tau()<<endl;
 //            std::cout<<endl;
             if(tauLastMinimization >= _minimizationTime) {
+                nvtxRangePushA("mechanics");
                 _mController->run();
+                nvtxRangePop();
+                nvtxRangePushA("update_pos");
                 updatePositions();
-
+                nvtxRangePop();
                 tauLastMinimization = 0.0;
             }
             
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;
+                nvtxRangePushA("output");
                 for(auto o: _outputs) o->print(i);
+                nvtxRangePop();
                 i++;
                 tauLastSnapshot = 0.0;
             }
 #elif defined(MECHANICS)
+            nvtxRangePushA("output");
             for(auto o: _outputs) o->print(i);
             i++;
+            nvtxRangePop();
 #endif
 
 #ifdef DYNAMICRATES
+            nvtxRangePushA("rate");
             updateReactionRates();
+            nvtxRangePop();
 #endif
             
 #ifdef CHEMISTRY
             // update neighbor lists
             if(tauLastNeighborList >= _neighborListTime) {
+                nvtxRangePushA("NL");
                 updateNeighborLists();
+                nvtxRangePop();
                 tauLastNeighborList = 0.0;
             }
             
@@ -709,7 +734,9 @@ void Controller::run() {
     }
     
     //print last snapshots
+    nvtxRangePushA("output");
     for(auto o: _outputs) o->print(i);
+    nvtxRangePop();
     
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);

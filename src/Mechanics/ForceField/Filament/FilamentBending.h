@@ -53,7 +53,7 @@ public:
     virtual double computeEnergy(double *coord, double *f, double d);
     virtual void computeForces(double *coord, double *f);
     
-    virtual const string getName() {return "Filament Stretching";}
+    virtual const string getName() {return "Filament Bending";}
 };
 
 

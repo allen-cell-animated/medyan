@@ -58,7 +58,9 @@ using namespace mathfunc;
 //}
 
 __global__ void BranchingBendingCosineenergy(double *coord, double *force, int *beadSet, double *kbend,
-                                            double *eqt, int *params, double *U_i) {
+                                            double *eqt, int *params, double *U_i,  int *culpritID,
+                                             char* culpritFF, char* culpritinteraction, char* FF, char*
+                                            interaction) {
 
     extern __shared__ double s[];
     double *c1 = s;
@@ -98,19 +100,32 @@ __global__ void BranchingBendingCosineenergy(double *coord, double *force, int *
 
         if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
             || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-            //TODO set culprit in host after return
-//            BranchingInteractions::_motorCulprit = Branching::getBranchings()[i];
+
             U_i[thread_idx]=-1.0;
-//            assert(0);
+            culpritID[0] = thread_idx;
+            culpritID[1] = -1;
+            int j = 0;
+            while(FF[j]!=0){
+                culpritFF[j] = FF[j];
+                j++;
+            }
+            j = 0;
+            while(interaction[j]!=0){
+                culpritinteraction[j] = interaction[j];
+                j++;
+            }
+            assert(0);
+            __syncthreads();
         }
-//        printf("%f %f %f \n", dist, kstr[thread_idx], U_i[thread_idx]);
     }
 
 //    __syncthreads();
 }
 
 __global__ void BranchingBendingCosineenergyz(double *coord, double *f, int *beadSet, double *kbend,
-                                             double *eqt, int *params, double *U_i, double *z) {
+                                             double *eqt, int *params, double *U_i, double *z,  int *culpritID,
+                                              char* culpritFF, char* culpritinteraction, char* FF, char*
+                                                interaction) {
 
     extern __shared__ double s[];
     double *c1 = s;
@@ -157,83 +172,96 @@ __global__ void BranchingBendingCosineenergyz(double *coord, double *f, int *bea
         dPhi = phi-eqt[thread_idx];
 
         U_i[thread_idx] = kbend[thread_idx] * ( 1 - cos(dPhi) );
+
         if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
             || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-            //TODO set culprit in host after return
-//            BranchingInteractions::_motorCulprit = Branching::getBranchings()[i];
+
             U_i[thread_idx]=-1.0;
-//            assert(0);
+            culpritID[0] = thread_idx;
+            culpritID[1] = -1;
+            int j = 0;
+            while(FF[j]!=0){
+                culpritFF[j] = FF[j];
+                j++;
+            }
+            j = 0;
+            while(interaction[j]!=0){
+                culpritinteraction[j] = interaction[j];
+                j++;
+            }
+            assert(0);
+            __syncthreads();
         }
 
     }
 
 }
 
-__global__ void BranchingBendingCosineenergyz2(double *coord, double *f, int *beadSet, double *kbend,
-                                              double *eqt, int *params, double *U_i, double *z) {
-
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *c4 = &c3[3 * blockDim.x];
-//    double *f1 = &c4[3 * blockDim.x];
-//    double *f2 = &f1[3 * blockDim.x];
-//    double *f3 = &f2[3 * blockDim.x];
-//    double *f4 = &f3[3 * blockDim.x];
-    double L1, L2, L1L2, l1l2, phi, dPhi;
-
-    int nint = params[1];
-    int n = params[0];
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-
-    if(thread_idx<nint) {
-        U_i[thread_idx] = 0.0;
-        for(auto i=0;i<3;i++){
-            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
-            c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
-            c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
-            c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
-//            f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
-//            f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
-//            f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
-//            f4[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 3] + i];
-        }
-
-    }
-    __syncthreads();
-
-    if(thread_idx<nint) {
-        L1 = sqrt(scalarProductStretchedmixedIDv2(c1, c2, c1, c2, z[0], 3 * threadIdx.x, f, 3 * beadSet[n * thread_idx],
-                                                  3 * beadSet[n * thread_idx +1], 3 * beadSet[n * thread_idx],
-                                                  3 * beadSet[n * thread_idx +1] ));
-        L2 = sqrt(scalarProductStretchedmixedIDv2(c3, c4,
-                                         c3, c4, z[0], 3 * threadIdx.x, f, 3 * beadSet[n * thread_idx+2],
-                                                  3 * beadSet[n * thread_idx +3], 3 * beadSet[n * thread_idx+2],
-                                                  3 * beadSet[n * thread_idx +3]));
-
-        L1L2 = L1*L2;
-        l1l2 = scalarProductStretchedmixedIDv2(c1, c2,
-                                      c3, c4, z[0], 3 * threadIdx.x, f, 3 * beadSet[n * thread_idx],
-                                               3 * beadSet[n * thread_idx +1], 3 * beadSet[n * thread_idx+2],
-                                               3 * beadSet[n * thread_idx +3]);
-
-        phi = safeacos(l1l2 / L1L2);
-        dPhi = phi-eqt[thread_idx];
-
-//        U_i[thread_idx] = kbend[thread_idx] * ( 1 - cos(dPhi) );
-        U_i[thread_idx] += 0.0;
-        if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-            //TODO set culprit in host after return
-//            BranchingInteractions::_motorCulprit = Branching::getBranchings()[i];
-            U_i[thread_idx]=-1.0;
-//            assert(0);
-        }
-
-    }
-
-}
+//__global__ void BranchingBendingCosineenergyz2(double *coord, double *f, int *beadSet, double *kbend,
+//                                              double *eqt, int *params, double *U_i, double *z) {
+//
+//    extern __shared__ double s[];
+//    double *c1 = s;
+//    double *c2 = &c1[3 * blockDim.x];
+//    double *c3 = &c2[3 * blockDim.x];
+//    double *c4 = &c3[3 * blockDim.x];
+////    double *f1 = &c4[3 * blockDim.x];
+////    double *f2 = &f1[3 * blockDim.x];
+////    double *f3 = &f2[3 * blockDim.x];
+////    double *f4 = &f3[3 * blockDim.x];
+//    double L1, L2, L1L2, l1l2, phi, dPhi;
+//
+//    int nint = params[1];
+//    int n = params[0];
+//    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+//
+//    if(thread_idx<nint) {
+//        U_i[thread_idx] = 0.0;
+//        for(auto i=0;i<3;i++){
+//            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
+//            c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
+//            c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
+//            c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
+////            f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
+////            f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
+////            f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
+////            f4[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 3] + i];
+//        }
+//
+//    }
+//    __syncthreads();
+//
+//    if(thread_idx<nint) {
+//        L1 = sqrt(scalarProductStretchedmixedIDv2(c1, c2, c1, c2, z[0], 3 * threadIdx.x, f, 3 * beadSet[n * thread_idx],
+//                                                  3 * beadSet[n * thread_idx +1], 3 * beadSet[n * thread_idx],
+//                                                  3 * beadSet[n * thread_idx +1] ));
+//        L2 = sqrt(scalarProductStretchedmixedIDv2(c3, c4,
+//                                         c3, c4, z[0], 3 * threadIdx.x, f, 3 * beadSet[n * thread_idx+2],
+//                                                  3 * beadSet[n * thread_idx +3], 3 * beadSet[n * thread_idx+2],
+//                                                  3 * beadSet[n * thread_idx +3]));
+//
+//        L1L2 = L1*L2;
+//        l1l2 = scalarProductStretchedmixedIDv2(c1, c2,
+//                                      c3, c4, z[0], 3 * threadIdx.x, f, 3 * beadSet[n * thread_idx],
+//                                               3 * beadSet[n * thread_idx +1], 3 * beadSet[n * thread_idx+2],
+//                                               3 * beadSet[n * thread_idx +3]);
+//
+//        phi = safeacos(l1l2 / L1L2);
+//        dPhi = phi-eqt[thread_idx];
+//
+////        U_i[thread_idx] = kbend[thread_idx] * ( 1 - cos(dPhi) );
+//        U_i[thread_idx] += 0.0;
+//        if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+//            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+//            //TODO set culprit in host after return
+////            BranchingInteractions::_motorCulprit = Branching::getBranchings()[i];
+//            U_i[thread_idx]=-1.0;
+////            assert(0);
+//        }
+//
+//    }
+//
+//}
 
 
 
