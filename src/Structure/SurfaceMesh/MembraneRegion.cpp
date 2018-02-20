@@ -6,7 +6,7 @@
 
 #include "MathFunctions.h"
 
-MembraneRegion::MembraneRegion(MembraneHierarchy* hier, bool excludeChilden):
+MembraneRegion::MembraneRegion(MembraneHierarchy* hier, bool excludeChildren):
     _hierOut({hier})
 {
     if(excludeChildren) {
@@ -55,6 +55,6 @@ bool MembraneRegion::contains(const std::array<double, 3>& point)const {
     for(auto eachHier: _hierIn) {
         if(eachHier->getMembrane()->contains(point)) return false;
     }
-    
+
     return true;
 }

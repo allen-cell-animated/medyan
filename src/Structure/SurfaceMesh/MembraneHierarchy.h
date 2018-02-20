@@ -51,7 +51,7 @@ public:
     /**************************************************************************
     Getters and Setters (static)
     **************************************************************************/
-    static MembraneHierarchy* getRoot() { return _root; }
+    static MembraneHierarchy& getRoot() { return _root; }
 
     /**************************************************************************
     Implements Component
