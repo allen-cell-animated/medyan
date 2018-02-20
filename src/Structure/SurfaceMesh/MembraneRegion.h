@@ -3,6 +3,7 @@
 
 #include <array>
 #include <vector>
+#include <memory>
 
 // Forward Declarations
 class MembraneHierarchy;
@@ -21,6 +22,9 @@ private:
     std::vector<MembraneHierarchy*> _hierOut; ///< Their union is the outer limit
     std::vector<MembraneHierarchy*> _hierIn;  ///< Their union is the inner limit
 
+    /// Constructor only for internal use
+    MembraneRegion() {}
+
 public:
     /// Construct the region with one membrane
     MembraneRegion(MembraneHierarchy* hier, bool excludeChildren=false);
@@ -31,6 +35,17 @@ public:
 
     /// Is point inside region
     bool contains(const std::array<double, 3>& point)const;
+
+    /**************************************************************************
+    Getters and Setters
+    **************************************************************************/
+    Boundary* getBoundary()const { return _boundary; }
+
+    /**************************************************************************
+    Factory functions
+    **************************************************************************/
+    /// Create region with hier's children as outer limit
+    static std::unique_ptr<MembraneRegion> makeByChildren(MembraneHierarchy* hier, bool excludeChildren=false);
 };
 
 #endif

@@ -16,6 +16,7 @@
 #include "Boundary.h"
 #include "Bubble.h"
 #include "Bead.h"
+#include "MembraneRegion.h"
 
 #include "MathFunctions.h"
 #include "GController.h"
@@ -24,9 +25,10 @@
 
 using namespace mathfunc;
 
-FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
-                                                              int filamentType,
-                                                              int lenFilaments) {
+FilamentData RandomFilamentDist::createFilaments(const MembraneRegion& mr,
+                                                 int numFilaments,
+                                                 int filamentType,
+                                                 int lenFilaments) {
     
     vector<tuple<short, vector<double>, vector<double>>> filaments;
     vector<tuple<string, short, vector<vector<double>>>> dummy;
@@ -58,13 +60,12 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
         }
         
         //check if within cutoff of boundary
-        bool outsideCutoff = false;
-        if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
-           b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
-            outsideCutoff = true;
-        }
+        bool outsideCutoff = mr.getBoundary() && (
+            mr.getBoundary()->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
+            mr.getBoundary()->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0
+        );
         
-        if(b->within(firstPoint) && b->within(secondPoint) && !inBubble && !outsideCutoff) {
+        if(mr.contains(vector2Array<double, 3>(firstPoint)) && mr.contains(vector2Array<double, 3>(secondPoint)) && !inBubble && !outsideCutoff) {
             filaments.emplace_back(filamentType, firstPoint, secondPoint);
             filamentCounter++;
         }
@@ -72,7 +73,8 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
     return make_tuple(filaments, dummy, dummy2, dummy3);
 }
 
-FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilaments,
+FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion& mr,
+                                                    int numFilaments,
                                                     int filamentType,
                                                     int lenFilaments) {
 
@@ -143,9 +145,14 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
                       SysParams::Geometry().cylinderSize[filamentType] - 0.01, randDirection);
         
         //choose if within boundary
-        if(b->within(firstPoint) && b->within(secondPoint) &&
-           b->distance(firstPoint) > safeDist &&
-           b->distance(secondPoint) > safeDist) {
+        if(
+            mr.contains(vector2Array<double, 3>(firstPoint)) && mr.contains(vector2Array<double, 3>(secondPoint)) && (
+                !mr.getBoundary() || (
+                    mr.getBoundary()->distance(firstPoint) > safeDist &&
+                    mr.getBoundary()->distance(secondPoint) > safeDist
+                )
+            )
+        ) {
             filaments.emplace_back(filamentType, firstPoint, secondPoint);
             
             prevFirstPoint = firstPoint;
@@ -163,9 +170,10 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
     return make_tuple(filaments,dummy,dummy2, dummy3);
 }
 
-FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
-                                                            int filamentType,
-                                                            int lenFilaments) {
+FilamentData MTOCFilamentDist::createFilaments(const MembraneRegion& mr,
+                                               int numFilaments,
+                                               int filamentType,
+                                               int lenFilaments) {
     
     vector<tuple<short, vector<double>, vector<double>>> filaments;
     vector<tuple<string, short, vector<vector<double>>>> dummy;

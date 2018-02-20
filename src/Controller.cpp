@@ -34,6 +34,7 @@
 #include "MTOC.h"
 #include "Membrane.h"
 #include "MembraneHierarchy.h"
+#include "MembraneRegion.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -283,9 +284,16 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
     cout << "Done. " << membraneData.size() << " membranes created." << endl;
 
+    // Create a region inside the membrane
+    auto regionInMembrane = (
+        membraneData.size()?
+        MembraneRegion::makeByChildren(&MembraneHierarchy::getRoot()):
+        make_unique<MembraneRegion>(_subSystem->getBoundary())
+    );
+
     /**************************************************************************
     Now starting to add the filaments into the network.
-    **************************************************************************/    
+    **************************************************************************/
     // Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
     
@@ -300,7 +308,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     //add other filaments if specified
     FilamentInitializer* fInit = new RandomFilamentDist();
     
-    auto filamentsGen = fInit->createFilaments(_subSystem->getBoundary(),
+    auto filamentsGen = fInit->createFilaments(*regionInMembrane,
                                                FSetup.numFilaments,
                                                FSetup.filamentType,
                                                FSetup.filamentLength);
