@@ -5,7 +5,6 @@
 #include "Boundary.h"
 
 #include "MathFunctions.h"
-#include "utility.h"
 
 MembraneRegion::MembraneRegion(MembraneHierarchy* hier, bool excludeChildren):
     _hierOut({hier})
@@ -60,16 +59,17 @@ bool MembraneRegion::contains(const std::array<double, 3>& point)const {
     return true;
 }
 
-std::unique_ptr<MembraneRegion> MembraneRegion::makeByChildren(MembraneHierarchy* hier, bool excludeChildren=false) {
-    auto mr = make_unique<MembraneRegion>();
+std::unique_ptr<MembraneRegion> MembraneRegion::makeByChildren(MembraneHierarchy* hier, bool excludeChildren) {
+    auto mr = unique_ptr<MembraneRegion>(new MembraneRegion());
 
-    for(auto eachHier: hier->children()) {
-        mr._hierOut.push_back(eachHier);
+    for(auto& it: hier->children()) {
+        auto eachHier = static_cast<MembraneHierarchy*>(it.get());
+        mr->_hierOut.push_back(eachHier);
         if(excludeChildren) {
             size_t n = eachHier->numberOfChildren();
-            mr._hierIn.reserve(n);
+            mr->_hierIn.reserve(n);
             for(size_t idx = 0; idx < n; ++idx) {
-                mr._hierIn.push_back( static_cast<MembraneHierarchy*>(eachHier->children(idx)) );
+                mr->_hierIn.push_back( static_cast<MembraneHierarchy*>(eachHier->children(idx)) );
             }
         }
     }
