@@ -304,7 +304,7 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
         for(int v0 = -1; v0 <= 1; ++v0) for(int v1 = -1; v1 <= 1; ++v1) for(int v2 = -1; v2 <= 1; ++v2) {
 
             vector<size_t> newIndices = {indices[0] + v0, indices[1] + v1, indices[2] + v2};
-            if(GController::indicesOutOfBound(indices)) {
+            if(GController::indicesOutOfBound(newIndices)) {
                 // Compartment not found. Simply ignore it.
                 continue;
             }
