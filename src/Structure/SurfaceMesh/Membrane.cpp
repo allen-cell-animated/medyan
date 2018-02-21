@@ -307,7 +307,7 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
 
         // Find all the neighbor compartments and find triangles to be added to search set.
         // The for loops are written like this for aesthetic reasons. Be very careful with the scope below.
-        for(int v0: {-1, 0, 1}) for(int v1: {-1, 0, 1}) for(int v2: {-1, 0, 1}) {
+        for(int v0 = -1; v0 <= 1; ++v0) for(int v1 = -1; v1 <= 1; ++v1) for(int v2 = -1; v2 <= 1; ++v2) {
 
             vector<size_t> newIndices = {indices[0] + v0, indices[1] + v1, indices[2] + v2};
             Compartment* c = nullptr;
