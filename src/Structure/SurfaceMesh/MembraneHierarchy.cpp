@@ -10,9 +10,13 @@ using namespace mathfunc;
 #include "Membrane.h"
 #include "Vertex.h"
 
-// FORWARD DECLARATIONS
+// Forward declarations
 class Membrane;
 
+// Static member initialization
+MembraneHierarchy MembraneHierarchy::_root(nullptr);
+
+// Member function definitions
 void MembraneHierarchy::printSelf()const {
     cout << endl;
 

@@ -520,8 +520,6 @@ array<double, 3> TriangleCylinderBeadExclVolRepulsion::loadForces(Triangle* t, c
     double numerator = G1*(E1 - F1) + G2*(E2 - F2) + G3*(E3 - F3);
     double denominator = B*D*D + A*(-4 * B*C + E*E) + F*(-D*E + C*F);
 
-    double H = numerator / denominator;
-    
     // Only consider derivative on the coordinate of the bead (cb)
     array<double, 3> dH = {};
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
@@ -566,7 +564,6 @@ array<double, 3> TriangleCylinderBeadExclVolRepulsion::loadForces(Triangle* t, c
     }
 
     double area = t->getGTriangle()->getArea();
-    auto& dArea = t->getGTriangle()->getDArea();
     
     array<double, 3> forceBead;
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {

@@ -292,13 +292,7 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
     }
     else {
         // Find the current compartment indices containing point p
-        vector<size_t> indices;
-        try { indices = GController::getCompartmentIndices(mathfunc::array2Vector(p)); }
-        catch (exception& e) {
-            cout << e.what() << endl;
-            printSelf();
-            exit(EXIT_FAILURE);
-        }
+        vector<size_t> indices = GController::getCompartmentIndices(mathfunc::array2Vector(p));
 
         if(indices.size() != 3)
             throw std::logic_error("Only 3D compartments are allowed in the membrane signed distance calculation.");
@@ -306,16 +300,16 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
 		unordered_set<Triangle*> triSet; // Set of triangles to be searched
 
         // Find all the neighbor compartments and find triangles to be added to search set.
-        // The for loops are written like this for aesthetic reasons. Be very careful with the scope below.
-        for(int v0: {-1, 0, 1}) for(int v1: {-1, 0, 1}) for(int v2: {-1, 0, 1}) {
+        // The for loops are written like this for aesthetic reasons. Be careful with the scope below.
+        for(int v0 = -1; v0 <= 1; ++v0) for(int v1 = -1; v1 <= 1; ++v1) for(int v2 = -1; v2 <= 1; ++v2) {
 
             vector<size_t> newIndices = {indices[0] + v0, indices[1] + v1, indices[2] + v2};
-            Compartment* c = nullptr;
-            try { c = GController::getCompartment(newIndices); }
-            catch(const OutOfBoundsException& e) {
+            if(GController::indicesOutOfBound(newIndices)) {
                 // Compartment not found. Simply ignore it.
                 continue;
             }
+
+            Compartment* c = GController::getCompartment(newIndices);
 
             // Compartment exists
             const unordered_set<Triangle*>& triSetEach = c->getTriangles();
@@ -421,6 +415,10 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
     }
     
     return minAbsDistance;
+}
+
+bool Membrane::contains(const std::array<double, 3>& point)const {
+    return signedDistance(point, true) < 0.0;
 }
 
 double Membrane::meshworkQuality()const {

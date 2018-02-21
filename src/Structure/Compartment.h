@@ -84,10 +84,10 @@ protected:
     vector<double> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
 
-    double _partialVolume; // The volume inside the cell membrane
-                                 // Might be changed to a list or a map when more membranes are involved
-    array<double, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; // The area inside the cell membrane
-                        // Might be changed to a list of arrays or a map of arrays when more membranes are involved
+    double _partialVolume; ///< The volume inside the cell membrane
+                           ///< Might be changed to a list or a map when more membranes are involved
+    array<double, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; ///< The area inside the cell membrane
+                        ///< Might be changed to a list of arrays or a map of arrays when more membranes are involved
     
 public:
     /// Default constructor, only takes in number of dimensions

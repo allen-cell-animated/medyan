@@ -33,13 +33,15 @@
 #include "Bubble.h"
 #include "MTOC.h"
 #include "Membrane.h"
+#include "MembraneHierarchy.h"
+#include "MembraneRegion.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "MController.h"
 #include "Cylinder.h"
 #include <unordered_map>
-#include 	<tuple>
+#include <tuple>
 #include <vector>
 #include <algorithm>
 #include "Restart.h"
@@ -251,10 +253,49 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         _subSystem->addTrackable<Bubble>(_subSystem, coord, type);
     }
     cout << "Done. " << bubbles.size() << " bubbles created." << endl;
+
+    /**************************************************************************
+    Now starting to add the membrane into the network.
+    **************************************************************************/
+    MembraneSetup MemSetup = p.readMembraneSetup();
     
-    //Read filament setup, parse filament input file if needed
+    cout << "---" << endl;
+    cout << "Initializing membranes...";
+    
+    if(MemSetup.inputFile != "") {
+        MembraneParser memp(_inputDirectory + MemSetup.inputFile);
+        membraneData = memp.readMembranes();
+    }
+    // Membrane auto initializer is currently not provided,
+    // which means that the input file is the only source of membrane information.
+    
+    // add membranes
+    for (auto& it: membraneData) {
+        
+        short type = 0; // Currently set as default(0).
+        
+        if(type >= SysParams::Chemistry().numMembranes) {
+            cout << "Membrane data specified contains an invalid membrane type. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+
+        Membrane* newMembrane = _subSystem->addTrackable<Membrane>(_subSystem, type, it);
+        MembraneHierarchy::addMembrane(newMembrane);
+    }
+    cout << "Done. " << membraneData.size() << " membranes created." << endl;
+
+    // Create a region inside the membrane
+    auto regionInMembrane = (
+        membraneData.size()?
+        MembraneRegion::makeByChildren(&MembraneHierarchy::getRoot()):
+        make_unique<MembraneRegion>(_subSystem->getBoundary())
+    );
+
+    /**************************************************************************
+    Now starting to add the filaments into the network.
+    **************************************************************************/
+    // Read filament setup, parse filament input file if needed
     FilamentSetup FSetup = p.readFilamentSetup();
-//    FilamentData filaments;
     
     cout << "---" << endl;
     cout << "Initializing filaments...";
@@ -267,7 +308,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     //add other filaments if specified
     FilamentInitializer* fInit = new RandomFilamentDist();
     
-    auto filamentsGen = fInit->createFilaments(_subSystem->getBoundary(),
+    auto filamentsGen = fInit->createFilaments(*regionInMembrane,
                                                FSetup.numFilaments,
                                                FSetup.filamentType,
                                                FSetup.filamentLength);
@@ -313,35 +354,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
     }
     cout << "Done. " << fil.size() << " filaments created." << endl;
-
-    /**************************************************************************
-    Now starting to add the membrane into the network.
-    **************************************************************************/
-    MembraneSetup MemSetup = p.readMembraneSetup();
-    
-    cout << "---" << endl;
-    cout << "Initializing membranes...";
-    
-    if(MemSetup.inputFile != "") {
-        MembraneParser memp(_inputDirectory + MemSetup.inputFile);
-        membranes = memp.readMembranes();
-    }
-    // Membrane auto initializer is currently not provided,
-    // which means that the input file is the only source of membrane information.
-    
-    // add membranes
-    for (auto& it: membranes) {
-        
-        short type = 0; // Currently set as default(0).
-        
-        if(type >= SysParams::Chemistry().numMembranes) {
-            cout << "Membrane data specified contains an invalid filament type. Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-
-        _subSystem->addTrackable<Membrane>(_subSystem, type, it);
-    }
-    cout << "Done. " << membranes.size() << " membranes created." << endl;
 
 }
 

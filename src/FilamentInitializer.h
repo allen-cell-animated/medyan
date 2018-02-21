@@ -19,7 +19,7 @@ typedef vector<tuple<short, vector<double>, vector<double>>> filamentData;
 typedef  tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  FilamentData;
 
 ///FORWARD DECLARATIONS
-class Boundary;
+class MembraneRegion;
 
 /// An interface to initialize an initial configuration of [Filaments](@ref Filament)
 /// in the SubSystem.
@@ -40,9 +40,10 @@ public:
     
     /// Returns a vector of tuples representing the Filament type and beginning and end
     /// coordinates, similar to the structure of manual parsing.
-    virtual FilamentData createFilaments(Boundary* b, int numFilaments,
-                                                      int filamentType,
-                                                      int lenFilaments) = 0;
+    virtual FilamentData createFilaments(const MembraneRegion& mr,
+                                         int numFilaments,
+                                         int filamentType,
+                                         int lenFilaments) = 0;
 };
 
 /// An implementation of FilamentInitialzer that creates a completely random
@@ -50,9 +51,10 @@ public:
 class RandomFilamentDist : public FilamentInitializer {
     
 public:
-    FilamentData createFilaments(Boundary* b, int numFilaments,
-                                              int filamentType,
-                                              int lenFilaments);
+    FilamentData createFilaments(const MembraneRegion& mr,
+                                 int numFilaments,
+                                 int filamentType,
+                                 int lenFilaments);
 };
 
 /// An implementation of FilamentInitialzer that creates a sufficiently spaced
@@ -60,7 +62,8 @@ public:
 class ConnectedFilamentDist : public FilamentInitializer {
     
 public:
-    FilamentData createFilaments(Boundary* b, int numFilaments,
+    FilamentData createFilaments(const MembraneRegion& mr,
+                                 int numFilaments,
                                  int filamentType,
                                  int lenFilaments);
 };
@@ -77,9 +80,10 @@ public:
     MTOCFilamentDist(vector<double> coord, double radius)
         : _coordMTOC(coord), _radius(radius) {}
     
-    FilamentData createFilaments(Boundary* b, int numFilaments,
-                                              int filamentType,
-                                              int lenFilaments);
+    FilamentData createFilaments(const MembraneRegion& mr,
+                                 int numFilaments,
+                                 int filamentType,
+                                 int lenFilaments);
 };
 
 
