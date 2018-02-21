@@ -98,8 +98,8 @@ public:
     /// Get a compartment based on coordinates or indices
     static Compartment* getCompartment(const vector<size_t> &indices);
     static Compartment* getCompartment(const vector<double> &coords);
-    static vector<int> getCompartmentIndices(const vector<double>& coords);
-    static bool indicesOutOfBound(const vector<int>& indices);
+    static vector<size_t> getCompartmentIndices(const vector<double>& coords);
+    static bool indicesOutOfBound(const vector<size_t>& indices);
     //@}
     
     // Properties (getters and setters)
