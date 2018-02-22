@@ -280,6 +280,11 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
 
         Membrane* newMembrane = _subSystem->addTrackable<Membrane>(_subSystem, type, it);
+
+        // Update membrane geometry
+        newMembrane->updateGeometry(true);
+
+        // Add to the global membrane hierarchy
         MembraneHierarchy::addMembrane(newMembrane);
     }
     cout << "Done. " << membraneData.size() << " membranes created." << endl;
