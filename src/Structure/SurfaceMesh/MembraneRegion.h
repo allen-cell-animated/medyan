@@ -40,6 +40,8 @@ public:
     Getters and Setters
     **************************************************************************/
     Boundary* getBoundary()const { return _boundary; }
+    const std::vector<MembraneHierarchy*>& getHierOut()const { return _hierOut; }
+    const std::vector<MembraneHierarchy*>& getHierIn ()const { return _hierIn;  }
 
     /**************************************************************************
     Factory functions
