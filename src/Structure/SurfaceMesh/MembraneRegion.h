@@ -14,6 +14,9 @@ class Boundary;
  * Membrane Region is a class for management of regions enclosed by membranes
  * and boundaries.
  * 
+ * Note: before building the membrane region, all the related membranes must
+ * have the updated geometry.
+ * 
 ******************************************************************************/
 
 class MembraneRegion {
