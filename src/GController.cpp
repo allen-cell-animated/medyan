@@ -116,9 +116,15 @@ vector<size_t> GController::getCompartmentIndices(const vector<double>& coords) 
         if(coords[coordIdx] < 0 || coords[coordIdx] >= (_compartmentSize[coordIdx] * _grid[coordIdx]))
             throw OutOfBoundsException();
             
-        indices[coordIdx] = int(coords[coordIdx] / _compartmentSize[coordIdx]);
+        indices[coordIdx] = size_t(int(coords[coordIdx] / _compartmentSize[coordIdx]));
     }
     return indices;
+}
+bool GController::indicesOutOfBound(const vector<size_t>& indices) {
+    for(size_t coordIdx = 0; coordIdx < _nDim; ++coordIdx)
+        if(indices[coordIdx] >= _grid[coordIdx])
+            return true;
+    return false;
 }
 
 void GController::generateConnections()

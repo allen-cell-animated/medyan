@@ -4,11 +4,15 @@
 #include <array>
 #include <tuple>
 #include <vector>
+#include <memory>
 
 #include "Database.h"
 #include "Geometric.h"
 #include "Trackable.h"
 #include "Composite.h"
+
+#include "GMembrane.h"
+#include "MMembrane.h"
 
 // FORWARD DECLARATIONS
 class SubSystem;
@@ -33,6 +37,9 @@ private:
     vector<Triangle*> _triangleVector; // collection of triangles
     vector<Edge*> _edgeVector; // collection of edges
     vector<Vertex*> _vertexVector; // collection of vertices
+
+    unique_ptr<GMembrane> _gMembrane; // pointer to geometric membrane object
+    unique_ptr<MMembrane> _mMembrane; // pointer to mechanical membrane object
 
     short _memType; // Membrane type
 
@@ -87,17 +94,33 @@ public:
     /**************************************************************************
     Geometric
     **************************************************************************/
-    /// Implements Geometric
+    /**
+     * Implements Geometric.
+     * If calcDerivative is true, most implementation would assume d is zero
+     *   regardless of the actual passed d value. If calcDerivative is false,
+     *   most implementation would store the result in member variables with
+     *   "stretched" in their name.
+     */
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
 
-    // Use pseudo normal signed distance field method to get the signed distance to a point.
-    // If the point is outside, the result is positive and vice versa.
-    // Throws an exception if the membrane is not closed.
-    // The function will search through the whole meshwork, so it might not be efficient.
-    // However, if the "safe" flag is turned off and neighboring compartments happen to contain membrane elements,
-    //   search space will be limited to those compartments to save time. In this case meshwork size should be
-    //   much smaller than the compartment size.
+    // Get geo membrane
+    GMembrane* getGMembrane() { return _gMembrane.get(); }
+
+    /**
+     * Use pseudo normal signed distance field method to get the signed distance to a point.
+     * If the point is outside, the result is positive and vice versa.
+     * Throws an exception if the membrane is not closed.
+     * The function will search through the whole meshwork, so it might not be efficient.
+     * However, if the "safe" flag is turned off and neighboring compartments happen to contain membrane elements,
+     *   search space will be limited to those compartments to save time. In this case meshwork size should be
+     *   much smaller than the compartment size.
+     */
     double signedDistance(const std::array<double, 3>& p, bool safe=false)const;
+    /**
+     * Use signed distance or other methods to judge whether a point is inside membrane.
+     * Throws an exception if the membrane is not closed.
+     */
+    bool contains(const std::array<double, 3>& point)const;
 
     // Function to monitor the quality of the meshwork
     double meshworkQuality()const; // Must be used after updating the geometry
@@ -108,6 +131,13 @@ public:
     Topological
     **************************************************************************/
     bool isClosed()const { return _isClosed; }
+
+    /**************************************************************************
+    Mechanics
+    **************************************************************************/
+    // Get mech membrane
+    MMembrane* getMMembrane() { return _mMembrane.get(); }
+
 
 };
 

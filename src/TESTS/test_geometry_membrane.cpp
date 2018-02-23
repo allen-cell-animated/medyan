@@ -199,6 +199,9 @@ TEST_F(MembraneGeometryTest, Geometry) {
         EXPECT_DOUBLE_EQ(vertexPseudoUnitNormal0[coordIdx], exVertexPseudoUnitNormal0[coordIdx])
             << "Vertex pseudo unit normal doesn't match at coordinate index " << coordIdx;
     
+    // Check total volume enclosed by the membrane
+    double exVolume = radius * radius * radius * 4 / 3;
+    EXPECT_DOUBLE_EQ(m->getGMembrane()->getVolume(), exVolume);
 
     /**************************************************************************
         Check stretched geometry
@@ -260,6 +263,10 @@ TEST_F(MembraneGeometryTest, Geometry) {
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx)
         EXPECT_DOUBLE_EQ(stretchedVertexPseudoUnitNormal0[coordIdx], exStretchedVertexPseudoUnitNormal0[coordIdx])
             << "Vertex stretched pseudo unit normal doesn't match at coordinate index " << coordIdx;
+    
+    // Check the total volume enclosed by the membrane
+    double exStretchedVolume = radius * radius * radius * 2 / 3;
+    EXPECT_DOUBLE_EQ(m->getGMembrane()->getStretchedVolume(), exStretchedVolume);
 
 }
 
@@ -298,7 +305,7 @@ TEST_F(MembraneGeometryTest, SignedDistance) {
 TEST_F(MembraneGeometryTest, Derivative) {
     m->updateGeometry(true);
     recordCoordinate(m);
-    assignRandomForce(m, radius/200); // Simple test shows that 100 induces a change not small enough
+    assignRandomForce(m, radius/1000); // Simple test shows that radius/500 induces a change not small enough
 
     size_t numEdges = m->getEdgeVector().size();
     size_t numTriangles = m->getTriangleVector().size();
@@ -326,6 +333,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
         vCellArea1[idx] = m->getVertexVector()[idx]->getGVoronoiCell()->getStretchedArea();
         vCellCurv1[idx] = m->getVertexVector()[idx]->getGVoronoiCell()->getStretchedCurv();
     }
+    double volume1 = m->getGMembrane()->getStretchedVolume();
 
     // Now move every vertex in the opposite direction
     resetCoordinate(m);
@@ -350,6 +358,7 @@ TEST_F(MembraneGeometryTest, Derivative) {
         vCellArea2[idx] = m->getVertexVector()[idx]->getGVoronoiCell()->getStretchedArea();
         vCellCurv2[idx] = m->getVertexVector()[idx]->getGVoronoiCell()->getStretchedCurv();
     }
+    double volume2 = m->getGMembrane()->getStretchedVolume();
 
     // Compare the results with derivative predictions
     // A(x+h) - A(x-h) = dotProduct(2h, dA/dx)
@@ -428,6 +437,17 @@ TEST_F(MembraneGeometryTest, Derivative) {
             );
         }
         EXPECT_NEAR(vCellCurv1[idx] - vCellCurv2[idx], exDiff, abs(exDiff / 1000));
+    }
+    {
+        // Total volume
+        double exDiff = 0.0;
+        for(size_t vIdx = 0; vIdx < numVertices; ++vIdx) {
+            exDiff += 2 * dotProduct(
+                m->getVertexVector()[vIdx]->force,
+                array2Vector(m->getGMembrane()->getDVolume()[vIdx])
+            );
+        }
+        EXPECT_NEAR(volume1 - volume2, exDiff, abs(exDiff / 1000));
     }
 
 }
