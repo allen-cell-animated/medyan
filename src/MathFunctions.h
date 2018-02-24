@@ -51,8 +51,9 @@ namespace mathfunc {
   }
 #endif
      __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot);
-    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int* culpritID, char* culpritFF,
-                              char* culpritinteraction, char *FF, char *interaction);
+//    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int* culpritID, char* culpritFF,
+//                              char* culpritinteraction, char *FF, char *interaction);
+    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot);
     /// Normalize a vector
     inline void normalize(vector<double> &v) {
 

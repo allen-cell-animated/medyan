@@ -23,6 +23,7 @@
 #include "cross_check.h"
 #include "Cylinder.h"
 #include "MathFunctions.h"
+#include "nvToolsExt.h"
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BoundaryCylinderRepulsionExp::deallocate(){
@@ -104,6 +105,9 @@ double* BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *bead
 
 double* BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
                                              int* nintvec, double* beListplane, double *z,int *params) {
+//    nvtxRangePushA("E_wait");
+//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
+//    nvtxRangePop();
 
     if(blocksnthreadse[1]>0) {
 
@@ -145,7 +149,10 @@ double* BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *bead
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+        addvectorred<<<1,10,10*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
         CUDAcommon::handleerror(cudaGetLastError(),"BoundaryCylinderRepulsionExpenergyz", "BoundaryCylinderRepulsionExp.cu");
         return gU_sum;
     }

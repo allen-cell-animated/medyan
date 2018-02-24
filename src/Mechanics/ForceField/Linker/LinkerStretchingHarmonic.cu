@@ -108,6 +108,9 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
 double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                          double *kstr, double *eql, double *pos1, double *pos2, double *z,
                                          int *params) {
+//    nvtxRangePushA("E_wait");
+//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
+//    nvtxRangePop();
     if(blocksnthreadse[1]>0) {
 
         LinkerStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
@@ -151,7 +154,10 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+        addvectorred<<<1,10,10*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
         CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
         return gU_sum;
     }

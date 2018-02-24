@@ -81,7 +81,7 @@ __global__ void BoundaryCylinderRepulsionExpenergy(double* coord, double* f, int
                     culpritinteraction[j] = interaction[j];
                     j++;
                 }
-//                printf("%d %f %f %f\n", thread_idx, r, R, U_i[thread_idx]);
+                printf("%d %f %f %f\n", thread_idx, r, R, U_i[thread_idx]);
                 assert(0);
                 __syncthreads();
             }
@@ -159,7 +159,7 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
                     culpritinteraction[j] = interaction[j];
                     j++;
                 }
-//                printf("%d %f %f %f\n", thread_idx, r, R, U_i[thread_idx]);
+                printf("%d %f %f %f\n", thread_idx, r, R, U_i[thread_idx]);
                 assert(0);
                 __syncthreads();
             }

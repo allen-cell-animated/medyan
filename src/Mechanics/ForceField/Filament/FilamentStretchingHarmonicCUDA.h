@@ -78,9 +78,9 @@ __global__ void FilamentStretchingHarmonicenergy(double *coord, double *force, i
                 c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
             }
 
-        }
-        __syncthreads();
-        if (thread_idx < nint) {
+//        }
+//        __syncthreads();
+//        if (thread_idx < nint) {
             dist = twoPointDistance(c1, c2, 3 * threadIdx.x) - eql[thread_idx];
 //        if(thread_idx ==1)
             U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
@@ -134,10 +134,10 @@ __global__ void FilamentStretchingHarmonicenergyz(double *coord, double *f, int 
                 f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
                 f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
             }
-     }
-        __syncthreads();
-
-        if (thread_idx < nint) {
+//     }
+//        __syncthreads();
+//
+//        if (thread_idx < nint) {
            dist = twoPointDistanceStretched(c1, f1, c2, f2, z[0], 3 * threadIdx.x) - eql[thread_idx];
            U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
 //        printf("C %d %f %f\n", thread_idx, dist, U_i[thread_idx]);
@@ -185,10 +185,10 @@ __global__ void FilamentStretchingHarmonicforces(double *coord, double *f, int *
 //                   f[3 *
 //                     beadSet[n * thread_idx + 1]+2]);
         }
-    }
-    __syncthreads();
-
-    if(thread_idx<nint) {
+//    }
+//    __syncthreads();
+//
+//    if(thread_idx<nint) {
 //        v1[0] = c1[3 * threadIdx.x] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x];
 //        v1[1] = c1[3 * threadIdx.x + 1] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 1];
 //        v1[2] = c1[3 * threadIdx.x + 2] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 2];

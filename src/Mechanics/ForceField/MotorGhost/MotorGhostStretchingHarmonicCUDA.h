@@ -85,15 +85,12 @@ __global__ void MotorGhostStretchingHarmonicenergy(double *coord, double *force,
                 c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
                 c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
                 c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
-//            printf("%f %f %f %f \n", c1[3 * threadIdx.x + i],c2[3 * threadIdx.x + i],c3[3 * threadIdx.x + i],
-//                   c4[3 * threadIdx.x + i]);
             }
 
-        }
-        __syncthreads();
-//    printf("%i \n",nint);
-        if (thread_idx < nint) {
-//        printf("%f %f \n", pos1[thread_idx],pos2[thread_idx]);
+//        }
+//        __syncthreads();
+//        if (thread_idx < nint) {
+
             midPointCoordinate(v1, c1, c2, pos1[thread_idx], 3 * threadIdx.x);
 //        printf("%f %f %f \n",v1[0],v1[1],v1[2]);
             midPointCoordinate(v2, c3, c4, pos2[thread_idx], 3 * threadIdx.x);
@@ -161,10 +158,10 @@ __global__ void MotorGhostStretchingHarmonicenergyz(double *coord, double *f, in
                 f4[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 3] + i];
             }
 
-        }
-        __syncthreads();
-
-        if (thread_idx < nint) {
+//        }
+//        __syncthreads();
+//
+//        if (thread_idx < nint) {
             midPointCoordinateStretched(v1, c1, f1, c2, f2, pos1[thread_idx], z[0], 3 * threadIdx.x);
             midPointCoordinateStretched(v2, c3, f3, c4, f4, pos2[thread_idx], z[0], 3 * threadIdx.x);
 
@@ -226,22 +223,10 @@ __global__ void MotorGhostStretchingHarmonicforces(double *coord, double *f, int
             c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
         }
 
-    }
-    __syncthreads();
-
-//    printf("%.14f %.14f %.14f %.14f %.14f %.14f %.14f %.14f %.14f %.14f %.14f %.14f \n",c1[3 * threadIdx.x] , c1[3 *
-//                                                                                                                 threadIdx.x +1] , c1[3 *
-//                                                                                                                    threadIdx
-//            .x+2],  c2[3 * threadIdx.x] , c2[3 * threadIdx.x +1] , c2[3 * threadIdx.x +2], c3[3 * threadIdx.x] , c3[3 *
-//                                                                                                                    threadIdx.x +1] , c3[3 * threadIdx.x +2], c4[3 * threadIdx.x] , c4[3 * threadIdx.x +1] , c4[3 * threadIdx.x +2]);
-
-   // __syncthreads();
-
-//    if(thread_idx<nint) {
-//    printf("%i \n", 3*thread_idx);
 //    }
-//__syncthreads();
-    if(thread_idx<nint) {
+//    __syncthreads();
+//
+//    if(thread_idx<nint) {
 //        v1[0] = c1[3 * threadIdx.x] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x];
 //        v1[1] = c1[3 * threadIdx.x + 1] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 1];
 //        v1[2] = c1[3 * threadIdx.x + 2] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 2];

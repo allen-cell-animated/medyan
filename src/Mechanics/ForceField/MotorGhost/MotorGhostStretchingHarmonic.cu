@@ -133,6 +133,9 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
 double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                             double *kstr, double *eql, double *pos1, double *pos2, double *z,
                                             int *params) {
+//    nvtxRangePushA("E_wait");
+//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
+//    nvtxRangePop();
     if(blocksnthreadse[1]>0) {
         nvtxRangePushA("cmse");
 
@@ -199,7 +202,10 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
         CUDAcommon::cudavars = cvars;
         nvtxRangePushA("cmseadd");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+        addvectorred<<<1,10,10*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
         nvtxRangePop();
         nvtxRangePushA("cmseError");
         CUDAcommon::handleerror( cudaGetLastError() , "MotorGhostStretchingHarmonicenergy",

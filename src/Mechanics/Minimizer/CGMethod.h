@@ -77,13 +77,15 @@ protected:
     double *gpu_FADotFA;//newGrad
     double *gpu_FADotFAP;//prevGrad
     double *gpu_FDotFA;
+    double *gpu_initlambdalocal;
     bool *gpu_convergencecheck;
     bool *convergencecheck;
     double gpuFDotF(double *f1, double *f2);
     void CUDAresetlambda(cudaStream_t stream);
-    void CUDAinitializeLambda(cudaStream_t stream, bool *check_in, bool *check_out, bool *Polaksafestate);
-    void CUDAfindLambda(cudaStream_t  stream, cudaEvent_t  event, bool *checkin, bool
-            *checkout, bool *gpu_safestate);
+    void CUDAinitializeLambda(cudaStream_t stream1, bool *check_in, bool *check_out, bool
+            *Polaksafestate, int *gpu_state);
+    void CUDAfindLambda(cudaStream_t  stream1, cudaStream_t stream2, cudaEvent_t event, bool *checkin, bool
+            *checkout, bool *gpu_safestate, int *gpu_state);
     void CUDAprepforbacktracking(cudaStream_t stream, bool *check_in, bool *check_out);
     void CUDAprepforsafebacktracking(cudaStream_t stream, bool *check_in, bool *check_out);
     void CUDAallFDotF(cudaStream_t stream);
@@ -92,12 +94,15 @@ protected:
     void CUDAallFDotFA(cudaStream_t stream);
     void CUDAshiftGradient(cudaStream_t stream, bool *Mcheckin);
     void CUDAshiftGradientifSafe(cudaStream_t stream, bool *Mcheckin, bool *Scheckin);
-    void CUDAgetPolakvars(bool calc_safestate,cudaStream_t streamcalc, double* gpu_GRADTOL, bool *gminstatein,
-                                    bool *gminstateout, bool *gsafestateout, volatile bool *cminstate);
+//    void CUDAgetPolakvars(bool calc_safestate,cudaStream_t streamcalc, double* gpu_GRADTOL, bool *gminstatein,
+//                                    bool *gminstateout, bool *gsafestateout, volatile bool *cminstate);
+    void CUDAgetPolakvars(cudaStream_t streamcalc, double* gpu_GRADTOL, bool *gminstatein,
+    bool *gminstateout, volatile bool *cminstate);
+    void CUDAgetPolakvars2(cudaStream_t streamcalc, bool *gsafestateout);
     void CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *minstateout, bool *safestatein, bool
     *safestateout);
     void CUDAmoveBeads(cudaStream_t stream, bool *gpu_checkin );
-    void getmaxFCUDA(double *gpu_forceAux, int *gpu_nint, double *gpu_fmax);
+//    void getmaxFCUDA(double *gpu_forceAux, int *gpu_nint, double *gpu_fmax);
     //PING PONG for backtracking (both normal and safe)
 //    struct backtrackingvars {
 //        double currentEnergy;
@@ -108,6 +113,7 @@ protected:
 //    backtrackingvars *bvar, *gpu_bvar1, *gpu_bvar2, *g_b1, *g_b2, *g_bs;
     cudaStream_t s1, s2, s3, *sp1, *sp2, *sps;
     cudaEvent_t e1, e2, *ep1, *ep2, *eps;
+    int *gpu_state;
     // @PING PONG ENDS
 
 #endif

@@ -77,28 +77,86 @@ namespace mathfunc {
         }
         U_sum[0] = sum;
         atomicAdd(&U_tot[0], sum);
-//        printf("%f %f\n", U_tot[0], sum);
+        printf("ADD1 %f\n", sum);
 
     }
-    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int *culpritID, char* culpritFF,
-                              char* culpritinteraction, char* FF, char* interaction){
-        U_sum[0] = 0.0;
-        double sum = 0.0;
-        for(auto i=0;i<params[1];i++){
-            if(U[i] == -1.0 && sum != -1.0){
-                U_sum[0] = -1.0;
-                U_tot[0] = -1.0;
-                sum = -1.0;
+
+    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot){
+        extern __shared__ double s[];
+        double *c1 = s;
+        int start = 0;
+        int end = params[1];
+        int factor = params[1]/blockDim.x;
+        if(factor > 0) {
+            if (threadIdx.x > 0)
+                start = threadIdx.x * factor;
+            if (threadIdx.x < blockDim.x - 1)
+                end = (threadIdx.x + 1) * factor;
+            c1[threadIdx.x] = 0.0;
+            for (auto i = start; i < end; i++) {
+                if (c1[threadIdx.x] != -1.0 || U[i] != -1.0)
+                    c1[threadIdx.x] += U[i];
+                else
+                    c1[threadIdx.x] = -1.0;
             }
-            else if(sum != -1.0)
-                sum  += U[i];
+//    printf("%d \n", params[0]);
+            __syncthreads();
+
+            if (threadIdx.x == 0) {
+                U_sum[0] = 0.0;
+                for (auto i = 0; i < blockDim.x; i++) {
+                    if (c1[i] != -1.0 && U_sum[0] != -1.0)
+                        U_sum[0] += c1[i];
+                    else
+                        U_sum[0] = -1.0;
+                }
+            if(U_sum[0] == -1.0){
+                auto val = -U_tot[0]-1.0;
+                atomicAdd(&U_tot[0], val);
+            }
+            else
+                atomicAdd(&U_tot[0], U_sum[0]);
+                printf("ADD2 %f %f \n", U_tot[0], U_sum[0]);
+            }
         }
-        U_sum[0] = sum;
-//        printf("sum %f\n",sum);
-        if(sum != -1.0)
+        else if(threadIdx.x == 0) {
+            U_sum[0] = 0.0;
+            double sum = 0.0;
+            for (auto i = 0; i < params[1]; i++) {
+                if (U[i] == -1.0 && sum != -1.0) {
+                    U_sum[0] = -1.0;
+                    U_tot[0] = -1.0;
+                    sum = -1.0;
+                    break;
+                } else
+                    sum += U[i];
+            }
+            U_sum[0] = sum;
             atomicAdd(&U_tot[0], sum);
-        else{
-            assert(0);
+            printf("ADD3 %f %f \n", U_tot[0], U_sum[0]);
         }
     }
+
+
+//    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int *culpritID, char* culpritFF,
+//                              char* culpritinteraction, char* FF, char* interaction){
+//        U_sum[0] = 0.0;
+//        double sum = 0.0;
+//        for(auto i=0;i<params[1];i++){
+//            if(U[i] == -1.0 && sum != -1.0){
+//                U_sum[0] = -1.0;
+//                U_tot[0] = -1.0;
+//                sum = -1.0;
+//            }
+//            else if(sum != -1.0)
+//                sum  += U[i];
+//        }
+//        U_sum[0] = sum;
+////        printf("sum %f\n",sum);
+//        if(sum != -1.0)
+//            atomicAdd(&U_tot[0], sum);
+//        else{
+//            assert(0);
+//        }
+//    }
 }

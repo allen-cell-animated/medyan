@@ -79,9 +79,9 @@ __global__ void FilamentBendingHarmonicenergy(double *coord, double *force, int 
             c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
             c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
         }
-    }
-    __syncthreads();
-    if(thread_idx<nint) {
+//    }
+//    __syncthreads();
+//    if(thread_idx<nint) {
         L1 = sqrt(scalarProduct(c1, c2,
                                 c1, c2, 3 * threadIdx.x));
         L2 = sqrt(scalarProduct(c2, c3,
@@ -143,10 +143,10 @@ __global__ void FilamentBendingHarmonicenergyz(double *coord, double *f, int *be
             f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
         }
 
-    }
-    __syncthreads();
-
-    if(thread_idx<nint) {
+//    }
+//    __syncthreads();
+//
+//    if(thread_idx<nint) {
         L1 = sqrt(scalarProductStretched(c1, f1, c2, f2,
                                          c1, f1, c2, f2, z[0], 3 * threadIdx.x));
         L2 = sqrt(scalarProductStretched(c2, f2, c3, f3,
@@ -200,10 +200,10 @@ __global__ void FilamentBendingHarmonicforces(double *coord, double *f, int *bea
             c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
         }
 
-    }
-    __syncthreads();
-
-    if(thread_idx<nint) {
+//    }
+//    __syncthreads();
+//
+//    if(thread_idx<nint) {
         L1 = sqrt(scalarProduct(c1, c2,
                                 c1, c2, 3 * threadIdx.x));
         L2 = sqrt(scalarProduct(c2, c3,

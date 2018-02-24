@@ -83,9 +83,9 @@ __global__ void LinkerStretchingHarmonicenergy(double *coord, double *force, int
                 c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
             }
 
-        }
-        __syncthreads();
-        if (thread_idx < nint) {
+//        }
+//        __syncthreads();
+//        if (thread_idx < nint) {
             midPointCoordinate(v1, c1, c2, pos1[thread_idx], 3 * threadIdx.x);
             midPointCoordinate(v2, c3, c4, pos2[thread_idx], 3 * threadIdx.x);
             dist = twoPointDistance(v1, v2) - eql[thread_idx];
@@ -148,18 +148,10 @@ __global__ void LinkerStretchingHarmonicenergyz(double *coord, double *f, int *b
                 f4[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 3] + i];
             }
 
-        }
-        __syncthreads();
-
-//        if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-//            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-//            //TODO set culprit in host after return
-////            LinkerInteractions::_motorCulprit = Linker::getLinkers()[i];
-//            U_i[thread_idx]=-1.0;
-////            assert(0);
 //        }
-
-        if (thread_idx < nint) {
+//        __syncthreads();
+//
+//        if (thread_idx < nint) {
             midPointCoordinateStretched(v1, c1, f1, c2, f2, pos1[thread_idx], z[0], 3 * threadIdx.x);
             midPointCoordinateStretched(v2, c3, f3, c4, f4, pos2[thread_idx], z[0], 3 * threadIdx.x);
 
@@ -221,13 +213,10 @@ __global__ void LinkerStretchingHarmonicforces(double *coord, double *f, int *be
             c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
         }
 
-    }
-    __syncthreads();
-
-    if(thread_idx<nint) {
-//        v1[0] = c1[3 * threadIdx.x] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x];
-//        v1[1] = c1[3 * threadIdx.x + 1] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 1];
-//        v1[2] = c1[3 * threadIdx.x + 2] * (1.0 - pos1[thread_idx]) + pos1[thread_idx] * c2[3 * threadIdx.x + 2];
+//    }
+//    __syncthreads();
+//
+//    if(thread_idx<nint) {
 
         midPointCoordinate(v1, c1, c2, pos1[thread_idx], 3 * threadIdx.x);
         midPointCoordinate(v2, c3, c4, pos2[thread_idx], 3 * threadIdx.x);

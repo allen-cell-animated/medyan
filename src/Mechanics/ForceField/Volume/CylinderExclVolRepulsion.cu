@@ -151,6 +151,9 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 }
 
 double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, double *krep, double *z, int *params) {
+//    nvtxRangePushA("E_wait");
+//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
+//    nvtxRangePop();
 
     if(blocksnthreadse[1]>0) {
 
@@ -209,7 +212,10 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
     else{
         nvtxRangePushA("cceeadd");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0, stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvector<<<1,1,0, stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+        addvectorred<<<1,10,10*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
         nvtxRangePop();
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);

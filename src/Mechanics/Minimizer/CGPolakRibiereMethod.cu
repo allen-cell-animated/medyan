@@ -104,8 +104,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::handleerror(cudaStreamDestroy(stream3));
     nvtxRangePop();
 //PING PONG
-
-
     bool  *Mmh_stop, *Mmg_stop1, *Mmg_stop2, *Mmg_s1, *Mmg_s2, *Mmg_ss;//minimization state
     bool  *Msh_stop, *Msg_stop1, *Msg_stop2, *Msg_s1, *Msg_s2, *Msg_ss;//safe state
     cudaStream_t Ms1, Ms2, Ms3, Ms4, *Msp1, *Msp2, *Msps;
@@ -129,6 +127,10 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::handleerror(cudaStreamCreate(&Ms4));
     CUDAcommon::handleerror(cudaEventCreate(&Me1));
     CUDAcommon::handleerror(cudaEventCreate(&Me2));
+    CUDAcommon::handleerror(cudaStreamCreate(&stream_shiftsafe));
+    CUDAcommon::handleerror(cudaStreamCreate(&stream_dotcopy));
+    CUDAcommon::handleerror(cudaEventCreate(&event_safe));
+    CUDAcommon::handleerror(cudaEventCreate(&event_dot));
     nvtxRangePop();
 
     Mmh_stop[0] = true; //Minimizationstate
@@ -153,7 +155,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::handleerror(cudaGetLastError(),"CUDAinitializePolak", "CGPolakRibiereMethod.cu");
 
     nvtxRangePushA("PolakCudacalc");
-    CGMethod::CUDAgetPolakvars(false, *Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Msg_s2, Mc_isminimizationstate);
+//    CGMethod::CUDAgetPolakvars(false, *Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Msg_s2, Mc_isminimizationstate);
+    CGMethod::CUDAgetPolakvars(*Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Mc_isminimizationstate);
     CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
     CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGPolakRibiereMethod.cu");
     nvtxRangePop();
@@ -166,7 +169,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     nvtxRangePop();
 //@}
 #else //SERIAL
-//FIND MAXIMUM ERROR BETWEEN CUDA AND VECTORIZED FORCES{
+    //FIND MAXIMUM ERROR BETWEEN CUDA AND VECTORIZED FORCES{
     //VECTORIZED. Prep for Polak{
     double curGrad = CGMethod::allFDotF();
     Ms_isminimizationstate = true;
@@ -176,16 +179,14 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     nvtxRangePop();
     //}
 #endif
-//    std::cout<<"maxF "<<maxF()<<" "<<GRADTOL<<" "<<Ms_isminimizationstate<<" "<<Mc_isminimizationstate[0]<<endl;
-    //Start Polak-Ribiere
     while (/* Iteration criterion */  numIter < N &&
                                       /* Gradient tolerance  */  (Ms_isminimizationstate ||
-                                              Mc_isminimizationstate[0])) {
-//        std::cout<<"maxF "<<maxF()<<" "<<GRADTOL<<" "<<Ms_isminimizationstate<<" "<<Mc_isminimizationstate[0]<<endl;
-
+                                                                  Mc_isminimizationstate[0])) {
 //PING PONG SWAP
 #ifdef CUDAACCL
-        CUDAcommon::handleerror(cudaStreamWaitEvent(*Msp2, *Mep1, 0));
+//        CUDAcommon::handleerror(cudaStreamWaitEvent(*Msp2, *Mep1, 0));
+        CUDAcommon::handleerror(cudaStreamSynchronize(*Msp1));
+        CUDAcommon::handleerror(cudaStreamSynchronize(stream_shiftsafe));
         Msps = Msp1;
         Msp1 = Msp2;
         Msp2 = Msps;
@@ -203,30 +204,26 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
 //PING ENDS
         numIter++;
-//        std::cout<<"iteration "<<numIter++<<endl;
-
-//
-//#if defined(CROSSCHECK)
-//        auto state=cross_check::crosscheckforces(force);
-//#endif
-//        std::cout<<"S "<<Mc_issafestate[0]<<" "<<Ms_issafestate<<endl;
 #ifdef CUDAACCL
         if(Mc_issafestate[0]) {
             _safeMode = false;
         }
+        nvtxRangePushA("while_Polak_sync");
+//        CUDAcommon::handleerror(cudaStreamSynchronize(*Msp2));//make sure previous iteration is done.
+        nvtxRangePop();
         //find lambda by line search, move beads
-
+        nvtxRangePushA("lambda");
         lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, Msg_s1)
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, Msg_s1);
+        nvtxRangePop();
 #else
         bool *dummy;
+        nvtxRangePushA("lambda");
         lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
+        nvtxRangePop();
 #endif
-//                double cudalambda[1];
-//                CUDAcommon::handleerror(cudaMemcpy(cudalambda, CUDAcommon::getCUDAvars().gpu_lambda, sizeof(double),
-//                                                                                       cudaMemcpyDeviceToHost));
-//                std::cout<<"lambda  "<<cudalambda[0]<<endl;
+
 #ifdef CUDAACCL
 //        std::cout<<"move beads"<<endl;
         CUDAmoveBeads(*Msp1, Mmg_s1);
@@ -247,56 +244,49 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.clear();
         CUDAcommon::cudavars = cvars;
+        CUDAcommon::handleerror(cudaStreamSynchronize(stream_dotcopy));
 #endif
         //compute new forces
 //        std::cout<<"compute forces"<<endl;
         FFM.computeForces(coord, forceAux);//split and synchronize
-//#ifndef CUDAACCL //SERIAL REMOVED AS IT IS incorrect place for copying forces.
-////vectorized copy
-//        nvtxRangePushA("SCPF");
-//        std::cout<<"copy forces serial"<<endl;
-//        FFM.copyForces(forceAuxPrev, forceAux);
-//        nvtxRangePop();
-//#endif
 #ifdef  CUDAACCL
         //wait for forces to be calculated
-//        std::cout<<"Force streams "<<CUDAcommon::getCUDAvars().streamvec.size()<<endl;
         for(auto strm:CUDAcommon::getCUDAvars().streamvec)
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
-//        nvtxRangePushA("CCPF");
-//        FFM.CUDAcopyForces(*Msp1, CUDAcommon::getCUDAvars().gpu_forceAuxP,CUDAcommon::getCUDAvars().gpu_forceAux);
-//        nvtxRangePop();
+
         //compute direction CUDA
 //        std::cout<<"FdotFA"<<endl;
-        CGMethod::CUDAallFADotFA(*Msp1); //newGrad
+        CGMethod::CUDAallFADotFA(stream_dotcopy); //newGrad
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 //        std::cout<<"FdotFAP"<<endl;
-        CGMethod::CUDAallFADotFAP(*Msp1); //prevGrad
+        CGMethod::CUDAallFADotFAP(stream_dotcopy); //prevGrad
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 //        std::cout<<"copy forces"<<endl;
+        CUDAcommon::handleerror(cudaEventRecord(event_dot,stream_dotcopy));
+        CUDAcommon::handleerror(cudaStreamWaitEvent(stream_shiftsafe, event_dot,0));
         nvtxRangePushA("CCPF"); //Copy forces
-        FFM.CUDAcopyForces(*Msp1, CUDAcommon::getCUDAvars().gpu_forceAuxP,CUDAcommon::getCUDAvars().gpu_forceAux);
+        FFM.CUDAcopyForces(stream_dotcopy, CUDAcommon::getCUDAvars().gpu_forceAuxP,CUDAcommon::getCUDAvars().gpu_forceAux);
         nvtxRangePop();
         //Polak-Ribieri update beta & shift gradient
 //        std::cout<<"shift Gradient"<<endl;
-        CUDAshiftGradient(*Msp1, Mmg_s1);
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
+        CUDAshiftGradient(stream_shiftsafe, Mmg_s1);
         //@CUDA Get minimizaton state{
         nvtxRangePushA("Polakcudacalc");
-        CGMethod::CUDAgetPolakvars(true, *Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Msg_s2, Mc_isminimizationstate);
+//        CGMethod::CUDAgetPolakvars(true, *Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Msg_s2, Mc_isminimizationstate);
+        CGMethod::CUDAgetPolakvars(*Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Mc_isminimizationstate);
         CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
+        CGMethod::CUDAgetPolakvars2(stream_shiftsafe, Msg_s2);
         CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGPolakRibiereMethod.cu");
         nvtxRangePop();
 //        std::cout<<"shift Gradient Safe"<<endl;
-        CUDAshiftGradientifSafe(*Msp1, Mmg_s1, Msg_s1);
-        CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
+        CUDAshiftGradientifSafe(stream_shiftsafe, Mmg_s1, Msg_s1);
         CUDAcommon::handleerror(cudaGetLastError(),"CUDAshiftGradientifSafe", "CGPolakRibiereMethod.cu");
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
         if(Mc_isminimizationstate[0]  == true){
             //Copy to host
             nvtxRangePushA("Polakcudawait");
             CUDAcommon::handleerror(cudaStreamWaitEvent(Ms3, *Mep1, 0));
-            CUDAcommon::handleerror(cudaStreamWaitEvent(Ms4, *Mep1, 0));
+            CUDAcommon::handleerror(cudaStreamWaitEvent(Ms4, event_safe, 0));
             nvtxRangePop();
             nvtxRangePushA("Polakcudacopy");
 //            std::cout<<"min state copy"<<endl;
@@ -422,7 +412,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
     endMinimization();
     FFM.computeLoadForces();
-std::cout<<"End minimization-----------------"<<endl;
+    std::cout<<"End minimization-----------------"<<endl;
 
     FFM.cleanupAllForceFields();
+    CUDAcommon::handleerror(cudaEventDestroy(event_safe));
+    CUDAcommon::handleerror(cudaEventDestroy(event_dot));
+    CUDAcommon::handleerror(cudaStreamDestroy(stream_dotcopy));
+    CUDAcommon::handleerror(cudaStreamDestroy(stream_shiftsafe));
 }

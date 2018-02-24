@@ -104,6 +104,9 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
 
 double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, double *z, int *params) {
+//    nvtxRangePushA("E_wait");
+//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
+//    nvtxRangePop();
     if(blocksnthreadse[1]>0) {
         FilamentBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
                 (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, z, CUDAcommon::getCUDAvars()
@@ -146,7 +149,10 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         CUDAcommon::cudavars = cvars;
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+        addvectorred<<<1,10,10*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         return gU_sum;
     }

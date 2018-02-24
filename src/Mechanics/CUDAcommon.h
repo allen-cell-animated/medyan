@@ -33,6 +33,7 @@ struct CUDAvars {
     double * gpu_lambda = NULL;
     float vectorize = 0.0;
     double * gpu_energy = NULL;
+    bool * gpu_btstate = NULL;
     vector<cudaStream_t*> streamvec;
     vector<cudaEvent_t> eventvec;
     int* culpritID = NULL;
@@ -41,6 +42,8 @@ struct CUDAvars {
     char* gculpritinteraction = NULL;
     char* culpritFF = NULL;
     char* culpritinteraction = NULL;
+//    cudaEvent_t *event;
+
 //    float Ccforce = 0.0;
 //    float Scforce = 0.0;
 //    unsigned int  gpu_sharedMem = 0;

@@ -103,6 +103,9 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
 
 double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                              double *kstr, double *eql, double *z, int *params) {
+//    nvtxRangePushA("E_wait");
+//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
+//    nvtxRangePop();
     if(blocksnthreadse[1]>0) {
         FilamentStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (6 * blocksnthreadse[1]) * sizeof
                 (double), stream>>> (coord, f, beadSet, kstr, eql, params, gU_i, z, CUDAcommon::getCUDAvars()
@@ -144,7 +147,10 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
+//        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+        addvectorred<<<1,10,10*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
         CUDAcommon::handleerror( cudaGetLastError() ,"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
         return gU_sum;}
 }

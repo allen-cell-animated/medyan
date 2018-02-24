@@ -74,10 +74,10 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
                 c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
             }
 
-        }
-        __syncthreads();
-
-        if (thread_idx < nint) {
+//        }
+//        __syncthreads();
+//
+//        if (thread_idx < nint) {
             //check if parallel
             if (areParallel(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
@@ -243,19 +243,6 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
         int n = params[0];
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
-//    printf("%i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f "
-//                   "%.16f %.16f %.16f %.16f %.16f %.16f %.16f\n",thread_idx, coord[3 * beadSet[n * thread_idx] ],
-//           coord[3 * beadSet[n * thread_idx] +1 ], coord[3 * beadSet[n * thread_idx] +2 ],
-//           coord[3 * beadSet[n * thread_idx +1] ], coord[3 * beadSet[n * thread_idx +1] +1 ], coord[3 * beadSet[n * thread_idx +1] +2 ],
-//           coord[3 * beadSet[n * thread_idx +2]], coord[3 * beadSet[n * thread_idx +2] +1 ], coord[3 * beadSet[n *
-//                                                                                                                     thread_idx +2] +2 ],
-//           coord[3 * beadSet[n * thread_idx +3]], coord[3 * beadSet[n * thread_idx +3] +1 ], coord[3 * beadSet[n *
-//                                                                                                                     thread_idx +3] +2 ],
-//    f[3 * beadSet[n * thread_idx] ], f[3 * beadSet[n * thread_idx] +1 ], f[3 * beadSet[n * thread_idx] +2 ],
-//    f[3 * beadSet[n * thread_idx +1] ], f[3 * beadSet[n * thread_idx +1] +1 ], f[3 * beadSet[n * thread_idx +1] +2 ],
-//    f[3 * beadSet[n * thread_idx +2]], f[3 * beadSet[n * thread_idx +2] +1 ], f[3 * beadSet[n * thread_idx +2] +2 ],
-//    f[3 * beadSet[n * thread_idx +3]], f[3 * beadSet[n * thread_idx +3] +1 ], f[3 * beadSet[n * thread_idx +3] +2 ]);
-
         if (thread_idx < nint) {
             U_i[thread_idx] = 0.0;
             for (auto i = 0; i < 3; i++) {
@@ -269,21 +256,10 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                                           + z[0] * f[3 * beadSet[n * thread_idx + 3] + i];
             }
 
-        }
-        __syncthreads();
-
-//    if(thread_idx<nint) {
-//        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx], c1[3 * threadIdx.x], c1[3 * threadIdx.x + 1], c1[3 * threadIdx.x + 2]);
-//        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx], c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2]);
-//        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1], c3[3 * threadIdx.x + 2]);
-//        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
-//        //check if parallel
-//        auto xx = areParallel(c1, c2, c3, c4, 3 * threadIdx.x);
-//        printf("%d %d %d \n", thread_idx, nint, xx);
-//    }
-//    __syncthreads();
-
-        if (thread_idx < nint) {
+//        }
+//        __syncthreads();
+//
+//        if (thread_idx < nint) {
             //check if parallel
             if (areParallel(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
@@ -460,30 +436,9 @@ __global__ void CUDAExclVolRepulsionforce(double *coord, double *f, int *beadSet
 //            f4[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 3] + i];
         }
 
-    }
-    __syncthreads();
-//
-//    if(thread_idx<nint) {
-//        printf("%d \n", beadSet[n * thread_idx]);
-//        printf("%d \n", beadSet[n * thread_idx +1]);
-//        printf("%d \n", beadSet[n * thread_idx +2]);
-//        printf("%d \n", beadSet[n * thread_idx +3]);
-//        //check if parallel
 //    }
 //    __syncthreads();
-//
 //    if(thread_idx<nint) {
-//        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx], c1[3 * threadIdx.x], c1[3 * threadIdx.x + 1], c1[3 * threadIdx.x + 2]);
-//        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx +1], c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2]);
-//        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx +2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1], c3[3 * threadIdx.x + 2]);
-//        printf("%d %d %f %f %f\n", thread_idx,beadSet[n * thread_idx +3], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
-//        //check if parallel
-//        auto xx = areParallel(c1, c2, c3, c4, 3 * threadIdx.x);
-//        printf("%d %d %d \n", thread_idx, nint, xx);
-//    }
-//    __syncthreads();
-
-    if(thread_idx<nint) {
 
         //check if parallel
         if(areParallel(c1, c2, c3, c4, 3 * threadIdx.x))  {
