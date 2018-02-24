@@ -200,7 +200,7 @@ private:
 
     /// Non data
     Membrane* _membrane;
-}
+};
 
 class OutputStructSnapshot: public OutputStruct {
 private:

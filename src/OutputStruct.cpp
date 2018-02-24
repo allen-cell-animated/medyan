@@ -288,10 +288,10 @@ OutputStruct for Membranes
 ******************************************************************************/
 //@{
 void OutputStructMembrane::getFromSystemWithoutChildren() {
-    _id = _bubble->getID();
-    _type = _bubble->getType();
+    _id = _membrane->getId();
+    _type = _membrane->getType();
 
-    auto& vertices = membrane->getVertexVector();
+    auto& vertices = _membrane->getVertexVector();
     _numVertices = vertices.size();
 
     // Store coordinates with neighbor indices
