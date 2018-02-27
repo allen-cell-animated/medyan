@@ -367,6 +367,19 @@ void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& i
 
     }
 }
+
+size_t OutputStructMembrane::getNumEdges()const {
+    if(_membrane) {
+        return _membrane->getEdgeVector().size();
+    } else {
+        size_t numEdges = 0;
+        for(VectorInfo& v: _memInfo) {
+            numEdges += get<1>(v).size(); // Add number of neighbors
+        }
+        numEdges /= 2;
+        return numEdges;
+    }
+}
 //@}
 
 /******************************************************************************
@@ -377,28 +390,28 @@ void OutputStructSnapshot::getFromSystem() {
     getFromSystemWithoutChildren();
 
     for(auto filament: Filament::getFilaments()) {
-        _filamentStruct.emplace_back(filament);
-        _filamentStruct.back().getFromSystem();
+        filamentStruct.emplace_back(filament);
+        filamentStruct.back().getFromSystem();
     }
     for(auto linker: Linker::getLinkers()) {
-        _linkerStruct.emplace_back(linker);
-        _linkerStruct.back().getFromSystem();
+        linkerStruct.emplace_back(linker);
+        linkerStruct.back().getFromSystem();
     }
     for(auto motor: MotorGhost::getMotorGhosts()) {
-        _motorStruct.emplace_back(motor);
-        _motorStruct.back().getFromSystem();
+        motorStruct.emplace_back(motor);
+        motorStruct.back().getFromSystem();
     }
     for(auto brancher: BranchingPoint::getBranchingPoints()) {
-        _brancherStruct.emplace_back(brancher);
-        _brancherStruct.back().getFromSystem();
+        brancherStruct.emplace_back(brancher);
+        brancherStruct.back().getFromSystem();
     }
     for(auto bubble: Bubble::getBubbles()) {
-        _bubbleStruct.emplace_back(bubble);
-        _bubbleStruct.back().getFromSystem();
+        bubbleStruct.emplace_back(bubble);
+        bubbleStruct.back().getFromSystem();
     }
     for(auto membrane: Membrane::getMembranes()) {
-        _membraneStruct.emplace_back(membrane);
-        _membraneStruct.back().getFromSystem();
+        membraneStruct.emplace_back(membrane);
+        membraneStruct.back().getFromSystem();
     }
 
     // Note: new children should be added here
@@ -421,28 +434,28 @@ void OutputStructSnapshot::outputFromSystem(std::ostream& os) {
     outputFromStoredWithoutChildren(os);
 
     for(auto filament: Filament::getFilaments()) {
-        _filamentStruct.emplace_back(filament);
-        _filamentStruct.back().outputFromSystem(os);
+        filamentStruct.emplace_back(filament);
+        filamentStruct.back().outputFromSystem(os);
     }
     for(auto linker: Linker::getLinkers()) {
-        _linkerStruct.emplace_back(linker);
-        _linkerStruct.back().outputFromSystem(os);
+        linkerStruct.emplace_back(linker);
+        linkerStruct.back().outputFromSystem(os);
     }
     for(auto motor: MotorGhost::getMotorGhosts()) {
-        _motorStruct.emplace_back(motor);
-        _motorStruct.back().outputFromSystem(os);
+        motorStruct.emplace_back(motor);
+        motorStruct.back().outputFromSystem(os);
     }
     for(auto brancher: BranchingPoint::getBranchingPoints()) {
-        _brancherStruct.emplace_back(brancher);
-        _brancherStruct.back().outputFromSystem(os);
+        brancherStruct.emplace_back(brancher);
+        brancherStruct.back().outputFromSystem(os);
     }
     for(auto bubble: Bubble::getBubbles()) {
-        _bubbleStruct.emplace_back(bubble);
-        _bubbleStruct.back().outputFromSystem(os);
+        bubbleStruct.emplace_back(bubble);
+        bubbleStruct.back().outputFromSystem(os);
     }
     for(auto membrane: Membrane::getMembranes()) {
-        _membraneStruct.emplace_back(membrane);
-        _membraneStruct.back().outputFromSystem(os);
+        membraneStruct.emplace_back(membrane);
+        membraneStruct.back().outputFromSystem(os);
     }
 
     // Note: new children should be added here
@@ -451,22 +464,22 @@ void OutputStructSnapshot::outputFromSystem(std::ostream& os) {
 void OutputStructSnapshot::outputFromStored(std::ostream& os) {
     outputFromStoredWithoutChildren(os);
     
-    for(auto& it: _filamentStruct) {
+    for(auto& it: filamentStruct) {
         it.outputFromStored(os);
     }
-    for(auto& it: _linkerStruct) {
+    for(auto& it: linkerStruct) {
         it.outputFromStored(os);
     }
-    for(auto& it: _motorStruct) {
+    for(auto& it: motorStruct) {
         it.outputFromStored(os);
     }
-    for(auto& it: _brancherStruct) {
+    for(auto& it: brancherStruct) {
         it.outputFromStored(os);
     }
-    for(auto& it: _bubbleStruct) {
+    for(auto& it: bubbleStruct) {
         it.outputFromStored(os);
     }
-    for(auto& it: _membraneStruct) {
+    for(auto& it: membraneStruct) {
         it.outputFromStored(os);
     }
 
@@ -503,23 +516,23 @@ void OutputStructSnapshot::getFromOutput(std::istream& is, std::istringstream& i
         std::string name;
         newIss >> name;
         if(name == OutputStructFilament::name) {
-            _filamentStruct.emplace_back(nullptr);
-            _filamentStruct.back().getFromOutput(is, newIss);
+            filamentStruct.emplace_back(nullptr);
+            filamentStruct.back().getFromOutput(is, newIss);
         } else if(name == OutputStructLinker::name) {
-            _linkerStruct.emplace_back(nullptr);
-            _linkerStruct.back().getFromOutput(is, newIss);
+            linkerStruct.emplace_back(nullptr);
+            linkerStruct.back().getFromOutput(is, newIss);
         } else if(name == OutputStructMotor::name) {
-            _motorStruct.emplace_back(nullptr);
-            _motorStruct.back().getFromOutput(is, newIss);
+            motorStruct.emplace_back(nullptr);
+            motorStruct.back().getFromOutput(is, newIss);
         } else if(name == OutputStructBrancher::name) {
-            _brancherStruct.emplace_back(nullptr);
-            _brancherStruct.back().getFromOutput(is, newIss);
+            brancherStruct.emplace_back(nullptr);
+            brancherStruct.back().getFromOutput(is, newIss);
         } else if(name == OutputStructBubble::name) {
-            _bubbleStruct.emplace_back(nullptr);
-            _bubbleStruct.back().getFromOutput(is, newIss);
+            bubbleStruct.emplace_back(nullptr);
+            bubbleStruct.back().getFromOutput(is, newIss);
         } else if(name == OutputStructMembrane::name) {
-            _membraneStruct.emplace_back(nullptr);
-            _membraneStruct.back().getFromOutput(is, newIss);
+            membraneStruct.emplace_back(nullptr);
+            membraneStruct.back().getFromOutput(is, newIss);
         } // TODO: other children
 
     } while(true);

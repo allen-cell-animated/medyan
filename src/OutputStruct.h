@@ -63,6 +63,8 @@ public:
     virtual void outputFromStoredWithoutChildren(std::ostream& os)override;
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
+    int getNumBeads()const { return _numBeads; }
+
 private:
     /// Data
     int _id;
@@ -189,6 +191,8 @@ public:
     virtual void outputFromStoredWithoutChildren(std::ostream& os)override;
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
+    size_t getNumEdges()const;
+
 private:
 
     /// Data
@@ -217,17 +221,17 @@ private:
     int _numBubbles;
     int _numMembranes;
 
+public:
     /// Children data
-    std::vector<OutputStructFilament> _filamentStruct;
-    std::vector<OutputStructLinker>   _linkerStruct;
-    std::vector<OutputStructMotor>    _motorStruct;
-    std::vector<OutputStructBrancher> _brancherStruct;
-    std::vector<OutputStructBubble>   _bubbleStruct;
-    std::vector<OutputStructMembrane> _membraneStruct;
+    std::vector<OutputStructFilament> filamentStruct;
+    std::vector<OutputStructLinker>   linkerStruct;
+    std::vector<OutputStructMotor>    motorStruct;
+    std::vector<OutputStructBrancher> brancherStruct;
+    std::vector<OutputStructBubble>   bubbleStruct;
+    std::vector<OutputStructMembrane> membraneStruct;
 
     /// Non data
 
-public:
     OutputStructSnapshot(int snapshot): _snapshot(snapshot) {}
 
     virtual void getFromSystem()override;
