@@ -64,6 +64,7 @@ public:
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
     int getNumBeads()const { return _numBeads; }
+    const std::vector<std::array<double, 3>>& getCoords()const { return _coords; }
 
 private:
     /// Data
@@ -91,6 +92,8 @@ public:
     virtual void outputFromStoredWithoutChildren(std::ostream& os)override;
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
+    const std::array<std::array<double, 3>, 2>& getCoords()const { return _coords; }
+
 private:
 
     /// Data
@@ -114,6 +117,8 @@ public:
     virtual void outputFromSystem(std::ostream& os)override;
     virtual void outputFromStoredWithoutChildren(std::ostream& os)override;
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
+
+    const std::array<std::array<double, 3>, 2>& getCoords()const { return _coords; }
 
 private:
 
@@ -192,6 +197,9 @@ public:
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
     size_t getNumEdges()const;
+    const MembraneInfo& getMembraneInfo()const { return _memInfo; }
+
+    Membrane* getMembrane()const { return _membrane; }
 
 private:
 
