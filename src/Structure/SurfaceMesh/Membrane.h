@@ -55,7 +55,7 @@ public:
     // Constructors
     // This constructor creates a membrane according to vertex and neighbor data
     Membrane(SubSystem* s, short membraneType,
-        vector<tuple<array<double, 3>, vector<size_t>>>& membraneData);
+        const vector<tuple<array<double, 3>, vector<size_t>>>& membraneData);
 
     // This destructor is called when a membrane is to be removed from the system.
     // Removes all vertices, edges and triangles associated with the membrane.

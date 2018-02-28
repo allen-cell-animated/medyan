@@ -373,7 +373,7 @@ size_t OutputStructMembrane::getNumEdges()const {
         return _membrane->getEdgeVector().size();
     } else {
         size_t numEdges = 0;
-        for(VectorInfo& v: _memInfo) {
+        for(const VertexInfo& v: _memInfo) {
             numEdges += get<1>(v).size(); // Add number of neighbors
         }
         numEdges /= 2;

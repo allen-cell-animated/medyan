@@ -26,7 +26,7 @@ using namespace mathfunc;
 Database<Membrane*> Membrane::_membranes;
 
 Membrane::Membrane(SubSystem* s, short membraneType,
-    vector<tuple<array<double, 3>, vector<size_t>>>& membraneData):
+    const vector<tuple<array<double, 3>, vector<size_t>>>& membraneData):
     Trackable(false, false, false, false, true), Geometric(),
     _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
     
