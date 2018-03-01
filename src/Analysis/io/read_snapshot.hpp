@@ -12,7 +12,7 @@ public:
     SnapshotReader(const std::string& snapshotFilepath, const std::string& vmdFilepath):
         _snapshotFilepath(snapshotFilepath), _vmdFilepath(vmdFilepath) {}
 
-    void readAndConvertToVmd();
+    void readAndConvertToVmd(const size_t maxFrames=0); // 0 means no limit on max frames
 };
 
 

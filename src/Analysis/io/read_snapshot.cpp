@@ -48,20 +48,27 @@ namespace {
             if(newMembrane > membrane) membrane = newMembrane;
         }
     };
+
+    /// Helper class for file stream handling with RAII
+    // TODO
 }
 
-void SnapshotReader::readAndConvertToVmd() {
+void SnapshotReader::readAndConvertToVmd(const size_t maxFrames=0) {
     using namespace std;
 
     vector<OutputStructSnapshot> snapshots;
 
-    // Read from output file
+    // Read snapshot
     ifstream is(_snapshotFilepath);
 
     PdbMaxBead maxBead;
 
+    size_t curFrame = 0;
+
     string line;
-    while(true) {
+    while(maxFrames == 0 || curFrame < maxFrames) {
+        ++curFrame;
+
         getline(is, line);
         if(!is) break;
         if(line.empty()) continue;
@@ -73,9 +80,10 @@ void SnapshotReader::readAndConvertToVmd() {
         maxBead.renew(snapshots.back());
     }
 
+    // close input stream
     is.close();
 
-    // Construct the vmd version
+    // Write to pdb
     ofstream os(_vmdFilepath);
 
     // Note: in the output, all the coordinates would be 1/10 in size.
@@ -249,6 +257,7 @@ void SnapshotReader::readAndConvertToVmd() {
 
     } // End of looping through snapshots
 
+    // Close files
     os.close();
 
 }
