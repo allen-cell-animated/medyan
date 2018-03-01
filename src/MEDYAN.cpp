@@ -71,7 +71,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "Controller.h"
 #include "SubSystem.h"
-#include "Analysis/io/read_snapshot.hpp"
+#include "Analysis/io/read_snapshot.h"
 #include "core/globals.h"
 
 using namespace medyan;
@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
         }
     }
     Global::global().mode = runMode;
-    
+
     //check for arguments
     if(runMode == 0 && inputFile == "") {
         cout << "User must specify a system input file. Exiting." << endl;

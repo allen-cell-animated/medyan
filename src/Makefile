@@ -15,7 +15,7 @@
 
 TESTS	:= $(shell find ./TESTS -name 'test_*')
 SOURCES := $(shell find . -name '*.cpp' ! -path './TESTS/*')
-HEADERS := $(shell find . -name '*.h(pp)?')
+HEADERS := $(shell find . -name '*.h')
 
 OBJECTS := $(SOURCES:.cpp=.o)
 

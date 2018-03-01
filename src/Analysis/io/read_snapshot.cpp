@@ -1,4 +1,4 @@
-#include "read_snapshot.hpp"
+#include "read_snapshot.h"
 
 #include <fstream>
 #include <iomanip>

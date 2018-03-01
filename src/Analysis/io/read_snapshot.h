@@ -1,5 +1,5 @@
-#ifndef MEDYAN_READ_SNAPSHOT_HPP
-#define MEDYAN_READ_SNAPSHOT_HPP
+#ifndef MEDYAN_READ_SNAPSHOT_H
+#define MEDYAN_READ_SNAPSHOT_H
 
 #include <string>
 
