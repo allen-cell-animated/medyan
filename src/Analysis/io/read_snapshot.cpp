@@ -53,7 +53,7 @@ namespace {
     // TODO
 }
 
-void SnapshotReader::readAndConvertToVmd(const size_t maxFrames=0) {
+void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     using namespace std;
 
     vector<OutputStructSnapshot> snapshots;
