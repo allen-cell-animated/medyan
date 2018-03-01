@@ -12,7 +12,7 @@ public:
     SnapshotReader(const std::string& snapshotFilepath, const std::string& vmdFilepath):
         _snapshotFilepath(snapshotFilepath), _vmdFilepath(vmdFilepath) {}
 
-    void ReadAndConvertToVmd();
+    void readAndConvertToVmd();
 };
 
 

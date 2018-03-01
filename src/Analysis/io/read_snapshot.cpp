@@ -50,7 +50,7 @@ namespace {
     };
 }
 
-void SnapshotReader::ReadAndConvertToVmd() {
+void SnapshotReader::readAndConvertToVmd() {
     using namespace std;
 
     vector<OutputStructSnapshot> snapshots;

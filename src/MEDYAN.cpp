@@ -71,9 +71,10 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "Controller.h"
 #include "SubSystem.h"
+#include "Analysis/io/read_snapshot.hpp"
 
 void printUsage() {
-    cout << "Usage: MEDYAN -s systemFile -i inputDirectory -o outputDirectory" << endl;
+    cout << "Usage: MEDYAN [-a] -s systemFile -i inputDirectory -o outputDirectory" << endl;
 }
 
 int main(int argc, char **argv) {
@@ -93,10 +94,13 @@ int main(int argc, char **argv) {
 
     string inputFile, inputDirectory, outputDirectory;
     int option;
+    int runMode = 0; // 0: run, 1: analyzer
     
     //parse command line args
-    while ((option = getopt(argc, argv, "s:i:o:h")) != -1) {
+    while ((option = getopt(argc, argv, "as:i:o:h")) != -1) {
         switch (option) {
+            case 'a' : runMode = 1;
+                break;
             case 's' : inputFile = optarg;
                 break;
             case 'i' : inputDirectory = optarg;
@@ -110,7 +114,7 @@ int main(int argc, char **argv) {
         }
     }
     //check for arguments
-    if(inputFile == "") {
+    if(runMode == 0 && inputFile == "") {
         cout << "User must specify a system input file. Exiting." << endl;
         printUsage();
         exit(EXIT_FAILURE);
@@ -126,9 +130,21 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
     
-    //initialize and run system
-    c.initialize(inputFile, inputDirectory, outputDirectory);
-    c.run();
+    switch(runMode) {
+    case 0:
+        //initialize and run system
+        c.initialize(inputFile, inputDirectory, outputDirectory);
+        c.run();
+        break;
+    case 1:
+        {
+            string inputFilePath = inputDirectory + "/snapshot.traj";
+            string outputFilePath = outputDirectory + "/snapshot.pdb";
+            SnapshotReader sr(inputFilePath, outputFilePath);
+            sr.readAndConvertToVmd();
+        }
+        break;
+    }
 
 }
 
