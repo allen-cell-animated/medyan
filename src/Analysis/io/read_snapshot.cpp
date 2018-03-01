@@ -98,6 +98,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         size_t atomSerial;
         size_t atomCount;
 
+        SubSystem s; // Dummy subsystem
+
         // Filaments
         chain = 'F';
         atomSerial = 0;
@@ -215,7 +217,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             Membrane* dataMembrane;
 
             unique_ptr<Membrane> newMembrane;
-            SubSystem s;
             if(buildMembrane) {
                 newMembrane = make_unique<Membrane>(&s, 0, eachMembrane.getMembraneInfo());
                 dataMembrane = newMembrane.get();
