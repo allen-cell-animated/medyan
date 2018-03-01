@@ -140,16 +140,16 @@ Membrane::Membrane(SubSystem* s, short membraneType,
                 nnVertex->getTriangleHead()[idx20] = 1;
 
                 // Bind edges to the triangle
-                lastAddedTriangle->getEdges() = {
+                lastAddedTriangle->getEdges() = {{
                     centerVertex->getNeighborEdges()[nIdx],
                     nVertex->getNeighborEdges()[idx12],
                     nnVertex->getNeighborEdges()[idx20]
-                };
-                lastAddedTriangle->getEdgeHead() = {
+                }};
+                lastAddedTriangle->getEdgeHead() = {{
                     centerVertex->getEdgeHead()[nIdx],
                     nVertex->getEdgeHead()[idx12],
                     nnVertex->getEdgeHead()[idx20]
-                };
+                }};
                 
                 // Bind the triangle to edges
                 for(size_t eIdx = 0; eIdx < 3; ++eIdx)

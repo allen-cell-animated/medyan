@@ -8,7 +8,7 @@ Database<Edge*> Edge::_edges;
 
 Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
     Trackable(),
-    _v{v1, v2}, _id(_edges.getID()) {
+    _v{{v1, v2}}, _id(_edges.getID()) {
     
     parent -> addChild(unique_ptr<Component>(this));
 
