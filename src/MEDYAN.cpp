@@ -72,6 +72,9 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Controller.h"
 #include "SubSystem.h"
 #include "Analysis/io/read_snapshot.hpp"
+#include "core/globals.h"
+
+using namespace medyan;
 
 void printUsage() {
     cout << "Usage: MEDYAN [-a] -s systemFile -i inputDirectory -o outputDirectory" << endl;
@@ -102,10 +105,13 @@ int main(int argc, char **argv) {
             case 'a' : runMode = 1;
                 break;
             case 's' : inputFile = optarg;
+                Global::global().systemInputFileName = optarg;
                 break;
             case 'i' : inputDirectory = optarg;
+                Global::global().inputDirectory = optarg;
                 break;
             case 'o' : outputDirectory = optarg;
+                Global::global().outputDirectory = optarg;
                 break;
             case 'h' : printUsage();
                 exit(EXIT_FAILURE);
@@ -113,6 +119,8 @@ int main(int argc, char **argv) {
                 exit(EXIT_FAILURE);
         }
     }
+    Global::global().mode = runMode;
+    
     //check for arguments
     if(runMode == 0 && inputFile == "") {
         cout << "User must specify a system input file. Exiting." << endl;
