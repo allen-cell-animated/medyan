@@ -65,9 +65,11 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
     size_t curFrame = 0;
 
+    cout << "Start reading " << _snapshotFilepath << endl;
     string line;
     while(maxFrames == 0 || curFrame < maxFrames) {
         ++curFrame;
+        if (curFrame % 10 == 0)cout << "Frame " << curFrame << endl;
 
         getline(is, line);
         if(!is) break;
@@ -79,6 +81,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
         maxBead.renew(snapshots.back());
     }
+    cout << "Reading complete. " << curFrame << " frames to be processed." << endl;
 
     // close input stream
     is.close();
