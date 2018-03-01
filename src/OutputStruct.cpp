@@ -36,6 +36,8 @@ using namespace mathfunc;
 OutputStruct for Filaments
 ******************************************************************************/
 //@{
+constexpr char OutputStructFilament::name[];
+
 void OutputStructFilament::getFromSystemWithoutChildren() {
     _id = _filament->getID();
     _type = _filament->getType();
@@ -99,6 +101,8 @@ void OutputStructFilament::getFromOutput(std::istream& is, std::istringstream& i
 OutputStruct for Linkers
 ******************************************************************************/
 //@{
+constexpr char OutputStructLinker::name[];
+
 void OutputStructLinker::getFromSystemWithoutChildren() {
     _id = _linker->getID();
     _type = _linker->getType();
@@ -152,6 +156,8 @@ void OutputStructLinker::getFromOutput(std::istream& is, std::istringstream& iss
 OutputStruct for Motors
 ******************************************************************************/
 //@{
+constexpr char OutputStructMotor::name[];
+
 void OutputStructMotor::getFromSystemWithoutChildren() {
     _id = _motor->getID();
     _type = _motor->getType();
@@ -207,6 +213,8 @@ void OutputStructMotor::getFromOutput(std::istream& is, std::istringstream& iss)
 OutputStruct for Branchers
 ******************************************************************************/
 //@{
+constexpr char OutputStructBrancher::name[];
+
 void OutputStructBrancher::getFromSystemWithoutChildren() {
     _id = _brancher->getID();
     _type = _brancher->getType();
@@ -247,6 +255,8 @@ void OutputStructBrancher::getFromOutput(std::istream& is, std::istringstream& i
 OutputStruct for Bubbles
 ******************************************************************************/
 //@{
+constexpr char OutputStructBubble::name[];
+
 void OutputStructBubble::getFromSystemWithoutChildren() {
     _id = _bubble->getID();
     _type = _bubble->getType();
@@ -287,6 +297,8 @@ void OutputStructBubble::getFromOutput(std::istream& is, std::istringstream& iss
 OutputStruct for Membranes
 ******************************************************************************/
 //@{
+constexpr char OutputStructMembrane::name[];
+
 void OutputStructMembrane::getFromSystemWithoutChildren() {
     _id = _membrane->getId();
     _type = _membrane->getType();
