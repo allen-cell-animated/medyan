@@ -13,6 +13,7 @@
 
 #include "Bead.h"
 
+#include "core/globals.h"
 #include "Compartment.h"
 #include "Composite.h"
 
@@ -33,22 +34,24 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
       _position(position), _birthTime(tau()) {
     
     parent->addChild(unique_ptr<Component>(this));
-          
-    loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
-    loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
-    
-    //Find compartment
-    try {_compartment = GController::getCompartment(v);}
-    catch (exception& e) {
+
+    if(medyan::Global::readGlobal().mode != 1) {
+        loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
+        loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
         
-        cout << e.what() << endl;
-        
-        printSelf();
-        
-        //also print parent info
-        getParent()->printSelf();
-        
-        exit(EXIT_FAILURE);
+        //Find compartment
+        try {_compartment = GController::getCompartment(v);}
+        catch (exception& e) {
+            
+            cout << e.what() << endl;
+            
+            printSelf();
+            
+            //also print parent info
+            getParent()->printSelf();
+            
+            exit(EXIT_FAILURE);
+        }
     }
           
 }

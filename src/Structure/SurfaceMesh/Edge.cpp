@@ -1,5 +1,6 @@
 #include "Edge.h"
 
+#include "core/globals.h"
 #include "Compartment.h"
 #include "GController.h"
 #include "MathFunctions.h"
@@ -17,13 +18,15 @@ Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
 
     // Set coordinate and add to compartment
     updateCoordinate();
-    try { _compartment = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
-    catch (exception& e) {
-        cout << e.what() << endl;
-        printSelf();
-        exit(EXIT_FAILURE);
+    if(medyan::Global::readGlobal().mode != 1) {
+        try { _compartment = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
+        catch (exception& e) {
+            cout << e.what() << endl;
+            printSelf();
+            exit(EXIT_FAILURE);
+        }
+    _compartment->addEdge(this);
     }
-   _compartment->addEdge(this);
 }
 
 void Edge::updateCoordinate() {

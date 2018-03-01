@@ -1,5 +1,6 @@
 #include "Triangle.h"
 
+#include "core/globals.h"
 #include "Compartment.h"
 #include "MathFunctions.h"
 #include "GController.h"
@@ -22,13 +23,15 @@ Triangle::Triangle(Composite* parent, Vertex* v1, Vertex* v2, Vertex* v3):
 
     // Set coordinate and add to compartment
     updateCoordinate();
-    try { _compartment = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
-    catch (exception& e) {
-        cout << e.what() << endl;
-        printSelf();
-        exit(EXIT_FAILURE);
+    if(medyan::Global::readGlobal().mode != 1) {
+        try { _compartment = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
+        catch (exception& e) {
+            cout << e.what() << endl;
+            printSelf();
+            exit(EXIT_FAILURE);
+        }
+        _compartment->addTriangle(this);
     }
-   _compartment->addTriangle(this);
    
 }
 
