@@ -89,10 +89,12 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     // Write to pdb
     ofstream os(_vmdFilepath);
 
+    cout << "Writing to " << _vmdFilepath << endl;
     // Note: in the output, all the coordinates would be 1/10 in size.
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
-        os << "MODEL     " << setw(4) << idx << endl;
+        if (idx % 10 == 0) cout << "Generating model " << idx << endl;
+        os << "MODEL     " << setw(4) << idx + 1 << endl;
 
         char chain;
         size_t atomSerial;
@@ -260,6 +262,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         }
 
     } // End of looping through snapshots
+    cout << "Writing complete. " << numSnapshots << " models created." << endl;
 
     // Close files
     os.close();
