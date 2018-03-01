@@ -31,7 +31,7 @@ public:
     void forces(Triangle*, Bead*, double kExVol);
     void forcesAux(Triangle*, Bead*, double kExVol);
 
-    double loadForces(Triangle*, const array<double, 3>&, double kExVol);
+    array<double, 3> loadForces(Triangle*, const array<double, 3>&, double kExVol);
 };
 
 

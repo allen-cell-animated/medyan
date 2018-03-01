@@ -75,6 +75,11 @@ void TriangleCylinderVolumeFF::computeForcesAux() {
         interaction->computeForcesAux();
 }
 
+void TriangleCylinderVolumeFF::computeLoadForces() {
+    for(auto& interaction: _triangleCylinderVolInteractionVector)
+        interaction->computeLoadForces();
+}
+
 vector<NeighborList*> TriangleCylinderVolumeFF::getNeighborLists() {
     
     vector<NeighborList*> neighborLists;
