@@ -43,7 +43,10 @@ namespace {
             // Beads in membranes
             size_t newMembrane = 0;
             for(auto& eachMembrane: snapshot.membraneStruct) {
+                /*
                 newMembrane += eachMembrane.getNumEdges() * 2;
+                */
+                newMembrane += eachMembrane.getNumVertices();
             }
             if(newMembrane > membrane) membrane = newMembrane;
         }
@@ -215,6 +218,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         atomSerial = 0;
         atomCount = 0;
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
+            /*
             bool buildMembrane = !eachMembrane.getMembrane();
             Membrane* dataMembrane;
 
@@ -246,6 +250,23 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 ++atomSerial;
             }
 
+            */
+            for(auto& vInfo: eachMembrane.getMembraneInfo()) {
+                ++atomSerial;
+                ++atomCount;
+                auto& v = get<0>(vInfo);
+                os << "ATOM  "
+                    << setw(5) << atomSerial
+                    << "  CA  ARG "
+                    << chain
+                    << setw(4) << atomSerial
+                    << "    "
+                    << fixed << setw(8) << setprecision(3) << v[0]
+                    << fixed << setw(8) << setprecision(3) << v[1]
+                    << fixed << setw(8) << setprecision(3) << v[2]
+                    << "  1.00  0.00"
+                    << endl;
+            }
         }
         while(atomCount < maxBead.membrane) {
             ++atomSerial;

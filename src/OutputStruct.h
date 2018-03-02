@@ -197,6 +197,7 @@ public:
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
     size_t getNumEdges()const;
+    size_t getNumVertices()const { return static_cast<size_t>(_numVertices); }
     const MembraneInfo& getMembraneInfo()const { return _memInfo; }
 
     Membrane* getMembrane()const { return _membrane; }
