@@ -219,6 +219,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     v[0], v[1], v[2]
                 );
             }
+            ++atomSerial;
         }
         while(atomCount < maxBead.membrane) {
             ++atomSerial;
