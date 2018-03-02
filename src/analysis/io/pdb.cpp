@@ -1,5 +1,7 @@
 #include "analysis/io/pdb.h"
 
+#include <iomanip>
+
 namespace medyan {
 namespace analysis {
 
