@@ -16,6 +16,9 @@
 #include "Structure/SurfaceMesh/Membrane.h"
 #include "Structure/SurfaceMesh/Vertex.h"
 
+namespace medyan {
+namespace analysis {
+
 namespace {
     /// Helper struct to find number of beads (atoms) required for pdb-style output
     struct PdbMaxBead {
@@ -52,8 +55,6 @@ namespace {
         }
     };
 
-    /// Helper class for file stream handling with RAII
-    // TODO
 }
 
 void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
@@ -289,3 +290,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     os.close();
 
 }
+
+} // namespace analysis
+} // namespace medyan

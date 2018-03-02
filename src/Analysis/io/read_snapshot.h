@@ -1,7 +1,10 @@
-#ifndef MEDYAN_READ_SNAPSHOT_H
-#define MEDYAN_READ_SNAPSHOT_H
+#ifndef MEDYAN_ANALYSIS_IO_READ_SNAPSHOT_H
+#define MEDYAN_ANALYSIS_IO_READ_SNAPSHOT_H
 
 #include <string>
+
+namespace medyan {
+namespace analysis {
 
 class SnapshotReader {
 private:
@@ -15,6 +18,7 @@ public:
     void readAndConvertToVmd(const size_t maxFrames=0); // 0 means no limit on max frames
 };
 
-
+} // namespace analysis
+} // namespace medyan
 
 #endif

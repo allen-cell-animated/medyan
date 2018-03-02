@@ -71,7 +71,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "Controller.h"
 #include "SubSystem.h"
-#include "Analysis/io/read_snapshot.h"
+#include "analysis/io/read_snapshot.h"
 #include "core/globals.h"
 
 using namespace medyan;
@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
         {
             string inputFilePath = inputDirectory + "/snapshot.traj";
             string outputFilePath = outputDirectory + "/snapshot.pdb";
-            SnapshotReader sr(inputFilePath, outputFilePath);
+            analysis::SnapshotReader sr(inputFilePath, outputFilePath);
             sr.readAndConvertToVmd();
         }
         break;
