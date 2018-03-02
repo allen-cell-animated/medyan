@@ -275,7 +275,13 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     double dist = twoPointDistance(m1, m2);
                     
                     if(dist > _rMax || dist < _rMin) continue;
+
+		    auto bc1 = cc->getCylinder()->getBranchingCylinder();
+                    auto bc2 = ccn->getCylinder()->getBranchingCylinder();
+		    if(bc1 || bc2) continue;                    
+
                     
+ 
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
                     
