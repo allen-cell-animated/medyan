@@ -73,12 +73,12 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     cout << "Start reading " << _snapshotFilepath << endl;
     string line;
     while(maxFrames == 0 || curFrame < maxFrames) {
-        ++curFrame;
-        if (curFrame % 10 == 0)cout << "Frame " << curFrame << endl;
-
         getline(is, line);
         if(!is) break;
         if(line.empty()) continue;
+
+        ++curFrame;
+        if (curFrame % 10 == 0)cout << "Frame " << curFrame << endl;
 
         istringstream iss(line);
         snapshots.emplace_back(0);

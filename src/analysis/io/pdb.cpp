@@ -12,6 +12,7 @@ void PdbGenerator::genModel(int serial) {
 
     _ofs
         << "MODEL "             //  1 -  6  Record name
+        << "    "
         << setw(4) << serial    // 11 - 14  serial
         << endl;
 }
