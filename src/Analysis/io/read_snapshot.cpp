@@ -10,6 +10,7 @@
 
 #include "OutputStruct.h"
 
+#include "analysis/io/pdb.h"
 #include "Structure/Bead.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"
@@ -91,14 +92,14 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     is.close();
 
     // Write to pdb
-    ofstream os(_vmdFilepath);
+    PdbGenerator pg(_vmdFilepath);
 
     cout << "Writing to " << _vmdFilepath << endl;
     // Note: in the output, all the coordinates would be 1/10 in size.
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
         if (idx % 10 == 0) cout << "Generating model " << idx << endl;
-        os << "MODEL     " << setw(4) << idx + 1 << endl;
+        pg.genModel(idx + 1);
 
         char chain;
         size_t atomSerial;
@@ -114,32 +115,20 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             for(auto& eachCoord: eachFilament.getCoords()) {
                 ++atomSerial;
                 ++atomCount;
-                os << "ATOM  "
-                    << setw(5) << atomSerial
-                    << "  CA  ARG "
-                    << chain
-                    << setw(4) << atomSerial
-                    << "    "
-                    << fixed << setw(8) << setprecision(3) << eachCoord[0]
-                    << fixed << setw(8) << setprecision(3) << eachCoord[1]
-                    << fixed << setw(8) << setprecision(3) << eachCoord[2]
-                    << "  1.00  0.00"
-                    << endl;
+                pg.genAtom(
+                    atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                    eachCoord[0], eachCoord[1], eachCoord[2]
+                );
             }
             ++atomSerial; // Separate bonds
         }
         while(atomCount < maxBead.filament) {
             ++atomSerial;
             ++atomCount;
-            os << "ATOM  "
-                << setw(5) << atomSerial
-                << "  CA ARG "
-                << chain
-                << setw(4) << atomSerial
-                << "     "
-                << "   0.000   0.000   0.000"
-                << "  1.00 0.00"
-                << endl;
+            pg.genAtom(
+                atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                0.0, 0.0, 0.0
+            );
         }
 
         // Linkers
@@ -150,32 +139,20 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             for(auto& eachCoord: eachLinker.getCoords()) {
                 ++atomSerial;
                 ++atomCount;
-                os << "ATOM  "
-                    << setw(5) << atomSerial
-                    << "  CA  ARG "
-                    << chain
-                    << setw(4) << atomSerial
-                    << "    "
-                    << fixed << setw(8) << setprecision(3) << eachCoord[0]
-                    << fixed << setw(8) << setprecision(3) << eachCoord[1]
-                    << fixed << setw(8) << setprecision(3) << eachCoord[2]
-                    << "  1.00  0.00"
-                    << endl;
+                pg.genAtom(
+                    atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                    eachCoord[0], eachCoord[1], eachCoord[2]
+                );
             }
             ++atomSerial; // Separate bonds
         }
         while(atomCount < maxBead.linker) {
             ++atomSerial;
             ++atomCount;
-            os << "ATOM  "
-                << setw(5) << atomSerial
-                << "  CA ARG "
-                << chain
-                << setw(4) << atomSerial
-                << "     "
-                << "   0.000   0.000   0.000"
-                << "  1.00 0.00"
-                << endl;
+            pg.genAtom(
+                atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                0.0, 0.0, 0.0
+            );
         }
 
         // Motors
@@ -186,32 +163,20 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             for(auto& eachCoord: eachMotor.getCoords()) {
                 ++atomSerial;
                 ++atomCount;
-                os << "ATOM  "
-                    << setw(5) << atomSerial
-                    << "  CA  ARG "
-                    << chain
-                    << setw(4) << atomSerial
-                    << "    "
-                    << fixed << setw(8) << setprecision(3) << eachCoord[0]
-                    << fixed << setw(8) << setprecision(3) << eachCoord[1]
-                    << fixed << setw(8) << setprecision(3) << eachCoord[2]
-                    << "  1.00  0.00"
-                    << endl;
+                pg.genAtom(
+                    atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                    eachCoord[0], eachCoord[1], eachCoord[2]
+                );
             }
             ++atomSerial; // Separate bonds
         }
         while(atomCount < maxBead.motor) {
             ++atomSerial;
             ++atomCount;
-            os << "ATOM  "
-                << setw(5) << atomSerial
-                << "  CA ARG "
-                << chain
-                << setw(4) << atomSerial
-                << "     "
-                << "   0.000   0.000   0.000"
-                << "  1.00 0.00"
-                << endl;
+            pg.genAtom(
+                atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                0.0, 0.0, 0.0
+            );
         }
 
         // Membranes
@@ -236,17 +201,10 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 for(Vertex* v: e->getVertices()) {
                     ++atomSerial;
                     ++atomCount;
-                    os << "ATOM  "
-                        << setw(5) << atomSerial
-                        << "  CA  ARG "
-                        << chain
-                        << setw(4) << atomSerial
-                        << "    "
-                        << fixed << setw(8) << setprecision(3) << v->coordinate[0]
-                        << fixed << setw(8) << setprecision(3) << v->coordinate[1]
-                        << fixed << setw(8) << setprecision(3) << v->coordinate[2]
-                        << "  1.00  0.00"
-                        << endl;
+                    pg.genAtom(
+                        atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                        v[0], v[1], v[2]
+                    );
                 }
                 ++atomSerial;
             }
@@ -256,38 +214,26 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 ++atomSerial;
                 ++atomCount;
                 auto& v = get<0>(vInfo);
-                os << "ATOM  "
-                    << setw(5) << atomSerial
-                    << "  CA  ARG "
-                    << chain
-                    << setw(4) << atomSerial
-                    << "    "
-                    << fixed << setw(8) << setprecision(3) << v[0]
-                    << fixed << setw(8) << setprecision(3) << v[1]
-                    << fixed << setw(8) << setprecision(3) << v[2]
-                    << "  1.00  0.00"
-                    << endl;
+                pg.genAtom(
+                    atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                    v[0], v[1], v[2]
+                );
             }
         }
         while(atomCount < maxBead.membrane) {
             ++atomSerial;
             ++atomCount;
-            os << "ATOM  "
-                << setw(5) << atomSerial
-                << "  CA ARG "
-                << chain
-                << setw(4) << atomSerial
-                << "     "
-                << "   0.000   0.000   0.000"
-                << "  1.00 0.00"
-                << endl;
+            pg.genAtom(
+                atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                0.0, 0.0, 0.0
+            );
         }
+
+        // End of model
+        pg.genEndmdl();
 
     } // End of looping through snapshots
     cout << "Writing complete. " << numSnapshots << " models created." << endl;
-
-    // Close files
-    os.close();
 
 }
 
