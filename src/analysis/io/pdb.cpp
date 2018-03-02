@@ -27,13 +27,18 @@ void PdbGenerator::genAtom(
 ) {
     if(!_ofs.is_open()) return;
 
+    name.resize(4, ' ');
+    resName.resize(3, ' ');
+    element.resize(2, ' ');
+    charge.resize(2, ' ');
+
     _ofs
         << "ATOM  "                                             //  1 -  6  Record name
         << setw(5) << serial                                    //  7 - 11  serial
         << ' '
-        << name.resize(4, ' ')                                  // 13 - 16  name
+        << name                                                 // 13 - 16  name
         << altLoc                                               // 17       altLoc
-        << resName.resize(3, ' ')                               // 18 - 20  resName
+        << resName                                              // 18 - 20  resName
         << ' '
         << chainID                                              // 22       chainID
         << setw(4) << resSeq                                    // 23 - 26  resSeq
@@ -45,22 +50,24 @@ void PdbGenerator::genAtom(
         << fixed << setw(6) << setprecision(2) << occupancy     // 55 - 60  occupancy
         << fixed << setw(6) << setprecision(2) << tempFactor    // 61 - 66  tempFactor
         << "          "
-        << element.resize(2, ' ')                               // 77 - 78  element
-        << charge.resize(2, ' ')                                // 79 - 80  charge
+        << element                                              // 77 - 78  element
+        << charge                                               // 79 - 80  charge
         << endl;
 
 }
 void PdbGenerator::genTer(
-    int serial, std::string resName, char chainID,
+    int serial, string resName, char chainID,
     int resSeq, char iCode
 ) {
     if(!_ofs.is_open()) return;
+
+    resName.resize(3, ' ');
 
     _ofs
         << "TER   "                 //  1 -  6  Record name
         << setw(5) << serial        //  7 - 11  serial
         << "      "
-        << resName.resize(3, ' ')   // 18 - 20  resName
+        << resName                  // 18 - 20  resName
         << ' '
         << chainID                  // 22       chainID
         << setw(4) << resSeq        // 23 - 26  resSeq
