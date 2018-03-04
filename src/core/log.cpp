@@ -1,0 +1,127 @@
+#include "core/log.h"
+
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <map>
+
+namespace medyan {
+namespace logger {
+
+namespace internal {
+
+    static std::string timeLiteralGeneration() {
+        using namespace std::chrono;
+
+        system_clock::time_point p = system_clock::now();
+        milliseconds ms = duration_cast<milliseconds>(p.time_since_epoch());
+        seconds s = duration_cast<seconds>(ms);
+
+        std::time_t timeToSec = s.count();
+        tm timeinfoToSec;
+        localtime_s(&timeinfoToSec, &timeToSec);
+
+        std::size_t msRemain = ms.count() % 1000;
+
+        std::stringstream ss;
+        ss << timeinfoToSec.tm_year + 1900 << '-'
+            << std::setfill('0') << std::setw(2) << timeinfoToSec.tm_mon + 1 << '-'
+            << std::setw(2) << timeinfoToSec.tm_mday << ' '
+            << std::setw(2) << timeinfoToSec.tm_hour << ':'
+            << std::setw(2) << timeinfoToSec.tm_min << ':'
+            << std::setw(2) << timeinfoToSec.tm_sec << '.'
+            << std::setw(3) << msRemain;
+
+        return ss.str();
+    }
+
+    const std::map<LogLevel, const char*> logLevelLiteral {
+        {LogLevel::Debug,   "Debug"},
+        {LogLevel::Info,    "Info"},
+        {LogLevel::Step,    "Step"},
+        {LogLevel::Note,    "Note"},
+        {LogLevel::Warning, "Warning"},
+        {LogLevel::Error,   "Error"},
+        {LogLevel::Fatal,   "Fatal"}
+    };
+    
+
+    void Logger::generatePrefix(const char* curFile, const char* curLine, const char* curFunc) {
+        bool genTime = false; // Generate time literal only once
+        std::string strTime;
+
+        for(auto& eachOs: _osContainers) {
+            if(eachOs.disp.isOnWith(_lv)) {
+                if(eachOs.dispTime.isOnWith(_lv)) {
+                    if(!genTime) {
+                        strTime = timeLiteralGeneration();
+                        genTime = true;
+                    }
+                    (*eachOs.os) << settings.delimiterBefore << strTime << settings.delimiterAfter
+                        << (settings.spaceAfterDelimiter? " ": "");
+                }
+                if(eachOs.dispLevel.isOnWith(_lv)) {
+                    (*eachOs.os) << settings.delimiterBefore << logLevelLiteral.find(_lv)->second << settings.delimiterAfter
+                        << (settings.spaceAfterDelimiter? " ": "");
+                }
+                if(eachOs.dispFile.isOnWith(_lv)) {
+                    (*eachOs.os) << settings.delimiterBefore << curFile << settings.delimiterAfter
+                        << (settings.spaceAfterDelimiter? " ": "");
+                }
+                if(eachOs.dispLine.isOnWith(_lv)) {
+                    (*eachOs.os) << settings.delimiterBefore << curLine << settings.delimiterAfter
+                        << (settings.spaceAfterDelimiter? " ": "");
+                }
+                if(eachOs.dispFunc.isOnWith(_lv)) {
+                    (*eachOs.os) << settings.delimiterBefore << curFunc << settings.delimiterAfter
+                        << (settings.spaceAfterDelimiter? " ": "");
+                }
+            }
+        }
+    }
+    void Logger::dispatchStream() {
+        for(auto& eachOs: _osContainers) {
+            if(eachOs.disp.isOnWith(_lv)) {
+                (*eachOs.os) << _oss.str();
+                if(eachOs.flushLevel.isOnWith(_lv)) (*eachOs.os) << std::flush;
+            }
+        }
+    }
+    void Logger::defaultLoggerInitialization(const std::string& filepath) {
+        Logger* l = getDefaultLogger();
+
+        LoggerOstreamContainer& scrn = l->attachOstream(&std::cout, false);
+        scrn.disp.turnOnAtLeast(LogLevel::Info);
+        //scrn.dispTime.turnOnAtLeast(LogLevel::Debug);
+        scrn.dispFile.turnOnAtLeast(LogLevel::Warning);
+        scrn.dispLine.turnOnAtLeast(LogLevel::Error);
+        scrn.dispFunc.turnOnAtLeast(LogLevel::Error);
+        scrn.dispLevel.turnOnAtLeast(LogLevel::Note);
+        scrn.dispLevel.turnOn(LogLevel::Debug);
+        scrn.flushLevel.turnOnAtLeast(LogLevel::Debug);
+
+        LoggerOstreamContainer& file = l->addOfstream(filepath);
+        file.disp.turnOnAtLeast(LogLevel::Debug);
+        file.dispTime.turnOnAtLeast(LogLevel::Debug);
+        file.dispFile.turnOnAtLeast(LogLevel::Note);
+        file.dispLine.turnOnAtLeast(LogLevel::Note);
+        file.dispFunc.turnOnAtLeast(LogLevel::Note);
+        file.dispLevel.turnOnAtLeast(LogLevel::Debug);
+        file.flushLevel.turnOnAtLeast(LogLevel::Warning);
+        
+    }
+
+    LogWriter::LogWriter(const char* curFile, const char* curLine, const char* curFunc, LogLevel lv, Logger* logger):
+        _logger(logger) {
+        _logger->setCurLevel(lv);
+        _logger->generatePrefix(curFile, curLine, curFunc);
+    }
+    LogWriter::~LogWriter() {
+        _logger->dispatchStream();
+        if(_logger->settings.newLineAfterLog) _logger->getStream() << '\n';
+    }
+} // namespace internal
+
+
+} // namespace logger
+} // namespace medyan
