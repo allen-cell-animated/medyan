@@ -165,9 +165,10 @@ namespace internal {
 #define MEDYAN_LOG_GEN_ERROR(writer)   MEDYAN_WRITE_LOG(writer, ::medyan::logger::LogLevel::Error)
 #define MEDYAN_LOG_GEN_FATAL(writer)   MEDYAN_WRITE_LOG(writer, ::medyan::logger::LogLevel::Fatal)
 
-#define MEDYAN_LOG_GEN(log_level) MEDYAN_LOG_GEN_##log_level(::medyan::logger::Logger::getDefaultLogger())
+#define MEDYAN_LOG_GEN(log_level) MEDYAN_LOG_GEN_##log_level(::medyan::logger::internal::Logger::getDefaultLogger())
 
 /// User interface
 #define LOG(log_level) MEDYAN_LOG_GEN(log_level)
+#define MEDYAN_LOG_DEFAULT_CONFIGURATION(filepath) ::medyan::logger::internal::Logger::defaultLoggerInitialization(filepath)
 
 #endif
