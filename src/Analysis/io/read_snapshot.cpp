@@ -35,15 +35,14 @@ namespace {
             for(auto& eachFilament: snapshot.filamentStruct) {
                 newFilament += eachFilament.getNumBeads();
             }
-            ++newFilament; // For TER
             if(newFilament > filament) filament = newFilament;
 
             // Beads in linkers
-            size_t newLinker = snapshot.linkerStruct.size() * 2 + 1; // +1 TER
+            size_t newLinker = snapshot.linkerStruct.size() * 2;
             if(newLinker > linker) linker = newLinker;
 
             // Beads in motors
-            size_t newMotor = snapshot.motorStruct.size() * 2 + 1; // +1 TER
+            size_t newMotor = snapshot.motorStruct.size() * 2;
             if(newMotor > motor) motor = newMotor;
 
             // Beads in membranes
@@ -54,7 +53,6 @@ namespace {
                 */
                 newMembrane += eachMembrane.getNumVertices();
             }
-            ++newMembrane; // +1 TER
             if(newMembrane > membrane) membrane = newMembrane;
         }
     };
@@ -131,6 +129,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         while(atomCount < maxBead.filament) {
             ++atomSerial;
             ++atomCount;
+            ++resSeq;
             pg.genAtom(
                 atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
@@ -157,6 +156,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         while(atomCount < maxBead.linker) {
             ++atomSerial;
             ++atomCount;
+            ++resSeq;
             pg.genAtom(
                 atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
@@ -183,6 +183,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         while(atomCount < maxBead.motor) {
             ++atomSerial;
             ++atomCount;
+            ++resSeq;
             pg.genAtom(
                 atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
@@ -236,6 +237,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         while(atomCount < maxBead.membrane) {
             ++atomSerial;
             ++atomCount;
+            ++resSeq;
             pg.genAtom(
                 atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
