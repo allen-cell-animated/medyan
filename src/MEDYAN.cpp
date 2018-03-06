@@ -127,6 +127,9 @@ int main(int argc, char **argv) {
 
     Global::global().mode = runAnalyze? 1: 0;
 
+    // Initialize logger
+    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::global().outputDirectory + "/medyan.log");
+
     // Start program    
     switch(Global::global().mode) {
     case 0:

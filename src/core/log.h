@@ -101,6 +101,19 @@ namespace internal {
             _osContainers.back().filepath = filepath;
             return _osContainers.back();
         }
+        void removeOstream(std::ostream* os) {
+            auto itContainer = std::find_if(
+                _osContainers.begin(), _osContainers.end(),
+                [&](LoggerOstreamContainer& loc) { return loc.os == os; }
+            );
+            if(itContainer != _osContainers.end()) _osContainers.erase(itContainer);
+
+            auto itManaged = std::find_if(
+                _osManaged.begin(), _osManaged.end(),
+                [&](std::unique_ptr<std::ostream>& p) { return p.get() == os; }
+            );
+            if(itManaged != _osManaged.end()) _osManaged.erase(itManaged);
+        }
 
         /// Dispatch log
         void generatePrefix(const char* curFile, const char* curLine, const char* curFunc);
@@ -111,7 +124,8 @@ namespace internal {
             static Logger l;
             return &l;
         }
-        static void defaultLoggerInitialization(const std::string& filepath);
+        /// Default initialization. Returns whether the file is successfully opened.
+        static bool defaultLoggerInitialization(const std::string& filepath);
     private:
         /// The actual stringstream
         std::ostringstream _oss;

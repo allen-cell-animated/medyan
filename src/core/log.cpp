@@ -87,7 +87,7 @@ namespace internal {
             }
         }
     }
-    void Logger::defaultLoggerInitialization(const std::string& filepath) {
+    bool Logger::defaultLoggerInitialization(const std::string& filepath) {
         Logger* l = getDefaultLogger();
 
         LoggerOstreamContainer& scrn = l->attachOstream(&std::cout, false);
@@ -108,6 +108,15 @@ namespace internal {
         file.dispFunc.turnOnAtLeast(LogLevel::Note);
         file.dispLevel.turnOnAtLeast(LogLevel::Debug);
         file.flushLevel.turnOnAtLeast(LogLevel::Warning);
+
+        bool fileOpenGood = static_cast<std::ofstream*>(file.os)->is_open();
+
+        if(!fileOpenGood) {
+            l->removeOstream(file.os);
+            std::cout << "Logger cannot open file " << filepath << std::endl;
+        }
+
+        return fileOpenGood;
         
     }
 
