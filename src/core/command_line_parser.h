@@ -18,9 +18,9 @@ class Command {
     friend OptionBase;
 
 private:
-    std::vector<std::unique_ptr<OptionBase>> _op;
-    std::vector<std::unique_ptr<Command>> _subcmd;
-    std::unique_ptr<OptionBase> _defaultOp; ///< The command itself acting as an option
+    std::vector<OptionBase*> _op;
+    std::vector<Command*> _subcmd;
+    OptionBase* _defaultOp = nullptr; ///< The command itself acting as an option
 
     /// Name for the subcommand
     std::string _name;
@@ -46,6 +46,12 @@ public:
         Fail // Unsupported syntax (eg "-a-f")
     };
 
+    /// Constructor
+    Command(OptionBase* op): _defaultOp(op) { if(op) _name = op->getFlagCommand(); }
+    Command(const std::string& name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds):
+        _name(name), _op(ops), _subcmd(subcmds) {}
+
+    /// Check state
     operator bool()const {
         return !(_invalidArgBit || _parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit);
     }
@@ -142,6 +148,8 @@ public:
     const std::string& getInvalidArgContent()const { return _invalidArgContent; }
 
     char getFlagShort()const { return _flagShort; }
+    const std::string& getFlagLong()const { return _flagLong; }
+    const std::string& getFlagCommand()const { return _flagCommand; }
 
     bool isRequired()const { return _required; }
     const std::vector<OptionBase*>& getExcluding()const { return _excluding; }
@@ -161,7 +169,7 @@ public:
     /// Print error message
     virtual void printError(std::ostream& out=std::cout)const {
         if(_inputFailBit)
-            out << "Internal error: unrecognized flag " << _match << std::endl;
+            out << "Internal error: unrecognized option " << _match << std::endl;
         if(_endOfArgListBit)
             out << "Must specify argument for " << _match << std::endl;
         if(_invalidArgBit)
@@ -178,17 +186,20 @@ private:
     /// The argument value
     T* _value;
 
+    /// Argument display name
+    std::string _argName;
+
     /// Validator
     std::function<bool(T)> _validator;
 
 public:
-    Option1(const char* match, T* destination, const std::string& description):
-        OptionBase(match, 1, description), _value(destination)
+    Option1(const char* match, T* destination, const std::string& argName, const std::string& description):
+        OptionBase(match, 1, description), _value(destination), _argName(argName)
     {
         _preprocess();
     }
-    Option1(const char* match, T* destination, std::function<bool(T)> validator, const std::string& description):
-        OptionBase(match, 1, description), _value(destination), _validator(validator)
+    Option1(const char* match, T* destination, const std::string& argName, std::function<bool(T)> validator, const std::string& description):
+        OptionBase(match, 1, description), _value(destination), _argName(argName), _validator(validator)
     {
         _preprocess();
     }

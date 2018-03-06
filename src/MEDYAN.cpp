@@ -72,6 +72,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Controller.h"
 #include "SubSystem.h"
 #include "analysis/io/read_snapshot.h"
+#include "core/command_line_parser.h"
 #include "core/globals.h"
 
 using namespace medyan;
@@ -81,6 +82,7 @@ void printUsage() {
 }
 
 int main(int argc, char **argv) {
+    using namespace commandline;
 
     cout << endl;
     cout << "*********************** MEDYAN ************************" << endl;
@@ -95,49 +97,37 @@ int main(int argc, char **argv) {
     SubSystem* s = nullptr;
     Controller c(s);
 
-    string inputFile, inputDirectory, outputDirectory;
-    int option;
-    int runMode = 0; // 0: run, 1: analyzer
+    // Parse command line arguments
+    bool runAnalyze = false;
+    bool runHelp = false;
     
-    //parse command line args
-    while ((option = getopt(argc, argv, "as:i:o:h")) != -1) {
-        switch (option) {
-            case 'a' : runMode = 1;
-                break;
-            case 's' : inputFile = optarg;
-                Global::global().systemInputFileName = optarg;
-                break;
-            case 'i' : inputDirectory = optarg;
-                Global::global().inputDirectory = optarg;
-                break;
-            case 'o' : outputDirectory = optarg;
-                Global::global().outputDirectory = optarg;
-                break;
-            case 'h' : printUsage();
-                exit(EXIT_FAILURE);
-            default: printUsage();
-                exit(EXIT_FAILURE);
-        }
-    }
-    Global::global().mode = runMode;
+    Option1 inputFile {"-s", &Global::global().systemInputFileName, "system-input", "Input file name"};
+    Option1 inputDir {"-i", &Global::global().inputDirectory, "input-directory", "Input directory"};
+    Option1 outputDir {"-o", &Global::global().outputDirectory, "output-directory", "Output directory"};
+    Flag opHelp {"-h,--help", &runHelp, true, "Print help message"};
+    Flag opAnalyze {"analyze", &runAnalysis, true, "Run analysis instead of simulation"};
+    Command cmdAnalyze {&opAnalyze};
+    Command cmd {"MEDYAN", {&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}};
 
-    //check for arguments
-    if(runMode == 0 && inputFile == "") {
-        cout << "User must specify a system input file. Exiting." << endl;
-        printUsage();
+    inputFile.require();
+    inputDir.require();
+    outputDir.require();
+
+    cmd.parse(argc, argv);
+
+    if(!cmd) {
+        cmd.printError();
+        cmd.printUsage();
         exit(EXIT_FAILURE);
     }
-    if(inputDirectory == "") {
-        cout << "User must specify an input directory. Exiting." << endl;
-        printUsage();
-        exit(EXIT_FAILURE);
+    if(runHelp) {
+        cmd.printUsage();
+        exit(EXIT_SUCCESS);
     }
-    if(outputDirectory == "") {
-        cout << "User must specify an output directory. Exiting." << endl;
-        printUsage();
-        exit(EXIT_FAILURE);
-    }
-    
+
+    Global::global().mode = runAnalysis? 1: 0;
+
+    // Start program    
     switch(runMode) {
     case 0:
         //initialize and run system

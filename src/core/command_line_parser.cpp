@@ -1,6 +1,7 @@
 #include "core/command_line_parser.h"
 
 #include <algorithm>
+#include <cstring>
 
 namespace medyan {
 namespace commandline {
@@ -110,7 +111,47 @@ bool Command::parse(int argc, char** argv, int argp) {
 }
 
 void Command::printUsage(std::ostream& out)const {
-    // TODO:
+    out << "Usage: " << _name;
+    for(auto& opPtr: _op) {
+        bool required = opPtr->isRequired();
+        out << (required? " ": " [");
+        if(opPtr->getFlagLong().length()) out << opPtr->getFlagLong();
+        else if(opPtr->getFlagShort()) out << opPtr->getFlagShort();
+        out << (required? "": "]");
+    }
+    if(!_subcmd.empty()) {
+        out << " <command>";
+    }
+    out << '\n' << std::endl;
+
+    if(!_subcmd.empty()) {
+        out << "Commands:\n";
+        for(auto& cmdPtr: _subcmd) {
+            if(cmdPtr->_name.length() > 16) {
+                out << cmdPtr->_name << '\n' << std::string(' ', 16);
+            } else {
+                std::string tmp = cmdPtr->_name;
+                tmp.resize(16, ' ');
+                out << tmp;
+            }
+            out << cmdPtr->_defaultOp->getDescription() << '\n';
+        }
+        out << std::endl;
+    }
+    if(!_op.empty()) {
+        out << "Options:\n";
+        for(auto& opPtr: _op) {
+            if(std::strlen(opPtr->getMatch()) > 16) {
+                out << opPtr->getMatch() << '\n' << std::string(' ', 16);
+            } else {
+                std::string tmp {opPtr->getMatch()};
+                tmp.resize(16, ' ');
+                out << tmp;
+            }
+            out << opPtr->getDescription() << '\n';
+        }
+        out << std::endl;
+    }
 }
 
 
