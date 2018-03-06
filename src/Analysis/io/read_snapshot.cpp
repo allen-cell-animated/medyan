@@ -33,16 +33,16 @@ namespace {
             // Beads in filaments
             size_t newFilament = 0;
             for(auto& eachFilament: snapshot.filamentStruct) {
-                newFilament += eachFilament.getNumBeads();
+                newFilament += eachFilament.getNumBeads() + 1; // +1 for TER
             }
             if(newFilament > filament) filament = newFilament;
 
             // Beads in linkers
-            size_t newLinker = snapshot.linkerStruct.size() * 2;
+            size_t newLinker = snapshot.linkerStruct.size() * 3; // 2 ATOM + 1 TER
             if(newLinker > linker) linker = newLinker;
 
             // Beads in motors
-            size_t newMotor = snapshot.motorStruct.size() * 2;
+            size_t newMotor = snapshot.motorStruct.size() * 3; // 2 ATOM + 1 TER
             if(newMotor > motor) motor = newMotor;
 
             // Beads in membranes
@@ -103,8 +103,9 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         pg.genModel(idx + 1);
 
         char chain;
-        size_t atomSerial;
+        size_t atomSerial = 0;
         size_t atomCount;
+        size_t resSeq;
 
         SubSystem s; // Dummy subsystem
 
@@ -127,8 +128,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             ++atomSerial;
             ++atomCount;
             pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
-                0.0, 0.0, 0.0
+                atomSerial, " CA ", ' ', "ARG", chain, atomSerial
             );
         }
 
@@ -151,8 +151,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             ++atomSerial;
             ++atomCount;
             pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
-                0.0, 0.0, 0.0
+                atomSerial, " CA ", ' ', "ARG", chain, atomSerial
             );
         }
 
@@ -175,8 +174,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             ++atomSerial;
             ++atomCount;
             pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
-                0.0, 0.0, 0.0
+                atomSerial, " CA ", ' ', "ARG", chain, atomSerial
             );
         }
 
@@ -226,8 +224,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             ++atomSerial;
             ++atomCount;
             pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
-                0.0, 0.0, 0.0
+                atomSerial, " CA ", ' ', "ARG", chain, atomSerial
             );
         }
 
