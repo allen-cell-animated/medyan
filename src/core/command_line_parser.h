@@ -9,20 +9,34 @@
 #include <vector>
 
 namespace medyan {
+namespace commandline {
 
 // Forward declarations
-class CommandLineOptionBase;
+class OptionBase;
 
-class CommandLineParser {
+class Command {
+    friend OptionBase;
+
 private:
-    std::vector<std::unique_ptr<CommandLineOptionBase>> _op;
+    std::vector<std::unique_ptr<OptionBase>> _op;
+    std::vector<std::unique_ptr<Command>> _subcmd;
+    std::unique_ptr<OptionBase> _defaultOp; ///< The command itself acting as an option
+
+    /// Name for the subcommand
+    std::string _name;
 
     /// Fail flags and associated variables
-    bool _invalidOptionBit = false;
-    std::string _invalidOptionContent;
-    bool _parseErrorBit = false;
-    bool _unusedArgBit = false;
+    bool _invalidArgBit = false; // Fail on understanding argument. Should abort parsing when this is set to true.
+    std::string _invalidArgContent;
+    bool _parseErrorBit = false; // Fail by option reader. Should abort parsing when this is set to true.
+    bool _subcmdErrorBit = false; // Fail by subcommand parser. Should abort parsing when this is set to true.
+    bool _unusedArgBit = false; // Unused arguments after parsing
     std::vector<std::string> _unusedArgs;
+    bool _logicErrorBit = false; // Option requirements not fulfilled
+    std::vector<std::string> _logicErrorContent;
+
+    /// States
+    bool _evaluated = false;
 
 public:
     enum class ArgType {
@@ -33,7 +47,7 @@ public:
     };
 
     operator bool()const {
-        return !(_invalidOptionBit || _parseErrorBit || _unusedArgBit);
+        return !(_invalidArgBit || _parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit);
     }
 
     /// Helper function to get arg type
@@ -53,30 +67,36 @@ public:
         return ArgType::Argument;
     }
 
-    bool parse(int argc, char** argv);
+    bool parse(int argc, char** argv, int argp=0);
 
     /// Print message
-    void printUsage()const;
-    void printError()const {
-        if(_invalidOptionBit)
-            std::cout << "Invalid option: " << _invalidOptionContent << std::endl;
-        if(_parseErrorBit)
-            ;// do nothing, because the message is printed by the option class
+    void printUsage(std::ostream& out=std::cout)const;
+    void printError(std::ostream& out=std::cout)const {
+        if(_invalidArgBit)
+            out << "Invalid option: " << _invalidArgContent << std::endl;
+        if(_parseErrorBit) {
+            _defaultOp->printError(out);
+            for(auto& opPtr: _op) opPtr->printError(out);
+        }
+        if(_subcmdErrorBit)
+            for(auto& cmdPtr: _subcmd) cmdPtr->printError(out);
+        if(_logicErrorBit)
+            for(auto& content: _logicErrorContent) out << content << std::endl;
         if(_unusedArgBit) {
-            std::cout << "Unknown option:" << std::endl;
-            for(auto& eachUnusedArg: _unusedArgs) std::cout << eachUnusedArg << " ";
-            std::cout << std::endl;
+            out << "Unknown option:" << std::endl;
+            for(auto& eachUnusedArg: _unusedArgs) out << eachUnusedArg << " ";
+            out << std::endl;
         }
     }
 };
 
-class CommandLineOptionBase {
+class OptionBase {
+    friend Command;
+
 protected:
     /// Input of the option
     const char* _match;
     std::string _description;
-
-    CommandLineParser* _p;
 
     /// Preprocessing
     char _flagShort = 0; // e.g. "-a" w/o "-"
@@ -94,15 +114,15 @@ protected:
 
     /// Configuration of the option
     int _numArgs = 0;
+    bool _required = false;
+    std::vector<OptionBase*> _excluding;
 
-    /// Evaluate
+    /// State
     bool _evaluated = false;
 
     /// Constructors
-    CommandLineOptionBase(const std::string& description):
-        _description(description) {}
-    CommandLineOptionBase(const char* match, const std::string& description):
-        _match(match), _description(description) {}
+    OptionBase(const char* match, int numArgs, const std::string& description):
+        _match(match), _numArgs(numArgs), _description(description) {}
 
 public:
     /// Check state
@@ -111,42 +131,49 @@ public:
     }
 
     /// Getters
+    const char* getMatch()const { return _match; }
+    const std::string& getDescription()const { return _description; }
+
     int getRequiredArgs()const { return _numArgs; }
 
-    bool getInputFailBit()const { return _inputFailBit; }
-    bool getEndOfArgListBit()const { return _endOfArgListBit; }
-    bool getInvalidArgBit()const { return _invalidArgBit; }
+    bool inputFail()const { return _inputFailBit; }
+    bool endOfArgList()const { return _endOfArgListBit; }
+    bool invalidArg()const { return _invalidArgBit; }
     const std::string& getInvalidArgContent()const { return _invalidArgContent; }
 
     char getFlagShort()const { return _flagShort; }
 
-    bool evaluated()const { return _evaluated; }
+    bool isRequired()const { return _required; }
+    const std::vector<OptionBase*>& getExcluding()const { return _excluding; }
+
+    bool isEvaluated()const { return _evaluated; }
+
+    /// Modify configuration
+    virtual OptionBase& require(bool required=true) { _required = required; return *this; }
+    virtual OptionBase& exclude(OptionBase* op) { _excluding.push_back(op); return *this; }
 
     /// Find hit.
-    virtual bool findHit(const std::string& arg, CommandLineParser::ArgType argType);
+    virtual bool findHit(const std::string& arg, Command::ArgType argType);
 
-    /// Evaluate. return how many arguments consumed.
+    /// Evaluate and validate. return how many arguments consumed.
     virtual int evaluate(int argc, char** argv, int argp) = 0;
 
-    /// Validate. Options with arguments should override this function
-    virtual bool validate() { return true; }
-
     /// Print error message
-    virtual void printError()const {
+    virtual void printError(std::ostream& out=std::cout)const {
         if(_inputFailBit)
-            std::cout << "Internal error: unrecognized flag " << _match << std::endl;
+            out << "Internal error: unrecognized flag " << _match << std::endl;
         if(_endOfArgListBit)
-            std::cout << "Must specify argument for " << _match << std::endl;
+            out << "Must specify argument for " << _match << std::endl;
         if(_invalidArgBit)
-            std::cout << "Incorrect argument for " << _match << ": " << _invalidArgContent << std::endl;
+            out << "Incorrect argument for " << _match << ": " << _invalidArgContent << std::endl;
         if(_validationFailBit)
-            std::cout << "The argument value for " << _match << ": " << _validationFailContent << " is not valid." << std::endl;
+            out << "The argument value for " << _match << ": " << _validationFailContent << " is not valid." << std::endl;
     }
 };
 
 /// Command line option which takes exactly one argument
 template<typename T>
-class CommandLineOption: public CommandLineOptionBase {
+class Option1: public OptionBase {
 private:
     /// The argument value
     T* _value;
@@ -155,21 +182,21 @@ private:
     std::function<bool(T)> _validator;
 
 public:
-    CommandLineOption(const char* match, T* destination, const std::string& description):
-        CommandLineOptionBase(match, description), _value(destination),
-        _numArgs(1)
+    Option1(const char* match, T* destination, const std::string& description):
+        OptionBase(match, 1, description), _value(destination)
     {
         _preprocess();
     }
-    CommandLineOption(const char* match, T* destination, std::function<bool(T)> validator, const std::string& description):
-        _match(match), _value(destination), _description(description), _validator(validator),
-        _numArgs(1)
+    Option1(const char* match, T* destination, std::function<bool(T)> validator, const std::string& description):
+        OptionBase(match, 1, description), _value(destination), _validator(validator)
     {
         _preprocess();
     }
 
     /// Evaluate
     virtual int evaluate(int argc, char** argv, int argp)override {
+        _evaluated = true;
+
         // _numArgs == 1
         if(argp + 1 >= argc) {
             _endOfArgListBit = true;
@@ -184,44 +211,43 @@ public:
             _invalidArgContent = std::string(argv[argp]);
         }
 
-        _evaluated = true;
-        return 1;
-    }
-
-    /// Validate.
-    virtual bool validate()override {
-        bool pass = !_validator || _validator(*_value);
-        if(!pass) {
-            std::ostringstream oss(_validationFailContent);
+        if(_validator && !_validator(*_value)) {
+            _validationFailBit = true;
+            std::ostringstream oss;
             oss << _value;
+            _validationFailContent = oss.str();
         }
-        return pass;
+
+        return 1;
     }
 
 };
 
 /// Command line option which takes no arguments
-class CommandLineFlag: public CommandLineOptionBase {
+class Flag: public OptionBase {
     /// The flag value
     bool* _value;
     bool _turnOn = true; ///< _value is true or false when this flag exists.
 
 public:
-    CommandLineFlag(const char* match, bool* destination, bool turnOn, const std::string& description):
-        CommandLineOptionBase(match, description), _value(destination), _turnOn(turnOn)
+    Flag(const char* match, bool* destination, bool turnOn, const std::string& description):
+        OptionBase(match, 0, description), _value(destination), _turnOn(turnOn)
     {
         _preprocess();
     }
 
     /// Evaluate
     virtual int evaluate(int argc, char** argv, int argp)override {
-        *_value = _turnOn;
         _evaluated = true;
+        *_value = _turnOn;
         return 0;
     }
 };
 
+/// Commmand line group logic
 
+
+} // namespace commandline
 } // namespace medyan
 
 #endif

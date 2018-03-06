@@ -4,8 +4,6 @@
 #include <string>
 
 namespace medyan {
-    constexpr const char* programName = "MEDYAN";
-    
     struct GlobalVar {
         /**
          * The core mode at which the program runs

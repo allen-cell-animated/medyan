@@ -2,80 +2,119 @@
 
 #include <algorithm>
 
-#include "core/globals.h"
-
 namespace medyan {
+namespace commandline {
 
-bool CommandLineParser::parse(int argc, char** argv) {
+bool Command::parse(int argc, char** argv, int argp) {
     _unusedArgs.clear();
     _unusedArgBit = false;
 
-    for(int idx = 1; idx < argc; ++idx) {
+    _evaluated = true;
+
+    // Try to read to the end of the arguments
+    for(int idx = argp + 1; idx < argc; ++idx) {
         ArgType t = getArgType(argv[idx]);
         std::string arg {argv[idx]};
         if(t == ArgType::Fail) {
-            _invalidOptionContent = arg;
-            _invalidOptionBit = true;
+            _invalidArgContent = arg;
+            _invalidArgBit = true;
             return false;
         }
 
         int maxMove = 0; // How many arguments should idx move forward
-        
-        for(auto& opPtr: _op) {
-            if(opPtr->findHit(arg, t)) {
-                if(!*opPtr) {
-                    opPtr->printError();
-                    _parseErrorBit = true;
-                    return false;
+
+        // Evaluate and parse arg
+        switch(t) {
+        case ArgType::Long:
+        case ArgType::Short:
+            if(_defaultOp->isEvaluated()) {
+                for(auto& opPtr: _op) {
+                    if(opPtr->findHit(arg, t)) {
+                        int iMove = opPtr->evaluate(argc, argv, idx);
+                        if(!*opPtr) {
+                            _parseErrorBit = true;
+                            return false;
+                        }
+                        if(iMove > maxMove) maxMove = iMove;
+
+                        // Short args may be evaluated by other options, e.g. "-af" would be evaluated by "-a" and "-f"
+                        if(t != ArgType::Short || arg.length() == 2) {
+                            arg.clear();
+                            break;
+                        } else {
+                            char f = opPtr->getFlagShort();
+                            arg.erase(std::remove(arg.begin(), arg.end(), f), arg.end());
+                        }
+                    }
+
                 }
 
-                int iMove = opPtr->evaluate(argc, argv, idx); // idx may be changed in this function
-                if(!*opPtr) {
-                    opPtr->printError();
+                if(!arg.empty()) _unusedArgs.push_back(arg);
+            } else {
+                int iMove = _defaultOp->evaluate(argc, argv, idx);
+                if(!*_defaultOp) {
                     _parseErrorBit = true;
                     return false;
                 }
                 if(iMove > maxMove) maxMove = iMove;
-
-                opPtr->validate();
-                if(!*opPtr) {
-                    opPtr->printError();
-                    _parseErrorBit = true;
-                    return false;
-                }
-
-                // Short args may be evaluated by other options, e.g. "-af" would be evaluated by "-a" and "-f"
-                if(t != ArgType::Short || arg.length() == 2) {
-                    arg = "";
-                }
-                else {
-                    char f = opPtr->getFlagShort();
-                    arg.erase(std::remove(arg.begin(), arg.end(), f), arg.end());
-                }
             }
 
+            // Increase idx by required
+            idx += maxMove;
+
+            break;
+        case ArgType::Argument:
+            // Currently only one subcommand in each command is allowed,
+            // because any command will try to read to the end of the arg list
+            for(auto& cmdPtr: _subcmd) {
+                if(cmdPtr->_name == arg) {
+                    if(!cmdPtr->parse(argc, argv, idx)) {
+                        _subcmdErrorBit = true;
+                        return false;
+                    }
+                    break;
+                }
+            }
+            break;
         }
-
-        if(!arg.empty()) _unusedArgs.push_back(arg);
-
-        // Increase idx by required
-        idx += maxMove;
     }
 
     if(_unusedArgs.size()) {
         _unusedArgBit = true;
         return false;
     }
+
+    // Check for option logic
+    for(auto& opPtr: _op) {
+        // Required option
+        if(opPtr->isRequired() && !opPtr->isEvaluated()) {
+            _logicErrorBit = true;
+            std::ostringstream oss;
+            oss << opPtr->getMatch() << " (" << opPtr->getDescription() << ") is required.";
+            _logicErrorContent.emplace_back(oss.str());
+            return false;
+        }
+        // Excluding
+        if(opPtr->isEvaluated())
+            for(auto ex: opPtr->getExcluding()) {
+                if(ex->isEvaluated()) {
+                    _logicErrorBit = true;
+                    std::ostringstream oss;
+                    oss << ex->getMatch() << " cannot be specified when " << opPtr->getMatch() << " is present.";
+                    _logicErrorContent.emplace_back(oss.str());
+                }
+            }
+    }
         
     return true;
 }
 
-void CommandLineParser::printUsage()const {
+void Command::printUsage(std::ostream& out)const {
     // TODO:
 }
 
 
-void CommandLineOptionBase::_preprocess() {
+void OptionBase::_preprocess() {
     int prevLoc = 0;
     std::string eachStr;
     std::istringstream iss{std::string(_match)};
@@ -97,9 +136,9 @@ void CommandLineOptionBase::_preprocess() {
     }
 }
 
-bool CommandLineOptionBase::findHit(const std::string& arg, CommandLineParser::ArgType argType) {
+bool OptionBase::findHit(const std::string& arg, Command::ArgType argType) {
     switch(argType) {
-    case CommandLineParser::ArgType::Short:
+    case Command::ArgType::Short:
         if(_flagShort) {
             size_t pos = arg.find(_flagShort);
             if(pos != std::string::npos) {
@@ -110,10 +149,10 @@ bool CommandLineOptionBase::findHit(const std::string& arg, CommandLineParser::A
             }
         }
         break;
-    case CommandLineParser::ArgType::Long:
+    case Command::ArgType::Long:
         if(_flagLong == std::string(arg, 2)) return true;
         break;
-    case CommandLineParser::ArgType::Argument:
+    case Command::ArgType::Argument:
         if(_flagCommand == arg) return true;
         break;
     default:
@@ -124,4 +163,5 @@ bool CommandLineOptionBase::findHit(const std::string& arg, CommandLineParser::A
 }
 
 
+} // namespace commandline
 } // namespace medyan
