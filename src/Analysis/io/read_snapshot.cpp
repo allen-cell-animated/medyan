@@ -11,6 +11,7 @@
 #include "OutputStruct.h"
 
 #include "analysis/io/pdb.h"
+#include "core/log.h"
 #include "Structure/Bead.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"
@@ -70,7 +71,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
     size_t curFrame = 0;
 
-    cout << "Start reading " << _snapshotFilepath << endl;
+    LOG(STEP) << "Start reading " << _snapshotFilepath;
     string line;
     while(maxFrames == 0 || curFrame < maxFrames) {
         getline(is, line);
@@ -78,7 +79,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         if(line.empty()) continue;
 
         ++curFrame;
-        if (curFrame % 10 == 0)cout << "Frame " << curFrame << endl;
+        if (curFrame % 20 == 0) LOG(INFO) << "Frame " << curFrame;
 
         istringstream iss(line);
         snapshots.emplace_back(0);
@@ -86,7 +87,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
         maxBead.renew(snapshots.back());
     }
-    cout << "Reading complete. " << curFrame << " frames to be processed." << endl;
+    LOG(STEP) << "Reading complete. " << curFrame << " frames to be processed.";
 
     // close input stream
     is.close();
@@ -98,7 +99,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     // Note: in the output, all the coordinates would be 1/10 in size.
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
-        if (idx % 10 == 0) cout << "Generating model " << idx << endl;
+        if (idx % 20 == 0) LOG(INFO) << "Generating model " << idx;
         pg.genModel(idx + 1);
 
         char chain;
@@ -234,7 +235,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         pg.genEndmdl();
 
     } // End of looping through snapshots
-    cout << "Writing complete. " << numSnapshots << " models created." << endl;
+    LOG(STEP) << "Writing complete. " << numSnapshots << " models created.";
 
 }
 
