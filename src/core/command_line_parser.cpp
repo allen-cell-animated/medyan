@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "core/globals.h"
+
 namespace medyan {
 
 bool CommandLineParser::parse(int argc, char** argv) {
@@ -66,6 +68,10 @@ bool CommandLineParser::parse(int argc, char** argv) {
     }
         
     return true;
+}
+
+void CommandLineParser::printUsage()const {
+    // TODO:
 }
 
 

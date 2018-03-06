@@ -55,7 +55,8 @@ public:
 
     bool parse(int argc, char** argv);
 
-    /// Print error message
+    /// Print message
+    void printUsage()const;
     void printError()const {
         if(_invalidOptionBit)
             std::cout << "Invalid option: " << _invalidOptionContent << std::endl;
@@ -92,8 +93,6 @@ protected:
     std::string _validationFailContent;
 
     /// Configuration of the option
-    bool _required = false;
-    std::string _requiredNotFulfilled {""};
     int _numArgs = 0;
 
     /// Evaluate
@@ -107,7 +106,7 @@ protected:
 
 public:
     /// Check state
-    virtual operator bool()const {
+    operator bool()const {
         return !(_inputFailBit || _endOfArgListBit || _invalidArgBit || _validationFailBit);
     }
 
@@ -121,12 +120,7 @@ public:
 
     char getFlagShort()const { return _flagShort; }
 
-    /// Change the option behavior. These manipulators always return the class itself.
-    virtual CommandLineOptionBase& required(const std::string& errorMessage) {
-        _required = true;
-        _requiredNotFulfilled = errorMessage;
-        return *this;
-    }
+    bool evaluated()const { return _evaluated; }
 
     /// Find hit.
     virtual bool findHit(const std::string& arg, CommandLineParser::ArgType argType);
@@ -190,6 +184,7 @@ public:
             _invalidArgContent = std::string(argv[argp]);
         }
 
+        _evaluated = true;
         return 1;
     }
 
@@ -219,7 +214,11 @@ public:
     }
 
     /// Evaluate
-    virtual int evaluate(int argc, char** argv, int argp)override { *_value = _turnOn; return 0; }
+    virtual int evaluate(int argc, char** argv, int argp)override {
+        *_value = _turnOn;
+        _evaluated = true;
+        return 0;
+    }
 };
 
 
