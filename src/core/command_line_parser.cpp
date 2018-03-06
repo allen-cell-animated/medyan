@@ -1,33 +1,71 @@
 #include "core/command_line_parser.h"
 
 #include <algorithm>
-#include <sstream>
 
 namespace medyan {
 
 bool CommandLineParser::parse(int argc, char** argv) {
-    std::vector<char*> unusedArgs;
+    _unusedArgs.clear();
+    _unusedArgBit = false;
 
     for(int idx = 1; idx < argc; ++idx) {
         ArgType t = getArgType(argv[idx]);
         std::string arg {argv[idx]};
         if(t == ArgType::Fail) {
-            _invalidArgContent = arg;
-            _invalidArg = true;
+            _invalidOptionContent = arg;
+            _invalidOptionBit = true;
             return false;
         }
+
+        int maxMove = 0; // How many arguments should idx move forward
         
         for(auto& opPtr: _op) {
             if(opPtr->findHit(arg, t)) {
-                opPtr->evaluate(argc, argv, idx); // idx may be changed in this function
-                // TODO
+                if(!*opPtr) {
+                    opPtr->printError();
+                    _parseErrorBit = true;
+                    return false;
+                }
 
-                if(t != ArgType::Short) break;
+                int iMove = opPtr->evaluate(argc, argv, idx); // idx may be changed in this function
+                if(!*opPtr) {
+                    opPtr->printError();
+                    _parseErrorBit = true;
+                    return false;
+                }
+                if(iMove > maxMove) maxMove = iMove;
+
+                opPtr->validate();
+                if(!*opPtr) {
+                    opPtr->printError();
+                    _parseErrorBit = true;
+                    return false;
+                }
+
                 // Short args may be evaluated by other options, e.g. "-af" would be evaluated by "-a" and "-f"
+                if(t != ArgType::Short || arg.length() == 2) {
+                    arg = "";
+                }
+                else {
+                    char f = opPtr->getFlagShort();
+                    arg.erase(std::remove(arg.begin(), arg.end(), f), arg.end());
+                }
             }
 
         }
+
+        if(!arg.empty()) _unusedArgs.push_back(arg);
+
+        // Increase idx by required
+        idx += maxMove;
     }
+
+    if(_unusedArgs.size()) {
+        _unusedArgBit = true;
+        return false;
+    }
+        
+    return true;
 }
 
 
