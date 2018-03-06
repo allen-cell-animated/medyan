@@ -46,7 +46,7 @@ namespace internal {
     };
     
 
-    void Logger::generatePrefix(const char* curFile, const char* curLine, const char* curFunc) {
+    void Logger::generatePrefix(const char* curFile, int curLine, const char* curFunc) {
         bool genTime = false; // Generate time literal only once
         std::string strTime;
 
@@ -65,15 +65,15 @@ namespace internal {
                         << (settings.spaceAfterDelimiter? " ": "");
                 }
                 if(eachOs.dispFile.isOnWith(_lv)) {
-                    (*eachOs.os) << settings.delimiterBefore << curFile << settings.delimiterAfter
+                    (*eachOs.os) << settings.delimiterBefore << "File " << curFile << settings.delimiterAfter
                         << (settings.spaceAfterDelimiter? " ": "");
                 }
                 if(eachOs.dispLine.isOnWith(_lv)) {
-                    (*eachOs.os) << settings.delimiterBefore << curLine << settings.delimiterAfter
+                    (*eachOs.os) << settings.delimiterBefore << "Line " << curLine << settings.delimiterAfter
                         << (settings.spaceAfterDelimiter? " ": "");
                 }
                 if(eachOs.dispFunc.isOnWith(_lv)) {
-                    (*eachOs.os) << settings.delimiterBefore << curFunc << settings.delimiterAfter
+                    (*eachOs.os) << settings.delimiterBefore << "Function " << curFunc << settings.delimiterAfter
                         << (settings.spaceAfterDelimiter? " ": "");
                 }
             }
@@ -83,15 +83,23 @@ namespace internal {
         for(auto& eachOs: _osContainers) {
             if(eachOs.disp.isOnWith(_lv)) {
                 (*eachOs.os) << _oss.str();
+                if(settings.newLineAfterLog) (*eachOs.os) << '\n';
                 if(eachOs.flushLevel.isOnWith(_lv)) (*eachOs.os) << std::flush;
             }
         }
+        // Clear string stream
+        _oss.clear();
+        _oss.str(std::string());
     }
     bool Logger::defaultLoggerInitialization(const std::string& filepath) {
         Logger* l = getDefaultLogger();
 
         LoggerOstreamContainer& scrn = l->attachOstream(&std::cout, false);
+#ifdef NDEBUG
         scrn.disp.turnOnAtLeast(LogLevel::Info);
+#else
+        scrn.disp.turnOnAtLeast(LogLevel::Debug);
+#endif
         //scrn.dispTime.turnOnAtLeast(LogLevel::Debug);
         scrn.dispFile.turnOnAtLeast(LogLevel::Warning);
         scrn.dispLine.turnOnAtLeast(LogLevel::Error);
@@ -120,14 +128,13 @@ namespace internal {
         
     }
 
-    LogWriter::LogWriter(const char* curFile, const char* curLine, const char* curFunc, LogLevel lv, Logger* logger):
+    LogWriter::LogWriter(const char* curFile, int curLine, const char* curFunc, LogLevel lv, Logger* logger):
         _logger(logger) {
         _logger->setCurLevel(lv);
         _logger->generatePrefix(curFile, curLine, curFunc);
     }
     LogWriter::~LogWriter() {
         _logger->dispatchStream();
-        if(_logger->settings.newLineAfterLog) _logger->getStream() << '\n';
     }
 } // namespace internal
 

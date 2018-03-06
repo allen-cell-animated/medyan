@@ -95,7 +95,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     // Write to pdb
     PdbGenerator pg(_vmdFilepath);
 
-    cout << "Writing to " << _vmdFilepath << endl;
+    LOG(STEP) << "Writing to " << _vmdFilepath;
     // Note: in the output, all the coordinates would be 1/10 in size.
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {

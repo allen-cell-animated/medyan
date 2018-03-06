@@ -116,7 +116,7 @@ namespace internal {
         }
 
         /// Dispatch log
-        void generatePrefix(const char* curFile, const char* curLine, const char* curFunc);
+        void generatePrefix(const char* curFile, int curLine, const char* curFunc);
         void dispatchStream(); ///< Also clears the stringstream
 
         /// Default logger
@@ -143,7 +143,7 @@ namespace internal {
     class LogWriter {
     public:
         /// Constructor accepts environmental information.
-        LogWriter(const char* curFile, const char* curLine, const char* curFunc, LogLevel lv, Logger* logger);
+        LogWriter(const char* curFile, int curLine, const char* curFunc, LogLevel lv, Logger* logger);
         LogWriter(const LogWriter& lw) = delete;
         ~LogWriter();
 
