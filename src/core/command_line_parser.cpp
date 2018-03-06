@@ -117,4 +117,5 @@ bool CommandLineOptionBase::findHit(const std::string& arg, CommandLineParser::A
     return false;
 }
 
+
 } // namespace medyan

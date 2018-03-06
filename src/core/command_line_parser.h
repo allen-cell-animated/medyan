@@ -99,9 +99,15 @@ protected:
     /// Evaluate
     bool _evaluated = false;
 
+    /// Constructors
+    CommandLineOptionBase(const std::string& description):
+        _description(description) {}
+    CommandLineOptionBase(const char* match, const std::string& description):
+        _match(match), _description(description) {}
+
 public:
     /// Check state
-    operator bool()const {
+    virtual operator bool()const {
         return !(_inputFailBit || _endOfArgListBit || _invalidArgBit || _validationFailBit);
     }
 
@@ -126,7 +132,7 @@ public:
     virtual bool findHit(const std::string& arg, CommandLineParser::ArgType argType);
 
     /// Evaluate. return how many arguments consumed.
-    virtual int evaluate(int argc, char** argv, int& argp) = 0;
+    virtual int evaluate(int argc, char** argv, int argp) = 0;
 
     /// Validate. Options with arguments should override this function
     virtual bool validate() { return true; }
@@ -156,7 +162,7 @@ private:
 
 public:
     CommandLineOption(const char* match, T* destination, const std::string& description):
-        _match(match), _value(destination), _description(description),
+        CommandLineOptionBase(match, description), _value(destination),
         _numArgs(1)
     {
         _preprocess();
@@ -169,7 +175,7 @@ public:
     }
 
     /// Evaluate
-    virtual int evaluate(int argc, char** argv, int& argp)override {
+    virtual int evaluate(int argc, char** argv, int argp)override {
         // _numArgs == 1
         if(argp + 1 >= argc) {
             _endOfArgListBit = true;
@@ -207,32 +213,13 @@ class CommandLineFlag: public CommandLineOptionBase {
 
 public:
     CommandLineFlag(const char* match, bool* destination, bool turnOn, const std::string& description):
-        _match(match), _value(destination), _turnOn(turnOn), _description(description)
+        CommandLineOptionBase(match, description), _value(destination), _turnOn(turnOn)
     {
         _preprocess();
     }
 
     /// Evaluate
-    virtual int evaluate(int argc, char** argv, int& argp)override { *_value = _turnOn; return 0; }
-};
-
-/* Broken type... Do not use it for now. */
-class CommandLineGroup: public CommandLineOptionBase {
-    /// Pointers to other options
-    std::vector<std::unique_ptr<CommandLineOptionBase>> _op;
-    /// Aggregate type
-public:
-    CommandLineGroup(CommandLineParser* p): _p(p) {
-        _preprocess();
-    }
-
-    /// Validate.
-    virtual bool validate()override {
-        for(auto& opPtr: _op) {
-            if(!opPtr->validate()) return false;
-        }
-        return true;
-    }
+    virtual int evaluate(int argc, char** argv, int argp)override { *_value = _turnOn; return 0; }
 };
 
 
