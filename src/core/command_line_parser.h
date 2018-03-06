@@ -57,6 +57,7 @@ protected:
 
     /// Configuration of the option
     int _numArgs = 0;
+    std::string _argName;
     bool _required = false;
     std::vector<OptionBase*> _excluding;
 
@@ -64,8 +65,8 @@ protected:
     bool _evaluated = false;
 
     /// Constructors
-    OptionBase(const char* match, int numArgs, const std::string& description):
-        _match(match), _numArgs(numArgs), _description(description) {}
+    OptionBase(const char* match, int numArgs, const std::string& argName, const std::string& description):
+        _match(match), _numArgs(numArgs), _argName(argName), _description(description) {}
 
 public:
     /// Check state
@@ -77,7 +78,8 @@ public:
     const char* getMatch()const { return _match; }
     const std::string& getDescription()const { return _description; }
 
-    int getRequiredArgs()const { return _numArgs; }
+    int getNumArgs()const { return _numArgs; }
+    const std::string& getArgName()const { return _argName; }
 
     bool inputFail()const { return _inputFailBit; }
     bool endOfArgList()const { return _endOfArgListBit; }
@@ -123,20 +125,17 @@ private:
     /// The argument value
     T* _value;
 
-    /// Argument display name
-    std::string _argName;
-
     /// Validator
     std::function<bool(T)> _validator;
 
 public:
     Option1(const char* match, T* destination, const std::string& argName, const std::string& description):
-        OptionBase(match, 1, description), _value(destination), _argName(argName)
+        OptionBase(match, 1, argName, description), _value(destination)
     {
         _preprocess();
     }
     Option1(const char* match, T* destination, const std::string& argName, std::function<bool(T)> validator, const std::string& description):
-        OptionBase(match, 1, description), _value(destination), _argName(argName), _validator(validator)
+        OptionBase(match, 1, argName, description), _value(destination), _validator(validator)
     {
         _preprocess();
     }
@@ -179,7 +178,7 @@ class Flag: public OptionBase {
 
 public:
     Flag(const char* match, bool* destination, bool turnOn, const std::string& description):
-        OptionBase(match, 0, description), _value(destination), _turnOn(turnOn)
+        OptionBase(match, 0, "", description), _value(destination), _turnOn(turnOn)
     {
         _preprocess();
     }

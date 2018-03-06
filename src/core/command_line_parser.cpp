@@ -12,6 +12,16 @@ bool Command::parse(int argc, char** argv, int argp) {
 
     _evaluated = true;
 
+    // Evaluate default option first
+    if(_defaultOp && !_defaultOp->isEvaluated()) {
+        ++argp;
+        int iMove = _defaultOp->evaluate(argc, argv, argp);
+        if(!*_defaultOp) {
+            _parseErrorBit = true;
+            return false;
+        }
+        argp += iMove;
+    }
     // Try to read to the end of the arguments
     for(int idx = argp + 1; idx < argc; ++idx) {
         ArgType t = getArgType(argv[idx]);
@@ -28,37 +38,28 @@ bool Command::parse(int argc, char** argv, int argp) {
         switch(t) {
         case ArgType::Long:
         case ArgType::Short:
-            if(!_defaultOp || _defaultOp->isEvaluated()) {
-                for(auto& opPtr: _op) {
-                    if(opPtr->findHit(arg, t)) {
-                        int iMove = opPtr->evaluate(argc, argv, idx);
-                        if(!*opPtr) {
-                            _parseErrorBit = true;
-                            return false;
-                        }
-                        if(iMove > maxMove) maxMove = iMove;
-
-                        // Short args may be evaluated by other options, e.g. "-af" would be evaluated by "-a" and "-f"
-                        if(t != ArgType::Short || arg.length() == 2) {
-                            arg.clear();
-                            break;
-                        } else {
-                            char f = opPtr->getFlagShort();
-                            arg.erase(std::remove(arg.begin(), arg.end(), f), arg.end());
-                        }
+            for(auto& opPtr: _op) {
+                if(opPtr->findHit(arg, t)) {
+                    int iMove = opPtr->evaluate(argc, argv, idx);
+                    if(!*opPtr) {
+                        _parseErrorBit = true;
+                        return false;
                     }
+                    if(iMove > maxMove) maxMove = iMove;
 
+                    // Short args may be evaluated by other options, e.g. "-af" would be evaluated by "-a" and "-f"
+                    if(t != ArgType::Short || arg.length() == 2) {
+                        arg.clear();
+                        break;
+                    } else {
+                        char f = opPtr->getFlagShort();
+                        arg.erase(std::remove(arg.begin(), arg.end(), f), arg.end());
+                    }
                 }
 
-                if(!arg.empty()) _unusedArgs.push_back(arg);
-            } else {
-                int iMove = _defaultOp->evaluate(argc, argv, idx);
-                if(!*_defaultOp) {
-                    _parseErrorBit = true;
-                    return false;
-                }
-                if(iMove > maxMove) maxMove = iMove;
             }
+
+            if(!arg.empty()) _unusedArgs.push_back(arg);
 
             // Increase idx by required
             idx += maxMove;
@@ -115,8 +116,13 @@ void Command::printUsage(std::ostream& out)const {
     for(auto& opPtr: _op) {
         bool required = opPtr->isRequired();
         out << (required? " ": " [");
-        if(opPtr->getFlagLong().length()) out << opPtr->getFlagLong();
-        else if(opPtr->getFlagShort()) out << opPtr->getFlagShort();
+
+        if(opPtr->getFlagLong().length()) out << "--" << opPtr->getFlagLong();
+        else if(opPtr->getFlagShort()) out << '-' << opPtr->getFlagShort();
+
+        if (opPtr->getNumArgs() == 1) out << " " << opPtr->getArgName();
+        else if (opPtr->getNumArgs() > 1) out << " " << opPtr->getArgName() << "...";
+
         out << (required? "": "]");
     }
     if(!_subcmd.empty()) {
@@ -127,8 +133,9 @@ void Command::printUsage(std::ostream& out)const {
     if(!_subcmd.empty()) {
         out << "Commands:\n";
         for(auto& cmdPtr: _subcmd) {
-            if(cmdPtr->_name.length() > 16) {
-                out << cmdPtr->_name << '\n' << std::string(' ', 16);
+            out << "  ";
+            if(cmdPtr->_name.length() > 14) {
+                out << cmdPtr->_name << '\n' << std::string(' ', 14);
             } else {
                 std::string tmp = cmdPtr->_name;
                 tmp.resize(16, ' ');
@@ -141,8 +148,9 @@ void Command::printUsage(std::ostream& out)const {
     if(!_op.empty()) {
         out << "Options:\n";
         for(auto& opPtr: _op) {
-            if(std::strlen(opPtr->getMatch()) > 16) {
-                out << opPtr->getMatch() << '\n' << std::string(' ', 16);
+            out << "  ";
+            if(std::strlen(opPtr->getMatch()) > 14) {
+                out << opPtr->getMatch() << '\n' << std::string(' ', 14);
             } else {
                 std::string tmp {opPtr->getMatch()};
                 tmp.resize(16, ' ');
