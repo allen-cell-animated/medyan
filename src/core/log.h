@@ -169,7 +169,7 @@ namespace internal {
 } // namespace medyan
 
 /// Exposed macro
-#define MEDYAN_WRITE_LOG(writer, log_level) ::medyan::logger::LogWriter(__FILE__, __LINE__, __func__, log_level, writer)
+#define MEDYAN_WRITE_LOG(writer, log_level) ::medyan::logger::internal::LogWriter(__FILE__, __LINE__, __func__, log_level, writer)
 
 #define MEDYAN_LOG_GEN_DEBUG(writer)   MEDYAN_WRITE_LOG(writer, ::medyan::logger::LogLevel::Debug)
 #define MEDYAN_LOG_GEN_INFO(writer)    MEDYAN_WRITE_LOG(writer, ::medyan::logger::LogLevel::Info)
