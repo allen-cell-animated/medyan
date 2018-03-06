@@ -33,16 +33,17 @@ namespace {
             // Beads in filaments
             size_t newFilament = 0;
             for(auto& eachFilament: snapshot.filamentStruct) {
-                newFilament += eachFilament.getNumBeads() + 1; // +1 for TER
+                newFilament += eachFilament.getNumBeads();
             }
+            ++newFilament; // For TER
             if(newFilament > filament) filament = newFilament;
 
             // Beads in linkers
-            size_t newLinker = snapshot.linkerStruct.size() * 3; // 2 ATOM + 1 TER
+            size_t newLinker = snapshot.linkerStruct.size() * 2 + 1; // +1 TER
             if(newLinker > linker) linker = newLinker;
 
             // Beads in motors
-            size_t newMotor = snapshot.motorStruct.size() * 3; // 2 ATOM + 1 TER
+            size_t newMotor = snapshot.motorStruct.size() * 2 + 1; // +1 TER
             if(newMotor > motor) motor = newMotor;
 
             // Beads in membranes
@@ -53,6 +54,7 @@ namespace {
                 */
                 newMembrane += eachMembrane.getNumVertices();
             }
+            ++newMembrane; // +1 TER
             if(newMembrane > membrane) membrane = newMembrane;
         }
     };
@@ -103,7 +105,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         pg.genModel(idx + 1);
 
         char chain;
-        size_t atomSerial = 0;
+        size_t atomSerial;
         size_t atomCount;
         size_t resSeq;
 
@@ -113,75 +115,85 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         chain = 'F';
         atomSerial = 0;
         atomCount = 0;
+        resSeq = 0;
         for(auto& eachFilament: snapshots[idx].filamentStruct) {
             for(auto& eachCoord: eachFilament.getCoords()) {
                 ++atomSerial;
                 ++atomCount;
+                ++resSeq;
                 pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                    atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
             }
-            ++atomSerial; // Separate bonds
+            ++resSeq; // Separate bonds
         }
         while(atomCount < maxBead.filament) {
             ++atomSerial;
             ++atomCount;
             pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, atomSerial
+                atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
         }
+        pg.genTer(++atomSerial, "ARG", chain, ++resSeq);
 
         // Linkers
         chain = 'L';
         atomSerial = 0;
         atomCount = 0;
+        resSeq = 0;
         for(auto& eachLinker: snapshots[idx].linkerStruct) {
             for(auto& eachCoord: eachLinker.getCoords()) {
                 ++atomSerial;
                 ++atomCount;
+                ++resSeq;
                 pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                    atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
             }
-            ++atomSerial; // Separate bonds
+            ++resSeq; // Separate bonds
         }
         while(atomCount < maxBead.linker) {
             ++atomSerial;
             ++atomCount;
             pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, atomSerial
+                atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
         }
+        pg.genTer(++atomSerial, "ARG", chain, ++resSeq);
 
         // Motors
         chain = 'M';
         atomSerial = 0;
         atomCount = 0;
+        resSeq = 0;
         for(auto& eachMotor: snapshots[idx].motorStruct) {
             for(auto& eachCoord: eachMotor.getCoords()) {
                 ++atomSerial;
                 ++atomCount;
+                ++resSeq;
                 pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                    atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
             }
-            ++atomSerial; // Separate bonds
+            ++resSeq; // Separate bonds
         }
         while(atomCount < maxBead.motor) {
             ++atomSerial;
             ++atomCount;
             pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, atomSerial
+                atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
         }
+        pg.genTer(++atomSerial, "ARG", chain, ++resSeq);
 
         // Membranes
         chain = 'E';
         atomSerial = 0;
         atomCount = 0;
+        resSeq = 0;
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
             /*
             bool buildMembrane = !eachMembrane.getMembrane();
@@ -212,21 +224,23 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             for(auto& vInfo: eachMembrane.getMembraneInfo()) {
                 ++atomSerial;
                 ++atomCount;
+                ++resSeq;
                 auto& v = get<0>(vInfo);
                 pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
+                    atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     v[0], v[1], v[2]
                 );
             }
-            ++atomSerial;
+            ++resSeq;
         }
         while(atomCount < maxBead.membrane) {
             ++atomSerial;
             ++atomCount;
             pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, atomSerial
+                atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
         }
+        pg.genTer(++atomSerial, "ARG", chain, ++resSeq);
 
         // End of model
         pg.genEndmdl();
