@@ -101,11 +101,11 @@ int main(int argc, char **argv) {
     bool runAnalyze = false;
     bool runHelp = false;
     
-    Option1 inputFile {"-s", &Global::global().systemInputFileName, "system-input", "Input file name"};
-    Option1 inputDir {"-i", &Global::global().inputDirectory, "input-directory", "Input directory"};
-    Option1 outputDir {"-o", &Global::global().outputDirectory, "output-directory", "Output directory"};
+    Option1<std::string> inputFile {"-s", &Global::global().systemInputFileName, "system-input", "Input file name"};
+    Option1<std::string> inputDir {"-i", &Global::global().inputDirectory, "input-directory", "Input directory"};
+    Option1<std::string> outputDir {"-o", &Global::global().outputDirectory, "output-directory", "Output directory"};
     Flag opHelp {"-h,--help", &runHelp, true, "Print help message"};
-    Flag opAnalyze {"analyze", &runAnalysis, true, "Run analysis instead of simulation"};
+    Flag opAnalyze {"analyze", &runAnalyze, true, "Run analysis instead of simulation"};
     Command cmdAnalyze {&opAnalyze};
     Command cmd {"MEDYAN", {&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}};
 
@@ -125,19 +125,21 @@ int main(int argc, char **argv) {
         exit(EXIT_SUCCESS);
     }
 
-    Global::global().mode = runAnalysis? 1: 0;
+    Global::global().mode = runAnalyze? 1: 0;
 
     // Start program    
-    switch(runMode) {
+    switch(Global::global().mode) {
     case 0:
         //initialize and run system
-        c.initialize(inputFile, inputDirectory, outputDirectory);
+        c.initialize(Global::global().systemInputFileName,
+                     Global::global().inputDirectory,
+                     Global::global().outputDirectory);
         c.run();
         break;
     case 1:
         {
-            string inputFilePath = inputDirectory + "/snapshot.traj";
-            string outputFilePath = outputDirectory + "/snapshot.pdb";
+            string inputFilePath = Global::global().inputDirectory + "/snapshot.traj";
+            string outputFilePath = Global::global().outputDirectory + "/snapshot.pdb";
             analysis::SnapshotReader sr(inputFilePath, outputFilePath);
             sr.readAndConvertToVmd();
         }

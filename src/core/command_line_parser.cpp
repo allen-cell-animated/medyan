@@ -28,7 +28,7 @@ bool Command::parse(int argc, char** argv, int argp) {
         switch(t) {
         case ArgType::Long:
         case ArgType::Short:
-            if(_defaultOp->isEvaluated()) {
+            if(!_defaultOp || _defaultOp->isEvaluated()) {
                 for(auto& opPtr: _op) {
                     if(opPtr->findHit(arg, t)) {
                         int iMove = opPtr->evaluate(argc, argv, idx);
@@ -177,9 +177,9 @@ void OptionBase::_preprocess() {
     }
 }
 
-bool OptionBase::findHit(const std::string& arg, Command::ArgType argType) {
+bool OptionBase::findHit(const std::string& arg, ArgType argType) {
     switch(argType) {
-    case Command::ArgType::Short:
+    case ArgType::Short:
         if(_flagShort) {
             size_t pos = arg.find(_flagShort);
             if(pos != std::string::npos) {
@@ -190,10 +190,10 @@ bool OptionBase::findHit(const std::string& arg, Command::ArgType argType) {
             }
         }
         break;
-    case Command::ArgType::Long:
+    case ArgType::Long:
         if(_flagLong == std::string(arg, 2)) return true;
         break;
-    case Command::ArgType::Argument:
+    case ArgType::Argument:
         if(_flagCommand == arg) return true;
         break;
     default:

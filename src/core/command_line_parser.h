@@ -11,94 +11,31 @@
 namespace medyan {
 namespace commandline {
 
-// Forward declarations
-class OptionBase;
-
-class Command {
-    friend OptionBase;
-
-private:
-    std::vector<OptionBase*> _op;
-    std::vector<Command*> _subcmd;
-    OptionBase* _defaultOp = nullptr; ///< The command itself acting as an option
-
-    /// Name for the subcommand
-    std::string _name;
-
-    /// Fail flags and associated variables
-    bool _invalidArgBit = false; // Fail on understanding argument. Should abort parsing when this is set to true.
-    std::string _invalidArgContent;
-    bool _parseErrorBit = false; // Fail by option reader. Should abort parsing when this is set to true.
-    bool _subcmdErrorBit = false; // Fail by subcommand parser. Should abort parsing when this is set to true.
-    bool _unusedArgBit = false; // Unused arguments after parsing
-    std::vector<std::string> _unusedArgs;
-    bool _logicErrorBit = false; // Option requirements not fulfilled
-    std::vector<std::string> _logicErrorContent;
-
-    /// States
-    bool _evaluated = false;
-
-public:
-    enum class ArgType {
-        Short, // Short option (eg "-a") or combined short option (eg "-af"). No more '-' is allowed
-        Long, // Long option (eg "--analysis").
-        Argument, // Argument or sub-command, not starting with "-" or "--" (eg "23" or "run")
-        Fail // Unsupported syntax (eg "-a-f")
-    };
-
-    /// Constructor
-    Command(OptionBase* op): _defaultOp(op) { if(op) _name = op->getFlagCommand(); }
-    Command(const std::string& name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds):
-        _name(name), _op(ops), _subcmd(subcmds) {}
-
-    /// Check state
-    operator bool()const {
-        return !(_invalidArgBit || _parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit);
-    }
-
-    /// Helper function to get arg type
-    static ArgType getArgType(const char* argv) {
-        int i = 0;
-        ArgType t;
-        bool startHyphen = false;
-        bool startHyphen2 = false;
-        while(argv[i]) {
-            if(i == 0 && argv[i] == '-') startHyphen = true;
-            if(i == 1 && startHyphen && argv[i] == '-') startHyphen2 = true;
-            if(i > 1 && startHyphen && !startHyphen2 && argv[i] == '-') return ArgType::Fail;
-            ++i;
-        }
-        if(startHyphen2) return ArgType::Long;
-        if(startHyphen) return ArgType::Short;
-        return ArgType::Argument;
-    }
-
-    bool parse(int argc, char** argv, int argp=0);
-
-    /// Print message
-    void printUsage(std::ostream& out=std::cout)const;
-    void printError(std::ostream& out=std::cout)const {
-        if(_invalidArgBit)
-            out << "Invalid option: " << _invalidArgContent << std::endl;
-        if(_parseErrorBit) {
-            _defaultOp->printError(out);
-            for(auto& opPtr: _op) opPtr->printError(out);
-        }
-        if(_subcmdErrorBit)
-            for(auto& cmdPtr: _subcmd) cmdPtr->printError(out);
-        if(_logicErrorBit)
-            for(auto& content: _logicErrorContent) out << content << std::endl;
-        if(_unusedArgBit) {
-            out << "Unknown option:" << std::endl;
-            for(auto& eachUnusedArg: _unusedArgs) out << eachUnusedArg << " ";
-            out << std::endl;
-        }
-    }
+enum class ArgType {
+    Short, // Short option (eg "-a") or combined short option (eg "-af"). No more '-' is allowed
+    Long, // Long option (eg "--analysis").
+    Argument, // Argument or sub-command, not starting with "-" or "--" (eg "23" or "run")
+    Fail // Unsupported syntax (eg "-a-f")
 };
 
-class OptionBase {
-    friend Command;
+/// Helper function to get arg type
+inline ArgType getArgType(const char* argv) {
+    int i = 0;
+    bool startHyphen = false;
+    bool startHyphen2 = false;
+    while (argv[i]) {
+        if (i == 0 && argv[i] == '-') startHyphen = true;
+        if (i == 1 && startHyphen && argv[i] == '-') startHyphen2 = true;
+        if (i > 1 && startHyphen && !startHyphen2 && argv[i] == '-') return ArgType::Fail;
+        ++i;
+    }
+    if (startHyphen2) return ArgType::Long;
+    if (startHyphen) return ArgType::Short;
+    return ArgType::Argument;
+}
 
+
+class OptionBase {
 protected:
     /// Input of the option
     const char* _match;
@@ -161,7 +98,7 @@ public:
     virtual OptionBase& exclude(OptionBase* op) { _excluding.push_back(op); return *this; }
 
     /// Find hit.
-    virtual bool findHit(const std::string& arg, Command::ArgType argType);
+    virtual bool findHit(const std::string& arg, ArgType argType);
 
     /// Evaluate and validate. return how many arguments consumed.
     virtual int evaluate(int argc, char** argv, int argp) = 0;
@@ -216,7 +153,7 @@ public:
 
         ++argp;
         std::istringstream iss(argv[argp]);
-        iss >> _value;
+        iss >> *_value;
         if(iss.fail()) {
             _invalidArgBit = true;
             _invalidArgContent = std::string(argv[argp]);
@@ -255,7 +192,63 @@ public:
     }
 };
 
-/// Commmand line group logic
+class Command {
+private:
+    std::vector<OptionBase*> _op;
+    std::vector<Command*> _subcmd;
+    OptionBase* _defaultOp = nullptr; ///< The command itself acting as an option
+
+                                      /// Name for the subcommand
+    std::string _name;
+
+    /// Fail flags and associated variables
+    bool _invalidArgBit = false; // Fail on understanding argument. Should abort parsing when this is set to true.
+    std::string _invalidArgContent;
+    bool _parseErrorBit = false; // Fail by option reader. Should abort parsing when this is set to true.
+    bool _subcmdErrorBit = false; // Fail by subcommand parser. Should abort parsing when this is set to true.
+    bool _unusedArgBit = false; // Unused arguments after parsing
+    std::vector<std::string> _unusedArgs;
+    bool _logicErrorBit = false; // Option requirements not fulfilled
+    std::vector<std::string> _logicErrorContent;
+
+    /// States
+    bool _evaluated = false;
+
+public:
+
+    /// Constructor
+    Command(OptionBase* op) : _defaultOp(op) { if (op) _name = op->getFlagCommand(); }
+    Command(const std::string& name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds) :
+        _name(name), _op(ops), _subcmd(subcmds) {}
+
+    /// Check state
+    operator bool()const {
+        return !(_invalidArgBit || _parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit);
+    }
+
+
+    bool parse(int argc, char** argv, int argp = 0);
+
+    /// Print message
+    void printUsage(std::ostream& out = std::cout)const;
+    void printError(std::ostream& out = std::cout)const {
+        if (_invalidArgBit)
+            out << "Invalid option: " << _invalidArgContent << std::endl;
+        if (_parseErrorBit) {
+            _defaultOp->printError(out);
+            for (auto& opPtr : _op) opPtr->printError(out);
+        }
+        if (_subcmdErrorBit)
+            for (auto& cmdPtr : _subcmd) cmdPtr->printError(out);
+        if (_logicErrorBit)
+            for (auto& content : _logicErrorContent) out << content << std::endl;
+        if (_unusedArgBit) {
+            out << "Unknown option:" << std::endl;
+            for (auto& eachUnusedArg : _unusedArgs) out << eachUnusedArg << " ";
+            out << std::endl;
+        }
+    }
+};
 
 
 } // namespace commandline
