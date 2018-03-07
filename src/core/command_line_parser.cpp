@@ -168,7 +168,6 @@ void Command::printUsage(std::ostream& out)const {
 
 
 void OptionBase::_preprocess() {
-    int prevLoc = 0;
     std::string eachStr;
     std::istringstream iss{std::string(_match)};
     while(std::getline(iss, eachStr, ',')) {
