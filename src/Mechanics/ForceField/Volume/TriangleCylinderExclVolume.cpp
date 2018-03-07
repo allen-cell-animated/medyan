@@ -142,7 +142,10 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                     }};
                     
                     array<double, 3> loadForce = _FFType.loadForces(t, newCoord, kExVol);
-                    bd->loadForcesP[bd->lfip++] += -dotProduct(normal, loadForce);
+                    double effLoadForce = -dotProduct(normal, loadForce);
+                    if(effLoadForce < 0.0) effLoadForce = 0.0;
+
+                    bd->loadForcesP[bd->lfip++] += effLoadForce;
                 }
                 //reset lfi
                 bd->lfip = 0;
@@ -171,7 +174,10 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                     }};
                     
                     array<double, 3> loadForce = _FFType.loadForces(t, newCoord, kExVol);
-                    bd->loadForcesM[bd->lfim++] += -dotProduct(normal, loadForce);
+                    double effLoadForce = -dotProduct(normal, loadForce);
+                    if(effLoadForce < 0.0) effLoadForce = 0.0;
+
+                    bd->loadForcesM[bd->lfim++] += effLoadForce;
                 }
                 //reset lfi
                 bd->lfim = 0;
