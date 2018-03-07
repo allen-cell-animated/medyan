@@ -19,7 +19,14 @@ namespace internal {
 
         std::time_t timeToSec = s.count();
         tm timeinfoToSec;
+#ifdef _MSC_VER
         localtime_s(&timeinfoToSec, &timeToSec);
+#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
+        localtime_r(&timeToSec, &timeinfoToSec);
+#else
+        // Not thread safe
+        timeinfoToSec = *localtime(&timeToSec);
+#endif
 
         std::size_t msRemain = ms.count() % 1000;
 
