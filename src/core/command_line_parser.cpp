@@ -126,7 +126,11 @@ void Command::printUsage(std::ostream& out)const {
         out << (required? "": "]");
     }
     if(!_subcmd.empty()) {
-        out << " <command>";
+        OptionBase* defaultOp = _subcmd[0]->getDefaultOp();
+        bool required = defaultOp && defaultOp->isRequired();
+        if(!required) out << "[";
+        out << " command";
+        if(!required) out << "]";
     }
     out << '\n' << std::endl;
 

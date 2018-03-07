@@ -65,8 +65,6 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  
  */
 
-#include <getopt.h>
-
 #include "common.h"
 
 #include "Controller.h"
@@ -77,10 +75,6 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "core/globals.h"
 
 using namespace medyan;
-
-void printUsage() {
-    cout << "Usage: MEDYAN [-a] -s systemFile -i inputDirectory -o outputDirectory" << endl;
-}
 
 int main(int argc, char **argv) {
     using namespace commandline;

@@ -225,7 +225,10 @@ public:
         return !(_invalidArgBit || _parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit);
     }
 
+    /// Getters
+    OptionBase* getDefaultOp()const { return _defaultOp; }
 
+    /// Main parsing function
     bool parse(int argc, char** argv, int argp = 0);
 
     /// Print message
