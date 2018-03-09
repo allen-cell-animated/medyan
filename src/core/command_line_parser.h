@@ -51,8 +51,31 @@ class CommandLineElement {
 protected:
     std::string _description;
     CommandLineElement(const std::string& description): _description(description) {}
+
+    /// Fail bits
+    bool _inputFailBit = false; // Interal error: cannot parse input
+    std::vector<std::string> _inputFailInfo;
+
+    /// Preprocessing
+    virtual void _preprocess() {};
 public:
+    /// Check state
+    operator bool()const {
+        return !_inputFailBit;
+    }
+
+    /// Getters
     const std::string& getDescription()const { return _description; }
+
+    bool inputFail()const { return _inputFailBit; }
+
+    /// Error printing
+    virtual void printError(std::ostream& os=std::cout)const {
+        if(_inputFailBit) {
+            for(auto& info: _inputFailInfo)
+                os << info << std::endl;
+        }
+    }
 };
 
 class OptionBase: public CommandLineElement {
@@ -66,10 +89,9 @@ protected:
     char _flagShort = 0; // e.g. "-a" w/o "-"
     std::string _flagLong; // e.g. "--analysis" w/o "--"
     std::string _flagCommand; // e.g. "add"
-    void _preprocess();
+    virtual void _preprocess()override;
 
     /// Fail flags and associated info
-    bool _inputFailBit = false; // Internal: input parsing failure
     bool _endOfArgListBit = false;
     bool _activateErrorBit = false; // activation fail by the callback
     bool _invalidArgBit = false; // Invalid argument
@@ -104,7 +126,6 @@ public:
     bool takesArg()const { return _takesArg; }
     const std::string& getArgName()const { return _argName; }
 
-    bool inputFail()const { return _inputFailBit; }
     bool endOfArgList()const { return _endOfArgListBit; }
     bool invalidArg()const { return _invalidArgBit; }
     const std::string& getInvalidArgContent()const { return _invalidArgContent; }
@@ -129,15 +150,15 @@ public:
     virtual int evaluate(int argc, char** argv, int argp) = 0;
 
     /// Print error message
-    virtual void printError(std::ostream& out=std::cout)const {
-        if(_inputFailBit)
-            out << "Internal error: invalid configuration for " << _match << std::endl;
+    virtual void printError(std::ostream& os=std::cout)const {
+        CommandLineElement::printError(os);
+
         if(_endOfArgListBit)
-            out << "Must specify argument for " << _match << std::endl;
+            os << "Must specify argument for " << _match << std::endl;
         if(_invalidArgBit)
-            out << "Invalid argument for " << _match << ": " << _invalidArgContent << std::endl;
+            os << "Invalid argument for " << _match << ": " << _invalidArgContent << std::endl;
         if(_activateErrorBit)
-            out << "The argument value for " << _match << " is not acceptable." << std::endl;
+            os << "The argument value for " << _match << " is not acceptable." << std::endl;
     }
 };
 
@@ -223,7 +244,10 @@ private:
     std::function<bool()> _activate; ///< Activate callback
 
     /// Name for the subcommand
-    std::string _name;
+    const char* _name;
+
+    /// Preprocessing
+    virtual void _preprocess()override;
 
     /// Fail flags and associated variables
     bool _parseErrorBit = false; // Fail by option reader. Should abort parsing when this is set to true.
@@ -240,7 +264,7 @@ private:
 public:
 
     /// Constructor
-    Command(const std::string& description, const std::string& name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds, const std::function<bool()>& activate) :
+    Command(const std::string& description, const char* name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds, const std::function<bool()>& activate) :
         PosElement(description), _name(name), _op(ops), _subcmd(subcmds), _activate(activate) {}
 
     /// Check state
@@ -262,18 +286,20 @@ public:
 
     /// Print message
     void printUsage(std::ostream& out = std::cout)const;
-    void printError(std::ostream& out = std::cout)const {
+    virtual void printError(std::ostream& os = std::cout)const override {
+        CommandLineElement::printError(os);
+
         if (_parseErrorBit) {
-            for (auto& opPtr : _op) opPtr->printError(out);
+            for (auto& opPtr : _op) opPtr->printError(os);
         }
         if (_subcmdErrorBit)
-            for (auto& cmdPtr : _subcmd) cmdPtr->printError(out);
+            for (auto& cmdPtr : _subcmd) cmdPtr->printError(os);
         if (_logicErrorBit)
-            for (auto& content : _logicErrorContent) out << content << std::endl;
+            for (auto& content : _logicErrorContent) os << content << std::endl;
         if (_unusedArgBit) {
-            out << "Unknown option:" << std::endl;
-            for (auto& eachUnusedArg : _unusedArgs) out << eachUnusedArg << " ";
-            out << std::endl;
+            os << "Unknown option:" << std::endl;
+            for (auto& eachUnusedArg : _unusedArgs) os << eachUnusedArg << " ";
+            os << std::endl;
         }
     }
 };

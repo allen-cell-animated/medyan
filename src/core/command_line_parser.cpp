@@ -210,6 +210,13 @@ bool OptionBase::findHit(const std::string& arg, ArgType argType) {
     return false;
 }
 
+void Command::_preprocess() {
+    if(getArgType(_name) != getArgType::ArgOrCmd) _inputFailBit = true;
+    
+    // Callback error
+    if(!activate) _inputFailBit = true;
+}
+
 
 } // namespace commandline
 } // namespace medyan
