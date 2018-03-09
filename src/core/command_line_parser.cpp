@@ -26,11 +26,6 @@ bool Command::parse(int argc, char** argv, int argp) {
     for(int idx = argp + 1; idx < argc; ++idx) {
         ArgType t = getArgType(argv[idx]);
         std::string arg {argv[idx]};
-        if(t == ArgType::Fail) {
-            _invalidArgContent = arg;
-            _invalidArgBit = true;
-            return false;
-        }
 
         int maxMove = 0; // How many arguments should idx move forward
 
@@ -65,7 +60,7 @@ bool Command::parse(int argc, char** argv, int argp) {
             idx += maxMove;
 
             break;
-        case ArgType::Argument:
+        case ArgType::ArgOrCmd:
             // Currently only one subcommand in each command is allowed,
             // because any command will try to read to the end of the arg list
             for(auto& cmdPtr: _subcmd) {
@@ -203,7 +198,7 @@ bool OptionBase::findHit(const std::string& arg, ArgType argType) {
     case ArgType::Long:
         if(_flagLong == std::string(arg, 2)) return true;
         break;
-    case ArgType::Argument:
+    case ArgType::ArgOrCmd:
         if(_flagCommand == arg) return true;
         break;
     default:

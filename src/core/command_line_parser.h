@@ -14,8 +14,7 @@ namespace commandline {
 enum class ArgType {
     Short, // Short option (eg "-a") or combined short option (eg "-af"). No more '-' is allowed
     Long, // Long option (eg "--analysis").
-    Argument, // Argument or sub-command, not starting with "-" or "--" (eg "23" or "run")
-    Fail // Unsupported syntax (eg "-a-f")
+    ArgOrCmd, // Argument or sub-command, not starting with "-" or "--" (eg "23" or "run")
 };
 
 /// Helper function to get arg type
@@ -26,14 +25,26 @@ inline ArgType getArgType(const char* argv) {
     while (argv[i]) {
         if (i == 0 && argv[i] == '-') startHyphen = true;
         if (i == 1 && startHyphen && argv[i] == '-') startHyphen2 = true;
-        if (i > 1 && startHyphen && !startHyphen2 && argv[i] == '-') return ArgType::Fail;
         ++i;
     }
     if (startHyphen2) return ArgType::Long;
     if (startHyphen) return ArgType::Short;
-    return ArgType::Argument;
+    return ArgType::ArgOrCmd;
 }
 
+/**
+ * The actual handling of the command line input should be separated into two
+ * parts: Parsing and Evaluating.
+ * 
+ * Parsing is to determine whether the user input is syntactically correct and
+ * to select from the multiple groupings. Actual value interpretation and
+ * validation do not occur here. Internal errors and command line syntax errors
+ * should be captured in this step.
+ * 
+ * Evaluating is where the value interpretation and validation happens. If any
+ * value is invalid, the whole command line reading should fail, without trying
+ * to parse in any other ways.
+ */
 
 class OptionBase {
 protected:
@@ -173,18 +184,24 @@ public:
     }
 };
 
-class Command {
+class PosElement {};
+// Note that although argument taken by options are also positional, they are
+// handled by the option class and thus not belong here.
+class PosArg: public PosElement {
+    bool _required;
+public:
+    bool isRequired()const { return _required; }
+};
+class Command: public PosElement {
 private:
     std::vector<OptionBase*> _op;
     std::vector<Command*> _subcmd;
     OptionBase* _defaultOp = nullptr; ///< The command itself acting as an option
 
-                                      /// Name for the subcommand
+    /// Name for the subcommand
     std::string _name;
 
     /// Fail flags and associated variables
-    bool _invalidArgBit = false; // Fail on understanding argument. Should abort parsing when this is set to true.
-    std::string _invalidArgContent;
     bool _parseErrorBit = false; // Fail by option reader. Should abort parsing when this is set to true.
     bool _subcmdErrorBit = false; // Fail by subcommand parser. Should abort parsing when this is set to true.
     bool _unusedArgBit = false; // Unused arguments after parsing
@@ -204,7 +221,7 @@ public:
 
     /// Check state
     operator bool()const {
-        return !(_invalidArgBit || _parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit);
+        return !(_parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit);
     }
 
     /// Getters
@@ -216,8 +233,6 @@ public:
     /// Print message
     void printUsage(std::ostream& out = std::cout)const;
     void printError(std::ostream& out = std::cout)const {
-        if (_invalidArgBit)
-            out << "Invalid option: " << _invalidArgContent << std::endl;
         if (_parseErrorBit) {
             _defaultOp->printError(out);
             for (auto& opPtr : _op) opPtr->printError(out);
