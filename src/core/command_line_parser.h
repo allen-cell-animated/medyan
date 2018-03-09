@@ -39,7 +39,8 @@ inline ArgType getArgType(const char* argv) {
  * Parsing is to determine whether the user input is syntactically correct and
  * to select from the multiple groupings. Actual value interpretation and
  * validation do not occur here. Internal errors and command line syntax errors
- * should be captured in this step.
+ * should be captured in this step. Parsing with multiple possibilities is a
+ * greedy process.
  * 
  * Evaluating is where the value interpretation and validation happens. If any
  * value is invalid, the whole command line reading should fail, without trying
@@ -53,6 +54,7 @@ protected:
 public:
     const std::string& getDescription()const { return _description; }
 };
+
 class OptionBase: public CommandLineElement {
 protected:
     /// Input of the option
@@ -189,7 +191,24 @@ public:
     }
 };
 
-class PosElement: public CommandLineElement {};
+/// Base of positional element
+class PosElement: public CommandLineElement {
+protected:
+    bool _required;
+    bool _offered; ///< Whether the element is offered in input, determined by Parsing
+
+    PosElement(const std::string& description):
+        CommandLineElement(description) {}
+public:
+    bool isRequired()const { return _required; }
+
+    /// Modifier
+    virtual PosElement& require(bool required=true) { _required = required; return *this; }
+
+    /// Main parsing function.
+    /// Returns the index just after the last argument it is using, or -1 if anything is wrong.
+    virtual int parse(int argc, char** argv, int argp=0) = 0;
+};
 // Note that although argument taken by options are also positional, they are
 // handled by the option class and thus not belong here.
 class PosArg: public PosElement {
@@ -197,7 +216,7 @@ class PosArg: public PosElement {
 public:
     bool isRequired()const { return _required; }
 };
-class Command: public CommandLineElement {
+class Command: public PosElement {
 private:
     std::vector<OptionBase*> _op;
     std::vector<Command*> _subcmd;
@@ -222,7 +241,7 @@ public:
 
     /// Constructor
     Command(const std::string& description, const std::string& name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds, const std::function<bool()>& activate) :
-        CommandLineElement(description), _name(name), _op(ops), _subcmd(subcmds), _activate(activate) {}
+        PosElement(description), _name(name), _op(ops), _subcmd(subcmds), _activate(activate) {}
 
     /// Check state
     operator bool()const {
@@ -233,7 +252,7 @@ public:
     bool isEvaluated()const { return _evaluated; }
 
     /// Main parsing function
-    bool parse(int argc, char** argv, int argp = 0);
+    virtual int parse(int argc, char** argv, int argp = 0)override;
 
     /// Evaluate
     int evaluate() {

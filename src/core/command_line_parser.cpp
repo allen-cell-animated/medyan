@@ -6,17 +6,17 @@
 namespace medyan {
 namespace commandline {
 
-bool Command::parse(int argc, char** argv, int argp) {
+int Command::parse(int argc, char** argv, int argp) {
     _unusedArgs.clear();
     _unusedArgBit = false;
 
     // Evaluate itself first
-    if(_evaluated) {
+    if(!_evaluated) {
         ++argp;
         int iMove = evaluate();
         if(!*this) {
             _parseErrorBit = true;
-            return false;
+            return -1;
         }
         argp += iMove;
     }
@@ -38,7 +38,7 @@ bool Command::parse(int argc, char** argv, int argp) {
                     int iMove = opPtr->evaluate(argc, argv, idx);
                     if(!*opPtr) {
                         _parseErrorBit = true;
-                        return false;
+                        return -1;
                     }
                     if(iMove > maxMove) maxMove = iMove;
 
@@ -65,9 +65,9 @@ bool Command::parse(int argc, char** argv, int argp) {
             // because any command will try to read to the end of the arg list
             for(auto& cmdPtr: _subcmd) {
                 if(cmdPtr->_name == arg) {
-                    if(!cmdPtr->parse(argc, argv, idx)) {
+                    if(cmdPtr->parse(argc, argv, idx) == -1) {
                         _subcmdErrorBit = true;
-                        return false;
+                        return -1;
                     }
                     break;
                 }
@@ -78,7 +78,7 @@ bool Command::parse(int argc, char** argv, int argp) {
 
     if(_unusedArgs.size()) {
         _unusedArgBit = true;
-        return false;
+        return -1;
     }
 
     // Check for option logic
@@ -89,7 +89,7 @@ bool Command::parse(int argc, char** argv, int argp) {
             std::ostringstream oss;
             oss << opPtr->getMatch() << " (" << opPtr->getDescription() << ") is required.";
             _logicErrorContent.emplace_back(oss.str());
-            return false;
+            return -1;
         }
         // Excluding
         if(opPtr->isEvaluated())
@@ -103,7 +103,7 @@ bool Command::parse(int argc, char** argv, int argp) {
             }
     }
         
-    return true;
+    return idx;
 }
 
 void Command::printUsage(std::ostream& out)const {
