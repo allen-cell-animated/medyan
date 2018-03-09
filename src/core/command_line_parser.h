@@ -58,6 +58,16 @@ protected:
 
     /// Preprocessing
     virtual void _preprocess() {};
+
+    /// Fields set by Parsing
+    bool _offered; ///< Whether the element is offered in input, determined by Parsing
+
+    /// Configuration
+    bool _required;
+
+    /// Fields set by Evaluating
+    bool _evaluated;
+
 public:
     /// Check state
     operator bool()const {
@@ -68,6 +78,18 @@ public:
     const std::string& getDescription()const { return _description; }
 
     bool inputFail()const { return _inputFailBit; }
+
+    bool isOffered()const { return _offered; }
+
+    bool isRequired()const { return _required; }
+
+    bool isEvaluated()const { return _evaluated; }
+
+    /// Modifier
+    virtual CommandLineElement& require(bool required=true) { _required = required; return *this; }
+
+    /// Evaluate
+    virtual void evaluate() = 0;
 
     /// Error printing
     virtual void printError(std::ostream& os=std::cout)const {
@@ -98,11 +120,7 @@ protected:
     std::string _invalidArgContent;
 
     /// Configuration of the option
-    bool _required = false;
     std::vector<OptionBase*> _excluding;
-
-    /// State
-    bool _evaluated = false;
 
     /// Activate callback
     std::function<bool()> _activate;
@@ -134,20 +152,16 @@ public:
     const std::string& getFlagLong()const { return _flagLong; }
     const std::string& getFlagCommand()const { return _flagCommand; }
 
-    bool isRequired()const { return _required; }
     const std::vector<OptionBase*>& getExcluding()const { return _excluding; }
 
-    bool isEvaluated()const { return _evaluated; }
-
     /// Modify configuration
-    virtual OptionBase& require(bool required=true) { _required = required; return *this; }
     virtual OptionBase& exclude(OptionBase* op) { _excluding.push_back(op); return *this; }
 
     /// Find hit.
     virtual bool findHit(const std::string& arg, ArgType argType);
 
     /// Evaluate and validate. return how many arguments consumed.
-    virtual int evaluate(int argc, char** argv, int argp) = 0;
+    virtual int evaluate2(int argc, char** argv, int argp) = 0;
 
     /// Print error message
     virtual void printError(std::ostream& os=std::cout)const {
@@ -169,12 +183,30 @@ private:
     /// The argument value
     T _value;
 
+    /// Fields supplied by Parsing
+    std::string _field;
+
 public:
     Option1(const std::string& description, const char* match, const std::string& argName, T* destination):
         OptionBase(description, match, true, argName, [destination, this]()->bool{ *destination = _value; return true; }) {}
 
+    /// Evaluate
+    virtual void evaluate()override {
+        _evaluated = true;
+
+        if(_required || _offered) {
+            std::istringstream iss(_field);
+            iss >> _value;
+            if(iss.fail()) {
+                _invalidArgBit = true;
+                _invalidArgContent = _field;
+            }
+        }
+
+        if(!_activate()) _activateErrorBit = true;
+    }
     /// Evaluate and activate
-    virtual int evaluate(int argc, char** argv, int argp)override {
+    virtual int evaluate2(int argc, char** argv, int argp)override {
         _evaluated = true;
 
         if(argp + 1 >= argc) {
@@ -206,7 +238,10 @@ public:
         OptionBase(description, match, false, "", activate) {}
 
     /// Evaluate
-    virtual int evaluate(int argc, char** argv, int argp)override {
+    virtual void evaluate()override {
+        if(!_activate()) _activateErrorBit = true;
+    }
+    virtual int evaluate2(int argc, char** argv, int argp)override {
         if(!_activate()) _activateErrorBit = true;
         return 0;
     }
@@ -215,13 +250,9 @@ public:
 /// Base of positional element
 class PosElement: public CommandLineElement {
 protected:
-    bool _required;
-    bool _offered; ///< Whether the element is offered in input, determined by Parsing
-
     PosElement(const std::string& description):
         CommandLineElement(description) {}
 public:
-    bool isRequired()const { return _required; }
 
     /// Modifier
     virtual PosElement& require(bool required=true) { _required = required; return *this; }
@@ -233,9 +264,10 @@ public:
 // Note that although argument taken by options are also positional, they are
 // handled by the option class and thus not belong here.
 class PosArg: public PosElement {
-    bool _required;
+    /// Fields set by Parsing
+    std::string _field;
 public:
-    bool isRequired()const { return _required; }
+    virtual int parse(int argc, char** argv, int argp=0)override { return 1; }
 };
 class Command: public PosElement {
 private:
@@ -272,16 +304,12 @@ public:
         return !(_parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit || _activateErrorBit);
     }
 
-    /// Getters
-    bool isEvaluated()const { return _evaluated; }
-
     /// Main parsing function
     virtual int parse(int argc, char** argv, int argp = 0)override;
 
     /// Evaluate
-    int evaluate() {
+    virtual void evaluate()override {
         if(!_activate || !_activate()) _activateErrorBit = true;
-        return 1;
     }
 
     /// Print message

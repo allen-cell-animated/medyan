@@ -12,12 +12,12 @@ int Command::parse(int argc, char** argv, int argp) {
 
     // Evaluate itself first
     if(!_evaluated) {
-        int iMove = evaluate();
+        evaluate();
         if(!*this) {
             _parseErrorBit = true;
             return -1;
         }
-        argp += iMove;
+        argp += 1;
     }
     _evaluated = true;
 
@@ -35,7 +35,7 @@ int Command::parse(int argc, char** argv, int argp) {
         case ArgType::Short:
             for(auto& opPtr: _op) {
                 if(opPtr->findHit(arg, t)) {
-                    int iMove = opPtr->evaluate(argc, argv, idx);
+                    int iMove = opPtr->evaluate2(argc, argv, idx);
                     if(!*opPtr) {
                         _parseErrorBit = true;
                         return -1;
