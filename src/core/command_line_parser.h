@@ -40,6 +40,7 @@ protected:
     /// Input of the option
     const char* _match;
     std::string _description;
+    bool _takesArg = 0;
 
     /// Preprocessing
     char _flagShort = 0; // e.g. "-a" w/o "-"
@@ -56,7 +57,6 @@ protected:
     std::string _validationFailContent;
 
     /// Configuration of the option
-    int _numArgs = 0;
     std::string _argName;
     bool _required = false;
     std::vector<OptionBase*> _excluding;
@@ -65,8 +65,8 @@ protected:
     bool _evaluated = false;
 
     /// Constructors
-    OptionBase(const char* match, int numArgs, const std::string& argName, const std::string& description):
-        _match(match), _numArgs(numArgs), _argName(argName), _description(description) {}
+    OptionBase(const char* match, const std::string& description, bool takesArg, const std::string& argName):
+        _match(match), _description(description), _takesArg(takesArg), _argName(argName) {}
 
 public:
     /// Check state
@@ -78,7 +78,7 @@ public:
     const char* getMatch()const { return _match; }
     const std::string& getDescription()const { return _description; }
 
-    int getNumArgs()const { return _numArgs; }
+    bool takesArg()const { return _takesArg; }
     const std::string& getArgName()const { return _argName; }
 
     bool inputFail()const { return _inputFailBit; }
@@ -130,12 +130,12 @@ private:
 
 public:
     Option1(const char* match, T* destination, const std::string& argName, const std::string& description):
-        OptionBase(match, 1, argName, description), _value(destination)
+        OptionBase(match, description, true, argName), _value(destination)
     {
         _preprocess();
     }
     Option1(const char* match, T* destination, const std::string& argName, std::function<bool(T)> validator, const std::string& description):
-        OptionBase(match, 1, argName, description), _value(destination), _validator(validator)
+        OptionBase(match, description, true, argName), _value(destination), _validator(validator)
     {
         _preprocess();
     }
@@ -144,7 +144,6 @@ public:
     virtual int evaluate(int argc, char** argv, int argp)override {
         _evaluated = true;
 
-        // _numArgs == 1
         if(argp + 1 >= argc) {
             _endOfArgListBit = true;
             return 0;
@@ -171,14 +170,14 @@ public:
 };
 
 /// Command line option which takes no arguments
-class Flag: public OptionBase {
+class Option0: public OptionBase {
     /// The flag value
     bool* _value;
     bool _turnOn = true; ///< _value is true or false when this flag exists.
 
 public:
-    Flag(const char* match, bool* destination, bool turnOn, const std::string& description):
-        OptionBase(match, 0, "", description), _value(destination), _turnOn(turnOn)
+    Option0(const char* match, bool* destination, bool turnOn, const std::string& description):
+        OptionBase(match, description, false, ""), _value(destination), _turnOn(turnOn)
     {
         _preprocess();
     }

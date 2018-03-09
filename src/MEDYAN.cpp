@@ -99,8 +99,8 @@ int main(int argc, char **argv) {
     Option1<std::string> inputFile {"-s", &Global::global().systemInputFileName, "system-input", "Input file name"};
     Option1<std::string> inputDir {"-i", &Global::global().inputDirectory, "input-directory", "Input directory"};
     Option1<std::string> outputDir {"-o", &Global::global().outputDirectory, "output-directory", "Output directory"};
-    Flag opHelp {"-h,--help", &runHelp, true, "Print help message"};
-    Flag opAnalyze {"analyze", &runAnalyze, true, "Run analysis instead of simulation"};
+    Option0 opHelp {"-h,--help", &runHelp, true, "Print help message"};
+    Option0 opAnalyze {"analyze", &runAnalyze, true, "Run analysis instead of simulation"};
     Command cmdAnalyze {&opAnalyze};
     Command cmd {"MEDYAN", {&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}};
 

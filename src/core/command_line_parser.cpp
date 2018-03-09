@@ -120,8 +120,7 @@ void Command::printUsage(std::ostream& out)const {
         if(opPtr->getFlagLong().length()) out << "--" << opPtr->getFlagLong();
         else if(opPtr->getFlagShort()) out << '-' << opPtr->getFlagShort();
 
-        if (opPtr->getNumArgs() == 1) out << " " << opPtr->getArgName();
-        else if (opPtr->getNumArgs() > 1) out << " " << opPtr->getArgName() << "...";
+        if (opPtr->takesArg()) out << '=' << opPtr->getArgName();
 
         out << (required? "": "]");
     }
@@ -138,7 +137,7 @@ void Command::printUsage(std::ostream& out)const {
         out << "Commands:\n";
         for(auto& cmdPtr: _subcmd) {
             out << "  ";
-            if(cmdPtr->_name.length() > 14) {
+            if(cmdPtr->_name.length() > 13) {
                 out << cmdPtr->_name << '\n' << std::string(' ', 14);
             } else {
                 std::string tmp = cmdPtr->_name;
@@ -153,7 +152,7 @@ void Command::printUsage(std::ostream& out)const {
         out << "Options:\n";
         for(auto& opPtr: _op) {
             out << "  ";
-            if(std::strlen(opPtr->getMatch()) > 14) {
+            if(std::strlen(opPtr->getMatch()) > 13) {
                 out << opPtr->getMatch() << '\n' << std::string(' ', 14);
             } else {
                 std::string tmp {opPtr->getMatch()};
@@ -194,7 +193,7 @@ bool OptionBase::findHit(const std::string& arg, ArgType argType) {
         if(_flagShort) {
             size_t pos = arg.find(_flagShort);
             if(pos != std::string::npos) {
-                if(_numArgs) {
+                if(_takesArg) {
                     if(pos == arg.length() - 1) return true;
                 }
                 else return true;
