@@ -40,38 +40,42 @@ protected:
     /// Input of the option
     const char* _match;
     std::string _description;
-    bool _takesArg = 0;
+    const bool _takesArg = 0;
 
     /// Preprocessing
     char _flagShort = 0; // e.g. "-a" w/o "-"
     std::string _flagLong; // e.g. "--analysis" w/o "--"
     std::string _flagCommand; // e.g. "add"
-    virtual void _preprocess();
+    void _preprocess();
 
     /// Fail flags and associated info
-    bool _inputFailBit = false; // input parsing failure
-    bool _endOfArgListBit = false; // end of argument list when reading arguments
+    bool _inputFailBit = false; // Internal: input parsing failure
+    bool _endOfArgListBit = false;
+    bool _activateErrorBit = false; // activation fail by the callback
     bool _invalidArgBit = false; // Invalid argument
     std::string _invalidArgContent;
-    bool _validationFailBit = false; // Not passing the validation
-    std::string _validationFailContent;
 
     /// Configuration of the option
-    std::string _argName;
     bool _required = false;
     std::vector<OptionBase*> _excluding;
 
     /// State
     bool _evaluated = false;
 
+    /// Activate callback
+    std::function<bool()> _activate;
+
     /// Constructors
-    OptionBase(const char* match, const std::string& description, bool takesArg, const std::string& argName):
-        _match(match), _description(description), _takesArg(takesArg), _argName(argName) {}
+    OptionBase(const char* match, const std::string& description, bool takesArg, const std::function<bool()>& activate):
+        _match(match), _description(description), _takesArg(takesArg), _activate(activate) {
+
+        _preprocess();
+    }
 
 public:
     /// Check state
     operator bool()const {
-        return !(_inputFailBit || _endOfArgListBit || _invalidArgBit || _validationFailBit);
+        return !(_inputFailBit || _endOfArgListBit || _activateErrorBit || _invalidArgBit);
     }
 
     /// Getters
@@ -79,7 +83,6 @@ public:
     const std::string& getDescription()const { return _description; }
 
     bool takesArg()const { return _takesArg; }
-    const std::string& getArgName()const { return _argName; }
 
     bool inputFail()const { return _inputFailBit; }
     bool endOfArgList()const { return _endOfArgListBit; }
@@ -102,6 +105,8 @@ public:
     /// Find hit.
     virtual bool findHit(const std::string& arg, ArgType argType);
 
+    /// Activate after successful evaluation.
+    virtual bool activate()const = 0; // TODO: const?
     /// Evaluate and validate. return how many arguments consumed.
     virtual int evaluate(int argc, char** argv, int argp) = 0;
 
@@ -112,9 +117,9 @@ public:
         if(_endOfArgListBit)
             out << "Must specify argument for " << _match << std::endl;
         if(_invalidArgBit)
-            out << "Incorrect argument for " << _match << ": " << _invalidArgContent << std::endl;
-        if(_validationFailBit)
-            out << "The argument value for " << _match << ": " << _validationFailContent << " is not valid." << std::endl;
+            out << "Invalid argument for " << _match << ": " << _invalidArgContent << std::endl;
+        if(_activateErrorBit)
+            out << "The argument value for " << _match << " is not acceptable." << std::endl;
     }
 };
 
@@ -123,25 +128,28 @@ template<typename T>
 class Option1: public OptionBase {
 private:
     /// The argument value
-    T* _value;
+    T _value;
 
-    /// Validator
-    std::function<bool(T)> _validator;
+    /// Default value
+    const bool _hasDefault;
+    T _defaultValue;
+
+    /// name
+    std::string _argName;
 
 public:
-    Option1(const char* match, T* destination, const std::string& argName, const std::string& description):
-        OptionBase(match, description, true, argName), _value(destination)
-    {
-        _preprocess();
-    }
-    Option1(const char* match, T* destination, const std::string& argName, std::function<bool(T)> validator, const std::string& description):
-        OptionBase(match, description, true, argName), _value(destination), _validator(validator)
-    {
-        _preprocess();
-    }
+    Option1(const char* match, const std::string& description, const std::string& argName, T* destination):
+        OptionBase(match, description, true, [destination, this]()->bool{ *destination = _value; return true; }),
+        _argName(argName), _hasDefault(false) {}
+    Option1(const char* match, const std::string& description, const std::string& argName, T* destination, T defaultValue):
+        OptionBase(match, description, true, [destination, this]()->bool{ *destination = _value; return true; }),
+        _argName(argName), _hasDefault(true), _defaultValue(defaultValue) {}
 
-    /// Evaluate
-    virtual int evaluate(int argc, char** argv, int argp)override {
+    /// Getters
+    const std::string& getArgName()const { return _argName; }
+
+    /// Evaluate and activate
+    virtual void evaluate(int argc, char** argv, int argp)override {
         _evaluated = true;
 
         if(argp + 1 >= argc) {
@@ -151,18 +159,13 @@ public:
 
         ++argp;
         std::istringstream iss(argv[argp]);
-        iss >> *_value;
+        iss >> _value;
         if(iss.fail()) {
             _invalidArgBit = true;
             _invalidArgContent = std::string(argv[argp]);
         }
 
-        if(_validator && !_validator(*_value)) {
-            _validationFailBit = true;
-            std::ostringstream oss;
-            oss << _value;
-            _validationFailContent = oss.str();
-        }
+        if(!_activate()) _activateErrorBit = true;
 
         return 1;
     }
@@ -171,21 +174,15 @@ public:
 
 /// Command line option which takes no arguments
 class Option0: public OptionBase {
-    /// The flag value
-    bool* _value;
-    bool _turnOn = true; ///< _value is true or false when this flag exists.
-
 public:
-    Option0(const char* match, bool* destination, bool turnOn, const std::string& description):
-        OptionBase(match, description, false, ""), _value(destination), _turnOn(turnOn)
-    {
-        _preprocess();
-    }
+    Option0(const char* match, const std::string& description, bool* destination):
+        OptionBase(match, description, false, [destination, this]()->bool{ *destination = true; return true; }) {}
+    Option0(const char* match, const std::string& description, const std::function<bool()>& activate):
+        OptionBase(match, description, false, activate) {}
 
     /// Evaluate
     virtual int evaluate(int argc, char** argv, int argp)override {
-        _evaluated = true;
-        *_value = _turnOn;
+        if(!_activate()) _activateErrorBit = true;
         return 0;
     }
 };

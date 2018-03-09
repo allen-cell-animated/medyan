@@ -96,11 +96,11 @@ int main(int argc, char **argv) {
     bool runAnalyze = false;
     bool runHelp = false;
     
-    Option1<std::string> inputFile {"-s", &Global::global().systemInputFileName, "system-input", "Input file name"};
-    Option1<std::string> inputDir {"-i", &Global::global().inputDirectory, "input-directory", "Input directory"};
-    Option1<std::string> outputDir {"-o", &Global::global().outputDirectory, "output-directory", "Output directory"};
-    Option0 opHelp {"-h,--help", &runHelp, true, "Print help message"};
-    Option0 opAnalyze {"analyze", &runAnalyze, true, "Run analysis instead of simulation"};
+    Option1<std::string> inputFile {"-s", "Input file name", "system-input", &Global::global().systemInputFileName};
+    Option1<std::string> inputDir {"-i", "Input directory", "input-directory", &Global::global().inputDirectory};
+    Option1<std::string> outputDir {"-o", "Output directory", "output-directory", &Global::global().outputDirectory};
+    Option0 opHelp {"-h,--help", "Print help message", &runHelp};
+    Option0 opAnalyze {"analyze", "Run analysis instead of simulation", &runAnalyze};
     Command cmdAnalyze {&opAnalyze};
     Command cmd {"MEDYAN", {&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}};
 
