@@ -41,6 +41,7 @@ protected:
     const char* _match;
     std::string _description;
     const bool _takesArg = 0;
+    std::string _argName;
 
     /// Preprocessing
     char _flagShort = 0; // e.g. "-a" w/o "-"
@@ -66,8 +67,8 @@ protected:
     std::function<bool()> _activate;
 
     /// Constructors
-    OptionBase(const char* match, const std::string& description, bool takesArg, const std::function<bool()>& activate):
-        _match(match), _description(description), _takesArg(takesArg), _activate(activate) {
+    OptionBase(const char* match, const std::string& description, bool takesArg, const std::string& argName, const std::function<bool()>& activate):
+        _match(match), _description(description), _takesArg(takesArg), _argName(argName), _activate(activate) {
 
         _preprocess();
     }
@@ -83,6 +84,7 @@ public:
     const std::string& getDescription()const { return _description; }
 
     bool takesArg()const { return _takesArg; }
+    const std::string& getArgName()const { return _argName; }
 
     bool inputFail()const { return _inputFailBit; }
     bool endOfArgList()const { return _endOfArgListBit; }
@@ -134,19 +136,15 @@ private:
     const bool _hasDefault;
     T _defaultValue;
 
-    /// name
-    std::string _argName;
-
 public:
     Option1(const char* match, const std::string& description, const std::string& argName, T* destination):
-        OptionBase(match, description, true, [destination, this]()->bool{ *destination = _value; return true; }),
-        _argName(argName), _hasDefault(false) {}
+        OptionBase(match, description, true, argName, [destination, this]()->bool{ *destination = _value; return true; }),
+        _hasDefault(false) {}
     Option1(const char* match, const std::string& description, const std::string& argName, T* destination, T defaultValue):
-        OptionBase(match, description, true, [destination, this]()->bool{ *destination = _value; return true; }),
-        _argName(argName), _hasDefault(true), _defaultValue(defaultValue) {}
+        OptionBase(match, description, true, argName, [destination, this]()->bool{ *destination = _value; return true; }),
+        _hasDefault(true), _defaultValue(defaultValue) {}
 
     /// Getters
-    const std::string& getArgName()const { return _argName; }
 
     /// Evaluate and activate
     virtual void evaluate(int argc, char** argv, int argp)override {
@@ -176,9 +174,9 @@ public:
 class Option0: public OptionBase {
 public:
     Option0(const char* match, const std::string& description, bool* destination):
-        OptionBase(match, description, false, [destination, this]()->bool{ *destination = true; return true; }) {}
+        OptionBase(match, description, false, "", [destination, this]()->bool{ *destination = true; return true; }) {}
     Option0(const char* match, const std::string& description, const std::function<bool()>& activate):
-        OptionBase(match, description, false, activate) {}
+        OptionBase(match, description, false, "", activate) {}
 
     /// Evaluate
     virtual int evaluate(int argc, char** argv, int argp)override {
