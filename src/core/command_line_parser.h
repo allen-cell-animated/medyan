@@ -107,8 +107,6 @@ public:
     /// Find hit.
     virtual bool findHit(const std::string& arg, ArgType argType);
 
-    /// Activate after successful evaluation.
-    virtual bool activate()const = 0; // TODO: const?
     /// Evaluate and validate. return how many arguments consumed.
     virtual int evaluate(int argc, char** argv, int argp) = 0;
 
@@ -147,7 +145,7 @@ public:
     /// Getters
 
     /// Evaluate and activate
-    virtual void evaluate(int argc, char** argv, int argp)override {
+    virtual int evaluate(int argc, char** argv, int argp)override {
         _evaluated = true;
 
         if(argp + 1 >= argc) {
