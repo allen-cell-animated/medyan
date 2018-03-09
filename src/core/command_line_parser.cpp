@@ -12,11 +12,11 @@ bool Command::parse(int argc, char** argv, int argp) {
 
     _evaluated = true;
 
-    // Evaluate default option first
-    if(_defaultOp && !_defaultOp->isEvaluated()) {
+    // Evaluate itself first
+    if(_evaluated) {
         ++argp;
-        int iMove = _defaultOp->evaluate(argc, argv, argp);
-        if(!*_defaultOp) {
+        int iMove = evaluate();
+        if(*this) {
             _parseErrorBit = true;
             return false;
         }
@@ -120,11 +120,10 @@ void Command::printUsage(std::ostream& out)const {
         out << (required? "": "]");
     }
     if(!_subcmd.empty()) {
-        OptionBase* defaultOp = _subcmd[0]->getDefaultOp();
-        bool required = defaultOp && defaultOp->isRequired();
-        if(!required) out << "[";
+        //bool required = defaultOp && defaultOp->isRequired();
+        //if(!required) out << "[";
         out << " command";
-        if(!required) out << "]";
+        //if(!required) out << "]";
     }
     out << '\n' << std::endl;
 
@@ -139,7 +138,7 @@ void Command::printUsage(std::ostream& out)const {
                 tmp.resize(16, ' ');
                 out << tmp;
             }
-            out << cmdPtr->_defaultOp->getDescription() << '\n';
+            out << cmdPtr->getDescription << '\n';
         }
         out << std::endl;
     }
@@ -180,6 +179,9 @@ void OptionBase::_preprocess() {
             _inputFailBit = true;
         }
     }
+    
+    // Callback error
+    if(!_activate) _inputFailBit = true;
 }
 
 bool OptionBase::findHit(const std::string& arg, ArgType argType) {

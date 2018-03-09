@@ -46,11 +46,17 @@ inline ArgType getArgType(const char* argv) {
  * to parse in any other ways.
  */
 
-class OptionBase {
+class CommandLineElement {
+protected:
+    std::string _description;
+    CommandLineElement(const std::string& description): _description(description) {}
+public:
+    const std::string& getDescription()const { return _description; }
+};
+class OptionBase: public CommandLineElement {
 protected:
     /// Input of the option
     const char* _match;
-    std::string _description;
     const bool _takesArg = 0;
     std::string _argName;
 
@@ -78,8 +84,8 @@ protected:
     std::function<bool()> _activate;
 
     /// Constructors
-    OptionBase(const char* match, const std::string& description, bool takesArg, const std::string& argName, const std::function<bool()>& activate):
-        _match(match), _description(description), _takesArg(takesArg), _argName(argName), _activate(activate) {
+    OptionBase(const std::string& description, const char* match, bool takesArg, const std::string& argName, const std::function<bool()>& activate):
+        CommandLineElement(description), _match(match), _takesArg(takesArg), _argName(argName), _activate(activate) {
 
         _preprocess();
     }
@@ -92,7 +98,6 @@ public:
 
     /// Getters
     const char* getMatch()const { return _match; }
-    const std::string& getDescription()const { return _description; }
 
     bool takesArg()const { return _takesArg; }
     const std::string& getArgName()const { return _argName; }
@@ -124,7 +129,7 @@ public:
     /// Print error message
     virtual void printError(std::ostream& out=std::cout)const {
         if(_inputFailBit)
-            out << "Internal error: unrecognized option " << _match << std::endl;
+            out << "Internal error: invalid configuration for " << _match << std::endl;
         if(_endOfArgListBit)
             out << "Must specify argument for " << _match << std::endl;
         if(_invalidArgBit)
@@ -142,8 +147,8 @@ private:
     T _value;
 
 public:
-    Option1(const char* match, const std::string& description, const std::string& argName, T* destination):
-        OptionBase(match, description, true, argName, [destination, this]()->bool{ *destination = _value; return true; }) {}
+    Option1(const std::string& description, const char* match, const std::string& argName, T* destination):
+        OptionBase(description, match, true, argName, [destination, this]()->bool{ *destination = _value; return true; }) {}
 
     /// Evaluate and activate
     virtual int evaluate(int argc, char** argv, int argp)override {
@@ -172,10 +177,10 @@ public:
 /// Command line option which takes no arguments
 class Option0: public OptionBase {
 public:
-    Option0(const char* match, const std::string& description, bool* destination):
-        OptionBase(match, description, false, "", [destination, this]()->bool{ *destination = true; return true; }) {}
-    Option0(const char* match, const std::string& description, const std::function<bool()>& activate):
-        OptionBase(match, description, false, "", activate) {}
+    Option0(const std::string& description, const char* match, bool* destination):
+        OptionBase(description, match, false, "", [destination]()->bool{ *destination = true; return true; }) {}
+    Option0(const std::string& description, const char* match, const std::function<bool()>& activate):
+        OptionBase(description, match, false, "", activate) {}
 
     /// Evaluate
     virtual int evaluate(int argc, char** argv, int argp)override {
@@ -184,7 +189,7 @@ public:
     }
 };
 
-class PosElement {};
+class PosElement: public CommandLineElement {};
 // Note that although argument taken by options are also positional, they are
 // handled by the option class and thus not belong here.
 class PosArg: public PosElement {
@@ -192,11 +197,11 @@ class PosArg: public PosElement {
 public:
     bool isRequired()const { return _required; }
 };
-class Command: public PosElement {
+class Command: public CommandLineElement {
 private:
     std::vector<OptionBase*> _op;
     std::vector<Command*> _subcmd;
-    OptionBase* _defaultOp = nullptr; ///< The command itself acting as an option
+    std::function<bool()> _activate; ///< Activate callback
 
     /// Name for the subcommand
     std::string _name;
@@ -208,6 +213,7 @@ private:
     std::vector<std::string> _unusedArgs;
     bool _logicErrorBit = false; // Option requirements not fulfilled
     std::vector<std::string> _logicErrorContent;
+    bool _activateErrorBit = false; // Activate error
 
     /// States
     bool _evaluated = false;
@@ -215,26 +221,30 @@ private:
 public:
 
     /// Constructor
-    Command(OptionBase* op) : _defaultOp(op) { if (op) _name = op->getFlagCommand(); }
-    Command(const std::string& name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds) :
-        _name(name), _op(ops), _subcmd(subcmds) {}
+    Command(const std::string& description, const std::string& name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds, const std::function<bool()>& activate) :
+        CommandLineElement(description), _name(name), _op(ops), _subcmd(subcmds), _activate(activate) {}
 
     /// Check state
     operator bool()const {
-        return !(_parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit);
+        return !(_parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit || _activateErrorBit);
     }
 
     /// Getters
-    OptionBase* getDefaultOp()const { return _defaultOp; }
+    bool isEvaluated()const { return _evaluated; }
 
     /// Main parsing function
     bool parse(int argc, char** argv, int argp = 0);
+
+    /// Evaluate
+    int evaluate() {
+        if(!_activate || !_activate()) _activateErrorBit = true;
+        return 1;
+    }
 
     /// Print message
     void printUsage(std::ostream& out = std::cout)const;
     void printError(std::ostream& out = std::cout)const {
         if (_parseErrorBit) {
-            _defaultOp->printError(out);
             for (auto& opPtr : _op) opPtr->printError(out);
         }
         if (_subcmdErrorBit)

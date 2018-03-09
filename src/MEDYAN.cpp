@@ -96,13 +96,12 @@ int main(int argc, char **argv) {
     bool runAnalyze = false;
     bool runHelp = false;
     
-    Option1<std::string> inputFile {"-s", "Input file name", "system-input", &Global::global().systemInputFileName};
-    Option1<std::string> inputDir {"-i", "Input directory", "input-directory", &Global::global().inputDirectory};
-    Option1<std::string> outputDir {"-o", "Output directory", "output-directory", &Global::global().outputDirectory};
-    Option0 opHelp {"-h,--help", "Print help message", &runHelp};
-    Option0 opAnalyze {"analyze", "Run analysis instead of simulation", &runAnalyze};
-    Command cmdAnalyze {&opAnalyze};
-    Command cmd {"MEDYAN", {&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}};
+    Option1<std::string> inputFile {"Input file name", "-s", "system-input", &Global::global().systemInputFileName};
+    Option1<std::string> inputDir {"Input directory", "-i", "input-directory", &Global::global().inputDirectory};
+    Option1<std::string> outputDir {"Output directory", "-o", "output-directory", &Global::global().outputDirectory};
+    Option0 opHelp {"Print help message", "-h,--help", &runHelp};
+    Command cmdAnalyze {"Run analysis instead of simulation.", "analyze", {}, {}, [&runAnalyze](){runAnalyze = true; return true;}};
+    Command cmd {"", "MEDYAN", {&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}, []{return true;}};
 
     inputFile.require();
     inputDir.require();
