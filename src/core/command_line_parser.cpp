@@ -10,18 +10,18 @@ bool Command::parse(int argc, char** argv, int argp) {
     _unusedArgs.clear();
     _unusedArgBit = false;
 
-    _evaluated = true;
-
     // Evaluate itself first
     if(_evaluated) {
         ++argp;
         int iMove = evaluate();
-        if(*this) {
+        if(!*this) {
             _parseErrorBit = true;
             return false;
         }
         argp += iMove;
     }
+    _evaluated = true;
+
     // Try to read to the end of the arguments
     for(int idx = argp + 1; idx < argc; ++idx) {
         ArgType t = getArgType(argv[idx]);
@@ -138,7 +138,7 @@ void Command::printUsage(std::ostream& out)const {
                 tmp.resize(16, ' ');
                 out << tmp;
             }
-            out << cmdPtr->getDescription << '\n';
+            out << cmdPtr->getDescription() << '\n';
         }
         out << std::endl;
     }
