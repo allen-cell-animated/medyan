@@ -12,7 +12,6 @@ int Command::parse(int argc, char** argv, int argp) {
 
     // Evaluate itself first
     if(!_evaluated) {
-        ++argp;
         int iMove = evaluate();
         if(!*this) {
             _parseErrorBit = true;
@@ -23,7 +22,8 @@ int Command::parse(int argc, char** argv, int argp) {
     _evaluated = true;
 
     // Try to read to the end of the arguments
-    for(int idx = argp + 1; idx < argc; ++idx) {
+    int idx = argp;
+    for(; idx < argc; ++idx) {
         ArgType t = getArgType(argv[idx]);
         std::string arg {argv[idx]};
 
