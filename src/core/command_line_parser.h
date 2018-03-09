@@ -130,19 +130,9 @@ private:
     /// The argument value
     T _value;
 
-    /// Default value
-    const bool _hasDefault;
-    T _defaultValue;
-
 public:
     Option1(const char* match, const std::string& description, const std::string& argName, T* destination):
-        OptionBase(match, description, true, argName, [destination, this]()->bool{ *destination = _value; return true; }),
-        _hasDefault(false) {}
-    Option1(const char* match, const std::string& description, const std::string& argName, T* destination, T defaultValue):
-        OptionBase(match, description, true, argName, [destination, this]()->bool{ *destination = _value; return true; }),
-        _hasDefault(true), _defaultValue(defaultValue) {}
-
-    /// Getters
+        OptionBase(match, description, true, argName, [destination, this]()->bool{ *destination = _value; return true; }) {}
 
     /// Evaluate and activate
     virtual int evaluate(int argc, char** argv, int argp)override {
