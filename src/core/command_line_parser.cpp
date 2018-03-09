@@ -131,7 +131,7 @@ void Command::printUsage(std::ostream& out)const {
         out << "Commands:\n";
         for(auto& cmdPtr: _subcmd) {
             out << "  ";
-            if(cmdPtr->_name.length() > 13) {
+            if(std::strlen(cmdPtr->_name) > 13) {
                 out << cmdPtr->_name << '\n' << std::string(' ', 14);
             } else {
                 std::string tmp = cmdPtr->_name;
@@ -211,10 +211,10 @@ bool OptionBase::findHit(const std::string& arg, ArgType argType) {
 }
 
 void Command::_preprocess() {
-    if(getArgType(_name) != getArgType::ArgOrCmd) _inputFailBit = true;
+    if(getArgType(_name) != ArgType::ArgOrCmd) _inputFailBit = true;
     
     // Callback error
-    if(!activate) _inputFailBit = true;
+    if(!_activate) _inputFailBit = true;
 }
 
 
