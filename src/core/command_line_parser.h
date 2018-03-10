@@ -480,6 +480,9 @@ private:
     bool _subFailBit = false; // Children command/option fail
     std::vector<std::string> _subFailInfo;
 
+    /// Configurations
+    bool _main = false;
+
     /// States
     bool _evaluated = false;
 
@@ -497,6 +500,9 @@ public:
 
     /// Getters
     virtual const char* getCommandName()const override { return _name; }
+
+    /// Modifiers
+    virtual Command& setMain(bool isMain=true) { _main = isMain; return *this; }
 
     /// Main parsing function
     virtual int parse(int argc, char** argv, int argp=0)override;

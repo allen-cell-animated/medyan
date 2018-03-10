@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
     Option0 opHelp {"Print help message", "-h,--help", &runHelp};
     Command cmdAnalyze {"Run analysis instead of simulation.", "analyze", nullptr, true, [&runAnalyze](){runAnalyze = true; return true;}};
     PosHolder cmdHolder {{&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}}; cmdHolder.require();
-    Command cmd {"", "MEDYAN", &cmdHolder, true, []{return true;}};
+    Command cmd {"", "MEDYAN", &cmdHolder, true, []{return true;}}; cmd.setMain();
 
     inputFile.require();
     inputDir.require();

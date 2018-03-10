@@ -252,7 +252,7 @@ void Command::_preprocess() {
 }
 
 int Command::parse(int argc, char** argv, int argp) {
-    if(argp >= argc || std::strcmp(argv[argp], _name) != 0) {
+    if(argp >= argc || (!_main && std::strcmp(argv[argp], _name) != 0)) {
         _parseErrorBit = true;
         return -1;
     }
