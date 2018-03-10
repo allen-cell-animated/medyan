@@ -355,7 +355,7 @@ public:
 
     /// Helper function for printUsage
     virtual void printContent(std::ostream& os=std::cout)override {
-        os << _argName;
+        os << '<' << _argName << '>';
     }
 
     /// Print error
@@ -379,9 +379,6 @@ private:
 
     bool _subFailBit = false; // Children command/option fail
     std::vector<std::string> _subFailInfo;
-
-    /// States
-    bool _evaluated = false;
 
 public:
 
@@ -446,12 +443,47 @@ public:
 class PosMutuallyExclusive: public PosElement {
     std::vector<PosElement*> _pos; ///< Store a list of mutually exclusive poses.
 
+    /// Fields set by parsing
+    int _index = -1; ///< which one to choose
+
+    /// Fail bits
+    bool _logicErrorBit = false; // Parsing logic error
+    std::vector<std::string> _logicErrorInfo;
+
+    bool _unknownBit = false; // Unknown internal error
+    bool _subFailBit = false; // Children command/option fail
+    std::vector<std::string> _subFailInfo;
+
 public:
     PosMutuallyExclusive(const std::vector<PosElement*>& pos):
         PosElement("", PosType::MutuallyExclusive), _pos(pos) {}
 
+    /// Check state
+    virtual operator bool()const override {
+        return PosElement::operator bool() &&
+            !(_logicErrorBit || _unknownBit || _subFailBit);
+    }
+
     /// Main parsing function
     virtual int parse(int argc, char** argv, int argp=0)override;
+
+    /// Evaluate
+    virtual bool evaluate()override {
+        _evaluated = true;
+        if(_index < 0 || _index >= _pos) {
+            _unknownBit = true;
+            return false;
+        }
+        if(!_pos[_index]->evaluate()) {
+            _subFailBit = true;
+            std::ostringstream oss;
+            _pos[_index]->printError(oss);
+            _subFailInfo.emplace_back(oss.str());
+            return false;
+        }
+
+        return operator bool();
+    }
 
     /// Helper function for printUsage
     virtual void printContent(std::ostream& os=std::cout)override {
@@ -461,6 +493,15 @@ public:
             (*it)->printContent(os);
         }
         os << (_required? ')': ']');
+    }
+
+    /// Print error
+    virtual void printError(std::ostream& os=std::cout)override {
+        PosElement::printError(os);
+
+        if(_logicErrorBit) for(auto& info: _logicErrorInfo) os << info << std::endl;
+        if(_unknownBit) os << "Something is wrong with command line mutual exclusive groups." << std::endl;
+        if(_subFailBit) for(auto& info: _subFailInfo) os << info << std::endl;
     }
 };
 
@@ -482,9 +523,6 @@ private:
 
     /// Configurations
     bool _main = false;
-
-    /// States
-    bool _evaluated = false;
 
 public:
 

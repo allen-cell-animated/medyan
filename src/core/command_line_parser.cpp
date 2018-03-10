@@ -226,8 +226,38 @@ void PosHolder::printCmdOp(std::ostream& os) {
 }
 
 int PosMutuallyExclusive::parse(int argc, char** argv, int argp) {
-    return 0; // TODO:
-    
+    _parseErrorBit = false;
+    _logicErrorBit = false;
+    _logicErrorInfo.clear();
+
+    if(!*this) return -1;
+
+    size_t successCnt = 0;
+    int lastGoodIndex = 0;
+    int lastGoodArgp = -1;
+
+    int newArgp;
+    size_t n = _pos.size();
+    for(size_t i = 0; i < n; ++i) {
+        newArgp = _pos[i]->parseThis(argc, argv, argp);
+        if(newArgp >= 0) {
+            ++successCnt;
+            lastGoodIndex = i;
+            lastGoodArgp = newArgp;
+        }
+    }
+
+    if(successCnt == 0) {
+        _parseErrorBit = true;
+        return -1;
+    } else if(successCnt > 1) {
+        _logicErrorBit = true;
+        _logicErrorInfo.emplace_back("More than 1 options that are mutually exclusive are supplied.");
+        return -1;
+    }
+
+    _index = lastGoodIndex;
+    return lastGoodArgp;
 }
 
 void Command::_preprocess() {
@@ -242,12 +272,6 @@ void Command::_preprocess() {
     if(!_activate) {
         _inputFailBit = true;
         _inputFailInfo.emplace_back("Command activate callback not set.");
-    }
-
-    // Command type error
-    if(_content && (_content->isCommand() || _content->isArgument() || !_content->isRequired())) {
-        _inputFailBit = true;
-        _inputFailInfo.emplace_back("Command can only take non-command non-argument non-optional holder.");
     }
 }
 
