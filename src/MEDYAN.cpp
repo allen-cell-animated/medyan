@@ -102,8 +102,9 @@ int main(int argc, char **argv) {
     inputFile.require();
     inputDir.require();
     outputDir.require();
-    Command cmdAnalyze {"Run analysis instead of simulation.", "analyze", nullptr, [&runAnalyze](){runAnalyze = true; return true;}};
-    PosHolder holderRun({&inputFile, &inputDir, &outputDir}, {&cmdAnalyze}); holderRun.require();
+    Option1<std::string> logFile {"Name of log file", "-l,--log", "log-file", &Global::global().logFileName};
+    Command cmdAnalyze {"Run analysis instead of simulation", "analyze", nullptr, [&runAnalyze](){runAnalyze = true; return true;}};
+    PosHolder holderRun({&inputFile, &inputDir, &outputDir, &logFile}, {&cmdAnalyze}); holderRun.require();
 
     Option0 opHelp{ "Print help message", "-h,--help", &runHelp }; opHelp.require();
     PosHolder holderHelp({&opHelp}, {}); holderHelp.require();
@@ -124,7 +125,7 @@ int main(int argc, char **argv) {
     Global::global().mode = runAnalyze? 1: 0;
 
     // Initialize logger
-    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::global().outputDirectory + "/medyan.log");
+    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::global().outputDirectory + "/" + Global::global().logFileName);
 
     // Start program    
     switch(Global::global().mode) {

@@ -195,10 +195,11 @@ void PosHolder::printContent(std::ostream& os)const {
         bool required = opPtr->isRequired();
         os << (required? " ": " [");
 
-        if(opPtr->getFlagLong().length()) os << "--" << opPtr->getFlagLong();
+        if(opPtr->getFlagLong().length()) {
+            os << "--" << opPtr->getFlagLong();
+            if(opPtr->takesArg()) os << "=<" << opPtr->getArgName() << ">";
+        }
         else if(opPtr->getFlagShort()) os << '-' << opPtr->getFlagShort();
-
-        if (opPtr->takesArg()) os << ' ' << opPtr->getArgName();
 
         os << (required? "": "]");
     }
@@ -336,7 +337,17 @@ void Command::printUsage(std::ostream& os)const {
     if(!op.empty()) {
         os << "Options:\n";
         for(OptionBase* ob: op) {
-            usagePairFormatter(std::string(ob->getMatch()), ob->getDescription(), os);
+            std::ostringstream oss;
+            if(ob->getFlagShort()) {
+                oss << ob->getFlagShort();
+                if(ob->takesArg()) oss << " <" << ob->getArgName() << ">";
+            }
+            if(!ob->getFlagLong().empty()) {
+                if(ob->getFlagShort()) os << ", ";
+                oss << ob->getFlagLong();
+                if(ob->takesArg()) oss << " <" << ob->getArgName() << ">";
+            }
+            usagePairFormatter(oss.str(), ob->getDescription(), os);
         }
         os << std::endl;
     }

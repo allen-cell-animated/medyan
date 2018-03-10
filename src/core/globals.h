@@ -16,6 +16,8 @@ namespace medyan {
         std::string systemInputFileName;
         std::string inputDirectory;
         std::string outputDirectory;
+
+        std::string logFileName {"medyan.log"};
     
     };
 
