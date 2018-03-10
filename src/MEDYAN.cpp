@@ -100,8 +100,9 @@ int main(int argc, char **argv) {
     Option1<std::string> inputDir {"Input directory", "-i", "input-directory", &Global::global().inputDirectory};
     Option1<std::string> outputDir {"Output directory", "-o", "output-directory", &Global::global().outputDirectory};
     Option0 opHelp {"Print help message", "-h,--help", &runHelp};
-    Command cmdAnalyze {"Run analysis instead of simulation.", "analyze", {}, {}, [&runAnalyze](){runAnalyze = true; return true;}};
-    Command cmd {"", "MEDYAN", {&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}, []{return true;}};
+    Command cmdAnalyze {"Run analysis instead of simulation.", "analyze", nullptr, [&runAnalyze](){runAnalyze = true; return true;}};
+    PosHolder cmdHolder {{&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}}; cmdHolder.require();
+    Command cmd {"", "MEDYAN", &cmdHolder, []{return true;}};
 
     inputFile.require();
     inputDir.require();

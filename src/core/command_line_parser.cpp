@@ -47,17 +47,7 @@ void OptionBase::_preprocess() {
 bool OptionBase::findHit(char argShort)              { return _flagShort == argShort; }
 bool OptionBase::findHit(const std::string& argLong) { return _flagLong  == argLong;  }
 
-void Command::_preprocess() {
-    if(getArgType(_name) != ArgType::ArgOrCmd) _inputFailBit = true;
-    
-    // Callback error
-    if(!_activate) _inputFailBit = true;
-}
-
-int Command::parse(int argc, char** argv, int argp) {
-    // This command should have already passed name check before entering
-    // So no self-check is performed
-
+int PosHolder::parse(int argc, char** argv, int argp) {
     // Uncheck error bit
     _parseErrorBit = false;
     _logicErrorBit = false;
@@ -73,7 +63,6 @@ int Command::parse(int argc, char** argv, int argp) {
 
     // Try to read to the end of the arguments
     bool shouldEnd = false;
-    ++argp; // Skip the "name" of this command
     while(argp < argc && !shouldEnd) {
         ArgType t = getArgType(argv[argp]);
         std::string arg {argv[argp]};
@@ -256,11 +245,11 @@ int Command::parse(int argc, char** argv, int argp) {
     }
         
     return argp;
+
 }
 
-void Command::printUsage(std::ostream& os)const {
-    os << "Usage: " << _name;
-    for(auto& opPtr: _op) {
+void PosHolder::printContent(std::ostream& os) {
+    for(auto opPtr: _op) {
         bool required = opPtr->isRequired();
         os << (required? " ": " [");
 
@@ -277,8 +266,8 @@ void Command::printUsage(std::ostream& os)const {
         pe->printContent(os);
         if(!required) os << "]";
     }
-    os << '\n' << std::endl;
-
+}
+void PosHolder::printCmdOp(std::ostream& os) {
     std::vector<PosElement*> commands;
     std::copy_if(_pos.begin(), _pos.end(), std::back_inserter(commands),
         [](PosElement* pe) { return pe->isCommand(); });
@@ -296,6 +285,66 @@ void Command::printUsage(std::ostream& os)const {
         }
         os << std::endl;
     }
+}
+
+int PosMutuallyExclusive::parse(int argc, char** argv, int argp) {
+    return 0; // TODO:
+    
+}
+
+void Command::_preprocess() {
+    if(getArgType(_name) != ArgType::ArgOrCmd) {
+        _inputFailBit = true;
+        std::ostringstream oss;
+        oss << "Command name " << _name << " is invalid.";
+        _inputFailInfo.emplace_back(oss.str());
+    }
+    
+    // Callback error
+    if(!_activate) {
+        _inputFailBit = true;
+        _inputFailInfo.emplace_back("Command activate callback not set.");
+    }
+
+    // Command type error
+    if(_content && (_content->isCommand() || _content->isArgument() || !_content->isRequired())) {
+        _inputFailBit = true;
+        _inputFailInfo.emplace_back("Command can only take non-command non-argument non-optional holder.");
+    }
+}
+
+int Command::parse(int argc, char** argv, int argp) {
+    // This command should have already passed name check before entering
+    // So no self-check is performed
+
+    // Uncheck error bit
+    _parseErrorBit = false;
+
+    if(!*this) return -1;
+
+    ++argp; // Skip the "name" of this command
+
+    if(!_content) return argp;
+
+    int newArgp = _content->parse(argc, argv, argp);
+    if(newArgp < 0) {
+        _parseErrorBit = true;
+        return -1;
+    }
+        
+    return newArgp;
+}
+
+void Command::printUsage(std::ostream& os)const {
+    os << "Usage: " << _name;
+    if(!_content) return;
+
+    _content->printContent(os);
+    os << '\n' << std::endl;
+
+    if(_isHolder) _content->printCmdOp(os);
+    // TODO: else
+
 }
 
 

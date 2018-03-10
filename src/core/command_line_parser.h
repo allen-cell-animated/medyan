@@ -70,7 +70,7 @@ protected:
 
 public:
     /// Check state
-    operator bool()const {
+    virtual operator bool()const {
         return !_inputFailBit;
     }
 
@@ -96,7 +96,7 @@ public:
     virtual void printError(std::ostream& os=std::cout)const {
         if(_inputFailBit) {
             for(auto& info: _inputFailInfo)
-                os << info << std::endl;
+                os << "Internal error: " << info << std::endl;
         }
     }
 };
@@ -130,8 +130,9 @@ protected:
 
 public:
     /// Check state
-    operator bool()const {
-        return !(_inputFailBit || _activateErrorBit || _invalidArgBit);
+    virtual operator bool()const override {
+        return CommandLineElement::operator bool() &&
+            !(_activateErrorBit || _invalidArgBit);
     }
 
     /// Getters
@@ -271,8 +272,9 @@ public:
         _activate([destination, this]()->bool{ *destination = _value; return true; }) {}
 
     /// Check state
-    operator bool()const {
-        return !(_invalidArgBit || _activateErrorBit);
+    virtual operator bool()const override {
+        return PosElement::operator bool() &&
+            !(_invalidArgBit || _activateErrorBit);
     }
 
     /// Modifier
@@ -311,24 +313,17 @@ public:
     }
 };
 
-class Command: public PosElement {
+/// Class PosHolder is a container of PosElements and Options
+class PosHolder: public PosElement {
 private:
     std::vector<PosElement*> _pos;
     std::vector<OptionBase*> _op;
-    std::function<bool()> _activate; ///< Activate callback
-
-    /// Name for the subcommand
-    const char* _name;
-
-    /// Preprocessing
-    virtual void _preprocess()override;
 
     /// Fail flags and associated variables
     bool _parseErrorBit = false; // Syntax error in parsing. Should abort parsing when this is set to true.
     bool _logicErrorBit = false; // Option requirements not fulfilled
     std::vector<std::string> _logicErrorInfo;
 
-    bool _activateErrorBit = false; // Activate error
     bool _subFailBit = false; // Children command/option fail
     std::vector<std::string> _subFailInfo;
 
@@ -338,25 +333,22 @@ private:
 public:
 
     /// Constructor
-    Command(const std::string& description, const char* name, const std::vector<OptionBase*>& op, const std::vector<PosElement*>& pos, const std::function<bool()>& activate) :
-        PosElement(description, true, false), _name(name), _op(op), _pos(pos), _activate(activate) {}
+    PosHolder(const std::vector<OptionBase*>& op, const std::vector<PosElement*>& pos) :
+        PosElement("", false, false), _op(op), _pos(pos) {}
 
     /// Check state
-    operator bool()const {
-        return !(_parseErrorBit || _logicErrorBit || _activateErrorBit || _subFailBit);
+    virtual operator bool()const override {
+        return PosElement::operator bool() &&
+            !(_parseErrorBit || _logicErrorBit || _subFailBit);
     }
 
-    /// Getters
-    virtual const char* getCommandName()const override { return _name; }
-
     /// Main parsing function
-    virtual int parse(int argc, char** argv, int argp = 0)override;
+    virtual int parse(int argc, char** argv, int argp=0)override;
 
     /// Evaluate
     virtual bool evaluate()override {
         _evaluated = true;
 
-        if(!_activate || !_activate()) _activateErrorBit = true;
         for(auto pe: _pos) {
             if(pe->isRequired() || pe->isOffered())
                 if(!pe->evaluate()) {
@@ -381,6 +373,99 @@ public:
         return operator bool();
     }
 
+    /// Helper function for printUsage.
+    virtual void printContent(std::ostream& os=std::cout)override;
+    virtual void printCmdOp(std::ostream& os=std::cout)override;
+
+    /// Print errors
+    virtual void printError(std::ostream& os = std::cout)const override {
+        PosElement::printError(os);
+
+        if(_parseErrorBit)
+            for(auto& opPtr : _op) opPtr->printError(os);
+        if(_logicErrorBit)
+            for(auto& info : _logicErrorInfo) os << info << std::endl;
+        if(_subFailBit)
+            for(auto& info: _subFailInfo) os << info << std::endl;
+    }
+};
+
+class PosMutuallyExclusive: public PosElement {
+    std::vector<PosElement*> _pos; ///< Store a list of mutually exclusive poses.
+
+public:
+    PosMutuallyExclusive(const std::vector<PosElement*>& pos):
+        PosElement("", false, false), _pos(pos) {}
+
+    /// Main parsing function
+    virtual int parse(int argc, char** argv, int argp=0)override;
+
+    /// Helper function for printUsage
+    virtual void printContent(std::ostream& os=std::cout)override {
+        os << (_required? '(': '[');
+        for(auto pe: _pos) pe->printContent(os);
+        os << (_required? ')', ']');
+    }
+};
+
+class Command: public PosElement {
+private:
+    PosElement* _content;
+    bool _isHolder;
+    std::function<bool()> _activate; ///< Activate callback
+
+    /// Name for the subcommand
+    const char* _name;
+
+    /// Preprocessing
+    virtual void _preprocess()override;
+
+    /// Fail flags and associated variables
+    bool _parseErrorBit = false; // Syntax error in parsing. Should abort parsing when this is set to true.
+
+    bool _activateErrorBit = false; // Activate error
+    bool _subFailBit = false; // Children command/option fail
+    std::vector<std::string> _subFailInfo;
+
+    /// States
+    bool _evaluated = false;
+
+public:
+
+    /// Constructor
+    Command(const std::string& description, const char* name, PosHolder* content, const std::function<bool()>& activate) :
+        PosElement(description, true, false), _name(name), _content(content), _isHolder(true), _activate(activate) {}
+    Command(const std::string& description, const char* name, PosMutuallyExclusive* content, const std::function<bool()>& activate) :
+        PosElement(description, true, false), _name(name), _content(content), _isHolder(false), _activate(activate) {}
+
+    /// Check state
+    virtual operator bool()const override {
+        return PosElement::operator bool() &&
+            !(_parseErrorBit || _activateErrorBit || _subFailBit);
+    }
+
+    /// Getters
+    virtual const char* getCommandName()const override { return _name; }
+
+    /// Main parsing function
+    virtual int parse(int argc, char** argv, int argp=0)override;
+
+    /// Evaluate
+    virtual bool evaluate()override {
+        _evaluated = true;
+
+        if(!_activate || !_activate()) _activateErrorBit = true;
+        if(_content && !_content->evaluate()) {
+            _subFailBit = true;
+            std::ostringstream oss;
+            _content->printError(oss);
+            _subFailInfo.emplace_back(oss.str());
+            return false;
+        }
+
+        return operator bool();
+    }
+
     /// Helper function for printUsage
     virtual void printContent(std::ostream& os=std::cout)override {
         os << _name;
@@ -393,9 +478,7 @@ public:
         PosElement::printError(os);
 
         if(_parseErrorBit)
-            for(auto& opPtr : _op) opPtr->printError(os);
-        if(_logicErrorBit)
-            for(auto& info : _logicErrorInfo) os << info << std::endl;
+            if(_content) _content->printError(os);
         if(_subFailBit)
             for(auto& info: _subFailInfo) os << info << std::endl;
     }
