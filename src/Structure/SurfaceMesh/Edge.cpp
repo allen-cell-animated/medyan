@@ -18,7 +18,7 @@ Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
 
     // Set coordinate and add to compartment
     updateCoordinate();
-    if(medyan::Global::readGlobal().mode != 1) {
+    if(medyan::Global::readGlobal().mode == medyan::GlobalVar::RunMode::Simulation) {
         try { _compartment = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
         catch (exception& e) {
             cout << e.what() << endl;

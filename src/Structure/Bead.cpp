@@ -35,7 +35,7 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
     
     parent->addChild(unique_ptr<Component>(this));
 
-    if(medyan::Global::readGlobal().mode != 1) {
+    if(medyan::Global::readGlobal().mode == medyan::GlobalVar::RunMode::Simulation) {
         loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
         loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
         
