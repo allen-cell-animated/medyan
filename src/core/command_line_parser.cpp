@@ -289,8 +289,15 @@ int Command::parse(int argc, char** argv, int argp) {
                                 // Use the rest as parameter
                                 (*it)->fillField(std::string(arg, 2));
                             }
+                            // Offer it and remove from the list
+                            (*it)->offer();
+                            op.erase(it);
+                            break;
                         } else { // Not taking arguments
                             arg.erase(1); // Remove short option
+                            // Offer it and remove from the list
+                            (*it)->offer();
+                            op.erase(it);
                         }
                     }
                 } // End of cropping short argument

@@ -108,7 +108,10 @@ int main(int argc, char **argv) {
     outputDir.require();
 
     // Main parsing
-    commandLineParse(argc, argv, cmd);
+    if(!commandLineParse(argc, argv, cmd)) {
+        cmd.printUsage();
+        exit(EXIT_FAILURE);
+    }
     if(runHelp) {
         cmd.printUsage();
         exit(EXIT_SUCCESS);

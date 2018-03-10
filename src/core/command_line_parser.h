@@ -372,8 +372,8 @@ private:
 public:
 
     /// Constructor
-    Command(const std::string& description, const char* name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds, const std::function<bool()>& activate) :
-        PosElement(description, true, false), _name(name), _op(ops), _subcmd(subcmds), _activate(activate) {}
+    Command(const std::string& description, const char* name, const std::vector<OptionBase*>& op, const std::vector<PosElement*>& pos, const std::function<bool()>& activate) :
+        PosElement(description, true, false), _name(name), _op(op), _pos(pos), _activate(activate) {}
 
     /// Check state
     operator bool()const {
@@ -407,7 +407,7 @@ public:
                 if(!ob->evaluate()) {
                     _subFailBit = true;
                     std::ostringstream oss;
-                    pe->printError(oss);
+                    ob->printError(oss);
                     _subFailInfo.emplace_back(oss.str());
                     return false;
                 }
