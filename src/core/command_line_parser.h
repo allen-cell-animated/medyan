@@ -242,6 +242,7 @@ public:
 
     /// Helper function for printUsage
     virtual void printContent(std::ostream& os=std::cout) = 0;
+    virtual void printCmdOp(std::ostream& os=std::cout) {} // TODO: replace it
     
 };
 
@@ -403,8 +404,11 @@ public:
     /// Helper function for printUsage
     virtual void printContent(std::ostream& os=std::cout)override {
         os << (_required? '(': '[');
-        for(auto pe: _pos) pe->printContent(os);
-        os << (_required? ')', ']');
+        for(auto it = _pos.begin(); it != _pos.end(); ++it) {
+            if(it != _pos.begin()) os << '|';
+            (*it)->printContent(os);
+        }
+        os << (_required? ')': ']');
     }
 };
 
@@ -433,10 +437,8 @@ private:
 public:
 
     /// Constructor
-    Command(const std::string& description, const char* name, PosHolder* content, const std::function<bool()>& activate) :
-        PosElement(description, true, false), _name(name), _content(content), _isHolder(true), _activate(activate) {}
-    Command(const std::string& description, const char* name, PosMutuallyExclusive* content, const std::function<bool()>& activate) :
-        PosElement(description, true, false), _name(name), _content(content), _isHolder(false), _activate(activate) {}
+    Command(const std::string& description, const char* name, PosElement* content, bool isHolder, const std::function<bool()>& activate) :
+        PosElement(description, true, false), _name(name), _content(content), _isHolder(isHolder), _activate(activate) {}
 
     /// Check state
     virtual operator bool()const override {

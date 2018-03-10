@@ -237,9 +237,7 @@ int PosHolder::parse(int argc, char** argv, int argp) {
     for(; itPos != _pos.end(); ++itPos) {
         if((*itPos)->isRequired()) {
             _logicErrorBit = true;
-            std::ostringstream oss;
-            oss << "Insufficient arguments for " << _name;
-            _logicErrorInfo.emplace_back(oss.str());
+            _logicErrorInfo.emplace_back("Insufficient arguments.");
             return -1;
         }
     }
@@ -274,7 +272,7 @@ void PosHolder::printCmdOp(std::ostream& os) {
     if(!commands.empty()) {
         os << "Commands:\n";
         for(PosElement* pe: commands) {
-            usagePairFormatter(std::string(static_cast<Command*>(pe)->_name), pe->getDescription(), os);
+            usagePairFormatter(std::string(static_cast<Command*>(pe)->getCommandName()), pe->getDescription(), os);
         }
         os << std::endl;
     }
@@ -342,7 +340,7 @@ void Command::printUsage(std::ostream& os)const {
     _content->printContent(os);
     os << '\n' << std::endl;
 
-    if(_isHolder) _content->printCmdOp(os);
+    if(_isHolder) static_cast<PosHolder*>(_content)->printCmdOp(os);
     // TODO: else
 
 }
