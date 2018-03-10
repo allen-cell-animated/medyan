@@ -222,10 +222,19 @@ protected:
     const bool _command; ///< Whether this is a command
     const bool _argument; ///< Whether this is an argument
 
+    /// Fail bits
+    bool _parseErrorBit = false; ///< Syntax error in parsing. Should abort parsing when this is set to true.
+
     PosElement(const std::string& description, bool isCommand, bool isArgument):
         CommandLineElement(description), _command(isCommand), _argument(isArgument) {}
 
 public:
+
+    /// Check state
+    virtual operator bool()const override {
+        return CommandLineElement::operator bool() &&
+            !_parseErrorBit;
+    }
 
     /// Getters
     bool isCommand()const { return _command; }
@@ -236,6 +245,32 @@ public:
     virtual PosElement& require(bool required=true)override { _required = required; return *this; }
     virtual PosElement& fillField(const std::string& field) { return *this; }
 
+    /// Helper function used by parent. This function deals with requiredness and offering
+    virtual int parseThis(int argc, char** argv, int argp) {
+        int newArgp = -1;
+
+        // Un-offer this
+        offer(false);
+
+        if(_required) {
+            // We don't care about the offer for required positional elements.
+            newArgp = parse(argc, argv, argp);
+        } else { // If it is optional
+            bool offerThisTime = true;
+            do {
+                offer(offerThisTime);
+
+                newArgp = parse(argc, argv, argp);
+                if(newArgp >= 0) break; // else we wait
+
+                offerThisTime = !offerThisTime; // false for the 2nd time
+            } while(!offerThisTime && newArgp < 0); // This will exit for at most 2 iterates.
+
+            // if newArgp < 0 here, it must be in the un-offered state.
+        }
+
+        return newArgp;
+    }
     /// Main parsing function.
     /// Returns the index just after the last argument it is using, or -1 if anything is wrong.
     virtual int parse(int argc, char** argv, int argp=0) = 0;
@@ -281,8 +316,19 @@ public:
     /// Modifier
     virtual PosArg& fillField(const std::string& field)override { _field = field; return *this; }
 
-    /// Dummy parsing. This should never be called.
-    virtual int parse(int argc, char** argv, int argp=0)override { return -1; }
+    virtual int parse(int argc, char** argv, int argp=0)override {
+        if(argp >= argc) {
+            _parseErrorBit = true;
+            return -1;
+        }
+
+        _parseErrorBit = false;
+
+        // Fill itself
+        fillField(std::string(argv[argp]));
+
+        return argp + 1;
+    }
 
     /// Evaluate
     virtual void evaluate()override {
@@ -321,7 +367,6 @@ private:
     std::vector<OptionBase*> _op;
 
     /// Fail flags and associated variables
-    bool _parseErrorBit = false; // Syntax error in parsing. Should abort parsing when this is set to true.
     bool _logicErrorBit = false; // Option requirements not fulfilled
     std::vector<std::string> _logicErrorInfo;
 
@@ -340,7 +385,7 @@ public:
     /// Check state
     virtual operator bool()const override {
         return PosElement::operator bool() &&
-            !(_parseErrorBit || _logicErrorBit || _subFailBit);
+            !(_logicErrorBit || _subFailBit);
     }
 
     /// Main parsing function
@@ -425,8 +470,6 @@ private:
     virtual void _preprocess()override;
 
     /// Fail flags and associated variables
-    bool _parseErrorBit = false; // Syntax error in parsing. Should abort parsing when this is set to true.
-
     bool _activateErrorBit = false; // Activate error
     bool _subFailBit = false; // Children command/option fail
     std::vector<std::string> _subFailInfo;
@@ -443,7 +486,7 @@ public:
     /// Check state
     virtual operator bool()const override {
         return PosElement::operator bool() &&
-            !(_parseErrorBit || _activateErrorBit || _subFailBit);
+            !(_activateErrorBit || _subFailBit);
     }
 
     /// Getters

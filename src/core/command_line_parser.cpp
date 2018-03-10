@@ -7,6 +7,7 @@ namespace medyan {
 namespace commandline {
 
 namespace {
+
     void usagePairFormatter(const std::string& key, const std::string& description, std::ostream& os) {
         static const size_t leftMargin = 2;
         static const size_t maxKeySize = 13;
@@ -146,73 +147,12 @@ int PosHolder::parse(int argc, char** argv, int argp) {
                     break;
                 }
 
-                // Un-offering current argument
-                (*itPos)->offer(false);
-
-                if((*itPos)->isRequired()) {
-                    // We don't care about the offer for required positional elements.
-                    if((*itPos)->isCommand()) {
-                        if(arg == (*itPos)->getCommandName()) { // Name matches
-                            int newArgp = (*itPos)->parse(argc, argv, argp);
-                            if(newArgp < 0) {
-                                _parseErrorBit = true;
-                                return -1;
-                            } else {
-                                argp = newArgp; // Update array index
-                            }
-                        } else { // Name does not match
-                            _parseErrorBit = true;
-                            return -1;
-                        }
-                    } else if((*itPos)->isArgument()) {
-                        (*itPos)->fillField(arg);
-                        ++argp;
-                    } else { // Other cases, directly parse them.
-                        int newArgp = (*itPos)->parse(argc, argv, argp);
-                        if(newArgp < 0) {
-                            _parseErrorBit = true;
-                            return -1;
-                        } else {
-                            argp = newArgp; // Update array index
-                        }
-                    }
-                } else { // If it is optional
-                    bool offerThisTime = true;
-                    int newArgp = -1;
-                    do {
-                        (*itPos)->offer(offerThisTime);
-                        if((*itPos)->isCommand()) {
-                            if(arg == (*itPos)->getCommandName()) { // Name matches
-                                newArgp = (*itPos)->parse(argc, argv, argp);
-                                if(newArgp < 0) {
-                                    // Things aren't correct, but we'll wait
-                                } else {
-                                    argp = newArgp; // Update array index
-                                    break;
-                                }
-                            } else { // Name does not match
-                                // Things aren't correct, but we'll wait
-                            }
-                        } else if((*itPos)->isArgument()) {
-                            (*itPos)->fillField(arg); // Fill it anyway
-                            ++argp;
-                            newArgp = argp; // Set positive value, because we need to check it later
-                            break;
-                        } else { //  Other cases
-                            newArgp = (*itPos)->parse(argc, argv, argp);
-                            if(newArgp < 0) {
-                                // Things aren't correct, but we'll wait
-                            } else {
-                                argp = newArgp; // Update array index
-                                break;
-                            }
-                        }
-                        offerThisTime = !offerThisTime; // false for the 2nd time
-                    } while(!offerThisTime && newArgp < 0); // This will exit for at most 2 iterates.
-                    if(newArgp < 0) {
-                        _parseErrorBit = true;
-                        return -1;
-                    } // Else the argp has already been updated inside the loop, so good!
+                int newArgp = (*itPos)->parseThis(argc, argv, argp);
+                if(newArgp < 0) {
+                    _parseErrorBit = true;
+                    return -1;
+                } else {
+                    argp = newArgp;
                 }
 
                 // Now update itPos
@@ -312,8 +252,10 @@ void Command::_preprocess() {
 }
 
 int Command::parse(int argc, char** argv, int argp) {
-    // This command should have already passed name check before entering
-    // So no self-check is performed
+    if(argp >= argc || std::strcmp(argv[argp], _name) != 0) {
+        _parseErrorBit = true;
+        return false;
+    }
 
     // Uncheck error bit
     _parseErrorBit = false;
@@ -324,7 +266,7 @@ int Command::parse(int argc, char** argv, int argp) {
 
     if(!_content) return argp;
 
-    int newArgp = _content->parse(argc, argv, argp);
+    int newArgp = _content->parseThis(argc, argv, argp);
     if(newArgp < 0) {
         _parseErrorBit = true;
         return -1;
