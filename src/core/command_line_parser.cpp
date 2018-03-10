@@ -104,7 +104,7 @@ int PosHolder::parse(int argc, char** argv, int argp) {
             {
                 // Offering is set at the end.
 
-                while(arg.length() >= 2) {
+                while(arg.length() >= 2 && !shouldEnd) {
                     char flag = arg[1];
                     auto it = std::find_if(op.begin(), op.end(),
                         [&flag](OptionBase* ob) { return ob->findHit(flag); });

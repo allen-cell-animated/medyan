@@ -99,18 +99,17 @@ int main(int argc, char **argv) {
     Option1<std::string> inputFile {"System input file name", "-s", "system-input", &Global::global().systemInputFileName};
     Option1<std::string> inputDir {"Input directory", "-i", "input-directory", &Global::global().inputDirectory};
     Option1<std::string> outputDir {"Output directory", "-o", "output-directory", &Global::global().outputDirectory};
-    Command cmdAnalyze {"Run analysis instead of simulation.", "analyze", nullptr, [&runAnalyze](){runAnalyze = true; return true;}};
-    PosHolder holderRun({&inputFile, &inputDir, &outputDir}, {&cmdAnalyze}); holderRun.require();
-
-    Option0 opHelp {"Print help message", "-h,--help", &runHelp};
-    PosHolder holderHelp({&opHelp}, {}); holderHelp.require();
-
-    PosMutuallyExclusive meMain({&holderRun, &holderHelp});
-    Command cmdMain {"", "MEDYAN", &meMain, []{return true;}}; cmdMain.setMain();
-
     inputFile.require();
     inputDir.require();
     outputDir.require();
+    Command cmdAnalyze {"Run analysis instead of simulation.", "analyze", nullptr, [&runAnalyze](){runAnalyze = true; return true;}};
+    PosHolder holderRun({&inputFile, &inputDir, &outputDir}, {&cmdAnalyze}); holderRun.require();
+
+    Option0 opHelp{ "Print help message", "-h,--help", &runHelp }; opHelp.require();
+    PosHolder holderHelp({&opHelp}, {}); holderHelp.require();
+
+    PosMutuallyExclusive meMain({ &holderRun, &holderHelp }); meMain.require();
+    Command cmdMain {"", "MEDYAN", &meMain, []{return true;}}; cmdMain.setMain();
 
     // Main parsing
     if(!commandLineParse(argc, argv, cmdMain)) {
