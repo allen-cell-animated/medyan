@@ -148,7 +148,7 @@ public:
 
     bool endOfArgList()const { return _endOfArgListBit; }
     bool invalidArg()const { return _invalidArgBit; }
-    const std::string& getInvalidArgContent()const { return _invalidArgContent; }
+    const std::string& getInvalidArgInfo()const { return _invalidArgInfo; }
 
     char getFlagShort()const { return _flagShort; }
     const std::string& getFlagLong()const { return _flagLong; }
@@ -387,7 +387,7 @@ public:
     int parse2(int argc, char** argv, int argp=0);
 
     /// Evaluate
-    virtual void evaluate()override {
+    virtual bool evaluate()override {
         _evaluated = true;
 
         if(!_activate || !_activate()) _activateErrorBit = true;
