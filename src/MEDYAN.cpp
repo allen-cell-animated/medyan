@@ -106,19 +106,19 @@ int main(int argc, char **argv) {
     PosHolder holderHelp({&opHelp}, {}); holderHelp.require();
 
     PosMutuallyExclusive meMain({&holderRun, &holderHelp});
-    Command cmdMain {"", "MEDYAN", &meMain, []{return true;}}; cmd.setMain();
+    Command cmdMain {"", "MEDYAN", &meMain, []{return true;}}; cmdMain.setMain();
 
     inputFile.require();
     inputDir.require();
     outputDir.require();
 
     // Main parsing
-    if(!commandLineParse(argc, argv, cmd)) {
-        cmd.printUsage();
+    if(!commandLineParse(argc, argv, cmdMain)) {
+        cmdMain.printUsage();
         exit(EXIT_FAILURE);
     }
     if(runHelp) {
-        cmd.printUsage();
+        cmdMain.printUsage();
         exit(EXIT_SUCCESS);
     }
 

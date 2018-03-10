@@ -186,7 +186,7 @@ int PosHolder::parse(int argc, char** argv, int argp) {
 
 }
 
-void PosHolder::printContent(std::ostream& os) {
+void PosHolder::printContent(std::ostream& os)const {
     for(auto opPtr: _op) {
         bool required = opPtr->isRequired();
         os << (required? " ": " [");
@@ -200,12 +200,13 @@ void PosHolder::printContent(std::ostream& os) {
     }
     for(auto pe: _pos) {
         bool required = pe->isRequired();
-        os << (required? " ": " [");
+        bool group = pe->isMutuallyExclusive();
+        os << (required? (group? " (": " "): " [");
         pe->printContent(os);
-        if(!required) os << "]";
+        os << (required? (group? ")": ""): "]");
     }
 }
-void PosHolder::printCmdOp(std::ostream& os) {
+void PosHolder::printCmdOp(std::ostream& os)const {
     std::vector<PosElement*> commands;
     std::copy_if(_pos.begin(), _pos.end(), std::back_inserter(commands),
         [](PosElement* pe) { return pe->isCommand(); });

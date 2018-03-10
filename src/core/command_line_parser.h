@@ -155,7 +155,7 @@ public:
     virtual bool findHit(const std::string& argLong);
 
     /// Print error message
-    virtual void printError(std::ostream& os=std::cout)const {
+    virtual void printError(std::ostream& os=std::cout)const override {
         CommandLineElement::printError(os);
 
         if(_invalidArgBit)
@@ -283,8 +283,8 @@ public:
     virtual int parse(int argc, char** argv, int argp=0) = 0;
 
     /// Helper function for printUsage
-    virtual void printContent(std::ostream& os=std::cout) = 0;
-    virtual void printCmdOp(std::ostream& os=std::cout) {} // TODO: replace it
+    virtual void printContent(std::ostream& os=std::cout)const = 0;
+    virtual void printCmdOp(std::ostream& os=std::cout)const {} // TODO: replace it
     
 };
 
@@ -354,12 +354,12 @@ public:
     }
 
     /// Helper function for printUsage
-    virtual void printContent(std::ostream& os=std::cout)override {
+    virtual void printContent(std::ostream& os=std::cout)const override {
         os << '<' << _argName << '>';
     }
 
     /// Print error
-    virtual void printError(std::ostream& os=std::cout)override {
+    virtual void printError(std::ostream& os=std::cout)const override {
         PosElement::printError();
 
         if(_invalidArgBit) os << "Invalid argument for " << _argName << std::endl;
@@ -424,8 +424,8 @@ public:
     }
 
     /// Helper function for printUsage.
-    virtual void printContent(std::ostream& os=std::cout)override;
-    virtual void printCmdOp(std::ostream& os=std::cout)override;
+    virtual void printContent(std::ostream& os=std::cout)const override;
+    virtual void printCmdOp(std::ostream& os=std::cout)const override;
 
     /// Print errors
     virtual void printError(std::ostream& os = std::cout)const override {
@@ -470,7 +470,7 @@ public:
     /// Evaluate
     virtual bool evaluate()override {
         _evaluated = true;
-        if(_index < 0 || _index >= _pos) {
+        if(_index < 0 || _index >= _pos.size()) {
             _unknownBit = true;
             return false;
         }
@@ -486,17 +486,15 @@ public:
     }
 
     /// Helper function for printUsage
-    virtual void printContent(std::ostream& os=std::cout)override {
-        os << (_required? '(': '[');
+    virtual void printContent(std::ostream& os=std::cout)const override {
         for(auto it = _pos.begin(); it != _pos.end(); ++it) {
             if(it != _pos.begin()) os << '|';
             (*it)->printContent(os);
         }
-        os << (_required? ')': ']');
     }
 
     /// Print error
-    virtual void printError(std::ostream& os=std::cout)override {
+    virtual void printError(std::ostream& os=std::cout)const override {
         PosElement::printError(os);
 
         if(_logicErrorBit) for(auto& info: _logicErrorInfo) os << info << std::endl;
@@ -562,7 +560,7 @@ public:
     }
 
     /// Helper function for printUsage
-    virtual void printContent(std::ostream& os=std::cout)override {
+    virtual void printContent(std::ostream& os=std::cout)const override {
         os << _name;
     }
     /// Print help message
