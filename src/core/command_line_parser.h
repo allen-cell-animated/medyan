@@ -89,8 +89,8 @@ public:
     virtual CommandLineElement& require(bool required=true) { _required = required; return *this; }
     virtual CommandLineElement& offer(bool offered=true) { _offered = offered; return *this; }
 
-    /// Evaluate
-    virtual void evaluate() = 0;
+    /// Evaluate. Returns whether successful
+    virtual bool evaluate() = 0;
 
     /// Error printing
     virtual void printError(std::ostream& os=std::cout)const {
@@ -116,9 +116,10 @@ protected:
 
     /// Fail flags and associated info
     bool _endOfArgListBit = false;
+
     bool _activateErrorBit = false; // activation fail by the callback
     bool _invalidArgBit = false; // Invalid argument
-    std::string _invalidArgContent;
+    std::string _invalidArgInfo;
 
     /// Configuration of the option
     std::vector<OptionBase*> _excluding;
@@ -174,7 +175,7 @@ public:
         if(_endOfArgListBit)
             os << "Must specify argument for " << _match << std::endl;
         if(_invalidArgBit)
-            os << "Invalid argument for " << _match << ": " << _invalidArgContent << std::endl;
+            os << "Invalid argument for " << _match << ": " << _invalidArgInfo << std::endl;
         if(_activateErrorBit)
             os << "The argument value for " << _match << " is not acceptable." << std::endl;
     }
@@ -198,19 +199,19 @@ public:
     virtual Option1& fillField(const std::string& field) { _field = field; return *this; }
 
     /// Evaluate
-    virtual void evaluate()override {
+    virtual bool evaluate()override {
         _evaluated = true;
 
-        if(_required || _offered) {
-            std::istringstream iss(_field);
-            iss >> _value;
-            if(iss.fail()) {
-                _invalidArgBit = true;
-                _invalidArgContent = _field;
-            }
+        std::istringstream iss(_field);
+        iss >> _value;
+        if(iss.fail()) {
+            _invalidArgBit = true;
+            _invalidArgInfo = _field;
         }
 
-        if(!_activate()) _activateErrorBit = true;
+        if(!_activate || !_activate()) _activateErrorBit = true;
+
+        return operator bool();
     }
     /// Evaluate and activate
     virtual int evaluate2(int argc, char** argv, int argp)override {
@@ -226,7 +227,7 @@ public:
         iss >> _value;
         if(iss.fail()) {
             _invalidArgBit = true;
-            _invalidArgContent = std::string(argv[argp]);
+            _invalidArgInfo = std::string(argv[argp]);
         }
 
         if(!_activate()) _activateErrorBit = true;
@@ -245,8 +246,9 @@ public:
         OptionBase(description, match, false, "", activate) {}
 
     /// Evaluate
-    virtual void evaluate()override {
+    virtual bool evaluate()override {
         if(!_activate()) _activateErrorBit = true;
+        return operator bool();
     }
     virtual int evaluate2(int argc, char** argv, int argp)override {
         if(!_activate()) _activateErrorBit = true;
@@ -282,17 +284,64 @@ public:
 
 // Note that although argument taken by options are also positional, they are
 // handled by the option class and thus not belong here.
+template<typename T>
 class PosArg: public PosElement {
     /// Fields set by Parsing
     std::string _field;
+
+    /// Input
+    std::string _argName; ///< Name of the argument
+
+    /// Argument value
+    T _value;
+
+    /// Activate callback
+    std::function<bool()> _activate;
+
+    /// Fail bit
+    bool _invalidArgBit = false; // Invalid argument
+    std::string _invalidArgInfo;
+    bool _activateErrorBit = false;
+
 public:
-    PosArg(const std::string& description): PosElement(description, false, true) {}
+    PosArg(const std::string& description, const std::string& argName, T* destination):
+        PosElement(description, false, true), _argName(argName),
+        _activate([destination, this]()->bool{ *destination = _value; return true; }) {}
+
+    /// Check state
+    operator bool()const {
+        return !(_invalidArgBit || _activateErrorBit);
+    }
 
     /// Modifier
     virtual PosArg& fillField(const std::string& field) { _field = field; return *this; }
 
     /// Dummy parsing. This should never be called.
     virtual int parse(int argc, char** argv, int argp=0)override { return -1; }
+
+    /// Evaluate
+    virtual void evaluate()override {
+        _evaluated = true;
+
+        std::istringstream iss(_field);
+        iss >> _value;
+        if(iss.fail()) {
+            _invalidArgBit = true;
+            _invalidArgInfo = _field;
+        }
+
+        if(!_activate || !_activate()) _activateErrorBit = true;
+
+        return operator bool();
+    }
+
+    /// Print error
+    virtual void printError(std::ostream& os=std::cout)override {
+        PosElement::printError();
+
+        if(_invalidArgBit) os << "Invalid argument for " << _argName << std::endl;
+        if(_activateErrorBit) os << "Argument " << _argName << " has incorrect value: " << _value << std::endl;
+    }
 };
 
 class Command: public PosElement {
@@ -312,7 +361,9 @@ private:
     bool _parseErrorBit = false; // Syntax error in parsing. Should abort parsing when this is set to true.
     bool _logicErrorBit = false; // Option requirements not fulfilled
     std::vector<std::string> _logicErrorInfo;
+
     bool _activateErrorBit = false; // Activate error
+    bool _subFailBit = false; // Children command/option fail
 
     /// States
     bool _evaluated = false;
@@ -325,7 +376,7 @@ public:
 
     /// Check state
     operator bool()const {
-        return !(_parseErrorBit || _logicErrorBit || _activateErrorBit);
+        return !(_parseErrorBit || _logicErrorBit || _activateErrorBit || _subFailBit);
     }
 
     /// Getters
@@ -337,19 +388,38 @@ public:
 
     /// Evaluate
     virtual void evaluate()override {
+        _evaluated = true;
+
         if(!_activate || !_activate()) _activateErrorBit = true;
+        for(auto pe: _pos) {
+            if(pe->isRequired() || pe->isOffered())
+                if(!pe->evaluate()) {
+                    _subFailBit = true;
+                    return false;
+                }
+        }
+        for(auto ob: _op) {
+            if(ob->isRequired() || ob->isOffered())
+                if(!ob->evaluate()) {
+                    _subFailBit = true;
+                    return false;
+                }
+        }
+
+        return operator bool();
     }
 
     /// Print message
     void printUsage(std::ostream& out = std::cout)const;
     virtual void printError(std::ostream& os = std::cout)const override {
-        CommandLineElement::printError(os);
+        PosElement::printError(os);
 
         if (_parseErrorBit) {
             for (auto& opPtr : _op) opPtr->printError(os);
         }
         if (_logicErrorBit)
             for (auto& content : _logicErrorInfo) os << content << std::endl;
+        // _subFailBit do nothing. because the information should be printed by children.
     }
 };
 
