@@ -95,14 +95,18 @@ int main(int argc, char **argv) {
     // Parse command line arguments
     bool runAnalyze = false;
     bool runHelp = false;
-    
+
     Option1<std::string> inputFile {"System input file name", "-s", "system-input", &Global::global().systemInputFileName};
     Option1<std::string> inputDir {"Input directory", "-i", "input-directory", &Global::global().inputDirectory};
     Option1<std::string> outputDir {"Output directory", "-o", "output-directory", &Global::global().outputDirectory};
-    Option0 opHelp {"Print help message", "-h,--help", &runHelp};
     Command cmdAnalyze {"Run analysis instead of simulation.", "analyze", nullptr, [&runAnalyze](){runAnalyze = true; return true;}};
-    PosHolder cmdHolder {{&opHelp, &inputFile, &inputDir, &outputDir}, {&cmdAnalyze}}; cmdHolder.require();
-    Command cmd {"", "MEDYAN", &cmdHolder, []{return true;}}; cmd.setMain();
+    PosHolder holderRun({&inputFile, &inputDir, &outputDir}, {&cmdAnalyze}); holderRun.require();
+
+    Option0 opHelp {"Print help message", "-h,--help", &runHelp};
+    PosHolder holderHelp({&opHelp}, {}); holderHelp.require();
+
+    PosMutuallyExclusive meMain({&holderRun, &holderHelp});
+    Command cmdMain {"", "MEDYAN", &meMain, []{return true;}}; cmd.setMain();
 
     inputFile.require();
     inputDir.require();
