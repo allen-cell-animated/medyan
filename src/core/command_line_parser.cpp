@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <unordered_set>
 
 namespace medyan {
 namespace commandline {
@@ -42,7 +43,10 @@ void OptionBase::_preprocess() {
     }
     
     // Callback error
-    if(!_activate) _inputFailBit = true;
+    if(!_activate) {
+        _inputFailBit = true;
+        _inputFailInfo.emplace_back("Option activate callback not set.");
+    }
 }
 
 bool OptionBase::findHit(char argShort)              { return _flagShort == argShort; }
@@ -206,23 +210,19 @@ void PosHolder::printContent(std::ostream& os)const {
         os << (required? (group? ")": ""): "]");
     }
 }
-void PosHolder::printCmdOp(std::ostream& os)const {
-    std::vector<PosElement*> commands;
-    std::copy_if(_pos.begin(), _pos.end(), std::back_inserter(commands),
-        [](PosElement* pe) { return pe->isCommand(); });
-    if(!commands.empty()) {
-        os << "Commands:\n";
-        for(PosElement* pe: commands) {
-            usagePairFormatter(std::string(static_cast<Command*>(pe)->getCommandName()), pe->getDescription(), os);
-        }
-        os << std::endl;
+
+void PosMutuallyExclusive::_preprocess() {
+    if(_pos.empty()) {
+        _inputFailBit = true;
+        _inputFailInfo.emplace_back("Mutually exclusive group cannot be empty.");
     }
-    if(!_op.empty()) {
-        os << "Options:\n";
-        for(auto& opPtr: _op) {
-            usagePairFormatter(std::string(opPtr->getMatch()), opPtr->getDescription(), os);
+
+    for(auto pe: _pos) {
+        if(!pe->isRequired()) {
+            _inputFailBit = true;
+            _inputFailInfo.emplace_back("Elements inside mutually exclusive group must be required.");
+            break;
         }
-        os << std::endl;
     }
 }
 
@@ -301,15 +301,53 @@ int Command::parse(int argc, char** argv, int argp) {
 }
 
 void Command::printUsage(std::ostream& os)const {
-    os << "Usage: " << _name;
+    os << "Usage:" << '\n';
     if(!_content) return;
 
-    _content->printContent(os);
-    os << '\n' << std::endl;
+    std::unordered_set<PosElement*> cmd;
+    std::unordered_set<OptionBase*> op;
+    switch(_content->getPosType) {
+    case PosType::Command:
+        os << "  " << _name;
+        _content->printContent(os);
+        cmd.insert(_content);
+        break;
+    case PosType::Arg:
+        os << "  " << _name;
+        _content->printContent(os);
+        break;
+    case PosType::MutuallyExclusive:
+        for(auto pe: _content->getPos()) {
+            os << "  " << _name;
+            pe->printContent(os);
+            if(pe->isCommand()) cmd.insert(pe);
+        }
+        break;
+    case PosType::Holder:
+        os << "  " << _name;
+        _content->printContent(os);
+        for(auto pe: _content->getPos()) if(pe->isCommand()) cmd.insert(pe);
+        for(auto ob: _content->getOp()) op.insert(ob);
+        break;
+    }
+    os << std::endl;
 
-    if(isHolder()) static_cast<PosHolder*>(_content)->printCmdOp(os);
-    // TODO: else
+    if(!cmd.empty()) {
+        os << "Commands:\n";
+        for(PosElement* pe: cmd) {
+            usagePairFormatter(std::string(pe->getCommandName()), pe->getDescription(), os);
+        }
+        os << std::endl;
+    }
+    if(!op.empty()) {
+        os << "Options:\n";
+        for(OptionBase* ob: op) {
+            usagePairFormatter(std::string(ob->getMatch()), ob->getDescription(), os);
+        }
+        os << std::endl;
+    }
 
+    os << std::endl;
 }
 
 

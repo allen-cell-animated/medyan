@@ -241,6 +241,7 @@ public:
     }
 
     /// Getters
+    PosType getPosType()const { return _posType; }
     bool isCommand()const { return _posType == PosType::Command; }
     bool isArgument()const { return _posType == PosType::Arg; }
     bool isHolder()const { return _posType == PosType::Holder; }
@@ -392,6 +393,10 @@ public:
             !(_logicErrorBit || _subFailBit);
     }
 
+    /// Getters
+    const std::vector<PosElement*>& getPos()const { return _pos; }
+    const std::vector<OptionBase*>& getOp()const { return _op; }
+
     /// Main parsing function
     virtual int parse(int argc, char** argv, int argp=0)override;
 
@@ -425,7 +430,6 @@ public:
 
     /// Helper function for printUsage.
     virtual void printContent(std::ostream& os=std::cout)const override;
-    virtual void printCmdOp(std::ostream& os=std::cout)const override;
 
     /// Print errors
     virtual void printError(std::ostream& os = std::cout)const override {
@@ -454,6 +458,9 @@ class PosMutuallyExclusive: public PosElement {
     bool _subFailBit = false; // Children command/option fail
     std::vector<std::string> _subFailInfo;
 
+    /// Preprocessing. This class only accepts required elements
+    virtual void _preprocess()override;
+
 public:
     PosMutuallyExclusive(const std::vector<PosElement*>& pos):
         PosElement("", PosType::MutuallyExclusive), _pos(pos) {}
@@ -463,6 +470,9 @@ public:
         return PosElement::operator bool() &&
             !(_logicErrorBit || _unknownBit || _subFailBit);
     }
+
+    /// Getters
+    const std::vector<PosElement*>& getPos()const { return _pos; }
 
     /// Main parsing function
     virtual int parse(int argc, char** argv, int argp=0)override;
