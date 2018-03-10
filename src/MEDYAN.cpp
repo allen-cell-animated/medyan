@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
     inputDir.require();
     outputDir.require();
 
-    cmd.parse(argc, argv);
+    cmd.parse2(argc, argv);
 
     if(!cmd) {
         cmd.printError();

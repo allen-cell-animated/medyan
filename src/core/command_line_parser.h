@@ -87,6 +87,7 @@ public:
 
     /// Modifier
     virtual CommandLineElement& require(bool required=true) { _required = required; return *this; }
+    virtual CommandLineElement& offer(bool offered=true) { _offered = offered; return *this; }
 
     /// Evaluate
     virtual void evaluate() = 0;
@@ -156,9 +157,12 @@ public:
 
     /// Modify configuration
     virtual OptionBase& exclude(OptionBase* op) { _excluding.push_back(op); return *this; }
+    virtual OptionBase& fillField(const std::string& field) { return *this; }
 
     /// Find hit.
-    virtual bool findHit(const std::string& arg, ArgType argType);
+    virtual bool findHit2(const std::string& arg, ArgType argType);
+    virtual bool findHit(char argShort);
+    virtual bool findHit(const std::string& argLong);
 
     /// Evaluate and validate. return how many arguments consumed.
     virtual int evaluate2(int argc, char** argv, int argp) = 0;
@@ -189,6 +193,9 @@ private:
 public:
     Option1(const std::string& description, const char* match, const std::string& argName, T* destination):
         OptionBase(description, match, true, argName, [destination, this]()->bool{ *destination = _value; return true; }) {}
+
+    /// Modifiers
+    virtual Option1& fillField(const std::string& field) { _field = field; return *this; }
 
     /// Evaluate
     virtual void evaluate()override {
@@ -247,30 +254,50 @@ public:
     }
 };
 
+
 /// Base of positional element
 class PosElement: public CommandLineElement {
 protected:
-    PosElement(const std::string& description):
-        CommandLineElement(description) {}
+    const bool _command; ///< Whether this is a command
+    const bool _argument; ///< Whether this is an argument
+
+    PosElement(const std::string& description, bool isCommand, bool isArgument):
+        CommandLineElement(description), _command(isCommand), _argument(isArgument) {}
+    
 public:
+
+    /// Getters
+    bool isCommand()const { return _command; }
+    bool isArgument()const { return _argument; }
+    virtual const char* getCommandName()const { return ""; }
 
     /// Modifier
     virtual PosElement& require(bool required=true) { _required = required; return *this; }
+    virtual PosElement& fillField(const std::string& field) { return *this; }
 
     /// Main parsing function.
     /// Returns the index just after the last argument it is using, or -1 if anything is wrong.
     virtual int parse(int argc, char** argv, int argp=0) = 0;
 };
+
 // Note that although argument taken by options are also positional, they are
 // handled by the option class and thus not belong here.
 class PosArg: public PosElement {
     /// Fields set by Parsing
     std::string _field;
 public:
-    virtual int parse(int argc, char** argv, int argp=0)override { return 1; }
+    PosArg(const std::string& description): PosElement(description, false, true) {}
+
+    /// Modifier
+    virtual PosArg& fillField(const std::string& field) { _field = field; return *this; }
+
+    /// Dummy parsing. This should never be called.
+    virtual int parse(int argc, char** argv, int argp=0)override { return -1; }
 };
+
 class Command: public PosElement {
 private:
+    std::vector<PosElement*> _pos;
     std::vector<OptionBase*> _op;
     std::vector<Command*> _subcmd;
     std::function<bool()> _activate; ///< Activate callback
@@ -282,12 +309,9 @@ private:
     virtual void _preprocess()override;
 
     /// Fail flags and associated variables
-    bool _parseErrorBit = false; // Fail by option reader. Should abort parsing when this is set to true.
-    bool _subcmdErrorBit = false; // Fail by subcommand parser. Should abort parsing when this is set to true.
-    bool _unusedArgBit = false; // Unused arguments after parsing
-    std::vector<std::string> _unusedArgs;
+    bool _parseErrorBit = false; // Syntax error in parsing. Should abort parsing when this is set to true.
     bool _logicErrorBit = false; // Option requirements not fulfilled
-    std::vector<std::string> _logicErrorContent;
+    std::vector<std::string> _logicErrorInfo;
     bool _activateErrorBit = false; // Activate error
 
     /// States
@@ -297,15 +321,19 @@ public:
 
     /// Constructor
     Command(const std::string& description, const char* name, const std::vector<OptionBase*>& ops, const std::vector<Command*>& subcmds, const std::function<bool()>& activate) :
-        PosElement(description), _name(name), _op(ops), _subcmd(subcmds), _activate(activate) {}
+        PosElement(description, true, false), _name(name), _op(ops), _subcmd(subcmds), _activate(activate) {}
 
     /// Check state
     operator bool()const {
-        return !(_parseErrorBit || _subcmdErrorBit || _unusedArgBit || _logicErrorBit || _activateErrorBit);
+        return !(_parseErrorBit || _logicErrorBit || _activateErrorBit);
     }
+
+    /// Getters
+    virtual const char* getCommandName()const override { return _name; }
 
     /// Main parsing function
     virtual int parse(int argc, char** argv, int argp = 0)override;
+    int parse2(int argc, char** argv, int argp=0);
 
     /// Evaluate
     virtual void evaluate()override {
@@ -320,15 +348,8 @@ public:
         if (_parseErrorBit) {
             for (auto& opPtr : _op) opPtr->printError(os);
         }
-        if (_subcmdErrorBit)
-            for (auto& cmdPtr : _subcmd) cmdPtr->printError(os);
         if (_logicErrorBit)
-            for (auto& content : _logicErrorContent) os << content << std::endl;
-        if (_unusedArgBit) {
-            os << "Unknown option:" << std::endl;
-            for (auto& eachUnusedArg : _unusedArgs) os << eachUnusedArg << " ";
-            os << std::endl;
-        }
+            for (auto& content : _logicErrorInfo) os << content << std::endl;
     }
 };
 
