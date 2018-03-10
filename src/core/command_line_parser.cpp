@@ -306,14 +306,12 @@ void Command::printUsage(std::ostream& os)const {
 
     std::unordered_set<PosElement*> cmd;
     std::unordered_set<OptionBase*> op;
+    _content->addToCmdOp(cmd, op);
+
     switch(_content->getPosType()) {
     case PosType::Command:
-        os << "  " << _name;
-        _content->printContent(os);
-        os << '\n';
-        cmd.insert(_content);
-        break;
     case PosType::Arg:
+    case PosType::Holder:
         os << "  " << _name;
         _content->printContent(os);
         os << '\n';
@@ -322,20 +320,8 @@ void Command::printUsage(std::ostream& os)const {
         for(auto pe: static_cast<PosMutuallyExclusive*>(_content)->getPos()) {
             os << "  " << _name;
             pe->printContent(os);
-            if(pe->isCommand()) cmd.insert(pe);
-            else if (pe->isHolder()) {
-                for (auto peIn: static_cast<PosHolder*>(pe)->getPos()) if (peIn->isCommand()) cmd.insert(peIn);
-                for (auto obIn: static_cast<PosHolder*>(pe)->getOp()) op.insert(obIn);
-            }
             os << '\n';
         }
-        break;
-    case PosType::Holder:
-        os << "  " << _name;
-        _content->printContent(os);
-        os << '\n';
-        for(auto pe: static_cast<PosHolder*>(_content)->getPos()) if(pe->isCommand()) cmd.insert(pe);
-        for(auto ob: static_cast<PosHolder*>(_content)->getOp()) op.insert(ob);
         break;
     }
     os << std::endl;

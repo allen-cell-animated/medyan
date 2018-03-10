@@ -6,6 +6,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace medyan {
@@ -285,7 +286,7 @@ public:
 
     /// Helper function for printUsage
     virtual void printContent(std::ostream& os=std::cout)const = 0;
-    virtual void printCmdOp(std::ostream& os=std::cout)const {} // TODO: replace it
+    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const = 0;
     
 };
 
@@ -358,6 +359,7 @@ public:
     virtual void printContent(std::ostream& os=std::cout)const override {
         os << '<' << _argName << '>';
     }
+    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const {}
 
     /// Print error
     virtual void printError(std::ostream& os=std::cout)const override {
@@ -430,6 +432,10 @@ public:
 
     /// Helper function for printUsage.
     virtual void printContent(std::ostream& os=std::cout)const override;
+    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const {
+        for(auto& pe: _pos) pe->addToCmdOpSet(pos, op);
+        for(auto& ob: _op) op.insert(ob);
+    }
 
     /// Print errors
     virtual void printError(std::ostream& os = std::cout)const override {
@@ -502,6 +508,9 @@ public:
             (*it)->printContent(os);
         }
     }
+    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const {
+        for(auto& pe: _pos) pe->addToCmdOpSet(pos, op);
+    }
 
     /// Print error
     virtual void printError(std::ostream& os=std::cout)const override {
@@ -572,6 +581,9 @@ public:
     /// Helper function for printUsage
     virtual void printContent(std::ostream& os=std::cout)const override {
         os << _name;
+    }
+    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const {
+        pos.insert(this);
     }
     /// Print help message
     void printUsage(std::ostream& os=std::cout)const;
