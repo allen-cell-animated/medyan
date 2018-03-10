@@ -286,7 +286,7 @@ public:
 
     /// Helper function for printUsage
     virtual void printContent(std::ostream& os=std::cout)const = 0;
-    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const = 0;
+    virtual void addToCmdOpSet(std::unordered_set<const PosElement*>& pos, std::unordered_set<const OptionBase*>& op)const = 0;
     
 };
 
@@ -359,7 +359,7 @@ public:
     virtual void printContent(std::ostream& os=std::cout)const override {
         os << '<' << _argName << '>';
     }
-    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const {}
+    virtual void addToCmdOpSet(std::unordered_set<const PosElement*>& pos, std::unordered_set<const OptionBase*>& op)const {}
 
     /// Print error
     virtual void printError(std::ostream& os=std::cout)const override {
@@ -432,7 +432,7 @@ public:
 
     /// Helper function for printUsage.
     virtual void printContent(std::ostream& os=std::cout)const override;
-    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const {
+    virtual void addToCmdOpSet(std::unordered_set<const PosElement*>& pos, std::unordered_set<const OptionBase*>& op)const {
         for(auto& pe: _pos) pe->addToCmdOpSet(pos, op);
         for(auto& ob: _op) op.insert(ob);
     }
@@ -508,7 +508,7 @@ public:
             (*it)->printContent(os);
         }
     }
-    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const {
+    virtual void addToCmdOpSet(std::unordered_set<const PosElement*>& pos, std::unordered_set<const OptionBase*>& op)const {
         for(auto& pe: _pos) pe->addToCmdOpSet(pos, op);
     }
 
@@ -582,7 +582,7 @@ public:
     virtual void printContent(std::ostream& os=std::cout)const override {
         os << _name;
     }
-    virtual void addToCmdOpSet(std::unordered_set<PosElement*>& pos, std::unordered_set<OptionBase*>& op)const {
+    virtual void addToCmdOpSet(std::unordered_set<const PosElement*>& pos, std::unordered_set<const OptionBase*>& op)const {
         pos.insert(this);
     }
     /// Print help message

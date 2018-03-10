@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cstring>
-#include <unordered_set>
 
 namespace medyan {
 namespace commandline {
@@ -11,7 +10,7 @@ namespace {
 
     void usagePairFormatter(const std::string& key, const std::string& description, std::ostream& os) {
         static const size_t leftMargin = 2;
-        static const size_t maxKeySize = 13;
+        static const size_t maxKeySize = 21;
         static const size_t midMargin = 1;
 
         os << std::string(leftMargin, ' ');
@@ -305,9 +304,9 @@ void Command::printUsage(std::ostream& os)const {
     os << "Usage:" << '\n';
     if(!_content) return;
 
-    std::unordered_set<PosElement*> cmd;
-    std::unordered_set<OptionBase*> op;
-    _content->addToCmdOp(cmd, op);
+    std::unordered_set<const PosElement*> cmd;
+    std::unordered_set<const OptionBase*> op;
+    _content->addToCmdOpSet(cmd, op);
 
     switch(_content->getPosType()) {
     case PosType::Command:
@@ -329,22 +328,22 @@ void Command::printUsage(std::ostream& os)const {
 
     if(!cmd.empty()) {
         os << "Commands:\n";
-        for(PosElement* pe: cmd) {
+        for(const PosElement* pe: cmd) {
             usagePairFormatter(std::string(pe->getCommandName()), pe->getDescription(), os);
         }
         os << std::endl;
     }
     if(!op.empty()) {
         os << "Options:\n";
-        for(OptionBase* ob: op) {
+        for(const OptionBase* ob: op) {
             std::ostringstream oss;
             if(ob->getFlagShort()) {
-                oss << ob->getFlagShort();
+                oss << '-' << ob->getFlagShort();
                 if(ob->takesArg()) oss << " <" << ob->getArgName() << ">";
             }
             if(!ob->getFlagLong().empty()) {
-                if(ob->getFlagShort()) os << ", ";
-                oss << ob->getFlagLong();
+                if(ob->getFlagShort()) oss << ", ";
+                oss << "--" << ob->getFlagLong();
                 if(ob->takesArg()) oss << " <" << ob->getArgName() << ">";
             }
             usagePairFormatter(oss.str(), ob->getDescription(), os);
