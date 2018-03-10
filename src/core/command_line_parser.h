@@ -111,18 +111,12 @@ protected:
     /// Preprocessing
     char _flagShort = 0; // e.g. "-a" w/o "-"
     std::string _flagLong; // e.g. "--analysis" w/o "--"
-    std::string _flagCommand; // e.g. "add"
     virtual void _preprocess()override;
 
     /// Fail flags and associated info
-    bool _endOfArgListBit = false;
-
     bool _activateErrorBit = false; // activation fail by the callback
     bool _invalidArgBit = false; // Invalid argument
     std::string _invalidArgInfo;
-
-    /// Configuration of the option
-    std::vector<OptionBase*> _excluding;
 
     /// Activate callback
     std::function<bool()> _activate;
@@ -137,7 +131,7 @@ protected:
 public:
     /// Check state
     operator bool()const {
-        return !(_inputFailBit || _endOfArgListBit || _activateErrorBit || _invalidArgBit);
+        return !(_inputFailBit || _activateErrorBit || _invalidArgBit);
     }
 
     /// Getters
@@ -146,34 +140,23 @@ public:
     bool takesArg()const { return _takesArg; }
     const std::string& getArgName()const { return _argName; }
 
-    bool endOfArgList()const { return _endOfArgListBit; }
     bool invalidArg()const { return _invalidArgBit; }
     const std::string& getInvalidArgInfo()const { return _invalidArgInfo; }
 
     char getFlagShort()const { return _flagShort; }
     const std::string& getFlagLong()const { return _flagLong; }
-    const std::string& getFlagCommand()const { return _flagCommand; }
-
-    const std::vector<OptionBase*>& getExcluding()const { return _excluding; }
 
     /// Modify configuration
-    virtual OptionBase& exclude(OptionBase* op) { _excluding.push_back(op); return *this; }
     virtual OptionBase& fillField(const std::string& field) { return *this; }
 
     /// Find hit.
-    virtual bool findHit2(const std::string& arg, ArgType argType);
     virtual bool findHit(char argShort);
     virtual bool findHit(const std::string& argLong);
-
-    /// Evaluate and validate. return how many arguments consumed.
-    virtual int evaluate2(int argc, char** argv, int argp) = 0;
 
     /// Print error message
     virtual void printError(std::ostream& os=std::cout)const {
         CommandLineElement::printError(os);
 
-        if(_endOfArgListBit)
-            os << "Must specify argument for " << _match << std::endl;
         if(_invalidArgBit)
             os << "Invalid argument for " << _match << ": " << _invalidArgInfo << std::endl;
         if(_activateErrorBit)
@@ -196,7 +179,7 @@ public:
         OptionBase(description, match, true, argName, [destination, this]()->bool{ *destination = _value; return true; }) {}
 
     /// Modifiers
-    virtual Option1& fillField(const std::string& field) { _field = field; return *this; }
+    virtual Option1& fillField(const std::string& field)override { _field = field; return *this; }
 
     /// Evaluate
     virtual bool evaluate()override {
@@ -213,27 +196,6 @@ public:
 
         return operator bool();
     }
-    /// Evaluate and activate
-    virtual int evaluate2(int argc, char** argv, int argp)override {
-        _evaluated = true;
-
-        if(argp + 1 >= argc) {
-            _endOfArgListBit = true;
-            return 0;
-        }
-
-        ++argp;
-        std::istringstream iss(argv[argp]);
-        iss >> _value;
-        if(iss.fail()) {
-            _invalidArgBit = true;
-            _invalidArgInfo = std::string(argv[argp]);
-        }
-
-        if(!_activate()) _activateErrorBit = true;
-
-        return 1;
-    }
 
 };
 
@@ -249,10 +211,6 @@ public:
     virtual bool evaluate()override {
         if(!_activate()) _activateErrorBit = true;
         return operator bool();
-    }
-    virtual int evaluate2(int argc, char** argv, int argp)override {
-        if(!_activate()) _activateErrorBit = true;
-        return 0;
     }
 };
 
@@ -274,7 +232,7 @@ public:
     virtual const char* getCommandName()const { return ""; }
 
     /// Modifier
-    virtual PosElement& require(bool required=true) { _required = required; return *this; }
+    virtual PosElement& require(bool required=true)override { _required = required; return *this; }
     virtual PosElement& fillField(const std::string& field) { return *this; }
 
     /// Main parsing function.
@@ -314,7 +272,7 @@ public:
     }
 
     /// Modifier
-    virtual PosArg& fillField(const std::string& field) { _field = field; return *this; }
+    virtual PosArg& fillField(const std::string& field)override { _field = field; return *this; }
 
     /// Dummy parsing. This should never be called.
     virtual int parse(int argc, char** argv, int argp=0)override { return -1; }
@@ -385,7 +343,6 @@ public:
 
     /// Main parsing function
     virtual int parse(int argc, char** argv, int argp = 0)override;
-    int parse2(int argc, char** argv, int argp=0);
 
     /// Evaluate
     virtual bool evaluate()override {
