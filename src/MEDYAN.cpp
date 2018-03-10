@@ -67,17 +67,15 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "common.h"
 
-#include "Controller.h"
-#include "SubSystem.h"
 #include "analysis/io/read_snapshot.h"
-#include "core/command_line_opt.h"
-#include "core/log.h"
+#include "Controller.h"
+#include "core/command_line.h"
 #include "core/globals.h"
+#include "Structure/SubSystem.h"
 
 using namespace medyan;
 
 int main(int argc, char **argv) {
-    using namespace commandline;
 
     cout << endl;
     cout << "*********************** MEDYAN ************************" << endl;
@@ -92,51 +90,19 @@ int main(int argc, char **argv) {
     SubSystem* s = nullptr;
     Controller c(s);
 
-    // Parse command line arguments
-    bool runAnalyze = false;
-    bool runHelp = false;
-
-    Option1<std::string> inputFile {"System input file name", "-s", "system-input", &Global::global().systemInputFileName};
-    Option1<std::string> inputDir {"Input directory", "-i", "input-directory", &Global::global().inputDirectory};
-    Option1<std::string> outputDir {"Output directory", "-o", "output-directory", &Global::global().outputDirectory};
-    inputFile.require();
-    inputDir.require();
-    outputDir.require();
-    Option1<std::string> logFile {"Name of log file", "-l,--log", "log-file", &Global::global().logFileName};
-    Command cmdAnalyze {"Run analysis instead of simulation", "analyze", nullptr, [&runAnalyze](){runAnalyze = true; return true;}};
-    PosHolder holderRun({&inputFile, &inputDir, &outputDir, &logFile}, {&cmdAnalyze}); holderRun.require();
-
-    Option0 opHelp{ "Print help message", "-h,--help", &runHelp }; opHelp.require();
-    PosHolder holderHelp({&opHelp}, {}); holderHelp.require();
-
-    PosMutuallyExclusive meMain({ &holderRun, &holderHelp }); meMain.require();
-    Command cmdMain {"", "MEDYAN", &meMain, []{return true;}}; cmdMain.setMain();
-
-    // Main parsing
-    if(!commandLineParse(argc, argv, cmdMain)) {
-        cmdMain.printUsage();
-        exit(EXIT_FAILURE);
-    }
-    if(runHelp) {
-        cmdMain.printUsage();
-        exit(EXIT_SUCCESS);
-    }
-
-    Global::global().mode = runAnalyze? 1: 0;
-
-    // Initialize logger
-    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::global().outputDirectory + "/" + Global::global().logFileName);
+    // Parse command line and do necessary initialzations
+    commandline::initializeFromCommandLine(argc, argv);
 
     // Start program    
     switch(Global::global().mode) {
-    case 0:
+    case GlobalVar::RunMode::Simulation:
         //initialize and run system
         c.initialize(Global::global().systemInputFileName,
                      Global::global().inputDirectory,
                      Global::global().outputDirectory);
         c.run();
         break;
-    case 1:
+    case GlobalVar::RunMode::Analysis:
         {
             string inputFilePath = Global::global().inputDirectory + "/snapshot.traj";
             string outputFilePath = Global::global().outputDirectory + "/snapshot.pdb";

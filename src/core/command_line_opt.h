@@ -179,8 +179,6 @@ private:
 public:
     Option1(const std::string& description, const char* match, const std::string& argName, T* destination):
         OptionBase(description, match, true, argName, [destination, this]()->bool{ *destination = _value; return true; }) {}
-    Option1(const std::string& description, const char* match, const std::string& argName, const std::function<bool()>& activate):
-        OptionBase(description, match, true, argName, activate) {}
 
     /// Modifiers
     virtual Option1& fillField(const std::string& field)override { _field = field; return *this; }

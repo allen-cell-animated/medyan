@@ -5,13 +5,10 @@
 
 namespace medyan {
     struct GlobalVar {
-        /**
-         * The core mode at which the program runs
-         * 
-         * 0: Simulation
-         * 1: Analyzing
-         */
-        int mode;
+        enum class RunMode {
+            Simulation,
+            Analysis
+        } mode; ///< The core mode at which the program runs
 
         std::string systemInputFileName;
         std::string inputDirectory;
