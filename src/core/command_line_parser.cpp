@@ -76,7 +76,7 @@ int PosHolder::parse(int argc, char** argv, int argp) {
         case ArgType::Long:
             {
                 size_t eq = arg.find('=');
-                std::string flag(arg, 2, eq);
+                std::string flag(arg, 2, eq-2);
                 auto it = std::find_if(op.begin(), op.end(),
                     [&flag](OptionBase* ob) { return ob->findHit(flag); });
                 if(it == op.end()) { // Not found
