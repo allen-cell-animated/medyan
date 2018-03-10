@@ -6,6 +6,23 @@
 namespace medyan {
 namespace commandline {
 
+namespace {
+    void usagePairFormatter(const std::string& key, const std::string& description, std::ostream& os) {
+        static const size_t leftMargin = 2;
+        static const size_t maxKeySize = 13;
+        static const size_t midMargin = 1;
+
+        os << std::string(leftMargin, ' ');
+
+        size_t len = key.length();
+        os << key;
+        if(len > maxKeySize) os << '\n' << std::string(leftMargin + maxKeySize + midMargin, ' ');
+        else os << std::string(maxKeySize + midMargin - len, ' ');
+
+        os << description << std::endl;
+    }
+}
+
 void OptionBase::_preprocess() {
     std::string eachStr;
     std::istringstream iss{std::string(_match)};
@@ -27,31 +44,6 @@ void OptionBase::_preprocess() {
     if(!_activate) _inputFailBit = true;
 }
 
-bool OptionBase::findHit2(const std::string& arg, ArgType argType) {
-    switch(argType) {
-    case ArgType::Short:
-        if(_flagShort) {
-            size_t pos = arg.find(_flagShort);
-            if(pos != std::string::npos) {
-                if(_takesArg) {
-                    if(pos == arg.length() - 1) return true;
-                }
-                else return true;
-            }
-        }
-        break;
-    case ArgType::Long:
-        if(_flagLong == std::string(arg, 2)) return true;
-        break;
-    case ArgType::ArgOrCmd:
-        if(_flagCommand == arg) return true;
-        break;
-    default:
-        break;
-    }
-
-    return false;
-}
 bool OptionBase::findHit(char argShort)              { return _flagShort == argShort; }
 bool OptionBase::findHit(const std::string& argLong) { return _flagLong  == argLong;  }
 
@@ -266,56 +258,43 @@ int Command::parse(int argc, char** argv, int argp) {
     return argp;
 }
 
-void Command::printUsage(std::ostream& out)const {
-    out << "Usage: " << _name;
+void Command::printUsage(std::ostream& os)const {
+    os << "Usage: " << _name;
     for(auto& opPtr: _op) {
         bool required = opPtr->isRequired();
-        out << (required? " ": " [");
+        os << (required? " ": " [");
 
-        if(opPtr->getFlagLong().length()) out << "--" << opPtr->getFlagLong();
-        else if(opPtr->getFlagShort()) out << '-' << opPtr->getFlagShort();
+        if(opPtr->getFlagLong().length()) os << "--" << opPtr->getFlagLong();
+        else if(opPtr->getFlagShort()) os << '-' << opPtr->getFlagShort();
 
-        if (opPtr->takesArg()) out << '=' << opPtr->getArgName();
+        if (opPtr->takesArg()) os << ' ' << opPtr->getArgName();
 
-        out << (required? "": "]");
+        os << (required? "": "]");
     }
-    if(!_subcmd.empty()) {
-        //bool required = defaultOp && defaultOp->isRequired();
-        //if(!required) out << "[";
-        out << " command";
-        //if(!required) out << "]";
+    for(auto pe: _pos) {
+        bool required = pe->isRequired();
+        os << (required? " ": " [");
+        pe->printContent(os);
+        if(!required) os << "]";
     }
-    out << '\n' << std::endl;
+    os << '\n' << std::endl;
 
-    if(!_subcmd.empty()) {
-        out << "Commands:\n";
-        for(auto& cmdPtr: _subcmd) {
-            out << "  ";
-            if(std::strlen(cmdPtr->_name) > 13) {
-                out << cmdPtr->_name << '\n' << std::string(' ', 14);
-            } else {
-                std::string tmp = cmdPtr->_name;
-                tmp.resize(16, ' ');
-                out << tmp;
-            }
-            out << cmdPtr->getDescription() << '\n';
+    std::vector<PosElement*> commands;
+    std::copy_if(_pos.begin(), _pos.end(), std::back_inserter(commands),
+        [](PosElement* pe) { return pe->isCommand(); });
+    if(!commands.empty()) {
+        os << "Commands:\n";
+        for(PosElement* pe: commands) {
+            usagePairFormatter(std::string(static_cast<Command*>(pe)->_name), pe->getDescription(), os);
         }
-        out << std::endl;
+        os << std::endl;
     }
     if(!_op.empty()) {
-        out << "Options:\n";
+        os << "Options:\n";
         for(auto& opPtr: _op) {
-            out << "  ";
-            if(std::strlen(opPtr->getMatch()) > 13) {
-                out << opPtr->getMatch() << '\n' << std::string(' ', 14);
-            } else {
-                std::string tmp {opPtr->getMatch()};
-                tmp.resize(16, ' ');
-                out << tmp;
-            }
-            out << opPtr->getDescription() << '\n';
+            usagePairFormatter(std::string(opPtr->getMatch()), opPtr->getDescription(), os);
         }
-        out << std::endl;
+        os << std::endl;
     }
 }
 

@@ -223,7 +223,7 @@ protected:
 
     PosElement(const std::string& description, bool isCommand, bool isArgument):
         CommandLineElement(description), _command(isCommand), _argument(isArgument) {}
-    
+
 public:
 
     /// Getters
@@ -238,6 +238,10 @@ public:
     /// Main parsing function.
     /// Returns the index just after the last argument it is using, or -1 if anything is wrong.
     virtual int parse(int argc, char** argv, int argp=0) = 0;
+
+    /// Helper function for printUsage
+    virtual void printContent(std::ostream& os=std::cout) = 0;
+    
 };
 
 // Note that although argument taken by options are also positional, they are
@@ -293,6 +297,11 @@ public:
         return operator bool();
     }
 
+    /// Helper function for printUsage
+    virtual void printContent(std::ostream& os=std::cout)override {
+        os << _argName;
+    }
+
     /// Print error
     virtual void printError(std::ostream& os=std::cout)override {
         PosElement::printError();
@@ -306,7 +315,6 @@ class Command: public PosElement {
 private:
     std::vector<PosElement*> _pos;
     std::vector<OptionBase*> _op;
-    std::vector<Command*> _subcmd;
     std::function<bool()> _activate; ///< Activate callback
 
     /// Name for the subcommand
@@ -373,8 +381,14 @@ public:
         return operator bool();
     }
 
-    /// Print message
-    void printUsage(std::ostream& out = std::cout)const;
+    /// Helper function for printUsage
+    virtual void printContent(std::ostream& os=std::cout)override {
+        os << _name;
+    }
+    /// Print help message
+    void printUsage(std::ostream& os=std::cout)const;
+
+    /// Print errors
     virtual void printError(std::ostream& os = std::cout)const override {
         PosElement::printError(os);
 
