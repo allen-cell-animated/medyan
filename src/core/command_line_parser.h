@@ -364,6 +364,7 @@ private:
 
     bool _activateErrorBit = false; // Activate error
     bool _subFailBit = false; // Children command/option fail
+    std::vector<std::string> _subFailInfo;
 
     /// States
     bool _evaluated = false;
@@ -395,6 +396,9 @@ public:
             if(pe->isRequired() || pe->isOffered())
                 if(!pe->evaluate()) {
                     _subFailBit = true;
+                    std::ostringstream oss;
+                    pe->printError(oss);
+                    _subFailInfo.emplace_back(oss.str());
                     return false;
                 }
         }
@@ -402,6 +406,9 @@ public:
             if(ob->isRequired() || ob->isOffered())
                 if(!ob->evaluate()) {
                     _subFailBit = true;
+                    std::ostringstream oss;
+                    pe->printError(oss);
+                    _subFailInfo.emplace_back(oss.str());
                     return false;
                 }
         }
@@ -414,14 +421,28 @@ public:
     virtual void printError(std::ostream& os = std::cout)const override {
         PosElement::printError(os);
 
-        if (_parseErrorBit) {
-            for (auto& opPtr : _op) opPtr->printError(os);
-        }
-        if (_logicErrorBit)
-            for (auto& content : _logicErrorInfo) os << content << std::endl;
-        // _subFailBit do nothing. because the information should be printed by children.
+        if(_parseErrorBit)
+            for(auto& opPtr : _op) opPtr->printError(os);
+        if(_logicErrorBit)
+            for(auto& info : _logicErrorInfo) os << info << std::endl;
+        if(_subFailBit)
+            for(auto& info: _subFailInfo) os << info << std::endl;
     }
 };
+
+
+/// Main parsing function
+inline bool commandLineParse(int argc, char** argv, Command& cmd) {
+    if(!cmd.parse(argc, argv)) {
+        cmd.printError();
+        return false;
+    }
+    if(!cmd.evaluate()) {
+        cmd.printError();
+        return false;
+    }
+    return true;
+}
 
 
 } // namespace commandline
