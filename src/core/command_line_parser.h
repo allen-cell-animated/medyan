@@ -218,15 +218,19 @@ public:
 
 /// Base of positional element
 class PosElement: public CommandLineElement {
+public:
+    enum class PosType {
+        Command, Arg, Holder, MutuallyExclusive
+    };
+
 protected:
-    const bool _command; ///< Whether this is a command
-    const bool _argument; ///< Whether this is an argument
+    const PosType _posType; ///< The element type
 
     /// Fail bits
     bool _parseErrorBit = false; ///< Syntax error in parsing. Should abort parsing when this is set to true.
 
-    PosElement(const std::string& description, bool isCommand, bool isArgument):
-        CommandLineElement(description), _command(isCommand), _argument(isArgument) {}
+    PosElement(const std::string& description, PosType posType):
+        CommandLineElement(description), _posType(posType) {}
 
 public:
 
@@ -237,8 +241,11 @@ public:
     }
 
     /// Getters
-    bool isCommand()const { return _command; }
-    bool isArgument()const { return _argument; }
+    bool isCommand()const { return _posType == PosType::Command; }
+    bool isArgument()const { return _posType == PosType::Arg; }
+    bool isHolder()const { return _posType == PosType::Holder; }
+    bool isMutuallyExclusive()const { return _posType == PosType::MutuallyExclusive; }
+
     virtual const char* getCommandName()const { return ""; }
 
     /// Modifier
@@ -304,7 +311,7 @@ class PosArg: public PosElement {
 
 public:
     PosArg(const std::string& description, const std::string& argName, T* destination):
-        PosElement(description, false, true), _argName(argName),
+        PosElement(description, PosType::Arg), _argName(argName),
         _activate([destination, this]()->bool{ *destination = _value; return true; }) {}
 
     /// Check state
@@ -380,7 +387,7 @@ public:
 
     /// Constructor
     PosHolder(const std::vector<OptionBase*>& op, const std::vector<PosElement*>& pos) :
-        PosElement("", false, false), _op(op), _pos(pos) {}
+        PosElement("", PosType::Holder), _op(op), _pos(pos) {}
 
     /// Check state
     virtual operator bool()const override {
@@ -441,7 +448,7 @@ class PosMutuallyExclusive: public PosElement {
 
 public:
     PosMutuallyExclusive(const std::vector<PosElement*>& pos):
-        PosElement("", false, false), _pos(pos) {}
+        PosElement("", PosType::MutuallyExclusive), _pos(pos) {}
 
     /// Main parsing function
     virtual int parse(int argc, char** argv, int argp=0)override;
@@ -460,7 +467,6 @@ public:
 class Command: public PosElement {
 private:
     PosElement* _content;
-    bool _isHolder;
     std::function<bool()> _activate; ///< Activate callback
 
     /// Name for the subcommand
@@ -480,8 +486,8 @@ private:
 public:
 
     /// Constructor
-    Command(const std::string& description, const char* name, PosElement* content, bool isHolder, const std::function<bool()>& activate) :
-        PosElement(description, true, false), _name(name), _content(content), _isHolder(isHolder), _activate(activate) {}
+    Command(const std::string& description, const char* name, PosElement* content, const std::function<bool()>& activate) :
+        PosElement(description, PosType::Command), _name(name), _content(content), _activate(activate) {}
 
     /// Check state
     virtual operator bool()const override {

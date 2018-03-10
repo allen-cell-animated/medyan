@@ -254,7 +254,7 @@ void Command::_preprocess() {
 int Command::parse(int argc, char** argv, int argp) {
     if(argp >= argc || std::strcmp(argv[argp], _name) != 0) {
         _parseErrorBit = true;
-        return false;
+        return -1;
     }
 
     // Uncheck error bit
@@ -282,7 +282,7 @@ void Command::printUsage(std::ostream& os)const {
     _content->printContent(os);
     os << '\n' << std::endl;
 
-    if(_isHolder) static_cast<PosHolder*>(_content)->printCmdOp(os);
+    if(isHolder()) static_cast<PosHolder*>(_content)->printCmdOp(os);
     // TODO: else
 
 }
