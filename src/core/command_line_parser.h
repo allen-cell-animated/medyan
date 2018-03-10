@@ -404,7 +404,7 @@ public:
 
 /// Main parsing function
 inline bool commandLineParse(int argc, char** argv, Command& cmd) {
-    if(!cmd.parse(argc, argv)) {
+    if(cmd.parse(argc, argv) < 0) {
         cmd.printError();
         return false;
     }

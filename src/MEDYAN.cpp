@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
     bool runAnalyze = false;
     bool runHelp = false;
     
-    Option1<std::string> inputFile {"Input file name", "-s", "system-input", &Global::global().systemInputFileName};
+    Option1<std::string> inputFile {"System input file name", "-s", "system-input", &Global::global().systemInputFileName};
     Option1<std::string> inputDir {"Input directory", "-i", "input-directory", &Global::global().inputDirectory};
     Option1<std::string> outputDir {"Output directory", "-o", "output-directory", &Global::global().outputDirectory};
     Option0 opHelp {"Print help message", "-h,--help", &runHelp};
