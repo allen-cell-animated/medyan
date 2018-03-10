@@ -7,9 +7,6 @@ namespace medyan {
 namespace commandline {
 
 int Command::parse2(int argc, char** argv, int argp) {
-    _unusedArgs.clear();
-    _unusedArgBit = false;
-
     // Evaluate itself first
     if(!_evaluated) {
         evaluate();
@@ -54,8 +51,6 @@ int Command::parse2(int argc, char** argv, int argp) {
 
             }
 
-            if(!arg.empty()) _unusedArgs.push_back(arg);
-
             // Increase idx by required
             idx += maxMove;
 
@@ -66,7 +61,6 @@ int Command::parse2(int argc, char** argv, int argp) {
             for(auto& cmdPtr: _subcmd) {
                 if(cmdPtr->_name == arg) {
                     if(cmdPtr->parse(argc, argv, idx) == -1) {
-                        _subcmdErrorBit = true;
                         return -1;
                     }
                     break;
@@ -76,11 +70,6 @@ int Command::parse2(int argc, char** argv, int argp) {
         }
     }
 
-    if(_unusedArgs.size()) {
-        _unusedArgBit = true;
-        return -1;
-    }
-
     // Check for option logic
     for(auto& opPtr: _op) {
         // Required option
@@ -88,7 +77,7 @@ int Command::parse2(int argc, char** argv, int argp) {
             _logicErrorBit = true;
             std::ostringstream oss;
             oss << opPtr->getMatch() << " (" << opPtr->getDescription() << ") is required.";
-            _logicErrorContent.emplace_back(oss.str());
+            _logicErrorInfo.emplace_back(oss.str());
             return -1;
         }
         // Excluding
@@ -98,7 +87,7 @@ int Command::parse2(int argc, char** argv, int argp) {
                     _logicErrorBit = true;
                     std::ostringstream oss;
                     oss << ex->getMatch() << " cannot be specified when " << opPtr->getMatch() << " is present.";
-                    _logicErrorContent.emplace_back(oss.str());
+                    _logicErrorInfo.emplace_back(oss.str());
                 }
             }
     }
@@ -254,7 +243,7 @@ int Command::parse(int argc, char** argv, int argp) {
                 if(it == op.end()) { // Not found
                     shouldEnd = true;
                 } else { // Found
-                    if(it->takesArg()) {
+                    if((*it)->takesArg()) {
                         if(eq == std::string::npos) { // no equal sign
                             ++argp;
                             if(argp >= argc) {
@@ -262,14 +251,14 @@ int Command::parse(int argc, char** argv, int argp) {
                                 return -1;
                             } else {
                                 // take the whole argument as a parameter
-                                it->fillField(std::string(argv[argp]));
+                                (*it)->fillField(std::string(argv[argp]));
                             }
                         } else { // with equal sign
-                            it->fillField(std::string(arg, eq+1));
+                            (*it)->fillField(std::string(arg, eq+1));
                         }
                     } // else good. Not taking arguments
                     // Offer it and remove from list
-                    it->offer();
+                    (*it)->offer();
                     op.erase(it);
                 }
                 ++argp;
@@ -286,7 +275,7 @@ int Command::parse(int argc, char** argv, int argp) {
                     if(it == op.end()) { // Not found
                         shouldEnd = true;
                     } else { // Found
-                        if(it->takesArg()) {
+                        if((*it)->takesArg()) {
                             if(arg.length() == 2) { // Single short option
                                 ++argp;
                                 if(argp >= argc) {
@@ -294,11 +283,11 @@ int Command::parse(int argc, char** argv, int argp) {
                                     return -1;
                                 } else {
                                     // take the whole argument as a parameter
-                                    it->fillField(std::string(argv[argp]));
+                                    (*it)->fillField(std::string(argv[argp]));
                                 }
                             } else {
                                 // Use the rest as parameter
-                                it->fillField(std::string(arg, 2));
+                                (*it)->fillField(std::string(arg, 2));
                             }
                         } else { // Not taking arguments
                             arg.erase(1); // Remove short option
@@ -316,13 +305,13 @@ int Command::parse(int argc, char** argv, int argp) {
                 }
 
                 // Un-offering current argument
-                itPos->offer(false);
+                (*itPos)->offer(false);
 
-                if(itPos->isRequired()) {
+                if((*itPos)->isRequired()) {
                     // We don't care about the offer for required positional elements.
-                    if(itPos->isCommand()) {
-                        if(arg == itPos->getCommandName()) { // Name matches
-                            int newArgp = itPos->parse(argc, argv, argp);
+                    if((*itPos)->isCommand()) {
+                        if(arg == (*itPos)->getCommandName()) { // Name matches
+                            int newArgp = (*itPos)->parse(argc, argv, argp);
                             if(newArgp < 0) {
                                 _parseErrorBit = true;
                                 return -1;
@@ -333,11 +322,11 @@ int Command::parse(int argc, char** argv, int argp) {
                             _parseErrorBit = true;
                             return -1;
                         }
-                    } else if(itPos->isArgument()) {
-                        it->fillField(arg);
+                    } else if((*itPos)->isArgument()) {
+                        (*itPos)->fillField(arg);
                         ++argp;
                     } else { // Other cases, directly parse them.
-                        int newArgp = itPos->parse(argc, argv, argp);
+                        int newArgp = (*itPos)->parse(argc, argv, argp);
                         if(newArgp < 0) {
                             _parseErrorBit = true;
                             return -1;
@@ -349,10 +338,10 @@ int Command::parse(int argc, char** argv, int argp) {
                     bool offerThisTime = true;
                     int newArgp = -1;
                     do {
-                        itPos->offer(offerThisTime);
-                        if(itPos->isCommand()) {
-                            if(arg == itPos->getCommandName()) { // Name matches
-                                newArgp = itPos->parse(argc, argv, argp);
+                        (*itPos)->offer(offerThisTime);
+                        if((*itPos)->isCommand()) {
+                            if(arg == (*itPos)->getCommandName()) { // Name matches
+                                newArgp = (*itPos)->parse(argc, argv, argp);
                                 if(newArgp < 0) {
                                     // Things aren't correct, but we'll wait
                                 } else {
@@ -362,13 +351,13 @@ int Command::parse(int argc, char** argv, int argp) {
                             } else { // Name does not match
                                 // Things aren't correct, but we'll wait
                             }
-                        } else if(itPos->isArgument()) {
-                            it->fillField(arg); // Fill it anyway
+                        } else if((*itPos)->isArgument()) {
+                            (*itPos)->fillField(arg); // Fill it anyway
                             ++argp;
                             newArgp = argp; // Set positive value, because we need to check it later
                             break;
                         } else { //  Other cases
-                            newArgp = itPos->parse(argc, argv, argp);
+                            newArgp = (*itPos)->parse(argc, argv, argp);
                             if(newArgp < 0) {
                                 // Things aren't correct, but we'll wait
                             } else {
@@ -396,7 +385,7 @@ int Command::parse(int argc, char** argv, int argp) {
         if(ob->isRequired()) {
             _logicErrorBit = true;
             std::ostringstream oss;
-            oss << opPtr->getMatch() << " (" << opPtr->getDescription() << ") is required.";
+            oss << ob->getMatch() << " (" << ob->getDescription() << ") is required.";
             _logicErrorInfo.emplace_back(oss.str());
             return -1;
         }
@@ -404,7 +393,7 @@ int Command::parse(int argc, char** argv, int argp) {
 
     // Check required pos eles
     for(; itPos != _pos.end(); ++itPos) {
-        if(itPos->isRequired()) {
+        if((*itPos)->isRequired()) {
             _logicErrorBit = true;
             std::ostringstream oss;
             oss << "Insufficient arguments for " << _name;
