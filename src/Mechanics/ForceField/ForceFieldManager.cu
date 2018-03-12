@@ -56,7 +56,7 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 //    std::cout<<"-------"<<endl;
     for(auto &ff : _forceFields) {
 //        std::cout<<ff->getName()<<endl;
-        std::cout<<"ForceField "<<ff->getName()<<endl;
+//        std::cout<<"ForceField "<<ff->getName()<<endl;
         auto tempEnergy = ff->computeEnergy(coord, f, d);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 

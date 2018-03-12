@@ -31,8 +31,6 @@ using namespace mathfunc;
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
-
-
     //count interactions
     nint = 0;
     for (auto be: BoundaryElement::getBoundaryElements())
@@ -120,8 +118,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 //    }
 #ifdef CUDAACCL
     CUDAcommon::handleerror(cudaStreamCreate(&stream));
-    F_i = new double[3 * Bead::getBeads().size()];
+//    F_i = new double[3 * Bead::getBeads().size()];
     nvtxRangePushA("CVFF");
+
     _FFType.optimalblocksnthreads(nint);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, n * nint * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * nint * sizeof(int), cudaMemcpyHostToDevice));
@@ -165,16 +164,17 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 
 #ifdef CUDAACCL
     _FFType.deallocate();
-    if(nint>0) {
+//    if(nint>0) {
         CUDAcommon::handleerror(cudaStreamDestroy(stream));
         CUDAcommon::handleerror(cudaFree(gpu_beadSet));
         CUDAcommon::handleerror(cudaFree(gpu_krep));
         CUDAcommon::handleerror(cudaFree(gpu_slen));
         CUDAcommon::handleerror(cudaFree(gpu_beListplane));
         CUDAcommon::handleerror(cudaFree(gpu_nintperbe));
+        CUDAcommon::handleerror(cudaFree(gpu_params));
 //        CUDAcommon::handleerror(cudaFreeHost(U_i));
 //        CUDAcommon::handleerror(cudaFree(gU));
-    }
+//    }
 #endif
 }
 

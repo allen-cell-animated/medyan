@@ -52,6 +52,9 @@ public:
     ///Constructor
     CylinderExclVolume() {
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
+#ifdef CUDAACCL
+        _neighborList->cudacpyforces = true;
+#endif
     }
     
     virtual void vectorize();

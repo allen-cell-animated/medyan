@@ -29,7 +29,12 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
                         SysParams::Chemistry().motorBoundIndex[_filamentType]);
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().motorBoundIndex[_filamentType]);
-        
+//        std::cout<<cc1->getCylinder()->getID()<<" "<<cc2->getCylinder()->getID()<<" "<<_position1<<" "<<_position2<<" "
+//                ""<<sm1->getN()<<" "
+//                ""<<sm2->getN()<<" "
+//                ""<<se1->getN()<<" "
+//                ""<<se2->getN
+//                ()<<endl;
     //mark species
     assert(areEqual(sm1->getN(), 0.0) && areEqual(sm2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&

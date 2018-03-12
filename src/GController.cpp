@@ -23,6 +23,49 @@
 #include "Rand.h"
 
 using namespace mathfunc;
+unsigned int GController::getCompartmentID(const vector<double> &coords)
+{
+    //Check if out of bounds
+    unsigned int index = 0;
+    unsigned int i = 0;
+    for(auto x: coords)
+    {
+        //Flatten the coordinates to 1D, get integer index
+        if(i == 0) {
+            if(x < 0 || x >= (_compartmentSize[0] * _grid[0]))
+                throw OutOfBoundsException();
+
+            index += int(x / _compartmentSize[0]);
+        }
+        else if(i == 1) {
+            if(x < 0 || x >= (_compartmentSize[1] * _grid[1]))
+                throw OutOfBoundsException();
+
+            index += int(x / _compartmentSize[1]) * _grid[0];
+        }
+        else {
+            if(x < 0 || x >= (_compartmentSize[2] * _grid[2]))
+                throw OutOfBoundsException();
+
+            index += int(x / _compartmentSize[2]) * _grid[0] * _grid[1];
+        }
+        i++;
+    }
+
+    return index;
+}
+
+Compartment* GController::getCompartment(const int index){
+    try {
+        return _compartmentGrid->getCompartment(index);
+    }
+    catch (exception& e){
+        cout << "Bad compartment access at..." << endl;
+        cout << "Compartment index = " << index << endl;
+//        cout << "Coords = " << coords[0] << " " << coords[1] << " " << coords[2] << endl;
+        throw NaNCoordinateException();
+    }
+}
 
 Compartment* GController::getCompartment(const vector<size_t> &indices)
 {

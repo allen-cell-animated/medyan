@@ -70,6 +70,7 @@ private:
     int _ID; ///< Unique ID of cylinder, managed by Database
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
+
     
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
     
@@ -87,7 +88,8 @@ private:
 public:
     vector<double> coordinate;
     ///< Coordinates of midpoint, updated with updatePosition()
-                                       
+    int _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector. Continuous ID assigned for
+///< CUDANL calculation
     /// Constructor, initializes a cylinder
     Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
              bool extensionFront = false,

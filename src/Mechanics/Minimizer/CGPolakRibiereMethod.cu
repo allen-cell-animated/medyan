@@ -201,6 +201,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         Msg_s2 = Msg_ss;
 #else
         double beta, newGrad, prevGrad;
+        std::cout<<"maxF "<<maxF()<<endl;
 #endif
 //PING ENDS
         numIter++;
@@ -395,6 +396,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::handleerror(cudaFree(Mmg_stop2));
     CUDAcommon::handleerror(cudaFree(Msg_stop1));
     CUDAcommon::handleerror(cudaFree(Msg_stop2));
+    CUDAcommon::handleerror(cudaFree(gpu_GRADTOL));
     CUDAcommon::handleerror(cudaFreeHost(Msh_stop));
     CUDAcommon::handleerror(cudaStreamSynchronize(Ms1));
     CUDAcommon::handleerror(cudaStreamSynchronize(Ms2));
@@ -406,6 +408,10 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::handleerror(cudaStreamDestroy(Ms4));
     CUDAcommon::handleerror(cudaEventDestroy(Me1));
     CUDAcommon::handleerror(cudaEventDestroy(Me2));
+    CUDAcommon::handleerror(cudaEventDestroy(event_safe));
+    CUDAcommon::handleerror(cudaEventDestroy(event_dot));
+    CUDAcommon::handleerror(cudaStreamDestroy(stream_dotcopy));
+    CUDAcommon::handleerror(cudaStreamDestroy(stream_shiftsafe));
 #else
     delete Mc_isminimizationstate;
     delete Mc_issafestate;
@@ -415,8 +421,4 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     std::cout<<"End minimization-----------------"<<endl;
 
     FFM.cleanupAllForceFields();
-    CUDAcommon::handleerror(cudaEventDestroy(event_safe));
-    CUDAcommon::handleerror(cudaEventDestroy(event_dot));
-    CUDAcommon::handleerror(cudaStreamDestroy(stream_dotcopy));
-    CUDAcommon::handleerror(cudaStreamDestroy(stream_shiftsafe));
 }

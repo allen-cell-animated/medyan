@@ -29,6 +29,16 @@
 
 #include "SysParams.h"
 
+#include "CUDAcommon.h"
+#include "CGMethod.h"
+#include "Filament.h"
+#include "Cylinder.h"
+#include "CompartmentGrid.h"
+#include "Bead.h"
+#include "GController.h"
+#include "nvToolsExt.h"
+//#include "NeighborListImplCUDA.h"
+
 //FORWARD DECLARATIONS
 class Boundary;
 class Filament;
@@ -144,11 +154,221 @@ public:
   
     /// Reset all neighbor lists in subsystem
     void resetNeighborLists() {
-        
+#ifdef CUDAACCL
+        nvtxRangePushA("NL_Prep_SubSystem");
+        coord = new double[CGMethod::N];
+        coord_com = new double[3 * Cylinder::getCylinders().size()];
+        beadSet = new int[2 * Cylinder::getCylinders().size()];
+        cylID = new int[Cylinder::getCylinders().size()];
+        filID = new int[Cylinder::getCylinders().size()];
+        filType = new int[Cylinder::getCylinders().size()];
+        cmpID = new unsigned int[Cylinder::getCylinders().size()];
+        fvecpos = new int[Cylinder::getCylinders().size()];
+//        cylstate= new bool[Cylinder::getCylinders().size()];
+//        cylvecpospercmp = new int[2 * _compartmentGrid->getCompartments().size()];
+
+        if(SysParams::Chemistry().numFilaments > 1) {
+            cout << "CUDA NL cannot handle more than one type of filaments." << endl;
+            exit(EXIT_FAILURE);
+        }
+        int numBindingSites = SysParams::Chemistry().bindingSites[0].size();
+        if(SysParams::Chemistry().numBrancherSpecies[0] > 0)
+            cmon_state_brancher = new int[ numBindingSites * Cylinder::getCylinders().size()];
+        if(SysParams::Chemistry().numLinkerSpecies[0] > 0)
+            cmon_state_linker = new int[numBindingSites * Cylinder::getCylinders().size()];
+        if(SysParams::Chemistry().numMotorSpecies[0] > 0)
+            cmon_state_motor = new int[numBindingSites * Cylinder::getCylinders().size()];
+
+        int i = 0; //int cID = 0;
+        for(auto b: Bead::getBeads()) {
+            //flatten indices
+            int index = 3 * i;
+            coord[index] = b->coordinate[0];
+            coord[index + 1] = b->coordinate[1];
+            coord[index + 2] = b->coordinate[2];
+            i++;
+        }
+        i = 0; //int countcyl = 0;
+//        for(auto C : _compartmentGrid->getCompartments()) {
+//            int iter = 0;
+//            for(auto nC : C->getNeighbours()) {
+//                cmp_neighbors[nneighbors * cID + iter] = GController::getCompartmentID(nC->coordinates());
+//                        iter++;
+//            }
+//            for(auto k = iter; k < nneighbors; k++ )
+//                cmp_neighbors[nneighbors * cID + k] = -1;
+
+//            cylvecpospercmp[2 * cID] = countcyl;
+//            countcyl += C->getCylinders().size();
+//            cylvecpospercmp[2 * cID + 1] = countcyl;
+
+//            if(C->getCylinders().size()>maxnumCyl)
+//                maxnumCyl = C->getCylinders().size();
+//            cID++;
+//            for(auto c:C->getCylinders()){
+         for(auto c:Cylinder::getCylinders()){
+                    //flatten indices
+                    int index = 3 * i;
+                    coord_com[index] = c->coordinate[0];
+                    coord_com[index + 1] = c->coordinate[1];
+                    coord_com[index + 2] = c->coordinate[2];
+
+                beadSet[2 * i] = c->getFirstBead()->_dbIndex;
+                beadSet[2 * i + 1] = c->getSecondBead()->_dbIndex;
+                cylID[i] = c->getID();
+                c->_dcIndex = i;
+                fvecpos[i] = c->getPosition();
+                auto fil = dynamic_cast<Filament*>(c->getParent());
+                filID[i] =  fil->getID();
+                cmpID[i] = GController::getCompartmentID(c->getCompartment()->coordinates());
+                filType[i] = fil->getType();
+//                cylstate[i] = c->isFullLength();
+                int j = 0;
+                for(auto it2 = SysParams::Chemistry().bindingSites[fil->getType()].begin();
+                    it2 != SysParams::Chemistry().bindingSites[fil->getType()].end(); it2++) {
+                    if(SysParams::Chemistry().numBrancherSpecies[0] > 0)
+                        cmon_state_brancher[numBindingSites * i + j ] = c->getCCylinder()->getCMonomer(*it2)
+                                ->speciesBound(SysParams::Chemistry().brancherBoundIndex[fil->getType()])->getN();
+                    if(SysParams::Chemistry().numLinkerSpecies[0] > 0)
+                        cmon_state_linker[numBindingSites * i + j ] = c->getCCylinder()->getCMonomer(*it2)
+                                ->speciesBound(SysParams::Chemistry().linkerBoundIndex[fil->getType()])->getN();
+                    if(SysParams::Chemistry().numMotorSpecies[0] > 0)
+                        cmon_state_motor[numBindingSites * i + j ] = c->getCCylinder()->getCMonomer(*it2)
+                                ->speciesBound(SysParams::Chemistry().motorBoundIndex[fil->getType()])->getN();
+                    j++;
+//                    for(auto k = 0; k< SysParams::Chemistry().numBoundSpecies[0]; k ++) {
+//                        cmon_state[SysParams::Chemistry().bindingSites[fil->getType()].size() * SysParams::Chemistry
+//                                ().numBoundSpecies[0] * i + j] =
+//                                c->getCCylinder()->getCMonomer(*it2)->speciesBound(k)->getN();
+//                        j++;
+//                    }
+                }
+                i++;
+            }
+//        }//Compartment
+        //CUDAMALLOC
+        //@{
+        size_t free, total;
+        CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+        fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
+                free/1e6, total/1e6);
+
+        cudaFree(0);
+
+        CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+        fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
+                free/1e6, total/1e6);
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_coord, CGMethod::N * sizeof(double)),"cuda data "
+                                "transfer", " SubSystem.h");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_coord_com, 3 * Cylinder::getCylinders().size() * sizeof
+                                (double)),"cuda data transfer", " SubSystem.h");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, 2 * Cylinder::getCylinders().size() * sizeof
+                                (int)), "cuda data transfer", " SubSystem.h");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylID, Cylinder::getCylinders().size() * sizeof(int)),
+                                "cuda data transfer", " SubSystem.h");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_fvecpos, Cylinder::getCylinders().size() * sizeof(int)),
+                                "cuda data transfer", " SubSystem.h");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_filID, Cylinder::getCylinders().size() * sizeof(int)),
+                                "cuda data transfer", " SubSystem.h");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_filType, Cylinder::getCylinders().size() * sizeof(int)),
+                                "cuda data transfer", " SubSystem.h");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmpID, Cylinder::getCylinders().size() * sizeof(unsigned
+                                int)), "cuda data transfer", " SubSystem.h");
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylstate, Cylinder::getCylinders().size() * sizeof(int)),
+//                                "cuda data transfer", " SubSystem.h");
+
+        if(SysParams::Chemistry().numBrancherSpecies[0] > 0)
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmon_state_brancher, numBindingSites *
+                Cylinder::getCylinders().size() * sizeof(int)), "cuda data transfer", " SubSystem.h");
+        if(SysParams::Chemistry().numLinkerSpecies[0] > 0)
+            CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmon_state_linker, numBindingSites *
+                                    Cylinder::getCylinders().size() * sizeof(int)), "cuda data transfer", " SubSystem.h");
+        if(SysParams::Chemistry().numMotorSpecies[0] > 0)
+            CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmon_state_motor, numBindingSites *
+                                    Cylinder::getCylinders().size() * sizeof(int)), "cuda data transfer", " SubSystem.h");
+
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylvecpospercmp,
+//                                2 * _compartmentGrid->getCompartments().size()), "cuda data transfer", " SubSystem.h");
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmp_neighbors, nneighbors *
+//                                 _compartmentGrid->getCompartments().size() * sizeof(int)), "cuda data transfer",
+//                                " SubSystem.h");
+        //@}
+        //CUDAMEMCPY
+        //@{
+        CUDAcommon::handleerror(cudaMemcpy(gpu_coord, coord, CGMethod::N *sizeof(double), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_coord_com, coord_com, 3 * Cylinder::getCylinders().size() *sizeof
+                                           (double), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, 2 * Cylinder::getCylinders().size() *sizeof(int),
+                                           cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_cylID, cylID, Cylinder::getCylinders().size() *sizeof(int),
+                                           cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_fvecpos, fvecpos, Cylinder::getCylinders().size() *sizeof(int),
+                                           cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_filID, filID, Cylinder::getCylinders().size() *sizeof(int),
+                                           cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_filType, filType, Cylinder::getCylinders().size() *sizeof(int),
+                                           cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_cmpID, cmpID, Cylinder::getCylinders().size() *sizeof(unsigned int),
+                                           cudaMemcpyHostToDevice));
+//        CUDAcommon::handleerror(cudaMemcpy(gpu_cylstate, cylstate, Cylinder::getCylinders().size() *sizeof(int),
+//                                           cudaMemcpyHostToDevice));
+        if(SysParams::Chemistry().numBrancherSpecies[0] > 0)
+        CUDAcommon::handleerror(cudaMemcpy(gpu_cmon_state_brancher, cmon_state_brancher, numBindingSites *
+                                Cylinder::getCylinders().size() * sizeof(int), cudaMemcpyHostToDevice));
+        if(SysParams::Chemistry().numLinkerSpecies[0] > 0)
+            CUDAcommon::handleerror(cudaMemcpy(gpu_cmon_state_linker, cmon_state_linker, numBindingSites *
+                                Cylinder::getCylinders().size() *sizeof(int), cudaMemcpyHostToDevice));
+        if(SysParams::Chemistry().numMotorSpecies[0] > 0)
+            CUDAcommon::handleerror(cudaMemcpy(gpu_cmon_state_motor, cmon_state_motor, numBindingSites *
+                                Cylinder::getCylinders().size() *sizeof(int), cudaMemcpyHostToDevice));
+
+//        CUDAcommon::handleerror(cudaMemcpy(gpu_cylvecpospercmp, cylvecpospercmp,
+//                                           2 * _compartmentGrid->getCompartments().size(), cudaMemcpyHostToDevice));
+        CylCylNLvars cylcylnlvars;
+        cylcylnlvars.gpu_coord = gpu_coord;
+        cylcylnlvars.gpu_coord_com = gpu_coord_com;
+        cylcylnlvars.gpu_beadSet = gpu_beadSet;
+        cylcylnlvars.gpu_cylID = gpu_cylID;
+        cylcylnlvars.gpu_fvecpos = gpu_fvecpos;
+        cylcylnlvars.gpu_filID = gpu_filID;
+        cylcylnlvars.gpu_filType = gpu_filType;
+        cylcylnlvars.gpu_cmpID = gpu_cmpID;
+//        cylcylnlvars.gpu_cylstate = gpu_cylstate;
+        cylcylnlvars.gpu_cmon_state_brancher = gpu_cmon_state_brancher;
+        cylcylnlvars.gpu_cmon_state_linker = gpu_cmon_state_linker;
+        cylcylnlvars.gpu_cmon_state_motor = gpu_cmon_state_motor;
+//        cylcylnlvars.gpu_cylvecpospercmp = gpu_cylvecpospercmp;
+
+        CUDAcommon::cylcylnlvars = cylcylnlvars;
+//        CUDAcommon::handleerror(cudaMemcpy(gpu_cmp_neighbors, cmp_neighbors, nneighbors * _compartmentGrid
+//                                           ->getCompartments().size() *sizeof(int),
+//                                           cudaMemcpyHostToDevice));
+        //@}
+        nvtxRangePop();
+#endif
+//        std::cout<<_neighborLists.getElements().size()<<endl;
         for(auto nl: _neighborLists.getElements())
             nl->reset();
     }
-    
+
+#ifdef CUDAACCL
+    void endresetCUDA(){
+        auto cylcylnvars = CUDAcommon::getCylCylNLvars();
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_coord),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_coord_com),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_beadSet),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cylID),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_fvecpos),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_filID),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_filType),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cmpID),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cmon_state_linker),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cmon_state_brancher),"cudaFree","SubSystem.h");
+        CUDAcommon::handleerror(cudaFree(cylcylnvars.gpu_cmon_state_motor),"cudaFree","SubSystem.h");
+//        Compartment* C0 = _compartmentGrid->getCompartments()[0];
+
+    }
+#endif
     //@{
     ///Subsystem energy management
     double getSubSystemEnergy() {return _energy;}
@@ -165,7 +385,7 @@ public:
     void updateBindingManagers();
     
 private:
-    
+
     double _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
     
@@ -175,6 +395,44 @@ private:
     Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
         
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
+#ifdef CUDAACCL
+    double* gpu_coord;
+    double* gpu_coord_com;
+    int * gpu_beadSet;
+    int *gpu_cylID;
+    int *gpu_filID;
+    int *gpu_cmpID;
+//    int *gpu_cylstate;
+    int *gpu_cmon_state_brancher;
+    int *gpu_cmon_state_linker;
+    int *gpu_cmon_state_motor;
+//    int *gpu_cylvecpospercmp;
+    int *gpu_fvecpos;
+    int *gpu_filType;
+    double *coord;
+    double *coord_com;
+    int *beadSet;
+    int *cylID;
+    int *filID;
+    int *filType;
+    int *gpu_bindingSites;
+    unsigned int *cmpID;
+//    bool *cylstate;
+    int *cmon_state_brancher;
+    int *cmon_state_linker;
+    int *cmon_state_motor;
+//    int *cylvecpospercmp;//each compartment gets a start and end integer representing the position of first and last
+    // cylinder in cmpID;
+    int *fvecpos; //position of cylinder in filament vector.
+//    int maxnumCyl = 0;
+    int *gpu_params = NULL;//used for possiblebindings update
+    vector<cudaStream_t > strvec;
+    int numbindmgrs = 0;
+    vector<int*> numpairs_vec;
+    vector<int*> possibleBindings_vec;
+    vector<int*> gpu_possibleBindings_vec;
+
+#endif
 };
 
 #endif

@@ -160,6 +160,10 @@ struct ChemParams {
     double makeLinkersStaticTime = 0.0;
     
     //@}
+#ifdef CUDAACCL
+    string bindingmanagerlist = "";
+    vector<double> bmanagerdistances = {};
+#endif
 };
 
 /// Struct to hold geometry parameters for the system

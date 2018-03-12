@@ -185,6 +185,7 @@ private:
     ///possible bindings at current state
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _branchrestarttuple; //Used only during restart conditions.
+
 public:
     BranchingManager(ReactionBase* reaction,
                      Compartment* compartment,
@@ -246,6 +247,15 @@ public:
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
         return _branchrestarttuple;
     }
+#ifdef CUDAACCL
+    double *gpu_distance;
+    int *gpu_zone;
+    int *gpu_numpairs = NULL;
+    void assigncudavars();
+    double* getdistancesCUDA();
+    int* getzoneCUDA();
+    int* getnumpairsCUDA();
+#endif
 };
 
 /// Manager for Linker binding.
@@ -260,6 +270,8 @@ friend class ChemManager;
 private:
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
+
+
     
     //possible bindings at current state. updated according to neighbor list
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
@@ -336,6 +348,23 @@ public:
     }
     
     virtual bool isConsistent();
+
+#ifdef CUDAACCL
+    double *gpu_rminmax = NULL;
+    int *gpu_numpairs = NULL;
+    void assigncudavars();
+    double* getdistancesCUDA() { return gpu_rminmax;}
+    int* getpossiblebindingssizeCUDA(){ return gpu_numpairs;}
+    int getNLsize(){
+        return _neighborLists[_nlIndex]->getNLsize();
+    }
+    int* getNLCUDA(){
+        return _neighborLists[_nlIndex]->getNLCUDA();
+    }
+    int* getNLsizeCUDA(){
+        return  _neighborLists[_nlIndex]->getNLsizeCUDA();
+    }
+#endif
 };
 
 /// Manager for MotorGhost binding
@@ -432,8 +461,23 @@ public:
     }
     
     virtual bool isConsistent();
-    
-    
+
+#ifdef CUDAACCL
+    double *gpu_rminmax = NULL;
+    int *gpu_numpairs = NULL;
+    void assigncudavars();
+    double* getdistancesCUDA() { return gpu_rminmax;}
+    int* getpossiblebindingssizeCUDA(){ return gpu_numpairs;}
+    int getNLsize(){
+        return _neighborLists[_nlIndex]->getNLsize();
+    }
+    int* getNLCUDA(){
+        return _neighborLists[_nlIndex]->getNLCUDA();
+    }
+    int* getNLsizeCUDA(){
+        return  _neighborLists[_nlIndex]->getNLsizeCUDA();
+    }
+#endif
     //DEPRECATED AS OF 9/8/16
 //    /// Adds an unbound ID to the container
 //    void addUnboundID(int ID) {_unboundIDs.push_back(ID);}

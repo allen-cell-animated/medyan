@@ -36,13 +36,41 @@ private:
     ///< The neighbors list, as a hash map
     
     bool _full; ///<Specifying whether this is a full or half list
+
+#ifdef CUDAACCL
+    vector<int> blocksnthreads;
+    int nint;
+//    vector<int> pair_cIndex_cmp;
+    vector<int> pair_cIndex_cnIndex;
+    int *gpu_pair_cIndex_cnIndex;
+//    int *gpu_pair_cIndex_cmp;
+    double *gpu_params = NULL;
+    int *gpu_NL = NULL;
+    int *gpu_numpairs = NULL;
+    int *gpu_params2;
+    int numpairs[1];
+#endif
     
     ///Helper function to update neighbors
     ///@param runtime - specifying whether the cylinder is being
     ///created/destroyed at runtime vs at a full neighbor list update.
     void updateNeighbors(Cylinder* cylinder, bool runtime = false);
+
     
 public:
+#ifdef CUDAACCL
+    bool cudacpyforces = false;
+
+    int getNLsize() {
+        return numpairs[0];
+    }
+    int* getNLsizeCUDA(){
+        return gpu_numpairs;
+    }
+    int* getNLCUDA(){
+        return gpu_NL;
+    }
+#endif
     CylinderCylinderNL(float rMax, float rMin=0.0, bool full = false)
     
         : NeighborList(rMax, rMin), _full(full) {}

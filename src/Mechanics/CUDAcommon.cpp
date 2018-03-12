@@ -5,4 +5,5 @@
 #include "CUDAcommon.h"
 #ifdef CUDAACCL
 CUDAvars   CUDAcommon::cudavars;
+CylCylNLvars CUDAcommon::cylcylnlvars;
 #endif

@@ -116,7 +116,7 @@ namespace mathfunc {
             }
             else
                 atomicAdd(&U_tot[0], U_sum[0]);
-                printf("ADD2 %f %f \n", U_tot[0], U_sum[0]);
+//                printf("ADD2 %f %f \n", U_tot[0], U_sum[0]);
             }
         }
         else if(threadIdx.x == 0) {
@@ -133,8 +133,11 @@ namespace mathfunc {
             }
             U_sum[0] = sum;
             atomicAdd(&U_tot[0], sum);
-            printf("ADD3 %f %f \n", U_tot[0], U_sum[0]);
+//            printf("ADD3 %f %f \n", U_tot[0], U_sum[0]);
         }
+    }
+    __global__ void resetintvariableCUDA(int *variable){
+        variable[0] = 0;
     }
 
 

@@ -63,7 +63,6 @@ public:
 
     /// Clear the container
     virtual void clear() {_reactions.clear();}
-
     /// Add a unique reaction ptr to this container
     virtual ReactionBase* addReactionUnique (unique_ptr<ReactionBase> &&Reaction) {
         _reactions.push_back(move(Reaction));

@@ -166,7 +166,7 @@ __global__ void addvectorred(double *U, int *params, double *U_sum){
         for (auto i = 0; i < blockDim.x; i++) {
             U_sum[0] += c1[i];
         }
-        printf("add2 %f \n", U_sum[0]);
+//        printf("add2 %f \n", U_sum[0]);
     }
 }
 

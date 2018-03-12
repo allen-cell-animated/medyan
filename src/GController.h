@@ -96,6 +96,8 @@ public:
     /// Get a compartment based on coordinates or indices
     static Compartment* getCompartment(const vector<size_t> &indices);
     static Compartment* getCompartment(const vector<double> &coords);
+    static unsigned int getCompartmentID(const vector<double> &coords);
+    static Compartment* getCompartment(const int index);
     //@}
     
     /// Get the center of the grid space

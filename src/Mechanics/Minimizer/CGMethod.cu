@@ -156,7 +156,7 @@ void CGMethod::CUDAallFDotF(cudaStream_t stream){
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
 //    addvector<<<1,1,0,stream>>>(gpu_g, gpu_nint, gpu_FDotF);
 //    cudaStreamSynchronize(stream);
-    addvectorred<<<1,10,10 * sizeof(double),stream>>>(gpu_g, gpu_nint, gpu_FDotF);
+    addvectorred<<<1,200,200 * sizeof(double),stream>>>(gpu_g, gpu_nint, gpu_FDotF);
 //    cudaStreamSynchronize(stream);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
     nvtxRangePop();
@@ -168,7 +168,7 @@ void CGMethod::CUDAallFADotFA(cudaStream_t stream){
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
 //    addvector<<<1,1,0,stream>>>(gpu_g, gpu_nint, gpu_FADotFA);
 //    cudaStreamSynchronize(stream);
-    addvectorred<<<1,10,10 * sizeof(double),stream>>>(gpu_g, gpu_nint, gpu_FADotFA);
+    addvectorred<<<1,200,200* sizeof(double),stream>>>(gpu_g, gpu_nint, gpu_FADotFA);
 //    cudaStreamSynchronize(stream);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
     nvtxRangePop();
@@ -180,7 +180,7 @@ void CGMethod::CUDAallFADotFAP(cudaStream_t stream){
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
 //    addvector<<<1,1,0,stream>>>(gpu_g, gpu_nint, gpu_FADotFAP);
 //    cudaStreamSynchronize(stream);
-    addvectorred<<<1,10,10 * sizeof(double),stream>>>(gpu_g, gpu_nint, gpu_FADotFAP);
+    addvectorred<<<1,200,200 * sizeof(double),stream>>>(gpu_g, gpu_nint, gpu_FADotFAP);
 //    cudaStreamSynchronize(stream);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
     nvtxRangePop();
@@ -192,7 +192,7 @@ void CGMethod::CUDAallFDotFA(cudaStream_t stream){
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
 //    addvector<<<1,1,0,stream>>>(gpu_g, gpu_nint, gpu_FDotFA);
 //    cudaStreamSynchronize(stream);
-    addvectorred<<<1,10,10 * sizeof(double),stream>>>(gpu_g, gpu_nint, gpu_FDotFA);
+    addvectorred<<<1,200,200* sizeof(double),stream>>>(gpu_g, gpu_nint, gpu_FDotFA);
 //    cudaStreamSynchronize(stream);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
     nvtxRangePop();
@@ -240,7 +240,7 @@ void CGMethod::CUDAgetPolakvars(cudaStream_t streamcalc, double* gpu_GRADTOL, bo
 //        maxFCUDA << < 1, 1, 0, streamcalc >> > (CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint, gpu_fmax);
 //        maxFCUDAred<<<1,3, 3*sizeof(double), streamcalc>>>(CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint, gpu_fmax);
 //        cudaStreamSynchronize(streamcalc);
-        maxFCUDAredv2<<<1,10, 10*sizeof(double), streamcalc>>>(CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint,
+        maxFCUDAredv2<<<1,200,200*sizeof(double), streamcalc>>>(CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint,
                 gpu_fmax);
 //        cudaStreamSynchronize(streamcalc);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -288,7 +288,7 @@ double CGMethod::gpuFDotF(double *f1,double *f2){
     allFADotFCUDA<<<blocksnthreads[0], blocksnthreads[1]>>>(f1, f2 ,gpu_g, gpu_nint);
     CUDAcommon::handleerror(cudaGetLastError(),"allFADotFCUDA", "CGMethod.cu");
 //    addvector<<<1,1>>>(gpu_g, gpu_nint, gSum);
-    addvectorred<<<1,10,10 * sizeof(double)>>>(gpu_g, gpu_nint, gSum);
+    addvectorred<<<1,200,200* sizeof(double)>>>(gpu_g, gpu_nint, gSum);
     CUDAcommon::handleerror(cudaGetLastError(),"allFADotFCUDA", "CGMethod.cu");
 
 //    CUDAcommon::handleerror( cudaPeekAtLastError() );
@@ -464,8 +464,19 @@ void CGMethod::printForces()
 }
 
 void CGMethod::startMinimization() {
+#ifdef CUDAACCL
+    size_t free, total;
+    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+    fprintf(stdout,"\t### Before Min Available VRAM : %g Mo/ %g Mo(total)\n\n",
+            free/1e6, total/1e6);
 
+    cudaFree(0);
 
+    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+    fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
+            free/1e6, total/1e6);
+
+#endif
     //COPY BEAD DATA
     N = 3 * Bead::getBeads().size();
 //    std::cout<<3 * Bead::getBeads().size()<<endl;
@@ -546,9 +557,9 @@ void CGMethod::startMinimization() {
     CUDAcommon::handleerror(cudaHostGetDevicePointer(&gpu_convergencecheck, convergencecheck, 0));
 
     //PING PONG
-    cudaMalloc(&g_stop1, sizeof(bool));
-    cudaMalloc(&g_stop2, sizeof(bool));
-    cudaHostAlloc(&h_stop, sizeof(bool), cudaHostAllocDefault);
+    CUDAcommon::handleerror(cudaMalloc(&g_stop1, sizeof(bool)));
+    CUDAcommon::handleerror(cudaMalloc(&g_stop2, sizeof(bool)));
+    CUDAcommon::handleerror(cudaHostAlloc(&h_stop, sizeof(bool), cudaHostAllocDefault));
     //@
 
 //    CUDAcommon::handleerror(cudaHostAlloc((void**)&convergencecheck, 3 * sizeof(bool), cudaHostAllocDefault));
@@ -697,6 +708,16 @@ void CGMethod::endMinimization() {
 //    CUDAcommon::getCUDAvars().gpu_force = NULL;
 //    CUDAcommon::getCUDAvars().gpu_forceAux = NULL;
 //    CUDAcommon::getCUDAvars().gpu_lambda = NULL;
+    size_t free, total;
+    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+    fprintf(stdout,"\t### After Min Available VRAM : %g Mo/ %g Mo(total)\n\n",
+            free/1e6, total/1e6);
+
+    cudaFree(0);
+
+    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+    fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
+            free/1e6, total/1e6);
 #endif
 }
 

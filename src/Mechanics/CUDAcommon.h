@@ -51,10 +51,28 @@ struct CUDAvars {
 //    int * motorparams;
 };
 
+struct CylCylNLvars {
+    double* gpu_coord;
+    double* gpu_coord_com;
+    int * gpu_beadSet;
+    int *gpu_cylID;
+    int *gpu_filID;
+    int *gpu_filType;
+    int *gpu_cmpID;
+    int *gpu_fvecpos;
+//    int *gpu_cylstate;
+    int *gpu_cmon_state_brancher;
+    int *gpu_cmon_state_linker;
+    int *gpu_cmon_state_motor;
+//    int *gpu_cylvecpospercmp;
+};
+
 class CUDAcommon{
 public:
     static CUDAvars cudavars;
+    static CylCylNLvars cylcylnlvars;
     static const CUDAvars& getCUDAvars(){return cudavars;}
+    static const CylCylNLvars& getCylCylNLvars(){return cylcylnlvars;}
     static void handleerror(cudaError_t a){
         if(a !=cudaSuccess){
             cout<<cudaGetErrorString(a)<<endl;
