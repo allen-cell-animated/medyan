@@ -1,5 +1,5 @@
-#ifndef MEDYAN_CORE_COMMAND_LINE_OPT_H
-#define MEDYAN_CORE_COMMAND_LINE_OPT_H
+#ifndef MEDYAN_CORE_IO_COMMAND_LINE_OPT_H
+#define MEDYAN_CORE_IO_COMMAND_LINE_OPT_H
 
 #include <functional>
 #include <iostream>

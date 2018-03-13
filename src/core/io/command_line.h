@@ -1,5 +1,5 @@
-#ifndef MEDYAN_CORE_COMMAND_LINE_H
-#define MEDYAN_CORE_COMMAND_LINE_H
+#ifndef MEDYAN_CORE_IO_COMMAND_LINE_H
+#define MEDYAN_CORE_IO_COMMAND_LINE_H
 
 namespace medyan {
 namespace commandline {
