@@ -11,7 +11,7 @@
 #include "OutputStruct.h"
 
 #include "analysis/io/pdb.h"
-#include "core/log.h"
+#include "core/io/log.h"
 #include "Structure/Bead.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"

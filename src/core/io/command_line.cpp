@@ -1,8 +1,8 @@
-#include "core/command_line.h"
+#include "core/io/command_line.h"
 
-#include "core/command_line_opt.h"
 #include "core/globals.h"
-#include "core/log.h"
+#include "core/io/command_line_opt.h"
+#include "core/io/log.h"
 
 namespace medyan {
 namespace commandline {

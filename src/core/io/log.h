@@ -1,5 +1,5 @@
-#ifndef MEDYAN_CORE_LOG_H
-#define MEDYAN_CORE_LOG_H
+#ifndef MEDYAN_CORE_IO_LOG_H
+#define MEDYAN_CORE_IO_LOG_H
 
 #include <algorithm>
 #include <fstream>
