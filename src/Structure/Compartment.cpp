@@ -122,13 +122,13 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bo
 
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
 
-            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, volumeFrac);
+            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, false, volumeFrac);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
 
             if(!outwardOnly) {
                 // Generate inward diffusion reaction
-                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, actualDiffRate, C->getVolumeFrac());
+                ReactionBase* R = new DiffusionReaction({sp_neighbour, sp_this.get()}, actualDiffRate, false, C->getVolumeFrac());
                 C->addDiffusionReaction(R);
                 rxns.push_back(R);
             }
