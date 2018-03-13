@@ -61,13 +61,13 @@ protected:
     virtual void _preprocess() {};
 
     /// Fields set by Parsing
-    bool _offered; ///< Whether the element is offered in input, determined by Parsing
+    bool _offered = false; ///< Whether the element is offered in input, determined by Parsing
 
     /// Configuration
     bool _required = false;
 
     /// Fields set by Evaluating
-    bool _evaluated;
+    bool _evaluated = false;
 
 public:
     /// Check state
