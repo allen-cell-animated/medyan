@@ -64,7 +64,7 @@ protected:
     bool _offered; ///< Whether the element is offered in input, determined by Parsing
 
     /// Configuration
-    bool _required;
+    bool _required = false;
 
     /// Fields set by Evaluating
     bool _evaluated;
