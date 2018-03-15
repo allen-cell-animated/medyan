@@ -16,7 +16,7 @@
 #include "Output.h"
 
 #include "SubSystem.h"
-#include "CompartmentGrid.h"
+#include "OutputStruct.h"
 
 #include "Bead.h"
 #include "BranchingPoint.h"
@@ -41,84 +41,9 @@ void BasicSnapshot::print(int snapshot) {
     
     _outputFile.precision(10);
     
-    // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers, bubbles, membranes)
-    _outputFile << snapshot << " " << tau() << " " <<
-        Filament::numFilaments() << " " <<
-        Linker::numLinkers() << " " <<
-        MotorGhost::numMotorGhosts() << " " <<
-        BranchingPoint::numBranchingPoints() << " " <<
-        Bubble::numBubbles() << " " <<
-        Membrane::numMembranes() << endl;
-    
-    for(auto &filament : Filament::getFilaments()) {
-        
-        //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
-        filament->getType() << " " <<
-        filament->getCylinderVector().size() + 1 << " " <<
-        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+    OutputStructSnapshot snapshots(snapshot);
 
-        //print coordinates
-        for (auto cylinder : filament->getCylinderVector()){
-            
-            auto x = cylinder->getFirstBead()->coordinate;
-            _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
-            
-        }
-        //print last bead coord
-        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
-        
-        _outputFile << endl;
-        
-        //Reset deltas for this filament
-        filament->resetDeltaPlusEnd();
-        filament->resetDeltaMinusEnd();
-    }
-    
-    
-    for(auto &linker : Linker::getLinkers()) {
-        
-        //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
-                               linker->getType() << endl;
-        
-        //print coordinates
-        auto x =
-            midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->coordinate,
-                               linker->getFirstCylinder()->getSecondBead()->coordinate,
-                               linker->getFirstPosition());
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
-        
-        x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->coordinate,
-                               linker->getSecondCylinder()->getSecondBead()->coordinate,
-                               linker->getSecondPosition());
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
-        
-        _outputFile << endl;
-    }
-
-    for(auto &motor : MotorGhost::getMotorGhosts()) {
-        
-        //print first line
-        //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
-        
-        //print coordinates
-        auto x =
-            midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->coordinate,
-                               motor->getFirstCylinder()->getSecondBead()->coordinate,
-                               motor->getFirstPosition());
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
-        
-        x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->coordinate,
-                               motor->getSecondCylinder()->getSecondBead()->coordinate,
-                               motor->getSecondPosition());
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
-        
-        _outputFile << endl;
-    }
+    snapshots.outputFromSystem(_outputFile);
     
     //DEPRECATED AS OF 9/8/16
 //    //collect diffusing motors
@@ -138,60 +63,6 @@ void BasicSnapshot::print(int snapshot) {
 //        
 //        _outputFile << endl;
 //    }
-    
-    for(auto &branch : BranchingPoint::getBranchingPoints()) {
-        
-        //print first line
-        _outputFile << "BRANCHER " << branch->getID() << " " <<
-                                      branch->getType() << endl;
-        
-        //print coordinates
-        auto x = branch->coordinate;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
-    }
-    
-    for(auto &bubble : Bubble::getBubbles()) {
-        
-        //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
-                                    bubble->getType() << endl;
-        
-        //print coordinates
-        auto x = bubble->coordinate;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
-    }
-    
-    for(auto &membrane : Membrane::getMembranes()) {
-        
-        //print first line (Membrane ID, type)
-        _outputFile << "MEMBRANE " << membrane->getId() << " " <<
-            membrane->getType() << endl;
-
-        //print coordinates with neighbor indices
-        auto& vertices = membrane->getVertexVector();
-        size_t numVertices = vertices.size();
-        for(size_t idx = 0; idx < numVertices; ++idx) {
-            
-            auto& x = vertices[idx]->coordinate;
-            _outputFile << x[0] << " " << x[1] << " " << x[2] << " ";
-
-            for(auto nVtx: vertices[idx]->getNeighborVertices()) {
-                auto where = std::find(vertices.begin(), vertices.end(), nVtx);
-                if(where == vertices.end()) {
-                    throw std::runtime_error("Neighbor vertex not in membrane.");
-                } else {
-                    int nIdx = std::distance(vertices.begin(), where);
-                    _outputFile << nIdx << " ";
-                }
-            }
-
-            _outputFile << endl;
-            
-        }
-
-        _outputFile << endl;
-        
-    }
 
     _outputFile <<endl;
 }
