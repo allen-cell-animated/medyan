@@ -20,7 +20,7 @@ void initializeFromCommandLine(int argc, char** argv) {
     bool runHelp = false;
 
     // Normal run options
-    Option1<std::string> opInputFile {"System input file name", "-s", "SYS_INPUT", &Global::global().systemInputFileName};
+    Option1<std::string> opInputFile {"System input file", "-s", "SYS_INPUT", &Global::global().systemInputFile};
     Option1<std::string> opInputDir {"Input directory", "-i", "INPUT_DIR", &Global::global().inputDirectory};
     Option1<std::string> opOutputDir {"Output directory", "-o", "OUTPUT_DIR", &Global::global().outputDirectory};
     opInputFile.require();

@@ -10,7 +10,7 @@ namespace medyan {
             Analysis
         } mode; ///< The core mode at which the program runs
 
-        std::string systemInputFileName;
+        std::string systemInputFile; // Path + name
         std::string inputDirectory;
         std::string outputDirectory;
 

@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
     switch(Global::readGlobal().mode) {
     case GlobalVar::RunMode::Simulation:
         //initialize and run system
-        c.initialize(Global::readGlobal().systemInputFileName,
+        c.initialize(Global::readGlobal().systemInputFile,
                      Global::readGlobal().inputDirectory,
                      Global::readGlobal().outputDirectory);
         c.run();
