@@ -20,13 +20,13 @@ void initializeFromCommandLine(int argc, char** argv) {
     bool runHelp = false;
 
     // Normal run options
-    Option1<std::string> opInputFile {"System input file name", "-s", "system-input", &Global::global().systemInputFileName};
-    Option1<std::string> opInputDir {"Input directory", "-i", "input-directory", &Global::global().inputDirectory};
-    Option1<std::string> opOutputDir {"Output directory", "-o", "output-directory", &Global::global().outputDirectory};
+    Option1<std::string> opInputFile {"System input file name", "-s", "SYS_INPUT", &Global::global().systemInputFileName};
+    Option1<std::string> opInputDir {"Input directory", "-i", "INPUT_DIR", &Global::global().inputDirectory};
+    Option1<std::string> opOutputDir {"Output directory", "-o", "OUTPUT_DIR", &Global::global().outputDirectory};
     opInputFile.require();
     opInputDir.require();
     opOutputDir.require();
-    Option1<std::string> opLogFile {"Name of log file", "-l,--log", "log-file", &Global::global().logFileName};
+    Option1<std::string> opLogFile {"Name of log file", "-l,--log", "LOG_FILE", &Global::global().logFileName};
 
     Command cmdAnalyze {"Run analysis instead of simulation", "analyze", nullptr,
         []()->bool { Global::global().mode = GlobalVar::RunMode::Analysis; return true; }};

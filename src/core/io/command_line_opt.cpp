@@ -337,15 +337,16 @@ void Command::printUsage(std::ostream& os)const {
         os << "Options:\n";
         for(const OptionBase* ob: op) {
             std::ostringstream oss;
-            if(ob->getFlagShort()) {
-                oss << '-' << ob->getFlagShort();
-                if(ob->takesArg()) oss << " <" << ob->getArgName() << ">";
-            }
+
+            if(ob->getFlagShort()) oss << '-' << ob->getFlagShort();
+            else oss << "    ";
+
             if(!ob->getFlagLong().empty()) {
                 if(ob->getFlagShort()) oss << ", ";
                 oss << "--" << ob->getFlagLong();
-                if(ob->takesArg()) oss << " <" << ob->getArgName() << ">";
-            }
+                if(ob->takesArg()) oss << '=' << ob->getArgName();
+            } else if(ob->takesArg()) oss << " " << ob->getArgName();
+
             usagePairFormatter(oss.str(), ob->getDescription(), os);
         }
         os << std::endl;
