@@ -57,7 +57,7 @@ void initializeFromCommandLine(int argc, char** argv) {
     }
 
     // Initialize logger
-    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::global().outputDirectory + "/" + Global::global().logFileName);
+    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::readGlobal().outputDirectory + "/" + Global::readGlobal().logFileName);
 
 }
 

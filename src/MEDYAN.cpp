@@ -94,18 +94,18 @@ int main(int argc, char **argv) {
     commandline::initializeFromCommandLine(argc, argv);
 
     // Start program    
-    switch(Global::global().mode) {
+    switch(Global::readGlobal().mode) {
     case GlobalVar::RunMode::Simulation:
         //initialize and run system
-        c.initialize(Global::global().systemInputFileName,
-                     Global::global().inputDirectory,
-                     Global::global().outputDirectory);
+        c.initialize(Global::readGlobal().systemInputFileName,
+                     Global::readGlobal().inputDirectory,
+                     Global::readGlobal().outputDirectory);
         c.run();
         break;
     case GlobalVar::RunMode::Analysis:
         {
-            string inputFilePath = Global::global().inputDirectory + "/snapshot.traj";
-            string outputFilePath = Global::global().outputDirectory + "/snapshot.pdb";
+            string inputFilePath = Global::readGlobal().inputDirectory + "/snapshot.traj";
+            string outputFilePath = Global::readGlobal().outputDirectory + "/snapshot.pdb";
             analysis::SnapshotReader sr(inputFilePath, outputFilePath);
             sr.readAndConvertToVmd();
         }
