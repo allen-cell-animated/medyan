@@ -376,6 +376,11 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         cout << "Must set a membrane elastic modulus for all membranes. Exiting." << endl;
         return false;
     }
+    if(mech.MemStretchingFFType != "" &&
+       MParams.MemEqAreaFactor.size() != CParams.numMembranes) {
+        cout << "Must set a equilibrium area factor for all membranes. Exiting." << endl;
+        return false;
+    }
     if(mech.MemBendingFFType != "" &&
        MParams.MemBendingK.size() != CParams.numMembranes) {
         cout << "Must set a membrane bending modulus for all membranes. Exiting." << endl;

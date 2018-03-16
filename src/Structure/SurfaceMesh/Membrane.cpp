@@ -8,9 +8,10 @@
 #include "MathFunctions.h"
 using namespace mathfunc;
 
-#include "SubSystem.h"
 #include "Compartment.h"
 #include "GController.h"
+#include "SubSystem.h"
+#include "SysParams.h"
 
 #include "Triangle.h"
 #include "Edge.h"
@@ -158,7 +159,10 @@ Membrane::Membrane(SubSystem* s, short membraneType,
                 // Calculate the area of the triangle and set it as eqArea
                 lastAddedTriangle->getGTriangle()->calcArea();
 #ifdef MECHANICS
-                lastAddedTriangle->getMTriangle()->setEqArea(lastAddedTriangle->getGTriangle()->getArea());
+                lastAddedTriangle->getMTriangle()->setEqArea(
+                    lastAddedTriangle->getGTriangle()->getArea() *
+                    SysParams::Mechanics().MemEqAreaFactor[membraneType]
+                );
 #endif
 				// Calculate angles for the use of Voronoi cells
 				lastAddedTriangle->getGTriangle()->calcTheta();
@@ -175,7 +179,7 @@ Membrane::Membrane(SubSystem* s, short membraneType,
 #ifdef MECHANICS
         MVoronoiCell* mvc = _vertexVector[idx]->getMVoronoiCell();
         // Set the current area as eqArea
-        mvc->setEqArea(gvc->getArea());
+        mvc->setEqArea(gvc->getArea() * SysParams::Mechanics().MemEqAreaFactor[membraneType]);
 #endif
     }
 

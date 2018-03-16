@@ -989,6 +989,13 @@ void SystemParser::readMechParams() {
                     MParams.MemElasticK.push_back(atof(lineVector[i].c_str()));
             }
         }
+        else if (line.find("MEM_EQ_AREA_FACTOR") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() >= 2) {
+                for(size_t i = 1; i < lineVector.size(); ++i)
+                    MParams.MemEqAreaFactor.push_back(atof(lineVector[i].c_str()));
+            }
+        }
         else if (line.find("MEM_BENDING_K") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() >= 2) {

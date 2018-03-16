@@ -82,9 +82,10 @@ struct MechParams {
     
     //@{
     /// Membrane parameter
-    vector<double> MemElasticK  = {};
-    vector<double> MemBendingK  = {};
-    vector<double> MemEqCurv    = {};
+    vector<double> MemElasticK     = {};
+    vector<double> MemEqAreaFactor = {};  // Only used in initialization
+    vector<double> MemBendingK     = {};
+    vector<double> MemEqCurv       = {};
     //@}
 
     // Water incompressibility
