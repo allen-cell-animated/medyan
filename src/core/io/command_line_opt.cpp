@@ -196,7 +196,7 @@ void PosHolder::printContent(std::ostream& os)const {
 
         if(opPtr->getFlagLong().length()) {
             os << "--" << opPtr->getFlagLong();
-            if(opPtr->takesArg()) os << "=<" << opPtr->getArgName() << ">";
+            if(opPtr->takesArg()) os << "=" << opPtr->getArgName();
         }
         else if(opPtr->getFlagShort()) os << '-' << opPtr->getFlagShort();
 
