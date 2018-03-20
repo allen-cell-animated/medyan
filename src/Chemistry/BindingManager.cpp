@@ -233,7 +233,7 @@ LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
 
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
-    
+
     if(cc->getType() != _filamentType) return;
     
     //if we change other managers copy number
@@ -276,9 +276,10 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     
                     if(dist > _rMax || dist < _rMin) continue;
 
-		    auto bc1 = cc->getCylinder()->getBranchingCylinder();
-                    auto bc2 = ccn->getCylinder()->getBranchingCylinder();
-		    if(bc1 || bc2) continue;                    
+		    auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Yossi
+                    auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Yossi
+		    if(bc1 || bc2) continue; //Yossi
+		                   
 
                     
  
@@ -447,6 +448,10 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             double dist = twoPointDistance(m1,m2);
                             
                             if(dist > _rMax || dist < _rMin) continue;
+			    
+			    auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Carlos
+		            auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Carlos
+			    //if(bc1 || bc2) continue; //Carlos
                             
                             auto t1 = tuple<CCylinder*, short>(cc, *it1);
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);
