@@ -276,9 +276,14 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     
                     if(dist > _rMax || dist < _rMin) continue;
 
-		    auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Yossi
-                    auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Yossi
-		    if(bc1 || bc2) continue; //Yossi
+		    //auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Yossi
+                    //auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Yossi
+		    auto bc3 = cc->getCylinder()->getMotherCylinder(); //Carlos
+		    auto bc4 = ccn->getCylinder()->getMotherCylinder(); //Carlos
+
+		    if(bc3 || bc4) {
+		 
+ 		    continue;} //Yossi
 		                   
 
                     
@@ -449,9 +454,14 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             
                             if(dist > _rMax || dist < _rMin) continue;
 			    
-			    auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Carlos
-		            auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Carlos
-			    //if(bc1 || bc2) continue; //Carlos
+			    //auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Carlos
+		            //auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Carlos
+			    auto bc3 = cc->getCylinder()->getMotherCylinder(); //Carlos
+		            auto bc4 = ccn->getCylinder()->getMotherCylinder(); //Carlos
+
+		    	    if(bc3 || bc4) {
+ 		            continue;} //Carlos
+		                   
                             
                             auto t1 = tuple<CCylinder*, short>(cc, *it1);
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);

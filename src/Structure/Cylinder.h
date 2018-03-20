@@ -72,7 +72,8 @@ private:
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
-    
+
+    Cylinder* _motherCylinder = nullptr; ///< ptr to a mother cylinder
     static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
     
     ///For dynamic polymerization rate
@@ -127,6 +128,13 @@ public:
     /// Branching cylinder management
     Cylinder* getBranchingCylinder() {return _branchingCylinder;}
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
+    //@}
+
+
+    //@{
+    /// Mother branching cylinder management
+    Cylinder* getMotherCylinder() {return _motherCylinder;}
+    void setMotherCylinder(Cylinder* c) {_motherCylinder = c;}
     //@}
     
     /// Get ID
