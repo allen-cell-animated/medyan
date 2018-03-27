@@ -24,18 +24,20 @@ namespace analysis {
 namespace {
     /// Helper struct to find number of beads (atoms) required for pdb-style output
     struct PdbMaxBead {
-        size_t filament = 0;
+        std::vector<size_t> filament; // Maximum beads in each filament
         size_t linker = 0;
         size_t motor = 0;
         size_t membrane = 0;
 
         void renew(const OutputStructSnapshot& snapshot) {
             // Beads in filaments
-            size_t newFilament = 0;
             for(auto& eachFilament: snapshot.filamentStruct) {
-                newFilament += eachFilament.getNumBeads();
+                int curId = eachElement.getId();
+                if(curId >= filament.size()) {
+                    filament.resize(curId + 1, 0);
+                }
+                if(filament[curId] < eachFilament.getNumBeads()) filament[curId] = eachFilament.getNumBeads();
             }
-            if(newFilament > filament) filament = newFilament;
 
             // Beads in linkers
             size_t newLinker = snapshot.linkerStruct.size() * 2;
@@ -96,7 +98,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     PdbGenerator pg(_vmdFilepath);
 
     LOG(STEP) << "Writing to " << _vmdFilepath;
-    // Note: in the output, all the coordinates would be 1/10 in size.
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
         if (idx % 20 == 0) LOG(INFO) << "Generating model " << idx;
@@ -112,33 +113,53 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         // Filaments
         chain = 'F';
         atomSerial = 0;
-        atomCount = 0;
         resSeq = 0;
-        for(auto& eachFilament: snapshots[idx].filamentStruct) {
-            for(auto& eachCoord: eachFilament.getCoords()) {
-                ++atomSerial;
-                ++atomCount;
-                ++resSeq;
-                pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
-                    eachCoord[0], eachCoord[1], eachCoord[2]
-                );
+        auto filamentPtr = snapshots[idx].filamentStruct.begin();
+        size_t filamentAlloc = maxBead.filament.size();
+        for(size_t i = 0; i < filamentAlloc; ++i) {
+            atomCount = 0;
+
+            if(filamentPtr != snapshots[idx].filamentStruct.end() && filamentPtr->getId() == i) {
+                // Filament exists for this id.
+                auto& allCoords = filamentPtr->getCoords();
+                for(auto& eachCoord: allCoords) {
+                    ++atomSerial;
+                    ++atomCount;
+                    ++resSeq;
+                    pg.genAtom(
+                        atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
+                        eachCoord[0], eachCoord[1], eachCoord[2]
+                    );
+                }
+                while(atomCount < maxBead.filament[i]) {
+                    ++atomSerial;
+                    ++atomCount;
+                    ++resSeq;
+                    pg.genAtom(
+                        atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
+                        allCoords.back()[0], allCoords.back()[1], allCoords.back()[2]
+                    );
+                }
+
+                ++filamentPtr;
+            } else {
+                // Filament does not exist for this id.
+                while(atomCount < maxBead.filament[i]) {
+                    ++atomSerial;
+                    ++atomCount;
+                    ++resSeq;
+                    pg.genAtom(
+                        atomSerial, " CA ", ' ', "ARG", chain, resSeq
+                    )
+                }
             }
-            ++resSeq; // Separate bonds
+
+            ++resSeq; // Separate trace.
         }
-        while(atomCount < maxBead.filament) {
-            ++atomSerial;
-            ++atomCount;
-            ++resSeq;
-            pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, resSeq
-            );
-        }
-        pg.genTer(++atomSerial, "ARG", chain, ++resSeq);
+        pg.genTer(++atomSerial, "ARG", chain, resSeq);
 
         // Linkers
         chain = 'L';
-        atomSerial = 0;
         atomCount = 0;
         resSeq = 0;
         for(auto& eachLinker: snapshots[idx].linkerStruct) {
@@ -154,18 +175,20 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             ++resSeq; // Separate bonds
         }
         while(atomCount < maxBead.linker) {
-            ++atomSerial;
-            ++atomCount;
-            ++resSeq;
-            pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, resSeq
-            );
+            for(size_t b = 0; b < 2; ++b) {
+                ++atomSerial;
+                ++atomCount;
+                ++resSeq;
+                pg.genAtom(
+                    atomSerial, " CA ", ' ', "ARG", chain, resSeq
+                );
+            }
+            ++resSeq; // Separate bonds
         }
-        pg.genTer(++atomSerial, "ARG", chain, ++resSeq);
+        pg.genTer(++atomSerial, "ARG", chain, resSeq);
 
         // Motors
         chain = 'M';
-        atomSerial = 0;
         atomCount = 0;
         resSeq = 0;
         for(auto& eachMotor: snapshots[idx].motorStruct) {
@@ -181,14 +204,17 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             ++resSeq; // Separate bonds
         }
         while(atomCount < maxBead.motor) {
-            ++atomSerial;
-            ++atomCount;
+            for(size_t b = 0; b < 2; ++b) {
+                ++atomSerial;
+                ++atomCount;
+                ++resSeq;
+                pg.genAtom(
+                    atomSerial, " CA ", ' ', "ARG", chain, resSeq
+                );
+            }
             ++resSeq;
-            pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, resSeq
-            );
         }
-        pg.genTer(++atomSerial, "ARG", chain, ++resSeq);
+        pg.genTer(++atomSerial, "ARG", chain, resSeq);
 
         // Membranes
         chain = 'E';
@@ -242,7 +268,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
         }
-        pg.genTer(++atomSerial, "ARG", chain, ++resSeq);
+        pg.genTer(++atomSerial, "ARG", chain, resSeq);
 
         // End of model
         pg.genEndmdl();

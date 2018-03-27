@@ -63,6 +63,7 @@ public:
     virtual void outputFromStoredWithoutChildren(std::ostream& os)override;
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
+    int getId()const { return _id; }
     int getNumBeads()const { return _numBeads; }
     const std::vector<std::array<double, 3>>& getCoords()const { return _coords; }
 
