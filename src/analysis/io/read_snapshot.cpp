@@ -32,7 +32,7 @@ namespace {
         void renew(const OutputStructSnapshot& snapshot) {
             // Beads in filaments
             for(auto& eachFilament: snapshot.filamentStruct) {
-                int curId = eachElement.getId();
+                int curId = eachFilament.getId();
                 if(curId >= filament.size()) {
                     filament.resize(curId + 1, 0);
                 }
@@ -150,7 +150,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     ++resSeq;
                     pg.genAtom(
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq
-                    )
+                    );
                 }
             }
 
