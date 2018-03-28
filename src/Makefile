@@ -21,7 +21,7 @@ OBJECTS := $(SOURCES:.cpp=.o)
 
 #CPP COMPILER CHOICE AND FLAGS
 #CXX = /usr/bin/g++ -std=c++11
-CXX = /opt/rh/devtoolset-4/root/usr/bin/g++ -std=c++11 #added jl135, for Rice Workstation only
+CXX = /opt/rh/devtoolset-4/root/usr/bin/g++ -std=c++11  -static #added jl135, for Rice Workstation only
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
