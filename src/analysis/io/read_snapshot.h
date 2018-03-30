@@ -9,11 +9,12 @@ namespace analysis {
 class SnapshotReader {
 private:
     std::string _snapshotFilepath;
-    std::string _vmdFilepath;
+    std::string _pdbFilepath;
+    std::string _psfFilepath;
 
 public:
-    SnapshotReader(const std::string& snapshotFilepath, const std::string& vmdFilepath):
-        _snapshotFilepath(snapshotFilepath), _vmdFilepath(vmdFilepath) {}
+    SnapshotReader(const std::string& snapshotFilepath, const std::string& pdbFilepath, const std::string& psfFilepath):
+        _snapshotFilepath(snapshotFilepath), _pdbFilepath(pdbFilepath), _psfFilepath(psfFilepath) {}
 
     void readAndConvertToVmd(const size_t maxFrames=0); // 0 means no limit on max frames
 };

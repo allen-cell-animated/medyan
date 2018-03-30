@@ -27,6 +27,30 @@ public:
 
 };
 
+// Psf contains the bond information
+// Uses implementation from www.ks.uiuc.edu/Research/vmd/plugins/doxygen/psfplugin_8c-source.html
+class PsfGenerator {
+    std::string _psfFilepath;
+    std::ofstream _ofs; ///< Handles the file output
+
+    // State machine for genBond (0-4)
+    int _bondOutputPos = 0;
+
+public:
+    PsfGenerator(const std::string& filepath): _psfFilepath(filepath), _ofs(filepath) {}
+
+    void genHeader();
+    void genNatom(int num);
+    void genAtom(int id, std::string segName, int resId, std::string resName, std::string name,
+        std::string type, double charge=0.0, double mass=12.0110); ///< Starting from id 1. TER ignored.
+    void genNbond(int num);
+    void genBond(int id1, int id2);
+
+    // Helper functions for genBond
+    void genBondStart() { _bondOutputPos = 0; }
+    void genBondEnd();
+};
+
 
 } // namespace analysis
 } // namespace medyan

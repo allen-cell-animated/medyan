@@ -77,6 +77,81 @@ void PdbGenerator::genTer(
 }
 
 
+void PsfGenerator::genHeader() {
+    if(!_ofs.is_open()) return;
+
+    _ofs << "PSF" << endl;
+}
+void PsfGenerator::genNatom(int num) {
+    if(!_ofs.is_open()) return; 
+
+    _ofs
+        << '\n'
+        << setw(8) << num
+        << " !NATOM"
+        << endl;
+}
+void PsfGenerator::genAtom(int id, std::string segName, int resId, std::string resName, std::string name,
+    std::string type, double charge, double mass
+) {
+    if(!_ofs.is_open()) return;
+
+    segName.resize(4, ' ');
+    resName.resize(4, ' ');
+    name.resize(4, ' ');
+    type.resize(4, ' ');
+
+    _ofs
+        << setw(8) << id
+        << ' '
+        << segName
+        << ' '
+        << left << setw(4) << resId << right
+        << ' '
+        << resName
+        << ' '
+        << name
+        << ' '
+        << type
+        << ' '
+        << setw(10) << setprecision(6) << charge
+        << "    "
+        << setw(10) << setprecision(4) << mass
+        << "  "
+        << setw(10) << 0
+        << endl;
+}
+void PsfGenerator::genNbond(int num) {
+    if(!_ofs.is_open()) return;
+
+    _ofs
+        << '\n'
+        << setw(8) << num
+        << " !NBOND: bonds"
+        << endl;
+}
+void PsfGenerator::genBond(int id1, int id2) {
+    if(!_ofs.is_open()) return;
+
+    _ofs
+        << setw(8) << id1
+        << setw(8) << id2;
+    
+    ++_bondOutputPos;
+    if(_bondOutputPos >= 4) {
+        _bondOutputPos = 0;
+        _ofs << '\n';
+    }
+}
+void PsfGenerator::genBondEnd() {
+    _bondOutputPos = 0;
+
+    if(!_ofs.is_open()) return;
+
+    _ofs << endl;
+}
+
+
 
 } // namespace analysis
 } // namespace medyan

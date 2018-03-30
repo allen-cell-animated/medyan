@@ -29,7 +29,11 @@ namespace {
         size_t motor = 0;
         size_t membrane = 0;
 
+        size_t maxBead = 0;
+
         void renew(const OutputStructSnapshot& snapshot) {
+            size_t curMaxBead = 0;
+
             // Beads in filaments
             for(auto& eachFilament: snapshot.filamentStruct) {
                 int curId = eachFilament.getId();
@@ -37,15 +41,18 @@ namespace {
                     filament.resize(curId + 1, 0);
                 }
                 if(filament[curId] < eachFilament.getNumBeads()) filament[curId] = eachFilament.getNumBeads();
+                curMaxBead += filament[curId];
             }
 
             // Beads in linkers
             size_t newLinker = snapshot.linkerStruct.size() * 2;
             if(newLinker > linker) linker = newLinker;
+            curMaxBead += linker;
 
             // Beads in motors
             size_t newMotor = snapshot.motorStruct.size() * 2;
             if(newMotor > motor) motor = newMotor;
+            curMaxBead += motor;
 
             // Beads in membranes
             size_t newMembrane = 0;
@@ -56,6 +63,10 @@ namespace {
                 newMembrane += eachMembrane.getNumVertices();
             }
             if(newMembrane > membrane) membrane = newMembrane;
+            curMaxBead += membrane;
+
+            // Total beads
+            if(curMaxBead > maxBead) maxBead = curMaxBead;
         }
     };
 
@@ -95,17 +106,21 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     is.close();
 
     // Write to pdb
-    PdbGenerator pg(_vmdFilepath);
+    PdbGenerator pg(_pdbFilepath);
+    PsfGenerator psfGen(_psfFilepath); // To generate bond connections for a fixed topology
 
-    LOG(STEP) << "Writing to " << _vmdFilepath;
+    LOG(STEP) << "Writing to " << _pdbFilepath << " and " << _psfFilepath;
+    psfGen.genHeader();
+    psfGen.genNAtom(maxBead.maxBead);
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
         if (idx % 20 == 0) LOG(INFO) << "Generating model " << idx;
         pg.genModel(idx + 1);
 
         char chain;
-        size_t atomSerial;
-        size_t atomCount;
+        size_t atomSerial; // Pdb file atom number
+        size_t atomId = 0; // Psf file atom number. TER does not increase this variable.
+        size_t atomCount; // Temporary counter
         size_t resSeq;
 
         SubSystem s; // Dummy subsystem
@@ -124,21 +139,29 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 auto& allCoords = filamentPtr->getCoords();
                 for(auto& eachCoord: allCoords) {
                     ++atomSerial;
+                    ++atomId;
                     ++atomCount;
                     ++resSeq;
                     pg.genAtom(
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                         eachCoord[0], eachCoord[1], eachCoord[2]
                     );
+                    if(idx == 0) {
+                        psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                    }
                 }
                 while(atomCount < maxBead.filament[i]) {
                     ++atomSerial;
+                    ++atomId;
                     ++atomCount;
                     ++resSeq;
                     pg.genAtom(
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                         allCoords.back()[0], allCoords.back()[1], allCoords.back()[2]
                     );
+                    if(idx == 0) {
+                        psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                    }
                 }
 
                 ++filamentPtr;
@@ -146,11 +169,15 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 // Filament does not exist for this id.
                 while(atomCount < maxBead.filament[i]) {
                     ++atomSerial;
+                    ++atomId;
                     ++atomCount;
                     ++resSeq;
                     pg.genAtom(
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq
                     );
+                    if(idx == 0) {
+                        psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                    }
                 }
             }
 
@@ -165,23 +192,31 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         for(auto& eachLinker: snapshots[idx].linkerStruct) {
             for(auto& eachCoord: eachLinker.getCoords()) {
                 ++atomSerial;
+                ++atomId;
                 ++atomCount;
                 ++resSeq;
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
+                if(idx == 0) {
+                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                }
             }
             ++resSeq; // Separate bonds
         }
         while(atomCount < maxBead.linker) {
             for(size_t b = 0; b < 2; ++b) {
                 ++atomSerial;
+                ++atomId;
                 ++atomCount;
                 ++resSeq;
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq
                 );
+                if(idx == 0) {
+                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                }
             }
             ++resSeq; // Separate bonds
         }
@@ -194,23 +229,31 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         for(auto& eachMotor: snapshots[idx].motorStruct) {
             for(auto& eachCoord: eachMotor.getCoords()) {
                 ++atomSerial;
+                ++atomId;
                 ++atomCount;
                 ++resSeq;
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
+                if(idx == 0) {
+                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                }
             }
             ++resSeq; // Separate bonds
         }
         while(atomCount < maxBead.motor) {
             for(size_t b = 0; b < 2; ++b) {
                 ++atomSerial;
+                ++atomId;
                 ++atomCount;
                 ++resSeq;
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq
                 );
+                if(idx == 0) {
+                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                }
             }
             ++resSeq;
         }
@@ -218,9 +261,14 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
         // Membranes
         chain = 'E';
-        atomSerial = 0;
         atomCount = 0;
         resSeq = 0;
+        if(idx == 0) {
+            size_t numBonds = 0;
+            for(auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumEdges();
+            psfGen.genNBond(numBonds / 2);
+            psfGen.genBondStart();
+        }
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
             /*
             bool buildMembrane = !eachMembrane.getMembrane();
@@ -238,6 +286,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             for(Edge* e: dataMembrane->getEdgeVector()) {
                 for(Vertex* v: e->getVertices()) {
                     ++atomSerial;
+                    ++atomId;
                     ++atomCount;
                     pg.genAtom(
                         atomSerial, " CA ", ' ', "ARG", chain, atomSerial, ' ',
@@ -248,8 +297,12 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             }
 
             */
+
+            size_t atomIdSoFar = atomId;
+
             for(auto& vInfo: eachMembrane.getMembraneInfo()) {
                 ++atomSerial;
+                ++atomId;
                 ++atomCount;
                 ++resSeq;
                 auto& v = get<0>(vInfo);
@@ -257,18 +310,44 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     v[0], v[1], v[2]
                 );
+                if(idx == 0) {
+                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                }
             }
             ++resSeq;
+
+            // Generate bonds. Currently using only the topology at the first frame.
+            if(idx == 0) {
+                size_t numVertices = eachMembrane.getMembraneInfo().size();
+                for(size_t vIdx = 0; vIdx < numVertices; ++vIdx) {
+                    for(auto eachNeighbor: get<1>(eachMembrane.getMembraneInfo()[vIdx])) {
+                        if(vIdx < eachNeighbor) {
+                            psfGen.genBond(
+                                atomIdSoFar + vIdx + 1,
+                                atomIdSoFar + eachNeighbor + 1
+                            );
+                        }
+                    }
+                }
+            }
         }
         while(atomCount < maxBead.membrane) {
             ++atomSerial;
+            ++atomId;
             ++atomCount;
             ++resSeq;
             pg.genAtom(
                 atomSerial, " CA ", ' ', "ARG", chain, resSeq
             );
+            if(idx == 0) {
+                psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+            }
         }
         pg.genTer(++atomSerial, "ARG", chain, resSeq);
+        if(idx == 0) {
+            psfGen.genBondEnd();
+            LOG(INFO) << "Bond info generated.";
+        }
 
         // End of model
         pg.genEndmdl();

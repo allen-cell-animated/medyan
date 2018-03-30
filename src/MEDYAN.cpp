@@ -105,8 +105,9 @@ int main(int argc, char **argv) {
     case GlobalVar::RunMode::Analysis:
         {
             string inputFilePath = Global::readGlobal().inputDirectory + "/snapshot.traj";
-            string outputFilePath = Global::readGlobal().outputDirectory + "/snapshot.pdb";
-            analysis::SnapshotReader sr(inputFilePath, outputFilePath);
+            string pdbFilePath = Global::readGlobal().outputDirectory + "/snapshot.pdb";
+            string psfFilePath = Global::readGlobal().outputDirectory + "/snapshot.psf";
+            analysis::SnapshotReader sr(inputFilePath, pdbFilePath, psfFilePath);
             sr.readAndConvertToVmd();
         }
         break;
