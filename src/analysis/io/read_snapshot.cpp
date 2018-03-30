@@ -111,7 +111,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
     LOG(STEP) << "Writing to " << _pdbFilepath << " and " << _psfFilepath;
     psfGen.genHeader();
-    psfGen.genNAtom(maxBead.maxBead);
+    psfGen.genNatom(maxBead.maxBead);
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
         if (idx % 20 == 0) LOG(INFO) << "Generating model " << idx;
@@ -266,7 +266,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         if(idx == 0) {
             size_t numBonds = 0;
             for(auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumEdges();
-            psfGen.genNBond(numBonds / 2);
+            psfGen.genNbond(numBonds / 2);
             psfGen.genBondStart();
         }
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
