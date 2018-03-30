@@ -263,12 +263,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         chain = 'E';
         atomCount = 0;
         resSeq = 0;
-        if(idx == 0) {
-            size_t numBonds = 0;
-            for(auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumEdges();
-            psfGen.genNbond(numBonds / 2);
-            psfGen.genBondStart();
-        }
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
             /*
             bool buildMembrane = !eachMembrane.getMembrane();
@@ -318,6 +312,11 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
             // Generate bonds. Currently using only the topology at the first frame.
             if(idx == 0) {
+                size_t numBonds = 0;
+                for(auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumEdges();
+                psfGen.genNbond(numBonds / 2);
+                psfGen.genBondStart();
+
                 size_t numVertices = eachMembrane.getMembraneInfo().size();
                 for(size_t vIdx = 0; vIdx < numVertices; ++vIdx) {
                     for(auto eachNeighbor: get<1>(eachMembrane.getMembraneInfo()[vIdx])) {
@@ -329,6 +328,9 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                         }
                     }
                 }
+
+                psfGen.genBondEnd();
+                LOG(INFO) << "Bond info generated.";
             }
         }
         while(atomCount < maxBead.membrane) {
@@ -344,10 +346,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             }
         }
         pg.genTer(++atomSerial, "ARG", chain, resSeq);
-        if(idx == 0) {
-            psfGen.genBondEnd();
-            LOG(INFO) << "Bond info generated.";
-        }
 
         // End of model
         pg.genEndmdl();
