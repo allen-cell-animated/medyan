@@ -314,7 +314,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             if(idx == 0) {
                 size_t numBonds = 0;
                 for(auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumEdges();
-                psfGen.genNbond(numBonds / 2);
+                psfGen.genNbond(numBonds);
                 psfGen.genBondStart();
 
                 size_t numVertices = eachMembrane.getMembraneInfo().size();
