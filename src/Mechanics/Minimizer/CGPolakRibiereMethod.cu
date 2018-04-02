@@ -119,7 +119,16 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     cudaMalloc(&Msg_stop2, sizeof(bool));
     cudaHostAlloc(&Msh_stop, sizeof(bool), cudaHostAllocDefault);
     //@
-
+    //Memory alloted
+    //@{
+//    size_t allocmem = 0;
+//    allocmem += sizeof(double) + 4 * sizeof(bool);
+//    auto c = CUDAcommon::getCUDAvars();
+//    c.memincuda += allocmem;
+//    CUDAcommon::cudavars = c;
+//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
+//    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
+    //@}
     nvtxRangePushA("MEvcreate");
     CUDAcommon::handleerror(cudaStreamCreate(&Ms1));
     CUDAcommon::handleerror(cudaStreamCreate(&Ms2));
@@ -412,6 +421,16 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::handleerror(cudaEventDestroy(event_dot));
     CUDAcommon::handleerror(cudaStreamDestroy(stream_dotcopy));
     CUDAcommon::handleerror(cudaStreamDestroy(stream_shiftsafe));
+    //Memory alloted
+    //@{
+//    allocmem = 0;
+//    allocmem += sizeof(double) + 4 * sizeof(bool);
+//    c = CUDAcommon::getCUDAvars();
+//    c.memincuda -= allocmem;
+//    CUDAcommon::cudavars = c;
+//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
+//    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
+    //@}
 #else
     delete Mc_isminimizationstate;
     delete Mc_issafestate;

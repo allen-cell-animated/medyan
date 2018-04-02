@@ -29,6 +29,8 @@ void BranchingStretchingHarmonic::deallocate(){
     CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
+    CUDAcommon::handleerror(cudaFree(gFF));
+    CUDAcommon::handleerror(cudaFree(ginteraction));
 }
 void BranchingStretchingHarmonic::optimalblocksnthreads( int nint){
     //CUDA stream create
@@ -56,9 +58,16 @@ void BranchingStretchingHarmonic::optimalblocksnthreads( int nint){
                                                        BranchingStretchingHarmonicforces, blockToSmemFB, 0);
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
-
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
+        //get addition vars
+        bntaddvec2.clear();
+        bntaddvec2 = getaddred2bnt(nint);
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
 
         char a[] = "BranchingFF";
         char b[] = "Branching Stretching Harmonic";
@@ -79,45 +88,60 @@ void BranchingStretchingHarmonic::optimalblocksnthreads( int nint){
 }
 double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                             double *kstr, double *eql, double *pos, int *params) {
-    if(blocksnthreadse[1]>0) {
-        BranchingStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i, CUDAcommon::getCUDAvars()
-                .gculpritID, CUDAcommon::getCUDAvars().gculpritFF, CUDAcommon::getCUDAvars().gculpritinteraction,
-                gFF, ginteraction);
-        auto cvars = CUDAcommon::getCUDAvars();
-        cvars.streamvec.push_back(&stream);
-        CUDAcommon::cudavars = cvars;
-        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
-        return gU_sum;}
-    else
-        return NULL;
+//    if(blocksnthreadse[1]>0) {
+//        BranchingStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
+//                (double), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i, CUDAcommon::getCUDAvars()
+//                .gculpritID, CUDAcommon::getCUDAvars().gculpritFF, CUDAcommon::getCUDAvars().gculpritinteraction,
+//                gFF, ginteraction);
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
+//        return gU_sum;}
+//    else
+//        return NULL;
 }
 
 
 double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                             double *kstr, double *eql, double *pos, double *z, int *params) {
+    if(blocksnthreadse[1]>0) {
+        BranchingStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
+                (double), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i, z, CUDAcommon::getCUDAvars()
+                .gculpritID, CUDAcommon::getCUDAvars().gculpritFF, CUDAcommon::getCUDAvars().gculpritinteraction,
+                gFF, ginteraction);
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
+//        return gU_sum;
+    }
+
     if(blocksnthreadsez[1]>0) {
         BranchingStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
                                                                                           sizeof(double), stream>> >
                 (coord, f, beadSet, kstr, eql, pos, params, gU_i, z, CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        auto cvars = CUDAcommon::getCUDAvars();
-        cvars.streamvec.push_back(&stream);
-        CUDAcommon::cudavars = cvars;
-        CUDAcommon::handleerror(cudaGetLastError(),"BranchingStretchingHarmonicenergyz", "BranchingStretchingHarmonic"
-                ".cu");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror(cudaGetLastError(),"BranchingStretchingHarmonicenergyz", "BranchingStretchingHarmonic"
+//                ".cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror(cudaGetLastError(),"BranchingStretchingHarmonicenergyz", "BranchingStretchingHarmonic"
+//                ".cu");
+//        return gU_sum;
+    }
 
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-        CUDAcommon::handleerror(cudaGetLastError(),"BranchingStretchingHarmonicenergyz", "BranchingStretchingHarmonic"
-                ".cu");
-        return gU_sum;
-    }else
-        return NULL;
 }
 
 void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,

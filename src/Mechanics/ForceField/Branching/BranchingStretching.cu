@@ -47,7 +47,7 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
     }
     //CUDA
 #ifdef CUDAACCL
-    F_i = new double[CGMethod::N];
+//    F_i = new double[CGMethod::N];
     nvtxRangePushA("CVFF");
 
     int numInteractions = BranchingPoint::getBranchingPoints().size();
@@ -109,14 +109,14 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *co
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
     nvtxRangePushA("CCEBS");
 
-    if(d == 0.0){
-        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_params);
-
-    }
-    else{
+//    if(d == 0.0){
+//        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_params);
+//
+//    }
+//    else{
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_d,
                             gpu_params);
-    }
+//    }
     nvtxRangePop();
 #else
     nvtxRangePushA("SCEBS");

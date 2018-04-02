@@ -36,7 +36,7 @@ __global__ void BoundaryCylinderRepulsionExpenergy(double* coord, double* f, int
         if (thread_idx < nint) {
             //get the plane equation.
             if (thread_idx < nintvec[0]) {
-                for (auto i = 0; i < 3; i++)
+                for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[i];
             } else if (thread_idx >= nintvec[0] || thread_idx < nintvec[1]) {
                 for (auto i = 0; i < 4; i++)
@@ -81,6 +81,9 @@ __global__ void BoundaryCylinderRepulsionExpenergy(double* coord, double* f, int
                     culpritinteraction[j] = interaction[j];
                     j++;
                 }
+
+                printf("Coord %d %f %f %f\n", thread_idx, c1[3*threadIdx.x],c1[3*threadIdx.x +1],c1[3*threadIdx.x +2]);
+                printf("Plane %d %f %f %f %f\n", thread_idx, plane[0], plane[1], plane[2], plane[3]);
                 printf("%d %f %f %f\n", thread_idx, r, R, U_i[thread_idx]);
                 assert(0);
                 __syncthreads();
@@ -114,7 +117,7 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
         if (thread_idx < nint) {
             //get the plane equation.
             if (thread_idx < nintvec[0]) {
-                for (auto i = 0; i < 3; i++)
+                for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[i];
             } else if (thread_idx >= nintvec[0] || thread_idx < nintvec[1]) {
                 for (auto i = 0; i < 4; i++)
@@ -159,6 +162,9 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
                     culpritinteraction[j] = interaction[j];
                     j++;
                 }
+                printf("Force %d %f %f %f\n", thread_idx, f1[3*threadIdx.x],f1[3*threadIdx.x +1],f1[3*threadIdx.x +2]);
+                printf("Coord %d %f %f %f\n", thread_idx, c1[3*threadIdx.x],c1[3*threadIdx.x +1],c1[3*threadIdx.x +2]);
+                printf("Plane %d %f %f %f %f\n", thread_idx, plane[0], plane[1], plane[2], plane[3]);
                 printf("%d %f %f %f\n", thread_idx, r, R, U_i[thread_idx]);
                 assert(0);
                 __syncthreads();
@@ -186,7 +192,7 @@ __global__ void BoundaryCylinderRepulsionExpforces(double* coord, double* f, int
     if(thread_idx<nint) {
         //get the plane equation.
         if (thread_idx < nintvec[0]) {
-            for (auto i = 0; i<3; i++)
+            for (auto i = 0; i<4; i++)
                 plane[i] = beListplane [i];
         }
         else if(thread_idx >= nintvec[0] || thread_idx < nintvec[1]){
@@ -216,6 +222,11 @@ __global__ void BoundaryCylinderRepulsionExpforces(double* coord, double* f, int
         R = -r / slen[thread_idx];
         f0 = krep[thread_idx] * exp(R);
         for (int i = 0; i < 3; i++) {
+            if (fabs(f0*norm[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f0*norm[i] != f0*norm[i]) {
+                printf("Boundary Force became infinite %f %f \n",f0, norm[i]);
+                assert(0);
+            }
             atomicAdd(&f[3 * beadSet[n * thread_idx] + i], f0*norm[i]);
         }
     }

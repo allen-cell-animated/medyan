@@ -149,6 +149,16 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
                             "BoundaryCylinderRepulsion.cu");
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice),
                             "cuda data transfer", "BoundaryCylinderRepulsion.cu");
+    //Memory alloted
+    //@{
+//    size_t allocmem = 0;
+//    allocmem += (n * nint + nbe) * sizeof(int) + (2 * nint + 4 * nbe) * sizeof(double);
+//    auto c = CUDAcommon::getCUDAvars();
+//    c.memincuda += allocmem;
+//    CUDAcommon::cudavars = c;
+//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
+//    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
+    //@}
     nvtxRangePop();
 #endif
     delete beListplane, nintvec;
@@ -175,6 +185,17 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 //        CUDAcommon::handleerror(cudaFreeHost(U_i));
 //        CUDAcommon::handleerror(cudaFree(gU));
 //    }
+    //Memory alloted
+    //@{
+//    size_t allocmem = 0;
+//    auto nbe = BoundaryElement::getBoundaryElements().size();
+//    allocmem += (n * nint + nbe) * sizeof(int) + (2 * nint + 4 * nbe) * sizeof(double);
+//    auto c = CUDAcommon::getCUDAvars();
+//    c.memincuda -= allocmem;
+//    CUDAcommon::cudavars = c;
+//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
+//    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
+    //@}
 #endif
 }
 

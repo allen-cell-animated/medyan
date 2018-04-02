@@ -48,6 +48,7 @@ public:
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
     cudaStream_t stream;
 
 #endif

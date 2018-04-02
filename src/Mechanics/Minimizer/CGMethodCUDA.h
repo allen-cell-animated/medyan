@@ -40,6 +40,13 @@ curGrad, bool *Mstate) {
     if (thread_idx < nint[0]) {
         for (auto i = 0; i < 3; i++) {
             f[3 * thread_idx + i] = fAux[3 * thread_idx + i] + d * f[3 * thread_idx + i];
+            if (fabs(f[3 * thread_idx + i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f[3 * thread_idx + i] != f[3 * thread_idx + i]) {
+                printf("Force became infinite during gradient shift. \n Force %f Aux Force %f Beta %f\n NewGrad %f "
+                               "PrevGrad %f curGrad %f \n",
+                       f[3 * thread_idx + i], fAux[3 * thread_idx + i], d, newGrad[0], prevGrad[0],curGrad[0]);
+                assert(0);
+            }
         }
     }
 }
@@ -52,6 +59,12 @@ __global__ void shiftGradientCUDAifsafe(double *f, double* fAux, int * nint, boo
     if (thread_idx < nint[0]) {
         for (auto i = 0; i < 3; i++) {
             f[3 * thread_idx + i] = fAux[3 * thread_idx + i];
+            if (fabs(f[3 * thread_idx + i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f[3 * thread_idx + i] != f[3 * thread_idx + i]) {
+                printf("Force became infinite during SAFE gradient shift. \n Force %f Aux Force %f \n",
+                       f[3 * thread_idx + i], fAux[3 * thread_idx + i]);
+                assert(0);
+            }
         }
     }
 }
@@ -131,7 +144,8 @@ __global__ void maxFCUDAredv2(double *f, int * nint, double *fmax) {
             if(fabs(c1[i]) > fmax[0])
                 fmax[0] = c1[i];
         }
-        printf("Fmaxv2 %f %f %f %f \n", fmax[0], c1[0], c1[1], c1[2]);
+//        printf("Fmaxv2 %f f_x %f f_y %f f_z %f \n", fmax[0], c1[0], c1[1], c1[2]);
+        printf("Fmaxv2 %f \n", fmax[0]);
     }
 }
 
@@ -145,28 +159,60 @@ __global__ void addvector(double *U, int *params, double *U_sum){
     printf("add1 %f \n", U_sum[0]);
 }
 
-__global__ void addvectorred(double *U, int *params, double *U_sum){
-    extern __shared__ double s[];
-    double *c1 = s;
-    int start = 0;
-    int end = params[0];
-    int factor = params[0]/blockDim.x;
-    if(threadIdx.x > 0)
-        start = threadIdx.x * factor;
-    if(threadIdx.x < blockDim.x - 1)
-        end = (threadIdx.x + 1) * factor;
-    c1[threadIdx.x] = 0.0;
-    for(auto i = start; i < end; i++)
-        c1[threadIdx.x] += U[i];
-//    printf("%d \n", params[0]);
-    __syncthreads();
+//__global__ void addvectorred(double *U, int *params, double *U_sum){
+//    extern __shared__ double s[];
+//    double *c1 = s;
+//    int start = 0;
+//    int end = params[0];
+//    int factor = params[0]/blockDim.x;
+//    if(threadIdx.x > 0)
+//        start = threadIdx.x * factor;
+//    if(threadIdx.x < blockDim.x - 1)
+//        end = (threadIdx.x + 1) * factor;
+//    c1[threadIdx.x] = 0.0;
+//    for(auto i = start; i < end; i++)
+//        c1[threadIdx.x] += U[i];
+////    printf("%d \n", params[0]);
+//    __syncthreads();
+//
+//    if(threadIdx.x == 0) {
+//        U_sum[0] = 0.0;
+//        for (auto i = 0; i < blockDim.x; i++) {
+//            U_sum[0] += c1[i];
+//        }
+////        printf("add2 %f \n", U_sum[0]);
+//    }
+//}
 
-    if(threadIdx.x == 0) {
-        U_sum[0] = 0.0;
-        for (auto i = 0; i < blockDim.x; i++) {
-            U_sum[0] += c1[i];
-        }
-//        printf("add2 %f \n", U_sum[0]);
+__global__ void addvectorred2(double *g_idata, int *num, double *g_odata)
+{
+    extern __shared__ double sdata[];
+    unsigned int tid = threadIdx.x;
+    auto blockSize = blockDim.x;
+    unsigned int i = blockIdx.x*(blockSize*2) + tid;
+    unsigned int gridSize = blockSize*2*gridDim.x;
+    int n = num[0];
+    sdata[tid] = 0;
+    while (i < n) {
+        sdata[tid] += g_idata[i] + g_idata[i+blockSize];
+        i += gridSize;
+    }
+    __syncthreads();
+    if(blockSize >=2048 ) {printf("Cannot handle blocks with threads larger than 2048\n");assert(0);}
+    if (blockSize >= 1024) { if (tid < 512) { sdata[tid] += sdata[tid + 512]; } __syncthreads(); }
+    if (blockSize >= 512) { if (tid < 256) { sdata[tid] += sdata[tid + 256]; } __syncthreads(); }
+    if (blockSize >= 256) { if (tid < 128) { sdata[tid] += sdata[tid + 128]; } __syncthreads(); }
+    if (blockSize >= 128) { if (tid < 64) { sdata[tid] += sdata[tid + 64]; } __syncthreads(); }
+    if (tid < 32) {
+        if (blockSize >= 64) sdata[tid] += sdata[tid + 32];
+        if (blockSize >= 32) sdata[tid] += sdata[tid + 16];
+        if (blockSize >= 16) sdata[tid] += sdata[tid + 8];
+        if (blockSize >= 8) sdata[tid] += sdata[tid + 4];
+        if (blockSize >= 4) sdata[tid] += sdata[tid + 2];
+        if (blockSize >= 2) sdata[tid] += sdata[tid + 1];
+    }
+    if (tid == 0) {atomicAdd(&g_odata[0], sdata[0]);
+//        printf("addv2 %f %f %f\n", sdata[0], sdata[1], sdata[2]);
     }
 }
 
@@ -231,7 +277,7 @@ __global__ void setcurrentenergy( double* energy, double* currentenergy, double 
 
 __global__ void findLambdaCUDA(double* energyLambda, double* currentEnergy, double* FDotFA, double *fmax, double*
 lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool *safestate, int *status){
-    printf("prev_conv %d \n", prev_convergence[0]);
+//    printf("prev_conv %d \n", prev_convergence[0]);
     if(prev_convergence[0]) return;
 //    current_convergence[0] = false;
 //    double LAMBDAREDUCE = params[1];
@@ -239,7 +285,7 @@ lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool
 //    double MAXDIST = params[4];
     double idealEnergyChange = 0.0;
     double energyChange = 0.0;
-    printf("Energies %f %f\n", energyLambda[0],currentEnergy[0]);
+//    printf("Energies %f %f\n", energyLambda[0],currentEnergy[0]);
     if(safestate[0] == true){
         energyChange = energyLambda[0] - currentEnergy[0];
         if (energyChange <= 0.0) {
@@ -278,7 +324,7 @@ lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool
 }
 __global__ void findLambdaCUDA2(double *fmax, double* lambda, double *params, bool* prev_convergence, bool*
 current_convergence, bool *safestate, int *status){
-    printf("prev_conv %d \n", prev_convergence[0]);
+//    printf("prev_conv %d \n", prev_convergence[0]);
     if(prev_convergence[0]) return;
     double LAMBDAREDUCE = params[1];
     double MAXDIST = params[4];
@@ -291,7 +337,7 @@ current_convergence, bool *safestate, int *status){
             lambda[0] = MAXDIST / fmax[0];
         else
             lambda[0] = 0.0;
-        printf("lambda_state %d \n", status[0]);
+//        printf("lambda_state %d \n", status[0]);
     }
 }
 //__global__ void CUDAbacktrackingfindlambda(double* energyLambda, double* currentEnergy, double* FDotFA, double*

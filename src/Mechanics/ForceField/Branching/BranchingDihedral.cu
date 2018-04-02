@@ -103,14 +103,14 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord,
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
     nvtxRangePushA("CCEBD");
 
-    if(d == 0.0){
-        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_params);
-
-    }
-    else{
+//    if(d == 0.0){
+//        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_params);
+//
+//    }
+//    else{
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_d,
                             gpu_params);
-    }
+//    }
     nvtxRangePop();
 #else
     nvtxRangePushA("SCEBD");

@@ -46,6 +46,7 @@ void LinkerStretchingHarmonic::optimalblocksnthreads( int nint){
 //    unaryfn::result_type result;
 //    unaryfn ufn;
     if(nint>0) {
+        numint = nint;
         cudaOccupancyMaxPotentialBlockSizeVariableSMem(&minGridSize, &blockSize,
                                                        LinkerStretchingHarmonicenergy, blockToSmem, 0);
         blocksnthreadse.push_back((nint + blockSize - 1) / blockSize);
@@ -62,8 +63,12 @@ void LinkerStretchingHarmonic::optimalblocksnthreads( int nint){
                                                        LinkerStretchingHarmonicforces, blockToSmem, 0);
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
-
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
+        //get addition vars
+        bntaddvec2.clear();
+        bntaddvec2 = getaddred2bnt(nint);
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
         char a[] = "LinkerFF";
         char b[] = "Linker Stretching Harmonic";
@@ -156,8 +161,13 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
+//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(2)<<" "<<bntaddvec2.at
+//                (3)<<" "<<numint<<endl;
+        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+                params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
         return gU_sum;
     }

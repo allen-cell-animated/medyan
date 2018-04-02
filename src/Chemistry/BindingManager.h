@@ -180,7 +180,7 @@ private:
     NucleationZoneType _nucleationZone;
     
     ///If using a nucleation zone, nucleating distance from the boundary
-    double _nucleationDistance;
+    double _nucleationDistance = 0.0;
     
     ///possible bindings at current state
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
@@ -239,6 +239,12 @@ public:
 //        _branchCylinder=(get<0>(t2));
         double newN=numBindingSites();
         updateBindingReaction(oldN,newN);}
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1){
+        double oldN=numBindingSites();
+        _possibleBindings.insert(t1);
+//        _branchCylinder=(get<0>(t2));
+        double newN=numBindingSites();
+        updateBindingReaction(oldN,newN);}
     virtual void clearpossibleBindings() {
         double oldN=numBindingSites();
         _possibleBindings.clear();
@@ -247,14 +253,19 @@ public:
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
         return _branchrestarttuple;
     }
+    virtual unordered_set<tuple<CCylinder*, short>> getpossibleBindings(){
+        return _possibleBindings;
+    }
 #ifdef CUDAACCL
     double *gpu_distance;
     int *gpu_zone;
     int *gpu_numpairs = NULL;
     void assigncudavars();
-    double* getdistancesCUDA();
+    void freecudavars();
+    double* getdistancesCUDA(){return gpu_distance;}
     int* getzoneCUDA();
     int* getnumpairsCUDA();
+    int* getpossiblebindingssizeCUDA(){ return gpu_numpairs;}
 #endif
 };
 
@@ -353,6 +364,7 @@ public:
     double *gpu_rminmax = NULL;
     int *gpu_numpairs = NULL;
     void assigncudavars();
+    void freecudavars();
     double* getdistancesCUDA() { return gpu_rminmax;}
     int* getpossiblebindingssizeCUDA(){ return gpu_numpairs;}
     int getNLsize(){
@@ -466,6 +478,7 @@ public:
     double *gpu_rminmax = NULL;
     int *gpu_numpairs = NULL;
     void assigncudavars();
+    void freecudavars();
     double* getdistancesCUDA() { return gpu_rminmax;}
     int* getpossiblebindingssizeCUDA(){ return gpu_numpairs;}
     int getNLsize(){

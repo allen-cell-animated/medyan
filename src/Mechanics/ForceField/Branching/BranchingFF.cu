@@ -100,8 +100,9 @@ double BranchingFF::computeEnergy(double *coord, double *f, double d) {
     double U_i;
 
     for (auto &interaction : _branchingInteractionVector) {
-
+//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_branchingInteractionVector.size()<<endl;
         U_i = interaction->computeEnergy(coord, f, d);
+        CUDAcommon::handleerror(cudaDeviceSynchronize(),"BranchingFF","BranchingFF");
 //        std::cout<<interaction->getName()<<" "<<U_i<<endl;
 
         if(U_i <= -1) {

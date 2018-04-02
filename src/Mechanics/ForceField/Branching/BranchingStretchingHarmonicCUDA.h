@@ -58,54 +58,56 @@ using namespace mathfunc;
 //}
 
 __global__ void BranchingStretchingHarmonicenergy(double *coord, double *force, int *beadSet, double *kstr,
-                                                 double *eql, double *pos, int *params, double *U_i, int *culpritID,
+                                                 double *eql, double *pos, int *params, double *U_i, double *z,  int
+                                                  *culpritID,
                                                   char* culpritFF, char* culpritinteraction, char* FF, char*
 interaction) {
+    if(z[0] == 0.0) {
+        extern __shared__ double s[];
+        double *c1 = s;
+        double *c2 = &c1[3 * blockDim.x];
+        double *c3 = &c2[3 * blockDim.x];
+        double dist;
+        double v1[3];
+        int nint = params[1];
+        int n = params[0];
+        const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double dist;
-    double v1[3];
-    int nint = params[1];
-    int n = params[0];
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+        if (thread_idx < nint) {
+            for (auto i = 0; i < 3; i++) {
+                U_i[thread_idx] = 0.0;
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
+            }
 
-    if(thread_idx<nint) {
-        for(auto i=0;i<3;i++){
-            U_i[thread_idx] =0.0;
-            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
-            c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
-            c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
         }
+        __syncthreads();
+        if (thread_idx < nint) {
+            midPointCoordinate(v1, c1, c2, pos[thread_idx], 3 * threadIdx.x);
+            dist = twoPointDistancemixedID(v1, c3, 0, 3 * threadIdx.x) - eql[thread_idx];
 
-    }
-    __syncthreads();
-    if(thread_idx<nint) {
-        midPointCoordinate(v1, c1, c2, pos[thread_idx], 3 * threadIdx.x);
-        dist = twoPointDistancemixedID(v1, c3, 0, 3 * threadIdx.x) - eql[thread_idx];
+            U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
 
-        U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
+            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
 
-        if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-
-            U_i[thread_idx]=-1.0;
-            culpritID[0] = thread_idx;
-            culpritID[1] = -1;
-            int j = 0;
-            while(FF[j]!=0){
-                culpritFF[j] = FF[j];
-                j++;
+                U_i[thread_idx] = -1.0;
+                culpritID[0] = thread_idx;
+                culpritID[1] = -1;
+                int j = 0;
+                while (FF[j] != 0) {
+                    culpritFF[j] = FF[j];
+                    j++;
+                }
+                j = 0;
+                while (interaction[j] != 0) {
+                    culpritinteraction[j] = interaction[j];
+                    j++;
+                }
+                assert(0);
+                __syncthreads();
             }
-            j = 0;
-            while(interaction[j]!=0){
-                culpritinteraction[j] = interaction[j];
-                j++;
-            }
-            assert(0);
-            __syncthreads();
         }
     }
 }
@@ -114,65 +116,68 @@ __global__ void BranchingStretchingHarmonicenergyz(double *coord, double *f, int
                                                   double *eql, double *pos, int *params, double *U_i, double *z,
                                                    int *culpritID, char* culpritFF, char* culpritinteraction, char* FF,
                                                    char* interaction) {
+    if(z[0] != 0.0) {
+        extern __shared__ double s[];
+        double *c1 = s;
+        double *c2 = &c1[3 * blockDim.x];
+        double *c3 = &c2[3 * blockDim.x];
+        double *f1 = &c3[3 * blockDim.x];
+        double *f2 = &f1[3 * blockDim.x];
+        double *f3 = &f2[3 * blockDim.x];
 
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *f1 = &c3[3 * blockDim.x];
-    double *f2 = &f1[3 * blockDim.x];
-    double *f3 = &f2[3 * blockDim.x];
+        double dist;
+        double v1[3];
+        double vzero[3];
+        vzero[0] = 0;
+        vzero[1] = 0;
+        vzero[2] = 0;
+        int nint = params[1];
+        int n = params[0];
+        const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
-    double dist;
-    double v1[3];
-    double vzero[3]; vzero[0] = 0; vzero[1] = 0; vzero[2] = 0;
-    int nint = params[1];
-    int n = params[0];
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-
-    if(thread_idx<nint) {
-        U_i[thread_idx] = 0.0;
-        for(auto i=0;i<3;i++){
-            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
-            c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
-            c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
-            f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
-            f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
-            f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
-        }
-
-    }
-    __syncthreads();
-
-    if(thread_idx<nint) {
-
-        midPointCoordinateStretched(v1, c1, f1, c2, f2, pos[thread_idx], z[0], 3 * threadIdx.x);
-        dist = twoPointDistanceStretchedmixedID(v1, vzero, c3, f3, z[0], 0, 3 * threadIdx.x) - eql[thread_idx];
-
-        U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
-
-        if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-
-            U_i[thread_idx]=-1.0;
-            culpritID[0] = thread_idx;
-            culpritID[1] = -1;
-            int j = 0;
-            while(FF[j]!=0){
-                culpritFF[j] = FF[j];
-                j++;
+        if (thread_idx < nint) {
+            U_i[thread_idx] = 0.0;
+            for (auto i = 0; i < 3; i++) {
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
+                f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
+                f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
+                f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
             }
-            j = 0;
-            while(interaction[j]!=0){
-                culpritinteraction[j] = interaction[j];
-                j++;
-            }
-            assert(0);
-            __syncthreads();
+
         }
+        __syncthreads();
 
+        if (thread_idx < nint) {
+
+            midPointCoordinateStretched(v1, c1, f1, c2, f2, pos[thread_idx], z[0], 3 * threadIdx.x);
+            dist = twoPointDistanceStretchedmixedID(v1, vzero, c3, f3, z[0], 0, 3 * threadIdx.x) - eql[thread_idx];
+
+            U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
+
+            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+
+                U_i[thread_idx] = -1.0;
+                culpritID[0] = thread_idx;
+                culpritID[1] = -1;
+                int j = 0;
+                while (FF[j] != 0) {
+                    culpritFF[j] = FF[j];
+                    j++;
+                }
+                j = 0;
+                while (interaction[j] != 0) {
+                    culpritinteraction[j] = interaction[j];
+                    j++;
+                }
+                assert(0);
+                __syncthreads();
+            }
+
+        }
     }
-
 }
 
 

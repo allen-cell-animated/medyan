@@ -50,7 +50,7 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
     //CUDA
 #ifdef CUDAACCL
-    F_i = new double[3 * Bead::getBeads().size()];
+//    F_i = new double[3 * Bead::getBeads().size()];
 //    cudaEvent_t start, stop;
 //    CUDAcommon::handleerror(cudaEventCreate( &start));
 //    CUDAcommon::handleerror(cudaEventCreate( &stop));
@@ -180,8 +180,8 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
         nvtxRangePop();
     }
 
-    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
-                                       cudaMemcpyDeviceToHost));
+//    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
+//                                       cudaMemcpyDeviceToHost));
 #else
     nvtxRangePushA("SCFM");
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);

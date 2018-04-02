@@ -67,9 +67,12 @@ protected:
 
 #ifdef CUDAACCL
     vector<int> blocksnthreads;
+    vector<int> bntaddvector;
+    vector<int> bnt;
     int *gpu_nint;
     double *gpu_g;
     double *gSum;
+    double *gSum2;
     double *gpu_fmax;
     double *g_currentenergy;
     double *gpu_params = NULL;

@@ -111,6 +111,8 @@ private:
     void pinBoundaryFilaments();
     
 public:
+    double minimizationtime = 0.0;
+
     Controller(SubSystem* s);
     ~Controller() {};
     

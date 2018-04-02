@@ -28,6 +28,8 @@ void BranchingPositionCosine::deallocate(){
     CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
+    CUDAcommon::handleerror(cudaFree(gFF));
+    CUDAcommon::handleerror(cudaFree(ginteraction));
 }
 void BranchingPositionCosine::optimalblocksnthreads( int nint){
     //CUDA stream create
@@ -55,9 +57,16 @@ void BranchingPositionCosine::optimalblocksnthreads( int nint){
                                                        BranchingPositionCosineforces, blockToSmemFB, 0);
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
-
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
+        //get addition vars
+        bntaddvec2.clear();
+        bntaddvec2 = getaddred2bnt(nint);
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
 
         char a[] = "BranchingFF";
         char b[] = "Branching Position Cosine";
@@ -78,43 +87,80 @@ void BranchingPositionCosine::optimalblocksnthreads( int nint){
 }
 double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
                                         double *kpos, double *pos, int *params) {
-    if(blocksnthreadse[1]>0) {
-        BranchingPositionCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        auto cvars = CUDAcommon::getCUDAvars();
-        cvars.streamvec.push_back(&stream);
-        CUDAcommon::cudavars = cvars;
-        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
-        return gU_sum;}
-    else
-        return NULL;
+//    if(blocksnthreadse[1]>0) {
+//        BranchingPositionCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
+//                (double), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+//                CUDAcommon::getCUDAvars().gculpritFF,
+//                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
+//        return gU_sum;}
+//    else
+//        return NULL;
 }
 
 
 double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
                                         double *kpos, double *pos, double *z, int *params) {
+    if(blocksnthreadse[1]>0) {
+        BranchingPositionCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
+                (double), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i, z, CUDAcommon::getCUDAvars()
+                .gculpritID,
+                CUDAcommon::getCUDAvars().gculpritFF,
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
+//        return gU_sum;
+    }
+
     if(blocksnthreadsez[1]>0) {
         BranchingPositionCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
                                           sizeof(double), stream>> > (coord, f, beadSet, kpos, pos, params, gU_i, z,
                 CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
+//        auto cvars = CUDAcommon::getCUDAvars();
+//        cvars.streamvec.push_back(&stream);
+//        CUDAcommon::cudavars = cvars;
+//        CUDAcommon::handleerror(cudaGetLastError(),"BranchingPositionCosineenergyz", "BranchingPositionCosine.cu");
+//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror(cudaGetLastError(),"BranchingPositionCosineenergyz", "BranchingPositionCosine.cu");
+//        return gU_sum;
+    }
+    if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
+        return NULL;
+    else{
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        CUDAcommon::handleerror(cudaGetLastError(),"BranchingPositionCosineenergyz", "BranchingPositionCosine.cu");
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
-        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-        CUDAcommon::handleerror(cudaGetLastError(),"BranchingPositionCosineenergyz", "BranchingPositionCosine.cu");
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
+//                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
+        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+                params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
+        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         return gU_sum;
-    }else
-        return NULL;
+    }
+
 }
 
 void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,

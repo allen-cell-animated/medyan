@@ -46,11 +46,13 @@ public:
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
     static void checkforculprit();
     double *gU_i;
     double *gU_sum;
     char *gFF, *ginteraction;
     cudaStream_t stream;
+    int numint;
 #endif
 #ifdef CROSSCHECK
     double energy(Bead*, Bead*, Bead*, Bead*,

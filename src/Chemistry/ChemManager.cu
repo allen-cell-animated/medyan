@@ -1144,7 +1144,7 @@ void ChemManager::genFilBindingReactions() {
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
 
-                cout << reactants.size() << " " << products.size() << endl;
+//                std::cout << reactants.size() << " " << products.size() << endl;
 
                 //Checks on number of reactants, products
                 if(reactants.size() != BRANCHINGREACTANTS ||
@@ -1885,9 +1885,9 @@ void ChemManager::genFilBindingReactions() {
                 //add to subsystem and manager
                 LinkerBindingManager::_neighborLists.push_back(nl);
                 _subSystem->addNeighborList(nl);
-#ifdef CUDAACCL
-                lManager->assigncudavars();
-#endif
+//#ifdef CUDAACCL
+//                lManager->assigncudavars();
+//#endif
             }
 
             else if((mManager = dynamic_cast<MotorBindingManager*>(manager.get()))) {
@@ -1899,14 +1899,14 @@ void ChemManager::genFilBindingReactions() {
                 //add to subsystem and manager
                 MotorBindingManager::_neighborLists.push_back(nl);
                 _subSystem->addNeighborList(nl);
-#ifdef CUDAACCL
-                mManager->assigncudavars();
-#endif
+//#ifdef CUDAACCL
+//                mManager->assigncudavars();
+//#endif
             }
             else if((bManager = dynamic_cast<BranchingManager*>(manager.get()))) {
-#ifdef CUDAACCL
-                bManager->assigncudavars();
-#endif
+//#ifdef CUDAACCL
+//                bManager->assigncudavars();
+//#endif
             }
         }
     }
@@ -1972,7 +1972,7 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
 
                 auto sb_bound = products[0].substr(0, products[0].find(":"));
 
-                cout << reactants.size() << " " << products.size() << endl;
+//                std::cout << reactants.size() << " " << products.size() << endl;
 
                 //basic check because we have not yet checked reactions
                 if(reactants.size() != BRANCHINGREACTANTS ||

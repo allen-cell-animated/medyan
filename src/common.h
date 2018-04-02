@@ -28,9 +28,7 @@
 #else
 #define CUDA_HOSTDEV
 #endif
-#ifndef THREADSPERBLOCK
-#define THREADSPERBLOCK 512
-#endif
+
 #endif
 
 ///Species constants

@@ -26,6 +26,20 @@ void ForceFieldManager::vectorizeAllForceFields() {
     int nint[1]; nint[0]=CGMethod::N/3;
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_nint, sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_nint, nint, sizeof(int), cudaMemcpyHostToDevice));
+    //Memory alloted
+    //@{
+//    size_t allocmem = 0;
+//    allocmem += sizeof(double);
+//    auto c = CUDAcommon::getCUDAvars();
+//    c.memincuda += allocmem;
+//    CUDAcommon::cudavars = c;
+//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
+//    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
+    //@}
+    int THREADSPERBLOCK;
+    cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+    THREADSPERBLOCK = prop.maxThreadsPerBlock;
     blocksnthreads.push_back(CGMethod::N/(3*THREADSPERBLOCK) + 1);
     if(blocksnthreads[0]==1) blocksnthreads.push_back(CGMethod::N/3);
     else blocksnthreads.push_back(THREADSPERBLOCK);
@@ -40,6 +54,16 @@ void ForceFieldManager::cleanupAllForceFields() {
     CUDAcommon::handleerror(cudaStreamDestroy(stream));
     if(CGMethod::N/3 > 0) {
         CUDAcommon::handleerror(cudaFree(gpu_nint));
+        //Memory alloted
+        //@{
+//        size_t allocmem = 0;
+//        allocmem += sizeof(double);
+//        auto c = CUDAcommon::getCUDAvars();
+//        c.memincuda -= allocmem;
+//        CUDAcommon::cudavars = c;
+//        std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
+//        std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
+        //@}
         blocksnthreads.clear();
     }
 #endif
@@ -58,7 +82,7 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 //        std::cout<<ff->getName()<<endl;
 //        std::cout<<"ForceField "<<ff->getName()<<endl;
         auto tempEnergy = ff->computeEnergy(coord, f, d);
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
+//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
 
         if(verbose) cout << ff->getName() << " energy = " << tempEnergy << endl;
 
@@ -106,11 +130,12 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
     CUDAcommon::handleerror( cudaGetLastError() ,"resetForcesCUDA", "ForceFieldManager.cu");
 #endif
     //recompute
-    double *F_i = new double[CGMethod::N];
+//    double *F_i = new double[CGMethod::N];
     for(auto &ff : _forceFields) {
+//                std::cout<<"ForceField "<<ff->getName()<<endl;
         ff->computeForces(coord, f);
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
-//        std::cout<<"ForceField "<<ff->getName()<<endl;
+        CUDAcommon::handleerror(cudaDeviceSynchronize());
+
 //        if(cross_checkclass::Aux)
 //            CUDAcommon::handleerror(
 //                cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_forceAux, 3 * Bead::getBeads().size() * sizeof
@@ -132,7 +157,7 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
 //        std::cout <<"Fmax "<< id<<" "<<fmax<<" "<<F_i[3 * id] << " " << F_i[3 * id + 1] << " " << F_i[3 * id + 2] <<
 //                                                                                                                 endl;
     }
-    delete F_i;
+//    delete F_i;
 }
 
 void ForceFieldManager::computeLoadForces() {

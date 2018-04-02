@@ -48,7 +48,7 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
 
     //CUDA
 #ifdef CUDAACCL
-    F_i = new double[3 * Bead::getBeads().size()];
+//    F_i = new double[3 * Bead::getBeads().size()];
 //    cudaEvent_t start, stop;
 //    CUDAcommon::handleerror(cudaEventCreate( &start));
 //    CUDAcommon::handleerror(cudaEventCreate( &stop));
@@ -180,8 +180,8 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, 
     }
 
     //TODO remove this later need not copy forces back to CPU.
-    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
-                                       cudaMemcpyDeviceToHost),"cuda data transfer", "LinkerStretching.cu");
+//    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
+//                                       cudaMemcpyDeviceToHost),"cuda data transfer", "LinkerStretching.cu");
 #else
     nvtxRangePushA("SCFL");
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);

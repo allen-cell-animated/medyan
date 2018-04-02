@@ -39,7 +39,7 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
     //CUDA
 #ifdef CUDAACCL
     nvtxRangePushA("CVFF");
-    F_i = new double[3 * Bead::getBeads().size()];
+//    F_i = new double[3 * Bead::getBeads().size()];
     int numInteractions = Cylinder::getCylinders().size();
     _FFType.optimalblocksnthreads(numInteractions);
 

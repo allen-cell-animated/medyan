@@ -99,11 +99,13 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     params.push_back(numInteractions);
     //TODO make sure not using cudafree here is fine.
     if(gpu_params != NULL )
-     CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree", "CylinderExclVolume.cu");
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)),"cuda data transfer",
-                            "CylinderExclVolume.cu");
-    CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice),
-                            "cuda data transfer", "CylinderExclVolume.cu");
+        CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree", "CylinderExclVolume.cu");
+    if(nint > 0) {
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)), "cuda data transfer",
+                                "CylinderExclVolume.cu");
+        CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice),
+                                "cuda data transfer", "CylinderExclVolume.cu");
+    }
     nvtxRangePop();
 #endif
     //

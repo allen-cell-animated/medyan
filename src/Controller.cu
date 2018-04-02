@@ -274,10 +274,10 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     auto filGen=get<0>(filamentsGen);
     fil.insert(fil.end(), filGen.begin(), filGen.end());
     delete fInit;
-
+    int countfil = 0;
     //add filaments
     for (auto it: fil) {
-
+        std::cout<<"countfil "<<countfil++<<endl;
         auto coord1 = get<1>(it);
         auto coord2 = get<2>(it);
         auto type = get<0>(it);
@@ -496,7 +496,7 @@ void Controller::run() {
 
     long totalSteps = 0;
 #endif
-    chrono::high_resolution_clock::time_point chk1, chk2;
+    chrono::high_resolution_clock::time_point chk1, chk2, mins, mine;
     chk1 = chrono::high_resolution_clock::now();
 //RESTART PHASE BEGINS
     if(SysParams::RUNSTATE==false){
@@ -530,10 +530,14 @@ void Controller::run() {
         updatePositions();
         updateNeighborLists();
 
+        mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
         nvtxRangePushA("mechanics_i");
         _mController->run(false);
         nvtxRangePop();
+        mine= chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_runm(mine - mins);
+        minimizationtime += elapsed_runm.count();
         SysParams::RUNSTATE=true;
 
         //reupdate positions and neighbor lists
@@ -588,9 +592,13 @@ void Controller::run() {
     oldTau = 0;
 #endif
     cout<<"Minimizing energy"<<endl;
+    mins = chrono::high_resolution_clock::now();
     nvtxRangePushA("mechanics_i2");
     _mController->run(false);
     nvtxRangePop();
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runm2(mine - mins);
+    minimizationtime += elapsed_runm2.count();
     nvtxRangePushA("output");
     for(auto o: _outputs) o->print(0);
     nvtxRangePop();
@@ -626,9 +634,13 @@ void Controller::run() {
 //            std::cout<<"TIME "<<tau()<<endl;
 //            std::cout<<endl;
             if(tauLastMinimization >= _minimizationTime) {
+                mins = chrono::high_resolution_clock::now();
                 nvtxRangePushA("mechanics");
                 _mController->run();
                 nvtxRangePop();
+                mine= chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed_runm3(mine - mins);
+                minimizationtime += elapsed_runm3.count();
                 nvtxRangePushA("update_pos");
                 updatePositions();
                 nvtxRangePop();
@@ -672,6 +684,23 @@ void Controller::run() {
             executeSpecialProtocols();
 
             oldTau = tau();
+#ifdef CUDAACCL
+            nvtxRangePushA("device reset");
+            //reset CUDA context
+//            CUDAcommon::handleerror(cudaDeviceSynchronize(), "cudaDeviceSynchronize", "Controller.cu");
+            CUDAcommon::handleerror(cudaDeviceReset(), "cudaDeviceReset", "Controller.cu");
+            nvtxRangePop();
+            size_t free, total;
+            CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+            fprintf(stdout,"\t### After Reset Available VRAM : %g Mo/ %g Mo(total)\n\n",
+                    free/1e6, total/1e6);
+
+            cudaFree(0);
+
+            CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+            fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
+                    free/1e6, total/1e6);
+#endif
         }
 #endif
     }
@@ -740,7 +769,7 @@ void Controller::run() {
 
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
-
+    cout << "Minimization time for run=" << minimizationtime <<endl;
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
     cout << "Total simulation time: dt=" << tau() << endl;
     cout << "Done with simulation!" << endl;

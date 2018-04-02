@@ -191,11 +191,11 @@ void CylinderCylinderNL::reset() {
     cpu_params2[1] = int(_full);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params2, 2 * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_params2, cpu_params2, 2 * sizeof(int), cudaMemcpyHostToDevice));
-    if(gpu_numpairs == NULL) {
+//    if(gpu_numpairs == NULL) {
 //    numpairs[0] = 0;
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_numpairs, sizeof(int)));
 //    CUDAcommon::handleerror(cudaMemcpy(gpu_numpairs, numpairs, 1 * sizeof(int), cudaMemcpyHostToDevice));
-    }
+//    }
 
 //        int *a;
 //        a = new int[1];
@@ -215,14 +215,14 @@ void CylinderCylinderNL::reset() {
     int *cmpIDlist = cylcylnlvars.gpu_cmpID;
     int *fvecposition = cylcylnlvars.gpu_fvecpos;
 //    int *cylvecpospercmp = cylcylnlvars.gpu_cylvecpospercmp;
-    if(gpu_params == NULL) {
+//    if(gpu_params == NULL) {
         double cpu_params[2];
         cpu_params[0] = double(_rMin);
         cpu_params[1] = double(_rMax);
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params,  2 * sizeof(double)),
                                 "cuda data transfer", " NeighborListImpl.h");
         CUDAcommon::handleerror(cudaMemcpy(gpu_params, cpu_params, 2 * sizeof(double), cudaMemcpyHostToDevice));
-    }
+//    }
     nvtxRangePop();
 //    std::cout<<_rMin<<" "<<_rMax<<endl;
     nvtxRangePushA("NL_Exec_NeighborListImpl");
@@ -281,13 +281,16 @@ void CylinderCylinderNL::reset() {
                 _list[cylinder].push_back(ncylinder);
             }
         }
-        if(cudacpyforces)
-            CUDAcommon::handleerror(cudaFree(gpu_NL),"cudaFree","NeighborListImpl.cu");
+        if(cudacpyforces) {
+            CUDAcommon::handleerror(cudaFree(gpu_NL), "cudaFree", "NeighborListImpl.cu");
+            CUDAcommon::handleerror(cudaFree(gpu_numpairs), "cudaFree", "NeighborListImpl.cu");
+        }
         delete NL;
     }
     CUDAcommon::handleerror(cudaFree(gpu_pair_cIndex_cnIndex),"cudaFree","NeighborListImpl.cu");
-//    CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree","NeighborListImpl.cu");
     CUDAcommon::handleerror(cudaFree(gpu_params2),"cudaFree","NeighborListImpl.cu");
+
+    CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree","NeighborListImpl.cu");
     nvtxRangePop();
 #endif
     }

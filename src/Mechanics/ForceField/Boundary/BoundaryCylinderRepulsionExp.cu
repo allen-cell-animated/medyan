@@ -32,6 +32,16 @@ void BoundaryCylinderRepulsionExp::deallocate(){
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
     CUDAcommon::handleerror(cudaFree(ginteraction));
+    //Memory alloted
+    //@{
+//    size_t allocmem = 0;
+//    allocmem += (bntaddvec2.at(0) + 1) * sizeof(double) + 200 * sizeof(char);
+//    auto c = CUDAcommon::getCUDAvars();
+//    c.memincuda -= allocmem;
+//    CUDAcommon::cudavars = c;
+//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
+//    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
+    //@}
 }
 void BoundaryCylinderRepulsionExp::optimalblocksnthreads( int nint){
     //CUDA stream create
@@ -64,7 +74,12 @@ void BoundaryCylinderRepulsionExp::optimalblocksnthreads( int nint){
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
 
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
+        //get addition vars
+        bntaddvec2.clear();
+        bntaddvec2 = getaddred2bnt(nint);
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
         char a[] = "Boundary Cylinder Repulsion";
         char b[] = "Boundary Cylinder Repulsion Exp";
@@ -72,6 +87,16 @@ void BoundaryCylinderRepulsionExp::optimalblocksnthreads( int nint){
         CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
         CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
         CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        //Memory alloted
+        //@{
+//        size_t allocmem = 0;
+//        allocmem += (bntaddvec2.at(0) + 1) * sizeof(double) + 200 * sizeof(char);
+//        auto c = CUDAcommon::getCUDAvars();
+//        c.memincuda += allocmem;
+//        CUDAcommon::cudavars = c;
+//        std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
+//        std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
+        //@}
     }
     else{
         blocksnthreadse.push_back(0);
@@ -151,8 +176,13 @@ double* BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *bead
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
+//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
+//                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
+        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+                params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror(cudaGetLastError(),"BoundaryCylinderRepulsionExpenergyz", "BoundaryCylinderRepulsionExp.cu");
         return gU_sum;
     }

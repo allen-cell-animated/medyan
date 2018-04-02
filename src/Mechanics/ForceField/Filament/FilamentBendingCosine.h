@@ -43,6 +43,7 @@ public:
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
     static void checkforculprit();
     double *gU_i;
     double *gU_sum;

@@ -92,5 +92,79 @@ int *relevant_spboundvec, int *bindingSites){
 //            __syncthreads(); //TODO remove later
         }//checkstate
     }
-};
+}
+
+__global__ void updateAllPossibleBindingsBrancherCUDA (double *coord, int *beadSet, int *cylID, int *filID, int *
+                                                      filType, int *cmpID, int *numpairs, int *params,
+                                                      double *distances, int *zone, int *possibleBindings,
+                                                      int *bindingSites, int
+                                                       *relevant_spboundvec, double *beListplane){
+    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+    int numBindingSites = params[0];
+    int filamenttype = params[1];
+    int numMonomerperCyl = params[2];
+    int numcyl = params[3];
+    double leg1[3];
+    bool checkstate = true;
+    if(thread_idx < numcyl){
+        int cIndex = thread_idx;
+        if (filamenttype != filType[cIndex])
+            checkstate = false;
+        if(checkstate){
+            double cylf[3], cyls[3];
+            for(int i = 0; i < 3; i++) {
+                cylf[i] = coord[3 * beadSet[2 * cIndex] + i];
+                cyls[i] = coord[3 * beadSet[2 * cIndex + 1] + i];
+            }
+            for (int bs = 0; bs < numBindingSites; bs++) {
+                double dist = -1.0;
+                if (zone[0] > 0) {// Type 0 = ALL
+                    double mp1 = double(bindingSites[bs]) / double(numMonomerperCyl);
+                    midPointCoordinate(leg1, cylf, cyls, mp1, 0);
+                //Get distance from the closest boundary.
+                    for (auto b = 0; b < 6; b++) {
+                        double plane[4];
+                        for (auto i = 0; i < 4; i++)
+                            plane[i] = beListplane[4*b + i];
+                        double dist_temp = getdistancefromplane(leg1, plane, 0);
+                        if(dist == -1.0)
+                            dist = dist_temp;
+                        else if (dist_temp < dist)
+                            dist = dist_temp;
+                    }
+                    //Check if within nucleationzone
+
+                    if(dist < distances[0]) {
+                        if (zone[0] == 2) {
+                            if (leg1[2] >= distances[1])
+                                checkstate = true;
+                            else
+                                checkstate = false;
+                        }
+                        else
+                            checkstate = true;
+                    }
+                    else
+                        checkstate = false;
+                }
+
+                //make sure binding sites are not occupied
+                if (int(relevant_spboundvec[numBindingSites * cIndex + bs] - 1.0) != 0)
+                    checkstate = false;
+//                printf("%d %d %d %f %f %f\n",thread_idx, bindingSites[bs], zone[0],dist, distances[0],
+//                       distances[1]);
+//                else
+//                    checkstate = true;
+                if(checkstate){
+//                    printf("%d %d %d %f %f %f\n",thread_idx, bindingSites[bs], zone[0],dist, distances[0],
+//                       distances[1]);
+                    int numpair_prev = atomicAdd(&numpairs[0], 1);
+                    possibleBindings[3 * numpair_prev] = cmpID[cIndex];
+                    possibleBindings[3 * numpair_prev + 1] = cIndex;
+                    possibleBindings[3 * numpair_prev + 2] = bindingSites[bs];
+                }
+            }
+        }
+    }
+}
 #endif //CUDA_VEC_BINDINGMANAGERCUDA_H

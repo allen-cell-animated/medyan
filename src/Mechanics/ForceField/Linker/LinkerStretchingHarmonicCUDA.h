@@ -244,13 +244,31 @@ __global__ void LinkerStretchingHarmonicforces(double *coord, double *f, int *be
         f4[2] = f0 * (v1[2] - v2[2]) * (pos2[thread_idx]);
 
         for (int i = 0; i < 3; i++) {
+            if (fabs(f1[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f1[i] != f1[i]) {
+                printf("Linker Force became infinite %f %f %f\n",f1[0], f1[1], f1[2]);
+                assert(0);
+            }
+            if (fabs(f2[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f2[i] != f2[i]) {
+                printf("Linker Force became infinite %f %f %f\n",f2[0], f2[1], f2[2]);
+                assert(0);
+            }
+            if (fabs(f3[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f3[i] != f3[i]) {
+                printf("Linker Force became infinite %f %f %f\n",f3[0], f3[1], f3[2]);
+                assert(0);
+            }
+            if (fabs(f4[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f4[i] != f4[i]) {
+                printf("Linker Force became infinite %f %f %f\n",f4[0], f4[1], f4[2]);
+                assert(0);
+            }
             atomicAdd(&f[3 * beadSet[n * thread_idx] + i], f1[i]);
             atomicAdd(&f[3 * beadSet[n * thread_idx + 1] + i], f2[i]);
             atomicAdd(&f[3 * beadSet[n * thread_idx + 2] + i], f3[i]);
             atomicAdd(&f[3 * beadSet[n * thread_idx + 3] + i], f4[i]);
         }
-
-
     }
 }
 

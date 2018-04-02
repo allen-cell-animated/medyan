@@ -58,8 +58,11 @@ void FilamentStretchingHarmonic::optimalblocksnthreads( int nint){
                                                        FilamentStretchingHarmonicforces, blockToSmemF, 0);
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
-
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
+        //get addition vars
+        bntaddvec2.clear();
+        bntaddvec2 = getaddred2bnt(nint);
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
         char a[] = "FilamentFF";
         char b[] = "Filament Stretching Harmonic";
@@ -149,7 +152,20 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//            double Sum[1];
+//        CUDAcommon::handleerror(cudaMemcpy(Sum, gU_sum, sizeof(double), cudaMemcpyDeviceToHost));
+//        double *gU_sum2;
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum2, sizeof(double)));
+//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
+//                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
+        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+                params, gU_sum, gpu_Utot);
+//        double Sum2[1];
+//        CUDAcommon::handleerror(cudaMemcpy(Sum2, gU_sum2, sizeof(double), cudaMemcpyDeviceToHost));
+//        cudaFree(gU_sum2);
+//        std::cout<<Sum[0]<<" "<<Sum2[0]<<endl;
 //        cudaStreamSynchronize(stream);
         CUDAcommon::handleerror( cudaGetLastError() ,"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
         return gU_sum;}

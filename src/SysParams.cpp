@@ -33,7 +33,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         return false;
     }
     if(chem.speciesDiffusing.size() != CParams.numDiffusingSpecies) {
-        
+
         cout << "Number of diffusing species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
         <<endl;

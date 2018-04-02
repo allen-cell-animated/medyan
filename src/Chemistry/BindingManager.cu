@@ -173,17 +173,20 @@ void BranchingManager::updateAllPossibleBindings() {
             }
             if (areEqual(cc->getCMonomer(*it)->speciesBound(
                     SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
-
+//                output test
+//                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
+//                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
+//                auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+//
+//                auto coord = midPointCoordinate(x1, x2, mp);
+//                std::cout<<c->_dcIndex<<" "<<*it<<" "<<_subSystem->getBoundary()->distance(coord)<<endl;
+//                end
                 auto t = tuple<CCylinder*, short>(cc, *it);
                 _possibleBindings.insert(t);
             }
         }
     }
-
-#ifdef CUDAACCL
-
-#endif
-
+//        std::cout<<_possibleBindings.size()<<endl;
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();
 
@@ -221,32 +224,38 @@ bool BranchingManager::isConsistent() {
 
 #ifdef CUDAACCL
 void BranchingManager::assigncudavars() {
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_distance, sizeof(double)),"cuda data transfer", " "
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_distance, 2 * sizeof(double)),"cuda data transfer", " "
             "BindingManager.cu");
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_numpairs, sizeof(int)),"cuda data transfer", " "
             "BindingManager.cu");
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_zone, sizeof(int)),"cuda data transfer", " "
             "BindingManager.cu");
-    double dist[1];
+    double dist[2];
     dist[0] = _nucleationDistance;
+    dist[1] = GController::getCenter()[2];
     int n[1];
     n[0] = 0;
     int zone[1];
+    zone[0] = -1;
     if(_nucleationZone == NucleationZoneType::ALL)
         zone[0] =0;
     else if(_nucleationZone == NucleationZoneType::BOUNDARY)
         zone[0] =1;
     else if(_nucleationZone == NucleationZoneType::TOPBOUNDARY)
         zone[0] =2;
-    CUDAcommon::handleerror(cudaMemcpy(gpu_distance, dist, 2 *sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_distance, dist, 2 * sizeof(double), cudaMemcpyHostToDevice));
     CUDAcommon::handleerror(cudaMemcpy(gpu_numpairs, n, sizeof(int), cudaMemcpyHostToDevice));
     CUDAcommon::handleerror(cudaMemcpy(gpu_zone, zone, sizeof(int), cudaMemcpyHostToDevice));
-    delete dist;
+//    delete dist;
 }
 
-double* BranchingManager::getdistancesCUDA(){
-    return gpu_distance;
+void BranchingManager::freecudavars() {
+    CUDAcommon::handleerror(cudaFree(gpu_distance),"cudaFree", "BindingManager");
+    CUDAcommon::handleerror(cudaFree(gpu_numpairs),"cudaFree", "BindingManager");
+    CUDAcommon::handleerror(cudaFree(gpu_zone),"cudaFree", "BindingManager");
 }
+
+
 int* BranchingManager::getzoneCUDA(){
     return gpu_zone;
 }
@@ -549,24 +558,27 @@ bool LinkerBindingManager::isConsistent() {
 
 #ifdef CUDAACCL
 void LinkerBindingManager::assigncudavars() {
-    if(gpu_rminmax == NULL) {
+//    if(gpu_rminmax == NULL) {
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_rminmax, 2 * sizeof(double)), "cuda data transfer", " "
                 "BindingManager.cu");
         double dist[2];
         dist[0] = _rMin;
         dist[1] = _rMax;
         CUDAcommon::handleerror(cudaMemcpy(gpu_rminmax, dist, 2 *sizeof(double), cudaMemcpyHostToDevice));
-    }
-    if(gpu_numpairs == NULL) {
+//    }
+//    if(gpu_numpairs == NULL) {
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_numpairs, sizeof(int)), "cuda data transfer", " "
                 "BindingManager.cu");
 //    int n[1];
 //    n[0] = 0;
 //    CUDAcommon::handleerror(cudaMemcpy(gpu_numpairs, n, sizeof(int), cudaMemcpyHostToDevice));
-    }
+//    }
 //    delete dist;
 }
-
+void LinkerBindingManager::freecudavars() {
+    CUDAcommon::handleerror(cudaFree(gpu_rminmax),"cudaFree", "BindingManager");
+    CUDAcommon::handleerror(cudaFree(gpu_numpairs),"cudaFree", "BindingManager");
+}
 #endif
 //MOTOR
 MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
@@ -892,24 +904,28 @@ bool MotorBindingManager::isConsistent() {
 #ifdef CUDAACCL
 void MotorBindingManager::assigncudavars() {
 
-    if(gpu_numpairs == NULL) {
+//    if(gpu_numpairs == NULL) {
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_numpairs, sizeof(int)), "cuda data transfer", " "
                 "BindingManager.cu");
 //    int n[1];
 //    n[0] = 0;
 //    CUDAcommon::handleerror(cudaMemcpy(gpu_numpairs, n, sizeof(int), cudaMemcpyHostToDevice));
-    }
+//    }
 
-    if(gpu_rminmax == NULL) {
+//    if(gpu_rminmax == NULL) {
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_rminmax, 2 * sizeof(double)), "cuda data transfer", " "
                 "BindingManager.cu");
         double dist[2];
         dist[0] = _rMin;
         dist[1] = _rMax;
         CUDAcommon::handleerror(cudaMemcpy(gpu_rminmax, dist, 2 * sizeof(double), cudaMemcpyHostToDevice));
-    }
+//    }
 
 //    delete dist;
+}
+void MotorBindingManager::freecudavars() {
+    CUDAcommon::handleerror(cudaFree(gpu_rminmax),"cudaFree", "BindingManager");
+    CUDAcommon::handleerror(cudaFree(gpu_numpairs),"cudaFree", "BindingManager");
 }
 #endif
 

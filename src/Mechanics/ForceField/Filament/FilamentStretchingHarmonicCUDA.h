@@ -224,6 +224,16 @@ __global__ void FilamentStretchingHarmonicforces(double *coord, double *f, int *
 //               f0, f1[0],f1[1],f1[2],f2[0],f2[1],f2[2]);
 //        printf("%d %f %f %f %f %f %f\n", thread_idx, f1[0],f1[1],f1[2],f2[0],f2[1],f2[2]);
         for (int i = 0; i < 3; i++) {
+            if (fabs(f1[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f1[i] != f1[i]) {
+                printf("Fil. Stret. Force became infinite %f %f %f\n",f1[0], f1[1], f1[2]);
+                assert(0);
+            }
+            if (fabs(f2[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || f2[i] != f2[i]) {
+                printf("Fil. Stret. became infinite %f %f %f\n",f2[0], f2[1], f2[2]);
+                assert(0);
+            }
             atomicAdd(&f[3 * beadSet[n * thread_idx] + i], f1[i]);
             atomicAdd(&f[3 * beadSet[n * thread_idx + 1] + i], f2[i]);
         }

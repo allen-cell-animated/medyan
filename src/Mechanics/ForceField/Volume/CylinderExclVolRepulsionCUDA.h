@@ -167,6 +167,12 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
                         culpritinteraction[j] = interaction[j];
                         j++;
                     }
+                    printf("Coordiantes \n %f %f %f \n %f %f %f \n %f %f %f \n %f %f %f \n", c1[3 * threadIdx.x ],
+                           c1[3 * threadIdx
+                    .x + 1], c1[3 * threadIdx.x + 2], c2[3 * threadIdx.x ], c2[3 * threadIdx
+                            .x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x ], c3[3 * threadIdx
+                            .x + 1], c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x ], c4[3 * threadIdx
+                            .x + 1], c4[3 * threadIdx.x + 2]);
                     assert(0);
                     __syncthreads();
                 }
@@ -357,6 +363,18 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                         culpritinteraction[j] = interaction[j];
                         j++;
                     }
+                    printf("Coordiantes \n %f %f %f \n %f %f %f \n %f %f %f \n %f %f %f \n", c1[3 * threadIdx.x ],
+                           c1[3 * threadIdx
+                                   .x + 1], c1[3 * threadIdx.x + 2], c2[3 * threadIdx.x ], c2[3 * threadIdx
+                                    .x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x ], c3[3 * threadIdx
+                                    .x + 1], c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x ], c4[3 * threadIdx
+                                    .x + 1], c4[3 * threadIdx.x + 2]);
+                    printf("Forces \n %f %f %f \n %f %f %f \n %f %f %f \n %f %f %f \n", c1[3 * threadIdx.x ],
+                           f[3 * beadSet[n * thread_idx]], f[3 * beadSet[n * thread_idx] + 1], f[3 * beadSet[n *
+                           thread_idx] + 2], f[3 * beadSet[n * thread_idx +1]], f[3 * beadSet[n * thread_idx +1] + 1],
+                           f[3 * beadSet[n * thread_idx +1] + 2], f[3 * beadSet[n * thread_idx +2]], f[3 * beadSet[n *
+                           thread_idx +2] + 1], f[3 * beadSet[n * thread_idx +2] + 2], f[3 * beadSet[n * thread_idx +3]],
+                           f[3 * beadSet[n * thread_idx+3] + 1], f[3 * beadSet[n * thread_idx+3] + 2]);
                     assert(0);
                     __syncthreads();
                 }

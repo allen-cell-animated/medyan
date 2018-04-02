@@ -50,11 +50,56 @@ namespace mathfunc {
     return __longlong_as_double(old);
   }
 #endif
+    __host__ inline int nextPowerOf2( int n)
+    {
+        n--;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+        n++;
+        return n;
+    }
+    __host__ inline vector<int> getaddred2bnt(int nint){
+        vector<int> bnt;
+        int THREADSPERBLOCK = 0;
+        cudaDeviceProp prop;
+        cudaGetDeviceProperties(&prop, 0);
+        THREADSPERBLOCK = prop.maxThreadsPerBlock;
+        auto maxthreads = 8 * THREADSPERBLOCK;
+        int M = max(nextPowerOf2(nint),64*4);
+        int blocks, threads;
+        if(M > THREADSPERBLOCK){
+            if(M > maxthreads) {
+                blocks = 8;
+                threads = THREADSPERBLOCK;
+            }
+            else if(M > THREADSPERBLOCK){
+                blocks = M /(4 * THREADSPERBLOCK) +1;
+                threads = THREADSPERBLOCK;
+            }
+        }
+        else
+        { blocks = 1; threads = M/4;}
+        //0 M
+        //1 THREADSPERBLOCK
+        //2 blocks
+        //3 threads
+        bnt.clear();
+        bnt.push_back(M);
+        bnt.push_back(THREADSPERBLOCK);
+        bnt.push_back(blocks);
+        bnt.push_back(threads);
+        return bnt;
+    }
     __global__ void resetintvariableCUDA(int *variable);
+    __global__ void resetdoublevariableCUDA(double *variable);
      __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot);
 //    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int* culpritID, char* culpritFF,
 //                              char* culpritinteraction, char *FF, char *interaction);
-    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot);
+//    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot);
+    __global__ void addvectorred2(double *U, int *params, double *U_sum, double *U_tot);
     /// Normalize a vector
     inline void normalize(vector<double> &v) {
 

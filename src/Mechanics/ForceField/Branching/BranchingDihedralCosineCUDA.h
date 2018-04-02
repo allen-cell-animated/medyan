@@ -59,66 +59,66 @@ using namespace mathfunc;
 
 __global__ void BranchingDihedralCosineenergy(double *coord, double *force, int *beadSet, double *kdih,
                                                double *pos, int *params,
-                                               double *U_i, int *culpritID,
+                                               double *U_i, double *z,  int *culpritID,
                                               char* culpritFF, char* culpritinteraction, char* FF, char*
                                                 interaction) {
+    if(z[0] == 0.0) {
+        extern __shared__ double s[];
+        double *c1 = s;
+        double *c2 = &c1[3 * blockDim.x];
+        double *c3 = &c2[3 * blockDim.x];
+        double *c4 = &c3[3 * blockDim.x];
+        double n1n2;
+        double mp[3], n1[3], n2[3];
 
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *c4 = &c3[3 * blockDim.x];
-    double n1n2;
-    double mp[3], n1[3], n2[3];
+        int nint = params[1];
+        int n = params[0];
+        const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
-    int nint = params[1];
-    int n = params[0];
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-
-    if(thread_idx<nint) {
-        for(auto i=0;i<3;i++){
-            U_i[thread_idx] =0.0;
-            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
-            c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
-            c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
-            c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
-        }
-
-    }
-    __syncthreads();
-    if(thread_idx<nint) {
-        midPointCoordinate(mp, c1, c2, pos[thread_idx], 3 * threadIdx.x);
-
-        vectorProductmixedID(n1, mp, c2, mp, c3, 0, 3 * threadIdx.x, 0, 3 * threadIdx.x);
-        vectorProductmixedID(n2, c3, c4, mp, c3, 3 * threadIdx.x, 3 * threadIdx.x, 0 , 3 * threadIdx.x);
-
-        normalizeVector(n1);
-        normalizeVector(n2);
-        n1n2 = dotProduct(n1, n2);
-
-        U_i[thread_idx] = kdih[thread_idx] * ( 1 - n1n2 );
-
-        if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-
-            U_i[thread_idx]=-1.0;
-            culpritID[0] = thread_idx;
-            culpritID[1] = -1;
-            int j = 0;
-            while(FF[j]!=0){
-                culpritFF[j] = FF[j];
-                j++;
+        if (thread_idx < nint) {
+            for (auto i = 0; i < 3; i++) {
+                U_i[thread_idx] = 0.0;
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
+                c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
             }
-            j = 0;
-            while(interaction[j]!=0){
-                culpritinteraction[j] = interaction[j];
-                j++;
+
+        }
+        __syncthreads();
+        if (thread_idx < nint) {
+            midPointCoordinate(mp, c1, c2, pos[thread_idx], 3 * threadIdx.x);
+
+            vectorProductmixedID(n1, mp, c2, mp, c3, 0, 3 * threadIdx.x, 0, 3 * threadIdx.x);
+            vectorProductmixedID(n2, c3, c4, mp, c3, 3 * threadIdx.x, 3 * threadIdx.x, 0, 3 * threadIdx.x);
+
+            normalizeVector(n1);
+            normalizeVector(n2);
+            n1n2 = dotProduct(n1, n2);
+
+            U_i[thread_idx] = kdih[thread_idx] * (1 - n1n2);
+
+            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+
+                U_i[thread_idx] = -1.0;
+                culpritID[0] = thread_idx;
+                culpritID[1] = -1;
+                int j = 0;
+                while (FF[j] != 0) {
+                    culpritFF[j] = FF[j];
+                    j++;
+                }
+                j = 0;
+                while (interaction[j] != 0) {
+                    culpritinteraction[j] = interaction[j];
+                    j++;
+                }
+                assert(0);
+                __syncthreads();
             }
-            assert(0);
-            __syncthreads();
         }
     }
-
 //    __syncthreads();
 }
 
@@ -127,74 +127,78 @@ __global__ void BranchingDihedralCosineenergyz(double *coord, double *f, int *be
                                                 double *U_i, double *z,  int *culpritID,
                                                char* culpritFF, char* culpritinteraction, char* FF, char*
                                                 interaction) {
+    if(z[0] != 0.0) {
+        extern __shared__ double s[];
+        double *c1 = s;
+        double *c2 = &c1[3 * blockDim.x];
+        double *c3 = &c2[3 * blockDim.x];
+        double *c4 = &c3[3 * blockDim.x];
+        double *f1 = &c4[3 * blockDim.x];
+        double *f2 = &f1[3 * blockDim.x];
+        double *f3 = &f2[3 * blockDim.x];
+        double *f4 = &f3[3 * blockDim.x];
 
-    extern __shared__ double s[];
-    double *c1 = s;
-    double *c2 = &c1[3 * blockDim.x];
-    double *c3 = &c2[3 * blockDim.x];
-    double *c4 = &c3[3 * blockDim.x];
-    double *f1 = &c4[3 * blockDim.x];
-    double *f2 = &f1[3 * blockDim.x];
-    double *f3 = &f2[3 * blockDim.x];
-    double *f4 = &f3[3 * blockDim.x];
+        double n1n2;
+        double mp[3], n1[3], n2[3], zero[3];
+        zero[0] = 0;
+        zero[1] = 0;
+        zero[2] = 0;
+        int nint = params[1];
+        int n = params[0];
+        const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
-    double n1n2;
-    double mp[3], n1[3], n2[3], zero[3];zero[0] = 0; zero[1] = 0; zero[2] = 0;
-    int nint = params[1];
-    int n = params[0];
-    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-
-    if(thread_idx<nint) {
-        U_i[thread_idx] = 0.0;
-        for(auto i=0;i<3;i++){
-            c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
-            c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
-            c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
-            c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
-            f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
-            f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
-            f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
-            f4[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 3] + i];
-        }
-
-    }
-    __syncthreads();
-
-    if(thread_idx<nint) {
-        midPointCoordinateStretched(mp, c1, f1, c2, f2, pos[thread_idx], z[0], 3 * threadIdx.x);
-
-        vectorProductStretchedmixedID(n1, mp, zero, c2, f2, mp, zero, c3, f3, z[0],0, 3 * threadIdx.x,0, 3 * threadIdx.x);
-        vectorProductStretchedmixedID(n2, c3, f3, c4, f4, mp, zero, c3, f3, z[0], 3 * threadIdx.x, 3 * threadIdx.x,
-                                      0, 3 * threadIdx.x);
-
-        normalizeVector(n1);
-        normalizeVector(n2);
-        n1n2 = dotProduct(n1, n2);
-
-        U_i[thread_idx] = kdih[thread_idx] * ( 1 - n1n2 );
-
-        if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-            || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
-
-            U_i[thread_idx]=-1.0;
-            culpritID[0] = thread_idx;
-            culpritID[1] = -1;
-            int j = 0;
-            while(FF[j]!=0){
-                culpritFF[j] = FF[j];
-                j++;
+        if (thread_idx < nint) {
+            U_i[thread_idx] = 0.0;
+            for (auto i = 0; i < 3; i++) {
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
+                c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
+                f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
+                f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
+                f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
+                f4[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 3] + i];
             }
-            j = 0;
-            while(interaction[j]!=0){
-                culpritinteraction[j] = interaction[j];
-                j++;
-            }
-            assert(0);
-            __syncthreads();
+
         }
+        __syncthreads();
 
+        if (thread_idx < nint) {
+            midPointCoordinateStretched(mp, c1, f1, c2, f2, pos[thread_idx], z[0], 3 * threadIdx.x);
+
+            vectorProductStretchedmixedID(n1, mp, zero, c2, f2, mp, zero, c3, f3, z[0], 0, 3 * threadIdx.x, 0,
+                                          3 * threadIdx.x);
+            vectorProductStretchedmixedID(n2, c3, f3, c4, f4, mp, zero, c3, f3, z[0], 3 * threadIdx.x, 3 * threadIdx.x,
+                                          0, 3 * threadIdx.x);
+
+            normalizeVector(n1);
+            normalizeVector(n2);
+            n1n2 = dotProduct(n1, n2);
+
+            U_i[thread_idx] = kdih[thread_idx] * (1 - n1n2);
+
+            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+
+                U_i[thread_idx] = -1.0;
+                culpritID[0] = thread_idx;
+                culpritID[1] = -1;
+                int j = 0;
+                while (FF[j] != 0) {
+                    culpritFF[j] = FF[j];
+                    j++;
+                }
+                j = 0;
+                while (interaction[j] != 0) {
+                    culpritinteraction[j] = interaction[j];
+                    j++;
+                }
+                assert(0);
+                __syncthreads();
+            }
+
+        }
     }
-
 }
 
 

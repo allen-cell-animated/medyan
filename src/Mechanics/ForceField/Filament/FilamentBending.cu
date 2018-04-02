@@ -53,7 +53,7 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
 
     //CUDA
 #ifdef CUDAACCL
-    F_i = new double[3 * Bead::getBeads().size()];
+//    F_i = new double[3 * Bead::getBeads().size()];
     nvtxRangePushA("CVFF");
     _FFType.optimalblocksnthreads(numInteractions);
 

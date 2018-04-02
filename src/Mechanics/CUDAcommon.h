@@ -42,6 +42,7 @@ struct CUDAvars {
     char* gculpritinteraction = NULL;
     char* culpritFF = NULL;
     char* culpritinteraction = NULL;
+    size_t memincuda = 0;
 //    cudaEvent_t *event;
 
 //    float Ccforce = 0.0;
@@ -107,7 +108,7 @@ public:
                 BranchingDihedralCosine::checkforculprit();
             else if(strcmp(culpritinteraction, "Branching Position Cosine")==0)
                 BranchingPositionCosine::checkforculprit();
-            else if(strcmp(culpritinteraction, "Boundary Repulsion Exp")==0)
+            else if(strcmp(culpritinteraction, "Boundary Cylinder Repulsion Exp")==0)
                 BoundaryCylinderRepulsionExp::checkforculprit();
             else{
                 cout<<"unknown assert error. Check code. Exiting.."<<endl;
