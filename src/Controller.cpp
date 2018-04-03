@@ -435,6 +435,44 @@ void Controller::executeSpecialProtocols() {
         
         pinLowerBoundaryFilaments();
     }
+    
+    //Qin, passivite (de)polymerization until flow rate > set value
+    if(SysParams::Chemistry().makeFlowRateDepend) {
+        double rate0 = 0;
+        vector<vector<double>> current;
+        
+        if(tau() == 0){
+            for (auto &filament : Filament::getFilaments()) {
+                //get plus end coordinates
+                auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+                previous.push_back(x);
+            }
+        } else if(tau() >= delta) {
+            for (auto &filament : Filament::getFilaments()) {
+                //get plus end coordinates
+                auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+                current.push_back(x);
+            }
+            for (int i = 0; i < current.size(); i++){
+                rate0 += twoPointDistance(previous[i],current[i]);
+            }
+                rate = rate0 / current.size();
+                delta +=1;
+                previous = current;
+        }
+        
+        if(rate < SysParams::Chemistry().makeFlowRateDependRate) {
+            checkrate = true;
+        } else {
+            checkrate = false;
+        }
+        //loop through all cylinders, passivate (de)polymerization
+        if(checkrate) {
+            for(auto c : Cylinder::getCylinders())
+            c->getCCylinder()->passivatefilreactions();
+        }
+        
+    }
 }
 
 void Controller::updatePositions() {

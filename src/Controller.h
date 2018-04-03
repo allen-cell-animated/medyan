@@ -111,6 +111,11 @@ private:
     void pinBoundaryFilaments();
     //Qin
     void pinLowerBoundaryFilaments();
+    //Qin for flow rate controling (de)polymerization
+    double delta = 1;
+    vector<vector<double>> previous;
+    double rate = 0.0;
+    bool checkrate = true;
     
 public:
     Controller(SubSystem* s);

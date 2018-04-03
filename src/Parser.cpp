@@ -195,6 +195,12 @@ void SystemParser::readChemParams() {
                     CParams.makeFilamentsStatic = true;
                     CParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
                 }
+                
+                //Qin
+                if(lineVector[1] == "FLOWRATE") {
+                    CParams.makeFlowRateDepend = true;
+                    CParams.makeFlowRateDependRate = atof(lineVector[2].c_str());
+                }
             }
         }
     }

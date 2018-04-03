@@ -164,6 +164,11 @@ struct ChemParams {
     bool makeLinkersStatic = false;
     double makeLinkersStaticTime = 0.0;
     
+    /// Qin
+    /// Make (de)polymerization depends on flow rate, the rate is in nm/s
+    bool makeFlowRateDepend = false;
+    double makeFlowRateDependRate = 0.0;
+    
     //@}
 };
 
