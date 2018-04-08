@@ -33,8 +33,25 @@ Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
 }
 
 void Bubble::updatePosition() {
-    
+
     coordinate = _bead->coordinate;
+}
+
+//Qin
+void Bubble::updatePositionManually() {
+    
+    //the gap, currently 0.5, must be bigger than the minization time step
+    if(tau() > 300 && tau() < 300.5) {
+        //mannually set coordinates as the following
+        vector<double> mannualcoordinate = {500, 500, 860};
+        coordinate = mannualcoordinate;
+    } else if(tau() > 500 && tau() < 500.5) {
+        vector<double> mannualcoordinate = {500, 500, 865};
+        coordinate = mannualcoordinate;
+    }
+    else{
+        coordinate = _bead->coordinate;
+    }
 }
 
 void Bubble::printSelf() {

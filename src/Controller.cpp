@@ -484,6 +484,13 @@ void Controller::updatePositions() {
     for(auto m : _subSystem->getMovables()) m->updatePosition();
 }
 
+//Qin, update bubble position by hand
+void Controller::updateBubblePositions() {
+    
+    //update bubble again based on time
+    for(auto b : Bubble::getBubbles()) b->updatePositionManually();
+}
+
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
@@ -696,6 +703,8 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
+                //Qin, reupdate bubble position
+                updateBubblePositions();
 
                 tauLastMinimization = 0.0;
             }
