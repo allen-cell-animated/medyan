@@ -8,7 +8,7 @@ d = \| \alpha\bm{r}_{01} + \alpha\beta\bm{r}_{12} + \bm{r}_{p0} \|
 \end{equation}
 The interaction energy can be written as
 \begin{equation}
-F_\text{vol}(f, p) = k_\text{vol} \iint_f \mathrm{d}A \frac1{d^4}
+V_\text{vol}(f, p) = k_\text{vol} \iint_f \mathrm{d}A \frac1{d^4}
 \label{eq:VolumeExclusionIntegral}
 \end{equation}
 where $k_\text{vol}$ is the strength of the interaction. The area element when $\alpha$ and $\beta$ change can be given as
@@ -120,8 +120,8 @@ B_3 &= 4BA-F^2+4BC-E^2+4BD-2EF &&= 4 \|\bm{r}_{12}\times\bm{r}_{p1}\|^2
 &\left\{
 \begin{aligned}
 C_1 &= 2A+D &&= 2\bm{r}_{01}\cdot\bm{r}_{p1}\\
-C_2 &= 2A+D+E+2(B+F) &&=\\
-C_3 &= 2B+E+F &&=\\
+C_2 &= 2A+D+E+2(B+F) &&= 2\bm{r}_{02}\cdot\bm{r}_{p2}\\
+C_3 &= 2B+E+F &&= 2\bm{r}_{12}\cdot\bm{r}_{p2}\\
 \end{aligned}
 \right.\\
 &\left\{
@@ -131,8 +131,12 @@ D_2 &= D+E &&= 2\bm{r}_{02}\cdot\bm{r}_{p0}\\
 D_3 &= E+F &&= 2\bm{r}_{12}\cdot\bm{r}_{p1}
 \end{aligned}
 \right.\\
-&I_\text{denominator} = -4 \left( (\bm{r}_{01}\times\bm{r}_{12}) \cdot \bm{r}_{p0} \right)^2\\
+&I_\text{denominator} = BD^2 + A(-4BC+E^2) + F(-DE+CF) = -4 \left( (\bm{r}_{01}\times\bm{r}_{12}) \cdot \bm{r}_{p0} \right)^2\\
 \end{aligned}
 \end{equation}
+
+The force \( F = -\nabla V \) can be obtained by doing step-by-step differentiation of the expression above on each of the vertex at \(\bm{x}_0\), \(\bm{x}_1\), \(\bm{x}_2\), as well as the bead of filament tip at \(\bm{x}_p\).
+
+The implementation uses exactly this method, and follows similar notation. Some more temporary variables might be used to simplify expression.
 
 \end{document}
