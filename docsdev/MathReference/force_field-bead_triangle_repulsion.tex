@@ -9,7 +9,7 @@ d = \| \alpha\bm{r}_{01} + \alpha\beta\bm{r}_{12} + \bm{r}_{p0} \|
 The interaction energy can be written as
 \begin{equation}
 V_\text{vol}(f, p) = k_\text{vol} \iint_f \mathrm{d}A \frac1{d^4}
-\label{eq:VolumeExclusionIntegral}
+\label{eq:TriangleBeadVolumeExclusionIntegral}
 \end{equation}
 where $k_\text{vol}$ is the strength of the interaction. The area element when $\alpha$ and $\beta$ change can be given as
 \begin{equation}
@@ -68,12 +68,13 @@ where $\| \bm{r}_{01} \times \bm{r}_{12} \|$ is simply twice the area of the tri
 \label{fig:FacetAreaElement}
 \end{figure}
 
-Now that equation (\ref{eq:VolumeExclusionIntegral}) can be done analytically as follows.
+Now that equation (\ref{eq:TriangleBeadVolumeExclusionIntegral}) can be done analytically as follows.
 \begin{equation}
 \begin{aligned}
-F_\text{vol} &= k_\text{vol} \iint_f \mathrm{d}A \frac1{d^4}\\
+V_\text{vol} &= k_\text{vol} \iint_f \mathrm{d}A \frac1{d^4}\\
 &= k_\text{vol} \| \bm{r}_{01} \times \bm{r}_{12} \| \underbrace{\int_0^1 \mathrm{d}\alpha \int_0^1 \mathrm{d}\beta \ \alpha / \| \alpha\bm{r}_{01} + \alpha\beta\bm{r}_{12} + \bm{r}_{p0} \|^4}_I\\
 \end{aligned}
+\label{eq:TriangleBeadVolumeExclusionIntegralExpanded}
 \end{equation}
 Let
 \begin{equation}
@@ -137,6 +138,9 @@ D_3 &= E+F &&= 2\bm{r}_{12}\cdot\bm{r}_{p1}
 
 The force \( F = -\nabla V \) can be obtained by doing step-by-step differentiation of the expression above on each of the vertex at \(\bm{x}_0\), \(\bm{x}_1\), \(\bm{x}_2\), as well as the bead of filament tip at \(\bm{x}_p\).
 
-The implementation uses exactly this method, and follows similar notation. Some more temporary variables might be used to simplify expression.
+The implementation uses exactly this method, and follows similar notation. Some more temporary variables might be used to simplify expression. Except that \(\|\bm{r}_{01}\times\bm{r}_{12}\|\) in equation (\ref{eq:TriangleBeadVolumeExclusionIntegralExpanded}) is obtained using the calculated area of the triangle, in that
+\begin{equation}
+\|\bm{r}_{01}\times\bm{r}_{12}\| = 2 \text{Area}(f)
+\end{equation}
 
 \end{document}
