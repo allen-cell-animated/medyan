@@ -22,6 +22,14 @@
 
 using namespace mathfunc;
 
+/**
+ * Implements the volume exclusion force field of triangle and bead.
+ * 
+ * Please refer to the document files for the math derivation of this force
+ * field. Developers of this force field are responsible of keeping the
+ * related documents up to date.
+ */
+
 // Note: These functions require that the area of the triangle has already been calculated
 
 double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
@@ -82,7 +90,7 @@ double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
 
     double H = numerator / denominator;
     
-    double energy = kExVol * t->getGTriangle()->getArea() * H;
+    double energy = kExVol * 2 * t->getGTriangle()->getArea() * H;
     
     return energy;
 }
@@ -155,7 +163,7 @@ double TriangleCylinderBeadExclVolRepulsion::energy(Triangle* t, Bead* b,
 
     double H = numerator / denominator;
     
-    double energy = kExVol * t->getGTriangle()->getStretchedArea() * H;
+    double energy = kExVol * 2 * t->getGTriangle()->getStretchedArea() * H;
     
     return energy;
 }
@@ -302,9 +310,9 @@ void TriangleCylinderBeadExclVolRepulsion::forces(Triangle* t, Bead* b,
     auto& dArea = t->getGTriangle()->getDArea();
     
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        b->force[coordIdx] -= kExVol * dH[3][coordIdx] * area;
+        b->force[coordIdx] -= kExVol * dH[3][coordIdx] * 2 * area;
         for(size_t vtxIdx = 0; vtxIdx < 3; ++vtxIdx) {
-            v[vtxIdx]->force[coordIdx] -= kExVol * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
+            v[vtxIdx]->force[coordIdx] -= kExVol * 2 * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
         }
     }
 }
@@ -451,9 +459,9 @@ void TriangleCylinderBeadExclVolRepulsion::forcesAux(Triangle* t, Bead* b,
     auto& dArea = t->getGTriangle()->getDArea();
     
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        b->forceAux[coordIdx] -= kExVol * dH[3][coordIdx] * area;
+        b->forceAux[coordIdx] -= kExVol * dH[3][coordIdx] * 2 * area;
         for(size_t vtxIdx = 0; vtxIdx < 3; ++vtxIdx) {
-            v[vtxIdx]->forceAux[coordIdx] -= kExVol * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
+            v[vtxIdx]->forceAux[coordIdx] -= kExVol * 2 * (dArea[vtxIdx][coordIdx]*H + dH[vtxIdx][coordIdx]*area);
         }
     }
 }
@@ -567,7 +575,7 @@ array<double, 3> TriangleCylinderBeadExclVolRepulsion::loadForces(Triangle* t, c
     
     array<double, 3> forceBead;
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        forceBead[coordIdx] = -kExVol * dH[coordIdx] * area;
+        forceBead[coordIdx] = -kExVol * dH[coordIdx] * 2 * area;
     }
 
     return forceBead;
