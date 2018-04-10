@@ -441,13 +441,14 @@ void Controller::executeSpecialProtocols() {
         double rate0 = 0;
         vector<vector<double>> current;
         
-        if(tau() == 0){
-            for (auto &filament : Filament::getFilaments()) {
-                //get plus end coordinates
-                auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
-                previous.push_back(x);
-            }
-        } else if(tau() >= delta) {
+//        if(tau() == 0){
+//            for (auto &filament : Filament::getFilaments()) {
+//                //get plus end coordinates
+//                auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+ //               previous.push_back(x);
+ //           }
+ //       } else if(tau() >= delta) {
+        if(tau() >= delta) {
             for (auto &filament : Filament::getFilaments()) {
                 //get plus end coordinates
                 auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
@@ -614,8 +615,8 @@ void Controller::run() {
 //Step 4.5. re-add pin positions
         SystemParser p(_inputFile);
         FilamentSetup filSetup = p.readFilamentSetup();
-        PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
-        ppin.resetPins();
+        //PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
+        //ppin.resetPins();
         
 //Step 5. run mcontroller, update system, turn off restart state.
         updatePositions();
@@ -681,6 +682,13 @@ void Controller::run() {
     cout << "Starting simulation..." << endl;
     
     int i = 1;
+    
+    //Qin
+    for (auto &filament : Filament::getFilaments()) {
+        //get plus end coordinates
+        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+       previous.push_back(x);
+    }
     
     //if runtime was specified, use this
     if(!areEqual(_runTime, 0.0)) {
