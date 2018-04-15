@@ -490,7 +490,6 @@ void Controller::updateBubblePositions() {
     
     //update bubble again based on time
     for(auto b : Bubble::getBubbles()) b->updatePositionManually();
-    for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
 }
 
 #ifdef DYNAMICRATES
@@ -712,7 +711,6 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 //Qin, update bubble position first
                 updateBubblePositions();
-                
                 _mController->run();
                 updatePositions();
 

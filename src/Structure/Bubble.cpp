@@ -45,10 +45,12 @@ void Bubble::updatePositionManually() {
         //mannually set coordinates as the following
         vector<double> mannualcoordinate = {500, 500, 860};
         coordinate = mannualcoordinate;
+        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
         
     } else if(tau() > 500 && tau() < 500.5) {
         vector<double> mannualcoordinate = {500, 500, 865};
         coordinate = mannualcoordinate;
+        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
     }
     else{
         coordinate = _bead->coordinate;
