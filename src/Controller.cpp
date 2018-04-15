@@ -709,11 +709,15 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
+                //Qin, update bubble position first
+                updateBubblePositions();
+                
                 _mController->run();
                 updatePositions();
+
                 //Qin, reupdate bubble position
                 updateBubblePositions();
-
+                
                 tauLastMinimization = 0.0;
             }
             
