@@ -45,6 +45,7 @@ void Bubble::updatePositionManually() {
         //mannually set coordinates as the following
         vector<double> mannualcoordinate = {500, 500, 860};
         coordinate = mannualcoordinate;
+        
     } else if(tau() > 500 && tau() < 500.5) {
         vector<double> mannualcoordinate = {500, 500, 865};
         coordinate = mannualcoordinate;
