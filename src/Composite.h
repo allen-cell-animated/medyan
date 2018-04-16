@@ -77,9 +77,9 @@ public:
     virtual unique_ptr<Component>&& getChild(Component *c) {
         
         auto child_iter = find_if(_children.begin(),_children.end(),
-                                  [&c](const unique_ptr<Component> &element)
+                                  [c](const unique_ptr<Component> &element)
                                   {return element.get()== c ? true : false;});
-        if(child_iter!=_children.end())
+        if(child_iter==_children.end())
             throw out_of_range("Composite::getChild(): The name child not found as a unique ptr.");
         else
             return move(*child_iter);
@@ -112,13 +112,12 @@ public:
     /// ownership to the new Composite parent.
     virtual void transferChild(unique_ptr<Component> &&child, Composite* newParent) {
         
-        vector<unique_ptr<Component>> v = newParent->_children;
-        v.push_back(move(child));
+        newParent->_children.push_back(move(child));
         
         //remove hanging ptr from old parent, which has been set to null
         auto child_iter = find_if(_children.begin(),_children.end(),
                                   [&child](const unique_ptr<Component> &element)
-                                  {return element.get()==nullptr ? true : false;});
+                                  {return element==nullptr ? true : false;});
         if(child_iter!=_children.end())
             _children.erase(child_iter);
         else
