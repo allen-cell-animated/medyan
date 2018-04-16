@@ -13,6 +13,6 @@
 
 #include "Rand.h"
 
-mt19937 Rand::eng; // Default seed. Will be overwritten at initialization.
-mt19937 Rand::engFixed(0);
-uniform_int_distribution<int> Rand::_int_distr;
+std::mt19937 Rand::eng; // Default seed. Will be overwritten at initialization.
+std::mt19937 Rand::engFixed(0);
+std::uniform_int_distribution<int> Rand::_int_distr;

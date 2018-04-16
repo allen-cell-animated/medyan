@@ -14,6 +14,7 @@
 #ifndef MEDYAN_Rand_h
 #define MEDYAN_Rand_h
 
+#include <limits>
 #include <random>
 
 /// A random number generator class.
@@ -28,7 +29,7 @@ public:
 
     ///Get a random double between low and high
     static inline double randDouble(double low, double high) {
-        return ((float)_int_distr(eng) / numeric_limits<int>::max()) * (high - low) + low;
+        return ((float)_int_distr(eng) / std::numeric_limits<int>::max()) * (high - low) + low;
     }
     ///Get a random integer between low and high
     static inline int randInteger(int low, int high) {
