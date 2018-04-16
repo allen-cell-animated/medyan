@@ -22,6 +22,8 @@
 
 #include "ChemNRMImpl.h"
 
+#include "Rand.h"
+
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
@@ -142,7 +144,7 @@ double ChemNRMImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
     
     _exp_distr.param(pm);
-    return _exp_distr(_eng);
+    return _exp_distr(Rand::eng);
 }
 
 bool ChemNRMImpl::makeStep() {

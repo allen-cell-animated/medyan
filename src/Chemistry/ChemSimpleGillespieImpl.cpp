@@ -13,6 +13,8 @@
 
 #include "ChemSimpleGillespieImpl.h"
 
+#include "Rand.h"
+
 void ChemSimpleGillespieImpl::initialize() {
     resetTime();
 }
@@ -33,11 +35,11 @@ double ChemSimpleGillespieImpl::generateTau(double a){
 
     exponential_distribution<double>::param_type pm(a);
     _exp_distr.param(pm);
-    return _exp_distr(_eng);
+    return _exp_distr(Rand::eng);
 }
 
 double ChemSimpleGillespieImpl::generateUniform(){
-    return _uniform_distr(_eng);
+    return _uniform_distr(Rand::eng);
 }
 
 double ChemSimpleGillespieImpl::computeTotalA(){
