@@ -24,8 +24,8 @@ private:
     static std::uniform_int_distribution<int> _int_distr;
     
 public:
-    static std::mt19937 eng;
-    static std::mt19937 engFixed;
+    static std::mt19937 eng; ///< The global random generator.
+    static std::mt19937 engFixed; ///< Currently only used in tests.
 
     ///Get a random double between low and high
     static inline double randDouble(double low, double high) {
