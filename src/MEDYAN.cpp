@@ -70,8 +70,11 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "analysis/io/read_snapshot.h"
 #include "Controller.h"
 #include "core/io/command_line.h"
+#include "core/io/log.h"
 #include "core/globals.h"
+#include "Rand.h"
 #include "Structure/SubSystem.h"
+#include "utility.h"
 
 using namespace medyan;
 
@@ -86,14 +89,26 @@ int main(int argc, char **argv) {
     
     cout.precision(8);
     
+    // Parse command line and do necessary initialzations
+    commandline::readFromCommandLine(argc, argv);
+
+    /**************************************************************************
+    Initializations
+    **************************************************************************/
+
     //create subsystem and controller to run it
     SubSystem* s = nullptr;
     Controller c(s);
 
-    // Parse command line and do necessary initialzations
-    commandline::initializeFromCommandLine(argc, argv);
+    // Initialize logger
+    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::readGlobal().outputDirectory + "/" + Global::readGlobal().logFileName);
 
-    // Start program    
+    // Seed global random generator
+    Rand::eng.seed(Global::readGlobal().randomGenSeedFixed ? Global::readGlobal().randomGenSeed : rdtsc());
+
+    /**************************************************************************
+    Start program 
+    **************************************************************************/
     switch(Global::readGlobal().mode) {
     case GlobalVar::RunMode::Simulation:
         //initialize and run system

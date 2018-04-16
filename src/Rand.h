@@ -14,28 +14,25 @@
 #ifndef MEDYAN_Rand_h
 #define MEDYAN_Rand_h
 
-#include <stdio.h>
 #include <random>
-
-#include "common.h"
 
 /// A random number generator class.
 class Rand {
     
 private:
-    static mt19937 _eng;
-    static uniform_int_distribution<int> _int_distr;
+    static std::uniform_int_distribution<int> _int_distr;
     
 public:
-    static mt19937 engFixed;
+    static std::mt19937 eng;
+    static std::mt19937 engFixed;
 
     ///Get a random double between low and high
     static inline double randDouble(double low, double high) {
-        return ((float)_int_distr(_eng) / numeric_limits<int>::max()) * (high - low) + low;
+        return ((float)_int_distr(eng) / numeric_limits<int>::max()) * (high - low) + low;
     }
     ///Get a random integer between low and high
     static inline int randInteger(int low, int high) {
-        return low + (_int_distr(_eng) % (high - low + 1));
+        return low + (_int_distr(eng) % (high - low + 1));
     }
 };
 

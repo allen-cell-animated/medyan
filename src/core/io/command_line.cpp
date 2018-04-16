@@ -2,13 +2,12 @@
 
 #include "core/globals.h"
 #include "core/io/command_line_opt.h"
-#include "core/io/log.h"
 
 namespace medyan {
 namespace commandline {
 
 /// MEDYAN read from command line input
-void initializeFromCommandLine(int argc, char** argv) {
+void readFromCommandLine(int argc, char** argv) {
 
     /**************************************************************************
     Parsing and reading from command line input
@@ -27,11 +26,16 @@ void initializeFromCommandLine(int argc, char** argv) {
     opInputDir.require();
     opOutputDir.require();
     Option1<std::string> opLogFile {"Name of log file", "-l,--log", "LOG_FILE", &Global::global().logFileName};
+    Option1<long long> opRandomGenSeedFixed {"Fixed random generator seed", "--seed-fixed", "SEED", &Global::global().randomGenSeed,
+        []()->bool { Global::global().randomGenSeedFixed = true; return true; }};
 
     Command cmdAnalyze {"Run analysis instead of simulation", "analyze", nullptr,
         []()->bool { Global::global().mode = GlobalVar::RunMode::Analysis; return true; }};
 
-    PosHolder holderRun({&opInputFile, &opInputDir, &opOutputDir, &opLogFile}, {&cmdAnalyze}); holderRun.require();
+    PosHolder holderRun(
+        {&opInputFile, &opInputDir, &opOutputDir, &opLogFile, &opRandomGenSeedFixed},
+        {&cmdAnalyze}
+    ); holderRun.require();
 
     // Help options
     Option0 opHelp{ "Print help message", "-h,--help", &runHelp }; opHelp.require();
@@ -47,17 +51,10 @@ void initializeFromCommandLine(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-    /**************************************************************************
-    Initializations
-    **************************************************************************/
-
     if(runHelp) {
         cmdMain.printUsage();
         exit(EXIT_SUCCESS);
     }
-
-    // Initialize logger
-    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::readGlobal().outputDirectory + "/" + Global::readGlobal().logFileName);
 
 }
 
