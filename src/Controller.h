@@ -93,10 +93,7 @@ private:
     
     /// Update the positions of all elements in the system
     void updatePositions();
-    
-    //Qin
-    void updateBubblePositions();
-    
+
 #ifdef DYNAMICRATES
     /// Update the reaction rates of all elements in the system
     void updateReactionRates();
