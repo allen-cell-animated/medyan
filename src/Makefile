@@ -24,7 +24,7 @@ CXX = /usr/bin/g++ -std=c++11
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
-LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl  
+LDLIBS = -L/usr/local/lib/ -lboost_system
 LDFLAGS = $(FAST)
 
 CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
