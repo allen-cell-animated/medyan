@@ -87,6 +87,11 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
+    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
+    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
+    //Qin add br force out and local diffussing species concentration
+    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
+    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -172,6 +177,8 @@ void Controller::initialize(string inputFile,
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
+    string concenname = _outputDirectory + "concentration.traj";
+    _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
 #endif
     
 #ifdef DYNAMICRATES
@@ -313,46 +320,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     }
         cout << "Done. " << fil.size() << " filaments created." << endl;
     
-//    for(auto fil:Filament::getFilaments()){
-//        auto it = fil->getCylinderVector().back();
-//        if(it->isPlusEnd()){
-//            std::cout<<"P "<<it->getMCylinder()->getEqLength()<<" ";
-//            bool check = false;
-//            auto ctr = 0;
-//            
-//            while((!check) && ctr < 40)
-//            {
-//                if(it->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
-//                ctr ++;
-//            }
-//            if(check)
-//                std::cout<<(ctr+1)*2.7<<endl;
-//            else
-//                std::cout<<"OOPS"<<endl;
-//        }
-//        else
-//            std::cout<<"CHECK! Cyl not a plus end"<<endl;
-//        //
-//        it = fil->getCylinderVector().front();
-//        if(it->isMinusEnd()){
-//            std::cout<<"M "<<it->getMCylinder()->getEqLength()<<" ";
-//            bool check = false;
-//            auto ctr = 0;
-//            
-//            while((!check) && ctr < 40)
-//            {
-//                if(it->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
-//                ctr ++;
-//            }
-//            if(check)
-//                std::cout<<(40-ctr)*2.7<<endl;
-//            else
-//                std::cout<<"OOPS"<<endl;
-//        }
-//        else
-//            std::cout<<"CHECK! Cyl not a minus end"<<endl;
-//            
-//    }
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {
@@ -409,7 +376,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
     cout << "Done." << endl;
 }
 
-void Controller::activatedeactivateComp(double timecheck){
+void Controller::activatedeactivateComp(){
 //    std::cout<<"BEFORE UPDATION (CYCLE BEGINS)"<<endl;
 //    auto counter=0;
 //    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
@@ -426,11 +393,8 @@ void Controller::activatedeactivateComp(double timecheck){
 
     //ControlfrontEndComp();
     //ControlbackEndComp();
-            ControlfrontbackEndComp(timecheck);
-            
-            if(timecheck>0) {
-                std::cout<<"BEFOREUPDATION "<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;}
-            
+            ControlfrontbackEndComp();
+            std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
             for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
             {
                 if(!(*it)->isActivated())
@@ -444,34 +408,37 @@ void Controller::activatedeactivateComp(double timecheck){
                 _cController->deactivate(it->second);
             fCompmap.clear();
             bCompmap.clear();
-            if(timecheck>0)
-            std::cout<<"AFTERUPDATION "<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+            std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+            std::cout<<"AFTERUPDATION ";
+            auto counter=0;
             for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-                auto coord=C->coordinates();
-                std::cout<<C->isActivated()<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<" ";
-                            for(auto sd : _chemData.speciesDiffusing) {
-                                std::cout<<C->isActivated()<<" "<<C->coordinates()[0];
-                                    string name = get<0>(sd);
-                                    auto s = C->findSpeciesByName(name);
-                                   auto copyNum = s->getN();
-                    
-                                std::cout << name <<" "<< copyNum;
-                               }
-                std::cout<<endl;
+                counter++;
+                //        std::cout<<C->isActivated()<<" ";
+                //           if(counter==SysParams::Geometry().NX)
+                //            std::cout<<endl;
             }
+            //    std::cout<<endl;
+            
+            //    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+            //        if(C->isActivated())
+            //            std::cout<<C->coordinates()[0]<<" ";
+            //        else
+            //            std::cout<<"0 ";
+            //    }
+            std::cout<<endl;
+            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+                for(auto sd : _chemData.speciesDiffusing) {
+                    string name = get<0>(sd);
+                    if(name.find("AD") != string::npos){
+                        auto s = C->findSpeciesByName(name);
+                        auto copyNum = s->getN();
+                        
+                        std::cout <<copyNum<<" ";
+                    }
+
         }
-    //std::cout<<"AFTERUPDATION ";
-   // auto counter=0;
-  //  for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-     //   counter++;
-        //std::cout<<C->isActivated()<<" ";
-//        if(counter==SysParams::Geometry().NX)
-//            std::cout<<endl;
-   // }
-  //  std::cout<<endl;
-//        }
 }
-void Controller::ControlfrontbackEndComp(double timecheck){
+void Controller::ControlfrontbackEndComp(){
     Compartment* maxcomp=NULL;
     Bead* maxbead=NULL;
     Compartment* mincomp=NULL;
@@ -507,6 +474,12 @@ void Controller::ControlfrontbackEndComp(double timecheck){
             maxcomp=C;
     }
     cmaxcomp=maxcomp->coordinates();
+    for(auto C:maxcomp->getNeighbours()){
+        auto cC=C->coordinates();
+        if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis])
+            maxcomp=C;
+    }
+    cmaxcomp=maxcomp->coordinates();
     assert((maxcomp!=NULL) && "Non existent maxcomp. Exiting.");
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         auto cC=C->coordinates();
@@ -528,6 +501,12 @@ void Controller::ControlfrontbackEndComp(double timecheck){
             mincomp=C;
     }
     cmincomp=mincomp->coordinates();
+    for(auto C:mincomp->getNeighbours()){
+        auto cC=C->coordinates();
+        if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis])
+            mincomp=C;
+    }
+    cmincomp=mincomp->coordinates();
     assert(mincomp!=NULL && "Non existent mincomp. Exiting.");
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         auto cC=C->coordinates();
@@ -540,10 +519,8 @@ void Controller::ControlfrontbackEndComp(double timecheck){
             }
         }
     }
-    if(timecheck>0) {
-    std::cout<<"Maxcomp "<<maxcomp->coordinates()[0]<<" ";
-    std::cout<<"Mincomp "<<mincomp->coordinates()[0]<<endl;
-    }
+    std::cout<<"Maxcomp "<<maxcomp->coordinates()[SysParams::Mechanics().transfershareaxis]<<" ";
+    std::cout<<"Mincomp "<<mincomp->coordinates()[SysParams::Mechanics().transfershareaxis]<<endl;
     
 }
 void Controller::ControlfrontEndCompobsolete(){
@@ -741,6 +718,13 @@ void Controller::executeSpecialProtocols() {
         
         pinBoundaryFilaments();
     }
+    
+    //Qin
+    if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
+       tau() >= SysParams::Mechanics().pinTime) {
+        
+        pinLowerBoundaryFilaments();
+    }
 }
 
 void Controller::updatePositions() {
@@ -799,7 +783,37 @@ void Controller::pinBoundaryFilaments() {
         }
     }
 }
-
+            //Qin
+            void Controller::pinLowerBoundaryFilaments() {
+                
+                //renew pinned filament list everytime
+                
+                //loop through beads, check if within pindistance
+                for(auto b : Bead::getBeads()) {
+                    
+                    //pin all beads besides plus end and minus end cylinder
+                    Filament* f = (Filament*) b->getParent();
+                    Cylinder* plusEndC = f->getPlusEndCylinder();
+                    Cylinder* minusEndC = f->getMinusEndCylinder();
+                    
+                    if((plusEndC->getSecondBead() != b) ||
+                       (minusEndC->getFirstBead() != b)) {
+                        
+                        //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
+                        //cout << SysParams::Mechanics().pinDistance << endl;
+                        
+                        auto index = Rand::randDouble(0,1);
+                        //cout << index <<endl;
+                        //if within dist to boundary and index > 0.5, add
+                        if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
+                           && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
+                            //cout << index << endl;
+                            b->pinnedPosition = b->coordinate;
+                            b->addAsPinned();
+                        }
+                    }
+                }
+            }
 
 void Controller::run() {
     
@@ -1008,7 +1022,7 @@ void Controller::run() {
             }
             
             //activate/deactivate compartments
-            activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
+            activatedeactivateComp();
             //move the boundary
             moveBoundary(tau() - oldTau);
             //special protocols
@@ -1069,7 +1083,7 @@ void Controller::run() {
             //move the boundary
             moveBoundary(tau() - oldTau);
             //activate/deactivate compartments
-            activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
+            activatedeactivateComp();
             //special protocols
             executeSpecialProtocols();
         }
