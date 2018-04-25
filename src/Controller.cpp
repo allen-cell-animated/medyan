@@ -898,31 +898,32 @@ void Controller::run() {
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
-        auto i=0;
-        for (auto b: BranchingPoint::getBranchingPoints()) {
-            
-            Bead* b1 = b->getFirstCylinder()->getFirstBead();
-            Bead* b2 = b->getFirstCylinder()->getSecondBead();
-            Bead* b3 = b->getSecondCylinder()->getFirstBead();
-            Bead* b4 = b->getSecondCylinder()->getSecondBead();
-            auto c = b->getSecondCylinder();
-            auto filType = c->getType();
-            std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
-            i++;
-            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
-                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
-                std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-            }
-        }
+//        auto i=0;
+//        for (auto b: BranchingPoint::getBranchingPoints()) {
+//            
+//            Bead* b1 = b->getFirstCylinder()->getFirstBead();
+//            Bead* b2 = b->getFirstCylinder()->getSecondBead();
+//            Bead* b3 = b->getSecondCylinder()->getFirstBead();
+//            Bead* b4 = b->getSecondCylinder()->getSecondBead();
+//            auto c = b->getSecondCylinder();
+//            auto filType = c->getType();
+////            std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+////            i++;
+////            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+////                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+////                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
+////                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+////                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+////                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+////                std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+////            }
+//        }
     cout<< "Restart procedures completed. Starting Medyan framework"<<endl;
     cout << "---" << endl;
+        
     resetglobaltime();
     _cController->restart();
-        
+    
      cout << "Current simulation time = "<< tau() << endl;
     //restart phase ends
     }
@@ -931,7 +932,8 @@ void Controller::run() {
     oldTau = 0;
 #endif
     for(auto o: _outputs) o->print(0);
-    
+    cout<<"Minimizing energy"<<endl;
+    _mController->run(false);
     cout << "Starting simulation..." << endl;
     
     int i = 1;
@@ -959,26 +961,26 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
-                auto i=0;
-                for (auto b: BranchingPoint::getBranchingPoints()) {
-                    
-                    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-                    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-                    Bead* b3 = b->getSecondCylinder()->getFirstBead();
-                    Bead* b4 = b->getSecondCylinder()->getSecondBead();
-                    auto c = b->getSecondCylinder();
-                    auto filType = c->getType();
-                    std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
-                    i++;
-                    for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
-                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
-                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
-                        std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                    }
-                }
+//                auto i=0;
+//                for (auto b: BranchingPoint::getBranchingPoints()) {
+//                    
+//                    Bead* b1 = b->getFirstCylinder()->getFirstBead();
+//                    Bead* b2 = b->getFirstCylinder()->getSecondBead();
+//                    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+//                    Bead* b4 = b->getSecondCylinder()->getSecondBead();
+//                    auto c = b->getSecondCylinder();
+//                    auto filType = c->getType();
+//                    std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+//                    i++;
+//                    for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+//                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
+//                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+//                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+//                        std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+//                    }
+//                }
                 tauLastMinimization = 0.0;
 
             }

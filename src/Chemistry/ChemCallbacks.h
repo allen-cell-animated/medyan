@@ -426,23 +426,23 @@ struct BranchingCallback {
         
         //create new branch
             CMonomer* x=c->getCCylinder()->getCMonomer(0);
-            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                            }
-            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+//            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
+//                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+//                            }
+//            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
             
         b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
             
-            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-            }
-            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+//            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
+//                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+//            }
+//            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
         frate=_offRate;
         }
         else
@@ -458,28 +458,28 @@ struct BranchingCallback {
                     break;
                 }}
             if(check){
-                auto cyl = c->getCylinder();
-                std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
-            std::cout<<c->getCylinder()->getID()<<endl;
-                CMonomer* x=c->getCMonomer(0);
-                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
-                    auto zz =c->getCMonomer(p)->speciesFilament(0);
-                    std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                }
-                std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+//                auto cyl = c->getCylinder();
+//                std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
+//            std::cout<<c->getCylinder()->getID()<<endl;
+//                CMonomer* x=c->getCMonomer(0);
+//                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+//                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
+//                    auto zz =c->getCMonomer(p)->speciesFilament(0);
+//                    std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+//                }
+//                std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
                 
             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
                 
-                x=c->getCMonomer(0);
-                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
-                    auto zz =c->getCMonomer(p)->speciesFilament(0);
-                    std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                }
-                std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+//                x=c->getCMonomer(0);
+//                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+//                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
+//                    auto zz =c->getCMonomer(p)->speciesFilament(0);
+//                    std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+//                }
+//                std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
             frate=0.0;
             }
             else

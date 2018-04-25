@@ -42,7 +42,7 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //                
 //            }
 //        }
-        std::cout<<sl1->getN()<<" "<<sl2->getN()<<" "<<se1->getN()<<" "<<se2->getN()<<endl;
+//        std::cout<<sl1->getN()<<" "<<sl2->getN()<<" "<<se1->getN()<<" "<<se2->getN()<<endl;
         
     assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&

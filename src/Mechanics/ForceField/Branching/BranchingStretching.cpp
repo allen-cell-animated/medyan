@@ -66,7 +66,7 @@ void BranchingStretching<BStretchingInteractionType>::computeForces() {
         Bead* b2 = b->getFirstCylinder()->getSecondBead();
         Bead* b3 = b->getSecondCylinder()->getFirstBead();
         Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+//        std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
 
         double kStretch = b->getMBranchingPoint()->getStretchingConstant();
         double eqLength = b->getMBranchingPoint()->getEqLength();
