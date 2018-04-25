@@ -60,6 +60,8 @@ protected:
     unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of Species
                                                ///< in compartment
     
+
+    
     /// All binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>> _bindingManagers;
 
@@ -575,15 +577,24 @@ public:
     /// Generate diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just added 
     vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
-
+    
+    //Qin
+    vector<ReactionBase*> generateScaleDiffusionReactions(Compartment* C);
+    float generateScaleFactor(Compartment* C);
+    
     /// Generate all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateAllDiffusionReactions();
     
+    /// Generates all diffusion reactions between this compartment and its neighbors
+    /// in addition to generating reverse reactions
+    ///@return - a vector of reactionbases that was just added
+    vector<ReactionBase*> generateAllpairsDiffusionReactions();
     
     /// Remove diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just removed
     void removeDiffusionReactions(ChemSim* chem, Compartment* C);
+    
     
     /// Remove all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just removed

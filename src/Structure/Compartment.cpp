@@ -14,6 +14,11 @@
 #include "Compartment.h"
 #include "MathFunctions.h"
 #include "Visitor.h"
+#include "Parser.h"
+//REMOVE LATER
+#include "ChemNRMImpl.h"
+
+
 
 Compartment& Compartment::operator=(const Compartment &other) {
     
@@ -50,7 +55,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
         int molecule = sp_this->getMolecule();
         float diff_rate = _diffusion_rates[molecule];
         if(diff_rate<0)  continue;
-    
+        
         if(C->isActivated()) {
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate);
@@ -58,17 +63,191 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
             rxns.push_back(R);
         }
     }
+
+    
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
 }
 
+//Qin
+vector<ReactionBase*> Compartment::generateScaleDiffusionReactions(Compartment* C)
+{
+    vector<ReactionBase*> rxns;
+
+    cout << "neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] <<endl;
+    auto factor = generateScaleFactor(C);
+    cout << "factor = " << factor << endl;
+    
+    for(auto &sp_this : _species.species()) {
+        int molecule = sp_this->getMolecule();
+        float diff_rate = _diffusion_rates[molecule];
+        if(diff_rate<0)  continue;
+        
+        if(C->isActivated()) {
+            Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
+            
+            auto diff_rate_s = diff_rate * factor;
+       
+            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate_s);
+            this->addDiffusionReaction(R);
+            rxns.push_back(R);
+        }
+        
+
+    }
+
+    
+    return vector<ReactionBase*>(rxns.begin(), rxns.end());
+}
+
+//Qin, generate a scaling factor for diffusion constant. For cylinder with 1 compartment in Z direction only
+float Compartment::generateScaleFactor(Compartment* C)
+{
+    vector<ReactionBase*> rxns;
+    
+    auto lx = SysParams::Geometry().compartmentSizeX;
+    auto ly = SysParams::Geometry().compartmentSizeY;
+    auto r = SysParams::Boundaries().diameter / 2; //radius
+    //float c1;
+    
+    if((_coords[0] - lx/2) < r && (_coords[0] + lx/2) > r) {
+        cout << "Diffusion Scaling failed" << endl;
+        return 1;
+    }
+    
+    if((_coords[1] - ly/2) < r && (_coords[1] + ly/2) > r) {
+        cout << "Diffusion Scaling failed" << endl;
+        return 1;
+    }
+    
+    auto x = _coords[0];
+    auto y = _coords[1];
+    auto nx = C->_coords[0];
+    auto ny = C->_coords[1];
+    float c1;
+    float c2;
+    
+    //scale diffusion rate based on compartment area
+    //1. find the location of the neighbor compartment
+    if(ny == y) {
+        
+        //2. calculate the interection point
+        //if at lower part
+        if(y < r) {
+            //if at left
+            if(nx < x) c1 = x - lx/2;
+            //if at right
+            else c1 = x + lx/2;
+  
+            c2 = r - sqrt(r * r - (c1 - r) * (c1 - r));
+            
+            //3. calculate scaling factor
+            //check if interaction is within compartment
+            if(c2 < (y + ly/2) && c2 > (y - ly/2)) {
+                float factor = (y + ly/2 - c2) / ly;
+                return factor;
+            }
+            else return 1;
+
+        }
+        //if at upper part
+        else {
+            //at left
+            if(nx < x) c1 = x - lx/2;
+
+            else c1 = x + lx/2; //right
+            
+            c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
+
+            
+            //3. calculate scaling factor
+            if(c2 < (y + ly/2) && c2 > (y - ly/2)) {
+                float factor = (c2 - y + ly/2) / ly;
+                return factor;
+            }
+            else return 1;
+
+        }
+    }
+    
+    else if(nx == x){
+        //2. calculate the interection point
+        //if at left part
+        if(x < r) {
+            //if at lower
+            if(ny < y) c1 = y - ly/2;
+
+            //if at upper
+            else c1 = y + ly/2;
+            
+            c2 = r - sqrt(r * r - (c1 - r) * (c1 - r));
+            
+            //3. calculate scaling factor
+            //check if interaction is within compartment
+            if(c2 < (x + lx/2) && c2 > (x - lx/2)) {
+                float factor = (_coords[0] + lx/2 - c2) / lx;
+                return factor;
+            }
+            else return 1;
+            
+        }
+        //if at right part
+        else {
+            //at lower
+            if(ny < y) auto c1 = y - ly/2;
+
+            else auto c1 = y + ly/2; //right
+            
+            auto c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
+            
+            //3. calculate scaling factor
+            if(c2 < (x + lx/2) && c2 > (x - lx/2)) {
+                float factor = (c2 - x + lx/2) / lx;
+                return factor;
+            }
+            else return 1;
+            
+        }
+
+    }
+    
+}
+
+
 vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
+    
+    vector<ReactionBase*> rxns;
+
+    if(_activated) {
+        for (auto &C: _neighbours) {
+            
+            auto newRxns = generateDiffusionReactions(C);
+            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+        }
+    }
+    return vector<ReactionBase*>(rxns.begin(), rxns.end());
+}
+
+vector<ReactionBase*> Compartment::generateAllpairsDiffusionReactions() {
     
     vector<ReactionBase*> rxns;
     
     if(_activated) {
         for (auto &C: _neighbours) {
+            if(C->isActivated()){
             auto newRxns = generateDiffusionReactions(C);
-            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+                 rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+            newRxns = C->generateDiffusionReactions(this);
+                 rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+
+//            for(auto &r : C->_diffusion_reactions.reactions()) {
+//                auto rs = r.get()->rspecies()[1];
+//                if(rs->getSpecies().getParent() == this) {
+//                    newRxns.push_back(r.get());
+//                }
+//            }
+//                std::cout<<newRxns.size()<<endl;;
+               
+            }
         }
     }
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
@@ -78,17 +257,19 @@ void Compartment::removeDiffusionReactions(ChemSim* chem, Compartment* C)
 {
     //look for neighbor's diffusion reactions
     vector<ReactionBase*> to_remove;
-    
+
     for(auto &r : C->_diffusion_reactions.reactions()) {
         
         auto rs = r.get()->rspecies()[1];
         if(rs->getSpecies().getParent() == this) {
-            
+
             r->passivateReaction();
+            
             chem->removeReaction(r.get());
             
             to_remove.push_back(r.get());
         }
+
     }
     
     //remove them
@@ -259,10 +440,35 @@ void Compartment::activate(ChemSim* chem) {
     _activated = true;
     shareSpecies(SysParams::Mechanics().transfershareaxis);
     //add all diffusion reactions
-    auto rxns = generateAllDiffusionReactions();
+    auto rxns = generateAllpairsDiffusionReactions();
     for(auto &r : rxns) chem->addReaction(r);
     
 
+//    _diffusion_reactions.updatePropensityComprtment();
+//    for (auto &C: _neighbours){
+//        C->_diffusion_reactions.updatePropensityComprtment();
+//    }
+    
+    
+//    std::cout<<"After updation"<<endl;
+//    for(auto &r : _diffusion_reactions.reactions()) {
+//        //auto rs = r.get()->rspecies();
+//        RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
+//        std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
+//    }
+//    std::cout<<"--"<<endl;
+//    for (auto &C: _neighbours){
+//        for(auto &r : C->_diffusion_reactions.reactions()) {
+//            auto rs = r.get()->rspecies()[1];
+//            if(rs->getSpecies().getParent() == this) {
+//                RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
+////                rn->printSelf();
+//                std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
+//            }
+//        }
+//        std::cout<<"-*"<<endl;
+//    }
+    
 }
 
 void Compartment::deactivate(ChemSim* chem) {

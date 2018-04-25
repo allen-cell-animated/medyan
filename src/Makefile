@@ -20,16 +20,20 @@ HEADERS := $(shell find . -name '*.h')
 OBJECTS := $(SOURCES:.cpp=.o)
 
 #CPP COMPILER CHOICE AND FLAGS
-CXX = /usr/bin/g++ -std=c++11
-DEBUG = -g
-FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
-
-LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl  
+CXX = g++ -std=c++11
+DEBUG = -gdwarf-3
+FAST = -o -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
+LDLIBS = -L/usr/local/lib/ -lboost_system -L/homes/achansek/boost/boost_1_58_0/boost_files/lib/
+#                                                                                                                            |#
+#  If running unit tests, googletest is needed.                                                                             |#   If running unit tests, googletest is needed.
+#                                                                                                                            |#
+# Tweak the following compiler and library options
+#LDLIBS = -L/usr/local/lib/ -lboost_system -L/homes/achansek/boost/boost_1_58_0/boost_files/lib/
 LDFLAGS = $(FAST)
 
 CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -Wno-uninitialized -Wno-unknown-warning-option \
--I/usr/local/include -I/usr/include/boost \
+-I/usr/local/include -I/homes/achansek/boost/boost_1_58_0/boost_files/include/ \
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
 -IMechanics/Minimizer                     \
@@ -41,7 +45,8 @@ CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -IMechanics/ForceField/Linker             \
 -IMechanics/ForceField/MotorGhost         \
 -IMechanics/ForceField/Bubble             \
-
+-IMechanics/ForceField/Adhesion		  \
+-IMechanics/ForceField/Substrate	  \
 
 #################MAIN USER MACROS#################
 #
@@ -62,8 +67,8 @@ CPPFLAGS += -DDYNAMICRATES
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
 
-#if compiling the testing suite
-#CPPFLAGS += -DTESTING
+#if compiling the testing suite	
+#CPPFLAGS += -DTESTING-I/homes/achansek/boost/boost_1_58_0/boost_files/include/ \
 
 #Detailed chemistry macros. 
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!

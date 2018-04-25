@@ -11,23 +11,25 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_BranchingBendingCosine_h
-#define MEDYAN_BranchingBendingCosine_h
+#ifndef MEDYAN_BoundaryCylinderRepulsionExpIn_h
+#define MEDYAN_BoundaryCylinderRepulsionExpIn_h
+
+#include <vector>
+#include <cmath>
 
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class Bead;
 
-/// A cosine potential used by the BranchingBending template.
-class BranchingBendingCosine {
+/// A exponential repulsive potential used by the BoundaryCylinderRepulsion template.
+class BoundaryCylinderRepulsionExpIn {
     
 public:
-    double energy(Bead*, Bead*, Bead*, Bead*, double, double);
-    double energy(Bead*, Bead*, Bead*, Bead*, double, double, double);
-    
-    double forces(Bead*, Bead*, Bead*, Bead*, double, double);
-    void forcesAux(Bead*, Bead*, Bead*, Bead*, double, double);
+    double energy(Bead*, double, double, double);
+    void forces(Bead*, double, vector<double>& norm, double, double);
+    void forcesAux(Bead*, double, vector<double>& norm, double, double);
+    double loadForces(double, double, double);
 };
 
 #endif

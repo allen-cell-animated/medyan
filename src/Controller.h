@@ -116,6 +116,8 @@ private:
     
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
+    //Qin
+    void pinLowerBoundaryFilaments();
     
 public:
     Controller(SubSystem* s);

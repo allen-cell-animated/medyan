@@ -201,6 +201,8 @@ struct BoundaryType {
     
     string boundaryShape = "";
     string boundaryMove = "";
+    //Qin
+    //string scaleDiffusion = "";
 };
 
 /// Struct to hold the ForceField types
@@ -262,6 +264,9 @@ struct DynamicRateType {
     ///Motor rate changing
     vector<string> dMUnbindingType = {};
     vector<string> dMWalkingType = {};
+
+    //Qin----
+    vector<string> dBUnbindingType = {};
     //@}
 };
 

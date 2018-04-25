@@ -177,8 +177,9 @@ void SystemParser::readChemParams() {
         if (line.find("SPECIALPROTOCOL") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
-            
-            if(lineVector.size() > 4) {
+            //Qin
+            //the vector size can be 5 for PINLOWERBOUNDARYFILAMENTS
+            if(lineVector.size() > 5) {
                 cout <<
                 "There was an error parsing input file at Chemistry parameters. Exiting."
                 << endl;
@@ -1206,6 +1207,18 @@ void SystemParser::readDyRateParams() {
             }
             else {}
         }
+        else if (line.find("DBUNBINDINGLEN") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRParams.dBranchUnbindingCharLength.push_back(
+                                        atof((lineVector[i].c_str())));
+            }
+            else {}
+            
+            
+        }
     }
     
     //set system parameters
@@ -1263,6 +1276,18 @@ DynamicRateType SystemParser::readDynamicRateType() {
                     DRType.dLUnbindingType.push_back(lineVector[i]);
             }
         }
+        
+        // Qin, adding branching dy type
+        else if (line.find("DBUNBINDINGTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    DRType.dBUnbindingType.push_back(lineVector[i]);
+            }
+        }
+        
     }
     return DRType;
 }
@@ -1302,6 +1327,18 @@ BoundaryType SystemParser::readBoundaryType() {
                 BType.boundaryMove = lineVector[1];
             }
         }
+        //Qin, add Compartment Scaling
+        //else if (line.find("DIFFUSIONSCALE") != string::npos) {
+            
+          //  vector<string> lineVector = split<string>(line);
+          //  if(lineVector.size() != 2) {
+          //      cout << "Diffusion scaling needs to be specified. Exiting." << endl;
+          //      exit(EXIT_FAILURE);
+          //  }
+          //  else if (lineVector.size() == 2) {
+          //      BType.scaleDiffusion = lineVector[1];
+          //  }
+        //}
     }
     return BType;
 }
@@ -1696,6 +1733,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
         else if(lineVector.size()==5) {
             vector<double> coord1;
             vector<vector<double>> coord3;
+            //USED ONLY TO RESTART PINNED TRAJECTORIES.
             if(lineVector[0]=="STATIC"){
                 for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 5; it++) {
                     coord1.push_back(atof(((*it).c_str()))); //FORMAT FILAMENTTYPE COORDx COORDy COORDz.

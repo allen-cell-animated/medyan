@@ -100,6 +100,22 @@ public:
     virtual float changeRate(float bareRate, double force);
 };
 
+// Qin -------------------------
+///A slip bond implementation of the BrancherRateChanger.
+///The same as crosslinker so far, details is being explored
+
+class BranchSlip : public BranchRateChanger {
+    
+private:
+    double _x; ///< The characteristic length for this function
+    
+public:
+    BranchSlip(short branchType, double charLength)
+    
+    : BranchRateChanger(branchType), _x(charLength) {}
+    
+    virtual float changeRate(float bareRate, double force);
+};
 
 ///A catch bond implementation of the MotorRateChanger
 ///Used for a motor unbinding when under stress

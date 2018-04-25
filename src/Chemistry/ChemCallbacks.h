@@ -347,6 +347,8 @@ struct BranchingPointUnbindingCallback {
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
         delete _branchingPoint;
     }
+    
+    
 };
 
 
@@ -493,6 +495,10 @@ struct BranchingCallback {
         cBrancher->setRates(_onRate, frate);
         cBrancher->createOffReaction(r, _ps);
         cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
+#ifdef DYNAMICRATES
+        //Qin ----------------
+        b -> updateReactionRates();
+#endif
     }
 };
 
@@ -794,29 +800,57 @@ struct FilamentCreationCallback {
         //set up a random initial position and direction
         vector<double> position;
         vector<double> direction;
-        
-        while(true) {
-            position = GController::getRandomCoordinates(c);
+        //Qin
+        if(_ps->getBoundary()->getShape() == BoundaryShape::Cylinder) {
+            while(true) {
+                position = GController::getRandomCenterCoordinates(c);
+                
+                //getting random numbers between -1 and 1
+                
+                direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), 0};
+                normalize(direction);
+                
+                auto npp = nextPointProjection(position,
+                                               SysParams::Geometry().cylinderSize[_filType], direction);
+                
+                //check if within boundary
+                if(_ps->getBoundary()->within(position) &&
+                   _ps->getBoundary()->within(npp))
+                    break;
+            }
             
-            //getting random numbers between -1 and 1
-            direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), Rand::randDouble(-1,1)};
-            normalize(direction);
+            //create filament, set up ends and filament species
+            Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction, true, false);
             
-            auto npp = nextPointProjection(position,
-                                           SysParams::Geometry().cylinderSize[_filType], direction);
-            
-            //check if within boundary
-            if(_ps->getBoundary()->within(position) &&
-               _ps->getBoundary()->within(npp))
-                break;
+            //initialize the nucleation
+            f->nucleate(_plusEnd, _filament, _minusEnd);
         }
-        
-        //create filament, set up ends and filament species
-        Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction, true, false);
-        
-        //initialize the nucleation
-        f->nucleate(_plusEnd, _filament, _minusEnd);
-    }
+        else {
+            while(true) {
+                position = GController::getRandomCoordinates(c);
+                
+                //getting random numbers between -1 and 1
+                
+                direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), Rand::randDouble(-1,1)};
+                normalize(direction);
+                
+                auto npp = nextPointProjection(position,
+                                               SysParams::Geometry().cylinderSize[_filType], direction);
+                
+                //check if within boundary
+                if(_ps->getBoundary()->within(position) &&
+                   _ps->getBoundary()->within(npp))
+                    break;
+            }
+            
+            //create filament, set up ends and filament species
+            Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction, true, false);
+            
+            //initialize the nucleation
+            f->nucleate(_plusEnd, _filament, _minusEnd);
+        }
+        }
+
     
 };
 

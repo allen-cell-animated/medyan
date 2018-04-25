@@ -1,4 +1,4 @@
-
+ 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -739,7 +739,8 @@ void Controller::updatePositions() {
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+    for(auto r : _subSystem->getReactables()) { r->updateReactionRates();
+    }
 }
 #endif
 
@@ -1009,10 +1010,6 @@ void Controller::run() {
             for(auto o: _outputs) o->print(i);
             i++;
 #endif
-
-#ifdef DYNAMICRATES
-            updateReactionRates();
-#endif
             
 #ifdef CHEMISTRY
             // update neighbor lists
@@ -1029,6 +1026,10 @@ void Controller::run() {
             executeSpecialProtocols();
             oldTau = tau();
         }
+#endif
+        
+#ifdef DYNAMICRATES
+        updateReactionRates();
 #endif
     }
     //if run steps were specified, use this
@@ -1069,9 +1070,6 @@ void Controller::run() {
             i++;
 #endif
             
-#ifdef DYNAMICRATES
-            updateReactionRates();
-#endif
             
 #ifdef CHEMISTRY
             // update neighbor lists
@@ -1087,6 +1085,10 @@ void Controller::run() {
             //special protocols
             executeSpecialProtocols();
         }
+#endif
+        
+#ifdef DYNAMICRATES
+        updateReactionRates();
 #endif
     }
     

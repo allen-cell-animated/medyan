@@ -29,7 +29,7 @@ public:
     double energy(Bead*, Bead*, Bead*,
                   double position, double kStretch, double eqLength, double d);
     
-    void forces(Bead*, Bead*, Bead*,
+    double forces(Bead*, Bead*, Bead*,
                 double position, double kStretch, double eqLength);
     void forcesAux(Bead*, Bead*, Bead*,
                    double position, double kStretch, double eqLength);

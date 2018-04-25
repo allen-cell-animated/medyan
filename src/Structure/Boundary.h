@@ -22,7 +22,7 @@
 class SubSystem;
 
 /// BoundaryShape is a shape enumeration.
-enum class BoundaryShape {Cube, Capsule, Sphere};
+enum class BoundaryShape {Cube, Capsule, Sphere, Cylinder};
 
 /// BoundaryMove is a enum describing the movement of a boundary.
 enum class BoundaryMove {None, Top, All};
@@ -72,6 +72,12 @@ public:
     /// closest boundary element in the boundary.
     /// Will return infinity if outside of the boundary.
     virtual double distance(const vector<double>& coordinates) = 0;
+    
+    //Qin
+    // Returns the distance from the boundary element in the lower boundary
+    virtual double lowerdistance(const vector<double>& coordinates) = 0;
+    // Returns the distance from the boundary element in the side boundary
+    virtual double sidedistance(const vector<double>& coordinates) = 0;
     
     ///Move a given part of a boundary a given distance
     ///@note a negative distance denotes movement towards the center of the grid.
