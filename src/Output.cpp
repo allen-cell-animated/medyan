@@ -30,7 +30,7 @@
 
 #include "Boundary.h"
 #include "CompartmentGrid.h"
-#include "GController.h"
+#include "core/controller/GController.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"

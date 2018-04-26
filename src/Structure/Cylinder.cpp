@@ -14,14 +14,14 @@
 #include "Cylinder.h"
 
 #include "SubSystem.h"
-#include "CController.h"
+#include "core/controller/CController.h"
 #include "ChemManager.h"
 #include "ChemRNode.h"
 
 #include "Filament.h"
 #include "Bead.h"
 
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
