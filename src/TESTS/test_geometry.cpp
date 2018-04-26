@@ -20,7 +20,7 @@
 
 #include "common.h"
 
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "SysParams.h"
 
 ///testing basic initialization and getters

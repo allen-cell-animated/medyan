@@ -17,7 +17,7 @@
 #include "Composite.h"
 
 #include "SysParams.h"
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;

@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "GController.h"
+#include "core/controller/GController.h"
 
 #include "Parser.h"
 #include "SubSystem.h"

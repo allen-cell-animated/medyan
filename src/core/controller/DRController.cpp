@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "DRController.h"
+#include "core/controller/DRController.h"
 
 #include "Parser.h"
 #include "RateChangerImpl.h"

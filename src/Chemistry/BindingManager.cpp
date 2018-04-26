@@ -26,7 +26,7 @@
 
 #include "ChemCallbacks.h"
 #include "MathFunctions.h"
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "SysParams.h"
 
 using namespace mathfunc;

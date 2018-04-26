@@ -18,7 +18,7 @@
 
 #include "Compartment.h"
 
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "SysParams.h"
 
 BoundaryCubic::BoundaryCubic(SubSystem* s, BoundaryMove move)

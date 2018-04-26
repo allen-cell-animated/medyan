@@ -18,7 +18,7 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "SysParams.h"
 #include "Rand.h"
 

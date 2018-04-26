@@ -31,7 +31,7 @@
 
 #include "SysParams.h"
 #include "MathFunctions.h"
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "Rand.h"
 
 using namespace mathfunc;

@@ -29,7 +29,7 @@
 
 #include "BindingManager.h"
 
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "MathFunctions.h"
 #include "SysParams.h"
 #include "Rand.h"

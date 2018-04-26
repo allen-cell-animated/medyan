@@ -14,7 +14,7 @@
 #include <random>
 #include <chrono>
 
-#include "Controller.h"
+#include "core/controller/Controller.h"
 
 #include "Parser.h"
 #include "Output.h"
@@ -35,7 +35,7 @@
 
 #include "SysParams.h"
 #include "MathFunctions.h"
-#include "MController.h"
+#include "core/controller/MController.h"
 #include "Cylinder.h"
 #include <unordered_map>
 #include 	<tuple>

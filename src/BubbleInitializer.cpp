@@ -15,7 +15,7 @@
 
 #include "Boundary.h"
 
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "SysParams.h"
 #include "Rand.h"
 
