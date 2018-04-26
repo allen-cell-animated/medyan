@@ -177,8 +177,10 @@ void Controller::initialize(string inputFile,
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
+    
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
+    
 #endif
     
 #ifdef DYNAMICRATES
@@ -390,9 +392,9 @@ void Controller::activatedeactivateComp(){
             fCompmap.clear();
             bCompmap.clear();
             activatecompartments.clear();
-
-    //ControlfrontEndComp();
-    //ControlbackEndComp();
+            
+            //ControlfrontEndComp();
+            //ControlbackEndComp();
             ControlfrontbackEndComp();
             std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
             for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
@@ -435,14 +437,16 @@ void Controller::activatedeactivateComp(){
                         
                         std::cout <<copyNum<<" ";
                     }
-
+                }
+            }
+            std::cout<<endl;
         }
 }
 void Controller::ControlfrontbackEndComp(){
     Compartment* maxcomp=NULL;
-    Bead* maxbead=NULL;
+//    Bead* maxbead=NULL;
     Compartment* mincomp=NULL;
-    Bead* minbead=NULL;
+//    Bead* minbead=NULL;
 
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         auto cyls=C->getCylinders();
@@ -496,7 +500,7 @@ void Controller::ControlfrontbackEndComp(){
     //back end
     auto cmincomp=mincomp->coordinates();
     for(auto C:mincomp->getNeighbours()){
-        auto cC=C->coordinates();
+      auto cC=C->coordinates();
         if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis])
             mincomp=C;
     }
@@ -739,8 +743,7 @@ void Controller::updatePositions() {
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables()) { r->updateReactionRates();
-    }
+    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
 }
 #endif
 
@@ -913,29 +916,8 @@ void Controller::run() {
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
-//        auto i=0;
-//        for (auto b: BranchingPoint::getBranchingPoints()) {
-//            
-//            Bead* b1 = b->getFirstCylinder()->getFirstBead();
-//            Bead* b2 = b->getFirstCylinder()->getSecondBead();
-//            Bead* b3 = b->getSecondCylinder()->getFirstBead();
-//            Bead* b4 = b->getSecondCylinder()->getSecondBead();
-//            auto c = b->getSecondCylinder();
-//            auto filType = c->getType();
-////            std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
-////            i++;
-////            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-////                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-////                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
-////                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-////                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
-////                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
-////                std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-////            }
-//        }
-    cout<< "Restart procedures completed. Starting Medyan framework"<<endl;
+    cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
     cout << "---" << endl;
-        
     resetglobaltime();
     _cController->restart();
     
@@ -958,7 +940,7 @@ void Controller::run() {
     
 #ifdef CHEMISTRY
         //activate/deactivate compartments
-        activatedeactivateComp(tauLastSnapshot+_minimizationTime-_snapshotTime);
+        activatedeactivateComp();
         while(tau() <= _runTime) {
             //run ccontroller
             if(!_cController->run(_minimizationTime)) {
@@ -976,26 +958,7 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
-//                auto i=0;
-//                for (auto b: BranchingPoint::getBranchingPoints()) {
-//                    
-//                    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-//                    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-//                    Bead* b3 = b->getSecondCylinder()->getFirstBead();
-//                    Bead* b4 = b->getSecondCylinder()->getSecondBead();
-//                    auto c = b->getSecondCylinder();
-//                    auto filType = c->getType();
-//                    std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
-//                    i++;
-//                    for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-//                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-//                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
-//                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-//                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
-//                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
-//                        std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-//                    }
-//                }
+
                 tauLastMinimization = 0.0;
 
             }
@@ -1009,6 +972,9 @@ void Controller::run() {
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
             i++;
+#endif
+#ifdef DYNAMICRATES
+            updateReactionRates();
 #endif
             
 #ifdef CHEMISTRY
@@ -1026,10 +992,6 @@ void Controller::run() {
             executeSpecialProtocols();
             oldTau = tau();
         }
-#endif
-        
-#ifdef DYNAMICRATES
-        updateReactionRates();
 #endif
     }
     //if run steps were specified, use this
@@ -1069,7 +1031,9 @@ void Controller::run() {
             for(auto o: _outputs) o->print(i);
             i++;
 #endif
-            
+#ifdef DYNAMICRATES
+            updateReactionRates();
+#endif
             
 #ifdef CHEMISTRY
             // update neighbor lists
@@ -1085,10 +1049,6 @@ void Controller::run() {
             //special protocols
             executeSpecialProtocols();
         }
-#endif
-        
-#ifdef DYNAMICRATES
-        updateReactionRates();
 #endif
     }
     

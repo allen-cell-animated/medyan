@@ -974,6 +974,18 @@ void SystemParser::readMechParams() {
                         exit(EXIT_FAILURE);}
                 }
             }
+            
+            else if (lineVector.size() == 5) {
+
+                //Qin
+                if(lineVector[1] == "PINLOWERBOUNDARYFILAMENTS") {
+                    
+                    MParams.pinLowerBoundaryFilaments = true;
+                    MParams.pinK = atof(lineVector[2].c_str());
+                    MParams.pinTime = atof(lineVector[3].c_str());
+                    MParams.pinFraction = atof(lineVector[4].c_str());
+                }
+            }
         }
         else {}
     }

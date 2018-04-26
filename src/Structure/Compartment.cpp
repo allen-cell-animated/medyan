@@ -398,9 +398,9 @@ void Compartment::shareSpecies(int i) {
         auto nit = activeNeighbors.begin();
         auto neighbor = *nit;
         sp_neighbor = neighbor->findSpeciesByName(sp->getName());
-        int copyNumber = sp->getN();
-        int lowerlimit = (int) sp->getN()/2;
-        
+        int copyNumber = sp_neighbor->getN();
+        int lowerlimit = (int) sp_neighbor->getN()/2;
+//        std::cout<<copyNumber<<endl;
         if(sp->getFullName().find("Bound") == string::npos){
             while(copyNumber > lowerlimit) {
                 sp_neighbor->down();
@@ -415,20 +415,22 @@ void Compartment::shareSpecies(int i) {
                 
                 //increase copy number
                 sp->up();
-                
                 //reset if we've looped through
                 if(++nit == activeNeighbors.end())
                     nit = activeNeighbors.begin();
+                neighbor = *nit;
+                sp_neighbor = neighbor->findSpeciesByName(sp->getName());
                 copyNumber--;
                 
             }
         }
-        
+//        std::cout<<sp->getN()<<" "<<sp_neighbor->getN()<<endl;
         //activate all reactions changed
         for(auto spn : sp_neighbors)
             spn->updateReactantPropensities();
         for(auto &sp : _species.species())
             sp->updateReactantPropensities();
+        
     }
 }
 
@@ -438,10 +440,33 @@ void Compartment::activate(ChemSim* chem) {
     
     //set marker
     _activated = true;
-    shareSpecies(SysParams::Mechanics().transfershareaxis);
     //add all diffusion reactions
     auto rxns = generateAllpairsDiffusionReactions();
     for(auto &r : rxns) chem->addReaction(r);
+    shareSpecies(SysParams::Mechanics().transfershareaxis);
+    
+//    for(auto &r : _diffusion_reactions.reactions()) {
+//        //auto rs = r.get()->rspecies();
+//        RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
+//        std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
+//    }
+//    std::cout<<"--"<<endl;
+    for (auto &C: _neighbours){
+        if(C->isActivated()){
+            for(auto &r : C->_diffusion_reactions.reactions()) {
+                auto rs = r.get()->rspecies()[1];
+                if(rs->getSpecies().getParent() == this) {
+                    auto rs1 = r.get()->rspecies()[0];
+                    if(rs1->getN()>0 && r->isPassivated()){
+                        r->activateReaction();
+                    }
+//            RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
+//            std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
+        }
+    }
+//        std::cout<<"-*"<<endl;
+        }
+    }
     
 
 //    _diffusion_reactions.updatePropensityComprtment();

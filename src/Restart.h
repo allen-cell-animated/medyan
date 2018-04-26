@@ -246,13 +246,13 @@ private:
                                     cc->getCMonomer(i)->speciesBound(j)->down();}
                         } //@ELSE
                     }
-                    for(int i = 0; i < cc->getSize(); i++) {
-//                        std::cout<<minus<<" "<<plus<<" "<<cc->getCMonomer(i)->speciesFilament(0)->getN()<<" ";
-                        for(auto j : SysParams::Chemistry().bindingIndices[filType]){
-//                            std::cout<<cc->getCMonomer(i)->speciesBound(j)->getN()<<" ";
-                        }
-//                        std::cout<<endl;
-                    }
+//                    for(int i = 0; i < cc->getSize(); i++) {
+////                        std::cout<<minus<<" "<<plus<<" "<<cc->getCMonomer(i)->speciesFilament(0)->getN()<<" ";
+//                        for(auto j : SysParams::Chemistry().bindingIndices[filType]){
+////                            std::cout<<cc->getCMonomer(i)->speciesBound(j)->getN()<<" ";
+//                        }
+////                        std::cout<<endl;
+//                    }
                     //FIXED CCYLINDER
                     }
                     else if(abs(mean1-mean2)==0){
