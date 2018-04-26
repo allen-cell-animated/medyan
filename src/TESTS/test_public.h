@@ -21,9 +21,9 @@
 
 #    include "common.h"
 
-#    include "CController.h"
+#    include "core/controller/CController.h"
 #    include "Composite.h"
-#    include "GController.h"
+#    include "core/controller/GController.h"
 #    include "SubSystem.h"
 
 namespace test_public {

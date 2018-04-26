@@ -9,7 +9,7 @@
 using namespace mathfunc;
 
 #include "Compartment.h"
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "SubSystem.h"
 #include "SysParams.h"
 

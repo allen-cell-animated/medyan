@@ -3,7 +3,7 @@
 #include "core/globals.h"
 #include "Compartment.h"
 #include "MathFunctions.h"
-#include "GController.h"
+#include "core/controller/GController.h"
 
 Database<Triangle*> Triangle::_triangles;
 

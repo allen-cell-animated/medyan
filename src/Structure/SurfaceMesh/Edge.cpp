@@ -2,7 +2,7 @@
 
 #include "core/globals.h"
 #include "Compartment.h"
-#include "GController.h"
+#include "core/controller/GController.h"
 #include "MathFunctions.h"
 
 Database<Edge*> Edge::_edges;
