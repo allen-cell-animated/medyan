@@ -591,9 +591,9 @@ struct MotorUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //find the motor binding manager associated with this species
-        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
+//        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
-        Compartment* c = static_cast<Compartment*>(sd->getParent());
+//        Compartment* c = static_cast<Compartment*>(sd->getParent());
 //        auto mManager = c->getMotorBindingManager(_motor->getType());
         
         //DEPRECATED AS OF 9/8/16

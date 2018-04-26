@@ -536,7 +536,7 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
     _bindingSpecies = _compartment->findSpeciesByName(name);
          
     //initialize ID's based on number of species in compartment
-    int numSpecies = rs[ML_RXN_INDEX + 1]->getSpecies().getN();
+//    int numSpecies = rs[ML_RXN_INDEX + 1]->getSpecies().getN();
 
     //DEPRECATED AS OF 9/22/16
 //    for(int i = 0; i < numSpecies; i++)
