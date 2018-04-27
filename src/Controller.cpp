@@ -368,7 +368,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
             
-            // check how many segments can fit between end-to-end of the filament
+            
             Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
             
@@ -410,15 +410,15 @@ void Controller::activatedeactivateComp(){
                 _cController->deactivate(it->second);
             fCompmap.clear();
             bCompmap.clear();
-            std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
-            std::cout<<"AFTERUPDATION ";
-            auto counter=0;
-            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-                counter++;
-                //        std::cout<<C->isActivated()<<" ";
-                //           if(counter==SysParams::Geometry().NX)
-                //            std::cout<<endl;
-            }
+//            std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+//            std::cout<<"AFTERUPDATION ";
+//            auto counter=0;
+//            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+//                counter++;
+//                //        std::cout<<C->isActivated()<<" ";
+//                //           if(counter==SysParams::Geometry().NX)
+//                //            std::cout<<endl;
+//            }
             //    std::cout<<endl;
             
             //    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
@@ -427,19 +427,19 @@ void Controller::activatedeactivateComp(){
             //        else
             //            std::cout<<"0 ";
             //    }
-            std::cout<<endl;
-            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-                for(auto sd : _chemData.speciesDiffusing) {
-                    string name = get<0>(sd);
-                    if(name.find("AD") != string::npos){
-                        auto s = C->findSpeciesByName(name);
-                        auto copyNum = s->getN();
-                        
-                        std::cout <<copyNum<<" ";
-                    }
-                }
-            }
-            std::cout<<endl;
+//            std::cout<<endl;
+//            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+//                for(auto sd : _chemData.speciesDiffusing) {
+//                    string name = get<0>(sd);
+//                    if(name.find("AD") != string::npos){
+//                        auto s = C->findSpeciesByName(name);
+//                        auto copyNum = s->getN();
+//                        
+//                        std::cout <<copyNum<<" ";
+//                    }
+//                }
+//            }
+//            std::cout<<endl;
         }
 }
 void Controller::ControlfrontbackEndComp(){

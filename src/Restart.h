@@ -15,7 +15,7 @@
 #define MEDYAN_Restart_h
 
 #include "common.h"
-
+#include<stdio.h>
 #include "Output.h"
 #include "MController.h"
 #include "GController.h"
@@ -114,7 +114,7 @@ private:
             }
             for (auto it = range.first; it != range.second; ++it){
                 scfmap.push_back(it->second);}//@FOR it
-//            TODO if(scfmap.size() > SysParams::Chemistry().numBindingSites[x->getType()])
+            //TODO if(scfmap.size() > SysParams::Chemistry().numBindingSites[x->getType()])
             //get vectors of bSite
             auto i = 0;
             for(int I=0;I<scfmap.size();I++){
@@ -127,8 +127,7 @@ private:
             if(scfmap.size()){
                 //if nummonomers is equal to total number of monomers allowed in a cylinder.
                 auto nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
-                if( nummonomers == SysParams::Geometry().cylinderNumMon[filType]
-                   ){
+                if( nummonomers == SysParams::Geometry().cylinderNumMon[filType]){
                     for(auto i = 0; i < bSite.size(); i++){
 //                        std::cout<<bSite[i]<<" "<<twoPointDistance(x->getFirstBead()->coordinate,x->getSecondBead()->coordinate)<<endl;
                         if(flag ==0)
@@ -272,7 +271,7 @@ private:
     }//reassign ENDS.
     
     
-    //cross checks to see linker and motor binding sites have the same distance between them as linker, adds to heap.
+//cross checks to see linker and motor binding sites have the same distance between them as linker, adds to heap.
     void crosschecklinkermotor(){
         
         short brows=boundVector.size();
@@ -299,12 +298,14 @@ private:
                     auto c2=get<0>(map[J])->getCylinder();
                     auto l1=midPointCoordinate(c1->getFirstBead()->coordinate, c1->getSecondBead()->coordinate,get<1>(map[I])/_numMonPerCyl);
                     auto l2=midPointCoordinate(c2->getFirstBead()->coordinate, c2->getSecondBead()->coordinate,get<1>(map[J])/_numMonPerCyl);
+//                    std::cout<<c1->getID()<<" "<<get<1>(map[I])/_numMonPerCyl<<" "<<c2->getID()<<" "<<get<1>(map[J])/_numMonPerCyl<<endl;
                     auto distanceproj=twoPointDistance(l1, l2);
+//                    std::cout<<"distances "<<distanceproj<<" "<<distanceactual<<endl;
                     if(abs((distanceproj-distanceactual)/distanceactual)<threshold)
                     {one=I;two=J;check2=1;threshold=abs((distanceproj-distanceactual)/distanceactual);}
                 }}
             if(!check2)
-            {cout<<"Serious error! Bound Species (Linker/Motor) with the following coordinates is not bound to a legitimate site"<<endl;
+            {cout<<"Serious error! Bound Species (Linker/Motor) with the following coordinates is not bound to a legitimate site. Printing coordinates"<<endl;
                 cout<<leg1[0]<<" "<<leg1[1]<<" "<<leg1[2]<<endl;
                 cout<<leg2[0]<<" "<<leg2[1]<<" "<<leg2[2]<<endl;
                 //exit(EXIT_FAILURE);
@@ -427,7 +428,7 @@ public:
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
         for(auto sd : _chemData.speciesDiffusing) {
             (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);}}
-        //Step #3. Add filament coordinates to be held static during minimization **** NEEEDS TO BE EDITED***
+//Step #3. Add filament coordinates to be held static during minimization **** NEEEDS TO BE EDITED***
         // coordinates to keep static
         vector<vector<double>> staticbeads=get<3>(filaments);
         int nbeads=get<3>(filaments).size();
@@ -449,7 +450,7 @@ public:
     }
     
     void addtoHeaplinkermotor(){
-        //STEP #2. ADD bound Linkers And Motors in inputfile into possible bindings.
+//STEP #2. ADD bound Linkers And Motors in inputfile into possible bindings.
         boundVector=get<1>(filaments);
         short brows=boundVector.size();
         vector<vector<double> > site1;
@@ -469,6 +470,7 @@ public:
                             _numMonPerCyl=(int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
                         else
                             _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
+//                        std::cout<<_numMonPerCyl<<endl;
                         vector<short> posBindingSites=SysParams::Chemistry().bindingSites[filamentType];
                         string boundName=get<0>(b);
                         vector<vector<double>> coord=get<2>(b);
@@ -478,6 +480,7 @@ public:
                         angdeltapos=getAngleDeltaPos(leg1,b1,b2);
                         if( angdeltapos.at(0)<0.001 && angdeltapos.at(1)<0.001){
                             auto f = (Filament*)(x->getParent());
+//                            std::cout<<"FilID1 "<<f->getID()<<endl;
                             double d=NULL;
                             if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
                                 if(x->isMinusEnd()){
@@ -485,10 +488,12 @@ public:
                                     if(vecpos!=branchcylIDs.end()) //If it is a branch cylinder, then the CMonomers are re-arranged starting from 0 instead of CMonomer.size().
                                         d = round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
                                         //d = round(angdeltapos.at(2)*_numMonPerCyl/SysParams::Geometry().cylinderSize[filamentType]); //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
-                                    else
-                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
+                                    else{
+//                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
+                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
 //                                        d = round((1-(angdeltapos.at(3)-angdeltapos.at(2))/SysParams::Geometry().cylinderSize[filamentType])*SysParams::Geometry().cylinderNumMon[filamentType]);
                                     //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
+                                    }
                                     }
                                 else
                                     d = round( angdeltapos.at(2)/SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
@@ -499,12 +504,33 @@ public:
                                 int lo=0;
                                 int mm;
                                 vector<short> test;
+                                vector<short>bindingsites;
+                                bindingsites = posBindingSites;
                                 for(mm=0;mm<posBindingSites.size();mm++){
                                     test.push_back(abs(posBindingSites[mm]-d));}
+                                //Sort in ascending order.
                                 for(mm=0;mm<posBindingSites.size();mm++){
-                                    if(test[mm]<test[lo])
-                                        lo=mm;}
-                                _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
+                                    for(int nn=mm+1;nn<posBindingSites.size();nn++){
+                                        if(test[nn] < test[mm]){
+                                            short temp1, temp2;
+                                            temp1 = test[mm];
+                                            test[mm] = test[nn];
+                                            test[nn] = temp1;
+                                            temp2 = bindingsites[mm];
+                                            bindingsites[mm] = bindingsites[nn];
+                                            bindingsites[nn] = temp2;
+                                        }
+                                    }
+                                }
+                                int topn = 2;
+                                if(posBindingSites.size()<topn)
+                                    topn = posBindingSites.size();
+                                for(mm = 0;mm<topn;mm++)
+                                    _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),bindingsites[mm])});
+                                //                                for(mm=0;mm<posBindingSites.size();mm++){
+                                //                                    if(test[mm]<test[lo])
+                                //                                        lo=mm;}
+                                //                                _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
                             }
                             else{
                                 _singlecylfilunsortedpairings.insert({x->getID(),make_tuple(iter, d)});
@@ -514,6 +540,7 @@ public:
                         angdeltapos=getAngleDeltaPos(leg2,b1,b2);
                         if( angdeltapos.at(0)<0.001 && angdeltapos.at(1)<0.001){
                             auto f = (Filament*)(x->getParent());
+//                            std::cout<<"FilID2 "<<f->getID()<<endl;
                             double d=NULL;
                             if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
                                 if(x->isMinusEnd()){
@@ -521,8 +548,12 @@ public:
                                     if(vecpos!=branchcylIDs.end()) //If it is a branch cylinder, then the CMonomers are re-arranged starting from 0 instead of CMonomer.size().
                                         d = round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
                                     //d = round(angdeltapos.at(2)*_numMonPerCyl/SysParams::Geometry().cylinderSize[filamentType]); //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
-                                    else
-                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
+                                    else{
+//                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*SysParams::Geometry().cylinderNumMon[filamentType]/angdeltapos.at(3));
+//                                    std::cout<<d<<endl;
+                                        d = SysParams::Geometry().cylinderNumMon[filamentType] -_numMonPerCyl + round(angdeltapos.at(2)*_numMonPerCyl/angdeltapos.at(3));
+//                                    std::cout<<d<<endl;
+                                    }
                                     //                                        d = round((1-(angdeltapos.at(3)-angdeltapos.at(2))/SysParams::Geometry().cylinderSize[filamentType])*SysParams::Geometry().cylinderNumMon[filamentType]);
                                     //THIS IS THE CORRECT WAY. TEMPORARILY DEPRECATED.
                                 }
@@ -536,12 +567,33 @@ public:
                                 int lo=0;
                                 int mm;
                                 vector<short> test;
+                                vector<short>bindingsites;
+                                bindingsites = posBindingSites;
                                 for(mm=0;mm<posBindingSites.size();mm++){
                                     test.push_back(abs(posBindingSites[mm]-d));}
+                                //Sort in ascending order.
                                 for(mm=0;mm<posBindingSites.size();mm++){
-                                    if(test[mm]<test[lo])
-                                        lo=mm;}
-                                _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
+                                    for(int nn=mm+1;nn<posBindingSites.size();nn++){
+                                        if(test[nn] < test[mm]){
+                                            short temp1, temp2;
+                                            temp1 = test[mm];
+                                            test[mm] = test[nn];
+                                            test[nn] = temp1;
+                                            temp2 = bindingsites[mm];
+                                            bindingsites[mm] = bindingsites[nn];
+                                            bindingsites[nn] = temp2;
+                                        }
+                                    }
+                                }
+                                int topn = 2;
+                                if(posBindingSites.size()<topn)
+                                    topn = posBindingSites.size();
+                                for(mm = 0;mm<topn;mm++)
+                                    _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),bindingsites[mm])});
+//                                for(mm=0;mm<posBindingSites.size();mm++){
+//                                    if(test[mm]<test[lo])
+//                                        lo=mm;}
+//                                _unsortedpairings.insert({iter,make_tuple(x->getCCylinder(),posBindingSites[lo])});
                             }
                             else{
                                 _singlecylfilunsortedpairings.insert({x->getID(),make_tuple(iter, d)});
