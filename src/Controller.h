@@ -75,6 +75,7 @@ private:
     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
     //@}
     
+    
     ///INITIALIZATION HELPER FUNCTIONS
     
     /// Set up an initial configuration of a network
@@ -110,7 +111,7 @@ private:
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
     //Qin
-    void pinLowerBoundaryFilaments();
+    void pinLowerBoundaryFilaments(double t1, double tstep);
     
 public:
     Controller(SubSystem* s);

@@ -110,7 +110,7 @@ double BoundaryCubic::distance(const vector<double>& coordinates) {
     return smallestDist;
 }
 
-//Qin
+//Qin, don't use
 double BoundaryCubic::lowerdistance(const vector<double>& coordinates) {
     
     // loop through, get smallest non-negative distance
@@ -495,4 +495,5 @@ double BoundaryCylinder::sidedistance(const vector<double>& coordinates) {
     if(dist > 0) return dist;
     else return numeric_limits<double>::infinity();
 }
+
 

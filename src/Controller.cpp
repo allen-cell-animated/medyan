@@ -92,6 +92,7 @@ void Controller::initialize(string inputFile,
     //Qin add br force out and local diffussing species concentration
     _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
     //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
+    _outputs.push_back(new WallTensions(_outputDirectory + "wallTension.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -429,12 +430,6 @@ void Controller::executeSpecialProtocols() {
         pinBoundaryFilaments();
     }
     
-    //Qin
-    if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
-       tau() >= SysParams::Mechanics().pinTime) {
-        
-        pinLowerBoundaryFilaments();
-    }
 }
 
 void Controller::updatePositions() {
@@ -496,36 +491,76 @@ void Controller::pinBoundaryFilaments() {
 }
 
 //Qin
-void Controller::pinLowerBoundaryFilaments() {
+void Controller::pinLowerBoundaryFilaments(double t1, double tstep) {
     
-    //renew pinned filament list everytime
+    //undate pin list every second
+    if(Bead::getPinnedBeads().size() != 0 && t1 >= tstep)
+        return;
+    
+    //remove all pin beads
+    for(auto b : Bead::getBeads()){
+        if(b->isPinned() == true) {
+            b->removeAsPinned();
+        }
+    }
     
     //loop through beads, check if within pindistance
     for(auto b : Bead::getBeads()) {
         
-        //pin all beads besides plus end and minus end cylinder
+        //pin only beads who are at the front of a plus end cylinder or back of a minus end cylinder
         Filament* f = (Filament*) b->getParent();
         Cylinder* plusEndC = f->getPlusEndCylinder();
         Cylinder* minusEndC = f->getMinusEndCylinder();
         
-        if((plusEndC->getSecondBead() != b) ||
-           (minusEndC->getFirstBead() != b)) {
+        if((plusEndC->getSecondBead() == b) ||
+           (minusEndC->getFirstBead() == b)) {
             
             //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
             //cout << SysParams::Mechanics().pinDistance << endl;
             
-            auto index = Rand::randDouble(0,1);
-            //cout << index <<endl;
-            //if within dist to boundary and index > 0.5, add
+            //if within dist to boundary and bead is not pinned, add
             if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
-               && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
-                //cout << index << endl;
+               && b->isPinned() == false) {
+                
                 b->pinnedPosition = b->coordinate;
                 b->addAsPinned();
             }
         }
+
     }
 }
+
+//void Controller::pinLowerBoundaryFilaments() {
+//
+//    //renew pinned filament list everytime
+//
+//    //loop through beads, check if within pindistance
+//    for(auto b : Bead::getBeads()) {
+//
+//        //pin all beads besides plus end and minus end cylinder
+//        Filament* f = (Filament*) b->getParent();
+//        Cylinder* plusEndC = f->getPlusEndCylinder();
+//        Cylinder* minusEndC = f->getMinusEndCylinder();
+//
+//        if((plusEndC->getSecondBead() != b) ||
+//           (minusEndC->getFirstBead() != b)) {
+//
+//            //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
+//            //cout << SysParams::Mechanics().pinDistance << endl;
+//
+//            auto index = Rand::randDouble(0,1);
+//
+//            //if within dist to boundary and index > 0.5, add
+//            if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
+//                && b->isPinned() == false) {
+//               //&& index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
+//
+//                b->pinnedPosition = b->coordinate;
+//                b->addAsPinned();
+//            }
+//        }
+//    }
+//}
 
 
 void Controller::run() {
@@ -689,6 +724,13 @@ void Controller::run() {
             
             //special protocols
             executeSpecialProtocols();
+            
+            //Qin
+            if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
+               tau() >= SysParams::Mechanics().pinTime) {
+                
+                pinLowerBoundaryFilaments(tauLastSnapshot, _snapshotTime);
+            }
             
             oldTau = tau();
         }
