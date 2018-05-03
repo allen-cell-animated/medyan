@@ -185,6 +185,10 @@ void Controller::initialize(string inputFile,
     string reactsnapname = _outputDirectory + "dissipation.traj";
     _outputs.push_back(new Dissipation(reactsnapname, _subSystem, _cs));
     
+    //Set up HRCD output if any
+    string hrcdsnapname = _outputDirectory + "HRCD.traj";
+    _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
+    
     
 #endif
     
@@ -651,11 +655,7 @@ void Controller::run() {
                 _dt->resetAfterStep();
                 
                 
-                vector<tuple<string,double>> checkit =_dt->getHRCDVec();
-                for(auto &i : checkit){
-                    cout<<get<0>(i)<<" "<<get<1>(i)<<endl;
-                }
-                cout<<endl;
+                
             }
             
             

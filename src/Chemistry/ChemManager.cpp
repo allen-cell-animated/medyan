@@ -777,7 +777,7 @@ void ChemManager::genFilReactionTemplates() {
                 new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
             else {
                 _filRxnTemplates[filType].emplace_back(
-                new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
+                new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r),-get<3>(r), get<4>(r)+"m"));
             }
         }
         

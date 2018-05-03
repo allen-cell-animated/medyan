@@ -565,6 +565,8 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
+        rxn->setGNumber(_gnum);
+        rxn->setHRCDID(_hrcdid);
     }
 }
 
@@ -614,6 +616,8 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
+    rxn->setGNumber(_gnum);
+    rxn->setHRCDID(_hrcdid);
 
 }
 
@@ -668,6 +672,8 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc) {
         
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+        rxn->setGNumber(_gnum);
+        rxn->setHRCDID(_hrcdid);
     }
 }
 
@@ -717,6 +723,8 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGBACKWARD);
+    rxn->setGNumber(_gnum);
+    rxn->setHRCDID(_hrcdid);
 }
 
 void AgingTemplate::addReaction(CCylinder* cc) {

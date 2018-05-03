@@ -795,3 +795,21 @@ void Dissipation::print(int snapshot) {
     _outputFile <<endl;
 }
 
+void HRCD::print(int snapshot) {
+    DissipationTracker* dt = _cs->getDT();
+    vector<tuple<string, double>> hrcdvec = dt->getHRCDVec();
+    // print first line (snapshot number, time)
+    
+    _outputFile << snapshot << " " << tau() << endl;
+    
+    for(auto &i : hrcdvec){
+        _outputFile<<get<0>(i)<<"     ";
+    }
+    _outputFile<<endl;
+    for(auto &i : hrcdvec){
+        _outputFile<<get<1>(i)<<"     ";
+    }
+    _outputFile<<endl<<endl;
+
+}
+

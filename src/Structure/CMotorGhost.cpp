@@ -73,7 +73,11 @@ void CMotorGhost::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     double gnum = onRxn->getGNumber();
     offRxn->setReactionType(ReactionType::MOTORUNBINDING);
-    offRxn->setGNumber(gnum);
+    offRxn->setGNumber(-gnum);
+    
+    //set hrcdid of offreaction
+    string hrcdid = onRxn->getHRCDID();
+    offRxn->setHRCDID(hrcdid + "off");
     
     //Attach the callback to the off reaction, add it
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
@@ -136,6 +140,10 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     // set new reaction gnum
     double gnum = _offRxn->getGNumber();
     newOffRxn->setGNumber(gnum);
+    
+    //set hrcdid of offreaction
+    string hrcdid = _offRxn->getHRCDID();
+    newOffRxn->setHRCDID(hrcdid);
     
     
     //attach signal
@@ -219,6 +227,10 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     // set new reaction gnum
     double gnum = _offRxn->getGNumber();
     newOffRxn->setGNumber(gnum);
+    
+    //set hrcdid of offreaction
+    string hrcdid = _offRxn->getHRCDID();
+    newOffRxn->setHRCDID(hrcdid);
     
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
