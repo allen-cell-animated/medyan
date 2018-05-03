@@ -2006,7 +2006,24 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             vector<string> lineVector = split<string>(line);
            
-            float gnum = atof(lineVector[1].c_str());
+            string diffString = lineVector[1].c_str();
+            istringstream iss(diffString);
+            string token;
+            vector<string> diffTokens;
+           
+           while (std::getline(iss, token, ':')) {
+                if (!token.empty())
+                    diffTokens.push_back(token);
+            }
+
+            float gnum = atof(diffTokens[0].c_str());
+            string HRCDID;
+           
+            if(diffTokens.size()!=1){
+                HRCDID = diffTokens[1];
+            } else {
+                HRCDID = "NA";
+            }
    
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2018,8 +2035,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.genReactions.push_back(
-                tuple<vector<string>, vector<string>, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
+                tuple<vector<string>, vector<string>, double, double, string>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
             }
             else {
@@ -2096,7 +2113,25 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double gnum = atof(lineVector[1].c_str());
+            string diffString = lineVector[1].c_str();
+            istringstream iss(diffString);
+            string token;
+            vector<string> diffTokens;
+            
+            while (std::getline(iss, token, ':')) {
+                if (!token.empty())
+                    diffTokens.push_back(token);
+            }
+
+            
+            float gnum = atof(diffTokens[0].c_str());
+            string HRCDID;
+            
+            if(diffTokens.size()!=1){
+                HRCDID = diffTokens[1];
+            } else {
+                HRCDID = "NA";
+            }
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2110,8 +2145,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.depolymerizationReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double,double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
+                tuple<vector<string>, vector<string>, double,double, string>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
             }
             else {
@@ -2128,7 +2163,25 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double gnum = atof(lineVector[1].c_str());
+            string diffString = lineVector[1].c_str();
+            istringstream iss(diffString);
+            string token;
+            vector<string> diffTokens;
+            
+            while (std::getline(iss, token, ':')) {
+                if (!token.empty())
+                    diffTokens.push_back(token);
+            }
+            
+            
+            float gnum = atof(diffTokens[0].c_str());
+            string HRCDID;
+            
+            if(diffTokens.size()!=1){
+                HRCDID = diffTokens[1];
+            } else {
+                HRCDID = "NA";
+            }
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2144,8 +2197,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.polymerizationReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double,double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
+                tuple<vector<string>, vector<string>, double,double,string>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
             }
             else {
@@ -2161,8 +2214,25 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
 
             int filType = atoi(lineVector[2].c_str());
-            double gnum = atoi(lineVector[1].c_str());
+            string diffString = lineVector[1].c_str();
+            istringstream iss(diffString);
+            string token;
+            vector<string> diffTokens;
             
+            while (std::getline(iss, token, ':')) {
+                if (!token.empty())
+                    diffTokens.push_back(token);
+            }
+            
+            float gnum = atof(diffTokens[0].c_str());
+            string HRCDID;
+            
+            if(diffTokens.size()!=1){
+                HRCDID = diffTokens[1];
+            } else {
+                HRCDID = "NA";
+            }
+
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
                 
@@ -2175,11 +2245,11 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.linkerReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, double, double, double>
+                tuple<vector<string>, vector<string>, double, double, double, double, double,string>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                       atof(lineVector[lineVector.size() - 2].c_str()),
-                                      atof(lineVector[lineVector.size() - 1].c_str()),gnum));
+                                      atof(lineVector[lineVector.size() - 1].c_str()),gnum, HRCDID));
                 
             }
             else {
@@ -2195,7 +2265,24 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double gnum = atof(lineVector[1].c_str());
+            string diffString = lineVector[1].c_str();
+            istringstream iss(diffString);
+            string token;
+            vector<string> diffTokens;
+            
+            while (std::getline(iss, token, ':')) {
+                if (!token.empty())
+                    diffTokens.push_back(token);
+            }
+
+            float gnum = atof(diffTokens[0].c_str());
+            string HRCDID;
+            
+            if(diffTokens.size()!=1){
+                HRCDID = diffTokens[1];
+            } else {
+                HRCDID = "NA";
+            }
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
@@ -2209,11 +2296,11 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.motorReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, double, double, double>
+                tuple<vector<string>, vector<string>, double, double, double, double, double,string>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                       atof(lineVector[lineVector.size() - 2].c_str()),
-                                      atof(lineVector[lineVector.size() - 1].c_str()),gnum));
+                                      atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
             }
             else {
@@ -2230,7 +2317,24 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double gnum = atoi(lineVector[1].c_str());
+            string diffString = lineVector[1].c_str();
+            istringstream iss(diffString);
+            string token;
+            vector<string> diffTokens;
+            
+            while (std::getline(iss, token, ':')) {
+                if (!token.empty())
+                    diffTokens.push_back(token);
+            }
+            
+            float gnum = atof(diffTokens[0].c_str());
+            string HRCDID;
+            
+            if(diffTokens.size()!=1){
+                HRCDID = diffTokens[1];
+            } else {
+                HRCDID = "NA";
+            }
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2244,8 +2348,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.motorWalkingReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
+                tuple<vector<string>, vector<string>, double, double,string>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
             }
             else {
@@ -2262,7 +2366,25 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
             int filType = atoi(lineVector[2].c_str());
-            double gnum = atof(lineVector[1].c_str());
+            string diffString = lineVector[1].c_str();
+            istringstream iss(diffString);
+            string token;
+            vector<string> diffTokens;
+            
+            while (std::getline(iss, token, ':')) {
+                if (!token.empty())
+                    diffTokens.push_back(token);
+            }
+            
+            
+            float gnum = atof(diffTokens[0].c_str());
+            string HRCDID;
+            
+            if(diffTokens.size()!=1){
+                HRCDID = diffTokens[1];
+            } else {
+                HRCDID = "NA";
+            }
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "->");
             if(arrowIt != lineVector.end()) {
@@ -2276,8 +2398,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.agingReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum));
+                tuple<vector<string>, vector<string>, double, double,string>
+                (reactants, products, atof(lineVector[lineVector.size() - 1].c_str()),gnum,HRCDID));
                 
             }
             else {

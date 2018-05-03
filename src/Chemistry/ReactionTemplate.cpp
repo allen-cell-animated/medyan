@@ -88,6 +88,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
 
         rxn->setGNumber(_gnum);
+        rxn->setHRCDID(_hrcdid);
+        
+
         
     }
     
@@ -141,6 +144,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONPLUSEND);
     rxn->setGNumber(_gnum);
+    rxn->setHRCDID(_hrcdid);
 
 }
 
@@ -202,6 +206,8 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
 #endif
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
+        rxn->setGNumber(_gnum);
+        rxn->setHRCDID(_hrcdid);
 
     }
     
@@ -254,8 +260,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
     cc->addInternalReaction(rxn);
     rxn->setReactionType(ReactionType::POLYMERIZATIONMINUSEND);
-
     rxn->setGNumber(_gnum);
+    rxn->setHRCDID(_hrcdid);
+    
 }
 
 void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
@@ -320,6 +327,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
         rxn->setGNumber(_gnum);
+        rxn->setHRCDID(_hrcdid);
     }
 }
 
@@ -386,6 +394,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
 
         rxn->setGNumber(_gnum);
+        rxn->setHRCDID(_hrcdid);
     }
 }
 
@@ -444,6 +453,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     cc2->addCrossCylinderReaction(cc1, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONPLUSEND);
     rxn->setGNumber(_gnum);
+    rxn->setHRCDID(_hrcdid);
 }
 
 void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
@@ -501,6 +511,7 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::DEPOLYMERIZATIONMINUSEND);
     rxn->setGNumber(_gnum);
+    rxn->setHRCDID(_hrcdid);
 }
 
 void MotorWalkPTemplate::addReaction(CCylinder* cc) {
@@ -747,6 +758,7 @@ void AgingTemplate::addReaction(CCylinder* cc) {
         cc->addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::AGING);
         rxn->setGNumber(_gnum);
+        rxn->setHRCDID(_hrcdid);
         
     }
 }

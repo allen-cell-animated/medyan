@@ -100,6 +100,8 @@ protected:
     
     float _gnum = 1.0;
     
+    string _hrcdid = "NA";
+    
     float _linkRateForward = 0.0;
     
     float _linkRateBackward = 0.0;
@@ -198,6 +200,10 @@ public:
     void setGNumber(double gnum) {_gnum = gnum;};
     
     double getGNumber() {return _gnum;};
+    
+    void setHRCDID(string hrcdid) {_hrcdid = hrcdid;};
+    
+    string getHRCDID() {return _hrcdid;};
     
     ///Set CBound
     void setCBound(CBound* cBound) {_cBound = cBound;}

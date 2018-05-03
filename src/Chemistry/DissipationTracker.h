@@ -32,8 +32,6 @@
 using namespace mathfunc;
 
 
-//doesn't like to include ReactionContainer.h
-
 class DissipationTracker{
     
 private:
@@ -71,6 +69,8 @@ private:
     // cumulative change in mechanical energy
     double cumGMechEn;
     
+    // vector of HRCD elements
+    vector<tuple<string, double>> HRCDVec;
     
 public:
     
@@ -126,7 +126,11 @@ public:
         // get the number of products
         int N = re->getN();
  
+        string hrcdid = re->getHRCDID();
         
+        if(reType==1){
+            hrcdid = "DIF";
+        }
         
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
         
@@ -140,8 +144,9 @@ public:
         vector<string> reacNames = re->getReactantSpecies();
         vector<string> prodNames = re->getProductSpecies();
         
+        
+        
         float delGZero;
-
         
         // declare delG and set it to 0
         float delG;
@@ -278,13 +283,22 @@ public:
             delG=0;
         }
         
+        if(isnan(delG)){
+            delG=0;
+        }
+        
+        updateHRCDVec(hrcdid,delG);
+        
+        if(hrcdid=="NA"){
+            cout<<reType<<endl;
+        }
+        
         return delG;
        
         
     }
     
-        
-    
+
     
     // increment the GChem counter when a reaction fires
     void updateDelGChem(ReactionBase* re){
@@ -376,6 +390,25 @@ public:
         GMid=0;
         G1=G2;
     };
+    
+    void updateHRCDVec(string hrcdid, double delG){
+        
+        for(auto i = 0; i<HRCDVec.size(); i++){
+            
+            if(get<0>(HRCDVec[i])==hrcdid){
+                
+                get<1>(HRCDVec[i]) += delG;
+                return;
+            }
+        };
+        
+        HRCDVec.push_back(make_tuple(hrcdid,delG));
+
+    }
+    
+    vector<tuple<string,double>> getHRCDVec(){
+        return HRCDVec;
+    }
 
     
     
