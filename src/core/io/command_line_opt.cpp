@@ -296,6 +296,13 @@ int Command::parse(int argc, char** argv, int argp) {
         _parseErrorBit = true;
         return -1;
     }
+
+    // For main command, report error if there are unused arguments
+    if(_main && newArgp < argc) {
+        _unusedArgumentBit = true;
+        for(int idx = newArgp; idx < argc; ++idx) _unusedArguments.emplace_back(argv[idx]);
+        return -1;
+    }
         
     return newArgp;
 }

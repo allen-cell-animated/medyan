@@ -539,6 +539,8 @@ private:
     bool _activateErrorBit = false; // Activate error
     bool _subFailBit = false; // Children command/option fail
     std::vector<std::string> _subFailInfo;
+    bool _unusedArgumentBit = false; // There are unused arguments. Only used for main command.
+    std::vector<std::string> _unusedArguments;
 
     /// Configurations
     bool _main = false;
@@ -552,7 +554,7 @@ public:
     /// Check state
     virtual operator bool()const override {
         return PosElement::operator bool() &&
-            !(_activateErrorBit || _subFailBit);
+            !(_activateErrorBit || _subFailBit || _unusedArgumentBit);
     }
 
     /// Getters
@@ -598,6 +600,11 @@ public:
             if(_content) _content->printError(os);
         if(_subFailBit)
             for(auto& info: _subFailInfo) os << info << std::endl;
+        if(_unusedArgumentBit) {
+            os << "Unrecognized arguments: ";
+            for(auto& arg: _unusedArguments) os << arg << ' ';
+            os << std::endl;
+        }
     }
 };
 
