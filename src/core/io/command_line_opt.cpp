@@ -100,7 +100,7 @@ int PosHolder::parse(int argc, char** argv, int argp) {
                     (*it)->offer();
                     op.erase(it);
                 }
-                ++argp;
+                if(!shouldEnd) ++argp;
             }
             break;
         case ArgType::Short:
@@ -140,7 +140,7 @@ int PosHolder::parse(int argc, char** argv, int argp) {
                         }
                     }
                 } // End of cropping short argument
-                ++argp;
+                if(!shouldEnd) ++argp;
             }
             break;
         case ArgType::ArgOrCmd:
