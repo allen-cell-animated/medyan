@@ -195,8 +195,6 @@ public:
     ///Get reaction type
     ReactionType getReactionType() {return _reactionType;}
     
-    
-    
     void setGNumber(double gnum) {_gnum = gnum;};
     
     double getGNumber() {return _gnum;};

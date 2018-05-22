@@ -165,7 +165,9 @@ namespace mathfunc {
             prodN=1;
         }
         
-        float delG =  - log(reacN) + log(prodN);
+        // float delG =  - log(reacN) + log(prodN);
+        float delG;
+        delG = (reacN-1)*log(reacN-1) - reacN*log(reacN) + (prodN+1)*log(prodN+1) - prodN*log(prodN);
 
         return delG;
     }

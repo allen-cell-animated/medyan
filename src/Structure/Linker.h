@@ -79,6 +79,7 @@ private:
     ///Helper to get coordinate
     void updateCoordinate();
     
+    
 public:
     vector<double> coordinate;
     ///< coordinate of midpoint, updated with updatePosition()
@@ -149,6 +150,9 @@ public:
     
     /// Count the number of linker species with a given name in the system
     static species_copy_t countSpecies(const string& name);
+    
+    
+    
 };
 
 

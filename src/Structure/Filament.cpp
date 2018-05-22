@@ -64,6 +64,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
         
+    // set cylinder's filID
+    c0->setFilID(_ID);
+        
     //set plus end marker
     _plusEndPosition = 1;
 }
@@ -102,6 +105,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
+        
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
     for (int i = 2; i<numBeads; i++)
         extendPlusEnd(tmpBeadsCoord[i]);
@@ -147,6 +153,9 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
+    // set cylinder's filID
+    c0->setFilID(_ID);
+    
 }
 
 //Extend back for initialization
@@ -170,6 +179,9 @@ void Filament::extendMinusEnd(vector<double>& coordinates) {
                                                   lpf - 1, false, false, true);
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
 
 }
 
@@ -204,6 +216,9 @@ void Filament::extendPlusEnd(short plusEnd) {
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
 #ifdef CHEMISTRY
     //get last cylinder, mark species
@@ -249,6 +264,9 @@ void Filament::extendMinusEnd(short minusEnd) {
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
 #ifdef CHEMISTRY
     //get first cylinder, mark species
@@ -926,44 +944,8 @@ species_copy_t Filament::countSpecies(short filamentType, const string& name) {
     return copyNum;
 }
 
-species_copy_t Filament::countTipComplexes(string whichEnd, const string& tipName, const string& filName){
-    
-    species_copy_t copyNum = 0;
-    
-    if(whichEnd=="PLUS"){
-    
-        for(auto f : getFilaments()) {
-            Cylinder* cyl = f->getPlusEndCylinder();
-            CCylinder* ccyl = cyl->getCCylinder();
-            // CMonomer* end = ccyl->getCMonomer(ccyl->getLastIndex());
-            CMonomer* adj = ccyl->getCMonomer(0);
-            
-            // end->print();
-            cout<<"   ";
-            adj->print();
-            cout<<endl;
 
-        }
-        return copyNum;
-        
-    } else if (whichEnd=="MINUS"){
-        
-        for(auto f : _filaments.getElements()) {
-            
-        }
-        return copyNum;
-        
-    }
     
-    else{
-        cout<<"Invalid end identifier"<<endl;
-        return copyNum;
-    }
-    
-    
-    
-    
-}
 
 
 

@@ -80,9 +80,14 @@ private:
                                        
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
+                                       
     
     ///Helper to get coordinate
     void updateCoordinate();
+                                       
+                
+    /// ID of filament
+    int _filID;
     
 public:
     vector<double> coordinate;
@@ -173,6 +178,15 @@ public:
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders
     virtual bool within(Cylinder* other, double dist);
+                                       
+                                    
+    void setFilID(int filID){
+        _filID = filID;
+    };
+                                       
+    int getFilID(){
+        return _filID;
+    };
 };
 
 #endif

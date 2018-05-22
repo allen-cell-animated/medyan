@@ -102,6 +102,7 @@ public:
                        short boundType,
                        SubSystem* ps);
     
+    void printReaction();
 };
 
 #endif

@@ -189,6 +189,10 @@ void Controller::initialize(string inputFile,
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
     _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
     
+    //Set up CMGraph output if any
+    string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
+    _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
+    
     
 #endif
     

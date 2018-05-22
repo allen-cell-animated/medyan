@@ -119,19 +119,20 @@ public:
         // get the type of reaction
         ReactionType reType = re->getReactionType();
         
-        
         // get the number of reactants
         int M = re->getM();
         
         // get the number of products
         int N = re->getN();
+        
+        string hrcdid;
  
-        string hrcdid = re->getHRCDID();
+        hrcdid = re->getHRCDID();
         
         if(reType==1){
             hrcdid = "DIF";
         }
-        
+
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
         
         vector<int> reacNu(M,1);
@@ -159,7 +160,11 @@ public:
              
         } else if(reType==1){
              // Diffusion Reaction
-                delG = delGDifChem(reacN[0],prodN[0]);
+
+            delG = delGDifChem(reacN[0],prodN[0]);
+
+   
+            
              
         } else if(reType==2){
             // Polymerization Plus End
@@ -398,6 +403,7 @@ public:
             if(get<0>(HRCDVec[i])==hrcdid){
                 
                 get<1>(HRCDVec[i]) += delG;
+                
                 return;
             }
         };
@@ -411,8 +417,7 @@ public:
     }
 
     
-    
-    
+  
 };
 
 

@@ -101,6 +101,9 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     
     ReactionBase* newOffRxn;
     
+    string hrcdid = _offRxn->getHRCDID();
+    double gnum = _offRxn->getGNumber();
+    
     if(getFirstSpecies() == smOld) {
         
         _position1 = newPosition;
@@ -138,11 +141,11 @@ void CMotorGhost::moveMotorHead(CCylinder* cc,
     newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
     
     // set new reaction gnum
-    double gnum = _offRxn->getGNumber();
+    
     newOffRxn->setGNumber(gnum);
     
     //set hrcdid of offreaction
-    string hrcdid = _offRxn->getHRCDID();
+    
     newOffRxn->setHRCDID(hrcdid);
     
     
@@ -174,6 +177,9 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     auto seNew = newCC->getCMonomer(newPosition)->speciesBound(boundType);
     
     ReactionBase* newOffRxn;
+    
+    string hrcdid = _offRxn->getHRCDID();
+     double gnum = _offRxn->getGNumber();
     
     if(getFirstSpecies() == smOld) {
         
@@ -225,15 +231,16 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     newOffRxn->setReactionType(ReactionType::MOTORUNBINDING);
     
     // set new reaction gnum
-    double gnum = _offRxn->getGNumber();
+   
     newOffRxn->setGNumber(gnum);
     
     //set hrcdid of offreaction
-    string hrcdid = _offRxn->getHRCDID();
+    
     newOffRxn->setHRCDID(hrcdid);
     
     //attach signal
     MotorUnbindingCallback mcallback(_pMotorGhost, ps);
+    
     ConnectionBlock rcb(newOffRxn->connect(mcallback,false));
 
     //add new
@@ -242,4 +249,9 @@ void CMotorGhost::moveMotorHead(CCylinder* oldCC,
     //set new unbinding reaction
     setOffReaction(newOffRxn);
     
+}
+
+
+void CMotorGhost::printReaction(){
+    cout<<_offRxn->getHRCDID()<<endl;
 }

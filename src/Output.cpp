@@ -813,3 +813,62 @@ void HRCD::print(int snapshot) {
 
 }
 
+void CMGraph::print(int snapshot) {
+
+    // print first line (snapshot number, time)
+    
+    _outputFile << snapshot << " " << tau() << endl;
+    
+     vector<vector<int>> filIDVec;
+    
+    for(auto &linker : Linker::getLinkers()) {
+        
+        int fid1 = linker->getFirstCylinder()->getFilID();
+        int fid2 = linker->getSecondCylinder()->getFilID();
+        vector<int> pair;
+        pair.push_back(fid1);
+        pair.push_back(fid2);
+        
+        sort(pair.begin(),pair.end());
+        filIDVec.push_back(pair);
+        
+
+        
+    }
+    
+    vector<vector<int>> uniqueFilIDVec;
+    vector<vector<int>> uniqueFilIDVecCounts;
+
+    for(auto i : filIDVec){
+        
+        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
+            
+            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
+            
+            uniqueFilIDVecCounts.at(ind).at(2) ++ ;
+
+            
+        } else {
+            
+            vector<int> pbVec;
+            pbVec.push_back(i[0]);
+            pbVec.push_back(i[1]);
+            pbVec.push_back(1);
+            
+            uniqueFilIDVecCounts.push_back(pbVec);
+            uniqueFilIDVec.push_back(i);
+
+        }
+        
+    }
+    
+    for(auto i: uniqueFilIDVecCounts){
+        _outputFile<< i[0] <<" "<<  i[1] << " "  << i[2]<< " ";
+    }
+    
+    
+
+    _outputFile<<endl<<endl;
+    
+}
+

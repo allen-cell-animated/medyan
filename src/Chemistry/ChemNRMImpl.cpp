@@ -190,17 +190,17 @@ bool ChemNRMImpl::makeStep() {
 //        cout<<endl<<_dt->getDelGChem(react)<<endl<<endl;
 //
 //    }
-//    if((react->getHRCDID()=="NA")&(react->getReactionType()!=1)){
+//    if(react->getReactionType()!=1){
 //        rn->printSelf();
+//        cout<<_dt->getDelGChem(react)<<endl;
 //    }
     //update delG BEFORE making the step
     _dt->updateDelGChem(react);
+    
+    
     rn->makeStep();
     
 
-    
-    
-    
     
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
