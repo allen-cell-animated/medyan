@@ -1390,10 +1390,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-lboost_system-mt",
-					"-lgsl",
-				);
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1457,10 +1454,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-lboost_system-mt",
-					"-lgsl",
-				);
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1493,10 +1487,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lboost_system-mt",
-					"-lgsl",
-				);
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Debug;
@@ -1531,10 +1522,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-lboost_system-mt",
-					"-lgsl",
-				);
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Release;
