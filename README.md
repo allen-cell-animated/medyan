@@ -1,13 +1,5 @@
 # README #
 
-###############
-
-THIS IS THE PRIVATE REPOSITORY FOR PAPOIAN CODE DEVELOPMENTS.
-The public repo can be found at (ssh) : git@bitbucket.org:jkomianos/medyan.git
-
-###############
-
-
 Welcome to Papoian Lab’s *Mechanochemical Dynamics of Active Networks* software package. 
 Copyright 2015-2016, Papoian lab at the University of Maryland.
 
