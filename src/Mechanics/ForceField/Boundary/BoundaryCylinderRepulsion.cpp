@@ -198,7 +198,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-                
+
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
@@ -206,8 +206,13 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                         bd->coordinate[1] + i * normal[1] * monSize,
                         bd->coordinate[2] + i * normal[2] * monSize};
                     
+                    // Projection magnitude ratio on the direction of the cylinder
+                    // (Effective monomer size) = (monomer size) * proj
+                    double proj = -dotProduct(be->normal(newCoord), normal);
+                
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
-                    bd->loadForcesP[bd->lfip++] += loadForce;
+                    // The load force stored in bead also considers effective monomer size.
+                    bd->loadForcesP[bd->lfip++] += proj * loadForce;
                 }
                 //reset lfi
                 bd->lfip = 0;
@@ -233,8 +238,13 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                         bd->coordinate[1] + i * normal[1] * monSize,
                         bd->coordinate[2] + i * normal[2] * monSize};
                     
+                    // Projection magnitude ratio on the direction of the cylinder
+                    // (Effective monomer size) = (monomer size) * proj
+                    double proj = -dotProduct(be->normal(newCoord), normal);
+
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
-                    bd->loadForcesM[bd->lfim++] += loadForce;
+                    // The load force stored in bead also considers effective monomer size.
+                    bd->loadForcesM[bd->lfim++] += proj * loadForce;
                 }
                 //reset lfi
                 bd->lfim = 0;
