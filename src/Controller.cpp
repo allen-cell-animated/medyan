@@ -680,7 +680,7 @@ void Controller::run() {
         _restart->addtoHeaplinkermotor();
         cout<<"Bound species added to reaction heap."<<endl;
 //Step 2A. Turn off diffusion, passivate filament reactions and empty binding managers.
-                _restart->settorestartphase(); 
+                _restart->settorestartphase();
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         std::cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController->runSteps(_restart->getnumchemsteps());
