@@ -35,7 +35,6 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
                 Bead* b2 = it->getSecondBead();
                 double kStretch = it->getMCylinder()->getStretchingConst();
                 double eqLength = it->getMCylinder()->getEqLength();
-//                std::cout<<kStretch<<" "<<eqLength<<" "<<b1->coordinate[0]<<" "<<b2->coordinate[0]<<endl;
                 U_i += _FFType.energy(b1, b2, kStretch, eqLength);
             }
         }
@@ -45,7 +44,6 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
                 Bead* b2 = it->getSecondBead();
                 double kStretch =it->getMCylinder()->getStretchingConst();
                 double eqLength = it->getMCylinder()->getEqLength();
-//                std::cout<<kStretch<<" "<<eqLength<<" "<<b1->coordinate[0]<<" "<<b2->coordinate[0]<<endl;
                 U_i += _FFType.energy(b1, b2, kStretch, eqLength, d);
             }
         }

@@ -379,24 +379,13 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 }
 
 void Controller::activatedeactivateComp(){
-//    std::cout<<"BEFORE UPDATION (CYCLE BEGINS)"<<endl;
-//    auto counter=0;
-//    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-//        counter++;
-//        std::cout<<C->isActivated()<<" ";
-//        if(counter==SysParams::Geometry().NX)
-//            std::cout<<endl;
-//    }
-//    std::cout<<endl;
+
         if(SysParams::Mechanics().transfershareaxis>=0){
             fCompmap.clear();
             bCompmap.clear();
             activatecompartments.clear();
-            
-            //ControlfrontEndComp();
-            //ControlbackEndComp();
             ControlfrontbackEndComp();
-            std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
+//            std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
             for(auto it=activatecompartments.begin();it!=activatecompartments.end();it++)
             {
                 if(!(*it)->isActivated())
@@ -410,24 +399,9 @@ void Controller::activatedeactivateComp(){
                 _cController->deactivate(it->second);
             fCompmap.clear();
             bCompmap.clear();
-//            std::cout<<fCompmap.size()<<" "<<bCompmap.size()<<" "<<activatecompartments.size()<<endl;
-//            std::cout<<"AFTERUPDATION ";
-//            auto counter=0;
-//            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-//                counter++;
-//                //        std::cout<<C->isActivated()<<" ";
-//                //           if(counter==SysParams::Geometry().NX)
-//                //            std::cout<<endl;
-//            }
-            //    std::cout<<endl;
-            
-            //    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-            //        if(C->isActivated())
-            //            std::cout<<C->coordinates()[0]<<" ";
-            //        else
-            //            std::cout<<"0 ";
-            //    }
-//            std::cout<<endl;
+
+//            std::cout<<"Printing diffusing actin copy numbers."<<endl;
+//            
 //            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
 //                for(auto sd : _chemData.speciesDiffusing) {
 //                    string name = get<0>(sd);
@@ -435,7 +409,7 @@ void Controller::activatedeactivateComp(){
 //                        auto s = C->findSpeciesByName(name);
 //                        auto copyNum = s->getN();
 //                        
-//                        std::cout <<copyNum<<" ";
+//                        std::cout <<C->coordinates()[0]<<" "<<copyNum<<" ";
 //                    }
 //                }
 //            }
@@ -444,7 +418,6 @@ void Controller::activatedeactivateComp(){
 }
 void Controller::ControlfrontbackEndComp(){
     Compartment* maxcomp=NULL;
-//    Bead* maxbead=NULL;
     Compartment* mincomp=NULL;
 //    Bead* minbead=NULL;
 
@@ -469,7 +442,7 @@ void Controller::ControlfrontbackEndComp(){
             }
         }
     }
-//    std::cout<<maxcomp->coordinates()[0]<<" "<<mincomp->coordinates()[0]<<endl;
+
     // front end
     auto cmaxcomp=maxcomp->coordinates();
     for(auto C:maxcomp->getNeighbours()){
@@ -487,7 +460,7 @@ void Controller::ControlfrontbackEndComp(){
     assert((maxcomp!=NULL) && "Non existent maxcomp. Exiting.");
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         auto cC=C->coordinates();
-        //        std::cout<<cC[0]<<" "<<cC[1]<<" "<<cC[2]<<" "<<C->isActivated()<<endl;
+
         if(cC[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
             if(C->isActivated())
                 fCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
@@ -527,146 +500,6 @@ void Controller::ControlfrontbackEndComp(){
     std::cout<<"Mincomp "<<mincomp->coordinates()[SysParams::Mechanics().transfershareaxis]<<endl;
     
 }
-void Controller::ControlfrontEndCompobsolete(){
-    Compartment* maxcomp=NULL;
-    //Bead* maxbead;
-    Filament* maxfil;
-//    for(auto b:Bead::getBeads()){
- //       auto comp=b->getCompartment();
- //       if(maxcomp!=NULL){
-  //          auto ccomp=comp->coordinates();
-   //         auto cmaxcomp=maxcomp->coordinates();
-    //        if(ccomp[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
-     //           maxcomp=comp;
-      //          maxbead=b;
-       //         cmaxcomp=maxcomp->coordinates();
-        //
-         //       for(auto C:comp->getNeighbours()){
-          //          auto cC=C->coordinates();
-           //         if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
-            //            maxcomp=C;
-             //           maxbead=b;
-              //      }
-               // }
-           // }
-
-            
-  //      }
-   //     else{
-    //        maxcomp=comp;
-     //       maxbead=b;
-      //       auto cmaxcomp=maxcomp->coordinates();
-       //     for(auto C:comp->getNeighbours()){
-       //         auto cC=C->coordinates();
-        //        if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
-         //           maxcomp=C;
-          //          maxbead=b;
-           //     }
-
-            // }}}
-    for(auto f:Filament::getFilaments()){
-        auto comp=f->getPlusEndCylinder()->getSecondBead()->getCompartment();
-        if(maxcomp!=NULL){
-            auto ccomp=comp->coordinates();
-            auto cmaxcomp=maxcomp->coordinates();
-            if(ccomp[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
-                maxcomp=comp;
-                maxfil=f;
-                cmaxcomp=maxcomp->coordinates();
-                
-                for(auto C:comp->getNeighbours()){
-                    auto cC=C->coordinates();
-                    if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
-                        maxcomp=C;
-                        maxfil=f;
-                    }
-                }}}
-        
-        else{
-            maxcomp=comp;
-            maxfil=f;
-            auto cmaxcomp=maxcomp->coordinates();
-            for(auto C:comp->getNeighbours()){
-                auto cC=C->coordinates();
-                if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis]){
-                    maxcomp=C;
-                    maxfil=f;
-                }
-            }}
-    }
-    
-//    auto x=maxcomp->coordinates();
-//        std::cout<<"PLUS END "<<maxfil->getPlusEndCylinder()->getSecondBead()->coordinate[0]<<endl;
-//        std::cout<<"MAXCOMP "<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-        auto cC=C->coordinates();
-//        std::cout<<cC[0]<<" "<<cC[1]<<" "<<cC[2]<<" "<<C->isActivated()<<endl;
-        auto cmaxcomp=maxcomp->coordinates();
-        if(cC[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
-            if(C->isActivated())
-                fCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
-        }
-        
-        else{
-            if(!(C->isActivated()))
-                activatecompartments.push_back(C);
-        }
-    }
-
-}
-
-void Controller::ControlbackEndCompobsolete(){
-    Compartment* mincomp=NULL;
-    Filament* minfil;
-    for(auto f:Filament::getFilaments()){
-        auto comp=f->getMinusEndCylinder()->getFirstBead()->getCompartment();
-        if(mincomp!=NULL){
-            auto ccomp=comp->coordinates();
-            auto cmincomp=mincomp->coordinates();
-            if(ccomp[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
-                mincomp=comp;
-                minfil=f;
-                cmincomp=mincomp->coordinates();
-                
-                for(auto C:comp->getNeighbours()){
-                    auto cC=C->coordinates();
-                    if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis]){
-                        mincomp=C;
-                        minfil=f;
-                    }
-                }}}
-        
-        else{
-            mincomp=comp;
-            minfil=f;
-            auto cmincomp=mincomp->coordinates();
-            for(auto C:comp->getNeighbours()){
-                auto cC=C->coordinates();
-                if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis]){
-                    mincomp=C;
-                    minfil=f;
-                }
-            }}
-    }
-    
-//    auto x=mincomp->coordinates();
-//        std::cout<<"MINUS END "<<minfil->getMinusEndCylinder()->getFirstBead()->coordinate[0]<<endl;
-//        std::cout<<"MINCOMP "<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-        auto cC=C->coordinates();
-        auto cmincomp=mincomp->coordinates();
-        if(cC[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
-            auto it = std::find(activatecompartments.begin(), activatecompartments.end(), C);
-            if(it!=activatecompartments.end())
-            activatecompartments.erase(it);
-            if(C->isActivated()){
-                    bCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
-            }
-        }
-    }
-    
-}
-
 
 void Controller::moveBoundary(double deltaTau) {
     
@@ -847,14 +680,22 @@ void Controller::run() {
         _restart->addtoHeaplinkermotor();
         cout<<"Bound species added to reaction heap."<<endl;
 //Step 2A. Turn off diffusion, passivate filament reactions and empty binding managers.
-                _restart->settorestartphase();
+                _restart->settorestartphase(); 
 //Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         std::cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController->runSteps(_restart->getnumchemsteps());
         cout<<"Reactions fired! Displaying heap"<<endl;
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
-            for(auto &Mgr:C->getFilamentBindingManagers()){cout<< Mgr->numBindingSites()<<' ';}}
+            for(auto &Mgr:C->getFilamentBindingManagers()){
+                if(Mgr->numBindingSites()==0)
+                    cout<< Mgr->numBindingSites()<<' ';
+                else{
+                    cout<<endl;
+                    cout<<"Few reactions are not fired! Cannot restart this trajectory. Exiting ..."<<endl;
+                    exit(EXIT_FAILURE);
+                }
+            }}
         cout<<endl;
         _restart->redistributediffusingspecies();
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;

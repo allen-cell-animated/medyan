@@ -356,26 +356,6 @@ void Filament::polymerizePlusEnd() {
     //increase eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
-//    bool check = false;
-//    auto ctr = 0;
-//    while((!check) && ctr < 40)
-//    {
-//        if(cBack->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
-//        ctr ++;
-//    }
-//    if(check)
-//        std::cout<<"PP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(ctr + 1)*2.7<<endl;
-//    else
-//        std::cout<<"PP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
-//    
-//        if(abs(newEqLen-(ctr + 1)*2.7)>0.1)
-//        {        Filament *bf = (Filament*)(cBack->getParent());
-//            std::cout<<bf->getID()<<endl;
-//            for(auto i=0;i<40;i++)
-//            std::cout<<cBack->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
-//            std::cout<<endl;
-//            exit(EXIT_FAILURE);
-//        }
     
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
@@ -409,26 +389,6 @@ void Filament::polymerizeMinusEnd() {
     //increase eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
-//    bool check = false;
-//    auto ctr = 0;
-//    while(!check && ctr < 40)
-//    {
-//        if(cFront->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
-//        ctr ++;
-//    }
-//    if(check)
-//        std::cout<<"PM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(40 - ctr)*2.7<<endl;
-//    else
-//        std::cout<<"PM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
-//    
-//    if(abs(newEqLen-(40 - ctr)*2.7)>0.1){
-//        Filament *bf = (Filament*)(cFront->getParent());
-//        std::cout<<bf->getID()<<endl;
-//        for(auto i=0;i<40;i++)
-//            std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
-//        std::cout<<endl;
-//        exit(EXIT_FAILURE);
-//    }
 
 
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
@@ -462,27 +422,7 @@ void Filament::depolymerizePlusEnd() {
     //decrease eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
-//    bool check = false;
-//    auto ctr = 0;
-//    while((!check) && ctr < 40)
-//    {
-//        if(cBack->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
-//        ctr ++;
-//    }
-//    if(check)
-//        std::cout<<"DP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(ctr + 1)*2.7<<endl;
-//    else
-//        std::cout<<"DP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
-    cBack->getMCylinder()->setEqLength(_filType, newEqLen);
-    
-//    if(abs(newEqLen-(ctr + 1)*2.7)>0.1){
-//        Filament *bf = (Filament*)(cBack->getParent());
-//        std::cout<<bf->getID()<<endl;
-//        for(auto i=0;i<40;i++)
-//            std::cout<<cBack->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
-//    std::cout<<endl;
-//    exit(EXIT_FAILURE);
-//}
+
 #endif
 #ifdef DYNAMICRATES
     //update rates of new back
@@ -512,29 +452,6 @@ void Filament::depolymerizeMinusEnd() {
     //decrease eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
-//    for(auto i=0;i<40;i++)
-//        std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
-//    std::cout<<endl;
-//    bool check = false;
-//    auto ctr = 0;
-//    while(!check && ctr < 40)
-//    {
-//        if(cFront->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
-//        ctr ++;
-//    }
-//    if(check)
-//        std::cout<<"DM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(40 - ctr)*2.7<<endl;
-//    else
-//        std::cout<<"DM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
-//    
-//    if(abs(newEqLen-(40 - ctr)*2.7)>0.1){
-//        Filament *bf = (Filament*)(cFront->getParent());
-//        std::cout<<bf->getID()<<endl;
-//        for(auto i=0;i<40;i++)
-//            std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
-//        std::cout<<endl;
-//        exit(EXIT_FAILURE);
-//    }
 
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif

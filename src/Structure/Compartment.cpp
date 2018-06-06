@@ -238,14 +238,6 @@ vector<ReactionBase*> Compartment::generateAllpairsDiffusionReactions() {
                  rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
             newRxns = C->generateDiffusionReactions(this);
                  rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
-
-//            for(auto &r : C->_diffusion_reactions.reactions()) {
-//                auto rs = r.get()->rspecies()[1];
-//                if(rs->getSpecies().getParent() == this) {
-//                    newRxns.push_back(r.get());
-//                }
-//            }
-//                std::cout<<newRxns.size()<<endl;;
                
             }
         }
@@ -400,7 +392,6 @@ void Compartment::shareSpecies(int i) {
         sp_neighbor = neighbor->findSpeciesByName(sp->getName());
         int copyNumber = sp_neighbor->getN();
         int lowerlimit = (int) sp_neighbor->getN()/2;
-//        std::cout<<copyNumber<<endl;
         if(sp->getFullName().find("Bound") == string::npos){
             while(copyNumber > lowerlimit) {
                 sp_neighbor->down();
@@ -424,7 +415,7 @@ void Compartment::shareSpecies(int i) {
                 
             }
         }
-//        std::cout<<sp->getN()<<" "<<sp_neighbor->getN()<<endl;
+
         //activate all reactions changed
         for(auto spn : sp_neighbors)
             spn->updateReactantPropensities();
@@ -445,12 +436,6 @@ void Compartment::activate(ChemSim* chem) {
     for(auto &r : rxns) chem->addReaction(r);
     shareSpecies(SysParams::Mechanics().transfershareaxis);
     
-//    for(auto &r : _diffusion_reactions.reactions()) {
-//        //auto rs = r.get()->rspecies();
-//        RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
-//        std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
-//    }
-//    std::cout<<"--"<<endl;
     for (auto &C: _neighbours){
         if(C->isActivated()){
             for(auto &r : C->_diffusion_reactions.reactions()) {
@@ -460,39 +445,10 @@ void Compartment::activate(ChemSim* chem) {
                     if(rs1->getN()>0 && r->isPassivated()){
                         r->activateReaction();
                     }
-//            RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
-//            std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
         }
     }
-//        std::cout<<"-*"<<endl;
         }
     }
-    
-
-//    _diffusion_reactions.updatePropensityComprtment();
-//    for (auto &C: _neighbours){
-//        C->_diffusion_reactions.updatePropensityComprtment();
-//    }
-    
-    
-//    std::cout<<"After updation"<<endl;
-//    for(auto &r : _diffusion_reactions.reactions()) {
-//        //auto rs = r.get()->rspecies();
-//        RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
-//        std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
-//    }
-//    std::cout<<"--"<<endl;
-//    for (auto &C: _neighbours){
-//        for(auto &r : C->_diffusion_reactions.reactions()) {
-//            auto rs = r.get()->rspecies()[1];
-//            if(rs->getSpecies().getParent() == this) {
-//                RNodeNRM *rn = (RNodeNRM*)((r)->getRnode());
-////                rn->printSelf();
-//                std::cout<<"DR " <<r->getBareRate()<<" "<<r->getRate()<<" "<<rn->getPropensity()<<" "<<r->isPassivated()<<endl;
-//            }
-//        }
-//        std::cout<<"-*"<<endl;
-//    }
     
 }
 

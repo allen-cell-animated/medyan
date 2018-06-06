@@ -53,7 +53,6 @@ double BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(dou
 template <class BAttachmentInteractionType>
 void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces() {
     //Qin
-    //std::cout<<Bead::getPinnedBeads().size() << "  " << Bead::getBeads().size()<<endl;
     for(auto b : Bead::getPinnedBeads()) {
         double kAttr = SysParams::Mechanics().pinK;
         _FFType.forces(b, kAttr);

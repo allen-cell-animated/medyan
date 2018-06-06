@@ -63,7 +63,6 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
           {
               int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
               double tpd = eqLength;
-//              std::cout<<eqLength<<" ";
               
               if(nummonomers ==0){
                   eqLength = SysParams::Geometry().monomerSize[type];
@@ -71,7 +70,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
               else{
                   eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
                   double mindis = abs(tpd - eqLength);
-//                  std::cout<<eqLength<<" ";
+
                   for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
                       if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
                       {
@@ -81,16 +80,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                   }
               }
               
-              
-//              for(auto i=nummonomers ;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
-//                  if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
-//                  {
-//                      eqLength = i * SysParams::Geometry().monomerSize[type];
-//                      mindis = abs(tpd - eqLength);
-//                  }
-//              }
-              
-//              std::cout<<eqLength<<endl;
+            
           }
           _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
           _mCylinder->setCylinder(this);

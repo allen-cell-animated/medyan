@@ -2670,14 +2670,9 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             if(!SysParams::RUNSTATE){
 #ifdef MECHANICS
                 int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
-//                std::cout<<"init "<<c->getMCylinder()->getEqLength()<<endl;
                 CMonomer* m2 = cc->getCMonomer(nummonomers - 1);
 
                 m2->speciesPlusEnd(0)->up();
-                
-//                for(auto i=0;i<40;i++)
-//                    std::cout<<c->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
-//                std::cout<<endl;
 
                 //fill new cylinder with default filament value
                 for(int i = 0; i < nummonomers - 1; i++) {
@@ -2726,7 +2721,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             }
             else {
 #ifdef MECHANICS
-//                std::cout<<c->getMCylinder()->getEqLength()<<" "<<SysParams::Geometry().cylinderNumMon[filType]<<endl;
+
                 int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
                 CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
                 m1->speciesMinusEnd(0)->up();
