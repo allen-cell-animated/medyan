@@ -405,13 +405,8 @@ void Tensions::print(int snapshot) {
                                linker->getType() << endl;
         
         //print
-        double k = linker->getMLinker()->getStretchingConstant();
-        double deltaL = linker->getMLinker()->getLength() -
-                        linker->getMLinker()->getEqLength();
-        
-        
-        _outputFile << abs(k * deltaL) << " " <<
-                       abs(k * deltaL) << endl;
+        _outputFile << linker->getMLinker()->stretchForce << " " <<
+        linker->getMLinker()->stretchForce << endl;
     }
     
     for(auto &motor : MotorGhost::getMotorGhosts()) {
@@ -421,12 +416,8 @@ void Tensions::print(int snapshot) {
         _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
         
         //print
-        double k = motor->getMMotorGhost()->getStretchingConstant();
-        double deltaL = motor->getMMotorGhost()->getLength() -
-                        motor->getMMotorGhost()->getEqLength();
-        
-        _outputFile << abs(k * deltaL) << " " <<
-                       abs(k * deltaL) << endl;
+        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
+        motor->getMMotorGhost()->stretchForce << endl;
     }
     
     //DEPRECATED AS OF 9/8/16
