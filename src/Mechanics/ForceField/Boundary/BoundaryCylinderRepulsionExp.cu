@@ -27,7 +27,8 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BoundaryCylinderRepulsionExp::deallocate(){
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
+    if(!(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
@@ -45,7 +46,8 @@ void BoundaryCylinderRepulsionExp::deallocate(){
 }
 void BoundaryCylinderRepulsionExp::optimalblocksnthreads( int nint){
     //CUDA stream create
-    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream));
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -222,6 +224,11 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
 
+//    for (int ib = 0; ib < nb; ib++) {
+//        auto be = beList[ib];
+//        be->printSelf();
+//    }
+
     for (int ib = 0; ib < nb; ib++) {
 
         auto be = beList[ib];
@@ -234,7 +241,12 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
 
             R = -r / slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
-
+//            double *var;
+//            var = new double[4];
+//            be->elementeqn(var);
+//            std::cout<<"SL "<<Cumnc + ic<<" "<<krep[Cumnc + ic]<<" "<<R<<" Coord "<<coord1[0]<<" "<<coord1[1]<<" "
+//            <<coord1[2]<<" Plane "<<var[0] <<" "<<var[1]<<" "<<var[2]<<" "<<var[3]<<endl;
+//            delete var;
 //            std::cout<<r<<" "<<U_i<<endl;
             if (fabs(U_i) == numeric_limits<double>::infinity()
                 || U_i != U_i || U_i < -1.0) {
@@ -279,8 +291,12 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
 
 //            std::cout<<r<<" "<<krep[Cumnc+ic]<<endl;
             U_i = krep[Cumnc + ic] * exp(R);
-
-
+//            double *var;
+//            var = new double[4];
+//            be->elementeqn(var);
+//            std::cout<<"SLZ "<<Cumnc + ic<<" "<<krep[Cumnc + ic]<<" "<<R<<" Coord "<<coord1[0]<<" "
+//                    <<coord1[1]<<" "<<coord1[2]<<" Plane "<<var[0] <<" "<<var[1]<<" "<<var[2]<<" "<<var[3]<<endl;
+//            delete var;
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
 

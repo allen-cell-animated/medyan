@@ -22,20 +22,11 @@ void ForceFieldManager::vectorizeAllForceFields() {
     for(auto &ff : _forceFields)
         ff->vectorize();
 #ifdef CUDAACCL
-    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    if(streamF == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&streamF));
     int nint[1]; nint[0]=CGMethod::N/3;
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_nint, sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_nint, nint, sizeof(int), cudaMemcpyHostToDevice));
-    //Memory alloted
-    //@{
-//    size_t allocmem = 0;
-//    allocmem += sizeof(double);
-//    auto c = CUDAcommon::getCUDAvars();
-//    c.memincuda += allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
-    //@}
     int THREADSPERBLOCK;
     cudaDeviceProp prop;
     cudaGetDeviceProperties(&prop, 0);
@@ -51,7 +42,8 @@ void ForceFieldManager::cleanupAllForceFields() {
     for(auto &ff : _forceFields)
         ff->cleanup();
 #ifdef CUDAACCL
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
+    if(!(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamDestroy(streamF));
     if(CGMethod::N/3 > 0) {
         CUDAcommon::handleerror(cudaFree(gpu_nint));
         //Memory alloted
@@ -74,16 +66,24 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
     double energy = 0;
 #ifdef CUDAACCL
     auto gU_tot = CUDAcommon::getCUDAvars().gpu_energy;
-    setenergytozero<<<1,1,0,stream>>>(gU_tot);
-    CUDAcommon::handleerror(cudaStreamSynchronize(stream));
+    setenergytozero<<<1,1,0,streamF>>>(gU_tot);
+    CUDAcommon::handleerror(cudaStreamSynchronize(streamF));
 #endif
 //    std::cout<<"-------"<<endl;
     for(auto &ff : _forceFields) {
 //        std::cout<<ff->getName()<<endl;
 //        std::cout<<"ForceField "<<ff->getName()<<endl;
         auto tempEnergy = ff->computeEnergy(coord, f, d);
-//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
-
+#ifdef SERIAL_CUDACROSSCHECK
+        for(auto strm:CUDAcommon::getCUDAvars().streamvec)
+            CUDAcommon::handleerror(cudaStreamSynchronize(*strm),"FFM","FFM.cu");
+        CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
+        double cuda_energy[1];
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(double),
+                                           cudaMemcpyDeviceToHost));
+//        std::cout<<ff->getName()<<endl;
+//        std::cout<<"Serial Energy "<<energy+tempEnergy<<" Cuda Energy "<<cuda_energy[0]<<endl;
+#endif
         if(verbose) cout << ff->getName() << " energy = " << tempEnergy << endl;
 
         //if energy is infinity, exit with infinity.
@@ -118,14 +118,15 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
 
 #ifdef CUDAACCL
     CUDAvars cvars=CUDAcommon::getCUDAvars();
-    cudaStream_t  stream;
-    CUDAcommon::handleerror(cudaStreamCreate( &stream));
+//    if(streamF == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamCreate( &streamF));
     if(cross_checkclass::Aux)
-        resetForcesCUDA<<<blocksnthreads[0],blocksnthreads[1],0,stream>>>(cvars.gpu_forceAux, gpu_nint);
+        resetForcesCUDA<<<blocksnthreads[0],blocksnthreads[1],0,streamF>>>(cvars.gpu_forceAux, gpu_nint);
     else
-        resetForcesCUDA<<<blocksnthreads[0],blocksnthreads[1],0,stream>>>(cvars.gpu_force, gpu_nint);
-    CUDAcommon::handleerror(cudaStreamSynchronize(stream));
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
+        resetForcesCUDA<<<blocksnthreads[0],blocksnthreads[1],0,streamF>>>(cvars.gpu_force, gpu_nint);
+    CUDAcommon::handleerror(cudaStreamSynchronize(streamF));
+//    if(!(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamDestroy(streamF));
 
     CUDAcommon::handleerror( cudaGetLastError() ,"resetForcesCUDA", "ForceFieldManager.cu");
 #endif
@@ -134,7 +135,7 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
     for(auto &ff : _forceFields) {
 //                std::cout<<"ForceField "<<ff->getName()<<endl;
         ff->computeForces(coord, f);
-        CUDAcommon::handleerror(cudaDeviceSynchronize());
+//        CUDAcommon::handleerror(cudaDeviceSynchronize());
 
 //        if(cross_checkclass::Aux)
 //            CUDAcommon::handleerror(
@@ -200,5 +201,11 @@ void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, doubl
 //    std::cout<<"Threads per block: "<<blocksnthreads[1]<<endl;
     copyForcesCUDA<<<blocksnthreads[0],blocksnthreads[1],0,stream>>>(f, fprev, gpu_nint);
     CUDAcommon::handleerror( cudaGetLastError(),"copyForcesCUDA", "ForceFieldManager.cu");
+}
+
+void ForceFieldManager::assignallforcemags() {
+
+    for(auto &ff : _forceFields)
+        ff->assignforcemags();
 }
 #endif

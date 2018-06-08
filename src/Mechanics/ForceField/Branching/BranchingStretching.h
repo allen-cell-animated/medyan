@@ -35,6 +35,7 @@ private:
     double *kstr;
     double *eql;
     double *pos;
+    double *stretchforce;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;

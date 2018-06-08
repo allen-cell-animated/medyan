@@ -18,6 +18,11 @@
 
 #include "Linker.h"
 
+void LinkerFF::assignforcemags(){
+    for (auto &interaction : _linkerInteractionVector)
+        interaction->assignforcemags();
+}
+
 LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 {
     if (stretching == "HARMONIC")
@@ -31,6 +36,11 @@ LinkerFF::LinkerFF (string& stretching, string& bending, string& twisting)
 }
 
 void LinkerFF::vectorize() {
+    //Reset stretching forces to 0.
+    for(auto l:Linker::getLinkers()){
+        //Using += to ensure that the stretching forces are additive.
+        l->getMLinker()->stretchForce = 0.0;
+    }
 
     for (auto &interaction : _linkerInteractionVector)
         interaction->vectorize();

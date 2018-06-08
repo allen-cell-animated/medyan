@@ -135,7 +135,7 @@ template <class CVolumeInteractionType>
 double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, double *f, double d) {
 
     double U_i[1];
-    double U_ii=NULL;
+    double U_ii=0.0;
     double *gU_i;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
@@ -150,7 +150,8 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_d, gpu_params);
 //    }
     nvtxRangePop();
-#else
+#endif
+#ifdef SERIAL
     nvtxRangePushA("SCEE");
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, krep);
@@ -183,7 +184,8 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_params);
         nvtxRangePop();
     }
-#else
+#endif
+#ifdef SERIAL
     nvtxRangePushA("SCFE");
 //    std::cout<<"x vol srl"<<endl;
     _FFType.forces(coord, f, beadSet, krep);

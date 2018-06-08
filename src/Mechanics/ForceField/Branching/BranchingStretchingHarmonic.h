@@ -31,7 +31,8 @@ public:
                   double *kstr, double *eql, double *pos, double d);
     
     void forces(double *coord, double *f, int *beadSet,
-                double *kstr, double *eql, double *pos);
+                double *kstr, double *eql, double *pos, double
+                *stretchforce);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
 
@@ -50,7 +51,7 @@ public:
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
     vector<int> bntaddvec2;
-    cudaStream_t stream;
+    cudaStream_t stream = NULL;
 #endif
     
 };

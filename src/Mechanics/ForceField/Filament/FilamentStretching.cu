@@ -38,7 +38,7 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
     }
     //CUDA
 #ifdef CUDAACCL
-    nvtxRangePushA("CVFF");
+//    nvtxRangePushA("CVFF");
 //    F_i = new double[3 * Bead::getBeads().size()];
     int numInteractions = Cylinder::getCylinders().size();
     _FFType.optimalblocksnthreads(numInteractions);
@@ -65,7 +65,7 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
                             " FilamentStretching.cu");
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice),
             "cuda data transfer", " FilamentStretching.cu");
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 
     //
@@ -99,7 +99,7 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 //    std::cout<<"Fil Stretching Forces"<<endl;
-    nvtxRangePushA("CCEFS");
+//    nvtxRangePushA("CCEFS");
 
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
@@ -109,15 +109,16 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_d,
                             gpu_params);
 //    }
-    nvtxRangePop();
-#else
-    nvtxRangePushA("SCEFS");
+//    nvtxRangePop();
+#endif
+#ifdef SERIAL
+//    nvtxRangePushA("SCEFS");
 
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, d);
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 //    whoisCulprit();
     return U_ii;
@@ -131,23 +132,24 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord
 
     double * gpu_force;
     if(cross_checkclass::Aux){
-        nvtxRangePushA("CCFFS");
+//        nvtxRangePushA("CCFFS");
 
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
-        nvtxRangePop();
+//        nvtxRangePop();
     }
     else {
-        nvtxRangePushA("CCFFS");
+//        nvtxRangePushA("CCFFS");
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
-        nvtxRangePop();
+//        nvtxRangePop();
     }
 
-#else
-    nvtxRangePushA("SCFFS");
+#endif
+#ifdef SERIAL
+//    nvtxRangePushA("SCFFS");
     _FFType.forces(coord, f, beadSet, kstr, eql);
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 
 }

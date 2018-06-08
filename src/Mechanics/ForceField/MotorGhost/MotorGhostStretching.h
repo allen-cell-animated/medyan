@@ -36,6 +36,7 @@ private:
     double *eql;
     double *pos1;
     double *pos2;
+    double *stretchforce;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
@@ -45,6 +46,7 @@ private:
     double *gpu_pos1;
     double *gpu_pos2;
     double *F_i;
+    double *gpu_Mstretchforce;
 #endif
     
 public:
@@ -65,6 +67,8 @@ public:
 
 
     virtual const string getName() {return "MotorGhost Stretching";}
+
+    virtual void assignforcemags();
 
 };
 

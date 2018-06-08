@@ -69,6 +69,12 @@ BranchingFF::BranchingFF(string& stretching, string& bending,
 }
 
 void BranchingFF::vectorize() {
+    //Reset stretching forces to 0.
+    for(auto b:BranchingPoint::getBranchingPoints()){
+        //Using += to ensure that the stretching forces are additive.
+        b->getMBranchingPoint()->stretchForce = 0.0;
+    }
+
 
     for (auto &interaction : _branchingInteractionVector)
         interaction->vectorize();
@@ -98,11 +104,17 @@ double BranchingFF::computeEnergy(double *coord, double *f, double d) {
 
     double U= 0;
     double U_i;
-
+#ifdef SERIAL_CUDACROSSCHECK
+//    std::cout<<"-----------"<<endl;
+#endif
     for (auto &interaction : _branchingInteractionVector) {
 //        std::cout<<"ForceField "<<interaction->getName()<<" "<<_branchingInteractionVector.size()<<endl;
+#ifdef SERIAL_CUDACROSSCHECK
+        CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
+//        std::cout<<interaction->getName()<<endl;
+#endif
         U_i = interaction->computeEnergy(coord, f, d);
-        CUDAcommon::handleerror(cudaDeviceSynchronize(),"BranchingFF","BranchingFF");
+//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"BranchingFF","BranchingFF");
 //        std::cout<<interaction->getName()<<" "<<U_i<<endl;
 
         if(U_i <= -1) {

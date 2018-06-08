@@ -222,7 +222,7 @@ bool BranchingManager::isConsistent() {
     return true;
 }
 
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
 void BranchingManager::assigncudavars() {
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_distance, 2 * sizeof(double)),"cuda data transfer", " "
             "BindingManager.cu");
@@ -511,7 +511,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     }
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
 
 #endif
     updateBindingReaction(oldN, newN);
@@ -556,7 +556,7 @@ bool LinkerBindingManager::isConsistent() {
     return true;
 }
 
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
 void LinkerBindingManager::assigncudavars() {
 //    if(gpu_rminmax == NULL) {
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_rminmax, 2 * sizeof(double)), "cuda data transfer", " "
@@ -901,7 +901,7 @@ bool MotorBindingManager::isConsistent() {
     return true;
 }
 
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
 void MotorBindingManager::assigncudavars() {
 
 //    if(gpu_numpairs == NULL) {

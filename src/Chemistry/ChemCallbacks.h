@@ -341,7 +341,12 @@ struct BranchingPointUnbindingCallback {
     : _ps(ps), _branchingPoint(b) {}
     
     void operator() (ReactionBase *r) {
-        
+
+//        //@{
+//        std::cout<<"Brancher unbinding "<<_branchingPoint->getFirstCylinder()->getID()<<" "
+//                ""<<_branchingPoint->getPosition()
+//                 <<" "<<_branchingPoint->getSecondCylinder()->getID()<<endl;
+//        //@}
         //remove the branching point
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
         delete _branchingPoint;
@@ -465,7 +470,11 @@ struct LinkerUnbindingCallback {
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
-        
+
+//        //@{
+//        std::cout<<"Linker unbinding "<<_linker->getFirstCylinder()->getID()<<" "<<_linker->getFirstPosition()
+//                 <<" "<<_linker->getSecondCylinder()->getID()<<" "<<_linker->getSecondPosition()<<endl;
+//        //@}
         //remove the linker
         _ps->removeTrackable<Linker>(_linker);
         delete _linker;
@@ -554,7 +563,12 @@ struct MotorUnbindingCallback {
 //        
 //        //re-add unbound ID to motor binding manager
 //        mManager->addUnboundID(_motor->getID());
-        
+
+//        //@{
+//        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "<<_motor->getFirstPosition()
+//                  <<" "<<_motor->getSecondCylinder()->getID()<<" "<<_motor->getSecondPosition()<<endl;
+//        //@}
+
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
         delete _motor;

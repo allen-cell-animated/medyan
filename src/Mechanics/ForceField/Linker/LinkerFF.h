@@ -52,6 +52,8 @@ public:
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
+    //Assigns stretchforces for ratechangeimpl
+    virtual void assignforcemags();
     
 };
 

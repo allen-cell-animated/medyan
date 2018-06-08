@@ -26,7 +26,8 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BranchingStretchingHarmonic::deallocate(){
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
+    if(!(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
@@ -34,7 +35,8 @@ void BranchingStretchingHarmonic::deallocate(){
 }
 void BranchingStretchingHarmonic::optimalblocksnthreads( int nint){
     //CUDA stream create
-    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream));
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -141,6 +143,27 @@ double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadS
 //                ".cu");
 //        return gU_sum;
     }
+    if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
+        return NULL;
+    else{
+        auto cvars = CUDAcommon::getCUDAvars();
+        cvars.streamvec.push_back(&stream);
+        CUDAcommon::cudavars = cvars;
+        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+
+//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        cudaStreamSynchronize(stream);
+//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
+//                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
+        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+                params, gU_sum, gpu_Utot);
+//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
+        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
+        return gU_sum;
+    }
 
 }
 
@@ -150,7 +173,6 @@ void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         BranchingStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (9 * blocksnthreadsf[1]) *
                                                                                        sizeof(double), stream >> >
                 (coord, f, beadSet, kstr, eql, pos, params);
-                    size_t freeMem, totalMem;
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -247,7 +269,8 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
 }
 
 void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                         double *kstr, double *eql, double *pos){
+                                         double *kstr, double *eql, double *pos,
+                                         double *stretchforce){
 
 
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
@@ -287,6 +310,7 @@ void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         f3[0] +=  -f0 * ( coord3[0] - v1[0] );
         f3[1] +=  -f0 * ( coord3[1] - v1[1] );
         f3[2] +=  -f0 * ( coord3[2] - v1[2] );
+        stretchforce[i] = f0/invL;
 
     }
     delete v1;

@@ -19,6 +19,7 @@
 #include "Cylinder.h"
 
 CylinderVolumeFF::CylinderVolumeFF (string& type) {
+    std::cout<<type<<endl;
     if (type == "REPULSION")
         _cylinderVolInteractionVector.emplace_back(
         new CylinderExclVolume <CylinderExclVolRepulsion>());

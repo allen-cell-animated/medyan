@@ -48,7 +48,7 @@ public:
     double *gU_i;
     double *gU_sum;
     char *gFF, *ginteraction;
-    cudaStream_t stream;
+    cudaStream_t stream = NULL;
 #endif
 #ifdef CROSSCHECK
     double energy(Bead*, Bead*, double, double);

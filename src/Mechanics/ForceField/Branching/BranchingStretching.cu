@@ -42,13 +42,13 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
         kstr[i] = b->getMBranchingPoint()->getStretchingConstant();
         eql[i] = b->getMBranchingPoint()->getEqLength();
         pos[i] = b->getPosition();
-
+        stretchforce[i] = 0.0;
         i++;
     }
     //CUDA
 #ifdef CUDAACCL
 //    F_i = new double[CGMethod::N];
-    nvtxRangePushA("CVFF");
+//    nvtxRangePushA("CVFF");
 
     int numInteractions = BranchingPoint::getBranchingPoints().size();
     _FFType.optimalblocksnthreads(numInteractions);
@@ -71,15 +71,19 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
     params.push_back(numInteractions);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice));
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
-
-    //
 }
 
 template<class BStretchingInteractionType>
 void BranchingStretching<BStretchingInteractionType>::deallocate() {
-
+    int i = 0;
+    for(auto b:BranchingPoint::getBranchingPoints()){
+        //Using += to ensure that the stretching forces are additive.
+        b->getMBranchingPoint()->stretchForce += stretchforce[i];
+        i++;
+    }
+    delete stretchforce;
     delete beadSet;
     delete kstr;
     delete eql;
@@ -107,7 +111,7 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *co
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-    nvtxRangePushA("CCEBS");
+//    nvtxRangePushA("CCEBS");
 
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_params);
@@ -117,14 +121,26 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *co
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_d,
                             gpu_params);
 //    }
-    nvtxRangePop();
-#else
-    nvtxRangePushA("SCEBS");
+//    nvtxRangePop();
+#endif
+#ifdef SERIAL
+//    nvtxRangePushA("SCEBS");
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos, d);
-    nvtxRangePop();
+//    nvtxRangePop();
+#endif
+#ifdef SERIAL_CUDACROSSCHECK
+    CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
+    double cuda_energy[1];
+    if(gU_i == NULL)
+        cuda_energy[0] = 0.0;
+    else {
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
+                                           cudaMemcpyDeviceToHost));
+    }
+//        std::cout << "Serial Energy " << U_ii << " Cuda Energy " << cuda_energy[0] << endl;
 #endif
     return U_ii;
 }
@@ -137,29 +153,27 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(double *coor
 
     double * gpu_force;
     if(cross_checkclass::Aux){
-        nvtxRangePushA("CCFBS");
+//        nvtxRangePushA("CCFBS");
 
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_params);
-        nvtxRangePop();
+//        nvtxRangePop();
     }
     else {
-        nvtxRangePushA("CCFBS");
+//        nvtxRangePushA("CCFBS");
 
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos, gpu_params);
-        nvtxRangePop();
+//        nvtxRangePop();
     }
-#else
-    nvtxRangePushA("SCFBS");
+#endif
+#ifdef SERIAL
+//    nvtxRangePushA("SCFBS");
 
-    _FFType.forces(coord, f, beadSet, kstr, eql, pos);
-    nvtxRangePop();
+    _FFType.forces(coord, f, beadSet, kstr, eql, pos, stretchforce);
+//    nvtxRangePop();
 #endif
 }
-
-
-
 ///Template specializations
 template double
 BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);

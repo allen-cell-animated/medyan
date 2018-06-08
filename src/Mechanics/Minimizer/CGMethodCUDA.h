@@ -31,13 +31,20 @@ __global__ void moveBeadsCUDA(double *coord, double* f, double *d,  int *nint, b
 }
 __global__ void shiftGradientCUDA(double *f, double* fAux, int * nint, double* newGrad, double* prevGrad, double*
 curGrad, bool *Mstate) {
-    if(Mstate[0] == false) return;
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+    if(thread_idx == 0)
+        printf("CUDA min state shift %d \n", Mstate[0]);
+    if(Mstate[0] == false) return;
+
     double d  = fmax(0.0, (newGrad[0] - prevGrad[0]) / curGrad[0]);
+    if(thread_idx == 0) {
+        printf("beta CUDA %f\n", d);
+        printf(" newGrad %f prevGrad %f, curGrad %f\n", newGrad[0], prevGrad[0], curGrad[0]);
+    }
 //    if(thread_idx == 0)
 //        printf("Shift Gradient %f %f %f %f\n", d, newGrad[0], prevGrad[0],curGrad[0] );
 
-    if (thread_idx < nint[0]) {
+    if (thread_idx < nint[0] && Mstate[0]) {
         for (auto i = 0; i < 3; i++) {
             f[3 * thread_idx + i] = fAux[3 * thread_idx + i] + d * f[3 * thread_idx + i];
             if (fabs(f[3 * thread_idx + i]) == __longlong_as_double(0x7ff0000000000000) //infinity
@@ -79,6 +86,8 @@ __global__ void allFADotFCUDA(double *f1, double *f2, double *g, int * nint) {
         for (auto i = 0; i < 3; i++) {
            g[thread_idx] +=f1[3 * thread_idx +i] * f2[3 * thread_idx +i];
         }
+//        printf("CUDA %d %f %f %f %f\n",thread_idx, g[thread_idx],f1[3 * thread_idx],f1[3 * thread_idx +1],f1[3 *
+//               thread_idx +2]);
     }
 }
 
@@ -125,16 +134,18 @@ __global__ void maxFCUDAredv2(double *f, int * nint, double *fmax) {
     extern __shared__ double s[];
     double *c1 = s;
     int start = 0;
-    int end = 3 * nint[0];
-    int factor = 3 * nint[0]/blockDim.x;
+    int end = nint[0];
+    int factor = nint[0]/blockDim.x;
+    if(threadIdx.x ==0)
+        printf("CMAXF %d %d %d\n", factor, nint[0],blockDim.x);
     if (threadIdx.x > 0)
         start = threadIdx.x * factor;
     if (threadIdx.x < blockDim.x - 1)
         end = (threadIdx.x + 1) * factor;
     c1[threadIdx.x] = -1.0;
     for (auto i = start; i < end; i++) {
-        if(fabs(f[i]) > c1[threadIdx.x])
-            c1[threadIdx.x] = fabs(f[i]);
+        if(fabs(sqrt(f[i])) > c1[threadIdx.x])
+            c1[threadIdx.x] = sqrt(fabs(f[i]));
     }
     __syncthreads();
 
@@ -145,9 +156,40 @@ __global__ void maxFCUDAredv2(double *f, int * nint, double *fmax) {
                 fmax[0] = c1[i];
         }
 //        printf("Fmaxv2 %f f_x %f f_y %f f_z %f \n", fmax[0], c1[0], c1[1], c1[2]);
-        printf("Fmaxv2 %f \n", fmax[0]);
+        printf("Fmax CUDA %f \n", fmax[0]);
     }
 }
+
+//__global__ void maxFCUDAredv2(double *f, int * nint, double *fmax) {
+//
+//    extern __shared__ double s[];
+//    double *c1 = s;
+//    int start = 0;
+//    int end = 3 * nint[0];
+//    int factor = 3 * nint[0]/blockDim.x;
+//    if(threadIdx.x ==0)
+//        printf("CMAXF %d %d %d\n", factor, nint[0],blockDim.x);
+//    if (threadIdx.x > 0)
+//        start = threadIdx.x * factor;
+//    if (threadIdx.x < blockDim.x - 1)
+//        end = (threadIdx.x + 1) * factor;
+//    c1[threadIdx.x] = -1.0;
+//    for (auto i = start; i < end; i++) {
+//        if(fabs(f[i]) > c1[threadIdx.x])
+//            c1[threadIdx.x] = fabs(f[i]);
+//    }
+//    __syncthreads();
+//
+//    if (threadIdx.x == 0) {
+//        fmax[0] = -1.0;
+//        for (auto i = 0; i < blockDim.x; i++) {
+//            if(fabs(c1[i]) > fmax[0])
+//                fmax[0] = c1[i];
+//        }
+////        printf("Fmaxv2 %f f_x %f f_y %f f_z %f \n", fmax[0], c1[0], c1[1], c1[2]);
+//        printf("Fmax CUDA %f \n", fmax[0]);
+//    }
+//}
 
 __global__ void addvector(double *U, int *params, double *U_sum){
     U_sum[0] = 0.0;
@@ -221,7 +263,7 @@ __global__ void initializeLambdaCUDA(bool *checkin, bool* checkout, double *curr
     checkin[0] = false;
     checkout[0] = false;
     status[0] = 0;
-    printf("lambda_status %d\n", status[0]);
+//    printf("lambda_status %d\n", status[0]);
     double LAMBDAMAX = params[3];
 //    printf("SS %d \n",Safestate[0]);
     if(Safestate[0] == true){//safebacktrackinglinesearch
@@ -237,7 +279,9 @@ __global__ void initializeLambdaCUDA(bool *checkin, bool* checkout, double *curr
         else
             CUDA_lambda[0] = fmin(LAMBDAMAX, MAXDIST / fmax[0]);
     }
-//    printf("CL %f %f\n", LAMBDAMAX, CUDA_lambda[0]);
+    printf("CL lambdamax %f cuda_lambda %f fmax %f MAXDIST %f state %d\n", LAMBDAMAX, CUDA_lambda[0], fmax[0],
+           params[4],
+           checkout[0]);
 }
 
 __global__ void resetlambdaCUDA (double *CUDA_lambda){
@@ -285,15 +329,14 @@ lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool
 //    double MAXDIST = params[4];
     double idealEnergyChange = 0.0;
     double energyChange = 0.0;
-//    printf("Energies %f %f\n", energyLambda[0],currentEnergy[0]);
+    printf("safestate %d\n",safestate[0]);
     if(safestate[0] == true){
         energyChange = energyLambda[0] - currentEnergy[0];
+        printf("energyChange %f \n", energyChange);
         if (energyChange <= 0.0) {
             current_convergence[0] = true;
-            printf("lambda_statusb %d\n", status[0]);
             atomicAdd(&status[0], 1);
-            printf("lambda_status %d\n", status[0]);
-            printf("lambda_converged %.8f\n", lambda[0]);
+            printf("energyChange %f lambda_converged %.8f\n", energyChange, lambda[0]);
             return;
         }
     }
@@ -301,13 +344,17 @@ lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool
         double BACKTRACKSLOPE = params[0];
         idealEnergyChange = -BACKTRACKSLOPE * lambda[0] * FDotFA[0];
         energyChange = energyLambda[0] - currentEnergy[0];
-
+        printf("BACKTRACKSLOPE %f lambda %f allFDotFA %f \n", BACKTRACKSLOPE, lambda[0], FDotFA[0]);
+        printf("idealEnergyChange %f energyChange %f \n",
+               idealEnergyChange, energyChange);
         if (energyChange <= idealEnergyChange) {
             current_convergence[0] = true;
-            printf("lambda_statusb %d\n", status[0]);
+//            printf("lambda_statusb %d\n", status[0]);
             atomicAdd(&status[0], 1);
-            printf("lambda_status %d\n", status[0]);
-            printf("lambda_converged %.8f \n", lambda[0]);
+//            printf("lambda_status %d\n", status[0]);
+            printf("idealEnergyChange %f energyChange %f lambda_converged %.8f \n",
+                   idealEnergyChange, energyChange,
+                   lambda[0]);
             return;
         }
     }
@@ -324,7 +371,7 @@ lambda, double *params, bool* prev_convergence, bool*  current_convergence, bool
 }
 __global__ void findLambdaCUDA2(double *fmax, double* lambda, double *params, bool* prev_convergence, bool*
 current_convergence, bool *safestate, int *status){
-//    printf("prev_conv %d \n", prev_convergence[0]);
+    printf("prev_conv %d \n", prev_convergence[0]);
     if(prev_convergence[0]) return;
     double LAMBDAREDUCE = params[1];
     double MAXDIST = params[4];
@@ -337,8 +384,9 @@ current_convergence, bool *safestate, int *status){
             lambda[0] = MAXDIST / fmax[0];
         else
             lambda[0] = 0.0;
-//        printf("lambda_state %d \n", status[0]);
+
     }
+    printf("lambda2 %.8f state %d\n", lambda[0], current_convergence[0]);
 }
 //__global__ void CUDAbacktrackingfindlambda(double* energyLambda, double* currentEnergy, double* FDotFA, double*
 //lambda, double *params, bool* prev_convergence, bool*  current_convergence){

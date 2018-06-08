@@ -21,6 +21,8 @@
 
 #include "NeighborList.h"
 #include "DynamicNeighbor.h"
+#include "BinGrid.h"
+#include "SysParams.h"
 
 //FORWARD DECLARATIONS
 class Cylinder;
@@ -37,7 +39,7 @@ private:
     
     bool _full; ///<Specifying whether this is a full or half list
 
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
     vector<int> blocksnthreads;
     int nint;
 //    vector<int> pair_cIndex_cmp;
@@ -58,7 +60,7 @@ private:
 
     
 public:
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
     bool cudacpyforces = false;
 
     int getNLsize() {
@@ -71,10 +73,11 @@ public:
         return gpu_NL;
     }
 #endif
-    CylinderCylinderNL(float rMax, float rMin=0.0, bool full = false)
-    
-        : NeighborList(rMax, rMin), _full(full) {}
-    
+    short _ID; //ID helps link binGridType to NeighborList.
+
+    CylinderCylinderNL(float rMax, float rMin = 0.0, bool full = false, short ID = 0)
+            : NeighborList(rMax, rMin), _full(full) {
+    }
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
     

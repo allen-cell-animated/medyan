@@ -30,7 +30,8 @@ public:
                   double *kstr, double *eql, double *pos1, double *pos2, double d);
     
     void forces(double *coord, double *f, int *beadSet,
-                double *kstr, double *eql, double *pos1, double *pos2);
+                double *kstr, double *eql, double *pos1, double *pos2, double
+                *stretchforce);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
 
@@ -41,7 +42,7 @@ public:
                    double *z, int *params);
 
     void forces(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2, int
-    *params);
+    *params, double *Lstretchforce);
     void deallocate();
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
@@ -51,7 +52,7 @@ public:
     double *gU_i;
     double *gU_sum;
     char *gFF, *ginteraction;
-    cudaStream_t stream;
+    cudaStream_t stream = NULL;
     int numint;
 #endif
 #ifdef CROSSCHECK

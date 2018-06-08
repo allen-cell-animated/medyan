@@ -117,9 +117,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 //                ""<<beListplane[4 *i +3]<<endl;
 //    }
 #ifdef CUDAACCL
-    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+//    CUDAcommon::handleerror(cudaStreamCreate(&stream));
 //    F_i = new double[3 * Bead::getBeads().size()];
-    nvtxRangePushA("CVFF");
+//    nvtxRangePushA("CVFF");
 
     _FFType.optimalblocksnthreads(nint);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, n * nint * sizeof(int)));
@@ -149,17 +149,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
                             "BoundaryCylinderRepulsion.cu");
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice),
                             "cuda data transfer", "BoundaryCylinderRepulsion.cu");
-    //Memory alloted
-    //@{
-//    size_t allocmem = 0;
-//    allocmem += (n * nint + nbe) * sizeof(int) + (2 * nint + 4 * nbe) * sizeof(double);
-//    auto c = CUDAcommon::getCUDAvars();
-//    c.memincuda += allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
-    //@}
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
     delete beListplane, nintvec;
 }
@@ -175,7 +165,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 #ifdef CUDAACCL
     _FFType.deallocate();
 //    if(nint>0) {
-        CUDAcommon::handleerror(cudaStreamDestroy(stream));
+//        CUDAcommon::handleerror(cudaStreamDestroy(stream));
         CUDAcommon::handleerror(cudaFree(gpu_beadSet));
         CUDAcommon::handleerror(cudaFree(gpu_krep));
         CUDAcommon::handleerror(cudaFree(gpu_slen));
@@ -185,17 +175,6 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 //        CUDAcommon::handleerror(cudaFreeHost(U_i));
 //        CUDAcommon::handleerror(cudaFree(gU));
 //    }
-    //Memory alloted
-    //@{
-//    size_t allocmem = 0;
-//    auto nbe = BoundaryElement::getBoundaryElements().size();
-//    allocmem += (n * nint + nbe) * sizeof(int) + (2 * nint + 4 * nbe) * sizeof(double);
-//    auto c = CUDAcommon::getCUDAvars();
-//    c.memincuda -= allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
-    //@}
 #endif
 }
 
@@ -209,7 +188,7 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-    nvtxRangePushA("CCBE");
+//    nvtxRangePushA("CCBE");
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
 //                            gpu_params);
@@ -218,8 +197,9 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
                             gpu_d, gpu_params);
 //    }
-    nvtxRangePop();
-#else
+//    nvtxRangePop();
+#endif
+#ifdef SERIAL
     nvtxRangePushA("SCBE");
     if (d == 0.0) {
         U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
@@ -240,29 +220,31 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
     double * gpu_force;
 
     if(cross_checkclass::Aux){
-        nvtxRangePushA("CCFBE");
+//        nvtxRangePushA("CCFBE");
 
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
                        gpu_params);
-        nvtxRangePop();
+//        nvtxRangePop();
     }
     else {
-        nvtxRangePushA("CCFBE");
+//        nvtxRangePushA("CCFBE");
 
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_slen, gpu_nintperbe, gpu_beListplane,
                        gpu_params);
-        nvtxRangePop();
+//        nvtxRangePop();
     }
 
     //TODO remove this later need not copy forces back to CPU.
 //    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
 //                                       cudaMemcpyDeviceToHost),"cuda data transfer", "BoundaryCylinderRepulsion.cu");
 #endif
-    nvtxRangePushA("SCFBE");
+#ifdef SERIAL
+//    nvtxRangePushA("SCFBE");
     _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
-    nvtxRangePop();
+//    nvtxRangePop();
+#endif
 }
 
 template <class BRepulsionInteractionType>
@@ -298,8 +280,13 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                                                    bd->coordinate[1] + i * normal[1] * monSize,
                                                    bd->coordinate[2] + i * normal[2] * monSize};
 
+                    // Projection magnitude ratio on the direction of the cylinder
+                    // (Effective monomer size) = (monomer size) * proj
+                    double proj = -dotProduct(be->normal(newCoord), normal);
+
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
-                    bd->loadForcesP[bd->lfip++] += loadForce;
+                    // The load force stored in bead also considers effective monomer size.
+                    bd->loadForcesP[bd->lfip++] += proj * loadForce;
                 }
                 //reset lfi
                 bd->lfip = 0;
@@ -325,8 +312,13 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                                                    bd->coordinate[1] + i * normal[1] * monSize,
                                                    bd->coordinate[2] + i * normal[2] * monSize};
 
+                    // Projection magnitude ratio on the direction of the cylinder
+                    // (Effective monomer size) = (monomer size) * proj
+                    double proj = -dotProduct(be->normal(newCoord), normal);
+
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
-                    bd->loadForcesM[bd->lfim++] += loadForce;
+                    // The load force stored in bead also considers effective monomer size.
+                    bd->loadForcesM[bd->lfim++] += proj * loadForce;
                 }
                 //reset lfi
                 bd->lfim = 0;

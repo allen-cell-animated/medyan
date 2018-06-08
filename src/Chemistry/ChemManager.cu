@@ -136,7 +136,9 @@ void ChemManager::configCMonomer() {
         //create offset vector for bound
         CMonomer::_speciesBoundIndex[filType].insert(
                 CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5});
-//        std::cout<<"0 "<<o3<<" "<<o4<<" "<<o5<<endl;
+
+//        std::cout<<"speciesBoundIndex 0 "<<o3<<" "<<o4<<" "<<o5<<endl;
+//        std::cout<<endl;
     }
 }
 
@@ -174,6 +176,7 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
         m->_speciesBound[bIndex] = sb;
         bIndex++;
     }
+//    std::cout<<bIndex<<endl;
     for (auto &l : _chemData.speciesLinker[filamentType]) {
         SpeciesLinker* sl =
                 c->addSpeciesLinker(SpeciesNamesDB::genUniqueFilName(l));

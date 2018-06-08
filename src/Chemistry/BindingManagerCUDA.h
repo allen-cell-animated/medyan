@@ -15,7 +15,8 @@
 using namespace mathfunc;
 
 __global__ void updateAllPossibleBindingsCUDA(double *coord, int *beadSet, int *cylID, int *filID, int
-*filType, int *cmpID,  int *NL, int *numNLpairs, int *numpairs, int *params, double *params2, int *possibleBindings,
+*filType, unsigned int *cmpID,  int *NL, int *numNLpairs, int *numpairs, int *params,
+                                              double *params2, int *possibleBindings,
 int *relevant_spboundvec, int *bindingSites){
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
     int numBindingSites = params[0];
@@ -77,9 +78,9 @@ int *relevant_spboundvec, int *bindingSites){
 //                                   mp1, mp2);
                             int numpair_prev = atomicAdd(&numpairs[0], 1);
                             possibleBindings[5 * numpair_prev] = cmpID[cIndex];
-                            possibleBindings[5 * numpair_prev + 1] = cylID[cIndex];
+                            possibleBindings[5 * numpair_prev + 1] = cIndex;
                             possibleBindings[5 * numpair_prev + 2] = bindingSites[bs];
-                            possibleBindings[5 * numpair_prev + 3] = cylID[cnIndex];
+                            possibleBindings[5 * numpair_prev + 3] = cnIndex;
                             possibleBindings[5 * numpair_prev + 4] = bindingSites[bsn];
 //                            printf("C %f %d %d %d %d\n", dist, cIndex, bindingSites[bs], cnIndex,
 //                                   bindingSites[bsn]);
@@ -95,7 +96,8 @@ int *relevant_spboundvec, int *bindingSites){
 }
 
 __global__ void updateAllPossibleBindingsBrancherCUDA (double *coord, int *beadSet, int *cylID, int *filID, int *
-                                                      filType, int *cmpID, int *numpairs, int *params,
+                                                      filType, unsigned int *cmpID, int
+*numpairs, int *params,
                                                       double *distances, int *zone, int *possibleBindings,
                                                       int *bindingSites, int
                                                        *relevant_spboundvec, double *beListplane){

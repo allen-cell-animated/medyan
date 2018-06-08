@@ -26,7 +26,8 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void LinkerStretchingHarmonic::deallocate(){
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
+    if(!(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
@@ -34,7 +35,8 @@ void LinkerStretchingHarmonic::deallocate(){
 }
 void LinkerStretchingHarmonic::optimalblocksnthreads( int nint){
     //CUDA stream create
-    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream));
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -76,6 +78,7 @@ void LinkerStretchingHarmonic::optimalblocksnthreads( int nint){
         CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
         CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
         CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
+
     }
     else{
         blocksnthreadse.push_back(0);
@@ -173,12 +176,13 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
     }
 }
 void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                      double *kstr, double *eql, double *pos1, double *pos2, int *params) {
+                                      double *kstr, double *eql, double *pos1, double
+                                      *pos2, int *params, double *Lstretchforce ) {
     if (blocksnthreadsf[1] > 0) {
         LinkerStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 *
                                                                                      blocksnthreadsf[1]) *
                                                                                     sizeof(double), stream >> >
-                                                                                                    (coord, f, beadSet, kstr, eql, pos1, pos2, params);
+                                    (coord, f, beadSet, kstr, eql, pos1, pos2, params, Lstretchforce);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -275,7 +279,8 @@ void LinkerStretchingHarmonic::checkforculprit() {
 
     }
     void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                          double *kstr, double *eql, double *pos1, double *pos2){
+                                          double *kstr, double *eql, double *pos1, double
+                                          *pos2, double *stretchforce){
 
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
@@ -328,7 +333,7 @@ void LinkerStretchingHarmonic::checkforculprit() {
             f4[2] +=   f0 * ( v1[2] - v2[2] ) * (pos2[i]);
 
             //assign stretch force
-            Linker::getLinkers()[i]->getMLinker()->stretchForce = f0;
+            stretchforce[i] = f0/invL;
 //        std::cout<<"LINKER "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
         }
         delete v1;

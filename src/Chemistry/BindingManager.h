@@ -256,7 +256,7 @@ public:
     virtual unordered_set<tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
     double *gpu_distance;
     int *gpu_zone;
     int *gpu_numpairs = NULL;
@@ -360,7 +360,7 @@ public:
     
     virtual bool isConsistent();
 
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
     double *gpu_rminmax = NULL;
     int *gpu_numpairs = NULL;
     void assigncudavars();
@@ -474,7 +474,7 @@ public:
     
     virtual bool isConsistent();
 
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
     double *gpu_rminmax = NULL;
     int *gpu_numpairs = NULL;
     void assigncudavars();

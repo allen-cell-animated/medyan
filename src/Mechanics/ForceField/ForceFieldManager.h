@@ -53,7 +53,7 @@ public:
     void copyForces(double *f, double *fprev);
 
 #ifdef CUDAACCL
-        cudaStream_t  stream;
+        cudaStream_t  streamF = NULL;
     /// CUDA Copy forces from f to fprev
     void CUDAcopyForces(cudaStream_t  stream, double *f, double *fprev);
 #endif
@@ -69,6 +69,7 @@ public:
 #ifdef CUDAACCL
     vector<int> blocksnthreads;
     int *gpu_nint;
+    void assignallforcemags();
 #endif
 };
 

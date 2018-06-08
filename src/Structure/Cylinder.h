@@ -70,7 +70,6 @@ private:
     int _ID; ///< Unique ID of cylinder, managed by Database
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
-
     
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
     
@@ -87,6 +86,7 @@ private:
     
 public:
     vector<double> coordinate;
+    vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
     int _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector. Continuous ID assigned for
 ///< CUDANL calculation

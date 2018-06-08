@@ -26,7 +26,8 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BranchingDihedralCosine::deallocate(){
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
+    if(!(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
@@ -34,7 +35,8 @@ void BranchingDihedralCosine::deallocate(){
 }
 void BranchingDihedralCosine::optimalblocksnthreads( int nint){
     //CUDA stream create
-    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream));
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();

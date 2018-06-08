@@ -41,6 +41,8 @@ public:
 
     /// Get the name of this interaction
     virtual const string getName() = 0;
+    /// Assign stretchforces for RateChangerImpl.
+    virtual void assignforcemags(){};
 };
 
 #endif

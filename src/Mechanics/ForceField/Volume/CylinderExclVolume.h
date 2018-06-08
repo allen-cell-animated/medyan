@@ -52,7 +52,7 @@ public:
     ///Constructor
     CylinderExclVolume() {
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
         _neighborList->cudacpyforces = true;
 #endif
     }

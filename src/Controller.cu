@@ -274,10 +274,10 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     auto filGen=get<0>(filamentsGen);
     fil.insert(fil.end(), filGen.begin(), filGen.end());
     delete fInit;
-    int countfil = 0;
+//    int countfil = 0;
     //add filaments
     for (auto it: fil) {
-        std::cout<<"countfil "<<countfil++<<endl;
+//        std::cout<<"countfil "<<countfil++<<endl;
         auto coord1 = get<1>(it);
         auto coord2 = get<2>(it);
         auto type = get<0>(it);
@@ -439,14 +439,14 @@ void Controller::updateReactionRates() {
 #endif
 
 void Controller::updateNeighborLists() {
-    nvtxRangePushA("neighborlist");
+//    nvtxRangePushA("neighborlist");
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
-    nvtxRangePop();
+//    nvtxRangePop();
 #ifdef CHEMISTRY
-    nvtxRangePushA("bindingmanager");
+//    nvtxRangePushA("bindingmanager");
     _subSystem->updateBindingManagers();
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 }
 
@@ -532,9 +532,9 @@ void Controller::run() {
 
         mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
-        nvtxRangePushA("mechanics_i");
+//        nvtxRangePushA("mechanics_i");
         _mController->run(false);
-        nvtxRangePop();
+//        nvtxRangePop();
         mine= chrono::high_resolution_clock::now();
         chrono::duration<double> elapsed_runm(mine - mins);
         minimizationtime += elapsed_runm.count();
@@ -593,15 +593,15 @@ void Controller::run() {
 #endif
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
-    nvtxRangePushA("mechanics_i2");
+//    nvtxRangePushA("mechanics_i2");
     _mController->run(false);
-    nvtxRangePop();
+//    nvtxRangePop();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
-    nvtxRangePushA("output");
+//    nvtxRangePushA("output");
     for(auto o: _outputs) o->print(0);
-    nvtxRangePop();
+//    nvtxRangePop();
 
     cout << "Starting simulation..." << endl;
 
@@ -613,13 +613,13 @@ void Controller::run() {
 #ifdef CHEMISTRY
         while(tau() <= _runTime) {
             //run ccontroller
-            nvtxRangePushA("chemistry");
+//            nvtxRangePushA("chemistry");
             auto var = !_cController->run(_minimizationTime);
-            nvtxRangePop();
+//            nvtxRangePop();
             if(var) {
-                nvtxRangePushA("output");
+//                nvtxRangePushA("output");
                 for(auto o: _outputs) o->print(i);
-                nvtxRangePop();
+//                nvtxRangePop();
                 break;
             }
 
@@ -629,29 +629,42 @@ void Controller::run() {
             tauLastNeighborList += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
+#ifdef CUDAACCL
+                //@{
+    size_t free, total;
+    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+    cudaFree(0);
+    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+    std::cout<<"Free VRAM before CUDA operations in bytes "<<free<<". Total VRAM in bytes "
+             <<total<<endl;
+            auto cvars = CUDAcommon::getCUDAvars();
+            cvars.memincuda = free;
+            CUDAcommon::cudavars = cvars;
+    //@}
+#endif
             //run mcontroller, update system
 //            std::cout<<endl;
 //            std::cout<<"TIME "<<tau()<<endl;
 //            std::cout<<endl;
             if(tauLastMinimization >= _minimizationTime) {
                 mins = chrono::high_resolution_clock::now();
-                nvtxRangePushA("mechanics");
+//                nvtxRangePushA("mechanics");
                 _mController->run();
-                nvtxRangePop();
+//                nvtxRangePop();
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
-                nvtxRangePushA("update_pos");
+//                nvtxRangePushA("update_pos");
                 updatePositions();
-                nvtxRangePop();
+//                nvtxRangePop();
                 tauLastMinimization = 0.0;
             }
 
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;
-                nvtxRangePushA("output");
+//                nvtxRangePushA("output");
                 for(auto o: _outputs) o->print(i);
-                nvtxRangePop();
+//                nvtxRangePop();
                 i++;
                 tauLastSnapshot = 0.0;
             }
@@ -663,17 +676,17 @@ void Controller::run() {
 #endif
 
 #ifdef DYNAMICRATES
-            nvtxRangePushA("rate");
+//            nvtxRangePushA("rate");
             updateReactionRates();
-            nvtxRangePop();
+//            nvtxRangePop();
 #endif
 
 #ifdef CHEMISTRY
             // update neighbor lists
             if(tauLastNeighborList >= _neighborListTime) {
-                nvtxRangePushA("NL");
+//                nvtxRangePushA("NL");
                 updateNeighborLists();
-                nvtxRangePop();
+//                nvtxRangePop();
                 tauLastNeighborList = 0.0;
             }
 
@@ -685,21 +698,35 @@ void Controller::run() {
 
             oldTau = tau();
 #ifdef CUDAACCL
-            nvtxRangePushA("device reset");
+//            nvtxRangePushA("device reset");
             //reset CUDA context
 //            CUDAcommon::handleerror(cudaDeviceSynchronize(), "cudaDeviceSynchronize", "Controller.cu");
-            CUDAcommon::handleerror(cudaDeviceReset(), "cudaDeviceReset", "Controller.cu");
-            nvtxRangePop();
-            size_t free, total;
-            CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-            fprintf(stdout,"\t### After Reset Available VRAM : %g Mo/ %g Mo(total)\n\n",
-                    free/1e6, total/1e6);
 
-            cudaFree(0);
+//            CUDAcommon::handleerror(cudaDeviceReset(), "cudaDeviceReset", "Controller.cu");
 
-            CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-            fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
-                    free/1e6, total/1e6);
+//            nvtxRangePop();
+//            size_t free, total;
+//            CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+//            fprintf(stdout,"\t### After Reset Available VRAM : %g Mo/ %g Mo(total)\n\n",
+//                    free/1e6, total/1e6);
+//
+//            cudaFree(0);
+//
+//            CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+//            fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
+//                    free/1e6, total/1e6);
+#ifdef CUDAACCL
+                //@{
+    size_t free2;
+    CUDAcommon::handleerror(cudaMemGetInfo(&free2, &total));
+    cudaFree(0);
+    CUDAcommon::handleerror(cudaMemGetInfo(&free2, &total));
+    std::cout<<"Free VRAM after CUDA operations in bytes "<<free2<<". Total VRAM in bytes "
+             <<total<<endl;
+    std::cout<<"Lost VRAM in bytes "<<CUDAcommon::getCUDAvars().memincuda-free2<<endl;
+            std::cout<<endl;
+    //@}
+#endif
 #endif
         }
 #endif
@@ -763,9 +790,9 @@ void Controller::run() {
     }
 
     //print last snapshots
-    nvtxRangePushA("output");
+//    nvtxRangePushA("output");
     for(auto o: _outputs) o->print(i);
-    nvtxRangePop();
+//    nvtxRangePop();
 
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);

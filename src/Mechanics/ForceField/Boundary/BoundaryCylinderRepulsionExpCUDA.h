@@ -27,30 +27,32 @@ __global__ void BoundaryCylinderRepulsionExpenergy(double* coord, double* f, int
         if (thread_idx < nint) {
             U_i[thread_idx] = 0.0;
             for (auto i = 0; i < 3; i++) {
-                U_i[thread_idx] = 0.0;
+//                U_i[thread_idx] = 0.0;
                 c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
             }
 
         }
         __syncthreads();
+        if(thread_idx == 0)
+            printf("nintvec %d %d %d %d %d %d\n", nintvec[0], nintvec[1], nintvec[2], nintvec[3], nintvec[4], nintvec[5]);
         if (thread_idx < nint) {
             //get the plane equation.
             if (thread_idx < nintvec[0]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[i];
-            } else if (thread_idx >= nintvec[0] || thread_idx < nintvec[1]) {
+            } else if (thread_idx >= nintvec[0] && thread_idx < nintvec[1]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[4 + i];
-            } else if (thread_idx >= nintvec[1] || thread_idx < nintvec[2]) {
+            } else if (thread_idx >= nintvec[1] && thread_idx < nintvec[2]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[8 + i];
-            } else if (thread_idx >= nintvec[2] || thread_idx < nintvec[3]) {
+            } else if (thread_idx >= nintvec[2] && thread_idx < nintvec[3]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[12 + i];
-            } else if (thread_idx >= nintvec[3] || thread_idx < nintvec[4]) {
+            } else if (thread_idx >= nintvec[3] && thread_idx < nintvec[4]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[16 + i];
-            } else if (thread_idx >= nintvec[4] || thread_idx < nintvec[5]) {
+            } else if (thread_idx >= nintvec[4] && thread_idx < nintvec[5]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[20 + i];
             }
@@ -58,7 +60,8 @@ __global__ void BoundaryCylinderRepulsionExpenergy(double* coord, double* f, int
             r = getdistancefromplane(c1, plane, 3 * threadIdx.x);
             R = -r / slen[thread_idx];
             U_i[thread_idx] = krep[thread_idx] * exp(R);
-//        printf("%d %f %f\n", thread_idx,krep[thread_idx], R);
+//        printf("CL %d %f %f Coord %f %f %f Plane %f %f %f %f\n", thread_idx,krep[thread_idx], R, c1[3*threadIdx.x],
+//               c1[3*threadIdx.x +1], c1[3*threadIdx.x +2], plane[0], plane[1], plane[2], plane[3]);
             if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 //set culprit and exit
@@ -108,30 +111,32 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
         if (thread_idx < nint) {
             U_i[thread_idx] = 0.0;
             for (auto i = 0; i < 3; i++) {
-                U_i[thread_idx] = 0.0;
+//                U_i[thread_idx] = 0.0;
                 c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
                 f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
             }
         }
         __syncthreads();
+        if(thread_idx == 0)
+            printf("nintvec %d %d %d %d %d %d\n", nintvec[0], nintvec[1], nintvec[2], nintvec[3], nintvec[4], nintvec[5]);
         if (thread_idx < nint) {
             //get the plane equation.
             if (thread_idx < nintvec[0]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[i];
-            } else if (thread_idx >= nintvec[0] || thread_idx < nintvec[1]) {
+            } else if (thread_idx >= nintvec[0] && thread_idx < nintvec[1]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[4 + i];
-            } else if (thread_idx >= nintvec[1] || thread_idx < nintvec[2]) {
+            } else if (thread_idx >= nintvec[1] && thread_idx < nintvec[2]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[8 + i];
-            } else if (thread_idx >= nintvec[2] || thread_idx < nintvec[3]) {
+            } else if (thread_idx >= nintvec[2] && thread_idx < nintvec[3]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[12 + i];
-            } else if (thread_idx >= nintvec[3] || thread_idx < nintvec[4]) {
+            } else if (thread_idx >= nintvec[3] && thread_idx < nintvec[4]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[16 + i];
-            } else if (thread_idx >= nintvec[4] || thread_idx < nintvec[5]) {
+            } else if (thread_idx >= nintvec[4] && thread_idx < nintvec[5]) {
                 for (auto i = 0; i < 4; i++)
                     plane[i] = beListplane[20 + i];
             }
@@ -139,8 +144,9 @@ __global__ void BoundaryCylinderRepulsionExpenergyz(double* coord, double* f, in
             r = getstretcheddistancefromplane(c1, f1, plane, z[0], 3 * threadIdx.x);
             R = -r / slen[thread_idx];
             U_i[thread_idx] = krep[thread_idx] * exp(R);
-//        printf("Z %d %f %f\n", thread_idx,krep[thread_idx], R);
-//        printf("%d %f %f %f\n", thread_idx, r, R, U_i[thread_idx]);
+//            printf("CLZ %d %f %f Coord %f %f %f Plane %f %f %f %f\n", thread_idx,krep[thread_idx], R, c1[3*threadIdx.x],
+//                   c1[3*threadIdx.x +1], c1[3*threadIdx.x +2], plane[0], plane[1], plane[2], plane[3]);
+
             if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 //set culprit and exit
@@ -195,23 +201,23 @@ __global__ void BoundaryCylinderRepulsionExpforces(double* coord, double* f, int
             for (auto i = 0; i<4; i++)
                 plane[i] = beListplane [i];
         }
-        else if(thread_idx >= nintvec[0] || thread_idx < nintvec[1]){
+        else if(thread_idx >= nintvec[0] && thread_idx < nintvec[1]){
             for (auto i = 0; i<4; i++)
                 plane[i] = beListplane [4 + i];
         }
-        else if(thread_idx >= nintvec[1] || thread_idx < nintvec[2]){
+        else if(thread_idx >= nintvec[1] && thread_idx < nintvec[2]){
             for (auto i = 0; i<4; i++)
                 plane[i] = beListplane [8 + i];
         }
-        else if(thread_idx >= nintvec[2] || thread_idx < nintvec[3]){
+        else if(thread_idx >= nintvec[2] && thread_idx < nintvec[3]){
             for (auto i = 0; i<4; i++)
                 plane[i] = beListplane [12 + i];
         }
-        else if(thread_idx >= nintvec[3] || thread_idx < nintvec[4]){
+        else if(thread_idx >= nintvec[3] && thread_idx < nintvec[4]){
             for (auto i = 0; i<4; i++)
                 plane[i] = beListplane [16 + i];
         }
-        else if(thread_idx >= nintvec[4] || thread_idx < nintvec[5]){
+        else if(thread_idx >= nintvec[4] && thread_idx < nintvec[5]){
             for (auto i = 0; i<4; i++)
                 plane[i] = beListplane [20 + i];
         }

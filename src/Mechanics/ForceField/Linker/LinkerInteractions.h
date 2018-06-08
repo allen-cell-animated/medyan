@@ -40,6 +40,8 @@ public:
     
     /// Get the name of this interaction
     virtual const string getName() = 0;
+
+    virtual void assignforcemags(){};
     
 };
 

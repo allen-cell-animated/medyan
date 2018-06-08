@@ -43,6 +43,7 @@ struct CUDAvars {
     char* culpritFF = NULL;
     char* culpritinteraction = NULL;
     size_t memincuda = 0;
+    bool conservestreams = true;
 //    cudaEvent_t *event;
 
 //    float Ccforce = 0.0;

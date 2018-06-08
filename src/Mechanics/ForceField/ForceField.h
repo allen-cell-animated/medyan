@@ -57,7 +57,8 @@ public:
     /// Get all neighbor lists associated with a ForceField
     virtual vector<NeighborList*> getNeighborLists() = 0;
     
-    
+    // assign stretchforces for Linker and Motor. Can be extended to other FFs as well.
+    virtual void assignforcemags(){};
 };
 
 #endif

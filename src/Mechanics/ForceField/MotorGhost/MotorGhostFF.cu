@@ -18,6 +18,10 @@
 
 #include "MotorGhost.h"
 
+void MotorGhostFF::assignforcemags(){
+    for (auto &interaction : _motorGhostInteractionVector)
+        interaction->assignforcemags();
+}
 MotorGhostFF::MotorGhostFF (string& stretching, string& bending, string& twisting)
 {
     if (stretching == "HARMONIC")
@@ -43,6 +47,12 @@ void MotorGhostFF::whoIsCulprit() {
 }
 
 void MotorGhostFF::vectorize() {
+    //Reset stretching forces to 0.
+    for(auto m:MotorGhost::getMotorGhosts()){
+        //Using += to ensure that the stretching forces are additive.
+        m->getMMotorGhost()->stretchForce = 0.0;
+    }
+
 
     for (auto &interaction : _motorGhostInteractionVector)
         interaction->vectorize();

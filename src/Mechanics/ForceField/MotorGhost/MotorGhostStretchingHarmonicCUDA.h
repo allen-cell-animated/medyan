@@ -194,7 +194,9 @@ __global__ void MotorGhostStretchingHarmonicenergyz(double *coord, double *f, in
 
 
 __global__ void MotorGhostStretchingHarmonicforces(double *coord, double *f, int *beadSet,
-                                          double *kstr, double *eql, double *pos1, double *pos2, int *params
+                                          double *kstr, double *eql, double *pos1, double
+                                                   *pos2, int *params, double
+                                                   *MStretchingforce
                                                   ){
 
     extern __shared__ double s[];
@@ -242,6 +244,7 @@ __global__ void MotorGhostStretchingHarmonicforces(double *coord, double *f, int
 //        printf("%f \n", dist);
         invL = 1 / dist;
         f0 = kstr[thread_idx] * (dist - eql[thread_idx]) * invL;
+        MStretchingforce[thread_idx] = f0;
         //printf(" %d %f \n", thread_idx, f0);
 
         //force on i

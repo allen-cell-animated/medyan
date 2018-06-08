@@ -49,7 +49,7 @@ public:
     vector<int> blocksnthreadsez;
     vector<int> blocksnthreadsf;
     vector<int> bntaddvec2;
-    cudaStream_t stream;
+    cudaStream_t stream = NULL;
 
 #endif
 #ifdef CROSSCHECK

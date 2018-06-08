@@ -70,7 +70,7 @@ protected:
     vector<int> bntaddvector;
     vector<int> bnt;
     int *gpu_nint;
-    double *gpu_g;
+    double *gpu_g, *gpu_maxF;
     double *gSum;
     double *gSum2;
     double *gpu_fmax;
@@ -114,8 +114,9 @@ protected:
 //    };
     bool *g_stop1, *g_stop2, *g_s1, *g_s2, *g_ss;
 //    backtrackingvars *bvar, *gpu_bvar1, *gpu_bvar2, *g_b1, *g_b2, *g_bs;
-    cudaStream_t s1, s2, s3, *sp1, *sp2, *sps;
-    cudaEvent_t e1, e2, *ep1, *ep2, *eps;
+    cudaStream_t s1 = NULL, s2 = NULL, s3 = NULL, *sp1, *sp2, *sps, stream_bt = NULL;
+    cudaEvent_t e1 = NULL, e2 = NULL, *ep1, *ep2, *eps;
+    cudaEvent_t  e = NULL;
     int *gpu_state;
     // @PING PONG ENDS
 
@@ -147,7 +148,12 @@ protected:
     /// shift the gradient by d
     void shiftGradient(double d);
     //@}
-    
+
+    //@{
+    double backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDIST,
+                                  double LAMBDAMAX, bool *gpu_safestate);
+    //@}
+
     //@{
     /// Linear search methods
     /// A simple backtracking search method that computes an optimal

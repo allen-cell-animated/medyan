@@ -26,7 +26,8 @@
 #include "BindingManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
-
+//#include "BinGrid.h"
+//#include "Bin.h"
 //FORWARD DECLARATIONS
 class BoundaryElement;
 class Bead;

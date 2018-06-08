@@ -39,13 +39,12 @@ void BranchingBending<BBendingInteractionType>::vectorize() {
 
         kbend[i] = b->getMBranchingPoint()->getStretchingConstant();
         eqt[i] = b->getMBranchingPoint()->getEqTheta();
-
         i++;
     }
     //CUDA
 #ifdef CUDAACCL
 //    F_i = new double [3 * Bead::getBeads().size()];
-    nvtxRangePushA("CVFF");
+//    nvtxRangePushA("CVFF");
     int numInteractions = BranchingPoint::getBranchingPoints().size();
     _FFType.optimalblocksnthreads(numInteractions);
 
@@ -64,13 +63,12 @@ void BranchingBending<BBendingInteractionType>::vectorize() {
     params.push_back(numInteractions);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice));
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 }
 
 template<class BBendingInteractionType>
 void BranchingBending<BBendingInteractionType>::deallocate() {
-
     delete beadSet;
     delete kbend;
     delete eqt;
@@ -96,7 +94,7 @@ double BranchingBending<BBendingInteractionType>::computeEnergy(double *coord, d
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-    nvtxRangePushA("CCEBB");
+//    nvtxRangePushA("CCEBB");
 
 //    if(d == 0.0){
 //        nvtxRangePushA("CCEBB1");
@@ -109,15 +107,27 @@ double BranchingBending<BBendingInteractionType>::computeEnergy(double *coord, d
                             gpu_params);
 //        nvtxRangePop();
 //    }
-    nvtxRangePop();
-#else
-    nvtxRangePushA("SCEBB");
+//    nvtxRangePop();
+#endif
+#ifdef SERIAL
+//    nvtxRangePushA("SCEBB");
 
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kbend, eqt);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kbend, eqt, d);
-    nvtxRangePop();
+//    nvtxRangePop();
+#endif
+#ifdef SERIAL_CUDACROSSCHECK
+    CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
+    double cuda_energy[1];
+    if(gU_i == NULL)
+        cuda_energy[0] = 0.0;
+    else {
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
+                                           cudaMemcpyDeviceToHost));
+    }
+//    std::cout<<"Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
 #endif
     return U_ii;
 }
@@ -131,24 +141,25 @@ void BranchingBending<BBendingInteractionType>::computeForces(double *coord, dou
     double * gpu_force;
 
     if(cross_checkclass::Aux){
-        nvtxRangePushA("CCFBB");
+//        nvtxRangePushA("CCFBB");
 
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kbend, gpu_eqt, gpu_params);
-        nvtxRangePop();
+//        nvtxRangePop();
     }
     else {
-        nvtxRangePushA("CCFBB");
+//        nvtxRangePushA("CCFBB");
 
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kbend, gpu_eqt, gpu_params);
-        nvtxRangePop();
+//        nvtxRangePop();
     }
-#else
-    nvtxRangePushA("SCFBB");
+#endif
+#ifdef SERIAL
+//    nvtxRangePushA("SCFBB");
 
     _FFType.forces(coord, f, beadSet, kbend, eqt);
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 }
 

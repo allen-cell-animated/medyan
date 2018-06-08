@@ -22,6 +22,19 @@
 #include "nvToolsExt.h"
 
 template <class MStretchingInteractionType>
+void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
+#ifdef CUDAACCL
+    double stretchforce[MotorGhost::getMotorGhosts().size()];
+    CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Mstretchforce,
+                                       MotorGhost::getMotorGhosts().size() * sizeof(double),
+                                       cudaMemcpyDeviceToHost));
+    int id = 0;
+    for(auto m:MotorGhost::getMotorGhosts())
+    {m->getMMotorGhost()->stretchForce = stretchforce[id];id++;}
+#endif
+}
+
+template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
     beadSet = new int[n * MotorGhost::getMotorGhosts().size()];
@@ -43,6 +56,7 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
         eql[i] = m->getMMotorGhost()->getEqLength();
         pos1[i] = m->getFirstPosition();
         pos2[i] = m->getSecondPosition();
+        stretchforce[i] = 0.0;
 
         i++;
     }
@@ -55,7 +69,7 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 //    CUDAcommon::handleerror(cudaEventCreate( &start));
 //    CUDAcommon::handleerror(cudaEventCreate( &stop));
 //    CUDAcommon::handleerror(cudaEventRecord( start, 0));
-    nvtxRangePushA("CVFF");
+//    nvtxRangePushA("CVFF");
 
     int numInteractions = MotorGhost::getMotorGhosts().size();
     _FFType.optimalblocksnthreads(numInteractions);
@@ -84,6 +98,9 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos2, numInteractions * sizeof(double)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_pos2, pos2, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_Mstretchforce, numInteractions *
+                                                                     sizeof(double)),"cuda data transfer",
+                            "MotorGhostStretching.cu");
 
     vector<int> params;
     params.push_back(int(n));
@@ -94,7 +111,7 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice));
 //    CUDAcommon::cudavars.motorparams = gpu_params;
 
-    nvtxRangePop();
+//    nvtxRangePop();
 
 #endif
 
@@ -103,7 +120,13 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
 template<class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
-
+    int i = 0;
+    for(auto m: MotorGhost::getMotorGhosts()){
+        //Using += to ensure that the stretching forces are additive.
+        m->getMMotorGhost()->stretchForce += stretchforce[i];
+        i++;
+    }
+    delete stretchforce;
     delete beadSet;
     delete kstr;
     delete eql;
@@ -117,6 +140,7 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
     CUDAcommon::handleerror(cudaFree(gpu_pos2));
     CUDAcommon::handleerror(cudaFree(gpu_eql));
     CUDAcommon::handleerror(cudaFree(gpu_params));
+    CUDAcommon::handleerror(cudaFree(gpu_Mstretchforce));
 #endif
 }
 
@@ -131,7 +155,7 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-    nvtxRangePushA("CCEM");
+//    nvtxRangePushA("CCEM");
 
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params);
@@ -141,16 +165,17 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_d,
                             gpu_params);
 //    }
-    nvtxRangePop();
-#else
-    nvtxRangePushA("SCEM");
+//    nvtxRangePop();
+#endif
+#ifdef SERIAL
+//    nvtxRangePushA("SCEM");
 
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
 
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 
     return U_ii;
@@ -166,26 +191,29 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
     double * gpu_force;
 //    std::cout<<"motor stretcing CUDA compute"<<endl;
     if(cross_checkclass::Aux){
-        nvtxRangePushA("CCFM");
+//        nvtxRangePushA("CCFM");
 
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
-        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params);
-        nvtxRangePop();
+        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1,
+                       gpu_pos2, gpu_params, gpu_Mstretchforce);
+//        nvtxRangePop();
     }
     else {
-        nvtxRangePushA("CCFM");
+//        nvtxRangePushA("CCFM");
 
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
-        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1, gpu_pos2, gpu_params);
-        nvtxRangePop();
+        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_pos1,
+                       gpu_pos2, gpu_params, gpu_Mstretchforce);
+//        nvtxRangePop();
     }
 
 //    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
 //                                       cudaMemcpyDeviceToHost));
-#else
-    nvtxRangePushA("SCFM");
-    _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2);
-    nvtxRangePop();
+#endif
+#ifdef SERIAL
+//    nvtxRangePushA("SCFM");
+    _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2, stretchforce);
+//    nvtxRangePop();
 #endif
 }
 
@@ -195,5 +223,6 @@ template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnerg
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(double *coord, double *f);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize();
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::deallocate();
+template void MotorGhostStretching<MotorGhostStretchingHarmonic>::assignforcemags();
 
 

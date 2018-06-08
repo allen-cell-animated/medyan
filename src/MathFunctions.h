@@ -155,9 +155,9 @@ namespace mathfunc {
 
     __host__ __device__
     inline double getstretcheddistancefromplane(double *coord, double *force, double * plane, double z, int id){
-        double movedPoint[3] = {coord[0] + z*force[0],
-                                     coord[1] + z*force[1],
-                                     coord[2] + z*force[2]};
+        double movedPoint[3] = {coord[id] + z*force[id],
+                                     coord[id + 1] + z*force[id + 1],
+                                     coord[id + 2] + z*force[id + 2]};
         return (plane[0] * movedPoint[0] + plane[1] * movedPoint[1] + plane[2] * movedPoint[2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
     }

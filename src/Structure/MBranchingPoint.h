@@ -30,6 +30,7 @@ class BranchingPoint;
 class MBranchingPoint {
     
 public:
+    double stretchForce = 0.0; ///< Stretching force of brancher at current state
     /// Main constructor, sets constants
     MBranchingPoint(int branchType);
     

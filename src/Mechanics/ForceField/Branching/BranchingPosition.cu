@@ -72,7 +72,6 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
 template<class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::deallocate() {
-
     delete beadSet;
     delete kpos;
     delete pos;
@@ -106,13 +105,25 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord,
                             gpu_params);
 //    }
     nvtxRangePop();
-#else
+#endif
+#ifdef SERIAL
     nvtxRangePushA("SCEBP");
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kpos, pos);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kpos, pos, d);
     nvtxRangePop();
+#endif
+#ifdef SERIAL_CUDACROSSCHECK
+    CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
+    double cuda_energy[1];
+    if(gU_i == NULL)
+        cuda_energy[0] = 0.0;
+    else {
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
+                                           cudaMemcpyDeviceToHost));
+    }
+//    std::cout<<"Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
 #endif
     return U_ii;
 }
@@ -140,7 +151,8 @@ void BranchingPosition<BPositionInteractionType>::computeForces(double *coord, d
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kpos, gpu_pos, gpu_params);
         nvtxRangePop();
     }
-#else
+#endif
+#ifdef SERIAL
     nvtxRangePushA("SCFBP");
 
     _FFType.forces(coord, f, beadSet, kpos, pos);

@@ -48,12 +48,12 @@ void CGMethod::CUDAresetlambda(cudaStream_t stream) {
 }
 void CGMethod::CUDAinitializeLambda(cudaStream_t stream, bool *check_in, bool *check_out, bool *Polaksafestate, int
                                     *gpu_state){
-    nvtxRangePushA("CMAXFevstrm");
+//    nvtxRangePushA("CMAXFevstrm");
 //    cudaStream_t  s;
 //    CUDAcommon::handleerror(cudaStreamCreate(&s));
 //    cudaEvent_t  e;
 //    CUDAcommon::handleerror(cudaEventCreate(&e));
-    nvtxRangePop();
+//    nvtxRangePop();
 //    nvtxRangePushA("cMAXFv1");
 //    maxFCUDA<<<1,1, 0, s>>>(CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint, gpu_fmax);
 //    cudaStreamSynchronize(s);
@@ -78,12 +78,12 @@ void CGMethod::CUDAinitializeLambda(cudaStream_t stream, bool *check_in, bool *c
 //    CUDAcommon::handleerror(cudaStreamDestroy(s));
 //    nvtxRangePop();
 
-    nvtxRangePushA("initialize_lambda");
+//    nvtxRangePushA("initialize_lambda");
 //    auto gpu_lambda = CUDAcommon::getCUDAvars().gpu_lambda;
     auto gpu_energy = CUDAcommon::getCUDAvars().gpu_energy;
     initializeLambdaCUDA<<<1,1,0, stream>>>(check_in, check_out, g_currentenergy, gpu_energy, gpu_initlambdalocal, gpu_fmax,
             gpu_params, Polaksafestate, gpu_state);
-    nvtxRangePop();
+//    nvtxRangePop();
 //    nvtxRangePushA("init_lambda_sync");
 //    CUDAcommon::handleerror(cudaStreamSynchronize (stream));
 //    nvtxRangePop();
@@ -148,7 +148,7 @@ void CGMethod::CUDAfindLambda(cudaStream_t  stream1, cudaStream_t stream2, cudaE
 //}
 
 void CGMethod::CUDAallFDotF(cudaStream_t stream){
-    nvtxRangePushA("COTHR");
+//    nvtxRangePushA("COTHR");
     allFADotFCUDA<<<blocksnthreads[0], blocksnthreads[1],0,stream>>>(CUDAcommon::getCUDAvars().gpu_force,
             CUDAcommon::getCUDAvars().gpu_force ,gpu_g, gpu_nint);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
@@ -165,10 +165,10 @@ void CGMethod::CUDAallFDotF(cudaStream_t stream){
 //    std::cout<<Sum[0]<<" "<<Sum2[0]<<endl;
 //    cudaStreamSynchronize(stream);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
-    nvtxRangePop();
+//    nvtxRangePop();
 }
 void CGMethod::CUDAallFADotFA(cudaStream_t stream){
-    nvtxRangePushA("COTHR");
+//    nvtxRangePushA("COTHR");
     allFADotFCUDA<<<blocksnthreads[0], blocksnthreads[1],0,stream>>>(CUDAcommon::getCUDAvars().gpu_forceAux,
             CUDAcommon::getCUDAvars().gpu_forceAux ,gpu_g, gpu_nint);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
@@ -180,10 +180,10 @@ void CGMethod::CUDAallFADotFA(cudaStream_t stream){
     addvectorred2<<<bntaddvector.at(2),bntaddvector.at(3), bntaddvector.at(3) * sizeof(double),stream>>>(gpu_g,
             gpu_nint, gpu_FADotFA);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
-    nvtxRangePop();
+//    nvtxRangePop();
 }
 void CGMethod::CUDAallFADotFAP(cudaStream_t stream){
-    nvtxRangePushA("COTHR");
+//    nvtxRangePushA("COTHR");
     allFADotFCUDA<<<blocksnthreads[0], blocksnthreads[1],0,stream>>>(CUDAcommon::getCUDAvars().gpu_forceAux,
             CUDAcommon::getCUDAvars().gpu_forceAuxP ,gpu_g, gpu_nint);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
@@ -195,10 +195,10 @@ void CGMethod::CUDAallFADotFAP(cudaStream_t stream){
             gpu_nint, gpu_FADotFAP);
 //    cudaStreamSynchronize(stream);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
-    nvtxRangePop();
+//    nvtxRangePop();
 }
 void CGMethod::CUDAallFDotFA(cudaStream_t stream){
-    nvtxRangePushA("COTHR");
+//    nvtxRangePushA("COTHR");
     allFADotFCUDA<<<blocksnthreads[0], blocksnthreads[1],0,stream>>>(CUDAcommon::getCUDAvars().gpu_force,
             CUDAcommon::getCUDAvars().gpu_forceAux ,gpu_g, gpu_nint);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
@@ -210,7 +210,7 @@ void CGMethod::CUDAallFDotFA(cudaStream_t stream){
     addvectorred2<<<bntaddvector.at(2),bntaddvector.at(3), bntaddvector.at(3) * sizeof(double),stream>>>(gpu_g,
             gpu_nint, gpu_FDotFA);
     CUDAcommon::handleerror(cudaGetLastError(), "allFADotFCUDA", "CGMethod.cu");
-    nvtxRangePop();
+//    nvtxRangePop();
 }
 
 void CGMethod::CUDAshiftGradient(cudaStream_t stream, bool *Mcheckin) {
@@ -221,6 +221,7 @@ void CGMethod::CUDAshiftGradient(cudaStream_t stream, bool *Mcheckin) {
 void CGMethod::CUDAshiftGradientifSafe(cudaStream_t stream, bool *Mcheckin, bool *Scheckin){
     shiftGradientCUDAifsafe<<<blocksnthreads[0], blocksnthreads[1],0, stream>>>(CUDAcommon::getCUDAvars().gpu_force, CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint,
                             Mcheckin, Scheckin);
+    CUDAcommon::handleerror(cudaGetLastError(),"CUDAshiftGradientifSafe", "CGMethod.cu");
 }
 
 //void CGMethod::CUDAgetPolakvars(bool calc_safestate,cudaStream_t streamcalc, double* gpu_GRADTOL, bool *gminstatein,
@@ -251,17 +252,22 @@ void CGMethod::CUDAgetPolakvars(cudaStream_t streamcalc, double* gpu_GRADTOL, bo
 //    state[0] = false;
 //    state[1] = false;
     if(cminstate[0] == true) {
-        nvtxRangePushA("cMAXF");
+//        nvtxRangePushA("cMAXF");
 //        maxFCUDA << < 1, 1, 0, streamcalc >> > (CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint, gpu_fmax);
 //        maxFCUDAred<<<1,3, 3*sizeof(double), streamcalc>>>(CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint, gpu_fmax);
 //        cudaStreamSynchronize(streamcalc);
-        maxFCUDAredv2<<<1,512,512*sizeof(double), streamcalc>>>(CUDAcommon::getCUDAvars().gpu_forceAux, gpu_nint,
+        allFADotFCUDA<<<blocksnthreads[0], blocksnthreads[1],0,streamcalc>>>(CUDAcommon::getCUDAvars().gpu_forceAux,
+                CUDAcommon::getCUDAvars().gpu_forceAux ,gpu_maxF, gpu_nint);
+        CUDAcommon::handleerror(cudaGetLastError(), "allFADotFACUDA", "CGMethod.cu");
+        maxFCUDAredv2<<<1,512,512*sizeof(double), streamcalc>>>(gpu_maxF, gpu_nint,
                 gpu_fmax);
+                cout<<"MaxF algorithm is not accurate. Redo algorithm. Exiting"<<endl;
+                exit(EXIT_FAILURE);
 //        cudaStreamSynchronize(streamcalc);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 //        std::cout<<"======"<<endl;
         CUDAcommon::handleerror(cudaGetLastError(), "maxFCUDA", "CGMethod.cu");
-        nvtxRangePop();
+//        nvtxRangePop();
         getminimizestateCUDA << < 1, 1, 0, streamcalc >> > (gpu_fmax, gpu_GRADTOL, gminstatein, gminstateout);
         CUDAcommon::handleerror(cudaGetLastError(), "getminimizestateCUDA", "CGMethod.cu");
 //        CUDAcommon::handleerror(cudaStreamSynchronize(streamcalc));
@@ -271,6 +277,7 @@ void CGMethod::CUDAgetPolakvars(cudaStream_t streamcalc, double* gpu_GRADTOL, bo
 //        getsafestateCUDA<<<1,1,0,streamcalc>>>(gpu_FDotFA, gpu_FDotF, gpu_FADotFA, gsafestateout);
 //        CUDAcommon::handleerror(cudaGetLastError(), "getsafestateCUDA", "CGMethod.cu");
 //    }
+    CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGMethod.cu");
 }
 
 void CGMethod::CUDAgetPolakvars2(cudaStream_t streamcalc, bool *gsafestateout){
@@ -285,17 +292,19 @@ void CGMethod::CUDAmoveBeads(cudaStream_t stream, bool *gpu_checkin){
     double *gpu_coord = CUDAcommon::getCUDAvars().gpu_coord;
     double *gpu_force = CUDAcommon::getCUDAvars().gpu_force;
 
-    nvtxRangePushA("CMVB");
+//    nvtxRangePushA("CMVB");
 
     moveBeadsCUDA<<<blocksnthreads[0], blocksnthreads[1],0, stream>>>(gpu_coord, gpu_force, gpu_lambda, gpu_nint,
             gpu_checkin);
-    nvtxRangePop();
+//    nvtxRangePop();
     CUDAcommon::handleerror(cudaGetLastError(),"moveBeadsCUDA", "CGMethod.cu");
 }
 
 void CGMethod::CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *minstateout, bool *safestatein, bool
         *safestateout){
+    CUDAallFDotFA(stream);
     initializePolak<<<1,1,0,stream>>>(minstatein, minstateout, safestatein, safestateout);
+    CUDAcommon::handleerror(cudaGetLastError(),"CUDAinitializePolak", "CGPolakRibiereMethod.cu");
 }
 
 //double CGMethod::gpuFDotF(double *f1,double *f2){
@@ -326,21 +335,21 @@ void CGMethod::CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *
 #endif
 double CGMethod::allFDotF()
 {
-    nvtxRangePushA("SOTHR");
+//    nvtxRangePushA("SOTHR");
     double g = 0;
     for(int i = 0; i < N; i++)
         g += force[i] * force[i];
-    nvtxRangePop();
+//    nvtxRangePop();
     return g;
 }
 
 double CGMethod::allFADotFA()
 {
-    nvtxRangePushA("SOTHR");
+//    nvtxRangePushA("SOTHR");
     double g = 0;
     for(int i = 0; i < N; i++)
         g += forceAux[i] * forceAux[i];
-    nvtxRangePop();
+//    nvtxRangePop();
 //#ifdef CUDAACCL
 //    nvtxRangePushA("COTHR");
 //    auto g_cuda = gpuFDotF(CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_forceAux);
@@ -362,21 +371,21 @@ double CGMethod::allFADotFA()
 
 double CGMethod::allFADotFAP()
 {
-    nvtxRangePushA("SOTHR");
+//    nvtxRangePushA("SOTHR");
     double g = 0;
     for(int i = 0; i < N; i++)
         g += forceAux[i] * forceAuxPrev[i];
-    nvtxRangePop();
+//    nvtxRangePop();
     return g;
 }
 
 double CGMethod::allFDotFA()
 {
-    nvtxRangePushA("SOTHR");
+//    nvtxRangePushA("SOTHR");
     double g = 0;
     for(int i = 0; i < N; i++)
         g += force[i] * forceAux[i];
-    nvtxRangePop();
+//    nvtxRangePop();
 //#ifdef CUDAACCL
 //    nvtxRangePushA("COTHR");
 //    auto g_cuda = gpuFDotF(CUDAcommon::getCUDAvars().gpu_force,CUDAcommon::getCUDAvars().gpu_forceAux);
@@ -398,15 +407,24 @@ double CGMethod::allFDotFA()
 }
 
 double CGMethod::maxF() {
-    nvtxRangePushA("SMAXF");
-    double maxF = 0;
-    double mag;
-
-    for(int i = 0; i < N; i++) {
-        mag = sqrt(forceAux[i]*forceAux[i]);
+//    nvtxRangePushA("SMAXF");
+    double maxF = 0.0;
+    double mag = 0.0;
+    for(int i = 0; i < N/3; i++) {
+        mag = 0.0;
+        for(int j = 0; j < 3; j++)
+            mag += forceAux[3 * i + j]*forceAux[3 * i + j];
+        mag = sqrt(mag);
+//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
+//                2]<<endl;
         if(mag > maxF) maxF = mag;
     }
-    nvtxRangePop();
+
+//    for(int i = 0; i < N; i++) {
+//        mag = sqrt(forceAux[i]*forceAux[i]);
+//        if(mag > maxF) maxF = mag;
+//    }
+//    nvtxRangePop();
     return maxF;
 }
 
@@ -415,7 +433,7 @@ Bead* CGMethod::maxBead() {
     double maxF = 0.0;
     double currentF;
     long index = 0;
-#ifndef CUDAACCL
+#ifdef SERIAL
     for (int i = 0; i < N; i++) {
 
         currentF = forceAux[i] * forceAux[i];
@@ -438,7 +456,7 @@ Bead* CGMethod::maxBead() {
 
         gcurrentF = F_i[i] * F_i[i];
         if(gcurrentF > gmaxF) {
-            index = i;
+            index = (i - i%3)/3;
             gmaxF = gcurrentF;
 //            std::cout<<gcurrentF<<" "<<forceAux[i] * forceAux[i]<<endl;
         }
@@ -454,10 +472,10 @@ void CGMethod::moveBeads(double d)
 {
     ///<NOTE: Ignores static beads for now.
     //if(!b->getstaticstate())
-    nvtxRangePushA("SMVB");
+//    nvtxRangePushA("SMVB");
     for (int i = 0; i < N; i++)
         coord[i] = coord[i] + d * force[i];
-    nvtxRangePop();
+//    nvtxRangePop();
 }
 
 void CGMethod::shiftGradient(double d)
@@ -479,19 +497,6 @@ void CGMethod::printForces()
 }
 
 void CGMethod::startMinimization() {
-#ifdef CUDAACCL
-    size_t free, total;
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    fprintf(stdout,"\t### Before Min Available VRAM : %g Mo/ %g Mo(total)\n\n",
-            free/1e6, total/1e6);
-
-    cudaFree(0);
-
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
-            free/1e6, total/1e6);
-
-#endif
     //COPY BEAD DATA
     N = 3 * Bead::getBeads().size();
 //    std::cout<<3 * Bead::getBeads().size()<<endl;
@@ -524,23 +529,8 @@ void CGMethod::startMinimization() {
         cout<<"Code not configured for multiple devices. Exiting..."<<endl;
         exit(EXIT_FAILURE);
     }
-//    for (int i = 0; i < nDevices;  i++) {
-//        cudaGetDeviceProperties(&prop, i);
-//        printf("Device Number: %d\n", i);
-//        printf("  Device name: %s\n", prop.name);
-//        printf("  Memory Clock Rate (KHz): %d\n",
-//               prop.memoryClockRate);
-//        printf("  Memory Bus Width (bits): %d\n",
-//               prop.memoryBusWidth);
-//        printf("  Peak Memory Bandwidth (GB/s): %f\n\n",
-//               2.0*prop.memoryClockRate*(prop.memoryBusWidth/8)/1.0e6);
-//        printf("  Total amount of shared memory per block:       %u bytes\n", prop.sharedMemPerBlock);
-//            printf("  Total amount of global memory:                 %llu bytes\n", (unsigned long long) prop
-//                    .totalGlobalMem);
-//    }
 
-    nvtxRangePushA("CSM");
-
+//    nvtxRangePushA("CSM");
     double f[N];
     for(auto iter=0;i<N;i++)
         f[iter]=0.0;
@@ -631,6 +621,9 @@ void CGMethod::startMinimization() {
     int M = bntaddvector.at(0);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_g, M * sizeof(double)));
     CUDAcommon::handleerror(cudaMemset(gpu_g, 0, M * sizeof(double)));
+    //MaxF
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_maxF, M * sizeof(double)));
+    CUDAcommon::handleerror(cudaMemset(gpu_maxF, 0, M * sizeof(double)));
     int THREADSPERBLOCK = bntaddvector.at(1);
 
     int nint[1]; nint[0]=CGMethod::N/3;
@@ -676,7 +669,7 @@ void CGMethod::startMinimization() {
 //    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
     //@}
 
-    nvtxRangePop();
+//    nvtxRangePop();
 
 //    cvars.gpu_globalMem = prop.totalGlobalMem;
 //    cvars.gpu_sharedMem = prop.sharedMemPerBlock;
@@ -705,10 +698,10 @@ void CGMethod::startMinimization() {
 
 void CGMethod::endMinimization() {
 #ifdef CUDAACCL
-    nvtxRangePushA("CEM");
+//    nvtxRangePushA("CEM");
     CUDAcommon::handleerror(cudaMemcpy(coord, CUDAcommon::getCUDAvars().gpu_coord, N *
                             sizeof(double), cudaMemcpyDeviceToHost));
-    nvtxRangePop();
+//    nvtxRangePop();
     #endif
     ///RECOPY BEAD DATA
     //coord management
@@ -726,7 +719,7 @@ void CGMethod::endMinimization() {
 
     deallocate();
 #ifdef CUDAACCL
-    nvtxRangePushA("CEM");
+//    nvtxRangePushA("CEM");
     CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_coord));
     CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_force));
     CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_forceAux));
@@ -762,7 +755,7 @@ void CGMethod::endMinimization() {
     CUDAcommon::handleerror(cudaFree(gpu_nint));
     CUDAcommon::handleerror(cudaFree(gpu_state));
     blocksnthreads.clear();
-    nvtxRangePop();
+//    nvtxRangePop();
     //TODO cross check later
 //    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().motorparams));
 
@@ -782,36 +775,36 @@ void CGMethod::endMinimization() {
 //    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
     //@}
 
-    size_t free, total;
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    fprintf(stdout,"\t### After Min Available VRAM : %g Mo/ %g Mo(total)\n\n",
-            free/1e6, total/1e6);
-
-    cudaFree(0);
-
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
-            free/1e6, total/1e6);
+//    size_t free, total;
+//    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+//    fprintf(stdout,"\t### After Min Available VRAM : %g Mo/ %g Mo(total)\n\n",
+//            free/1e6, total/1e6);
+//
+//    cudaFree(0);
+//
+//    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+//    fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
+//            free/1e6, total/1e6);
 #endif
 }
 
-double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
+double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDIST,
                                         double LAMBDAMAX, bool *gpu_safestate) {
     double lambda;
-    sconvergencecheck = true;
-#ifndef CUDAACCL //SERIAL
-    sconvergencecheck = false;
-    cconvergencecheck = new bool[1];
-    cconvergencecheck[0] = true;
-#endif
+    h_stop[0] = false;
 #ifdef CUDAACCL
-    nvtxRangePushA("Evcreate");
-    CUDAcommon::handleerror(cudaStreamCreate(&s1));
-    CUDAcommon::handleerror(cudaStreamCreate(&s2));
-    CUDAcommon::handleerror(cudaStreamCreate(&s3));
-    CUDAcommon::handleerror(cudaEventCreate(&e1));
-    CUDAcommon::handleerror(cudaEventCreate(&e2));
-    nvtxRangePop();
+//    nvtxRangePushA("Evcreate");
+    if(s1 == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&s1));
+    if(s2 == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&s2));
+    if(s3 == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&s3));
+    if(e1 == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaEventCreate(&e1));
+    if(e2 == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaEventCreate(&e2));
+//    nvtxRangePop();
     sp1 = &s1;
     sp2 = &s2;
     ep1 = &e1;
@@ -819,7 +812,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
     g_s1 = g_stop1;
     g_s2 = g_stop2;
     //prep for backtracking.
-//    if(gpu_params == NULL){
+    if(gpu_params == NULL){
         double params[5];
         params[0] = BACKTRACKSLOPE;
         params[1] = LAMBDAREDUCE;
@@ -829,94 +822,75 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 5 * sizeof(double)));
         CUDAcommon::handleerror(cudaMemcpy(gpu_params, params, 5 * sizeof(double),
                                            cudaMemcpyHostToDevice));
-//    }
-    //Memory alloted
-    //@{
-//    size_t allocmem = 0;
-//    allocmem += 8 *sizeof(double);
-//    auto c = CUDAcommon::getCUDAvars();
-//    c.memincuda += allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
-    //@}
-
-//    //initialize lambda search
-//    CUDAinitializeLambda(*sp1, g_s1, g_s2, gpu_safestate);
-//    CUDAcommon::handleerror(cudaEventRecord(*ep1, *sp1));
-//    //check if converged.
-//    nvtxRangePushA("backConv");
-//    CUDAcommon::handleerror(cudaStreamWaitEvent(s3, *ep1, 0));
-//    CUDAcommon::handleerror(cudaMemcpyAsync(h_stop, g_s2, sizeof(bool), cudaMemcpyDeviceToHost, s3));
-//    nvtxRangePop();
-
-    nvtxRangePushA("reset_lambda_sync");
+    }
     CUDAresetlambda(*sp1);//set lambda to zero.
-    cudaEvent_t  e;
-    CUDAcommon::handleerror(cudaEventCreate(&e));
+    if(e == NULL || !(CUDAcommon::getCUDAvars().conservestreams))  {
+//    cudaEvent_t  e;
+        CUDAcommon::handleerror(cudaEventCreate(&e));
+    }
     CUDAcommon::handleerror(cudaEventRecord(e, *sp1));
 //    cudaEventSynchronize(e);
 //    cudaStreamSynchronize(*sp1);
 //    cudaEventDestroy(e);
-    nvtxRangePop();
+//    nvtxRangePop();
     auto cvars = CUDAcommon::getCUDAvars();
     cvars.streamvec.clear();
 //    cvars.event = &e;
     CUDAcommon::cudavars = cvars;
     //initialize lambda search
-    nvtxRangePushA("cuda_init_lambda");
+//    nvtxRangePushA("cuda_init_lambda");
     CUDAinitializeLambda(*sp1, g_s1, g_s2, gpu_safestate, gpu_state);
 //    CUDAcommon::handleerror(cudaEventRecord(*ep1, *sp1));
 //    cudaStreamSynchronize(*sp1);
-    nvtxRangePop();
-#else
-    double f = maxF();
-    //return zero if no forces
-    if(f == 0.0){lambda = 0.0; sconvergencecheck = true;}
-    //calculate first lambda
-    lambda = min(LAMBDAMAX, MAXDIST / f);
+//    nvtxRangePop();
 #endif
-//    std::cout<<"back 0"<<endl;
-    nvtxRangePushA("Energy 0");
+//    nvtxRangePushA("Energy 0");
     double currentEnergy = FFM.computeEnergy(coord, force, 0.0);
-    nvtxRangePop();
-
+//    nvtxRangePop();
+#ifdef SERIAL_CUDACROSSCHECK
+    std::cout<<"-------"<<endl;
+    CUDAcommon::handleerror(cudaDeviceSynchronize());
+    double cuda_energy[1];
+    CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(double),
+                                       cudaMemcpyDeviceToHost));
+    std::cout<<"Total Energy "<<cuda_energy[0]<<" "<<currentEnergy<<endl;
+#endif
 #ifdef CUDAACCL
     //wait for energies to be calculated
-    cudaStream_t stream_bt;
-    CUDAcommon::handleerror(cudaStreamCreate(&stream_bt),"find lambda", "CGMethod.cu");
-    nvtxRangePushA("backConvsync");
+    if(stream_bt == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream_bt),"find lambda", "CGMethod.cu");
+
+//    nvtxRangePushA("backConvsync");
     for(auto strm:CUDAcommon::getCUDAvars().streamvec)
         CUDAcommon::handleerror(cudaStreamSynchronize(*strm),"backConvSync","CGMethod.cu");
-    nvtxRangePop();
-    nvtxRangePushA("set_cur_E");
+//    nvtxRangePop();
+//    nvtxRangePushA("set_cur_E");
     cudaStreamSynchronize(*sp1);
     setcurrentenergy<<<1,1,0,*sp1>>>(CUDAcommon::getCUDAvars().gpu_energy, g_currentenergy, CUDAcommon::getCUDAvars()
             .gpu_lambda, gpu_initlambdalocal);
     CUDAcommon::handleerror(cudaGetLastError(),"setcurrentenergy", "CGMethod.cu");
     cudaStreamSynchronize(*sp1);
-    nvtxRangePop();
+//    nvtxRangePop();
 
     //check if converged.
-    nvtxRangePushA("backConv");
-    CUDAcommon::handleerror(cudaStreamWaitEvent(s3, *ep1, 0));
+//    nvtxRangePushA("backConv");
+    //TODO commented coz this line is not needed
+//    CUDAcommon::handleerror(cudaStreamWaitEvent(s3, *ep1, 0));
 //    CUDAcommon::handleerror(cudaEventRecord(*CUDAcommon::getCUDAvars().event, *sp1));
     CUDAcommon::handleerror(cudaMemcpyAsync(h_stop, g_s2, sizeof(bool), cudaMemcpyDeviceToHost, s3));
-    nvtxRangePop();
+//    nvtxRangePop();
 //    CUDAcommon::handleerror(cudaStreamSynchronize (*sp1)); CHECK IF NEEDED
-    h_stop[0] = false;
     cconvergencecheck = h_stop;
 #endif
-int iter = 0;
-    while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
-
+    int iter = 0;
+    while(!(cconvergencecheck[0])) {
         iter++;
 
 #ifdef CUDAACCL
-        nvtxRangePushA("While wait");
+//        nvtxRangePushA("While wait");
         CUDAcommon::handleerror(cudaStreamWaitEvent(*sp2, *ep1, 0));
         CUDAcommon::handleerror(cudaStreamSynchronize(*sp2));
-        nvtxRangePop();
+//        nvtxRangePop();
         //ping pong swap
         sps = sp1;
         sp1 = sp2;
@@ -936,68 +910,167 @@ int iter = 0;
 //        cvars.event = ep1;
         CUDAcommon::cudavars = cvars;
 #endif
+#ifdef SERIAL_CUDACROSSCHECK
+        double cuda_lambda[1];
+        CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
+        CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(double),
+                                           cudaMemcpyDeviceToHost));
+        lambda = cuda_lambda[0];
+#endif
 //        std::cout<<"back Z"<<endl;
-        nvtxRangePushA("Energy Z");
+//        nvtxRangePushA("Energy Z");
         //let each forcefield calculate energy IFF conv state = false. That will help them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
         double energyLambda = FFM.computeEnergy(coord, force, lambda);
-        nvtxRangePop();
-
+//        nvtxRangePop();
+#ifdef SERIAL_CUDACROSSCHECK
+        std::cout<<"-------"<<endl;
+        for(auto strm:CUDAcommon::getCUDAvars().streamvec) {
+            CUDAcommon::handleerror(cudaStreamSynchronize(*strm), "backConvsync", "CGMethod.cu");
+        }
+        CUDAcommon::handleerror(cudaDeviceSynchronize());
+        double cuda_energy[1];
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, CUDAcommon::cudavars.gpu_energy,  sizeof(double),
+                                           cudaMemcpyDeviceToHost));
+        std::cout<<"Total Energy "<<cuda_energy[0]<<" "<<energyLambda<<endl;
+#endif
 #ifdef CUDAACCL
         //wait for energies to be calculated
 //        std::cout<<"Total energy streams "<<CUDAcommon::getCUDAvars().streamvec.size()<<endl;
-        nvtxRangePushA("backConvsync");
+//        nvtxRangePushA("backConvsync");
 //        int c = 0;
-        for(auto strm:CUDAcommon::getCUDAvars().streamvec) {
+         for(auto strm:CUDAcommon::getCUDAvars().streamvec) {
 //            std::cout<<c++<<" "<<CUDAcommon::getCUDAvars().streamvec.size()<<endl;
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm), "backConvsync", "CGMethod.cu");
         }
-        nvtxRangePop();
+//        nvtxRangePop();
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
         if(!(cconvergencecheck[0])){
 //            std::cout<<"----------"<<endl;
-            nvtxRangePushA("While wait2");
+//            nvtxRangePushA("While wait2");
             CUDAcommon::handleerror(cudaStreamSynchronize(stream_bt));
-            nvtxRangePop();
-            nvtxRangePushA("CUDAfindlambda");
+//            nvtxRangePop();
+//            nvtxRangePushA("CUDAfindlambda");
             CUDAfindLambda(*sp1, stream_bt, *ep1, g_s1, g_s2, gpu_safestate, gpu_state);
-                    CUDAcommon::handleerror(cudaStreamSynchronize(*sp1));
+            CUDAcommon::handleerror(cudaStreamSynchronize(*sp1));
             CUDAcommon::handleerror(cudaStreamSynchronize(stream_bt));
-            auto cvars = CUDAcommon::getCUDAvars();
+#ifdef SERIAL_CUDACROSSCHECK
+            CUDAcommon::handleerror(cudaDeviceSynchronize());
+#endif
+//            auto cvars = CUDAcommon::getCUDAvars();
 //            cvars.event = ep1;
-            CUDAcommon::cudavars = cvars;
-            nvtxRangePop();
-//            nvtxRangePushA("CUDAfindlambda_sync");
-//            CUDAcommon::handleerror(cudaEventSynchronize(*ep1));
+//            CUDAcommon::cudavars = cvars;
 //            nvtxRangePop();
             //check if converged.
-            nvtxRangePushA("backConv");
+//            nvtxRangePushA("backConv");
             if(cconvergencecheck[0]  == false){
                 CUDAcommon::handleerror(cudaStreamWaitEvent(s3, *ep1, 0));
                 CUDAcommon::handleerror(cudaMemcpyAsync(h_stop, g_s2, sizeof(bool), cudaMemcpyDeviceToHost, s3));
             }
-            nvtxRangePop();
+//            nvtxRangePop();
         }
-#else
+#endif
+    }
+#ifdef CUDAACCL
+    if(!(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaFree(gpu_params), "CudaFree", "CGMethod.cu");
+//    nvtxRangePushA("Evsync");
+    correctlambdaCUDA<<<1,1,0, stream_bt>>>(CUDAcommon::getCUDAvars().gpu_lambda, gpu_state, gpu_params);
+    CUDAcommon::handleerror(cudaStreamSynchronize(stream_bt));
+    CUDAcommon::handleerror(cudaStreamSynchronize(s1));
+    CUDAcommon::handleerror(cudaStreamSynchronize(s2));
+    CUDAcommon::handleerror(cudaStreamSynchronize(s3));
+//    nvtxRangePop();
+
+//    nvtxRangePushA("EvDESTROY");
+    if(!(CUDAcommon::getCUDAvars().conservestreams))  {
+        CUDAcommon::handleerror(cudaStreamDestroy(s1));
+        CUDAcommon::handleerror(cudaStreamDestroy(s2));
+        CUDAcommon::handleerror(cudaStreamDestroy(s3));
+        CUDAcommon::handleerror(cudaStreamDestroy(stream_bt));
+        CUDAcommon::handleerror(cudaEventDestroy(e1));
+        CUDAcommon::handleerror(cudaEventDestroy(e2));
+    }
+//    nvtxRangePop();
+#endif
+    std::cout<<"lambda determined in "<<iter<<endl;
+//synchronize streams
+    if(cconvergencecheck[0]||sconvergencecheck)
+        return lambda;
+
+}
+double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
+                                        double LAMBDAMAX, bool *gpu_safestate) {
+    double lambda;
+    sconvergencecheck = true;
+#ifdef SERIAL //SERIAL
+    sconvergencecheck = false;
+    cconvergencecheck = new bool[1];
+    cconvergencecheck[0] = true;
+#endif
+#ifdef SERIAL
+    double f = maxF();
+    //return zero if no forces
+    if(f == 0.0){
+        lambda = 0.0;
+#ifdef SERIAL_CUDACROSSCHECK
+        std::cout<<"initial_lambda_serial "<<lambda<<endl;
+#endif
+        sconvergencecheck = true;}
+    //calculate first lambda
+    lambda = min(LAMBDAMAX, MAXDIST / f);
+#ifdef SERIAL_CUDACROSSCHECK
+    std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<f<<" state "<<sconvergencecheck<<endl;
+#endif
+#endif
+//    std::cout<<"back 0"<<endl;
+//    nvtxRangePushA("Energy 0");
+    double currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+//    nvtxRangePop();
+
+    int iter = 0;
+    while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
+//        //@{
+//        size_t free, total;
+//        CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+////        fprintf(stdout,"\t### Before lambda Available VRAM : %g Mo/ %g Mo(total)\n\n",
+////                free/1e6, total/1e6);
+//
+//        cudaFree(0);
+//
+//        CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
+//        fprintf(stdout,"Before iter %d \t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
+//                iter, free/1e6, total/1e6);
+////@}
+
+        iter++;
+//        std::cout<<"back Z"<<endl;
+//        nvtxRangePushA("Energy Z");
+        //let each forcefield calculate energy IFF conv state = false. That will help them avoid unnecessary iterations.
+        //let each forcefield also add energies to two different energy variables.
+        double energyLambda = FFM.computeEnergy(coord, force, lambda);
+//        nvtxRangePop();
+
+#ifdef SERIAL
 
         if(!(sconvergencecheck)){
-                double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
-                double energyChange = energyLambda - currentEnergy;
+            double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
+            double energyChange = energyLambda - currentEnergy;
 
-                //return if ok
-                if(energyChange <= idealEnergyChange) {
+            //return if ok
+            if(energyChange <= idealEnergyChange) {
 //            double cudalambda[1];
 //            CUDAcommon::handleerror(cudaMemcpy(cudalambda, CUDAcommon::getCUDAvars().gpu_lambda, sizeof(double),
 //                                               cudaMemcpyDeviceToHost));
 //            std::cout<<lambda<<" "<<cudalambda[0]<<" "<<convergencecheck[0]<< endl;
-                    sconvergencecheck = true;}
-                else
+                sconvergencecheck = true;}
+            else
                 //reduce lambda
                 lambda *= LAMBDAREDUCE;
 
-                if(lambda <= 0.0 || lambda <= LAMBDATOL) {
-                    sconvergencecheck = true;
-                    lambda = 0.0;
+            if(lambda <= 0.0 || lambda <= LAMBDATOL) {
+                sconvergencecheck = true;
+                lambda = 0.0;
 //            nvtxRangePushA("CLCP");
 //            CUDAcommon::handleerror(cudaMemcpy(CUDAcommon::getCUDAvars().gpu_lambda, &lambda, sizeof(double),
 //                                               cudaMemcpyHostToDevice));
@@ -1006,38 +1079,15 @@ int iter = 0;
 //            CUDAcommon::handleerror(cudaMemcpy(cudalambda, CUDAcommon::getCUDAvars().gpu_lambda, sizeof(double),
 //                                               cudaMemcpyDeviceToHost));
 //            std::cout<<lambda<<" "<<cudalambda[0]<<" "<<convergencecheck[0]<< endl;
-                }
+            }
+            std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
+                                                                                <<allFDotFA()<<endl;
+            std::cout<<"SL2 energyChange "<<energyChange<<"idealEnergyChange "<<idealEnergyChange
+                     <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
         }
 #endif
     }
-#ifdef CUDAACCL
-    CUDAcommon::handleerror(cudaFree(gpu_params), "CudaFree", "CGMethod.cu");
-    //Memory alloted
-    //@{
-//    allocmem = 0;
-//    allocmem += 8*sizeof(double);
-//    c = CUDAcommon::getCUDAvars();
-//    c.memincuda -= allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
-    //@}
-    nvtxRangePushA("Evsync");
-    correctlambdaCUDA<<<1,1,0, stream_bt>>>(CUDAcommon::getCUDAvars().gpu_lambda, gpu_state, gpu_params);
-    CUDAcommon::handleerror(cudaStreamSynchronize(stream_bt));
-    CUDAcommon::handleerror(cudaStreamSynchronize(s1));
-    CUDAcommon::handleerror(cudaStreamSynchronize(s2));
-    CUDAcommon::handleerror(cudaStreamSynchronize(s3));
-    nvtxRangePop();
-
-    nvtxRangePushA("EvDESTROY");
-    CUDAcommon::handleerror(cudaStreamDestroy(s1));
-    CUDAcommon::handleerror(cudaStreamDestroy(s2));
-    CUDAcommon::handleerror(cudaStreamDestroy(s3));
-    CUDAcommon::handleerror(cudaEventDestroy(e1));
-    CUDAcommon::handleerror(cudaEventDestroy(e2));
-    nvtxRangePop();
-#else
+#ifdef SERIAL
     delete cconvergencecheck;
 #endif
     std::cout<<"lambda determined in "<<iter<<endl;
@@ -1049,7 +1099,6 @@ int iter = 0;
 
 double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                             double LAMBDAMAX, bool *gpu_safestate) {
-
     //reset safe mode
     _safeMode = false;
     sconvergencecheck = true;
@@ -1057,138 +1106,32 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     double lambda = LAMBDAMAX;
 //    std::cout<<lambda<<endl;
     std::cout<<"safe 0"<<endl;
-#ifndef CUDAACCL //SERIAL
+//#ifdef SERIAL //SERIAL
+//    cconvergencecheck = new bool[1];
+//    cconvergencecheck[0] = true;
+////#else
+////    sconvergencecheck = false;
+//#endif
+#ifdef SERIAL //SERIAL
+    sconvergencecheck = false;
     cconvergencecheck = new bool[1];
     cconvergencecheck[0] = true;
-//#else
-//    sconvergencecheck = false;
 #endif
 //prepare for ping pong optimization
-#ifdef CUDAACCL
-    nvtxRangePushA("Evcreatesafe");
-    CUDAcommon::handleerror(cudaStreamCreate(&s1));
-    CUDAcommon::handleerror(cudaStreamCreate(&s2));
-    CUDAcommon::handleerror(cudaStreamCreate(&s3));
-    CUDAcommon::handleerror(cudaEventCreate(&e1));
-    CUDAcommon::handleerror(cudaEventCreate(&e2));
-    nvtxRangePop();
-    h_stop[0] = false;
-    cconvergencecheck = h_stop;
-    sp1 = &s1;
-    sp2 = &s2;
-    ep1 = &e1;
-    ep2 = &e2;
-    g_s1 = g_stop1;
-    g_s2 = g_stop2;
-    //prep for safe backtracking.
-//    if(gpu_params == NULL){
-        double params[5];
-        params[0] = BACKTRACKSLOPE;
-        params[1] = LAMBDAREDUCE;
-        params[2] = LAMBDATOL;
-        params[3] = LAMBDAMAX;
-        params[4] = MAXDIST;
-        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 5 * sizeof(double)));
-        CUDAcommon::handleerror(cudaMemcpy(gpu_params, params, 5 * sizeof(double),
-                                           cudaMemcpyHostToDevice));
-    //Memory alloted
-    //@{
-//    size_t allocmem = 0;
-//    allocmem += 8 *sizeof(double);
-//    auto c = CUDAcommon::getCUDAvars();
-//    c.memincuda += allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated "<< allocmem/1024<<"Memory freed 0"<<endl;
-    //@}
-//    }
-    //initialize lambda search
-    CUDAinitializeLambda(*sp1, g_s1, g_s2, gpu_safestate, gpu_state);
-    CUDAcommon::handleerror(cudaEventRecord(*ep1, *sp1));
-    auto cvars = CUDAcommon::getCUDAvars();
-    cvars.streamvec.clear();
-    CUDAcommon::cudavars = cvars;
-    //check if converged.
-    nvtxRangePushA("safeConv");
-    CUDAcommon::handleerror(cudaStreamWaitEvent(s3, *ep1, 0));
-    CUDAcommon::handleerror(cudaMemcpyAsync(h_stop, g_s2, sizeof(bool), cudaMemcpyDeviceToHost, s3));
-    nvtxRangePop();
-//        double cudalambda[1];
-//    CUDAcommon::handleerror(cudaMemcpy(cudalambda, CUDAcommon::getCUDAvars().gpu_lambda, sizeof(double),
-//                                       cudaMemcpyDeviceToHost));
-//    std::cout<<lambda<<" "<<cudalambda[0]<<" "<<cconvergencecheck[0]<< sconvergencecheck<<endl;
-//    std::cout<<endl;
-#endif
-    nvtxRangePushA("Energy S 0");
+//    nvtxRangePushA("Energy S 0");
     double currentEnergy = FFM.computeEnergy(coord, force, 0.0);
-    nvtxRangePop();
-#ifdef CUDAACCL
-    //wait for energies to be calculated
-    nvtxRangePushA("Safebacksync");
-//    std::cout<<"Total energy streams "<<CUDAcommon::getCUDAvars().streamvec.size()<<endl;
-    for(auto strm:CUDAcommon::getCUDAvars().streamvec)
-    {CUDAcommon::handleerror(cudaStreamSynchronize(*strm));}
-    nvtxRangePop();
-    setcurrentenergy<<<1,1,0,*sp1>>>(CUDAcommon::getCUDAvars().gpu_energy, g_currentenergy, CUDAcommon::getCUDAvars()
-            .gpu_lambda, gpu_initlambdalocal);
-    CUDAcommon::handleerror(cudaGetLastError(),"setcurrentenergy", "CGMethod.cu");
-    CUDAcommon::handleerror(cudaStreamSynchronize (*sp1));
-    h_stop[0] = false;
-    cconvergencecheck = h_stop;
-#endif
-int iter =0;
+//    nvtxRangePop();
+    int iter =0;
     //safe backtracking loop
     while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
-    iter++;
-#ifdef CUDAACCL
-        CUDAcommon::handleerror(cudaStreamWaitEvent(*sp2, *ep1, 0));
-        //ping pong swap
-        sps = sp1;
-        sp1 = sp2;
-        sp2 = sps;
-        eps = ep1;
-        ep1 = ep2;
-        ep2 = eps;
-//        g_bs = g_b1;
-//        g_b1 = g_b2;
-//        g_b2 = g_bs;
-        g_ss = g_s1;
-        g_s1 = g_s2;
-        g_s2 = g_ss;
-        auto cvars = CUDAcommon::getCUDAvars();
-        cvars.streamvec.clear();
-        CUDAcommon::cudavars = cvars;
-#endif
-
         //new energy when moved by lambda
         std::cout<<"safe z"<<endl;
-        nvtxRangePushA("Energy S");
+        iter++;
+//        nvtxRangePushA("Energy S");
         double energyLambda = FFM.computeEnergy(coord, force, lambda);
-        nvtxRangePop();
+//        nvtxRangePop();
 
-#ifdef CUDAACCL
-        //wait for energies to be calculated
-        nvtxRangePushA("Safebacksync");
-        for(auto strm:CUDAcommon::getCUDAvars().streamvec)
-            CUDAcommon::handleerror(cudaStreamSynchronize(*strm),"Stream Synchronize", "CGMethod.cu");
-        nvtxRangePop();
-
-        if(!(cconvergencecheck[0])){
-//            CUDAfindLambda(*sp1, stream_bt, g_s1, g_s2, gpu_safestate, gpu_state);
-            //check if converged.
-            nvtxRangePushA("safeConv");
-            if(cconvergencecheck[0]  == false){
-
-                CUDAcommon::handleerror(cudaStreamWaitEvent(s3, *ep1, 0));
-                cudaMemcpyAsync(h_stop, g_s2, sizeof(bool), cudaMemcpyDeviceToHost, s3);
-            }
-            nvtxRangePop();
-//            CUDAcommon::handleerror(cudaMemcpy(cudalambda, CUDAcommon::getCUDAvars().gpu_lambda, sizeof(double),
-//                                               cudaMemcpyDeviceToHost));
-//            std::cout<<lambda<<" "<<cudalambda[0]<<" "<<cconvergencecheck[0]<< sconvergencecheck<<endl;
-//            std::cout<<endl;
-        }
-#else
+#ifdef SERIAL
         if(!(sconvergencecheck)){
             double energyChange = energyLambda - currentEnergy;
 
@@ -1204,35 +1147,11 @@ int iter =0;
                 lambda = MAXDIST / maxF();
                 sconvergencecheck = true;
             }
+            std::cout<<"safe energyChange "<<energyChange<<" lambda "<<lambda<<endl;
         }
 #endif
     }
-
-#ifdef CUDAACCL
-    CUDAcommon::handleerror(cudaFree(gpu_params), "CudaFree", "CGMethod.cu");
-    //Memory alloted
-    //@{
-//    allocmem = 0;
-//    allocmem += 8*sizeof(double);
-//    c = CUDAcommon::getCUDAvars();
-//    c.memincuda -= allocmem;
-//    CUDAcommon::cudavars = c;
-//    std::cout<<"Total allocated memory "<<c.memincuda/1024<<endl;
-//    std::cout<<"Memory allocated 0 . Memory freed "<<allocmem/1024<<endl;
-    //@}
-    nvtxRangePushA("Evsyncsafe");
-    CUDAcommon::handleerror(cudaStreamSynchronize(s1));
-    CUDAcommon::handleerror(cudaStreamSynchronize(s2));
-    CUDAcommon::handleerror(cudaStreamSynchronize(s3));
-    nvtxRangePop();
-    nvtxRangePushA("EvDESTROYsafe");
-    CUDAcommon::handleerror(cudaStreamDestroy(s1));
-    CUDAcommon::handleerror(cudaStreamDestroy(s2));
-    CUDAcommon::handleerror(cudaStreamDestroy(s3));
-    CUDAcommon::handleerror(cudaEventDestroy(e1));
-    CUDAcommon::handleerror(cudaEventDestroy(e2));
-    nvtxRangePop();
-#else
+#ifdef SERIAL
     delete cconvergencecheck;
 #endif
     std::cout<<"lambda determined in "<<iter<<endl;

@@ -25,7 +25,8 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BranchingPositionCosine::deallocate(){
-    CUDAcommon::handleerror(cudaStreamDestroy(stream));
+    if(!(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
@@ -33,7 +34,8 @@ void BranchingPositionCosine::deallocate(){
 }
 void BranchingPositionCosine::optimalblocksnthreads( int nint){
     //CUDA stream create
-    CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream));
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -354,7 +356,6 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
         f3[0] +=  k * ( (1-position)*(coord2[0] - coord1[0]) - xd * C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
         f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
         f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
-
     }
     delete mp;
 }

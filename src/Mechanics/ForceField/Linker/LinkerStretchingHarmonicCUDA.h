@@ -184,8 +184,9 @@ __global__ void LinkerStretchingHarmonicenergyz(double *coord, double *f, int *b
 
 
 __global__ void LinkerStretchingHarmonicforces(double *coord, double *f, int *beadSet,
-                                                   double *kstr, double *eql, double *pos1, double *pos2, int *params
-){
+                                                   double *kstr, double *eql, double
+                                               *pos1, double *pos2, int *params, double
+                                               *LStretchingforce){
 
     extern __shared__ double s[];
     double *c1 = s;
@@ -223,6 +224,7 @@ __global__ void LinkerStretchingHarmonicforces(double *coord, double *f, int *be
         dist = twoPointDistance(v1, v2);
         invL = 1 / dist;
         f0 = kstr[thread_idx] * (dist - eql[thread_idx]) * invL;
+        LStretchingforce[thread_idx] = f0;
         //force on i
         f1[0] = -f0 * (v1[0] - v2[0]) * (1 - pos1[thread_idx]);
         f1[1] = -f0 * (v1[1] - v2[1]) * (1 - pos1[thread_idx]);

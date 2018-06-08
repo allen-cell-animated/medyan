@@ -37,6 +37,7 @@ private:
     double *eql;
     double *pos1;
     double *pos2;
+    double *stretchforce;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
@@ -47,6 +48,7 @@ private:
     double *gpu_pos2;
 //    CUDAvars cvars;
     double *F_i;
+    double *gpu_Lstretchforce;
 #endif
     
 public:
@@ -67,6 +69,8 @@ public:
     virtual void computeForces(double *coord, double *f);
     
     virtual const string getName() {return "Linker Stretching";}
+
+    virtual void assignforcemags();
 };
 
 #endif
