@@ -2463,7 +2463,7 @@ void ChemManager::genNucleationReactions() {
                 
                 //add the reaction. The products will only be involved in creating the
                 //callback needed to create a new filament
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, get<2>(r));
+                ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, get<2>(r));
                 rxn->setReactionType(ReactionType::FILAMENTCREATION);
                 
                 C->addInternalReaction(rxn);
