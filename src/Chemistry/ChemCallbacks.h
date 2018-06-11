@@ -311,6 +311,7 @@ struct FilamentDepolymerizationPlusEndCallback {
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
+        
         f->depolymerizePlusEnd();
     }
 };
@@ -351,6 +352,8 @@ struct BranchingPointUnbindingCallback {
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
         delete _branchingPoint;
     }
+    
+    
 };
 
 
@@ -429,25 +432,33 @@ struct BranchingCallback {
         c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
+            
         b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
+            
         frate=_offRate;
         }
         else
         {
-        CCylinder* c;
+            CCylinder* c; auto check = false;
         vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
             for(auto T:BrT){
                 CCylinder* cx=get<0>(get<0>(T));
                 double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
                 if(cx->getCylinder()->getID()==c1->getID() && p==pos){
                     c=get<0>(get<1>(T));
+                    check = true;
                     break;
                 }}
+            if(check){
+
+                
             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
-            CMonomer* x=c->getCMonomer(0);
-            x->speciesMinusEnd(0)->down();
-            x->speciesFilament(0)->up();
+                
             frate=0.0;
+            }
+            else
+                cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
+                //exit(EXIT_FAILURE);
         }
         
         //create off reaction
@@ -456,6 +467,10 @@ struct BranchingCallback {
         cBrancher->setRates(_onRate, frate);
         cBrancher->createOffReaction(r, _ps);
         cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
+#ifdef DYNAMICRATES
+        //Qin ----------------
+        b -> updateReactionRates();
+#endif
     }
 };
 
@@ -552,10 +567,10 @@ struct MotorUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //find the motor binding manager associated with this species
-        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
+//        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
-        Compartment* c = static_cast<Compartment*>(sd->getParent());
-        auto mManager = c->getMotorBindingManager(_motor->getType());
+//        Compartment* c = static_cast<Compartment*>(sd->getParent());
+//        auto mManager = c->getMotorBindingManager(_motor->getType());
         
         //DEPRECATED AS OF 9/8/16
 //        
@@ -766,29 +781,57 @@ struct FilamentCreationCallback {
         //set up a random initial position and direction
         vector<double> position;
         vector<double> direction;
-        
-        while(true) {
-            position = GController::getRandomCoordinates(c);
+        //Qin
+        if(_ps->getBoundary()->getShape() == BoundaryShape::Cylinder) {
+            while(true) {
+                position = GController::getRandomCenterCoordinates(c);
+                
+                //getting random numbers between -1 and 1
+                
+                direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), 0};
+                normalize(direction);
+                
+                auto npp = nextPointProjection(position,
+                                               SysParams::Geometry().cylinderSize[_filType], direction);
+                
+                //check if within boundary
+                if(_ps->getBoundary()->within(position) &&
+                   _ps->getBoundary()->within(npp))
+                    break;
+            }
             
-            //getting random numbers between -1 and 1
-            direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), Rand::randDouble(-1,1)};
-            normalize(direction);
+            //create filament, set up ends and filament species
+            Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction, true, false);
             
-            auto npp = nextPointProjection(position,
-                                           SysParams::Geometry().cylinderSize[_filType], direction);
-            
-            //check if within boundary
-            if(_ps->getBoundary()->within(position) &&
-               _ps->getBoundary()->within(npp))
-                break;
+            //initialize the nucleation
+            f->nucleate(_plusEnd, _filament, _minusEnd);
         }
-        
-        //create filament, set up ends and filament species
-        Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction, true, false);
-        
-        //initialize the nucleation
-        f->nucleate(_plusEnd, _filament, _minusEnd);
-    }
+        else {
+            while(true) {
+                position = GController::getRandomCoordinates(c);
+                
+                //getting random numbers between -1 and 1
+                
+                direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), Rand::randDouble(-1,1)};
+                normalize(direction);
+                
+                auto npp = nextPointProjection(position,
+                                               SysParams::Geometry().cylinderSize[_filType], direction);
+                
+                //check if within boundary
+                if(_ps->getBoundary()->within(position) &&
+                   _ps->getBoundary()->within(npp))
+                    break;
+            }
+            
+            //create filament, set up ends and filament species
+            Filament* f = _ps->addTrackable<Filament>(_ps, _filType, position, direction, true, false);
+            
+            //initialize the nucleation
+            f->nucleate(_plusEnd, _filament, _minusEnd);
+        }
+        }
+
     
 };
 

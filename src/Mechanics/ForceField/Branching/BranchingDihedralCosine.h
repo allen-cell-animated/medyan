@@ -28,7 +28,7 @@ public:
     
     double energy(double *coord, double *f, int *beadSet,
                   double *kdih, double *pos, double d);
-    
+
     void forces(double *coord, double *f, int *beadSet,
                 double *kdih, double *pos);
 #ifdef CUDAACCL

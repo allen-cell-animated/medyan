@@ -11,8 +11,8 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#ifndef MEDYAN_BoundaryBubbleRepulsion_h
-#define MEDYAN_BoundaryBubbleRepulsion_h
+#ifndef MEDYAN_BoundaryCylinderRepulsionIn_h
+#define MEDYAN_BoundaryCylinderRepulsionIn_h
 
 #include <vector>
 
@@ -27,31 +27,29 @@
 class BoundaryElement;
 class Bead;
 
-/// Represents a repulsive interaction between a BoundaryElement and Bubble.
+/// Represents a repulsive interaction between a BoundaryElement and Cylinder.
 template <class BRepulsionInteractionType>
-class BoundaryBubbleRepulsion : public BoundaryInteractions {
+class BoundaryCylinderRepulsionIn : public BoundaryInteractions {
     
 private:
     BRepulsionInteractionType _FFType;
-    BoundaryBubbleNL* _neighborList; ///<Neighbor list of Bubble's bead - BoundaryElement
+    BoundaryCylinderNL* _neighborList; ///<Neighbor list of BoundaryElement - Cylinder
 public:
     
     /// Constructor
-    BoundaryBubbleRepulsion() {
-        _neighborList = new BoundaryBubbleNL(SysParams::Boundaries().BoundaryCutoff);
+    BoundaryCylinderRepulsionIn() {
+        _neighborList = new BoundaryCylinderNL(SysParams::Boundaries().BoundaryCutoff);
     }
     
-    virtual double computeEnergy(double d);
-   
-    virtual void computeForces();
-    virtual void computeForcesAux();
-    
-    virtual void computeLoadForces() {return;}
-    
-    /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() {return _neighborList;}
-    
-    virtual const string getName() {return "Boundary-Bubble Repulsion";}
+//    virtual double computeEnergy(double d);
+//    //@{
+//    /// This repulsive force calculation also updates load forces
+//    /// on beads within the interaction range.
+//    virtual void computeForces();
+//    virtual void computeForcesAux();
+//
+//    virtual void computeLoadForces();
+    //@}
 
     //TODO needs implmenetation @{
     virtual void vectorize(){};
@@ -62,6 +60,12 @@ public:
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
     virtual void computeForces(double *coord, double *f){};
+    virtual void computeLoadForces(){};
     //@}
+    
+    /// Get the neighbor list for this interaction
+    virtual NeighborList* getNeighborList() {return _neighborList;}
+    
+    virtual const string getName() {return "Boundary-Cylinder Repulsion Inside";}
 };
 #endif

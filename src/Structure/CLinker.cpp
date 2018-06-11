@@ -64,6 +64,7 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //    std::cout<<endl;
 //    //@}
     //mark species
+        
     assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
            "Major bug: Linker binding to an occupied site.");

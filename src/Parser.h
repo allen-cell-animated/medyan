@@ -201,6 +201,8 @@ struct BoundaryType {
     
     string boundaryShape = "";
     string boundaryMove = "";
+    //Qin
+    //string scaleDiffusion = "";
 };
 
 /// Struct to hold the ForceField types
@@ -262,6 +264,9 @@ struct DynamicRateType {
     ///Motor rate changing
     vector<string> dMUnbindingType = {};
     vector<string> dMWalkingType = {};
+
+    //Qin----
+    vector<string> dBUnbindingType = {};
     //@}
 };
 
@@ -337,7 +342,6 @@ public:
     }
     ~Parser() {_inputFile.close();}
 };
-
 
 /// To parse a system input file, initialized by the Controller.
 class SystemParser : public Parser{
@@ -429,7 +433,7 @@ public:
     PinRestartParser(string inputFileName) : Parser(inputFileName) {}
     ~PinRestartParser() {}
     
-    /// Reads pin positions from file, and sets filaments
+    /// Reads pin positions from file, and sets filamen ts
     void resetPins();
 };
 

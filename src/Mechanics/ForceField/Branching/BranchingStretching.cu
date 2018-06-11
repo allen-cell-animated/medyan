@@ -29,7 +29,7 @@ void BranchingStretching<BStretchingInteractionType>::vectorize() {
     kstr = new double[BranchingPoint::getBranchingPoints().size()];
     eql = new double[BranchingPoint::getBranchingPoints().size()];
     pos = new double[BranchingPoint::getBranchingPoints().size()];
-
+    stretchforce = new double[BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 

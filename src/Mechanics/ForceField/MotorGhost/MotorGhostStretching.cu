@@ -42,6 +42,7 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
     eql = new double[MotorGhost::getMotorGhosts().size()];
     pos1 = new double[MotorGhost::getMotorGhosts().size()];
     pos2 = new double[MotorGhost::getMotorGhosts().size()];
+    stretchforce = new double[MotorGhost::getMotorGhosts().size()];
 
     int i = 0;
 

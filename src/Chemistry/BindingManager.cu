@@ -77,6 +77,14 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
                 else
                     inZone = false;
             }
+            //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
+            else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
+                if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance)
+                    inZone = true;
+                else
+                    inZone = false;
+            }
+
             else inZone = true;
         }
         else
@@ -163,6 +171,17 @@ void BranchingManager::updateAllPossibleBindings() {
 
                         if(coord[2] >= GController::getCenter()[2])
                             inZone = true;
+                        else
+                            inZone = false;
+                    }
+                    //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
+                    else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
+                        if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance){
+                            inZone = true;
+                            //cout << "x= " << coord[1] << "y= " << coord[2] << endl;
+                        }
+                        
+                        
                         else
                             inZone = false;
                     }
@@ -505,6 +524,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                                 _possibleBindings.emplace(t1, t2);
                         }
                     }
+//                    std::cout<<_possibleBindings.size()<<endl;
                 }
             }
         }
@@ -597,7 +617,7 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
     _bindingSpecies = _compartment->findSpeciesByName(name);
 
     //initialize ID's based on number of species in compartment
-    int numSpecies = rs[ML_RXN_INDEX + 1]->getSpecies().getN();
+//    int numSpecies = rs[ML_RXN_INDEX + 1]->getSpecies().getN();
 
     //DEPRECATED AS OF 9/22/16
 //    for(int i = 0; i < numSpecies; i++)
@@ -662,7 +682,10 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 
                     //add in correct order
                     if(c->getID() > cn->getID())
+                    {
                         _possibleBindings.emplace(t1,t2);
+                    }
+                    
                     else {
                         //add in this compartment
                         if(cn->getCompartment() == _compartment) {

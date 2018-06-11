@@ -29,7 +29,7 @@ public:
     
     double energy(double *coord, double * f, int *beadSet,
                   double *kstr, double *eql, double *pos, double d);
-    
+
     void forces(double *coord, double *f, int *beadSet,
                 double *kstr, double *eql, double *pos, double
                 *stretchforce);

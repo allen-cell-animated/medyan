@@ -30,7 +30,7 @@ class BranchingPoint;
 class MBranchingPoint {
     
 public:
-    double stretchForce = 0.0; ///< Stretching force of brancher at current state
+
     /// Main constructor, sets constants
     MBranchingPoint(int branchType);
     
@@ -53,6 +53,11 @@ public:
     }
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
+    
+    //Qin -----
+    double stretchForce = 0.0; ///< Stretching force of brancher at current state
+    double bendingForce = 0.0;
+    double dihedralForce = 0.0;
     
 private:
     double _eqLength;  ///< Equilibrium length

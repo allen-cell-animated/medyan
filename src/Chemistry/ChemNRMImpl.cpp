@@ -161,11 +161,16 @@ bool ChemNRMImpl::makeStep() {
         return false;
     }
     
+//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
+//
+//        cout << "Stopping to check linker rxn." << endl;
+//    }
+    
     double t_prev = _t;
     
     _t=tau_top;
     syncGlobalTime();
-//    std::cout<<rn->getReaction()->getReactionType()<<endl;
+    
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){

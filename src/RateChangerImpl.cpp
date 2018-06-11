@@ -40,6 +40,14 @@ float LinkerSlip::changeRate(float bareRate, double force) {
     return newRate;
 }
 
+//Qin ----------------
+float BranchSlip::changeRate(float bareRate, double force) {
+    
+    double newRate = bareRate * exp( force * _x / kT);
+    
+    return newRate;
+}
+
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 double force, int numHeads) {
     

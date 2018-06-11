@@ -77,7 +77,7 @@ void CylinderCylinderNL::addNeighbor(Neighbor* n) {
     if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
 
     //update neighbors
-#ifdef DNLORIGINAL
+#ifdef NLORIGINAL
     updateNeighbors(cylinder, true);
 #endif
 }
@@ -86,7 +86,7 @@ void CylinderCylinderNL::removeNeighbor(Neighbor* n) {
 
     Cylinder* cylinder;
     if(!(cylinder = dynamic_cast<Cylinder*>(n))) return;
-#ifdef DNLORIGINAL
+#ifdef NLORIGINAL
     _list.erase(cylinder);
 
     //remove from other lists
@@ -131,7 +131,7 @@ void CylinderCylinderNL::reset() {
 //    nvtxRangePop();
 #endif
     //loop through all neighbor keys
-#ifdef DNLORIGINAL//serial
+#ifdef NLORIGINAL//serial
     _list.clear();
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighbors(cylinder);

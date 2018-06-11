@@ -142,8 +142,10 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
     auto newBeadCoords=coordinates;
     //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
+
     Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
                                                        lpf + 1, false, false, true);
+    
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
@@ -168,6 +170,7 @@ void Filament::extendMinusEnd(vector<double>& coordinates) {
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() - 1);
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
                                                   lpf - 1, false, false, true);
+    
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
 
@@ -201,6 +204,8 @@ void Filament::extendPlusEnd(short plusEnd) {
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
                                                       lpf + 1, true);
+    
+    
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
@@ -351,6 +356,7 @@ void Filament::polymerizePlusEnd() {
     //increase eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
+    
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
     
@@ -358,6 +364,8 @@ void Filament::polymerizePlusEnd() {
     //update rates of new back
     _cylinderVector.back()->updateReactionRates();
 #endif
+   
+    _polyPlusEnd++;
     
 }
 
@@ -381,13 +389,17 @@ void Filament::polymerizeMinusEnd() {
     //increase eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
+
+
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
-    
-#ifdef DYNAMICRATES
+    #ifdef DYNAMICRATES
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
+    
+    _polyMinusEnd++;
+    
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -410,13 +422,14 @@ void Filament::depolymerizePlusEnd() {
     //decrease eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
-    cBack->getMCylinder()->setEqLength(_filType, newEqLen);
+
 #endif
 #ifdef DYNAMICRATES
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
     
+    _depolyPlusEnd++;;
     
 }
 
@@ -439,6 +452,7 @@ void Filament::depolymerizeMinusEnd() {
     //decrease eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
+
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
     
@@ -446,6 +460,9 @@ void Filament::depolymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
+    
+    _depolyMinusEnd++;
+    
 }
 
 
@@ -472,6 +489,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
 #endif
+    
+    _nucleationReaction++;
+    
 }
 
 
@@ -508,6 +528,10 @@ Filament* Filament::sever(int cylinderPosition) {
         
         newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
+        
+        //Add beads to new parent
+        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
+        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
@@ -533,7 +557,9 @@ Filament* Filament::sever(int cylinderPosition) {
     newB->coordinate[1] += -offsetCoord[1];
     newB->coordinate[2] += -offsetCoord[2];
     
+    //add bead
     c1->setSecondBead(newB);
+    newFilament->addChild(unique_ptr<Component>(newB));
     
     //set plus and minus ends
     c1->setPlusEnd(true);
@@ -569,6 +595,10 @@ Filament* Filament::sever(int cylinderPosition) {
     cc2->removeCrossCylinderReactions(cc1);
 #endif
     
+    //Qin
+    
+    _severingReaction++;
+    _severingID.push_back(newFilament->getID());
     return newFilament;
 }
 

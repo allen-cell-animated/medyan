@@ -43,7 +43,8 @@ class BoundaryElement : public Component, public Trackable, public Neighbor {
 friend class BoundaryCubic;
 friend class BoundarySpherical;
 friend class BoundaryCapsule;
-    
+friend class BoundaryCylinder;
+
 private:
     static Database<BoundaryElement*> _boundaryElements;
     ///< Collection of boundary elements in SubSystem
@@ -84,23 +85,27 @@ public:
     virtual double distance(const vector<double>& point) = 0;
     virtual double distance(double const *point) = 0;
     //@}
-    
+
     //@{
+    //Qin
+    virtual double lowerdistance(const vector<double>& point) = 0;
+    virtual double sidedistance(const vector<double>& point) = 0;
+
     /// Returns stretched distance, similar to distance above
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force, double d) = 0;
     virtual double stretchedDistance(double const *point,
                                      double const *force, double d) = 0;
     //@}
-    
-    
+
+
     //@{
     /// Returns normal vector of point to plane
     virtual const vector<double> normal(const vector<double> &point) = 0;
     virtual const vector<double> normal(const double *point) = 0;
     virtual const void elementeqn(double* var) = 0;
     //@}
-    
+
     //@{
     /// Getter for mechanical parameters
     virtual double getRepulsionConst() {return _kRep;}

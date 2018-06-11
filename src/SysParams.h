@@ -82,13 +82,18 @@ struct MechParams {
     //@{
     /// SPECIAL MECHANICAL PROTOCOLS
     
+    //Qin
+    bool pinLowerBoundaryFilaments = false;
+    double pinFraction = 1.0; //test 
+    
     ///To pin filaments on boundary via an attractive potential
     bool pinBoundaryFilaments = false;
     double pinDistance = 250; ///< 250nm pinning distance for now
     double pinK = 0.0;       ///< Tethered stiffness
     double pinTime = 0.0;    ///< Time at which to pin the filaments
-    
+    int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
     //@}
+    
     
 };
 
@@ -236,6 +241,10 @@ struct DyRateParams {
     
     /// Option for dynamic walking rate of motors
     vector<double> dMotorWalkingCharForce = {};
+    
+    //Qin
+    /// Option for dynamic branching point unbinding rate
+    vector<double> dBranchUnbindingCharLength = {};
 };
 
 /// Static class that holds all simulation parameters,

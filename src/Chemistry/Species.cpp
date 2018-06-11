@@ -40,8 +40,9 @@ ostream& operator<<(ostream& os, const Species& s){
 
 void Species::updateReactantPropensities() {
     
-    for(auto r : _rspecies->reactantReactions())
+    for(auto r : _rspecies->reactantReactions()){
         r->updatePropensity();
+    }
 }
 
 void Species::activateReactantReactions() {
