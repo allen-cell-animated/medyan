@@ -17,11 +17,12 @@ build/
 *.pyc
 *.o
 
+# Output files
+*.traj
+
 # Backup files
 *~.nib
 
 # Project for Visual Studio 2017
 .vs/
 /projects/VC15/**/MEDYAN/
-# Traj
-*.traj
