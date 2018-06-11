@@ -108,10 +108,10 @@ public:
     float v = (float)(nx*ny*nz);
     
     // get the stepFrac parameter for myosin walking, assume all fil and motor are type 0
-    double d_step = SysParams::Chemistry().motorStepSize[0];
-    double d_total = (double)SysParams::Geometry().cylinderSize[0] /
+    double d_head = SysParams::Chemistry().motorStepSize[0];
+    double d_step = (double)SysParams::Geometry().cylinderSize[0] /
     SysParams::Chemistry().numBindingSites[0];
-    double _stepFrac = d_step / d_total;
+    double _stepFrac = d_head / d_step;
     
     // Find the Gibbs free energy change for a reaction using its ReactionBase representation
     double getDelGChem(ReactionBase* re){
@@ -162,8 +162,6 @@ public:
              // Diffusion Reaction
 
             delG = delGDifChem(reacN[0],prodN[0]);
-
-   
             
              
         } else if(reType==2){
@@ -195,6 +193,7 @@ public:
             delGZero = re->getGNumber();
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
+
 
         } else if(reType==6){
             // Linker Binding

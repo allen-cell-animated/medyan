@@ -80,7 +80,6 @@ private:
                                        
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
-                                       
     
     ///Helper to get coordinate
     void updateCoordinate();

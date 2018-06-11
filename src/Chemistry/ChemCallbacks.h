@@ -546,7 +546,7 @@ struct MotorUnbindingCallback {
         Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
         Compartment* c = static_cast<Compartment*>(sd->getParent());
-        auto mManager = c->getMotorBindingManager(_motor->getType());
+//        auto mManager = c->getMotorBindingManager(_motor->getType());
         
         //DEPRECATED AS OF 9/8/16
 //        

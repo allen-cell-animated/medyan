@@ -223,7 +223,7 @@ public:
     virtual void print(int snapshot);
 };
 
-/// Print chem energy changes by HRCDID
+/// Print cm graph
 class CMGraph : public Output {
     
 public:

@@ -145,13 +145,13 @@ namespace mathfunc {
         float sumreacs = 0;
         
         for (int i=0; (i<reacN.size()); i++){
-            sumreacs += reacNminNu[i]*log(reacN[i]) - reacN[i]*log(reacN[i]) ;
+            sumreacs += reacNminNu[i]*log(reacNminNu[i]) - reacN[i]*log(reacN[i]) ;
         }
         
         float sumprods = 0;
         
         for (int i=0; (i<prodN.size()); i++){
-            sumprods += prodNplusNu[i]*log(prodN[i]) - prodN[i]*log(prodN[i]) ;
+            sumprods += prodNplusNu[i]*log(prodNplusNu[i]) - prodN[i]*log(prodN[i]) ;
         }
         
         float delG = delGZero +  sumreacs +  sumprods;
@@ -180,9 +180,9 @@ namespace mathfunc {
         float sumreacs=0;
         
         if(whichWay=="P"){
-            sumreacs = - log(reacN);
+            sumreacs = (reacN-1)*log(reacN-1) - reacN*log(reacN);
         } else if (whichWay=="D"){
-            sumreacs =  log(reacN);
+            sumreacs = -((reacN-1)*log(reacN-1) - reacN*log(reacN));
         }
         
         float delG =  delGzero +   sumreacs ;

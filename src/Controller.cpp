@@ -182,8 +182,8 @@ void Controller::initialize(string inputFile,
     
     
     //Set up reactions output if any
-    string reactsnapname = _outputDirectory + "dissipation.traj";
-    _outputs.push_back(new Dissipation(reactsnapname, _subSystem, _cs));
+    string disssnapname = _outputDirectory + "dissipation.traj";
+    _outputs.push_back(new Dissipation(disssnapname, _subSystem, _cs));
     
     //Set up HRCD output if any
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
@@ -193,6 +193,9 @@ void Controller::initialize(string inputFile,
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
     
+//    //Set up Turnover output if any
+//    string turnover = _outputDirectory + "Turnover.traj";
+//    _outputs.push_back(new FilamentTurnoverTimes(turnover, _subSystem));
     
 #endif
     
@@ -579,7 +582,7 @@ void Controller::run() {
             BB->getCBranchingPoint()->setOffRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
             BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
-        }
+        }	
 //STEP 7: Get cylinders, activate filament reactions.
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
@@ -687,6 +690,7 @@ void Controller::run() {
                 for(auto o: _outputs) o->print(i);
                 i++;
                 tauLastSnapshot = 0.0;
+
             }
             
 #elif defined(MECHANICS)
