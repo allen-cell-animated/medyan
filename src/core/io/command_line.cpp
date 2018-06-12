@@ -26,7 +26,7 @@ void readFromCommandLine(int argc, char** argv) {
     opInputDir.require();
     opOutputDir.require();
     Option1<std::string> opLogFile {"Name of log file", "-l,--log", "LOG_FILE", &Global::global().logFileName};
-    Option1<long long> opRandomGenSeedFixed {"Fixed random generator seed", "--seed-fixed", "SEED", &Global::global().randomGenSeed,
+    Option1<unsigned long long> opRandomGenSeedFixed {"Fixed random generator seed", "--seed-fixed", "SEED", &Global::global().randomGenSeed,
         []()->bool { Global::global().randomGenSeedFixed = true; return true; }};
 
     Command cmdAnalyze {"Run analysis instead of simulation", "analyze", nullptr,

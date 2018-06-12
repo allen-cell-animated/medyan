@@ -17,7 +17,7 @@ namespace medyan {
         std::string logFileName {"medyan.log"};
 
         bool randomGenSeedFixed = false;
-        long long randomGenSeed; // Only used in fixed random seed
+        unsigned long long randomGenSeed; // The global random seed
     
     };
 

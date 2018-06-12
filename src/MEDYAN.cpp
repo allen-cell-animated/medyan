@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
     
     cout.precision(8);
     
-    // Parse command line and do necessary initialzations
+    // Parse command line (Will abort the program if parsing fails)
     commandline::readFromCommandLine(argc, argv);
 
     /**************************************************************************
@@ -104,7 +104,11 @@ int main(int argc, char **argv) {
     MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::readGlobal().outputDirectory + "/" + Global::readGlobal().logFileName);
 
     // Seed global random generator
-    Rand::eng.seed(Global::readGlobal().randomGenSeedFixed ? Global::readGlobal().randomGenSeed : rdtsc());
+    if(!Global::readGlobal().randomGenSeedFixed) {
+        Global::global().randomGenSeed = rdtsc();
+        LOG(DEBUG) << "Global RNG seed: " << Global::readGlobal().randomGenSeed;
+    }
+    Rand::eng.seed(Global::readGlobal().randomGenSeed);
 
     /**************************************************************************
     Start program 
