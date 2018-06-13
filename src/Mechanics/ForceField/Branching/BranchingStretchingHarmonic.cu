@@ -19,9 +19,12 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "nvToolsExt.h"
+#endif
 
 using namespace mathfunc;
 #ifdef CUDAACCL
@@ -221,7 +224,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
 
         U += U_i;
     }
-    delete v1;
+    delete [] v1;
     return U;
 }
 
@@ -264,7 +267,8 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
 
         U += U_i;
     }
-    delete v1; vzero;
+    delete [] v1;
+    delete [] vzero;
     return U;
 }
 
@@ -313,5 +317,5 @@ void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         stretchforce[i] = f0/invL;
 
     }
-    delete v1;
+    delete [] v1;
 }

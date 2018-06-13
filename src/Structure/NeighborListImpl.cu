@@ -23,7 +23,9 @@
 #include "MathFunctions.h"
 #include "CUDAcommon.h"
 #include "NeighborListImplCUDA.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 using namespace mathfunc;
 
 void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {

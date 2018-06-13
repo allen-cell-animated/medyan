@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_FILAMENTSTRETCHINGHARMONICCUDA_H
 #define CUDA_VEC_FILAMENTSTRETCHINGHARMONICCUDA_H
+#ifdef CUDAACCL
 #include "FilamentStretchingHarmonic.h"
 
 #include "FilamentStretching.h"
@@ -18,8 +19,6 @@
 #include <cuda_runtime.h>
 
 using namespace mathfunc;
-
-#ifdef CUDAACCL
 
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //

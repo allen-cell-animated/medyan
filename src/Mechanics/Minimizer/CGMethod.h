@@ -171,21 +171,21 @@ protected:
     void printForces();
     
     /// Initialize data arrays
-    inline void allocate(long numBeads) {
-        
-        coord = new double[3 * numBeads];
-        force = new double[3 * numBeads];
-        forceAux = new double[3 * numBeads];
-        forceAuxPrev = new double[3 * numBeads];
+    inline void allocate(long numBeadsx3) {
+
+        coord = new double[numBeadsx3];
+        force = new double[numBeadsx3];
+        forceAux = new double[numBeadsx3];
+        forceAuxPrev = new double[numBeadsx3];
     }
     
     ///Deallocation of CG arrays
     inline void deallocate() {
         
-        delete coord;
-        delete force;
-        delete forceAux;
-        delete forceAuxPrev;
+        delete [] coord;
+        delete [] force;
+        delete [] forceAux;
+        delete [] forceAuxPrev;
     }
 public:
     static long N; ///< Number of beads in the system, set before each minimization

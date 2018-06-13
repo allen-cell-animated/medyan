@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_BRANCHINGBENDINGCOSINECUDA_H
 #define CUDA_VEC_BRANCHINGBENDINGCOSINECUDA_H
+#ifdef CUDAACCL
 #include "BranchingBendingCosine.h"
 
 #include "BranchingBending.h"
@@ -19,7 +20,6 @@
 
 using namespace mathfunc;
 
-#ifdef CUDAACCL
 //
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //

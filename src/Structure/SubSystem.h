@@ -36,7 +36,9 @@
 #include "CompartmentGrid.h"
 #include "Bead.h"
 #include "GController.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 //#include "NeighborListImplCUDA.h"
 
 //FORWARD DECLARATIONS

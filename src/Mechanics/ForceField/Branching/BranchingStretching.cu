@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include <src/Mechanics/Minimizer/CGMethod.h>
+#include <CGMethod.h>
 #include "BranchingStretching.h"
 
 #include "BranchingStretchingHarmonic.h"
@@ -20,7 +20,9 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "cross_check.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 
 template <class BStretchingInteractionType>
 void BranchingStretching<BStretchingInteractionType>::vectorize() {
@@ -83,11 +85,11 @@ void BranchingStretching<BStretchingInteractionType>::deallocate() {
         b->getMBranchingPoint()->stretchForce += stretchforce[i];
         i++;
     }
-    delete stretchforce;
-    delete beadSet;
-    delete kstr;
-    delete eql;
-    delete pos;
+    delete [] stretchforce;
+    delete [] beadSet;
+    delete [] kstr;
+    delete [] eql;
+    delete [] pos;
 #ifdef CUDAACCL
     _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet));

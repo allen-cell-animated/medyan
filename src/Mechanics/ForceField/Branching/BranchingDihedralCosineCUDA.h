@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_BRANCHINGDIHEDRALCOSINECUDA_H
 #define CUDA_VEC_BRANCHINGDIHEDRALCOSINECUDA_H
+#ifdef CUDAACCL
 #include "BranchingDihedralCosine.h"
 
 #include "BranchingDihedral.h"
@@ -14,12 +15,12 @@
 #include "SysParams.h"
 #include <limits>
 #include <assert.h>
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
-
+#endif
 using namespace mathfunc;
 
-#ifdef CUDAACCL
 
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //

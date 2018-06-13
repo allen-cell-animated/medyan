@@ -18,7 +18,9 @@
 #include "Composite.h"
 #include "Output.h"
 #include "cross_check.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
                             double MAXDIST, double LAMBDAMAX, bool steplimit){
 
@@ -489,8 +491,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
-    delete Mc_isminimizationstate;
-    delete Mc_issafestate;
+    delete [] Mc_isminimizationstate;
+    delete [] Mc_issafestate;
     //@}
 #endif
     //TODO make sure it calculates stretchforce in CUDA.

@@ -19,9 +19,11 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "nvToolsExt.h"
+#endif
 
 using namespace mathfunc;
 #ifdef CUDAACCL
@@ -235,8 +237,8 @@ void LinkerStretchingHarmonic::checkforculprit() {
 
             U += U_i;
         }
-        delete v1;
-        delete v2;
+        delete [] v1;
+        delete [] v2;
 
         return U;
     }
@@ -272,8 +274,8 @@ void LinkerStretchingHarmonic::checkforculprit() {
 
             U += 0.5 * kstr[i] * dist * dist;
         }
-        delete v1;
-        delete v2;
+        delete [] v1;
+        delete [] v2;
 
         return U;
 
@@ -336,7 +338,7 @@ void LinkerStretchingHarmonic::checkforculprit() {
             stretchforce[i] = f0/invL;
 //        std::cout<<"LINKER "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
         }
-        delete v1;
-        delete v2;
+        delete [] v1;
+        delete [] v2;
     }
 

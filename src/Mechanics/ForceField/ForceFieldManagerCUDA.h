@@ -4,12 +4,13 @@
 
 #ifndef CUDA_VEC_FORCEFIELDMANAGERCUDA_H
 #define CUDA_VEC_FORCEFIELDMANAGERCUDA_H
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "ForceField.h"
 #include "MathFunctions.h"
 using namespace mathfunc;
-#ifdef CUDAACCL
+
 __global__ void setenergytozero(double *U_tot){
     U_tot[0] = 0.0;
 }

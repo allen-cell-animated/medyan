@@ -4,7 +4,7 @@
 
 #ifndef CUDA_VEC_BOUNDARYCYLINDERREPULSIONEXPCUDA_H
 #define CUDA_VEC_BOUNDARYCYLINDERREPULSIONEXPCUDA_H
-
+#ifdef CUDAACCL
 #include "MathFunctions.h"
 #include "SysParams.h"
 #include <limits>
@@ -246,5 +246,6 @@ __global__ void BoundaryCylinderRepulsionExpforces(double* coord, double* f, int
 //        }
 //    }
 //}
+#endif
 
 #endif //CUDA_VEC_BOUNDARYCYLINDERREPULSIONCUDA_H

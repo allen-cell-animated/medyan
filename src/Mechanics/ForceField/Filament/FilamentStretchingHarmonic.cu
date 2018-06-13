@@ -19,9 +19,12 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+
+#ifdef CUDAACCL
+#include "nvToolsExt.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include "nvToolsExt.h"
+#endif
 
 using namespace mathfunc;
 #ifdef CUDAACCL
@@ -253,8 +256,8 @@ double FilamentStretchingHarmonic::energy(double *coord, double * f, int *beadSe
 //        std::cout<<"S "<<i<<" "<<dist<<" "<<0.5 * kstr[i] * dist * dist<<endl;
         U += 0.5 * kstr[i] * dist * dist;
     }
-    delete v1;
-    delete v2;
+    delete [] v1;
+    delete [] v2;
 
     return U;
 }

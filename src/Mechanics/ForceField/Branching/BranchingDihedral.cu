@@ -19,7 +19,9 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "cross_check.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 
 template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::vectorize() {
@@ -75,9 +77,9 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
 template<class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::deallocate() {
-    delete beadSet;
-    delete kdih;
-    delete pos;
+    delete [] beadSet;
+    delete [] kdih;
+    delete [] pos;
 #ifdef CUDAACCL
     _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet));

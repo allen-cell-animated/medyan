@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_FILAMENTBENDINGHARMONICCUDA_H
 #define CUDA_VEC_FILAMENTBENDINGHARMONICCUDA_H
+#ifdef CUDAACCL
 #include "FilamentBendingHarmonic.h"
 
 #include "FilamentBending.h"
@@ -19,7 +20,7 @@
 
 using namespace mathfunc;
 
-#ifdef CUDAACCL
+
 //
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //

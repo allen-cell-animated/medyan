@@ -5,7 +5,7 @@
 #ifndef CUDA_VEC_CUDACOMMON_H
 #define CUDA_VEC_CUDACOMMON_H
 
-
+#ifdef CUDAACCL
 #include <vector>
 #include <list>
 #include <src/Mechanics/ForceField/Filament/FilamentStretchingHarmonic.h>
@@ -24,7 +24,6 @@
 #include "string.h"
 #include "MathFunctions.h"
 using namespace mathfunc;
-#ifdef CUDAACCL
 struct CUDAvars {
     double * gpu_force = NULL;
     double * gpu_forceAux = NULL;

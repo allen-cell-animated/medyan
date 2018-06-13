@@ -39,10 +39,12 @@
 #include "MathFunctions.h"
 #include "SysParams.h"
 #include <limits>
-#include <src/Mechanics/Minimizer/CGMethod.h>
+#include <CGMethod.h>
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
+#endif
 typedef std::numeric_limits< double > dbl;
 
 using namespace mathfunc;
@@ -449,6 +451,10 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
         }
         U += U_i;
     }
+    delete [] c1;
+    delete [] c2;
+    delete [] c3;
+    delete [] c4;
 //    std::cout<<"total energy serial "<<U<<endl;
     return U;
 
@@ -582,6 +588,10 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
         U += U_i;
     }
 //    std::cout<<"Total energy serial "<<U<<endl;
+    delete [] c1;
+    delete [] c2;
+    delete [] c3;
+    delete [] c4;
     return U;
 }
 
@@ -787,6 +797,14 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
 //                <<ATG3<<" "<<ATG4<<" "<<U<<endl;
 
     }
+//    delete c1;
+//    delete c2;
+//    delete c3;
+//    delete c4;
+//    delete f1;
+//    delete f2;
+//    delete f3;
+//    delete f4;
 //    stop = clock();
 //    elapsedtime = ((float)stop - (float)start)/CLOCKS_PER_SEC *1000;
 //    std::cout<<"S CFE "<<elapsedtime<<endl;

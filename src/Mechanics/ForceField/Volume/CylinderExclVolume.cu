@@ -20,7 +20,10 @@
 
 #include "MathFunctions.h"
 #include "cross_check.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
+
 
 using namespace mathfunc;
 
@@ -115,8 +118,8 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
 
-    delete beadSet;
-    delete krep;
+    delete [] beadSet;
+    delete [] krep;
 #ifdef CUDAACCL
     if(nint > 0) {
         _FFType.deallocate();
@@ -152,13 +155,13 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
     nvtxRangePop();
 #endif
 #ifdef SERIAL
-    nvtxRangePushA("SCEE");
+//    nvtxRangePushA("SCEE");
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, krep);
     else
         U_ii = _FFType.energy(coord, f, beadSet, krep, d);
 //        U_i = _FFType.energy(coord, f, beadSet, krep, d);
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
     return U_ii;
 }
@@ -186,10 +189,10 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
     }
 #endif
 #ifdef SERIAL
-    nvtxRangePushA("SCFE");
+//    nvtxRangePushA("SCFE");
 //    std::cout<<"x vol srl"<<endl;
     _FFType.forces(coord, f, beadSet, krep);
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 }
 

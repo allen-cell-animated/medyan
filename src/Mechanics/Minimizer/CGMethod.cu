@@ -22,15 +22,14 @@
 #define CUDA_HOSTDEV __host__ __device__
 #else
 #define CUDA_HOSTDEV
+#include "nvToolsExt.h"
 #endif
-
-#define ARRAY_SIZE 128
-//
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "CUDAcommon.h"
-#include "nvToolsExt.h"
 #endif
+#define ARRAY_SIZE 128
+//
 #include <vector>
 #include <cmath>
 #include <ctime>
@@ -38,7 +37,6 @@
 #include <ctime>
 #include <cstdlib>
 #include "cross_check.h"
-#include "nvToolsExt.h"
 //
 long CGMethod::N = 0;
 #ifdef CUDAACCL
@@ -1088,7 +1086,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
 #endif
     }
 #ifdef SERIAL
-    delete cconvergencecheck;
+    delete [] cconvergencecheck;
 #endif
     std::cout<<"lambda determined in "<<iter<<endl;
 //synchronize streams
@@ -1152,7 +1150,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
 #endif
     }
 #ifdef SERIAL
-    delete cconvergencecheck;
+    delete [] cconvergencecheck;
 #endif
     std::cout<<"lambda determined in "<<iter<<endl;
     if(cconvergencecheck[0]||sconvergencecheck)

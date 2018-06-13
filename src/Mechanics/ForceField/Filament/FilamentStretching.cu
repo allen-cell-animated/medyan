@@ -16,7 +16,9 @@
 #include "FilamentStretchingHarmonic.h"
 #include "Bead.h"
 #include "cross_check.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::vectorize() {
@@ -74,9 +76,9 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
 template<class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::deallocate() {
 
-    delete beadSet;
-    delete kstr;
-    delete eql;
+    delete [] beadSet;
+    delete [] kstr;
+    delete [] eql;
 #ifdef CUDAACCL
     _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet));

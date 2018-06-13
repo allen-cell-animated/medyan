@@ -19,11 +19,14 @@
 //TODO added for temporary CUDA force.
 #include "CGMethod.h"
 #include "BoundaryCylinderRepulsionExpCUDA.h"
-#include "CUDAcommon.h"
+
 #include "cross_check.h"
 #include "Cylinder.h"
 #include "MathFunctions.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#include "CUDAcommon.h"
+#endif
 using namespace mathfunc;
 #ifdef CUDAACCL
 void BoundaryCylinderRepulsionExp::deallocate(){

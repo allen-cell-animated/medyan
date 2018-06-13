@@ -21,12 +21,11 @@
 #include "common.h"
 
 #include "CGMethod.h"
-
 /// The steepest descent method for conjugate gradient minimization
-class SteepestDescent : public CGMethod {
-public:
-    virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
-                          double MAXDIST, double LAMBDAMAX, bool steplimit);
-};
+    class SteepestDescent : public CGMethod {
+    public:
+        virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
+                              double MAXDIST, double LAMBDAMAX, bool steplimit);
 
+    };
 #endif

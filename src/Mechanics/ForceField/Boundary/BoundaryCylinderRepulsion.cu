@@ -24,7 +24,9 @@
 #include "cross_check.h"
 #include "CUDAcommon.h"
 #include "BoundaryCylinderRepulsionCUDA.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 
 using namespace mathfunc;
 
@@ -105,6 +107,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             beListplane[4 * i +1] = x[1];
             beListplane[4 * i +2] = x[2];
             beListplane[4 * i +3] = x[3];
+            delete [] x;
         }
         else{
             cout<<"CUDA cannot handle non-plane type boundaries. Exiting..."<<endl;
@@ -151,16 +154,17 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
                             "cuda data transfer", "BoundaryCylinderRepulsion.cu");
 //    nvtxRangePop();
 #endif
-    delete beListplane, nintvec;
+    delete [] beListplane;
+    delete [] nintvec;
 }
 
 template<class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 
-    delete beadSet;
-    delete krep;
-    delete slen;
-    delete nneighbors;
+    delete [] beadSet;
+    delete [] krep;
+    delete [] slen;
+    delete [] nneighbors;
 
 #ifdef CUDAACCL
     _FFType.deallocate();
@@ -200,14 +204,14 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
 //    nvtxRangePop();
 #endif
 #ifdef SERIAL
-    nvtxRangePushA("SCBE");
+//    nvtxRangePushA("SCBE");
     if (d == 0.0) {
         U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
     }
     else {
         U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
     }
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
     return U_ii;
 }

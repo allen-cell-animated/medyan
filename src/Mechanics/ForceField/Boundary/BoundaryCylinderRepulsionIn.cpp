@@ -246,11 +246,14 @@ using namespace mathfunc;
 
 
 ///Template specializations
-template double BoundaryCylinderRepulsion<BoundaryCylinderRepulsionIn>::computeEnergy(double *coord, double *f, double d);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionIn>::computeForces(double *coord, double *f);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionIn>::computeLoadForces();
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionIn>::vectorize();
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionIn>::deallocate();
+template double BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy
+        (double *coord, double *f, double d);
+template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForces
+        (double *coord, double *f);
+template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn
+>::computeLoadForces();
+template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::vectorize();
+template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::deallocate();
 //template double BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy(double d);
 //template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForces();
 //template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForcesAux();

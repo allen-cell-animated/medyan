@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_LINKERSTRETCHINGHARMONICCUDA_H
 #define CUDA_VEC_LINKERSTRETCHINGHARMONICCUDA_H
+#ifdef CUDAACCL
 #include "LinkerStretchingHarmonic.h"
 
 #include "LinkerStretching.h"
@@ -18,8 +19,6 @@
 #include <cuda_runtime.h>
 
 using namespace mathfunc;
-
-#ifdef CUDAACCL
 
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //

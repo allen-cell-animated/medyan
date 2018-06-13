@@ -62,6 +62,8 @@ namespace mathfunc {
 
         return tuple<vector<double>, vector<double>>(direction, bp1);
     }
+
+#ifdef CUDAACCL
      __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot){
         U_sum[0] = 0.0;
         double sum = 0.0;
@@ -180,6 +182,7 @@ namespace mathfunc {
     __global__ void resetdoublevariableCUDA(double *variable){
         variable[0] = 0.0;
     }
+#endif
 //    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int *culpritID, char* culpritFF,
 //                              char* culpritinteraction, char* FF, char* interaction){
 //        U_sum[0] = 0.0;

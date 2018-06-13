@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_FILAMENTBENDINGCOSINECUDA_H
 #define CUDA_VEC_FILAMENTBENDINGCOSINECUDA_H
+#ifdef CUDAACCL
 #include "FilamentBendingCosine.h"
 
 #include "FilamentBending.h"
@@ -18,8 +19,6 @@
 #include <cuda_runtime.h>
 
 using namespace mathfunc;
-
-#ifdef CUDAACCL
 
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //

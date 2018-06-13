@@ -17,8 +17,10 @@
 #include <vector>
 
 #include "common.h"
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
+#endif
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
@@ -50,7 +52,8 @@ namespace mathfunc {
     return __longlong_as_double(old);
   }
 #endif
-    __host__ inline int nextPowerOf2( int n)
+#ifdef CUDAACCL
+     __host__ inline int nextPowerOf2( int n)
     {
         n--;
         n |= n >> 1;
@@ -100,6 +103,7 @@ namespace mathfunc {
 //                              char* culpritinteraction, char *FF, char *interaction);
 //    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot);
     __global__ void addvectorred2(double *U, int *params, double *U_sum, double *U_tot);
+    #endif
     /// Normalize a vector
     inline void normalize(vector<double> &v) {
 
@@ -126,7 +130,9 @@ namespace mathfunc {
 
     /// Return normalized vector
     /// ARRAY VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void normalizeVector(double *v) {
 
         double norm = sqrt((*(v)) * (*(v)) + (*(v + 1)) * (*(v + 1)) + (*(v + 2)) * (*(v + 2)));
@@ -141,19 +147,25 @@ namespace mathfunc {
         return sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     }
     ///ARRAY VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double magnitude(double const *v) {
 
         return sqrt((*(v)) * (*(v)) + (*(v + 1)) * (*(v + 1)) + (*(v + 2)) * (*(v + 2)));
     }
 
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double getdistancefromplane(double *coord, double * plane,int id){
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
     }
 
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double getstretcheddistancefromplane(double *coord, double *force, double * plane, double z, int id){
         double movedPoint[3] = {coord[id] + z*force[id],
                                      coord[id + 1] + z*force[id + 1],
@@ -187,7 +199,9 @@ namespace mathfunc {
 
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     /// ARRAY VERSION
-    __host__ __device__
+    #ifdef CUDAACCL
+     __host__ __device__
+     #endif
     inline double twoPointDistance(double const *v1, double const *v2) {
 
         return sqrt((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
@@ -195,13 +209,17 @@ namespace mathfunc {
     }
 
     ///CUDA VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double twoPointDistance(double const *v1, double const *v2, int const id) {
 
         return sqrt((v2[id] - v1[id]) * (v2[id] - v1[id]) + (v2[id + 1] - v1[id + 1]) * (v2[id + 1] - v1[id + 1])
                     + (v2[id + 2] - v1[id + 2]) * (v2[id + 2] - v1[id + 2]));
     }
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double twoPointDistancemixedID(double const *v1, double const *v2, int const id1, int const id2) {
 
         return sqrt((v2[id2] - v1[id1]) * (v2[id2] - v1[id1]) + (v2[id2 + 1] - v1[id1 + 1]) * (v2[id2 + 1] - v1[id1 +
@@ -244,7 +262,9 @@ namespace mathfunc {
     }
 
     //CUDA version
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double twoPointDistanceStretched(double const *v1,
                                             double const *p1,
                                             double const *v2,
@@ -257,7 +277,9 @@ namespace mathfunc {
                     ((v2[id + 2] + d * p2[id + 2]) - (v1[id + 2] + d * p1[id + 2])));
     }
     //CUDA version
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double twoPointDistanceStretchedmixedID(double const *v1,
                                             double const *p1,
                                             double const *v2,
@@ -309,7 +331,9 @@ namespace mathfunc {
 
     /// Scalar product of two vectors v1(x,y,z) and v2(x,y,z)
     /// ARRAY VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double dotProduct(double const *v1, double const *v2) {
         return (*(v1)) * (*(v2)) + (*(v1 + 1)) * (*(v2 + 1)) + (*(v1 + 2)) * (*(v2 + 2));
 
@@ -340,7 +364,9 @@ namespace mathfunc {
     }
 
     ///CUDA VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double scalarProduct(double const *v1, double const *v2,
                                 double const *v3, double const *v4, int const id) {
 //        return((*(v2)-*(v1))*(*(v4)-*(v3))
@@ -352,7 +378,9 @@ namespace mathfunc {
                 (v2[id + 2] - v1[id + 2]) * (v4[id + 2] - v3[id + 2]));
     }
     ///CUDA VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline double scalarProductmixedID(double const *v1, double const *v2,
                                 double const *v3, double const *v4, int const id1, int const id2, int const id3, int
                                        const id4) {
@@ -411,7 +439,9 @@ namespace mathfunc {
 
     }
     //CUDA version
-    __host__ __device__
+    #ifdef CUDAACCL
+     __host__ __device__
+     #endif
     inline double scalarProductStretched(double const *v1,
                                          double const *p1,
                                          double const *v2,
@@ -430,7 +460,9 @@ namespace mathfunc {
         return xx + yy + zz;
     }
 
+    #ifdef CUDAACCL
     __host__ __device__
+     #endif
     inline double scalarProductStretchedmixedIDv2(double const *v1,
 
                                          double const *v2,
@@ -451,7 +483,9 @@ namespace mathfunc {
     }
 
     //CUDA version
+    #ifdef CUDAACCL
     __host__ __device__
+     #endif
     inline double scalarProductStretchedmixedID(double const *v1,
                                          double const *p1,
                                          double const *v2,
@@ -527,7 +561,9 @@ namespace mathfunc {
     };
 
     /// CUDA VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void vectorProduct(double *v,
                               double const *v1,
                               double const *v2,
@@ -543,7 +579,9 @@ namespace mathfunc {
         v[2] = vz;
     };
     /// CUDA VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void vectorProductmixedID(double *v,
                               double const *v1,
                               double const *v2,
@@ -619,7 +657,9 @@ namespace mathfunc {
         v[2] = vz;
     }
     ///CUDA version
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void vectorProductStretched(double *v,
                                        double const *v1,
                                        double const *p1,
@@ -653,7 +693,9 @@ namespace mathfunc {
         v[2] = vz;
     };
     ///CUDA version
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void vectorProductStretchedmixedID(double *v,
                                        double const *v1,
                                        double const *p1,
@@ -704,7 +746,9 @@ namespace mathfunc {
     };
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z].
     /// ARRAY VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void crossProduct(double *cp,
                              double const *v1,
                              double const *v2) {
@@ -763,7 +807,9 @@ namespace mathfunc {
     }
 
     //CUDA version
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void midPointCoordinate(double *v, double const *v1, double const *v2, double alpha, int id) {
         v[0] = v1[id] * (1.0 - alpha) + alpha * v2[id];
         v[1] = v1[id + 1] * (1.0 - alpha) + alpha * v2[id + 1];
@@ -801,7 +847,9 @@ namespace mathfunc {
     }
 
     //CUDA version
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void midPointCoordinateStretched(double *v,
                                             double *v1,
                                             double *p1,
@@ -845,13 +893,17 @@ namespace mathfunc {
         crossProduct(cp, v1, v2);
 
         auto retVal = areEqual(magnitude(cp), 0.0);
-        delete v1, v2, cp;
+        delete [] v1;
+        delete [] v2;
+        delete [] cp;
 
         return retVal;
     }
 
     /// CUDA VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline bool areParallel(double const *p1, double const *p2,
                             double const *p3, double const *p4, int id) {
 
@@ -872,7 +924,9 @@ namespace mathfunc {
 //        printf("cp %d %f %f %f\n", id, cp[0], cp[1], cp[2]);
         auto retVal = areEqual(magnitude(cp), 0.0);
 //        printf("aE %d %d \n",id, retVal);
-        //delete v1, v2, cp;
+//        delete [] v1;
+//        delete [] v2;
+//        delete [] cp;
 
         return retVal;
     }
@@ -902,13 +956,18 @@ namespace mathfunc {
         crossProduct(cp, v1, v2);
 //        std::cout<<*(p2)<<endl;
         auto retVal = areEqual(dotProduct(v3, cp), 0.0);
-        delete v1, v2, cp;
+        delete [] v1;
+        delete [] v2;
+        delete [] v3;
+        delete [] cp;
 
         return retVal;
     }
 
     ///CUDA VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline bool areInPlane(double const *p1, double const *p2,
                            double const *p3, double const *p4, int const id) {
 
@@ -935,7 +994,7 @@ namespace mathfunc {
 //        cp[2] = v1[0] * v2[1] - v1[1] * v2[0];
 
         crossProduct(cp, v1, v2);
-        auto xxx=dotProduct(v3, cp);
+//        auto xxx=dotProduct(v3, cp);
         auto retVal = areEqual(dotProduct(v3, cp), 0.0);
 //        delete v1, v2, cp;
         return retVal;
@@ -1045,11 +1104,15 @@ namespace mathfunc {
             p4[1] = (p4[1] + norm[1] * d);
             p4[2] = (p4[2] + norm[2] * d);
         }
-        delete norm, v1, v2;
+        delete [] norm;
+        delete [] v1;
+        delete [] v2;
     }
 
     ///CUDA VERSION
+    #ifdef CUDAACCL
     __host__ __device__
+    #endif
     inline void movePointOutOfPlane(double *p1,
                                     double *p2,
                                     double *p3,
@@ -1100,7 +1163,9 @@ namespace mathfunc {
             p4[id + 1] = (p4[id + 1] + norm[1] * d);
             p4[id + 2] = (p4[id + 2] + norm[2] * d);
         }
-        delete norm, v1, v2;
+//        delete [] norm;
+//        delete [] v1;
+//        delete [] v2;
     }
 
     /// Function to create a initial branching point and direction, given an

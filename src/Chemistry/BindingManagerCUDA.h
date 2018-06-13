@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_BINDINGMANAGERCUDA_H
 #define CUDA_VEC_BINDINGMANAGERCUDA_H
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cuda_runtime_api.h>
@@ -169,4 +170,5 @@ __global__ void updateAllPossibleBindingsBrancherCUDA (double *coord, int *beadS
         }
     }
 }
+#endif
 #endif //CUDA_VEC_BINDINGMANAGERCUDA_H

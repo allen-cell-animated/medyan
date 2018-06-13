@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_CYLINDEREXCLVOLREPULSIONCUDA_H
 #define CUDA_VEC_CYLINDEREXCLVOLREPULSIONCUDA_H
+#ifdef CUDAACCL
 #include "CylinderExclVolRepulsion.h"
 
 #include "CylinderExclVolume.h"
@@ -18,8 +19,6 @@
 #include <cuda_runtime.h>
 #include <assert.h>
 using namespace mathfunc;
-
-#ifdef CUDAACCL
 
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //

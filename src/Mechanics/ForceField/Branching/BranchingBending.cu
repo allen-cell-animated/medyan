@@ -18,7 +18,9 @@
 #include "BranchingPoint.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 #include "cross_check.h"
 
 template <class BBendingInteractionType>
@@ -69,9 +71,9 @@ void BranchingBending<BBendingInteractionType>::vectorize() {
 
 template<class BBendingInteractionType>
 void BranchingBending<BBendingInteractionType>::deallocate() {
-    delete beadSet;
-    delete kbend;
-    delete eqt;
+    delete [] beadSet;
+    delete [] kbend;
+    delete [] eqt;
 #ifdef CUDAACCL
     _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet));

@@ -20,9 +20,11 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "nvToolsExt.h"
+#endif
 
 using namespace mathfunc;
 #ifdef CUDAACCL

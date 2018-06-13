@@ -18,7 +18,9 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 #include "cross_check.h"
 template <class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::vectorize() {
@@ -79,9 +81,9 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
 template<class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::deallocate() {
 
-    delete beadSet;
-    delete kbend;
-    delete eqt;
+    delete [] beadSet;
+    delete [] kbend;
+    delete [] eqt;
 #ifdef CUDAACCL
     _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet));

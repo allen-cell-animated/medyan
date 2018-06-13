@@ -19,7 +19,9 @@
 #include "Linker.h"
 #include "Bead.h"
 #include "cross_check.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
@@ -117,12 +119,12 @@ void LinkerStretching<LStretchingInteractionType>::deallocate() {
         l->getMLinker()->stretchForce += stretchforce[i];
         i++;
     }
-    delete stretchforce;
-    delete beadSet;
-    delete kstr;
-    delete eql;
-    delete pos1;
-    delete pos2;
+    delete [] stretchforce;
+    delete [] beadSet;
+    delete [] kstr;
+    delete [] eql;
+    delete [] pos1;
+    delete [] pos2;
 #ifdef CUDAACCL
     _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet),"cudaFree", "LinkerStretching.cu");

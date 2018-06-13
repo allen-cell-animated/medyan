@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_NEIGHBORLISTIMPLCUDA_H
 #define CUDA_VEC_NEIGHBORLISTIMPLCUDA_H
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cuda_runtime_api.h>
@@ -131,4 +132,5 @@ __global__ void CylinderCylinderNLCUDA(double *coord_com, int *beadSet, int *cyl
 //            }
 //        }
 //}
+#endif
 #endif //CUDA_VEC_NEIGHBORLISTIMPLCUDA_H

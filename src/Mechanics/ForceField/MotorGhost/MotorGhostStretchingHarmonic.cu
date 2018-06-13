@@ -18,9 +18,11 @@
 #include "Bead.h"
 #include "MathFunctions.h"
 #include "common.h"
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "nvToolsExt.h"
+#endif
 
 using namespace mathfunc;
 #ifdef CUDAACCL
@@ -351,8 +353,8 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadS
 //        std::cout<<U_i<<endl;
     }
 //    std::cout<<"MS Total energy serial "<< U <<endl;
-    delete v1;
-    delete v2;
+    delete [] v1;
+    delete [] v2;
 
     return U;
 }
@@ -405,8 +407,8 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double * f, int *bead
     }
 
 //    std::cout<<"MS Total energy serial "<< U <<endl;
-    delete v1;
-    delete v2;
+    delete [] v1;
+    delete [] v2;
 
     return U;
 
@@ -486,7 +488,7 @@ void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet
         stretchforce[i] = f0/invL;
 //        MotorGhost::getMotorGhosts()[i]->getMMotorGhost()->stretchForce = f0;
     }
-    delete v1;
-    delete v2;
+    delete [] v1;
+    delete [] v2;
 
 }

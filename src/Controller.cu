@@ -42,7 +42,9 @@
 #include <vector>
 #include <algorithm>
 #include "Restart.h"
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
+#endif
 using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {

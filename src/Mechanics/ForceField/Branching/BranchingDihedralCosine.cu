@@ -19,9 +19,11 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "nvToolsExt.h"
+#endif
 
 using namespace mathfunc;
 #ifdef CUDAACCL
@@ -242,9 +244,9 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 
         U += U_i;
     }
-    delete mp;
-    delete n1;
-    delete n2;
+    delete [] mp;
+    delete [] n1;
+    delete [] n2;
 
     return U;
 }
@@ -299,10 +301,10 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
 
         U += U_i;
     }
-    delete mp;
-    delete n1;
-    delete n2;
-    delete zero;
+    delete [] mp;
+    delete [] n1;
+    delete [] n2;
+    delete [] zero;
     return U;
 }
 
@@ -403,8 +405,8 @@ void BranchingDihedralCosine::forces(double *coord, double *f, int *beadSet,
 
         f4[2] +=f0*( YD*( (coord4[0] - coord3[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord4[1] - coord3[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + Y2*(coord4[2] - coord3[2]) - D2*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
     }
-    delete mp;
-    delete n1;
-    delete n2;
-    delete zero;
+    delete [] mp;
+    delete [] n1;
+    delete [] n2;
+    delete [] zero;
 }

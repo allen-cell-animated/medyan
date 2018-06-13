@@ -18,8 +18,11 @@
 #include "BranchingPoint.h"
 #include "Cylinder.h"
 #include "Bead.h"
+
+#ifdef CUDAACCL
 #include "nvToolsExt.h"
 #include "cross_check.h"
+#endif
 
 template <class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::vectorize() {
@@ -72,9 +75,9 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
 template<class BPositionInteractionType>
 void BranchingPosition<BPositionInteractionType>::deallocate() {
-    delete beadSet;
-    delete kpos;
-    delete pos;
+    delete [] beadSet;
+    delete [] kpos;
+    delete [] pos;
 #ifdef CUDAACCL
     _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet));
@@ -107,12 +110,12 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord,
     nvtxRangePop();
 #endif
 #ifdef SERIAL
-    nvtxRangePushA("SCEBP");
+//    nvtxRangePushA("SCEBP");
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kpos, pos);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kpos, pos, d);
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 #ifdef SERIAL_CUDACROSSCHECK
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
@@ -153,10 +156,10 @@ void BranchingPosition<BPositionInteractionType>::computeForces(double *coord, d
     }
 #endif
 #ifdef SERIAL
-    nvtxRangePushA("SCFBP");
+//    nvtxRangePushA("SCFBP");
 
     _FFType.forces(coord, f, beadSet, kpos, pos);
-    nvtxRangePop();
+//    nvtxRangePop();
 #endif
 }
 

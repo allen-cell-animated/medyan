@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_CGMETHODCUDA_H
 #define CUDA_VEC_CGMETHODCUDA_H
+#ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "math.h"
@@ -429,7 +430,6 @@ current_convergence, bool *safestate, int *status){
 //    if(lambda[0] <= 0.0 || lambda[0] <= LAMBDATOL) {current_convergence[0] = true; lambda[0] = MAXDIST / fmax[0];  }
 //}
 
-#ifdef CUDAACCL
 
 __global__ void getsafestateCUDA(double* FDotFA, double* curGrad, double* newGrad, bool* checkout){
     //if(checkin[0] == true) return;

@@ -4,6 +4,7 @@
 
 #ifndef CUDA_VEC_BRANCHINGSTRETCHINGHARMONICCUDA_H
 #define CUDA_VEC_BRANCHINGSTRETCHINGHARMONICCUDA_H
+#ifdef CUDAACCL
 #include "BranchingStretchingHarmonic.h"
 
 #include "Bead.h"
@@ -18,8 +19,6 @@
 #include <math.h>
 
 using namespace mathfunc;
-
-#ifdef CUDAACCL
 
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //
