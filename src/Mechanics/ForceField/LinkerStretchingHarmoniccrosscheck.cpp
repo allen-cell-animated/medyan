@@ -78,7 +78,7 @@ double LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     b4->force[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->force[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
     
-    return f0;
+    return f0 / invL;
 }
 
 double LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
@@ -112,7 +112,7 @@ double LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b
     b4->forceAux[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->forceAux[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
     
-    return f0;
+    return f0 / invL;
 }
 
 #endif

@@ -72,6 +72,11 @@ public:
     ///< monomer increments (future values).
     ///< These are then used to propagate load forces in between
     ///< mechanical force calculations.
+    ///< (Edited 20180216) Different angle between the cylinder and the
+    ///< boundary would result in different effective monomer size in the
+    ///< calculation of the Brownian Ratchet model. To simply computation, we
+    ///< include that factor in our loadForces here. As a clarification, the
+    ///< actual physical load force should not have that factor.
     
     short lfip = 0;
     short lfim = 0;  ///< Index which saves which load force to use
