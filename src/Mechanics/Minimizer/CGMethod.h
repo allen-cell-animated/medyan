@@ -149,10 +149,12 @@ protected:
     void shiftGradient(double d);
     //@}
 
+#ifdef CUDAACCL
     //@{
     double backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDIST,
                                   double LAMBDAMAX, bool *gpu_safestate);
     //@}
+#endif // CUDAACCL
 
     //@{
     /// Linear search methods
