@@ -190,11 +190,11 @@ float Compartment::generateScaleFactor(Compartment* C)
         //if at right part
         else {
             //at lower
-            if(ny < y) auto c1 = y - ly/2;
+            if(ny < y) c1 = y - ly/2;
 
-            else auto c1 = y + ly/2; //right
+            else c1 = y + ly/2; //right
             
-            auto c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
+            c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
             
             //3. calculate scaling factor
             if(c2 < (x + lx/2) && c2 > (x - lx/2)) {
