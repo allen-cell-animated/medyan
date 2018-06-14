@@ -196,11 +196,11 @@ float Compartment::generateScaleFactor(Compartment* C)
         //if at right part
         else {
             //at lower
-            if(ny < y) auto c1 = y - ly/2;
+            if(ny < y) c1 = y - ly/2;
 
-            else auto c1 = y + ly/2; //right
+            else c1 = y + ly/2; //right
             
-            auto c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
+            c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
             cout << c1 << endl;
             cout << c2 << endl;
             
