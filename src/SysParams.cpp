@@ -13,6 +13,9 @@
 
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
+#ifdef NLSTENCILLIST
+short SysParams::numcylcylNL = 0;
+#endif
 vector<float> SysParams::MUBBareRate ={};
 vector<float> SysParams::LUBBareRate ={};
 vector<float> SysParams::BUBBareRate ={};

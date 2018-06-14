@@ -265,6 +265,9 @@ public:
     
 public:
     //@{
+#ifdef NLSTENCILLIST
+    static short numcylcylNL;
+#endif
     ///Const getter
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
     //aravind July11,2016

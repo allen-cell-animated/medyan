@@ -74,9 +74,60 @@ public:
     }
 #endif
     short _ID; //ID helps link binGridType to NeighborList.
-
+#ifdef NLSTENCILLIST
+    unordered_map<Cylinder*, vector<Cylinder*>> _list4mbin;
+    ///< The neighbors list, as a hash map
+    void generateConnections();
+    void initializeBinGrid();
+    vector<int> _grid; ///< Number of bins in each dimension
+    vector<double> _binSize; ///< Bin size in each dimension
+    vector<int> _size;       ///< Size of entire grid spanned in each dimension
+    double maxcylsize; // maximum of the two cylinder sizes that are part of this
+    // CylinderCylinderNL.
+    short NLcyltypes[2] = {0,0};// The two types of cylinders that engage in this neighbors
+    // List
+    BinGrid* _binGrid;
+    Bin* getBin(const vector<double> &coords);
+    Bin* getBin(const vector<size_t> &indices);
+    void assignallcylinderstobin();
+    void assignbin(Cylinder* cyl);
+    void updateallcylinderstobin();
+    void updatebin(Cylinder* cyl);
+    void updateNeighborsbin(Cylinder* cylinder, bool runtime = false);
+    vector<Cylinder*> getNeighborsbin(Cylinder* cylinder);
+//    void setbinvars(){
+//        initializeBinGrid();
+//        assignallcylinderstobin();
+//        NLcyltypes[0] = 0;
+//        NLcyltypes[1] = 0;
+//        _ID = SysParams::numcylcylNL;
+//        SysParams::numcylcylNL++;
+//        //Determine binSize based on the longer of the two cylinders involved in the NL.
+//        std::cout<<"Cylinder size "<<SysParams::Geometry()
+//                .cylinderSize[NLcyltypes[0]]<<endl;
+//        maxcylsize = max(SysParams::Geometry().cylinderSize[NLcyltypes[0]],
+//                         SysParams::Geometry().cylinderSize[NLcyltypes[1]]);
+//    }
+#endif
     CylinderCylinderNL(float rMax, float rMin = 0.0, bool full = false, short ID = 0)
             : NeighborList(rMax, rMin), _full(full) {
+#ifdef NLSTENCILLIST
+        //Right now only two cylinders of same type can be considered for NL.
+        NLcyltypes[0] = 0;
+        NLcyltypes[1] = 0;
+        maxcylsize = max(SysParams::Geometry().cylinderSize[NLcyltypes[0]],
+                         SysParams::Geometry().cylinderSize[NLcyltypes[1]]);
+        std::cout<<"Cylinder size "<<SysParams::Geometry()
+                .cylinderSize[NLcyltypes[0]]<<endl;
+        initializeBinGrid();
+        assignallcylinderstobin();
+
+        _ID = SysParams::numcylcylNL;
+        std::cout<<"NL ID "<<SysParams::numcylcylNL<<endl;
+        SysParams::numcylcylNL++;
+        //Determine binSize based on the longer of the two cylinders involved in the NL.
+
+#endif
     }
     virtual void addNeighbor(Neighbor* n);
     virtual void removeNeighbor(Neighbor* n);
