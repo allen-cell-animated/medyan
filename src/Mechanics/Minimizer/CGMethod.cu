@@ -786,11 +786,11 @@ void CGMethod::endMinimization() {
 #endif
 }
 
+#ifdef CUDAACCL
 double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDIST,
                                         double LAMBDAMAX, bool *gpu_safestate) {
     double lambda;
     h_stop[0] = false;
-#ifdef CUDAACCL
 //    nvtxRangePushA("Evcreate");
     if(s1 == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamCreate(&s1));
@@ -841,7 +841,6 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
 //    CUDAcommon::handleerror(cudaEventRecord(*ep1, *sp1));
 //    cudaStreamSynchronize(*sp1);
 //    nvtxRangePop();
-#endif
 //    nvtxRangePushA("Energy 0");
     double currentEnergy = FFM.computeEnergy(coord, force, 0.0);
 //    nvtxRangePop();
@@ -853,7 +852,6 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
                                        cudaMemcpyDeviceToHost));
     std::cout<<"Total Energy "<<cuda_energy[0]<<" "<<currentEnergy<<endl;
 #endif
-#ifdef CUDAACCL
     //wait for energies to be calculated
     if(stream_bt == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaStreamCreate(&stream_bt),"find lambda", "CGMethod.cu");
@@ -879,12 +877,10 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
 //    nvtxRangePop();
 //    CUDAcommon::handleerror(cudaStreamSynchronize (*sp1)); CHECK IF NEEDED
     cconvergencecheck = h_stop;
-#endif
     int iter = 0;
     while(!(cconvergencecheck[0])) {
         iter++;
 
-#ifdef CUDAACCL
 //        nvtxRangePushA("While wait");
         CUDAcommon::handleerror(cudaStreamWaitEvent(*sp2, *ep1, 0));
         CUDAcommon::handleerror(cudaStreamSynchronize(*sp2));
@@ -907,7 +903,6 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
         cvars.streamvec.clear();
 //        cvars.event = ep1;
         CUDAcommon::cudavars = cvars;
-#endif
 #ifdef SERIAL_CUDACROSSCHECK
         double cuda_lambda[1];
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
@@ -932,7 +927,6 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
                                            cudaMemcpyDeviceToHost));
         std::cout<<"Total Energy "<<cuda_energy[0]<<" "<<energyLambda<<endl;
 #endif
-#ifdef CUDAACCL
         //wait for energies to be calculated
 //        std::cout<<"Total energy streams "<<CUDAcommon::getCUDAvars().streamvec.size()<<endl;
 //        nvtxRangePushA("backConvsync");
@@ -967,9 +961,7 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
             }
 //            nvtxRangePop();
         }
-#endif
     }
-#ifdef CUDAACCL
     if(!(CUDAcommon::getCUDAvars().conservestreams))
         CUDAcommon::handleerror(cudaFree(gpu_params), "CudaFree", "CGMethod.cu");
 //    nvtxRangePushA("Evsync");
@@ -990,13 +982,14 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
         CUDAcommon::handleerror(cudaEventDestroy(e2));
     }
 //    nvtxRangePop();
-#endif
     std::cout<<"lambda determined in "<<iter<<endl;
 //synchronize streams
     if(cconvergencecheck[0]||sconvergencecheck)
         return lambda;
 
 }
+#endif // CUDAACCL
+
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                         double LAMBDAMAX, bool *gpu_safestate) {
     double lambda;

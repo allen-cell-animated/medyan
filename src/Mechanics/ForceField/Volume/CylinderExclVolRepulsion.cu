@@ -451,10 +451,6 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
         }
         U += U_i;
     }
-    delete [] c1;
-    delete [] c2;
-    delete [] c3;
-    delete [] c4;
 //    std::cout<<"total energy serial "<<U<<endl;
     return U;
 

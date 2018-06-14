@@ -456,9 +456,11 @@ struct BranchingCallback {
                 
             frate=0.0;
             }
-            else
+            else {
+                b = nullptr;
                 cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
                 //exit(EXIT_FAILURE);
+            }
         }
         
         //create off reaction
