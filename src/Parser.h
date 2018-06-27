@@ -136,6 +136,21 @@ struct ChemistryData {
     vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions;
     //@}
     
+    //@{
+    /// CAMKII reactions
+    /*!
+     *  The CAMKII reactions are held using a vector, which contains a tupple with  
+     *  the string of reactants, string of products. The first binding reaction contains
+     *  an on rate and an off rate. Succesive reactions contain a binding range and an off rate.
+     */
+    /// Branching reactions copy
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactionscopy;
+    /// CAMKII reactions
+    vector<vector<tuple<vector<string>, vector<string>, double, double>>> camkiiReactions1;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double>>> camkiiReactions2;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double>>> camkiiReactions3;
+    //@}
+    
     /// MotorGhost walking reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions;
     
