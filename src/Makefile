@@ -20,19 +20,19 @@ HEADERS := $(shell find . -name '*.h')
 OBJECTS := $(SOURCES:.cpp=.o)
 
 #CPP COMPILER CHOICE AND FLAGS
-#CXX = /usr/bin/g++ -std=c++11
-CXX = /opt/rh/devtoolset-4/root/usr/bin/g++ -std=c++11 -static -pthread -Wl,--whole-archive -lpthread -Wl,--no-whole-archive #added jl135, for Rice Workstation only
+CXX = /usr/bin/g++ -std=c++11
+#CXX = /usr/bin/g++ -std=c++11 -static -pthread -Wl,--whole-archive -lpthread -Wl,--no-whole-archive #added jl135, for Rice Workstation only
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
-#LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl
+LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl
 #added LDLIBS for Rice Workstation only
-LDLIBS = -L/storage-home/j/jl135/bin2/boost_1_60_0/bin.v2/libs/system/build/gcc-4.4.7/release/threading-multi/ -lboost_system  -L/storage-home/j/jl135/bin2/gsl-2.1/lib/ -lgsl -lgslcblas #added jl135  
+#LDLIBS = -L/storage-home/j/jl135/bin2/boost_1_60_0/bin.v2/libs/system/build/gcc-4.4.7/release/threading-multi/ -lboost_system  -L/storage-home/j/jl135/bin2/gsl-2.1/lib/ -lgsl -lgslcblas #added jl135  
 LDFLAGS = $(FAST)
 
 CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -Wno-uninitialized -Wno-unknown-warning-option \
--I/storage-home/j/jl135/bin2/boost_1_60_0 -I/storage-home/j/jl135/bin2/boost_1_60_0/boost	  \
+-I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
 -IMechanics/Minimizer                     \
