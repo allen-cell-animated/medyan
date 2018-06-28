@@ -142,7 +142,7 @@ public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ///and the number of reactions to 0
     ChemGillespieImpl() :
-    ChemSimImpl(), _eng(rdtsc()), _exp_distr(0.0),
+    ChemSimImpl(), _exp_distr(0.0),
     _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed
@@ -249,7 +249,7 @@ private:
 private:
     unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie
                                                                           ///< objects, representing the reaction network
-    mt19937 _eng; ///< Random number generator
+//    mt19937 _eng; ///< Random number generator
     exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<double> _uniform_distr;
     double _t; ///< global time

@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <chrono>
-
+#include "Rand.h"
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
@@ -134,7 +134,7 @@ double ChemNRMImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
     
     _exp_distr.param(pm);
-    return _exp_distr(_eng);
+    return _exp_distr(Rand::_eng);
 }
 
 bool ChemNRMImpl::makeStep() {
