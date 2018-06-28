@@ -43,6 +43,7 @@ double ForceFieldManager::computeEnergy(double d, bool verbose) {
             else return numeric_limits<double>::infinity();
         }
         else energy += tempEnergy;
+        std::cout<<"ForceField "<<f->getName()<<" energy "<<tempEnergy<<" d "<<d<<endl;
         
     }
     return energy;

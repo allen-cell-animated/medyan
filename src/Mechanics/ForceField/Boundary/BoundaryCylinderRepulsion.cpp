@@ -198,7 +198,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-
+                
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     

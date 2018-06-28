@@ -368,7 +368,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
             
-            
+            // check how many segments can fit between end-to-end of the filament
             Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
             
@@ -768,6 +768,7 @@ void Controller::run() {
     
     //perform first minimization
 #ifdef MECHANICS
+     cout<<"Minimizing energy"<<endl;
     _mController->run(false);
     
     //reupdate positions and neighbor lists
@@ -785,8 +786,8 @@ void Controller::run() {
     oldTau = 0;
 #endif
     for(auto o: _outputs) o->print(0);
-    cout<<"Minimizing energy"<<endl;
-    _mController->run(false);
+//    cout<<"Minimizing energy"<<endl;
+//    _mController->run(false);
     cout << "Starting simulation..." << endl;
     
     int i = 1;
@@ -814,10 +815,6 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
-                
-#ifdef DYNAMICRATES
-                updateReactionRates();
-#endif
 
                 tauLastMinimization = 0.0;
 
@@ -829,13 +826,13 @@ void Controller::run() {
                 i++;
                 tauLastSnapshot = 0.0;
             }
-#elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(i);
-            i++;
-#endif
 #ifdef DYNAMICRATES
             updateReactionRates();
 #endif
+#endif
+//#ifdef DYNAMICRATES
+//            updateReactionRates();
+//#endif
             
 #ifdef CHEMISTRY
             // update neighbor lists
@@ -878,10 +875,6 @@ void Controller::run() {
                 _mController->run();
                 updatePositions();
                 
-#ifdef DYNAMICRATES
-                updateReactionRates();
-#endif
-                
                 stepsLastMinimization = 0;
             }
             
@@ -890,6 +883,7 @@ void Controller::run() {
                 for(auto o: _outputs) o->print(i);
                 i++;
                 stepsLastSnapshot = 0;
+        
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);

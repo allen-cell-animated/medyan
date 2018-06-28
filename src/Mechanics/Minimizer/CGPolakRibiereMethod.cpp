@@ -42,6 +42,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 
 		numIter++;
 		double lambda, beta, newGrad, prevGrad;
+        std::cout<<"SL maxF "<<maxF()<<endl;
         
         //find lambda by line search, move beads
         lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX)
@@ -64,7 +65,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //shift gradient
         shiftGradient(beta);
-        
+
         //direction reset if not downhill, or no progress made
         if(CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad)) {
             
@@ -72,8 +73,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
             _safeMode = true;
         }
         curGrad = newGrad;
+        std::cout<<"Maximum Force"<<maxF()<<endl;
     }
-    
+    std::cout<<"Total iterations "<<numIter<<endl; 
     if (numIter >= N) {
         cout << endl;
         

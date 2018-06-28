@@ -140,9 +140,9 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                                 double LAMBDAMAX) {
 
     double f = maxF();
-    
+    int iter = 0;
     //return zero if no forces
-    if(f == 0.0) return 0.0;
+    if(f == 0.0){std::cout<<"lambda determined in "<<iter<<endl;return 0.0;}
     
     //calculate first lambda
     double lambda = min(LAMBDAMAX, MAXDIST / f);
@@ -150,6 +150,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
     
     //backtracking loop
     while(true) {
+        iter++;
         
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
@@ -158,13 +159,22 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
-        if(energyChange <= idealEnergyChange) return lambda;
+        if(energyChange <= idealEnergyChange) {
+            std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "<<allFDotFA()<<endl;
+            std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "<<idealEnergyChange<<" lambda "<<lambda<<endl;
+            std::cout<<"lambda determined in "<<iter<<endl; return lambda;}
         
         //reduce lambda
         lambda *= LAMBDAREDUCE;
         
         if(lambda <= 0.0 || lambda <= LAMBDATOL)
-            return 0.0;
+        {
+            std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "<<allFDotFA()<<endl;
+            std::cout<<"SL2 energyChange "<<energyChange<<"idealEnergyChange "<<idealEnergyChange<<" lambda "<<lambda<<endl;
+            std::cout<<"lambda determined in "<<iter<<endl;
+            return 0.0;}
+        std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "<<allFDotFA()<<endl;
+        std::cout<<"SL2 energyChange "<<energyChange<<"idealEnergyChange "<<idealEnergyChange<<" lambda "<<lambda<<endl;
     }
 }
 
@@ -177,23 +187,30 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     //calculate first lambda
     double lambda = LAMBDAMAX;
     double currentEnergy = FFM.computeEnergy(0.0);
-    
+    int iter = 0;
     //backtracking loop
     while(true) {
-        
+        iter++;
+        std::cout<<"safe z"<<endl;
         //new energy when moved by lambda
         double energyLambda = FFM.computeEnergy(lambda);
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
-        if(energyChange <= 0.0) return lambda;
+        if(energyChange <= 0.0) {
+            std::cout<<"safe energyChange "<<energyChange<<" lambda "<<lambda<<endl;
+            std::cout<<"lambda determined in "<<iter<<endl;
+            return lambda;}
         
         //reduce lambda
         lambda *= LAMBDAREDUCE;
         
         //just shake if we cant find an energy min,
         //so we dont get stuck
-        if(lambda <= 0.0 || lambda <= LAMBDATOL)
+        if(lambda <= 0.0 || lambda <= LAMBDATOL){
+            std::cout<<"safe energyChange "<<energyChange<<" lambda "<<lambda<<endl;
+            std::cout<<"lambda determined in "<<iter<<endl;
             return MAXDIST / maxF();
+        }
     }
 }

@@ -422,7 +422,7 @@ void Filament::depolymerizePlusEnd() {
     //decrease eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
-
+    cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
 #ifdef DYNAMICRATES
     //update rates of new back

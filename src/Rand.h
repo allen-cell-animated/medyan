@@ -23,10 +23,11 @@
 class Rand {
     
 private:
-    static mt19937 _eng;
+    
     static uniform_int_distribution<int> _int_distr;
     
 public:
+    static mt19937 _eng;
     ///Get a random double between low and high
     static inline double randDouble(double low, double high) {
         return ((float)_int_distr(_eng) / numeric_limits<int>::max()) * (high - low) + low;
