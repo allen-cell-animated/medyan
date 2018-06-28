@@ -7,6 +7,7 @@
 - Fixed a bug on stretch force computation for motors and linkers.
 - Fixed main controller procedure.
 - Fixed a bug on nucleation.
+- Fixed a bug on cofilin.
 
 ## Improvements
 - Added plotting function to the analysis script.
