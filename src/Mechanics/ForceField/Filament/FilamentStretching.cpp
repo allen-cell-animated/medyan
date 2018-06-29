@@ -17,7 +17,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 
-//#include "Bead.h"
+#include "Bead.h"
 
 template <class FStretchingInteractionType>
 double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
@@ -77,6 +77,12 @@ void FilamentStretching<FStretchingInteractionType>::computeForces() {
             _FFType.forces(b1, b2, kStretch, eqLength);
         }
     }
+    double maxF = 0;
+    
+    //calc max force
+    for(auto b: Bead::getBeads())
+        maxF = max(maxF, sqrt(b->FADotFA()));
+    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 
@@ -95,6 +101,12 @@ void FilamentStretching<FStretchingInteractionType>::computeForcesAux() {
             _FFType.forcesAux(b1, b2, kStretch, eqLength);
         }
     }
+    double maxF = 0;
+    
+    //calc max force
+    for(auto b: Bead::getBeads())
+        maxF = max(maxF, sqrt(b->FADotFA()));
+    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 ///Template specializations

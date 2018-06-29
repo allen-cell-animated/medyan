@@ -74,7 +74,7 @@ double FilamentFF::computeEnergy(double d) {
             return -1;
         }
         else U += U_i;
-        
+        std::cout<<getName()<<" "<<U_i<<endl;
     }
     return U;
 }

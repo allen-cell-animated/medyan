@@ -65,6 +65,7 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
 
 template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
+    int iter = 0;
 
     for(auto ci : Cylinder::getCylinders()) {
         
@@ -72,6 +73,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
         if(!ci->isFullLength()) continue;
         
         for(auto &cn : _neighborList->getNeighbors(ci)) {
+            iter++;
             
             //do not calculate exvol for a branching cylinder
             if(!cn->isFullLength() ||
@@ -86,11 +88,19 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
             _FFType.forces(b1, b2, b3, b4, kRepuls);
         }
     }
+    std::cout<<"Excl vol int "<<iter<<endl;
+    double maxF = 0;
+    
+    //calc max force
+    for(auto b: Bead::getBeads())
+        maxF = max(maxF, sqrt(b->FADotFA()));
+    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 
 template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux() {
+    int iter = 0;
 
     for(auto ci : Cylinder::getCylinders()) {
         
@@ -98,7 +108,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux() {
         if(!ci->isFullLength()) continue;
         
         for(auto &cn : _neighborList->getNeighbors(ci)) {
-            
+            iter++;
             //do not calculate exvol for a branching cylinder
             if(!cn->isFullLength() ||
                cn->getBranchingCylinder() == ci) continue;
@@ -112,6 +122,13 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux() {
             _FFType.forcesAux(b1, b2, b3, b4, kRepuls);
         }
     }
+    std::cout<<"Excl vol int "<<iter<<endl;
+    double maxF = 0;
+    
+    //calc max force
+    for(auto b: Bead::getBeads())
+        maxF = max(maxF, sqrt(b->FADotFA()));
+    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 ///Template specializations

@@ -75,7 +75,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         curGrad = newGrad;
         std::cout<<"Maximum Force"<<maxF()<<endl;
     }
-    std::cout<<"Total iterations "<<numIter<<endl; 
+    std::cout<<"Total iterations "<<numIter<<endl;
+
     if (numIter >= N) {
         cout << endl;
         
@@ -94,5 +95,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     //final force calculation
     FFM.computeForces();
+    std::cout<<"End Minimization......"<<endl;
     FFM.computeLoadForces();
 }

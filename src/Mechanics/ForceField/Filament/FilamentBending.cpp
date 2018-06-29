@@ -18,6 +18,7 @@
 
 #include "Filament.h"
 #include "Cylinder.h"
+#include "Bead.h"
 
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
@@ -96,6 +97,12 @@ void FilamentBending<FBendingInteractionType>::computeForces()
             }
         }
     }
+    double maxF = 0;
+    
+    //calc max force
+    for(auto b: Bead::getBeads())
+        maxF = max(maxF, sqrt(b->FADotFA()));
+    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 template <class FBendingInteractionType>
@@ -118,6 +125,12 @@ void FilamentBending<FBendingInteractionType>::computeForcesAux()
             }
         }
     }
+    double maxF = 0;
+    
+    //calc max force
+    for(auto b: Bead::getBeads())
+        maxF = max(maxF, sqrt(b->FADotFA()));
+    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 ///Template specializations

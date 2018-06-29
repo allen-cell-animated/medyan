@@ -73,6 +73,12 @@ void LinkerStretching<LStretchingInteractionType>::computeForces() {
         double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
         l->getMLinker()->stretchForce = f0;
     }
+    double maxF = 0;
+    
+    //calc max force
+    for(auto b: Bead::getBeads())
+        maxF = max(maxF, sqrt(b->FADotFA()));
+    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 
@@ -94,6 +100,12 @@ void LinkerStretching<LStretchingInteractionType>::computeForcesAux() {
         double f0 = _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
         l->getMLinker()->stretchForce = f0;
     }
+    double maxF = 0;
+    
+    //calc max force
+    for(auto b: Bead::getBeads())
+        maxF = max(maxF, sqrt(b->FADotFA()));
+    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 ///Temlate specializations
