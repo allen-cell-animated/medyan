@@ -36,6 +36,19 @@ Compartment::Compartment(const Compartment &C): _species(), _internal_reactions(
     // Should eventually clone beads, cylinders, boundary elements.... not clear yet
 }
 
+Compartment& Compartment::operator=(const Compartment &other) {
+    
+    _species.clear();
+    _internal_reactions.clear();
+    _diffusion_reactions.clear();
+    other.cloneSpecies(this);
+    other.cloneReactions(this);
+    _diffusion_rates = other._diffusion_rates;
+    
+    return *this;
+    
+}
+
 void Compartment::getSlicedVolumeArea() {
     // The calculation requires the
     //  - The position calculation of triangles
@@ -73,19 +86,6 @@ void Compartment::getSlicedVolumeArea() {
     }
 }
 
-Compartment& Compartment::operator=(const Compartment &other) {
-    
-    _species.clear();
-    _internal_reactions.clear();
-    _diffusion_reactions.clear();
-    other.cloneSpecies(this);
-    other.cloneReactions(this);
-    _diffusion_rates = other._diffusion_rates;
-    
-    return *this;
-    
-}
-    
 bool Compartment::apply_impl(SpeciesVisitor &v) {
     for(auto &s : _species.species()) {
         v.visit(s.get());
