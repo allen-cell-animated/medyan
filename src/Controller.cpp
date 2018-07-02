@@ -529,7 +529,7 @@ void Controller::pinBoundaryFilaments() {
             
             cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
             cout << SysParams::Mechanics().pinDistance << endl;
-            
+            //bubble
             
             //if within dist to boundary, add
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
