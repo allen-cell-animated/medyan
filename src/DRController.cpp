@@ -19,7 +19,6 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "Cylinder.h"
-#include "BranchingPoint.h"
 
 void DRController::initialize(DynamicRateType& drTypes) {
     
@@ -43,44 +42,11 @@ void DRController::initialize(DynamicRateType& drTypes) {
             filamentIndex++;
         }
     }
-    
-
-    //Qin branching point unbinding changer
-    int branchIndex = 0;
-    int charLengthIndexbr = 0;
-    
-    if(sum(SysParams::Chemistry().numBrancherSpecies) !=0) {
-        
-        for(auto &changer : drTypes.dBUnbindingType) {
-            
-            if(changer == "SLIP") {
-                
-                //if user did not specify enough parameters, return
-                if(charLengthIndexbr >= SysParams::DynamicRates().dBranchUnbindingCharLength.size() )
-                    return;
-                
-                //get the param
-                double x1 = SysParams::DynamicRates().dBranchUnbindingCharLength[charLengthIndexbr];
-                
-                //add the rate changer
-                BranchingPoint::_unbindingChangers.push_back(new BranchSlip(branchIndex, x1));
-                charLengthIndexbr += 1;
-            }
-            else {
-                cout << "Branching point unbinding rate changing form not recognized. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-            
-            branchIndex++;
-        }
-        
-    }
 
     //linker unbinding changer
     int charLengthIndex = 0;
     int ampIndex = 0;
     int linkerIndex = 0;
-    
     
     if(sum(SysParams::Chemistry().numLinkerSpecies) != 0) {
     

@@ -82,16 +82,11 @@ struct MechParams {
     //@{
     /// SPECIAL MECHANICAL PROTOCOLS
     
-    //Qin
-    bool pinLowerBoundaryFilaments = false;
-    double pinFraction = 1.0; //test 
-    
     ///To pin filaments on boundary via an attractive potential
-    bool pinBoundaryFilaments = false;
-    double pinDistance = 250; ///< 250nm pinning distance for now
-    double pinK = 0.0;       ///< Tethered stiffness
+    bool pinBoundaryFilaments = true;
+    double pinDistance = 250.0; ///< 250nm pinning distance for now
+    double pinK = 100.0;       ///< Tethered stiffness
     double pinTime = 0.0;    ///< Time at which to pin the filaments
-
     
     //@}
     
@@ -163,8 +158,8 @@ struct ChemParams {
     /// bound linkers for the rest of simulation.
     bool makeLinkersStatic = false;
     double makeLinkersStaticTime = 0.0;
-    
-    /// Qin
+	
+	/// Qin
     /// Make (de)polymerization depends on flow rate, the rate is in nm/s
     bool makeFlowRateDepend = false;
     double makeFlowRateDependRate = 0.0;
@@ -242,10 +237,6 @@ struct DyRateParams {
     
     /// Option for dynamic walking rate of motors
     vector<double> dMotorWalkingCharForce = {};
-    
-    //Qin
-    /// Option for dynamic branching point unbinding rate
-    vector<double> dBranchUnbindingCharLength = {};
 };
 
 /// Static class that holds all simulation parameters,

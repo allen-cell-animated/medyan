@@ -79,19 +79,4 @@ public:
     
 };
 
-//Qin -----
-/// A simple implementation of the BoundarySurface class.
-class CylinderXYZ: public BoundarySurface {
-    
-private:
-    vector<double> _coords; ///< Center of cylinder
-    
-public:
-    ///Constructor, creates boundary elements
-    ///@param coords - coordinates of center of cylinder
-    ///@param normal - normal vector to sphere
-    CylinderXYZ(SubSystem* s, vector<double> coords, double radius, double height);
-    
-};
-
 #endif

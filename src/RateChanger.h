@@ -50,26 +50,6 @@ public:
     virtual float changeRate(float bareRate, double force) = 0;
 };
 
-// Qin -----------------------------
-/// Used to change Linker reaction rates based on forces in the network
-/*!
- *  The LinkerRateChanger class is an abstract class which allows
- *  for Linker rate changing based on a given force. Different
- *  implementations of this class will have different rate changing models,
- *  and will all implement the changeRate() function.
- */
-class BranchRateChanger {
-    
-protected:
-    short _branchType; ///< This linker type
-    
-public:
-    BranchRateChanger(short branchType) : _branchType(branchType) {}
-    
-    /// Change the reaction rate based on a bare rate and given force.
-    virtual float changeRate(float bareRate, double force) = 0;
-};
-
 /// Used to change MotorGhost reaction rates based on forces in the network
 /*!
  *  The MotorRateChanger class is an abstract class which allows

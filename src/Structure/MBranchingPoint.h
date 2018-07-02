@@ -53,11 +53,6 @@ public:
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
     
-    //Qin -----
-    double stretchForce = 0.0;
-    double bendingForce = 0.0;
-    double dihedralForce = 0.0;
-    
 private:
     double _eqLength;  ///< Equilibrium length
     double _kStretch;  ///< Stretching constant

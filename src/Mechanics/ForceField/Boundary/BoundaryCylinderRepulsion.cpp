@@ -38,72 +38,29 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
             
             //potential acts on second bead unless this is a minus end
             Bead* bd;
-            if(c->isMinusEnd()) {
-                
+            if(c->isMinusEnd())
                 bd = c->getFirstBead();
-                
-                if (d == 0.0)
-                    U_i =  _FFType.energy(bd, be->distance(bd->coordinate), kRep, screenLength);
-                else
-                    U_i = _FFType.energy(bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
-                
-                if(fabs(U_i) == numeric_limits<double>::infinity()
-                   || U_i != U_i || U_i < -1.0) {
-                    
-                    //set culprits and return
-                    _otherCulprit = c;
-                    _boundaryElementCulprit = be;
-                    
-                    return -1;
-                }
-                else {
-                    U += U_i;
-                }
-                
-                
+            else
                 bd = c->getSecondBead();
-                    
-                if (d == 0.0)
-                    U_i =  _FFType.energy(bd, be->distance(bd->coordinate), kRep, screenLength);
-                else
-                    U_i = _FFType.energy(bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
-                    
-                if(fabs(U_i) == numeric_limits<double>::infinity()
-                    || U_i != U_i || U_i < -1.0) {
-                        
-                    //set culprits and return
-                    _otherCulprit = c;
-                    _boundaryElementCulprit = be;
-                        
-                    return -1;
-                }
-                else {
-                    U += U_i;
-                }
-                    
-            }
             
-            else {
-                bd = c->getSecondBead();
+            if (d == 0.0)
+                U_i =  _FFType.energy(
+                bd, be->distance(bd->coordinate), kRep, screenLength);
+            else
+                U_i = _FFType.energy(
+                bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
+            
+            if(fabs(U_i) == numeric_limits<double>::infinity()
+               || U_i != U_i || U_i < -1.0) {
                 
-                if (d == 0.0)
-                    U_i =  _FFType.energy(bd, be->distance(bd->coordinate), kRep, screenLength);
-                else
-                    U_i = _FFType.energy(bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
+                //set culprits and return
+                _otherCulprit = c;
+                _boundaryElementCulprit = be;
                 
-                if(fabs(U_i) == numeric_limits<double>::infinity()
-                   || U_i != U_i || U_i < -1.0) {
-                    
-                    //set culprits and return
-                    _otherCulprit = c;
-                    _boundaryElementCulprit = be;
-                    
-                    return -1;
-                }
-                else {
-                    U += U_i;
-                }
+                return -1;
             }
+            else
+                U += U_i;
         }
     }
 
@@ -122,20 +79,13 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
             
             //potential acts on second cylinder bead unless this is a minus end
             Bead* bd;
-            if(c->isMinusEnd()) {
+            if(c->isMinusEnd())
                 bd = c->getFirstBead();
-                auto normal = be->normal(bd->coordinate);
-                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-                
+            else
                 bd = c->getSecondBead();
-                normal = be->normal(bd->coordinate);
-                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-            }
-            else {
-                bd = c->getSecondBead();
-                auto normal = be->normal(bd->coordinate);
-                _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-            }
+            
+            auto normal = be->normal(bd->coordinate);
+            _FFType.forces(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
             
         }
     }
@@ -152,23 +102,16 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux() {
             double kRep = be->getRepulsionConst();
             double screenLength = be->getScreeningLength();
             
-            //potential acts on second cylinder bead unless this is a minus end, then we compute forces
-            //for both first and second bead
+            //potential acts on second cylinder bead unless this is a minus end
             Bead* bd;
-            if(c->isMinusEnd()) {
+            if(c->isMinusEnd())
                 bd = c->getFirstBead();
-                auto normal = be->normal(bd->coordinate);
-                _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+            else
+                bd = c->getSecondBead();
             
-                bd = c->getSecondBead();
-                normal = be->normal(bd->coordinate);
-                _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-            }
-            else {
-                bd = c->getSecondBead();
-                auto normal = be->normal(bd->coordinate);
-                _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
-            }
+            auto normal = be->normal(bd->coordinate);
+            _FFType.forcesAux(bd, be->distance(bd->coordinate), normal, kRep, screenLength);
+            
         }
     }
 }
