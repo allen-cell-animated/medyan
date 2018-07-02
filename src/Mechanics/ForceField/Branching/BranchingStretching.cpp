@@ -67,7 +67,10 @@ void BranchingStretching<BStretchingInteractionType>::computeForces() {
         double eqLength = b->getMBranchingPoint()->getEqLength();
         double position = b->getPosition();
         
-        _FFType.forces(b1, b2, b3, position, kStretch, eqLength);
+        //Qin
+        //_FFType.forces(b1, b2, b3, position, kStretch, eqLength);
+        double f0 = _FFType.forces(b1, b2, b3, position, kStretch, eqLength);
+        b->getMBranchingPoint()->stretchForce = f0;
     }
 }
 

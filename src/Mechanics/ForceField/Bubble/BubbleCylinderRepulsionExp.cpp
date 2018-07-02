@@ -22,98 +22,47 @@ using namespace mathfunc;
 double BubbleCylinderRepulsionExp::energy(Bead* b1, Bead* b2, double radius,
                                           double kRep, double screenLength) {
     
-    if (tau()<=60.5) {
-    kRep=40;
-	} 
-    else if (tau()<=120.5) {
-    kRep=80;
-	}
-    else if (tau()<=180.5) {
-    kRep=120;
-	}
-    else if (tau()<=240.5) {
-    kRep=200;
-	}
-    else if (tau()<=300.5) {
-    kRep=280;
-	}
-    else {
-    kRep=360;
-	}
-    
     double dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
     double effd = dist - radius;
     
-    double R = -effd / screenLength;
-
-    return 361-kRep * exp(R);
+    //double R = -effd / screenLength;
+    //return kRep * exp(R);
+    
+    return 0.5 * kRep * effd * effd;
+    
     
 }
 
 double BubbleCylinderRepulsionExp::energy(Bead* b1, Bead* b2, double radius,
                                           double kRep, double screenLength, double d) {
     
-    if (tau()<=60.5) {
-    kRep=40;
-	} 
-    else if (tau()<=120.5) {
-    kRep=80;
-	}
-    else if (tau()<=180.5) {
-    kRep=120;
-	}
-    else if (tau()<=240.5) {
-    kRep=200;
-	}
-    else if (tau()<=300.5) {
-    kRep=280;
-	}
-    else {
-    kRep=360;
-	}
-    
     double dist = twoPointDistanceStretched(b1->coordinate, b1->force,
                                             b2->coordinate, b2->force, d);
     double effd = dist - radius;
     
-    double R = -effd / screenLength;
-
-    return 361-kRep * exp(R);
+    //double R = -effd / screenLength;
+    //return kRep * exp(R);
+    
+    return 0.5 * kRep * effd * effd;
 
 }
 
 void BubbleCylinderRepulsionExp::forces(Bead* b1, Bead* b2, double radius,
                                         double kRep, double screenLength) {
     
-    if (tau()<=60.5) {
-    kRep=40;
-	} 
-    else if (tau()<=120.5) {
-    kRep=80;
-	}
-    else if (tau()<=180.5) {
-    kRep=120;
-	}
-    else if (tau()<=240.5) {
-    kRep=200;
-	}
-    else if (tau()<=300.5) {
-    kRep=280;
-	}
-    else {
-    kRep=360;
-	}
-    
     //get dist
     double dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
     double effd = dist - radius;
     
-    double R = -effd / screenLength;
-
-    double f0 = -kRep * exp(R) / screenLength;
-            
+    //double R = -effd / screenLength;
+    //double f0 = kRep * exp(R) / screenLength;
+    
+    double invL = 1 / dist;
+    
+    double f0 = -kRep * ( dist - radius ) * invL;
+    
     //get norm
     auto norm = normalizedVector(twoPointDirection(b1->coordinate, b2->coordinate));
     
@@ -128,34 +77,18 @@ void BubbleCylinderRepulsionExp::forces(Bead* b1, Bead* b2, double radius,
 
 void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
                                            double kRep, double screenLength) {
-    if (tau()<=60.5) {
-    kRep=40;
-	} 
-    else if (tau()<=120.5) {
-    kRep=80;
-	}
-    else if (tau()<=180.5) {
-    kRep=120;
-	}
-    else if (tau()<=240.5) {
-    kRep=200;
-	}
-    else if (tau()<=300.5) {
-    kRep=280;
-	}
-    else {
-    kRep=360;
-	}
     
     //get dist
     double dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
     double effd = dist - radius;
     
-    double R = -effd / screenLength;
-
-    double f0 = -kRep * exp(R) / screenLength;
-
+    //double R = -effd / screenLength;
+    //double f0 = kRep * exp(R) / screenLength;
+    
+    double invL = 1 / dist;
+    
+    double f0 = -kRep * ( dist - radius ) * invL;
     //get norm
     auto norm = normalizedVector(twoPointDirection(b1->coordinate, b2->coordinate));
     
@@ -172,32 +105,15 @@ void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
 double BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, double radius,
                                               double kRep, double screenLength) {
     
-    if (tau()<=60.5) {
-    kRep=40;
-	} 
-    else if (tau()<=120.5) {
-    kRep=80;
-	}
-    else if (tau()<=180.5) {
-    kRep=120;
-	}
-    else if (tau()<=240.5) {
-    kRep=200;
-	}
-    else if (tau()<=300.5) {
-    kRep=280;
-	}
-    else {
-    kRep=360;
-	}
-    
     //get dist
     double dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
     double effd = dist - radius;
     
-    double R = -effd / screenLength;
-
-    return -kRep * exp(R) / screenLength;
-
+    //double R = -effd / screenLength;
+//    return kRep * exp(R) / screenLength;
+    double invL = 1 / dist;
+    
+    return -kRep * ( dist - radius ) * invL;
+    
 }

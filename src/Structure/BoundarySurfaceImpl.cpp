@@ -53,6 +53,16 @@ CylinderZ::CylinderZ(SubSystem* s, vector<double> coords, double radius, double 
                                    SysParams::Boundaries().BScreenLength));
 }
 
+CylinderXYZ::CylinderXYZ(SubSystem* s, vector<double> coords, double radius, double height)
+: BoundarySurface(s, 3), _coords(coords) {
+    
+    //Create a cylindricalZ boundary element
+    _boundaryElements.emplace_back(s->addTrackable<CylindricalXYZBoundaryElement>
+                                   (coords, radius, height,
+                                    SysParams::Boundaries().BoundaryK,
+                                    SysParams::Boundaries().BScreenLength));
+}
+
 HalfSphereZ::HalfSphereZ(SubSystem* s, vector<double> coords, double radius, bool up)
     : BoundarySurface(s, 3), _coords(coords) {
     

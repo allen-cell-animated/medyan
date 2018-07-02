@@ -26,10 +26,10 @@ Database<Bead*> Bead::_beads;
 Database<Bead*> Bead::_pinnedBeads;
 
 Bead::Bead (vector<double> v, Composite* parent, int position)
-
+// Qin add brforce, pinforce
     : Trackable(true),
       coordinate(v), coordinateP(v), coordinateB(v),
-      force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
+      force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
       _position(position), _birthTime(tau()) {
     
     parent->addChild(unique_ptr<Component>(this));
@@ -54,10 +54,10 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
 }
 
 Bead::Bead(Composite* parent, int position)
-
+// Qin add brforce, pinforce
     : Trackable(true),
     coordinate(3, 0), coordinateP(3, 0), coordinateB(3, 0),
-    force(3, 0), forceAux(3, 0), forceAuxP(3, 0),  _position(position) {
+    force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {
     
     parent->addChild(unique_ptr<Component>(this));
 }

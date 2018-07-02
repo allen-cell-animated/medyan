@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>638C4106-7D12-4876-9029-CAEE6DC1A59B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>CytoSim</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>E5F3BF46-AF8B-4BE7-B8B2-17D4A5E659AE</key>
+		<string>file:///Users/jameskomianos/Dropbox/Research/CytoSim-Remote-Repo.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>CytoSim.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3ED0D028-651B-440C-A4C3-143115162C5B</key>
+		<string>../../../../Dropbox/Research/CytoMech/CytoMech</string>
+		<key>E5F3BF46-AF8B-4BE7-B8B2-17D4A5E659AE</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>file:///Users/jameskomianos/Dropbox/Research/CytoSim-Remote-Repo.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>E5F3BF46-AF8B-4BE7-B8B2-17D4A5E659AE</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3ED0D028-651B-440C-A4C3-143115162C5B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>CytoMech</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>E5F3BF46-AF8B-4BE7-B8B2-17D4A5E659AE</string>
+			<key>IDESourceControlWCCName</key>
+			<string>CytoSim-Repo</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -40,6 +40,8 @@ class FilamentBindingManager;
 class Controller {
 
 private:
+    string _inputFile; ///< System input file
+    
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
 
     MController* _mController;   ///< Chemical controller used
@@ -91,9 +93,9 @@ private:
     
     /// Update the positions of all elements in the system
     void updatePositions();
-
+    
     //Qin
-    //void updateBubblePositions();
+    void updateBubblePositions();
     
 #ifdef DYNAMICRATES
     /// Update the reaction rates of all elements in the system
@@ -110,7 +112,8 @@ private:
     
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
-
+    //Qin
+    void pinLowerBoundaryFilaments();
     //Qin for flow rate controling (de)polymerization
     double delta = 1;
     vector<vector<double>> previous;

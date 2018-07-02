@@ -96,9 +96,9 @@ public:
     
     ///Update bubble position
     virtual void updatePosition();
-
+    
     ///Qin, add a special type that can manually update bubble position
-    ///virtual void updatePositionManually();
+    virtual void updatePositionManually();
 
 };
 

@@ -33,40 +33,29 @@ Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
 }
 
 void Bubble::updatePosition() {
-    
+
     coordinate = _bead->coordinate;
 }
 
 //Qin
-//void Bubble::updatePositionManually() {
+void Bubble::updatePositionManually() {
     
-//    //the gap, currently 0.5, must be bigger than the minization time step
-//    if(tau() <= 300.5) {
-//   vector<double> mannualcoordinate = {500, 500, 760};
-//        coordinate = mannualcoordinate;
-//        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;		
-//    } else if(tau() <= 600.5) {
-//        vector<double> mannualcoordinate = {500, 500, 780};
-//        coordinate = mannualcoordinate;
-//        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
-//    } else if(tau() <= 900.5) {
-//       vector<double> mannualcoordinate = {500, 500, 800};
-//        coordinate = mannualcoordinate;
-//        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
-//    } else if(tau() <= 1200.5) {
-//        vector<double> mannualcoordinate = {500, 500, 840};
-//        coordinate = mannualcoordinate;
-//        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
-//    } else if(tau() <= 1500.5) {
-//        vector<double> mannualcoordinate = {500, 500, 880};
-//        coordinate = mannualcoordinate;
-//        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
-//    } else {
-//        vector<double> mannualcoordinate = {500, 500, 920};
-//        coordinate = mannualcoordinate;
-//        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
-//    }
-//}
+    //the gap, currently 0.5, must be bigger than the minization time step
+    if(tau() > 300 && tau() < 300.5) {
+        //mannually set coordinates as the following
+        vector<double> mannualcoordinate = {500, 500, 860};
+        coordinate = mannualcoordinate;
+        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
+        
+    } else if(tau() > 500 && tau() < 500.5) {
+        vector<double> mannualcoordinate = {500, 500, 865};
+        coordinate = mannualcoordinate;
+        for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
+    }
+    else{
+        coordinate = _bead->coordinate;
+    }
+}
 
 void Bubble::printSelf() {
     

@@ -75,6 +75,14 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
                 else
                     inZone = false;
             }
+            //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
+            else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
+                if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance)
+                    inZone = true;
+                else
+                    inZone = false;
+            }
+
             else inZone = true;
         }
         else
@@ -161,6 +169,17 @@ void BranchingManager::updateAllPossibleBindings() {
                         
                         if(coord[2] >= GController::getCenter()[2])
                             inZone = true;
+                        else
+                            inZone = false;
+                    }
+                    //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
+                    else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
+                        if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance){
+                            inZone = true;
+                            //cout << "x= " << coord[1] << "y= " << coord[2] << endl;
+                        }
+                        
+                        
                         else
                             inZone = false;
                     }
@@ -582,7 +601,10 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     
                     //add in correct order
                     if(c->getID() > cn->getID())
+                    {
                         _possibleBindings.emplace(t1,t2);
+                    }
+                    
                     else {
                         //add in this compartment
                         if(cn->getCompartment() == _compartment) {

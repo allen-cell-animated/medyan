@@ -66,7 +66,10 @@ void BranchingBending<BBendingInteractionType>::computeForces() {
         double kBend = b->getMBranchingPoint()->getBendingConstant();
         double eqTheta = b->getMBranchingPoint()->getEqTheta();
       
-        _FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
+        //_FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
+        //Qin
+        double f0 = _FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
+        b->getMBranchingPoint()->bendingForce = f0;
     }
 }
 

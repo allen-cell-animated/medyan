@@ -60,6 +60,9 @@ public:
     vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
     vector<double> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
+    vector<double> brforce; //Qin boundary repulsion force
+    vector<double> pinforce;
+    
     vector<double> loadForcesP;
     vector<double> loadForcesM;
     ///< The force on this bead due to an external load
@@ -122,6 +125,13 @@ public:
         _pinnedBeads.removeElement(this);
     }
     
+    //Qin
+    // Remove all pinned beads.
+    void resetAllPinned() {
+        
+        _isPinned = false;
+        _pinnedBeads.clearElements();
+    }
     
     /// Get all pinned beads from subsystem
     static const vector<Bead*>& getPinnedBeads() {
@@ -172,6 +182,18 @@ public:
         return forceAux[0]*forceAuxP[0] +
                forceAux[1]*forceAuxP[1] +
                forceAux[2]*forceAuxP[2];
+    }
+    //Qin add brFDotbrF
+    inline double brFDotbrF() {
+        return brforce[0]*brforce[0] +
+        brforce[1]*brforce[1] +
+        brforce[2]*brforce[2];
+    }
+    //Qin add pinFDotpinF
+    inline double pinFDotpinF() {
+        return pinforce[0]*pinforce[0] +
+        pinforce[1]*pinforce[1] +
+        pinforce[2]*pinforce[2];
     }
     //@}
     

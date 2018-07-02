@@ -59,7 +59,7 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     return kDihed * ( 1 - n1n2 );
 }
 
-void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+double BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                      double kDihed, double position){
     
     vector<double> n1 = vectorProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
@@ -146,6 +146,9 @@ void BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     b4->force[1] +=f0*( YD*( (b4->coordinate[2] - b3->coordinate[2])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) - (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) ) + Y2*(b4->coordinate[1] - b3->coordinate[1]) - D2*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) );
     
     b4->force[2] +=f0*( YD*( (b4->coordinate[0] - b3->coordinate[0])*(b3->coordinate[1] - (1-position)*b1->coordinate[1] - position*b2->coordinate[1]) - (b4->coordinate[1] - b3->coordinate[1])*(b3->coordinate[0] - (1-position)*b1->coordinate[0] - position*b2->coordinate[0]) ) + Y2*(b4->coordinate[2] - b3->coordinate[2]) - D2*(b3->coordinate[2] - (1-position)*b1->coordinate[2] - position*b2->coordinate[2]) );
+    
+    //Qin
+    return f0;
 
     
 }

@@ -1,4 +1,4 @@
-
+ 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -76,6 +76,7 @@ void Controller::initialize(string inputFile,
     _outputDirectory = outputDirectory + "/";
     
     //Parse input, get parameters
+    _inputFile = inputFile;
     SystemParser p(inputFile);
     
     //snapshot type output
@@ -86,6 +87,11 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
+    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
+    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
+    //Qin add br force out and local diffussing species concentration
+    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
+    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -171,6 +177,10 @@ void Controller::initialize(string inputFile,
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
+    
+    string concenname = _outputDirectory + "concentration.traj";
+    _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
+    
 #endif
     
 #ifdef DYNAMICRATES
@@ -327,10 +337,9 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         MTOC* mtoc = _subSystem->addTrackable<MTOC>();
         
         //create the bubble in top part of grid, centered in x,y
-                //create the bubble in top part of grid, centered in x,y
         double bcoordx = GController::getSize()[0] / 2;
         double bcoordy = GController::getSize()[1] / 2;
-        double bcoordz = GController::getSize()[2] * 9 / 10;
+        double bcoordz = GController::getSize()[2] * 5 / 6;
         
         vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
@@ -420,11 +429,18 @@ void Controller::executeSpecialProtocols() {
         pinBoundaryFilaments();
     }
     
+    //Qin
+    if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
+       tau() >= SysParams::Mechanics().pinTime) {
+        
+        pinLowerBoundaryFilaments();
+    }
+    
     //Qin, passivite (de)polymerization until flow rate > set value
-//    if(SysParams::Chemistry().makeFlowRateDepend) {
-//        double rate0 = 0;
-//        vector<vector<double>> current;
-//
+    if(SysParams::Chemistry().makeFlowRateDepend) {
+        double rate0 = 0;
+        vector<vector<double>> current;
+        
 //        if(tau() == 0){
 //            for (auto &filament : Filament::getFilaments()) {
 //                //get plus end coordinates
@@ -432,38 +448,18 @@ void Controller::executeSpecialProtocols() {
  //               previous.push_back(x);
  //           }
  //       } else if(tau() >= delta) {
-//        if(tau() >= delta) {
-//            for (auto &filament : Filament::getFilaments()) {
-//                //get plus end coordinates
-//               auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
-//                current.push_back(x);
-//           }
-//            for (int i = 0; i < current.size(); i++){
-//                rate0 += twoPointDistance(previous[i],current[i]);
-//            }
-//                rate = rate0 / current.size();
-//                delta +=1;
-//                previous = current;
-//        }
-//        
-//        if(rate < SysParams::Chemistry().makeFlowRateDependRate) {
-//           checkrate = true;
-//        } else {
-//            checkrate = false;
-//        }
-//        //loop through all cylinders, passivate (de)polymerization
-//        if(checkrate) {
-//            for(auto c : Cylinder::getCylinders())
-//            c->getCCylinder()->passivatefilreactions();
-//        }
-//       
-//    }	
-
-if(SysParams::Chemistry().makeFlowRateDepend) {
-
         if(tau() >= delta) {
-          rate = tau();
-          delta += 1;
+            for (auto &filament : Filament::getFilaments()) {
+                //get plus end coordinates
+                auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+                current.push_back(x);
+            }
+            for (int i = 0; i < current.size(); i++){
+                rate0 += twoPointDistance(previous[i],current[i]);
+            }
+                rate = rate0 / current.size();
+                delta +=1;
+                previous = current;
         }
         
         if(rate < SysParams::Chemistry().makeFlowRateDependRate) {
@@ -476,10 +472,9 @@ if(SysParams::Chemistry().makeFlowRateDepend) {
             for(auto c : Cylinder::getCylinders())
             c->getCCylinder()->passivatefilreactions();
         }
-       
-    }		
+        
+    }
 }
-
 
 void Controller::updatePositions() {
     
@@ -491,17 +486,17 @@ void Controller::updatePositions() {
 }
 
 //Qin, update bubble position by hand
-//void Controller::updateBubblePositions() {
+void Controller::updateBubblePositions() {
     
     //update bubble again based on time
-//    for(auto b : Bubble::getBubbles()) b->updatePositionManually();
-//	for(auto b : Bead::getPinnedBeads()) b->pinnedPosition = b->coordinate;
-//}
+    for(auto b : Bubble::getBubbles()) b->updatePositionManually();
+}
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
     /// update all reactables
-    for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+    for(auto r : _subSystem->getReactables()) { r->updateReactionRates();
+    }
 }
 #endif
 
@@ -516,80 +511,7 @@ void Controller::updateNeighborLists() {
 }
 
 void Controller::pinBoundaryFilaments() {
-    //need to mannually change pin position for all tau()
-    if(tau() > 0.2 && tau() < 0.5) {
-        vector<double> mannualcoordinate = {500, 500, 800};	
-        for(auto b : Bead::getBeads()) {
-            Bubble* bu = (Bubble*) b->getParent();
-            if(bu->getBead() == b){
-                //need to remove this bubble from pin list first
-                b->removeAsPinned();
-                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
-                b->pinnedPosition = mannualcoordinate;
-                b->addAsPinned();
-            }
-        }
-    }else if(tau() > 60.5 && tau() < 60.8) {
-        vector<double> mannualcoordinate = {500, 500, 824};
-        for(auto b : Bead::getBeads()) {
-            Bubble* bu = (Bubble*) b->getParent();
-            if(bu->getBead() == b){
-                //need to remove this bubble from pin list first
-                b->removeAsPinned();
-                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
-                b->pinnedPosition = mannualcoordinate;
-                b->addAsPinned();
-            }
-        }
-    }else if(tau() > 120.5 && tau() < 120.8) {
-        vector<double> mannualcoordinate = {500, 500, 848};
-        for(auto b : Bead::getBeads()) {
-            Bubble* bu = (Bubble*) b->getParent();
-            if(bu->getBead() == b){
-                //need to remove this bubble from pin list first
-                b->removeAsPinned();
-                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
-                b->pinnedPosition = mannualcoordinate;
-                b->addAsPinned();
-            }
-        }
-    }else if(tau() > 180.5 && tau() < 180.8) {
-        vector<double> mannualcoordinate = {500, 500, 896};
-        for(auto b : Bead::getBeads()) {
-            Bubble* bu = (Bubble*) b->getParent();
-            if(bu->getBead() == b){
-                //need to remove this bubble from pin list first
-                b->removeAsPinned();
-                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
-                b->pinnedPosition = mannualcoordinate;
-                b->addAsPinned();
-            }
-        }
-    }else if(tau() > 240.5 && tau() < 240.8) {
-        vector<double> mannualcoordinate = {500, 500, 944};
-        for(auto b : Bead::getBeads()) {
-            Bubble* bu = (Bubble*) b->getParent();
-            if(bu->getBead() == b){
-                //need to remove this bubble from pin list first
-                b->removeAsPinned();
-                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
-                b->pinnedPosition = mannualcoordinate;
-                b->addAsPinned();
-            }
-        }
-    }else if(tau() > 300.5 && tau() < 300.8) {
-        vector<double> mannualcoordinate = {500, 500, 992};
-        for(auto b : Bead::getBeads()) {
-            Bubble* bu = (Bubble*) b->getParent();
-            if(bu->getBead() == b){
-                //need to remove this bubble from pin list first
-                b->removeAsPinned();
-                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
-                b->pinnedPosition = mannualcoordinate;
-                b->addAsPinned();
-            }
-        }
-    }
+
     //if we've already added pinned filaments, return
     if(Bead::getPinnedBeads().size() != 0)
         return;
@@ -604,10 +526,7 @@ void Controller::pinBoundaryFilaments() {
         
         if((plusEndC->getSecondBead() == b) ||
            (minusEndC->getFirstBead() == b)) {
-       
-        //Bubble* bu = (Bubble*) b->getParent();
-        //if(bu->getBead() == b){
-
+            
             cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
             cout << SysParams::Mechanics().pinDistance << endl;
             
@@ -616,11 +535,44 @@ void Controller::pinBoundaryFilaments() {
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
                 
                 b->pinnedPosition = b->coordinate;
-                 b->addAsPinned();
+                b->addAsPinned();
             }
         }
     }
 }
+
+//Qin
+void Controller::pinLowerBoundaryFilaments() {
+    
+    //renew pinned filament list everytime
+    
+    //loop through beads, check if within pindistance
+    for(auto b : Bead::getBeads()) {
+        
+        //pin all beads besides plus end and minus end cylinder
+        Filament* f = (Filament*) b->getParent();
+        Cylinder* plusEndC = f->getPlusEndCylinder();
+        Cylinder* minusEndC = f->getMinusEndCylinder();
+        
+        if((plusEndC->getSecondBead() != b) ||
+           (minusEndC->getFirstBead() != b)) {
+            
+            //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
+            //cout << SysParams::Mechanics().pinDistance << endl;
+            
+            auto index = Rand::randDouble(0,1);
+            //cout << index <<endl;
+            //if within dist to boundary and index > 0.5, add
+            if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
+               && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
+                //cout << index << endl;
+                b->pinnedPosition = b->coordinate;
+                b->addAsPinned();
+            }
+        }
+    }
+}
+
 
 void Controller::run() {
     
@@ -659,14 +611,24 @@ void Controller::run() {
         cout<<endl;
         _restart->redistributediffusingspecies();
         cout<<"Diffusion rates restored, diffusing molecules redistributed."<<endl;
-		
+        
+//Step 4.5. re-add pin positions
+        SystemParser p(_inputFile);
+        FilamentSetup filSetup = p.readFilamentSetup();
+        //PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
+        //ppin.resetPins();
+        
 //Step 5. run mcontroller, update system, turn off restart state.
-    cout<<"Minimizing energy"<<endl;
-    _mController->run(false);
-    SysParams::RUNSTATE=true;
-    //reupdate positions and neighbor lists
-    updatePositions();
-    updateNeighborLists();
+        updatePositions();
+        updateNeighborLists();
+        
+        cout<<"Minimizing energy"<<endl;
+        _mController->run(false);
+        SysParams::RUNSTATE=true;
+        
+        //reupdate positions and neighbor lists
+        updatePositions();
+        updateNeighborLists();
     
 //Step 6. Set Off rates back to original value.
     for(auto LL : Linker::getLinkers())
@@ -704,7 +666,6 @@ void Controller::run() {
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
-//    for(auto o: _outputs) o->print(_numChemSteps);
     cout<< "Restart procedures completed. Starting original Medyan framework"<<endl;
     cout << "---" << endl;
     resetglobaltime();
@@ -721,14 +682,14 @@ void Controller::run() {
     cout << "Starting simulation..." << endl;
     
     int i = 1;
-	
+    
     //Qin
     for (auto &filament : Filament::getFilaments()) {
         //get plus end coordinates
         auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
        previous.push_back(x);
     }
-
+    
     //if runtime was specified, use this
     if(!areEqual(_runTime, 0.0)) {
     
@@ -748,12 +709,11 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
-			_mController->run();
+                //Qin, update bubble position first
+                updateBubblePositions();
+                _mController->run();
                 updatePositions();
 
-                //Qin, reupdate bubble position
-                //updateBubblePositions();
-				
                 tauLastMinimization = 0.0;
             }
             
