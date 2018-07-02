@@ -511,7 +511,80 @@ void Controller::updateNeighborLists() {
 }
 
 void Controller::pinBoundaryFilaments() {
-
+    //need to mannually change pin position for all tau()
+    if(tau() > 0.2 && tau() < 0.5) {
+        vector<double> mannualcoordinate = {500, 500, 800};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 60.5 && tau() < 60.8) {
+        vector<double> mannualcoordinate = {500, 500, 824};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 120.5 && tau() < 120.8) {
+        vector<double> mannualcoordinate = {500, 500, 848};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 180.5 && tau() < 180.8) {
+        vector<double> mannualcoordinate = {500, 500, 896};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 240.5 && tau() < 240.8) {
+        vector<double> mannualcoordinate = {500, 500, 944};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 300.5 && tau() < 300.8) {
+        vector<double> mannualcoordinate = {500, 500, 992};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }
     //if we've already added pinned filaments, return
     if(Bead::getPinnedBeads().size() != 0)
         return;
@@ -529,7 +602,6 @@ void Controller::pinBoundaryFilaments() {
             
             cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
             cout << SysParams::Mechanics().pinDistance << endl;
-            //bubble
             
             //if within dist to boundary, add
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
