@@ -393,7 +393,8 @@ void Tensions::print(int snapshot) {
         double k = cylinder->getMCylinder()->getStretchingConst();
         double deltaL = cylinder->getMCylinder()->getLength() -
                         cylinder->getMCylinder()->getEqLength();
-        _outputFile<< abs(k * deltaL);
+        _outputFile<< k * deltaL;
+        
         
         _outputFile << endl;
     }
