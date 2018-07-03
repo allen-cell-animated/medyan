@@ -524,12 +524,19 @@ Filament* Filament::sever(int cylinderPosition) {
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
         
-        newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
         
-        //Add beads to new parent
-        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
-        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
+        //TRANSFER CHILD
+        unique_ptr<Component> &&tmp = this->getChild(c);
+        this->transferChild(std::move(tmp), (Composite*)newFilament);
+        
+        //Add beads and cylinder to new parent
+        if(i == vectorPosition) {
+            unique_ptr<Component> &&tmp2 = this->getChild(c->getFirstBead());
+            this->transferChild(std::move(tmp2), (Composite*)newFilament);
+        }
+        unique_ptr<Component> &&tmp1 = this->getChild(c->getSecondBead());
+        this->transferChild(std::move(tmp1), (Composite*)newFilament);
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
