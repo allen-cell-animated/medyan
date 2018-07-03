@@ -87,9 +87,9 @@ struct MechParams {
     double pinFraction = 1.0; //test 
     
     ///To pin filaments on boundary via an attractive potential
-    bool pinBoundaryFilaments = false;
+    bool pinBoundaryFilaments = true;
     double pinDistance = 250; ///< 250nm pinning distance for now
-    double pinK = 0.0;       ///< Tethered stiffness
+    double pinK = 100.0;       ///< Tethered stiffness
     double pinTime = 0.0;    ///< Time at which to pin the filaments
 
     
@@ -163,6 +163,11 @@ struct ChemParams {
     /// bound linkers for the rest of simulation.
     bool makeLinkersStatic = false;
     double makeLinkersStaticTime = 0.0;
+    
+    /// Qin
+    /// Make (de)polymerization depends on flow rate, the rate is in nm/s
+    bool makeFlowRateDepend = false;
+    double makeFlowRateDependRate = 0.0;
     
     //@}
 };

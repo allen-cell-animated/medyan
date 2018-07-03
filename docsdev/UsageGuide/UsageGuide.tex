@@ -567,8 +567,8 @@ This reaction will move a motor head in the given direction.
 \item A \textbf{branching reaction} can be defined in the following form:\newline\newline
 \texttt{BRANCHINGREACTION: <FILAMENTTYPE>}\newline
 \texttt{<NAME>:BULK/DIFFUSING + <NAME>:BULK/DIFFUSING +  <NAME>:BOUND <->}\newline
-\texttt{<NAME>:BRANCHER + <NAME>:PLUSEND <RATE> <NUCLEATIONZONE> <NUCLEATIONDIST>}\newline\newline
-where \texttt{<NAME>} is the string name of the species, and \texttt{<RATE>} is a float value that determines the rate constant of the reaction.  It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding branching binding site.
+\texttt{<NAME>:BRANCHER + <NAME>:PLUSEND <ONRATE> <OFFRATE> <NUCLEATIONZONE> <NUCLEATIONDIST>}\newline\newline
+where \texttt{<NAME>} is the string name of the species, and \texttt{<ONRATE>, <OFFRATE>} are float values that determine the rate constants of the reaction.  It is noted that the first and second species listed can be either \texttt{DIFFUSING} or \texttt{BULK}. The bound species listed must be the corresponding branching binding site.
 
 The \texttt{NUCLEATIONZONE} and \texttt{NUCLEATIONDIST} specify the volume in which a branching reaction can occur. The choices for the zone parameter are the following
 

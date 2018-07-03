@@ -561,12 +561,12 @@
 				F7C9CFAB1A2D165D0087434A /* BoundaryElementImpl.h */,
 				F7C9CFAE1A2D165D0087434A /* BoundarySurface.h */,
 				F7C9CFAF1A2D165D0087434A /* BoundarySurfaceImpl.cpp */,
+				F7C9CFB11A2D165D0087434A /* CBound.h */,
 				F7C9CFB01A2D165D0087434A /* BoundarySurfaceImpl.h */,
 				F7C9CFA21A2D165D0087434A /* Bead.cpp */,
 				F7C9CFA31A2D165D0087434A /* Bead.h */,
 				F764F0841BD56DD300E2BBB8 /* Bubble.cpp */,
 				F764F0851BD56DD300E2BBB8 /* Bubble.h */,
-				F7C9CFB11A2D165D0087434A /* CBound.h */,
 				F7C9CFB61A2D165D0087434A /* CMonomer.cpp */,
 				F7C9CFB71A2D165D0087434A /* CMonomer.h */,
 				F7199B281A30B8F700CD5DCC /* BranchingPoint.cpp */,
@@ -1301,10 +1301,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-lboost_system-mt",
-					"-lgst",
-				);
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -1323,10 +1320,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				OTHER_LDFLAGS = (
-					"-lboost_system-mt",
-					"-lgst",
-				);
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				SDKROOT = macosx;
 			};
 			name = Release;

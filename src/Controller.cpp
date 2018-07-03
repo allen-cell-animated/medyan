@@ -435,6 +435,45 @@ void Controller::executeSpecialProtocols() {
         
         pinLowerBoundaryFilaments();
     }
+    
+    //Qin, passivite (de)polymerization until flow rate > set value
+    if(SysParams::Chemistry().makeFlowRateDepend) {
+        double rate0 = 0;
+        vector<vector<double>> current;
+        
+//        if(tau() == 0){
+//            for (auto &filament : Filament::getFilaments()) {
+//                //get plus end coordinates
+//                auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+ //               previous.push_back(x);
+ //           }
+ //       } else if(tau() >= delta) {
+        if(tau() >= delta) {
+            for (auto &filament : Filament::getFilaments()) {
+                //get plus end coordinates
+                auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+                current.push_back(x);
+            }
+            for (int i = 0; i < current.size(); i++){
+                rate0 += twoPointDistance(previous[i],current[i]);
+            }
+                rate = rate0 / current.size();
+                delta +=1;
+                previous = current;
+        }
+        
+        if(rate < SysParams::Chemistry().makeFlowRateDependRate) {
+            checkrate = true;
+        } else {
+            checkrate = false;
+        }
+        //loop through all cylinders, passivate (de)polymerization
+        if(checkrate) {
+            for(auto c : Cylinder::getCylinders())
+            c->getCCylinder()->passivatefilreactions();
+        }
+        
+    }
 }
 
 void Controller::updatePositions() {
@@ -444,6 +483,13 @@ void Controller::updatePositions() {
     
     //update all other moveables
     for(auto m : _subSystem->getMovables()) m->updatePosition();
+}
+
+//Qin, update bubble position by hand
+void Controller::updateBubblePositions() {
+    
+    //update bubble again based on time
+    for(auto b : Bubble::getBubbles()) b->updatePositionManually();
 }
 
 #ifdef DYNAMICRATES
@@ -465,7 +511,80 @@ void Controller::updateNeighborLists() {
 }
 
 void Controller::pinBoundaryFilaments() {
-
+    //need to mannually change pin position for all tau()
+    if(tau() > 0.2 && tau() < 0.5) {
+        vector<double> mannualcoordinate = {500, 500, 800};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 60.5 && tau() < 60.8) {
+        vector<double> mannualcoordinate = {500, 500, 824};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 120.5 && tau() < 120.8) {
+        vector<double> mannualcoordinate = {500, 500, 848};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 180.5 && tau() < 180.8) {
+        vector<double> mannualcoordinate = {500, 500, 896};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 240.5 && tau() < 240.8) {
+        vector<double> mannualcoordinate = {500, 500, 944};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }else if(tau() > 300.5 && tau() < 300.8) {
+        vector<double> mannualcoordinate = {500, 500, 992};
+        for(auto b : Bead::getBeads()) {
+            Bubble* bu = (Bubble*) b->getParent();
+            if(bu->getBead() == b){
+                //need to remove this bubble from pin list first
+                b->removeAsPinned();
+                //Pin this bubble to mannualcoordinate, ignore the distance to boundary
+                b->pinnedPosition = mannualcoordinate;
+                b->addAsPinned();
+            }
+        }
+    }
     //if we've already added pinned filaments, return
     if(Bead::getPinnedBeads().size() != 0)
         return;
@@ -483,7 +602,6 @@ void Controller::pinBoundaryFilaments() {
             
             cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
             cout << SysParams::Mechanics().pinDistance << endl;
-            
             
             //if within dist to boundary, add
             if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
@@ -569,8 +687,8 @@ void Controller::run() {
 //Step 4.5. re-add pin positions
         SystemParser p(_inputFile);
         FilamentSetup filSetup = p.readFilamentSetup();
-        PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
-        ppin.resetPins();
+        //PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
+        //ppin.resetPins();
         
 //Step 5. run mcontroller, update system, turn off restart state.
         updatePositions();
@@ -652,6 +770,13 @@ void Controller::run() {
     
     int i = 1;
     
+    //Qin
+    for (auto &filament : Filament::getFilaments()) {
+        //get plus end coordinates
+        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+       previous.push_back(x);
+    }
+    
     //if runtime was specified, use this
     if(!areEqual(_runTime, 0.0)) {
     
@@ -671,6 +796,8 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
+                //Qin, update bubble position first
+                updateBubblePositions();
                 _mController->run();
                 updatePositions();
                 
