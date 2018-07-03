@@ -239,10 +239,12 @@ public:
             delG = re->getGNumber();
             delG = delG*(1/_stepFrac);
             
+            
         } else if(reType==11){
             // Motor Walking Backward
             delG = -(re->getGNumber());
-            delG = delG*(1/_stepFrac);
+            delG = 0;
+            
             
         } else if(reType==12){
             // Filament Aging
@@ -370,7 +372,7 @@ public:
     
     // increment cumDissChemEnergy
     void updateCumDissChemEnergy(){
-        cumDissChemEnergy += GChem - (G1-GMid);
+        cumDissChemEnergy += GChem + getCurrentStress();
     }
     
     // increment cumDissMechEnergy
