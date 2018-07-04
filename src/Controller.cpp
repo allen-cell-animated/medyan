@@ -592,22 +592,26 @@ void Controller::pinBoundaryFilaments() {
     //loop through beads, check if within pindistance
     for(auto b : Bead::getBeads()) {
         
-        //pin only beads who are at the front of a plus end cylinder or back of a minus end cylinder
-        Filament* f = (Filament*) b->getParent();
-        Cylinder* plusEndC = f->getPlusEndCylinder();
-        Cylinder* minusEndC = f->getMinusEndCylinder();
-        
-        if((plusEndC->getSecondBead() == b) ||
-           (minusEndC->getFirstBead() == b)) {
+        Bubble* bu = (Bubble*) b->getParent();
+        if(bu->getBead() != b){
             
-            cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
-            cout << SysParams::Mechanics().pinDistance << endl;
+            //pin only beads who are at the front of a plus end cylinder or back of a minus end cylinder
+            Filament* f = (Filament*) b->getParent();
+            Cylinder* plusEndC = f->getPlusEndCylinder();
+            Cylinder* minusEndC = f->getMinusEndCylinder();
             
-            //if within dist to boundary, add
-            if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+            if((plusEndC->getSecondBead() == b) ||
+               (minusEndC->getFirstBead() == b)) {
                 
-                b->pinnedPosition = b->coordinate;
-                b->addAsPinned();
+                cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
+                cout << SysParams::Mechanics().pinDistance << endl;
+                
+                //if within dist to boundary, add
+                if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+                    
+                    b->pinnedPosition = b->coordinate;
+                    b->addAsPinned();
+                }
             }
         }
     }
