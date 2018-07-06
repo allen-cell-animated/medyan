@@ -748,6 +748,50 @@ public:
     ~SpeciesBrancher () noexcept {};
 };
 
+//added for CaMKII, jli013
+class SpeciesCaMKII : public SpeciesBound {
+
+public:
+    /// Default constructor
+    SpeciesCaMKII() : SpeciesBound() {}
+
+    /// The main constructor
+    /// @param name - Example, "G-Actin" or "Arp2/3"
+    /// @param n - copy number
+    SpeciesCaMKII (const string &name, species_copy_t n=0, species_copy_t ulim=1)
+    :  SpeciesBound(name, n, ulim) {};
+
+    /// Copy constructor
+    SpeciesCaMKII(const SpeciesCaMKII &rhs)  : SpeciesBound(rhs) {}
+
+    /// Move constructor
+    SpeciesCaMKII (SpeciesCaMKII &&rhs) noexcept : SpeciesBound(move(rhs)){
+    }
+
+    /// Regular Assignment
+    SpeciesCaMKII& operator=(const SpeciesCaMKII& rhs)  {
+        SpeciesBound::operator=(rhs);
+        return *this;
+    }
+
+    /// Move assignment
+    SpeciesCaMKII& operator=(SpeciesBrancher&& rhs)
+    {
+        SpeciesBound::operator=(move(rhs));
+        return *this;
+    }
+
+    virtual SpeciesCaMKII* clone() {
+        return new SpeciesCaMKII(*this);
+    }
+
+    /// Return the full name of this Species in a string format (e.g. "Arp2/3{Brancher}"
+    virtual string getFullName() const {return getName() + "{CaMKII}";}
+
+    /// Default destructor
+    ~SpeciesCaMKII () noexcept {};
+};
+
 
 /// Used for a plus end species on a Filament.
 /// This allows for various polymerization/depolymerization rates on filaments

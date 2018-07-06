@@ -180,6 +180,7 @@ struct ChemistryData {
     vector<string> B_BINDING_INDEX;
     vector<string> L_BINDING_INDEX;
     vector<string> M_BINDING_INDEX;
+    vector<string> CA_BINDING_INDEX; //jli013 for CaMKII
     //@}
     
     ///Constructor initializes memory of vector members
@@ -212,7 +213,8 @@ struct ChemistryData {
     
       B_BINDING_INDEX(MAX_FILAMENT_TYPES),
       L_BINDING_INDEX(MAX_FILAMENT_TYPES),
-      M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
+	  CA_BINDING_INDEX(MAX_FILAMENT_TYPES), //jli013 for CaMKII
+	  M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
     
 };
 

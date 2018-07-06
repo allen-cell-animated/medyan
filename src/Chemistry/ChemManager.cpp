@@ -81,6 +81,22 @@ void ChemManager::setupBindingSites() {
                 SysParams::CParams.motorBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
             }
         }
+        //for CaMKII bound species by jli013
+        if(_chemData.CA_BINDING_INDEX[filType] != "") {
+            auto it = find(_chemData.speciesBound[filType].begin(),
+                           _chemData.speciesBound[filType].end(),
+                           _chemData.CA_BINDING_INDEX[filType]);
+
+            if(it == _chemData.speciesBound[filType].end()) {
+
+                cout << "The CaMKII binding site listed is not a valid bound species. Exiting. jli013"
+                     << endl;
+                 exit(EXIT_FAILURE);
+            }
+            else {
+                SysParams::CParams.CaMKIIBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
+            }
+        }
         
         //for initialization of cylinders
         SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.brancherBoundIndex[filType]);
@@ -2621,6 +2637,14 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             Species* ms = cc->getCMonomer(i)->speciesBound(
                           SysParams::CParams.motorBoundIndex[filType]);
             ConnectionBlock rcbm(ms->connect(mcallback,false));
+
+            //added for CaMKII
+            UpdateCaMKIIBindingCallback CAcallback(c, i);
+
+            Species* cas = cc->getCMonomer(i)->speciesBound(
+                          SysParams::CParams.CaMKIIBoundIndex[filType]);
+            ConnectionBlock rcbCA(cas->connect(CAcallback,false));
+
         }
     }
     

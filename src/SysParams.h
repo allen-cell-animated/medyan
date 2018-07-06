@@ -140,6 +140,7 @@ struct ChemParams {
     vector<short> brancherBoundIndex = vector<short>(MAX_FILAMENT_TYPES);
     vector<short> linkerBoundIndex   = vector<short>(MAX_FILAMENT_TYPES);
     vector<short> motorBoundIndex    = vector<short>(MAX_FILAMENT_TYPES);
+    vector<short> CaMKIIBoundIndex    = vector<short>(MAX_FILAMENT_TYPES); //added for CaMKII jli013
     
     vector<vector<short>> bindingIndices = vector<vector<short>>(MAX_FILAMENT_TYPES);
     //@}
