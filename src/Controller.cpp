@@ -92,6 +92,7 @@ void Controller::initialize(string inputFile,
     //Qin add br force out and local diffussing species concentration
     _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
     //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
+    _outputs.push_back(new WallTensions(_outputDirectory + "walltension.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
@@ -498,28 +499,28 @@ void Controller::pinBoundaryFilaments() {
 //Qin
 void Controller::pinLowerBoundaryFilaments() {
     
-    //renew pinned filament list everytime
+    //if we've already added pinned filaments, return
+    if(Bead::getPinnedBeads().size() != 0)
+        return;
     
     //loop through beads, check if within pindistance
     for(auto b : Bead::getBeads()) {
         
-        //pin all beads besides plus end and minus end cylinder
+        //pin only beads who are at the front of a plus end cylinder or back of a minus end cylinder
         Filament* f = (Filament*) b->getParent();
         Cylinder* plusEndC = f->getPlusEndCylinder();
         Cylinder* minusEndC = f->getMinusEndCylinder();
         
-        if((plusEndC->getSecondBead() != b) ||
-           (minusEndC->getFirstBead() != b)) {
+        if((plusEndC->getSecondBead() == b) ||
+           (minusEndC->getFirstBead() == b)) {
             
-            //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
-            //cout << SysParams::Mechanics().pinDistance << endl;
+            cout << _subSystem->getBoundary()->sidedistance(b->coordinate) << endl;
+            cout << SysParams::Mechanics().pinDistance << endl;
             
-            auto index = Rand::randDouble(0,1);
-            //cout << index <<endl;
-            //if within dist to boundary and index > 0.5, add
-            if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
-               && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
-                //cout << index << endl;
+            
+            //if within dist to boundary, add
+            if(_subSystem->getBoundary()->sidedistance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+                
                 b->pinnedPosition = b->coordinate;
                 b->addAsPinned();
             }

@@ -488,13 +488,25 @@ void WallTensions::print(int snapshot) {
             Bead* b = cylinder->getFirstBead();
             
             if(b->isPinned()) {
-                auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
-                auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+                //auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
+                //auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
                 
-                double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+                //double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+                //_outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
                 
+                auto x0 = b->pinnedPosition[0] - 2000;
+                auto y0 = b->pinnedPosition[1] - 2000;
+                auto r0 = sqrt(x0 * x0 + y0 * y0);
                 
-                _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
+                vector<double> pinboundary{0,0,0};
+                pinboundary[0] = x0 * 2000 / r0 + 2000;
+                pinboundary[1] = x0 * 2000 / r0 + 2000;
+                pinboundary[2] = b->pinnedPosition[2];
+                
+                auto eqL = twoPointDistance(b->pinnedPosition,pinboundary);
+                double dist2 = twoPointDistance(b->coordinate, pinboundary);
+                
+                _outputFile<< k * (dist2 - eqL) << " ";
             }
             else
                 _outputFile << 0.0 << " ";
@@ -506,12 +518,26 @@ void WallTensions::print(int snapshot) {
         Bead* b = cylinder->getSecondBead();
         
         if(b->isPinned()) {
-            auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
-            auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+            //auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
+            //auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
             
-            double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+            //double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
             
-            _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
+            //_outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
+            
+            auto x0 = b->pinnedPosition[0] - 2000;
+            auto y0 = b->pinnedPosition[1] - 2000;
+            auto r0 = sqrt(x0 * x0 + y0 * y0);
+            
+            vector<double> pinboundary{0,0,0};
+            pinboundary[0] = x0 * 2000 / r0 + 2000;
+            pinboundary[1] = x0 * 2000 / r0 + 2000;
+            pinboundary[2] = b->pinnedPosition[2];
+            
+            auto eqL = twoPointDistance(b->pinnedPosition,pinboundary);
+            double dist2 = twoPointDistance(b->coordinate, pinboundary);
+            
+            _outputFile<< k * (dist2 - eqL) << " ";
         }
         else
             _outputFile << 0.0 << " ";

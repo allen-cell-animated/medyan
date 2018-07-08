@@ -21,16 +21,42 @@ using namespace mathfunc;
 
 double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr) {
     
-    double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
-    return 0.5 * kAttr * dist * dist;
+    auto x0 = b->pinnedPosition[0] - 2000;
+    auto y0 = b->pinnedPosition[1] - 2000;
+    auto r0 = sqrt(x0 * x0 + y0 * y0);
+    
+    vector<double> pinboundary{0,0,0};
+    pinboundary[0] = x0 * 2000 / r0 + 2000;
+    pinboundary[1] = x0 * 2000 / r0 + 2000;
+    pinboundary[2] = b->pinnedPosition[2];
+    
+    auto eqL = twoPointDistance(b->pinnedPosition,pinboundary);
+    double dist2 = twoPointDistance(b->coordinate, pinboundary);
+    
+    //double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
+    //return 0.5 * kAttr * dist * dist;
+    return 0.5 * kAttr * (dist2 - eqL) * (dist2 - eqL);
 }
 
 double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr, double d) {
     
     vector<double> zeros{0,0,0};
     
-    double dist = twoPointDistanceStretched(b->coordinate, b->force, b->pinnedPosition, zeros, d);
-    return 0.5 * kAttr * dist * dist;
+    auto x0 = b->pinnedPosition[0] - 2000;
+    auto y0 = b->pinnedPosition[1] - 2000;
+    auto r0 = sqrt(x0 * x0 + y0 * y0);
+    
+    vector<double> pinboundary{0,0,0};
+    pinboundary[0] = x0 * 2000 / r0 + 2000;
+    pinboundary[1] = x0 * 2000 / r0 + 2000;
+    pinboundary[2] = b->pinnedPosition[2];
+    
+    auto eqL = twoPointDistance(b->pinnedPosition,pinboundary);
+    double dist2 = twoPointDistanceStretched(b->coordinate, b->force, pinboundary, zeros, d);
+    
+    //double dist = twoPointDistanceStretched(b->coordinate, b->force, b->pinnedPosition, zeros, d);
+    //return 0.5 * kAttr * dist * dist;
+    return 0.5 * kAttr * (dist2 - eqL) * (dist2 - eqL);
 }
 
 void BoundaryCylinderAttachmentHarmonic::forces(Bead* b, double kAttr) {
@@ -39,8 +65,24 @@ void BoundaryCylinderAttachmentHarmonic::forces(Bead* b, double kAttr) {
     double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
     if(areEqual(dist, 0.0)) return;
     
-    auto dir = normalizedVector(twoPointDirection(b->coordinate, b->pinnedPosition));
-    double f0 = kAttr * dist;
+    
+    auto x0 = b->pinnedPosition[0] - 2000;
+    auto y0 = b->pinnedPosition[1] - 2000;
+    auto r0 = sqrt(x0 * x0 + y0 * y0);
+    
+    vector<double> pinboundary{0,0,0};
+    pinboundary[0] = x0 * 2000 / r0 + 2000;
+    pinboundary[1] = x0 * 2000 / r0 + 2000;
+    pinboundary[2] = b->pinnedPosition[2];
+    
+    auto eqL = twoPointDistance(b->pinnedPosition,pinboundary);
+    double dist2 = twoPointDistance(b->coordinate, pinboundary);
+    
+    auto dir = normalizedVector(twoPointDirection(b->coordinate, pinboundary));
+    double f0 = kAttr * (dist2 - eqL);
+    //auto dir = normalizedVector(twoPointDirection(b->coordinate, b->pinnedPosition));
+    //double f0 = kAttr * dist;
+    
     
     b->force[0] += f0 * dir[0];
     b->force[1] += f0 * dir[1];
@@ -57,8 +99,23 @@ void BoundaryCylinderAttachmentHarmonic::forcesAux(Bead* b, double kAttr) {
     double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
     if(areEqual(dist, 0.0)) return;
     
-    auto dir = normalizedVector(twoPointDirection(b->coordinate, b->pinnedPosition));
-    double f0 = kAttr * dist;
+    auto x0 = b->pinnedPosition[0] - 2000;
+    auto y0 = b->pinnedPosition[1] - 2000;
+    auto r0 = sqrt(x0 * x0 + y0 * y0);
+    
+    vector<double> pinboundary{0,0,0};
+    pinboundary[0] = x0 * 2000 / r0 + 2000;
+    pinboundary[1] = x0 * 2000 / r0 + 2000;
+    pinboundary[2] = b->pinnedPosition[2];
+    
+    auto eqL = twoPointDistance(b->pinnedPosition,pinboundary);
+    double dist2 = twoPointDistance(b->coordinate, pinboundary);
+
+    auto dir = normalizedVector(twoPointDirection(b->coordinate, pinboundary));
+    double f0 = kAttr * (dist2 - eqL);
+    
+    //auto dir = normalizedVector(twoPointDirection(b->coordinate, b->pinnedPosition));
+    //double f0 = kAttr * dist;
     
     b->forceAux[0] += f0 * dir[0];
     b->forceAux[1] += f0 * dir[1];
