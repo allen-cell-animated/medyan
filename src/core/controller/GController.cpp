@@ -196,7 +196,7 @@ CompartmentGrid* GController::initializeGrid() {
              _compartmentSize[2] * _grid[2]};
     
     _centerGrid = {_compartmentSize[0] * _grid[0] / 2,
-                   _compartmentSize[1] * _grid[2] / 2,
+                   _compartmentSize[1] * _grid[1] / 2,
                    _compartmentSize[2] * _grid[2] / 2};
     
     _compartmentVolume = _compartmentSize[0] * _compartmentSize[1] * _compartmentSize[2];
