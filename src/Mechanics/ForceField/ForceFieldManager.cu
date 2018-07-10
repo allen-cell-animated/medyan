@@ -63,7 +63,7 @@ void ForceFieldManager::cleanupAllForceFields() {
 
 double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool verbose) {
 
-    double energy = 0;
+    double energy = 0.0;
 #ifdef CUDAACCL
     auto gU_tot = CUDAcommon::getCUDAvars().gpu_energy;
     setenergytozero<<<1,1,0,streamF>>>(gU_tot);
@@ -106,6 +106,8 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
             else return numeric_limits<double>::infinity();
         }
         else energy += tempEnergy;
+                std::cout<<"ForceField "<<ff->getName()<<" energy "<<tempEnergy<<" d "
+                        <<d<<endl;
 
     }
 //    std::cout<<"-------"<<endl;
@@ -113,6 +115,7 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 }
 void ForceFieldManager::computeForces(double *coord, double *f) {
     //reset to zero
+
     for (int i = 0; i < CGMethod::N; i++)
         f[i] = 0.0;
 
@@ -135,6 +138,7 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
     for(auto &ff : _forceFields) {
 //                std::cout<<"ForceField "<<ff->getName()<<endl;
         ff->computeForces(coord, f);
+
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 
 //        if(cross_checkclass::Aux)

@@ -46,7 +46,9 @@ void CylinderCylinderNL::assignbin(Cylinder* cyl){
     _bin->addCylinder(cyl);
     cyl->_binvec.push_back(_bin);
 }
-
+void CylinderCylinderNL::unassignbin(Cylinder* cyl, Bin* bin){
+    bin->removeCylinder(cyl);
+}
 void CylinderCylinderNL::updatebin(Cylinder *cyl){
     Bin* _bin;
 //    std::cout<<coordinate[0]<<" "<<coordinate[1]<<" "<<coordinate[2]<<endl;
@@ -71,6 +73,7 @@ void CylinderCylinderNL::updatebin(Cylinder *cyl){
     }
 }
 
+
 void CylinderCylinderNL::generateConnections()
 {
     for(size_t i=0U; i<_grid[0]; ++i) {
@@ -85,14 +88,15 @@ void CylinderCylinderNL::generateConnections()
                         {indices[0] * _binSize[0] + _binSize[0] / 2,
                          indices[1] * _binSize[1] + _binSize[1] / 2,
                          indices[2] * _binSize[2] + _binSize[2] / 2};
+                std::cout<<coordinates[0]<<" "<<coordinates[1]<<" "<<coordinates[2]<<endl;
                 target->setCoordinates(coordinates);
                 //Go through all neighbors to get the neighbors list
 //                std::cout<<"ijk "<<i<<" "<<j<<" "<<k<<endl;
                 for(int ii: {-1,0,1}){
                     for(int jj: {-1,0,1}){
                         for(int kk: {-1,0,1}){
-                            //Don't consider the target bin itself as a neighbor.
-                            if(ii != 0 || jj != 0 || kk != 0) {
+                            //Consider the target bin itself as a neighbor.
+//                            if(ii != 0 || jj != 0 || kk != 0) {
                                 int iprime = i+ii;
                                 int jprime = j+jj;
                                 int kprime = k+kk;
@@ -105,8 +109,14 @@ void CylinderCylinderNL::generateConnections()
 //                                std::cout<<"CI "<<currentIndices[0]<<" "
 //                                        ""<<currentIndices[1]<<" "<<currentIndices[2]<<endl;
                                 Bin *neighbor = getBin(currentIndices);
+//                            if(ii==0 && jj == 0 &&  kk == 0 )
+//                            if(neighbor->coordinates()[0] == target->coordinates()[0] &&
+//                                    neighbor->coordinates()[1] == target->coordinates()
+//                                                                  [1] &&
+//                                    neighbor->coordinates()[2] == target->coordinates()[2])
+//                                std::cout<<"Self bin added"<<endl;
                                 target->addNeighbour(neighbor);
-                            }
+//                            }
                         }
                     }
                 }
@@ -281,18 +291,28 @@ Bin* CylinderCylinderNL::getBin(const vector<size_t> &indices)
 }
 
 void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
+//    if(runtime)
+//        std::cout<<"Runtime is true "<<runtime<<endl;
+//    else
+//        std::cout<<"Runtime is false "<<runtime<<endl;
     //clear existing
     _list4mbin[cylinder].clear();
     auto binvec = cylinder->_binvec;//The different bins that this cylinder belongs to.
     if(binvec.size()<=_ID)
         assignbin(cylinder);
     binvec = cylinder->_binvec;
-    vector<Bin*> _neighboringBins = binvec.at(_ID)
+    auto parentbin =  binvec.at(_ID);
+    vector<Bin*> _neighboringBins = binvec.at(_ID)//Get the bin that belongs to the
+                    // current binGrid of interest for this NL.
             ->getNeighbours();
     for(auto &bin : _neighboringBins){
+//        std::cout<<bin->getCylinders().size()<<endl;
         for(auto &ncylinder : bin->getCylinders()) {
 
             bool checkstatus = false;
+//            std::cout<<"parent "<<cylinder->getType()<<endl;
+//            std::cout<<"neighbor "<<ncylinder->getID()<<endl;
+//            ncylinder->printSelf();
             if ((cylinder->getType() == NLcyltypes[0] &&
                  ncylinder->getType() == NLcyltypes[1]) || (cylinder->getType() ==
                                                             NLcyltypes[1] &&
@@ -331,13 +351,17 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
 
     }
 }
-vector<Cylinder*> CylinderCylinderNL::getNeighborsbin(Cylinder* cylinder) {
+vector<Cylinder*> CylinderCylinderNL::getNeighborsstencil(Cylinder* cylinder) {
 
     return _list4mbin[cylinder];
 }
 #endif
 
 void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
+//    if(runtime)
+//        std::cout<<"Runtime is true "<<runtime<<endl;
+//    else
+//        std::cout<<"Runtime is false "<<runtime<<endl;
 
     //clear existing
     _list[cylinder].clear();
@@ -411,12 +435,24 @@ void CylinderCylinderNL::removeNeighbor(Neighbor* n) {
     }
 #endif
 #ifdef NLSTENCILLIST
+    std::cout<<"Removing neighbors of "<<cylinder<<" from NL "<<_ID<<endl;
+    //Remove from NeighborList
     _list4mbin.erase(cylinder);
+    //Remove from bin
+    Bin* bin = cylinder->_binvec.at(_ID);
+    unassignbin(cylinder, bin);
     //remove from other lists
+    std::cout<<"Removed from cylinders ";
     for(auto it = _list4mbin.begin(); it != _list4mbin.end(); it++) {
         auto cit = find(it->second.begin(), it->second.end(), cylinder);
-        if(cit != it->second.end()) it->second.erase(cit);
+        {
+            if (cit != it->second.end()) {
+                it->second.erase(cit);
+                std::cout<<it->first<<" ";
+            }
+        }
     }
+    std::cout<<endl;
 #endif
 }
 
@@ -455,15 +491,23 @@ void CylinderCylinderNL::reset() {
     //loop through all neighbor keys
 #ifdef NLORIGINAL//serial
     _list.clear();
+    int tot = 0;
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighbors(cylinder);
+        tot += _list[cylinder].size();
     }
+    std::cout<<"NLORIGINAL size "<<" "<<tot<<endl;
+    tot = 0;
 #endif
 #ifdef NLSTENCILLIST
     _list4mbin.clear();
+    //check and reassign cylinders to different bins if needed.
+    updateallcylinderstobin();
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighborsbin(cylinder);
+        tot += _list4mbin[cylinder].size();
     }
+    std::cout<<"NLSTENCILLIST size "<<" "<<tot<<endl;
 #endif
 //        std::cout<<cylinder->_dcIndex<<" "<<_list.size()<<" "<<vec_numpairs<<" "<<_full<<endl;
 #ifdef CUDAACCL_NL

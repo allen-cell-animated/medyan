@@ -198,6 +198,21 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     Ms_isminimizationstate = maxF() > GRADTOL;
 //    nvtxRangePop();
     //}
+    //
+#ifdef DETAILEDOUTPUT
+    std::cout<<"printing beads & forces"<<endl;
+    long i = 0;
+    long index = 0;
+    for(auto b:Bead::getBeads()){
+        index = 3 * b->_dbIndex;
+        std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+                ""<<coord[index + 2]<<" "
+                ""<<force[index]<<" "
+                ""<<force[index + 1]<<" "<<force[index + 2]<<endl;
+    }
+    std::cout<<"printed beads & forces"<<endl;
+#endif
+    //
 #endif
 
     while (/* Iteration criterion */  numIter < N &&
@@ -296,6 +311,21 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //compute new forces
 //        std::cout<<"compute forces"<<endl;
         FFM.computeForces(coord, forceAux);//split and synchronize
+#ifdef DETAILEDOUTPUT
+        std::cout<<"MB printing beads & forces L "<<lambda<<endl;
+        long i = 0;
+        long index = 0;
+        for(auto b:Bead::getBeads()){
+            index = 3 * b->_dbIndex;
+
+            std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+                    ""<<coord[index + 2]<<" "
+                    ""<<forceAux[index]<<" "
+                    ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
+                    b->_dbIndex<<endl;
+        }
+        std::cout<<"MB printed beads & forces"<<endl;
+#endif
 #ifdef  CUDAACCL
         //wait for forces to be calculated
         for(auto strm:CUDAcommon::getCUDAvars().streamvec)
@@ -365,6 +395,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         if(Ms_isminimizationstate)
             //shift gradient
             shiftGradient(beta);
+        std::cout<<"Shift Gradient "<<beta<<endl;
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
         std::cout<<"Beta serial "<<beta<<endl;
@@ -382,10 +413,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         if(Ms_issafestate && Ms_isminimizationstate ) {
             shiftGradient(0.0);
             _safeMode = true;
+            std::cout<<"Shift Gradient 0.0"<<endl;
         }
         curGrad = newGrad;
 //        nvtxRangePushA("Polakserial");
-        Ms_isminimizationstate = maxF() > GRADTOL;
+        auto maxForce = maxF();
+        Ms_isminimizationstate = maxForce > GRADTOL;
+        std::cout<<"Maximum Force "<<maxForce<<endl;
 //        nvtxRangePop();
 #endif
 
@@ -416,8 +450,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         cvars.streamvec.clear();
         CUDAcommon::cudavars = cvars;
 #endif
-
-
         cout << "System energy..." << endl;
         FFM.computeEnergy(coord, force, 0.0, true);
 #ifdef CUDAACCL
@@ -428,9 +460,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
         cout << endl;
     }
-
 //    cout << "Minimized." << endl;
-
 #if defined(CROSSCHECK) || defined(CUDAACCL)
     cross_checkclass::Aux=false;
 #endif
@@ -501,7 +531,16 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
     endMinimization();
     FFM.computeLoadForces();
-    std::cout<<"End minimization-----------------"<<endl;
-
+    std::cout<<"End Minimization************"<<endl;
     FFM.cleanupAllForceFields();
+#ifdef DETAILEDOUTPUT
+    std::cout<<"printing beads & forces"<<endl;
+    for(auto b:Bead::getBeads()){
+        std::cout<<b->getID()<<" "<<b->coordinate[0]<<" "<<b->coordinate[1]<<" "
+                ""<<b->coordinate[2]<<" "
+                ""<<b->force[index]<<" "
+                ""<<b->force[index+1]<<" "<<b->force[index+2]<<endl;
+    }
+    std::cout<<"printed beads & forces"<<endl;
+#endif
 }

@@ -222,8 +222,8 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
 
     int nb, nc;
     double *coord1, R, r, U_i;
-    double U = 0;
-    auto Cumnc=0;
+    double U = 0.0;
+    int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
 
@@ -273,8 +273,8 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
 
     int nb, nc;
     double *coord1, *force1, R, r, U_i;
-    double U = 0;
-    long Cumnc=0;
+    double U = 0.0;
+    int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
 
@@ -331,7 +331,7 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
 
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
-    auto Cumnc=0;
+    int Cumnc=0;
 
     for (int ib = 0; ib < nb; ib++) {
 
@@ -344,8 +344,7 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
             auto norm = be->normal(coord1);
 
             R = -r / slen[Cumnc + ic];
-            f0 = krep[Cumnc + ic] * exp(R);
-
+            f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];

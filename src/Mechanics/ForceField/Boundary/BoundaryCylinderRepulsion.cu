@@ -24,6 +24,7 @@
 #include "cross_check.h"
 #include "CUDAcommon.h"
 #include "BoundaryCylinderRepulsionCUDA.h"
+#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -54,16 +55,16 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
     int ni = 0;
     int bindex = 0;
 
-    nneighbors = new int[nbe];
+    nneighbors = new int[nbe];//stores number of interactions per boundary element.
     double *beListplane;
     int *nintvec;
     beListplane = new double[4 * nbe];
-    nintvec = new int[nbe];
+    nintvec = new int[nbe];//stores cumulative number of nneighbors.
 
-    auto cumnn=0;
+    int cumnn=0;
     for (i = 0; i < nbe; i++) {
 
-        auto be = BoundaryElement::getBoundaryElements()[i];
+        auto be = BoundaryElement::getBoundaryElements()[i];//beList[i];
         auto nn = _neighborList->getNeighbors(be).size();
 
         nneighbors[i] = 0;
@@ -113,7 +114,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             cout<<"CUDA cannot handle non-plane type boundaries. Exiting..."<<endl;
             exit(EXIT_FAILURE);
         }
+//        std::cout<<"nint per be "<<idx<<" "<<nn<<" "<<nintvec[i]<<endl;
     }
+//    std::cout<<"Nint "<<nint<<" "<<cumnn<<endl;
 //    for (i = 0; i < nbe; i++) {
 //        std::cout<<nintvec[i]<<" "<<nint<<" "<<beListplane[4 *i]<<" "<<beListplane[4 *i +1]<<" "<<beListplane[4 *i
 //                                                                                                            +2]<<" "
@@ -184,9 +187,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 
 template <class BRepulsionInteractionType>
 double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double *coord, double *f, double d) {
-    double U_i[1], U_ii;
+    double U_i[1], U_ii=0.0;
     double* gU_i;
-    U_ii = NULL;
+    U_ii = -1.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -248,6 +251,20 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
 //    nvtxRangePushA("SCFBE");
     _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
 //    nvtxRangePop();
+#endif
+#ifdef DETAILEDOUTPUT
+    double maxF = 0.0;
+    double mag = 0.0;
+    for(int i = 0; i < CGMethod::N/3; i++) {
+        mag = 0.0;
+        for(int j = 0; j < 3; j++)
+            mag += f[3 * i + j]*f[3 * i + j];
+        mag = sqrt(mag);
+//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
+//                2]<<endl;
+        if(mag > maxF) maxF = mag;
+    }
+    std::cout<<"max "<<getName()<<" "<<maxF<<endl;
 #endif
 }
 

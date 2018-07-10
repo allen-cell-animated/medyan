@@ -55,6 +55,9 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
 //    }
 //    std::cout<<endl;
 //    //@}
+
+    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
+            "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
     //mark species
     assert(areEqual(sm1->getN(), 0.0) && areEqual(sm2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&

@@ -471,6 +471,7 @@ void CGMethod::moveBeads(double d)
     ///<NOTE: Ignores static beads for now.
     //if(!b->getstaticstate())
 //    nvtxRangePushA("SMVB");
+//    std::cout<<"3N "<<N<<endl;
     for (int i = 0; i < N; i++)
         coord[i] = coord[i] + d * force[i];
 //    nvtxRangePop();
@@ -515,6 +516,9 @@ void CGMethod::startMinimization() {
         coord[index + 2] = b->coordinate[2];
 
         b->coordinateP = b->coordinate;
+//        force[index] = 0.0;
+//        force[index + 1] = 0.0;
+//        force[index + 2] = 0.0;
         i++;
     }
 
@@ -708,10 +712,11 @@ void CGMethod::endMinimization() {
     for(auto b: Bead::getBeads()) {
 
         //flatten indices
-        index = 3 * i;
+        index = 3 * b->_dbIndex;
         b->coordinate[0] = coord[index];
         b->coordinate[1] = coord[index + 1];
         b->coordinate[2] = coord[index + 2];
+
         i++;
     }
 
@@ -1073,18 +1078,20 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
             }
             std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
                                                                                 <<allFDotFA()<<endl;
-            std::cout<<"SL2 energyChange "<<energyChange<<"idealEnergyChange "<<idealEnergyChange
+            std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
+                    ""<<idealEnergyChange
                      <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
         }
 #endif
     }
-#ifdef SERIAL
-    delete [] cconvergencecheck;
-#endif
     std::cout<<"lambda determined in "<<iter<<endl;
 //synchronize streams
-    if(cconvergencecheck[0]||sconvergencecheck)
+    if(cconvergencecheck[0]||sconvergencecheck) {
+#ifdef SERIAL
+        delete [] cconvergencecheck;
+#endif
         return lambda;
+    }
 
 }
 
@@ -1142,10 +1149,11 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
         }
 #endif
     }
-#ifdef SERIAL
-    delete [] cconvergencecheck;
-#endif
     std::cout<<"lambda determined in "<<iter<<endl;
-    if(cconvergencecheck[0]||sconvergencecheck)
-        return lambda;;
+    if(cconvergencecheck[0]||sconvergencecheck) {
+#ifdef SERIAL
+        delete [] cconvergencecheck;
+#endif
+        return lambda;
+    }
 }

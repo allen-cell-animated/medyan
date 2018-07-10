@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 
 #include "ChemSimpleGillespieImpl.h"
+#include "Rand.h"
 
 void ChemSimpleGillespieImpl::initialize() {
     resetTime();
@@ -25,11 +26,15 @@ ChemSimpleGillespieImpl::~ChemSimpleGillespieImpl() noexcept {
 double ChemSimpleGillespieImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
     _exp_distr.param(pm);
+#ifdef DEBUGCONSTANTSEED
+    return _exp_distr(Rand::_eng);
+#else
     return _exp_distr(_eng);
+#endif
 }
 
 double ChemSimpleGillespieImpl::generateUniform(){
-    return _uniform_distr(_eng);
+    return _uniform_distr(Rand::_eng);
 }
 
 double ChemSimpleGillespieImpl::computeTotalA(){

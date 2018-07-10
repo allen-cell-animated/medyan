@@ -45,6 +45,7 @@ INCLUDES = -I/usr/local/include -I/usr/include/boost \
 -IMechanics/ForceField/Branching          \
 -IMechanics/ForceField/Filament           \
 -IMechanics/ForceField/Linker             \
+-IMechanics/ForceField/Membrane           \
 -IMechanics/ForceField/MotorGhost         \
 -IMechanics/ForceField/Bubble             \
 #-IMechanics/ForceField/Membrane           \
@@ -75,10 +76,13 @@ CPPFLAGS += -DCHEMISTRY
 CPPFLAGS += -DMECHANICS
 #Use dynamic rate changing
 CPPFLAGS += -DDYNAMICRATES
-#vectorized serial energy minimization
-CPPFLAGS += -DSERIAL
 #neighbors list calculations
 CPPFLAGS += -DNLORIGINAL
+#serialized energy minimization
+CPPFLAGS += -DSERIAL
+CPPFLAGS += -DDETAILEDOUTPUT
+CPPFLAGS += -DDEBUGCONSTANTSEED
+
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
@@ -96,7 +100,6 @@ CPPFLAGS += -DTRACK_DEPENDENTS
 #For passivating and activating reactions accordingly
 CPPFLAGS += -DTRACK_ZERO_COPY_N
 CPPFLAGS += -DTRACK_UPPER_COPY_N
-
 #Reaction signaling. Needed for all Filament, Linker,
 #Motor, and BranchingPoint reactions in system
 CPPFLAGS += -DREACTION_SIGNALING
@@ -131,7 +134,7 @@ else
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
 endif
 
-%.o: %.cpp
+%.o: %.cpp 
 	$(CXX) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c $< -o $@
 
 %.o: %.cu

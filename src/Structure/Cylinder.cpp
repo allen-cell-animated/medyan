@@ -46,8 +46,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what() << endl;
-        
-        printSelf();
+
+//        cout << "Creating Cylinder: ptr = " << this << endl;
         
         exit(EXIT_FAILURE);
     }
@@ -95,12 +95,11 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                                       extensionBack, initialization);
 #endif
 
-
         
 }
 
 Cylinder::~Cylinder() noexcept {
-    
+//    std::cout<<"Removing cylinder from Cmpt "<<this<<endl;
     //remove from compartment
     _compartment->removeCylinder(this);
     

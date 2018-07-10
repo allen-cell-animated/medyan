@@ -76,8 +76,8 @@ void FilamentFF::whoIsCulprit() {
 
 double FilamentFF::computeEnergy(double *coord, double *f, double d) {
 
-    double U= 0;
-    double U_i;
+    double U= 0.0;
+    double U_i=0.0;
 
     for (auto &interaction : _filamentInteractionVector) {
 //        std::cout<<"ForceField "<<interaction->getName()<<" "<<_filamentInteractionVector.size()<<endl;
@@ -89,7 +89,9 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
             return -1;
         }
         else U += U_i;
-
+#ifdef DETAILEDOUTPUT
+        std::cout<<getName()<<" "<<U_i<<endl;
+#endif
     }
 
     return U;

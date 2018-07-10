@@ -160,4 +160,4 @@ void FilamentBendingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3,
                                 (b3->coordinate[2] - b2->coordinate[2])*C );
     
 }
-#endif;
+#endif

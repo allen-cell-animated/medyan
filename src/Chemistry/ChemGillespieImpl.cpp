@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 
 #include "ChemGillespieImpl.h"
+#include "Rand.h"
 
 RNodeGillespie::RNodeGillespie(ReactionBase *r, ChemGillespieImpl &chem_Gillespie)
     :_chem_Gillespie (chem_Gillespie), _react(r) {
@@ -70,11 +71,20 @@ ChemGillespieImpl::~ChemGillespieImpl() noexcept{
 double ChemGillespieImpl::generateTau(double a) {
     exponential_distribution<double>::param_type pm(a);
     _exp_distr.param(pm);
+#ifdef DEBUGCONSTANTSEED
+    Rand::Ncounter++;
+    return _exp_distr(Rand::_eng);
+#else
     return _exp_distr(_eng);
+#endif
 }
 
 double ChemGillespieImpl::generateUniform() {
+#ifdef DEBUGCONSTANTSEED
+    return _uniform_distr(Rand::_eng);
+#else
     return _uniform_distr(_eng);
+#endif
 }
 
 double ChemGillespieImpl::computeTotalA() {

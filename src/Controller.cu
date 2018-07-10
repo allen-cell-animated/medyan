@@ -325,6 +325,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
     }
     cout << "Done. " << fil.size() << " filaments created." << endl;
+
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {
@@ -588,7 +589,6 @@ void Controller::updateReactionRates() {
 void Controller::updateNeighborLists() {
     //    nvtxRangePushA("neighborlist");
     //Full reset of neighbor lists
-    //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
 //    nvtxRangePop();
 #ifdef CHEMISTRY
@@ -783,6 +783,8 @@ void Controller::run() {
     tauLastSnapshot = tau();
     oldTau = 0;
 #endif
+
+#ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
 //    nvtxRangePushA("mechanics_i2");
@@ -792,6 +794,19 @@ void Controller::run() {
     chrono::duration<double> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
 //    nvtxRangePushA("output");
+    //reupdate positions and neighbor lists
+    updatePositions();
+    updateNeighborLists();
+
+#ifdef DYNAMICRATES
+    updateReactionRates();
+#endif
+#endif
+
+#ifdef CHEMISTRY
+    tauLastSnapshot = tau();
+    oldTau = 0;
+#endif
     for(auto o: _outputs) o->print(0);
 //    nvtxRangePop();
 

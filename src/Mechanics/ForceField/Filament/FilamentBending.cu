@@ -18,6 +18,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -42,9 +43,11 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
 
                 auto it2 = it - 1;
                 beadSet[n * i] = (*it2)->getFirstBead()->_dbIndex;
-                beadSet[n * i + 1] = (*it)->getFirstBead()->_dbIndex;;
-                beadSet[n * i + 2] = (*it)->getSecondBead()->_dbIndex;;
-
+                beadSet[n * i + 1] = (*it)->getFirstBead()->_dbIndex;
+                beadSet[n * i + 2] = (*it)->getSecondBead()->_dbIndex;
+//                std::cout<<f->getCylinderVector().size()<<" "<<(*it2)->getFirstBead()
+//                        ->_dbIndex<<" "<<(*it)->getFirstBead()
+//                        ->_dbIndex<<" "<<(*it)->getSecondBead()->_dbIndex<<endl;
                 kbend[i] = (*it)->getMCylinder()->getBendingConst();
                 eqt[i]  = (*it)->getMCylinder()->getEqTheta();
 
@@ -97,9 +100,9 @@ void FilamentBending<FBendingInteractionType>::deallocate() {
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord, double *f, double d){
 
-    double U_i[1], U_ii;
+    double U_i[1], U_ii=0.0;
     double* gU_i;
-    U_ii = NULL;
+    U_ii = -1.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -158,6 +161,20 @@ void FilamentBending<FBendingInteractionType>::computeForces(double *coord, doub
 
     _FFType.forces(coord, f, beadSet, kbend, eqt);
 //    nvtxRangePop();
+#endif
+#ifdef DETAILEDOUTPUT
+    double maxF = 0.0;
+    double mag = 0.0;
+    for(int i = 0; i < CGMethod::N/3; i++) {
+        mag = 0.0;
+        for(int j = 0; j < 3; j++)
+            mag += f[3 * i + j]*f[3 * i + j];
+        mag = sqrt(mag);
+//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
+//                2]<<endl;
+        if(mag > maxF) maxF = mag;
+    }
+    std::cout<<"max "<<getName()<<" "<<maxF<<endl;
 #endif
 
 }

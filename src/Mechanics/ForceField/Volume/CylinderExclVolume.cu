@@ -20,6 +20,7 @@
 
 #include "MathFunctions.h"
 #include "cross_check.h"
+#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -72,6 +73,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->_dbIndex;
             krep[Cumnc] = ci->getMCylinder()->getExVolConst();
             Cumnc++;
+            std::cout<<"CV"<<ci->getID()<<" "<<cin->getID()<<endl;
         }
     }
     //CUDA
@@ -193,6 +195,20 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
 //    std::cout<<"x vol srl"<<endl;
     _FFType.forces(coord, f, beadSet, krep);
 //    nvtxRangePop();
+#endif
+#ifdef DETAILEDOUTPUT
+    double maxF = 0.0;
+    double mag = 0.0;
+    for(int i = 0; i < CGMethod::N/3; i++) {
+        mag = 0.0;
+        for(int j = 0; j < 3; j++)
+            mag += f[3 * i + j]*f[3 * i + j];
+        mag = sqrt(mag);
+//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
+//                2]<<endl;
+        if(mag > maxF) maxF = mag;
+    }
+    std::cout<<"max "<<getName()<<" "<<maxF<<endl;
 #endif
 }
 

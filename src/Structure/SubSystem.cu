@@ -83,8 +83,17 @@ void SubSystem::updateBindingManagers() {
 
     for(auto C : _compartmentGrid->getCompartments()) {
 
-        for(auto &manager : C->getFilamentBindingManagers())
+        for(auto &manager : C->getFilamentBindingManagers()) {
+#ifdef NLORIGINAL
             manager->updateAllPossibleBindings();
+#endif
+#ifdef NLSTENCILLIST
+            manager->updateAllPossibleBindingsstencil();
+#endif
+#if defined(NLORIGINAL) && defined(NLSTENCILLIST)
+            manager->crosscheck();
+#endif
+        }
     }
 #endif
 

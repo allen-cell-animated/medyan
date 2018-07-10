@@ -336,7 +336,10 @@ void LinkerStretchingHarmonic::checkforculprit() {
 
             //assign stretch force
             stretchforce[i] = f0/invL;
-//        std::cout<<"LINKER "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+//        std::cout<<"L "<<i<< " "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "
+//                ""<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+//            std::cout<<"L "<<i<<" "<<kstr[i]<<" "<<dist<<" "<<eql[i]<<" "<<invL<<" "
+//                    ""<<pos1[i]<<" "<<pos2[i]<<endl;
         }
         delete [] v1;
         delete [] v2;

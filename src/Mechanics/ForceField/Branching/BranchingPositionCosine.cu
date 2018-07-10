@@ -293,7 +293,7 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta, U_i;
+    double *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta;
     double *mp = new double[3];
 
 

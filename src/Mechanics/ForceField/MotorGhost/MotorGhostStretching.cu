@@ -19,6 +19,7 @@
 #include "Cylinder.h"
 #include "Bead.h"
 #include "cross_check.h"
+#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -127,6 +128,7 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
     for(auto m: MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
         m->getMMotorGhost()->stretchForce += stretchforce[i];
+//        std::cout<<m->getMMotorGhost()->stretchForce<<endl;
         i++;
     }
     delete [] stretchforce;
@@ -150,9 +152,9 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
 
 template <class MStretchingInteractionType>
 double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* coord, double *f, double d){
-    double U_i[1], U_ii;
+    double U_i[1], U_ii=0.0;
     double* gU_i;
-    U_ii = NULL;
+    U_ii = -1.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -217,6 +219,20 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
 //    nvtxRangePushA("SCFM");
     _FFType.forces(coord, f, beadSet, kstr, eql, pos1, pos2, stretchforce);
 //    nvtxRangePop();
+#ifdef DETAILEDOUTPUT
+    double maxF = 0.0;
+    double mag = 0.0;
+    for(int i = 0; i < CGMethod::N/3; i++) {
+        mag = 0.0;
+        for(int j = 0; j < 3; j++)
+            mag += f[3 * i + j]*f[3 * i + j];
+        mag = sqrt(mag);
+//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
+//                2]<<endl;
+        if(mag > maxF) maxF = mag;
+    }
+    std::cout<<"max "<<getName()<<" "<<maxF<<endl;
+#endif
 #endif
 }
 

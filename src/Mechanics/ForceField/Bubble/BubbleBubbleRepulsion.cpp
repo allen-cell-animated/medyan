@@ -21,8 +21,8 @@
 template <class BRepulsionInteractionType>
 double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto bb: Bubble::getBubbles()) {
         

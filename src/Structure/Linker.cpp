@@ -159,6 +159,10 @@ void Linker::updateReactionRates() {
     float newRate = _unbindingChangers[_linkerType]->changeRate(offRxn->getBareRate(), force);
     if(SysParams::RUNSTATE==false)
     {newRate=0.0;}
+    std::cout<<"Linker UB f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+            ""<<coordinate[1]<<" "
+            ""<<coordinate[2]<<endl;
+
     offRxn->setRate(newRate);
     offRxn->updatePropensity();
 }

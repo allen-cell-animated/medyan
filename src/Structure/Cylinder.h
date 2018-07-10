@@ -147,8 +147,13 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _cylinders.addElement(this);}
-    virtual void removeFromSubSystem() {_cylinders.removeElement(this);}
+    virtual void addToSubSystem() {
+//        std::cout<<"Adding cylinder "<<this<<endl;
+        _cylinders.addElement(this);}
+    virtual void removeFromSubSystem() {
+//        std::cout<<"Removing cylinder "<<this<<endl;
+        _cylinders.removeElement(this);
+    }
     //@}
     
     /// Get all instances of this class from the SubSystem

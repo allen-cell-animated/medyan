@@ -15,6 +15,7 @@
 #define MEDYAN_NeighborListImpl_h
 
 #include <unordered_map>
+
 #include <vector>
 
 #include "common.h"
@@ -91,10 +92,11 @@ public:
     Bin* getBin(const vector<size_t> &indices);
     void assignallcylinderstobin();
     void assignbin(Cylinder* cyl);
+    void unassignbin(Cylinder* cyl, Bin* bin);
     void updateallcylinderstobin();
     void updatebin(Cylinder* cyl);
     void updateNeighborsbin(Cylinder* cylinder, bool runtime = false);
-    vector<Cylinder*> getNeighborsbin(Cylinder* cylinder);
+    vector<Cylinder*> getNeighborsstencil(Cylinder* cylinder);
 //    void setbinvars(){
 //        initializeBinGrid();
 //        assignallcylinderstobin();

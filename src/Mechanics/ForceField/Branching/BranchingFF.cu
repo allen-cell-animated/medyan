@@ -102,8 +102,8 @@ void BranchingFF::whoIsCulprit() {
 
 double BranchingFF::computeEnergy(double *coord, double *f, double d) {
 
-    double U= 0;
-    double U_i;
+    double U= 0.0;
+    double U_i=0.0;
 #ifdef SERIAL_CUDACROSSCHECK
 //    std::cout<<"-----------"<<endl;
 #endif

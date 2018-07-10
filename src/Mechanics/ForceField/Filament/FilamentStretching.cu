@@ -16,6 +16,7 @@
 #include "FilamentStretchingHarmonic.h"
 #include "Bead.h"
 #include "cross_check.h"
+#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -94,7 +95,7 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
 
     double U_i[1], U_ii;
     double* gU_i;
-    U_ii = NULL;
+    U_ii = -1.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -151,6 +152,21 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord
 #ifdef SERIAL
 //    nvtxRangePushA("SCFFS");
     _FFType.forces(coord, f, beadSet, kstr, eql);
+#ifdef DETAILEDOUTPUT
+    double maxF = 0.0;
+    double mag = 0.0;
+    for(int i = 0; i < CGMethod::N/3; i++) {
+        mag = 0.0;
+        for(int j = 0; j < 3; j++)
+            mag += f[3 * i + j]*f[3 * i + j];
+        mag = sqrt(mag);
+//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
+//                2]<<endl;
+        if(mag > maxF) maxF = mag;
+    }
+    std::cout<<"max "<<getName()<<" "<<maxF<<" nint "<<Cylinder::getCylinders().size()
+             <<endl;
+#endif
 //    nvtxRangePop();
 #endif
 

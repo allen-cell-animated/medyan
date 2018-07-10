@@ -63,6 +63,10 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //    }
 //    std::cout<<endl;
 //    //@}
+
+    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
+            "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
+
     //mark species
         
     assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&

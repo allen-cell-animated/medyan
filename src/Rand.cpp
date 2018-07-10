@@ -12,6 +12,13 @@
 //------------------------------------------------------------------
 
 #include "Rand.h"
-
+#ifdef DEBUGCONSTANTSEED
+mt19937 Rand::_eng(1);
+long Rand::counter = 0;
+long Rand::Dcounter = 0;//counts number of times double is called
+long Rand::Ncounter = 0;//counts number of times NRM Impl calls
+#else
 mt19937 Rand::_eng(rdtsc());
+#endif
 uniform_int_distribution<int> Rand::_int_distr;
+

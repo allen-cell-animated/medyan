@@ -94,7 +94,7 @@ struct UpdateLinkerBindingCallback {
     
     //callback
     void operator() (RSpecies *r, int delta) {
-        
+
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
         
