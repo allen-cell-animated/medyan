@@ -33,7 +33,7 @@ class CBound;
 
 ///Enumeration for Species types
 enum SpeciesType {
-    BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, BRANCHER, PLUSEND, MINUSEND
+    BULK, DIFFUSING, FILAMENT, BOUND, LINKER, MOTOR, BRANCHER, CaMKII, PLUSEND, MINUSEND
 };
 
 /// Used to associate unique integers with character based names of Species.
