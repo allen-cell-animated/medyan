@@ -173,7 +173,6 @@ struct ChemistryData {
     vector<vector<string>> speciesLinker;
     vector<vector<string>> speciesMotor;
     vector<vector<string>> speciesBrancher;
-    vector<vector<string>> speciesCaMKII;
     //@}
     
     //@{
@@ -258,14 +257,6 @@ struct MechanicsFFType {
     string BrPositionType   = "";
     //@}
     
-    //@{
-    /// CaMKIIFF type, added for CaMKII
-    string CaMKIIStretchingType = "";
-    string CaMKIIBendingType    = "";
-    string CaMKIIDihedralType   = "";
-    string CaMKIIPositionType   = "";
-    //@}
-
     /// VolumeFF type
     string VolumeFFType = "";
     

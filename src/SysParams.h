@@ -61,16 +61,6 @@ struct MechParams {
     //@}
     
     //@{
-    /// CaMKIIPoint parameter
-    vector<double> CaMKIIStretchingK  = {};
-    vector<double> CaMKIIStretchingL  = {};
-    vector<double> CaMKIIBendingK     = {};
-    vector<double> CaMKIIBendingTheta = {};
-    vector<double> CaMKIIDihedralK    = {};
-    vector<double> CaMKIIPositionK    = {};
-    //@}
-
-    //@{
     /// Volume parameter
     vector<double> VolumeK = {};
     double VolumeCutoff = 0.0;
@@ -122,7 +112,6 @@ struct ChemParams {
     vector<short> numLinkerSpecies   = {};
     vector<short> numMotorSpecies    = {};
     vector<short> numBrancherSpecies = {};
-    vector<short> numCaMKIISpecies = {};
     //@}
 
     /// Number of different filament types

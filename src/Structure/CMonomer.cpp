@@ -182,18 +182,6 @@ short CMonomer::activeSpeciesBrancher() {
     return -1;
 }
 
-//add CaMKII
-short CMonomer::activeSpeciesCaMKII() {
-    short numCaMKIISpecies = SysParams::Chemistry().numCaMKIISpecies[_filamentType];
-    short offset = _speciesBoundIndex[_filamentType][SPECIESCaMKII];
-
-    for(int i = 0; i < numCaMKIISpecies; i++) {
-        SpeciesBound* s = _speciesBound[i + offset];
-        if(s != nullptr && areEqual(s->getN(), 1.0)) return i;
-    }
-    return -1;
-}
-
 bool CMonomer::isConsistent() {
     
     //check all species between 0 and 1 inclusive

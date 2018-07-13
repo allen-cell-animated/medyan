@@ -122,16 +122,6 @@ void SystemParser::readChemParams() {
                     CParams.numBrancherSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
-        if (line.find("NUMCaMKIISPECIES") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-
-            if (lineVector.size() >= 2) {
-                for(int i = 1; i < lineVector.size(); i++)
-                    CParams.numCaMKIISpecies.push_back(atoi(lineVector[i].c_str()));
-            }
-        }
-
         if (line.find("NUMFILAMENTTYPES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -2044,7 +2034,6 @@ ChemistryData ChemistryParser::readChemistryInput() {
             else if (lineVector.size() == 3)
                 chem.CA_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
-        }
         //loop through a reaction
        else if(line.find("GENREACTION") != string::npos) {
             

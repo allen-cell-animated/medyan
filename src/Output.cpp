@@ -135,7 +135,7 @@ void BasicSnapshot::print(int snapshot) {
 //        
 //        _outputFile << endl;
 //    }
-    ///TODO: CaMKII
+    
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
@@ -146,18 +146,6 @@ void BasicSnapshot::print(int snapshot) {
         auto x = branch->coordinate;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
-    //added for CaMKII
-    for(auto &camkii : BranchingPoint::getBranchingPoints()) {
-
-        //print first line
-        _outputFile << "CaMKII " << camkii->getID() << " " <<
-                                      camkii->getType() << endl;
-
-        //print coordinates
-        auto x = camkii->coordinate;
-        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
-    }
-
     
     for(auto &bubble : Bubble::getBubbles()) {
         
@@ -255,19 +243,6 @@ void BirthTimes::print(int snapshot) {
         //print birth times
         _outputFile << branch->getBirthTime() << endl;
     }
-    //added for CaMKII
-    for(auto &camkii : BranchingPoint::getBranchingPoints()) {
-
-        //print first line
-        _outputFile << "BRANCHER " << camkii->getID() << " " <<
-        							  camkii->getType() << endl;
-
-        //print birth times
-        _outputFile << camkii->getBirthTime() << endl;
-    }
-
-
-
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -365,17 +340,6 @@ void Forces::print(int snapshot) {
                                       branch->getType() << endl;
         
         //Nothing for branchers
-        _outputFile << 0.0 << endl;
-    }
-
-    //TODO: CaMKII
-    for(auto &camkii : BranchingPoint::getBranchingPoints()) {
-
-        //print first line
-        _outputFile << "CaMKII " << camkii->getID() << " " <<
-                                      camkii->getType() << endl;
-
-        //Nothing for camkii
         _outputFile << 0.0 << endl;
     }
     for(auto &bubble : Bubble::getBubbles()) {
@@ -490,20 +454,6 @@ void Tensions::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
-
-    //TODO: CaMKII
-    for(auto &camkii : BranchingPoint::getBranchingPoints()) {
-
-        //print first line
-        _outputFile << "CaMKII " << camkii->getID() << " " <<
-                                      camkii->getType() << endl;
-
-        //Nothing for camkii
-        _outputFile << 0.0 << endl;
-    }
-
-
-
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -604,18 +554,6 @@ void WallTensions::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
-
-    //TODO: CaMKII
-    for(auto &camkii : BranchingPoint::getBranchingPoints()) {
-
-        //print first line
-        _outputFile << "CaMKII " << camkii->getID() << " " <<
-        camkii->getType() << endl;
-
-        //Nothing for camkii
-        _outputFile << 0.0 << endl;
-    }
-
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -710,18 +648,6 @@ void Types::print(int snapshot) {
         //Nothing for branchers
         _outputFile << branch->getType() << endl;
     }
-
-    //TODO: CaMKII
-    for(auto &camkii : BranchingPoint::getBranchingPoints()) {
-
-        //print first line
-        _outputFile << "CaMKII " << camkii->getID() << " " <<
-        camkii->getType() << endl;
-
-        //Nothing for camkii
-        _outputFile << camkii->getType() << endl;
-    }
-
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -795,12 +721,8 @@ void Chemistry::print(int snapshot) {
             auto copyNum = BranchingPoint::countSpecies(sb);
             _outputFile << sb << ":BRANCHER " << copyNum << endl;
         }
-        for(auto sc : _chemData.speciesCaMKII[filType]) {
-
-            auto copyNum = BranchingPoint::countSpecies(sc);
-            _outputFile << sc << ":CaMKII " << copyNum << endl;
-        }
     }
+    
     _outputFile <<endl;
 }
 

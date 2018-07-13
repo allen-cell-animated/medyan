@@ -106,7 +106,6 @@ public:
     short activeSpeciesLinker();
     short activeSpeciesMotor();
     short activeSpeciesBrancher();
-    short activeSpeciesCaMKII();
     //@
     
     /// Check the consistency of the CMonomer for debugging.
