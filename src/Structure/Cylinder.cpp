@@ -124,7 +124,7 @@ void Cylinder::updatePosition() {
         exit(EXIT_FAILURE);
     }
     
-    if(c != _compartment) {
+    if(c != _compartment) { 
 
 #ifdef CHEMISTRY
         auto oldCompartment = _compartment;
