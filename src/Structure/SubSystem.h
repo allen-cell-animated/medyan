@@ -29,7 +29,9 @@
 
 #include "SysParams.h"
 
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
 #include "CGMethod.h"
 #include "Filament.h"
 #include "Cylinder.h"

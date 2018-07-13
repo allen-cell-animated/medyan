@@ -15,7 +15,9 @@
 #define MEDYAN_MotorGhostStretching_h
 
 #include "common.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
 
 #include "MotorGhostInteractions.h"
 

@@ -59,6 +59,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     volatile bool *Mc_issafestate;
     Ms_isminimizationstate = false;
     Ms_issafestate = false;
+
 #endif
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
@@ -214,10 +215,10 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
     //
 #endif
-
+    
+   
     while (/* Iteration criterion */  numIter < N &&
-           /* Gradient tolerance  */  (Ms_isminimizationstate ||
-           Mc_isminimizationstate[0])) {
+           /* Gradient tolerance  */  (Ms_isminimizationstate || Mc_isminimizationstate[0])) {
 #ifdef CUDAACCL
 //        //@{
 //        size_t free1, total;
@@ -426,7 +427,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 //        std::cout<<"M "<<Mc_isminimizationstate[0]<<" "<<Ms_isminimizationstate<<endl;
 //        std::cout<<endl;
     }
-    std::cout<<"Total iterations "<<numIter<<endl;
+    //std::cout<<"Total iterations "<<numIter<<endl;
 //    std::cout<<"maxF "<<maxF()<<" "<<GRADTOL<<" "<<Ms_isminimizationstate<<" "<<Mc_isminimizationstate[0]<<endl;
 
     if (numIter >= N) {
@@ -531,7 +532,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
     endMinimization();
     FFM.computeLoadForces();
-    std::cout<<"End Minimization************"<<endl;
+    //std::cout<<"End Minimization************"<<endl;
     FFM.cleanupAllForceFields();
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;

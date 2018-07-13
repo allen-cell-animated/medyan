@@ -14,8 +14,11 @@
 #include "BoundaryElement.h"
 #include "CompartmentGrid.h"
 #include "BindingManager.h"
-#include "BindingManagerCUDA.h"
+
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#include "BindingManagerCUDA.h"
+#endif
 #include "MathFunctions.h"
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"

@@ -17,7 +17,9 @@
 #include <vector>
 
 #include "common.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
 #include "BoundaryInteractions.h"
 #include "NeighborListImpl.h"
 

@@ -21,7 +21,9 @@
 
 #include "GController.h"
 #include "MathFunctions.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
 #include "NeighborListImplCUDA.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -496,7 +498,7 @@ void CylinderCylinderNL::reset() {
         updateNeighbors(cylinder);
         tot += _list[cylinder].size();
     }
-    std::cout<<"NLORIGINAL size "<<" "<<tot<<endl;
+   // std::cout<<"NLORIGINAL size "<<" "<<tot<<endl;
     tot = 0;
 #endif
 #ifdef NLSTENCILLIST
@@ -507,7 +509,7 @@ void CylinderCylinderNL::reset() {
         updateNeighborsbin(cylinder);
         tot += _list4mbin[cylinder].size();
     }
-    std::cout<<"NLSTENCILLIST size "<<" "<<tot<<endl;
+    //std::cout<<"NLSTENCILLIST size "<<" "<<tot<<endl;
 #endif
 //        std::cout<<cylinder->_dcIndex<<" "<<_list.size()<<" "<<vec_numpairs<<" "<<_full<<endl;
 #ifdef CUDAACCL_NL

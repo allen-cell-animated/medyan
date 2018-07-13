@@ -17,7 +17,9 @@
 #include <cmath>
 
 #include "common.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;

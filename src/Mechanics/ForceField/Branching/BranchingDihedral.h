@@ -15,7 +15,9 @@
 #define MEDYAN_BranchingDihedral_h
 
 #include "common.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
 #include "BranchingInteractions.h"
 
 //FORWARD DECLARATIONS

@@ -28,7 +28,9 @@
 #include "MathFunctions.h"
 #include "GController.h"
 #include "SysParams.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
 
 
 using namespace mathfunc;
@@ -401,8 +403,8 @@ void BranchingManager::removePossibleBindingsstencil(CCylinder* cc, short bindin
 }
 
 void BranchingManager::crosscheck(){
-    cout<<"Branching NLORIGINAL size "<<_possibleBindings.size()<<" NLSTENCIL size "
-            <<_possibleBindingsstencil.size()<<endl;
+    //cout<<"Branching NLORIGINAL size "<<_possibleBindings.size()<<" NLSTENCIL size "
+    //       <<_possibleBindingsstencil.size()<<endl;
     if(_possibleBindings.size() != _possibleBindingsstencil.size())
         cout<<"Branching.. The two methods compared do not yield the same number of "
                 "binding sites"<<endl;
@@ -1145,8 +1147,8 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bi
 }
 
 void LinkerBindingManager::crosscheck(){
-    cout<<"Branching NLORIGINAL size "<<_possibleBindings.size()<<" NLSTENCIL size "
-        <<_possibleBindingsstencil.size()<<endl;
+    //cout<<"Branching NLORIGINAL size "<<_possibleBindings.size()<<" NLSTENCIL size "
+    //    <<_possibleBindingsstencil.size()<<endl;
     if(_possibleBindings.size() != _possibleBindingsstencil.size())
         cout<<"Linker.. The two methods compared do not yield the same number of "
                 "binding sites"<<endl;
@@ -2003,8 +2005,8 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bin
 }
 
 void MotorBindingManager::crosscheck(){
-    cout<<"Branching NLORIGINAL size "<<_possibleBindings.size()<<" NLSTENCIL size "
-        <<_possibleBindingsstencil.size()<<endl;
+    //cout<<"Branching NLORIGINAL size "<<_possibleBindings.size()<<" NLSTENCIL size "
+    //    <<_possibleBindingsstencil.size()<<endl;
     if(_possibleBindings.size() != _possibleBindingsstencil.size()) {
         cout << "Motor.. The two methods compared do not yield the same number of "
                 "binding sites" << endl;

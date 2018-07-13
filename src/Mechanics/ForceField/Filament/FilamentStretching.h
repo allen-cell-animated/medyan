@@ -16,8 +16,11 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "common.h"
-#include "CUDAcommon.h"
 #include "FilamentInteractions.h"
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
+
 /// Represents a Filament stretching interaction
 template <class FStretchingInteractionType>
 class FilamentStretching : public FilamentInteractions {

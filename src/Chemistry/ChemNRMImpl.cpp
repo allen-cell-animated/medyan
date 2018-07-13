@@ -182,14 +182,14 @@ bool ChemNRMImpl::makeStep() {
 
     _t=tau_top;
     syncGlobalTime();
-    std::cout<<"------------"<<endl;
-    rn->printSelf();
-    std::cout<<"------------"<<endl;
+    //std::cout<<"------------"<<endl;
+    //rn->printSelf();
+    //std::cout<<"------------"<<endl;
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
-        std::cout<<"Update R and Tau for fired reaction"<<endl;
+        //std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N

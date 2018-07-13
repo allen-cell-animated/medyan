@@ -15,7 +15,9 @@
 #define MEDYAN_FilamentBending_h
 
 #include "common.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
 #include "FilamentInteractions.h"
 //FORWARD DECLARATIONS
 class Filament;

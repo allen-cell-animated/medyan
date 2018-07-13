@@ -20,7 +20,10 @@
 #include "NeighborListImpl.h"
 
 #include "SysParams.h"
+#ifdef CUDAACCL
 #include "CUDAcommon.h"
+#endif
+
 //FORWARD DECLARATIONS
 class Cylinder;
 
