@@ -161,11 +161,6 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             << endl;
             return false;
         }
-        if(chem.CA_BINDING_INDEX[filType] == "" && chem.speciesBrancher[filType].size() != 0) {
-            cout << "A CaMKII binding site must be set for every filament type. Exiting jli013."
-                 << endl;
-            return false;
-        }
     }
 
     //count all first

@@ -88,16 +88,6 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
         auto t = tuple<CCylinder*, short>(cc, bindingSite);
         _possibleBindings.insert(t);
     }
-
-    //added for CaMKII, jli013
-    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-        SysParams::Chemistry().CaMKIIBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
-
-        auto t = tuple<CCylinder*, short>(cc, bindingSite);
-        _possibleBindings.insert(t);
-    }
-
-
     
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();
@@ -182,13 +172,6 @@ void BranchingManager::updateAllPossibleBindings() {
             if (areEqual(cc->getCMonomer(*it)->speciesBound(
                 SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
                 
-                auto t = tuple<CCylinder*, short>(cc, *it);
-                _possibleBindings.insert(t);
-            }
-            //added for CaMKII, jli013
-            if (areEqual(cc->getCMonomer(*it)->speciesBound(
-                SysParams::Chemistry().CaMKIIBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
-
                 auto t = tuple<CCylinder*, short>(cc, *it);
                 _possibleBindings.insert(t);
             }

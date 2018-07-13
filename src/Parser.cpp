@@ -2023,17 +2023,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 chem.M_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
         }
-        //for CaMKII jli013
-        else if(line.find("CAMKIIBINDINGSITE") != string::npos) {
-
-            vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  3) {
-                cout << "Error reading a CaMKII binding site. Exiting. jli013" << endl;
-                exit(EXIT_FAILURE);
-            }
-            else if (lineVector.size() == 3)
-                chem.CA_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
-            else {}
+        
         //loop through a reaction
        else if(line.find("GENREACTION") != string::npos) {
             

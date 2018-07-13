@@ -80,38 +80,6 @@ struct UpdateBrancherBindingCallback {
         }
     }
 };
-//added for CaMKII, jli013
-struct UpdateCaMKIIBindingCallback {
-
-    Cylinder* _cylinder; ///< cylinder to update
-
-    short _bindingSite;  ///< binding site to update
-
-    //Constructor, sets members
-    UpdateCaMKIIBindingCallback(Cylinder* cylinder, short bindingSite)
-
-    : _cylinder(cylinder), _bindingSite(bindingSite) {}
-
-    //callback
-    void operator() (RSpecies *r, int delta) {
-
-        //update this cylinder
-        Compartment* c = _cylinder->getCompartment();
-
-        for(auto &manager : c->getFilamentBindingManagers()) {
-
-            if(dynamic_cast<CaMKIIManager*>(manager.get())) {
-
-                CCylinder* cc = _cylinder->getCCylinder();
-
-                //update binding sites
-                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
-
-                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
-            }
-        }
-    }
-};
 
 struct UpdateLinkerBindingCallback {
     
