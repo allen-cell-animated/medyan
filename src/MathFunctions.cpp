@@ -182,7 +182,7 @@ namespace mathfunc {
         if(whichWay=="P"){
             sumreacs = (reacN-1)*log(reacN-1) - reacN*log(reacN);
         } else if (whichWay=="D"){
-            sumreacs = -((reacN-1)*log(reacN-1) - reacN*log(reacN));
+            sumreacs = ((reacN+1)*log(reacN+1) - reacN*log(reacN));
         }
         
         float delG =  delGzero +   sumreacs ;
