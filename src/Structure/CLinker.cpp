@@ -64,8 +64,10 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //    std::cout<<endl;
 //    //@}
 
+#ifdef DETAILEDOUTPUT
     std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
             "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
+#endif
 
     //mark species
         

@@ -2098,8 +2098,8 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSites() {
     auto it = _possibleBindings.begin();
 
     advance(it, randomIndex);
-    auto xxx = _compartment->coordinates();
-    std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
+//    auto xxx = _compartment->coordinates();
+//    std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
 
 #ifdef DEBUGCONSTANTSEED
     return (*it);

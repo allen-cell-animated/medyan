@@ -229,7 +229,11 @@ public:
 	                               {  point[0],  point[1], 0});
     }
     //TODO
-    virtual double distance(double const *point) { return 0.0; }
+    virtual double distance(double const *point) {
+        cout<<"Distance not implemented for Boundary Element of CylinderZ type. "
+                "Exiting"<<endl;
+        exit(EXIT_FAILURE);
+        return 0.0; }
 
     virtual const void elementeqn(double* var){
         var[0] = _radius; var[1] = _height;
@@ -356,7 +360,11 @@ public:
     }
     
     ///TODO
-    virtual double distance(double const *point) { return 0.0; }
+    virtual double distance(double const *point) {
+        cout<<"Distance not implemented for Boundary Element of HalfSphereZ type. "
+                "Exiting"<<endl;
+        exit(EXIT_FAILURE);
+        return 0.0; }
 
     //Qin, the same as distance
     virtual double lowerdistance(const vector<double>& point) {
@@ -555,6 +563,9 @@ public:
     }
     //TODO needs implementation @{
     virtual double distance(double const *point) {
+        cout<<"Distance not implemented for Boundary Element of CylinderXYZ type. "
+                "Exiting"<<endl;
+        exit(EXIT_FAILURE);
         return 0.0;
     }
     virtual double stretchedDistance(double const *point,

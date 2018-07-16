@@ -48,9 +48,9 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
     stretchforce = new double[MotorGhost::getMotorGhosts().size()];
 
     int i = 0;
-
+    
     for (auto m: MotorGhost::getMotorGhosts()) {
-
+        m->_dbIndex = i;
         beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->_dbIndex;
         beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->_dbIndex;
         beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->_dbIndex;
@@ -64,7 +64,6 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
         i++;
     }
-
 
     //CUDA
 #ifdef CUDAACCL
@@ -124,12 +123,10 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
 template<class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
-    int i = 0;
     for(auto m: MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
-        m->getMMotorGhost()->stretchForce += stretchforce[i];
+        m->getMMotorGhost()->stretchForce += stretchforce[m->_dbIndex];
 //        std::cout<<m->getMMotorGhost()->stretchForce<<endl;
-        i++;
     }
     delete [] stretchforce;
     delete [] beadSet;

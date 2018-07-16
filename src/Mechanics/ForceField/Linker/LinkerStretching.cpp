@@ -50,7 +50,7 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
     int i = 0;
 
     for (auto l: Linker::getLinkers()) {
-
+        l->_dbIndex = i;
         beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->_dbIndex;
         beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->_dbIndex;
         beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->_dbIndex;
@@ -114,11 +114,9 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
 
 template<class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::deallocate() {
-    int i = 0;
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
-        l->getMLinker()->stretchForce += stretchforce[i];
-        i++;
+        l->getMLinker()->stretchForce += stretchforce[l->_dbIndex];
     }
     delete [] stretchforce;
     delete [] beadSet;
