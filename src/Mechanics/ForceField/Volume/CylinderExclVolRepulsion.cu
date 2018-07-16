@@ -374,8 +374,8 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-    U_i = 0;
-    U = 0;
+    U_i = 0.0;
+    U = 0.0;
     newc2 = new double[3];
     for (int i = 0; i < nint; i++) {
 
@@ -410,7 +410,9 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
 
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
+            std::cout<<"old c2 "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
             c2 = newc2;
+            std::cout<<"new c2 "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
         }
 
         a = scalarProduct(c1, c2, c1, c2);
@@ -467,25 +469,34 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
     double d, invDSquare, U, U_i, *f1, *f2, *f3, *f4;
     double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     double ATG1, ATG2, ATG3, ATG4;
-
-    double *c1 = new double[3];
+    double *c1us, *c2us, *c3us, *c4us;
+    double *c1 = new double[3];//stretched
     double *c2 = new double[3];
     double *c3 = new double[3];
     double *c4 = new double[3];
+//    double *c1us = new double[3];//unstretched
+//    double *c2us = new double[3];
+//    double *c3us = new double[3];
+//    double *c4us = new double[3];
     double *newc2 = new double[3];
 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-    U_i = 0;
-    U = 0;
-
+    U_i = 0.0;
+    U = 0.0;
+//std::cout<<"-----------"<<endl;
     for (int i = 0; i < nint; i++) {
 
-        memcpy(c1, &coord[3 * beadSet[n * i]], 3 * sizeof(double));
-        memcpy(c2, &coord[3 * beadSet[n * i + 1]], 3 * sizeof(double));
-        memcpy(c3, &coord[3 * beadSet[n * i + 2]], 3 * sizeof(double));
-        memcpy(c4, &coord[3 * beadSet[n * i + 3]], 3 * sizeof(double));
+        c1us = &coord[3 * beadSet[n * i]];
+        c2us = &coord[3 * beadSet[n * i +1]];
+        c3us = &coord[3 * beadSet[n * i +2]];
+        c4us = &coord[3 * beadSet[n * i +3]];
+
+//        memcpy(c1us, &coord[3 * beadSet[n * i]], 3 * sizeof(double));
+//        memcpy(c2us, &coord[3 * beadSet[n * i + 1]], 3 * sizeof(double));
+//        memcpy(c3us, &coord[3 * beadSet[n * i + 2]], 3 * sizeof(double));
+//        memcpy(c4us, &coord[3 * beadSet[n * i + 3]], 3 * sizeof(double));
 
         //stretch coords
         f1 = &f[3 * beadSet[n * i]];
@@ -494,39 +505,41 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
         f4 = &f[3 * beadSet[n * i + 3]];
 
 //        cout.precision(dbl::max_digits10);
-//        std::cout<<i<<" "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<c3[0]<<" "
-//                ""<<c3[1]<<" "
-//                ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<" "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "
+//        std::cout<<i<<" BEFORE "<<c1us[0]<<" "<<c1us[1]<<" "<<c1us[2]<<" "<<c2us[0]<<" "<<c2us[1]<<" "
+//                ""<<c2us[2]<<" "<<c3us[0]<<" "
+//                ""<<c3us[1]<<" "
+//                ""<<c3us[2]<<" "<<c4us[0]<<" "<<c4us[1]<<" "<<c4us[2]<<endl;
+//        std::cout<<"Force "<<f1[0]<<" "
+//                ""<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "
 //                ""<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
-        c1[0] = c1[0] + z * f1[0];
-        c1[1] = c1[1] + z * f1[1];
-        c1[2] = c1[2] + z * f1[2];
-        c2[0] = c2[0] + z * f2[0];
-        c2[1] = c2[1] + z * f2[1];
-        c2[2] = c2[2] + z * f2[2];
-        c3[0] = c3[0] + z * f3[0];
-        c3[1] = c3[1] + z * f3[1];
-        c3[2] = c3[2] + z * f3[2];
-        c4[0] = c4[0] + z * f4[0];
-        c4[1] = c4[1] + z * f4[1];
-        c4[2] = c4[2] + z * f4[2];
-
+        c1[0] = c1us[0] + z * f1[0];
+        c1[1] = c1us[1] + z * f1[1];
+        c1[2] = c1us[2] + z * f1[2];
+        c2[0] = c2us[0] + z * f2[0];
+        c2[1] = c2us[1] + z * f2[1];
+        c2[2] = c2us[2] + z * f2[2];
+        c3[0] = c3us[0] + z * f3[0];
+        c3[1] = c3us[1] + z * f3[1];
+        c3[2] = c3us[2] + z * f3[2];
+        c4[0] = c4us[0] + z * f4[0];
+        c4[1] = c4us[1] + z * f4[1];
+        c4[2] = c4us[2] + z * f4[2];
+//        std::cout<<"AFTER "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "
+//                ""<<c2[1]<<" "<<
+//                 c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
 
             d = twoPointDistance(c1, c3);
             invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
-//            std::cout<<U_i<<endl;
+//            std::cout<<"P Energy"<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
 
                 //set culprit and return TODO
                 return -1;
             }
-//            std::cout<<i<<" 1.0 "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<c3[0]<<" "
-//                    ""<<c3[1]<<" "
-//                             ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<" "<<U_i<<endl;
             U += U_i;
             continue;
         }
@@ -537,21 +550,18 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
             c2 = newc2;
+            std::cout<<"move"<<endl;
 //            std::cout<<i<<" 2.0 "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<c3[0]<<" "
 //                    ""<<c3[1]<<" "
 //                             ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<" "<<U_i<<endl;
         }
-       // else
-//            std::cout<<i<<" 3.0 "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<c3[0]<<" "
-//                    ""<<c3[1]<<" "
-//                             ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
         a = scalarProduct(c1, c2, c1, c2);
         b = scalarProduct(c3, c4, c3, c4);
         c = scalarProduct(c3, c1, c3, c1);
         d = scalarProduct(c1, c2, c3, c4);
         e = scalarProduct(c1, c2, c3, c1);
         F = scalarProduct(c3, c4, c3, c1);
-
+//    std::cout<<i<<" "<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<endl;
         AA = sqrt(a*c - e*e);
         BB = sqrt(b*c - F*F);
 
@@ -572,14 +582,13 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
 
         U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-//        std::cout<<"0"<<endl;
-//        std::cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<U_i<<endl;
+//        std::cout<<"N energy "<<U_i<<endl;
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return TODO
 
-            return -1;
+            return -1.0;
         }
 //        std::cout<<i<<" "<<U_i<<" "<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<" "<<AA<<" "<<BB<<" "<<CC<<" "<<DD<<" "
 //                ""<<EE<<" "
@@ -594,11 +603,15 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
     delete [] c3;
     delete [] c4;
     delete [] newc2;
+//    delete [] c1us;
+//    delete [] c2us;
+//    delete [] c3us;
+//    delete [] c4us;
     return U;
 }
 
 void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, double *krep) {
-cout.precision(10);
+//cout.precision(10);
 //    clock_t start, stop;
 //    float elapsedtime;
 //    start = clock();
@@ -616,7 +629,7 @@ cout.precision(10);
 //            for(auto i=0;i<CGMethod::N;i++)
 //            std::cout<<f[i]<<" ";
 //        std::cout<<endl;
-    std::cout<<"Excl vol nint "<<nint<<endl;
+//    std::cout<<"Excl vol nint "<<nint<<endl;
     newc2 = new double[3];
     for (int i = 0; i < nint; i++) {
 //        std::cout<<beadSet[n * i]<<" "<<beadSet[n * i+1]<<" "<<beadSet[n * i+2]<<" "<<beadSet[n * i+3]<<endl;
@@ -631,10 +644,10 @@ cout.precision(10);
         f3 = &f[3 * beadSet[n * i + 2]];
         f4 = &f[3 * beadSet[n * i + 3]];
 
-    std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
-         c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
-         c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
-         c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
+//    std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
+//         c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
+//         c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
+//         c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
 
@@ -716,12 +729,12 @@ cout.precision(10);
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
 //        std::cout<<"N3 "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
 #ifdef DETAILEDOUTPUT
-        U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+//        U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
         std::cout<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<" "<<AA<<" "<<BB<<" "<<CC<<" "
                 ""<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<" "<<ATG1<<" "<<ATG2<<" "
                          ""<<ATG3<<" "<<ATG4<<" "<<U<<" "<<krep[i]<<endl;
 #endif
-//        U = 0.5 * krep[i]*invJJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+        U = 0.5 * krep[i]*invJJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 //        std::cout<<U<<endl;
         A1 = AA*AA/(AA*AA + e*e);
         A2 = AA*AA/(AA*AA + (a + e)*(a + e));
@@ -758,10 +771,10 @@ cout.precision(10);
               (ATG4*HH)/(FF*FF);
         F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
         F14 = (F1*HH)/(FF*FF);
-        std::cout<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<" "
-                ""<<A11<<" "<<A12<<" "<<A13<<" "<<A14<<" "<<E11<<" "<<E12<<" "<<E13<<" "
-                         ""<<E14<<" "<<B11<<" "<<B12<<" "<<B13<<" "<<B14<<" "<<F11<<" "<<F12<<" "
-                         ""<<F13<<" "<<F14<<endl;
+//        std::cout<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<" "
+//                ""<<A11<<" "<<A12<<" "<<A13<<" "<<A14<<" "<<E11<<" "<<E12<<" "<<E13<<" "
+//                         ""<<E14<<" "<<B11<<" "<<B12<<" "<<B13<<" "<<B14<<" "<<F11<<" "<<F12<<" "
+//                         ""<<F13<<" "<<F14<<endl;
         f1[0] +=  - 0.5*invJJ*( (c2[0] - c1[0] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[0] - c3[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[0] - c3[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
 
         f1[1] +=  - 0.5*invJJ*( (c2[1] - c1[1] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[1] - c3[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[1] - c3[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );

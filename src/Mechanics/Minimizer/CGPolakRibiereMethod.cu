@@ -391,6 +391,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         prevGrad = CGMethod::allFADotFAP();
 
         //Polak-Ribieri update
+//        std::cout<<newGrad<<" "<<prevGrad<<" "<<curGrad<<endl;
         beta = max(0.0, (newGrad - prevGrad) / curGrad);
         if(Ms_isminimizationstate)
             //shift gradient

@@ -29,7 +29,7 @@ NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
+FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native -g
 
 # Compiler flags
 INCLUDES = -I/usr/local/include -I/usr/include/boost \

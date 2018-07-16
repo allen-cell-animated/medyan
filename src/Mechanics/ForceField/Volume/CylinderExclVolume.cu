@@ -73,7 +73,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->_dbIndex;
             krep[Cumnc] = ci->getMCylinder()->getExVolConst();
             Cumnc++;
-            std::cout<<"CV"<<ci->getID()<<" "<<cin->getID()<<endl;
+//            std::cout<<"CV"<<ci->getID()<<" "<<cin->getID()<<endl;
         }
     }
     //CUDA
