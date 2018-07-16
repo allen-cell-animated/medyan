@@ -256,7 +256,6 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeForces(doubl
 //#ifdef SERIAL
     //    nvtxRangePushA("SCFBE");
     _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
-    cout<<"FFTYPEEEEEE"<<endl;
     //    nvtxRangePop();
 //#endif
 #ifdef DETAILEDOUTPUT

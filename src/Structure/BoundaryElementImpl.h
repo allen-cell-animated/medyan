@@ -225,8 +225,8 @@ public:
             return numeric_limits<double>::infinity();
 
 
-	        return _radius - twoPointDistance({_coords[0],_coords[1], 0},
-	                               {  point[0],  point[1], 0});
+            return _radius - twoPointDistance({_coords[0],_coords[1], 0},
+                                   {  point[0],  point[1], 0});
     }
     //TODO
     virtual double distance(double const *point) {
@@ -299,23 +299,23 @@ public:
 
       //Qin
       auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
-					    {  point[0],  point[1], 0});
+                        {  point[0],  point[1], 0});
 
       double dzz = point[2];
       if((_coords[2] * 2 - point[2]) < dzz) {
-	dzz = _coords[2]*2 - point[2];
+    dzz = _coords[2]*2 - point[2];
       }
       else {
-	dzz = point[2];
+    dzz = point[2];
       }
 
       if(dxy > dzz) {
-	return twoPointDirection({0,  0, point[2]},
-				 {0,0, _coords[2]});
+    return twoPointDirection({0,  0, point[2]},
+                 {0,0, _coords[2]});
       }
       else {
-	return twoPointDirection({point[0],  point[1], 0},
-				 {_coords[0],_coords[1], 0});
+    return twoPointDirection({point[0],  point[1], 0},
+                 {_coords[0],_coords[1], 0});
       }
       //return twoPointDirection({point[0],  point[1], 0},
       //                         {_coords[0],_coords[1], 0});

@@ -18,7 +18,6 @@
 #include "Bead.h"
 //TODO added for temporary CUDA force.
 #include "CGMethod.h"
-#include "BoundaryCylinderRepulsionExpCUDA.h"
 
 #include "cross_check.h"
 #include "Cylinder.h"
@@ -26,6 +25,7 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #include "CUDAcommon.h"
+#include "BoundaryCylinderRepulsionExpCUDA.h"
 #endif
 using namespace mathfunc;
 #ifdef CUDAACCL
@@ -205,7 +205,7 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
     }
 }
 void BoundaryCylinderRepulsionExpIn::checkforculprit() {
-    CUDAcommon::printculprit("BoundaryCylinderRepulsion","BoundaryCylinderRepulsionExp");
+    CUDAcommon::printculprit("BoundaryCylinderRepulsionIn","BoundaryCylinderRepulsionExpIn");
     Cylinder *c;
     BoundaryElement* be;
     be = BoundaryElement::getBoundaryElements()[CUDAcommon::getCUDAvars().culpritID[1]];
@@ -242,7 +242,7 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             r = be->distance(coord1);
             
-            R = -r / slen[Cumnc + ic] + 100 / slen[Cumnc + ic];
+            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
             //            double *var;
             //            var = new double[4];
@@ -270,7 +270,7 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
 
 double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
                                             double *krep, double *slen, int *nneighbors, double d) {
-    std::cout<<"energyyyyy"<<endl;
+    
     int nb, nc;
     double *coord1, *force1, R, r, U_i;
     double U = 0.0;
@@ -290,7 +290,7 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
             
             r = be->stretchedDistance(coord1, force1, d);
             
-            R = -r / slen[Cumnc + ic] + 100 / slen[Cumnc + ic];
+            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
             
             //            std::cout<<r<<" "<<krep[Cumnc+ic]<<endl;
             U_i = krep[Cumnc + ic] * exp(R);
@@ -342,7 +342,8 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
             force1 = &f[3 * beadSet[ Cumnc + ic]];
             r = be->distance(coord1);
             auto norm = be->normal(coord1);
-            R = -r / slen[Cumnc + ic] + 100 / slen[Cumnc + ic];
+            
+            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
@@ -354,8 +355,7 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
 
 double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double screenLength) {
     
-    double R = -r/screenLength + 100/screenLength;
+    double R = -r/screenLength + 100.0 / screenLength;
     return kRep * exp(R)/screenLength;
     
 }
-
