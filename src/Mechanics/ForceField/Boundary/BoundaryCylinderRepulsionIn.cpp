@@ -105,6 +105,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
         nneighbors[i]=idx;
         cumnn+=idx;
         nintvec[i] = cumnn;
+#ifdef CUDAACCL
         if(dynamic_cast<PlaneBoundaryElement*>(beList[i])) {
             double *x = new double[4];
             beList[i]->elementeqn(x);
@@ -118,6 +119,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
             cout<<"CUDA cannot handle non-plane type boundaries. Exiting..."<<endl;
             exit(EXIT_FAILURE);
         }
+#endif
         //        std::cout<<"nint per be "<<idx<<" "<<nn<<" "<<nintvec[i]<<endl;
     }
     //    std::cout<<"Nint "<<nint<<" "<<cumnn<<endl;
@@ -210,7 +212,7 @@ double BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy(dou
     //    }
     //    nvtxRangePop();
 #endif
-#ifdef SERIAL
+//#ifdef SERIAL
     //    nvtxRangePushA("SCBE");
     if (d == 0.0) {
         U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors);
@@ -219,7 +221,7 @@ double BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy(dou
         U_ii = _FFType.energy(coord, f, beadSet, krep, slen, nneighbors, d);
     }
     //    nvtxRangePop();
-#endif
+//#endif
     return U_ii;
 }
 
@@ -251,11 +253,12 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeForces(doubl
     //    CUDAcommon::handleerror(cudaMemcpy(F_i, gpu_force, 3 * Bead::getBeads().size() *sizeof(double),
     //                                       cudaMemcpyDeviceToHost),"cuda data transfer", "BoundaryCylinderRepulsion.cu");
 #endif
-#ifdef SERIAL
+//#ifdef SERIAL
     //    nvtxRangePushA("SCFBE");
     _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
+    cout<<"FFTYPEEEEEE"<<endl;
     //    nvtxRangePop();
-#endif
+//#endif
 #ifdef DETAILEDOUTPUT
     double maxF = 0.0;
     double mag = 0.0;

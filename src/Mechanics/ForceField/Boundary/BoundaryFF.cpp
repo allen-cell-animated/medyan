@@ -113,8 +113,11 @@ double BoundaryFF::computeEnergy(double *coord, double *f, double d) {
 
 void BoundaryFF::computeForces(double *coord, double *f) {
 
-    for (auto &interaction : _boundaryInteractionVector)
+    for (auto &interaction : _boundaryInteractionVector){
         interaction->computeForces(coord, f);
+
+    }
+    
 }
 
 void BoundaryFF::computeLoadForces() {

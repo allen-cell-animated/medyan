@@ -270,7 +270,7 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
 
 double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
                                             double *krep, double *slen, int *nneighbors, double d) {
-    
+    std::cout<<"energyyyyy"<<endl;
     int nb, nc;
     double *coord1, *force1, R, r, U_i;
     double U = 0.0;
@@ -342,7 +342,6 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
             force1 = &f[3 * beadSet[ Cumnc + ic]];
             r = be->distance(coord1);
             auto norm = be->normal(coord1);
-            
             R = -r / slen[Cumnc + ic] + 100 / slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
             force1[0] += f0 *norm[0];

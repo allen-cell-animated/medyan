@@ -103,6 +103,8 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         nneighbors[i]=idx;
         cumnn+=idx;
         nintvec[i] = cumnn;
+        
+#ifdef CUDAACCL
         if(dynamic_cast<PlaneBoundaryElement*>(beList[i])) {
             double *x = new double[4];
             beList[i]->elementeqn(x);
@@ -116,6 +118,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             cout<<"CUDA cannot handle non-plane type boundaries. Exiting..."<<endl;
             exit(EXIT_FAILURE);
         }
+#endif
 //        std::cout<<"nint per be "<<idx<<" "<<nn<<" "<<nintvec[i]<<endl;
     }
 //    std::cout<<"Nint "<<nint<<" "<<cumnn<<endl;

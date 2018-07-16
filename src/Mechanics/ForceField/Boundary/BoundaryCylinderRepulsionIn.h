@@ -86,7 +86,7 @@ class BoundaryCylinderRepulsionIn : public BoundaryInteractions {
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}
     
-    virtual const string getName() {return "Boundary-Cylinder Repulsion";}
+    virtual const string getName() {return "Boundary-Cylinder RepulsionIn";}
 };
 #endif
 

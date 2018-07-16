@@ -58,6 +58,7 @@ public:
 
 	vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
+    vector<double> force1;
     vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
     vector<double> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
@@ -174,12 +175,16 @@ public:
                force[1]*force[1] +
                force[2]*force[2];
     }
+//    inline double FDotF() {
+//        return force1[0]*force1[0] +
+//        force1[1]*force1[1] +
+//        force1[2]*force1[2];
+//    }
     inline double FDotFA() {
         return force[0]*forceAux[0] +
-               force[1]*forceAux[1] +
-               force[2]*forceAux[2];
+        force[1]*forceAux[1] +
+        force[2]*forceAux[2];
     }
-    
     inline double FADotFA() {
         return forceAux[0]*forceAux[0] +
                forceAux[1]*forceAux[1] +

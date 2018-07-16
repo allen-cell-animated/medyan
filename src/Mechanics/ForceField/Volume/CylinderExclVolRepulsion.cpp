@@ -631,10 +631,10 @@ cout.precision(10);
         f3 = &f[3 * beadSet[n * i + 2]];
         f4 = &f[3 * beadSet[n * i + 3]];
 
-    std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
-         c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
-         c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
-         c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
+//    std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
+//         c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
+//         c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
+//         c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
 
@@ -715,8 +715,8 @@ cout.precision(10);
         ATG3 = atan((F)/BB) - atan((F - b)/BB);
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
 //        std::cout<<"N3 "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
+         U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 #ifdef DETAILEDOUTPUT
-        U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
         std::cout<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<" "<<AA<<" "<<BB<<" "<<CC<<" "
                 ""<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<" "<<ATG1<<" "<<ATG2<<" "
                          ""<<ATG3<<" "<<ATG4<<" "<<U<<" "<<krep[i]<<endl;

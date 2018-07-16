@@ -716,6 +716,9 @@ void CGMethod::endMinimization() {
         b->coordinate[0] = coord[index];
         b->coordinate[1] = coord[index + 1];
         b->coordinate[2] = coord[index + 2];
+        b->force[0] = force[index];
+        b->force[1] = force[index + 1];
+        b->force[2] = force[index + 2];
 
         i++;
     }
