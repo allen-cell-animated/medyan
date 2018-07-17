@@ -58,6 +58,7 @@ public:
     virtual double lowerdistance(const vector<double>& point) {
         return point[2];
     }
+    
     //Qin, side distance is either x or y axis
     virtual double sidedistance(const vector<double>& point) {
         if(point[0] > point[1]) {
@@ -297,21 +298,21 @@ public:
 
     virtual const vector<double> normal(const vector<double>& point) {
 
-      //Qin
-      auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
-                        {  point[0],  point[1], 0});
-
-      double dzz = point[2];
-      if((_coords[2] * 2 - point[2]) < dzz) {
-    dzz = _coords[2]*2 - point[2];
-      }
-      else {
-    dzz = point[2];
-      }
-
-      if(dxy > dzz) {
-    return twoPointDirection({0,  0, point[2]},
-                 {0,0, _coords[2]});
+        //Qin
+        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
+                                              {  point[0],  point[1], 0});
+        
+        double dzz = point[2];
+        if((_coords[2] * 2 - point[2]) < dzz) {
+            dzz = _coords[2]*2 - point[2];
+        }
+        else {
+            dzz = point[2];
+        }
+        
+        if(dxy > dzz) {
+            return twoPointDirection({0,  0, point[2]},
+                                     {0,0, _coords[2]});
       }
       else {
     return twoPointDirection({point[0],  point[1], 0},
@@ -561,17 +562,80 @@ public:
 
         _coords = newCoords;
     }
-    //TODO needs implementation @{
+
     virtual double distance(double const *point) {
-        cout<<"Distance not implemented for Boundary Element of CylinderXYZ type. "
-                "Exiting"<<endl;
-        exit(EXIT_FAILURE);
-        return 0.0;
+        ///check z coordinate. If outside, return infinity
+        if(point[2] > (_coords[2] + _height / 2) ||
+           point[2] < (_coords[2] - _height / 2))
+        
+        return numeric_limits<double>::infinity();
+        
+        //Qin
+        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
+                                              {  point[0],  point[1], 0});
+        
+        double dzz = point[2];
+        if((_coords[2] * 2 - point[2]) < dzz) {
+            dzz = _coords[2]*2 - point[2];
+        }
+        else {
+            dzz = point[2];
+        }
+        
+        
+        if(dxy > dzz) {
+            return dzz;
+        }
+        else {
+            return dxy;
+        }
     }
     virtual double stretchedDistance(double const *point,
-                                     double const *force, double d) {return 0.0;};
-    virtual const vector<double> normal(const double *point) {vector<double> a; return a;};
-    virtual const void elementeqn(double* var){} ;
+                                     double const *force, double d) {
+        
+        // check z coordinate. If outside, return infinity
+        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
+           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
+        
+        return numeric_limits<double>::infinity();
+        
+        vector<double> movedPoint{point[0] + d * force[0],
+            point[1] + d * force[1],
+            point[2] + d * force[2]};
+        
+        return distance(movedPoint);
+        
+    };
+    
+    virtual const vector<double> normal(const double *point) {
+        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
+                                              {  point[0],  point[1], 0});
+        
+        double dzz = point[2];
+        if((_coords[2] * 2 - point[2]) < dzz) {
+            dzz = _coords[2]*2 - point[2];
+        }
+        else {
+            dzz = point[2];
+        }
+        
+        if(dxy > dzz) {
+            return twoPointDirection({0,  0, point[2]},
+                                     {0,0, _coords[2]});
+        }
+        else {
+            return twoPointDirection({point[0],  point[1], 0},
+                                     {_coords[0],_coords[1], 0});
+        }
+        
+    };
+    
+    virtual const void elementeqn(double* var){
+        cout<<"elementeqn not implemented for Boundary Element of CylindericalXYZ type. "
+        "Exiting"<<endl;
+        exit(EXIT_FAILURE);
+        
+    } ;
 
     //@}
 
