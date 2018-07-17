@@ -106,8 +106,8 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
             else return numeric_limits<double>::infinity();
         }
         else energy += tempEnergy;
-                std::cout<<"ForceField "<<ff->getName()<<" energy "<<tempEnergy<<" d "
-                        <<d<<endl;
+        //        std::cout<<"ForceField "<<ff->getName()<<" energy "<<tempEnergy<<" d "
+        //                <<d<<endl;
 
     }
 //    std::cout<<"-------"<<endl;

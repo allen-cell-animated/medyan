@@ -432,7 +432,7 @@ Bead* CGMethod::maxBead() {
     double currentF;
     long index = 0;
 #ifdef SERIAL
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < N/3; i++) {
 
         currentF = forceAux[i] * forceAux[i];
         if(currentF > maxF) {
@@ -463,6 +463,7 @@ Bead* CGMethod::maxBead() {
 //        std::cout<<N<<endl;
 //        std::cout<<"CPU and GPU codes do not point to same bead with maxF."<<endl;
 #endif
+    
     return Bead::getBeads()[index];
 }
 
@@ -990,7 +991,7 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
         CUDAcommon::handleerror(cudaEventDestroy(e2));
     }
 //    nvtxRangePop();
-    std::cout<<"lambda determined in "<<iter<<endl;
+//    std::cout<<"lambda determined in "<<iter<<endl;
 //synchronize streams
     if(cconvergencecheck[0]||sconvergencecheck)
         return lambda;
@@ -1079,15 +1080,15 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
 //                                               cudaMemcpyDeviceToHost));
 //            std::cout<<lambda<<" "<<cudalambda[0]<<" "<<convergencecheck[0]<< endl;
             }
-            std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
-                                                                                <<allFDotFA()<<endl;
-            std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
-                    ""<<idealEnergyChange
-                     <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
+//            std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA "
+//                                                                                <<allFDotFA()<<endl;
+//           std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
+//                   ""<<idealEnergyChange
+//                     <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
         }
 #endif
     }
-    std::cout<<"lambda determined in "<<iter<<endl;
+//    std::cout<<"lambda determined in "<<iter<<endl;
 //synchronize streams
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
@@ -1106,7 +1107,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     //calculate first lambda
     double lambda = LAMBDAMAX;
 //    std::cout<<lambda<<endl;
-    std::cout<<"safe 0"<<endl;
+//    std::cout<<"safe 0"<<endl;
 //#ifdef SERIAL //SERIAL
 //    cconvergencecheck = new bool[1];
 //    cconvergencecheck[0] = true;
@@ -1126,7 +1127,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     //safe backtracking loop
     while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
         //new energy when moved by lambda
-        std::cout<<"safe z"<<endl;
+//        std::cout<<"safe z"<<endl;
         iter++;
 //        nvtxRangePushA("Energy S");
         double energyLambda = FFM.computeEnergy(coord, force, lambda);
@@ -1148,11 +1149,11 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
                 lambda = MAXDIST / maxF();
                 sconvergencecheck = true;
             }
-            std::cout<<"safe energyChange "<<energyChange<<" lambda "<<lambda<<endl;
+//            std::cout<<"safe energyChange "<<energyChange<<" lambda "<<lambda<<endl;
         }
 #endif
     }
-    std::cout<<"lambda determined in "<<iter<<endl;
+//    std::cout<<"lambda determined in "<<iter<<endl;
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
         delete [] cconvergencecheck;

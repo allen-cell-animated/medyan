@@ -39,7 +39,7 @@
 #include "MathFunctions.h"
 #include "SysParams.h"
 #include <limits>
-#include <CGMethod.h>
+#include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #include <cuda.h>

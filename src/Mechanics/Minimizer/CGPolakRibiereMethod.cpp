@@ -27,9 +27,10 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     //number of steps
     int N;
     if(steplimit) {
+
         int beadMaxStep = 5 * Bead::numBeads();
         N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS);
-//        N = 100;
+
     }
     else
         N = numeric_limits<int>::max();
@@ -177,7 +178,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::handleerror(cudaGetLastError(),"CUDAgetPolakvars", "CGPolakRibiereMethod.cu");
 #ifdef SERIAL_CUDACROSSCHECK
     CUDAcommon::handleerror(cudaDeviceSynchronize());
-    std::cout<<"FMAX SL "<<maxF()<<endl;
+    //std::cout<<"FMAX SL "<<maxF()<<endl;
 #endif
 //    nvtxRangePop();
     //Copy to host
@@ -253,7 +254,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
 #ifdef SERIAL
         double beta, newGrad, prevGrad;
-        std::cout<<"SL maxF "<<maxF()<<endl;
+//        std::cout<<"SL maxF "<<maxF()<<endl;
 #endif
 //PING ENDS
         numIter++;
@@ -364,7 +365,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 //        std::cout<<"shift Gradient Safe"<<endl;
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize());
-        std::cout<<"FMAX SL "<<maxF()<<endl;
+        //std::cout<<"FMAX SL "<<maxF()<<endl;
 #endif
         CUDAshiftGradientifSafe(stream_shiftsafe, Mmg_s1, Msg_s1);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -397,7 +398,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         if(Ms_isminimizationstate)
             //shift gradient
             shiftGradient(beta);
-        std::cout<<"Shift Gradient "<<beta<<endl;
+        //std::cout<<"Shift Gradient "<<beta<<endl;
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
         std::cout<<"Beta serial "<<beta<<endl;
@@ -415,13 +416,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         if(Ms_issafestate && Ms_isminimizationstate ) {
             shiftGradient(0.0);
             _safeMode = true;
-            std::cout<<"Shift Gradient 0.0"<<endl;
+//            std::cout<<"Shift Gradient 0.0"<<endl;
         }
         curGrad = newGrad;
 //        nvtxRangePushA("Polakserial");
         auto maxForce = maxF();
         Ms_isminimizationstate = maxForce > GRADTOL;
-        std::cout<<"Maximum Force "<<maxForce<<endl;
+//        std::cout<<"Maximum Force "<<maxForce<<endl;
 //        nvtxRangePop();
 #endif
 
@@ -441,7 +442,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         cout << endl;
 
         cout << "WARNING: Did not minimize in N = " << N << " steps." << endl;
-//        cout << "Maximum force in system = " << maxF() << endl;
+        cout << "Maximum force in system = " << maxF() << endl;
 
         cout << "Culprit ..." << endl;
         auto b = maxBead();
