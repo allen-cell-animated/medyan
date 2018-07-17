@@ -781,18 +781,18 @@ void Controller::run() {
     }
     
     //perform first minimization
-#ifdef MECHANICS
-    _mController->run(false);
-    
-    //reupdate positions and neighbor lists
-    updatePositions();
-    updateNeighborLists();
-    
-#ifdef DYNAMICRATES
-    updateReactionRates();
-#endif
-    
-#endif
+//#ifdef MECHANICS
+//    _mController->run(false);
+//    
+//    //reupdate positions and neighbor lists
+//    updatePositions();
+//    updateNeighborLists();
+//    
+//#ifdef DYNAMICRATES
+//    updateReactionRates();
+//#endif
+//    
+//#endif
     
 #ifdef CHEMISTRY
     tauLastSnapshot = tau();
