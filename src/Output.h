@@ -193,6 +193,21 @@ public:
     virtual void print(int snapshot);
 };
 
+/// Print total, chemdiss, mechdiss, chem, and mech
+class Dissipation : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    Dissipation(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~Dissipation() {}
+    
+    virtual void print(int snapshot);
+};
+
 /// Print Filament plusend types
 class PlusEnd : public Output {
     
@@ -213,6 +228,37 @@ public:
     
     virtual void print(int snapshot);
 };
+
+
+/// Print chem energy changes by HRCDID
+class HRCD : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    HRCD(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~HRCD() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+// Print cm graph
+class CMGraph : public Output {
+    
+public:
+    CMGraph(string outputFileName, SubSystem* s)
+    
+    : Output(outputFileName, s) {}
+    
+    ~CMGraph() {}
+    
+    virtual void print(int snapshot);
+};
+
 
 
 // Print boundary repulsion force

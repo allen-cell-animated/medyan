@@ -776,6 +776,34 @@ void FilamentTurnoverTimes::print(int snapshot) {
     _outputFile << endl << endl;
 }
 
+void Dissipation::print(int snapshot) {
+    
+    // print first line (snapshot number, time)
+    _outputFile << snapshot << " " << tau() << endl;
+    vector<double> energies;
+    energies = _cs->getEnergy();
+    _outputFile << energies[0] << "     " << energies[1] << "     "<< energies[2]<<"     "<<energies[3]<<"     "<<energies[4];
+    
+    _outputFile <<endl;
+}
+
+void HRCD::print(int snapshot) {
+    DissipationTracker* dt = _cs->getDT();
+    vector<tuple<string, double>> hrcdvec = dt->getHRCDVec();
+    // print first line (snapshot number, time)
+    
+    _outputFile << snapshot << " " << tau() << endl;
+    
+    for(auto &i : hrcdvec){
+        _outputFile<<get<0>(i)<<"     ";
+    }
+    _outputFile<<endl;
+    for(auto &i : hrcdvec){
+        _outputFile<<get<1>(i)<<"     ";
+    }
+    _outputFile<<endl<<endl;
+    
+}
 
 void PlusEnd::print(int snapshot) {
     
@@ -812,6 +840,64 @@ void PlusEnd::print(int snapshot) {
     }
     
     _outputFile << endl;
+    
+}
+void CMGraph::print(int snapshot) {
+    
+    // print first line (snapshot number, time)
+    
+    _outputFile << snapshot << " " << tau() << endl;
+    
+    vector<vector<int>> filIDVec;
+    
+    for(auto &linker : Linker::getLinkers()) {
+        
+        int fid1 = linker->getFirstCylinder()->getFilID();
+        int fid2 = linker->getSecondCylinder()->getFilID();
+        vector<int> pair;
+        pair.push_back(fid1);
+        pair.push_back(fid2);
+        
+        sort(pair.begin(),pair.end());
+        filIDVec.push_back(pair);
+        
+        
+        
+    }
+    
+    vector<vector<int>> uniqueFilIDVec;
+    vector<vector<int>> uniqueFilIDVecCounts;
+    
+    for(auto i : filIDVec){
+        
+        if(find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) != uniqueFilIDVec.end()) {
+            
+            int ind = find(uniqueFilIDVec.begin(), uniqueFilIDVec.end(), i) - uniqueFilIDVec.begin();
+            
+            uniqueFilIDVecCounts.at(ind).at(2) ++ ;
+            
+            
+        } else {
+            
+            vector<int> pbVec;
+            pbVec.push_back(i[0]);
+            pbVec.push_back(i[1]);
+            pbVec.push_back(1);
+            
+            uniqueFilIDVecCounts.push_back(pbVec);
+            uniqueFilIDVec.push_back(i);
+            
+        }
+        
+    }
+    
+    for(auto i: uniqueFilIDVecCounts){
+        _outputFile<< i[0] <<" "<<  i[1] << " "  << i[2]<< " ";
+    }
+    
+    
+    
+    _outputFile<<endl<<endl;
     
 }
 

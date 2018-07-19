@@ -22,6 +22,7 @@
 
 #include "ChemNRMImpl.h"
 #include "Rand.h"
+#include "CController.h"
 
 #ifdef BOOST_MEM_POOL
 #ifdef BOOST_POOL_MEM_RNODENRM
