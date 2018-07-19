@@ -71,7 +71,17 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
             beadSet[n * (Cumnc) + 1] = ci->getSecondBead()->_dbIndex;
             beadSet[n * (Cumnc) + 2] = cin->getFirstBead()->_dbIndex;
             beadSet[n * (Cumnc) + 3] = cin->getSecondBead()->_dbIndex;
-            krep[Cumnc] = ci->getMCylinder()->getExVolConst();
+            
+            //Get KRepuls based on filament type
+            if(ci->getType() != cin->getType()){
+                auto ki = ci->getMCylinder()->getExVolConst();
+                auto kin = cin->getMCylinder()->getExVolConst();
+                krep[Cumnc] = max(ki, kin);
+            }
+            else{
+                krep[Cumnc] = ci->getMCylinder()->getExVolConst();
+            }
+            
             Cumnc++;
             //std::cout<<"CV"<<ci->getID()<<" "<<cin->getID()<<endl;
         }
