@@ -30,6 +30,7 @@
 #include "Reaction.h"
 #include "ChemSimImpl.h"
 #include "ChemRNode.h"
+#include "CMonomer.h"
 
 #ifdef BOOST_MEM_POOL
 #include <boost/pool/pool.hpp>

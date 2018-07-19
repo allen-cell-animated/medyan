@@ -1,0 +1,210 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		C1504D581F2A943C0097CA45 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		C1504D591F2A943C0097CA45 /* test_boundaries.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_boundaries.cpp; sourceTree = "<group>"; };
+		C1504D5A1F2A943C0097CA45 /* test_compartments.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_compartments.cpp; sourceTree = "<group>"; };
+		C1504D5B1F2A943C0097CA45 /* test_composite.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_composite.cpp; sourceTree = "<group>"; };
+		C1504D5C1F2A943C0097CA45 /* test_geometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_geometry.cpp; sourceTree = "<group>"; };
+		C1504D5D1F2A943C0097CA45 /* test_gillespie.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie.cpp; sourceTree = "<group>"; };
+		C1504D5E1F2A943C0097CA45 /* test_gillespie_cross.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_gillespie_cross.cpp; sourceTree = "<group>"; };
+		C1504D5F1F2A943C0097CA45 /* test_nrm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_nrm.cpp; sourceTree = "<group>"; };
+		C1504D601F2A943C0097CA45 /* test_reactions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_reactions.cpp; sourceTree = "<group>"; };
+		C1504D611F2A943C0097CA45 /* test_simple_gillespie.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_simple_gillespie.cpp; sourceTree = "<group>"; };
+		C1504D621F2A943C0097CA45 /* test_species.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_species.cpp; sourceTree = "<group>"; };
+		C1504D631F2A943C0097CA45 /* TESTS 2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "TESTS 2.xcodeproj"; sourceTree = "<group>"; };
+		C1504D661F2A943C0097CA45 /* TESTS 3.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "TESTS 3.xcodeproj"; sourceTree = "<group>"; };
+		C1504D691F2A943C0097CA45 /* TESTS 4.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "TESTS 4.xcodeproj"; sourceTree = "<group>"; };
+		C1504D6C1F2A943C0097CA45 /* TESTS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = TESTS.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		C1504D521F2A943C0097CA45 = {
+			isa = PBXGroup;
+			children = (
+				C1504D581F2A943C0097CA45 /* Makefile */,
+				C1504D591F2A943C0097CA45 /* test_boundaries.cpp */,
+				C1504D5A1F2A943C0097CA45 /* test_compartments.cpp */,
+				C1504D5B1F2A943C0097CA45 /* test_composite.cpp */,
+				C1504D5C1F2A943C0097CA45 /* test_geometry.cpp */,
+				C1504D5D1F2A943C0097CA45 /* test_gillespie.cpp */,
+				C1504D5E1F2A943C0097CA45 /* test_gillespie_cross.cpp */,
+				C1504D5F1F2A943C0097CA45 /* test_nrm.cpp */,
+				C1504D601F2A943C0097CA45 /* test_reactions.cpp */,
+				C1504D611F2A943C0097CA45 /* test_simple_gillespie.cpp */,
+				C1504D621F2A943C0097CA45 /* test_species.cpp */,
+				C1504D631F2A943C0097CA45 /* TESTS 2.xcodeproj */,
+				C1504D661F2A943C0097CA45 /* TESTS 3.xcodeproj */,
+				C1504D691F2A943C0097CA45 /* TESTS 4.xcodeproj */,
+				C1504D6C1F2A943C0097CA45 /* TESTS.xcodeproj */,
+			);
+			sourceTree = "<group>";
+		};
+		C1504D641F2A943C0097CA45 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C1504D671F2A943C0097CA45 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C1504D6A1F2A943C0097CA45 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C1504D6D1F2A943C0097CA45 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		C1504D571F2A943C0097CA45 /* TESTS */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = C1504D731F2A943C0097CA45 /* Build configuration list for PBXLegacyTarget "TESTS" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = /Users/csfloyd/Desktop/MEDYANv3.1/src/TESTS;
+			dependencies = (
+			);
+			name = TESTS;
+			passBuildSettingsInEnvironment = 1;
+			productName = TESTS;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		C1504D531F2A943C0097CA45 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+			};
+			buildConfigurationList = C1504D561F2A943C0097CA45 /* Build configuration list for PBXProject "TESTS 5" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = C1504D521F2A943C0097CA45;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = C1504D641F2A943C0097CA45 /* Products */;
+					ProjectRef = C1504D631F2A943C0097CA45 /* TESTS 2.xcodeproj */;
+				},
+				{
+					ProductGroup = C1504D671F2A943C0097CA45 /* Products */;
+					ProjectRef = C1504D661F2A943C0097CA45 /* TESTS 3.xcodeproj */;
+				},
+				{
+					ProductGroup = C1504D6A1F2A943C0097CA45 /* Products */;
+					ProjectRef = C1504D691F2A943C0097CA45 /* TESTS 4.xcodeproj */;
+				},
+				{
+					ProductGroup = C1504D6D1F2A943C0097CA45 /* Products */;
+					ProjectRef = C1504D6C1F2A943C0097CA45 /* TESTS.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				C1504D571F2A943C0097CA45 /* TESTS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		C1504D541F2A943C0097CA45 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		C1504D551F2A943C0097CA45 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		C1504D741F2A943C0097CA45 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = TESTS;
+			};
+			name = Debug;
+		};
+		C1504D751F2A943C0097CA45 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = TESTS;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C1504D561F2A943C0097CA45 /* Build configuration list for PBXProject "TESTS 5" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1504D541F2A943C0097CA45 /* Debug */,
+				C1504D551F2A943C0097CA45 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C1504D731F2A943C0097CA45 /* Build configuration list for PBXLegacyTarget "TESTS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1504D741F2A943C0097CA45 /* Debug */,
+				C1504D751F2A943C0097CA45 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C1504D531F2A943C0097CA45 /* Project object */;
+}

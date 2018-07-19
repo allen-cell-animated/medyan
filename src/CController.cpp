@@ -24,7 +24,7 @@
 #include "CCylinder.h"
 #include "Cylinder.h"
 
-void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
+void CController::initialize(string& chemAlgorithm, ChemistryData& chem, DissipationTracker* dt) {
     
     // new ChemSim object
     _chemSim = new ChemSim;
@@ -73,6 +73,10 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
     CCylinder::_chemSim = _chemSim;
     Cylinder::_chemManager = _chemManager;
     
+    // initialize the dissipation tracker
+    
+    csi->_dt = dt;
+    
 }
 
 bool CController::run(double time) {
@@ -96,4 +100,17 @@ bool CController::runSteps(int steps) {
     //run the steps
     return _chemSim->runSteps(steps);
 }
+
+vector<double> CController::getEnergy(){
+    return _chemSim->getEnergy();};
+
+ChemSim* CController::getCS(){
+    return _chemSim;};
+
+DissipationTracker* CController::getDT(){
+    return _chemSim->getDT();
+};
+
+
+
 

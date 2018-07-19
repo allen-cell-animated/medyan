@@ -19,6 +19,8 @@
 #include "common.h"
 
 #include "Parser.h"
+#include "DissipationTracker.h"
+
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;

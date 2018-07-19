@@ -113,6 +113,14 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     offRxn->setReactionType(ReactionType::LINKERUNBINDING);
     
+    //set gnum of offreaction
+    double gnum = onRxn->getGNumber();
+    offRxn->setGNumber(-gnum);
+    
+    //set hrcdid of offreaction
+    string hrcdid = onRxn->getHRCDID();
+    offRxn->setHRCDID(hrcdid + "off");
+    
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);
     ConnectionBlock rcb(offRxn->connect(lcallback,false));

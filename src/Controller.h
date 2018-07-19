@@ -21,6 +21,7 @@
 #include "GController.h"
 #include "CController.h"
 #include "DRController.h"
+#include "DissipationTracker.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -60,6 +61,8 @@ private:
     
     double _minimizationTime;  ///< Frequency of mechanical minimization
     double _neighborListTime;  ///< Frequency of neighbor list updates
+    
+    DissipationTracker* _dt;   ///< dissipation tracking object
     
     //@{
     /// Same parameter set as timestep, but in terms of chemical

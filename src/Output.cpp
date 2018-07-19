@@ -33,6 +33,9 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 
+#include "CController.h"
+#include "ChemSimImpl.h"
+
 using namespace mathfunc;
 
 void BasicSnapshot::print(int snapshot) {

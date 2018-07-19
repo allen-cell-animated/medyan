@@ -174,7 +174,9 @@ void Controller::initialize(string inputFile,
         cout << "Need to specify a chemical input file. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
-    _cController->initialize(CAlgorithm.algorithm, ChemData);
+    
+    _dt = new DissipationTracker(_mController);
+    _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
     cout << "Done." << endl;
     
     //Set up chemistry output if any
@@ -757,7 +759,7 @@ void Controller::run() {
             BB->getCBranchingPoint()->setOffRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
             BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
-        }
+        }	
 //STEP 7: Get cylinders, activate filament reactions.
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
@@ -846,6 +848,9 @@ void Controller::run() {
 //                nvtxRangePop();
                 break;
             }
+            _dt->setGMid();
+            
+            
             
             //add the last step
             tauLastSnapshot += tau() - oldTau;
@@ -882,6 +887,19 @@ void Controller::run() {
                 updatePositions();
 //                nvtxRangePop();
                 tauLastMinimization = 0.0;
+                
+                //cout<<"Min happened"<<endl;
+                
+                _dt->setG2();
+                _dt->updateCumDissChemEnergy();
+                _dt->updateCumDissMechEnergy();
+                _dt->updateCumDissEn();
+                _dt->updateCumGChemEn();
+                _dt->updateCumGMechEn();
+                _dt->resetAfterStep();
+                
+                
+                
             }
 
             if(tauLastSnapshot >= _snapshotTime) {
@@ -891,7 +909,9 @@ void Controller::run() {
 //                nvtxRangePop();
                 i++;
                 tauLastSnapshot = 0.0;
+
             }
+            
 #elif defined(MECHANICS)
             nvtxRangePushA("output");
             for(auto o: _outputs) o->print(i);

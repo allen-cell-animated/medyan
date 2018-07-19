@@ -64,6 +64,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
         
+    // set cylinder's filID
+    c0->setFilID(_ID);
+        
     //set plus end marker
     _plusEndPosition = 1;
 }
@@ -102,6 +105,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
+        
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
     for (int i = 2; i<numBeads; i++)
         extendPlusEnd(tmpBeadsCoord[i]);
@@ -149,6 +155,9 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
+    // set cylinder's filID
+    c0->setFilID(_ID);
+    
 }
 
 //Extend back for initialization
@@ -173,6 +182,9 @@ void Filament::extendMinusEnd(vector<double>& coordinates) {
     
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
 
 }
 
@@ -209,6 +221,9 @@ void Filament::extendPlusEnd(short plusEnd) {
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
 #ifdef CHEMISTRY
     //get last cylinder, mark species
@@ -254,6 +269,9 @@ void Filament::extendMinusEnd(short minusEnd) {
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
 #ifdef CHEMISTRY
     //get first cylinder, mark species
@@ -526,12 +544,19 @@ Filament* Filament::sever(int cylinderPosition) {
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
         
-        newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
         
-        //Add beads to new parent
-        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
-        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
+        //TRANSFER CHILD
+        unique_ptr<Component> &&tmp = this->getChild(c);
+        this->transferChild(std::move(tmp), (Composite*)newFilament);
+        
+        //Add beads and cylinder to new parent
+        if(i == vectorPosition) {
+            unique_ptr<Component> &&tmp2 = this->getChild(c->getFirstBead());
+            this->transferChild(std::move(tmp2), (Composite*)newFilament);
+        }
+        unique_ptr<Component> &&tmp1 = this->getChild(c->getSecondBead());
+        this->transferChild(std::move(tmp1), (Composite*)newFilament);
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
@@ -949,6 +974,9 @@ species_copy_t Filament::countSpecies(short filamentType, const string& name) {
     }
     return copyNum;
 }
+
+
+    
 
 
 

@@ -186,6 +186,9 @@ bool ChemNRMImpl::makeStep() {
     //rn->printSelf();
     //std::cout<<"------------"<<endl;
     rn->makeStep();
+    
+
+    
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif

@@ -131,6 +131,8 @@ struct ChemParams {
     vector<short> motorNumHeadsMin = {};
     vector<short> motorNumHeadsMax = {};
     
+    double dutyRatio = 0.1;
+    
     vector<double> motorStepSize = {};
     //@}
     

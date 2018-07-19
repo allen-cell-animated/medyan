@@ -242,6 +242,7 @@ public:
     
     /// Count the number of filament species with a given name in the system
     static species_copy_t countSpecies(short filamentType, const string& name);
+    
 };
 
 #endif
