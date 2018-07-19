@@ -51,6 +51,23 @@ public:
     void equlibrate(ForceFieldManager &FFM, bool steplimit) {
         _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX, steplimit);
     }
+    
+    double* getCoords(){
+        return _CGType.getCoords();
+    }
+    
+    double* getForces(){
+        return _CGType.getForces();
+    }
+    
+    double getEnergy(ForceFieldManager &FFM, double d){
+        double* coords = getCoords();
+        double* forces = getForces();
+        return FFM.computeEnergy(coords,forces,d);
+    }
+
+    
+    
 };
 
 #endif

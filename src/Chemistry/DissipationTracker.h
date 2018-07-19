@@ -77,18 +77,18 @@ public:
     // Constructor, allow access to objects that information is needed from, set all energy
     // tracking variables to zero
     DissipationTracker(MController* mcon = NULL):  _mcon(mcon) {
-       count = 0;
-       cumDissEnergy=0;
-       cumDissChemEnergy=0;
-       cumDissMechEnergy=0;
-       cumGChemEn=0;
-       cumGMechEn=0;
-       G1=0;
-       G2=0;
-       GMid=0;
-       GChem=0;
+        count = 0;
+        cumDissEnergy=0;
+        cumDissChemEnergy=0;
+        cumDissMechEnergy=0;
+        cumGChemEn=0;
+        cumGMechEn=0;
+        G1=0;
+        G2=0;
+        GMid=0;
+        GChem=0;
     };
-
+    
     // increment the reaction counter
     void updateCount(){
         count++;
@@ -126,13 +126,13 @@ public:
         int N = re->getN();
         
         string hrcdid;
- 
+        
         hrcdid = re->getHRCDID();
         
         if(reType==1){
             hrcdid = "DIF";
         }
-
+        
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
         
         vector<int> reacNu(M,1);
@@ -157,44 +157,44 @@ public:
             // Regular Reaction
             delGZero =  re->getGNumber();
             delG = delGGenChem(delGZero, reacN, reacNu, prodN, prodNu);
-             
+            
         } else if(reType==1){
-             // Diffusion Reaction
-
+            // Diffusion Reaction
+            
             delG = delGDifChem(reacN[0],prodN[0]);
             
-             
+            
         } else if(reType==2){
             // Polymerization Plus End
-
+            
             delGZero = re->getGNumber();
             species_copy_t nMon = reacN[0];
             delG = delGPolyChem(delGZero,nMon,"P");
-
-
+            
+            
         } else if(reType==3){
             // Polymerization Minus End
-
+            
             delGZero = re->getGNumber();
             species_copy_t nMon = reacN[0];
             delG = delGPolyChem(delGZero,nMon,"P");
-
-
+            
+            
         } else if(reType==4){
             // Depolymerization Plus End
-
+            
             delGZero = re->getGNumber();
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
-
+            
         } else if(reType==5){
             // Depolymerization Minus End
-
+            
             delGZero = re->getGNumber();
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
-
-
+            
+            
         } else if(reType==6){
             // Linker Binding
             delGZero=re->getGNumber();
@@ -205,7 +205,7 @@ public:
         } else if(reType==7){
             // Motor Binding
             double rn=re->getGNumber();
- 
+            
             double nh1 = SysParams::Chemistry().motorNumHeadsMin[0];
             double nh2 = SysParams::Chemistry().motorNumHeadsMax[0];
             double nh = (nh1+nh2)/2.0;
@@ -219,7 +219,7 @@ public:
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
-
+            
             
         } else if(reType==9){
             // Motor Unbinding
@@ -232,7 +232,7 @@ public:
             
             delG = delGMyoChem(nh,rn);
             delG = -delG;
-
+            
             
         } else if(reType==10){
             // Motor Walking Forward
@@ -248,15 +248,15 @@ public:
             
         } else if(reType==12){
             // Filament Aging
- 
-                vector<species_copy_t> numR;
-                numR.push_back(Filament::countSpecies(0,reacNames[0]));
             
-                vector<species_copy_t> numP;
-                numP.push_back(Filament::countSpecies(0,prodNames[0]));
-                
-                delGZero = (re->getGNumber());
-                delG = delGGenChem(delGZero, numR, reacNu, numP, prodNu);
+            vector<species_copy_t> numR;
+            numR.push_back(Filament::countSpecies(0,reacNames[0]));
+            
+            vector<species_copy_t> numP;
+            numP.push_back(Filament::countSpecies(0,prodNames[0]));
+            
+            delGZero = (re->getGNumber());
+            delG = delGGenChem(delGZero, numR, reacNu, numP, prodNu);
             
         } else if(reType==13){
             // Filament Creation
@@ -300,19 +300,19 @@ public:
         }
         
         return delG;
-       
+        
         
     }
     
-
+    
     
     // increment the GChem counter when a reaction fires
     void updateDelGChem(ReactionBase* re){
         GChem += getDelGChem(re);
         updateCount();
-
+        
     }
-
+    
     // return the mechanical energy of the system
     double getMechEnergy(){
         double ret = _mcon->getEnergy();
@@ -350,14 +350,14 @@ public:
     // set the value of G1
     void setG1(){
         G1=getMechEnergy();
-
+        
     }
     
     // set the value of G2
     void setG2(){
         G2=getMechEnergy();
-//        cout<<"G1 is "<<G1<<endl;
-//        cout<<"G2 is "<<G2<<endl;
+        //        cout<<"G1 is "<<G1<<endl;
+        //        cout<<"G2 is "<<G2<<endl;
         
     }
     
@@ -410,15 +410,15 @@ public:
         };
         
         HRCDVec.push_back(make_tuple(hrcdid,delG));
-
+        
     }
     
     vector<tuple<string,double>> getHRCDVec(){
         return HRCDVec;
     }
-
     
-  
+    
+    
 };
 
 

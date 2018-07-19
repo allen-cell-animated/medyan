@@ -1217,6 +1217,16 @@ namespace mathfunc {
     tuple<vector<double>, vector<double>> branchProjection(const vector<double> &n,
                                                            const vector<double> &p,
                                                            double l, double m, double theta);
+    
+    
+    float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+    
+    float delGDifChem(species_copy_t reacN ,species_copy_t prodN);
+    
+    
+    float delGPolyChem(float delGzero, species_copy_t reacN, string whichWay);
+    
+    float delGMyoChem(float nh, float rn);
 
 }
 #endif

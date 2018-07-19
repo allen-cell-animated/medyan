@@ -191,7 +191,19 @@ protected:
         delete [] forceAux;
         delete [] forceAuxPrev;
     }
+    
+    
+    
 public:
+    
+    double* getCoords(){
+        return coord;
+    }
+    
+    double* getForces(){
+        return force;
+    }
+    
     static long N; ///< Number of beads in the system, set before each minimization
     
     virtual ~CGMethod() {};

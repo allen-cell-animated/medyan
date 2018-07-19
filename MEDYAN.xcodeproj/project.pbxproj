@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1F44169F21012AB300455BB9 /* DissipationTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F44169E21012AB300455BB9 /* DissipationTracker.h */; };
 		23EC735920F937ED0037DD00 /* CylinderVolumeInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735820F937ED0037DD00 /* CylinderVolumeInteractions.cpp */; };
 		23EC735A20F937ED0037DD00 /* CylinderVolumeInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735820F937ED0037DD00 /* CylinderVolumeInteractions.cpp */; };
 		23EC735C20F9396C0037DD00 /* BoundaryInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735B20F9396B0037DD00 /* BoundaryInteractions.cpp */; };
@@ -293,6 +292,7 @@
 		BF9A59361B0B72C300ADF902 /* Trackable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Trackable.h; sourceTree = "<group>"; };
 		BF9A59391B0B90C200ADF902 /* BoundaryElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = BoundaryElement.cpp; sourceTree = "<group>"; };
 		BF9A593C1B0BA75A00ADF902 /* DynamicNeighbor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicNeighbor.h; sourceTree = "<group>"; };
+		C16C0F5821012F6400876B0C /* DissipationTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DissipationTracker.h; sourceTree = "<group>"; };
 		F2291E5B1F50CAC800494109 /* FilamentBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBending.cpp; sourceTree = "<group>"; };
 		F2291E5C1F50CAC800494109 /* FilamentBending.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilamentBending.h; sourceTree = "<group>"; };
 		F2291E5D1F50CAC800494109 /* FilamentBendingCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilamentBendingCosine.cpp; sourceTree = "<group>"; };
@@ -777,7 +777,6 @@
 				F735B7911A2D172800AE21D1 /* ChemSim.h */,
 				F735B7921A2D172800AE21D1 /* ChemSimImpl.h */,
 				F735B7931A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp */,
-				C1BB4F8F1F2E5E5400981ED2 /* DissipationTracker.h */,
 				F735B7941A2D172800AE21D1 /* ChemSimpleGillespieImpl.h */,
 				F7401C2C1AF9388D00BA97A5 /* Reaction.cpp */,
 				F7401C2D1AF9388D00BA97A5 /* Reaction.h */,
@@ -793,6 +792,7 @@
 				F735B7961A2D172800AE21D1 /* ReactionTemplate.h */,
 				F7401C281AF934A200BA97A5 /* BindingManager.cpp */,
 				F7401C291AF934A200BA97A5 /* BindingManager.h */,
+				C16C0F5821012F6400876B0C /* DissipationTracker.h */,
 			);
 			name = Chemistry;
 			path = src/Chemistry;
@@ -1023,7 +1023,6 @@
 				F7C9D0041A2D165D0087434A /* CompartmentGrid.h in Headers */,
 				F7525A551A70241E007A4E9F /* BranchingBendingCosine.h in Headers */,
 				F7525A3E1A7023EF007A4E9F /* CylinderVolumeFF.h in Headers */,
-				C1BB4F901F2E5E5400981ED2 /* DissipationTracker.h in Headers */,
 				F7401C3F1AF9388D00BA97A5 /* SpeciesContainer.h in Headers */,
 				F7C9CFEE1A2D165D0087434A /* BoundaryElement.h in Headers */,
 				F735B7761A2D16F200AE21D1 /* Controller.h in Headers */,

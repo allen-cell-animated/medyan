@@ -30,6 +30,11 @@ public:
     /// @param FFM - The force field manager of this system. @see ForceFieldManager.
     /// @param stepLimit - If there is a limit for the number of equlibration steps.
     void virtual equlibrate(ForceFieldManager &FFM, bool stepLimit) = 0;
+    
+    double virtual getEnergy(ForceFieldManager &FFM, double d) = 0;
+    
+    
+    
 };
 
 #endif
