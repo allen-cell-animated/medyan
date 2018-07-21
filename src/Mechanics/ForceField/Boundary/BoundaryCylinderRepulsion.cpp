@@ -309,6 +309,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = -dotProduct(be->normal(newCoord), normal);
+                    if(proj < 0.0) proj = 0.0;
 
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
@@ -341,6 +342,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = -dotProduct(be->normal(newCoord), normal);
+                    if(proj < 0.0) proj = 0.0;
 
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
