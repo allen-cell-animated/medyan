@@ -547,12 +547,19 @@ public:
         }
 
         if(dxy > dzz) {
-            return twoPointDirection({0,  0, point[2]},
-                                     {0,0, _coords[2]});
+            auto n = twoPointDirection({0,  0, point[2]},
+                                       {0,0, _coords[2]});
+            // when the Z coordinate is located at geometry center
+            if(isnan(n[2])) return vector<double> {0.0, 0.0, 0.0};
+            else return n;
+            
         }
         else {
-            return twoPointDirection({point[0],  point[1], 0},
-                                     {_coords[0],_coords[1], 0});
+            auto n = twoPointDirection({point[0],  point[1], 0},
+                                       {_coords[0],_coords[1], 0});
+            // when the Z coordinate is located at geometry center
+            if(isnan(n[0])) return vector<double> {0.0, 0.0, 0.0};
+            else return n;
         }
         //return twoPointDirection({point[0],  point[1], 0},
         //                         {_coords[0],_coords[1], 0});
@@ -620,12 +627,19 @@ public:
         }
         
         if(dxy > dzz) {
-            return twoPointDirection({0,  0, point[2]},
+            auto n = twoPointDirection({0,  0, point[2]},
                                      {0,0, _coords[2]});
+            // when the Z coordinate is located at geometry center
+            if(isnan(n[2])) return vector<double> {0.0, 0.0, 0.0};
+            else return n;
+            
         }
         else {
-            return twoPointDirection({point[0],  point[1], 0},
+            auto n = twoPointDirection({point[0],  point[1], 0},
                                      {_coords[0],_coords[1], 0});
+            // when the Z coordinate is located at geometry center
+            if(isnan(n[0])) return vector<double> {0.0, 0.0, 0.0};
+            else return n;
         }
         
     };

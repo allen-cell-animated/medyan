@@ -99,7 +99,7 @@ public:
     
     ///Returns the normal inward at this coordinate
     //@note - Not yet implemented.
-    virtual vector<double> normal(vector<double>& coordinate) {return vector<double>{0,0,0};}
+    virtual vector<double> normal(vector<double>& coordinate) {return vector<double>{0.0, 0.0, 0.0};}
 };
 
 /// A cylinder Boundary implementation.
@@ -128,7 +128,7 @@ public:
     
     ///Returns the normal inward at this coordinate
     //@note - Not yet implemented.
-    virtual vector<double> normal(vector<double>& coordinate) {return vector<double>{0,0,0};}
+    virtual vector<double> normal(vector<double>& coordinate) {return vector<double>{0.0, 0.0, 0.0};}
 };
 
 
