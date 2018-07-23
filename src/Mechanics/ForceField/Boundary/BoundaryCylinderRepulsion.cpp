@@ -314,7 +314,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     //bd->loadForcesP[bd->lfip++] += proj * loadForce;
-                    bd->loadForcesM[bd->lfim++] += loadForce;
+                    bd->loadForcesP[bd->lfip++] += loadForce;
                 }
                 //reset lfi
                 bd->lfip = 0;
@@ -348,7 +348,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     //bd->loadForcesM[bd->lfim++] += proj * loadForce;
-                    bd->loadForcesP[bd->lfip++] += loadForce;
+                    bd->loadForcesM[bd->lfim++] += loadForce;
                 }
                 //reset lfi
                 bd->lfim = 0;

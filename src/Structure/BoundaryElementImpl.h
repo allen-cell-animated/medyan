@@ -642,7 +642,7 @@ public:
             }
             else {
                 return twoPointDirection({0,  0, point[2]},
-                                          {0,0, _coords[2]});;
+                                          {0, 0, _coords[2]});;
             }
             
         }

@@ -169,9 +169,10 @@ void ForceFieldManager::computeLoadForces() {
 
     //reset
     for (auto b: Bead::getBeads()) {
-
-        b->loadForcesP.clear();
-        b->loadForcesM.clear();
+        std::fill(b->loadForcesM.begin(),b->loadForcesM.end(),0.0);
+        std::fill(b->loadForcesP.begin(),b->loadForcesP.end(),0.0);
+        //b->loadForcesP.clear();
+        //b->loadForcesM.clear();
     }
 
     for(auto &f : _forceFields)
