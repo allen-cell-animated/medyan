@@ -34,8 +34,8 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
     
     parent->addChild(unique_ptr<Component>(this));
           
-    loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
-    loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
+    loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+    loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
     
     //Find compartment
     try {_compartment = GController::getCompartment(v);}
