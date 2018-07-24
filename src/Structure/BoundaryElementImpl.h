@@ -535,8 +535,8 @@ public:
     virtual const vector<double> normal(const vector<double>& point) {
 
         //Qin
-        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
-                                              {  point[0],  point[1], 0});
+        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0.0},
+                                              {  point[0],  point[1], 0.0});
 
         double dzz = point[2];
         if((_coords[2] * 2 - point[2]) < dzz) {
@@ -553,8 +553,8 @@ public:
                 return vector<double> {0.0, 0.0, 0.0};
             }
             else {
-                return twoPointDirection({0,  0, point[2]},
-                                         {0,0, _coords[2]});;
+                return twoPointDirection({0.0,  0.0, point[2]},
+                                         {0.0, 0.0, _coords[2]});;
             }
             
         }
@@ -565,8 +565,8 @@ public:
                 return vector<double> {0.0, 0.0, 0.0};
             }
             else {
-                return twoPointDirection({point[0],  point[1], 0},
-                                         {_coords[0],_coords[1], 0});;
+                return twoPointDirection({point[0],  point[1], 0.0},
+                                         {_coords[0],_coords[1], 0.0});;
             }
         }
         //return twoPointDirection({point[0],  point[1], 0},
@@ -623,8 +623,8 @@ public:
     };
     
     virtual const vector<double> normal(const double *point) {
-        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
-                                              {  point[0],  point[1], 0});
+        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0.0},
+                                              {  point[0],  point[1], 0.0});
         
         double dzz = point[2];
         if((_coords[2] * 2 - point[2]) < dzz) {
@@ -641,8 +641,8 @@ public:
                 return vector<double> {0.0, 0.0, 0.0};
             }
             else {
-                return twoPointDirection({0,  0, point[2]},
-                                          {0, 0, _coords[2]});;
+                return twoPointDirection({0.0,  0.0, point[2]},
+                                          {0.0, 0.0, _coords[2]});;
             }
             
         }
@@ -653,8 +653,8 @@ public:
                 return vector<double> {0.0, 0.0, 0.0};
             }
             else {
-                return twoPointDirection({point[0],  point[1], 0},
-                                         {_coords[0],_coords[1], 0});;
+                return twoPointDirection({point[0],  point[1], 0.0},
+                                         {_coords[0],_coords[1], 0.0});;
             }
         }
         

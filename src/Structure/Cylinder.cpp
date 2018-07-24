@@ -187,6 +187,7 @@ void Cylinder::updateReactionRates() {
                 float newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
                 
                 r->setRate(newRate);
+
                 r->updatePropensity();
             }
         }
