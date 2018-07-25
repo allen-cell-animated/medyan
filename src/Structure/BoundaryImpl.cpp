@@ -421,7 +421,7 @@ BoundaryCylinder::BoundaryCylinder(SubSystem* s, double diameter, BoundaryMove m
 }
 
 bool BoundaryCylinder::within(Compartment* C) {
-    // mark
+
     // project compartment to a 2D cylinderical coordinate
     double comX = GController::getCompartmentSize()[0];
     double comY = GController::getCompartmentSize()[1];

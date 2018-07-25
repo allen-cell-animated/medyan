@@ -22,6 +22,8 @@
 #include "SysParams.h"
 #include "MathFunctions.h"
 
+
+
 using namespace mathfunc;
 
 void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
@@ -40,6 +42,8 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         //loop through reactants, products. find all species
         auto r = _reactants[0];
         
+        int numDiffusingReactant = 0; // Used in determining volume dependence
+        
         //FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (getType(r) == SpeciesType::BULK)
             reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));
@@ -47,6 +51,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         else if(getType(r) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
             reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
+            ++numDiffusingReactant;
         }
         
         //SECOND REACTANT MUST BE PLUS END
@@ -72,11 +77,11 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         ReactionBase* rxn;
         
         if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
-            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
         else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
-            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
         else
-            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
         
         //callback
 #ifdef REACTION_SIGNALING
@@ -95,6 +100,9 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     //loop through reactants, products. find all species
     auto r = _reactants[0];
+    
+    int numDiffusingReactant = 0; // Used in determining volume dependence
+    
     //FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (getType(r) == SpeciesType::BULK)
         reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));
@@ -102,6 +110,7 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     else if(getType(r) == SpeciesType::DIFFUSING) {
         Compartment* c = cc->getCompartment();
         reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
+        ++numDiffusingReactant;
     }
     
     //SECOND REACTANT MUST BE PLUS END
@@ -122,11 +131,11 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     
     ReactionBase* rxn;
     if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
-        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
     else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
-        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
     else
-        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
     
     //callbacks
 #ifdef REACTION_SIGNALING
@@ -154,6 +163,9 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         
         //loop through reactants, products. find all species
         auto r = _reactants[0];
+        
+        int numDiffusingReactant = 0; // Used in determining volume dependence
+        
         //FIRST REACTANT MUST BE BULK OR DIFFUSING
         if (getType(r) == SpeciesType::BULK)
             reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));
@@ -161,6 +173,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         else if(getType(r) == SpeciesType::DIFFUSING) {
             Compartment* c = cc->getCompartment();
             reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
+            ++numDiffusingReactant;
         }
         
         //SECOND REACTANT MUST BE MINUS END
@@ -185,11 +198,11 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         
         ReactionBase *rxn;
         if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
-            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
         else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
-            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
         else
-            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
         
 #ifdef REACTION_SIGNALING
         FilamentPolymerizationMinusEndCallback polyCallback(cc->getCylinder());
@@ -207,6 +220,8 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     //loop through reactants, products. find all species
     auto r = _reactants[0];
     
+    int numDiffusingReactant = 0; // Used in determining volume dependence
+    
     //FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (getType(r) == SpeciesType::BULK)
         reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));
@@ -214,6 +229,7 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     else if(getType(r)  == SpeciesType::DIFFUSING) {
         Compartment* c = cc->getCompartment();
         reactantSpecies.push_back(c->findSpeciesByMolecule(getInt(r)));
+        ++numDiffusingReactant;
     }
     
     //SECOND REACTANT MUST BE MINUS END
@@ -234,11 +250,11 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     
     ReactionBase* rxn;
     if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
-        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
     else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
-        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
     else
-        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate);
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS>(species, _rate, false, cc->getCompartment()->getVolumeFrac(), -numDiffusingReactant);
     
 #ifdef REACTION_SIGNALING
     auto minusEndType = get<0>(_products[1]);
@@ -262,7 +278,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         CMonomer* m2 = cc->getCMonomer(i-1);
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
-
+        
         //loop through reactants, products. find all species
         
         //FIRST REACTANT  MUST BE FILAMENT
@@ -384,7 +400,7 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     CMonomer* m2 = cc1->getCMonomer(cc1->getSize() - 1);
     vector<Species*> reactantSpecies;
     vector<Species*> productSpecies;
-
+    
     //loop through reactants, products. find all species
     
     //FIRST REACTANT  MUST BE FILAMENT
@@ -494,7 +510,7 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-             it != SysParams::Chemistry().bindingSites[_filamentType].end() - 1; it++) {
+        it != SysParams::Chemistry().bindingSites[_filamentType].end() - 1; it++) {
         
         int site1 = *(it);
         int site2 = *(it+1);
@@ -590,14 +606,14 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     cc1->addCrossCylinderReaction(cc2, rxn);
     rxn->setReactionType(ReactionType::MOTORWALKINGFORWARD);
-
+    
 }
 
 void MotorWalkMTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = SysParams::Chemistry().bindingSites[_filamentType].end() - 1;
-             it != SysParams::Chemistry().bindingSites[_filamentType].begin(); it--) {
+        it != SysParams::Chemistry().bindingSites[_filamentType].begin(); it--) {
         
         int site1 = *(it);
         int site2 = *(it-1);
@@ -847,7 +863,7 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
     
     //loop through all monomers
     for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-             it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+        it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
         
         int site = *(it);
         CMonomer* m = cc->getCMonomer(site);
@@ -882,3 +898,5 @@ void SeveringTemplate::addReaction(CCylinder* cc) {
 }
 
 SubSystem* FilamentReactionTemplate::_ps = 0;
+
+

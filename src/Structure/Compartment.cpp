@@ -17,6 +17,7 @@
 #include "Parser.h"
 //REMOVE LATER
 #include "ChemNRMImpl.h"
+#include "GController.h"
 
 
 
@@ -47,8 +48,50 @@ bool Compartment::apply_impl(ReactionVisitor &v) {
     return true;
 }
 
-vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
-{
+//mark
+//TODO
+void Compartment::getSlicedVolumeArea() {
+    // The calculation requires the
+    //  - The position calculation of triangles
+    //  - The area calculation of triangles
+    //  - The unit normal vector of triangles
+    // ASSUMPTIONS:
+    //  - This compartment is a CUBE
+//    size_t numTriangle = _triangles.size();
+//    if(numTriangle) {
+//        double sumArea = 0.0;
+//        array<double, 3> sumNormal {};
+//        array<double, 3> sumPos {};
+//        for(Triangle* t: _triangles) {
+//            double area = t->getGTriangle()->getArea();
+//            vectorIncrease(sumNormal, vectorMultiply(t->getGTriangle()->getUnitNormal(), area));
+//            vectorIncrease(sumPos, vectorMultiply(t->coordinate, area));
+//            sumArea += area;
+//        }
+//        double oneOverSumArea = 1.0 / sumArea;
+//        vectorExpand(sumNormal, oneOverSumArea);
+//        vectorExpand(sumPos, oneOverSumArea);
+//
+//        PlaneCubeSlicingResult res = planeCubeSlice(
+//                                                    sumPos, sumNormal,
+//                                                    {{
+//            _coords[0] - SysParams::Geometry().compartmentSizeX * 0.5,
+//            _coords[1] - SysParams::Geometry().compartmentSizeY * 0.5,
+//            _coords[2] - SysParams::Geometry().compartmentSizeZ * 0.5
+//        }},
+//                                                    SysParams::Geometry().compartmentSizeX // Since it is a cube
+//                                                    );
+//
+//        _partialVolume = res.volumeIn;
+//        _partialArea = res.areaIn;
+//    }
+}
+
+
+vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
+    // The compartment C and "this" must be neighbors of each other, and
+    // "this" must be an active compartment.
+    
     vector<ReactionBase*> rxns;
     
     for(auto &sp_this : _species.species()) {
@@ -57,19 +100,24 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
         if(diff_rate<0)  continue;
         
         if(C->isActivated()) {
+            // Scale the diffusion rate according to the contacting areas
+            size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
+            double scaleFactor = 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) / GController::getCompartmentArea()[idxFwd / 2];
+                        double actualDiffRate = diff_rate * scaleFactor;
+            double volumeFrac = getVolumeFrac();
+            
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             //Diffusion reaction from "this" compartment to C.
-            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate);
+            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, false, volumeFrac);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
+            
+
         }
     }
-
-    
-    return vector<ReactionBase*>(rxns.begin(), rxns.end());
 }
 
-//Qin
+//Diffusion is now scaled directly in Compartment::generateDiffusionReactions(Compartment* C).
 vector<ReactionBase*> Compartment::generateScaleDiffusionReactions(Compartment* C)
 {
     vector<ReactionBase*> rxns;

@@ -170,7 +170,7 @@ void GController::generateConnections()
                         continue;
                     vector<size_t> currentIndices{size_t(iprime), j, k};
                     Compartment *neighbor = getCompartment(currentIndices);
-                    target->addNeighbour(neighbor);
+                    target->addNeighbour(neighbor, (ii < 0? 0: 1));
                 }
                 for(int jj: {-1,1})
                 {
@@ -179,7 +179,7 @@ void GController::generateConnections()
                         continue;
                     vector<size_t> currentIndices{i, size_t(jprime), k};
                     Compartment *neighbor = getCompartment(currentIndices);
-                    target->addNeighbour(neighbor);
+                    target->addNeighbour(neighbor, (jj < 0? 2: 3));
                 }
                 for(int kk: {-1,1})
                 {
@@ -188,7 +188,7 @@ void GController::generateConnections()
                         continue;
                     vector<size_t> currentIndices{i, j, size_t(kprime)};
                     Compartment *neighbor = getCompartment(currentIndices);
-                    target->addNeighbour(neighbor);
+                    target->addNeighbour(neighbor, (kk < 0? 4: 5));
                 }
             }
         }
@@ -217,6 +217,14 @@ CompartmentGrid* GController::initializeGrid() {
     _centerGrid = {_compartmentSize[0] * _grid[0] / 2,
                    _compartmentSize[1] * _grid[2] / 2,
                    _compartmentSize[2] * _grid[2] / 2};
+    
+    _compartmentVolume = _compartmentSize[0] * _compartmentSize[1] * _compartmentSize[2];
+    
+    _compartmentArea = {{
+        _compartmentSize[1] * _compartmentSize[2],
+        _compartmentSize[2] * _compartmentSize[0],
+        _compartmentSize[0] * _compartmentSize[1]
+    }};
     
     //Check that grid and compartmentSize match nDim
     if((_nDim == 3 &&
@@ -331,8 +339,7 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
 }
 
 void GController::setActiveCompartments() {
-
-    //mark
+    
     //initialize all compartments equivalent to cproto
     for(auto C : _compartmentGrid->getCompartments())
         if(_boundary->within(C)) C->setAsActive();
@@ -431,6 +438,8 @@ vector<int>    GController::_grid = {};
 vector<double> GController::_size = {};
 vector<double> GController::_compartmentSize = {};
 vector<double> GController::_centerGrid = {};
+double         GController::_compartmentVolume = 0;
+vector<double> GController::_compartmentArea = {};
 
 CompartmentGrid* GController::_compartmentGrid = 0;
 

@@ -11,9 +11,9 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include <cmath>
-
 #include "ChemManager.h"
+
+#include <cmath>
 
 #include "ChemCallbacks.h"
 #include "CompartmentGrid.h"
@@ -22,8 +22,9 @@
 
 #include "SysParams.h"
 #include "MathFunctions.h"
-
 #include "Boundary.h"
+
+
 
 using namespace mathfunc;
 
@@ -32,7 +33,7 @@ void ChemManager::setupBindingSites() {
     //set binding indices
     //check if binding sites are valid and mark
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
-    
+        
         
         if(_chemData.B_BINDING_INDEX[filType] != "") {
             auto it = find(_chemData.speciesBound[filType].begin(),
@@ -42,8 +43,8 @@ void ChemManager::setupBindingSites() {
             if(it == _chemData.speciesBound[filType].end()) {
                 
                 cout << "The brancher binding site listed is not a valid bound species. Exiting."
-                     << endl;
-                 exit(EXIT_FAILURE);
+                << endl;
+                exit(EXIT_FAILURE);
             }
             else {
                 SysParams::CParams.brancherBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
@@ -59,8 +60,8 @@ void ChemManager::setupBindingSites() {
             if(it == _chemData.speciesBound[filType].end()) {
                 
                 cout << "The linker binding site listed is not a valid bound species. Exiting."
-                     << endl;
-                 exit(EXIT_FAILURE);
+                << endl;
+                exit(EXIT_FAILURE);
             }
             else {
                 SysParams::CParams.linkerBoundIndex[filType] = it - _chemData.speciesBound[filType].begin();
@@ -76,7 +77,7 @@ void ChemManager::setupBindingSites() {
             if(it == _chemData.speciesBound[filType].end()) {
                 
                 cout << "The motor binding site listed is not a valid bound species. Exiting."
-                     << endl;
+                << endl;
                 exit(EXIT_FAILURE);
             }
             else {
@@ -88,7 +89,7 @@ void ChemManager::setupBindingSites() {
         SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.brancherBoundIndex[filType]);
         
         if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.linkerBoundIndex[filType])
-             SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.linkerBoundIndex[filType]);
+            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.linkerBoundIndex[filType]);
         
         if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.motorBoundIndex[filType] &&
            SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.motorBoundIndex[filType])
@@ -99,16 +100,16 @@ void ChemManager::setupBindingSites() {
 void ChemManager::configCMonomer() {
     
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
-    
+        
         //set up static CMonomer things
         CMonomer::_numFSpecies[filType] = _chemData.speciesFilament[filType].size() +
-                                        _chemData.speciesPlusEnd[filType].size()  +
-                                        _chemData.speciesMinusEnd[filType].size();
+        _chemData.speciesPlusEnd[filType].size()  +
+        _chemData.speciesMinusEnd[filType].size();
         
         CMonomer::_numBSpecies[filType] = _chemData.speciesBound[filType].size()   +
-                                        _chemData.speciesLinker[filType].size()  +
-                                        _chemData.speciesMotor[filType].size()   +
-                                        _chemData.speciesBrancher[filType].size();
+        _chemData.speciesLinker[filType].size()  +
+        _chemData.speciesMotor[filType].size()   +
+        _chemData.speciesBrancher[filType].size();
         
         //set up species offsets
         short o1 = _chemData.speciesFilament[filType].size();
@@ -120,11 +121,11 @@ void ChemManager::configCMonomer() {
         
         //create offset vector for filament
         CMonomer::_speciesFilamentIndex[filType].insert(
-        CMonomer::_speciesFilamentIndex[filType].end(), {0,o1,o2});
+                                                        CMonomer::_speciesFilamentIndex[filType].end(), {0,o1,o2});
         
         //create offset vector for bound
         CMonomer::_speciesBoundIndex[filType].insert(
-        CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5});
+                                                     CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5});
     }
 }
 
@@ -141,18 +142,18 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
     }
     for (auto &p : _chemData.speciesPlusEnd[filamentType]) {
         SpeciesPlusEnd* sp =
-                c->addSpeciesPlusEnd(SpeciesNamesDB::genUniqueFilName(p));
+        c->addSpeciesPlusEnd(SpeciesNamesDB::genUniqueFilName(p));
         m->_speciesFilament[fIndex] = sp;
         fIndex++;
-
+        
     }
     for (auto &mi : _chemData.speciesMinusEnd[filamentType]) {
         SpeciesMinusEnd* smi =
-                c->addSpeciesMinusEnd(SpeciesNamesDB::genUniqueFilName(mi));
+        c->addSpeciesMinusEnd(SpeciesNamesDB::genUniqueFilName(mi));
         m->_speciesFilament[fIndex] = smi;
         fIndex++;
     }
-
+    
     // BOUND SPECIES
     
     int bIndex = 0;
@@ -164,19 +165,19 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
     }
     for (auto &l : _chemData.speciesLinker[filamentType]) {
         SpeciesLinker* sl =
-                c->addSpeciesLinker(SpeciesNamesDB::genUniqueFilName(l));
+        c->addSpeciesLinker(SpeciesNamesDB::genUniqueFilName(l));
         m->_speciesBound[bIndex] = sl;
         bIndex++;
     }
     for (auto &mo : _chemData.speciesMotor[filamentType]) {
         SpeciesMotor* sm =
-                c->addSpeciesMotor(SpeciesNamesDB::genUniqueFilName(mo));
+        c->addSpeciesMotor(SpeciesNamesDB::genUniqueFilName(mo));
         m->_speciesBound[bIndex] = sm;
         bIndex++;
     }
     for (auto &br : _chemData.speciesBrancher[filamentType]) {
         SpeciesBrancher* sbr =
-                c->addSpeciesBrancher(SpeciesNamesDB::genUniqueFilName(br));
+        c->addSpeciesBrancher(SpeciesNamesDB::genUniqueFilName(br));
         m->_speciesBound[bIndex] = sbr;
         bIndex++;
     }
@@ -186,7 +187,7 @@ void ChemManager::genFilReactionTemplates() {
     
     
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
-    
+        
         //set up reaction templates
         for(auto &r: _chemData.polymerizationReactions[filType]) {
             
@@ -222,7 +223,7 @@ void ChemManager::genFilReactionTemplates() {
                     exit(EXIT_FAILURE);
                 }
                 reactantTemplate.push_back( tuple<int, SpeciesType>(
-                        SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
+                                                                    SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
             }
             
             else if(reactant.find("DIFFUSING") != string::npos) {
@@ -239,12 +240,12 @@ void ChemManager::genFilReactionTemplates() {
                     exit(EXIT_FAILURE);
                 }
                 reactantTemplate.push_back(tuple<int, SpeciesType>(
-                        SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
+                                                                   SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
             }
             else {
                 cout <<
-                     "First species listed in a polymerization reaction must be either bulk or diffusing. Exiting."
-                     << endl;
+                "First species listed in a polymerization reaction must be either bulk or diffusing. Exiting."
+                << endl;
                 exit(EXIT_FAILURE);
             }
             
@@ -387,10 +388,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add polymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                                                       new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
             else
                 _filRxnTemplates[filType].emplace_back(
-                new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                                                       new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
         }
         
         //set up reaction templates
@@ -428,15 +429,15 @@ void ChemManager::genFilReactionTemplates() {
                 }
                 else {
                     cout <<
-                         "A filament species that was included in a reaction was not initialized. Exiting."
-                         << endl;
+                    "A filament species that was included in a reaction was not initialized. Exiting."
+                    << endl;
                     exit(EXIT_FAILURE);
                 }
             }
             else {
                 cout <<
-                     "First species listed in a depolymerization reaction must be filament. Exiting."
-                     << endl;
+                "First species listed in a depolymerization reaction must be filament. Exiting."
+                << endl;
                 exit(EXIT_FAILURE);
             }
             
@@ -512,7 +513,7 @@ void ChemManager::genFilReactionTemplates() {
                     exit(EXIT_FAILURE);
                 }
                 productTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
+                                                                  SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
             }
             
             else if(product.find("DIFFUSING") != string::npos) {
@@ -529,7 +530,7 @@ void ChemManager::genFilReactionTemplates() {
                     exit(EXIT_FAILURE);
                 }
                 productTemplate.push_back(tuple<int, SpeciesType>(
-                SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
+                                                                  SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
             }
             else {
                 cout <<
@@ -591,10 +592,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add depolymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                                                       new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
             else
                 _filRxnTemplates[filType].emplace_back(
-                new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                                                       new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
         }
         
         for(auto &r: _chemData.motorWalkingReactions[filType]) {
@@ -775,10 +776,10 @@ void ChemManager::genFilReactionTemplates() {
             //add reaction
             if(type == ReactionType::MOTORWALKINGFORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                                                       new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
             else {
                 _filRxnTemplates[filType].emplace_back(
-                new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
+                                                       new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
             }
         }
         
@@ -1033,7 +1034,7 @@ void ChemManager::genFilReactionTemplates() {
                         exit(EXIT_FAILURE);
                     }
                     productTemplate.push_back(tuple<int, SpeciesType>(
-                    SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
+                                                                      SpeciesNamesDB::stringToInt(name), SpeciesType::BULK));
                 }
                 
                 else if(product.find("DIFFUSING") != string::npos) {
@@ -1050,7 +1051,7 @@ void ChemManager::genFilReactionTemplates() {
                         exit(EXIT_FAILURE);
                     }
                     productTemplate.push_back(tuple<int, SpeciesType>(
-                    SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
+                                                                      SpeciesNamesDB::stringToInt(name), SpeciesType::DIFFUSING));
                 }
                 else {
                     cout <<
@@ -1116,10 +1117,10 @@ void ChemManager::genFilBindingReactions() {
     double rMax, rMin;
     
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
-    
+        
         //loop through all compartments
         for(auto C : grid->getCompartments()) {
-        
+            
             int managerIndex = 0;
             int linkerIndex = 0;
             int motorIndex = 0;
@@ -1131,9 +1132,9 @@ void ChemManager::genFilBindingReactions() {
                 
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
-
-//                std::cout << reactants.size() << " " << products.size() << endl;
-
+                
+                //                std::cout << reactants.size() << " " << products.size() << endl;
+                
                 //Checks on number of reactants, products
                 if(reactants.size() != BRANCHINGREACTANTS ||
                    products.size() != BRANCHINGPRODUCTS) {
@@ -1202,6 +1203,8 @@ void ChemManager::genFilBindingReactions() {
                     exit(EXIT_FAILURE);
                 }
                 
+                int numDiffusingReactant = 0; // Used in determining volume dependence
+                
                 //FIRST AND SECOND REACTANTS MUST BE BULK OR DIFFUSING
                 auto reactant = reactants[0];
                 
@@ -1238,6 +1241,8 @@ void ChemManager::genFilBindingReactions() {
                         exit(EXIT_FAILURE);
                     }
                     reactantSpecies.push_back(C->findSpeciesByName(name));
+                    
+                    ++numDiffusingReactant;
                 }
                 else {
                     cout <<
@@ -1279,6 +1284,8 @@ void ChemManager::genFilBindingReactions() {
                         exit(EXIT_FAILURE);
                     }
                     reactantSpecies.push_back(C->findSpeciesByName(name));
+                    
+                    ++numDiffusingReactant;
                 }
                 else {
                     cout <<
@@ -1346,14 +1353,14 @@ void ChemManager::genFilBindingReactions() {
                 else if(nzstr == "TOPBOUNDARY")
                     nucleationZone = NucleationZoneType::TOPBOUNDARY;
                 else if(nzstr == "SIDEBOUNDARY")
-                nucleationZone = NucleationZoneType::SIDEBOUNDARY;
+                    nucleationZone = NucleationZoneType::SIDEBOUNDARY;
                 else {
                     cout << "Nucleation zone type specified in a branching reaction not valid. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 double nucleationDist = get<5>(r);
                 
-                ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate);
+                ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::BRANCHING);
                 
                 C->addInternalReaction(rxn);
@@ -1529,6 +1536,8 @@ void ChemManager::genFilBindingReactions() {
                     exit(EXIT_FAILURE);
                 }
                 
+                int numDiffusingReactant = 0; // Used in determining volume dependence
+                
                 //THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
                 reactant = reactants[2];
                 if(reactant.find("BULK") != string::npos) {
@@ -1562,13 +1571,15 @@ void ChemManager::genFilBindingReactions() {
                         exit(EXIT_FAILURE);
                     }
                     reactantSpecies.push_back(C->findSpeciesByName(name));
+                    
+                    ++numDiffusingReactant;
                 }
                 else {
                     cout << "Third species listed in a linker reaction must be bulk or diffusing. Exiting."
                     << endl;
                     exit(EXIT_FAILURE);
                 }
-            
+                
                 double onRate = get<2>(r);
                 double offRate = get<3>(r);
                 //aravind 24, June, 2016.
@@ -1581,7 +1592,7 @@ void ChemManager::genFilBindingReactions() {
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
                 
                 C->addInternalReaction(rxn);
@@ -1589,7 +1600,7 @@ void ChemManager::genFilBindingReactions() {
                 //create manager
                 LinkerBindingManager* lManager = new LinkerBindingManager(rxn, C, linkerInt, linkerName,
                                                                           filType, rMax, rMin);
-
+                
                 C->addFilamentBindingManager(lManager);
                 
                 lManager->setNLIndex(linkerIndex++);
@@ -1756,6 +1767,8 @@ void ChemManager::genFilBindingReactions() {
                     exit(EXIT_FAILURE);
                 }
                 
+                int numDiffusingReactant = 0; // Used in determining volume dependence
+                
                 //THIRD REACTANT SPECIES SHOULD BE BULK OR DIFFUSING
                 reactant = reactants[2];
                 if(reactant.find("BULK") != string::npos) {
@@ -1789,6 +1802,8 @@ void ChemManager::genFilBindingReactions() {
                         exit(EXIT_FAILURE);
                     }
                     reactantSpecies.push_back(C->findSpeciesByName(name));
+                    
+                    ++numDiffusingReactant;
                 }
                 else {
                     cout << "Third species listed in a motor reaction must be bulk or diffusing. Exiting."
@@ -1810,7 +1825,7 @@ void ChemManager::genFilBindingReactions() {
                 
                 //multiply by num heads to get rate
                 ///CHANGED
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::MOTORBINDING);
                 
                 C->addInternalReaction(rxn);
@@ -1842,7 +1857,7 @@ void ChemManager::genFilBindingReactions() {
                 
                 auto nl =
                 new CylinderCylinderNL(lManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
-                                   max(lManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
+                                       max(lManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
                 
                 //add to subsystem and manager
                 LinkerBindingManager::_neighborLists.push_back(nl);
@@ -1853,14 +1868,14 @@ void ChemManager::genFilBindingReactions() {
                 
                 auto nl =
                 new CylinderCylinderNL(mManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
-                                   max(mManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
+                                       max(mManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
                 
                 //add to subsystem and manager
                 MotorBindingManager::_neighborLists.push_back(nl);
                 _subSystem->addNeighborList(nl);
-//#ifdef CUDAACCL
-//                mManager->assigncudavars();
-//#endif
+                //#ifdef CUDAACCL
+                //                mManager->assigncudavars();
+                //#endif
             }
         }
     }
@@ -1914,7 +1929,7 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
     }
     
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
-    
+        
         // create single binding and pair binding species
         for(auto &sb : _chemData.speciesBrancher[filType]) {
             
@@ -1923,11 +1938,11 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                 
                 auto reactants = get<0>(rb);
                 auto products = get<1>(rb);
-
+                
                 auto sb_bound = products[0].substr(0, products[0].find(":"));
-
-//                std::cout << reactants.size() << " " << products.size() << endl;
-
+                
+                //                std::cout << reactants.size() << " " << products.size() << endl;
+                
                 //basic check because we have not yet checked reactions
                 if(reactants.size() != BRANCHINGREACTANTS ||
                    products.size() != BRANCHINGPRODUCTS) {
@@ -2030,7 +2045,7 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                 }
             }
         }
-    
+        
     }
 }
 
@@ -2073,11 +2088,11 @@ void ChemManager::updateCopyNumbers() {
             
             ///remove species from all compartments
             for(auto C : grid->getCompartments()) {
-            
+                
                 Species* species = C->findSpeciesByName(name);
                 
                 while(species->getN() > 0) {
-                
+                    
                     species->down();
                     species->updateReactantPropensities();
                 }
@@ -2135,6 +2150,8 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         vector<string> reactants = get<0>(r);
         vector<string> products = get<1>(r);
         
+        int numDiffusingReactant = 0; // Used in determining volume dependence
+        
         for(auto &reactant : reactants) {
             
             if(reactant.find("BULK") != string::npos) {
@@ -2143,7 +2160,7 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
                                   [name](tuple<string, int, double, double, string> element) {
-                                   return get<0>(element) == name ? true : false; });
+                                      return get<0>(element) == name ? true : false; });
                 
                 if(it == _chemData.speciesBulk.end()) {
                     cout <<
@@ -2169,6 +2186,8 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
                     exit(EXIT_FAILURE);
                 }
                 reactantSpecies.push_back(protoCompartment.findSpeciesByName(name));
+                
+                ++numDiffusingReactant;
             }
             else {
                 cout <<
@@ -2229,28 +2248,28 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         
         //<1,1>
         if(reactantSpecies.size() == 1 && productSpecies.size() == 1)
-            rxn = new Reaction<1,1>(species, get<2>(r), true);
+            rxn = new Reaction<1,1>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<2,1>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 1)
-            rxn = new Reaction<2,1>(species, get<2>(r), true);
+            rxn = new Reaction<2,1>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<1,2>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 2)
-            rxn = new Reaction<1,2>(species, get<2>(r), true);
+            rxn = new Reaction<1,2>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<2,0>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 0)
-            rxn = new Reaction<2,0>(species, get<2>(r), true);
+            rxn = new Reaction<2,0>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 2)
-            rxn = new Reaction<2,2>(species, get<2>(r), true);
+            rxn = new Reaction<2,2>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<1,3>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 3)
-            rxn = new Reaction<1,3>(species, get<2>(r), true);
+            rxn = new Reaction<1,3>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 3)
-            rxn = new Reaction<2,3>(species, get<2>(r), true);
+            rxn = new Reaction<2,3>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         //<3,2>
         else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
-            rxn = new Reaction<3,2>(species, get<2>(r), true);
+            rxn = new Reaction<3,2>(species, get<2>(r), true, 1.0, -numDiffusingReactant);
         else {
             cout <<
             "General reaction specified does not match any existing templates. Exiting."
@@ -2265,104 +2284,104 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
 }
 
 void ChemManager::genBulkReactions() {
-
+    
     auto grid = _subSystem->getCompartmentGrid();
-
+    
     //go through reactions, add each
     for(auto &r: _chemData.bulkReactions) {
-
+        
         vector<Species*> reactantSpecies;
         vector<Species*> productSpecies;
-
+        
         vector<string> reactants = get<0>(r);
         vector<string> products = get<1>(r);
-
+        
         for(auto &reactant : reactants) {
             if(reactant.find("BULK") != string::npos) {
-
+                
                 //Look up species, make sure in list
                 string name = reactant.substr(0, reactant.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
                                   [name](tuple<string, int, double, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
-
+                
                 if(it == _chemData.speciesBulk.end()) {
                     cout <<
-                         "A bulk species that was included in a reaction was not initialized. Exiting."
-                         << endl;
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    << endl;
                     exit(EXIT_FAILURE);
                 }
                 reactantSpecies.push_back(grid->findSpeciesBulkByName(name));
             }
             else {
                 cout <<
-                     "All reactants and products in a bulk reaction must be bulk. Exiting."
-                     << endl;
+                "All reactants and products in a bulk reaction must be bulk. Exiting."
+                << endl;
                 exit(EXIT_FAILURE);
             }
         }
-
+        
         for(auto &product : products) {
             if(product.find("BULK") != string::npos) {
-
+                
                 //Look up species, make sure in list
                 string name = product.substr(0, product.find(":"));
                 auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
                                   [name](tuple<string, int, double, double, string> element) {
                                       return get<0>(element) == name ? true : false; });
-
+                
                 if(it == _chemData.speciesBulk.end()) {
                     cout <<
-                         "A bulk species that was included in a reaction was not initialized. Exiting."
-                         << endl;
+                    "A bulk species that was included in a reaction was not initialized. Exiting."
+                    << endl;
                     exit(EXIT_FAILURE);
                 }
                 productSpecies.push_back(grid->findSpeciesBulkByName(name));
             }
             else {
                 cout <<
-                     "All reactants and products in a bulk reaction must be bulk. Exiting."
-                     << endl;
+                "All reactants and products in a bulk reaction must be bulk. Exiting."
+                << endl;
                 exit(EXIT_FAILURE);
             }
         }
         //add the reaction
         vector<Species*> species = reactantSpecies;
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
-
+        
         ReactionBase* rxn;
         //create the reaction
-
+        
         //<1,1>
         if(reactantSpecies.size() == 1 && productSpecies.size() == 1)
             rxn = new Reaction<1,1>(species, get<2>(r));
-            //<2,1>
+        //<2,1>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 1)
             rxn = new Reaction<2,1>(species, get<2>(r));
-            //<1,2>
+        //<1,2>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 2)
             rxn = new Reaction<1,2>(species, get<2>(r));
-            //<2,0>
+        //<2,0>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 0)
             rxn = new Reaction<2,0>(species, get<2>(r));
-            //<2,2>
+        //<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 2)
             rxn = new Reaction<2,2>(species, get<2>(r));
-            //<1,3>
+        //<1,3>
         else if(reactantSpecies.size() == 1 && productSpecies.size() == 3)
             rxn = new Reaction<1,3>(species, get<2>(r));
-            //<2,2>
+        //<2,2>
         else if(reactantSpecies.size() == 2 && productSpecies.size() == 3)
             rxn = new Reaction<2,3>(species, get<2>(r));
-            //<3,2>
+        //<3,2>
         else if(reactantSpecies.size() == 3 && productSpecies.size() == 2)
             rxn = new Reaction<3,2>(species, get<2>(r));
         else {
             cout << "Bulk reaction specified does not match any existing templates. Exiting."
-                 <<endl;
+            <<endl;
             exit(EXIT_FAILURE);
         }
-
+        
         //add to grid
         grid->addBulkReactionUnique(unique_ptr<ReactionBase>(rxn));
         rxn->setReactionType(ReactionType::REGULAR);
@@ -2370,185 +2389,189 @@ void ChemManager::genBulkReactions() {
 }
 
 void ChemManager::genNucleationReactions() {
-
+    
     auto grid = _subSystem->getCompartmentGrid();
-
+    
 #if !defined(REACTION_SIGNALING)
     if(!_chemData.nucleationReactions.empty()) {
-
+        
         cout << "Nucleation reactions rely on reaction signaling. Please set this "
         << "compilation macro. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
 #endif
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
-
+        
         //loop through all compartments
         for(auto C : grid->getCompartments()) {
-
+            
             //go through reactions, add each
             for(auto &r: _chemData.nucleationReactions[filType]) {
-
+                
                 vector<Species*> reactantSpecies;
-
+                
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
-
+                
                 if(reactants.size() != NUCLEATIONREACTANTS ||
                    products.size() != NUCLEATIONPRODUCTS) {
                     cout << "Invalid nucleation reaction. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 bool diffusing = false;
-
+                
+                int numDiffusingReactant = 0; // Used in determining volume dependence
+                
                 for(auto &reactant : reactants) {
                     if(reactant.find("BULK") != string::npos) {
-
+                        
                         //Look up species, make sure in list
                         string name = reactant.substr(0, reactant.find(":"));
                         auto it = find_if(_chemData.speciesBulk.begin(), _chemData.speciesBulk.end(),
                                           [name](tuple<string, int, double, double, string> element) {
                                               return get<0>(element) == name ? true : false; });
-
+                        
                         if(it == _chemData.speciesBulk.end()) {
                             cout <<
-                                 "A bulk species that was included in a reaction was not initialized. Exiting."
-                                 << endl;
+                            "A bulk species that was included in a reaction was not initialized. Exiting."
+                            << endl;
                             exit(EXIT_FAILURE);
                         }
                         reactantSpecies.push_back(
-                                grid->findSpeciesBulkByName(name));
+                                                  grid->findSpeciesBulkByName(name));
                     }
-
+                    
                     else if(reactant.find("DIFFUSING") != string::npos) {
-
+                        
                         //Look up species, make sure in list
                         string name = reactant.substr(0, reactant.find(":"));
                         auto it =
-                                find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
-                                        [name](tuple<string, int, double, double, double, string, int> element) {
-                                            return get<0>(element) == name ? true : false; });
+                        find_if(_chemData.speciesDiffusing.begin(), _chemData.speciesDiffusing.end(),
+                                [name](tuple<string, int, double, double, double, string, int> element) {
+                                    return get<0>(element) == name ? true : false; });
                         if(it == _chemData.speciesDiffusing.end()) {
                             cout <<
-                                 "A diffusing species that was included in a reaction was not initialized. Exiting."
-                                 << endl;
+                            "A diffusing species that was included in a reaction was not initialized. Exiting."
+                            << endl;
                             exit(EXIT_FAILURE);
                         }
                         reactantSpecies.push_back(C->findSpeciesByName(name));
                         diffusing = true;
+                        
+                        ++numDiffusingReactant;
                     }
                     else {
                         cout <<
-                             "All reactants and products in a general reaction must be bulk or diffusing. Exiting."
-                             << endl;
+                        "All reactants and products in a general reaction must be bulk or diffusing. Exiting."
+                        << endl;
                         exit(EXIT_FAILURE);
                     }
                 }
-
+                
                 //add the reaction. The products will only be involved in creating the
                 //callback needed to create a new filament
-                ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, get<2>(r));
+                ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, get<2>(r), false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::FILAMENTCREATION);
-
+                
                 C->addInternalReaction(rxn);
-
+                
                 reactantSpecies.clear();
-
+                
                 //now, loop through products, add callback
                 short plusEnd;
                 short minusEnd;
                 short filament;
-
+                
                 //FIRST SPECIES MUST BE PLUS END
                 auto product = products[0];
                 if(product.find("PLUSEND") != string::npos) {
-
+                    
                     //look up species, make sure in list
                     string name = product.substr(0, product.find(":"));
                     auto it = find(_chemData.speciesPlusEnd[filType].begin(), _chemData.speciesPlusEnd[filType].end(), name);
-
+                    
                     if(it != _chemData.speciesPlusEnd[filType].end()) {
                         //get position of iterator
                         plusEnd = distance(_chemData.speciesPlusEnd[filType].begin(), it);
                     }
                     else {
                         cout <<
-                             "A plus end species that was included in a reaction was not initialized. Exiting."
-                             << endl;
+                        "A plus end species that was included in a reaction was not initialized. Exiting."
+                        << endl;
                         exit(EXIT_FAILURE);
                     }
                 }
                 else {
                     cout <<
-                         "First product species listed in a nucleation reaction must be plus end. Exiting."
-                         << endl;
+                    "First product species listed in a nucleation reaction must be plus end. Exiting."
+                    << endl;
                     exit(EXIT_FAILURE);
                 }
-
+                
                 //SECOND SPECIES MUST BE FILAMENT
                 product = products[1];
                 if(product.find("FILAMENT") != string::npos) {
-
+                    
                     //look up species, make sure in list
                     string name = product.substr(0, product.find(":"));
                     auto it = find(_chemData.speciesFilament[filType].begin(), _chemData.speciesFilament[filType].end(), name);
-
+                    
                     if(it != _chemData.speciesFilament[filType].end()) {
                         //get position of iterator
                         filament = distance(_chemData.speciesFilament[filType].begin(), it);
                     }
                     else {
                         cout <<
-                             "A filament species that was included in a reaction was not initialized. Exiting."
-                             << endl;
+                        "A filament species that was included in a reaction was not initialized. Exiting."
+                        << endl;
                         exit(EXIT_FAILURE);
                     }
                 }
                 else {
                     cout <<
-                         "Second product species listed in a nucleation reaction must be filament. Exiting."
-                         << endl;
+                    "Second product species listed in a nucleation reaction must be filament. Exiting."
+                    << endl;
                     exit(EXIT_FAILURE);
                 }
-
+                
                 //THIRD SPECIES MUST BE MINUSEND
                 product = products[2];
                 if(product.find("MINUSEND") != string::npos) {
-
+                    
                     //look up species, make sure in list
                     string name = product.substr(0, product.find(":"));
                     auto it = find(_chemData.speciesMinusEnd[filType].begin(), _chemData.speciesMinusEnd[filType].end(), name);
-
+                    
                     if(it != _chemData.speciesMinusEnd[filType].end()) {
                         //get position of iterator
                         minusEnd = distance(_chemData.speciesMinusEnd[filType].begin(), it);
                     }
                     else {
                         cout <<
-                             "A minus end species that was included in a reaction was not initialized. Exiting."
-                             << endl;
+                        "A minus end species that was included in a reaction was not initialized. Exiting."
+                        << endl;
                         exit(EXIT_FAILURE);
                     }
                 }
                 else {
                     cout <<
-                         "Third product species listed in a nucleation reaction must be minus end. Exiting."
-                         << endl;
+                    "Third product species listed in a nucleation reaction must be minus end. Exiting."
+                    << endl;
                     exit(EXIT_FAILURE);
                 }
-
+                
                 //if the reaction had any diffusing species, create the filament
                 //in a random position within that compartment
                 Compartment* creationCompartment;
                 if(diffusing) creationCompartment = C;
                 else creationCompartment = GController::getRandomCompartment();
-
+                
                 //now, add the callback
 #ifdef REACTION_SIGNALING
                 FilamentCreationCallback
-                        fcallback(plusEnd, filament, minusEnd, filType, _subSystem, creationCompartment);
+                fcallback(plusEnd, filament, minusEnd, filType, _subSystem, creationCompartment);
                 ConnectionBlock rcb(rxn->connect(fcallback,false));
-    #endif
+#endif
             }
         }
     }
@@ -2574,14 +2597,13 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
     //will copy all general and bulk reactions
     for(auto C : grid->getCompartments())
         *C = cProto;
-
+    
     //auto shape = _subSystem->getBoundary()->getShape();
-    if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder) {
-        for(auto C : grid->getCompartments())
-            //C->generateAllScaleDiffusionReactions();
-            C->generateAllDiffusionReactions();
+    if(_subSystem->getBoundary() && _subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder) {
+        //        for(auto C : grid->getCompartments())
+        //            C->generateAllScaleDiffusionReactions();
     }
-
+    
     else {
         for(auto C : grid->getCompartments())
             C->generateAllDiffusionReactions();
@@ -2620,24 +2642,24 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         if(find(SysParams::Chemistry().bindingSites[filType].begin(),
                 SysParams::Chemistry().bindingSites[filType].end(), i)
            !=  SysParams::Chemistry().bindingSites[filType].end()) {
-
+            
             //add callback to all binding sites
             UpdateBrancherBindingCallback bcallback(c, i);
-
+            
             Species* bs = cc->getCMonomer(i)->speciesBound(
-                    SysParams::CParams.brancherBoundIndex[filType]);
+                                                           SysParams::CParams.brancherBoundIndex[filType]);
             ConnectionBlock rcbb(bs->connect(bcallback,false));
             
             UpdateLinkerBindingCallback lcallback(c, i);
             
             Species* ls = cc->getCMonomer(i)->speciesBound(
-                          SysParams::CParams.linkerBoundIndex[filType]);
+                                                           SysParams::CParams.linkerBoundIndex[filType]);
             ConnectionBlock rcbl(ls->connect(lcallback,false));
             
             UpdateMotorBindingCallback mcallback(c, i);
             
             Species* ms = cc->getCMonomer(i)->speciesBound(
-                          SysParams::CParams.motorBoundIndex[filType]);
+                                                           SysParams::CParams.motorBoundIndex[filType]);
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
@@ -2665,7 +2687,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             lastcc = f->getCylinderVector().back()->getCCylinder();
             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
             m1->speciesPlusEnd(0)->down();
-
+            
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
             
@@ -2676,64 +2698,64 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 #ifdef MECHANICS
                 int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
                 CMonomer* m2 = cc->getCMonomer(nummonomers - 1);
-
+                
                 m2->speciesPlusEnd(0)->up();
-
+                
                 //fill new cylinder with default filament value
                 for(int i = 0; i < nummonomers - 1; i++) {
                     cc->getCMonomer(i)->speciesFilament(0)->up();
-
+                    
                     for(auto j : SysParams::CParams.bindingIndices[filType])
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
 #endif
             }
             else{
-            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
-            m2->speciesPlusEnd(0)->up();
-
+                CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
+                m2->speciesPlusEnd(0)->up();
+                
                 //fill new cylinder with default filament value
                 for(int i = 0; i < cc->getSize() - 1; i++) {
                     cc->getCMonomer(i)->speciesFilament(0)->up();
-
+                    
                     for(auto j : SysParams::CParams.bindingIndices[filType])
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
             }
-
+            
             for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
         }
         //this is first one
         else {
-
+            
             //set back and front
             CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
             m1->speciesPlusEnd(0)->up();
             
-
+            
             if(SysParams::RUNSTATE){
                 CMonomer* m2 = cc->getCMonomer(0);
                 m2->speciesMinusEnd(0)->up();
                 //fill with default filament value
                 for(int i = 1; i < cc->getSize() - 1; i++) {
                     cc->getCMonomer(i)->speciesFilament(0)->up();
-
+                    
                     for(auto j : SysParams::CParams.bindingIndices[filType])
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
-
-
+                
+                
             }
             else {
 #ifdef MECHANICS
-
+                
                 int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
                 CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
                 m1->speciesMinusEnd(0)->up();
                 //fill with default filament value
                 for(int i = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + 1; i < cc->getSize() - 1; i++) {
                     cc->getCMonomer(i)->speciesFilament(0)->up();
-
+                    
                     for(auto j : SysParams::CParams.bindingIndices[filType])
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
@@ -2743,11 +2765,11 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                 //fill with default filament value
                 for(int i = 1; i < cc->getSize() - 1; i++) {
                     cc->getCMonomer(i)->speciesFilament(0)->up();
-
+                    
                     for(auto j : SysParams::CParams.bindingIndices[filType])
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
-
+                
 #endif
             }
         }
@@ -2755,4 +2777,5 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
     //Add all reaction templates to this cylinder
     for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
 }
+
 

@@ -84,10 +84,17 @@ protected:
     #endif
     
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
+    unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
+                                                            ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
     
     ///OTHER COMPARTMENT PROPERTIES
     vector<double> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
+    
+    double _partialVolume = 1.0; ///< The volume fraction inside the membrane/boundary
+    ///< Might be changed to a list or a map when more membranes are involved
+    array<double, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; ///< The area inside the cell membrane
+    ///< Might be changed to a list of arrays or a map of arrays when more membranes are involved
     
 public:
     /// Default constructor, only takes in number of dimensions
@@ -538,13 +545,15 @@ public:
     }
 
     /// Add a neighboring compartment to this compartments list of neighbors
-    void addNeighbour(Compartment *comp) {
+    void addNeighbour(Compartment *comp, size_t spacialIndex) {
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
-        if(nit==_neighbours.end())
+        if(nit==_neighbours.end()) {
             _neighbours.push_back(comp);
+            _neighborIndex[comp] = spacialIndex;
+        }
         else
             throw runtime_error(
-            "Compartment::addNeighbour(): Compartment is already a neighbour");
+                                "Compartment::addNeighbour(): Compartment is already a neighbour");
     }
     
     /// Remove a neighboring compartment
@@ -552,6 +561,7 @@ public:
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit!=_neighbours.end())
             _neighbours.erase(nit);
+            _neighborIndex.erase(comp);
     }
     
     /// Clone the species values of another compartment into this one
@@ -664,6 +674,22 @@ public:
 
     //GetType implementation just returns zero (no Compartment types yet)
     virtual int getType() override {return 0;}
+    
+    // Helper function for getting the result of geometry from a approximately planar slice
+    void getSlicedVolumeArea();
+    
+    // Properties (public variables and getters and setters for private variables)
+    bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
+    
+    //Qin, _partialVolume is actually fraction
+    //TODO, need to double check
+    double getPartialVolume()const { return _partialVolume; }
+    void setPartialVolume(double partialVolume) { _partialVolume = partialVolume; }
+    double getVolumeFrac()const {
+        return _partialVolume;
+    }
+    const array<double, 6>& getPartialArea()const { return _partialArea; }
+    void setPartialArea(const array<double, 6>& partialArea) { _partialArea = partialArea; }
     
 };
 #endif

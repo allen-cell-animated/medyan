@@ -165,7 +165,7 @@ void Linker::updateReactionRates() {
             ""<<coordinate[2]<<endl;
 #endif
 
-    offRxn->setRate(newRate);
+    offRxn->setRateScaled(newRate);
     offRxn->updatePropensity();
 }
 
