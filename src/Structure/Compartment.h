@@ -134,6 +134,10 @@ public:
     /// Update the activation status of a compartment, having following effects:
     /// 1) Updates diffusion reaction rates between this and neighbors if not
     ///    activated. Otherwise activate the compartment additively.
+    /// Note:
+    ///   - BEFORE this function call, all volume and area information must be
+    ///     updated.
+    ///   - Rate changers should happen AFTER calling this function.
     virtual void updateActivation(ChemSim* chem);
     
     /// Deactivate a compartment. Has the following sid effects:

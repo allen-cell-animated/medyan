@@ -296,6 +296,22 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         make_unique<MembraneRegion>(_subSystem->getBoundary())
     );
 
+    // Deactivate all the compartments outside membrane, and mark boundaries as interesting
+    for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
+        if(!c->getTriangles().empty()) {
+            // Contains triangles, so this compartment is at the boundary.
+            c->boundaryInteresting = true;
+
+            // Update partial activate status
+            c->getSlicedVolumeArea();
+            _cController->updateActivation(c);
+
+        } else if( ! regionInMembrane->contains(vector2Array<double, 3>(c->coordinates()))) {
+            // Compartment is outside the membrane
+            _cController->deactivate(c);
+        }
+    }
+
     /**************************************************************************
     Now starting to add the filaments into the network.
     **************************************************************************/
@@ -720,7 +736,10 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
-                
+
+                // Update activation of the compartments
+                updateActiveCompartments();
+
 #ifdef DYNAMICRATES
                 updateReactionRates();
 #endif
@@ -750,9 +769,6 @@ void Controller::run() {
             //move the boundary
             moveBoundary(tau() - oldTau);
 
-            // Update activation of the compartments
-            updateActiveCompartments();
-            
             //special protocols
             executeSpecialProtocols();
             
@@ -784,6 +800,9 @@ void Controller::run() {
                 _mController->run();
                 updatePositions();
                 
+                // Update activation of the compartments
+                updateActiveCompartments();
+
 #ifdef DYNAMICRATES
                 updateReactionRates();
 #endif
@@ -812,9 +831,6 @@ void Controller::run() {
             
             //move the boundary
             moveBoundary(tau() - oldTau);
-            
-            // Update activation of the compartments
-            updateActiveCompartments();
             
             //special protocols
             executeSpecialProtocols();

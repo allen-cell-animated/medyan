@@ -22,8 +22,8 @@ class Boundary;
 class MembraneRegion {
 private:
     Boundary* _boundary = nullptr; ///< The boundary of the playground
-    std::vector<MembraneHierarchy*> _hierOut; ///< Their union is the outer limit
-    std::vector<MembraneHierarchy*> _hierIn;  ///< Their union is the inner limit
+    std::vector<MembraneHierarchy*> _hierOut; ///< Outer limit. A point is inside the region if it is in at least 1 of the membranes.
+    std::vector<MembraneHierarchy*> _hierIn;  ///< Inner limit. A point is inside the region if it is not in any of the membranes.
 
     /// Constructor only for internal use
     MembraneRegion() {}
