@@ -94,6 +94,7 @@ protected:
     double _partialVolume = 1.0; ///< The volume fraction inside the membrane/boundary
     ///< Might be changed to a list or a map when more membranes are involved
     array<double, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; ///< The area inside the cell membrane
+    ///<In the order of x, y and z, from smaller coordinate value neighbor to larger coordinate value
     ///< Might be changed to a list of arrays or a map of arrays when more membranes are involved
     
 public:
@@ -604,7 +605,7 @@ public:
     
     //Qin
     vector<ReactionBase*> generateScaleDiffusionReactions(Compartment* C);
-    float generateScaleFactor(Compartment* C);
+    double generateScaleFactor(Compartment* C);
     
     /// Generate all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just added
@@ -681,7 +682,7 @@ public:
     // Properties (public variables and getters and setters for private variables)
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
     
-    //Qin, _partialVolume is actually fraction
+    //_partialVolume is the volume fraction
     //TODO, need to double check
     double getPartialVolume()const { return _partialVolume; }
     void setPartialVolume(double partialVolume) { _partialVolume = partialVolume; }

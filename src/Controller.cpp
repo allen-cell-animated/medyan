@@ -119,6 +119,8 @@ void Controller::initialize(string inputFile,
     _gController->initializeBoundary(BTypes);
     cout << "Done." <<endl;
     
+    
+    
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -138,6 +140,11 @@ void Controller::initialize(string inputFile,
 #ifdef CHEMISTRY
     //Activate necessary compartments for diffusion
     _gController->setActiveCompartments();
+    
+    //Calculate surface area and volume for reaction rate scaling
+    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+        C->getSlicedVolumeArea();
+    }
     
     //read parameters
     p.readChemParams();
@@ -826,6 +833,7 @@ void Controller::run() {
 //    nvtxRangePop();
 
     cout << "Starting simulation..." << endl;
+    
 
     int i = 1;
 
@@ -981,6 +989,7 @@ void Controller::run() {
             if(stepsLastMinimization >= _minimizationSteps) {
                 _mController->run();
                 updatePositions();
+
                 
 #ifdef DYNAMICRATES
                 updateReactionRates();
