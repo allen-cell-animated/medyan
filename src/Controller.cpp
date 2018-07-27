@@ -87,6 +87,10 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new BirthTimes(_outputDirectory + "birthtimes.traj", _subSystem));
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
+    _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
+    //ReactionOut should be the last one in the output list
+    //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
+    _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
     
     //Always read geometry, check consistency
     p.readGeoParams();
