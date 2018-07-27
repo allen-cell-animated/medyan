@@ -16,7 +16,6 @@
 #include "Output.h"
 
 #include "SubSystem.h"
-#include "CompartmentGrid.h"
 
 #include "Filament.h"
 #include "Cylinder.h"
@@ -28,6 +27,7 @@
 
 #include "Boundary.h"
 #include "CompartmentGrid.h"
+#include "Compartment.h"
 #include "GController.h"
 
 #include "SysParams.h"
@@ -770,4 +770,28 @@ void FilamentTurnoverTimes::print(int snapshot) {
     
     Filament::getTurnoverTimes()->print(_outputFile);
     _outputFile << endl << endl;
+}
+
+void Concentrations::print(int snapshot) {
+    
+    _outputFile << snapshot << " " << tau() << endl;
+    
+    for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
+        
+        if(c->isActivated()) {
+            
+            _outputFile << "COMPARTMENT: " << c->coordinates()[0] << " "
+            << c->coordinates()[1] << " " << c->coordinates()[2] << endl;
+            
+            for(auto sd : _chemData.speciesDiffusing) {
+                
+                string name = get<0>(sd);
+                auto s = c->findSpeciesByName(name);
+                auto copyNum = s->getN();
+                
+                _outputFile << name << ":DIFFUSING " << copyNum << endl;
+            }
+        }
+    }
+    _outputFile << endl;
 }

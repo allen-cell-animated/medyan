@@ -191,4 +191,20 @@ public:
     virtual void print(int snapshot);
 };
 
+
+// Print concentration in each compartment
+class Concentrations : public Output {
+    
+    ChemistryData _chemData; ///< chemistry data of this system
+    SubSystem* _subSystem;///< SubSystem ptr
+    
+public:
+    Concentrations(string outputFileName, SubSystem* s,
+                   ChemistryData chemData)
+    : Output(outputFileName, s), _subSystem(s), _chemData(chemData) {}
+    ~Concentrations() {}
+    
+    virtual void print(int snapshot);
+};
+
 #endif
