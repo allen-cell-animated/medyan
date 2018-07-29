@@ -191,7 +191,7 @@ void Compartment::getSlicedVolumeArea() {
     if(edge.size() == 2 && edge_index.size() == 2){
         //case 1, trapezoid
         if(abs(edge_index[0] - edge_index[1]) == 1)
-            _partialVolume = 0.5 * (edge[0] + edge[1]) * sizex * sizez;
+            _partialVolume = 0.5 * (edge[0] + edge[1]) * sizex * sizez / totalVol;
         else if(edge_index[0] - edge_index[1] == 0)
             cout <<"Intersection points are at the same edge!" << endl;
         //case 2, trangle
