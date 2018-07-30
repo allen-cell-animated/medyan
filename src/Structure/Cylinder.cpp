@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -54,47 +54,6 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                    
    //add to compartment
    _compartment->addCylinder(this);
-          
-#ifdef MECHANICS
-          //set eqLength according to cylinder size
-          
-              double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
-          if(!SysParams::RUNSTATE) //RESTARTPHASE
-          {
-              int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
-              double tpd = eqLength;
-//              std::cout<<eqLength<<" ";
-              
-              if(nummonomers ==0){
-                  eqLength = SysParams::Geometry().monomerSize[type];
-              }
-              else{
-                  eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
-                  double mindis = abs(tpd - eqLength);
-//                  std::cout<<eqLength<<" ";
-                  for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
-                      if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
-                      {
-                          eqLength = i * SysParams::Geometry().monomerSize[type];
-                          mindis = abs(tpd - eqLength);
-                      }
-                  }
-              }
-              
-              
-//              for(auto i=nummonomers ;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
-//                  if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
-//                  {
-//                      eqLength = i * SysParams::Geometry().monomerSize[type];
-//                      mindis = abs(tpd - eqLength);
-//                  }
-//              }
-              
-//              std::cout<<eqLength<<endl;
-          }
-          _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
-          _mCylinder->setCylinder(this);
-#endif
     
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
@@ -105,7 +64,13 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                                       extensionBack, initialization);
 #endif
 
-
+#ifdef MECHANICS
+    //set eqLength according to cylinder size
+    double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
+        
+    _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
+    _mCylinder->setCylinder(this);
+#endif
         
 }
 
@@ -117,7 +82,7 @@ Cylinder::~Cylinder() noexcept {
 }
 
 /// Get filament type
-int Cylinder::getType() {return _type;}
+short Cylinder::getType() {return _type;}
 
 void Cylinder::updatePosition() {
 
@@ -188,7 +153,7 @@ void Cylinder::updateReactionRates() {
     if(_plusEnd) {
         
         //get force of front bead
-        force = _b2->getLoadForcesP();
+        force = _b2->loadForce;
         
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
@@ -204,10 +169,10 @@ void Cylinder::updateReactionRates() {
     }
     
     //load force from back (affects minus end polymerization)
-    if(_minusEnd) {
+    else if(_minusEnd) {
         
         //get force of front bead
-        force = _b1->getLoadForcesM();
+        force = _b1->loadForce;
         
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
@@ -215,7 +180,7 @@ void Cylinder::updateReactionRates() {
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
                 float newRate =  _polyChanger[_type]->changeRate(r->getBareRate(), force);
-                
+
                 r->setRate(newRate);
                 r->updatePropensity();
             }

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -81,7 +81,7 @@ public:
     virtual void clear() override {_species.clear();}
     
     /// Add species to the container. The memory of species is owned by the container
-    virtual Species* addSpecies(Species *species) override {
+    virtual Species* addSpecies(Species *species) {
         _species.emplace_back(unique_ptr<Species>(species));
         return _species.back().get();
     }

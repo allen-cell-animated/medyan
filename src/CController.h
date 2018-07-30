@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -61,8 +61,6 @@ public:
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used
     ///@param chemInitializer - a string defining the chemical manager used
     void initialize(string& chemAlgorithm, ChemistryData& chem);
-    //aravind June 29,2016.
-    void restart();
     
     ///Run chemistry for a given amount of time
     bool run(double time);
@@ -72,6 +70,7 @@ public:
     
     ///Remove set of reactions at runtime, specified by input
     void removeReactions();
+    
 };
 
 

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -17,7 +17,6 @@
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
-    #include <boost/math/special_functions/fpclassify.hpp>
 #endif
 
 #include "ChemNRMImpl.h"
@@ -70,14 +69,14 @@ RNodeNRM::~RNodeNRM() noexcept {
 }
 
 void RNodeNRM::printSelf() const {
-    //cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() <<
-    //    ", a=" << _a << ", points to Reaction:\n";
-    //cout << (*_react);
+    cout << "RNodeNRM: ptr=" << this << ", tau=" << getTau() <<
+        ", a=" << _a << ", points to Reaction:\n";
+    cout << (*_react);
 }
 
 void RNodeNRM::printDependents() const {
-    //cout << "RNodeNRM: ptr=" << this
-    //<< ", the following RNodeNRM objects are dependents:\n\n";
+    cout << "RNodeNRM: ptr=" << this
+    << ", the following RNodeNRM objects are dependents:\n\n";
     for(auto rit = _react->dependents().begin();
         rit!=_react->dependents().end(); ++rit){
         RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
@@ -146,10 +145,12 @@ bool ChemNRMImpl::makeStep() {
     }
     RNodeNRM *rn = _heap.top()._rn;
     double tau_top = rn->getTau();
+    
     if(tau_top==numeric_limits<double>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
     }    
+    
     ///DEBUG
     //assert heap ordering
     if(tau_top < _t) {
@@ -160,18 +161,9 @@ bool ChemNRMImpl::makeStep() {
         rn->printSelf();
         return false;
     }
-
-//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
-//        
-//        cout << "Stopping to check linker rxn." << endl;
-//    }
-    
-    double t_prev = _t;
     
     _t=tau_top;
     syncGlobalTime();
-    
-    rn->printSelf();
     
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
@@ -215,24 +207,20 @@ bool ChemNRMImpl::makeStep() {
                 tau_new = (a_old/a_new)*(tau_old-_t)+_t;
             }
 #endif
-            if(boost::math::isnan(tau_new)){tau_new=numeric_limits<double>::infinity();}
             ///DEBUG
             if(tau_new < _t) {
                 
-                cout << "WARNING: Generated tau may be incorrect. " << endl;
+                cout << "ERROR: Generated tau is incorrect. " << endl;
                 
                 cout << "Tau new = " << tau_new << endl;
                 cout << "Tau old = " << tau_old << endl;
-                cout << "Current global t = " << _t << endl;
-                cout << "Previous global t = " << t_prev << endl;
+                cout << "Tau current = " << _t << endl;
                 cout << "a_old = " << a_old << endl;
                 cout << "a_new = " << a_new << endl;
                 
+                cout << "We have a problem. " << endl;
                 cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
-                
-                
                 rn->printSelf();
-                rn_other->printSelf();
             }
             
             rn_other->setTau(tau_new);

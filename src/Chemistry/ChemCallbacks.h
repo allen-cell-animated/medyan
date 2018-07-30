@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -38,15 +38,6 @@ using namespace mathfunc;
 
 #ifdef RSPECIES_SIGNALING
 
-/// @note - A NOTE TO ALL DEVELOPERS:
-///
-///         When creating a RSpecies or ReactionBase callback, be sure to not include
-///         in the callback structure any variables that may change in the duration
-///         of the simulation (i.e. compartments, binding managers, etc). This information
-///         needs to be found dynamically to ensure correct behavior - the alternative may
-///         cause brutal bugs that are difficult to track in simulation.
-///
-
 /// Callback to update the compartment-local binding species based on
 /// a change of copy number for an empty site.
 struct UpdateBrancherBindingCallback {
@@ -58,7 +49,7 @@ struct UpdateBrancherBindingCallback {
     //Constructor, sets members
     UpdateBrancherBindingCallback(Cylinder* cylinder, short bindingSite)
     
-    : _cylinder(cylinder), _bindingSite(bindingSite) {}
+        : _cylinder(cylinder), _bindingSite(bindingSite) {}
     
     //callback
     void operator() (RSpecies *r, int delta) {
@@ -145,53 +136,6 @@ struct UpdateMotorBindingCallback {
     }
 };
 
-struct UpdateMotorIDCallback{
-    
-    int _motorType; ///< type of motor to find its binding manager
-    
-    //Constructor, sets members
-    UpdateMotorIDCallback(int motorType) : _motorType(motorType) {};
-    
-    //callback
-    void operator() (RSpecies *r, int delta) {
-        
-    //DEPRECATED AS OF 9/8/16
-//        //find compartment and binding manager
-//        Compartment *c = static_cast<Compartment*>(r->getSpecies().getParent());
-//        MotorBindingManager* mManager = c->getMotorBindingManager(_motorType);
-//        
-//        if(delta == +1) {
-//            //pull from motorDB of transferred ID's
-//            //note that if there is no transfer ID, we are experiencing an unbinding event. The specific
-//            //motor will give its ID to the corresponding binding manager.
-//            int ID = MotorGhost::_motorGhosts.getTransferID();
-//            
-//            if(ID != -1) {
-//                mManager->addUnboundID(ID);
-//                
-//                //we can only check this assertion of it is a diffusion event
-//                assert(r->getN() == mManager->getAllUnboundIDs().size() &&
-//                       "Major bug: number of unbound ID's and copy number does not match");
-//            }
-//            //else - create an ID. This is an addition at runtime
-//            else{
-//                mManager->addUnboundID(MotorGhost::_motorGhosts.getID());
-//            }
-//        }
-//        
-//        else{ /* -1 */
-//            //add to the motorDB of transferred ID's
-//            
-//            int ID = mManager->getUnboundID();
-//            MotorGhost::_motorGhosts.setTransferID(ID);
-//            
-//            assert(r->getN() == mManager->getAllUnboundIDs().size() &&
-//                   "Major bug: number of unbound ID's and copy number does not match");
-//        }
-    }
-};
-
-
 #endif
 
 #ifdef REACTION_SIGNALING
@@ -206,7 +150,7 @@ struct FilamentExtensionPlusEndCallback {
     
     //Constructor, sets members
     FilamentExtensionPlusEndCallback(Cylinder* cylinder, short plusEnd)
-    : _cylinder(cylinder), _plusEnd(plusEnd){};
+        : _cylinder(cylinder), _plusEnd(plusEnd){};
     
     //Callback
     void operator() (ReactionBase *r){
@@ -226,7 +170,7 @@ struct FilamentExtensionMinusEndCallback {
     
     //Constructor, sets members
     FilamentExtensionMinusEndCallback(Cylinder* cylinder, short minusEnd)
-    : _cylinder(cylinder), _minusEnd(minusEnd){};
+        : _cylinder(cylinder), _minusEnd(minusEnd){};
     //Callback
     void operator() (ReactionBase *r){
         //extend the back
@@ -243,7 +187,7 @@ struct FilamentRetractionPlusEndCallback {
     
     //Constructor, sets members
     FilamentRetractionPlusEndCallback(Cylinder* cylinder)
-    : _cylinder(cylinder) {};
+        : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f =(Filament*)( _cylinder->getParent());
@@ -259,7 +203,7 @@ struct FilamentRetractionMinusEndCallback {
     
     //Constructor, sets members
     FilamentRetractionMinusEndCallback(Cylinder* cylinder)
-    : _cylinder(cylinder) {};
+        : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -275,7 +219,7 @@ struct FilamentPolymerizationPlusEndCallback {
     
     //Constructor, sets members
     FilamentPolymerizationPlusEndCallback(Cylinder* cylinder)
-    : _cylinder(cylinder) {};
+        : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -291,7 +235,7 @@ struct FilamentPolymerizationMinusEndCallback {
     
     //Constructor, sets members
     FilamentPolymerizationMinusEndCallback(Cylinder* cylinder)
-    : _cylinder(cylinder) {};
+        : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -307,11 +251,10 @@ struct FilamentDepolymerizationPlusEndCallback {
     
     //Constructor, sets members
     FilamentDepolymerizationPlusEndCallback(Cylinder* cylinder)
-    : _cylinder(cylinder) {};
+        : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
-        
         f->depolymerizePlusEnd();
     }
 };
@@ -324,7 +267,7 @@ struct FilamentDepolymerizationMinusEndCallback {
     
     //Constructor, sets members
     FilamentDepolymerizationMinusEndCallback(Cylinder* cylinder)
-    : _cylinder(cylinder) {};
+        : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
         Filament* f = (Filament*)(_cylinder->getParent());
@@ -339,7 +282,7 @@ struct BranchingPointUnbindingCallback {
     BranchingPoint* _branchingPoint;
     
     BranchingPointUnbindingCallback(BranchingPoint* b, SubSystem* ps)
-    : _ps(ps), _branchingPoint(b) {}
+        : _ps(ps), _branchingPoint(b) {}
     
     void operator() (ReactionBase *r) {
         
@@ -366,11 +309,10 @@ struct BranchingCallback {
                       float onRate, float offRate, SubSystem* ps)
     
     : _ps(ps), _bManager(bManager),
-    _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
+      _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-        BranchingPoint* b;
-        float frate;
+        
         short branchType = _bManager->getBoundInt();
         
         //choose a random binding site from manager
@@ -378,10 +320,11 @@ struct BranchingCallback {
         
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
+        
         short filType = c1->getType();
         
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
-        if(SysParams::RUNSTATE==true){
+        
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
         auto x2 = c1->getSecondBead()->coordinate;
@@ -394,21 +337,22 @@ struct BranchingCallback {
 #ifdef MECHANICS
         //use mechanical parameters
         double l, t;
+        
         if(SysParams::Mechanics().BrStretchingL.size() != 0) {
             l = SysParams::Mechanics().BrStretchingL[branchType];
             t = SysParams::Mechanics().BrBendingTheta[branchType];
         }
         else {
             cout << "Branching initialization cannot occur unless mechanical parameters are specified."
-            << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-            << endl;
+                 << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+                 << endl;
             l = 10.0;
             t = 1.22;
         }
 #else
         cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
-        << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
-        << endl;
+             << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
+             << endl;
         double l = 10.0;
         double t = 1.22;
 #endif
@@ -425,74 +369,13 @@ struct BranchingCallback {
         c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new branch
-            CMonomer* x=c->getCCylinder()->getCMonomer(0);
-            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                            }
-            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-            
-        b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
-            
-            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-            }
-            //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-        frate=_offRate;
-        }
-        else
-        {
-            CCylinder* c; auto check = false;
-        vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
-            for(auto T:BrT){
-                CCylinder* cx=get<0>(get<0>(T));
-                double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
-                if(cx->getCylinder()->getID()==c1->getID() && p==pos){
-                    c=get<0>(get<1>(T));
-                    check = true;
-                    break;
-                }}
-            if(check){
-                auto cyl = c->getCylinder();
-                //std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
-            //std::cout<<c->getCylinder()->getID()<<endl;
-                CMonomer* x=c->getCMonomer(0);
-                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
-                    auto zz =c->getCMonomer(p)->speciesFilament(0);
-                    //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                }
-                //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-                
-            b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
-                
-                x=c->getCMonomer(0);
-                for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
-                    auto zz =c->getCMonomer(p)->speciesFilament(0);
-                    //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                }
-                //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-            frate=0.0;
-            }
-            else
-                cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
-                //exit(EXIT_FAILURE);
-        }
+        BranchingPoint* b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
         
         //create off reaction
         auto cBrancher = b->getCBranchingPoint();
         
-        cBrancher->setRates(_onRate, frate);
+        cBrancher->setRates(_onRate, _offRate);
         cBrancher->createOffReaction(r, _ps);
-        cBrancher->getOffReaction()->setBareRate(SysParams::BUBBareRate[branchType]);
     }
 };
 
@@ -523,17 +406,16 @@ struct LinkerBindingCallback {
     
     float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
-    
+
     LinkerBindingCallback(LinkerBindingManager* lManager,
                           float onRate, float offRate, SubSystem* ps)
     
-    : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
+        : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
         
         //get a random binding
         short linkerType = _lManager->getBoundInt();
-        float f;
         
         //choose a random binding site from manager
         auto site = _lManager->chooseBindingSites();
@@ -553,20 +435,12 @@ struct LinkerBindingCallback {
         
         //create off reaction
         auto cLinker = l->getCLinker();
-        //aravind June 24, 2016.
-        if(SysParams::RUNSTATE==false)
-            f=0.0;
-        else
-            f=_offRate;
-        //@
-        cLinker->setRates(_onRate, f);
+        
+        cLinker->setRates(_onRate, _offRate);
         cLinker->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
-        //aravind june 24, 2016
-        cLinker->getOffReaction()->setBareRate(SysParams::LUBBareRate[linkerType]);
-        //@
         l->updateReactionRates();
 #endif
     }
@@ -578,24 +452,9 @@ struct MotorUnbindingCallback {
     SubSystem* _ps;
     MotorGhost* _motor;
     
-    MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) :
-    
-    _ps(ps), _motor(m) {}
+    MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) : _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
-        
-        //find the motor binding manager associated with this species
-        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
-        
-        Compartment* c = static_cast<Compartment*>(sd->getParent());
-        auto mManager = c->getMotorBindingManager(_motor->getType());
-        
-        //DEPRECATED AS OF 9/8/16
-//        
-//        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
-//        
-//        //re-add unbound ID to motor binding manager
-//        mManager->addUnboundID(_motor->getID());
         
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
@@ -623,7 +482,7 @@ struct MotorBindingCallback {
         
         //get a random binding
         short motorType = _mManager->getBoundInt();
-        float f;
+        
         //choose a random binding site from manager
         auto site = _mManager->chooseBindingSites();
         
@@ -638,31 +497,17 @@ struct MotorBindingCallback {
         double pos1 = double(get<1>(site[0])) / cylinderSize;
         double pos2 = double(get<1>(site[1])) / cylinderSize;
         
-        MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2, _onRate, _offRate);
-        
-        //attach an ID to the motor based on the transfer ID
-        //DEPRECATED AS OF 9/22/16
-//        m->setID(MotorGhost::_motorGhosts.getTransferID());
-        
+        MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2);
+
         //create off reaction
         auto cMotorGhost = m->getCMotorGhost();
-        //aravind June 24, 2016.
-        if(SysParams::RUNSTATE==false){
-        f=0.0;
-        }
-        else
-            f=_offRate;
-        //@
-        cMotorGhost->setRates(_onRate, f);
+        
+        cMotorGhost->setRates(_onRate, _offRate);
         cMotorGhost->createOffReaction(r, _ps);
         
 #ifdef DYNAMICRATES
         //reset the associated walking reactions
         m->updateReactionRates();
-        //aravind June 24,2016.
-        cMotorGhost->getOffReaction()->setBareRate(SysParams::MUBBareRate[motorType]);
-        //@
-
 #endif
         
     }
@@ -682,14 +527,14 @@ struct MotorWalkingCallback {
     SubSystem* _ps;      ///< Ptr to subsystem
     
     MotorWalkingCallback(Cylinder* c,
-                         short oldPosition, short newPosition,
-                         short motorType, short boundType, SubSystem* ps)
+                        short oldPosition, short newPosition,
+                        short motorType, short boundType, SubSystem* ps)
     
-    :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
-    _motorType(motorType), _boundType(boundType), _ps(ps) {}
+        :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
+         _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        
+
         //get species
         CCylinder* cc = _c->getCCylinder();
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
@@ -709,7 +554,6 @@ struct MotorWalkingCallback {
 #ifdef DYNAMICRATES
         //reset the associated reactions
         m->updateReactionRates();
-
 #endif
     }
 };
@@ -732,8 +576,8 @@ struct MotorMovingCylinderCallback {
                                 short oldPosition, short newPosition,
                                 short motorType, short boundType, SubSystem* ps)
     
-    :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
-    _motorType(motorType), _boundType(boundType), _ps(ps) {}
+        :_oldC(oldC), _newC(newC), _oldPosition(oldPosition), _newPosition(newPosition),
+         _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
         
@@ -741,6 +585,7 @@ struct MotorMovingCylinderCallback {
         CCylinder* oldCC = _oldC->getCCylinder();
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
+        
         short filType = _oldC->getType();
         
         //get motor
@@ -768,7 +613,7 @@ struct FilamentCreationCallback {
     short _minusEnd;
     short _filament;
     //@}
-    
+
     ///Filament type to create
     short _filType;
     
@@ -778,11 +623,11 @@ struct FilamentCreationCallback {
     FilamentCreationCallback(short plusEnd, short minusEnd, short filament,
                              short filType, SubSystem* ps, Compartment* c = nullptr)
     
-    : _plusEnd(plusEnd), _minusEnd(minusEnd), _filament(filament),
-    _filType(filType), _compartment(c), _ps(ps) {}
+        : _plusEnd(plusEnd), _minusEnd(minusEnd), _filament(filament),
+          _filType(filType), _compartment(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        
+
         Compartment* c;
         
         //no compartment was set, pick a random one
@@ -803,7 +648,7 @@ struct FilamentCreationCallback {
             normalize(direction);
             
             auto npp = nextPointProjection(position,
-                                           SysParams::Geometry().cylinderSize[_filType], direction);
+            SysParams::Geometry().cylinderSize[_filType], direction);
             
             //check if within boundary
             if(_ps->getBoundary()->within(position) &&

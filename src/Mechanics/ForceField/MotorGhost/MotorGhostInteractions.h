@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -27,7 +27,7 @@ friend class MotorGhostFF;
     
 protected:
     /// The motor ghost in the case of an error
-    MotorGhost* _motorCulprit = nullptr;
+    MotorGhost* _motorCulprit;
     
 public:
     /// Compute the energy of this interaction

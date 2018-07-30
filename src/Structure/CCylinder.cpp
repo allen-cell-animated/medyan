@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -23,6 +23,7 @@ ChemSim* CCylinder::_chemSim = 0;
 /// Default constructor, sets compartment and cylinder
 CCylinder::CCylinder(Compartment* C, Cylinder* c)
     : _compartment(C), _pCylinder(c) {
+    
     //set size based on parent cylinder
     _size = SysParams::Geometry().cylinderSize[c->getType()] /
             SysParams::Geometry().monomerSize[c->getType()];
@@ -217,73 +218,19 @@ CCylinder::~CCylinder() {
     }
 }
 
-void CCylinder::passivatefilcrossreactions(){
+void CCylinder::passivatePolyReactions() {
     
-    for (auto it2=_crossCylinderReactions.begin(); it2!=_crossCylinderReactions.end(); ++it2){
-        auto mySet = it2->second;
-        for (auto it: mySet) {
-            if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
-               ||it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
-               ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
-               ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
-               ||it->getReactionType() ==ReactionType::SEVERING
-               ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
-               ||it->getReactionType() ==ReactionType::AGING)
-            {it->passivateReaction();}
+    for(auto r : getAllReactions()) {
         
-        }}
-//    auto tempReactions = _crossCylinderReactions[this];
-//    if(this->getCylinder()->isPlusEnd()){
-//        for(auto &it : tempReactions){
-//            std::cout<<it->getReactionType()<<endl;
-//        }
-//    }
-//    for(auto &it : tempReactions){
-//        if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
-//           ||it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
-//           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
-//           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
-//           ||it->getReactionType() ==ReactionType::SEVERING
-//           ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
-//           ||it->getReactionType() ==ReactionType::AGING)
-//        {it->passivateReaction();}
-//    }
-}
-
-void CCylinder::activatefilcrossreactions(){    
-    for (auto it2=_crossCylinderReactions.begin(); it2!=_crossCylinderReactions.end(); ++it2){
-        auto mySet = it2->second;
-        for (auto it: mySet) {
-            if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
-               ||it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
-               ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
-               ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
-               ||it->getReactionType() ==ReactionType::SEVERING
-               ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
-               ||it->getReactionType() ==ReactionType::AGING)
-            {it->activateReaction();}
+        if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND   ||
+           r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND  ||
+           r->getReactionType() == ReactionType::DEPOLYMERIZATIONPLUSEND ||
+           r->getReactionType() == ReactionType::DEPOLYMERIZATIONMINUSEND) {
             
-        }}}
-void CCylinder::passivatefilreactions(){
-    for(auto &it: _internalReactions){
-        if(it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
-           ||it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
-           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
-           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
-           ||it->getReactionType() ==ReactionType::SEVERING
-           ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
-           ||it->getReactionType() ==ReactionType::AGING)
-        {it->passivateReaction();}}}
-void CCylinder::activatefilreactions(){
-    for(auto &it: _internalReactions){
-        if(it->getReactionType() ==ReactionType::POLYMERIZATIONPLUSEND
-           ||it->getReactionType() ==ReactionType::POLYMERIZATIONMINUSEND
-           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONMINUSEND
-           ||it->getReactionType() ==ReactionType::DEPOLYMERIZATIONPLUSEND
-           ||it->getReactionType() ==ReactionType::SEVERING
-           ||it->getReactionType() ==ReactionType::FILAMENTDESTRUCTION
-           ||it->getReactionType() ==ReactionType::AGING)
-        {it->activateReaction();}}}
+            r->passivateReaction();
+        }
+    }
+}
 
 vector<ReactionBase*> CCylinder::getAllReactions() {
     

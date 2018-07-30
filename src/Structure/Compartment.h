@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -150,8 +150,7 @@ public:
     /// Transfer all species copy numbers from this compartment to neighboring
     /// active compartments. If no neighboring active compartments are present,
     /// throw an error.
-    virtual void transferSpecies(int i);
-    virtual void shareSpecies(int i);
+    virtual void transferSpecies();
     
     
     /// Removes all reactions from this compartment, diffusing and internal
@@ -200,20 +199,20 @@ public:
     }
     
     /// This is a species container
-    virtual bool isSpeciesContainer() const override {return true;}
+    virtual bool isSpeciesContainer() const {return true;}
     /// This is a reaction container
-    virtual bool isReactionsContainer() const override {return true;}
+    virtual bool isReactionsContainer() const {return true;}
     /// Returns compartment name
-    virtual string getFullName() const override {return "Compartment";};
+    virtual string getFullName() const {return "Compartment";};
     /// Returns the number of species in this compartment
-    size_t numberOfSpecies() const override {return _species.species().size();}
+    size_t numberOfSpecies() const {return _species.species().size();}
     /// Returns the number of internal reactions in this compartment
     size_t numberOfInternalReactions() const {
         return _internal_reactions.reactions().size();
     }
     /// Returns the total number of reactions in this compartment, diffusing and
     /// internal
-    size_t numberOfReactions() const override {
+    size_t numberOfReactions() const {
         return _internal_reactions.reactions().size() +
                _diffusion_reactions.reactions().size();
     }
@@ -450,22 +449,6 @@ public:
         return _bindingManagers;
     }
     
-    
-    /// Get a specific motor binding manager from this compartment
-    MotorBindingManager* getMotorBindingManager(int motorType) {
-        
-        MotorBindingManager* mp;
-        
-        for(auto it = _bindingManagers.begin(); it != _bindingManagers.end(); it++) {
-            
-            //find the correct manager and type
-            if((mp = dynamic_cast<MotorBindingManager*>((*it).get())) && (*it)->getBoundInt() == motorType)
-                return mp;
-        }
-        
-        return nullptr;
-    }
-    
     ///Add a boundary element to this compartment
     void addBoundaryElement(BoundaryElement* be) {_boundaryElements.insert(be);}
     
@@ -629,7 +612,7 @@ public:
     }
     
     /// Print properties of this compartment
-    virtual void printSelf() override {
+    virtual void printSelf() {
         cout << this->getFullName() << "\n"
         << "Number of neighbors: " << numberOfNeighbours() << endl;
         printSpecies();
@@ -637,8 +620,5 @@ public:
         printReactions();
     }
 
-    //GetType implementation just returns zero (no Compartment types yet)
-    virtual int getType() override {return 0;}
-    
 };
 #endif

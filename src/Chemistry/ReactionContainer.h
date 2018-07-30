@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -97,10 +97,6 @@ public:
             _reactions.erase(child_iter);
         }
     }
-   //aravind June 24, 2016.
-    virtual void updatePropensityComprtment()
-    {        for(auto &it: _reactions)
-        it->updatePropensity();    }
     
     /// Remove all reactions that contain a certain species from this container
     virtual void removeReactions (Species* s)

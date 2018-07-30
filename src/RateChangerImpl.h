@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -27,18 +27,11 @@
 /// Elastic Brownian Ratchet Model (by Peskin et al, Biophys J 1993):
 ///
 ///                 k = k_0 * exp(-f * x / kT)
-///
-/// @note - We note that we have implemented a load force ceiling of 100pN
-///         such that recalculated reaction rates are not excessively small.
-///         This would produce problems in the chemical simulation algorithm.
-///         A 100pN load force ensures that the polymerization rate produced
-///         will be small enough such that polymerization events are VERY rare (factor = 1E-29).
 
 class BrownianRatchet : public FilamentRateChanger {
     
 private:
     double _x; ///< The characteristic length for this function
-    const double _max_f = 100; ///< 100pN ceiling
     
 public:
     BrownianRatchet(double charLength) : _x(charLength) {}
@@ -70,9 +63,9 @@ public:
               double amplitude1, double amplitude2,
               double charLength1, double charLength2)
     
-    : LinkerRateChanger(linkerType),
-    _a1(amplitude1),  _a2(amplitude2),
-    _x1(charLength1), _x2(charLength2) {}
+        : LinkerRateChanger(linkerType),
+          _a1(amplitude1),  _a2(amplitude2),
+          _x1(charLength1), _x2(charLength2) {}
     
     virtual float changeRate(float bareRate, double force);
 };
@@ -95,7 +88,7 @@ private:
 public:
     Slip(short linkerType, double charLength)
     
-    : LinkerRateChanger(linkerType), _x(charLength) {}
+        : LinkerRateChanger(linkerType), _x(charLength) {}
     
     virtual float changeRate(float bareRate, double force);
 };
@@ -136,10 +129,10 @@ private:
 public:
     LowDutyCatch(short motorType, double charForce)
     
-    : MotorRateChanger(motorType), _F0(charForce) {}
+        : MotorRateChanger(motorType), _F0(charForce) {}
     
     virtual float changeRate(float onRate, float offRate,
-                             double numHeads, double force);
+                             int numHeads, double force);
 };
 
 ///A low duty catch-slip bond implementation of the MotorRateChanger
@@ -186,13 +179,13 @@ private:
     
 public:
     LowDutyCatchSlip(short motorType, double charCatchForce,
-                     double charSlipForce)
+                                         double charSlipForce)
     
     : MotorRateChanger(motorType),
-    _FCatch(charCatchForce), _FSlip(charSlipForce) {}
+      _FCatch(charCatchForce), _FSlip(charSlipForce) {}
     
     virtual float changeRate(float onRate, float offRate,
-                             double numHeads, double force);
+                             int numHeads, double force);
 };
 
 
@@ -243,19 +236,19 @@ private:
 public:
     LowDutyStall(short motorType, short filamentType, double charForce)
     
-    : MotorRateChanger(motorType), _F0(charForce) {
-        
+        : MotorRateChanger(motorType), _F0(charForce) {
+    
         //calculate rate based on step fraction
         double d_step = SysParams::Chemistry().motorStepSize[_motorType];
         
         double d_total = (double)SysParams::Geometry().cylinderSize[filamentType] /
-        SysParams::Chemistry().numBindingSites[filamentType];
+                                 SysParams::Chemistry().numBindingSites[filamentType];
         
         _stepFrac = d_step / d_total;
     }
     
     virtual float changeRate(float onRate, float offRate,
-                             double numHeads, double force);
+                             int numHeads, double force);
 };
 
 

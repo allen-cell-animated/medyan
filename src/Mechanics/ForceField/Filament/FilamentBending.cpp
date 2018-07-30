@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -48,7 +48,7 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
             else {
                 for (auto it = f->getCylinderVector().begin()+1;
                           it != f->getCylinderVector().end(); it++){
-                        
+                    
                     auto it2 = it - 1;
                     Bead* b1 = (*it2)->getFirstBead();
                     Bead* b2 = (*it)->getFirstBead();

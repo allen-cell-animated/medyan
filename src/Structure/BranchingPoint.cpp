@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -53,7 +53,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
     }
         
     int pos = int(position * SysParams::Geometry().cylinderNumMon[c1->getType()]);
-          //std::cout<<c1->getID()<<" "<<c2->getID()<<" "<<pos<<endl;
+    
 #ifdef CHEMISTRY
     _cBranchingPoint = unique_ptr<CBranchingPoint>(
     new CBranchingPoint(branchType, _compartment, c1->getCCylinder(), c2->getCCylinder(), pos));

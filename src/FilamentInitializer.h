@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -15,8 +15,8 @@
 #define MEDYAN_FilamentInitializer_h
 
 #include "common.h"
-typedef vector<tuple<short, vector<double>, vector<double>>> filamentData;
-typedef  tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  FilamentData;
+
+typedef vector<tuple<short, vector<double>, vector<double>>> FilamentData;
 
 ///FORWARD DECLARATIONS
 class Boundary;
@@ -63,23 +63,6 @@ public:
     FilamentData createFilaments(Boundary* b, int numFilaments,
                                  int filamentType,
                                  int lenFilaments);
-};
-
-/// An implementation of FilamentInitialzer that creates a random MTOC configuration
-class MTOCFilamentDist : public FilamentInitializer {
-    
-private:
-    vector<double> _coordMTOC; ///< Coordinates of the MTOC to make filaments around
-    double _radius;            ///< Radius of MTOC
-    
-public:
-    ///Constructor sets parameters of MTOC
-    MTOCFilamentDist(vector<double> coord, double radius)
-        : _coordMTOC(coord), _radius(radius) {}
-    
-    FilamentData createFilaments(Boundary* b, int numFilaments,
-                                              int filamentType,
-                                              int lenFilaments);
 };
 
 

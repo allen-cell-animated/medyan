@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -59,15 +59,6 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
           
     int pos1 = int(position1 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
     int pos2 = int(position2 * SysParams::Geometry().cylinderNumMon[c1->getType()]);
-          
-          auto coord1 = midPointCoordinate(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate, _position1);
-          auto coord2 = midPointCoordinate(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate, _position2);
-//          std::cout<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "<<_position2<<endl;
-//          std::cout<<_c1->isMinusEnd()<<" "<<_c1->isPlusEnd()<<" "<<_c2->isMinusEnd()<<" "<<_c2->isPlusEnd()<<endl;
-//          std::cout<<twoPointDistance(_c1->getFirstBead()->coordinate, _c1->getSecondBead()->coordinate)<<" "<<twoPointDistance(_c2->getFirstBead()->coordinate, _c2->getSecondBead()->coordinate)<<endl;
-//          std::cout<<_c1->getFirstBead()->coordinate[0]<<" "<<_c1->getFirstBead()->coordinate[1]<<" "<<_c1->getFirstBead()->coordinate[2]<<endl;
-//          std::cout<<_c2->getFirstBead()->coordinate[0]<<" "<<_c2->getFirstBead()->coordinate[1]<<" "<<_c2->getFirstBead()->coordinate[2]<<endl;
-//          std::cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
         
 #ifdef CHEMISTRY
     _cLinker = unique_ptr<CLinker>(
@@ -88,16 +79,8 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #endif
 }
 
-///@note - tracks lifetime data here
-Linker::~Linker() noexcept {
-
-//    double lifetime = tau() - _birthTime;
-//    
-//    if(_lifetimes->getMax() > lifetime &&
-//       _lifetimes->getMin() < lifetime)
-//        _lifetimes->addValue(lifetime);
-
-}
+///@note - nothing for now, but could record data here
+Linker::~Linker() noexcept {}
 
 
 void Linker::updatePosition() {
@@ -166,8 +149,7 @@ void Linker::updateReactionRates() {
 
     //change the rate
     float newRate = _unbindingChangers[_linkerType]->changeRate(offRxn->getBareRate(), force);
-    if(SysParams::RUNSTATE==false)
-    {newRate=0.0;}
+    
     offRxn->setRate(newRate);
     offRxn->updatePropensity();
 }

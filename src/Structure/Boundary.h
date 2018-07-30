@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -76,10 +76,6 @@ public:
     ///Move a given part of a boundary a given distance
     ///@note a negative distance denotes movement towards the center of the grid.
     virtual void move(double dist) = 0;
-    
-    //Give a normal to the plane (pointing inward) at a given point
-    virtual vector<double> normal(vector<double>& coordinates) = 0;
-    
 };
 
 

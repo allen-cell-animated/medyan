@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -54,8 +54,6 @@ class SubSystem;
  *  @note - The geometry controller currently only supports three-dimensional grids.
  */
 class GController {
-
-friend class Output;
     
 private:
     static short _nDim; ///< Number of dimensions in the system
@@ -88,9 +86,6 @@ public:
     /// Set compartments in compartment grid as active based on boundary.
     /// Used at system initialization.
     void setActiveCompartments();
-    
-    /// Get the SubSystem ptr
-    const SubSystem* getSubSystem() const {return _subSystem;}
     
     //@{
     /// Get a compartment based on coordinates or indices

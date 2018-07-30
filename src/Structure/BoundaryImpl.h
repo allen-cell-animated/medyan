@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -37,10 +37,6 @@ public:
     virtual double distance(const vector<double>& coordinates);
     
     virtual void move(double dist);
-    
-    ///Returns the normal inward at this coordinate
-    //rule - takes the closest wall's normal inward.
-    virtual vector<double> normal(vector<double>& coordinates);
 };
 
 /// A spherical Boundary implementation.
@@ -60,9 +56,6 @@ public:
     
     ///@note - not yet implemented.
     virtual void move(double dist) {}
-    
-    ///Returns the normal inward at this coordinate
-    virtual vector<double> normal(vector<double>& coordinate);
 };
 
 /// A capsule Boundary implementation.
@@ -84,10 +77,6 @@ public:
     
     ///@note - Not yet implemented.
     virtual void move(double dist) {}
-    
-    ///Returns the normal inward at this coordinate
-    //@note - Not yet implemented.
-    virtual vector<double> normal(vector<double>& coordinate) {return vector<double>{0,0,0};}
 };
 
 

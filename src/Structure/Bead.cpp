@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -23,7 +23,6 @@
 using namespace mathfunc;
 
 Database<Bead*> Bead::_beads;
-Database<Bead*> Bead::_pinnedBeads;
 
 Bead::Bead (vector<double> v, Composite* parent, int position)
 
@@ -34,9 +33,6 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
     
     parent->addChild(unique_ptr<Component>(this));
           
-    loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
-    loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
-    
     //Find compartment
     try {_compartment = GController::getCompartment(v);}
     catch (exception& e) {
@@ -50,7 +46,6 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
         
         exit(EXIT_FAILURE);
     }
-          
 }
 
 Bead::Bead(Composite* parent, int position)
@@ -95,27 +90,5 @@ void Bead::printSelf() {
     cout << "Birth time = " << _birthTime << endl;
     
     cout << endl;
-}
-
-double Bead::getLoadForcesP() {
-    
-    if (lfip < 0)
-        return loadForcesP[0];
-        
-    if (lfip >= SysParams::Geometry().cylinderNumMon[getType()])
-        return loadForcesP[SysParams::Geometry().cylinderNumMon[getType()] - 1];
-    
-    else return loadForcesP[lfip];
-}
-
-double Bead::getLoadForcesM() {
-    
-    if (lfim < 0)
-        return loadForcesM[0];
-    
-    if (lfim >= SysParams::Geometry().cylinderNumMon[getType()])
-        return loadForcesM[SysParams::Geometry().cylinderNumMon[getType()] - 1];
-    
-    else return loadForcesM[lfim];
 }
 

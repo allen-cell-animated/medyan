@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -18,13 +18,10 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
-#include "MotorGhost.h"
-
 #include "SubSystem.h"
 #include "Boundary.h"
 #include "CompartmentGrid.h"
 
-#include "ChemCallbacks.h"
 #include "MathFunctions.h"
 #include "GController.h"
 #include "SysParams.h"
@@ -233,7 +230,7 @@ LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
 
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
-
+    
     if(cc->getType() != _filamentType) return;
     
     //if we change other managers copy number
@@ -275,19 +272,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     double dist = twoPointDistance(m1, m2);
                     
                     if(dist > _rMax || dist < _rMin) continue;
-
-		    //auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Yossi
-                    //auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Yossi
-		    auto bc3 = cc->getCylinder()->getMotherCylinder(); //Carlos
-		    auto bc4 = ccn->getCylinder()->getMotherCylinder(); //Carlos
-
-		    if(bc3 || bc4) {
-		 
- 		    continue;} //Yossi
-		                   
-
                     
- 
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
                     
@@ -453,15 +438,6 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             double dist = twoPointDistance(m1,m2);
                             
                             if(dist > _rMax || dist < _rMin) continue;
-			    
-			    //auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Carlos
-		            //auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Carlos
-			    auto bc3 = cc->getCylinder()->getMotherCylinder(); //Carlos
-		            auto bc4 = ccn->getCylinder()->getMotherCylinder(); //Carlos
-
-		    	    if(bc3 || bc4) {
- 		            continue;} //Carlos
-		                   
                             
                             auto t1 = tuple<CCylinder*, short>(cc, *it1);
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);
@@ -536,21 +512,6 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
     string name = rs[ML_RXN_INDEX]->getSpecies().getName();
     
     _bindingSpecies = _compartment->findSpeciesByName(name);
-         
-    //initialize ID's based on number of species in compartment
-    int numSpecies = rs[ML_RXN_INDEX + 1]->getSpecies().getN();
-
-    //DEPRECATED AS OF 9/22/16
-//    for(int i = 0; i < numSpecies; i++)
-//        _unboundIDs.push_back(MotorGhost::_motorGhosts.getID());
-         
-         
-    //attach an rspecies callback to this species
-    Species* sd = &(rs[ML_RXN_INDEX + 1]->getSpecies());
-         
-    UpdateMotorIDCallback mcallback(boundInt);
-    ConnectionBlock rcb(sd->connect(mcallback,false));
-         
 }
 
 

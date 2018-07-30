@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -23,7 +23,6 @@
 #include <ios>
 
 #include "common.h"
-#include "utility.h"
 
 /// Struct to hold output types;
 struct OutputTypes {
@@ -136,21 +135,6 @@ struct ChemistryData {
     vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions;
     //@}
     
-    //@{
-    /// CAMKII reactions
-    /*!
-     *  The CAMKII reactions are held using a vector, which contains a tupple with  
-     *  the string of reactants, string of products. The first binding reaction contains
-     *  an on rate and an off rate. Succesive reactions contain a binding range and an off rate.
-     */
-    /// Branching reactions copy
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactionscopy;
-    /// CAMKII reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double>>> camkiiReactions1;
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double>>> camkiiReactions2;
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double>>> camkiiReactions3;
-    //@}
-    
     /// MotorGhost walking reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions;
     
@@ -196,11 +180,6 @@ struct ChemistryData {
       linkerReactions(MAX_FILAMENT_TYPES),
       motorReactions(MAX_FILAMENT_TYPES),
       motorWalkingReactions(MAX_FILAMENT_TYPES),
-      
-      branchingReactionscopy(MAX_FILAMENT_TYPES),
-      camkiiReactions1(MAX_FILAMENT_TYPES),
-      camkiiReactions2(MAX_FILAMENT_TYPES),
-      camkiiReactions3(MAX_FILAMENT_TYPES),
     
       speciesFilament(MAX_FILAMENT_TYPES),
       speciesPlusEnd(MAX_FILAMENT_TYPES),
@@ -261,12 +240,6 @@ struct MechanicsFFType {
     /// BoundaryFF Type
     string BoundaryFFType = "";
     
-    /// Bubble Type
-    string BubbleFFType = "";
-    
-    /// MTOC Type
-    string MTOCFFType = "";
-    
 };
 
 ///Struct to hold dynamic rate changer type
@@ -282,22 +255,6 @@ struct DynamicRateType {
     ///Motor rate changing
     vector<string> dMUnbindingType = {};
     vector<string> dMWalkingType = {};
-    //@}
-};
-
-
-/// Struct to hold any special setup types
-struct SpecialSetupType {
-    
-    ///MTOC configuration
-    bool mtoc = false;
-    
-    //@{
-    ///MTOC Parameters
-    short mtocFilamentType = 0;
-    int mtocNumFilaments   = 0;
-    int mtocFilamentLength = 0;
-    short mtocBubbleType   = 0;
     //@}
 };
 
@@ -318,11 +275,6 @@ struct FilamentSetup {
     int filamentLength = 1;
     ///Filament type to create
     short filamentType = 0;
-    ///Filament projection type.
-    string projectionType="STRAIGHT";
-    
-    ///For resetting pin positions in restart phase
-    string pinRestartFile = "";
 };
 
 /// Struct to hold Bubble setup information
@@ -358,6 +310,7 @@ public:
     ~Parser() {_inputFile.close();}
 };
 
+
 /// To parse a system input file, initialized by the Controller.
 class SystemParser : public Parser{
 public:
@@ -385,14 +338,10 @@ public:
     MechanicsFFType readMechanicsFFType();
     DynamicRateType readDynamicRateType();
     BoundaryType readBoundaryType();
-    SpecialSetupType readSpecialSetupType();
     //@}
     
     /// Read Filament information
     FilamentSetup readFilamentSetup();
-    
-    /// Read Bubble information
-    BubbleSetup readBubbleSetup();
     
     /// Chemistry information
     ChemistrySetup readChemistrySetup();
@@ -408,23 +357,8 @@ public:
     /// Reads filament input file. Returns a vector of tuples containing
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> ,
-            vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
+    vector<tuple<short, vector<double>, vector<double>>> readFilaments();
 };
-
-/// Used to parse initial Bubble information, initialized by the Controller.
-class BubbleParser : public Parser {
-    
-public:
-    BubbleParser(string inputFileName) : Parser(inputFileName) {}
-    ~BubbleParser() {}
-    
-    /// Reads bubble input file. Returns a vector of tuples containing
-    /// bubble type and position.
-    /// @note - Does not check for coordinate correctness.
-    vector<tuple<short, vector<double>>> readBubbles();
-};
-
 
 /// Used to parse all chemical information, initialized by the Controller.
 class ChemistryParser: public Parser {
@@ -439,19 +373,6 @@ public:
     ///         sanity check here is that there are no duplicate species names.
     ChemistryData readChemistryInput();
 };
-
-
-/// Used to parse pin positions if needed upon restart
-class PinRestartParser: public Parser {
-    
-public:
-    PinRestartParser(string inputFileName) : Parser(inputFileName) {}
-    ~PinRestartParser() {}
-    
-    /// Reads pin positions from file, and sets filamen ts
-    void resetPins();
-};
-
 
 
 #endif

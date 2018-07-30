@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -72,8 +72,7 @@ private:
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
-
-    Cylinder* _motherCylinder = nullptr; ///< ptr to a mother cylinder
+    
     static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
     
     ///For dynamic polymerization rate
@@ -107,7 +106,7 @@ public:
     void setCCylinder(CCylinder* c) {_cCylinder = unique_ptr<CCylinder>(c);}
     
     /// Get cylinder type
-    virtual int getType();
+    short getType();
                                        
     //@{
     /// Get beads
@@ -128,13 +127,6 @@ public:
     /// Branching cylinder management
     Cylinder* getBranchingCylinder() {return _branchingCylinder;}
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
-    //@}
-
-
-    //@{
-    /// Mother branching cylinder management
-    Cylinder* getMotherCylinder() {return _motherCylinder;}
-    void setMotherCylinder(Cylinder* c) {_motherCylinder = c;}
     //@}
     
     /// Get ID

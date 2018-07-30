@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -16,12 +16,6 @@
 #include "BoundaryCylinderRepulsion.h"
 #include "BoundaryCylinderRepulsionExp.h"
 
-#include "BoundaryBubbleRepulsion.h"
-#include "BoundaryBubbleRepulsionExp.h"
-
-#include "BoundaryCylinderAttachment.h"
-#include "BoundaryCylinderAttachmentHarmonic.h"
-
 #include "BoundaryElement.h"
 #include "Bead.h"
 #include "Composite.h"
@@ -31,18 +25,11 @@ BoundaryFF::BoundaryFF (string type) {
     if (type == "REPULSIONEXP") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
     else if(type == "") {}
     else {
         cout << "Boundary FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
-    }
-    //if pinning to boundaries
-    if(SysParams::Mechanics().pinBoundaryFilaments) {
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }
 }
 
@@ -53,13 +40,10 @@ void BoundaryFF::whoIsCulprit() {
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
     cout << "Printing the culprit boundary element..." << endl;
-    
-    if(_culpritInteraction->_boundaryElementCulprit != nullptr)
-        _culpritInteraction->_boundaryElementCulprit->printSelf();
+    _culpritInteraction->_boundaryElementCulprit->printSelf();
     
     cout << "Printing the other culprit structure..." << endl;
-    if(_culpritInteraction->_otherCulprit != nullptr)
-        _culpritInteraction->_otherCulprit->printSelf();
+    _culpritInteraction->_otherCulprit->printSelf();
     
     cout << endl;
 }
@@ -95,13 +79,6 @@ void BoundaryFF::computeForcesAux() {
     
     for (auto &interaction : _boundaryInteractionVector)
         interaction->computeForcesAux();
-}
-
-
-void BoundaryFF::computeLoadForces() {
-    
-    for (auto &interaction : _boundaryInteractionVector)
-        interaction->computeLoadForces();
 }
 
 vector<NeighborList*> BoundaryFF::getNeighborLists() {

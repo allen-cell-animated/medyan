@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -107,7 +107,7 @@ template <unsigned short M, unsigned short N>
             return vector<ReactionBase*>(rxns.begin(),rxns.end());
         }
         
-        virtual void updatePropensityImpl() override;
+        virtual void updatePropensityImpl();
         
     protected:
         /// An implementation method used by the constructor.
@@ -241,7 +241,7 @@ template <unsigned short M, unsigned short N>
         virtual Reaction<M,N>* cloneImpl(
             const SpeciesPtrContainerVector &spcv) override;
         
-        virtual bool updateDependencies() override {return true;}
+        virtual bool updateDependencies() {return true;}
     };
 
 
@@ -295,7 +295,7 @@ public:
     
         //if averaging, update dependency marker
         if(_averaging) {
-            
+
             bool newAvgR = ((RSpeciesAvg*)_rspecies[0])->newAverage();
             bool newAvgP = ((RSpeciesAvg*)_rspecies[1])->newAverage();
         
@@ -304,9 +304,7 @@ public:
     }
 
     ///This implementation returns the kept boolean value
-    virtual bool updateDependencies() override {return _dependencies;}
-
-    virtual void updatePropensityImpl() override;
+    virtual bool updateDependencies() {return _dependencies;}
 };
 
 #endif

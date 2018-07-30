@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -84,10 +84,6 @@ bool CController::run(double time) {
     return _chemSim->run(time);
 }
 
-//aravind June 29,2016.
-void CController::restart(){
- _chemSim->initialize();
-}
 bool CController::runSteps(int steps) {
     
     //update copy numbers

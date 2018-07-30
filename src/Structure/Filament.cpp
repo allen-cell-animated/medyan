@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -86,9 +86,6 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
     //arc projection
     else if(projectionType == "ARC")
         tmpBeadsCoord = arcFilamentProjection(position, numBeads);
-        //predefined projection aravind sep 9, 15
-    else if(projectionType == "PREDEFINED")
-        tmpBeadsCoord = predefinedFilamentProjection(position, numBeads);
    
     //create beads
     auto direction = twoPointDirection(tmpBeadsCoord[0], tmpBeadsCoord[1]);
@@ -136,16 +133,14 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
     Bead* b2 = cBack->getSecondBead();
     
     //create a new bead
-//    auto direction = twoPointDirection(b2->coordinate, coordinates);
-//    auto newBeadCoords = nextPointProjection(b2->coordinate,
-//    twoPointDistance(b2->coordinate, coordinates), direction);
-    auto newBeadCoords=coordinates;
+    auto direction = twoPointDirection(b2->coordinate, coordinates);
+    auto newBeadCoords = nextPointProjection(b2->coordinate,
+    SysParams::Geometry().cylinderSize[_filType], direction);
+    
     //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
-
     Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
                                                        lpf + 1, false, false, true);
-    
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
@@ -170,7 +165,6 @@ void Filament::extendMinusEnd(vector<double>& coordinates) {
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() - 1);
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
                                                   lpf - 1, false, false, true);
-    
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
 
@@ -198,14 +192,11 @@ void Filament::extendPlusEnd(short plusEnd) {
 #ifdef MECHANICS
     //transfer the same load force to new bead
     //(approximation until next minimization)
-    bNew->loadForcesP = b2->loadForcesP;
-    bNew->lfip = b2->lfip + 1;
+    bNew->loadForce = b2->loadForce;
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
                                                       lpf + 1, true);
-    
-    
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
@@ -245,8 +236,7 @@ void Filament::extendMinusEnd(short minusEnd) {
 #ifdef MECHANICS
     //transfer the same load force to new bead
     //(approximation until next minimization)
-    bNew->loadForcesM = b2->loadForcesM;
-    bNew->lfim = b2->lfim + 1;
+    bNew->loadForce = b2->loadForce;
 #endif
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
@@ -277,13 +267,6 @@ void Filament::retractPlusEnd() {
     Cylinder* retCylinder = _cylinderVector.back();
     _cylinderVector.pop_back();
     
-#ifdef MECHANICS
-    //transfer load forces
-    Bead* bd = _cylinderVector.back()->getSecondBead();
-    bd->loadForcesP = retCylinder->getSecondBead()->loadForcesP;
-    bd->lfip = retCylinder->getSecondBead()->lfip - 1;
-#endif
-    
     _subSystem->removeTrackable<Bead>(retCylinder->getSecondBead());
     removeChild(retCylinder->getSecondBead());
     
@@ -292,7 +275,6 @@ void Filament::retractPlusEnd() {
     
     _cylinderVector.back()->setPlusEnd(true);
 
-    
 #ifdef DYNAMICRATES
     //update rates of new front
     _cylinderVector.back()->updateReactionRates();
@@ -305,13 +287,6 @@ void Filament::retractMinusEnd() {
     
     Cylinder* retCylinder = _cylinderVector.front();
     _cylinderVector.pop_front();
-    
-#ifdef MECHANICS
-    //transfer load forces
-    Bead* bd = _cylinderVector.front()->getFirstBead();
-    bd->loadForcesM = retCylinder->getFirstBead()->loadForcesM;
-    bd->lfim = retCylinder->getFirstBead()->lfim - 1;
-#endif
     
     _subSystem->removeTrackable<Bead>(retCylinder->getFirstBead());
     removeChild(retCylinder->getFirstBead());
@@ -327,14 +302,6 @@ void Filament::retractMinusEnd() {
 #endif
     
     _deltaMinusEnd--;
-    
-    ///If filament has turned over, mark as such
-    if(_plusEndPosition == getMinusEndCylinder()->getFirstBead()->getPosition()) {
-        
-        //reset
-        _plusEndPosition = getPlusEndCylinder()->getSecondBead()->getPosition();
-        _turnoverTime = tau();
-    }
 }
 
 void Filament::polymerizePlusEnd() {
@@ -350,41 +317,11 @@ void Filament::polymerizePlusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
-    //increment load
-    b2->lfip++;
-    
     //increase eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
-//    bool check = false;
-//    auto ctr = 0;
-//    while((!check) && ctr < 40)
-//    {
-//        if(cBack->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
-//        ctr ++;
-//    }
-//    if(check)
-//        std::cout<<"PP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(ctr + 1)*2.7<<endl;
-//    else
-//        std::cout<<"PP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
-//    
-//        if(abs(newEqLen-(ctr + 1)*2.7)>0.1)
-//        {        Filament *bf = (Filament*)(cBack->getParent());
-//            std::cout<<bf->getID()<<endl;
-//            for(auto i=0;i<40;i++)
-//            std::cout<<cBack->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
-//            std::cout<<endl;
-//            exit(EXIT_FAILURE);
-//        }
-    
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
-    
-#ifdef DYNAMICRATES
-    //update rates of new back
-    _cylinderVector.back()->updateReactionRates();
-#endif
-    
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -400,40 +337,10 @@ void Filament::polymerizeMinusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
 
 #ifdef MECHANICS
-    
-    //increment load
-    b1->lfim++;
-    
     //increase eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
-//    bool check = false;
-//    auto ctr = 0;
-//    while(!check && ctr < 40)
-//    {
-//        if(cFront->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
-//        ctr ++;
-//    }
-//    if(check)
-//        std::cout<<"PM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(40 - ctr)*2.7<<endl;
-//    else
-//        std::cout<<"PM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
-//    
-//    if(abs(newEqLen-(40 - ctr)*2.7)>0.1){
-//        Filament *bf = (Filament*)(cFront->getParent());
-//        std::cout<<bf->getID()<<endl;
-//        for(auto i=0;i<40;i++)
-//            std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
-//        std::cout<<endl;
-//        exit(EXIT_FAILURE);
-//    }
-
-
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
-#endif
-    #ifdef DYNAMICRATES
-    //update rates of new back
-    _cylinderVector.front()->updateReactionRates();
 #endif
 }
 
@@ -450,41 +357,11 @@ void Filament::depolymerizePlusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
-    
-    //increment load
-    b2->lfip--;
-    
     //decrease eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
-//    bool check = false;
-//    auto ctr = 0;
-//    while((!check) && ctr < 40)
-//    {
-//        if(cBack->getCCylinder()->getCMonomer(ctr)->speciesPlusEnd(0)->getN()){check = true; break;}
-//        ctr ++;
-//    }
-//    if(check)
-//        std::cout<<"DP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(ctr + 1)*2.7<<endl;
-//    else
-//        std::cout<<"DP "<<cBack->getID()<<" "<<cBack->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
-    
-//    if(abs(newEqLen-(ctr + 1)*2.7)>0.1){
-//        Filament *bf = (Filament*)(cBack->getParent());
-//        std::cout<<bf->getID()<<endl;
-//        for(auto i=0;i<40;i++)
-//            std::cout<<cBack->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
-//    std::cout<<endl;
-//    exit(EXIT_FAILURE);
-//}
 #endif
-#ifdef DYNAMICRATES
-    //update rates of new back
-    _cylinderVector.front()->updateReactionRates();
-#endif
-    
-    
 }
 
 void Filament::depolymerizeMinusEnd() {
@@ -500,42 +377,10 @@ void Filament::depolymerizeMinusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     
 #ifdef MECHANICS
-    
-    b1->lfim--;
-    
     //decrease eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
-//    for(auto i=0;i<40;i++)
-//        std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
-//    std::cout<<endl;
-//    bool check = false;
-//    auto ctr = 0;
-//    while(!check && ctr < 40)
-//    {
-//        if(cFront->getCCylinder()->getCMonomer(ctr)->speciesMinusEnd(0)->getN()){check = true; break;}
-//        ctr ++;
-//    }
-//    if(check)
-//        std::cout<<"DM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" "<<(40 - ctr)*2.7<<endl;
-//    else
-//        std::cout<<"DM "<<cFront->getID()<<" "<<cFront->getMCylinder()->getEqLength()<<" "<<newEqLen<<" OOPS"<<endl;
-//    
-//    if(abs(newEqLen-(40 - ctr)*2.7)>0.1){
-//        Filament *bf = (Filament*)(cFront->getParent());
-//        std::cout<<bf->getID()<<endl;
-//        for(auto i=0;i<40;i++)
-//            std::cout<<cFront->getCCylinder()->getCMonomer(i)->speciesMinusEnd(0)->getN()<<" ";
-//        std::cout<<endl;
-//        exit(EXIT_FAILURE);
-//    }
-
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
-#endif
-    
-#ifdef DYNAMICRATES
-    //update rates of new back
-    _cylinderVector.front()->updateReactionRates();
 #endif
 }
 
@@ -599,12 +444,7 @@ Filament* Filament::sever(int cylinderPosition) {
         
         newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
-        
-        //Add beads to new parent
-        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
-        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
     }
-    
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
     auto c2 = _cylinderVector.front();
@@ -628,11 +468,9 @@ Filament* Filament::sever(int cylinderPosition) {
     newB->coordinate[0] += -offsetCoord[0];
     newB->coordinate[1] += -offsetCoord[1];
     newB->coordinate[2] += -offsetCoord[2];
-
-    // add bead    
+    
     c1->setSecondBead(newB);
-    newFilament->addChild(unique_ptr<Component>(newB));
-
+    
     //set plus and minus ends
     c1->setPlusEnd(true);
     c2->setMinusEnd(true);
@@ -893,11 +731,8 @@ vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v
     matrix_mul(X,Y,Z,x,y,z,numBeads,coordinates);
     return coordinates;
 }
-// predefined projection
-vector<vector<double>> Filament::predefinedFilamentProjection(vector<vector<double>>& v, int numBeads) {
-    return v;
-}
-//@
+
+
 void Filament::printSelf() {
     
     cout << endl;

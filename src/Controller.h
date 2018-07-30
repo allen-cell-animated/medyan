@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -24,8 +24,6 @@
 
 //FORWARD DECLARATIONS
 class SubSystem;
-class Cylinder;
-class FilamentBindingManager;
 
 /// Used to initialize, manage, and run an entire simulation.
 
@@ -40,8 +38,6 @@ class FilamentBindingManager;
 class Controller {
 
 private:
-    string _inputFile; ///< System input file
-    
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
 
     MController* _mController;   ///< Chemical controller used
@@ -69,35 +65,17 @@ private:
     
     double _minimizationSteps;
     double _neighborListSteps;
-    ChemistryData _chemData;
-    ChemistryAlgorithm _cAlgorithm;
-    vector<tuple<short, vector<double>, vector<double>>> fil;
-    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
-    vector<Compartment*> activatecompartments;
-     multimap<int,Compartment*> fCompmap;
-     multimap<int,Compartment*> bCompmap;
     //@}
     
     ///INITIALIZATION HELPER FUNCTIONS
     
     /// Set up an initial configuration of a network
-    /// For now, only [Bubbles](@ref Bubble) and [Filaments](@ref Filament)
+    /// For now, only [Filaments](@ref Filament)
     /// can be initialized before the simulation begins. Any other elements
     /// should be initialized in this function.
     void setupInitialNetwork(SystemParser& p);
     
-    /// Setup any special structures needed
-    void setupSpecialStructures(SystemParser& p);
-    
     ///RUNTIME HELPER FUNCTIONS
-    
-    /// Move the boundary based on the timestep
-    void moveBoundary(double deltaTau);
-    ///Activate/deactivate compartments based on the longest filament (along Xaxis).
-    void activatedeactivateComp(double timecheck);
-    void ControlfrontEndCompobsolete();
-    void ControlbackEndCompobsolete();
-    void ControlfrontbackEndComp(double timecheck);
     /// Update the positions of all elements in the system
     void updatePositions();
     
@@ -112,10 +90,6 @@ private:
     /// Execute any special protocols needed, for example,
     /// making Linker and Filament species static
     void executeSpecialProtocols();
-
-    
-    ///Helper function to pin filaments near the boundary
-    void pinBoundaryFilaments();
     
 public:
     Controller(SubSystem* s);
@@ -127,6 +101,7 @@ public:
                     string outputDirectory);
     ///Run the simulation
     void run();
+    
 };
 
 #endif

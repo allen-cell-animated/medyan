@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -1130,8 +1130,6 @@ void ChemManager::genFilBindingReactions() {
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
                 
-                cout << reactants.size() << " " << products.size() << endl;
-                
                 //Checks on number of reactants, products
                 if(reactants.size() != BRANCHINGREACTANTS ||
                    products.size() != BRANCHINGPRODUCTS) {
@@ -1328,12 +1326,7 @@ void ChemManager::genFilBindingReactions() {
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
-                auto temp=SysParams::BUBBareRate;
-                if(temp.size()>0)
-                    temp[brancherInt]=offRate;
-                else
-                    temp.push_back(offRate);
-                SysParams::BUBBareRate=temp;
+                
                 //get nucleation zone
                 string nzstr = get<4>(r);
                 NucleationZoneType nucleationZone;
@@ -1567,13 +1560,7 @@ void ChemManager::genFilBindingReactions() {
             
                 double onRate = get<2>(r);
                 double offRate = get<3>(r);
-                //aravind 24, June, 2016.
-                auto temp=SysParams::LUBBareRate;
-                if(temp.size()>0)
-                    temp[linkerInt]=offRate;
-                else
-                    temp.push_back(offRate);
-                SysParams::LUBBareRate=temp;
+                
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 
@@ -1793,13 +1780,7 @@ void ChemManager::genFilBindingReactions() {
                 
                 double onRate = get<2>(r);
                 double offRate = get<3>(r);
-                //aravind June 24, 2016.
-                auto temp=SysParams::MUBBareRate;
-                if(temp.size()>0)
-                    temp[motorInt]=offRate;
-                else
-                    temp.push_back(offRate);
-                SysParams::MUBBareRate=temp;
+                
                 rMin = get<4>(r);
                 rMax = get<5>(r);
                 
@@ -1917,8 +1898,6 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
                 auto products = get<1>(rb);
 
                 auto sb_bound = products[0].substr(0, products[0].find(":"));
-                
-                cout << reactants.size() << " " << products.size() << endl;
                 
                 //basic check because we have not yet checked reactions
                 if(reactants.size() != BRANCHINGREACTANTS ||
@@ -2593,6 +2572,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
     
     Filament* f = (Filament*)(c->getParent());
     short filType = f->getType();
+    
     //add monomers to cylinder
     for(int i = 0; i < cc->getSize(); i++) {
         CMonomer* m = new CMonomer(filType);
@@ -2648,94 +2628,39 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
             m1->speciesPlusEnd(0)->down();
             
+            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
+            m2->speciesPlusEnd(0)->up();
+            
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
             
             for(auto j : SysParams::CParams.bindingIndices[filType])
                 m1->speciesBound(j)->up();
             
-            if(!SysParams::RUNSTATE){
-#ifdef MECHANICS
-                int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
-//                std::cout<<"init "<<c->getMCylinder()->getEqLength()<<endl;
-                CMonomer* m2 = cc->getCMonomer(nummonomers - 1);
-
-                m2->speciesPlusEnd(0)->up();
+            //fill new cylinder with default filament value
+            for(int i = 0; i < cc->getSize() - 1; i++) {
+                cc->getCMonomer(i)->speciesFilament(0)->up();
                 
-//                for(auto i=0;i<40;i++)
-//                    std::cout<<c->getCCylinder()->getCMonomer(i)->speciesPlusEnd(0)->getN()<<" ";
-//                std::cout<<endl;
-
-                //fill new cylinder with default filament value
-                for(int i = 0; i < nummonomers - 1; i++) {
-                    cc->getCMonomer(i)->speciesFilament(0)->up();
-                    
-                    for(auto j : SysParams::CParams.bindingIndices[filType])
-                        cc->getCMonomer(i)->speciesBound(j)->up();
-                }
-#endif
+                for(auto j : SysParams::CParams.bindingIndices[filType])
+                    cc->getCMonomer(i)->speciesBound(j)->up();
             }
-            else{
-            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
-            m2->speciesPlusEnd(0)->up();
-                
-                //fill new cylinder with default filament value
-                for(int i = 0; i < cc->getSize() - 1; i++) {
-                    cc->getCMonomer(i)->speciesFilament(0)->up();
-                    
-                    for(auto j : SysParams::CParams.bindingIndices[filType])
-                        cc->getCMonomer(i)->speciesBound(j)->up();
-                }
-            }
-
             for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
         }
         //this is first one
         else {
-            
             //set back and front
             CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
             m1->speciesPlusEnd(0)->up();
             
+            CMonomer* m2 = cc->getCMonomer(0);
+            m2->speciesMinusEnd(0)->up();
             
-            if(SysParams::RUNSTATE){
-                CMonomer* m2 = cc->getCMonomer(0);
-                m2->speciesMinusEnd(0)->up();
-                //fill with default filament value
-                for(int i = 1; i < cc->getSize() - 1; i++) {
-                    cc->getCMonomer(i)->speciesFilament(0)->up();
-                    
-                    for(auto j : SysParams::CParams.bindingIndices[filType])
-                        cc->getCMonomer(i)->speciesBound(j)->up();
-                }
+            //fill with default filament value
+            for(int i = 1; i < cc->getSize() - 1; i++) {
+                cc->getCMonomer(i)->speciesFilament(0)->up();
                 
-                
-            }
-            else {
-#ifdef MECHANICS
-//                std::cout<<c->getMCylinder()->getEqLength()<<" "<<SysParams::Geometry().cylinderNumMon[filType]<<endl;
-                int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
-                CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
-                m1->speciesMinusEnd(0)->up();
-                //fill with default filament value
-                for(int i = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + 1; i < cc->getSize() - 1; i++) {
-                    cc->getCMonomer(i)->speciesFilament(0)->up();
-                    
-                    for(auto j : SysParams::CParams.bindingIndices[filType])
-                        cc->getCMonomer(i)->speciesBound(j)->up();
-                }
-#else
-                CMonomer* m2 = cc->getCMonomer(0);
-                m2->speciesMinusEnd(0)->up();
-                //fill with default filament value
-                for(int i = 1; i < cc->getSize() - 1; i++) {
-                    cc->getCMonomer(i)->speciesFilament(0)->up();
-                    
-                    for(auto j : SysParams::CParams.bindingIndices[filType])
-                        cc->getCMonomer(i)->speciesBound(j)->up();
-                }
- 
-#endif
+                for(auto j : SysParams::CParams.bindingIndices[filType])
+                    cc->getCMonomer(i)->speciesBound(j)->up();
             }
         }
     }

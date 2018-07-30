@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -101,13 +101,6 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
     newReaction->_reactionType = _reactionType;
     return newReaction;
 }
-
-void DiffusionReaction::updatePropensityImpl() {
-    
-    //just update the rnode if not passivated
-    if(_rnode!=nullptr && !_passivated) _rnode->activateReaction();
-}
-
     
 #ifdef BOOST_MEM_POOL
 template <unsigned short M, unsigned short N>

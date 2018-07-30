@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -42,10 +42,6 @@ public:
     /// Compute auxiliary forces of this forcefield in the system. Update
     /// Bead auxiliary forces accordingly.
     virtual void computeForcesAux() = 0;
-    
-    ///Compute all load forces on beads in this system.
-    ///Updates all Bead's load force components for Reaction updating.
-    virtual void computeLoadForces() = 0;
     
     /// In the case of a calculation error, print the culprit of the FF error.
     /// Typically, will just print the Trackable element where the error came from.

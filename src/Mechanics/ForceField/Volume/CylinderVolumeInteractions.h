@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -28,8 +28,8 @@ friend class CylinderVolumeFF;
 protected:
     //@{
     /// The cylinder culprits in the case of an error
-    Cylinder* _cylinderCulprit1 = nullptr;
-    Cylinder* _cylinderCulprit2 = nullptr;
+    Cylinder* _cylinderCulprit1;
+    Cylinder* _cylinderCulprit2;
     //@}
     
 public:

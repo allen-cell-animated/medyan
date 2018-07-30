@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -45,9 +45,6 @@ public:
     virtual double computeEnergy(double d);
     virtual void computeForces();
     virtual void computeForcesAux();
-    
-    /// BoundaryFF can compute load forces from all boundaries.
-    virtual void computeLoadForces();
     
     virtual vector<NeighborList*> getNeighborLists();
 };

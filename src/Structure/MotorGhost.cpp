@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -42,14 +42,13 @@ void MotorGhost::updateCoordinate() {
 
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                       double position1, double position2,
-                       double onRate, double offRate)
+                       double position1, double position2)
 
     : Trackable(true, true),
       _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _motorType(motorType), _motorID(_motorGhosts.getID()), _birthTime(tau()),
-      _onRate(onRate), _offRate(offRate) {
+      _motorType(motorType), _motorID(_motorGhosts.getID()),
+      _birthTime(tau()) {
           
     //find compartment
     updateCoordinate();
@@ -71,9 +70,6 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     _numHeads = Rand::randInteger(SysParams::Chemistry().motorNumHeadsMin[_motorType],
                                   SysParams::Chemistry().motorNumHeadsMax[_motorType]);
     
-    //as of 6/8/17
-    _numBoundHeads = _numHeads;
-    
 #ifdef CHEMISTRY
     _cMotorGhost = unique_ptr<CMotorGhost>(
     new CMotorGhost(motorType, _compartment, _c1->getCCylinder(), _c2->getCCylinder(), pos1, pos2));
@@ -87,27 +83,14 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     auto x4 = _c2->getSecondBead()->coordinate;
           
     _mMotorGhost = unique_ptr<MMotorGhost>(
-    new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
+    new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
 #endif
     
 }
 
-///@note - record lifetime data here
-MotorGhost::~MotorGhost() noexcept {
-
-//    double lifetime = tau() - _birthTime;
-//    
-//    if(_lifetimes->getMax() > lifetime &&
-//       _lifetimes->getMin() < lifetime)
-//        _lifetimes->addValue(lifetime);
-//        
-//    
-//    if(_walkLengths->getMax() > _walkLength &&
-//       _walkLengths->getMin() < _walkLength)
-//        _walkLengths->addValue(_walkLength);
-    
-}
+///@note - nothing for now, but could record data here
+MotorGhost::~MotorGhost() noexcept {}
 
 void MotorGhost::updatePosition() {
     
@@ -156,12 +139,6 @@ void MotorGhost::updatePosition() {
     auto m2 = midPointCoordinate(x3, x4, _position2);
     
     _mMotorGhost->setLength(twoPointDistance(m1, m2));
-    
-    //as of 6/8/17
-    _numBoundHeads = _numHeads;
-    
-    _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
-
 #endif
     
 }
@@ -176,9 +153,6 @@ void MotorGhost::updateReactionRates() {
 
     //current force
     double force = max(0.0, _mMotorGhost->stretchForce);
-    
-    //update number of bound heads
-    _numBoundHeads = _numHeads;
     
     //walking rate changer
     if(!_walkingChangers.empty()) {
@@ -216,11 +190,9 @@ void MotorGhost::updateReactionRates() {
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
                            _numHeads, max(0.0, forceDotDirectionC1));
-                if(SysParams::RUNSTATE==false){
-                    newRate=0.0;}
+                
                 r->setRate(newRate);
                 r->updatePropensity();
-
             }
             else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
                 float newRate =
@@ -229,10 +201,7 @@ void MotorGhost::updateReactionRates() {
                            _cMotorGhost->getOffRate(),
                            _numHeads, max(0.0, -forceDotDirectionC1));
                 
-                if(SysParams::RUNSTATE==false){
-                    newRate=0.0;}
                 r->setRate(newRate);
-
                 r->updatePropensity();
             }
         }
@@ -245,8 +214,6 @@ void MotorGhost::updateReactionRates() {
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
                            _numHeads, max(0.0, forceDotDirectionC2));
-                if(SysParams::RUNSTATE==false)
-                { newRate=0.0;}
                 
                 r->setRate(newRate);
                 r->updatePropensity();
@@ -258,8 +225,7 @@ void MotorGhost::updateReactionRates() {
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
                            _numHeads, max(0.0, -forceDotDirectionC2));
-                if(SysParams::RUNSTATE==false)
-                { newRate=0.0;}
+                
                 r->setRate(newRate);
                 r->updatePropensity();
             }

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -117,10 +117,19 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 MotorGhost::_unbindingChangers.push_back(new LowDutyCatch(motorIndex, f));
                 forceIndex++;
             }
-
             else if(changer == "LOWDUTYCATCHSLIP") {
-                cout << "Catch-slip bond implementation of low duty motor not complete. Exiting." << endl;
-                exit(EXIT_FAILURE);
+                
+                //if user did not specify enough parameters, return
+                if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())
+                    return;
+                
+                //get param
+                double fCatch = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
+                double fSlip  = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex + 1];
+                
+                //add the rate changer
+                MotorGhost::_unbindingChangers.push_back(new LowDutyCatchSlip(motorIndex, fCatch, fSlip));
+                forceIndex += 2;
             }
             else {
                 cout << "Motor unbinding rate changing form not recognized. Exiting." << endl;
@@ -147,7 +156,6 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 MotorGhost::_walkingChangers.push_back(new LowDutyStall(motorIndex, 0, f));
                 forceIndex++;
             }
-            
             else {
                 cout << "Motor walking rate changing form not recognized. Exiting." << endl;
                 exit(EXIT_FAILURE);

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -24,7 +24,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     int N;
     if(steplimit) {
         int beadMaxStep = 5 * Bead::numBeads();
-        N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS)*10; //x10 max steps jl135;
+        N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS);
     }
     else {
         N = numeric_limits<int>::max();
@@ -92,5 +92,4 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     //final force calculation
     FFM.computeForces();
-    FFM.computeLoadForces();
 }

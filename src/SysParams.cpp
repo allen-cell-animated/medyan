@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -12,10 +12,7 @@
 //------------------------------------------------------------------
 
 #include "SysParams.h"
-bool SysParams::RUNSTATE=true;
-vector<float> SysParams::MUBBareRate ={};
-vector<float> SysParams::LUBBareRate ={};
-vector<float> SysParams::BUBBareRate ={};
+
 bool SysParams::checkChemParameters(ChemistryData& chem) {
     
     if(CParams.numFilaments < 1) {
@@ -348,20 +345,6 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     
-    //Bubbles
-    if(mech.BubbleFFType != "" &&
-      (MParams.BubbleK.size() != MParams.numBubbleTypes ||
-       MParams.BubbleRadius.size() != MParams.numBubbleTypes ||
-       MParams.BubbleScreenLength.size() != MParams.numBubbleTypes)) {
-        cout << "Must set all bubble mechanical constants for every bubble type. Exiting." << endl;
-        return false;
-    }
-    if(mech.BubbleFFType != "" && areEqual(MParams.BubbleCutoff, 0.0)) {
-        cout << "Must set a bubble cutoff for mechanical equilibration. Exiting." << endl;
-        return false;
-    }
-    
-    
     ///Cylinder and monomer lengths specified
     if(GParams.cylinderSize.size() != CParams.numFilaments) {
         
@@ -470,9 +453,6 @@ bool SysParams::checkDyRateParameters(DynamicRateType& dy) {
             numCharForces += 2;
         }
         else if(changer == "LOWDUTYCATCH") {
-            numCharForces += 1;
-        }
-        else if(changer == "HIGHDUTYCATCH") {
             numCharForces += 1;
         }
         

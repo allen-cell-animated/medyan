@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -45,11 +45,6 @@ public:
     void computeForcesAux();
     /// Compute forcesAuxP of all force fields
     void computeForcesAuxP();
-    
-    /// Compute the load forces on the beads. This does not update the force (xyz) vector
-    /// contained by Bead, but updates the loadForce vector which contains precalculated
-    /// load values based on the bead's directionality of growth in a filament.
-    void computeLoadForces();
     
     /// Reset the forces of all objects
     void resetForces();

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -65,32 +65,6 @@ struct MechParams {
     vector<double> VolumeK = {};
     double VolumeCutoff = 0.0;
     //@}
-    
-    //@{
-    /// Bubble parameter
-    vector<double> BubbleK = {};
-    vector<double> BubbleRadius = {};
-    vector<double> BubbleScreenLength = {};
-    
-    double BubbleCutoff = 0.0;
-    
-    ///If using more than one bubble
-    short numBubbleTypes = 1;
-    //@}
-    
-    
-    //@{
-    /// SPECIAL MECHANICAL PROTOCOLS
-    
-    ///To pin filaments on boundary via an attractive potential
-    bool pinBoundaryFilaments = false;
-    double pinDistance = 250; ///< 250nm pinning distance for now
-    double pinK = 0.0;       ///< Tethered stiffness
-    double pinTime = 0.0;    ///< Time at which to pin the filaments
-    int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
-    //@}
-    
-    
 };
 
 /// Struct to hold chemistry parameters for the system
@@ -254,12 +228,6 @@ public:
 public:
     //@{
     ///Const getter
-    static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
-    //aravind July11,2016
-    static vector<float> MUBBareRate;
-    static vector<float> LUBBareRate;
-    static vector<float> BUBBareRate;
-    //@
     static const MechParams& Mechanics() {return MParams;}
     static const ChemParams& Chemistry() {return CParams;}
     static const GeoParams& Geometry() {return GParams;}

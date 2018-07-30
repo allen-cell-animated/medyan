@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -26,9 +26,9 @@ BoundaryCubic::BoundaryCubic(SubSystem* s, BoundaryMove move)
     : Boundary(s, 3, BoundaryShape::Cube, move){
     
     //Get full system size (want planes to be slightly inside compartment grid)
-    double zeroX = 25;
-    double zeroY = 25;
-    double zeroZ = 25;
+    double zeroX = 0.2 * SysParams::Boundaries().BoundaryCutoff;
+    double zeroY = 0.2 * SysParams::Boundaries().BoundaryCutoff;
+    double zeroZ = 0.2 * SysParams::Boundaries().BoundaryCutoff;
     
     double sysX = GController::getSize()[0] - zeroX;
     double sysY = GController::getSize()[1] - zeroY;
@@ -108,29 +108,6 @@ double BoundaryCubic::distance(const vector<double>& coordinates) {
         
     }
     return smallestDist;
-}
-
-vector<double> BoundaryCubic::normal(vector<double>& coordinates) {
-    
-    // loop through, get smallest non-negative distance
-    BoundaryElement* closestPlane = nullptr;
-    double smallestDist = numeric_limits<double>::infinity();
-    
-    for(auto &bs : _boundarySurfaces) {
-        
-        auto be = bs->boundaryElements()[0].get();
-        
-        double dist = be->distance(coordinates);
-        
-        if(dist < 0) continue;
-        if(dist < smallestDist) {
-            smallestDist = dist;
-            closestPlane = be;
-        }
-        
-    }
-    //return normal of plane
-    return closestPlane->normal(coordinates);
 }
 
 void BoundaryCubic::move(double dist) {
@@ -240,13 +217,6 @@ double BoundarySpherical::distance(const vector<double>& coordinates) {
     
     if(dist > 0) return dist;
     else return numeric_limits<double>::infinity();
-}
-
-
-vector<double> BoundarySpherical::normal(vector<double>& coordinates) {
-    
-    auto be = _boundarySurfaces[0]->boundaryElements()[0].get();
-    return be->normal(coordinates);
 }
 
 

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -237,7 +237,7 @@ namespace mathfunc {
     }
     
     /// Returns coordinates of a point v located on a line between v1 and v2.
-    /// |v-v1|/|v2-v1| = alpha.
+    /// |v-v1|/|v2-v| = alpha.
     inline vector<double> midPointCoordinate(const vector<double>& v1,
                                              const vector<double>& v2, double alpha) {
         vector<double> v;

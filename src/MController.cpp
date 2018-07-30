@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -20,7 +20,6 @@
 #include "MotorGhostFF.h"
 #include "BoundaryFF.h"
 #include "BranchingFF.h"
-#include "BubbleFF.h"
 #include "CylinderVolumeFF.h"
 
 #include "ConjugateGradient.h"
@@ -77,27 +76,13 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     //add to the subsystem's database of neighbor lists.
     auto volumeFF = new CylinderVolumeFF(forceFields.VolumeFFType);
     _FFManager._forceFields.push_back(volumeFF);
-    for(auto nl : volumeFF->getNeighborLists()) {
-        
-        if(nl != nullptr)
-            _subSystem->addNeighborList(nl);
-    }
+    for(auto nl : volumeFF->getNeighborLists())
+        _subSystem->addNeighborList(nl);
     
     auto boundaryFF = new BoundaryFF(forceFields.BoundaryFFType);
     _FFManager._forceFields.push_back(boundaryFF);
-    for(auto nl : boundaryFF->getNeighborLists()) {
-        
-        if(nl != nullptr)
-            _subSystem->addNeighborList(nl);
-    }
-    
-    auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,
-                                 forceFields.MTOCFFType);
-    _FFManager._forceFields.push_back(bubbleFF);
-    for(auto nl : bubbleFF->getNeighborLists()) {
-        
-        if(nl != nullptr)
-            _subSystem->addNeighborList(nl);
-    }
+    for(auto nl : boundaryFF->getNeighborLists())
+        _subSystem->addNeighborList(nl);
+
 }
 

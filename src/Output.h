@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -22,7 +22,6 @@
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;
-class SubSystem;
 
 /// To print a specified output into a file
 /*!
@@ -35,11 +34,9 @@ class Output {
 protected:
     ofstream _outputFile; ///< The output file being used
     
-    SubSystem* _subSystem = nullptr;
-    
 public:
     /// Constructor, which opens the output file
-    Output(string outputFileName, SubSystem* s) {
+    Output(string outputFileName) {
         _outputFile.open(outputFileName);
         if(!_outputFile.is_open()) {
             cout << "There was an error opening file " << outputFileName
@@ -47,8 +44,6 @@ public:
             exit(EXIT_FAILURE);
         }
         cout << "Opening file " << outputFileName << endl;
-        
-        _subSystem = s;
     }
     /// Destructor, which closes the output file
     ~Output() {_outputFile.close();}
@@ -62,7 +57,7 @@ public:
 class BasicSnapshot : public Output {
 
 public:
-    BasicSnapshot(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    BasicSnapshot(string outputFileName) : Output(outputFileName) {}
     ~BasicSnapshot() {}
     
     virtual void print(int snapshot);
@@ -73,7 +68,7 @@ public:
 class BirthTimes : public Output {
     
 public:
-    BirthTimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    BirthTimes(string outputFileName) : Output(outputFileName) {}
     ~BirthTimes() {}
     
     virtual void print(int snapshot);
@@ -83,7 +78,7 @@ public:
 class Forces : public Output {
     
 public:
-    Forces(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    Forces(string outputFileName) : Output(outputFileName) {}
     ~Forces() {}
     
     virtual void print(int snapshot);
@@ -97,39 +92,11 @@ public:
 class Tensions : public Output {
     
 public:
-    Tensions(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    Tensions(string outputFileName) : Output(outputFileName) {}
     ~Tensions() {}
     
     virtual void print(int snapshot);
 };
-
-/// Print wall tension for each pinned filament:
-///                 k * l * nhat
-/// where k is the stretching force constant of the pin, l is the current
-/// vector distance away from the pin position for the pinned bead.
-/// @note - nhat is a vector pointing from the direction of the boundary normal.
-class WallTensions : public Output {
-    
-public:
-    WallTensions(string outputFileName, SubSystem* s) :
-                Output(outputFileName, s) {}
-    ~WallTensions() {}
-    
-    
-    virtual void print(int snapshot);
-};
-
-    
-/// Print type of each species
-class Types : public Output {
-    
-public:
-    Types(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
-    ~Types() {}
-        
-    virtual void print(int snapshot);
-};
-
 
 /// Print all chemical species in the system, including diffusing
 /// and bulk species, filament, motors, linkers and branchers.
@@ -139,10 +106,10 @@ ChemistryData _chemData; ///< chemistry data of this system
 CompartmentGrid* _grid; ///< compartment grid of the system
     
 public:
-    Chemistry(string outputFileName, SubSystem* s,
-              ChemistryData chemData, CompartmentGrid* grid)
+    Chemistry(string outputFileName, ChemistryData chemData,
+                                     CompartmentGrid* grid)
     
-        : Output(outputFileName, s),
+        : Output(outputFileName),
          _chemData(chemData), _grid(grid) {}
     
     ~Chemistry() {}
@@ -155,7 +122,7 @@ public:
 class MotorLifetimes : public Output {
     
 public:
-    MotorLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    MotorLifetimes(string outputFileName) : Output(outputFileName) {}
     ~MotorLifetimes() {}
     
     virtual void print(int snapshot);
@@ -165,7 +132,7 @@ public:
 class MotorWalkLengths : public Output {
     
 public:
-    MotorWalkLengths(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    MotorWalkLengths(string outputFileName) : Output(outputFileName) {}
     ~MotorWalkLengths() {}
     
     virtual void print(int snapshot);
@@ -175,7 +142,7 @@ public:
 class LinkerLifetimes : public Output {
     
 public:
-    LinkerLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    LinkerLifetimes(string outputFileName) : Output(outputFileName) {}
     ~LinkerLifetimes() {}
     
     virtual void print(int snapshot);
@@ -185,7 +152,7 @@ public:
 class FilamentTurnoverTimes : public Output {
     
 public:
-    FilamentTurnoverTimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    FilamentTurnoverTimes(string outputFileName) : Output(outputFileName) {}
     ~FilamentTurnoverTimes() {}
     
     virtual void print(int snapshot);

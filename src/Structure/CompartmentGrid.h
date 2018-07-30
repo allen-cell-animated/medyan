@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -149,17 +149,6 @@ public:
     species_copy_t countDiffusingSpecies(const string& name);
     /// Count the number of bulk species with a given name
     species_copy_t  countBulkSpecies(const string& name);
-    
-    ///GetType implementation just returns zero (no CompartmentGrid types yet)
-    virtual int getType() {return 0;}
-    
-    
-    ///This function gets all diffusing motor species and creates a virtual position within
-    ///the simulation volume (dependent on the compartment). This is used for analyzing motor
-    ///gradients when species can either be bound or unbound.
-    ///@return - a tuple of the motor ID, the type, and two coordinates defining its end positions
-    vector<tuple<int, int, vector<double>, vector<double>>> getDiffusingMotors();
-    
 };
 
 #endif

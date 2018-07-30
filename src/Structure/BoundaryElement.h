@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -32,7 +32,7 @@ class Bead;
 /*!
  * The BoundaryElement class is a representation of a BoundarySurface element, which can
  * interact with other elements in the system, including other BoundaryElements as well 
- * as [Beads] (@ref Bead) in [Filaments](@ref Filament) and [Bubbles](@ref Bubble). 
+ * as [Beads] (@ref Bead) in [Filaments](@ref Filament). 
  * Together, a collection of boundary elements make up a BoundarySurface. 
  *
  * Extending the Neighbor class, all instances can be kept in 
@@ -111,9 +111,6 @@ public:
     }
     
     virtual void printSelf();
-    
-    //GetType implementation just returns zero (no boundary element types yet)
-    virtual int getType() {return 0;}
 };
 
 #endif

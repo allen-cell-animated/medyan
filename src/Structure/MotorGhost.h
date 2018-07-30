@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -48,12 +48,6 @@ class MotorGhost : public Component, public Trackable, public Movable, public Re
    
 friend class Controller;
 friend class DRController;
-    
-friend class MotorBindingManager;
-    
-friend struct UpdateMotorIDCallback;
-friend struct MotorBindingCallback;
-friend struct MotorUnbindingCallback;
 
 private:
     unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to mech motor ghost
@@ -74,14 +68,6 @@ private:
     Compartment* _compartment; ///< Where this motorghost is
     
     int _numHeads = 1; ///< Number of heads that this motor contains
-    double _numBoundHeads = 1; ///< Number of bound heads in the ensemble,
-                               ///< which is force-dependent
-    
-    //@{
-    ///Kinetic rates of individual motor heads
-    double _onRate = 0.0;
-    double _offRate = 0.0;
-    //@}
     
     static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
     
@@ -95,20 +81,18 @@ private:
     static vector<MotorRateChanger*> _unbindingChangers;
     ///For dynamic rate walking
     static vector<MotorRateChanger*> _walkingChangers;
+    
+    ///Helper to get coordinate
+    void updateCoordinate();
 
 public:
     vector<double> coordinate;
         ///< coordinate of midpoint, updated with updatePosition()
     
-    ///Standard constructor
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-               double position1 = 0.5, double position2 = 0.5,
-               double onRate = 0.0, double offRate = 0.0);
+               double position1 = 0.5, double position2 = 0.5);
     
     virtual ~MotorGhost() noexcept;
-    
-    ///Helper to get coordinate
-    void updateCoordinate();
     
     //@{
     /// Get cylinder
@@ -143,10 +127,8 @@ public:
     
     //@{
     ///Parameter management
-    virtual int getType() {return _motorType;}
+    short getType() {return _motorType;}
     int getID() {return _motorID;}
-    
-    void setID(int ID) {_motorID = ID;}
     //@}
     
     /// Get the birth time

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -150,12 +150,6 @@ public:
     /// PQNode object. However, it does not update the heap - this needs to be done
     /// seprately.
     void generateNewRandTau();
-    
-    
-    /// This method reuses a previous tau to generate a new tau based on a change
-    /// in reaction propensity.@note This methods modifies tau which is stored in the associated
-    /// PQNode object. However, it does not update the heap - this needs to be done seperately.
-    void generateNewTau();
     
     /// Returns a pointer to the Reaction which corresponds to this RNodeNRM.
     inline ReactionBase* getReaction() const {return _react;};

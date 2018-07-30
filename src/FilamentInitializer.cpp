@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.0
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -14,7 +14,6 @@
 #include "FilamentInitializer.h"
 
 #include "Boundary.h"
-#include "Bubble.h"
 #include "Bead.h"
 
 #include "MathFunctions.h"
@@ -28,10 +27,8 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
                                                               int filamentType,
                                                               int lenFilaments) {
     
-    vector<tuple<short, vector<double>, vector<double>>> filaments;
-    vector<tuple<string, short, vector<vector<double>>>> dummy;
-    vector<tuple<string, short, vector<double>>> dummy2;
-    vector<vector<double>> dummy3;
+    FilamentData filaments;
+    
     //Create random distribution of filaments
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
@@ -48,28 +45,12 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             nextPointProjection(firstPoint,(double)lenFilaments *
             SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
         
-        //check if these points are outside bubbles
-        bool inBubble = false;
-        for(auto bb : Bubble::getBubbles()) {
-            
-            if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-               (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
-                inBubble = true;
-        }
-        
-        //check if within cutoff of boundary
-        bool outsideCutoff = false;
-        if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
-           b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
-            outsideCutoff = true;
-        }
-        
-        if(b->within(firstPoint) && b->within(secondPoint) && !inBubble && !outsideCutoff) {
+        if(b->within(firstPoint) && b->within(secondPoint)) {
             filaments.emplace_back(filamentType, firstPoint, secondPoint);
             filamentCounter++;
         }
     }
-    return make_tuple(filaments, dummy, dummy2, dummy3);
+    return filaments;
 }
 
 FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilaments,
@@ -79,10 +60,7 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
     ///SET THIS SPACING PARAMETER
     double maxSpacing = 50;
     
-    vector<tuple<short, vector<double>, vector<double>>> filaments;
-    vector<tuple<string, short, vector<vector<double>>>> dummy;
-    vector<tuple<string, short, vector<double>>> dummy2;
-    vector<vector<double>> dummy3;
+    FilamentData filaments;
     
     ///First filament as normal
     //Create a random filament vector one cylinder long
@@ -160,37 +138,5 @@ FilamentData ConnectedFilamentDist::createFilaments(Boundary* b, int numFilament
         
     }
     
-    return make_tuple(filaments,dummy,dummy2, dummy3);
-}
-
-FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
-                                                            int filamentType,
-                                                            int lenFilaments) {
-    
-    vector<tuple<short, vector<double>, vector<double>>> filaments;
-    vector<tuple<string, short, vector<vector<double>>>> dummy;
-    vector<vector<double>> dummy3;
-    vector<tuple<string, short, vector<double>>> dummy2;
-    int filamentCounter = 0;
-    while (filamentCounter < numFilaments) {
-        
-        double l = Rand::randDouble(0,2 * M_PI);
-        double h = Rand::randDouble(-M_PI/2, M_PI/2);
-        
-        vector<double> point1;
-        point1.push_back(_coordMTOC[0] + _radius * cos(l) * cos(h));
-        point1.push_back(_coordMTOC[1] + _radius * sin(h));
-        point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
-        
-        // get projection outward from the MTOC
-        auto dir = normalizedVector(twoPointDirection(_coordMTOC, point1));
-        auto point2 = nextPointProjection(point1,
-            SysParams::Geometry().cylinderSize[filamentType]*lenFilaments - 0.01, dir);
-        
-        filaments.emplace_back(filamentType, point1, point2);
-        
-        filamentCounter++;
-    }
-    
-    return make_tuple(filaments,dummy,dummy2, dummy3);
+    return filaments;
 }
