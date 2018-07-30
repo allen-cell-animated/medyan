@@ -30,7 +30,7 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
     : Trackable(true),
       coordinate(v), coordinateP(v), coordinateB(v),
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
-      _position(position), _birthTime(tau()) {
+      _position(position), _birthTime(tau()),_ID(_beads.getID()) {
     
     parent->addChild(unique_ptr<Component>(this));
           

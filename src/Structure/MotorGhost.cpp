@@ -87,10 +87,15 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     auto x2 = _c1->getSecondBead()->coordinate;
     auto x3 = _c2->getFirstBead()->coordinate;
     auto x4 = _c2->getSecondBead()->coordinate;
-          
+#ifdef PLOSFEEDBACK
     _mMotorGhost = unique_ptr<MMotorGhost>(
     new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
+#else
+    _mMotorGhost = unique_ptr<MMotorGhost>(
+            new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
+    _mMotorGhost->setMotorGhost(this);
+#endif
 #endif
     
 }
@@ -169,8 +174,11 @@ void MotorGhost::updatePosition() {
     else
         _numBoundHeads = _numHeads;
     
-    
+#ifdef PLOSFEEDBACK
+    _mMotorGhost->setStretchingConstant(_motorType, _numHeads);
+#else
     _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
+#endif
 
 #endif
     
@@ -231,6 +239,9 @@ void MotorGhost::updateReactionRates() {
                            _numHeads, max(0.0, forceDotDirectionC1));
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
+                std::cout<<"Motor WF1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
+                         forceDotDirectionC2<<" NH "<<_numHeads<<endl;
                 r->setRate(newRate);
                 r->updatePropensity();
 
@@ -244,8 +255,10 @@ void MotorGhost::updateReactionRates() {
                 
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
+                std::cout<<"Motor WB1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
+                         forceDotDirectionC2<<" NH "<<_numHeads<<endl;
                 r->setRate(newRate);
-
                 r->updatePropensity();
             }
         }
@@ -260,11 +273,10 @@ void MotorGhost::updateReactionRates() {
                            _numHeads, max(0.0, forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
-                
                 r->setRate(newRate);
                 r->updatePropensity();
             }
-            else if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+            else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
                 
                 float newRate =
                 _walkingChangers[_motorType]->
@@ -289,7 +301,9 @@ void MotorGhost::updateReactionRates() {
         float newRate =
         _unbindingChangers[_motorType]->
         changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numHeads, force);
-        
+        std::cout<<"Motor UB f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+                ""<<coordinate[1]<<" "
+                         ""<<coordinate[2]<<endl;
         offRxn->setRate(newRate);
         offRxn->activateReaction();
     }

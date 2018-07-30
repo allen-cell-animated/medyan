@@ -122,7 +122,9 @@ private:
 private:
     vector<ReactionBase*> _reactions; ///< The database of Reaction objects,
                                       ///< representing the reaction network
-//    mt19937 _eng; ///< Random number generator
+#ifndef DEBUGCONSTANTSEED
+    mt19937 _eng; ///< Random number generator
+#endif
     exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<double> _uniform_distr; ///< Adaptor for the uniform distribution
     double _t; ///< global time

@@ -50,8 +50,11 @@ float BranchSlip::changeRate(float bareRate, double force) {
 
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 double force, int numHeads) {
-    
+#ifdef PLOSFEEDBACK
+    return min(numHeads, numHeads * _dutyRatio + _gamma * force;
+#else
     return numHeads * _dutyRatio + _beta * force / numHeads;
+#endif
     
 }
 
@@ -59,24 +62,36 @@ float MotorCatch::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
     
     //calculate new rate
-    double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads) - 1);
+#ifdef PLOSFEEEDBACK
+    double k_0 = _beta * onRate /numBoundHeads(onRate, offRate, force, numHeads);
+
+    double factor = exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0));
+#else
+    double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads)
+                                        - 1.0);
     
     double factor = min(10.0, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
+#endif
     
     double newRate = k_0 * factor;
     return newRate;
 }
-
 
 float MotorStall::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
     
     //determine k_0
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
-    
+
     //calculate new rate
+#ifdef PLOSFEEDBACK
+    double newRate =  max(0.0, k_0 * (_F0 - force/numHeads)
+                          / (_F0 + (force / (numHeads * _alpha))));
+#else
     double newRate =  max(0.0, k_0 * (_F0 - force)
-                          / (_F0 + (force / (_alpha))));
+                               / (_F0 + (force / (_alpha))));
+#endif
     
     return newRate;
 }
+

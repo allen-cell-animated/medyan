@@ -346,7 +346,9 @@ private:
                                                                     ///< representing the reaction network
     boost_heap _heap; ///< A priority queue for the NRM algorithm,
                       ///< containing PQNode elements
-//    mt19937 _eng; ///< Random number generator
+#ifndef DEBUGCONSTANTSEED
+    mt19937 _eng; ///< Random number generator
+#endif
     exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     double _t; ///< global time
     size_t _n_reacts; ///< number of reactions in the network

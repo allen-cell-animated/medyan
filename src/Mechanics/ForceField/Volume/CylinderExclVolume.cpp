@@ -21,8 +21,8 @@
 template <class CVolumeInteractionType>
 double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for(auto ci : Cylinder::getCylinders()) {
         
@@ -84,7 +84,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
             Bead* b3 = cn->getFirstBead();
             Bead* b4 = cn->getSecondBead();
             double kRepuls = ci->getMCylinder()->getExVolConst();
-            
+            std::cout<<"CV"<<ci->getID()<<" "<<cn->getID()<<endl;
             _FFType.forces(b1, b2, b3, b4, kRepuls);
         }
     }
@@ -93,7 +93,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
     
     //calc max force
     for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FADotFA()));
+        maxF = max(maxF, sqrt(b->FDotF()));
     std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 

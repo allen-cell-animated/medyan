@@ -23,8 +23,8 @@
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto f: Filament::getFilaments()) {
         
@@ -101,7 +101,7 @@ void FilamentBending<FBendingInteractionType>::computeForces()
     
     //calc max force
     for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FADotFA()));
+        maxF = max(maxF, sqrt(b->FDotF()));
     std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 

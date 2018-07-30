@@ -18,11 +18,18 @@
 #include <vector>
 
 #include "common.h"
+//#ifdef DEBUGCONSTANTSEED
+//#include "Cylinder.h"
+//#endif
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
+
+//#ifdef DEBUGCONSTANTSEED
+//    struct Orderset;
+//#endif
     
     /// Normalize a vector
     inline void normalize(vector<double>& v) {
@@ -282,7 +289,7 @@ namespace mathfunc {
         auto v3 = {p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2]};
         
         auto cp = crossProduct(v1, v2);
-        
+        std::cout<<"DP "<<dotProduct(v3, cp)<<endl;
         return areEqual(dotProduct(v3, cp), 0.0);
     }
     

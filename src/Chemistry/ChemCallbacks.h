@@ -94,22 +94,30 @@ struct UpdateLinkerBindingCallback {
     
     //callback
     void operator() (RSpecies *r, int delta) {
-        
+        int iadd = 0;int iremove = 0;
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
-        
+//        std::cout<<"UpdateLinkerBindingCallback"<<endl;
         for(auto &manager : c->getFilamentBindingManagers()) {
             
             if(dynamic_cast<LinkerBindingManager*>(manager.get())) {
                 
                 CCylinder* cc = _cylinder->getCCylinder();
-                
+                auto x = c->coordinates();
                 //update binding sites
-                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+                if(delta == +1){ manager->addPossibleBindings(cc, _bindingSite);iadd++;
+//                std::cout<<"Added Cyl "<<_cylinder->getID()<<" bs "<<_bindingSite<<" Cmp "
+//                        ""<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
+ }
                 
-                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+                else{ /* -1 */
+//                    std::cout<<"Removed Cyl "<<_cylinder->getID()<<" bs "
+//                            ""<<_bindingSite<<" Cmp "
+//                            ""<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
+                    manager->removePossibleBindings(cc, _bindingSite);iremove++;}
             }
         }
+        std::cout<<"Update Linker added "<<iadd<<" removed "<<iremove<<endl;
     }
 };
 
@@ -676,7 +684,8 @@ struct MotorWalkingCallback {
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
-        
+        std::cout<<"Motor walking on Cyl "<<_c->getID()<<" "<<_oldPosition<<" "
+                ""<<_newPosition<<endl;
         m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
         
 #ifdef DYNAMICRATES
@@ -722,6 +731,9 @@ struct MotorMovingCylinderCallback {
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
+
+        std::cout<<"Motor moving from Cyl "<<_oldC->getID()<<" bs "<<_oldPosition<<" to "
+                ""<<_newC<<" bs "<<_newPosition<<endl;
         
         m->moveMotorHead(_oldC, _newC, oldpos, newpos, _boundType, _ps);
         

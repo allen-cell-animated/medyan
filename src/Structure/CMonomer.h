@@ -25,6 +25,7 @@
  *  CMonomer provides a container to hold all Species that are held at a given
  *  filament position. The species are held in an standard vector.
  */
+
 class CMonomer {
     
 friend class ChemManager;

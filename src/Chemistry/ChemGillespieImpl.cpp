@@ -71,11 +71,21 @@ ChemGillespieImpl::~ChemGillespieImpl() noexcept{
 double ChemGillespieImpl::generateTau(double a) {
     exponential_distribution<double>::param_type pm(a);
     _exp_distr.param(pm);
+    Rand::counter++;
+#ifdef DEBUGCONSTANTSEED
     return _exp_distr(Rand::_eng);
+#else
+    return _exp_distr(_eng);
+#endif
 }
 
 double ChemGillespieImpl::generateUniform() {
+    Rand::counter++;
+#ifdef DEBUGCONSTANTSEED
     return _uniform_distr(Rand::_eng);
+#else
+    return _uniform_distr(_eng);
+#endif
 }
 
 double ChemGillespieImpl::computeTotalA() {

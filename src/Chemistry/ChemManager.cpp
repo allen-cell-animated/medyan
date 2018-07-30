@@ -2116,6 +2116,18 @@ void ChemManager::updateCopyNumbers() {
             get<1>(s) = -1;
         }
     }
+//    std::cout<<"Counter tally after updatecopynumbers N "<<Rand::Ncounter<<" D "
+//            ""<<Rand::Dcounter<<" T "<<Rand::counter<<endl;
+//    for(auto cmp:grid->getCompartments()){
+//        auto coord  = cmp->coordinates();
+//        std::cout<<"Cmp "<<coord[0]<<" "<<coord[1]<<" "<<coord[2]<<" ";
+//        for(auto &s : _chemData.speciesDiffusing) {
+//            auto name = get<0>(s);
+//            Species* species = cmp->findSpeciesByName(name);
+//            std::cout<<species->getName()<<" "<<species->getN()<<" ";
+//        }
+//        std::cout<<endl;
+//    }
 }
 
 void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
@@ -2548,6 +2560,8 @@ void ChemManager::genNucleationReactions() {
             }
         }
     }
+    std::cout<<"Counter tally after Nucleation N "<<Rand::Ncounter<<" D "
+            ""<<Rand::Dcounter<<" T "<<Rand::counter<<endl;
 }
 
 void ChemManager::initializeSystem(ChemSim* chemSim) {

@@ -31,11 +31,19 @@ CLinker::CLinker(short linkerType, Compartment* c,
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     
+
+    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
+            "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
+    auto x1 = cc1->getCompartment()->coordinates();
+    auto x2 = cc2->getCompartment()->coordinates();
+    std::cout<<x1[0]<<" "<<x1[1]<<" "<<x1[2]<<endl;
+    std::cout<<x2[0]<<" "<<x2[1]<<" "<<x2[2]<<endl;
     //mark species
-        
     assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
            "Major bug: Linker binding to an occupied site.");
+
+
     
     sl1->up(); sl2->up();
     se1->down(); se2->down();
@@ -78,7 +86,7 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);
     ConnectionBlock rcb(offRxn->connect(lcallback,false));
-    
+    std::cout<<"Off Reaction"<<endl;
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
 }

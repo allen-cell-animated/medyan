@@ -18,6 +18,7 @@
 #include "BindingManager.h"
 
 void SubSystem::updateBindingManagers() {
+//    std::cout<<"Updating Binding Managers"<<endl;
     
     for(auto C : _compartmentGrid->getCompartments()) {
         

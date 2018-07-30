@@ -26,8 +26,8 @@ using namespace mathfunc;
 template <class BRepulsionInteractionType>
 double BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto be: BoundaryElement::getBoundaryElements()) {
         

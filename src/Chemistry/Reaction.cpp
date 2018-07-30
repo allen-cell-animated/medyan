@@ -48,6 +48,7 @@ template <unsigned short M, unsigned short N>
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     _passivated=false;
 #endif
+
     if(_rnode!=nullptr) _rnode->activateReaction();
 }
 

@@ -53,6 +53,17 @@ void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
     b1->force[0] +=  f0 * ( b2->coordinate[0] - b1->coordinate[0] );
     b1->force[1] +=  f0 * ( b2->coordinate[1] - b1->coordinate[1] );
     b1->force[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
+
+//    std::cout<<f0 * ( b1->coordinate[0] - b2->coordinate[0] )<<" "<<f0 * (
+//               b1->coordinate[1] - b2->coordinate[1] )<<" "<<f0 * ( b1->coordinate[2] -
+//            b2->coordinate[2] )<<" "<<f0 * ( b2->coordinate[0] - b1->coordinate[0] )<<" "
+//            ""<<f0 * ( b2->coordinate[1] - b1->coordinate[1] )<<" "<<f0 * (
+//            b2->coordinate[2] - b1->coordinate[2] )<<" "<<endl;
+//    std::cout<<b1->force[0]<<" "<<b1->force[1]<<" "<<b1->force[2]<<" "<<b2->force[0]<<" "
+//            ""<<b2->force[1]<<" "<<b2->force[2]<<endl;
+//    std::cout<<kStretch<<" "<<f0<<" "<<dist<<" "<<eqLength<<" "<<invL<<" "
+//            ""<<b1->coordinate[0]<<" "<<b1->coordinate[1]<<" "<<b1->coordinate[2]<<" "
+//            ""<<b2->coordinate[0]<<" "<<b2->coordinate[1]<<" "<<b2->coordinate[2]<<endl;
 }
 
 void FilamentStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
@@ -71,5 +82,16 @@ void FilamentStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
     b1->forceAux[0] +=  f0 * ( b2->coordinate[0] - b1->coordinate[0] );
     b1->forceAux[1] +=  f0 * ( b2->coordinate[1] - b1->coordinate[1] );
     b1->forceAux[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
+//    std::cout<<f0 * ( b1->coordinate[0] - b2->coordinate[0] )<<" "<<f0 * (
+//            b1->coordinate[1] - b2->coordinate[1] )<<" "<<f0 * ( b1->coordinate[2] -
+//                                                                 b2->coordinate[2] )<<" "<<f0 * ( b2->coordinate[0] - b1->coordinate[0] )<<" "
+//                     ""<<f0 * ( b2->coordinate[1] - b1->coordinate[1] )<<" "<<f0 * (
+//            b2->coordinate[2] - b1->coordinate[2] )<<" "<<endl;
+//    std::cout<<b1->forceAux[0]<<" "<<b1->forceAux[1]<<" "<<b1->forceAux[2]<<" "
+//            ""<<b2->forceAux[0]<<" "
+//            ""<<b2->forceAux[1]<<" "<<b2->forceAux[2]<<endl;
+//    std::cout<<kStretch<<" "<<f0<<" "<<dist<<" "<<eqLength<<" "<<invL<<" "
+//            ""<<b1->coordinate[0]<<" "<<b1->coordinate[1]<<" "<<b1->coordinate[2]<<" "
+//                     ""<<b2->coordinate[0]<<" "<<b2->coordinate[1]<<" "<<b2->coordinate[2]<<endl;
 }
 

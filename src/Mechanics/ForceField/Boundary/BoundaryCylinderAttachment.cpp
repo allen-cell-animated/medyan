@@ -22,8 +22,8 @@
 template <class BAttachmentInteractionType>
 double BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     
     for(auto b : Bead::getPinnedBeads()) {

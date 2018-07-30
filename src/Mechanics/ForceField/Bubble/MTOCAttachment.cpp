@@ -24,8 +24,8 @@
 template <class MTOCInteractionType>
 double MTOCAttachment<MTOCInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for(auto mtoc : MTOC::getMTOCs()) {
         

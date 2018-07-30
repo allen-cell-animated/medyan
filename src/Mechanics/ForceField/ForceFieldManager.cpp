@@ -84,7 +84,7 @@ void ForceFieldManager::computeLoadForces() {
     for(auto &f : _forceFields)
         f->computeLoadForces();
     
-    //reset lfi as well
+    //reset lfip and lfim as well
     for(auto b: Bead::getBeads()) {
         b->lfip = 0;
         b->lfim = 0;

@@ -765,6 +765,10 @@ void Controller::run() {
      cout << "Current simulation time = "<< tau() << endl;
     //restart phase ends
     }
+#ifdef CHEMISTRY
+    tauLastSnapshot = tau();
+    oldTau = 0;
+#endif
     
     //perform first minimization
 #ifdef MECHANICS

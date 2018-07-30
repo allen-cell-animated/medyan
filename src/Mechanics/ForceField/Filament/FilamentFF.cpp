@@ -61,8 +61,8 @@ void FilamentFF::whoIsCulprit() {
 
 double FilamentFF::computeEnergy(double d) {
     
-    double U= 0;
-    double U_i;
+    double U= 0.0;
+    double U_i=0.0;
     
     for (auto &interaction : _filamentInteractionVector) {
         

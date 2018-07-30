@@ -249,7 +249,9 @@ private:
 private:
     unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie
                                                                           ///< objects, representing the reaction network
-//    mt19937 _eng; ///< Random number generator
+#ifndef DEBUGCONSTANTSEED
+    mt19937 _eng; ///< Random number generator
+#endif
     exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<double> _uniform_distr;
     double _t; ///< global time

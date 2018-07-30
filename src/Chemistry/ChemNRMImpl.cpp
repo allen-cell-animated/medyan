@@ -104,9 +104,13 @@ void RNodeNRM::generateNewRandTau() {
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
     setTau(newTau);
+//    std::cout<<"generating R and Tau reaction"<<endl;
+//    printSelf();
+//    std::cout<<endl;
 }
 
 void RNodeNRM::activateReaction() {
+//    std::cout<<"activate Reaction"<<endl;
     generateNewRandTau();
     updateHeap();
 }
@@ -134,7 +138,15 @@ double ChemNRMImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
     
     _exp_distr.param(pm);
+    Rand::counter++;
+    Rand::Ncounter++;
+//    std::cout<<"Counters N "<<Rand::Ncounter<<" D "<<Rand::Dcounter<<" T "<<Rand::counter<<
+//            endl;
+#ifdef DEBUGCONSTANTSEED
     return _exp_distr(Rand::_eng);
+#else
+    return _exp_distr(_eng);
+#endif
 }
 
 bool ChemNRMImpl::makeStep() {
@@ -165,11 +177,14 @@ bool ChemNRMImpl::makeStep() {
     
     _t=tau_top;
     syncGlobalTime();
-    
+//    std::cout<<"----------------"<<endl;
+//    rn->printSelf();
+//    std::cout<<"----------------"<<endl;
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
+        std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N

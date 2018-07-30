@@ -25,18 +25,26 @@ class Rand {
 private:
     
     static uniform_int_distribution<int> _int_distr;
-    
+
 public:
     static mt19937 _eng;
+        static long counter;
+	static long Dcounter;
+	static long Ncounter;
     ///Get a random double between low and high
     static inline double randDouble(double low, double high) {
+        counter++;
+	Dcounter++;
         return ((float)_int_distr(_eng) / numeric_limits<int>::max()) * (high - low) + low;
     }
     ///Get a random integer between low and high
     static inline int randInteger(int low, int high) {
-        return low + (_int_distr(_eng) % (high - low + 1));
+        counter++;
+        int y =_int_distr(_eng); 
+        int x = low + (y % (high - low + 1));
+        std::cout<<"RandomInteger "<<x<<" "<<y<<" "<<high<<" "<<low<<" "<<counter<<" "<<Dcounter<<" "<<Ncounter<<endl;
+        return x;
     }
 };
-
 
 #endif

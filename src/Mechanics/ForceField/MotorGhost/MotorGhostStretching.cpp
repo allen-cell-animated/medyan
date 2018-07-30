@@ -22,8 +22,8 @@
 template <class MStretchingInteractionType>
 double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto m: MotorGhost::getMotorGhosts()) {
         
@@ -78,7 +78,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces() {
     
     //calc max force
     for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FADotFA()));
+        maxF = max(maxF, sqrt(b->FDotF()));
     std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
