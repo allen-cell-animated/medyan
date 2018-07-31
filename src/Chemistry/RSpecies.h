@@ -335,6 +335,10 @@ public:
         species_copy_t prev_n = _n;
 #endif
         _n-=1;
+        if(_n < 0 || _n > 2000){
+            std::out << "At time = " << tau() << endl;
+            std::out << "Wrong CopyNum = " << _n << " for species: " << getFullName() << endl;
+        }
 #ifdef TRACK_ZERO_COPY_N
         if(_n == 0)
             passivateAssocReactantReactions();

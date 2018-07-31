@@ -93,10 +93,7 @@ void Bead::printSelf() {
     cout << "Position on structure = " << _position << endl;
     cout << "Birth time = " << _birthTime << endl;
     
-    cout << "loadForceP = " << loadForcesP[0] << ", " << loadForcesP[1] << ", " << loadForcesP[2] << endl;
-    cout << "loadForceM = " << loadForcesM[0] << ", " << loadForcesM[1] << ", " << loadForcesM[2] << endl;
-    cout << "Forces1 = " << force1[0] << ", " << force1[1] << ", " << force1[2] << endl;
-
+    
     cout << endl;
 }
 

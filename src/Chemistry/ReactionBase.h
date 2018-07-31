@@ -162,9 +162,9 @@ public:
     void setRateScaled(float rate) {
         // This can automatically set the "_rate" as scaled value of "rate"
 
-        if(tau() < 2.0) {
-            cout << "Reaction: " << getReactionType() << ". VolFrac = " << _volumeFrac << ", bare rate = " << rate << endl;
-        }
+//        if(tau() < 2.0) {
+//            cout << "Reaction: " << getReactionType() << ". VolFrac = " << _volumeFrac << ", bare rate = " << rate << endl;
+//        }
         // Some possibilities of the exponent are implemented specifically to decrease the use of "pow"
         switch(_rateVolumeDepExp) {
             case 0:
