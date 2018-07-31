@@ -64,7 +64,7 @@ private:
                                ///< at minus end since last snapshot
     
     int _plusEndPosition   = 0;  ///< Position of plus end bead at last turnover
-    double _turnoverTime   = 0;  ///< Time since last turnover\\
+    double _turnoverTime   = 0;  ///< Time since last turnover
     
     short _polyPlusEnd = 0;    ///< Change in corresponding reaction
     short _polyMinusEnd = 0;   ///< since last snapshot
