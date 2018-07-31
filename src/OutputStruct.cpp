@@ -51,10 +51,6 @@ void OutputStructFilament::getFromSystemWithoutChildren() {
         _coords.push_back(vector2Array<double, 3>(cylinder->getFirstBead()->coordinate));
     _coords.push_back(vector2Array<double, 3>(_filament->getCylinderVector().back()->getSecondBead()->coordinate));
         
-    // Side effect: Reset deltas for this filament
-    // TODO: Move to output
-    _filament->resetDeltaPlusEnd();
-    _filament->resetDeltaMinusEnd();
 }
 
 void OutputStructFilament::outputFromSystem(std::ostream& os) {
