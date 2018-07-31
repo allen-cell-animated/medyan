@@ -156,25 +156,12 @@ public:
     deque<Cylinder*>& getCylinderVector() {return _cylinderVector;}
     
     //@{
-    /// Reset delta
+    /// Get / reset temporary counters
     void resetDeltaPlusEnd() {_deltaPlusEnd = 0;}
     void resetDeltaMinusEnd() {_deltaMinusEnd = 0;}
-    //@}
-    
-    //@{
-    /// Get delta
     short getDeltaPlusEnd() {return _deltaPlusEnd;}
     short getDeltaMinusEnd() {return _deltaMinusEnd;}
-    //@}
-    
-    /// Get ID
-    int getID() {return _ID;}
-    
-    /// Get type
-    int getType() {return _filType;}
-    
-    //@{
-    /// Get reactions
+
     short getPolyPlusEnd() {return _polyPlusEnd;}
     void resetPolyPlusEnd() { _polyPlusEnd = 0;}
     
@@ -189,7 +176,23 @@ public:
     
     short getNucleation() {return _nucleationReaction;}
     void resetNucleation() { _nucleationReaction = 0;}
+
+    void resetCounters() {
+        resetDeltaPlusEnd();
+        resetDeltaMinusEnd();
+        resetPolyPlusEnd();
+        resetPolyMinusEnd();
+        resetDepolyPlusEnd();
+        resetDepolyMinusEnd();
+        resetNucleation();
+    }
     //@}
+    
+    /// Get ID
+    int getID() {return _ID;}
+    
+    /// Get type
+    int getType() {return _filType;}
     
     //@{
     /// Get end cylinder
