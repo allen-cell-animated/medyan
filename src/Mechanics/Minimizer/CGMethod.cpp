@@ -1161,3 +1161,36 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
         return lambda;
     }
 }
+
+double* CGMethod::getCoords(){
+    //COPY BEAD DATA
+    N = 3 * Bead::getBeads().size();
+    //    std::cout<<3 * Bead::getBeads().size()<<endl;
+    coordDiss = new double[N];
+    
+    //coord management
+    long i = 0;
+    long index = 0;
+    for(auto b: Bead::getBeads()) {
+        
+        //set bead index
+        b->_dbIndex = i;
+        
+        //flatten indices
+        index = 3 * i;
+        coordDiss[index] = b->coordinate[0];
+        coordDiss[index + 1] = b->coordinate[1];
+        coordDiss[index + 2] = b->coordinate[2];
+        
+        b->coordinateP = b->coordinate;
+        //        force[index] = 0.0;
+        //        force[index + 1] = 0.0;
+        //        force[index + 2] = 0.0;
+        i++;
+    }
+    
+    return coordDiss;
+    
+    
+
+}

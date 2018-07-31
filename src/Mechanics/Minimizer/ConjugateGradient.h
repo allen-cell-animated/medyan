@@ -52,18 +52,32 @@ public:
         _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX, steplimit);
     }
     
-    double* getCoords(){
-        return _CGType.getCoords();
-    }
+
     
-    double* getForces(){
-        return _CGType.getForces();
-    }
+
     
     double getEnergy(ForceFieldManager &FFM, double d){
-        double* coords = getCoords();
-        double* forces = getForces();
-        return FFM.computeEnergy(coords,forces,d);
+      
+        double* coord = _CGType.getCoords();
+        
+        FFM.vectorizeAllForceFields();
+        
+        double dummyForce[1] = {0};
+        
+        double f = FFM.computeEnergy(coord,dummyForce,0.0);
+        cout<<"it is "<<f<<endl;
+        
+        
+        delete [] coord;
+        
+        FFM.cleanupAllForceFields();
+        
+        
+        
+        return f;
+        
+        
+        
     }
 
     

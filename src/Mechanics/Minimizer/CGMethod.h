@@ -42,7 +42,7 @@ protected:
 
     ///< Data vectors for calculation
     double *coord;  ///<bead coordinates (length 3*N)
-    
+    double *coordDiss;
     double *force; ///< bead forces (length 3*N)
     double *forceAux; ///< auxiliary force calculations (length 3*N)
     double *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
@@ -184,6 +184,7 @@ protected:
     }
     
     ///Deallocation of CG arrays
+    
     inline void deallocate() {
         
         delete [] coord;
@@ -193,16 +194,12 @@ protected:
     }
     
     
-    
 public:
     
-    double* getCoords(){
-        return coord;
-    }
+    double* getCoords();
     
-    double* getForces(){
-        return force;
-    }
+    
+    
     
     static long N; ///< Number of beads in the system, set before each minimization
     
