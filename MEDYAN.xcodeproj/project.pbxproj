@@ -1358,11 +1358,15 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
+					/opt/local/include,
 					"./**",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/opt/local/lib,
+					/usr/local/lib,
+				);
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1422,11 +1426,15 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
+					/opt/local/include,
 					"./**",
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/opt/local/lib,
+					/usr/local/lib,
+				);
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1456,10 +1464,14 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					"$(inherited)",
+					/opt/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/opt/local/lib,
+				);
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Debug;
@@ -1491,10 +1503,14 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					"$(inherited)",
+					/opt/local/include,
 				);
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/opt/local/lib,
+				);
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-lboost_system";
+				OTHER_LDFLAGS = "-lboost_system-mt";
 				PRODUCT_NAME = MEDYAN;
 			};
 			name = Release;

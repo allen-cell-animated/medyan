@@ -16,6 +16,8 @@ build/
 *.[oa]
 *.pyc
 *.o
+src/Makefile.dep
+src/MEDYAN
 
 # Output files
 *.traj

@@ -64,7 +64,13 @@ private:
                                ///< at minus end since last snapshot
     
     int _plusEndPosition   = 0;  ///< Position of plus end bead at last turnover
-    double _turnoverTime   = 0;  ///< Time since last turnover
+    double _turnoverTime   = 0;  ///< Time since last turnover\\
+    
+    short _polyPlusEnd = 0;    ///< Change in corresponding reaction
+    short _polyMinusEnd = 0;   ///< since last snapshot
+    short _depolyPlusEnd = 0;
+    short _depolyMinusEnd = 0;
+    short _nucleationReaction = 0;
     
     static Database<Filament*> _filaments; ///< Collection in SubSystem
     
@@ -166,6 +172,24 @@ public:
     
     /// Get type
     int getType() {return _filType;}
+    
+    //@{
+    /// Get reactions
+    short getPolyPlusEnd() {return _polyPlusEnd;}
+    void resetPolyPlusEnd() { _polyPlusEnd = 0;}
+    
+    short getPolyMinusEnd() {return _polyMinusEnd;}
+    void resetPolyMinusEnd() { _polyMinusEnd = 0;}
+    
+    short getDepolyPlusEnd() {return _depolyPlusEnd;}
+    void resetDepolyPlusEnd() { _depolyPlusEnd = 0;}
+    
+    short getDepolyMinusEnd() {return _depolyMinusEnd;}
+    void resetDepolyMinusEnd() { _depolyMinusEnd = 0;}
+    
+    short getNucleation() {return _nucleationReaction;}
+    void resetNucleation() { _nucleationReaction = 0;}
+    //@}
     
     //@{
     /// Get end cylinder
