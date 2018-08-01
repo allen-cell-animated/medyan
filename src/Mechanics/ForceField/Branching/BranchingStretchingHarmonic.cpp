@@ -74,7 +74,7 @@ double BranchingStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
     b3->force[1] +=  -f0 * ( b3->coordinate[1] - v1[1] );
     b3->force[2] +=  -f0 * ( b3->coordinate[2] - v1[2] );
     
-    return f0;
+    return f0/invL;
     
 }
 

@@ -301,9 +301,6 @@ void MotorGhost::updateReactionRates() {
         float newRate =
         _unbindingChangers[_motorType]->
         changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numHeads, force);
-        std::cout<<"Motor UB f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
-                ""<<coordinate[1]<<" "
-                         ""<<coordinate[2]<<endl;
         offRxn->setRate(newRate);
         offRxn->activateReaction();
     }

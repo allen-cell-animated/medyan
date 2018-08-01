@@ -94,10 +94,8 @@ struct UpdateLinkerBindingCallback {
     
     //callback
     void operator() (RSpecies *r, int delta) {
-        int iadd = 0;int iremove = 0;
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
-//        std::cout<<"UpdateLinkerBindingCallback"<<endl;
         for(auto &manager : c->getFilamentBindingManagers()) {
             
             if(dynamic_cast<LinkerBindingManager*>(manager.get())) {
@@ -105,19 +103,14 @@ struct UpdateLinkerBindingCallback {
                 CCylinder* cc = _cylinder->getCCylinder();
                 auto x = c->coordinates();
                 //update binding sites
-                if(delta == +1){ manager->addPossibleBindings(cc, _bindingSite);iadd++;
-//                std::cout<<"Added Cyl "<<_cylinder->getID()<<" bs "<<_bindingSite<<" Cmp "
-//                        ""<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
+                if(delta == +1){ manager->addPossibleBindings(cc, _bindingSite);
+
  }
                 
                 else{ /* -1 */
-//                    std::cout<<"Removed Cyl "<<_cylinder->getID()<<" bs "
-//                            ""<<_bindingSite<<" Cmp "
-//                            ""<<x[0]<<" "<<x[1]<<" "<<x[2]<<endl;
-                    manager->removePossibleBindings(cc, _bindingSite);iremove++;}
+                    manager->removePossibleBindings(cc, _bindingSite);}
             }
         }
-        std::cout<<"Update Linker added "<<iadd<<" removed "<<iremove<<endl;
     }
 };
 
@@ -453,15 +446,12 @@ struct BranchingCallback {
                     break;
                 }}
             if(check){
-
-                
             b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
-                
             frate=0.0;
             }
             else
                 cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
-                //exit(EXIT_FAILURE);
+                exit(EXIT_FAILURE);
         }
         
         //create off reaction
@@ -684,8 +674,6 @@ struct MotorWalkingCallback {
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
-        std::cout<<"Motor walking on Cyl "<<_c->getID()<<" "<<_oldPosition<<" "
-                ""<<_newPosition<<endl;
         m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
         
 #ifdef DYNAMICRATES
@@ -731,9 +719,6 @@ struct MotorMovingCylinderCallback {
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
-
-        std::cout<<"Motor moving from Cyl "<<_oldC->getID()<<" bs "<<_oldPosition<<" to "
-                ""<<_newC<<" bs "<<_newPosition<<endl;
         
         m->moveMotorHead(_oldC, _newC, oldpos, newpos, _boundType, _ps);
         

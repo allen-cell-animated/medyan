@@ -368,9 +368,6 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 }
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {
-//    auto cylcoord = cc->getCylinder()->coordinate;
-//    std::cout<<"L Adding possible to Cyl "<<cc->getCylinder()->getID()<<" w coords "
-//            ""<<cylcoord[0]<<" "<<cylcoord[1]<<" "<<cylcoord[2]<<endl;
     
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
              bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
@@ -389,17 +386,6 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
 #ifdef DEBUGCONSTANTSEED
     erasepossibleBindings(cc,bindingSite);
     //remove all tuples which have this ccylinder as key
-//    auto t = tuple<CCylinder*, short>(cc, bindingSite);
-//    _possibleBindings.erase(t);
-//
-//    //remove all tuples which have this as value
-//    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
-//
-//        if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-//            _possibleBindings.erase(it++);
-//
-//        else ++it;
-//    }
 #else
     //remove all tuples which have this ccylinder as key
     auto t = tuple<CCylinder*, short>(cc, bindingSite);
@@ -436,12 +422,6 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
     for(auto m : affectedManagers) {
 #ifdef DEBUGCONSTANTSEED
         m->erasepossibleBindings(cc,bindingSite);
-//        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-//
-//            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-//                m->_possibleBindings.erase(it++);
-//            else ++it;
-//        }
 #else
         for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
             
@@ -486,11 +466,6 @@ void LinkerBindingManager::updateAllPossibleBindings() {
         for(auto c : _compartment->getCylinders())
 #endif
         {
-
-//        auto x = _compartment->coordinates();
-//        std::cout<<"L updateall Cyl "<<c->getID()<<" "<<c->coordinate[0]<<" "<<
-//                 c->coordinate[1]<<" "<<c->coordinate[2]<<" in comp "<<x[0]<<" "
-//                         ""<<x[1]<<" "<<x[2]<<endl;
     
         if(c->getType() != _filamentType) continue;
         
@@ -545,15 +520,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             
                             //add in correct order
                             if(c->getID() > cn->getID()) {
-//                                std::cout<<"L pb Cyl "<<cc->getCylinder()->getID()<<" bs "
-//                                        ""<<*it1<<" Cyl "<<ccn->getCylinder()->getID()<<""
-//                                                 " bs "<<*it2<<" in comp "<<x[0]<<" "
-//                         ""<<x[1]<<" "<<x[2]<<endl;
 #ifdef DEBUGCONSTANTSEED
                                 appendpossibleBindings(t1,t2);
-//                                _possibleBindings.emplace(t1, t2);
-//                                std::cout<<"placing L Cyl "<<c->getID()<<" bs "<<*it1<<" "
-//                                        "Cyl "<<cn->getID()<<" bs "<<*it2<<endl;
 #else
                                 _possibleBindings.emplace(t1, t2);
 #endif
@@ -564,23 +532,6 @@ void LinkerBindingManager::updateAllPossibleBindings() {
             }
         }
     }
-    auto x = _compartment->coordinates();
-//    std::cout<<"L possibile "<<_possibleBindings.size()<<" in comp "<<x[0]<<" "
-//            ""<<x[1]<<" "<<x[2]<<endl;
-//    std::cout<<"*****"<<endl;
-//        for(auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++){
-//            auto bspair = *it;
-//            auto cyl1 = get<0>(bspair[0])->getCylinder()->getID();
-//            auto cyl2 = get<0>(bspair[1])->getCylinder()->getID();
-//            std::cout<<"Cyl "<<cyl1<<"bs "<<get<1>(bspair[0])<<" Cyl "<<cyl2<<" bs "
-//                    ""<<get<1>(bspair[1])<<endl;
-//    }
-//    for(auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++){
-//        auto cyl1 = get<0>(it->first)->getCylinder();
-//        auto cyl2 = get<0>(it->second)->getCylinder();
-//        std::cout<<"Cyl "<<cyl1->getID()<<"bs "<<get<1>(it->first)<<" Cyl "<<cyl2->getID
-//                ()<<" bs "<<get<1>(it->second)<<endl;
-//    }
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();
     
@@ -596,12 +547,6 @@ bool LinkerBindingManager::isConsistent() {
 
         short bindingSite1 = get<1>((*it)[0]);
         short bindingSite2 = get<1>((*it)[1]);
-//        CCylinder* cc1 = get<0>(it->first);
-//
-//        CCylinder* cc2 = get<0>(it->second);
-//
-//        short bindingSite1 = get<1>(it->first);
-//        short bindingSite2 = get<1>(it->second);
 #else
         CCylinder* cc1 = get<0>(it->first);
 
@@ -655,7 +600,6 @@ vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSites() {
     std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
 #ifdef DEBUGCONSTANTSEED
     return (*it);
-//    return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #else
   return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #endif
@@ -700,30 +644,7 @@ void LinkerBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
     }
     if(status)
     {  _possibleBindings.push_back(a);
-//        auto c1 = (get<0>(t1))->getCylinder()->coordinate;
-//        auto c2 = (get<0>(t2))->getCylinder()->coordinate;
-//        auto c1ID = (get<0>(t1))->getCylinder()->getID();
-//        auto c2ID = (get<0>(t2))->getCylinder()->getID();
-//        auto bs1 = get<1>(t1);
-//        auto bs2 = get<1>(t2);
-//        auto x = _compartment->coordinates();
-//        std::cout<<"Added Cyl "<<c1ID<<" bs "<<bs1<<" Cyl "<<c2ID<<" bs "<<bs2<<" "
-//                "to position "<<_possibleBindings.size()<<" in compartment "<<x[0]<<" "<<x[1]<<" "
-//                         ""<<x[2]<<"with coords "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "
-//                ""<<c2[1]<<" "<<c2[1]<<" "<<c2[2]<<endl;
     }
-//    _possibleBindings.emplace(t1,t2);
-//            auto c1 = (get<0>(t1))->getCylinder()->coordinate;
-//        auto c2 = (get<0>(t2))->getCylinder()->coordinate;
-//        auto c1ID = (get<0>(t1))->getCylinder()->getID();
-//        auto c2ID = (get<0>(t2))->getCylinder()->getID();
-//        auto bs1 = get<1>(t1);
-//        auto bs2 = get<1>(t2);
-//        auto x = _compartment->coordinates();
-//        std::cout<<"Added Cyl "<<c1ID<<" bs "<<bs1<<" Cyl "<<c2ID<<" bs "<<bs2<<" "
-//                "to position "<<_possibleBindings.size()<<" in compartment "<<x[0]<<" "<<x[1]<<" "
-//                         ""<<x[2]<<"with coords "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "
-//                ""<<c2[1]<<" "<<c2[1]<<" "<<c2[2]<<endl;
 #else
     _possibleBindings.emplace(t1,t2);
 #endif
@@ -885,9 +806,6 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 
 void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
 
-//    auto cylcoord = cc->getCylinder()->coordinate;
-//    std::cout<<"M Adding possible to Cyl "<<cc->getCylinder()->getID()<<" w coords "
-//            ""<<cylcoord[0]<<" "<<cylcoord[1]<<" "<<cylcoord[2]<<endl;
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
              bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
         
@@ -904,17 +822,6 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
 #ifdef DEBUGCONSTANTSEED
     erasepossibleBindings(cc,bindingSite);
     //remove all tuples which have this ccylinder as key
-//    auto t = tuple<CCylinder*, short>(cc, bindingSite);
-//    _possibleBindings.erase(t);
-//
-//    //remove all tuples which have this as value
-//    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
-//
-//        if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-//            _possibleBindings.erase(it++);
-//
-//        else ++it;
-//    }
 #else
     //remove all tuples which have this ccylinder as key
     auto t = tuple<CCylinder*, short>(cc, bindingSite);
@@ -953,14 +860,6 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
     for(auto m : affectedManagers) {
 #ifdef DEBUGCONSTANTSEED
         m->erasepossibleBindings(cc,bindingSite);
-
-//        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-//
-//            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-//                m->_possibleBindings.erase(it++);
-//
-//            else ++it;
-//        }
 #else
         for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
 
@@ -1005,10 +904,6 @@ void MotorBindingManager::updateAllPossibleBindings() {
         for(auto c : _compartment->getCylinders())
 #endif
         {
-//        auto x = _compartment->coordinates();
-//        std::cout<<"M updateall Cyl "<<c->getID()<<" "<<c->coordinate[0]<<" "<<
-//                 c->coordinate[1]<<" "<<c->coordinate[2]<<" in comp "<<x[0]<<" "
-//                         ""<<x[1]<<" "<<x[2]<<endl;
 
         if(c->getType() != _filamentType) continue;
         
@@ -1065,13 +960,8 @@ for(auto cn:_neighborLists[_nlIndex]->getNeighbors
                             
                             //add in correct order
                             if(c->getID() > cn->getID()){
-//                                std::cout<<"M pb Cyl "<<cc->getCylinder()->getID()<<" bs "
-//                                        ""<<*it1<<" Cyl "<<ccn->getCylinder()->getID()<<""
-//                                                 " bs "<<*it2<<" in comp "<<x[0]<<" "
-//                                        ""<<x[1]<<" "<<x[2]<<endl;
 #ifdef DEBUGCONSTANTSEED
                                 appendpossibleBindings(t1,t2);
-//                                _possibleBindings.emplace(t1, t2);
 #else
                                 _possibleBindings.emplace(t1, t2);
 #endif
@@ -1082,27 +972,8 @@ for(auto cn:_neighborLists[_nlIndex]->getNeighbors
             }
         }
     }
-    auto x = _compartment->coordinates();
-//    std::cout<<"M possibile "<<_possibleBindings.size()<<" in comp "<<x[0]<<" "
-//            ""<<x[1]<<" "<<x[2]<<endl;
-//    std::cout<<"*****"<<endl;
-//    for(auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++){
-//        auto bspair = *it;
-//        auto cyl1 = get<0>(bspair[0])->getCylinder()->getID();
-//        auto cyl2 = get<0>(bspair[1])->getCylinder()->getID();
-//        std::cout<<"Cyl "<<cyl1<<"bs "<<get<1>(bspair[0])<<" Cyl "<<cyl2<<" bs "
-//                ""<<get<1>(bspair[1])<<endl;
-//    }
-//    for(auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++){
-//        auto cyl1 = get<0>(it->first)->getCylinder();
-//        auto cyl2 = get<0>(it->second)->getCylinder();
-//        std::cout<<"Cyl "<<cyl1->getID()<<"bs "<<get<1>(it->first)<<" Cyl "<<cyl2->getID
-//                ()<<" bs "<<get<1>(it->second)<<endl;
-//    }
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();
-//    std::cout<<"Cmp "<<_compartment->coordinates()[0]<<" "<<_compartment->coordinates()[1]<<""
-//            " "<<_compartment->coordinates()[2]<<" "<<_possibleBindings.size()<<" "<<oldN<<" "<<newN<<endl;
     updateBindingReaction(oldN, newN);
 }
 
@@ -1193,7 +1064,6 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSites() {
     std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
 #ifdef DEBUGCONSTANTSEED
     return (*it);
-//    return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #else
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #endif

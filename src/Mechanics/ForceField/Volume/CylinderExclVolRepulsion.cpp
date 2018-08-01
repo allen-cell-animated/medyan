@@ -122,24 +122,7 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     vector<double> c4Stretched = {c4[0] + z * b4->force[0],
                                   c4[1] + z * b4->force[1],
                                   c4[2] + z * b4->force[2]};
-    std::cout<<" BEFORE "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "
-            ""<<c2[2]<<" "<<c3[0]<<" "
-                     ""<<c3[1]<<" "
-                     ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
-    std::cout<<"FORCE "<<b1->force[0]<<" "
-            ""<<b1->force[1]<<" "<<b1->force[2]<<" "<<b2->force[0]<<" "
-                     ""<<b2->force[1]<<" "<<b2->force[2]<<" "<<b3->force[0]<<" "
-            ""<<b3->force[1]<<" "<<b3->force[2]<<" "<<b4->force[0]<<" "<<b4->force[1]<<" "
-            ""<<b4->force[2]<<endl;
-    std::cout<<" AFTER "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "
-            ""<<c2[2]<<" "<<c3[0]<<" "
-                     ""<<c3[1]<<" "
-                     ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
-    std::cout<<"Force "<<b1->force[0]<<" "
-                     ""<<b1->force[1]<<" "<<b1->force[2]<<" "<<b2->force[0]<<" "
-                     ""<<b2->force[1]<<" "<<b2->force[2]<<" "<<b3->force[0]<<" "
-                     ""<<b3->force[1]<<" "<<b3->force[2]<<" "<<b4->force[0]<<" "<<b4->force[1]<<" "
-                     ""<<b4->force[2]<<endl;
+
     //check if parallel
     if(areParallel(c1Stretched, c2Stretched,
                    c3Stretched, c4Stretched)) {
@@ -147,7 +130,6 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
         double d = twoPointDistance(c1Stretched, c3Stretched);
         double invDSquare =  1 / (d * d);
         double energy =  kRepuls * invDSquare * invDSquare;
-        std::cout<<"P Energy"<<energy<<endl;
         return energy;
     }
     
@@ -156,7 +138,6 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
         //slightly move point
         c2Stretched = movePointOutOfPlane(c1Stretched, c2Stretched,
                                           c3Stretched, c4Stretched, 2, 0.01);
-        std::cout<<"move"<<endl;
     }
     
     double a = scalarProduct(c1Stretched, c2Stretched, c1Stretched, c2Stretched);
@@ -185,10 +166,8 @@ double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     double energy = 0.5*kRepuls/JJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-    std::cout<<"N energy "<<energy<<endl;
     if(fabs(energy) == numeric_limits<double>::infinity()
        || energy != energy || energy < -1.0) {
-        std::cout<<"oops"<<endl;
     }
 
     return energy;
@@ -203,8 +182,6 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
     auto c2 = b2->coordinate;
     auto c3 = b3->coordinate;
     auto c4 = b4->coordinate;
-    std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "
-            ""<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
     //check if parallel
     if(areParallel(c1, c2, c3, c4)) {
         
@@ -227,24 +204,13 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
         b4->force[0] += f0 * (c4[0] - c2[0]);
         b4->force[1] += f0 * (c4[1] - c2[1]);
         b4->force[2] += f0 * (c4[2] - c2[2]);
-        std::cout<<"P "<<b1->force[0]<<" "<<b1->force[1]<<" "<<b1->force[2]<<" "
-                ""<<b2->force[0]<<" "<<b2->force[1]<<" "<<b2->force[2]<<" "
-                ""<<b3->force[0]<<" "<<b3->force[1]<<" "<<b3->force[2]<<" "
-                ""<<b4->force[0]<<" "<<b4->force[1]<<" "<<b4->force[2]<<endl;
         return;
     }
     
     //check if in same plane
     if(areInPlane(c1, c2, c3, c4)) {
-        std::cout<<"Mv"<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "
-                ""<<c2[2]<<" "
-                ""<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
         //slightly move point
         c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
-        std::cout<<"M ";
-    }
-    else{
-        std::cout<<"N ";
     }
 
     double a = scalarProduct(c1, c2, c1, c2);
@@ -340,10 +306,6 @@ void CylinderExclVolRepulsion::forces(Bead* b1, Bead* b2,
     
     b4->force[2] +=  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;
 
-    std::cout<<b1->force[0]<<" "<<b1->force[1]<<" "<<b1->force[2]<<" "
-            ""<<b2->force[0]<<" "<<b2->force[1]<<" "<<b2->force[2]<<" "
-                     ""<<b3->force[0]<<" "<<b3->force[1]<<" "<<b3->force[2]<<" "
-                     ""<<b4->force[0]<<" "<<b4->force[1]<<" "<<b4->force[2]<<endl;
 
 }
 
@@ -356,8 +318,6 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
     auto c2 = b2->coordinate;
     auto c3 = b3->coordinate;
     auto c4 = b4->coordinate;
-    std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "
-            ""<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
     //check if parallel
     if(areParallel(c1, c2, c3, c4)) {
         
@@ -380,26 +340,13 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
         b4->forceAux[0] += f0 * (c4[0] - c2[0]);
         b4->forceAux[1] += f0 * (c4[1] - c2[1]);
         b4->forceAux[2] += f0 * (c4[2] - c2[2]);
-        std::cout<<"P "<<b1->forceAux[0]<<" "<<b1->forceAux[1]<<" "<<b1->forceAux[2]<<" "
-                ""<<b2->forceAux[0]<<" "<<b2->forceAux[1]<<" "<<b2->forceAux[2]<<" "
-                         ""<<b3->forceAux[0]<<" "<<b3->forceAux[1]<<" "
-                ""<<b3->forceAux[2]<<" "
-                         ""<<b4->forceAux[0]<<" "<<b4->forceAux[1]<<" "
-                ""<<b4->forceAux[2]<<endl;
         return;
     }
     
     //check if in same plane
     if(areInPlane(c1, c2, c3, c4)) {
-        std::cout<<"Mv"<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "
-                ""<<c2[2]<<" "
-                         ""<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
         //slightly move point
         c2 = movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01);
-        std::cout<<"M ";
-    }
-    else{
-        std::cout<<"N ";
     }
 
     double a = scalarProduct(c1, c2, c1, c2);
@@ -431,10 +378,6 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
     double ATG4 = atan((d + f)/FF) - atan((d + f - b)/FF);
     
     double U = 0.5*kRepuls*invJJ*( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4 );
-
-    std::cout<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<f<<" "<<AA<<" "<<BB<<" "<<CC<<" "
-            ""<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<" "<<ATG1<<" "<<ATG2<<" "
-            ""<<ATG3<<" "<<ATG4<<" "<<U<<" "<<kRepuls<<endl;
     
     double A1 = AA*AA/(AA*AA + e*e);
     double A2 = AA*AA/(AA*AA + (a + e)*(a + e));
@@ -472,10 +415,7 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
                  (ATG4*HH)/(FF*FF);
     double F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
     double F14 = (F1*HH)/(FF*FF);
-    std::cout<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<" "
-            ""<<A11<<" "<<A12<<" "<<A13<<" "<<A14<<" "<<E11<<" "<<E12<<" "<<E13<<" "
-            ""<<E14<<" "<<B11<<" "<<B12<<" "<<B13<<" "<<B14<<" "<<F11<<" "<<F12<<" "
-            ""<<F13<<" "<<F14<<endl;
+
     b1->forceAux[0] +=  - 0.5*invJJ*( (c2[0] - c1[0] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (c4[0] - c3[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (c1[0] - c3[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
     
     b1->forceAux[1] +=  - 0.5*invJJ*( (c2[1] - c1[1] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*f - 2*U*(b*e - d*f) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*f))/(2*EE) - A11*f + E11*f - 2*U*f*f + (F12*b)/(2*FF)) ) + (c4[1] - c3[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*f - F11*f - 2*U*a*f - 4*U*e*f + 2*U*(d*e - a*f) - (B12*f)/BB) +  (c1[1] - c3[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*f + 2*U*(b*e - d*f) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
@@ -499,11 +439,5 @@ void CylinderExclVolRepulsion::forcesAux(Bead* b1, Bead* b2,
     b4->forceAux[1] +=  - invJJ*( 0.5*(c2[1] - c1[1] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[1] - c3[1])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[1] - c3[1] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) ) ;
     
     b4->forceAux[2] +=  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*f + F11*f +4*U*e*f - (F12*(d + f))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*f + 2*U*(d*e - a*f) - (B12*f)/BB - (F12*(d + f))/FF) );
-    std::cout<<b1->forceAux[0]<<" "<<b1->forceAux[1]<<" "<<b1->forceAux[2]<<" "
-            ""<<b2->forceAux[0]<<" "<<b2->forceAux[1]<<" "<<b2->forceAux[2]<<" "
-                     ""<<b3->forceAux[0]<<" "<<b3->forceAux[1]<<" "
-                     ""<<b3->forceAux[2]<<" "
-                     ""<<b4->forceAux[0]<<" "<<b4->forceAux[1]<<" "
-                     ""<<b4->forceAux[2]<<endl;
 }
 

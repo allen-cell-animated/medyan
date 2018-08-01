@@ -30,14 +30,7 @@ CLinker::CLinker(short linkerType, Compartment* c,
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-    
 
-    std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
-            "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
-    auto x1 = cc1->getCompartment()->coordinates();
-    auto x2 = cc2->getCompartment()->coordinates();
-    std::cout<<x1[0]<<" "<<x1[1]<<" "<<x1[2]<<endl;
-    std::cout<<x2[0]<<" "<<x2[1]<<" "<<x2[2]<<endl;
     //mark species
     assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&

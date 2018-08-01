@@ -74,12 +74,6 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces() {
         double f0 = _FFType.forces(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
         m->getMMotorGhost()->stretchForce = f0;
     }
-    double maxF = 0;
-    
-    //calc max force
-    for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FDotF()));
-    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 
@@ -101,12 +95,6 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForcesAux() {
         double f0 = _FFType.forcesAux(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
         m->getMMotorGhost()->stretchForce = f0;
     }
-    double maxF = 0;
-    
-    //calc max force
-    for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FADotFA()));
-    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 ///Template specializations

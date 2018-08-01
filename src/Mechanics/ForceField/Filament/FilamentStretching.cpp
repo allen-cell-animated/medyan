@@ -64,7 +64,6 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
 
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::computeForces() {
-    int nint = 0;
     
     for (auto f: Filament::getFilaments()) {
     
@@ -76,15 +75,8 @@ void FilamentStretching<FStretchingInteractionType>::computeForces() {
             double eqLength = it->getMCylinder()->getEqLength();
            
             _FFType.forces(b1, b2, kStretch, eqLength);
-            nint++;
         }
     }
-    double maxF = 0;
-    
-    //calc max force
-    for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FDotF()));
-    std::cout<<"maxF "<<getName()<<" "<<maxF<<" nint "<<nint<<endl;
 }
 
 
@@ -103,12 +95,6 @@ void FilamentStretching<FStretchingInteractionType>::computeForcesAux() {
             _FFType.forcesAux(b1, b2, kStretch, eqLength);
         }
     }
-    double maxF = 0;
-    
-    //calc max force
-    for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FADotFA()));
-    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 ///Template specializations

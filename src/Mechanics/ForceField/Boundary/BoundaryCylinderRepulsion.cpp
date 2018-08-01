@@ -139,12 +139,6 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
             
         }
     }
-    double maxF = 0;
-    
-    //calc max force
-    for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FDotF()));
-    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 
@@ -177,12 +171,6 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux() {
             }
         }
     }
-    double maxF = 0;
-    
-    //calc max force
-    for(auto b: Bead::getBeads())
-        maxF = max(maxF, sqrt(b->FADotFA()));
-    std::cout<<"maxF "<<getName()<<" "<<maxF<<endl;
 }
 
 template <class BRepulsionInteractionType>
