@@ -23,6 +23,17 @@ struct PlaneCubeSlicingResult {
         return *this;
     }
 
+    PlaneCubeSlicingResult& operator*=(const std::array<double, 3>& a) {
+        // Expand the volume and area with different aspect ratio
+        const std::array<double, 3> areaFac {{ a[1] * a[2], a[2] * a[0], a[0] * a[1] }};
+        for(size_t idx = 0; idx < 3; ++idx) {
+            areaIn[2*idx    ] *= areaFac[idx];
+            areaIn[2*idx + 1] *= areaFac[idx];
+        }
+        volumeIn *= a[0] * a[1] * a[2];
+        return *this;
+    }
+
     PlaneCubeSlicingResult& flip(unsigned short int flippedCoords) { // coords (0-7) in binary is zyx
         for(size_t inspect = 0; inspect < 3; ++inspect) {
             if((flippedCoords >> inspect) & 1) {
@@ -240,19 +251,45 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
     return res;
 }
 
-inline PlaneCubeSlicingResult planeCubeSlice(
-    const std::array<double, 3>& point,  // A point on the plane
-    const std::array<double, 3>& normal, // Unit normal of the plane pointing outwards
-    const std::array<double, 3>& r0,     // (x_min, y_min, z_min) of the cube
-    double                       a       // Side length of the cube
-) {
-    PlaneCubeSlicingResult res;
-    res = planeUnitCubeSlice(
-        mathfunc::vectorMultiply(mathfunc::vectorDifference(point, r0), 1.0 / a),
-        normal
-    );
-    res *= a;
-    return res;
-}
+struct PlaneCubeSlicer {
+    PlaneCubeSlicingResult operator() (
+        const std::array<double, 3>& point,  // A point on the plane
+        const std::array<double, 3>& normal, // Unit normal of the plane pointing outwards
+        const std::array<double, 3>& r0,     // (x_min, y_min, z_min) of the cube
+        double                       a       // Side length of the cube
+    ) {
+        PlaneCubeSlicingResult res;
+        res = planeUnitCubeSlice(
+            mathfunc::vectorMultiply(mathfunc::vectorDifference(point, r0), 1.0 / a),
+            normal
+        );
+        res *= a;
+        return res;
+    }
+};
+
+struct PlaneCuboidSlicer {
+    PlaneCubeSlicingResult operator() (
+        const std::array<double, 3>& point,  // A point on the plane
+        const std::array<double, 3>& normal, // Unit normal of the plane pointing outwards
+        const std::array<double, 3>& r0,     // (x_min, y_min, z_min) of the cuboid
+        const std::array<double, 3>& a       // Edge length of the cuboid
+    ) {
+        PlaneCubeSlicingResult res;
+        const std::array<double, 3> pointInUnitCube = {{
+            (point[0] - r0[0]) / a[0],
+            (point[1] - r0[1]) / a[1],
+            (point[2] - r0[2]) / a[2]
+        }};
+        const std::array<double, 3> normalInUnitCube = mathfunc::normalizedVector(std::array<double, 3> {{
+            normal[0] / a[0],
+            normal[1] / a[1],
+            normal[2] / a[2]
+        }});
+        res = planeUnitCubeSlice(pointInUnitCube, normalInUnitCube);
+        res *= a;
+        return res;
+    }
+};
 
 #endif

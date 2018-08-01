@@ -201,7 +201,7 @@ TEST(CubeSlicingTest, TranslationAndScaling) {
     const double r0Val = 10.0;
     const double s = 2.0;
 
-    auto r = planeCubeSlice(
+    auto r = PlaneCubeSlicer() (
         {{r0Val + s * pVal, r0Val + s * pVal, r0Val + s * pVal}},
         {{-nVal, -nVal, -nVal}},
         {{r0Val, r0Val, r0Val}},

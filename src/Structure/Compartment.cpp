@@ -71,7 +71,7 @@ void Compartment::getSlicedVolumeArea() {
         vectorExpand(sumNormal, oneOverSumArea);
         vectorExpand(sumPos, oneOverSumArea);
 
-        PlaneCubeSlicingResult res = planeCubeSlice(
+        PlaneCubeSlicingResult res = PlaneCubeSlicer() (
             sumPos, sumNormal,
             {{
                 _coords[0] - SysParams::Geometry().compartmentSizeX * 0.5,
