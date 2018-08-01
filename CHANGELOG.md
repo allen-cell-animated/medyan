@@ -10,7 +10,7 @@
     - Fixed a bug on stretch force computation for motors and linkers.
 - Other
     - Improved arrangement of main controller procedure.
-    - Bug fix on retrieving compartment grid center coordinate.
+    - Bug fix on retrieving compartment grid center coordinate. (used rarely in MEDYAN)
 
 ## New features
 - Added output files for trajectory of concentration, plus end type / coordinate and chemical reaction counter on filament.
