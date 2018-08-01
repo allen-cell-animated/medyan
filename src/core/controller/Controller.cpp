@@ -567,6 +567,10 @@ void Controller::updateNeighborLists() {
 #endif
 }
 
+void Controller::resetCounters() {
+    for(Filament* f : Filament::getFilaments()) f->resetCounters();
+}
+
 void Controller::pinBoundaryFilaments() {
 
     //if we've already added pinned filaments, return
@@ -718,6 +722,7 @@ void Controller::run() {
     oldTau = 0;
 #endif
     for(auto o: _outputs) o->print(0);
+    resetCounters();
     
     cout << "Starting simulation..." << endl;
     
@@ -731,6 +736,7 @@ void Controller::run() {
             //run ccontroller
             if(!_cController->run(_minimizationTime)) {
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 break;
             }
             
@@ -758,11 +764,13 @@ void Controller::run() {
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
+            resetCounters();
             i++;
 #endif
 
@@ -792,6 +800,7 @@ void Controller::run() {
             //run ccontroller
             if(!_cController->runSteps(_minimizationSteps)) {
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 break;
             }
             
@@ -821,11 +830,13 @@ void Controller::run() {
             if(stepsLastSnapshot >= _snapshotSteps) {
                 cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 i++;
                 stepsLastSnapshot = 0;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
+            resetCounters();
             i++;
 #endif
         
@@ -848,6 +859,7 @@ void Controller::run() {
     
     //print last snapshots
     for(auto o: _outputs) o->print(i);
+    resetCounters();
     
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
