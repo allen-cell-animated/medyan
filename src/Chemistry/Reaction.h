@@ -157,9 +157,26 @@ template <unsigned short M, unsigned short N>
         inline virtual double getProductOfReactantsImpl() const override
         {
             double prod = 1;
+            //TODO
+            //simple fix for formin nucleation which contains two diffusing actins as reactants
+            //Need to be extend for all reaction types
+            if(M == 3 && N == 0){
+                //double check if the name matches
+                if(_rspecies[0]->getFullName() == _rspecies[1]->getFullName()){
+                    
+                    if(areEqual(_rspecies[0]->getN(),1.0)) return 0.0;
+                    
+                    prod*=_rspecies[0]->getN();
+                    prod*=(_rspecies[1]->getN() - 1);
+                    prod*=_rspecies[2]->getN();
+                    return prod / 2;
+                }
+            }
+            
             for(auto i=0U; i<M; ++i)
                 prod*=_rspecies[i]->getN();
             return prod;
+            
             
         }
 
