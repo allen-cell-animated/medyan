@@ -5,13 +5,13 @@
 
 #    include "gtest/gtest.h"
 
-#    include "CubeSlicing.h"
+#    include "CuboidSlicing.h"
 
 #    include "MathFunctions.h"
 using namespace mathfunc;
 
 namespace {
-    bool planeCubeSlicingResultEqual(const PlaneCubeSlicingResult& r1, const PlaneCubeSlicingResult& r2, double eps) {
+    bool planeCubeSlicingResultEqual(const PlaneCuboidSlicingResult& r1, const PlaneCuboidSlicingResult& r2, double eps) {
         if(abs(r1.volumeIn - r2.volumeIn) > eps) return false;
         size_t s = r1.areaIn.size();
         for(size_t i = 0; i < r1.areaIn.size(); ++i) {
@@ -20,7 +20,7 @@ namespace {
         return true;
     }
 
-    PlaneCubeSlicingResult planeUnitCubeSliceByIntersection(double x, double y, double z) {
+    PlaneCuboidSlicingResult planeUnitCubeSliceByIntersection(double x, double y, double z) {
         auto normal = normalizedVector(std::array<double, 3>{{1.0/x, 1.0/y, 1.0/z}});
         auto point = std::array<double, 3>{{x, 0, 0}};
         return planeUnitCubeSlice(point, normal);

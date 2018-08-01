@@ -1,12 +1,12 @@
-#ifndef MEDYAN_CubeSlicing_h
-#define MEDYAN_CubeSlicing_h
+#ifndef MEDYAN_CuboidSlicing_h
+#define MEDYAN_CuboidSlicing_h
 
 #include <array>
 
 #include "MathFunctions.h"
 
 // The result produced by plane intersecting a cube
-struct PlaneCubeSlicingResult {
+struct PlaneCuboidSlicingResult {
     double volumeIn;
 
     std::array<double, 6> areaIn;
@@ -15,7 +15,7 @@ struct PlaneCubeSlicingResult {
     // y = y_min, y = y_max,
     // z = z_min, z = z_max
 
-    PlaneCubeSlicingResult& operator*=(double a) {
+    PlaneCuboidSlicingResult& operator*=(double a) {
         // Expand the volume and area
         double a2 = a * a;
         volumeIn *= a2 * a;
@@ -23,7 +23,7 @@ struct PlaneCubeSlicingResult {
         return *this;
     }
 
-    PlaneCubeSlicingResult& operator*=(const std::array<double, 3>& a) {
+    PlaneCuboidSlicingResult& operator*=(const std::array<double, 3>& a) {
         // Expand the volume and area with different aspect ratio
         const std::array<double, 3> areaFac {{ a[1] * a[2], a[2] * a[0], a[0] * a[1] }};
         for(size_t idx = 0; idx < 3; ++idx) {
@@ -34,7 +34,7 @@ struct PlaneCubeSlicingResult {
         return *this;
     }
 
-    PlaneCubeSlicingResult& flip(unsigned short int flippedCoords) { // coords (0-7) in binary is zyx
+    PlaneCuboidSlicingResult& flip(unsigned short int flippedCoords) { // coords (0-7) in binary is zyx
         for(size_t inspect = 0; inspect < 3; ++inspect) {
             if((flippedCoords >> inspect) & 1) {
                 std::swap(areaIn[inspect*2], areaIn[inspect*2+1]);
@@ -42,7 +42,7 @@ struct PlaneCubeSlicingResult {
         }
         return *this;
     }
-    PlaneCubeSlicingResult& reverse(double a) { // a is cube size
+    PlaneCuboidSlicingResult& reverse(double a) { // a is cube size
         double a2 = a * a;
         volumeIn = a2 * a - volumeIn;
         for(double& eachAreaIn: areaIn) eachAreaIn = a2 - eachAreaIn;
@@ -51,11 +51,11 @@ struct PlaneCubeSlicingResult {
 
 };
 
-inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 1]
+inline PlaneCuboidSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 1]
     const std::array<double, 3>& point,  // A point on the plane
     const std::array<double, 3>& normal  // Unit normal of the plane pointing outwards
 ) {
-    PlaneCubeSlicingResult res{}; // zero-initiate
+    PlaneCuboidSlicingResult res{}; // zero-initiate
 
     // First consider the case where normal has only non-neg components
     std::array<double, 3> flippedPoint = point;
@@ -252,13 +252,13 @@ inline PlaneCubeSlicingResult planeUnitCubeSlice( // Cube [0, 1] x [0, 1] x [0, 
 }
 
 struct PlaneCubeSlicer {
-    PlaneCubeSlicingResult operator() (
+    PlaneCuboidSlicingResult operator() (
         const std::array<double, 3>& point,  // A point on the plane
         const std::array<double, 3>& normal, // Unit normal of the plane pointing outwards
         const std::array<double, 3>& r0,     // (x_min, y_min, z_min) of the cube
         double                       a       // Side length of the cube
     ) {
-        PlaneCubeSlicingResult res;
+        PlaneCuboidSlicingResult res;
         res = planeUnitCubeSlice(
             mathfunc::vectorMultiply(mathfunc::vectorDifference(point, r0), 1.0 / a),
             normal
@@ -269,13 +269,13 @@ struct PlaneCubeSlicer {
 };
 
 struct PlaneCuboidSlicer {
-    PlaneCubeSlicingResult operator() (
+    PlaneCuboidSlicingResult operator() (
         const std::array<double, 3>& point,  // A point on the plane
         const std::array<double, 3>& normal, // Unit normal of the plane pointing outwards
         const std::array<double, 3>& r0,     // (x_min, y_min, z_min) of the cuboid
         const std::array<double, 3>& a       // Edge length of the cuboid
     ) {
-        PlaneCubeSlicingResult res;
+        PlaneCuboidSlicingResult res;
         const std::array<double, 3> pointInUnitCube = {{
             (point[0] - r0[0]) / a[0],
             (point[1] - r0[1]) / a[1],

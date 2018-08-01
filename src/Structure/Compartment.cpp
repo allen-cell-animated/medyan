@@ -13,7 +13,7 @@
 
 #include "Compartment.h"
 
-#include "CubeSlicing.h"
+#include "CuboidSlicing.h"
 #include "core/controller/GController.h"
 #include "MathFunctions.h"
 using namespace mathfunc;
@@ -54,8 +54,6 @@ void Compartment::getSlicedVolumeArea() {
     //  - The position calculation of triangles
     //  - The area calculation of triangles
     //  - The unit normal vector of triangles
-    // ASSUMPTIONS:
-    //  - This compartment is a CUBE
     size_t numTriangle = _triangles.size();
     if(numTriangle) {
         double sumArea = 0.0;
@@ -71,14 +69,18 @@ void Compartment::getSlicedVolumeArea() {
         vectorExpand(sumNormal, oneOverSumArea);
         vectorExpand(sumPos, oneOverSumArea);
 
-        PlaneCubeSlicingResult res = PlaneCubeSlicer() (
+        PlaneCuboidSlicingResult res = PlaneCuboidSlicer() (
             sumPos, sumNormal,
             {{
                 _coords[0] - SysParams::Geometry().compartmentSizeX * 0.5,
                 _coords[1] - SysParams::Geometry().compartmentSizeY * 0.5,
                 _coords[2] - SysParams::Geometry().compartmentSizeZ * 0.5
             }},
-            SysParams::Geometry().compartmentSizeX // Since it is a cube
+            {{
+                SysParams::Geometry().compartmentSizeX,
+                SysParams::Geometry().compartmentSizeY,
+                SysParams::Geometry().compartmentSizeZ
+            }}
         );
 
         _partialVolume = res.volumeIn;
