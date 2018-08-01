@@ -68,10 +68,6 @@ void BasicSnapshot::print(int snapshot) {
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
         
         _outputFile << endl;
-        
-        //DeltaPlusEnd should only be reset once
-        //filament->resetDeltaPlusEnd();
-        //filament->resetDeltaMinusEnd();
     }
     
     
@@ -847,14 +843,6 @@ void ReactionOut::print(int snapshot) {
         filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
         filament->getNucleation() << " " << numMonomer << endl;
         
-        
-        filament->resetPolyMinusEnd();
-        filament->resetPolyPlusEnd();
-        filament->resetDepolyMinusEnd();
-        filament->resetDepolyPlusEnd();
-        filament->resetNucleation();
-        filament->resetDeltaPlusEnd();
-        filament->resetDeltaMinusEnd();
     }
     
     _outputFile << endl;
