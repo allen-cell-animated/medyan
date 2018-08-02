@@ -808,7 +808,7 @@ struct FilamentCreationCallback {
             //initialize the nucleation
             f->nucleate(_plusEnd, _filament, _minusEnd);
             
-            cout << "Nucleation at t = " << tau() << ", x = " << position[0] << ", y = " << position[1] << ", z = " << position[2] << endl;
+//            cout << "Nucleation at t = " << tau() << ", x = " << position[0] << ", y = " << position[1] << ", z = " << position[2] << endl;
             
         }
         else {
