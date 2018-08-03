@@ -37,6 +37,7 @@ class Compartment;
 class Cylinder;
 
 ///Enumeration for nucleation zone type. Used by BranchingManager.
+///Enumeration for nucleation zone type. Used by CaMKIIingManager.
 enum NucleationZoneType {
     ALL, BOUNDARY, TOPBOUNDARY
 };
@@ -247,6 +248,85 @@ public:
         return _branchrestarttuple;
     }
 };
+
+/// Manager for Filament and CaMKIIingPoint creation
+class CaMKIIingManager : public FilamentBindingManager {
+
+friend class ChemManager;
+    
+private:
+    ///Nucleation zone type, to define where nucleation should occur
+    NucleationZoneType _nucleationZone;
+    
+    ///If using a nucleation zone, nucleating distance from the boundary
+    double _nucleationDistance;
+    
+    ///possible bindings at current state
+    unordered_set<tuple<CCylinder*, short>> _possibleBindings;
+    vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _camkiirestarttuple; //Used only during restart conditions.
+public:
+    CaMKIIingManager(ReactionBase* reaction,
+                     Compartment* compartment,
+                     short boundInt, string boundName,
+                     short filamentType,
+                     NucleationZoneType zone = NucleationZoneType::ALL,
+                     double nucleationDistance = numeric_limits<double>::infinity());
+    ~CaMKIIingManager() {}
+    
+    //@{
+    ///add possible binding reactions that could occur
+    virtual void addPossibleBindings(CCylinder* cc, short bindingSite);
+    virtual void addPossibleBindings(CCylinder* cc);
+    //@}
+    
+    //@{
+    /// Remove all bindings including this cylinder
+    virtual void removePossibleBindings(CCylinder* cc, short bindingSite);
+    virtual void removePossibleBindings(CCylinder* cc);
+    //@}
+    
+    ///update all possible binding reactions that could occur
+    virtual void updateAllPossibleBindings();
+    
+    virtual int numBindingSites() {
+        
+        return _possibleBindings.size();
+    }
+    
+    /// Choose a random binding site based on current state
+    tuple<CCylinder*, short> chooseBindingSite() {
+        
+        assert((_possibleBindings.size() != 0)
+               && "Major bug: CaMKIIing manager should not have zero binding \
+                  sites when called to choose a binding site.");
+        
+        int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
+        auto it = _possibleBindings.begin();
+        
+        advance(it, randomIndex);
+        
+        return *it;
+    }
+    
+    virtual bool isConsistent();
+    /// ARAVIND ADDED FEB 17 2016. append possible bindings.
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
+        double oldN=numBindingSites();
+        _possibleBindings.insert(t1);
+        _camkiirestarttuple.push_back(make_tuple(t1,t2));
+//        _camkiiCylinder=(get<0>(t2));
+        double newN=numBindingSites();
+        updateBindingReaction(oldN,newN);}
+    virtual void clearpossibleBindings() {
+        double oldN=numBindingSites();
+        _possibleBindings.clear();
+        updateBindingReaction(oldN,0);
+    }
+    vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
+        return _camkiirestarttuple;
+    }
+};
+
 
 /// Manager for Linker binding.
 /*!

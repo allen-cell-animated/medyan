@@ -213,6 +213,187 @@ bool BranchingManager::isConsistent() {
     return true;
 }
 
+//CAMKIIER
+
+CaMKIIingManager::CaMKIIingManager(ReactionBase* reaction,
+                                   Compartment* compartment,
+                                   short boundInt, string boundName,
+                                   short filamentType,
+                                   NucleationZoneType zone, double nucleationDistance)
+
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName, filamentType),
+      _nucleationZone(zone), _nucleationDistance(nucleationDistance) {
+    
+    //find the single binding species
+    RSpecies** rs = reaction->rspecies();
+    string name = rs[B_RXN_INDEX]->getSpecies().getName();
+    
+    _bindingSpecies = _compartment->findSpeciesByName(name);
+}
+
+void CaMKIIingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
+    
+    if(cc->getType() != _filamentType) return;
+    
+    bool inZone = true;
+    //see if in nucleation zone
+    if(_nucleationZone != NucleationZoneType::ALL) {
+        
+        auto mp = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
+        
+        auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
+        auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+        
+        auto coord = midPointCoordinate(x1, x2, mp);
+        
+        //set nucleation zone
+        if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
+            
+            //if top boundary, check if we are above the center coordinate in z
+            if(_nucleationZone == NucleationZoneType::TOPBOUNDARY) {
+                
+                if(coord[2] >= GController::getCenter()[2])
+                    inZone = true;
+                else
+                    inZone = false;
+            }
+            else inZone = true;
+        }
+        else
+            inZone = false;
+    }
+    
+    //add valid site
+    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+        SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
+        
+        auto t = tuple<CCylinder*, short>(cc, bindingSite);
+        _possibleBindings.insert(t);
+    }
+    
+    int oldN = _bindingSpecies->getN();
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
+}
+
+void CaMKIIingManager::addPossibleBindings(CCylinder* cc) {
+    
+    
+    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+             bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
+        
+        addPossibleBindings(cc, *bit);
+}
+
+void CaMKIIingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
+    
+    if(cc->getType() != _filamentType) return;
+    
+    //remove tuple which has this ccylinder
+    _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
+    
+    int oldN = _bindingSpecies->getN();
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
+}
+
+
+void CaMKIIingManager::removePossibleBindings(CCylinder* cc) {
+    
+    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+             bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
+        
+        removePossibleBindings(cc, *bit);
+}
+
+
+void CaMKIIingManager::updateAllPossibleBindings() {
+    
+    //clear all
+    _possibleBindings.clear();
+    
+    for(auto &c : _compartment->getCylinders()) {
+    
+        if(c->getType() != _filamentType) continue;
+        
+        auto cc = c->getCCylinder();
+        
+        //now re add valid binding sites
+        for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+            
+            bool inZone = true;
+            //see if in nucleation zone
+            if(_nucleationZone != NucleationZoneType::ALL) {
+                
+                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
+                
+                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
+                auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+                
+                auto coord = midPointCoordinate(x1, x2, mp);
+                
+                //set nucleation zone
+                if(_subSystem->getBoundary()->distance(coord) < _nucleationDistance) {
+                    
+                    //if top boundary, check if we are above the center coordinate in z
+                    if(_nucleationZone == NucleationZoneType::TOPBOUNDARY) {
+                        
+                        if(coord[2] >= GController::getCenter()[2])
+                            inZone = true;
+                        else
+                            inZone = false;
+                    }
+                    else inZone = true;
+                }
+                else
+                    inZone = false;
+            }
+            if (areEqual(cc->getCMonomer(*it)->speciesBound(
+                SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
+                
+                auto t = tuple<CCylinder*, short>(cc, *it);
+                _possibleBindings.insert(t);
+            }
+        }
+    }
+    
+    int oldN = _bindingSpecies->getN();
+    int newN = numBindingSites();
+    
+    updateBindingReaction(oldN, newN);
+}
+
+bool CaMKIIingManager::isConsistent() {
+    
+    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++) {
+        
+        CCylinder* cc = get<0>(*it);
+        Cylinder* c   = cc->getCylinder();
+        
+        short bindingSite = get<1>(*it);
+        
+        bool flag = true;
+    
+        //check site empty
+        if(!areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+           SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0))
+            flag = false;
+
+        if(!flag) {
+            cout << "Binding site in camkiiing manager is inconsistent. " << endl;
+            cout << "Binding site = " << bindingSite << endl;
+            
+            cout << "Cylinder info ..." << endl;
+            c->printSelf();
+            
+            return false;
+        }
+    }
+    return true;
+}
 //LINKER
 
 LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
