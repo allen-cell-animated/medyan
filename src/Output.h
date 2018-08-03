@@ -58,7 +58,7 @@ public:
 };
 
 /// Print basic information about all Filament, Linker,
-/// MotorGhost, and BranchingPoint
+/// MotorGhost, and BranchingPoint, and CaMKIIingPoint
 class BasicSnapshot : public Output {
 
 public:
@@ -69,7 +69,7 @@ public:
 };
 
 /// Print birth times of beads for each Filament, Linker,
-/// MotorGhost, and BranchingPoint
+/// MotorGhost, and BranchingPoint, and CaMKIIPoint
 class BirthTimes : public Output {
     
 public:
@@ -132,7 +132,7 @@ public:
 
 
 /// Print all chemical species in the system, including diffusing
-/// and bulk species, filament, motors, linkers and branchers.
+/// and bulk species, filament, motors, linkers and branchers, and camkiiers.
 class Chemistry : public Output {
 
 ChemistryData _chemData; ///< chemistry data of this system

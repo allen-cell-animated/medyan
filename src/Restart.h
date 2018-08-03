@@ -40,6 +40,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
+#include "CaMKIIingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
 
@@ -73,6 +74,7 @@ private:
     vector<LinkerBindingManager*> affectedManagers;
     vector<tuple<string, short, vector<vector<double>>>> boundVector;
     vector<short> branchcylIDs;
+    vector<short> camkiicylIDs;
     int  _numChemSteps=0;
     //gives angle and delta
     vector<double> getAngleDeltaPos(vector<double>leg, vector<double> site1, vector<double> site2){
@@ -90,7 +92,7 @@ private:
         return returnVector; }
     
     // Goes through single cylinder filaments and decides the appropriate way to activate them.
-    void reassignsinglecylfil(bool flag){ //flag 0 - linker/motor, 1-brancher.
+    void reassignsinglecylfil(bool flag){ //flag 0 - linker/motor, 1-brancher, 2-camkiier.
         for(auto x:Cylinder::getCylinders()){
             vector<tuple<int, short>> scfmap;
             typedef unordered_multimap<int, tuple<int, short>>:: iterator umit;
@@ -136,7 +138,7 @@ private:
                             _bunsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
                     }
                 }
-                else{ //in case where there are fewer monomers in the cylinder.
+                else{ //in case where there are fewer monomers in the cylinder. James CaMKII jli013
                     auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
                     //If the cylinder is both a branch and branching cylinder (like the shaft in letter I), we need to re-do the binding site position when it is branching cylinder.
                     if(vecpos != branchcylIDs.end() && flag == 1){

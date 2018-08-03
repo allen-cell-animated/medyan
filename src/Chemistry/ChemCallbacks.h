@@ -591,9 +591,9 @@ struct CaMKIIingCallback {
 #ifdef MECHANICS
         //use mechanical parameters
         double l, t;
-        if(SysParams::Mechanics().BrStretchingL.size() != 0) {
-            l = SysParams::Mechanics().BrStretchingL[camkiiType];
-            t = SysParams::Mechanics().BrBendingTheta[camkiiType];
+        if(SysParams::Mechanics().CaMKIIStretchingL.size() != 0) {
+            l = SysParams::Mechanics().CaMKIIStretchingL[camkiiType];
+            t = SysParams::Mechanics().CaMKIIBendingTheta[camkiiType];
         }
         else {
             cout << "CaMKIIing initialization cannot occur unless mechanical parameters are specified."

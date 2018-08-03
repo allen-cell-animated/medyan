@@ -53,6 +53,7 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 #define SPECIESLINKER         1
 #define SPECIESMOTOR          2
 #define SPECIESBRANCHER       3
+#define SPECIESCAMKIIER       4
 //@}
 
 //@{
@@ -100,6 +101,14 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 #define BRANCHINGPRODUCTS     2
 
 /// Branch unbinding
+#define BUNBINDINGREACTANTS   1
+#define BUNBINDINGPRODUCTS    2
+
+/// CaMKIIing
+#define CAMKIIINGREACTANTS    3
+#define CAMKIIINGPRODUCTS     2
+
+/// CaMKII unbinding
 #define BUNBINDINGREACTANTS   1
 #define BUNBINDINGPRODUCTS    2
 //@}

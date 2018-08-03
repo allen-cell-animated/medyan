@@ -122,6 +122,18 @@ void SystemParser::readChemParams() {
                     CParams.numBrancherSpecies.push_back(atoi(lineVector[i].c_str()));
             }
         }
+
+        if (line.find("NUMCAMKIIERSPECIES") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    CParams.numCaMKIIerSpecies.push_back(atoi(lineVector[i].c_str()));
+            }
+        }
+
+
         if (line.find("NUMFILAMENTTYPES") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -573,6 +585,62 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MType.BrPositionType = lineVector[1];
             }
         }
+
+        if (line.find("CAMKIISTRETCHINGFFTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at CaMKII stretching FF type. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MType.CaMKIIStretchingType = lineVector[1];
+            }
+        }
+        else if (line.find("CAMKIIBENDINGFFTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at CaMKII bending FF type. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MType.CaMKIIBendingType = lineVector[1];
+            }
+        }
+        else if (line.find("CAMKIIDIHEDRALFFTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at CaMKII dihedral FF type. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MType.CaMKIIDihedralType = lineVector[1];
+            }
+        }
+        else if (line.find("CAMKIIPOSITIONFFTYPE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout <<
+                "There was an error parsing input file at CaMKII position FF type. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                MType.CaMKIIPositionType = lineVector[1];
+            }
+        }
+
+
+
         else if (line.find("BOUNDARYFFTYPE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -855,6 +923,72 @@ void SystemParser::readMechParams() {
                     MParams.BrPositionK.push_back(atof((lineVector[i].c_str())));
             }
         }
+
+        //CaMKII stretching
+        if (line.find("CAMKIISTRETCHINGK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.CaMKIIStretchingK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        else if (line.find("CAMKIISTRETCHINGL") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.CaMKIIStretchingL.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        
+        
+        //CaMKII bending
+        else if (line.find("CAMKIIBENDINGK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.CaMKIIBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        else if (line.find("CAMKIIBENDINGTHETA") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.CaMKIIBendingTheta.push_back(atof((lineVector[i].c_str())));
+            }
+            
+        }
+        
+        //CaMKII dihedral
+        else if (line.find("CAMKIIDIHEDRALK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.CaMKIIDihedralK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+        //CaMKII position
+        else if (line.find("CAMKIIPOSITIONK") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                    MParams.CaMKIIPositionK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
+    
+
+
         
         //Volume parameter
         else if (line.find("VOLUMEK") != string::npos) {
@@ -1654,6 +1788,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
      vector<vector<double>> staticVector;
      vector<tuple<string, short, vector<vector<double>>>> boundVector;
      vector<tuple<string, short, vector<double>>> branchVector;
+     vector<tuple<string, short, vector<double>>> camkiiVector;
      string line;
     
     while(getline(_inputFile, line)) {
@@ -1692,7 +1827,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
                 boundVector.emplace_back(boundType, type, coord3);
             }
         }
-        //aravind Feb 19, 2016. Parase Linkers, Motors.
+        //aravind Feb 19, 2016. Parase Linkers, Motors. James CaMKII jli013
         else if(lineVector.size()==5) {
             vector<double> coord1;
             vector<vector<double>> coord3;
@@ -1708,10 +1843,12 @@ BubbleSetup SystemParser::readBubbleSetup() {
                     coord1.push_back(atof(((*it).c_str())));
                 }
                 branchVector.emplace_back(boundType,type,coord1);
+                camkiiVector.emplace_back(boundType,type,coord1);
             }
         }
     }
       tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, staticVector);
+      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,camkiiVector, staticVector);
     return returnVector;
 }
 
@@ -1947,6 +2084,29 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
             else {}
         }
+
+        else if(line.find("SPECIESCAMKIIER") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() !=  3) {
+                cout << "Error reading a filament camkiier species. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 3) {
+            
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+                
+                chem.speciesCaMKIIer[atoi(lineVector[2].c_str())].push_back(lineVector[1]);
+            }
+            else {}
+        }
+
         else if(line.find("SPECIESPLUSEND") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -2000,6 +2160,19 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 chem.B_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
         }
+
+        else if(line.find("CAMKIIERBINDINGSITE") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() !=  3) {
+                cout << "Error reading a camkiier binding site. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 3)
+                chem.CaMKII_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
+            else {}
+        }
+
         else if(line.find("LINKERBINDINGSITE") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
@@ -2366,7 +2539,41 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 exit(EXIT_FAILURE);
             }
         }
-        
+       
+        else if(line.find("CAMKIIINGREACTION") != string::npos) {
+            
+            vector<string> reactants;
+            vector<string> products;
+            
+            vector<string> lineVector = split<string>(line);
+            
+            int filType = atoi(lineVector[1].c_str());
+            
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
+            if(arrowIt != lineVector.end()) {
+                
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                }
+                
+                for(auto it = arrowIt + 1; it != lineVector.end() - 4; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                }
+                
+                chem.camkiiingReactions[filType].push_back(
+                tuple<vector<string>, vector<string>, double, double, string, double>
+                (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
+                                      atof(lineVector[lineVector.size() - 3].c_str()),
+                                           lineVector[lineVector.size() - 2].c_str(),
+                                      atof(lineVector[lineVector.size() - 1].c_str())));
+            }
+            else {
+                cout << "Error reading a camkiiing reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+ 
         else if(line.find("BRANCHINGCOPYREACTION") != string::npos) {
             
             cout << line << endl;

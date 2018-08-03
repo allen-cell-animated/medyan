@@ -60,6 +60,18 @@ struct MechParams {
     vector<double> BrPositionK    = {};
     //@}
     
+
+    //@{
+    /// CaMKIIingPoint parameter
+    vector<double> CaMKIIStretchingK  = {};
+    vector<double> CaMKIIStretchingL  = {};
+    vector<double> CaMKIIBendingK     = {};
+    vector<double> CaMKIIBendingTheta = {};
+    vector<double> CaMKIIDihedralK    = {};
+    vector<double> CaMKIIPositionK    = {};
+    //@}
+
+
     //@{
     /// Volume parameter
     vector<double> VolumeK = {};
@@ -112,6 +124,7 @@ struct ChemParams {
     vector<short> numLinkerSpecies   = {};
     vector<short> numMotorSpecies    = {};
     vector<short> numBrancherSpecies = {};
+    vector<short> numCaMKIIerSpecies = {};
     //@}
 
     /// Number of different filament types
@@ -138,6 +151,7 @@ struct ChemParams {
     /// Positions of all bound molecules in species vectors
     /// Vector corresponds to each filament type
     vector<short> brancherBoundIndex = vector<short>(MAX_FILAMENT_TYPES);
+    vector<short> camkiierBoundIndex = vector<short>(MAX_FILAMENT_TYPES);
     vector<short> linkerBoundIndex   = vector<short>(MAX_FILAMENT_TYPES);
     vector<short> motorBoundIndex    = vector<short>(MAX_FILAMENT_TYPES);
     

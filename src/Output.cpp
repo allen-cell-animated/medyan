@@ -24,6 +24,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
+#include "CaMKIIingPoint.h"
 #include "Bubble.h"
 
 #include "Boundary.h"
@@ -40,12 +41,13 @@ void BasicSnapshot::print(int snapshot) {
     _outputFile.precision(10);
     
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers, bubbles)
+    // linkers, motors, branchers, camkiiers, bubbles)
     _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
+        CaMKIIingPoint::numCaMKIIingPoints() << " " <<
         Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -146,6 +148,18 @@ void BasicSnapshot::print(int snapshot) {
         auto x = branch->coordinate;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
+
+    for(auto &camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+        
+        //print first line
+        _outputFile << "CAMKIIER " << camkii->getID() << " " <<
+                                      camkii->getType() << endl;
+        
+        //print coordinates
+        auto x = camkii->coordinate;
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
+    }
+
     
     for(auto &bubble : Bubble::getBubbles()) {
         
@@ -166,12 +180,13 @@ void BirthTimes::print(int snapshot) {
     _outputFile.precision(10);
     
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers, bubbles)
+    // linkers, motors, branchers, camkiiers, bubbles)
     _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
+        CaMKIIingPoint::numCaMKIIingPoints() << " " <<
         Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -243,6 +258,18 @@ void BirthTimes::print(int snapshot) {
         //print birth times
         _outputFile << branch->getBirthTime() << endl;
     }
+
+    for(auto &camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+        
+        //print first line
+        _outputFile << "CAMKIIER " << camkii->getID() << " " <<
+                                      camkii->getType() << endl;
+        
+        //print birth times
+        _outputFile << camkii->getBirthTime() << endl;
+    }
+
+
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -261,12 +288,13 @@ void Forces::print(int snapshot) {
     _outputFile.precision(10);
     
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
+    // linkers, motors, branchers, camkiiers)
     _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
+        CaMKIIingPoint::numCaMKIIingPoints() << " " <<
         Bubble::numBubbles() << endl;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -342,6 +370,17 @@ void Forces::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
+
+    for(auto &camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+        
+        //print first line
+        _outputFile << "CAMKIIER " << camkii->getID() << " " <<
+                                      camkii->getType() << endl;
+        
+        //Nothing for camkiiers
+        _outputFile << 0.0 << endl;
+    }
+
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -361,12 +400,13 @@ void Tensions::print(int snapshot) {
     _outputFile.precision(10);
     
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
+    // linkers, motors, branchers, camkiiers)
     _outputFile << snapshot << " " << tau() << " " <<
         Filament::numFilaments() << " " <<
         Linker::numLinkers() << " " <<
         MotorGhost::numMotorGhosts() << " " <<
         BranchingPoint::numBranchingPoints() << " " <<
+        CaMKIIingPoint::numCaMKIIingPoints() << " " <<
         Bubble::numBubbles() << endl;;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -454,6 +494,17 @@ void Tensions::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
+
+    for(auto &camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+        
+        //print first line
+        _outputFile << "CAMKIIER " << camkii->getID() << " " <<
+                                      camkii->getType() << endl;
+        
+        //Nothing for camkiiers
+        _outputFile << 0.0 << endl;
+    }
+
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -473,12 +524,13 @@ void WallTensions::print(int snapshot) {
     _outputFile.precision(10);
     
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
+    // linkers, motors, branchers, camkiiers)
     _outputFile << snapshot << " " << tau() << " " <<
     Filament::numFilaments() << " " <<
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
+    CaMKIIingPoint::numCaMKIIingPoints() << " " <<
     Bubble::numBubbles() << endl;;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -554,6 +606,17 @@ void WallTensions::print(int snapshot) {
         //Nothing for branchers
         _outputFile << 0.0 << endl;
     }
+
+    for(auto &camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+        
+        //print first line
+        _outputFile << "CAMKIIER " << camkii->getID() << " " <<
+        camkii->getType() << endl;
+        
+        //Nothing for camkiiers
+        _outputFile << 0.0 << endl;
+    }
+
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -573,12 +636,13 @@ void Types::print(int snapshot) {
     _outputFile.precision(10);
     
     // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
+    // linkers, motors, branchers, camkiiers)
     _outputFile << snapshot << " " << tau() << " " <<
     Filament::numFilaments() << " " <<
     Linker::numLinkers() << " " <<
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
+    CaMKIIingPoint::numCaMKIIingPoints() << " " <<
     Bubble::numBubbles() << endl;;
     
     for(auto &filament : Filament::getFilaments()) {
@@ -648,6 +712,17 @@ void Types::print(int snapshot) {
         //Nothing for branchers
         _outputFile << branch->getType() << endl;
     }
+
+    for(auto &camkii : CaMKIIingPoint::getCaMKIIingPoints()) {
+        
+        //print first line
+        _outputFile << "CAMKIIER " << camkii->getID() << " " <<
+        camkii->getType() << endl;
+        
+        //Nothing for camkiiers
+        _outputFile << camkii->getType() << endl;
+    }
+
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
@@ -720,6 +795,12 @@ void Chemistry::print(int snapshot) {
             
             auto copyNum = BranchingPoint::countSpecies(sb);
             _outputFile << sb << ":BRANCHER " << copyNum << endl;
+        }
+
+        for(auto sb : _chemData.speciesCaMKIIer[filType]) {
+            
+            auto copyNum = CaMKIIingPoint::countSpecies(sb);
+            _outputFile << sb << ":CAMKIIER " << copyNum << endl;
         }
     }
     

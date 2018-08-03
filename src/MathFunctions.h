@@ -303,6 +303,16 @@ namespace mathfunc {
     tuple<vector<double>, vector<double>> branchProjection(const vector<double>& n,
                                                            const vector<double>& p,
                                                            double l, double m, double theta);
+
+    /// Function to create a initial camkiiing point and direction, given an
+    /// initial normal vector and point.
+    /// @param l - the distance of the camkii from the original point
+    /// @param m - the size of the camkii projection
+    /// @param theta - the angle of camkiiing
+    /// @return a vector describing the initial camkiiing direction and point
+    tuple<vector<double>, vector<double>> camkiiProjection(const vector<double>& n,
+                                                           const vector<double>& p,
+                                                           double l, double m, double theta);
     
     
     }

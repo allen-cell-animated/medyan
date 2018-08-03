@@ -130,6 +130,17 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
             
             return false;
         }
+
+        if(CParams.numCaMKIIerSpecies.size() != 0 &&
+           chem.speciesCaMKIIer[filType].size() != CParams.numCaMKIIerSpecies[filType]) {
+            
+            cout << "Number of camkiier species in chemistry input does not "
+            << "match the system file. Check these parameters. Exiting."
+            <<endl;
+            
+            return false;
+        }
+
         
         //plus and minus end consistency
         if(CParams.numPlusEndSpecies[filType] < CParams.numFilamentSpecies[filType]) {
@@ -149,6 +160,14 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
                  << endl;
             return false;
         }
+
+        //check if binding sites are valid
+        if(chem.CaMKII_BINDING_INDEX[filType] == "" && chem.speciesCaMKIIer[filType].size() != 0) {
+            cout << "A camkiier binding site must be set for every filament type. Exiting."
+                 << endl;
+            return false;
+        }
+
         
         if(chem.L_BINDING_INDEX[filType] == "" && chem.speciesLinker[filType].size() != 0) {
             cout << "A linker binding site must be set for every filament type. Exiting."
@@ -323,6 +342,47 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
         return false;
     }
     
+    //CAMKIIINGPOINT
+    short totalNumCaMKIIers = sum(CParams.numCaMKIIerSpecies);
+    
+    if(mech.CaMKIIStretchingType != "" &&
+       MParams.CaMKIIStretchingK.size() != totalNumCaMKIIers) {
+        cout << "Number of camkiiing point stretching constants does not match the number of"
+             << " camkiier species in system. Exiting." << endl;
+        return false;
+    }
+    if(mech.CaMKIIStretchingType != "" &&
+       MParams.CaMKIIStretchingL.size() != totalNumCaMKIIers) {
+        cout << "Number of camkiiing point stretching length does not match the number of"
+             << " camkiier species in system. Exiting." << endl;
+        return false;
+    }
+    if(mech.CaMKIIBendingType != "" &&
+       MParams.CaMKIIBendingK.size() != totalNumCaMKIIers) {
+        cout << "Number of camkiiing point bending constants does not match the number of"
+             << " camkiier species in system. Exiting." << endl;
+        return false;
+    }
+    if(mech.CaMKIIBendingType != "" &&
+       MParams.CaMKIIBendingTheta.size() != totalNumCaMKIIers) {
+        cout << "Number of camkiiing point bending angles does not match the number of"
+             << " camkiier species in system. Exiting." << endl;
+        return false;
+    }
+    if(mech.CaMKIIDihedralType != "" &&
+       MParams.CaMKIIDihedralK.size() != totalNumCaMKIIers) {
+        cout << "Number of camkiiing point dihedral constants does not match the number of"
+             << " camkiier species in system. Exiting." << endl;
+        return false;
+    }
+    if(mech.CaMKIIPositionType != "" &&
+       MParams.CaMKIIPositionK.size() != totalNumCaMKIIers) {
+        cout << "Number of camkiiing point position constants does not match the number of"
+             << " camkiier species in system. Exiting." << endl;
+        return false;
+    }
+
+
     //VOLUME
     if(mech.VolumeFFType != "" &&
        MParams.VolumeK.size() != CParams.numFilaments) {

@@ -119,6 +119,12 @@ struct ChemistryData {
     /// specifying the nucleation zone and relevant distance parameter
     vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactions;
     
+    /// CaMKIIing reactions
+    /// This reaction also contains the off rate, and a string
+    /// specifying the nucleation zone and relevant distance parameter
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> camkiiingReactions;
+
+
     /// Severing reactions
     vector<vector<tuple<string, double>>> severingReactions;
     //@}
@@ -173,11 +179,13 @@ struct ChemistryData {
     vector<vector<string>> speciesLinker;
     vector<vector<string>> speciesMotor;
     vector<vector<string>> speciesBrancher;
+    vector<vector<string>> speciesCaMKIIer;
     //@}
     
     //@{
     /// Binding sites parsed
     vector<string> B_BINDING_INDEX;
+    vector<string> CaMKII_BINDING_INDEX;
     vector<string> L_BINDING_INDEX;
     vector<string> M_BINDING_INDEX;
     //@}
@@ -192,12 +200,14 @@ struct ChemistryData {
       destructionReactions(MAX_FILAMENT_TYPES),
     
       branchingReactions(MAX_FILAMENT_TYPES),
+      camkiiingReactions(MAX_FILAMENT_TYPES),
       severingReactions(MAX_FILAMENT_TYPES),
       linkerReactions(MAX_FILAMENT_TYPES),
       motorReactions(MAX_FILAMENT_TYPES),
       motorWalkingReactions(MAX_FILAMENT_TYPES),
       
       branchingReactionscopy(MAX_FILAMENT_TYPES),
+      camkiiingReactionscopy(MAX_FILAMENT_TYPES),
       camkiiReactions1(MAX_FILAMENT_TYPES),
       camkiiReactions2(MAX_FILAMENT_TYPES),
       camkiiReactions3(MAX_FILAMENT_TYPES),
@@ -209,8 +219,10 @@ struct ChemistryData {
       speciesLinker(MAX_FILAMENT_TYPES),
       speciesMotor(MAX_FILAMENT_TYPES),
       speciesBrancher(MAX_FILAMENT_TYPES),
+      speciesCaMKIIer(MAX_FILAMENT_TYPES),
     
       B_BINDING_INDEX(MAX_FILAMENT_TYPES),
+      CaMKII_BINDING_INDEX(MAX_FILAMENT_TYPES),
       L_BINDING_INDEX(MAX_FILAMENT_TYPES),
       M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
     
@@ -254,6 +266,15 @@ struct MechanicsFFType {
     string BrDihedralType   = "";
     string BrPositionType   = "";
     //@}
+
+    //@{
+    /// CaMKIIingFF type
+    string CaMKIIStretchingType = "";
+    string CaMKIIBendingType    = "";
+    string CaMKIIDihedralType   = "";
+    string CaMKIIPositionType   = "";
+    //@}
+
     
     /// VolumeFF type
     string VolumeFFType = "";
