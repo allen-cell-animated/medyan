@@ -207,7 +207,6 @@ struct ChemistryData {
       motorWalkingReactions(MAX_FILAMENT_TYPES),
       
       branchingReactionscopy(MAX_FILAMENT_TYPES),
-      camkiiingReactionscopy(MAX_FILAMENT_TYPES),
       camkiiReactions1(MAX_FILAMENT_TYPES),
       camkiiReactions2(MAX_FILAMENT_TYPES),
       camkiiReactions3(MAX_FILAMENT_TYPES),
