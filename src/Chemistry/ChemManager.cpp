@@ -1634,8 +1634,8 @@ void ChemManager::genFilBindingReactions() {
                 bManager->setMIndex(managerIndex++);
                 
                 //attach callback
-                CaMKIIingCallback bcallback(bManager, plusEnd, onRate, offRate, _subSystem);
-                ConnectionBlock rcb(rxn->connect(bcallback,false));
+                CaMKIIingCallback camkiicallback(bManager, plusEnd, onRate, offRate, _subSystem);
+                ConnectionBlock rcb(rxn->connect(camkiicallback,false));
             }
             
             for(auto &r: _chemData.linkerReactions[filType]) {
@@ -2921,11 +2921,11 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                           SysParams::CParams.brancherBoundIndex[filType]);
             ConnectionBlock rcbb(bs->connect(bcallback,false));
             
-            UpdateCaMKIIerBindingCallback bcallback(c, i);
+            UpdateCaMKIIerBindingCallback camkiicallback(c, i);
             
             Species* cs = cc->getCMonomer(i)->speciesBound(
                           SysParams::CParams.camkiierBoundIndex[filType]);
-            ConnectionBlock rcbb(cs->connect(bcallback,false));
+            ConnectionBlock rcbb(cs->connect(camkiicallback,false));
 
             UpdateLinkerBindingCallback lcallback(c, i);
             
