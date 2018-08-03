@@ -5,7 +5,6 @@
 #
 #	GCC 4.7 and above
 #	Boost 1.49 and above
-#	GSL
 #
 #   If running unit tests, googletest is needed.
 #
@@ -24,7 +23,7 @@ CXX = /usr/bin/g++ -std=c++11
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
-LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl  
+LDLIBS = -L/usr/local/lib/ -lboost_system
 LDFLAGS = $(FAST)
 
 CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
