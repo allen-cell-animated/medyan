@@ -19,7 +19,7 @@
 #include "CBound.h"
 #include "Compartment.h"
 
-#define SPECIESB_BINDING_INDEX 0
+#define SPECIESCaMKII_BINDING_INDEX 0
 
 //FORWARD DECLARATIONS
 class CaMKIIingPoint;

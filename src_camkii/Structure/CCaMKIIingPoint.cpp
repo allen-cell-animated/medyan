@@ -49,7 +49,7 @@ void CCaMKIIingPoint::createOffReaction(ReactionBase* onRxn, SubSystem* ps){
     
     //first, find the correct diffusing or bulk species
     RSpecies** rs = onRxn->rspecies();
-    Species* sfb = &(rs[SPECIESB_BINDING_INDEX]->getSpecies());
+    Species* sfb = &(rs[SPECIESCaMKII_BINDING_INDEX]->getSpecies());
     
     //create the reaction species
     CMonomer* m = _cc1->getCMonomer(_position1);

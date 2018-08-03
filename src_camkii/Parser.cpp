@@ -1997,7 +1997,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 3)
-                chem.B_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
+                chem.CaMKII_BINDING_INDEX[atoi(lineVector[2].c_str())] = lineVector[1];
             else {}
         }
         else if(line.find("LINKERBINDINGSITE") != string::npos) {

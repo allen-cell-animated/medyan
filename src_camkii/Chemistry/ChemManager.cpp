@@ -32,10 +32,10 @@ void ChemManager::setupBindingSites() {
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
         
-        if(_chemData.B_BINDING_INDEX[filType] != "") {
+        if(_chemData.CaMKII_BINDING_INDEX[filType] != "") {
             auto it = find(_chemData.speciesBound[filType].begin(),
                            _chemData.speciesBound[filType].end(),
-                           _chemData.B_BINDING_INDEX[filType]);
+                           _chemData.CaMKII_BINDING_INDEX[filType]);
             
             if(it == _chemData.speciesBound[filType].end()) {
                 

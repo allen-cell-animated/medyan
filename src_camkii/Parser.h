@@ -177,7 +177,7 @@ struct ChemistryData {
     
     //@{
     /// Binding sites parsed
-    vector<string> B_BINDING_INDEX;
+    vector<string> CaMKII_BINDING_INDEX;
     vector<string> L_BINDING_INDEX;
     vector<string> M_BINDING_INDEX;
     //@}
@@ -210,7 +210,7 @@ struct ChemistryData {
       speciesMotor(MAX_FILAMENT_TYPES),
       speciesCaMKIIer(MAX_FILAMENT_TYPES),
     
-      B_BINDING_INDEX(MAX_FILAMENT_TYPES),
+      CaMKII_BINDING_INDEX(MAX_FILAMENT_TYPES),
       L_BINDING_INDEX(MAX_FILAMENT_TYPES),
       M_BINDING_INDEX(MAX_FILAMENT_TYPES) {}
     
