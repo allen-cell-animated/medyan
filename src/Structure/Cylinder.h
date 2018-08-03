@@ -72,6 +72,7 @@ private:
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
+    Cylinder* _camkiiingCylinder = nullptr; ///< ptr to a camkiiing cylinder
 
     Cylinder* _motherCylinder = nullptr; ///< ptr to a mother cylinder
     static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
@@ -130,9 +131,16 @@ public:
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
     //@}
 
+    //@{
+    /// CaMKIIing cylinder management
+    Cylinder* getCaMKIIingCylinder() {return _camkiiingCylinder;}
+    void setCaMKIIingCylinder(Cylinder* c) {_camkiiingCylinder = c;}
+    //@}
+
 
     //@{
     /// Mother branching cylinder management
+    /// Mother camkiiing cylinder management
     Cylinder* getMotherCylinder() {return _motherCylinder;}
     void setMotherCylinder(Cylinder* c) {_motherCylinder = c;}
     //@}

@@ -393,6 +393,17 @@ public:
         return sp;
     }
     
+    /// Add a camkiier species to this compartment
+    /// @param args - any number of SpeciesCaMKIIer objects
+    template<typename ...Args>
+    SpeciesCaMKIIer* addSpeciesCaMKIIer(Args&& ...args) {
+        SpeciesCaMKIIer *sp =
+        (SpeciesCaMKIIer*)(_species.addSpecies<SpeciesCaMKIIer>(forward<Args>(args)...));
+        sp->setParent(this);
+        _diffusion_rates[sp->getMolecule()]=-1.0;
+        return sp;
+    }
+
     /// Add a single binding species to this compartment
     /// @param args - any number of SpeciesSingleBinding objects
     template<typename ...Args>

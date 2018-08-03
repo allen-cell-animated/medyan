@@ -30,6 +30,7 @@
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
+#include "CaMKIIingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
 
@@ -826,11 +827,12 @@ void Controller::run() {
         cout<<"Turned off Diffusion, filament reactions."<<endl;
 //Step 2. Add bound species to their respective binding managers. Turn off unbinding, update propensities.
         _restart->addtoHeapbranchers();
+        _restart->addtoHeapcamkiiers();
         _restart->addtoHeaplinkermotor();
         cout<<"Bound species added to reaction heap."<<endl;
 //Step 2A. Turn off diffusion, passivate filament reactions and empty binding managers.
                 _restart->settorestartphase();
-//Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
+//Step 3. ############ RUN LINKER/MOTOR REACTIONS TO BIND BRANCHERS, CAMKIIERS, LINKERS, MOTORS AT RESPECTIVE POSITIONS.#######
         std::cout<<"Reactions to be fired "<<_restart->getnumchemsteps()<<endl;
         _cController->runSteps(_restart->getnumchemsteps());
         cout<<"Reactions fired! Displaying heap"<<endl;
@@ -884,6 +886,15 @@ void Controller::run() {
             BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
         }
+
+    int dummy2=0;
+    for (auto BB: CaMKIIingPoint::getCaMKIIingPoints()) {
+            dummy2++;
+            BB->getCCaMKIIingPoint()->setOffRate(BB->getCCaMKIIingPoint()->getOffReaction()->getBareRate());
+            BB->getCCaMKIIingPoint()->getOffReaction()->setRate(BB->getCCaMKIIingPoint()->getOffReaction()->getBareRate());
+            BB->getCCaMKIIingPoint()->getOffReaction()->updatePropensity();
+        }
+
 //STEP 7: Get cylinders, activate filament reactions.
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
@@ -918,6 +929,28 @@ void Controller::run() {
                 //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
             }
         }
+
+        auto i=0;
+        for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
+            
+            Bead* b1 = b->getFirstCylinder()->getFirstBead();
+            Bead* b2 = b->getFirstCylinder()->getSecondBead();
+            Bead* b3 = b->getSecondCylinder()->getFirstBead();
+            Bead* b4 = b->getSecondCylinder()->getSecondBead();
+            auto c = b->getSecondCylinder();
+            auto filType = c->getType();
+            //std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+            i++;
+            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(b->getType());
+                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+                //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+            }
+        }
+
     cout<< "Restart procedures completed. Starting Medyan framework"<<endl;
     cout << "---" << endl;
     resetglobaltime();
@@ -979,6 +1012,28 @@ void Controller::run() {
                         //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                     }
                 }
+
+                auto i=0;
+                for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
+                    
+                    Bead* b1 = b->getFirstCylinder()->getFirstBead();
+                    Bead* b2 = b->getFirstCylinder()->getSecondBead();
+                    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+                    Bead* b4 = b->getSecondCylinder()->getSecondBead();
+                    auto c = b->getSecondCylinder();
+                    auto filType = c->getType();
+                    //std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+                    i++;
+                    for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(b->getType());
+                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+                        //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+                    }
+                }
+
                 tauLastMinimization = 0.0;
 
             }

@@ -40,7 +40,7 @@ Database<Filament*> Filament::_filaments;
 Histogram* Filament::_turnoverTimes;
 
 Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
-                   vector<double>& direction, bool nucleation, bool branch)
+                   vector<double>& direction, bool nucleation, bool branch, bool camkii)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
  
@@ -51,6 +51,7 @@ Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
     double length = 0.0;
     
     if(branch)          length = SysParams::Geometry().monomerSize[_filType];
+    else if(camkii)     length = SysParams::Geometry().monomerSize[_filType];
     else if(nucleation) length = SysParams::Geometry().minCylinderSize[_filType];
     
     auto pos2 = nextPointProjection(position, length, direction);

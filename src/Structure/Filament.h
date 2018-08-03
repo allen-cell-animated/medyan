@@ -77,13 +77,15 @@ public:
     /// This constructor creates a short filament, containing only two beads, at runtime.
     /// Coordinates of the first bead is an input, second is set up by using an input
     /// direction. Using all this, two constructors for beads and cylinders are called.
-    /// @param nucleation - this filament was nucleated at runtime by a non-branching species
+    /// @param nucleation - this filament was nucleated at runtime by a non-branching, non-camkiiing  species
     /// @param branching - this filament was branched at runtime from an existing filament
+    /// @param camkiiing - this filament was camkiied at runtime from an existing filament
 	Filament(SubSystem* s, short filamentType,
                            vector<double>& position,
                            vector<double>& direction,
                            bool nucleation = false,
-                           bool branch = false);
+                           bool branch = false,
+                           bool camkii = false);
     
     /// This constructor is called to create a filament at startup. It creates a filament
     /// with a number of beads numBeads. Filaments starts and ends in the point

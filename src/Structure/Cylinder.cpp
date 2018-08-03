@@ -245,6 +245,7 @@ void Cylinder::printSelf() {
     if(_minusEnd) cout << "Is a minus end." << endl;
     
     if(_branchingCylinder != nullptr) cout << "Has a branching cylinder." << endl;
+    if(_camkiiingCylinder != nullptr) cout << "Has a camkiiing cylinder." << endl;
     
     cout << "Position = " << _position << endl;
     

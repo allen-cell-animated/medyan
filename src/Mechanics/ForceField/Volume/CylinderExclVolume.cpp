@@ -32,8 +32,10 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
         for(auto &cn : _neighborList->getNeighbors(ci)) {
             
             //do not calculate exvol for a branching cylinder
+            //do not calculate exvol for a camkiiing cylinder
             if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci) continue;
+               cn->getBranchingCylinder() == ci ||
+               cn->getCaMKIIingCylinder() == ci) continue;
             
             Bead* b1 = ci->getFirstBead();
             Bead* b2 = ci->getSecondBead();
@@ -74,8 +76,10 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
         for(auto &cn : _neighborList->getNeighbors(ci)) {
             
             //do not calculate exvol for a branching cylinder
+            //do not calculate exvol for a camkiiing cylinder
             if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci) continue;
+               cn->getBranchingCylinder() == ci ||
+               cn->getCaMKIIingCylinder() == ci) continue;
             
             Bead* b1 = ci->getFirstBead();
             Bead* b2 = ci->getSecondBead();
@@ -100,8 +104,10 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux() {
         for(auto &cn : _neighborList->getNeighbors(ci)) {
             
             //do not calculate exvol for a branching cylinder
+            //do not calculate exvol for a camkiiing cylinder
             if(!cn->isFullLength() ||
-               cn->getBranchingCylinder() == ci) continue;
+               cn->getBranchingCylinder() == ci ||
+               cn->getCaMKIIingCylinder() == ci) continue;
             
             Bead* b1 = ci->getFirstBead();
             Bead* b2 = ci->getSecondBead();

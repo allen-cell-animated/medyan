@@ -93,6 +93,7 @@ public:
     SpeciesBound* speciesLinker   (int index);
     SpeciesBound* speciesMotor    (int index);
     SpeciesBound* speciesBrancher (int index);
+    SpeciesBound* speciesCaMKIIer (int index);
     //@}
     
     //@{
@@ -106,6 +107,7 @@ public:
     short activeSpeciesLinker();
     short activeSpeciesMotor();
     short activeSpeciesBrancher();
+    short activeSpeciesCaMKIIer();
     //@
     
     /// Check the consistency of the CMonomer for debugging.
