@@ -1847,8 +1847,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
             }
         }
     }
-      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, staticVector);
-      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,camkiiVector, staticVector);
+      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>>,vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,brancherVector, camkiiVector, staticVector);
     return returnVector;
 }
 
