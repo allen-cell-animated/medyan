@@ -18,19 +18,19 @@
 MCaMKIIingPoint::MCaMKIIingPoint(int camkiiType) {
     
     //set parameters
-    if(!SysParams::Mechanics().BrStretchingK.empty()) {
-        _kStretch = SysParams::Mechanics().BrStretchingK[camkiiType];
-        _eqLength = SysParams::Mechanics().BrStretchingL[camkiiType];
+    if(!SysParams::Mechanics().CaMKIIStretchingK.empty()) {
+        _kStretch = SysParams::Mechanics().CaMKIIStretchingK[camkiiType];
+        _eqLength = SysParams::Mechanics().CaMKIIStretchingL[camkiiType];
     }
     
-    if(!SysParams::Mechanics().BrBendingK.empty()) {
-        _kBend = SysParams::Mechanics().BrBendingK[camkiiType];
-        _eqTheta = SysParams::Mechanics().BrBendingTheta[camkiiType];
+    if(!SysParams::Mechanics().CaMKIIBendingK.empty()) {
+        _kBend = SysParams::Mechanics().CaMKIIBendingK[camkiiType];
+        _eqTheta = SysParams::Mechanics().CaMKIIBendingTheta[camkiiType];
     }
     
-    if(!SysParams::Mechanics().BrDihedralK.empty())
-        _kDihedr = SysParams::Mechanics().BrDihedralK[camkiiType];
+    if(!SysParams::Mechanics().CaMKIIDihedralK.empty())
+        _kDihedr = SysParams::Mechanics().CaMKIIDihedralK[camkiiType];
  
-    if(!SysParams::Mechanics().BrPositionK.empty())
-        _kPosition = SysParams::Mechanics().BrPositionK[camkiiType];
+    if(!SysParams::Mechanics().CaMKIIPositionK.empty())
+        _kPosition = SysParams::Mechanics().CaMKIIPositionK[camkiiType];
 }

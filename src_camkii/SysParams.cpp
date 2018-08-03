@@ -286,38 +286,38 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     //CAMKIIINGPOINT
     short totalNumCaMKIIers = sum(CParams.numCaMKIIerSpecies);
     
-    if(mech.BrStretchingType != "" &&
-       MParams.BrStretchingK.size() != totalNumCaMKIIers) {
+    if(mech.CaMKIIStretchingType != "" &&
+       MParams.CaMKIIStretchingK.size() != totalNumCaMKIIers) {
         cout << "Number of camkiiing point stretching constants does not match the number of"
              << " camkiier species in system. Exiting." << endl;
         return false;
     }
-    if(mech.BrStretchingType != "" &&
-       MParams.BrStretchingL.size() != totalNumCaMKIIers) {
+    if(mech.CaMKIIStretchingType != "" &&
+       MParams.CaMKIIStretchingL.size() != totalNumCaMKIIers) {
         cout << "Number of camkiiing point stretching length does not match the number of"
              << " camkiier species in system. Exiting." << endl;
         return false;
     }
-    if(mech.BrBendingType != "" &&
-       MParams.BrBendingK.size() != totalNumCaMKIIers) {
+    if(mech.CaMKIIBendingType != "" &&
+       MParams.CaMKIIBendingK.size() != totalNumCaMKIIers) {
         cout << "Number of camkiiing point bending constants does not match the number of"
              << " camkiier species in system. Exiting." << endl;
         return false;
     }
-    if(mech.BrBendingType != "" &&
-       MParams.BrBendingTheta.size() != totalNumCaMKIIers) {
+    if(mech.CaMKIIBendingType != "" &&
+       MParams.CaMKIIBendingTheta.size() != totalNumCaMKIIers) {
         cout << "Number of camkiiing point bending angles does not match the number of"
              << " camkiier species in system. Exiting." << endl;
         return false;
     }
-    if(mech.BrDihedralType != "" &&
-       MParams.BrDihedralK.size() != totalNumCaMKIIers) {
+    if(mech.CaMKIIDihedralType != "" &&
+       MParams.CaMKIIDihedralK.size() != totalNumCaMKIIers) {
         cout << "Number of camkiiing point dihedral constants does not match the number of"
              << " camkiier species in system. Exiting." << endl;
         return false;
     }
-    if(mech.BrPositionType != "" &&
-       MParams.BrPositionK.size() != totalNumCaMKIIers) {
+    if(mech.CaMKIIPositionType != "" &&
+       MParams.CaMKIIPositionK.size() != totalNumCaMKIIers) {
         cout << "Number of camkiiing point position constants does not match the number of"
              << " camkiier species in system. Exiting." << endl;
         return false;

@@ -531,7 +531,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BrStretchingType = lineVector[1];
+                MType.CaMKIIStretchingType = lineVector[1];
             }
         }
         else if (line.find("BRBENDINGFFTYPE") != string::npos) {
@@ -544,7 +544,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BrBendingType = lineVector[1];
+                MType.CaMKIIBendingType = lineVector[1];
             }
         }
         else if (line.find("BRDIHEDRALFFTYPE") != string::npos) {
@@ -557,7 +557,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BrDihedralType = lineVector[1];
+                MType.CaMKIIDihedralType = lineVector[1];
             }
         }
         else if (line.find("BRPOSITIONFFTYPE") != string::npos) {
@@ -570,7 +570,7 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                MType.BrPositionType = lineVector[1];
+                MType.CaMKIIPositionType = lineVector[1];
             }
         }
         else if (line.find("BOUNDARYFFTYPE") != string::npos) {
@@ -800,7 +800,7 @@ void SystemParser::readMechParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrStretchingK.push_back(atof((lineVector[i].c_str())));
+                    MParams.CaMKIIStretchingK.push_back(atof((lineVector[i].c_str())));
             }
         }
         else if (line.find("BRSTRETCHINGL") != string::npos) {
@@ -809,7 +809,7 @@ void SystemParser::readMechParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrStretchingL.push_back(atof((lineVector[i].c_str())));
+                    MParams.CaMKIIStretchingL.push_back(atof((lineVector[i].c_str())));
             }
         }
         
@@ -821,7 +821,7 @@ void SystemParser::readMechParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrBendingK.push_back(atof((lineVector[i].c_str())));
+                    MParams.CaMKIIBendingK.push_back(atof((lineVector[i].c_str())));
             }
         }
         else if (line.find("BRBENDINGTHETA") != string::npos) {
@@ -830,7 +830,7 @@ void SystemParser::readMechParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrBendingTheta.push_back(atof((lineVector[i].c_str())));
+                    MParams.CaMKIIBendingTheta.push_back(atof((lineVector[i].c_str())));
             }
             
         }
@@ -842,7 +842,7 @@ void SystemParser::readMechParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrDihedralK.push_back(atof((lineVector[i].c_str())));
+                    MParams.CaMKIIDihedralK.push_back(atof((lineVector[i].c_str())));
             }
         }
         //CaMKII position
@@ -852,7 +852,7 @@ void SystemParser::readMechParams() {
             
             if (lineVector.size() >= 2) {
                 for(int i = 1; i < lineVector.size(); i++)
-                    MParams.BrPositionK.push_back(atof((lineVector[i].c_str())));
+                    MParams.CaMKIIPositionK.push_back(atof((lineVector[i].c_str())));
             }
         }
         

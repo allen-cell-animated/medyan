@@ -52,12 +52,12 @@ struct MechParams {
     
     //@{
     /// CaMKIIingPoint parameter
-    vector<double> BrStretchingK  = {};
-    vector<double> BrStretchingL  = {};
-    vector<double> BrBendingK     = {};
-    vector<double> BrBendingTheta = {};
-    vector<double> BrDihedralK    = {};
-    vector<double> BrPositionK    = {};
+    vector<double> CaMKIIStretchingK  = {};
+    vector<double> CaMKIIStretchingL  = {};
+    vector<double> CaMKIIBendingK     = {};
+    vector<double> CaMKIIBendingTheta = {};
+    vector<double> CaMKIIDihedralK    = {};
+    vector<double> CaMKIIPositionK    = {};
     //@}
     
     //@{

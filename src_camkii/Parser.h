@@ -249,10 +249,10 @@ struct MechanicsFFType {
     
     //@{
     /// CaMKIIingFF type
-    string BrStretchingType = "";
-    string BrBendingType    = "";
-    string BrDihedralType   = "";
-    string BrPositionType   = "";
+    string CaMKIIStretchingType = "";
+    string CaMKIIBendingType    = "";
+    string CaMKIIDihedralType   = "";
+    string CaMKIIPositionType   = "";
     //@}
     
     /// VolumeFF type

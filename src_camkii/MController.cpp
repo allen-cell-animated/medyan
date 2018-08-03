@@ -68,10 +68,10 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
                          forceFields.MTwistingType));
     
     _FFManager._forceFields.push_back(
-        new CaMKIIingFF(forceFields.BrStretchingType,
-                        forceFields.BrBendingType,
-                        forceFields.BrDihedralType,
-                        forceFields.BrPositionType));
+        new CaMKIIingFF(forceFields.CaMKIIStretchingType,
+                        forceFields.CaMKIIBendingType,
+                        forceFields.CaMKIIDihedralType,
+                        forceFields.CaMKIIPositionType));
     
     //These FF's have a neighbor list associated with them
     //add to the subsystem's database of neighbor lists.
