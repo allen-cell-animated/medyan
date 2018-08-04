@@ -827,7 +827,7 @@ void Controller::run() {
         cout<<"Turned off Diffusion, filament reactions."<<endl;
 //Step 2. Add bound species to their respective binding managers. Turn off unbinding, update propensities.
         _restart->addtoHeapbranchers();
-        _restart->addtoHeapcamkiiers();
+        //_restart->addtoHeapcamkiiers();
         _restart->addtoHeaplinkermotor();
         cout<<"Bound species added to reaction heap."<<endl;
 //Step 2A. Turn off diffusion, passivate filament reactions and empty binding managers.
@@ -930,7 +930,7 @@ void Controller::run() {
             }
         }
 
-        auto i=0;
+        auto j=0;
         for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
             
             Bead* b1 = b->getFirstCylinder()->getFirstBead();
@@ -939,8 +939,8 @@ void Controller::run() {
             Bead* b4 = b->getSecondCylinder()->getSecondBead();
             auto c = b->getSecondCylinder();
             auto filType = c->getType();
-            //std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
-            i++;
+            //std::cout<<j<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+            j++;
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                 auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
                 auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(b->getType());
