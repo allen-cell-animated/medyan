@@ -1779,7 +1779,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
     }
     return BSetup;
 }
-    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > FilamentParser::readFilaments() {
+    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<tuple<string, short, vector<double>>>, vector<vector<double>> > FilamentParser::readFilaments() {
     _inputFile.clear();
     _inputFile.seekg(0);
      vector<tuple<short, vector<double>, vector<double>>> filamentVector;
@@ -1847,7 +1847,7 @@ BubbleSetup SystemParser::readBubbleSetup() {
             }
         }
     }
-      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>>,vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, camkiiVector, staticVector);
+      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>>,vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, camkiiVector, staticVector);
     return returnVector;
 }
 

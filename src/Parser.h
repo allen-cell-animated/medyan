@@ -429,7 +429,7 @@ public:
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> ,
-            vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
+            vector<tuple<string, short, vector<double>>>, vector<tuple<string, short, vector<double>>>, vector<vector<double>>>  readFilaments();
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.

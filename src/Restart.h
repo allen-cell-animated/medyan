@@ -64,7 +64,7 @@ private:
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
     vector<double> temp_diffrate_vector; ///vector of diffusion rates
     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>>,
-    vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+    vector<tuple<string, short, vector<double>>>,vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
     ChemistryData _chemData;
     vector<double> CopyNumbers;
     unordered_multimap<int, tuple<CCylinder*, short>> _unsortedpairings;
@@ -408,7 +408,7 @@ private:
     }}
 public:
     Restart(SubSystem* s, tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short,
-            vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > f, ChemistryData _cd)
+            vector<vector<double>>>> , vector<tuple<string, short, vector<double>>>,vector<tuple<string, short, vector<double>>> , vector<vector<double>> > f, ChemistryData _cd)
             : _subSystem(s), filaments(f), _chemData(_cd) {}
     int getnumchemsteps(){return _numChemSteps;}
     void settorestartphase(){
@@ -439,8 +439,8 @@ public:
             (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);}}
         //Step #3. Add filament coordinates to be held static during minimization **** NEEEDS TO BE EDITED***
         // coordinates to keep static
-        vector<vector<double>> staticbeads=get<3>(filaments);
-        int nbeads=get<3>(filaments).size();
+        vector<vector<double>> staticbeads=get<4>(filaments);
+        int nbeads=get<4>(filaments).size();
         for (int ix=0;ix<nbeads;ix++){
             vector<double> staticbead=staticbeads[ix];
             vector<double> staticbead2;
