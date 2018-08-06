@@ -7,6 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		187E01412118EAD800F91778 /* MCaMKIIingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 181D6F362118D50F00A84218 /* MCaMKIIingPoint.h */; };
+		187E01422118EAD800F91778 /* CaMKIIingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 181D6F302118D3E900A84218 /* CaMKIIingPoint.h */; };
+		187E01432118EAD800F91778 /* CCaMKIIingPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 181D6F2D2118D3CB00A84218 /* CCaMKIIingPoint.h */; };
+		187E014E2118ED5500F91778 /* MCaMKIIingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 181D6F352118D50F00A84218 /* MCaMKIIingPoint.cpp */; };
+		187E014F2118ED5500F91778 /* CaMKIIingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 181D6F312118D3E900A84218 /* CaMKIIingPoint.cpp */; };
+		187E01502118ED5500F91778 /* CCaMKIIingPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 181D6F2E2118D3CB00A84218 /* CCaMKIIingPoint.cpp */; };
+		187E01792118F39A00F91778 /* CaMKIIingBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01672118F39800F91778 /* CaMKIIingBending.cpp */; };
+		187E017A2118F39A00F91778 /* CaMKIIingDihedralCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01692118F39800F91778 /* CaMKIIingDihedralCosine.cpp */; };
+		187E017B2118F39A00F91778 /* CaMKIIingStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E016C2118F39900F91778 /* CaMKIIingStretching.cpp */; };
+		187E017C2118F39A00F91778 /* CaMKIIingBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01702118F39900F91778 /* CaMKIIingBendingCosine.cpp */; };
+		187E017D2118F39A00F91778 /* CaMKIIingBending.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 187E01712118F39900F91778 /* CaMKIIingBending.o */; };
+		187E017E2118F39A00F91778 /* CaMKIIingPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01732118F39900F91778 /* CaMKIIingPosition.cpp */; };
+		187E017F2118F39A00F91778 /* CaMKIIingPositionCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01742118F39A00F91778 /* CaMKIIingPositionCosine.cpp */; };
+		187E01802118F39A00F91778 /* CaMKIIingStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01752118F39A00F91778 /* CaMKIIingStretchingHarmonic.cpp */; };
+		187E01812118F39A00F91778 /* CaMKIIingDihedral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01762118F39A00F91778 /* CaMKIIingDihedral.cpp */; };
+		187E01822118F39A00F91778 /* CaMKIIingFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01782118F39A00F91778 /* CaMKIIingFF.cpp */; };
+		187E01832118F3C700F91778 /* CaMKIIingBending.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E016F2118F39900F91778 /* CaMKIIingBending.h */; };
+		187E01842118F3C700F91778 /* CaMKIIingBendingCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E01662118F39800F91778 /* CaMKIIingBendingCosine.h */; };
+		187E01852118F3C700F91778 /* CaMKIIingDihedral.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E01682118F39800F91778 /* CaMKIIingDihedral.h */; };
+		187E01862118F3C700F91778 /* CaMKIIingDihedralCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E016D2118F39900F91778 /* CaMKIIingDihedralCosine.h */; };
+		187E01872118F3C700F91778 /* CaMKIIingFF.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E01772118F39A00F91778 /* CaMKIIingFF.h */; };
+		187E01882118F3C700F91778 /* CaMKIIingInteractions.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E016B2118F39900F91778 /* CaMKIIingInteractions.h */; };
+		187E01892118F3C700F91778 /* CaMKIIingPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E01652118F39800F91778 /* CaMKIIingPosition.h */; };
+		187E018A2118F3C700F91778 /* CaMKIIingPositionCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E016A2118F39800F91778 /* CaMKIIingPositionCosine.h */; };
+		187E018B2118F3C700F91778 /* CaMKIIingStretching.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E01722118F39900F91778 /* CaMKIIingStretching.h */; };
+		187E018C2118F3C700F91778 /* CaMKIIingStretchingHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = 187E016E2118F39900F91778 /* CaMKIIingStretchingHarmonic.h */; };
+		187E018D2118F3DE00F91778 /* CaMKIIingBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01672118F39800F91778 /* CaMKIIingBending.cpp */; };
+		187E018E2118F3DE00F91778 /* CaMKIIingBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01702118F39900F91778 /* CaMKIIingBendingCosine.cpp */; };
+		187E018F2118F3DE00F91778 /* CaMKIIingDihedral.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01762118F39A00F91778 /* CaMKIIingDihedral.cpp */; };
+		187E01902118F3DE00F91778 /* CaMKIIingDihedralCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01692118F39800F91778 /* CaMKIIingDihedralCosine.cpp */; };
+		187E01912118F3DE00F91778 /* CaMKIIingFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01782118F39A00F91778 /* CaMKIIingFF.cpp */; };
+		187E01922118F3DE00F91778 /* CaMKIIingPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01732118F39900F91778 /* CaMKIIingPosition.cpp */; };
+		187E01932118F3DE00F91778 /* CaMKIIingPositionCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01742118F39A00F91778 /* CaMKIIingPositionCosine.cpp */; };
+		187E01942118F3DE00F91778 /* CaMKIIingStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E016C2118F39900F91778 /* CaMKIIingStretching.cpp */; };
+		187E01952118F3DE00F91778 /* CaMKIIingStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01752118F39A00F91778 /* CaMKIIingStretchingHarmonic.cpp */; };
 		BF365D871ABC728F006EE099 /* NeighborListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */; };
 		BF365D881ABC728F006EE099 /* NeighborListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BF365D861ABC728F006EE099 /* NeighborListImpl.h */; };
 		BF9A59341B0B68DE00ADF902 /* Database.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9A59321B0B68DE00ADF902 /* Database.h */; };
@@ -266,6 +301,32 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		181D6F2D2118D3CB00A84218 /* CCaMKIIingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCaMKIIingPoint.h; sourceTree = "<group>"; };
+		181D6F2E2118D3CB00A84218 /* CCaMKIIingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCaMKIIingPoint.cpp; sourceTree = "<group>"; };
+		181D6F302118D3E900A84218 /* CaMKIIingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaMKIIingPoint.h; sourceTree = "<group>"; };
+		181D6F312118D3E900A84218 /* CaMKIIingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaMKIIingPoint.cpp; sourceTree = "<group>"; };
+		181D6F352118D50F00A84218 /* MCaMKIIingPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MCaMKIIingPoint.cpp; sourceTree = "<group>"; };
+		181D6F362118D50F00A84218 /* MCaMKIIingPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MCaMKIIingPoint.h; sourceTree = "<group>"; };
+		187E01652118F39800F91778 /* CaMKIIingPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingPosition.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingPosition.h; sourceTree = SOURCE_ROOT; };
+		187E01662118F39800F91778 /* CaMKIIingBendingCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingBendingCosine.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingBendingCosine.h; sourceTree = SOURCE_ROOT; };
+		187E01672118F39800F91778 /* CaMKIIingBending.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingBending.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingBending.cpp; sourceTree = SOURCE_ROOT; };
+		187E01682118F39800F91778 /* CaMKIIingDihedral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingDihedral.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingDihedral.h; sourceTree = SOURCE_ROOT; };
+		187E01692118F39800F91778 /* CaMKIIingDihedralCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingDihedralCosine.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingDihedralCosine.cpp; sourceTree = SOURCE_ROOT; };
+		187E016A2118F39800F91778 /* CaMKIIingPositionCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingPositionCosine.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingPositionCosine.h; sourceTree = SOURCE_ROOT; };
+		187E016B2118F39900F91778 /* CaMKIIingInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingInteractions.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingInteractions.h; sourceTree = SOURCE_ROOT; };
+		187E016C2118F39900F91778 /* CaMKIIingStretching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingStretching.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingStretching.cpp; sourceTree = SOURCE_ROOT; };
+		187E016D2118F39900F91778 /* CaMKIIingDihedralCosine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingDihedralCosine.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingDihedralCosine.h; sourceTree = SOURCE_ROOT; };
+		187E016E2118F39900F91778 /* CaMKIIingStretchingHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingStretchingHarmonic.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingStretchingHarmonic.h; sourceTree = SOURCE_ROOT; };
+		187E016F2118F39900F91778 /* CaMKIIingBending.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingBending.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingBending.h; sourceTree = SOURCE_ROOT; };
+		187E01702118F39900F91778 /* CaMKIIingBendingCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingBendingCosine.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingBendingCosine.cpp; sourceTree = SOURCE_ROOT; };
+		187E01712118F39900F91778 /* CaMKIIingBending.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; name = CaMKIIingBending.o; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingBending.o; sourceTree = SOURCE_ROOT; };
+		187E01722118F39900F91778 /* CaMKIIingStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingStretching.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingStretching.h; sourceTree = SOURCE_ROOT; };
+		187E01732118F39900F91778 /* CaMKIIingPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingPosition.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingPosition.cpp; sourceTree = SOURCE_ROOT; };
+		187E01742118F39A00F91778 /* CaMKIIingPositionCosine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingPositionCosine.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingPositionCosine.cpp; sourceTree = SOURCE_ROOT; };
+		187E01752118F39A00F91778 /* CaMKIIingStretchingHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingStretchingHarmonic.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingStretchingHarmonic.cpp; sourceTree = SOURCE_ROOT; };
+		187E01762118F39A00F91778 /* CaMKIIingDihedral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingDihedral.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingDihedral.cpp; sourceTree = SOURCE_ROOT; };
+		187E01772118F39A00F91778 /* CaMKIIingFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingFF.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingFF.h; sourceTree = SOURCE_ROOT; };
+		187E01782118F39A00F91778 /* CaMKIIingFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingFF.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingFF.cpp; sourceTree = SOURCE_ROOT; };
 		BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListImpl.cpp; sourceTree = "<group>"; };
 		BF365D861ABC728F006EE099 /* NeighborListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListImpl.h; sourceTree = "<group>"; };
 		BF9A59321B0B68DE00ADF902 /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
@@ -517,6 +578,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				187E017D2118F39A00F91778 /* CaMKIIingBending.o in Frameworks */,
 				F777FAA719C2294E00D2850A /* libmedyan.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -532,9 +594,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		187E01642118F36500F91778 /* CaMKIIing */ = {
+			isa = PBXGroup;
+			children = (
+				187E01672118F39800F91778 /* CaMKIIingBending.cpp */,
+				187E016F2118F39900F91778 /* CaMKIIingBending.h */,
+				187E01712118F39900F91778 /* CaMKIIingBending.o */,
+				187E01702118F39900F91778 /* CaMKIIingBendingCosine.cpp */,
+				187E01662118F39800F91778 /* CaMKIIingBendingCosine.h */,
+				187E01762118F39A00F91778 /* CaMKIIingDihedral.cpp */,
+				187E01682118F39800F91778 /* CaMKIIingDihedral.h */,
+				187E01692118F39800F91778 /* CaMKIIingDihedralCosine.cpp */,
+				187E016D2118F39900F91778 /* CaMKIIingDihedralCosine.h */,
+				187E01782118F39A00F91778 /* CaMKIIingFF.cpp */,
+				187E01772118F39A00F91778 /* CaMKIIingFF.h */,
+				187E016B2118F39900F91778 /* CaMKIIingInteractions.h */,
+				187E01732118F39900F91778 /* CaMKIIingPosition.cpp */,
+				187E01652118F39800F91778 /* CaMKIIingPosition.h */,
+				187E01742118F39A00F91778 /* CaMKIIingPositionCosine.cpp */,
+				187E016A2118F39800F91778 /* CaMKIIingPositionCosine.h */,
+				187E016C2118F39900F91778 /* CaMKIIingStretching.cpp */,
+				187E01722118F39900F91778 /* CaMKIIingStretching.h */,
+				187E01752118F39A00F91778 /* CaMKIIingStretchingHarmonic.cpp */,
+				187E016E2118F39900F91778 /* CaMKIIingStretchingHarmonic.h */,
+			);
+			path = CaMKIIing;
+			sourceTree = SOURCE_ROOT;
+		};
 		B52F64BE19BA230000A2B9FD /* Structure */ = {
 			isa = PBXGroup;
 			children = (
+				181D6F352118D50F00A84218 /* MCaMKIIingPoint.cpp */,
+				181D6F362118D50F00A84218 /* MCaMKIIingPoint.h */,
+				181D6F312118D3E900A84218 /* CaMKIIingPoint.cpp */,
+				181D6F302118D3E900A84218 /* CaMKIIingPoint.h */,
+				181D6F2E2118D3CB00A84218 /* CCaMKIIingPoint.cpp */,
+				181D6F2D2118D3CB00A84218 /* CCaMKIIingPoint.h */,
 				F7C9CFE71A2D165D0087434A /* SubSystem.cpp */,
 				F7C9CFE81A2D165D0087434A /* SubSystem.h */,
 				BF9A59321B0B68DE00ADF902 /* Database.h */,
@@ -819,6 +914,7 @@
 				F735B7D61A2D175800AE21D1 /* ForceField.h */,
 				F735B7D71A2D175800AE21D1 /* ForceFieldManager.cpp */,
 				F735B7D81A2D175800AE21D1 /* ForceFieldManager.h */,
+				187E01642118F36500F91778 /* CaMKIIing */,
 				F75259EA1A7021E3007A4E9F /* Volume */,
 				F764F0941BD7DF2000E2BBB8 /* Bubble */,
 				F75259E91A7021D5007A4E9F /* Boundary */,
@@ -916,6 +1012,19 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				187E01832118F3C700F91778 /* CaMKIIingBending.h in Headers */,
+				187E01842118F3C700F91778 /* CaMKIIingBendingCosine.h in Headers */,
+				187E01852118F3C700F91778 /* CaMKIIingDihedral.h in Headers */,
+				187E01862118F3C700F91778 /* CaMKIIingDihedralCosine.h in Headers */,
+				187E01872118F3C700F91778 /* CaMKIIingFF.h in Headers */,
+				187E01882118F3C700F91778 /* CaMKIIingInteractions.h in Headers */,
+				187E01892118F3C700F91778 /* CaMKIIingPosition.h in Headers */,
+				187E018A2118F3C700F91778 /* CaMKIIingPositionCosine.h in Headers */,
+				187E018B2118F3C700F91778 /* CaMKIIingStretching.h in Headers */,
+				187E018C2118F3C700F91778 /* CaMKIIingStretchingHarmonic.h in Headers */,
+				187E01412118EAD800F91778 /* MCaMKIIingPoint.h in Headers */,
+				187E01422118EAD800F91778 /* CaMKIIingPoint.h in Headers */,
+				187E01432118EAD800F91778 /* CCaMKIIingPoint.h in Headers */,
 				F748D6FB1DCA3F0000D52588 /* Restart.h in Headers */,
 				F735B7721A2D16F200AE21D1 /* Component.h in Headers */,
 				F7525A9A1A702461007A4E9F /* LinkerStretchingHarmonic.h in Headers */,
@@ -1104,7 +1213,10 @@
 		F763ECFD1548FFC70069DA61 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0730;
+				KnownAssetTags = (
+					New,
+				);
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "University of Maryland";
 			};
 			buildConfigurationList = F763ED001548FFC70069DA61 /* Build configuration list for PBXProject "MEDYAN" */;
@@ -1131,6 +1243,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				187E018D2118F3DE00F91778 /* CaMKIIingBending.cpp in Sources */,
+				187E018E2118F3DE00F91778 /* CaMKIIingBendingCosine.cpp in Sources */,
+				187E018F2118F3DE00F91778 /* CaMKIIingDihedral.cpp in Sources */,
+				187E01902118F3DE00F91778 /* CaMKIIingDihedralCosine.cpp in Sources */,
+				187E01912118F3DE00F91778 /* CaMKIIingFF.cpp in Sources */,
+				187E01922118F3DE00F91778 /* CaMKIIingPosition.cpp in Sources */,
+				187E01932118F3DE00F91778 /* CaMKIIingPositionCosine.cpp in Sources */,
+				187E01942118F3DE00F91778 /* CaMKIIingStretching.cpp in Sources */,
+				187E01952118F3DE00F91778 /* CaMKIIingStretchingHarmonic.cpp in Sources */,
+				187E014E2118ED5500F91778 /* MCaMKIIingPoint.cpp in Sources */,
+				187E014F2118ED5500F91778 /* CaMKIIingPoint.cpp in Sources */,
+				187E01502118ED5500F91778 /* CCaMKIIingPoint.cpp in Sources */,
 				F735B7B81A2D173F00AE21D1 /* CGPolakRibiereMethod.cpp in Sources */,
 				F764F0B01BD81D4F00E2BBB8 /* BubbleCylinderRepulsion.cpp in Sources */,
 				F735B7A51A2D172800AE21D1 /* ChemSimpleGillespieImpl.cpp in Sources */,
@@ -1235,7 +1359,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				187E01802118F39A00F91778 /* CaMKIIingStretchingHarmonic.cpp in Sources */,
+				187E01792118F39A00F91778 /* CaMKIIingBending.cpp in Sources */,
+				187E01822118F39A00F91778 /* CaMKIIingFF.cpp in Sources */,
+				187E017F2118F39A00F91778 /* CaMKIIingPositionCosine.cpp in Sources */,
 				F735B7AB1A2D172D00AE21D1 /* MEDYAN.cpp in Sources */,
+				187E017C2118F39A00F91778 /* CaMKIIingBendingCosine.cpp in Sources */,
+				187E017E2118F39A00F91778 /* CaMKIIingPosition.cpp in Sources */,
+				187E017A2118F39A00F91778 /* CaMKIIingDihedralCosine.cpp in Sources */,
+				187E01812118F39A00F91778 /* CaMKIIingDihedral.cpp in Sources */,
+				187E017B2118F39A00F91778 /* CaMKIIingStretching.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1263,11 +1396,28 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1277,7 +1427,9 @@
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1289,14 +1441,33 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				SDKROOT = macosx;
@@ -1461,6 +1632,7 @@
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = MEDYAN;
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = "";
 			};
 			name = Debug;
 		};
@@ -1496,6 +1668,7 @@
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-lboost_system";
 				PRODUCT_NAME = MEDYAN;
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = "";
 			};
 			name = Release;
 		};

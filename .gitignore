@@ -16,6 +16,9 @@ build/
 *.[oa]
 *.pyc
 *.o
+Makefile.dep
+MEDYAN
 
 # Backup files
 *~.nib
+
