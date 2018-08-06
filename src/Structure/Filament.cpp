@@ -39,8 +39,8 @@ using namespace mathfunc;
 Database<Filament*> Filament::_filaments;
 Histogram* Filament::_turnoverTimes;
 
-Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
-                   vector<double>& direction, bool nucleation, bool branch)
+Filament::Filament(SubSystem* s, short filamentType, const vector<double>& position,
+                   const vector<double>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
  
