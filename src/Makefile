@@ -5,7 +5,6 @@
 #
 #	GCC 4.7 and above
 #	Boost 1.49 and above
-#	GSL
 #
 #   If running unit tests, googletest is needed.
 #

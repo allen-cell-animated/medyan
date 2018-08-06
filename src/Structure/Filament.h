@@ -86,8 +86,8 @@ public:
     /// @param nucleation - this filament was nucleated at runtime by a non-branching species
     /// @param branching - this filament was branched at runtime from an existing filament
 	Filament(SubSystem* s, short filamentType,
-                           vector<double>& position,
-                           vector<double>& direction,
+                           const vector<double>& position,
+                           const vector<double>& direction,
                            bool nucleation = false,
                            bool branch = false);
     
