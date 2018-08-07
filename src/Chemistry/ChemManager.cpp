@@ -200,10 +200,10 @@ void ChemManager::initCMonomer(CMonomer* m, short filamentType, Compartment* c) 
         m->_speciesBound[bIndex] = sbr;
         bIndex++;
     }
-    for (auto &br : _chemData.speciesCaMKIIer[filamentType]) {
-        SpeciesCaMKIIer* sbr =
-        c->addSpeciesCaMKIIer(SpeciesNamesDB::genUniqueFilName(br));
-        m->_speciesBound[bIndex] = sbr;
+    for (auto &ca : _chemData.speciesCaMKIIer[filamentType]) {
+        SpeciesCaMKIIer* sca =
+        c->addSpeciesCaMKIIer(SpeciesNamesDB::genUniqueFilName(ca));
+        m->_speciesBound[bIndex] = sca;
         bIndex++;
     }
 }
