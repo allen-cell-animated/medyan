@@ -95,7 +95,7 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord,
 
     double U_i[1], U_ii=0.0;
     double* gU_i;
-    U_ii = -1.0;
+    U_ii = 0.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;

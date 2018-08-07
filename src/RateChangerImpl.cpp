@@ -62,7 +62,7 @@ float MotorCatch::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
     
     //calculate new rate
-#ifdef PLOSFEEEDBACK
+#ifdef PLOSFEEDBACK
     double k_0 = _beta * onRate /numBoundHeads(onRate, offRate, force, numHeads);
 
     double factor = exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0));

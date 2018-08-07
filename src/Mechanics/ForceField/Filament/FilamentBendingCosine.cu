@@ -221,7 +221,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
 
     double *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -266,7 +266,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
 
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
