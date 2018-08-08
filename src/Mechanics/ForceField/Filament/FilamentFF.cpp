@@ -89,6 +89,10 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
             return -1;
         }
         else U += U_i;
+        
+        if(U_i > 1000.0){
+            std::cout<<" High Energy in" <<getName()<<" = "<<U_i<<endl;
+        }
 #ifdef DETAILEDOUTPUT
         std::cout<<getName()<<" "<<U_i<<endl;
 #endif
