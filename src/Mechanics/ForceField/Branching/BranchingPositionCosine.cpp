@@ -196,7 +196,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
     double *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
     double *mp = new double[3];
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -244,7 +244,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
     double *mp = new double[3];
     double *vzero = new double[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

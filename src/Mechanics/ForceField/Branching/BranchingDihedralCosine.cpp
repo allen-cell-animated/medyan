@@ -213,7 +213,7 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
     double *n1 = new double[3];
     double *n2 = new double[3];
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -265,7 +265,7 @@ double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
     double *n2 = new double[3];
     double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -322,7 +322,7 @@ void BranchingDihedralCosine::forces(double *coord, double *f, int *beadSet,
     double *n2 = new double[3];
     double *zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

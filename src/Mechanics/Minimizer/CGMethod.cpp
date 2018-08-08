@@ -433,8 +433,9 @@ Bead* CGMethod::maxBead() {
     long index = 0;
 #ifdef SERIAL
     for (int i = 0; i < N/3; i++) {
-
-        currentF = forceAux[i] * forceAux[i];
+        for (int j = 0 ; j < 3; j++) {
+            currentF = forceAux[3*i+j] * forceAux[3*i+j];
+        }
         if(currentF > maxF) {
             index = i;
             maxF = currentF;

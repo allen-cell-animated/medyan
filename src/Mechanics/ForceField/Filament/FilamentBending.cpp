@@ -100,9 +100,9 @@ void FilamentBending<FBendingInteractionType>::deallocate() {
 template <class FBendingInteractionType>
 double FilamentBending<FBendingInteractionType>::computeEnergy(double *coord, double *f, double d){
 
-    double U_i[1], U_ii=0.0;
+    double U_i[1], U_ii;
     double* gU_i;
-    U_ii = -1.0;
+    U_ii = 0.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;

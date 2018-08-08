@@ -728,7 +728,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         ATG3 = atan((F)/BB) - atan((F - b)/BB);
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
 //        std::cout<<"N3 "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
-         U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+//         U = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 #ifdef DETAILEDOUTPUT
         std::cout<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<" "<<AA<<" "<<BB<<" "<<CC<<" "
                 ""<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "<<JJ<<" "<<ATG1<<" "<<ATG2<<" "

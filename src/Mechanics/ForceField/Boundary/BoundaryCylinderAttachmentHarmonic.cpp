@@ -28,7 +28,7 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
     int nint = Bead::getPinnedBeads().size();
 
     double *coord1, *pin1, dist, U_i;
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -60,7 +60,7 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
     int nint = Bead::getPinnedBeads().size();
 
     double *coord1, *pin1, *force1, *zero, dist, U_i;
-    double U = 0;
+    double U = 0.0;
     zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
     for(int i = 0; i < nint; i += 1) {

@@ -211,7 +211,7 @@ void LinkerStretchingHarmonic::checkforculprit() {
         double *v1 = new double[3];
         double *v2 = new double[3];
 
-        double U = 0;
+        double U = 0.0;
 
         for(int i = 0; i < nint; i += 1) {
 
@@ -253,7 +253,7 @@ void LinkerStretchingHarmonic::checkforculprit() {
         double *v1 = new double[3];
         double *v2 = new double[3];
 
-        double U = 0;
+        double U = 0.0;
 
         for(int i = 0; i < nint; i += 1) {
 

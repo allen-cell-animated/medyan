@@ -182,7 +182,7 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
 
     double *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -225,7 +225,7 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
 
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist, U_i, L1, L2, L1L2, l1l2;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

@@ -238,6 +238,12 @@ void Cylinder::printSelf() {
     
     cout << "Position = " << _position << endl;
     
+    cout<< "Length "<<_mCylinder->getLength()<<endl;
+    cout<< "Eq Length "<<_mCylinder->getEqLength()<<endl;
+    cout<< "Eq Theta "<<_mCylinder->getEqTheta()<<endl;
+    cout<<" Stretching constant "<<_mCylinder->getStretchingConst()<<endl;
+    cout<<" Bending constant "<<_mCylinder->getBendingConst()<<endl;
+    
     cout << endl;
     
 #ifdef CHEMISTRY
