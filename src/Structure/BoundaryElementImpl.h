@@ -648,7 +648,7 @@ public:
         }
         else {
             
-            // when the Z coordinate is located at geometry center
+            // when the X, Y coordinate is located at geometry center
             if(areEqual(point[0],_coords[0]) && areEqual(point[1],_coords[1])) {
                 return vector<double> {0.0, 0.0, 0.0};
             }

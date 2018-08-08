@@ -124,9 +124,6 @@ double BranchingFF::computeEnergy(double *coord, double *f, double d) {
         }
         else U += U_i;
         
-        if(U_i > 1000.0){
-            std::cout<<" High Energy in Branching = "<<U_i<<endl;
-        }
 
     }
     

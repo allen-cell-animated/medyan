@@ -79,10 +79,6 @@ double LinkerFF::computeEnergy(double *coord, double *f, double d) {
             return -1;
         }
         else U += U_i;
-        
-        if(U_i > 1000.0){
-            std::cout<<"High Energy in Linker = "<<U_i<<endl;
-        }
 
     }
     return U;

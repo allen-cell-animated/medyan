@@ -292,6 +292,8 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         f1[0] +=  f0 * ( coord2[0] - coord1[0] );
         f1[1] +=  f0 * ( coord2[1] - coord1[1] );
         f1[2] +=  f0 * ( coord2[2] - coord1[2] );
+        
+
 //        std::cout<<i<<" "<< f0 * ( coord1[0] - coord2[0] )<<" "<<
 //        f0 * ( coord1[1] - coord2[1] )<<" "<<
 //        f0 * ( coord1[2] - coord2[2] )<<" "<<

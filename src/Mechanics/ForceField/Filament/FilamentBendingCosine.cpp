@@ -380,6 +380,7 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
 
         force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                            (coord3[2] - coord2[2])*C );
+        
 //        double f1[3], f2[3], f3[3];
 //        f1[0] =  k * ((-coord3[0] + coord2[0])*A +
 //                           (coord2[0] - coord1[0])*B );
