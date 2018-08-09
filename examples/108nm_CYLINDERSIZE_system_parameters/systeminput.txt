@@ -13,7 +13,7 @@ COMPARTMENTSIZEZ:            500.0
 
 MONOMERSIZE:                 2.7
  
-CYLINDERSIZE:                27.0
+CYLINDERSIZE:                108.0
 
 BOUNDARYSHAPE:               CUBIC
 
@@ -23,10 +23,10 @@ BOUNDARYSHAPE:               CUBIC
 ### ALGORITHM ###
 CONJUGATEGRADIENT:           POLAKRIBIERE
 
-GRADIENTTOLERANCE:           1.0
+GRADIENTTOLERANCE:           5.0
 
-MAXDISTANCE:		         0.05
-LAMBDAMAX:		   		     0.005
+MAXDISTANCE:		         1.0
+LAMBDAMAX:		   		     0.01
 
 ### FILAMENTS ###
 
@@ -34,8 +34,7 @@ FSTRETCHINGFFTYPE:           HARMONIC
 FSTRETCHINGK:                100.0
 
 FBENDINGFFTYPE:              COSINE
-#Use 672.5 for 108nm cylinder size
-FBENDINGK:                   2960.0
+FBENDINGK:                   672.5
 FBENDINGTHETA:               0.0
 
 VOLUMEFFTYPE:               REPULSION
