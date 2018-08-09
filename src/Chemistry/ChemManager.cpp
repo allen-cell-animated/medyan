@@ -98,20 +98,21 @@ void ChemManager::setupBindingSites() {
             }
         }
         
-        //for initialization of cylinders
-        SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.camkiierBoundIndex[filType]);
-        
-        if(SysParams::CParams.camkiierBoundIndex[filType] != SysParams::CParams.brancherBoundIndex[filType])
-             SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.brancherBoundIndex[filType]);
-             
-        if(SysParams::CParams.camkiierBoundIndex[filType] != SysParams::CParams.linkerBoundIndex[filType] &&
-           SysParams::CParams.brancherBoundIndex[filType]   != SysParams::CParams.linkerBoundIndex[filType])
-            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.linkerBoundIndex[filType]);
-            
-        if(SysParams::CParams.camkiierBoundIndex[filType] != SysParams::CParams.motorBoundIndex[filType] &&
-           SysParams::CParams.brancherBoundIndex[filType]   != SysParams::CParams.motorBoundIndex[filType] &&
-           SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.motorBoundIndex[filType])
-            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.motorBoundIndex[filType]);
+        //for initialization of cylinders, for CaMKII, based on Aravind suggestion
+
+        SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.brancherBoundIndex[filType]);        
+
+        if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.linkerBoundIndex[filType])
+            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.linkerBoundIndex[filType]);        
+
+        if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.motorBoundIndex[filType] &&
+            SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.motorBoundIndex[filType])
+            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.motorBoundIndex[filType]);        
+
+        if(SysParams::CParams.brancherBoundIndex[filType] != SysParams::CParams.camkiierBoundIndex[filType] &&
+            SysParams::CParams.linkerBoundIndex[filType]   != SysParams::CParams.camkiierBoundIndex[filType] &&
+            SysParams::CParams.motorBoundIndex[filType]   != SysParams::CParams.camkiierBoundIndex[filType])
+            SysParams::CParams.bindingIndices[filType].push_back(SysParams::CParams.camkiierBoundIndex[filType]);
     }
 }
 
