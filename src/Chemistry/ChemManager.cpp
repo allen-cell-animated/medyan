@@ -125,9 +125,9 @@ void ChemManager::configCMonomer() {
                                         _chemData.speciesMinusEnd[filType].size();
         
         CMonomer::_numBSpecies[filType] = _chemData.speciesBound[filType].size()   +
-                                        _chemData.speciesLinker[filType].size()  +
-                                        _chemData.speciesMotor[filType].size()   +
-                                        _chemData.speciesBrancher[filType].size();
+                                        _chemData.speciesLinker[filType].size()    +
+                                        _chemData.speciesMotor[filType].size()     +
+                                        _chemData.speciesBrancher[filType].size()  +
                                         _chemData.speciesCaMKIIer[filType].size();
         
         //set up species offsets
