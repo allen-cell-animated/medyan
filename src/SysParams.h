@@ -242,7 +242,6 @@ struct DyRateParams {
     /// Option for dynamic walking rate of motors
     vector<double> dMotorWalkingCharForce = {};
     
-    //Qin
     /// Option for dynamic branching point unbinding rate
     vector<double> dBranchUnbindingCharLength = {};
 };

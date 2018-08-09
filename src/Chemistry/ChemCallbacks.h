@@ -796,10 +796,15 @@ struct FilamentCreationCallback {
                 auto npp = nextPointProjection(position,
                                                SysParams::Geometry().cylinderSize[_filType], direction);
                 
-                //check if within boundary
+                //check if within boundary && if within REPULSIONEXPIN region (set as 125nm)
                 if(_ps->getBoundary()->within(position) &&
-                   _ps->getBoundary()->within(npp))
-                    break;
+                   _ps->getBoundary()->within(npp)){
+                    
+                    if(_ps->getBoundary()->distance(position) > 125 &&
+                       _ps->getBoundary()->distance(npp) > 125)
+                        break;
+                }
+                
             }
             
             //create filament, set up ends and filament species

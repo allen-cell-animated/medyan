@@ -93,8 +93,8 @@ void Controller::initialize(string inputFile,
 
     _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
-    //Qin add br force out and local diffussing species concentration
-    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
+    //add br force out and local diffussing species concentration
+    //_outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
     //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
 
     //Always read geometry, check consistency
@@ -569,7 +569,6 @@ void Controller::executeSpecialProtocols() {
         pinBoundaryFilaments();
     }
 
-    //Qin
     if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
        tau() >= SysParams::Mechanics().pinTime) {
 
@@ -635,7 +634,7 @@ void Controller::pinBoundaryFilaments() {
         }
     }
 }
-            //Qin
+
             void Controller::pinLowerBoundaryFilaments() {
 
                 //renew pinned filament list everytime

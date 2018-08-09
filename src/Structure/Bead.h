@@ -133,8 +133,7 @@ public:
     }
     
     const vector<double>& getPinPosition() { return pinnedPosition;}
-    //Qin
-    // Remove all pinned beads.
+
     //Qin
     // Remove all pinned beads.
     void resetAllPinned() {
