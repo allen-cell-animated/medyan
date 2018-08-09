@@ -71,12 +71,17 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
         
         ReactionBase* rxn;
         
-        if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
+	//to accomodate different binding sites, jl135, CaMKII
+        if(SysParams::Chemistry().bindingIndices[_filamentType].size() ==4)
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+4>(species, _rate);
+        else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
-        else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
-            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
-        else
+ 	else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);        
+	else
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
+
+	
         
         //callback
 #ifdef REACTION_SIGNALING
@@ -121,7 +126,11 @@ void PolyPlusEndTemplate::addReaction(CCylinder* cc) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
+    
+    //added for CaMKII, jli013    
+    if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 4)
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
+    else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
     else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
@@ -184,7 +193,11 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         
         ReactionBase *rxn;
-        if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
+
+        //added for CaMKII, jli013
+        if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 4)
+            rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+4>(species, _rate);
+        else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
         else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
             rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
@@ -233,7 +246,11 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
+
+    //added for CaMKII, jli013
+    if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 4)
+        rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+3>(species, _rate);
+    else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+2>(species, _rate);
     else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
         rxn = new Reaction<POLYREACTANTS,POLYPRODUCTS+1>(species, _rate);
@@ -296,8 +313,12 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         
         ReactionBase* rxn;
+
+        //added for CaMKII, jli013
         
-        if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
+        if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 4)
+            rxn = new Reaction<DEPOLYREACTANTS+4,DEPOLYPRODUCTS>(species, _rate);        
+        else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
             rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
         else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
             rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
@@ -360,8 +381,12 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc) {
         species.insert(species.end(), productSpecies.begin(), productSpecies.end());
         
         ReactionBase* rxn;
-        
-        if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
+
+        //added for CaMKII
+
+        if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 4)
+            rxn = new Reaction<DEPOLYREACTANTS+4,DEPOLYPRODUCTS>(species, _rate);
+        else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
             rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
         else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
             rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
@@ -418,7 +443,11 @@ void DepolyPlusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     species.insert(species.end(), productSpecies.begin(), productSpecies.end());
     
     ReactionBase* rxn;
-    if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
+
+    //added for CaMKII, for jli013
+    if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 4)
+        rxn = new Reaction<DEPOLYREACTANTS+4,DEPOLYPRODUCTS>(species, _rate);
+    else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
         rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
     else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
         rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);
@@ -474,7 +503,11 @@ void DepolyMinusEndTemplate::addReaction(CCylinder* cc1, CCylinder* cc2) {
     
     ReactionBase* rxn;
     
-    if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
+    //added for CaMKII
+
+    if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 4)
+        rxn = new Reaction<DEPOLYREACTANTS+4,DEPOLYPRODUCTS>(species, _rate);
+    else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 3)
         rxn = new Reaction<DEPOLYREACTANTS+3,DEPOLYPRODUCTS>(species, _rate);
     else if(SysParams::Chemistry().bindingIndices[_filamentType].size() == 2)
         rxn = new Reaction<DEPOLYREACTANTS+2,DEPOLYPRODUCTS>(species, _rate);

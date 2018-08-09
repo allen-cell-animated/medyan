@@ -156,12 +156,16 @@ template void* Reaction<2,4>::operator new(size_t size);
 template void Reaction<2,4>::operator delete(void* ptr);
 template void* Reaction<2,5>::operator new(size_t size);
 template void Reaction<2,5>::operator delete(void* ptr);
+template void* Reaction<2,6>::operator new(size_t size); //added for CaMKII
+template void Reaction<2,6>::operator delete(void* ptr); //added for CaMKII
 template void* Reaction<4,0>::operator new(size_t size);
 template void Reaction<4,0>::operator delete(void* ptr);
 template void* Reaction<5,2>::operator new(size_t size);
 template void Reaction<5,2>::operator delete(void* ptr);
 template void* Reaction<4,2>::operator new(size_t size);
 template void Reaction<4,2>::operator delete(void* ptr);
+template void* Reaction<6,2>::operator new(size_t size); //added for CaMKII
+template void Reaction<6,2>::operator delete(void* ptr); //added for CaMKII
 #endif
 
 template void Reaction<1,1>::updatePropensityImpl();
@@ -223,6 +227,12 @@ template void Reaction<2,5>::activateReactionUnconditionalImpl();
 template void Reaction<2,5>::passivateReactionImpl();
 template Reaction<2,5>* Reaction<2,5>::cloneImpl(const SpeciesPtrContainerVector &spcv);
 
+//added for CaMKII
+template void Reaction<2,6>::updatePropensityImpl();
+template void Reaction<2,6>::activateReactionUnconditionalImpl();
+template void Reaction<2,6>::passivateReactionImpl();
+template Reaction<2,6>* Reaction<2,6>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+
 template void Reaction<4,0>::updatePropensityImpl();
 template void Reaction<4,0>::activateReactionUnconditionalImpl();
 template void Reaction<4,0>::passivateReactionImpl();
@@ -237,4 +247,10 @@ template void Reaction<4,2>::updatePropensityImpl();
 template void Reaction<4,2>::activateReactionUnconditionalImpl();
 template void Reaction<4,2>::passivateReactionImpl();
 template Reaction<4,2>* Reaction<4,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
+
+//added for CaMKII
+template void Reaction<6,2>::updatePropensityImpl();
+template void Reaction<6,2>::activateReactionUnconditionalImpl();
+template void Reaction<6,2>::passivateReactionImpl();
+template Reaction<6,2>* Reaction<6,2>::cloneImpl(const SpeciesPtrContainerVector &spcv);
 

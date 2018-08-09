@@ -137,6 +137,8 @@ void ChemManager::configCMonomer() {
         short o3 = _chemData.speciesBound[filType].size();
         short o4 = o3 + _chemData.speciesLinker[filType].size();
         short o5 = o4 + _chemData.speciesMotor[filType].size();
+        short o6 = o5 + _chemData.speciesBrancher[filType].size();
+	
         
         //create offset vector for filament
         CMonomer::_speciesFilamentIndex[filType].insert(
@@ -144,7 +146,7 @@ void ChemManager::configCMonomer() {
         
         //create offset vector for bound
         CMonomer::_speciesBoundIndex[filType].insert(
-        CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5});
+        CMonomer::_speciesBoundIndex[filType].end(), {0,o3,o4,o5,o6});
     }
 }
 
