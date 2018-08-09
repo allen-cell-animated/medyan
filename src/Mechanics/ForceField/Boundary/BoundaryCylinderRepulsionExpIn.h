@@ -35,7 +35,7 @@ class BoundaryCylinderRepulsionExpIn {
     void forces(double *coord, double *f, int *beadSet,
                 double *krep, double *slen, int *nneighbors);
     
-    double loadForces(double r, double krep , double slen, vector<double> norm);
+    double loadForces(double r, double krep , double slen);
     
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);

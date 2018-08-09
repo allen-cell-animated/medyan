@@ -242,13 +242,7 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             r = be->distance(coord1);
             
-            auto norm = be->normal(coord1);
-            if(areEqual(norm[0],0.0) && areEqual(norm[1],0.0)){
-                R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
-            }
-            else{
-                R = -r / slen[Cumnc + ic];
-            }
+            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
             
             U_i = krep[Cumnc + ic] * exp(R);
             //            double *var;
@@ -297,13 +291,7 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
             
             r = be->stretchedDistance(coord1, force1, d);
             
-            auto norm = be->normal(coord1);
-            if(areEqual(norm[0],0.0) && areEqual(norm[1],0.0)){
-                R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
-            }
-            else{
-                R = -r / slen[Cumnc + ic];
-            }
+            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
             
             
             //            std::cout<<r<<" "<<krep[Cumnc+ic]<<endl;
@@ -355,38 +343,24 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
             coord1 = &coord[3 * beadSet[ Cumnc + ic]];
             force1 = &f[3 * beadSet[ Cumnc + ic]];
             r = be->distance(coord1);
-            auto norm = be->normal(coord1);
             
-            if(areEqual(norm[0],0.0) && areEqual(norm[1],0.0)){
-                R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
-            }
-            else{
-                R = -r / slen[Cumnc + ic];
-            }
+            auto norm = be->normal(coord1);
+            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
             
             f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
-            
-            if(f0 > 1000.0){
-                cout<<"High Boundary Force = " << f0 << endl;
-            }
+    
             
         }
         Cumnc+=nc;
     }}
 
-double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double screenLength, vector<double> norm) {
+double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double screenLength) {
     
-    double R;
+    double R = -r/screenLength + 100.0 / screenLength;
     
-    if(areEqual(norm[0],0.0) && areEqual(norm[1],0.0)){
-        R = -r / screenLength + 100.0 / screenLength;
-    }
-    else{
-        R = -r / screenLength;
-    }
     return kRep * exp(R)/screenLength;
     
 }

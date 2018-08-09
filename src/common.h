@@ -91,7 +91,7 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 #define MWALKINGPRODUCTS      2
 
 /// Nucleation
-#define NUCLEATIONREACTANTS   3
+#define NUCLEATIONREACTANTS   2
 #define NUCLEATIONPRODUCTS    3
 
 /// Destruction

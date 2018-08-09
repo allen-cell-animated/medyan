@@ -314,8 +314,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                     double proj = -dotProduct(be->normal(newCoord), normal);
                     if(proj < 0.0) proj = 0.0;
                     
-                    auto norm = be->normal(newCoord);
-                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength, norm);
+                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     bd->loadForcesP[bd->lfip++] += proj * loadForce;
                 //bd->loadForcesP[bd->lfip++] += loadForce;
@@ -349,8 +348,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
                     double proj = -dotProduct(be->normal(newCoord), normal);
                     if(proj < 0.0) proj = 0.0;
                     
-                    auto norm = be->normal(newCoord);
-                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength, norm);
+                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     bd->loadForcesM[bd->lfim++] += proj * loadForce;
                     //bd->loadForcesM[bd->lfim++] += loadForce;
