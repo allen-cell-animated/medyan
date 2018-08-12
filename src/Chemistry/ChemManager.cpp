@@ -1346,7 +1346,7 @@ void ChemManager::genFilBindingReactions() {
                 else if(nzstr == "TOPBOUNDARY")
                     nucleationZone = NucleationZoneType::TOPBOUNDARY;
                 else if(nzstr == "SIDEBOUNDARY")
-                nucleationZone = NucleationZoneType::SIDEBOUNDARY;
+                    nucleationZone = NucleationZoneType::SIDEBOUNDARY;
                 else {
                     cout << "Nucleation zone type specified in a branching reaction not valid. Exiting." << endl;
                     exit(EXIT_FAILURE);
@@ -2687,8 +2687,8 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 #endif
             }
             else{
-            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
-            m2->speciesPlusEnd(0)->up();
+                CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
+                m2->speciesPlusEnd(0)->up();
                 
                 //fill new cylinder with default filament value
                 for(int i = 0; i < cc->getSize() - 1; i++) {

@@ -103,12 +103,9 @@ struct UpdateLinkerBindingCallback {
                 CCylinder* cc = _cylinder->getCCylinder();
                 auto x = c->coordinates();
                 //update binding sites
-                if(delta == +1){ manager->addPossibleBindings(cc, _bindingSite);
-
- }
+                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
                 
-                else{ /* -1 */
-                    manager->removePossibleBindings(cc, _bindingSite);}
+                else /* -1 */ manager->removePossibleBindings(cc, _bindingSite);
             }
         }
     }
@@ -436,7 +433,7 @@ struct BranchingCallback {
         else
         {
             CCylinder* c; auto check = false;
-        vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
+            vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
             for(auto T:BrT){
                 CCylinder* cx=get<0>(get<0>(T));
                 double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
@@ -444,10 +441,11 @@ struct BranchingCallback {
                     c=get<0>(get<1>(T));
                     check = true;
                     break;
-                }}
+                }
+            }
             if(check){
-            b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
-            frate=0.0;
+                b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
+                frate=0.0;
             }
             else
                 cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
@@ -813,7 +811,7 @@ struct FilamentCreationCallback {
             //initialize the nucleation
             f->nucleate(_plusEnd, _filament, _minusEnd);
         }
-        }
+    }
 
     
 };

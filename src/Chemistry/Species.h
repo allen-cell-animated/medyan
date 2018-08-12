@@ -122,7 +122,7 @@ public:
                 return name.substr(0, i);
             }
         }
-        //if there was no integer, retu rn the name
+        //if there was no integer, return the name
         return name;
     }
     

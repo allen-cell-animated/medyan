@@ -28,13 +28,13 @@ private:
 
 public:
     static mt19937 _eng;
-        static long counter;
-	static long Dcounter;
-	static long Ncounter;
+    static long counter;
+    static long Dcounter;
+    static long Ncounter;
     ///Get a random double between low and high
     static inline double randDouble(double low, double high) {
         counter++;
-	Dcounter++;
+        Dcounter++;
         return ((float)_int_distr(_eng) / numeric_limits<int>::max()) * (high - low) + low;
     }
     ///Get a random integer between low and high

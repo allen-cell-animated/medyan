@@ -463,9 +463,9 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     
     for(auto c : _cylinderssorted)
 #else
-        for(auto c : _compartment->getCylinders())
+    for(auto c : _compartment->getCylinders())
 #endif
-        {
+    {
     
         if(c->getType() != _filamentType) continue;
         
@@ -586,22 +586,22 @@ bool LinkerBindingManager::isConsistent() {
 /// Choose random binding sites based on current state
 vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSites() {
 
-  assert((_possibleBindings.size() != 0)
-	            && "Major bug: Linker binding manager should not have zero binding \
-           sites when called to choose a binding site.");
+    assert((_possibleBindings.size() != 0)
+	    && "Major bug: Linker binding manager should not have zero binding \
+            sites when called to choose a binding site.");
     std::cout<<"Choose binding sites"<<endl;
-  int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
+    int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
 
     auto it = _possibleBindings.begin();
-//
+
     advance(it, randomIndex);
 
-  auto xxx = _compartment->coordinates();
+    auto xxx = _compartment->coordinates();
     std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
 #ifdef DEBUGCONSTANTSEED
     return (*it);
 #else
-  return vector<tuple<CCylinder*, short>>{it->first, it->second};
+    return vector<tuple<CCylinder*, short>>{it->first, it->second};
 #endif
 }
 
@@ -628,8 +628,7 @@ void LinkerBindingManager::erasepossibleBindings(CCylinder* cc, short bindingSit
 }
 #endif
 void LinkerBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
-                                              tuple<CCylinder*,
-        short> t2){
+                                                  tuple<CCylinder*, short> t2){
     double oldN=numBindingSites();
 #ifdef DEBUGCONSTANTSEED
     vector<tuple<CCylinder*, short>> a = {t1,t2};
@@ -901,9 +900,9 @@ void MotorBindingManager::updateAllPossibleBindings() {
     
     for(auto c : _cylinderssorted)
 #else
-        for(auto c : _compartment->getCylinders())
+    for(auto c : _compartment->getCylinders())
 #endif
-        {
+    {
 
         if(c->getType() != _filamentType) continue;
         
@@ -922,11 +921,9 @@ void MotorBindingManager::updateAllPossibleBindings() {
                 sort(nList.begin(),nList.end(),Orderset());
                 for (auto cn : nList)
 #endif
-for(auto cn:_neighborLists[_nlIndex]->getNeighbors
-        (cc->getCylinder()))
-                //loop through neighbors
-                //now re add valid based on CCNL
-                 {
+                for(auto cn:_neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
+                    //loop through neighbors
+                    //now re add valid based on CCNL
                     
                     if(cn->getParent() == c->getParent()) continue;
                     if(cn->getType() != _filamentType) continue;

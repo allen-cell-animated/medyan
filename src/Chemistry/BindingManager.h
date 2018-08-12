@@ -273,7 +273,7 @@ private:
     
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
-        vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
+    vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
 //    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
 #else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;

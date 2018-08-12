@@ -320,7 +320,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                 _subSystem->addTrackable<Filament>(_subSystem, type, coords, numSegment + 1, FSetup.projectionType);
         }
     }
-        cout << "Done. " << fil.size() << " filaments created." << endl;
+    cout << "Done. " << fil.size() << " filaments created." << endl;
     
 }
 
@@ -506,24 +506,24 @@ void Controller::moveBoundary(double deltaTau) {
     //calculate distance to move
     double dist = SysParams::Boundaries().moveSpeed * deltaTau;
     if(abs(dist)>0){
-    //move it
-    if(tau() >= SysParams::Boundaries().moveStartTime &&
-       tau() <= SysParams::Boundaries().moveEndTime)
-        _subSystem->getBoundary()->move(dist);
-    
-    //activate, deactivate necessary compartments
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+        //move it
+        if(tau() >= SysParams::Boundaries().moveStartTime &&
+        tau() <= SysParams::Boundaries().moveEndTime)
+            _subSystem->getBoundary()->move(dist);
         
-        if(_subSystem->getBoundary()->within(C)) {
+        //activate, deactivate necessary compartments
+        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             
-            if(C->isActivated()) continue;
-            else _cController->activate(C);
+            if(_subSystem->getBoundary()->within(C)) {
+                
+                if(C->isActivated()) continue;
+                else _cController->activate(C);
+            }
+            else {
+                if(!C->isActivated()) continue;
+                else _cController->deactivate(C);
+            }
         }
-        else {
-            if(!C->isActivated()) continue;
-            else _cController->deactivate(C);
-        }
-    }
     }
 }
 
@@ -620,37 +620,37 @@ void Controller::pinBoundaryFilaments() {
         }
     }
 }
-            //Qin
-            void Controller::pinLowerBoundaryFilaments() {
-                
-                //renew pinned filament list everytime
-                
-                //loop through beads, check if within pindistance
-                for(auto b : Bead::getBeads()) {
-                    
-                    //pin all beads besides plus end and minus end cylinder
-                    Filament* f = (Filament*) b->getParent();
-                    Cylinder* plusEndC = f->getPlusEndCylinder();
-                    Cylinder* minusEndC = f->getMinusEndCylinder();
-                    
-                    if((plusEndC->getSecondBead() != b) ||
-                       (minusEndC->getFirstBead() != b)) {
-                        
-                        //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
-                        //cout << SysParams::Mechanics().pinDistance << endl;
-                        
-                        auto index = Rand::randDouble(0,1);
-                        //cout << index <<endl;
-                        //if within dist to boundary and index > 0.5, add
-                        if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
-                           && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
-                            //cout << index << endl;
-                            b->pinnedPosition = b->coordinate;
-                            b->addAsPinned();
-                        }
-                    }
-                }
+//Qin
+void Controller::pinLowerBoundaryFilaments() {
+    
+    //renew pinned filament list everytime
+    
+    //loop through beads, check if within pindistance
+    for(auto b : Bead::getBeads()) {
+        
+        //pin all beads besides plus end and minus end cylinder
+        Filament* f = (Filament*) b->getParent();
+        Cylinder* plusEndC = f->getPlusEndCylinder();
+        Cylinder* minusEndC = f->getMinusEndCylinder();
+        
+        if((plusEndC->getSecondBead() != b) ||
+            (minusEndC->getFirstBead() != b)) {
+            
+            //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
+            //cout << SysParams::Mechanics().pinDistance << endl;
+            
+            auto index = Rand::randDouble(0,1);
+            //cout << index <<endl;
+            //if within dist to boundary and index > 0.5, add
+            if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
+                && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
+                //cout << index << endl;
+                b->pinnedPosition = b->coordinate;
+                b->addAsPinned();
             }
+        }
+    }
+}
 
 void Controller::run() {
     

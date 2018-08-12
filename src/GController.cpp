@@ -327,7 +327,7 @@ Compartment* GController::getRandomCompartment() {
         vector<double> coord =
         {_grid[0] * _compartmentSize[0] * Rand::randDouble(0,0.999),
          _grid[1] * _compartmentSize[1] * Rand::randDouble(0,0.999),
-        _grid[2] * _compartmentSize[2] * Rand::randDouble(0,0.999)};
+         _grid[2] * _compartmentSize[2] * Rand::randDouble(0,0.999)};
         
         Compartment* c = getCompartment(coord);
         if(c->isActivated()) return c;

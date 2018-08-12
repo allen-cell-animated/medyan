@@ -58,32 +58,32 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 #ifdef MECHANICS
           //set eqLength according to cylinder size
           
-              double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
-          if(!SysParams::RUNSTATE) //RESTARTPHASE
-          {
-              int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
-              double tpd = eqLength;
+    double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
+    if(!SysParams::RUNSTATE) //RESTARTPHASE
+    {
+        int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
+        double tpd = eqLength;
               
-              if(nummonomers ==0){
-                  eqLength = SysParams::Geometry().monomerSize[type];
-              }
-              else{
-                  eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
-                  double mindis = abs(tpd - eqLength);
+        if(nummonomers ==0){
+            eqLength = SysParams::Geometry().monomerSize[type];
+        }
+        else{
+            eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
+            double mindis = abs(tpd - eqLength);
 
-                  for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
-                      if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
-                      {
-                          eqLength = i * SysParams::Geometry().monomerSize[type];
-                          mindis = abs(tpd - eqLength);
-                      }
-                  }
-              }
+            for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
+                if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
+                {
+                    eqLength = i * SysParams::Geometry().monomerSize[type];
+                    mindis = abs(tpd - eqLength);
+                }
+            }
+        }
               
             
-          }
-          _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
-          _mCylinder->setCylinder(this);
+    }
+    _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
+    _mCylinder->setCylinder(this);
 #endif
     
 #ifdef CHEMISTRY

@@ -934,44 +934,44 @@ void SystemParser::readMechParams() {
             
             vector<string> lineVector = split<string>(line);
                 
-                if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
-                    if(lineVector.size() > 4) {
-                        cout <<
+            if(lineVector[1] == "PINBOUNDARYFILAMENTS") {
+                if(lineVector.size() > 4) {
+                    cout <<
                         "There was an error parsing input file at Chemistry parameters. Exiting."
                         << endl;
-                        exit(EXIT_FAILURE);
-                    }
+                    exit(EXIT_FAILURE);
+                }
 
-                    else{
+                else{
                     MParams.pinBoundaryFilaments = true;
                     MParams.pinK = atof(lineVector[2].c_str());
                     MParams.pinTime = atof(lineVector[3].c_str());
-                    }
                 }
+            }
                 
-                else if(lineVector[1]=="TRANSFERSHAREAXIS"){
-                    if(lineVector.size() > 3) {
-                        cout <<
+            else if(lineVector[1]=="TRANSFERSHAREAXIS"){
+                if(lineVector.size() > 3) {
+                    cout <<
                         "There was an error parsing input file at Chemistry parameters. Exiting."
                         << endl;
-                        exit(EXIT_FAILURE);
-                    }
+                    exit(EXIT_FAILURE);
+                }
                     
-                    else{
-                        cout<<"TRANSFERSHARE AXIS "<<lineVector[2]<<endl;
-                    if(lineVector[2]=="X")
-                        MParams.transfershareaxis=0;
-                    else if(lineVector[2]=="Y")
-                        MParams.transfershareaxis=1;
-                    else if(lineVector[2]=="Z")
-                        MParams.transfershareaxis=2;
-                    else if(lineVector[2]=="RADIAL")
-                        MParams.transfershareaxis=3;
-                    else{
-                        cout <<
-                            "There was an error parsing input file at Chemistry parameters. Exiting."
-                            << endl;
-                        exit(EXIT_FAILURE);}
+                else{
+                    cout<<"TRANSFERSHARE AXIS "<<lineVector[2]<<endl;
+                if(lineVector[2]=="X")
+                    MParams.transfershareaxis=0;
+                else if(lineVector[2]=="Y")
+                    MParams.transfershareaxis=1;
+                else if(lineVector[2]=="Z")
+                    MParams.transfershareaxis=2;
+                else if(lineVector[2]=="RADIAL")
+                    MParams.transfershareaxis=3;
+                else{
+                    cout <<
+                        "There was an error parsing input file at Chemistry parameters. Exiting."
+                        << endl;
+                    exit(EXIT_FAILURE);}
                 }
             }
             
