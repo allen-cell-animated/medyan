@@ -88,10 +88,11 @@ struct MechParams {
     
     ///To pin filaments on boundary via an attractive potential
     bool pinBoundaryFilaments = false;
-    double pinDistance = 250; ///< 250nm pinning distance for now
+    double pinDistance = 0.0; ///< 250nm pinning distance for now
     double pinK = 0.0;       ///< Tethered stiffness
     double pinTime = 0.0;    ///< Time at which to pin the filaments
-    int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
+    int transfershareaxis=3;       ///Axis along which activate/deactivate protocols
+/// should be executed.
     //@}
     
     

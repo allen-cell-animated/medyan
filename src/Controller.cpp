@@ -380,7 +380,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 
 void Controller::activatedeactivateComp(){
 
-        if(SysParams::Mechanics().transfershareaxis>=0){
+        if(SysParams::Mechanics().transfershareaxis!=3){
             fCompmap.clear();
             bCompmap.clear();
             activatecompartments.clear();
@@ -400,20 +400,6 @@ void Controller::activatedeactivateComp(){
             fCompmap.clear();
             bCompmap.clear();
 
-//            std::cout<<"Printing diffusing actin copy numbers."<<endl;
-//            
-//            for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-//                for(auto sd : _chemData.speciesDiffusing) {
-//                    string name = get<0>(sd);
-//                    if(name.find("AD") != string::npos){
-//                        auto s = C->findSpeciesByName(name);
-//                        auto copyNum = s->getN();
-//                        
-//                        std::cout <<C->coordinates()[0]<<" "<<copyNum<<" ";
-//                    }
-//                }
-//            }
-//            std::cout<<endl;
         }
 }
 void Controller::ControlfrontbackEndComp(){

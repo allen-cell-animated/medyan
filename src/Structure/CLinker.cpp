@@ -79,7 +79,6 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);
     ConnectionBlock rcb(offRxn->connect(lcallback,false));
-    std::cout<<"Off Reaction"<<endl;
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
 }

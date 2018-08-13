@@ -447,9 +447,11 @@ struct BranchingCallback {
                 b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
                 frate=0.0;
             }
-            else
-                cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
+            else {
+                cout << "Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting."
+                        << endl;
                 exit(EXIT_FAILURE);
+            }
         }
         
         //create off reaction

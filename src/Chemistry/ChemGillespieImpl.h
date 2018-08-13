@@ -141,9 +141,15 @@ class ChemGillespieImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ///and the number of reactions to 0
+#ifdef DEBUGCONSTANTSEED
     ChemGillespieImpl() :
-    ChemSimImpl(), _exp_distr(0.0),
+            ChemSimImpl(), _exp_distr(0.0),
+            _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
+#else
+    ChemGillespieImpl() :
+    ChemSimImpl(), _exp_distr(0.0),_eng(rdtsc()),
     _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
+#endif
     
     /// Copying is not allowed
     ChemGillespieImpl(const ChemGillespieImpl &rhs) = delete;

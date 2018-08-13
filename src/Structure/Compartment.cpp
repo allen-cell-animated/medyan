@@ -291,7 +291,7 @@ void Compartment::transferSpecies(int i) {
     //0 X
     //1 Y
     //2 Z
-    //3 all directions
+    //3 all directions NOT IMPLEMENTED
     //get active neighbors
     vector<Compartment*> activeNeighbors;
     
@@ -299,8 +299,10 @@ void Compartment::transferSpecies(int i) {
         auto ncoord=neighbor->coordinates();
 
         if(neighbor->isActivated()){
-            if(i==3)
+            if(i==3) {
                 activeNeighbors.push_back(neighbor);
+                //Not implemented.
+            }
             else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
                 activeNeighbors.push_back(neighbor);
         }}
