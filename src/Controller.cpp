@@ -809,9 +809,14 @@ void Controller::run() {
 #ifdef DYNAMICRATES
                 updateReactionRates();
 #endif
-#endif
+
                 tauLastMinimization = 0.0;
             }
+#elif defined(MECHANICS)
+            for(auto o: _outputs) o->print(i);
+            resetCounters();
+            i++;
+#endif
             
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;
