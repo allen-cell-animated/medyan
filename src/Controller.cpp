@@ -820,9 +820,6 @@ void Controller::run() {
                 i++;
                 tauLastSnapshot = 0.0;
             }
-#ifdef DYNAMICRATES
-            updateReactionRates();
-#endif
 
             
 #ifdef CHEMISTRY
@@ -887,9 +884,6 @@ void Controller::run() {
             for(auto o: _outputs) o->print(i);
             resetCounters();
             i++;
-#endif
-#ifdef DYNAMICRATES
-            updateReactionRates();
 #endif
             
 #ifdef CHEMISTRY
