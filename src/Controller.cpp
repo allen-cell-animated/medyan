@@ -692,7 +692,7 @@ void Controller::run() {
 
         if(SysParams::Mechanics().pinBoundaryFilaments){
         PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
-        ppin.resetPins();
+        ppin.resetPins();}
         
 //Step 5. run mcontroller, update system, turn off restart state.
         updatePositions();
@@ -809,7 +809,7 @@ void Controller::run() {
 #ifdef DYNAMICRATES
                 updateReactionRates();
 #endif
-
+#endif
                 tauLastMinimization = 0.0;
             }
             
