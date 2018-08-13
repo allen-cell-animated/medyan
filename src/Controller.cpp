@@ -812,11 +812,6 @@ void Controller::run() {
 
                 tauLastMinimization = 0.0;
             }
-#elif defined(MECHANICS)
-            for(auto o: _outputs) o->print(i);
-            resetCounters();
-            i++;
-#endif
             
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;
@@ -826,6 +821,11 @@ void Controller::run() {
                 tauLastSnapshot = 0.0;
             }
 
+#elif defined(MECHANICS)
+            for(auto o: _outputs) o->print(i);
+            resetCounters();
+            i++;
+#endif
             
 #ifdef CHEMISTRY
             // update neighbor lists
