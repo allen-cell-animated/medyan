@@ -18,18 +18,11 @@
 #include <vector>
 
 #include "common.h"
-//#ifdef DEBUGCONSTANTSEED
-//#include "Cylinder.h"
-//#endif
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
-
-//#ifdef DEBUGCONSTANTSEED
-//    struct Orderset;
-//#endif
     
     /// Normalize a vector
     inline void normalize(vector<double>& v) {

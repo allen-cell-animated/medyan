@@ -17,15 +17,8 @@
 
 #include "MathFunctions.h"
 #include "Rand.h"
-#include "Cylinder.h"
 
 namespace mathfunc {
-//    struct Orderset
-//    {
-//        bool operator()(Cylinder* lhs, Cylinder* rhs) const  {
-//            return lhs->getID() < rhs->getID();
-//        }
-//    };
     
     vector<double> movePointOutOfPlane(const vector<double>& p1,
                                        const vector<double>& p2,
