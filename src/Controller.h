@@ -108,12 +108,14 @@ private:
     
     /// Update neighbors lists, called in run
     void updateNeighborLists();
-    
+
     /// Execute any special protocols needed, for example,
     /// making Linker and Filament species static
     void executeSpecialProtocols();
 
-    
+    /// Reset counters on all elements in the system
+    void resetCounters();
+
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
     //Qin

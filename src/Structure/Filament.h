@@ -75,6 +75,12 @@ private:
     double _turnoverTime   = 0;  ///< Time since last turnover
 
     
+    short _polyPlusEnd = 0;    ///< Change in corresponding reaction
+    short _polyMinusEnd = 0;   ///< since last snapshot
+    short _depolyPlusEnd = 0;
+    short _depolyMinusEnd = 0;
+    short _nucleationReaction = 0;
+    
     static Database<Filament*> _filaments; ///< Collection in SubSystem
     
     //@{
@@ -89,8 +95,8 @@ public:
     /// @param nucleation - this filament was nucleated at runtime by a non-branching species
     /// @param branching - this filament was branched at runtime from an existing filament
 	Filament(SubSystem* s, short filamentType,
-                           vector<double>& position,
-                           vector<double>& direction,
+                           const vector<double>& position,
+                           const vector<double>& direction,
                            bool nucleation = false,
                            bool branch = false);
     
@@ -159,15 +165,36 @@ public:
     deque<Cylinder*>& getCylinderVector() {return _cylinderVector;}
     
     //@{
-    /// Reset delta
+    /// Get / reset temporary counters
     void resetDeltaPlusEnd() {_deltaPlusEnd = 0;}
     void resetDeltaMinusEnd() {_deltaMinusEnd = 0;}
-    //@}
-    
-    //@{
-    /// Get delta
     short getDeltaPlusEnd() {return _deltaPlusEnd;}
     short getDeltaMinusEnd() {return _deltaMinusEnd;}
+
+    short getPolyPlusEnd() {return _polyPlusEnd;}
+    void resetPolyPlusEnd() { _polyPlusEnd = 0;}
+    
+    short getPolyMinusEnd() {return _polyMinusEnd;}
+    void resetPolyMinusEnd() { _polyMinusEnd = 0;}
+    
+    short getDepolyPlusEnd() {return _depolyPlusEnd;}
+    void resetDepolyPlusEnd() { _depolyPlusEnd = 0;}
+    
+    short getDepolyMinusEnd() {return _depolyMinusEnd;}
+    void resetDepolyMinusEnd() { _depolyMinusEnd = 0;}
+    
+    short getNucleation() {return _nucleationReaction;}
+    void resetNucleation() { _nucleationReaction = 0;}
+
+    void resetCounters() {
+        resetDeltaPlusEnd();
+        resetDeltaMinusEnd();
+        resetPolyPlusEnd();
+        resetPolyMinusEnd();
+        resetDepolyPlusEnd();
+        resetDepolyMinusEnd();
+        resetNucleation();
+    }
     //@}
     
     //@{

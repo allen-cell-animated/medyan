@@ -73,6 +73,18 @@ public:
     /// Returns the full name of this node.
     virtual string getFullName() const override {return "Composite";}; 
     
+    /// Returns the unique ptr which is under this Composite ownership
+    virtual unique_ptr<Component>&& getChild(Component *c) {
+        
+        auto child_iter = find_if(_children.begin(),_children.end(),
+                                  [c](const unique_ptr<Component> &element)
+                                  {return element.get()== c ? true : false;});
+        if(child_iter==_children.end())
+            throw out_of_range("Composite::getChild(): The name child not found as a unique ptr.");
+        else
+            return move(*child_iter);
+    }
+    
     /// Adds a Component child to this Composite node
     /// @param child - is a unique_ptr<Component>, hence, this node takes the memory
     /// ownership of the corresponding child pointer.
@@ -96,6 +108,21 @@ public:
             throw out_of_range("Composite::removeChild(): The name child not found");
     }
     
+    /// Transfer *child from this node to another. This will transfer the unique_ptr
+    /// ownership to the new Composite parent.
+    virtual void transferChild(unique_ptr<Component> &&child, Composite* newParent) {
+        
+        newParent->_children.push_back(move(child));
+        
+        //remove hanging ptr from old parent, which has been set to null
+        auto child_iter = find_if(_children.begin(),_children.end(),
+                                  [&child](const unique_ptr<Component> &element)
+                                  {return element==nullptr ? true : false;});
+        if(child_iter!=_children.end())
+            _children.erase(child_iter);
+        else
+            throw out_of_range("Composite::removeChild(): The name child not found");
+    }
     
     /// Returns the number of immediate children of this node.
     /// @note Species and reactions and not included in this tally

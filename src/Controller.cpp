@@ -1,4 +1,4 @@
- 
+
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -88,11 +88,10 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new Forces(_outputDirectory + "forces.traj", _subSystem));
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
     _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
+    //ReactionOut should be the last one in the output list
+    //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
-    //Qin add br force out and local diffussing species concentration
-    _outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
-    //_outputs.push_back(new PinForces(_outputDirectory + "pinforce.traj", _subSystem));
-    
+
     //Always read geometry, check consistency
     p.readGeoParams();
     if(!SysParams::checkGeoParameters()) exit(EXIT_FAILURE);
@@ -177,10 +176,10 @@ void Controller::initialize(string inputFile,
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
-    
+
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
-    
+
 #endif
     
 #ifdef DYNAMICRATES
@@ -321,7 +320,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
     }
     cout << "Done. " << fil.size() << " filaments created." << endl;
-    
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {
@@ -484,7 +482,7 @@ void Controller::ControlfrontbackEndComp(){
     }
     std::cout<<"Maxcomp "<<maxcomp->coordinates()[SysParams::Mechanics().transfershareaxis]<<" ";
     std::cout<<"Mincomp "<<mincomp->coordinates()[SysParams::Mechanics().transfershareaxis]<<endl;
-    
+
 }
 
 void Controller::moveBoundary(double deltaTau) {
@@ -496,12 +494,12 @@ void Controller::moveBoundary(double deltaTau) {
         if(tau() >= SysParams::Boundaries().moveStartTime &&
         tau() <= SysParams::Boundaries().moveEndTime)
             _subSystem->getBoundary()->move(dist);
-        
+
         //activate, deactivate necessary compartments
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
-            
+
             if(_subSystem->getBoundary()->within(C)) {
-                
+
                 if(C->isActivated()) continue;
                 else _cController->activate(C);
             }
@@ -512,8 +510,6 @@ void Controller::moveBoundary(double deltaTau) {
         }
     }
 }
-
-
 
 void Controller::executeSpecialProtocols() {
     
@@ -541,11 +537,11 @@ void Controller::executeSpecialProtocols() {
         
         pinBoundaryFilaments();
     }
-    
+
     //Qin
     if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
        tau() >= SysParams::Mechanics().pinTime) {
-        
+
         pinLowerBoundaryFilaments();
     }
 }
@@ -574,6 +570,10 @@ void Controller::updateNeighborLists() {
 #ifdef CHEMISTRY
     _subSystem->updateBindingManagers();
 #endif
+}
+
+void Controller::resetCounters() {
+    for(Filament* f : Filament::getFilaments()) f->resetCounters();
 }
 
 void Controller::pinBoundaryFilaments() {
@@ -608,23 +608,23 @@ void Controller::pinBoundaryFilaments() {
 }
 //Qin
 void Controller::pinLowerBoundaryFilaments() {
-    
+
     //renew pinned filament list everytime
-    
+
     //loop through beads, check if within pindistance
     for(auto b : Bead::getBeads()) {
-        
+
         //pin all beads besides plus end and minus end cylinder
         Filament* f = (Filament*) b->getParent();
         Cylinder* plusEndC = f->getPlusEndCylinder();
         Cylinder* minusEndC = f->getMinusEndCylinder();
-        
+
         if((plusEndC->getSecondBead() != b) ||
             (minusEndC->getFirstBead() != b)) {
-            
+
             //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
             //cout << SysParams::Mechanics().pinDistance << endl;
-            
+
             auto index = Rand::randDouble(0,1);
             //cout << index <<endl;
             //if within dist to boundary and index > 0.5, add
@@ -689,10 +689,10 @@ void Controller::run() {
 //Step 4.5. re-add pin positions
         SystemParser p(_inputFile);
         FilamentSetup filSetup = p.readFilamentSetup();
-        
+
         if(SysParams::Mechanics().pinBoundaryFilaments){
         PinRestartParser ppin(_inputDirectory + filSetup.pinRestartFile);
-            ppin.resetPins();}
+        ppin.resetPins();
         
 //Step 5. run mcontroller, update system, turn off restart state.
         updatePositions();
@@ -747,7 +747,6 @@ void Controller::run() {
     cout << "---" << endl;
     resetglobaltime();
     _cController->restart();
-    
      cout << "Current simulation time = "<< tau() << endl;
     //restart phase ends
     }
@@ -755,7 +754,7 @@ void Controller::run() {
     tauLastSnapshot = tau();
     oldTau = 0;
 #endif
-    
+
     //perform first minimization
 #ifdef MECHANICS
      cout<<"Minimizing energy"<<endl;
@@ -776,8 +775,8 @@ void Controller::run() {
     oldTau = 0;
 #endif
     for(auto o: _outputs) o->print(0);
-//    cout<<"Minimizing energy"<<endl;
-//    _mController->run(false);
+    resetCounters();
+
     cout << "Starting simulation..." << endl;
     
     int i = 1;
@@ -792,6 +791,7 @@ void Controller::run() {
             //run ccontroller
             if(!_cController->run(_minimizationTime)) {
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 break;
             }
             
@@ -805,24 +805,25 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
+                
+#ifdef DYNAMICRATES
+                updateReactionRates();
+#endif
 
                 tauLastMinimization = 0.0;
-
             }
             
             if(tauLastSnapshot >= _snapshotTime) {
                 cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
             }
 #ifdef DYNAMICRATES
             updateReactionRates();
 #endif
-#endif
-//#ifdef DYNAMICRATES
-//            updateReactionRates();
-//#endif
+
             
 #ifdef CHEMISTRY
             // update neighbor lists
@@ -835,8 +836,10 @@ void Controller::run() {
             activatedeactivateComp();
             //move the boundary
             moveBoundary(tau() - oldTau);
+            
             //special protocols
             executeSpecialProtocols();
+            
             oldTau = tau();
         }
 #endif
@@ -849,6 +852,7 @@ void Controller::run() {
             //run ccontroller
             if(!_cController->runSteps(_minimizationSteps)) {
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 break;
             }
             
@@ -865,18 +869,23 @@ void Controller::run() {
                 _mController->run();
                 updatePositions();
                 
+#ifdef DYNAMICRATES
+                updateReactionRates();
+#endif
+                
                 stepsLastMinimization = 0;
             }
             
             if(stepsLastSnapshot >= _snapshotSteps) {
                 cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 i++;
                 stepsLastSnapshot = 0;
-        
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
+            resetCounters();
             i++;
 #endif
 #ifdef DYNAMICRATES
@@ -902,7 +911,8 @@ void Controller::run() {
     
     //print last snapshots
     for(auto o: _outputs) o->print(i);
-    
+    resetCounters();
+
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
     

@@ -16,7 +16,6 @@
 #include "Output.h"
 
 #include "SubSystem.h"
-#include "CompartmentGrid.h"
 
 #include "Filament.h"
 #include "Cylinder.h"
@@ -27,6 +26,7 @@
 #include "Bubble.h"
 
 #include "Boundary.h"
+#include "CompartmentGrid.h"
 #include "Compartment.h"
 #include "GController.h"
 
@@ -68,11 +68,6 @@ void BasicSnapshot::print(int snapshot) {
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
         
         _outputFile << endl;
-        
-        //Reset deltas only at the last output, otherwise all the other outputs will not
-        //have accurate DeltaPlusEnd and DeltaMinus results
-        //filament->resetDeltaPlusEnd();
-        //filament->resetDeltaMinusEnd();
     }
     
     
@@ -385,7 +380,7 @@ void Tensions::print(int snapshot) {
             double deltaL = cylinder->getMCylinder()->getLength() -
                             cylinder->getMCylinder()->getEqLength();
             
-            _outputFile<< abs(k * deltaL) << " ";
+            _outputFile<< k * deltaL << " ";
             
         }
         //print last
@@ -393,7 +388,7 @@ void Tensions::print(int snapshot) {
         double k = cylinder->getMCylinder()->getStretchingConst();
         double deltaL = cylinder->getMCylinder()->getLength() -
                         cylinder->getMCylinder()->getEqLength();
-        _outputFile<< abs(k * deltaL);
+        _outputFile<< k * deltaL;
         
         _outputFile << endl;
     }
@@ -773,11 +768,10 @@ void FilamentTurnoverTimes::print(int snapshot) {
     _outputFile << endl << endl;
 }
 
-
 void PlusEnd::print(int snapshot) {
-    
+
     _outputFile.precision(10);
-    
+
     // print first line (snapshot number, time, number of filaments,
     // linkers, motors, branchers)
     _outputFile << snapshot << " " << tau() << " " <<
@@ -786,38 +780,38 @@ void PlusEnd::print(int snapshot) {
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
     Bubble::numBubbles() <<endl;;
-    
+
     for(auto &filament : Filament::getFilaments()) {
-        
+
         //print first line (Filament ID, type, length, left_delta, right_delta)
         _outputFile <<"FILAMENT " << filament->getID() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
-        
+
         //print plus end
         auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
-        
-        
+
+
         for (int i=0; i<filament->getCylinderVector().back()->getCCylinder()->getSize(); i++) {
             int out=filament->getCylinderVector().back()->getCCylinder()->getCMonomer(i)->activeSpeciesPlusEnd();
             if(out !=-1) {_outputFile << "PLUSEND: " << out << endl;}
-            
+
         }
-        
+
     }
-    
+
     _outputFile << endl;
-    
+
 }
 
 
 
 void ReactionOut::print(int snapshot) {
-    
+
     _outputFile.precision(10);
-    
+
     // print first line (snapshot number, time, number of filaments,
     // linkers, motors, branchers)
     _outputFile << snapshot << " " << tau() << " " <<
@@ -826,19 +820,19 @@ void ReactionOut::print(int snapshot) {
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
     Bubble::numBubbles() <<endl;;
-    
+
     for(auto &filament : Filament::getFilaments()) {
-        
+
         int numMonomer = 2; // 2 for plus/minus end
         for (auto c : filament->getCylinderVector()) {
             for (int i=0; i < c->getCCylinder()->getSize(); i++) {
                 auto FilamentMonomer = c->getCCylinder()-> getCMonomer(i)->activeSpeciesFilament();
                 if(FilamentMonomer != -1) {numMonomer ++;}
-                
+
             }
-            
+
         }
-        
+
         //print first line (Filament ID, type, length, left_delta, right_delta)
         _outputFile <<"FILAMENT " << filament->getID() << " " <<
         filament->getType() << " " <<
@@ -848,186 +842,34 @@ void ReactionOut::print(int snapshot) {
         filament->getPolyMinusEnd() << " " << filament->getPolyPlusEnd() << " " <<
         filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
         filament->getNucleation() << " " << numMonomer << endl;
-        
-        _outputFile << "SEVERING " << filament->getSevering() << endl;
-        if (filament->getNewID().size() == 0) {
-            _outputFile << "-1";
-        }
-        else {
-            for (int i = 0; i < filament->getNewID().size(); ++i) {
-                _outputFile << filament->getNewID()[i] << " ";
-            }
-        }
-        
-        _outputFile << endl;
-        
-        filament->resetPolyMinusEnd();
-        filament->resetPolyPlusEnd();
-        filament->resetDepolyMinusEnd();
-        filament->resetDepolyPlusEnd();
-        filament->resetNucleation();
-        filament->resetDeltaPlusEnd();
-        filament->resetDeltaMinusEnd();
-        filament->resetSevering();
-        filament->resetSeveringID();
+
     }
-    
+
     _outputFile << endl;
-    
-}
 
-
-void BRForces::print(int snapshot) {
-    
-    _outputFile.precision(10);
-    
-    // print first line (snapshot number, time, number of filaments,
-    // linkers, motors, branchers)
-    _outputFile << snapshot << " " << tau() << " " <<
-    Filament::numFilaments() << " " <<
-    Linker::numLinkers() << " " <<
-    MotorGhost::numMotorGhosts() << " " <<
-    BranchingPoint::numBranchingPoints() << " " <<
-    Bubble::numBubbles() << endl;
-    
-    for(auto &filament : Filament::getFilaments()) {
-        
-        //print first line (Filament ID, type, length, left_delta, right_delta
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
-        filament->getType() << " " <<
-        filament->getCylinderVector().size() + 1 << " " <<
-        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
-        
-        //print force
-        for (auto cylinder : filament->getCylinderVector()){
-            
-            double forceMag= cylinder->getFirstBead()->brFDotbrF();
-            forceMag = sqrt(forceMag);
-            _outputFile<<forceMag << " ";
-            
-        }
-        //print last bead force
-        double forceMag = filament->getCylinderVector().back()->
-        getSecondBead()->brFDotbrF();
-        forceMag = sqrt(forceMag);
-        _outputFile<<forceMag;
-        
-        _outputFile << endl;
-    }
-    
-    for(auto &linker : Linker::getLinkers()) {
-        
-        //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
-        linker->getType() << endl;
-        
-        //print stretch force
-        _outputFile << linker->getMLinker()->stretchForce << " " <<
-        linker->getMLinker()->stretchForce << endl;
-    }
-    
-    for(auto &motor : MotorGhost::getMotorGhosts()) {
-        
-        //print first line
-        //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
-        
-        //print stretch force
-        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
-        motor->getMMotorGhost()->stretchForce << endl;
-    }
-    
 }
 
 void Concentrations::print(int snapshot) {
-    
+
     _outputFile << snapshot << " " << tau() << endl;
-    
+
     for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
-        
+
         if(c->isActivated()) {
-            
+
             _outputFile << "COMPARTMENT: " << c->coordinates()[0] << " "
             << c->coordinates()[1] << " " << c->coordinates()[2] << endl;
-            
+
             for(auto sd : _chemData.speciesDiffusing) {
-                
+
                 string name = get<0>(sd);
                 auto s = c->findSpeciesByName(name);
                 auto copyNum = s->getN();
-                
+
                 _outputFile << name << ":DIFFUSING " << copyNum << endl;
             }
         }
     }
-    
- 
     _outputFile << endl;
-    
 }
 
-
-//Don't use now
-
-//void PinForces::print(int snapshot) {
-//    
-//    _outputFile.precision(10);
-//    
-//    // print first line (snapshot number, time, number of filaments,
-//    // linkers, motors, branchers)
-//    _outputFile << snapshot << " " << tau() << " " <<
-//    Filament::numFilaments() << " " <<
-//    Linker::numLinkers() << " " <<
-//    MotorGhost::numMotorGhosts() << " " <<
-//    BranchingPoint::numBranchingPoints() << " " <<
-//    Bubble::numBubbles() << endl;
-//    
-//    for(auto &filament : Filament::getFilaments()) {
-//        
-//        //print first line (Filament ID, type, length, left_delta, right_delta
-//        _outputFile << "FILAMENT " << filament->getID() << " " <<
-//        filament->getType() << " " <<
-//        filament->getCylinderVector().size() + 1 << " " <<
-//        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
-//        
-//        //print force
-//        for (auto cylinder : filament->getCylinderVector()){
-//            
-//            double forceMag= cylinder->getFirstBead()->pinFDotpinF();
-//            forceMag = sqrt(forceMag);
-//            _outputFile<<forceMag << " ";
-//            
-//        }
-//        //print last bead force
-//        double forceMag = filament->getCylinderVector().back()->
-//        getSecondBead()->pinFDotpinF();
-//        forceMag = sqrt(forceMag);
-//        _outputFile<<forceMag;
-//        
-//        _outputFile << endl;
-//    }
-//    
-//    for(auto &linker : Linker::getLinkers()) {
-//        
-//        //print first line
-//        _outputFile << "LINKER " << linker->getID()<< " " <<
-//        linker->getType() << endl;
-//        
-//        //print stretch force
-//        _outputFile << linker->getMLinker()->stretchForce << " " <<
-//        linker->getMLinker()->stretchForce << endl;
-//    }
-//    
-//    for(auto &motor : MotorGhost::getMotorGhosts()) {
-//        
-//        //print first line
-//        //also contains a Bound(1) or unbound(0) qualifier
-//        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
-//        
-//        //print stretch force
-//        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
-//        motor->getMMotorGhost()->stretchForce << endl;
-//    }
-//    
-//}
-//
