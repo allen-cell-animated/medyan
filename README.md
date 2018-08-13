@@ -14,11 +14,18 @@ The main authors of the code are the following:
 	James Komianos       jkomianos@gmail.com
 	Konstantin Popov     kpopov@email.unc.edu
 
+Active developers of the code are the following:
+ 	*Name*		     		*Email*
+	Aravind Chandrasekaran      achansek@umd.edu	
+	Haoran Ni       	    haoranni@umd.edu 
+	Qin Ni			    qni@umd.edu
+	Carlos Floyd		    csfloyd@umd.edu 
+
 All general correspondence about the code and its applications should 
 be directed to Garegin Papoian. All developer and more specific code, 
-installation, and usage correspondence should be directed to James Komianos.
+installation, and usage correspondence should be directed to Active developers.
 
-This MEDYAN distribution (v3.0) has the following files and directories:
+This MEDYAN distribution (v3.2) has the following files and directories:
 
 	*File/Dir*				   *Description*
 	README.md				Current file
@@ -36,3 +43,4 @@ See the following documentation for details:
 	docs/InstallGuide.pdf		Tips on compilation, etc
 	docs/UsageGuide.pdf	        Tips on input, output, etc
 	docs/ExampleGuide.pdf		Packaged example description
+	docs/

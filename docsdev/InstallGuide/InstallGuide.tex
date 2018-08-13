@@ -105,8 +105,13 @@ The command line macros can be edited in the Makefile to turn on or off certain 
   \hline
      RSPECIES\_SIGNALING & Enable species callback signaling.\\
   \hline
+     DEBUGCONSTANTSEED & Remove stochasticity from simulations while debugging/testing.\\
+  \hline
+          PLOSFEEDBACK & Uses feedback models described in Plos 2016 paper.\\
+  \hline
 \end{tabular}
 \end{table}
+   DEBUGCONSTANTSEED is best enbled to debug small systems without diffusion reactions. Might slow down the simulations considerably.
 \normalsize
 
 	
