@@ -351,7 +351,13 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
-    
+            
+            if(f0 > 1e4){
+                cout<<"High Boundary force = " << f0 << endl;
+                cout<<"coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[2] << endl;
+                cout<<"R = " << R << ", r = " << r << endl;
+                cout<<"nb" << nb << endl;
+            }
             
         }
         Cumnc+=nc;

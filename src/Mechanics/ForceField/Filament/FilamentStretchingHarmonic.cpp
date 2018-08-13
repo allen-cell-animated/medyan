@@ -293,6 +293,14 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         f1[1] +=  f0 * ( coord2[1] - coord1[1] );
         f1[2] +=  f0 * ( coord2[2] - coord1[2] );
         
+        if(f0 > 1e4){
+            cout << "High streching force" << endl;
+            cout << "coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[2] << endl;
+            cout << "coord2 = " << coord2[0] << " " << coord2[1] << " " << coord2[2] << endl;
+            cout << "f0 = " << f0 << endl;
+            cout << "dist = " << dist << endl;
+            cout << "nint = " << nint<<endl;
+        }
 
 //        std::cout<<i<<" "<< f0 * ( coord1[0] - coord2[0] )<<" "<<
 //        f0 * ( coord1[1] - coord2[1] )<<" "<<

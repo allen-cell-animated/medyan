@@ -428,6 +428,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 
 //        std::cout<<"M "<<Mc_isminimizationstate[0]<<" "<<Ms_isminimizationstate<<endl;
 //        std::cout<<endl;
+        
     }
     //std::cout<<"Total iterations "<<numIter<<endl;
 //    std::cout<<"maxF "<<maxF()<<" "<<GRADTOL<<" "<<Ms_isminimizationstate<<" "<<Mc_isminimizationstate[0]<<endl;

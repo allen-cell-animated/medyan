@@ -423,6 +423,7 @@ double CGMethod::maxF() {
 //        if(mag > maxF) maxF = mag;
 //    }
 //    nvtxRangePop();
+
     return maxF;
 }
 
