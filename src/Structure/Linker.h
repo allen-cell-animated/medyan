@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -82,6 +82,7 @@ private:
 public:
     vector<double> coordinate;
     ///< coordinate of midpoint, updated with updatePosition()
+
     
     Linker(Cylinder* c1, Cylinder* c2, short linkerType,
            double position1 = 0.5, double position2 = 0.5);

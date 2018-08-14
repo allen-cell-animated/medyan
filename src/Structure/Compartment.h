@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -16,6 +16,11 @@
 
 #include <vector>
 #include <array>
+#ifdef DEBUGCONSTANTSEED
+#include <map>
+#include <set>
+//#include "MathFunctions.h"
+#endif
 #include <unordered_map>
 #include <unordered_set>
 
@@ -60,6 +65,8 @@ protected:
     unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of Species
                                                ///< in compartment
     
+
+    
     /// All binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>> _bindingManagers;
 
@@ -68,8 +75,19 @@ protected:
                                                        ///< that are in this compartment
     
     unordered_set<Bead*> _beads; ///< Set of beads that are in this compartment
-    
+
+#ifdef DEBUGCONSTANTSEED
+//        struct Orderset
+//    {
+//        bool operator()(Cylinder* lhs, Cylinder* rhs) const  {
+//            return lhs->getID() < rhs->getID();
+//        }
+//    };
+    set<Cylinder*> _cylinders; ///< Set of cylinders that are in this
+///< compartment
+#else
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
+#endif
     
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment
     
@@ -150,7 +168,8 @@ public:
     /// Transfer all species copy numbers from this compartment to neighboring
     /// active compartments. If no neighboring active compartments are present,
     /// throw an error.
-    virtual void transferSpecies();
+    virtual void transferSpecies(int i);
+    virtual void shareSpecies(int i);
     
     
     /// Removes all reactions from this compartment, diffusing and internal
@@ -486,13 +505,16 @@ public:
     void addCylinder(Cylinder* c) {_cylinders.insert(c);}
     
     ///Remove a cylinder from this compartment
-    ///@note does nothing if cylinder is not in compartment already
     void removeCylinder(Cylinder* c) {
         auto it = _cylinders.find(c);
         if(it != _cylinders.end()) _cylinders.erase(it);
     }
     ///get the cylinders in this compartment
+#ifdef DEBUGCONSTANTSEED
+    set<Cylinder*>& getCylinders() {return _cylinders;}
+#else
    unordered_set<Cylinder*>& getCylinders() {return _cylinders;}
+#endif
     
     /// Get the diffusion rate of a species
     /// @param - species_name, a string
@@ -574,15 +596,24 @@ public:
     /// Generate diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just added 
     vector<ReactionBase*> generateDiffusionReactions(Compartment* C);
-
+    
+    //Qin
+    vector<ReactionBase*> generateScaleDiffusionReactions(Compartment* C);
+    float generateScaleFactor(Compartment* C);
+    
     /// Generate all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just added
     vector<ReactionBase*> generateAllDiffusionReactions();
     
+    /// Generates all diffusion reactions between this compartment and its neighbors
+    /// in addition to generating reverse reactions
+    ///@return - a vector of reactionbases that was just added
+    vector<ReactionBase*> generateAllpairsDiffusionReactions();
     
     /// Remove diffusion reactions between this compartment and another
     ///@return - a vector of reactionbases that was just removed
     void removeDiffusionReactions(ChemSim* chem, Compartment* C);
+    
     
     /// Remove all diffusion reactions for this compartment and its neighbors
     ///@return - a vector of reactionbases that was just removed

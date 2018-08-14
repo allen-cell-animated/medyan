@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -17,16 +17,17 @@
 #include "Filament.h"
 #include "Cylinder.h"
 
+#include "Bead.h"
+
 template <class FStretchingInteractionType>
 double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto f: Filament::getFilaments()) {
         
         U_i = 0;
-        
         if (d == 0.0){
             for(auto it : f->getCylinderVector()){
                 
@@ -34,7 +35,6 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
                 Bead* b2 = it->getSecondBead();
                 double kStretch = it->getMCylinder()->getStretchingConst();
                 double eqLength = it->getMCylinder()->getEqLength();
-                
                 U_i += _FFType.energy(b1, b2, kStretch, eqLength);
             }
         }
@@ -44,11 +44,9 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
                 Bead* b2 = it->getSecondBead();
                 double kStretch =it->getMCylinder()->getStretchingConst();
                 double eqLength = it->getMCylinder()->getEqLength();
-                
                 U_i += _FFType.energy(b1, b2, kStretch, eqLength, d);
             }
         }
-        
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             

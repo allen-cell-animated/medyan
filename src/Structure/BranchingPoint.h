@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -23,6 +23,8 @@
 #include "Trackable.h"
 #include "Movable.h"
 #include "Component.h"
+#include "Reactable.h"
+#include "RateChangerImpl.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -36,7 +38,10 @@ class Cylinder;
  *  Extending the Movable class, the positions of all instances 
  *  can be updated by the SubSystem.
  */
-class BranchingPoint : public Component, public Trackable, public Movable {
+class BranchingPoint : public Component, public Trackable, public Movable, public Reactable {
+    
+    friend class Controller;
+    friend class DRController;
     
 private:
     unique_ptr<MBranchingPoint> _mBranchingPoint; ///< Pointer to mech branch point
@@ -60,6 +65,10 @@ private:
     
     ///Helper to get coordinate
     void updateCoordinate();
+    
+    //Qin ---
+    ///For dynamic rate unbinding
+    static vector<BranchRateChanger*> _unbindingChangers;
     
 public:
     vector<double> coordinate; ///< coordinate of midpoint,
@@ -117,15 +126,21 @@ public:
     static int numBranchingPoints() {
         return _branchingPoints.countElements();
     }
-
-    /// Update the position, inherited from Movable
-    /// @note - changes compartment if needed
-    virtual void updatePosition();
     
     virtual void printSelf();
     
     /// Count the number of brancher species with a given name in the system
     static species_copy_t countSpecies(const string& name);
+    
+    /// Update the position, inherited from Movable
+    /// @note - changes compartment if needed
+    virtual void updatePosition();
+    
+    //Qin ------
+    /// Update the reaction rates, inherited from Reactable
+    virtual void updateReactionRates();
+
+
 };
 
 #endif

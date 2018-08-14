@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -769,9 +769,9 @@ void FilamentTurnoverTimes::print(int snapshot) {
 }
 
 void PlusEnd::print(int snapshot) {
-    
+
     _outputFile.precision(10);
-    
+
     // print first line (snapshot number, time, number of filaments,
     // linkers, motors, branchers)
     _outputFile << snapshot << " " << tau() << " " <<
@@ -780,38 +780,38 @@ void PlusEnd::print(int snapshot) {
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
     Bubble::numBubbles() <<endl;;
-    
+
     for(auto &filament : Filament::getFilaments()) {
-        
+
         //print first line (Filament ID, type, length, left_delta, right_delta)
         _outputFile <<"FILAMENT " << filament->getID() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
-        
+
         //print plus end
         auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
-        
-        
+
+
         for (int i=0; i<filament->getCylinderVector().back()->getCCylinder()->getSize(); i++) {
             int out=filament->getCylinderVector().back()->getCCylinder()->getCMonomer(i)->activeSpeciesPlusEnd();
             if(out !=-1) {_outputFile << "PLUSEND: " << out << endl;}
-            
+
         }
-        
+
     }
-    
+
     _outputFile << endl;
-    
+
 }
 
 
 
 void ReactionOut::print(int snapshot) {
-    
+
     _outputFile.precision(10);
-    
+
     // print first line (snapshot number, time, number of filaments,
     // linkers, motors, branchers)
     _outputFile << snapshot << " " << tau() << " " <<
@@ -820,19 +820,19 @@ void ReactionOut::print(int snapshot) {
     MotorGhost::numMotorGhosts() << " " <<
     BranchingPoint::numBranchingPoints() << " " <<
     Bubble::numBubbles() <<endl;;
-    
+
     for(auto &filament : Filament::getFilaments()) {
-        
+
         int numMonomer = 2; // 2 for plus/minus end
         for (auto c : filament->getCylinderVector()) {
             for (int i=0; i < c->getCCylinder()->getSize(); i++) {
                 auto FilamentMonomer = c->getCCylinder()-> getCMonomer(i)->activeSpeciesFilament();
                 if(FilamentMonomer != -1) {numMonomer ++;}
-                
+
             }
-            
+
         }
-        
+
         //print first line (Filament ID, type, length, left_delta, right_delta)
         _outputFile <<"FILAMENT " << filament->getID() << " " <<
         filament->getType() << " " <<
@@ -842,30 +842,30 @@ void ReactionOut::print(int snapshot) {
         filament->getPolyMinusEnd() << " " << filament->getPolyPlusEnd() << " " <<
         filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
         filament->getNucleation() << " " << numMonomer << endl;
-        
+
     }
-    
+
     _outputFile << endl;
-    
+
 }
 
 void Concentrations::print(int snapshot) {
-    
+
     _outputFile << snapshot << " " << tau() << endl;
-    
+
     for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
-        
+
         if(c->isActivated()) {
-            
+
             _outputFile << "COMPARTMENT: " << c->coordinates()[0] << " "
             << c->coordinates()[1] << " " << c->coordinates()[2] << endl;
-            
+
             for(auto sd : _chemData.speciesDiffusing) {
-                
+
                 string name = get<0>(sd);
                 auto s = c->findSpeciesByName(name);
                 auto copyNum = s->getN();
-                
+
                 _outputFile << name << ":DIFFUSING " << copyNum << endl;
             }
         }

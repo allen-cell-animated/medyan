@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -27,8 +27,8 @@ using namespace mathfunc;
 template <class BRepulsionInteractionType>
 double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto bb: Bubble::getBubbles()) {
         
@@ -211,7 +211,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
-
+                    if(proj < 0.0) proj = 0.0;
                     double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
                     bd2->loadForcesP[bd2->lfip++] += proj * loadForce;
                 }
@@ -240,7 +240,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
-
+                    if(proj < 0.0) proj = 0.0;
                     double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
                     bd2->loadForcesM[bd2->lfim++] += proj * loadForce;
                 }

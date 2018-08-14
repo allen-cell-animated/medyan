@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -265,6 +265,19 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
         _boundary = new BoundaryCapsule(_subSystem,
                     SysParams::Boundaries().diameter, move);
     }
+
+    else if(BTypes.boundaryShape == "CYLINDER") {
+        
+        if(move != BoundaryMove::None) {
+            
+            cout << "Moving boundaries for a cylinder shape "
+            << "not yet implemented. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        _boundary = new BoundaryCylinder(_subSystem,
+                                        SysParams::Boundaries().diameter, move);
+    }
+    
     else{
         cout << endl << "Given boundary shape not yet implemented. Exiting." <<endl;
         exit(EXIT_FAILURE);
@@ -276,9 +289,10 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
 
 void GController::setActiveCompartments() {
 
+    //mark
     //initialize all compartments equivalent to cproto
     for(auto C : _compartmentGrid->getCompartments())
-        if(_boundary->within(C))  C->setAsActive();
+        if(_boundary->within(C)) C->setAsActive();
 }
 
 void GController::findCompartments(const vector<double>& coords,
@@ -325,10 +339,22 @@ vector<double> GController::getRandomCoordinates(Compartment* c) {
     //get coordinates of compartment
     auto coordsCompartment = c->coordinates();
     vector<double> coords;
-    
     coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randDouble(-1,1) / 2);
     coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randDouble(-1,1) / 2);
+    
+    return coords;
+}
+
+//Qin
+vector<double> GController::getRandomCenterCoordinates(Compartment* c) {
+    
+    //get coordinates of compartment
+    auto coordsCompartment = c->coordinates();
+    vector<double> coords;
+    coords.push_back(coordsCompartment[0] + _compartmentSize[0] * Rand::randDouble(-1,1) / 2);
+    coords.push_back(coordsCompartment[1] + _compartmentSize[1] * Rand::randDouble(-1,1) / 2);
+    coords.push_back(coordsCompartment[2] + _compartmentSize[2] * Rand::randDouble(-0.4,0.4) / 2);
     
     return coords;
 }
@@ -340,6 +366,18 @@ vector<double> GController::getRandomCoordinates() {
     coords.push_back(Rand::randDouble(0,1) * _grid[0] * _compartmentSize[0]);
     coords.push_back(Rand::randDouble(0,1) * _grid[1] * _compartmentSize[1]);
     coords.push_back(Rand::randDouble(0,1) * _grid[2] * _compartmentSize[2]);
+    
+    return coords;
+}
+
+//Qin
+vector<double> GController::getRandomCenterCoordinates() {
+    
+    vector<double> coords;
+    
+    coords.push_back(Rand::randDouble(0,1) * _grid[0] * _compartmentSize[0]);
+    coords.push_back(Rand::randDouble(0,1) * _grid[1] * _compartmentSize[1]);
+    coords.push_back(Rand::randDouble(0.3,0.7) * _grid[2] * _compartmentSize[2]);
     
     return coords;
 }

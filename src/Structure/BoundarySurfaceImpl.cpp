@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -51,6 +51,16 @@ CylinderZ::CylinderZ(SubSystem* s, vector<double> coords, double radius, double 
                                    (coords, radius, height,
                                    SysParams::Boundaries().BoundaryK,
                                    SysParams::Boundaries().BScreenLength));
+}
+
+CylinderXYZ::CylinderXYZ(SubSystem* s, vector<double> coords, double radius, double height)
+: BoundarySurface(s, 3), _coords(coords) {
+    
+    //Create a cylindricalZ boundary element
+    _boundaryElements.emplace_back(s->addTrackable<CylindricalXYZBoundaryElement>
+                                   (coords, radius, height,
+                                    SysParams::Boundaries().BoundaryK,
+                                    SysParams::Boundaries().BScreenLength));
 }
 
 HalfSphereZ::HalfSphereZ(SubSystem* s, vector<double> coords, double radius, bool up)

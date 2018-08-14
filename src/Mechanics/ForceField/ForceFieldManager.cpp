@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 
 #include "ForceFieldManager.h"
+#include <algorithm>
 
 double ForceFieldManager::computeEnergy(double d, bool verbose) {
     
@@ -42,7 +43,6 @@ double ForceFieldManager::computeEnergy(double d, bool verbose) {
             else return numeric_limits<double>::infinity();
         }
         else energy += tempEnergy;
-        
     }
     return energy;
 }
@@ -82,7 +82,7 @@ void ForceFieldManager::computeLoadForces() {
     for(auto &f : _forceFields)
         f->computeLoadForces();
     
-    //reset lfi as well
+    //reset lfip and lfim as well
     for(auto b: Bead::getBeads()) {
         b->lfip = 0;
         b->lfim = 0;
@@ -96,6 +96,8 @@ void ForceFieldManager::resetForces() {
         b->force.assign (3, 0); //Set force to zero;
         std::fill(b->loadForcesP.begin(), b->loadForcesP.end(), 0.0); //Set load force to zero
         std::fill(b->loadForcesM.begin(), b->loadForcesM.end(), 0.0); //Set load force to zero
+//        std::memset((void*)(&b->loadForcesP[0]), 0, sizeof(double)*(b->loadForcesP).size());  //Set load force to zero;
+//        std::memset((void*)(&b->loadForcesM[0]), 0, sizeof(double)*(b->loadForcesM).size());  //Set load force to zero;
     }
 }
 

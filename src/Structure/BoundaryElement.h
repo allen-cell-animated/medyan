@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -43,6 +43,7 @@ class BoundaryElement : public Component, public Trackable, public Neighbor {
 friend class BoundaryCubic;
 friend class BoundarySpherical;
 friend class BoundaryCapsule;
+friend class BoundaryCylinder;
     
 private:
     static Database<BoundaryElement*> _boundaryElements;
@@ -81,6 +82,10 @@ public:
     ///           2) Negative number if point is outside boundary element
     ///           3) Infinity if point is not in domain of this boundary element
     virtual double distance(const vector<double>& point) = 0;
+    
+    //Qin
+    virtual double lowerdistance(const vector<double>& point) = 0;
+    virtual double sidedistance(const vector<double>& point) = 0;
     
     /// Returns stretched distance, similar to distance above
     virtual double stretchedDistance(const vector<double>& point,

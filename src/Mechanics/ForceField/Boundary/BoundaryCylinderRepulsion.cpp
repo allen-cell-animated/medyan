@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -26,8 +26,8 @@ using namespace mathfunc;
 template <class BRepulsionInteractionType>
 double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto be: BoundaryElement::getBoundaryElements()) {
         
@@ -198,7 +198,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-
+                
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
@@ -209,7 +209,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = -dotProduct(be->normal(newCoord), normal);
-                
+                    if(proj < 0.0) proj = 0.0;
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     bd->loadForcesP[bd->lfip++] += proj * loadForce;
@@ -230,7 +230,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
                 
-                
+
                 bd->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
@@ -241,7 +241,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = -dotProduct(be->normal(newCoord), normal);
-
+                    if(proj < 0.0) proj = 0.0;
                     double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     bd->loadForcesM[bd->lfim++] += proj * loadForce;

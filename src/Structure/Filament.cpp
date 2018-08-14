@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -358,8 +358,9 @@ void Filament::polymerizePlusEnd() {
     //update rates of new back
     _cylinderVector.back()->updateReactionRates();
 #endif
-    
+
     _polyPlusEnd++;
+
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -389,8 +390,9 @@ void Filament::polymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+
     _polyMinusEnd++;
+
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -420,8 +422,8 @@ void Filament::depolymerizePlusEnd() {
     _cylinderVector.front()->updateReactionRates();
 #endif
     
-     _depolyPlusEnd++;;
-    
+    _depolyPlusEnd++;;
+
 }
 
 void Filament::depolymerizeMinusEnd() {
@@ -450,7 +452,7 @@ void Filament::depolymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+
     _depolyMinusEnd++;
 }
 
@@ -478,8 +480,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
 #endif
-    
+
     _nucleationReaction++;
+
 }
 
 
@@ -513,13 +516,13 @@ Filament* Filament::sever(int cylinderPosition) {
         
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
-        
+
         newFilament->_cylinderVector.push_back(c);
         
         //TRANSFER CHILD
         unique_ptr<Component> &&tmp = this->getChild(c);
         this->transferChild(std::move(tmp), (Composite*)newFilament);
-        
+
         //Add beads and cylinder to new parent
         if(i == vectorPosition) {
             unique_ptr<Component> &&tmp2 = this->getChild(c->getFirstBead());
@@ -590,6 +593,10 @@ Filament* Filament::sever(int cylinderPosition) {
     cc2->removeCrossCylinderReactions(cc1);
 #endif
     
+    //Qin
+
+    _severingReaction++;
+    _severingID.push_back(newFilament->getID());
     return newFilament;
 }
 

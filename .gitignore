@@ -12,6 +12,12 @@ xcuserdata/
 *.xcscheme
 
 # Generated files
+## LaTeX
+docsdev/**/*.aux
+docsdev/**/*.log
+docsdev/**/*.synctex.gz
+docsdev/**/*.toc
+## C++ and python
 build/
 *.[oa]
 *.pyc
@@ -24,3 +30,4 @@ src/MEDYAN
 
 # Traj
 *.traj
+!analysis/**/*.traj

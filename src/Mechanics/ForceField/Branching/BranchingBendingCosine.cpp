@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -70,7 +70,7 @@ double BranchingBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
 }
 
-void BranchingBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+double BranchingBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                     double kBend, double eqTheta ){
     
     //l1 = b2-b3; l2 = b4-b3;
@@ -138,6 +138,8 @@ void BranchingBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     b4->force[2] +=
         k *( (-b1->coordinate[2] + b2->coordinate[2])*A -
             (b4->coordinate[2] - b3->coordinate[2])*C );
+    
+    return k;
     
     
 }

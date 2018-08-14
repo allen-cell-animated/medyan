@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -12,8 +12,13 @@
 //------------------------------------------------------------------
 
 #include "Compartment.h"
-
+#include "MathFunctions.h"
 #include "Visitor.h"
+#include "Parser.h"
+//REMOVE LATER
+#include "ChemNRMImpl.h"
+
+
 
 Compartment& Compartment::operator=(const Compartment &other) {
     
@@ -50,7 +55,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
         int molecule = sp_this->getMolecule();
         float diff_rate = _diffusion_rates[molecule];
         if(diff_rate<0)  continue;
-    
+        
         if(C->isActivated()) {
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate);
@@ -58,17 +63,183 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C)
             rxns.push_back(R);
         }
     }
+
+    
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
 }
 
+//Qin
+vector<ReactionBase*> Compartment::generateScaleDiffusionReactions(Compartment* C)
+{
+    vector<ReactionBase*> rxns;
+
+    cout << "neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] <<endl;
+    auto factor = generateScaleFactor(C);
+    cout << "factor = " << factor << endl;
+    
+    for(auto &sp_this : _species.species()) {
+        int molecule = sp_this->getMolecule();
+        float diff_rate = _diffusion_rates[molecule];
+        if(diff_rate<0)  continue;
+        
+        if(C->isActivated()) {
+            Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
+            
+            auto diff_rate_s = diff_rate * factor;
+       
+            ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate_s);
+            this->addDiffusionReaction(R);
+            rxns.push_back(R);
+        }
+        
+
+    }
+
+    
+    return vector<ReactionBase*>(rxns.begin(), rxns.end());
+}
+
+//Qin, generate a scaling factor for diffusion constant. For cylinder with 1 compartment in Z direction only
+float Compartment::generateScaleFactor(Compartment* C)
+{
+    vector<ReactionBase*> rxns;
+    
+    auto lx = SysParams::Geometry().compartmentSizeX;
+    auto ly = SysParams::Geometry().compartmentSizeY;
+    auto r = SysParams::Boundaries().diameter / 2; //radius
+    //float c1;
+    
+    if((_coords[0] - lx/2) < r && (_coords[0] + lx/2) > r) {
+        cout << "Diffusion Scaling failed" << endl;
+        return 1;
+    }
+    
+    if((_coords[1] - ly/2) < r && (_coords[1] + ly/2) > r) {
+        cout << "Diffusion Scaling failed" << endl;
+        return 1;
+    }
+    
+    auto x = _coords[0];
+    auto y = _coords[1];
+    auto nx = C->_coords[0];
+    auto ny = C->_coords[1];
+    float c1;
+    float c2;
+    
+    //scale diffusion rate based on compartment area
+    //1. find the location of the neighbor compartment
+    if(ny == y) {
+        
+        //2. calculate the interection point
+        //if at lower part
+        if(y < r) {
+            //if at left
+            if(nx < x) c1 = x - lx/2;
+            //if at right
+            else c1 = x + lx/2;
+  
+            c2 = r - sqrt(r * r - (c1 - r) * (c1 - r));
+            
+            //3. calculate scaling factor
+            //check if interaction is within compartment
+            if(c2 < (y + ly/2) && c2 > (y - ly/2)) {
+                float factor = (y + ly/2 - c2) / ly;
+                return factor;
+            }
+            else return 1;
+
+        }
+        //if at upper part
+        else {
+            //at left
+            if(nx < x) c1 = x - lx/2;
+
+            else c1 = x + lx/2; //right
+            
+            c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
+
+            
+            //3. calculate scaling factor
+            if(c2 < (y + ly/2) && c2 > (y - ly/2)) {
+                float factor = (c2 - y + ly/2) / ly;
+                return factor;
+            }
+            else return 1;
+
+        }
+    }
+    
+    else if(nx == x){
+        //2. calculate the interection point
+        //if at left part
+        if(x < r) {
+            //if at lower
+            if(ny < y) c1 = y - ly/2;
+
+            //if at upper
+            else c1 = y + ly/2;
+            
+            c2 = r - sqrt(r * r - (c1 - r) * (c1 - r));
+            
+            //3. calculate scaling factor
+            //check if interaction is within compartment
+            if(c2 < (x + lx/2) && c2 > (x - lx/2)) {
+                float factor = (_coords[0] + lx/2 - c2) / lx;
+                return factor;
+            }
+            else return 1;
+            
+        }
+        //if at right part
+        else {
+            //at lower
+            if(ny < y) auto c1 = y - ly/2;
+
+            else auto c1 = y + ly/2; //right
+            
+            auto c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
+            
+            //3. calculate scaling factor
+            if(c2 < (x + lx/2) && c2 > (x - lx/2)) {
+                float factor = (c2 - x + lx/2) / lx;
+                return factor;
+            }
+            else return 1;
+            
+        }
+
+    }
+    
+}
+
+
 vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
+    
+    vector<ReactionBase*> rxns;
+
+    if(_activated) {
+        for (auto &C: _neighbours) {
+            
+            auto newRxns = generateDiffusionReactions(C);
+            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+        }
+    }
+    return vector<ReactionBase*>(rxns.begin(), rxns.end());
+}
+
+vector<ReactionBase*> Compartment::generateAllpairsDiffusionReactions() {
     
     vector<ReactionBase*> rxns;
     
     if(_activated) {
         for (auto &C: _neighbours) {
+            if(C->isActivated()){
             auto newRxns = generateDiffusionReactions(C);
-            rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+                 rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+            newRxns = C->generateDiffusionReactions(this);
+                 rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
+               
+            }
         }
     }
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
@@ -78,17 +249,19 @@ void Compartment::removeDiffusionReactions(ChemSim* chem, Compartment* C)
 {
     //look for neighbor's diffusion reactions
     vector<ReactionBase*> to_remove;
-    
+
     for(auto &r : C->_diffusion_reactions.reactions()) {
         
         auto rs = r.get()->rspecies()[1];
         if(rs->getSpecies().getParent() == this) {
-            
+
             r->passivateReaction();
+            
             chem->removeReaction(r.get());
             
             to_remove.push_back(r.get());
         }
+
     }
     
     //remove them
@@ -113,17 +286,33 @@ void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
 }
 
 
-void Compartment::transferSpecies() {
-    
+void Compartment::transferSpecies(int i) {
+    //i axis
+    //0 X
+    //1 Y
+    //2 Z
+    //3 all directions NOT IMPLEMENTED
     //get active neighbors
     vector<Compartment*> activeNeighbors;
     
-    for(auto &neighbor : _neighbours)
-        if(neighbor->isActivated())
-            activeNeighbors.push_back(neighbor);
+    for(auto &neighbor : _neighbours){
+        auto ncoord=neighbor->coordinates();
+
+        if(neighbor->isActivated()){
+            if(i==3) {
+                activeNeighbors.push_back(neighbor);
+                //Not implemented.
+            }
+            else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
+                activeNeighbors.push_back(neighbor);
+        }}
     
     assert(activeNeighbors.size() != 0
            && "Cannot transfer species to another compartment... no neighbors are active");
+    if(i<3 && activeNeighbors.size()>1){
+        cout<<"Error transferring species along an axis. More than 1 neighbor. Exiting. "<< endl;
+        exit(EXIT_FAILURE);
+    }
     
     //go through species
     Species* sp_neighbor;
@@ -134,33 +323,107 @@ void Compartment::transferSpecies() {
         int copyNumber = sp->getN();
         auto nit = activeNeighbors.begin();
         
-        while(copyNumber > 0) {
-            sp->down();
-            
-            //choose a random active neighbor
-            auto neighbor = *nit;
-            sp_neighbor = neighbor->findSpeciesByName(sp->getName());
-            
-            //add to list if not already
-            auto spit = find(sp_neighbors.begin(),
-                             sp_neighbors.end(),
-                             sp_neighbor);
-            
-            if(spit == sp_neighbors.end())
-                sp_neighbors.push_back(sp_neighbor);
-            
-            //increase copy number
-            sp_neighbor->up();
-            
-            //reset if we've looped through
-            if(++nit == activeNeighbors.end())
-                nit = activeNeighbors.begin();
-            copyNumber--;
+        if(sp->getFullName().find("Bound") == string::npos){
+            while(copyNumber > 0) {
+                sp->down();
+                
+                //choose a random active neighbor
+                auto neighbor = *nit;
+                
+                sp_neighbor = neighbor->findSpeciesByName(sp->getName());
+                
+                //add to list if not already
+                auto spit = find(sp_neighbors.begin(),
+                                 sp_neighbors.end(),
+                                 sp_neighbor);
+                
+                if(spit == sp_neighbors.end())
+                    sp_neighbors.push_back(sp_neighbor);
+                
+                //increase copy number
+                
+                sp_neighbor->up();
+                
+                //reset if we've looped through
+                if(++nit == activeNeighbors.end())
+                    nit = activeNeighbors.begin();
+                copyNumber--;
+                
+            }
         }
         
         //activate all reactions changed
         for(auto spn : sp_neighbors)
             spn->updateReactantPropensities();
+        for(auto &sp : _species.species())
+            sp->updateReactantPropensities();
+    }
+}
+
+void Compartment::shareSpecies(int i) {
+    //i axis
+    //0 X
+    //1 Y
+    //2 Z
+    //3 all directions
+    //get active neighbors
+    vector<Compartment*> activeNeighbors;
+    
+    for(auto &neighbor : _neighbours){
+        auto ncoord=neighbor->coordinates();
+    if(neighbor->isActivated()){
+        if(i==3)
+            activeNeighbors.push_back(neighbor);
+        else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
+        activeNeighbors.push_back(neighbor);
+    }}
+    
+    assert(activeNeighbors.size() != 0
+           && "Cannot share species to another compartment... no neighbors are active");
+    if(i<3 && activeNeighbors.size()>1){
+        cout<<"Error sharing species along an axis. More than 1 neighbor. Exiting."<< endl;
+        exit(EXIT_FAILURE);
+    }
+    //go through species
+    Species* sp_neighbor;
+    vector<Species*> sp_neighbors;
+    
+    for(auto &sp : _species.species()) {
+        auto nit = activeNeighbors.begin();
+        auto neighbor = *nit;
+        sp_neighbor = neighbor->findSpeciesByName(sp->getName());
+        int copyNumber = sp_neighbor->getN();
+        int lowerlimit = (int) sp_neighbor->getN()/2;
+        if(sp->getFullName().find("Bound") == string::npos){
+            while(copyNumber > lowerlimit) {
+                sp_neighbor->down();
+                
+                //add to list if not already
+                auto spit = find(sp_neighbors.begin(),
+                                 sp_neighbors.end(),
+                                 sp_neighbor);
+                
+                if(spit == sp_neighbors.end())
+                    sp_neighbors.push_back(sp_neighbor);
+                
+                //increase copy number
+                sp->up();
+                //reset if we've looped through
+                if(++nit == activeNeighbors.end())
+                    nit = activeNeighbors.begin();
+                neighbor = *nit;
+                sp_neighbor = neighbor->findSpeciesByName(sp->getName());
+                copyNumber--;
+                
+            }
+        }
+
+        //activate all reactions changed
+        for(auto spn : sp_neighbors)
+            spn->updateReactantPropensities();
+        for(auto &sp : _species.species())
+            sp->updateReactantPropensities();
+        
     }
 }
 
@@ -170,11 +433,25 @@ void Compartment::activate(ChemSim* chem) {
     
     //set marker
     _activated = true;
-    
     //add all diffusion reactions
-    auto rxns = generateAllDiffusionReactions();
+    auto rxns = generateAllpairsDiffusionReactions();
     for(auto &r : rxns) chem->addReaction(r);
-
+    shareSpecies(SysParams::Mechanics().transfershareaxis);
+    
+    for (auto &C: _neighbours){
+        if(C->isActivated()){
+            for(auto &r : C->_diffusion_reactions.reactions()) {
+                auto rs = r.get()->rspecies()[1];
+                if(rs->getSpecies().getParent() == this) {
+                    auto rs1 = r.get()->rspecies()[0];
+                    if(rs1->getN()>0 && r->isPassivated()){
+                        r->activateReaction();
+                    }
+        }
+    }
+        }
+    }
+    
 }
 
 void Compartment::deactivate(ChemSim* chem) {
@@ -188,7 +465,7 @@ void Compartment::deactivate(ChemSim* chem) {
     //set marker
     _activated = false;
     
-    transferSpecies();
+    transferSpecies(SysParams::Mechanics().transfershareaxis);
     removeAllDiffusionReactions(chem);
 }
 

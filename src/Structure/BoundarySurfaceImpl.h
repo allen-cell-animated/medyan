@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -76,6 +76,21 @@ public:
     ///@param coords - coordinates of center of half sphere
     ///@param normal - normal vector to sphere
     HalfSphereZ(SubSystem* s, vector<double> coords, double radius, bool up);
+    
+};
+
+//Qin -----
+/// A simple implementation of the BoundarySurface class.
+class CylinderXYZ: public BoundarySurface {
+    
+private:
+    vector<double> _coords; ///< Center of cylinder
+    
+public:
+    ///Constructor, creates boundary elements
+    ///@param coords - coordinates of center of cylinder
+    ///@param normal - normal vector to sphere
+    CylinderXYZ(SubSystem* s, vector<double> coords, double radius, double height);
     
 };
 
