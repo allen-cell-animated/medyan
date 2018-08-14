@@ -41,5 +41,5 @@ void MCylinder::setEqLength(short filamentType, double l) {
         _kStretch = SysParams::Mechanics().FStretchingK[filamentType] * fracCylinderSize;
     
     if(!SysParams::Mechanics().FBendingK.empty())
-        _kBend = SysParams::Mechanics().FBendingK[filamentType] / fracCylinderSize;
+        _kBend = SysParams::Mechanics().FBendingK[filamentType];
 }
