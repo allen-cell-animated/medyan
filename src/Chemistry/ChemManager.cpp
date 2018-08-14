@@ -2574,7 +2574,8 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
     //auto shape = _subSystem->getBoundary()->getShape();
     if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder) {
         for(auto C : grid->getCompartments())
-            C->generateAllScaleDiffusionReactions();
+            //C->generateAllScaleDiffusionReactions();
+             C->generateAllDiffusionReactions();
     }
     
     else {
