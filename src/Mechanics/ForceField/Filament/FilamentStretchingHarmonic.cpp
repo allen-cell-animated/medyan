@@ -300,6 +300,8 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
             cout << "f0 = " << f0 << endl;
             cout << "dist = " << dist << endl;
             cout << "nint = " << nint<<endl;
+            Bead::getBeads()[beadSet[n * i]]->printSelf();
+            Bead::getBeads()[beadSet[n * i+1]]->printSelf();
         }
 
 //        std::cout<<i<<" "<< f0 * ( coord1[0] - coord2[0] )<<" "<<

@@ -388,16 +388,19 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
         
         if(f1sq > 1e8 || f2sq > 1e8 || f3sq > 1e8){
             cout<<"High bending cosine force!" << endl;
-            cout<<"coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[1] <<endl;
+            cout<<"coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[2] <<endl;
             cout<< "force1 = " << sqrt(f1sq) << endl;
-            cout<<"coord2 = " << coord2[0] << " " << coord2[1] << " " << coord2[1] <<endl;
+            cout<<"coord2 = " << coord2[0] << " " << coord2[1] << " " << coord2[2] <<endl;
             cout<< "force2 = " << sqrt(f2sq) << endl;
-            cout<<"coord3 = " << coord3[0] << " " << coord3[1] << " " << coord3[1] <<endl;
+            cout<<"coord3 = " << coord3[0] << " " << coord3[1] << " " << coord3[2] <<endl;
             cout<< "force3 = " << sqrt(f3sq) << endl;
             cout << "L1 = " << L1 << ", L2 = " << L2 << ", l1l2 = " << l1l2 <<endl;
             cout << "A = " << A << ", B = " << B << ", C = " << C <<endl;
             cout << "k = " << k  << ", eqt = " << eqt[i] << endl;
             cout << "nint = " << nint<<endl;
+            Bead::getBeads()[beadSet[n * i]]->printSelf();
+            Bead::getBeads()[beadSet[n * i+1]]->printSelf();
+            Bead::getBeads()[beadSet[n * i+2]]->printSelf();
         }
         
 //        double f1[3], f2[3], f3[3];
