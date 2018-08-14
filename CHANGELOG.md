@@ -1,4 +1,4 @@
-# 3.2 (Release date TBD)
+# 3.2 (Release date: 14, August, 2018)
 
 ## Bug fixes
 - Filament
