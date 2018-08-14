@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -16,7 +16,6 @@
 #include "Output.h"
 
 #include "SubSystem.h"
-#include "CompartmentGrid.h"
 
 #include "Filament.h"
 #include "Cylinder.h"
@@ -28,6 +27,7 @@
 
 #include "Boundary.h"
 #include "CompartmentGrid.h"
+#include "Compartment.h"
 #include "GController.h"
 
 #include "SysParams.h"
@@ -68,10 +68,6 @@ void BasicSnapshot::print(int snapshot) {
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
         
         _outputFile << endl;
-        
-        //Reset deltas for this filament
-        filament->resetDeltaPlusEnd();
-        filament->resetDeltaMinusEnd();
     }
     
     
@@ -384,7 +380,7 @@ void Tensions::print(int snapshot) {
             double deltaL = cylinder->getMCylinder()->getLength() -
                             cylinder->getMCylinder()->getEqLength();
             
-            _outputFile<< abs(k * deltaL) << " ";
+            _outputFile<< k * deltaL << " ";
             
         }
         //print last
@@ -392,7 +388,7 @@ void Tensions::print(int snapshot) {
         double k = cylinder->getMCylinder()->getStretchingConst();
         double deltaL = cylinder->getMCylinder()->getLength() -
                         cylinder->getMCylinder()->getEqLength();
-        _outputFile<< abs(k * deltaL);
+        _outputFile<< k * deltaL;
         
         _outputFile << endl;
     }
@@ -404,13 +400,8 @@ void Tensions::print(int snapshot) {
                                linker->getType() << endl;
         
         //print
-        double k = linker->getMLinker()->getStretchingConstant();
-        double deltaL = linker->getMLinker()->getLength() -
-                        linker->getMLinker()->getEqLength();
-        
-        
-        _outputFile << abs(k * deltaL) << " " <<
-                       abs(k * deltaL) << endl;
+        _outputFile << linker->getMLinker()->stretchForce << " " <<
+        linker->getMLinker()->stretchForce << endl;
     }
     
     for(auto &motor : MotorGhost::getMotorGhosts()) {
@@ -420,12 +411,8 @@ void Tensions::print(int snapshot) {
         _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
         
         //print
-        double k = motor->getMMotorGhost()->getStretchingConstant();
-        double deltaL = motor->getMMotorGhost()->getLength() -
-                        motor->getMMotorGhost()->getEqLength();
-        
-        _outputFile << abs(k * deltaL) << " " <<
-                       abs(k * deltaL) << endl;
+        _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
+        motor->getMMotorGhost()->stretchForce << endl;
     }
     
     //DEPRECATED AS OF 9/8/16
@@ -780,3 +767,109 @@ void FilamentTurnoverTimes::print(int snapshot) {
     Filament::getTurnoverTimes()->print(_outputFile);
     _outputFile << endl << endl;
 }
+
+void PlusEnd::print(int snapshot) {
+
+    _outputFile.precision(10);
+
+    // print first line (snapshot number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << snapshot << " " << tau() << " " <<
+    Filament::numFilaments() << " " <<
+    Linker::numLinkers() << " " <<
+    MotorGhost::numMotorGhosts() << " " <<
+    BranchingPoint::numBranchingPoints() << " " <<
+    Bubble::numBubbles() <<endl;;
+
+    for(auto &filament : Filament::getFilaments()) {
+
+        //print first line (Filament ID, type, length, left_delta, right_delta)
+        _outputFile <<"FILAMENT " << filament->getID() << " " <<
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
+
+        //print plus end
+        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+        _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
+
+
+        for (int i=0; i<filament->getCylinderVector().back()->getCCylinder()->getSize(); i++) {
+            int out=filament->getCylinderVector().back()->getCCylinder()->getCMonomer(i)->activeSpeciesPlusEnd();
+            if(out !=-1) {_outputFile << "PLUSEND: " << out << endl;}
+
+        }
+
+    }
+
+    _outputFile << endl;
+
+}
+
+
+
+void ReactionOut::print(int snapshot) {
+
+    _outputFile.precision(10);
+
+    // print first line (snapshot number, time, number of filaments,
+    // linkers, motors, branchers)
+    _outputFile << snapshot << " " << tau() << " " <<
+    Filament::numFilaments() << " " <<
+    Linker::numLinkers() << " " <<
+    MotorGhost::numMotorGhosts() << " " <<
+    BranchingPoint::numBranchingPoints() << " " <<
+    Bubble::numBubbles() <<endl;;
+
+    for(auto &filament : Filament::getFilaments()) {
+
+        int numMonomer = 2; // 2 for plus/minus end
+        for (auto c : filament->getCylinderVector()) {
+            for (int i=0; i < c->getCCylinder()->getSize(); i++) {
+                auto FilamentMonomer = c->getCCylinder()-> getCMonomer(i)->activeSpeciesFilament();
+                if(FilamentMonomer != -1) {numMonomer ++;}
+
+            }
+
+        }
+
+        //print first line (Filament ID, type, length, left_delta, right_delta)
+        _outputFile <<"FILAMENT " << filament->getID() << " " <<
+        filament->getType() << " " <<
+        filament->getCylinderVector().size() + 1 << " " <<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << "\n"<<
+        filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << " " <<
+        filament->getPolyMinusEnd() << " " << filament->getPolyPlusEnd() << " " <<
+        filament->getDepolyMinusEnd() << " " << filament->getDepolyPlusEnd() << " " <<
+        filament->getNucleation() << " " << numMonomer << endl;
+
+    }
+
+    _outputFile << endl;
+
+}
+
+void Concentrations::print(int snapshot) {
+
+    _outputFile << snapshot << " " << tau() << endl;
+
+    for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
+
+        if(c->isActivated()) {
+
+            _outputFile << "COMPARTMENT: " << c->coordinates()[0] << " "
+            << c->coordinates()[1] << " " << c->coordinates()[2] << endl;
+
+            for(auto sd : _chemData.speciesDiffusing) {
+
+                string name = get<0>(sd);
+                auto s = c->findSpeciesByName(name);
+                auto copyNum = s->getN();
+
+                _outputFile << name << ":DIFFUSING " << copyNum << endl;
+            }
+        }
+    }
+    _outputFile << endl;
+}
+

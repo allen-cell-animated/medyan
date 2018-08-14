@@ -5,7 +5,6 @@
 #
 #	GCC 4.7 and above
 #	Boost 1.49 and above
-#	GSL
 #
 #   If running unit tests, googletest is needed.
 #
@@ -24,7 +23,7 @@ CXX = /usr/bin/g++ -std=c++11
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
-LDLIBS = -L/usr/local/lib/ -lboost_system -lgsl  
+LDLIBS = -L/usr/local/lib/ -lboost_system
 LDFLAGS = $(FAST)
 
 CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
@@ -32,6 +31,7 @@ CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
+-IMechanics/                              \
 -IMechanics/Minimizer                     \
 -IMechanics/ForceField                    \
 -IMechanics/ForceField/Volume             \
@@ -55,7 +55,7 @@ CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 CPPFLAGS += -DCHEMISTRY
 #Initialize mechanical components of system
 CPPFLAGS += -DMECHANICS
-#Use dynamic rate changing 
+#Use dynamic rate changing
 CPPFLAGS += -DDYNAMICRATES
 
 #Boost memory macros
@@ -65,18 +65,18 @@ CPPFLAGS += -DBOOL_POOL_NSIZE=65536
 #if compiling the testing suite
 #CPPFLAGS += -DTESTING
 
-#Detailed chemistry macros. 
+#Detailed chemistry macros.
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!
 
 #Track dependents. Needed for Gillespie and NRM algorithm
 CPPFLAGS += -DTRACK_DEPENDENTS
 
-#Track zero copy and max copy number. 
+#Track zero copy and max copy number.
 #For passivating and activating reactions accordingly
 CPPFLAGS += -DTRACK_ZERO_COPY_N
 CPPFLAGS += -DTRACK_UPPER_COPY_N
-
-#Reaction signaling. Needed for all Filament, Linker, 
+#CPPFLAGS += -DDEBUGCONSTANTSEED
+#Reaction signaling. Needed for all Filament, Linker,
 #Motor, and BranchingPoint reactions in system
 CPPFLAGS += -DREACTION_SIGNALING
 

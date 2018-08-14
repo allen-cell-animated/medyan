@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -73,6 +73,9 @@ private:
     ChemistryAlgorithm _cAlgorithm;
     vector<tuple<short, vector<double>, vector<double>>> fil;
     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+    vector<Compartment*> activatecompartments;
+    multimap<int,Compartment*> fCompmap;
+    multimap<int,Compartment*> bCompmap;
     //@}
     
     ///INITIALIZATION HELPER FUNCTIONS
@@ -90,7 +93,11 @@ private:
     
     /// Move the boundary based on the timestep
     void moveBoundary(double deltaTau);
-    
+    ///Activate/deactivate compartments based on the longest filament (along Xaxis).
+    void activatedeactivateComp();
+    void ControlfrontEndCompobsolete();
+    void ControlbackEndCompobsolete();
+    void ControlfrontbackEndComp();
     /// Update the positions of all elements in the system
     void updatePositions();
     
@@ -101,14 +108,18 @@ private:
     
     /// Update neighbors lists, called in run
     void updateNeighborLists();
-    
+
     /// Execute any special protocols needed, for example,
     /// making Linker and Filament species static
     void executeSpecialProtocols();
 
-    
+    /// Reset counters on all elements in the system
+    void resetCounters();
+
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
+    //Qin
+    void pinLowerBoundaryFilaments();
     
 public:
     Controller(SubSystem* s);

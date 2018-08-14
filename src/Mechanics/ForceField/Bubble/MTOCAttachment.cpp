@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -24,8 +24,8 @@
 template <class MTOCInteractionType>
 double MTOCAttachment<MTOCInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for(auto mtoc : MTOC::getMTOCs()) {
         

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -26,11 +26,11 @@ Database<Bead*> Bead::_beads;
 Database<Bead*> Bead::_pinnedBeads;
 
 Bead::Bead (vector<double> v, Composite* parent, int position)
-
+// Qin add brforce, pinforce
     : Trackable(true),
       coordinate(v), coordinateP(v), coordinateB(v),
-      force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
-      _position(position), _birthTime(tau()) {
+      force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
+      _position(position), _birthTime(tau()),_ID(_beads.getID()) {
     
     parent->addChild(unique_ptr<Component>(this));
           
@@ -54,10 +54,10 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
 }
 
 Bead::Bead(Composite* parent, int position)
-
+// Qin add brforce, pinforce
     : Trackable(true),
     coordinate(3, 0), coordinateP(3, 0), coordinateB(3, 0),
-    force(3, 0), forceAux(3, 0), forceAuxP(3, 0),  _position(position) {
+    force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {
     
     parent->addChild(unique_ptr<Component>(this));
 }
@@ -102,8 +102,8 @@ double Bead::getLoadForcesP() {
     if (lfip < 0)
         return loadForcesP[0];
         
-    if (lfip >= SysParams::Geometry().cylinderNumMon[getType()])
-        return loadForcesP[SysParams::Geometry().cylinderNumMon[getType()] - 1];
+    if (lfip >= loadForcesP.size())
+        return loadForcesP.back();
     
     else return loadForcesP[lfip];
 }
@@ -113,8 +113,8 @@ double Bead::getLoadForcesM() {
     if (lfim < 0)
         return loadForcesM[0];
     
-    if (lfim >= SysParams::Geometry().cylinderNumMon[getType()])
-        return loadForcesM[SysParams::Geometry().cylinderNumMon[getType()] - 1];
+    if (lfim >= loadForcesM.size())
+        return loadForcesM.back();
     
     else return loadForcesM[lfim];
 }

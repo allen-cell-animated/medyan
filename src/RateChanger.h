@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -45,6 +45,26 @@ protected:
     
 public:
     LinkerRateChanger(short linkerType) : _linkerType(linkerType) {}
+    
+    /// Change the reaction rate based on a bare rate and given force.
+    virtual float changeRate(float bareRate, double force) = 0;
+};
+
+// Qin -----------------------------
+/// Used to change Linker reaction rates based on forces in the network
+/*!
+ *  The LinkerRateChanger class is an abstract class which allows
+ *  for Linker rate changing based on a given force. Different
+ *  implementations of this class will have different rate changing models,
+ *  and will all implement the changeRate() function.
+ */
+class BranchRateChanger {
+    
+protected:
+    short _branchType; ///< This linker type
+    
+public:
+    BranchRateChanger(short branchType) : _branchType(branchType) {}
     
     /// Change the reaction rate based on a bare rate and given force.
     virtual float changeRate(float bareRate, double force) = 0;

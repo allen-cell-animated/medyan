@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -75,7 +75,7 @@ double MotorGhostStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* 
     b4->force[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->force[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
     
-    return f0;
+    return f0 / invL;
 }
 
 double MotorGhostStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
@@ -111,5 +111,5 @@ double MotorGhostStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bea
     b4->forceAux[1] +=   f0 * ( v1[1] - v2[1] ) * (position2);
     b4->forceAux[2] +=   f0 * ( v1[2] - v2[2] ) * (position2);
     
-    return f0;
+    return f0 / invL;
 }

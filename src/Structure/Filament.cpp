@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -39,8 +39,8 @@ using namespace mathfunc;
 Database<Filament*> Filament::_filaments;
 Histogram* Filament::_turnoverTimes;
 
-Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
-                   vector<double>& direction, bool nucleation, bool branch)
+Filament::Filament(SubSystem* s, short filamentType, const vector<double>& position,
+                   const vector<double>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
  
@@ -358,7 +358,9 @@ void Filament::polymerizePlusEnd() {
     //update rates of new back
     _cylinderVector.back()->updateReactionRates();
 #endif
-    
+
+    _polyPlusEnd++;
+
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -388,6 +390,9 @@ void Filament::polymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
+
+    _polyMinusEnd++;
+
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -417,7 +422,8 @@ void Filament::depolymerizePlusEnd() {
     _cylinderVector.front()->updateReactionRates();
 #endif
     
-    
+    _depolyPlusEnd++;;
+
 }
 
 void Filament::depolymerizeMinusEnd() {
@@ -446,6 +452,8 @@ void Filament::depolymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
+
+    _depolyMinusEnd++;
 }
 
 
@@ -472,6 +480,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
 #endif
+
+    _nucleationReaction++;
+
 }
 
 
@@ -505,13 +516,20 @@ Filament* Filament::sever(int cylinderPosition) {
         
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
-        
-        newFilament->addChild(unique_ptr<Component>(c));
+
         newFilament->_cylinderVector.push_back(c);
         
-        //Add beads to new parent
-        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
-        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
+        //TRANSFER CHILD
+        unique_ptr<Component> &&tmp = this->getChild(c);
+        this->transferChild(std::move(tmp), (Composite*)newFilament);
+
+        //Add beads and cylinder to new parent
+        if(i == vectorPosition) {
+            unique_ptr<Component> &&tmp2 = this->getChild(c->getFirstBead());
+            this->transferChild(std::move(tmp2), (Composite*)newFilament);
+        }
+        unique_ptr<Component> &&tmp1 = this->getChild(c->getSecondBead());
+        this->transferChild(std::move(tmp1), (Composite*)newFilament);
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
@@ -575,6 +593,10 @@ Filament* Filament::sever(int cylinderPosition) {
     cc2->removeCrossCylinderReactions(cc1);
 #endif
     
+    //Qin
+
+    _severingReaction++;
+    _severingID.push_back(newFilament->getID());
     return newFilament;
 }
 

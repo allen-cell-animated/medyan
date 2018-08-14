@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -282,7 +282,6 @@ namespace mathfunc {
         auto v3 = {p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2]};
         
         auto cp = crossProduct(v1, v2);
-        
         return areEqual(dotProduct(v3, cp), 0.0);
     }
     

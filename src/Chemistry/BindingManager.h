@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -14,8 +14,13 @@
 #ifndef MEDYAN_BindingManager_h
 #define MEDYAN_BindingManager_h
 
-#include <unordered_set>
+#ifdef DEBUGCONSTANTSEED
+#include <map>
+#include <set>
+#else
 #include <unordered_map>
+#include <unordered_set>
+#endif
 #include <random>
 
 #include "common.h"
@@ -38,7 +43,7 @@ class Cylinder;
 
 ///Enumeration for nucleation zone type. Used by BranchingManager.
 enum NucleationZoneType {
-    ALL, BOUNDARY, TOPBOUNDARY
+    ALL, BOUNDARY, TOPBOUNDARY, SIDEBOUNDARY
 };
 
 /// To store and manage binding reactions.
@@ -62,6 +67,7 @@ class FilamentBindingManager {
 friend class ChemManager;
     
 protected:
+
     ReactionBase* _bindingReaction; ///< The binding reaction for this compartment
     
     Compartment* _compartment; ///< Compartment this is in
@@ -183,7 +189,11 @@ private:
     double _nucleationDistance;
     
     ///possible bindings at current state
+    #ifdef DEBUGCONSTANTSEED
+    set<tuple<CCylinder*, short>> _possibleBindings;
+    #else
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
+    #endif
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _branchrestarttuple; //Used only during restart conditions.
 public:
     BranchingManager(ReactionBase* reaction,
@@ -262,7 +272,12 @@ private:
     float _rMax; ///< Maximum reaction range
     
     //possible bindings at current state. updated according to neighbor list
+#ifdef DEBUGCONSTANTSEED
+    vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
+//    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
+#else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
+#endif
     
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
@@ -297,16 +312,16 @@ public:
         return _possibleBindings.size();
     }
     /// ARAVIND ADDED FEB 17 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
-        double oldN=numBindingSites();
-         _possibleBindings.emplace(t1,t2);
-         double newN=numBindingSites();
-        updateBindingReaction(oldN,newN);
-    }
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*,
+            short> t2);
     //get possible bindings.
+#ifdef DEBUGCONSTANTSEED
+
+#else
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
+#endif
     
     /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
     virtual void clearpossibleBindings() {
@@ -321,21 +336,26 @@ public:
     //@}
     
     /// Choose random binding sites based on current state
-    vector<tuple<CCylinder*, short>> chooseBindingSites() {
+    vector<tuple<CCylinder*, short>> chooseBindingSites();
         
-        assert((_possibleBindings.size() != 0)
-               && "Major bug: Linker binding manager should not have zero binding \
-                   sites when called to choose a binding site.");
-        
-        int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
-        auto it = _possibleBindings.begin();
-        
-        advance(it, randomIndex);
-        
-        return vector<tuple<CCylinder*, short>>{it->first, it->second};
-    }
-    
+      //{        assert((_possibleBindings.size() != 0)
+      //        && "Major bug: Linker binding manager should not have zero binding \
+      //            sites when called to choose a binding site.");
+      //	auto xxx = _compartment->coordinates();
+      //	std::cout<<"Compartment "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
+      // int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
+      // auto it = _possibleBindings.begin();
+
+      // advance(it, randomIndex);
+
+      // return vector<tuple<CCylinder*, short>>{it->first, it->second};
+      //}
+
     virtual bool isConsistent();
+
+#ifdef DEBUGCONSTANTSEED
+    virtual void erasepossibleBindings(CCylinder* cc, short bindingSite);
+#endif
 };
 
 /// Manager for MotorGhost binding
@@ -357,8 +377,13 @@ private:
     float _rMax; ///< Maximum reaction range
     
     //possible bindings at current state. updated according to neighbor list
+#ifdef DEBUGCONSTANTSEED
+    vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
+//    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
+#else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
-    
+#endif
+
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
     
@@ -392,16 +417,16 @@ public:
         return _possibleBindings.size();
     }
     /// ARAVIND ADDED FEB 22 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
-        double oldN=numBindingSites();
-        _possibleBindings.emplace(t1,t2);
-        double newN=numBindingSites();
-        updateBindingReaction(oldN,newN);
-    }
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*,
+            short> t2);
     //get possible bindings.
+#ifdef DEBUGCONSTANTSEED
+
+#else
     virtual unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
     }
+#endif
     
     /// ARAVIND ADDED FEB 18 2016. clear possible bindings.
     virtual void clearpossibleBindings() {
@@ -417,23 +442,14 @@ public:
     //@}
     
     /// Choose random binding sites based on current state
-    vector<tuple<CCylinder*, short>> chooseBindingSites() {
-        
-        assert((_possibleBindings.size() != 0)
-               && "Major bug: Motor binding manager should not have zero binding \
-                   sites when called to choose a binding site.");
-        
-        int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
-        auto it = _possibleBindings.begin();
-        
-        advance(it, randomIndex);
-        
-        return vector<tuple<CCylinder*, short>>{it->first, it->second};
-    }
+    vector<tuple<CCylinder*, short>> chooseBindingSites();
     
     virtual bool isConsistent();
-    
-    
+
+#ifdef DEBUGCONSTANTSEED
+    virtual void erasepossibleBindings(CCylinder* cc, short bindingSite);
+#endif
+
     //DEPRECATED AS OF 9/8/16
 //    /// Adds an unbound ID to the container
 //    void addUnboundID(int ID) {_unboundIDs.push_back(ID);}

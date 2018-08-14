@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -45,6 +45,11 @@ void BoundaryCylinderAttachmentHarmonic::forces(Bead* b, double kAttr) {
     b->force[0] += f0 * dir[0];
     b->force[1] += f0 * dir[1];
     b->force[2] += f0 * dir[2];
+    
+    //Qin, add pinforce
+    b->pinforce[0] += f0 * dir[0];
+    b->pinforce[1] += f0 * dir[1];
+    b->pinforce[2] += f0 * dir[2];
 }
 
 void BoundaryCylinderAttachmentHarmonic::forcesAux(Bead* b, double kAttr) {

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -47,7 +47,7 @@ double BranchingStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
     return energy;
 }
 
-void BranchingStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
+double BranchingStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
                                          double position, double kStretch,
                                          double eqLength){
     
@@ -73,6 +73,8 @@ void BranchingStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
     b3->force[0] +=  -f0 * ( b3->coordinate[0] - v1[0] );
     b3->force[1] +=  -f0 * ( b3->coordinate[1] - v1[1] );
     b3->force[2] +=  -f0 * ( b3->coordinate[2] - v1[2] );
+    
+    return f0/invL;
     
 }
 
