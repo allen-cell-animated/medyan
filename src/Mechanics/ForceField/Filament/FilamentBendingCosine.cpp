@@ -398,9 +398,20 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
             cout << "A = " << A << ", B = " << B << ", C = " << C <<endl;
             cout << "k = " << k  << ", eqt = " << eqt[i] << endl;
             cout << "nint = " << nint<<endl;
-            Bead::getBeads()[beadSet[n * i]]->printSelf();
-            Bead::getBeads()[beadSet[n * i+1]]->printSelf();
-            Bead::getBeads()[beadSet[n * i+2]]->printSelf();
+            for (auto b: Bead::getBeads()){
+                if(b->_dbIndex == beadSet[beadSet[n * i]]){
+                    //Then access all elements of beads that you want to access
+                    b->printSelf();
+                }
+                if(b->_dbIndex == beadSet[beadSet[n * i] +1]){
+                    //Then access all elements of beads that you want to access
+                    b->printSelf();
+                }
+                if(b->_dbIndex == beadSet[beadSet[n * i] +2]){
+                    //Then access all elements of beads that you want to access
+                    b->printSelf();
+                }
+            }
         }
         
 //        double f1[3], f2[3], f3[3];

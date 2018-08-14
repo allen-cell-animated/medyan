@@ -356,9 +356,14 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
             
             if(f0 > 1e4){
                 cout<<"High Boundary force = " << f0 << endl;
-                //cout<<"coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[2] << endl;
+                cout<<"coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[2] << endl;
                 cout<<"R = " << R << ", r = " << r << endl;
-                Bead::getBeads()[beadSet[ Cumnc + ic]]->printSelf();
+                for (auto b: Bead::getBeads()){
+                    if(b->_dbIndex == beadSet[Cumnc+ic]){
+                        //Then access all elements of beads that you want to access
+                        b->printSelf();
+                    }
+                }
             }
             
         }
