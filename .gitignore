@@ -17,13 +17,13 @@ docsdev/**/*.aux
 docsdev/**/*.log
 docsdev/**/*.synctex.gz
 docsdev/**/*.toc
-## C++ and python
+## C++
 build/
-*.[oa]
-*.pyc
-*.o
-src/Makefile.dep
+*.[oad]
 src/MEDYAN
+src/medyan_test
+## Python
+*.pyc
 
 # Backup files
 *~.nib
