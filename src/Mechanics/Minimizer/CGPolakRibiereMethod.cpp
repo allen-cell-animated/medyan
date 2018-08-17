@@ -404,6 +404,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         std::cout<<"Beta serial "<<beta<<endl;
         std::cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
 #endif
+        //add additional output to check
+        std::cout<< "numI = " << numIter << ", lambda = " << lambda << ", beta = "<<beta<<endl;
+        std::cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
         //vectorized copy
 //        nvtxRangePushA("SCPF");
 //        std::cout<<"copy forces serial"<<endl;
@@ -422,17 +425,21 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 //        nvtxRangePushA("Polakserial");
         auto maxForce = maxF();
         Ms_isminimizationstate = maxForce > GRADTOL;
-//        std::cout<<"Maximum Force "<<maxForce<<endl;
+        
+        std::cout<<"Maximum Force "<<maxForce<<endl;
 //        nvtxRangePop();
 #endif
 
-//        std::cout<<"M "<<Mc_isminimizationstate[0]<<" "<<Ms_isminimizationstate<<endl;
+        std::cout<<"M "<<Mc_isminimizationstate[0]<<" "<<Ms_isminimizationstate<<endl;
 //        std::cout<<endl;
         
     }
     //std::cout<<"Total iterations "<<numIter<<endl;
 //    std::cout<<"maxF "<<maxF()<<" "<<GRADTOL<<" "<<Ms_isminimizationstate<<" "<<Mc_isminimizationstate[0]<<endl;
 
+    
+    
+    
     if (numIter >= N) {
 #ifdef CUDAACCL
 //        FFM.CUDAcopyForces(*Msp1, CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_force);

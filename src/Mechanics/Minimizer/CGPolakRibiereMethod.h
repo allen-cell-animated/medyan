@@ -29,6 +29,8 @@ public:
     
     virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
                           double MAXDIST, double LAMBDAMAX, bool steplimit);
+
+    
 protected:
 #ifdef CUDAACCL
     cudaStream_t stream_shiftsafe = NULL, stream_dotcopy = NULL;
