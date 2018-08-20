@@ -93,12 +93,16 @@ CPPFLAGS += -DTRACK_DEPENDENTS
 CPPFLAGS += -DTRACK_ZERO_COPY_N
 CPPFLAGS += -DTRACK_UPPER_COPY_N
 #CPPFLAGS += -DDEBUGCONSTANTSEED
+
 #Reaction signaling. Needed for all Filament, Linker,
 #Motor, and BranchingPoint reactions in system
 CPPFLAGS += -DREACTION_SIGNALING
 
 #Species signaling
 CPPFLAGS += -DRSPECIES_SIGNALING
+
+# Implementation fix (should be turned on by default)
+CPPFLAGS += -DPLOSFEEDBACK
 
 # Non-CUDA specific
 CPPFLAGS_CXX      = $(CPPFLAGS)
