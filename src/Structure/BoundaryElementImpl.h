@@ -220,10 +220,10 @@ public:
         
         
         ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2))
-            
-            return numeric_limits<double>::infinity();
+//        if(point[2] > (_coords[2] + _height / 2) ||
+//           point[2] < (_coords[2] - _height / 2))
+//
+//            return numeric_limits<double>::infinity();
 
 
             return _radius - twoPointDistance({_coords[0],_coords[1], 0},
@@ -245,32 +245,16 @@ public:
 
 
         ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2)) {
-
-            return numeric_limits<double>::infinity();
-        }
-        else {
-            return point[2];
-        }
+        return point[2];
     }
 
 
     //Qin, find the distance for the side boundary
     virtual double sidedistance(const vector<double>& point) {
-
-
-        ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2)) {
-
-            return numeric_limits<double>::infinity();
-        }
-        else {
-            auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
-                                                  {  point[0],  point[1], 0});
-            return dxy;
-        }
+        
+        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
+                                              {  point[0],  point[1], 0});
+        return dxy;
     }
 
 
@@ -279,10 +263,10 @@ public:
                                      double d) {
         
         // check z coordinate. If outside, return infinity
-        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
-           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
-            
-            return numeric_limits<double>::infinity();
+//        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
+//           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
+//
+//            return numeric_limits<double>::infinity();
         
         vector<double> movedPoint{point[0] + d * force[0],
                                   point[1] + d * force[1],
@@ -353,9 +337,9 @@ public:
     virtual double distance(const vector<double>& point) {
         
         // check z coordinate. If outside, return infinity
-        if((_up && (point[2] > _coords[2])) ||
-          (!_up && (point[2] < _coords[2])))
-            return numeric_limits<double>::infinity();
+//        if((_up && (point[2] > _coords[2])) ||
+//          (!_up && (point[2] < _coords[2])))
+//            return numeric_limits<double>::infinity();
         
         return _radius - twoPointDistance(_coords, point);
     }
@@ -371,18 +355,18 @@ public:
     virtual double lowerdistance(const vector<double>& point) {
 
         // check z coordinate. If outside, return infinity
-        if((_up && (point[2] > _coords[2])) ||
-           (!_up && (point[2] < _coords[2])))
-            return numeric_limits<double>::infinity();
+//        if((_up && (point[2] > _coords[2])) ||
+//           (!_up && (point[2] < _coords[2])))
+//            return numeric_limits<double>::infinity();
 
         return _radius - twoPointDistance(_coords, point);
     }
     virtual double sidedistance(const vector<double>& point) {
 
         // check z coordinate. If outside, return infinity
-        if((_up && (point[2] > _coords[2])) ||
-           (!_up && (point[2] < _coords[2])))
-            return numeric_limits<double>::infinity();
+//        if((_up && (point[2] > _coords[2])) ||
+//           (!_up && (point[2] < _coords[2])))
+//            return numeric_limits<double>::infinity();
 
         return _radius - twoPointDistance(_coords, point);
     }
@@ -396,9 +380,9 @@ public:
                                   point[2] + d * force[2]};
         
         // check z coordinate. If outside, return infinity
-        if((_up && (movedPoint[2] > _coords[2])) ||
-          (!_up && (movedPoint[2] < _coords[2])))
-            return numeric_limits<double>::infinity();
+//        if((_up && (movedPoint[2] > _coords[2])) ||
+//          (!_up && (movedPoint[2] < _coords[2])))
+//            return numeric_limits<double>::infinity();
         
         return distance(movedPoint);
         
@@ -452,10 +436,10 @@ public:
 
 
         ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2))
-
-            return numeric_limits<double>::infinity();
+//        if(point[2] > (_coords[2] + _height / 2) ||
+//           point[2] < (_coords[2] - _height / 2))
+//
+//            return numeric_limits<double>::infinity();
 
         //Qin
         auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
@@ -483,34 +467,18 @@ public:
 
     //Qin, find the distance for the lower boundary
     virtual double lowerdistance(const vector<double>& point) {
-
-
-        ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2)) {
-
-            return numeric_limits<double>::infinity();
-        }
-        else {
-            return point[2];
-        }
+        
+        return point[2];
     }
 
     //Qin, find the distance for the side boundary
     virtual double sidedistance(const vector<double>& point) {
 
 
-        ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2)) {
+        auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
+                                              {  point[0],  point[1], 0});
+        return dxy;
 
-            return numeric_limits<double>::infinity();
-        }
-        else {
-            auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
-                                                  {  point[0],  point[1], 0});
-            return dxy;
-        }
     }
 
 
@@ -519,10 +487,10 @@ public:
                                      double d) {
 
         // check z coordinate. If outside, return infinity
-        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
-           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
-
-            return numeric_limits<double>::infinity();
+//        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
+//           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
+//
+//            return numeric_limits<double>::infinity();
 
         vector<double> movedPoint{point[0] + d * force[0],
                                   point[1] + d * force[1],
@@ -580,10 +548,10 @@ public:
 
     virtual double distance(double const *point) {
         ///check z coordinate. If outside, return infinity
-        if(point[2] > (_coords[2] + _height / 2) ||
-           point[2] < (_coords[2] - _height / 2))
-        
-        return numeric_limits<double>::infinity();
+//        if(point[2] > (_coords[2] + _height / 2) ||
+//           point[2] < (_coords[2] - _height / 2))
+//
+//        return numeric_limits<double>::infinity();
         
         //Qin
         auto dxy = _radius - twoPointDistance({_coords[0],_coords[1], 0},
@@ -609,10 +577,10 @@ public:
                                      double const *force, double d) {
         
         // check z coordinate. If outside, return infinity
-        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
-           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
-        
-        return numeric_limits<double>::infinity();
+//        if((point[2] + d * force[2]) > (_coords[2] + _height / 2) ||
+//           (point[2] + d * force[2]) < (_coords[2] - _height / 2))
+//        
+//        return numeric_limits<double>::infinity();
         
         vector<double> movedPoint{point[0] + d * force[0],
             point[1] + d * force[1],

@@ -366,6 +366,8 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
                 }
             }
             
+            if(r == numeric_limits<double>::infinity()) cout<< "Still have infinity!" << endl;
+            
         }
         Cumnc+=nc;
     }}
