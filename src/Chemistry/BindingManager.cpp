@@ -1027,5 +1027,4 @@ SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CylinderCylinderNL*> LinkerBindingManager::_neighborLists;
 vector<CylinderCylinderNL*> MotorBindingManager::_neighborLists;
-//vector<CylinderCylinderNL*> CaMKIIerBindingManager::_neighborLists;
 

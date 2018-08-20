@@ -28,24 +28,21 @@
 using namespace mathfunc;
 
 void CaMKIIingPoint::updateCoordinate() {
-
-    auto c1 = _cylinders.at(0);
-    coordinate = midPointCoordinate(c1->getFirstBead()->coordinate, c1->getSecondBead()->coordinate, _position);
+    
+    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
+                                    _c1->getSecondBead()->coordinate,
+                                    _position);
 }
 
-CaMKIIingPoint::CaMKIIingPoint(Cylinder* c1, Cylinder* c2,short camkiiType, double position)
-				:Trackable(true), _position(position), _camkiiType(camkiiType),_c1(c1), _c2(c2),
-				 _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
-	//_cylinders.push_back(c1);
-    //_cylinders.push_back(c2);
-	_cylinders.push_back(c1);
-	_cylinders.push_back(c2);
-	   cout << "dddddddddddd" << endl;
+CaMKIIingPoint::CaMKIIingPoint(Cylinder* c1, Cylinder* c2,
+                               short camkiiType, double position)
 
+    : Trackable(true), _c1(c1), _c2(c2), _position(position),
+      _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
+    
     //Find compartment
     updateCoordinate();
-	cout << "22222222" << endl;
-
+        
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what();
@@ -67,30 +64,23 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* c1, Cylinder* c2,short camkiiType, doub
     _mCaMKIIingPoint = unique_ptr<MCaMKIIingPoint>(new MCaMKIIingPoint(camkiiType));
     _mCaMKIIingPoint->setCaMKIIingPoint(this);
 #endif
-
+        
     //set the camkiiing cylinder
     _c1->setCaMKIIingCylinder(_c2);
-   cout << "aaaaaaaaaaaaaa" << endl;
-
-    cout << "bbbbbbbbbbb" << endl;
-
 }
 
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {
-
-	auto c1 = _cylinders.at(0);
-	auto c2 = _cylinders.at(1);
-
+    
 #ifdef MECHANICS
     //offset the camkiiing cylinder's bead by a little for safety
-	auto msize = SysParams::Geometry().monomerSize[c1->getType()];
+    auto msize = SysParams::Geometry().monomerSize[_c1->getType()];
     
     vector<double> offsetCoord =
     {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
      (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
      (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
     
-    auto b = c2->getFirstBead();
+    auto b = _c2->getFirstBead();
     
     b->coordinate[0] += offsetCoord[0];
     b->coordinate[1] += offsetCoord[1];
@@ -103,7 +93,7 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
     //filament. If this is a filament species, change it to its
     //corresponding minus end. If a plus end, release a diffusing
     //or bulk species, depending on the initial reaction.
-    CMonomer* m = c2->getCCylinder()->getCMonomer(0);
+    CMonomer* m = _c2->getCCylinder()->getCMonomer(0);
     short speciesFilament = m->activeSpeciesFilament();
     
     //there is a filament species, mark its corresponding minus end
@@ -112,7 +102,7 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
         
         //unmark the filament and bound species
         m->speciesFilament(speciesFilament)->down();
-        m->speciesBound(SysParams::Chemistry().camkiierBoundIndex[c1->getType()])->down();
+        m->speciesBound(SysParams::Chemistry().camkiierBoundIndex[_c1->getType()])->down();
     }
     //mark the free species instead
     else {
@@ -149,7 +139,7 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
         }
             
         //remove the filament from the system
-        Filament *bf = (Filament*)(c2->getParent());
+        Filament *bf = (Filament*)(_c2->getParent());
         _subSystem->removeTrackable<Filament>(bf);
         
         delete bf;
@@ -160,17 +150,15 @@ CaMKIIingPoint::~CaMKIIingPoint() noexcept {
     }
 #endif
     //reset camkiiing cylinder
-    c1->setCaMKIIingCylinder(nullptr);
+    _c1->setCaMKIIingCylinder(nullptr);
 }
 
 void CaMKIIingPoint::updatePosition() {
-	auto c1 = _cylinders.at(0);
-	auto c2 = _cylinders.at(1);
-
+    
 #ifdef CHEMISTRY
     //update ccylinders
-    _cCaMKIIingPoint->setFirstCCylinder(c1->getCCylinder());
-    _cCaMKIIingPoint->setSecondCCylinder(c2->getCCylinder());
+    _cCaMKIIingPoint->setFirstCCylinder(_c1->getCCylinder());
+    _cCaMKIIingPoint->setSecondCCylinder(_c2->getCCylinder());
     
 #endif
     //Find compartment
@@ -201,8 +189,7 @@ void CaMKIIingPoint::updatePosition() {
 }
             
 void CaMKIIingPoint::printSelf() {
-	auto c1 = _cylinders.at(0);
-	auto c2 = _cylinders.at(1);
+    
     cout << endl;
     
     cout << "CaMKIIingPoint: ptr = " << this << endl;
@@ -223,8 +210,8 @@ void CaMKIIingPoint::printSelf() {
     cout << endl;
     
     cout << "Associated cylinders (mother and camkiiing): " << endl;
-    c1->printSelf();
-    c2->printSelf();
+    _c1->printSelf();
+    _c2->printSelf();
     
     cout << endl;
 }

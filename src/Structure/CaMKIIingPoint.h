@@ -42,12 +42,11 @@ private:
     unique_ptr<MCaMKIIingPoint> _mCaMKIIingPoint; ///< Pointer to mech camkii point
     unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
     
-    vector<Cylinder*> _cylinders; ///< for CaMKII neighbor cylinders
-
-    Cylinder* _c1;
-    Cylinder* _c2;
-
+    Cylinder* _c1; ///< Mother cylinder
+    Cylinder* _c2; ///< CaMKIIing cylinder
+    
     double _position;  ///< Position on mother cylinder
+    
     short _camkiiType; ///< Integer specifying the type
     
     int _camkiiID;     ///< Integer ID of this specific
@@ -71,10 +70,9 @@ public:
     virtual ~CaMKIIingPoint() noexcept;
     
     //@{
-    ///Get attached cylinder VECTOR CYLINDER
-    Cylinder* getCylinder(int n) {return _cylinders.at(n);}
-    Cylinder* getFirstCylinder() {return getCylinder(1);}
-    Cylinder* getSecondCylinder() {return getCylinder(2);}
+    ///Get attached cylinder
+    Cylinder* getFirstCylinder() {return _c1;}
+    Cylinder* getSecondCylinder() {return _c2;}
     //@}
     
     /// Set chem camkii point
@@ -93,13 +91,6 @@ public:
     void setPosition(double position) {_position = position;}
     //@}
     
-
-    //@{
-    /// Coordination number for CaMKII
-    int getCoordinationNum() {return _cylinders.size();}
-    //@}
-
-
     //@{
     /// Get camkii parameter
     virtual int getType() {return _camkiiType;}
