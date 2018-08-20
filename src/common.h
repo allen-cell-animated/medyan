@@ -104,13 +104,21 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 #define BUNBINDINGREACTANTS   1
 #define BUNBINDINGPRODUCTS    2
 
-/// CaMKIIing
-#define CAMKIIINGREACTANTS    3
-#define CAMKIIINGPRODUCTS     2
+/// CaMKII binding
+#define CAMKIIBINDINGREACTANTS     2
+#define CAMKIIBINDINGPRODUCTS      1
 
 /// CaMKII unbinding
-#define BUNBINDINGREACTANTS   1
-#define BUNBINDINGPRODUCTS    2
+#define CAMKIIUNBINDINGREACTANTS   1
+#define CAMKIIUNBINDINGPRODUCTS    2
+
+/// CaMKII bundling
+#define CAMKIIBUNDLINGREACTANTS    2
+#define CAMKIIBUNDLINGPRODUCTS     1
+
+/// CaMKII unbundling
+#define CAMKIIUNBUNDLINGGREACTANTS 1
+#define CAMKIIUNBUNDLINGPRODUCTS   2
 //@}
 
 #endif

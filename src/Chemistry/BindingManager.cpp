@@ -213,9 +213,9 @@ bool BranchingManager::isConsistent() {
     return true;
 }
 
-//CAMKIIER
+//CAMKII Binding
 
-CaMKIIingManager::CaMKIIingManager(ReactionBase* reaction,
+CaMKIIBindingManager::CaMKIIBindingManager(ReactionBase* reaction,
                                    Compartment* compartment,
                                    short boundInt, string boundName,
                                    short filamentType,
@@ -231,7 +231,7 @@ CaMKIIingManager::CaMKIIingManager(ReactionBase* reaction,
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
 
-void CaMKIIingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
+void CaMKIIBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
     if(cc->getType() != _filamentType) return;
     
@@ -277,7 +277,7 @@ void CaMKIIingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     updateBindingReaction(oldN, newN);
 }
 
-void CaMKIIingManager::addPossibleBindings(CCylinder* cc) {
+void CaMKIIBindingManager::addPossibleBindings(CCylinder* cc) {
     
     
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -286,7 +286,7 @@ void CaMKIIingManager::addPossibleBindings(CCylinder* cc) {
         addPossibleBindings(cc, *bit);
 }
 
-void CaMKIIingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
+void CaMKIIBindingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
     
     if(cc->getType() != _filamentType) return;
     
@@ -300,7 +300,7 @@ void CaMKIIingManager::removePossibleBindings(CCylinder* cc, short bindingSite) 
 }
 
 
-void CaMKIIingManager::removePossibleBindings(CCylinder* cc) {
+void CaMKIIBindingManager::removePossibleBindings(CCylinder* cc) {
     
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
              bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
@@ -309,7 +309,7 @@ void CaMKIIingManager::removePossibleBindings(CCylinder* cc) {
 }
 
 
-void CaMKIIingManager::updateAllPossibleBindings() {
+void CaMKIIBindingManager::updateAllPossibleBindings() {
     
     //clear all
     _possibleBindings.clear();
@@ -366,7 +366,7 @@ void CaMKIIingManager::updateAllPossibleBindings() {
     updateBindingReaction(oldN, newN);
 }
 
-bool CaMKIIingManager::isConsistent() {
+bool CaMKIIBindingManager::isConsistent() {
     
     for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++) {
         
@@ -389,6 +389,135 @@ bool CaMKIIingManager::isConsistent() {
             cout << "Cylinder info ..." << endl;
             c->printSelf();
             
+            return false;
+        }
+    }
+    return true;
+}
+
+//CAMKII Bundling
+
+CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
+                                   Compartment* compartment,
+                                   short boundInt, string boundName,
+                                   short filamentType)
+
+    : FilamentBindingManager(reaction, compartment, boundInt, boundName, filamentType) {
+
+    //find the single binding species
+    RSpecies** rs = reaction->rspecies();
+    string name = rs[B_RXN_INDEX]->getSpecies().getName();
+
+    _bindingSpecies = _compartment->findSpeciesByName(name);
+}
+
+void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
+
+    if(cc->getType() != _filamentType) return;
+
+    bool inZone = true;
+
+    //add valid site
+    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+        SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
+
+        auto t = tuple<CCylinder*, short>(cc, bindingSite);
+        _possibleBindings.insert(t);
+    }
+
+    int oldN = _bindingSpecies->getN();
+    int newN = numBindingSites();
+
+    updateBindingReaction(oldN, newN);
+}
+
+void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc) {
+
+
+    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+             bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
+
+        addPossibleBindings(cc, *bit);
+}
+
+void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
+
+    if(cc->getType() != _filamentType) return;
+
+    //remove tuple which has this ccylinder
+    _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
+
+    int oldN = _bindingSpecies->getN();
+    int newN = numBindingSites();
+
+    updateBindingReaction(oldN, newN);
+}
+
+
+void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
+
+    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+             bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
+
+        removePossibleBindings(cc, *bit);
+}
+
+
+void CaMKIIBundlingManager::updateAllPossibleBindings() {
+
+    //clear all
+    _possibleBindings.clear();
+
+    for(auto &c : _compartment->getCylinders()) {
+
+        if(c->getType() != _filamentType) continue;
+
+        auto cc = c->getCCylinder();
+
+        //now re add valid binding sites
+        for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+
+            bool inZone = true;
+
+            if (areEqual(cc->getCMonomer(*it)->speciesBound(
+                SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
+
+                auto t = tuple<CCylinder*, short>(cc, *it);
+                _possibleBindings.insert(t);
+            }
+        }
+    }
+
+    int oldN = _bindingSpecies->getN();
+    int newN = numBindingSites();
+
+    updateBindingReaction(oldN, newN);
+}
+
+bool CaMKIIBundlingManager::isConsistent() {
+
+    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); it++) {
+
+        CCylinder* cc = get<0>(*it);
+        Cylinder* c   = cc->getCylinder();
+
+        short bindingSite = get<1>(*it);
+
+        bool flag = true;
+
+        //check site empty
+        if(!areEqual(cc->getCMonomer(bindingSite)->speciesBound(
+           SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0))
+            flag = false;
+
+        if(!flag) {
+            cout << "Binding site in camkiiing manager is inconsistent. " << endl;
+            cout << "Binding site = " << bindingSite << endl;
+
+            cout << "Cylinder info ..." << endl;
+            c->printSelf();
+
             return false;
         }
     }

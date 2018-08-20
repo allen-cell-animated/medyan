@@ -122,7 +122,9 @@ struct ChemistryData {
     /// CaMKIIing reactions
     /// This reaction also contains the off rate, and a string
     /// specifying the nucleation zone and relevant distance parameter
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> camkiiingReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> camkiibindingReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double, double>>> camkiibundlingReactions;
+
 
 
     /// Severing reactions
@@ -140,21 +142,6 @@ struct ChemistryData {
     vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> linkerReactions;
     /// MotorGhost reactions
     vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions;
-    //@}
-    
-    //@{
-    /// CAMKII reactions
-    /*!
-     *  The CAMKII reactions are held using a vector, which contains a tupple with  
-     *  the string of reactants, string of products. The first binding reaction contains
-     *  an on rate and an off rate. Succesive reactions contain a binding range and an off rate.
-     */
-    /// Branching reactions copy
-    vector<vector<tuple<vector<string>, vector<string>, double, double, string, double>>> branchingReactionscopy;
-    /// CAMKII reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double>>> camkiiReactions1;
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double>>> camkiiReactions2;
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double>>> camkiiReactions3;
     //@}
     
     /// MotorGhost walking reactions
@@ -200,17 +187,13 @@ struct ChemistryData {
       destructionReactions(MAX_FILAMENT_TYPES),
     
       branchingReactions(MAX_FILAMENT_TYPES),
-      camkiiingReactions(MAX_FILAMENT_TYPES),
+      camkiibindingReactions(MAX_FILAMENT_TYPES),
+      camkiibundlingReactions(MAX_FILAMENT_TYPES),
       severingReactions(MAX_FILAMENT_TYPES),
       linkerReactions(MAX_FILAMENT_TYPES),
       motorReactions(MAX_FILAMENT_TYPES),
       motorWalkingReactions(MAX_FILAMENT_TYPES),
       
-      branchingReactionscopy(MAX_FILAMENT_TYPES),
-      camkiiReactions1(MAX_FILAMENT_TYPES),
-      camkiiReactions2(MAX_FILAMENT_TYPES),
-      camkiiReactions3(MAX_FILAMENT_TYPES),
-    
       speciesFilament(MAX_FILAMENT_TYPES),
       speciesPlusEnd(MAX_FILAMENT_TYPES),
       speciesMinusEnd(MAX_FILAMENT_TYPES),

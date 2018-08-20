@@ -2539,7 +2539,11 @@ ChemistryData ChemistryParser::readChemistryInput() {
             }
         }
        
-        else if(line.find("CAMKIIINGREACTION") != string::npos) {
+
+        else if(line.find("CAMKIIBINDINGREACTION") != string::npos) {
+            
+            cout << line << endl;
+            cout <<"CAMKIIBINDINGREACTION: ";
             
             vector<string> reactants;
             vector<string> products;
@@ -2550,167 +2554,72 @@ ChemistryData ChemistryParser::readChemistryInput() {
             
             auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
             if(arrowIt != lineVector.end()) {
-                
+            	cout<<"reactants (";
                 for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
                     if(*it != "+") reactants.push_back((*it));
+                    cout<<*it<<" ";
                 }
-                
+                cout<<") products (";
                 for(auto it = arrowIt + 1; it != lineVector.end() - 4; it++) {
                     if(*it != "+")  products.push_back((*it));
+                    cout<<*it<<" ";
                 }
+                cout<<")"<<endl;
                 
-                chem.camkiiingReactions[filType].push_back(
+                chem.camkiibindingReactions[filType].push_back(
                 tuple<vector<string>, vector<string>, double, double, string, double>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
+								      atof(lineVector[lineVector.size() - 3].c_str()),
+									       lineVector[lineVector.size() - 2].c_str(),
+									  atof(lineVector[lineVector.size() - 1].c_str())));
+
+            }
+            else {
+                cout << "Error reading a CaMKII binding reaction. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        
+        else if(line.find("CAMKIIBUNDLINGREACTION") != string::npos) {
+            cout << line << endl;
+            cout <<"CAMKIIBUNDLINGREACTION: ";
+            
+            vector<string> reactants;
+            vector<string> products;
+            
+            vector<string> lineVector = split<string>(line);
+            
+            int filType = atoi(lineVector[1].c_str());
+            
+            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
+            if(arrowIt != lineVector.end()) {
+            	cout<<"reactants (";
+                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
+                    if(*it != "+") reactants.push_back((*it));
+                    cout<<*it<<" ";
+                }
+                cout<<") products (";
+                for(auto it = arrowIt + 1; it != lineVector.end() - 5; it++) {
+                    if(*it != "+")  products.push_back((*it));
+                    cout<<*it<<" ";
+                }
+                cout<<")"<<endl;
+                
+                chem.camkiibundlingReactions[filType].push_back(
+                tuple<vector<string>, vector<string>, double, double, double, double,double>
+                (reactants, products, atof(lineVector[lineVector.size() - 5].c_str()),
+                		              atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
-                                           lineVector[lineVector.size() - 2].c_str(),
+                                      atof(lineVector[lineVector.size() - 2].c_str()),
                                       atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
-                cout << "Error reading a camkiiing reaction. Exiting." << endl;
+                cout << "Error reading a CaMKII bundling reaction. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
         }
 
- 
-        else if(line.find("BRANCHINGCOPYREACTION") != string::npos) {
-            
-            cout << line << endl;
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            int filType = atoi(lineVector[1].c_str());
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 4; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.branchingReactionscopy[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, string, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
-                                      atof(lineVector[lineVector.size() - 3].c_str()),
-                                           lineVector[lineVector.size() - 2].c_str(),
-                                      atof(lineVector[lineVector.size() - 1].c_str())));
-            }
-            else {
-                cout << "Error reading a branching reaction (copy). Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        else if(line.find("CAMKIIREACTION1") != string::npos) {
-            
-            cout << line << endl;
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            int filType = atoi(lineVector[1].c_str());
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 2; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.camkiiReactions1[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 2].c_str()),
-                                      atof(lineVector[lineVector.size() - 1].c_str())));
-            }
-            else {
-                cout << "Error reading a camkii reaction type 1. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-       else if(line.find("CAMKIIREACTION2") != string::npos) {
-            
-            cout << line << endl;
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            int filType = atoi(lineVector[1].c_str());
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 3; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.camkiiReactions2[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
-                                      atof(lineVector[lineVector.size() - 2].c_str()),
-                                      atof(lineVector[lineVector.size() - 1].c_str())));
-            }
-            else {
-                cout << "Error reading a camkii reaction type 2. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        else if(line.find("CAMKIIREACTION3") != string::npos) {
-            
-            cout << line << endl;
-            
-            vector<string> reactants;
-            vector<string> products;
-            
-            vector<string> lineVector = split<string>(line);
-            
-            int filType = atoi(lineVector[1].c_str());
-            
-            auto arrowIt = find(lineVector.begin(), lineVector.end(), "<->");
-            if(arrowIt != lineVector.end()) {
-                
-                for(auto it  = lineVector.begin() + 2; it != arrowIt; it++) {
-                    if(*it != "+") reactants.push_back((*it));
-                }
-                
-                for(auto it = arrowIt + 1; it != lineVector.end() - 3; it++) {
-                    if(*it != "+")  products.push_back((*it));
-                }
-                
-                chem.camkiiReactions3[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, double>
-                (reactants, products, atof(lineVector[lineVector.size() - 3].c_str()),
-                                      atof(lineVector[lineVector.size() - 2].c_str()),
-                                      atof(lineVector[lineVector.size() - 1].c_str())));
-            }
-            else {
-                cout << "Error reading a camkii reaction type 3. Exiting." << endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-        
-        
-        else if(line.find("SEVERINGREACTION") != string::npos) {
+         else if(line.find("SEVERINGREACTION") != string::npos) {
             
             vector<string> lineVector = split<string>(line);
             
