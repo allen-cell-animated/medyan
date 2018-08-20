@@ -24,7 +24,7 @@ Active developers of the code are the following:
 
 All general correspondence about the code and its applications should be directed to Garegin Papoian. All developer and more specific code, installation, and usage correspondence should be directed to Active developers.
 
-This MEDYAN distribution (v3.2) has the following files and directories:
+This MEDYAN distribution (v3.2.1) has the following files and directories:
 
     *File/Dir*              *Description*
     README.md               Current file
