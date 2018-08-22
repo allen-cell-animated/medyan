@@ -405,8 +405,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         std::cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
 #endif
         //add additional output to check
-        std::cout<< "numI = " << numIter << ", lambda = " << lambda << ", beta = "<<beta<<endl;
-        std::cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
+//        std::cout<< "numI = " << numIter << ", lambda = " << lambda << ", beta = "<<beta<<endl;
+//        std::cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
         //vectorized copy
 //        nvtxRangePushA("SCPF");
 //        std::cout<<"copy forces serial"<<endl;
@@ -426,11 +426,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         auto maxForce = maxF();
         Ms_isminimizationstate = maxForce > GRADTOL;
         
-        std::cout<<"Maximum Force "<<maxForce<<endl;
+//        std::cout<<"Maximum Force "<<maxForce<<endl;
 //        nvtxRangePop();
 #endif
 
-        std::cout<<"M "<<Mc_isminimizationstate[0]<<" "<<Ms_isminimizationstate<<endl;
+//        std::cout<<"M "<<Mc_isminimizationstate[0]<<" "<<Ms_isminimizationstate<<endl;
 //        std::cout<<endl;
         
     }

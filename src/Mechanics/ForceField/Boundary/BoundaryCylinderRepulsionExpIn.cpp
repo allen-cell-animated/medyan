@@ -353,8 +353,8 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
             force1[2] += f0 *norm[2];
             
             
-            
-            if(f0 > 1e4){
+#ifdef DETAILEDOUTPUT
+            if(f0 > 1e6){
                 cout<<"High Boundary force = " << f0 << endl;
                 cout<<"coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[2] << endl;
                 cout<<"R = " << R << ", r = " << r << endl;
@@ -365,9 +365,10 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
                     }
                 }
             }
+
             
             if(r == numeric_limits<double>::infinity()) cout<< "Still have infinity!" << endl;
-            
+#endif
         }
         Cumnc+=nc;
     }}

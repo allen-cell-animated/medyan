@@ -382,11 +382,12 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
         force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                            (coord3[2] - coord2[2])*C );
         
+#ifdef DETAILEDOUTPUT
         double f1sq = force1[0] * force1[0] + force1[1] * force1[1] + force1[2] * force1[2];
         double f2sq = force2[0] * force2[0] + force2[1] * force2[1] + force2[2] * force2[2];
         double f3sq = force3[0] * force3[0] + force3[1] * force3[1] + force3[2] * force3[2];
-        
-        if(f1sq > 1e8 || f2sq > 1e8 || f3sq > 1e8){
+
+        if(f1sq > 1e12 || f2sq > 1e12 || f3sq > 1e12){
             cout<<"High bending cosine force!" << endl;
             cout<<"coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[2] <<endl;
             cout<< "force1 = " << sqrt(f1sq) << endl;
@@ -413,6 +414,7 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
                 }
             }
         }
+#endif
         
 //        double f1[3], f2[3], f3[3];
 //        f1[0] =  k * ((-coord3[0] + coord2[0])*A +
