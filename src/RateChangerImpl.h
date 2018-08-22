@@ -166,6 +166,9 @@ private:
     ///Constant parameters
     double _dutyRatio;
     double _beta;
+    #ifdef PLOSFEEDBACK
+    double _gamma = 0.05;
+    #endif
     //@}
 
     
