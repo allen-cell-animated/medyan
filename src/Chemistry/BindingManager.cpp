@@ -45,6 +45,7 @@ BranchingManager::BranchingManager(ReactionBase* reaction,
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
     string name = rs[B_RXN_INDEX]->getSpecies().getName();
+    cout << "Brancher "<< "name: "<<name<<" "<< __LINE__ << __FILE__ << endl;
     
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
@@ -226,7 +227,8 @@ CaMKIIBindingManager::CaMKIIBindingManager(ReactionBase* reaction,
     
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[B_RXN_INDEX]->getSpecies().getName();
+    string name = rs[C_RXN_INDEX]->getSpecies().getName();
+    cout << "CAMKIIBinding "<< "name: "<<name<<" "<< __LINE__ << __FILE__ << endl;
     
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }
@@ -406,7 +408,9 @@ CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
 
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[B_RXN_INDEX]->getSpecies().getName();
+    string name = rs[C_RXN_INDEX]->getSpecies().getName();
+    cout << "CAMKIIBundling "<< "name: "<<name<<" "<< __LINE__ << __FILE__ << endl;
+
 
     _bindingSpecies = _compartment->findSpeciesByName(name);
 }

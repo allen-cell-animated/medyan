@@ -1554,6 +1554,7 @@ void ChemManager::genFilBindingReactions() {
                 }
                 double nucleationDist = get<5>(r);
                 
+                cout << "CAMKII "<<reactantSpecies.size() << __LINE__ <<" "<< __FILE__ << endl;
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBINDING);
                 
@@ -1689,7 +1690,7 @@ void ChemManager::genFilBindingReactions() {
 					<< endl;
 					exit(EXIT_FAILURE);
 				}
-
+				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
@@ -1699,21 +1700,22 @@ void ChemManager::genFilBindingReactions() {
                 else
                     temp.push_back(offRate);
                 SysParams::BUBBareRate=temp;
-
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
+                cout << "CAMKII "<<reactantSpecies.size() << __LINE__ <<" "<< __FILE__ << endl;
+                ReactionBase* rxn = new Reaction<1,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBUNDLING);
-
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 C->addInternalReaction(rxn);
-
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //create manager
                 CaMKIIBundlingManager* bManager = new CaMKIIBundlingManager(rxn, C, camkiierInt, camkiierName, filType);
                 C->addFilamentBindingManager(bManager);
-
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 bManager->setMIndex(managerIndex++);
-
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //attach callback
                 CaMKIIBundlingCallback camkiicallback(bManager, onRate, offRate, _subSystem);
                 ConnectionBlock rcb(rxn->connect(camkiicallback,false));
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             }
 
             for(auto &r: _chemData.linkerReactions[filType]) {
