@@ -168,6 +168,14 @@ template void* Reaction<6,2>::operator new(size_t size); //added for CaMKII
 template void Reaction<6,2>::operator delete(void* ptr); //added for CaMKII
 #endif
 
+//CaMKII
+template void Reaction<1,0>::updatePropensityImpl();
+template Reaction<1,0>* Reaction<1,0>::cloneImpl(SpeciesPtrContainerVector const&);
+template void Reaction<1,0>::passivateReactionImpl();
+template void* Reaction<1,0>::operator new(size_t size);
+template void Reaction<1,0>::operator delete(void* ptr);
+
+
 template void Reaction<1,1>::updatePropensityImpl();
 template void Reaction<1,1>::activateReactionUnconditionalImpl();
 template void Reaction<1,1>::passivateReactionImpl();
