@@ -27,7 +27,8 @@
 #include "Rand.h"
 
 #define B_RXN_INDEX 2
-#define C_RXN_INDEX 1
+#define C1_RXN_INDEX 1
+#define C2_RXN_INDEX 0
 #define ML_RXN_INDEX 0
 
 //FORWARD DECLARATIONS

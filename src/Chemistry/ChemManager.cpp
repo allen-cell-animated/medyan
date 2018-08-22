@@ -1380,6 +1380,8 @@ void ChemManager::genFilBindingReactions() {
                 }
                 double nucleationDist = get<5>(r);
                 
+
+                cout << "Branching rS_size:"<<reactantSpecies.size()<<" pS_size:" <<productSpecies.size()<<" " << __LINE__ <<" "<< __FILE__ << endl;
                 ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::BRANCHING);
                 
@@ -1554,7 +1556,7 @@ void ChemManager::genFilBindingReactions() {
                 }
                 double nucleationDist = get<5>(r);
                 
-                cout << "CAMKII "<<reactantSpecies.size() << __LINE__ <<" "<< __FILE__ << endl;
+                cout << "CAMKIIBinding rS_size:"<<reactantSpecies.size()<<" pS_size:" <<productSpecies.size()<<" " << __LINE__ <<" "<< __FILE__ << endl;
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBINDING);
                 
@@ -1667,7 +1669,7 @@ void ChemManager::genFilBindingReactions() {
 
 						if(position != SysParams::CParams.camkiierBoundIndex[filType]) {
 							cout <<
-							"Second species listed in a CaMKII binding reaction must be the corresponding camkiier empty site. Exiting."
+							"Second species listed in a CaMKII bundling reaction must be the corresponding camkiier empty site. Exiting."
 							<< endl;
 							exit(EXIT_FAILURE);
 						}
@@ -1679,14 +1681,14 @@ void ChemManager::genFilBindingReactions() {
 					}
 					else {
 						cout <<
-						"A bound species that was included in a CaMKII binding reaction was not initialized. Exiting."
+						"A bound species that was included in a CaMKII bundling reaction was not initialized. Exiting."
 						<< endl;
 						exit(EXIT_FAILURE);
 					}
 				}
 				else{
 					cout <<
-					"Second species listed in a CaMKII binding reaction must be bound. Exiting."
+					"Second species listed in a CaMKII bundling reaction must be bound. Exiting."
 					<< endl;
 					exit(EXIT_FAILURE);
 				}
@@ -1700,7 +1702,7 @@ void ChemManager::genFilBindingReactions() {
                 else
                     temp.push_back(offRate);
                 SysParams::BUBBareRate=temp;
-                cout << "CAMKII "<<reactantSpecies.size() << __LINE__ <<" "<< __FILE__ << endl;
+                cout << "CAMKIIBundling rS_size:"<<reactantSpecies.size()<<" pS_size:" <<productSpecies.size()<<" " << __LINE__ <<" "<< __FILE__ << endl;
                 ReactionBase* rxn = new Reaction<1,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBUNDLING);
                 cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;

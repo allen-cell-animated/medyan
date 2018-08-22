@@ -227,7 +227,7 @@ CaMKIIBindingManager::CaMKIIBindingManager(ReactionBase* reaction,
     
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[C_RXN_INDEX]->getSpecies().getName();
+    string name = rs[C1_RXN_INDEX]->getSpecies().getName();
     cout << "CAMKIIBinding "<< "name: "<<name<<" "<< __LINE__ << __FILE__ << endl;
     
     _bindingSpecies = _compartment->findSpeciesByName(name);
@@ -408,7 +408,8 @@ CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
 
     //find the single binding species
     RSpecies** rs = reaction->rspecies();
-    string name = rs[C_RXN_INDEX]->getSpecies().getName();
+    cout << "CAMKIIBundling "<< __LINE__ <<" "<< __FILE__ << endl;
+    string name = rs[C2_RXN_INDEX]->getSpecies().getName();
     cout << "CAMKIIBundling "<< "name: "<<name<<" "<< __LINE__ << __FILE__ << endl;
 
 
