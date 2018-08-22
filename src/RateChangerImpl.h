@@ -167,7 +167,7 @@ private:
     double _dutyRatio;
     double _beta;
     #ifdef PLOSFEEDBACK
-    gamma = 0.05;
+    double gamma = 0.05;
     #endif
     //@}
 
