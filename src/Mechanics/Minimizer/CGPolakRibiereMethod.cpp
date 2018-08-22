@@ -24,7 +24,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     int N;
     if(steplimit) {
         int beadMaxStep = 5 * Bead::numBeads();
-        N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS)*10; //x10 max steps jl135;
+        N = (beadMaxStep > _MINNUMSTEPS ? beadMaxStep : _MINNUMSTEPS)*10 //x10 max steps jl135;
     }
     else {
         N = numeric_limits<int>::max();
