@@ -37,7 +37,7 @@ void CaMKIIingPoint::updateCoordinate() {
 CaMKIIingPoint::CaMKIIingPoint(Cylinder* c1, Cylinder* c2,
                                short camkiiType, double position)
 
-    : Trackable(true), _c1(c1), _c2(c2), _position(position), _coordinationNum(0),
+    : Trackable(true), _c1(c1), _c2(c2), _position(position), _coordinationNum(1),
       _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
     
     //Find compartment
