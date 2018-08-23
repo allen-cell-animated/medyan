@@ -54,6 +54,7 @@ private:
     
     float _birthTime;  ///<Birth time
     
+    unsigned short _coordinationNum;
     Compartment* _compartment; ///< Where this camkii point is
     
     static Database<CaMKIIingPoint*> _camkiiingPoints; ///< Collection in SubSystem
@@ -109,6 +110,13 @@ public:
     virtual void removeFromSubSystem() {_camkiiingPoints.removeElement(this);}
     //@}
     
+    //@{
+    /// Coordination Number management
+    unsigned short getCoordinationNum() {return _coordinationNum;}
+    void increaseCoordinationNum() {_coordinationNum++;}
+    void decreaseCoordinationNum() {_coordinationNum--;}
+    //@}
+
     /// Get all instances of this class from the SubSystem
     static const vector<CaMKIIingPoint*>& getCaMKIIingPoints() {
         return _camkiiingPoints.getElements();
