@@ -1,8 +1,9 @@
-# 3.2.1 (Released 2018-08-20)
+# 3.2.1 (Released 2018-08-23)
 
 ## Bug fixes
 - Rewrote `Makefile` and fixed the incorrect dependency generation. Also added `PLOSFEEDBACK` to the macro list.
 - Fixed a typo in the source.
+- Fixed some bugs related to mechanochemical feedback when `PLOSFEEDBACK` is defined.
 
 # 3.2 (Released 2018-08-14)
 
