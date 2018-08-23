@@ -98,7 +98,7 @@ public:
     /// with a number of beads numBeads. Filaments starts and ends in the point
     /// determined by position vector.
     Filament(SubSystem* s, short filamentType,
-             vector<vector<double>>& position, int numBeads,
+             const vector<vector<double>>& position, int numBeads,
              string projectionType = "STRAIGHT");
     
     /// This constructor is called when a filament is severed. It creates a filament
@@ -250,11 +250,11 @@ public:
     /// Projection function, returns a vector of coordinates for bead creation
     vector<double> nextBeadProjection(Bead* b, double d, vector<double> director);
     
-    vector<vector<double>> straightFilamentProjection(vector<vector<double>>& v, int numBeads);
-    vector<vector<double>> zigZagFilamentProjection(vector<vector<double>>& v, int numBeads);
-    vector<vector<double>> arcFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> straightFilamentProjection(const vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> zigZagFilamentProjection(const vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> arcFilamentProjection(const vector<vector<double>>& v, int numBeads);
     //Aravind 18 Feb 2016.
-    vector<vector<double>> predefinedFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> predefinedFilamentProjection(const vector<vector<double>>& v, int numBeads);
     //@}
     
     virtual void printSelf();
