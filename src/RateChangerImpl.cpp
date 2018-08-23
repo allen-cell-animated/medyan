@@ -51,9 +51,9 @@ float BranchSlip::changeRate(float bareRate, double force) {
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 double force, int numHeads) {
 #ifdef PLOSFEEDBACK
-    return min(numHeads, numHeads * _dutyRatio + _gamma * force);
+    return min<double>(numHeads, numHeads * _dutyRatio + _gamma * force);
 #else
-    return min(numHeads,numHeads * _dutyRatio + _beta * force / numHeads);
+    return min<double>(numHeads,numHeads * _dutyRatio + _beta * force / numHeads);
 #endif
     
 }
