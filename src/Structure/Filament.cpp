@@ -69,7 +69,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<double>& posit
 }
 
 
-Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& position,
+Filament::Filament(SubSystem* s, short filamentType, const vector<vector<double> >& position,
                    int numBeads, string projectionType)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
@@ -600,7 +600,7 @@ Filament* Filament::sever(int cylinderPosition) {
     return newFilament;
 }
 
-vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::straightFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -621,7 +621,7 @@ vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double
     return coordinate;
 }
 
-vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
+vector<vector<double>> Filament::zigZagFilamentProjection(const vector<vector<double>>& v, int numBeads){
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -761,7 +761,7 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     }
 }
 
-void arcOutward(vector<double>&v1,vector<double>&v2,vector<vector<double>>&v) {
+void arcOutward(vector<double>&v1,vector<double>&v2, const vector<vector<double>>&v) {
     
     vector<double> center,tempv1,tempv2,temp2,temp3(3),
                    temp4(3),mid,mid2(3),mid3(3),temp5;
@@ -807,7 +807,7 @@ void arcOutward(vector<double>&v1,vector<double>&v2,vector<vector<double>>&v) {
                    std::back_inserter(v2), std::plus<double>());
 }
 
-vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::arcFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     
     using namespace boost::numeric::ublas;
 
@@ -824,7 +824,7 @@ vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v
     return coordinates;
 }
 // predefined projection
-vector<vector<double>> Filament::predefinedFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::predefinedFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     return v;
 }
 //@
