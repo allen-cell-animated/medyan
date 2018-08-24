@@ -20,8 +20,8 @@ HEADERS := $(shell find . -name '*.h')
 OBJECTS := $(SOURCES:.cpp=.o)
 
 #CPP COMPILER CHOICE AND FLAGS
-CXX = /usr/bin/g++ -std=c++11
-#CXX = /usr/bin/g++ -std=c++11 -static -pthread -Wl,--whole-archive -lpthread -Wl,--no-whole-archive #added jl135, for Rice Workstation only
+#CXX = /usr/bin/g++ -std=c++11
+CXX = /usr/bin/g++ -std=c++11 -static -pthread -Wl,--whole-archive -lpthread -Wl,--no-whole-archive #added jl135, for Rice Workstation only
 DEBUG = -g
 FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
