@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -69,7 +69,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<double>& posit
 }
 
 
-Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& position,
+Filament::Filament(SubSystem* s, short filamentType, const vector<vector<double> >& position,
                    int numBeads, string projectionType)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
@@ -358,8 +358,9 @@ void Filament::polymerizePlusEnd() {
     //update rates of new back
     _cylinderVector.back()->updateReactionRates();
 #endif
-    
+
     _polyPlusEnd++;
+
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -389,8 +390,9 @@ void Filament::polymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+
     _polyMinusEnd++;
+
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -420,8 +422,8 @@ void Filament::depolymerizePlusEnd() {
     _cylinderVector.front()->updateReactionRates();
 #endif
     
-     _depolyPlusEnd++;;
-    
+    _depolyPlusEnd++;;
+
 }
 
 void Filament::depolymerizeMinusEnd() {
@@ -450,7 +452,7 @@ void Filament::depolymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+
     _depolyMinusEnd++;
 }
 
@@ -478,8 +480,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
 #endif
-    
+
     _nucleationReaction++;
+
 }
 
 
@@ -513,13 +516,13 @@ Filament* Filament::sever(int cylinderPosition) {
         
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
-        
+
         newFilament->_cylinderVector.push_back(c);
         
         //TRANSFER CHILD
         unique_ptr<Component> &&tmp = this->getChild(c);
         this->transferChild(std::move(tmp), (Composite*)newFilament);
-        
+
         //Add beads and cylinder to new parent
         if(i == vectorPosition) {
             unique_ptr<Component> &&tmp2 = this->getChild(c->getFirstBead());
@@ -590,10 +593,14 @@ Filament* Filament::sever(int cylinderPosition) {
     cc2->removeCrossCylinderReactions(cc1);
 #endif
     
+    //Qin
+
+    _severingReaction++;
+    _severingID.push_back(newFilament->getID());
     return newFilament;
 }
 
-vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::straightFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -614,7 +621,7 @@ vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double
     return coordinate;
 }
 
-vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
+vector<vector<double>> Filament::zigZagFilamentProjection(const vector<vector<double>>& v, int numBeads){
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -754,7 +761,7 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     }
 }
 
-void arcOutward(vector<double>&v1,vector<double>&v2,vector<vector<double>>&v) {
+void arcOutward(vector<double>&v1,vector<double>&v2, const vector<vector<double>>&v) {
     
     vector<double> center,tempv1,tempv2,temp2,temp3(3),
                    temp4(3),mid,mid2(3),mid3(3),temp5;
@@ -800,7 +807,7 @@ void arcOutward(vector<double>&v1,vector<double>&v2,vector<vector<double>>&v) {
                    std::back_inserter(v2), std::plus<double>());
 }
 
-vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::arcFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     
     using namespace boost::numeric::ublas;
 
@@ -817,7 +824,7 @@ vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v
     return coordinates;
 }
 // predefined projection
-vector<vector<double>> Filament::predefinedFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::predefinedFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     return v;
 }
 //@

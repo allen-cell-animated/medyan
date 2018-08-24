@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -16,3 +16,6 @@
 std::mt19937 Rand::eng; // Defined with default seed. Must be seeded at initialization.
 std::mt19937 Rand::engFixed(0);
 std::uniform_int_distribution<int> Rand::_int_distr;
+long Rand::counter = 0;
+long Rand::Dcounter = 0;
+long Rand::Ncounter = 0;

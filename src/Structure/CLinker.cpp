@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -30,11 +30,13 @@ CLinker::CLinker(short linkerType, Compartment* c,
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
     SpeciesBound* se2 = _cc2->getCMonomer(_position2)->speciesBound(
                         SysParams::Chemistry().linkerBoundIndex[_filamentType]);
-    
+
     //mark species
     assert(areEqual(sl1->getN(), 0.0) && areEqual(sl2->getN(), 0.0) &&
            areEqual(se1->getN(), 1.0) && areEqual(se2->getN(), 1.0) &&
            "Major bug: Linker binding to an occupied site.");
+
+
     
     sl1->up(); sl2->up();
     se1->down(); se2->down();
@@ -77,7 +79,6 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);
     ConnectionBlock rcb(offRxn->connect(lcallback,false));
-    
     _cc1->addCrossCylinderReaction(_cc2, offRxn);
     setOffReaction(offRxn);
 }

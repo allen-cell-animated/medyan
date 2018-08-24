@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -14,7 +14,9 @@
 #include "BoundaryFF.h"
 
 #include "BoundaryCylinderRepulsion.h"
+#include "BoundaryCylinderRepulsionIn.h"
 #include "BoundaryCylinderRepulsionExp.h"
+#include "BoundaryCylinderRepulsionExpIn.h"
 
 #include "BoundaryBubbleRepulsion.h"
 #include "BoundaryBubbleRepulsionExp.h"
@@ -34,13 +36,24 @@ BoundaryFF::BoundaryFF (string type) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
-    else if(type == "") {}
+    else if(type == "REPULSIONEXPIN") {
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+    }
     else {
         cout << "Boundary FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
     //if pinning to boundaries
     if(SysParams::Mechanics().pinBoundaryFilaments) {
+        _boundaryInteractionVector.emplace_back(
+        new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
+    }
+    
+    //Qin, don't change it for now
+    if(SysParams::Mechanics().pinLowerBoundaryFilaments) {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>());
     }
@@ -67,8 +80,8 @@ void BoundaryFF::whoIsCulprit() {
 
 double BoundaryFF::computeEnergy(double d) {
     
-    double U= 0;
-    double U_i;
+    double U= 0.0;
+    double U_i=0.0;
     
     for (auto &interaction : _boundaryInteractionVector) {
         

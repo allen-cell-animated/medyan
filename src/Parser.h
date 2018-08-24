@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -201,6 +201,8 @@ struct BoundaryType {
     
     string boundaryShape = "";
     string boundaryMove = "";
+    //Qin
+    //string scaleDiffusion = "";
 };
 
 /// Struct to hold the ForceField types
@@ -267,6 +269,9 @@ struct DynamicRateType {
     ///Motor rate changing
     vector<string> dMUnbindingType = {};
     vector<string> dMWalkingType = {};
+
+    //Qin----
+    vector<string> dBUnbindingType = {};
     //@}
 };
 
@@ -352,7 +357,6 @@ public:
     }
     ~Parser() {_inputFile.close();}
 };
-
 
 /// To parse a system input file, initialized by the Controller.
 class SystemParser : public Parser{

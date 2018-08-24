@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -52,6 +52,11 @@ public:
     }
     /// Get parent
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
+    
+    //Qin -----
+    double stretchForce = 0.0;
+    double bendingForce = 0.0;
+    double dihedralForce = 0.0;
     
 private:
     double _eqLength;  ///< Equilibrium length

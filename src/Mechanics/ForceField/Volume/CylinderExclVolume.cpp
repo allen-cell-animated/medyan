@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -21,8 +21,8 @@
 template <class CVolumeInteractionType>
 double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for(auto ci : Cylinder::getCylinders()) {
         
@@ -82,7 +82,6 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces() {
             Bead* b3 = cn->getFirstBead();
             Bead* b4 = cn->getSecondBead();
             double kRepuls = ci->getMCylinder()->getExVolConst();
-            
             _FFType.forces(b1, b2, b3, b4, kRepuls);
         }
     }
@@ -98,7 +97,6 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux() {
         if(!ci->isFullLength()) continue;
         
         for(auto &cn : _neighborList->getNeighbors(ci)) {
-            
             //do not calculate exvol for a branching cylinder
             if(!cn->isFullLength() ||
                cn->getBranchingCylinder() == ci) continue;

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <chrono>
-
+#include "Rand.h"
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
@@ -106,9 +106,13 @@ void RNodeNRM::generateNewRandTau() {
         newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #endif
     setTau(newTau);
+//    std::cout<<"generating R and Tau reaction"<<endl;
+//    printSelf();
+//    std::cout<<endl;
 }
 
 void RNodeNRM::activateReaction() {
+//    std::cout<<"activate Reaction"<<endl;
     generateNewRandTau();
     updateHeap();
 }
@@ -175,11 +179,14 @@ bool ChemNRMImpl::makeStep() {
     
     _t=tau_top;
     syncGlobalTime();
-    
+//    std::cout<<"----------------"<<endl;
+//    rn->printSelf();
+//    std::cout<<"----------------"<<endl;
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
+        std::cout<<"Update R and Tau for fired reaction"<<endl;
         rn->generateNewRandTau();
         rn->updateHeap();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N

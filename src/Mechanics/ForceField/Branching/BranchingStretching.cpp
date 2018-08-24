@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -19,11 +19,14 @@
 #include "Cylinder.h"
 #include "Bead.h"
 
+#include "MathFunctions.h"
+using namespace mathfunc;
+
 template <class BStretchingInteractionType>
 double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto b: BranchingPoint::getBranchingPoints()) {
         
@@ -56,18 +59,21 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d) 
 
 template <class BStretchingInteractionType>
 void BranchingStretching<BStretchingInteractionType>::computeForces() {
-    
+    auto i=0;
     for (auto b: BranchingPoint::getBranchingPoints()) {
-    
+        i++;
         Bead* b1 = b->getFirstCylinder()->getFirstBead();
         Bead* b2 = b->getFirstCylinder()->getSecondBead();
         Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        
+
         double kStretch = b->getMBranchingPoint()->getStretchingConstant();
         double eqLength = b->getMBranchingPoint()->getEqLength();
         double position = b->getPosition();
         
-        _FFType.forces(b1, b2, b3, position, kStretch, eqLength);
+        //Qin
+        //_FFType.forces(b1, b2, b3, position, kStretch, eqLength);
+        double f0 = _FFType.forces(b1, b2, b3, position, kStretch, eqLength);
+        b->getMBranchingPoint()->stretchForce = f0;
     }
 }
 

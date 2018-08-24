@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -36,7 +36,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 
     //compute first gradient
     double curGrad = CGMethod::allFDotF();
-    
+
 	int numIter = 0;
     while (/* Iteration criterion */  numIter < N &&
            /* Gradient tolerance  */  maxF() > GRADTOL) {
@@ -57,7 +57,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //compute new forces
         FFM.computeForcesAux();
-        
+
         //compute direction
         newGrad = CGMethod::allFADotFA();
         prevGrad = CGMethod::allFADotFAP();
@@ -70,7 +70,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         
         //shift gradient
         shiftGradient(beta);
-        
+
         //direction reset if not downhill, or no progress made
         if(CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad)) {
             
@@ -79,7 +79,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         }
         curGrad = newGrad;
     }
-    
+
     if (numIter >= N) {
         cout << endl;
         
@@ -98,5 +98,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     
     //final force calculation
     FFM.computeForces();
+    std::cout<<"End Minimization......"<<endl;
     FFM.computeLoadForces();
 }

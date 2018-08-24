@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -53,6 +53,7 @@ void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
     b1->force[0] +=  f0 * ( b2->coordinate[0] - b1->coordinate[0] );
     b1->force[1] +=  f0 * ( b2->coordinate[1] - b1->coordinate[1] );
     b1->force[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
+
 }
 
 void FilamentStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,

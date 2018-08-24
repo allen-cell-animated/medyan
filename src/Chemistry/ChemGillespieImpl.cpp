@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 
 #include "ChemGillespieImpl.h"
+#include "Rand.h"
 
 #include "Rand.h"
 
@@ -80,10 +81,12 @@ double ChemGillespieImpl::generateTau(double a) {
 
     exponential_distribution<double>::param_type pm(a);
     _exp_distr.param(pm);
+    Rand::counter++;
     return _exp_distr(Rand::eng);
 }
 
 double ChemGillespieImpl::generateUniform() {
+    Rand::counter++;
     return _uniform_distr(Rand::eng);
 }
 

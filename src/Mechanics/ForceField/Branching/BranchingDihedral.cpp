@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -22,8 +22,8 @@
 template <class BDihedralInteractionType>
 double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto b: BranchingPoint::getBranchingPoints()) {
         
@@ -69,7 +69,11 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces() {
         
         double position = b->getPosition();
         
-        _FFType.forces(b1, b2, b3, b4, kDihedr, position);
+        //Qin
+        //_FFType.forces(b1, b2, b3, b4, kDihedr, position);
+        double f0 = _FFType.forces(b1, b2, b3, b4, kDihedr, position);
+        b->getMBranchingPoint()->dihedralForce = f0;
+        
     }
 }
 

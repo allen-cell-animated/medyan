@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -22,6 +22,8 @@
 
 #include "SysParams.h"
 #include "MathFunctions.h"
+
+#include "Boundary.h"
 
 using namespace mathfunc;
 
@@ -1349,6 +1351,8 @@ void ChemManager::genFilBindingReactions() {
                     nucleationZone = NucleationZoneType::BOUNDARY;
                 else if(nzstr == "TOPBOUNDARY")
                     nucleationZone = NucleationZoneType::TOPBOUNDARY;
+                else if(nzstr == "SIDEBOUNDARY")
+                    nucleationZone = NucleationZoneType::SIDEBOUNDARY;
                 else if(nzstr == "MEMBRANE")
                     nucleationZone = NucleationZoneType::MEMBRANE;
                 else {
@@ -2463,7 +2467,7 @@ void ChemManager::genNucleationReactions() {
                 
                 //add the reaction. The products will only be involved in creating the
                 //callback needed to create a new filament
-                ReactionBase* rxn = new Reaction<3,0>(reactantSpecies, get<2>(r), false, C->getVolumeFrac(), -numDiffusingReactant);
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, get<2>(r), false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::FILAMENTCREATION);
                 
                 C->addInternalReaction(rxn);
@@ -2590,8 +2594,20 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
     //will copy all general and bulk reactions
     for(auto C : grid->getCompartments())
         *C = cProto;
-    for(auto C : grid->getCompartments())
-        C->generateAllDiffusionReactions();
+    
+    //auto shape = _subSystem->getBoundary()->getShape();
+    if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder) {
+        std::cout<<"Scaling not implemented for Cylinder boundary and are crucial. "
+                "Exiting..."<<endl;
+        exit(EXIT_FAILURE);
+//        for(auto C : grid->getCompartments())
+//            C->generateAllScaleDiffusionReactions();
+    }
+    
+    else {
+        for(auto C : grid->getCompartments())
+            C->generateAllDiffusionReactions();
+    }
     
     //try initial copy number setting
     updateCopyNumbers();
@@ -2617,7 +2633,6 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
     
     Filament* f = (Filament*)(c->getParent());
     short filType = f->getType();
-    
     //add monomers to cylinder
     for(int i = 0; i < cc->getSize(); i++) {
         CMonomer* m = new CMonomer(filType);
@@ -2673,39 +2688,89 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
             m1->speciesPlusEnd(0)->down();
             
-            CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
-            m2->speciesPlusEnd(0)->up();
-            
             //fill last cylinder with default filament value
             m1->speciesFilament(0)->up();
             
             for(auto j : SysParams::CParams.bindingIndices[filType])
                 m1->speciesBound(j)->up();
             
-            //fill new cylinder with default filament value
-            for(int i = 0; i < cc->getSize() - 1; i++) {
-                cc->getCMonomer(i)->speciesFilament(0)->up();
-                
-                for(auto j : SysParams::CParams.bindingIndices[filType])
-                    cc->getCMonomer(i)->speciesBound(j)->up();
+            if(!SysParams::RUNSTATE){
+#ifdef MECHANICS
+                int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
+                CMonomer* m2 = cc->getCMonomer(nummonomers - 1);
+
+                m2->speciesPlusEnd(0)->up();
+
+                //fill new cylinder with default filament value
+                for(int i = 0; i < nummonomers - 1; i++) {
+                    cc->getCMonomer(i)->speciesFilament(0)->up();
+                    
+                    for(auto j : SysParams::CParams.bindingIndices[filType])
+                        cc->getCMonomer(i)->speciesBound(j)->up();
+                }
+#endif
             }
+            else{
+                CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
+                m2->speciesPlusEnd(0)->up();
+                
+                //fill new cylinder with default filament value
+                for(int i = 0; i < cc->getSize() - 1; i++) {
+                    cc->getCMonomer(i)->speciesFilament(0)->up();
+                    
+                    for(auto j : SysParams::CParams.bindingIndices[filType])
+                        cc->getCMonomer(i)->speciesBound(j)->up();
+                }
+            }
+
             for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
         }
         //this is first one
         else {
+            
             //set back and front
             CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
             m1->speciesPlusEnd(0)->up();
             
-            CMonomer* m2 = cc->getCMonomer(0);
-            m2->speciesMinusEnd(0)->up();
             
-            //fill with default filament value
-            for(int i = 1; i < cc->getSize() - 1; i++) {
-                cc->getCMonomer(i)->speciesFilament(0)->up();
+            if(SysParams::RUNSTATE){
+                CMonomer* m2 = cc->getCMonomer(0);
+                m2->speciesMinusEnd(0)->up();
+                //fill with default filament value
+                for(int i = 1; i < cc->getSize() - 1; i++) {
+                    cc->getCMonomer(i)->speciesFilament(0)->up();
+                    
+                    for(auto j : SysParams::CParams.bindingIndices[filType])
+                        cc->getCMonomer(i)->speciesBound(j)->up();
+                }
                 
-                for(auto j : SysParams::CParams.bindingIndices[filType])
-                    cc->getCMonomer(i)->speciesBound(j)->up();
+                
+            }
+            else {
+#ifdef MECHANICS
+
+                int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
+                CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
+                m1->speciesMinusEnd(0)->up();
+                //fill with default filament value
+                for(int i = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + 1; i < cc->getSize() - 1; i++) {
+                    cc->getCMonomer(i)->speciesFilament(0)->up();
+                    
+                    for(auto j : SysParams::CParams.bindingIndices[filType])
+                        cc->getCMonomer(i)->speciesBound(j)->up();
+                }
+#else
+                CMonomer* m2 = cc->getCMonomer(0);
+                m2->speciesMinusEnd(0)->up();
+                //fill with default filament value
+                for(int i = 1; i < cc->getSize() - 1; i++) {
+                    cc->getCMonomer(i)->speciesFilament(0)->up();
+                    
+                    for(auto j : SysParams::CParams.bindingIndices[filType])
+                        cc->getCMonomer(i)->speciesBound(j)->up();
+                }
+ 
+#endif
             }
         }
     }

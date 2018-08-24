@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -22,8 +22,8 @@
 template <class BBendingInteractionType>
 double BranchingBending<BBendingInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     for (auto b: BranchingPoint::getBranchingPoints()) {
         
@@ -66,7 +66,10 @@ void BranchingBending<BBendingInteractionType>::computeForces() {
         double kBend = b->getMBranchingPoint()->getBendingConstant();
         double eqTheta = b->getMBranchingPoint()->getEqTheta();
       
-        _FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
+        //_FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
+        //Qin
+        double f0 = _FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
+        b->getMBranchingPoint()->bendingForce = f0;
     }
 }
 

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -245,10 +245,10 @@ class ChemNRMImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0 and the number
     /// of reactions to 0
-    ChemNRMImpl() : 
-    ChemSimImpl(),
-    _exp_distr(), _n_reacts(0) { resetTime(); }
-    
+    ChemNRMImpl() :
+        ChemSimImpl(),
+        _exp_distr(), _n_reacts(0) { resetTime(); }
+
     /// Copying is not allowed
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
     

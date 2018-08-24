@@ -11,13 +11,23 @@ project.xcworkspace/
 xcuserdata/
 *.xcscheme
 
+# Project for Visual Studio 2017
+.vs/
+/projects/VC15/**/MEDYAN/
+
 # Generated files
+## LaTeX
+docsdev/**/*.aux
+docsdev/**/*.log
+docsdev/**/*.synctex.gz
+docsdev/**/*.toc
+## C++
 build/
-*.[oa]
-*.pyc
-*.o
-src/Makefile.dep
+*.[oad]
 src/MEDYAN
+src/medyan_test
+## Python
+*.pyc
 
 # Output files
 *.traj
@@ -25,6 +35,6 @@ src/MEDYAN
 # Backup files
 *~.nib
 
-# Project for Visual Studio 2017
-.vs/
-/projects/VC15/**/MEDYAN/
+# Traj
+*.traj
+!analysis/**/*.traj

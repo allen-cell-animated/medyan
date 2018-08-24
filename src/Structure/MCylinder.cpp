@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -22,7 +22,6 @@ MCylinder::MCylinder(short filamentType, double eqLength){
     
     //Set equilibrium length and constants relative to full cylinder length
     setEqLength(filamentType, eqLength);
-    
     //set excluded volume const
     if(!SysParams::Mechanics().VolumeK.empty())
         _kExVol = SysParams::Mechanics().VolumeK[filamentType];
@@ -39,7 +38,6 @@ void MCylinder::setEqLength(short filamentType, double l) {
     // recalculate other constants
     if(!SysParams::Mechanics().FStretchingK.empty())
         _kStretch = SysParams::Mechanics().FStretchingK[filamentType] * fracCylinderSize;
-    
     if(!SysParams::Mechanics().FBendingK.empty())
         _kBend = SysParams::Mechanics().FBendingK[filamentType] / fracCylinderSize;
 }

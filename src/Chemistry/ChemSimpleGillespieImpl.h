@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -34,8 +34,8 @@ class ChemSimpleGillespieImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ChemSimpleGillespieImpl() :
-    ChemSimImpl(),
-    _exp_distr(), _uniform_distr() { resetTime(); }
+        ChemSimImpl(),
+        _exp_distr(), _uniform_distr() { resetTime(); }
     
     /// Copying is not allowed
     ChemSimpleGillespieImpl(const ChemSimpleGillespieImpl &rhs) = delete;

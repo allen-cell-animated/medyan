@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -193,38 +193,38 @@ public:
 
 /// Print Filament plusend types
 class PlusEnd : public Output {
-    
+
 public:
     PlusEnd(string outputFileName, SubSystem* s): Output(outputFileName, s) {}
     ~PlusEnd() {}
-    
+
     virtual void print(int snapshot);
 };
 
 
 /// Print reactions for each filament
 class ReactionOut : public Output {
-    
+
 public:
     ReactionOut(string outputFileName, SubSystem* s): Output(outputFileName, s) {}
     ~ReactionOut() {}
-    
+
     virtual void print(int snapshot);
 };
 
 
 // Print concentration in each compartment
 class Concentrations : public Output {
-    
+
     ChemistryData _chemData; ///< chemistry data of this system
     SubSystem* _subSystem;///< SubSystem ptr
-    
+
 public:
     Concentrations(string outputFileName, SubSystem* s,
                    ChemistryData chemData)
     : Output(outputFileName, s), _subSystem(s), _chemData(chemData) {}
     ~Concentrations() {}
-    
+
     virtual void print(int snapshot);
 };
 

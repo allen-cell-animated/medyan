@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -22,8 +22,8 @@
 template <class BAttachmentInteractionType>
 double BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(double d) {
     
-    double U = 0;
-    double U_i;
+    double U = 0.0;
+    double U_i=0.0;
     
     
     for(auto b : Bead::getPinnedBeads()) {
@@ -52,9 +52,8 @@ double BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(dou
 
 template <class BAttachmentInteractionType>
 void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces() {
-    
+    //Qin
     for(auto b : Bead::getPinnedBeads()) {
-        
         double kAttr = SysParams::Mechanics().pinK;
         _FFType.forces(b, kAttr);
     }

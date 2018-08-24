@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -140,9 +140,8 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                                 double LAMBDAMAX) {
 
     double f = maxF();
-    
     //return zero if no forces
-    if(f == 0.0) return 0.0;
+    if(f == 0.0){return 0.0;}
     
     //calculate first lambda
     double lambda = min(LAMBDAMAX, MAXDIST / f);
@@ -160,13 +159,15 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
-        if(energyChange <= idealEnergyChange) return lambda;
+        if(energyChange <= idealEnergyChange) {
+            return lambda;}
         
         //reduce lambda
         lambda *= LAMBDAREDUCE;
         
         if(lambda <= 0.0 || lambda <= LAMBDATOL)
-            return 0.0;
+        {
+            return 0.0;}
     }
 }
 
@@ -180,24 +181,24 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     double lambda = LAMBDAMAX;
     // The unstretched geometry should be already avaliable before calling this function.
     double currentEnergy = FFM.computeEnergy(0.0);
-    
     //backtracking loop
     while(true) {
-        
         //new energy when moved by lambda
         FFM.updateGeometries(false, lambda);
         double energyLambda = FFM.computeEnergy(lambda);
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
-        if(energyChange <= 0.0) return lambda;
+        if(energyChange <= 0.0) {
+            return lambda;}
         
         //reduce lambda
         lambda *= LAMBDAREDUCE;
         
         //just shake if we cant find an energy min,
         //so we dont get stuck
-        if(lambda <= 0.0 || lambda <= LAMBDATOL)
+        if(lambda <= 0.0 || lambda <= LAMBDATOL){
             return MAXDIST / maxF();
+        }
     }
 }
