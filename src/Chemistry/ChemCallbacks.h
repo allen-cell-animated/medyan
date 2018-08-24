@@ -567,6 +567,7 @@ struct CaMKIIBindingCallback {
         CaMKIIingPoint* b;
         float frate;
         short camkiiType = _bManager->getBoundInt();
+        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
         //choose a random binding site from manager
         auto site = _bManager->chooseBindingSite();
@@ -580,10 +581,12 @@ struct CaMKIIBindingCallback {
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
         auto x2 = c1->getSecondBead()->coordinate;
+        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<" x1: "<<x1.at(0) <<" x2: "<<x2.at(0) << endl;
 
         //get original direction of cylinder
         auto p= midPointCoordinate(x1, x2, pos);
         vector<double> n = twoPointDirection(x1, x2);
+        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<" p: "<<p.at(0)<<" n: "<<n.at(0) << endl;
 
         //get camkii projection
 #ifdef MECHANICS
@@ -627,9 +630,9 @@ struct CaMKIIBindingCallback {
                 auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
                 //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                             }
-            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-
-        b= _ps->addTrackable<CaMKIIingPoint>(c1, c, camkiiType, pos);
+            //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+        vector<Cylinder*> cy{c1,c};
+        b= _ps->addTrackable<CaMKIIingPoint>(cy, camkiiType, pos);
 
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                 auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
@@ -664,8 +667,8 @@ struct CaMKIIBindingCallback {
                     //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                 }
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-
-            b= _ps->addTrackable<CaMKIIingPoint>(c1, c->getCylinder(), camkiiType, pos);
+                vector<Cylinder*> cy{c1,c->getCylinder()};
+                b= _ps->addTrackable<CaMKIIingPoint>(cy, camkiiType, pos);
 
                 x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
@@ -708,9 +711,11 @@ struct CaMKIIBundlingCallback {
     : _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-        CaMKIIingPoint* b;
+    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+    	CaMKIIingPoint* b;
         float frate;
         short camkiiType = _bManager->getBoundInt();
+        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         
         //choose a random binding site from manager
         auto site = _bManager->chooseBindingSite();
@@ -761,7 +766,7 @@ struct CaMKIIBundlingCallback {
         
         //mark first cylinder
         Cylinder* c = f->getCylinderVector().front();
-        c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+        //c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
         
         //create new camkii
             CMonomer* x=c->getCCylinder()->getCMonomer(0);
@@ -772,8 +777,8 @@ struct CaMKIIBundlingCallback {
                 //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                             }
             std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-            
-        b= _ps->addTrackable<CaMKIIingPoint>(c1, c, camkiiType, pos);
+            vector<Cylinder*> cy{c1,c};
+            b= _ps->addTrackable<CaMKIIingPoint>(cy, camkiiType, pos);
             
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                 auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
@@ -808,8 +813,8 @@ struct CaMKIIBundlingCallback {
                     //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                 }
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-                
-            b= _ps->addTrackable<CaMKIIingPoint>(c1, c->getCylinder(), camkiiType, pos);
+                vector<Cylinder*> cy{c1,c->getCylinder()};
+                b= _ps->addTrackable<CaMKIIingPoint>(cy, camkiiType, pos);
                 
                 x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){

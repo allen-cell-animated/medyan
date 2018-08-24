@@ -42,8 +42,7 @@ private:
     unique_ptr<MCaMKIIingPoint> _mCaMKIIingPoint; ///< Pointer to mech camkii point
     unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
     
-    Cylinder* _c1; ///< Mother cylinder
-    Cylinder* _c2; ///< CaMKIIing cylinder
+    vector<Cylinder*> _cylinders;
     
     double _position;  ///< Position on mother cylinder
     
@@ -66,14 +65,15 @@ public:
     vector<double> coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
     
-    CaMKIIingPoint(Cylinder* c1, Cylinder* c2,
+    CaMKIIingPoint(vector<Cylinder*> cylinders,
                    short camkiiType, double position = 0.5);
     virtual ~CaMKIIingPoint() noexcept;
     
     //@{
-    ///Get attached cylinder
-    Cylinder* getFirstCylinder() {return _c1;}
-    Cylinder* getSecondCylinder() {return _c2;}
+    ///Get attached cylinders
+    Cylinder* getCylinder(int n) {return _cylinders.at(n);}
+    Cylinder* getFirstCylinder() {return _cylinders.at(0);}
+    Cylinder* getSecondCylinder() {return _cylinders.at(1);}
     //@}
     
     /// Set chem camkii point

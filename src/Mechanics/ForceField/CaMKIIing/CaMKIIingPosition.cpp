@@ -27,9 +27,9 @@ double CaMKIIingPosition<BPositionInteractionType>::computeEnergy(double d) {
     
     for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
         
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        Bead* b1 = b->getCylinder(0)->getFirstBead();
+        Bead* b2 = b->getCylinder(0)->getSecondBead();
+        Bead* b3 = b->getCylinder(1)->getFirstBead();
         
         double kPosition = b->getMCaMKIIingPoint()->getPositionConstant();
         double position = b->getPosition();
