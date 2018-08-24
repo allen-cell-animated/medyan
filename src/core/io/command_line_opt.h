@@ -342,7 +342,7 @@ public:
     }
 
     /// Evaluate
-    virtual void evaluate()override {
+    virtual bool evaluate()override {
         _evaluated = true;
 
         std::istringstream iss(_field);
