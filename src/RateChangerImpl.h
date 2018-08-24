@@ -1,7 +1,7 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.2
+//               Dynamics of Active Networks, v3.2.1
 //
 //  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
@@ -166,6 +166,9 @@ private:
     ///Constant parameters
     double _dutyRatio;
     double _beta;
+    #ifdef PLOSFEEDBACK
+    double _gamma = 0.05;
+    #endif
     //@}
 
     
