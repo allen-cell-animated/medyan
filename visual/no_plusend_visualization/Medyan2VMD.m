@@ -19,5 +19,5 @@ for i=1:N
     time_vector10=[time_vector10;{r(i).time_vector}];
 end
 VMDstylesnap_polym(r,outputfile);
-save([outputfile,'.mat']);
+% save([outputfile,'.mat']); %Saves the coordinates on a class structure within matlab.
 end
