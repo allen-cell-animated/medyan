@@ -184,7 +184,7 @@ bool ChemNRMImpl::makeStep() {
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
-        std::cout<<"Update R and Tau for fired reaction"<<endl;
+
         rn->generateNewRandTau();
         rn->updateHeap();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
