@@ -80,9 +80,9 @@ bool Logger::defaultLoggerInitialization(const std::string& filepath) {
 
     LoggerOstreamContainer& file = l.addOfstream(filepath);
 #ifdef NDEBUG
-    scrn.disp.turnOnAtLeast(LogLevel::Info);
+    file.disp.turnOnAtLeast(LogLevel::Info);
 #else
-    scrn.disp.turnOnAtLeast(LogLevel::Debug);
+    file.disp.turnOnAtLeast(LogLevel::Debug);
 #endif
     file.dispTime.turnOnAtLeast(LogLevel::Debug);
     file.dispFile.turnOnAtLeast(LogLevel::Note);
