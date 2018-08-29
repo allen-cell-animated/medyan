@@ -10,41 +10,47 @@ namespace logger {
 
 namespace {
 
-    std::string timeLiteralGeneration() {
-        using namespace std::chrono;
+std::string timeLiteralGeneration() {
+    using namespace std::chrono;
 
-        system_clock::time_point p = system_clock::now();
-        milliseconds ms = duration_cast<milliseconds>(p.time_since_epoch());
-        seconds s = duration_cast<seconds>(ms);
+    system_clock::time_point p = system_clock::now();
+    milliseconds ms = duration_cast<milliseconds>(p.time_since_epoch());
+    seconds s = duration_cast<seconds>(ms);
 
-        std::time_t timeToSec = s.count();
-        tm timeinfoToSec;
+    std::time_t timeToSec = s.count();
+    tm timeinfoToSec;
 #ifdef _MSC_VER
-        localtime_s(&timeinfoToSec, &timeToSec);
+    localtime_s(&timeinfoToSec, &timeToSec);
 #elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
-        localtime_r(&timeToSec, &timeinfoToSec);
+    localtime_r(&timeToSec, &timeinfoToSec);
 #else
-        // Not thread safe
-        timeinfoToSec = *localtime(&timeToSec);
+    // Not thread safe
+    timeinfoToSec = *localtime(&timeToSec);
 #endif
 
-        std::size_t msRemain = ms.count() % 1000;
+    std::size_t msRemain = ms.count() % 1000;
 
-        std::stringstream ss;
-        ss << timeinfoToSec.tm_year + 1900 << '-'
-            << std::setfill('0') << std::setw(2) << timeinfoToSec.tm_mon + 1 << '-'
-            << std::setw(2) << timeinfoToSec.tm_mday << ' '
-            << std::setw(2) << timeinfoToSec.tm_hour << ':'
-            << std::setw(2) << timeinfoToSec.tm_min << ':'
-            << std::setw(2) << timeinfoToSec.tm_sec << '.'
-            << std::setw(3) << msRemain;
+    std::stringstream ss;
+    ss << timeinfoToSec.tm_year + 1900 << '-'
+        << std::setfill('0') << std::setw(2) << timeinfoToSec.tm_mon + 1 << '-'
+        << std::setw(2) << timeinfoToSec.tm_mday << ' '
+        << std::setw(2) << timeinfoToSec.tm_hour << ':'
+        << std::setw(2) << timeinfoToSec.tm_min << ':'
+        << std::setw(2) << timeinfoToSec.tm_sec << '.'
+        << std::setw(3) << msRemain;
 
-        return ss.str();
-    }
+    return ss.str();
+}
+
+// Remove by c++14
+struct LogLevelHash {
+    std::size_t operator()(LogLevel lv)const { return static_cast<std::size_t>(lv); }
+};
 
 } // namespace
 
-const std::unordered_map<LogLevel, const char*> logLevelLiteral {
+// Mapping log level to string. Notice that we no longer need to supply hash since c++14.
+const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelLiteral {
     {LogLevel::Debug,   "Debug"},
     {LogLevel::Info,    "Info"},
     {LogLevel::Step,    "Step"},
