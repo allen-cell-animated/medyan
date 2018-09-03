@@ -141,10 +141,18 @@ void Controller::initialize(string inputFile,
     //Activate necessary compartments for diffusion
     _gController->setActiveCompartments();
     
-    //Calculate surface area and volume for reaction rate scaling
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-        C->getSlicedVolumeArea();
+    if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder){
+        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+            C->getSlicedVolumeArea();
+        }
     }
+    else{
+        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+            C->getNonSlicedVolumeArea();
+        }
+    }
+    //Calculate surface area and volume for reaction rate scaling
+    
     
     //read parameters
     p.readChemParams();

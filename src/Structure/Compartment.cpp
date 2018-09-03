@@ -48,6 +48,16 @@ bool Compartment::apply_impl(ReactionVisitor &v) {
     return true;
 }
 
+void Compartment::getNonSlicedVolumeArea() {
+    auto sizex = SysParams::Geometry().compartmentSizeX;
+    auto sizey = SysParams::Geometry().compartmentSizeY;
+    auto sizez = SysParams::Geometry().compartmentSizeZ;
+    
+    _partialArea = {{sizey * sizez, sizey * sizez, sizex * sizez, sizex * sizez, sizex * sizey, sizex * sizey}};
+    
+    _partialVolume = 1.0;
+}
+
 //Calculates volume fraction
 void Compartment::getSlicedVolumeArea() {
     // The calculation requires the
