@@ -632,7 +632,8 @@ struct CaMKIIBindingCallback {
                             }
             //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
         vector<Cylinder*> cy{c1,c};
-        b= _ps->addTrackable<CaMKIIingPoint>(cy, camkiiType, pos);
+            
+        b= _ps->addTrackable<CaMKIIingPoint>(c1,get<1>(site), camkiiType, pos);
 
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                 auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
@@ -668,7 +669,7 @@ struct CaMKIIBindingCallback {
                 }
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
                 vector<Cylinder*> cy{c1,c->getCylinder()};
-                b= _ps->addTrackable<CaMKIIingPoint>(cy, camkiiType, pos);
+                b= _ps->addTrackable<CaMKIIingPoint>(c1, get<1>(site), camkiiType, pos);
 
                 x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
@@ -778,7 +779,7 @@ struct CaMKIIBundlingCallback {
                             }
             std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
             vector<Cylinder*> cy{c1,c};
-            b= _ps->addTrackable<CaMKIIingPoint>(cy, camkiiType, pos);
+            b= _ps->addTrackable<CaMKIIingPoint>(c1, get<1>(site), camkiiType, pos);
             
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                 auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
@@ -813,8 +814,8 @@ struct CaMKIIBundlingCallback {
                     //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                 }
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-                vector<Cylinder*> cy{c1,c->getCylinder()};
-                b= _ps->addTrackable<CaMKIIingPoint>(cy, camkiiType, pos);
+                //vector<Cylinder*> cy{c1,c->getCylinder()};
+                b= _ps->addTrackable<CaMKIIingPoint>(c1, get<1>(site), camkiiType, pos);
                 
                 x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){

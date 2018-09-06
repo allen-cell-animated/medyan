@@ -1018,9 +1018,9 @@ void Controller::run() {
                     
                     Bead* b1 = b->getCylinder(0)->getFirstBead();
                     Bead* b2 = b->getCylinder(0)->getSecondBead();
-                    Bead* b3 = b->getCylinder(1)->getFirstBead();
-                    Bead* b4 = b->getCylinder(1)->getSecondBead();
-                    auto c = b->getCylinder(1);
+                    //Bead* b3 = b->getCylinder(1)->getFirstBead();
+                    //Bead* b4 = b->getCylinder(1)->getSecondBead();
+                    auto c = b->getCylinder(0);
                     auto filType = c->getType();
                     //std::cout<<j<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
                     j++;

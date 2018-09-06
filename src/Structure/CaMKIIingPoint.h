@@ -42,7 +42,7 @@ private:
     unique_ptr<MCaMKIIingPoint> _mCaMKIIingPoint; ///< Pointer to mech camkii point
     unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
     
-    vector<Cylinder*> _cylinders;
+    vector<tuple<Cylinder*, short>> _bonds;
     
     double _position;  ///< Position on mother cylinder
     
@@ -52,8 +52,7 @@ private:
                        ///< camkii point, managed by the Database
     
     float _birthTime;  ///<Birth time
-    
-    unsigned short _coordinationNum;
+
     Compartment* _compartment; ///< Where this camkii point is
     
     static Database<CaMKIIingPoint*> _camkiiingPoints; ///< Collection in SubSystem
@@ -65,16 +64,19 @@ public:
     vector<double> coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
     
-    CaMKIIingPoint(vector<Cylinder*> cylinders,
-                   short camkiiType, double position = 0.5);
+    CaMKIIingPoint(Cylinder* cylinder, short bond, short camkiiType, double position = 0.5);
     virtual ~CaMKIIingPoint() noexcept;
     
     //@{
-    ///Get attached cylinders
-    Cylinder* getCylinder(int n) {return _cylinders.at(n);}
-    Cylinder* getFirstCylinder() {return _cylinders.at(0);}
-    Cylinder* getSecondCylinder() {return _cylinders.at(1);}
+    ///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
+    tuple<Cylinder*, short> getBond(int n) { return _bonds.at(n);}
+    Cylinder* getCylinder(int n) { return get<0>(getBond(n));}
+    void addBond(Cylinder* c, short pos) { _bonds.push_back(tuple<Cylinder*, short>(c, pos));}
+    Cylinder* getFirstCylinder() { return get<0>(_bonds.at(0)); }
+    Cylinder* getSecondCylinder() { return get<0>(_bonds.at(0)); } //TODO fix
+    int getCoordinationNumber() { return _bonds.size(); }
     //@}
+    
     
     /// Set chem camkii point
     void setCCaMKIIingPoint(CCaMKIIingPoint* cCaMKIIingPoint) {
@@ -108,13 +110,6 @@ public:
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _camkiiingPoints.addElement(this);}
     virtual void removeFromSubSystem() {_camkiiingPoints.removeElement(this);}
-    //@}
-    
-    //@{
-    /// Coordination Number management
-    unsigned short getCoordinationNum() {return _coordinationNum;}
-    void increaseCoordinationNum() {_coordinationNum++;}
-    void decreaseCoordinationNum() {_coordinationNum--;}
     //@}
 
     /// Get all instances of this class from the SubSystem
