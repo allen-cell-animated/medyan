@@ -32,13 +32,12 @@ void CaMKIIingPoint::updateCoordinate() {
 	//TODO The coordinate of the CAMKII needs to be on the middle of all the cylinders
     coordinate = midPointCoordinate(get<0>(_bonds.at(0))->getFirstBead()->coordinate,
     								get<0>(_bonds.at(0))->getSecondBead()->coordinate,
-                                    _position);
+                                    get<1>(_bonds.at(0)));
 }
 
-CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short bondPos, short camkiiType, double position)
+CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double bondPos)
 
-    : Trackable(true), _position(position),
-      _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
+    : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
 
     addBond(cylinder, bondPos);
     //Find compartment
@@ -53,7 +52,7 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short bondPos, short camkiiTy
         exit(EXIT_FAILURE);
     }
         
-    int pos = int(position * SysParams::Geometry().cylinderNumMon[getCylinder(0)->getType()]);
+    int pos = int(bondPos * SysParams::Geometry().cylinderNumMon[getCylinder(0)->getType()]);
           //std::cout<<c1->getID()<<" "<<c2->getID()<<" "<<pos<<endl;
 #ifdef CHEMISTRY
     _cCaMKIIingPoint = unique_ptr<CCaMKIIingPoint>(
@@ -199,7 +198,7 @@ void CaMKIIingPoint::printSelf() {
     cout << "CaMKIIing type = " << _camkiiType << ", CaMKII ID = " << _camkiiID << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
-    cout << "Position on mother cylinder (double) = " << _position << endl;
+    cout << "Position on mother cylinder (double) = " << get<1>(_bonds.at(0)) << endl;
     cout << "Birth time = " << _birthTime << endl;
     
     cout << endl;

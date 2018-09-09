@@ -42,10 +42,8 @@ private:
     unique_ptr<MCaMKIIingPoint> _mCaMKIIingPoint; ///< Pointer to mech camkii point
     unique_ptr<CCaMKIIingPoint> _cCaMKIIingPoint; ///< Pointer to chem camkii point
     
-    vector<tuple<Cylinder*, short>> _bonds;
-    
-    double _position;  ///< Position on mother cylinder
-    
+    vector<tuple<Cylinder*, double>> _bonds;
+
     short _camkiiType; ///< Integer specifying the type
     
     int _camkiiID;     ///< Integer ID of this specific
@@ -56,7 +54,7 @@ private:
     Compartment* _compartment; ///< Where this camkii point is
     
     static Database<CaMKIIingPoint*> _camkiiingPoints; ///< Collection in SubSystem
-    
+
     ///Helper to get coordinate
     void updateCoordinate();
     
@@ -64,12 +62,12 @@ public:
     vector<double> coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
     
-    CaMKIIingPoint(Cylinder* cylinder, short bond, short camkiiType, double position = 0.5);
+    CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position = 0.5);
     virtual ~CaMKIIingPoint() noexcept;
     
     //@{
     ///Get attached bonds tuples <cylinders, short> (a cylinder and a position)
-    tuple<Cylinder*, short> getBond(int n) { return _bonds.at(n);}
+    tuple<Cylinder*, double> getBond(int n) { return _bonds.at(n);}
     Cylinder* getCylinder(int n) { return get<0>(getBond(n));}
     void addBond(Cylinder* c, short pos) { _bonds.push_back(tuple<Cylinder*, short>(c, pos));}
     Cylinder* getFirstCylinder() { return get<0>(_bonds.at(0)); }
@@ -90,8 +88,8 @@ public:
     
     //@{
     /// Position management
-    double getPosition() {return _position;}
-    void setPosition(double position) {_position = position;}
+    double getPosition() {return get<1>(_bonds.at(0));} //TODO fix later
+    //void setPosition(double position) {_position = position;}
     //@}
     
     //@{
