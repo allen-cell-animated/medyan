@@ -26,6 +26,7 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Boundary.h"
+#include "Bubble.h"
 
 #include "BindingManager.h"
 
@@ -764,7 +765,10 @@ struct FilamentCreationCallback {
         //set up a random initial position and direction
         vector<double> position;
         vector<double> direction;
-        //Qin
+        
+        //Flag to check if the new filament is outside bubble
+        bool inBubble = false;
+
         if(_ps->getBoundary()->getShape() == BoundaryShape::Cylinder) {
             while(true) {
                 position = GController::getRandomCenterCoordinates(c);
@@ -779,8 +783,23 @@ struct FilamentCreationCallback {
                 
                 //check if within boundary
                 if(_ps->getBoundary()->within(position) &&
-                   _ps->getBoundary()->within(npp))
-                    break;
+                   _ps->getBoundary()->within(npp)){
+                    
+                    //check if inside bubble
+                    for(auto &bu : Bubble::getBubbles()){
+                        auto budist1 = twoPointDistance(position,bu->coordinate);
+                        auto budist2 = twoPointDistance(npp,bu->coordinate);
+                        
+                        if(budist1 < bu->getRadius() && budist2 < bu->getRadius()){
+                            inBubble = true;
+                            break;
+                        }
+                        else inBubble = false;
+                    }
+                    
+                    if(!inBubble) break;
+                }
+
             }
             
             //create filament, set up ends and filament species
@@ -803,8 +822,23 @@ struct FilamentCreationCallback {
                 
                 //check if within boundary
                 if(_ps->getBoundary()->within(position) &&
-                   _ps->getBoundary()->within(npp))
-                    break;
+                   _ps->getBoundary()->within(npp)){
+                    
+                    //check if inside bubble
+                    for(auto &bu : Bubble::getBubbles()){
+                        auto budist1 = twoPointDistance(position,bu->coordinate);
+                        auto budist2 = twoPointDistance(npp,bu->coordinate);
+                        
+                        if(budist1 < bu->getRadius() && budist2 < bu->getRadius()){
+                            inBubble = true;
+                            break;
+                        }
+                        else inBubble = false;
+                    }
+                    
+                    if(!inBubble) break;
+                }
+
             }
             
             //create filament, set up ends and filament species

@@ -135,6 +135,7 @@ public:
     void passivatefilcrossreactions();
     void activatefilcrossreactions();
     
+    
     //@}
     
     /// Get all reactions that this CCylinder has ownership of

@@ -89,6 +89,9 @@ private:
     /// Setup any special structures needed
     void setupSpecialStructures(SystemParser& p);
     
+    // Setup Bubble separately
+    void setupInitialBubble(SystemParser& p);
+    
     ///RUNTIME HELPER FUNCTIONS
     
     /// Move the boundary based on the timestep
@@ -120,6 +123,8 @@ private:
     void pinBoundaryFilaments();
     //Qin
     void pinLowerBoundaryFilaments();
+    
+    void activatePassivateNuReaction(Compartment* C);
     
 public:
     Controller(SubSystem* s);

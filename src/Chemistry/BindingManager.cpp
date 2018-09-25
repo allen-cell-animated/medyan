@@ -433,8 +433,8 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
         
         int oldNOther = m->_bindingSpecies->getN();
         int newNOther = m->numBindingSites();
-        std::cout<<"removed affected mgr rxns "<<abs(oldN-newN)<<"(Old "<<oldN<<" NewN "
-                ""<<newN<<endl;
+        //std::cout<<"removed affected mgr rxns "<<abs(oldN-newN)<<"(Old "<<oldN<<" NewN "
+        //        ""<<newN<<endl;
         m->updateBindingReaction(oldNOther, newNOther);
     }
 }
@@ -589,15 +589,15 @@ vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSites() {
     assert((_possibleBindings.size() != 0)
 	    && "Major bug: Linker binding manager should not have zero binding \
             sites when called to choose a binding site.");
-    std::cout<<"Choose binding sites"<<endl;
+    //std::cout<<"Choose binding sites"<<endl;
     int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
 
     auto it = _possibleBindings.begin();
 
     advance(it, randomIndex);
 
-    auto xxx = _compartment->coordinates();
-    std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
+    //auto xxx = _compartment->coordinates();
+    //std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
 #ifdef DEBUGCONSTANTSEED
     return (*it);
 #else
@@ -1057,8 +1057,8 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSites() {
     auto it = _possibleBindings.begin();
 
     advance(it, randomIndex);
-    auto xxx = _compartment->coordinates();
-    std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
+    //auto xxx = _compartment->coordinates();
+    //std::cout<<"Compartment coords "<<xxx[0]<<" "<<xxx[1]<<" "<<xxx[2]<<endl;
 #ifdef DEBUGCONSTANTSEED
     return (*it);
 #else

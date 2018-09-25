@@ -77,7 +77,7 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
         return make_tuple(filaments, dummy, dummy2, dummy3);
     }
     
-    //Qin
+
     else{
         while (filamentCounter < numFilaments) {
             

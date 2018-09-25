@@ -2540,11 +2540,11 @@ void ChemManager::genNucleationReactions() {
                 else creationCompartment = GController::getRandomCompartment();
                 
                 //now, add the callback
-    #ifdef REACTION_SIGNALING
+#ifdef REACTION_SIGNALING
                 FilamentCreationCallback
                 fcallback(plusEnd, filament, minusEnd, filType, _subSystem, creationCompartment);
                 ConnectionBlock rcb(rxn->connect(fcallback,false));
-    #endif
+#endif
             }
         }
     }

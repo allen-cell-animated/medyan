@@ -169,6 +169,9 @@ void Controller::initialize(string inputFile,
         cout << "Need to specify a chemical input file. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
+    
+    //setupInitialBubble(p);
+    
     _cController->initialize(CAlgorithm.algorithm, ChemData);
     cout << "Done." << endl;
     
@@ -220,6 +223,44 @@ void Controller::initialize(string inputFile,
     
     //setup special structures
     setupSpecialStructures(p);
+}
+
+void Controller::setupInitialBubble(SystemParser& p) {
+    
+    //Read bubble setup, parse bubble input file if needed
+    BubbleSetup BSetup = p.readBubbleSetup();
+    BubbleData bubbles;
+    
+    cout << "---" << endl;
+    cout << "Initializing bubbles...";
+    
+    if(BSetup.inputFile != "") {
+        BubbleParser bp(_inputDirectory + BSetup.inputFile);
+        bubbles = bp.readBubbles();
+    }
+    //add other bubbles if specified
+    BubbleInitializer* bInit = new RandomBubbleDist();
+    
+    auto bubblesGen = bInit->createBubbles(_subSystem->getBoundary(),
+                                           BSetup.numBubbles,
+                                           BSetup.bubbleType);
+    bubbles.insert(bubbles.end(), bubblesGen.begin(), bubblesGen.end());
+    delete bInit;
+    
+    //add bubbles
+    for (auto it: bubbles) {
+        
+        auto coord = get<1>(it);
+        auto type = get<0>(it);
+        
+        if(type >= SysParams::Mechanics().numBubbleTypes) {
+            cout << "Bubble data specified contains an "
+            <<"invalid bubble type. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
+        _subSystem->addTrackable<Bubble>(_subSystem, coord, type);
+    }
+    cout << "Done. " << bubbles.size() << " bubbles created." << endl;
 }
 
 void Controller::setupInitialNetwork(SystemParser& p) {
@@ -546,6 +587,60 @@ void Controller::executeSpecialProtocols() {
     }
 }
 
+void Controller::activatePassivateNuReaction(Compartment* C){
+    
+    bool isPassivated = true;
+    bool inBubble = false;
+    
+    //Find if the compartment center is inside the bubble
+    for(auto &bu : Bubble::getBubbles()){
+        auto dist = twoPointDistance(C->coordinates(), bu->coordinate);
+        
+        if(dist < bu->getRadius()) {
+            inBubble = true;
+            break;
+        }
+    }
+        
+    //Find if there is FILAMENTCREATION.
+    //Remove FILAMENTCREATION if the compartment center is inside the bubble
+    for(int i = 0; i < C->getInternalReactionContainer().reactions().size(); i++) {
+        ReactionBase* r = C->getInternalReactionContainer().reactions()[i].get();
+        if(r->getReactionType() == ReactionType::FILAMENTCREATION){
+            isPassivated = false;
+            if(inBubble){
+                C->removeInternalReaction(r);
+                break;
+            }
+        }
+    }
+        
+    //Add the internal reaction back if out of the bubble
+    if(isPassivated && !inBubble){
+        for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+            for(auto &r: _chemData.nucleationReactions[filType]) {
+                vector<Species*> reactantSpecies;
+                vector<string> reactants = get<0>(r);
+                
+                for(auto &reactant : reactants) {
+                    if(reactant.find("DIFFUSING") != string::npos) {
+                        string name = reactant.substr(0, reactant.find(":"));
+                        reactantSpecies.push_back(C->findSpeciesByName(name));
+                    }
+                }
+                
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, get<2>(r));
+                rxn->setReactionType(ReactionType::FILAMENTCREATION);
+                C->addInternalReaction(rxn);
+                reactantSpecies.clear();
+
+            }
+        }
+        
+    }
+    
+}
+
 void Controller::updatePositions() {
     
     //NEED TO UPDATE CYLINDERS FIRST
@@ -760,6 +855,13 @@ void Controller::run() {
     updatePositions();
     updateNeighborLists();
     
+    //if there is a bubble, update nucleation reaction
+    if(Bubble::getBubbles().size()){
+        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+            activatePassivateNuReaction(C);
+        }
+    }
+    
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
@@ -801,6 +903,13 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
                 updatePositions();
+                
+                //if there is a bubble, update nucleation reaction
+                if(Bubble::getBubbles().size()){
+                    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+                        activatePassivateNuReaction(C);
+                    }
+                }
                 
 #ifdef DYNAMICRATES
                 updateReactionRates();
@@ -866,6 +975,13 @@ void Controller::run() {
             if(stepsLastMinimization >= _minimizationSteps) {
                 _mController->run();
                 updatePositions();
+                
+                //if there is a bubble, update nucleation reaction
+                if(Bubble::getBubbles().size()){
+                    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
+                        activatePassivateNuReaction(C);
+                    }
+                }
                 
 #ifdef DYNAMICRATES
                 updateReactionRates();

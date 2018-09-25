@@ -109,6 +109,7 @@ void CCylinder::removeInternalReaction(ReactionBase* r) {
     }
 }
 
+
 void CCylinder::addCrossCylinderReaction(CCylinder* other,
                                          ReactionBase* r) {
     

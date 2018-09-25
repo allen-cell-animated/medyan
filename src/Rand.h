@@ -42,7 +42,7 @@ public:
         counter++;
         int y =_int_distr(_eng); 
         int x = low + (y % (high - low + 1));
-        std::cout<<"RandomInteger "<<x<<" "<<y<<" "<<high<<" "<<low<<" "<<counter<<" "<<Dcounter<<" "<<Ncounter<<endl;
+        //std::cout<<"RandomInteger "<<x<<" "<<y<<" "<<high<<" "<<low<<" "<<counter<<" "<<Dcounter<<" "<<Ncounter<<endl;
         return x;
     }
 };
