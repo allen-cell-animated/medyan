@@ -32,7 +32,7 @@ public:
     void forces(double *coord, double *f, int *beadSet,
                 double *kbend, double *eqt);
 #ifdef CUDAACCL
-    void optimalblocksnthreads(int nint);
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
 
     double* energy(double *coord, double *f, int *beadSet, double *kbend, double *eqt, int *params);
 

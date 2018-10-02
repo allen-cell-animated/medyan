@@ -1858,7 +1858,7 @@ void ChemManager::genFilBindingReactions() {
                 //add to subsystem and manager
                 MotorBindingManager::_neighborLists.push_back(nl);
                 _subSystem->addNeighborList(nl);
-//#ifdef CUDAACCL
+//#ifdef CUDAACCL_NL
 //                mManager->assigncudavars();
 //#endif
             }

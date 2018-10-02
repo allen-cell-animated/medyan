@@ -28,17 +28,18 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void LinkerStretchingHarmonic::deallocate(){
-    if(!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(stream));
+//    if(!(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
     CUDAcommon::handleerror(cudaFree(ginteraction));
 }
-void LinkerStretchingHarmonic::optimalblocksnthreads( int nint){
-    //CUDA stream create
-    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+void LinkerStretchingHarmonic::optimalblocksnthreads( int nint, cudaStream_t stream_pass){
+//    //CUDA stream create
+//    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    stream = stream_pass;
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -58,28 +59,32 @@ void LinkerStretchingHarmonic::optimalblocksnthreads( int nint){
         blockSize = 0;
 
         cudaOccupancyMaxPotentialBlockSizeVariableSMem(&minGridSize, &blockSize,
-                                                       LinkerStretchingHarmonicenergyz, blockToSmemez, 0);
+//                                                       LinkerStretchingHarmonicenergyz, blockToSmemez, 0);
+                                                       LinkerStretchingHarmonicenergyz, blockToSmemZero, 0);
         blocksnthreadsez.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsez.push_back(blockSize);
         blockSize = 0;
 
         cudaOccupancyMaxPotentialBlockSizeVariableSMem(&minGridSize, &blockSize,
-                                                       LinkerStretchingHarmonicforces, blockToSmem, 0);
+//                                                       LinkerStretchingHarmonicforces, blockToSmem, 0);
+                                                       LinkerStretchingHarmonicforces, blockToSmemZero, 0);
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
+        CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof
+                                                                                    (double), stream));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
         char a[] = "LinkerFF";
         char b[] = "Linker Stretching Harmonic";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
         CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
-        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
-        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpyAsync(gFF, a, 100 * sizeof(char),
+                                            cudaMemcpyHostToDevice, stream));
+        CUDAcommon::handleerror(cudaMemcpyAsync(ginteraction, b, 100 * sizeof(char),
+                                            cudaMemcpyHostToDevice, stream));
 
     }
     else{
@@ -118,44 +123,28 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
 double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                          double *kstr, double *eql, double *pos1, double *pos2, double *z,
                                          int *params) {
-//    nvtxRangePushA("E_wait");
-//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
-//    nvtxRangePop();
-    if(blocksnthreadse[1]>0) {
+//    if(blocksnthreadse[1]>0) {
 
-        LinkerStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-                (double), stream>>>
-                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z, CUDAcommon::getCUDAvars()
-                                  .gculpritID,
-                                  CUDAcommon::getCUDAvars().gculpritFF,
-                                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
-//        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.push_back(&stream);
-//        CUDAcommon::cudavars = cvars;
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        LinkerStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
+//                (double), stream>>>
+//                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z, CUDAcommon::getCUDAvars()
+//                                  .gculpritID,
+//                                  CUDAcommon::getCUDAvars().gculpritFF,
+//                                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
-//        return gU_sum;
-    }
+//    }
 
     if(blocksnthreadsez[1]>0) {
-        LinkerStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
+        auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
+//        LinkerStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
+        LinkerStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (0) *
                                              sizeof(double), stream>> >
-                                            (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z ,
+                                            (coord, f, beadSet, kstr, eql, pos1, pos2,
+                                                    params, gU_i, CUDAcommon::cudavars.gpu_energyvec,  z ,
                                              CUDAcommon::getCUDAvars().gculpritID,
                                              CUDAcommon::getCUDAvars().gculpritFF,
-                                             CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        CUDAcommon::handleerror(cudaGetLastError(),"LinkerStretchingHarmonicenergyz", "LinkerStretchingHarmonic.cu");
-//        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.push_back(&stream);
-//        CUDAcommon::cudavars = cvars;
-//
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        CUDAcommon::handleerror(cudaGetLastError(),"LinkerStretchingHarmonicenergyz", "LinkerStretchingHarmonic.cu");
-//
-//        return gU_sum;
+                                             CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction, boolvarvec.at(0),
+                                                    boolvarvec.at(1));
     }
     if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
         return NULL;
@@ -163,16 +152,12 @@ double* LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
+#ifdef CUDA_INDIVIDUAL_ESUM
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        cudaStreamSynchronize(stream);
-//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(2)<<" "<<bntaddvec2.at
-//                (3)<<" "<<numint<<endl;
         resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
         addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
+#endif
         CUDAcommon::handleerror( cudaGetLastError() ,"LinkerStretchingHarmonicenergy", "LinkerStretchingHarmonic.cu");
         return gU_sum;
     }
@@ -181,9 +166,9 @@ void LinkerStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
                                       double *kstr, double *eql, double *pos1, double
                                       *pos2, int *params, double *Lstretchforce ) {
     if (blocksnthreadsf[1] > 0) {
-        LinkerStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 *
-                                                                                     blocksnthreadsf[1]) *
-                                                                                    sizeof(double), stream >> >
+//        LinkerStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 *
+        LinkerStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (0 *
+                                       blocksnthreadsf[1]) * sizeof(double), stream >> >
                                     (coord, f, beadSet, kstr, eql, pos1, pos2, params, Lstretchforce);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);

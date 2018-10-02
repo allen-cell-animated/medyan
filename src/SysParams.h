@@ -165,7 +165,7 @@ struct ChemParams {
     double makeLinkersStaticTime = 0.0;
     
     //@}
-#ifdef CUDAACCL
+#ifdef CUDAACCL_NL
     string bindingmanagerlist = "";
     vector<double> bmanagerdistances = {};
 #endif

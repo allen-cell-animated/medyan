@@ -66,6 +66,7 @@ protected:
     //@{
 
 #ifdef CUDAACCL
+    int *gpu_mutexlock;
     vector<int> blocksnthreads;
     vector<int> bntaddvector;
     vector<int> bnt;
@@ -115,6 +116,7 @@ protected:
     bool *g_stop1, *g_stop2, *g_s1, *g_s2, *g_ss;
 //    backtrackingvars *bvar, *gpu_bvar1, *gpu_bvar2, *g_b1, *g_b2, *g_bs;
     cudaStream_t s1 = NULL, s2 = NULL, s3 = NULL, *sp1, *sp2, *sps, stream_bt = NULL;
+    cudaStream_t stream_startmin = NULL;
     cudaEvent_t e1 = NULL, e2 = NULL, *ep1, *ep2, *eps;
     cudaEvent_t  e = NULL;
     int *gpu_state;
@@ -165,8 +167,10 @@ protected:
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
+
     double safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                               double LAMBDAMAX, bool *gpu_safestate);
+
     //@}
     
     /// Print forces on all beads

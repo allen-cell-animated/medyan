@@ -79,7 +79,7 @@ void SubSystem::updateBindingManagers() {
     //cudaFree
     endresetCUDA();
 #endif
-#ifdef SERIAL
+#ifdef NLORIGINAL
 
     for(auto C : _compartmentGrid->getCompartments()) {
 

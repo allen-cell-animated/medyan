@@ -460,7 +460,7 @@ void CylinderCylinderNL::reset() {
 
 #ifdef CUDAACCL_NL
     _list.clear();
-//    nvtxRangePushA("NL_Prep_NeighborListImpl1");
+
 //    pair_cIndex_cmp.clear();
     nint = 0;
     pair_cIndex_cnIndex.clear();
@@ -486,7 +486,7 @@ void CylinderCylinderNL::reset() {
         blocksnthreads.push_back(blockSize);
         std::cout<<"NL blocks and threads "<<blocksnthreads.at(0)<<" "<<blocksnthreads.at(1)<<endl;
     }
-//    nvtxRangePop();
+
 #endif
     //loop through all neighbor keys
 #ifdef NLORIGINAL//serial
@@ -511,7 +511,7 @@ void CylinderCylinderNL::reset() {
 #endif
 //        std::cout<<cylinder->_dcIndex<<" "<<_list.size()<<" "<<vec_numpairs<<" "<<_full<<endl;
 #ifdef CUDAACCL_NL
-//    nvtxRangePushA("NL_Prep_NeighborListImpl2");
+
         for(auto cylinder: Cylinder::getCylinders()) {
         //Find surrounding compartments (For now its conservative)
         vector<Compartment*> compartments;
@@ -535,14 +535,13 @@ void CylinderCylinderNL::reset() {
 //        vec_numpairs += _list[cylinder].size();
 //    }
     std::cout<<pair_cIndex_cnIndex.size()<<" "<<nint<<endl;
-//    nvtxRangePop();
-//    nvtxRangePushA("NL_Prep_NeighborListImpl4");
+
 //    int *cpu_pair_cIndex_cnIndex;
 //    cpu_pair_cIndex_cnIndex = new int[pair_cIndex_cnIndex.size()];
 //    for (auto i = 0; i < pair_cIndex_cnIndex.size(); i++)
 //        cpu_pair_cIndex_cnIndex[i] = pair_cIndex_cnIndex.at(i);
-//    nvtxRangePop();
-//    nvtxRangePushA("NL_Prep_NeighborListImpl3");
+
+
 //    int cpu_pair_cIndex_cmp[pair_cIndex_cmp.size()];
 //    for (auto i = 0; i < pair_cIndex_cmp.size(); i++)
 //        cpu_pair_cIndex_cmp[i] = pair_cIndex_cmp.at(i);
@@ -595,18 +594,18 @@ void CylinderCylinderNL::reset() {
                                 "cuda data transfer", " NeighborListImpl.h");
         CUDAcommon::handleerror(cudaMemcpy(gpu_params, cpu_params, 2 * sizeof(double), cudaMemcpyHostToDevice));
 //    }
-//    nvtxRangePop();
+
 //    std::cout<<_rMin<<" "<<_rMax<<endl;
-//    nvtxRangePushA("NL_Exec_NeighborListImpl");
+
     resetintvariableCUDA<<<1,1>>>(gpu_numpairs);
     CylinderCylinderNLCUDA<<<blocksnthreads[0],blocksnthreads[1]>>> (coord_com, beadSet, cylID, filID, cmpIDlist,
             fvecposition, gpu_pair_cIndex_cnIndex, gpu_params, gpu_numpairs, gpu_NL, gpu_params2);
 //    CUDAcommon::handleerror(cudaDeviceSynchronize());
     //TODO make this Async and synchronize stream before binding manager call.
     cudaMemcpy(numpairs, gpu_numpairs,  sizeof(int), cudaMemcpyDeviceToHost);
-//    nvtxRangePop();
+
     std::cout<<"Number of neighbors "<<numpairs[0]<<" "<<vec_numpairs<<" Full "<<_full<<endl;
-//    nvtxRangePushA("NL_End_NeighborListImpl");
+
     if(true){
         //copy forces back to CUDA
 //        cudaMemcpy(numpairs, gpu_numpairs,  sizeof(int), cudaMemcpyDeviceToHost);
@@ -663,7 +662,6 @@ void CylinderCylinderNL::reset() {
     CUDAcommon::handleerror(cudaFree(gpu_params2),"cudaFree","NeighborListImpl.cu");
 
     CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree","NeighborListImpl.cu");
-//    nvtxRangePop();
 #endif
 }
 

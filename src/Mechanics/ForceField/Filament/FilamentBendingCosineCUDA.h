@@ -79,7 +79,7 @@ __global__ void FilamentBendingCosineenergy(double *coord, double *force, int *b
                 c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
             }
         }
-        __syncthreads();
+
         if (thread_idx < nint) {
             L1 = sqrt(scalarProduct(c1, c2,
                                     c1, c2, 3 * threadIdx.x));
@@ -118,51 +118,60 @@ __global__ void FilamentBendingCosineenergy(double *coord, double *force, int *b
 }
 
 __global__ void FilamentBendingCosineenergyz(double *coord, double *f, int *beadSet, double *kbend,
-                                             double *eqt, int *params, double *U_i, double *z, int *culpritID,
+                                             double *eqt, int *params, double *U_i,
+                                             double *U_vec, double *z, int *culpritID,
                                              char* culpritFF, char* culpritinteraction, char* FF, char*
-                                             interaction) {
-    if(z[0] != 0.0) {
+                                             interaction, bool* conv_state1, bool*
+                                             conv_state2){
+    if(conv_state1[0]||conv_state2[0]) return;
+
+    if(z[0] == 0.0) {
         extern __shared__ double s[];
         double *c1 = s;
         double *c2 = &c1[3 * blockDim.x];
         double *c3 = &c2[3 * blockDim.x];
-        double *f1 = &c3[3 * blockDim.x];
-        double *f2 = &f1[3 * blockDim.x];
-        double *f3 = &f2[3 * blockDim.x];
         double L1, L2, L1L2, l1l2, phi, dPhi;
-
+//        double *c1, *c2, *c3;
         int nint = params[1];
         int n = params[0];
+        int offset = max(params[2] -1 , 0);
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
         if (thread_idx < nint) {
-            U_i[thread_idx] = 0.0;
+//            if(thread_idx == 0){
+//                printf("Offset %d \n", offset);
+//            }
             for (auto i = 0; i < 3; i++) {
+                U_i[thread_idx] = 0.0;
                 c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
                 c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
                 c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
-                f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
-                f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
-                f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
             }
+//        }
+//
+//        if (thread_idx < nint) {
+            U_i[thread_idx ] = 0.0;
 
-        }
-        __syncthreads();
+//            c1 = &coord[3 * beadSet[n * thread_idx]];
+//            c2 = &coord[3 * beadSet[n * thread_idx + 1]];
+//            c3 = &coord[3 * beadSet[n * thread_idx + 2]];
+//            L1 = sqrt(scalarProduct(c1, c2, c1, c2));
+//            L2 = sqrt(scalarProduct(c2, c3, c2, c3));
 
-        if (thread_idx < nint) {
-            L1 = sqrt(scalarProductStretched(c1, f1, c2, f2,
-                                             c1, f1, c2, f2, z[0], 3 * threadIdx.x));
-            L2 = sqrt(scalarProductStretched(c2, f2, c3, f3,
-                                             c2, f2, c3, f3, z[0], 3 * threadIdx.x));
+            L1 = sqrt(scalarProduct(c1, c2,
+                                    c1, c2, 3 * threadIdx.x));
+            L2 = sqrt(scalarProduct(c2, c3,
+                                    c2, c3, 3 * threadIdx.x));
 
             L1L2 = L1 * L2;
-            l1l2 = scalarProductStretched(c1, f1, c2, f2,
-                                          c2, f2, c3, f3, z[0], 3 * threadIdx.x);
+            l1l2 = scalarProduct(c1, c2, c2, c3, 3 * threadIdx.x);
+//            l1l2 = scalarProduct(c1, c2, c2, c3);
 
             phi = safeacos(l1l2 / L1L2);
             dPhi = phi - eqt[thread_idx];
 
             U_i[thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
+            U_vec[offset + thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
             if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
                 || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                 U_i[thread_idx] = -1.0;
@@ -181,6 +190,84 @@ __global__ void FilamentBendingCosineenergyz(double *coord, double *f, int *bead
                 assert(0);
                 __syncthreads();
             }
+        }
+    }
+
+    else if(z[0] != 0.0) {
+        extern __shared__ double s[];
+        double *c1 = s;
+        double *c2 = &c1[3 * blockDim.x];
+        double *c3 = &c2[3 * blockDim.x];
+        double *f1 = &c3[3 * blockDim.x];
+        double *f2 = &f1[3 * blockDim.x];
+        double *f3 = &f2[3 * blockDim.x];
+        double L1, L2, L1L2, l1l2, phi, dPhi;
+//        double *c1, *c2, *c3, *f1, *f2, *f3;
+        int nint = params[1];
+        int n = params[0];
+        int offset = max(params[2] -1 , 0 );
+        const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+
+        if (thread_idx < nint) {
+//            if(thread_idx == 0){
+//                printf("Offset %d \n", offset);
+//            }
+            U_i[thread_idx] = 0.0;
+            for (auto i = 0; i < 3; i++) {
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
+                f1[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx] + i];
+                f2[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 1] + i];
+                f3[3 * threadIdx.x + i] = f[3 * beadSet[n * thread_idx + 2] + i];
+            }
+
+//        }
+//
+//        if (thread_idx < nint) {
+
+//            c1 = &coord[3 * beadSet[n * thread_idx]];
+//            c2 = &coord[3 * beadSet[n * thread_idx + 1]];
+//            c3 = &coord[3 * beadSet[n * thread_idx + 2]];
+//
+//            f1 = &f[3 * beadSet[n * thread_idx]];
+//            f2 = &f[3 * beadSet[n * thread_idx + 1]];
+//            f3 = &f[3 * beadSet[n * thread_idx + 2]];
+//
+//            L1 = sqrt(scalarProductStretched(c1, f1, c2, f2, c1, f1, c2, f2, z[0]));
+//            L2 = sqrt(scalarProductStretched(c2, f2, c3, f3, c2, f2, c3, f3, z[0]));
+            L1 = sqrt(scalarProductStretched(c1, f1, c2, f2,
+                                             c1, f1, c2, f2, z[0], 3 * threadIdx.x));
+            L2 = sqrt(scalarProductStretched(c2, f2, c3, f3,
+                                             c2, f2, c3, f3, z[0], 3 * threadIdx.x));
+            L1L2 = L1 * L2;
+            l1l2 = scalarProductStretched(c1, f1, c2, f2,
+                                          c2, f2, c3, f3, z[0], 3 * threadIdx.x);
+//            l1l2 = scalarProductStretched(c1, f1, c2, f2, c2, f2, c3, f3, z[0]);
+
+            phi = safeacos(l1l2 / L1L2);
+            dPhi = phi - eqt[thread_idx];
+
+            U_i[thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
+            U_vec[offset + thread_idx] = kbend[thread_idx] * (1 - cos(dPhi));
+/*            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
+                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+                U_i[thread_idx] = -1.0;
+                culpritID[0] = thread_idx;
+                culpritID[1] = -1;
+                int j = 0;
+                while (FF[j] != 0) {
+                    culpritFF[j] = FF[j];
+                    j++;
+                }
+                j = 0;
+                while (interaction[j] != 0) {
+                    culpritinteraction[j] = interaction[j];
+                    j++;
+                }
+                assert(0);
+                __syncthreads();
+            }*/
 
         }
     }

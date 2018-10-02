@@ -5,7 +5,7 @@
 #ifndef CUDA_VEC_CUDACOMMON_H
 #define CUDA_VEC_CUDACOMMON_H
 
-#ifdef CUDAACCL
+#if defined(CUDAACCL) || defined(CUDATIMETRACK)
 #include <vector>
 #include <list>
 #include <src/Mechanics/ForceField/Filament/FilamentStretchingHarmonic.h>
@@ -33,8 +33,10 @@ struct CUDAvars {
     float vectorize = 0.0;
     double * gpu_energy = NULL;
     bool * gpu_btstate = NULL;
+#ifdef CUDAACCL
     vector<cudaStream_t*> streamvec;
     vector<cudaEvent_t> eventvec;
+#endif
     int* culpritID = NULL;
     int* gculpritID = NULL;
     char* gculpritFF = NULL;
@@ -43,6 +45,9 @@ struct CUDAvars {
     char* culpritinteraction = NULL;
     size_t memincuda = 0;
     bool conservestreams = true;
+    int offset_E = 0;
+    double *gpu_energyvec = NULL;
+    vector<bool*> backtrackbools;
 //    cudaEvent_t *event;
 
 //    float Ccforce = 0.0;
@@ -68,12 +73,52 @@ struct CylCylNLvars {
 //    int *gpu_cylvecpospercmp;
 };
 
+struct SERLtime {
+    double TvectorizeFF = 0.0;
+    double TcomputeE = 0.0;
+    double TcomputeEiter = 0.0;
+    int Ecount = 0;
+    double TcomputeF= 0.0;
+    double Tlambda = 0.0;
+    double TshiftGrad= 0.0;
+    double TmaxF= 0.0;
+    double Tcalculatedot = 0.0;
+    vector<double>TvecvectorizeFF;
+    vector<double>TveccomputeE;
+    vector<double>TveccomputeF;
+    vector<double>Tlambdavec;
+    vector<double>Tlambdap;
+    vector<double>Tlambdapcount;
+};
+
+struct CUDAtime {
+    double TvectorizeFF = 0.0;
+    double TcomputeE = 0.0;
+    double TcomputeEiter = 0.0;
+    int Ecount = 0;
+    double TcomputeF= 0.0;
+    double Tlambda = 0.0;
+    double TshiftGrad= 0.0;
+    double TmaxF= 0.0;
+    double Tcalculatedot = 0.0;
+    double Tstartmin = 0.0;
+    vector<double>TvecvectorizeFF;
+    vector<double>TveccomputeE;
+    vector<double>TveccomputeF;
+    vector<double>Tlambdavec;
+    vector<double>Tlambdap;
+    vector<double>Tlambdapcount;
+};
+
 class CUDAcommon{
 public:
     static CUDAvars cudavars;
     static CylCylNLvars cylcylnlvars;
+    static SERLtime serltime;
+    static CUDAtime cudatime;
     static const CUDAvars& getCUDAvars(){return cudavars;}
     static const CylCylNLvars& getCylCylNLvars(){return cylcylnlvars;}
+#ifdef CUDAACCL
     static void handleerror(cudaError_t a){
         if(a !=cudaSuccess){
             cout<<cudaGetErrorString(a)<<endl;
@@ -127,7 +172,7 @@ public:
         cout << "The culprit was ... " << tag1 << endl;
         cout << "Culprit interaction = " << tag2 << endl;
     }
-
+#endif
 };
 #endif
 #endif

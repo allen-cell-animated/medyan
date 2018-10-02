@@ -49,7 +49,6 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 //    CUDAcommon::handleerror(cudaEventCreate( &start));
 //    CUDAcommon::handleerror(cudaEventCreate( &stop));
 //    CUDAcommon::handleerror(cudaEventRecord( start, 0));
-//    nvtxRangePushA("CVFF");
 
     int numInteractions =BranchingPoint::getBranchingPoints().size();
     _FFType.optimalblocksnthreads(numInteractions);
@@ -69,8 +68,6 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice));
-
-//    nvtxRangePop();
 
 #endif
 }
@@ -101,7 +98,7 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord,
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-//    nvtxRangePushA("CCEBD");
+
 
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_params);
@@ -111,18 +108,15 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord,
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_d,
                             gpu_params);
 //    }
-//    nvtxRangePop();
+
 #endif
 #ifdef SERIAL
-//    nvtxRangePushA("SCEBD");
-
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kdih, pos);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kdih, pos, d);
-//    nvtxRangePop();
 #endif
-#ifdef SERIAL_CUDACROSSCHECK
+#if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
     double cuda_energy[1];
     if(gU_i == NULL)
@@ -131,7 +125,7 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord,
         CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
                                            cudaMemcpyDeviceToHost));
     }
-//    std::cout<<"Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
+    std::cout<<getName()<<" Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
 #endif
     return U_ii;
 
@@ -146,25 +140,24 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(double *coord, d
     double * gpu_force;
 
     if(cross_checkclass::Aux){
-//        nvtxRangePushA("CCFBD");
 
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_params);
-//        nvtxRangePop();
+
     }
     else {
-//        nvtxRangePushA("CCFBD");
+
 
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_params);
-//        nvtxRangePop();
+
     }
 #endif
 #ifdef SERIAL
-//    nvtxRangePushA("SCFBD");
+
 
     _FFType.forces(coord, f, beadSet, kdih, pos);
-//    nvtxRangePop();
+
 #endif
 }
 

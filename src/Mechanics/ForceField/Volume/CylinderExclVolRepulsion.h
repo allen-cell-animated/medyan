@@ -34,7 +34,7 @@ public:
     void forces(double *coord, double *f, int *beadSet, double *krep);
 
 #ifdef CUDAACCL
-    void optimalblocksnthreads(int nint);
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
     void deallocate();
     double* energy(double *coord, double *f, int *beadSet, double *krep, int *params);
 

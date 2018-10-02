@@ -49,6 +49,7 @@ private:
 //    CUDAvars cvars;
     double *F_i;
     double *gpu_Lstretchforce;
+    cudaStream_t  stream = NULL;
 #endif
     
 public:

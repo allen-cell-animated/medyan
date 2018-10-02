@@ -61,6 +61,7 @@ CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 LDLIBS = -L/usr/local/lib/ -lboost_system
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
 LDFLAGS_CXX = $(FAST_CXX)
+USING_CUDA := true
 
 #################MAIN USER MACROS#################
 #
@@ -79,7 +80,8 @@ CPPFLAGS += -DDYNAMICRATES
 #neighbors list calculations
 CPPFLAGS += -DNLORIGINAL
 #serialized energy minimization
-CPPFLAGS += -DSERIAL
+CPPGLAGS += -DCUDAACCL
+#CPPFLAGS += -DSERIAL
 CPPFLAGS += -DDETAILEDOUTPUT
 CPPFLAGS += -DDEBUGCONSTANTSEED
 
@@ -129,6 +131,7 @@ all: medyan
 
 medyan: $(OBJECTS)
 ifeq ($(USING_CUDA), true)
+	echo "USING NVCC"
 	$(NVCC) -o MEDYAN $(OBJECTS) $(LDLIBS_NVCC)
 else
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
@@ -155,7 +158,7 @@ ifeq ($(USING_CUDA), true)
 	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 	[ -s $@ ] || rm -f $@'
 else
-	$(SHELL) -ec '$(CXX) -MM -xc++ $(CPPFLAGS_CXX) $(INCLUDES)  $(filter %.cpp %.cu,$^) \
+	$(SHELL) -ec '$(CXX) -xc++ $(CPPFLAGS_CXX) $(INCLUDES)  $(filter %.cpp %.cu,$^) \
 	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 	[ -s $@ ] || rm -f $@'
 endif

@@ -23,7 +23,6 @@
 
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::vectorize() {
-
     beadSet = new int[n * Cylinder::getCylinders().size()];
     kstr = new double[Cylinder::getCylinders().size()];
     eql = new double[Cylinder::getCylinders().size()];
@@ -41,34 +40,52 @@ void FilamentStretching<FStretchingInteractionType>::vectorize() {
     }
     //CUDA
 #ifdef CUDAACCL
-//    nvtxRangePushA("CVFF");
-//    F_i = new double[3 * Bead::getBeads().size()];
+#ifdef CUDATIMETRACK
+    //stream create
+    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+
+    chrono::high_resolution_clock::time_point tbegin, tend;
+    tbegin = chrono::high_resolution_clock::now();
+#endif
     int numInteractions = Cylinder::getCylinders().size();
-    _FFType.optimalblocksnthreads(numInteractions);
+    _FFType.optimalblocksnthreads(numInteractions, stream);
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, n * numInteractions * sizeof(int)),"cuda data "
             "transfer", " FilamentStretching.cu");
-    CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * numInteractions * sizeof(int),
-                                       cudaMemcpyHostToDevice),"cuda data transfer", " FilamentStretching.cu");
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_beadSet, beadSet, n * numInteractions *
+                            sizeof(int), cudaMemcpyHostToDevice, stream),"cuda data transfer", " FilamentStretching.cu");
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kstr, numInteractions * sizeof(double)),"cuda data transfer",
                             " FilamentStretching.cu");
-    CUDAcommon::handleerror(cudaMemcpy(gpu_kstr, kstr, numInteractions * sizeof(double), cudaMemcpyHostToDevice),
-                            "cuda data transfer", " FilamentStretching.cu");
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_kstr, kstr, numInteractions * sizeof
+                            (double), cudaMemcpyHostToDevice, stream), "cuda data transfer", " FilamentStretching.cu");
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eql, numInteractions * sizeof(double)),"cuda data transfer",
                             " FilamentStretching.cu");
-    CUDAcommon::handleerror(cudaMemcpy(gpu_eql, eql, numInteractions * sizeof(double), cudaMemcpyHostToDevice),
-                            "cuda data transfer", " FilamentStretching.cu");
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_eql, eql, numInteractions * sizeof(double),
+                            cudaMemcpyHostToDevice, stream), "cuda data transfer", " FilamentStretching.cu");
 
     vector<int> params;
     params.push_back(int(n));
     params.push_back(numInteractions);
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)),"cuda data transfer",
-                            " FilamentStretching.cu");
-    CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice),
+    params.push_back(CUDAcommon::cudavars.offset_E);
+    //set offset
+    CUDAcommon::cudavars.offset_E += numInteractions;
+//    std::cout<<"offset "<<getName()<<" "<<CUDAcommon::cudavars.offset_E<<endl;
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 3 * sizeof(int)),"cuda data"
+                                    " transfer", " FilamentStretching.cu");
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_params, params.data(), 3 * sizeof(int),
+                                       cudaMemcpyHostToDevice, stream),
             "cuda data transfer", " FilamentStretching.cu");
-//    nvtxRangePop();
+#ifdef CUDATIMETRACK
+//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentStretching.cu",
+//                            "vectorizeFF");
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(tend - tbegin);
+    CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
+    CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
+#endif
 #endif
 
     //
@@ -81,6 +98,8 @@ void FilamentStretching<FStretchingInteractionType>::deallocate() {
     delete [] kstr;
     delete [] eql;
 #ifdef CUDAACCL
+    if(!(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     _FFType.deallocate();
     CUDAcommon::handleerror(cudaFree(gpu_beadSet));
     CUDAcommon::handleerror(cudaFree(gpu_kstr));
@@ -97,12 +116,16 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
     double* gU_i;
     U_ii=0.0;
 #ifdef CUDAACCL
+#ifdef CUDATIMETRACK
+    chrono::high_resolution_clock::time_point tbegin, tend;
+    tbegin = chrono::high_resolution_clock::now();
+#endif
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 //    std::cout<<"Fil Stretching Forces"<<endl;
-//    nvtxRangePushA("CCEFS");
+
 
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
@@ -112,16 +135,34 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_d,
                             gpu_params);
 //    }
-//    nvtxRangePop();
+#ifdef CUDATIMETRACK
+//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu",
+//                            "computeEnergy");
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(tend - tbegin);
+    CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
+    CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
+    CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
+#endif
 #endif
 #ifdef SERIAL
-//    nvtxRangePushA("SCEFS");
+#ifdef CUDATIMETRACK
+    chrono::high_resolution_clock::time_point tbegin, tend;
+    tbegin = chrono::high_resolution_clock::now();
+#endif
 
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, d);
-//    nvtxRangePop();
+
+#ifdef CUDATIMETRACK
+    tend = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runs(tend - tbegin);
+    CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
+    CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
+    CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
+#endif
 #endif
 //    whoisCulprit();
     return U_ii;
@@ -129,29 +170,40 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double* coo
 
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord, double *f) {
+#ifdef CUDATIMETRACK
+    chrono::high_resolution_clock::time_point tbegin, tend;
+    tbegin = chrono::high_resolution_clock::now();
+#endif
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
     double * gpu_force;
     if(cross_checkclass::Aux){
-//        nvtxRangePushA("CCFFS");
-
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
-//        nvtxRangePop();
     }
     else {
-//        nvtxRangePushA("CCFFS");
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kstr, gpu_eql, gpu_params);
-//        nvtxRangePop();
     }
-
+#endif
+#ifdef CUDATIMETRACK
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(tend - tbegin);
+    CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
+    CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
+    tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef SERIAL
-//    nvtxRangePushA("SCFFS");
     _FFType.forces(coord, f, beadSet, kstr, eql);
+#endif
+#ifdef CUDATIMETRACK
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runs(tend - tbegin);
+    CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
+    CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
+#endif
 #ifdef DETAILEDOUTPUT
     double maxF = 0.0;
     double mag = 0.0;
@@ -167,9 +219,6 @@ void FilamentStretching<FStretchingInteractionType>::computeForces(double *coord
     std::cout<<"max "<<getName()<<" "<<maxF<<" nint "<<Cylinder::getCylinders().size()
              <<endl;
 #endif
-//    nvtxRangePop();
-#endif
-
 }
 
 //template <class FStretchingInteractionType>

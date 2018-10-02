@@ -46,7 +46,6 @@ private:
     int *nneighbors;
 #ifdef CUDAACCL
     double *gU;
-    cudaStream_t  stream;
     int *gpu_beadSet;
     double *gpu_krep;
     double *gpu_slen;
@@ -56,6 +55,7 @@ private:
     int *gpu_nintperbe;
 //    CUDAvars cvars;
     double *F_i;
+    cudaStream_t stream = NULL;
 #endif
     
 public:

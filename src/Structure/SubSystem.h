@@ -161,7 +161,7 @@ public:
     /// Reset all neighbor lists in subsystem
     void resetNeighborLists() {
 #ifdef CUDAACCL_NL
-        //        nvtxRangePushA("NL_Prep_SubSystem");
+
                 coord = new double[CGMethod::N];
                 coord_com = new double[3 * Cylinder::getCylinders().size()];
                 beadSet = new int[2 * Cylinder::getCylinders().size()];
@@ -350,7 +350,7 @@ public:
         //                                           ->getCompartments().size() *sizeof(int),
         //                                           cudaMemcpyHostToDevice));
                 //@}
-        //        nvtxRangePop();
+
 #endif
 //        std::cout<<_neighborLists.getElements().size()<<endl;
         for (auto nl: _neighborLists.getElements())

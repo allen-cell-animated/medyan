@@ -78,7 +78,10 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     }
     //CUDA
 #ifdef CUDAACCL
-    nvtxRangePushA("CVFF");
+#ifdef CUDATIMETRACK
+    chrono::high_resolution_clock::time_point tbegin, tend;
+    tbegin = chrono::high_resolution_clock::now();
+#endif
 
 //    cudaEvent_t start, stop;
 //    CUDAcommon::handleerror(cudaEventCreate( &start));
@@ -89,29 +92,49 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 //    if(blocksnthreads[0]==1) blocksnthreads.push_back( numInteractions);
 ////    if(blocksnthreads[0]==1) blocksnthreads.push_back( 32*(int(numInteractions/32 +1)) );
 //    else blocksnthreads.push_back(THREADSPERBLOCK);
-    _FFType.optimalblocksnthreads(numInteractions);
+
+    //CUDA stream create
+    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream),"cuda stream", "CylinderExclVolume.cu");
+    _FFType.optimalblocksnthreads(numInteractions, stream);
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, n * numInteractions * sizeof(int)),"cuda data transfer",
                             "CylinderExclVolume.cu");
-    CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * numInteractions * sizeof(int), cudaMemcpyHostToDevice),
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_beadSet, beadSet, n * numInteractions *
+                                    sizeof(int), cudaMemcpyHostToDevice, stream),
                             "cuda data transfer", "CylinderExclVolume.cu");
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_krep, numInteractions * sizeof(double)),"cuda data transfer",
                             "CylinderExclVolume.cu");
-    CUDAcommon::handleerror(cudaMemcpy(gpu_krep, krep, numInteractions * sizeof(double), cudaMemcpyHostToDevice),
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_krep, krep, numInteractions * sizeof
+                            (double), cudaMemcpyHostToDevice, stream),
                             "cuda data transfer", "CylinderExclVolume.cu");
     vector<int> params;
     params.push_back(int(n));
     params.push_back(numInteractions);
+    params.push_back(CUDAcommon::cudavars.offset_E);
+//    std::cout<<"CUDA exvol offsetE "<<CUDAcommon::cudavars.offset_E<<endl;
+    //set offset
+    CUDAcommon::cudavars.offset_E += nint;
+//    std::cout<<"offset "<<getName()<<" "<<CUDAcommon::cudavars.offset_E<<endl;
     //TODO make sure not using cudafree here is fine.
     if(gpu_params != NULL )
         CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree", "CylinderExclVolume.cu");
     if(nint > 0) {
-        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)), "cuda data transfer",
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 3 * sizeof(int)), "cuda"
+                                        " data transfer",
                                 "CylinderExclVolume.cu");
-        CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice),
+        CUDAcommon::handleerror(cudaMemcpyAsync(gpu_params, params.data(), 3 * sizeof(int),
+                                           cudaMemcpyHostToDevice, stream),
                                 "cuda data transfer", "CylinderExclVolume.cu");
     }
-    nvtxRangePop();
+#ifdef CUDATIMETRACK
+//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu",
+//                            "vectorizeFF");
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(tend - tbegin);
+    CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
+    CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
+#endif
 #endif
     //
 }
@@ -124,6 +147,8 @@ void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
     delete [] krep;
 #ifdef CUDAACCL
     if(nint > 0) {
+        if(!(CUDAcommon::getCUDAvars().conservestreams))
+            CUDAcommon::handleerror(cudaStreamDestroy(stream),"cuda stream", "CylinderExclVolume.cu");
         _FFType.deallocate();
         CUDAcommon::handleerror(cudaFree(gpu_beadSet), "cudaFree", "CylinderExclVolume.cu");
         CUDAcommon::handleerror(cudaFree(gpu_krep), "cudaFree", "CylinderExclVolume.cu");
@@ -142,59 +167,94 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
     double U_i[1];
     double U_ii=0.0;
     double *gU_i;
+#ifdef CUDATIMETRACK
+    chrono::high_resolution_clock::time_point tbegin, tend;
+#endif
 #ifdef CUDAACCL
+
+#ifdef CUDATIMETRACK
+    tbegin = chrono::high_resolution_clock::now();
+#endif
+
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force = CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-    nvtxRangePushA("CCEE");
+
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_params);
 //    }
 //    else{
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_d, gpu_params);
 //    }
-    nvtxRangePop();
+
+#ifdef CUDATIMETRACK
+//    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu", "computeEnergy");
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(tend - tbegin);
+    CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
+    CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
+    CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
+#endif
 #endif
 #ifdef SERIAL
-//    nvtxRangePushA("SCEE");
+#ifdef CUDATIMETRACK
+    tbegin = chrono::high_resolution_clock::now();
+#endif
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, krep);
     else
         U_ii = _FFType.energy(coord, f, beadSet, krep, d);
-//        U_i = _FFType.energy(coord, f, beadSet, krep, d);
-//    nvtxRangePop();
+
+#ifdef CUDATIMETRACK
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runs(tend - tbegin);
+    CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
+    CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
+    CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
+#endif
+
 #endif
     return U_ii;
 }
 
 template <class CVolumeInteractionType>
 void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, double *f) {
-
+#ifdef CUDATIMETRACK
+    chrono::high_resolution_clock::time_point tbegin, tend;
+    tbegin = chrono::high_resolution_clock::now();
+#endif
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    //
     double * gpu_force;
-//    std::cout<<"ex  vol cda"<<endl;
     if(cross_checkclass::Aux) {
-        nvtxRangePushA("CCFE");
+
         gpu_force = CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_params);
-        nvtxRangePop();
+
     }
     else {
-        nvtxRangePushA("CCFE");
+
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_params);
-        nvtxRangePop();
     }
 #endif
+#ifdef CUDATIMETRACK
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_run(tend - tbegin);
+    CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
+    CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
+    tbegin = chrono::high_resolution_clock::now();
+#endif
 #ifdef SERIAL
-//    nvtxRangePushA("SCFE");
-//    std::cout<<"x vol srl"<<endl;
     _FFType.forces(coord, f, beadSet, krep);
-//    nvtxRangePop();
+#endif
+#ifdef CUDATIMETRACK
+    tend= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runs(tend - tbegin);
+    CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
+    CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
 #endif
 #ifdef DETAILEDOUTPUT
     double maxF = 0.0;

@@ -64,24 +64,24 @@ namespace mathfunc {
     }
 
 #ifdef CUDAACCL
-     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot){
-        U_sum[0] = 0.0;
-        double sum = 0.0;
-        for(auto i=0;i<params[1];i++){
-            if(U[i] == -1.0 && sum != -1.0){
-                U_sum[0] = -1.0;
-                U_tot[0] = -1.0;
-                sum = -1.0;
-                break;
-            }
-            else
-                sum  += U[i];
-        }
-        U_sum[0] = sum;
-        atomicAdd(&U_tot[0], sum);
-        printf("ADD1 %f\n", sum);
-
-    }
+//     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot){
+//        U_sum[0] = 0.0;
+//        double sum = 0.0;
+//        for(auto i=0;i<params[1];i++){
+//            if(U[i] == -1.0 && sum != -1.0){
+//                U_sum[0] = -1.0;
+//                U_tot[0] = -1.0;
+//                sum = -1.0;
+//                break;
+//            }
+//            else
+//                sum  += U[i];
+//        }
+//        U_sum[0] = sum;
+//        atomicAdd(&U_tot[0], sum);
+//        printf("ADD1 %f\n", sum);
+//
+//    }
 
 //    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot){
 //        extern __shared__ double s[];
@@ -162,12 +162,12 @@ namespace mathfunc {
         if (blockSize >= 256) { if (tid < 128) { sdata[tid] += sdata[tid + 128]; } __syncthreads(); }
         if (blockSize >= 128) { if (tid < 64) { sdata[tid] += sdata[tid + 64]; } __syncthreads(); }
         if (tid < 32) {
-            if (blockSize >= 64) sdata[tid] += sdata[tid + 32];
-            if (blockSize >= 32) sdata[tid] += sdata[tid + 16];
-            if (blockSize >= 16) sdata[tid] += sdata[tid + 8];
-            if (blockSize >= 8) sdata[tid] += sdata[tid + 4];
-            if (blockSize >= 4) sdata[tid] += sdata[tid + 2];
-            if (blockSize >= 2) sdata[tid] += sdata[tid + 1];
+            if (blockSize >= 64) {sdata[tid] += sdata[tid + 32]; __syncthreads(); }
+            if (blockSize >= 32) {sdata[tid] += sdata[tid + 16]; __syncthreads(); }
+            if (blockSize >= 16) {sdata[tid] += sdata[tid + 8]; __syncthreads(); }
+            if (blockSize >= 8) {sdata[tid] += sdata[tid + 4]; __syncthreads(); }
+            if (blockSize >= 4) {sdata[tid] += sdata[tid + 2]; __syncthreads(); }
+            if (blockSize >= 2) {sdata[tid] += sdata[tid + 1]; __syncthreads(); }
         }
         if (tid == 0) {
             atomicAdd(&g_odata[0], sdata[0]);
@@ -175,10 +175,47 @@ namespace mathfunc {
 //        printf("addv2 %f %f %f\n", sdata[0], sdata[1], sdata[2]);
         }
     }
+
+    __global__ void addvectorred3(double *g_idata, int *num, double *U_sum)
+    {
+        extern __shared__ double sdata[];
+        unsigned int tid = threadIdx.x;
+        auto blockSize = blockDim.x;
+        unsigned int i = blockIdx.x*(blockSize*2) + tid;
+        unsigned int gridSize = blockSize*2*gridDim.x;
+        int n = num[0];
+        sdata[tid] = 0.0;
+        while (i < n) {
+//            printf("%d %d %d %d\n", tid, i, i+blockSize,num[0]);
+            if(g_idata[i] == -1.0 || g_idata[i+blockSize] == -1.0)
+            {printf("CUDA addition of energies. Energy is infinite\n");assert(0);}
+            sdata[tid] += g_idata[i] + g_idata[i+blockSize];
+            i += gridSize;
+        }
+        /*if(tid ==0) printf("%d %f %d\n", blockIdx.x, sdata[0],n);*/
+        __syncthreads();
+        if(blockSize >=2048 ) {printf("Cannot handle blocks with threads larger than 2048\n");assert(0);}
+        if (blockSize >= 1024) { if (tid < 512) { sdata[tid] += sdata[tid + 512]; } __syncthreads(); }
+        if (blockSize >= 512) { if (tid < 256) { sdata[tid] += sdata[tid + 256]; } __syncthreads(); }
+        if (blockSize >= 256) { if (tid < 128) { sdata[tid] += sdata[tid + 128]; } __syncthreads(); }
+        if (blockSize >= 128) { if (tid < 64) { sdata[tid] += sdata[tid + 64]; } __syncthreads(); }
+        if (tid < 32) {
+            if (blockSize >= 64) {sdata[tid] += sdata[tid + 32];__syncthreads(); }
+            if (blockSize >= 32) {sdata[tid] += sdata[tid + 16];__syncthreads(); }
+            if (blockSize >= 16) {sdata[tid] += sdata[tid + 8];__syncthreads(); }
+            if (blockSize >= 8) {sdata[tid] += sdata[tid + 4];__syncthreads(); }
+            if (blockSize >= 4) {sdata[tid] += sdata[tid + 2];__syncthreads(); }
+            if (blockSize >= 2) {sdata[tid] += sdata[tid + 1];__syncthreads(); }
+        }
+        if (tid == 0) {
+            /*printf("%d %f \n", blockIdx.x, sdata[0]);*/
+            atomicAdd(&U_sum[0], sdata[0]);
+        }
+    }
+
     __global__ void resetintvariableCUDA(int *variable){
         variable[0] = 0;
     }
-
     __global__ void resetdoublevariableCUDA(double *variable){
         variable[0] = 0.0;
     }

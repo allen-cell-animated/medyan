@@ -120,7 +120,12 @@ private:
     void pinLowerBoundaryFilaments();
     
 public:
+    double chemistrytime = 0.0;
     double minimizationtime = 0.0;
+    double nltime = 0.0;
+    double rxnratetime = 0.0;
+    double outputtime =0.0;
+    double specialtime = 0.0;
 
     Controller(SubSystem* s);
     ~Controller() {};

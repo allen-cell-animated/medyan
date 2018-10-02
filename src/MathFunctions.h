@@ -76,7 +76,12 @@ namespace mathfunc {
         if(M > THREADSPERBLOCK){
             if(M > maxthreads) {
                 blocks = 8;
+                blocks = M /(4 * THREADSPERBLOCK) +1;
                 threads = THREADSPERBLOCK;
+                std::cout<<"MaxF Number of elements is greater than number of "
+                        "threads"<<endl;
+                cout<<"Choosing "<<blocks<<" blocks and "<<THREADSPERBLOCK<<" threads per"
+                        " block"<<endl;
             }
             else if(M > THREADSPERBLOCK){
                 blocks = M /(4 * THREADSPERBLOCK) +1;
@@ -98,11 +103,12 @@ namespace mathfunc {
     }
     __global__ void resetintvariableCUDA(int *variable);
     __global__ void resetdoublevariableCUDA(double *variable);
-     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot);
+//     __global__ void addvector(double *U, int *params, double *U_sum);
 //    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int* culpritID, char* culpritFF,
 //                              char* culpritinteraction, char *FF, char *interaction);
-//    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot);
+    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot);
     __global__ void addvectorred2(double *U, int *params, double *U_sum, double *U_tot);
+    __global__ void addvectorred3(double *U, int *params, double *U_sum);
     #endif
     /// Normalize a vector
     inline void normalize(vector<double> &v) {
@@ -159,6 +165,15 @@ namespace mathfunc {
     __host__ __device__
     #endif
     inline double getdistancefromplane(double *coord, double * plane,int id){
+        return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
+               sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
+    }
+
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
+    inline double getdistancefromplane(double *coord, double * plane){
+        int id = 0;
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
     }
@@ -245,7 +260,10 @@ namespace mathfunc {
 
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
-    /// ARRAY VERSION
+    /// CUDA & ARRAY VERSION
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline double twoPointDistanceStretched(double const *v1,
                                             double const *p1,
                                             double const *v2,
@@ -352,7 +370,10 @@ namespace mathfunc {
 
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3)
-    /// ARRAY VERSION
+    /// ARRAY VERSION & CUDA version
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline double scalarProduct(double const *v1, double const *v2,
                                 double const *v3, double const *v4) {
 //        return((*(v2)-*(v1))*(*(v4)-*(v3))
@@ -388,6 +409,8 @@ namespace mathfunc {
                 (v2[id2 + 1] - v1[id1 + 1]) * (v4[id4 + 1] - v3[id3 + 1]) +
                 (v2[id2 + 2] - v1[id1 + 2]) * (v4[id4 + 2] - v3[id3 + 2]));
     }
+
+
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
     inline double scalarProductStretched(const vector<double> &v1,
@@ -413,6 +436,10 @@ namespace mathfunc {
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
     ///
+    //CUDA version & ARRAY VERSION
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline double scalarProductStretched(double const *v1,
                                          double const *p1,
                                          double const *v2,
@@ -798,7 +825,10 @@ namespace mathfunc {
     }
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v1| = alpha. ARRAY VERSION
-
+    //CUDA & ARRAY version
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline void midPointCoordinate(double *v, double const *v1, double const *v2, double alpha) {
 
         *(v) = ((*v1) * (1.0 - alpha) + alpha * (*(v2)));
@@ -833,7 +863,10 @@ namespace mathfunc {
 
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
-    /// ARRAY VERSION
+    /// ARRAY & CUDA VERSION
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline void midPointCoordinateStretched(double *v,
                                             double const *v1,
                                             double const *p1,
@@ -1192,6 +1225,7 @@ namespace mathfunc {
         return areEqual(dotProduct(v3, cp), 0.0);
     }
 
+    inline size_t blockToSmemZero(int blockSize){return 0.0 * sizeof(double);}
     inline size_t blockToSmem(int blockSize){return 12 * blockSize * sizeof(double);}
     inline size_t blockToSmemez(int blockSize){return 24 * blockSize * sizeof(double);}
     inline size_t blockToSmemF(int blockSize){return 6 * blockSize * sizeof(double);}
