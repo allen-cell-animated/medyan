@@ -6,6 +6,16 @@
 #include <type_traits>
 #include <vector>
 
+#include "util/restart_data.h"
+
+// Tasks for restart io:
+//
+// Reading:
+//   - Read restart files and store them in restart data and/or SysParams
+//
+// Writing:
+//   - Write restart files from restart data and/or SysParams
+
 namespace restart {
 
 // "unsigned char"s should be replaced by "std::byte"s starting C++17
@@ -33,6 +43,8 @@ template<
 struct Layer {
     std::fstream& fs;
 
+    RestartData& rd;
+
     vec_byte header;
     // body could be Layer, a vector of Layers or pure bytes
 
@@ -40,15 +52,16 @@ struct Layer {
     virtual void read() = 0;
 
     // Read from system and write information to restart file (from current ifstream)
-    virtual void print() = 0;
+    virtual void write() = 0;
 };
 
 struct LayerElement : public Layer {
 };
 struct LayerFilament : public Layer {
-    vec_byte body;
+    RestartData::FilamentData& thisFilamentData;
+
     virtual void read() override;
-    virtual void print() override;
+    virtual void write() override;
 };
 
 } // namespace restart
