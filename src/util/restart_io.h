@@ -8,6 +8,7 @@
 
 namespace restart {
 
+// "unsigned char"s should be replaced by "std::byte"s starting C++17
 using vec_byte = std::vector<unsigned char>;
 
 namespace helper {
@@ -30,7 +31,7 @@ template<
 } // namespace helper
 
 struct Layer {
-    std::fstream* fs;
+    std::fstream& fs;
 
     vec_byte header;
     // body could be Layer, a vector of Layers or pure bytes
