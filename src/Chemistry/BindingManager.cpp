@@ -49,6 +49,7 @@ BranchingManager::BranchingManager(ReactionBase* reaction,
 void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
     
     if(cc->getType() != _filamentType) return;
+    if(tau() > 800.0) return;
     
     bool inZone = true;
     //see if in nucleation zone
@@ -132,8 +133,8 @@ void BranchingManager::updateAllPossibleBindings() {
     for(auto &c : _compartment->getCylinders()) {
     
         if(c->getType() != _filamentType) continue;
-	// Qin, 2016/12/5
-	//if(tau() > 1000.0) continue;
+        if(tau() > 800.0) continue;
+
 	
         auto cc = c->getCCylinder();
         
