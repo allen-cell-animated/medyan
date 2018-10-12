@@ -6,6 +6,8 @@
 #include <string>
 #include <type_traits>
 
+#include "util/io/log.h"
+
 namespace profiler {
 
 #ifdef USE_PROFILER
@@ -16,10 +18,13 @@ constexpr bool useProfiler = false;
 
 namespace internal {
 
-template< bool > class SimpleTimerImpl;
+template<
+    bool enable,
+    bool raii
+> class SimpleTimerImpl;
 
 // Specialization
-template<> class SimpleTimerImpl< true > {
+template<bool raii> class SimpleTimerImpl< true, raii > {
 private:
     using _time_point_t = std::chrono::time_point< std::chrono::steady_clock >;
     using _time_diff_t = decltype(_time_point_t() - _time_point_t());
@@ -29,6 +34,15 @@ private:
 
     std::string _name;
 public:
+    // Constructor for block timer
+    template< typename = typename std::enable_if< raii >::type >
+    SimpleTimerImpl(const std::string& name) : _name(name) {
+        start();
+    }
+    // Constructor for manual timer
+    template< typename = typename std::enable_if< !raii >::type >
+    SimpleTimerImpl(const std::string& name) : _name(name) {}
+
     // Record the current time as start time.
     void start() {
         _start = std::chrono::steady_clock::now();
@@ -37,10 +51,14 @@ public:
     void elapse() {
         _elapsed = std::chrono::steady_clock::now() - _start;
     }
-    void report();
+    void report() {
+        LOG(INFO) << "Time elapsed for " << _name << ": "
+            << std::chrono::duration_cast< std::chrono::duration< double > >(_elapsed).count()
+            << "s.";
+    }
 };
 
-template<> class SimpleTimerImpl< false > {
+template<bool raii> class SimpleTimerImpl< false, raii > {
 public:
     void start() {}
     void elapse() {}
@@ -49,7 +67,8 @@ public:
 
 } // namespace internal
 
-using Timer = internal::SimpleTimerImpl< useProfiler >;
+using Timer = internal::SimpleTimerImpl< useProfiler, false >;
+using BlockTimer = internal::SimpleTimerImpl< useProfiler, true >;
 
 } // namespace profiler
 
