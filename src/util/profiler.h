@@ -42,6 +42,13 @@ public:
     // Constructor for manual timer
     template< typename = typename std::enable_if< !raii >::type >
     SimpleTimerImpl(const std::string& name) : _name(name) {}
+    // Destructor. Unfortunately SFINAE is not an option here.
+    ~SimpleTimerImpl() {
+        if /* constexpr since c++17 */ (raii) {
+            elapse();
+            report();
+        }
+    }
 
     // Record the current time as start time.
     void start() {
@@ -51,6 +58,7 @@ public:
     void elapse() {
         _elapsed = std::chrono::steady_clock::now() - _start;
     }
+    // Output the timer result.
     void report() {
         LOG(INFO) << "Time elapsed for " << _name << ": "
             << std::chrono::duration_cast< std::chrono::duration< double > >(_elapsed).count()
@@ -60,6 +68,10 @@ public:
 
 template<bool raii> class SimpleTimerImpl< false, raii > {
 public:
+    // General constructor which does nothing
+    template< typename... Args >
+    SimpleTimerImpl(Args&&... args) {}
+
     void start() {}
     void elapse() {}
     void report() {}
@@ -68,7 +80,7 @@ public:
 } // namespace internal
 
 using Timer = internal::SimpleTimerImpl< useProfiler, false >;
-using BlockTimer = internal::SimpleTimerImpl< useProfiler, true >;
+using ScopeTimer = internal::SimpleTimerImpl< useProfiler, true >;
 
 } // namespace profiler
 
