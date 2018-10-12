@@ -45,8 +45,8 @@ template< bool enable > struct SimpleTimerMember {};
 template<> struct SimpleTimerMember<true> {
     using time_point_t = std::chrono::time_point< std::chrono::steady_clock >;
     using time_diff_t = decltype(time_point_t() - time_point_t());
-    time_point_t _start;
-    time_diff_t _elapsed;
+    time_point_t start;
+    time_diff_t elapsed;
 };
 
 template< bool enable, bool print > struct SimpleTimerPrintMember {
@@ -57,7 +57,7 @@ template<> struct SimpleTimerPrintMember< true, true > {
     SimpleTimerPrintMember(const std::string& name) : name(name) {}
 };
 
-template< bool enable, bool manager > struct SimpleTimerManagerMember {
+template< bool enable, bool worker > struct SimpleTimerManagerMember {
     using timer_manager_t = TimerManager< enable >;
     SimpleTimerManagerMember(timer_manager_t& manager) {} // Discard input
 };
@@ -101,14 +101,14 @@ public:
 
     // Record the current time as start time.
     template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
-    void start() { _start = std::chrono::steady_clock::now(); }
+    void start() { this->start = std::chrono::steady_clock::now(); }
     template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
     void start() {}
 
     // Calculate the time elapsed from start to current time.
     template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
     void elapse() {
-        _elapsed = std::chrono::steady_clock::now() - _start;
+        this->elapsed = std::chrono::steady_clock::now() - this->start;
         _submit();
     }
     template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
@@ -118,7 +118,7 @@ private:
     // _submit will submit the current result to the manager.
     // Will be called by elapse()
     template< typename T = void, typename std::enable_if< enable && worker, T >::type* = nullptr >
-    void _submit()const { manager.submit(_elapsed); }
+    void _submit()const { this->manager.submit(this->elapsed); }
     template< typename T = void, typename std::enable_if< !(enable && worker), T >::type* = nullptr >
     void _submit()const {}
 
@@ -126,8 +126,8 @@ public:
     // Output the timer result.
     template< typename T = void, typename std::enable_if< enable && print, T >::type* = nullptr >
     void report()const {
-        LOG(INFO) << "Time elapsed for " << _name << ": "
-            << std::chrono::duration_cast< std::chrono::duration< time_count_float_t > >(_elapsed).count()
+        LOG(INFO) << "Time elapsed for " << this->name << ": "
+            << std::chrono::duration_cast< std::chrono::duration< time_count_float_t > >(this->elapsed).count()
             << "s.";
     }
     template< typename T = void, typename std::enable_if< !(enable && print), T >::type* = nullptr >
