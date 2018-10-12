@@ -34,14 +34,9 @@ private:
 
     std::string _name;
 public:
-    // Constructor for block timer
-    template< typename = typename std::enable_if< raii >::type >
     SimpleTimerImpl(const std::string& name) : _name(name) {
-        start();
+        if /* constexpr since c++17 */ (raii) start();
     }
-    // Constructor for manual timer
-    template< typename = typename std::enable_if< !raii >::type >
-    SimpleTimerImpl(const std::string& name) : _name(name) {}
     // Destructor. Unfortunately SFINAE is not an option here.
     ~SimpleTimerImpl() {
         if /* constexpr since c++17 */ (raii) {
