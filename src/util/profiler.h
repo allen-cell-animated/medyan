@@ -67,11 +67,11 @@ template<> struct SimpleTimerPrintMember< true, true > {
 };
 
 template< bool enable, bool worker > struct SimpleTimerManagerMember {
-    using timer_manager_t = TimerManager< enable >;
+    using timer_manager_t = TimerManagerImpl< enable >;
     SimpleTimerManagerMember(timer_manager_t& manager) {} // Discard input
 };
 template<> struct SimpleTimerManagerMember< true, true > {
-    using timer_manager_t = TimerManager< true >;
+    using timer_manager_t = TimerManagerImpl< true >;
     timer_manager_t& manager;
     SimpleTimerManagerMember(timer_manager_t& manager) : manager(manager) {}
 };
@@ -196,7 +196,7 @@ public:
             << "Time elapsed for " << this->count.load() << " occurrences for " << this->name
             << this->elapsed.load() << "s.";
     }
-    template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
+    template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
     void report()const {}
 };
 
