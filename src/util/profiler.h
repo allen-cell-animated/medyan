@@ -33,14 +33,23 @@ namespace internal {
  *     containing the name and elapsed time.
  *   - worker: If set true, the timer must specify a manager obejct. The
  *     elapsed time will be automatically submitted to the manager.
+ * 
+ * Note:
+ *   - At least one in print and worker must be true.
  */
 template< bool enable, bool raii, bool print, bool worker> class SimpleTimerImpl;
 
-template<
-    bool enable
-> class TimerManager;
+/**
+ * TimerManagerImpl is used to collect timer results from worker timers.
+ * 
+ * Template parameters
+ *   - enable: If set false, no member variables should exist. All function
+ *     calls should be valid but empty.
+ */
+template< bool enable > class TimerManagerImpl;
 
 
+// Helper classes for SimpleTimerImpl
 template< bool enable > struct SimpleTimerMember {};
 template<> struct SimpleTimerMember<true> {
     using time_point_t = std::chrono::time_point< std::chrono::steady_clock >;
@@ -118,7 +127,9 @@ private:
     // _submit will submit the current result to the manager.
     // Will be called by elapse()
     template< typename T = void, typename std::enable_if< enable && worker, T >::type* = nullptr >
-    void _submit()const { this->manager.submit(this->elapsed); }
+    void _submit()const {
+        this->manager.submit(std::chrono::duration_cast< std::chrono::duration< time_count_float_t > >(this->elapsed).count());
+    }
     template< typename T = void, typename std::enable_if< !(enable && worker), T >::type* = nullptr >
     void _submit()const {}
 
@@ -135,17 +146,68 @@ public:
 };
 
 
-template<> class TimerManager< true > {
-private:
-    unsigned long long _count;
-    std::atomic<time_count_float_t> _elapsed;
+// Helper classes for TimerManager
+template< bool enable > struct TimerManagerMember {
+    TimerManagerMember() = default;
+};
+template<> struct TimerManagerMember<true> {
+    std::atomic<unsigned long long> count;
+    std::atomic<time_count_float_t> elapsed;
+    TimerManagerMember() : count(0ull), elapsed(0.0) {}
+};
+
+template< bool enable > struct TimerManagerPrintMember {
+    TimerManagerPrintMember(const std::string& name) {} // Discard input
+};
+template<> struct TimerManagerPrintMember<true> {
+    std::string name;
+    TimerManagerPrintMember(const std::string& name) : name(name) {}
+};
+
+// Definition
+template< bool enable > class TimerManagerImpl
+    : public TimerManagerMember<enable> {
 public:
+    // Constructors
+    TimerManagerImpl(const std::string& name)
+        : TimerManagerPrintMember<enable>(name) {}
+
+    // Reset the counter and timer.
+    template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
+    void reset() { this->elapsed = 0.0; this->count = 0ull; }
+    template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
+    void reset() {}
+
+    // submit(elapsed) will add the time to the total elapsed time, and will
+    // increase the timer fire count by 1.
+    // Normally it should only be called by worker timer.
+    template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
+    void submit(time_count_float_t elapsedSingle) {
+        ++(this->count);
+        this->elapsed += elapsedSingle;
+    }
+    template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
+    void submit(time_count_float_t elapsedSingle) {} // Do nothing
+
+    // print the total time information
+    template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
+    void report()const {
+        LOG(INFO)
+            << "Time elapsed for " << this->count.load() << " occurrences for " << this->name
+            << this->elapsed.load() << "s.";
+    }
+    template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
+    void report()const {}
 };
 
 } // namespace internal
 
-using Timer = internal::SimpleTimerImpl< useProfiler, false, true, false >;
-using ScopeTimer = internal::SimpleTimerImpl< useProfiler, true, true, false >;
+using Timer            = internal::SimpleTimerImpl< useProfiler, false, true,  false >;
+using ScopeTimer       = internal::SimpleTimerImpl< useProfiler, true,  true,  false >;
+using TimerWorker      = internal::SimpleTimerImpl< useProfiler, false, false, true  >;
+using ScopeTimerWorker = internal::SimpleTimerImpl< useProfiler, true,  false, true  >;
+
+using TimerManager = internal::TimerManagerImpl< useProfiler >;
 
 } // namespace profiler
 
