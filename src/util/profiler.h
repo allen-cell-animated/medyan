@@ -58,25 +58,23 @@ template<> struct SimpleTimerMember<true> {
     time_diff_t elapsed;
 };
 
-template< bool enable, bool print > struct SimpleTimerPrintMember {
-    template< typename T = void, typename std::enable_if< print, T >::type* = nullptr >
+template< bool enable, bool print > struct SimpleTimerPrintMember {};
+template<> struct SimpleTimerPrintMember< false, true > {
     SimpleTimerPrintMember(const std::string& name) {} // Discard input
 };
-template< bool print > struct SimpleTimerPrintMember< true, print > {
+template<> struct SimpleTimerPrintMember< true, true > {
     std::string name;
-    template< typename T = void, typename std::enable_if< print, T >::type* = nullptr >
     SimpleTimerPrintMember(const std::string& name) : name(name) {}
 };
 
-template< bool enable, bool worker > struct SimpleTimerManagerMember {
-    using timer_manager_t = TimerManagerImpl< enable >;
-    template< typename T = void, typename std::enable_if< worker, T >::type* = nullptr >
+template< bool enable, bool worker > struct SimpleTimerManagerMember {};
+template<> struct SimpleTimerManagerMember< false, true > {
+    using timer_manager_t = TimerManagerImpl< false >;
     SimpleTimerManagerMember(timer_manager_t& manager) {} // Discard input
 };
-template< bool worker > struct SimpleTimerManagerMember< true, worker > {
+template<> struct SimpleTimerManagerMember< true, true > {
     using timer_manager_t = TimerManagerImpl< true >;
     timer_manager_t& manager;
-    template< typename T = void, typename std::enable_if< worker, T >::type* = nullptr >
     SimpleTimerManagerMember(timer_manager_t& manager) : manager(manager) {}
 };
 
