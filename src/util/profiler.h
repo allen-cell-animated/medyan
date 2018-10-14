@@ -54,7 +54,7 @@ template< bool enable > struct SimpleTimerMember {};
 template<> struct SimpleTimerMember<true> {
     using time_point_t = std::chrono::time_point< std::chrono::steady_clock >;
     using time_diff_t = decltype(time_point_t() - time_point_t());
-    time_point_t start;
+    time_point_t tpStart;
     time_diff_t elapsed;
 };
 
@@ -112,14 +112,14 @@ public:
 
     // Record the current time as start time.
     template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
-    void start() { this->start = std::chrono::steady_clock::now(); }
+    void start() { this->tpStart = std::chrono::steady_clock::now(); }
     template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
     void start() {}
 
     // Calculate the time elapsed from start to current time.
     template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
     void elapse() {
-        this->elapsed = std::chrono::steady_clock::now() - this->start;
+        this->elapsed = std::chrono::steady_clock::now() - this->tpStart;
         _submit();
     }
     template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
