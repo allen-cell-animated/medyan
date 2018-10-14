@@ -166,7 +166,8 @@ template<> struct TimerManagerPrintMember<true> {
 
 // Definition
 template< bool enable > class TimerManagerImpl
-    : public TimerManagerMember<enable> {
+    : public TimerManagerMember<enable>,
+      public TimerManagerPrintMember<enable> {
 public:
     // Constructors
     TimerManagerImpl(const std::string& name)
