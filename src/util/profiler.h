@@ -199,7 +199,7 @@ public:
     void report()const {
         LOG(INFO)
             << "Time elapsed for " << this->count.load() << " occurrences for " << this->name
-            << this->elapsed.load() << "s.";
+            << ": " << this->elapsed.load() << "s.";
     }
     template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
     void report()const {}
