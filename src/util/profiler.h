@@ -67,7 +67,9 @@ template<> struct SimpleTimerPrintMember< true, true > {
     SimpleTimerPrintMember(const std::string& name) : name(name) {}
 };
 
-template< bool enable, bool worker > struct SimpleTimerManagerMember {};
+template< bool enable, bool worker > struct SimpleTimerManagerMember {
+    using timer_manager_t = TimerManagerImpl< enable >;
+};
 template<> struct SimpleTimerManagerMember< false, true > {
     using timer_manager_t = TimerManagerImpl< false >;
     SimpleTimerManagerMember(timer_manager_t& manager) {} // Discard input
