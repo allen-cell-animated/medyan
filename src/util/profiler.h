@@ -19,6 +19,21 @@ constexpr bool useProfiler = false;
 
 using time_count_float_t = double;
 
+/**
+ * The types used can be found below at the type alias part.
+ * 
+ * Usage guide:
+ *   - Use a Timer to measure a certain time period. Use Timer::start() to mark
+ *     the current time as the starting point. Call Timer::elapse() to get the
+ *     time elapsed between the starting point and the current time. Finally,
+ *     use Timer::report() to print the result.
+ *   - A ScopeTimer is a timer, except that it will measure and report the time
+ *     between its construction and destruction.
+ *   - A TimerManager can collect timer result from workers. TimerWorker and
+ *     ScopeTimerWorker have the same interface as Timer / ScopeTimer, except
+ *     that they will submit the time to the manager instead of printing it.
+ */
+
 namespace internal {
 
 /**
@@ -209,6 +224,7 @@ public:
 
 } // namespace internal
 
+// Type alias
 using Timer            = internal::SimpleTimerImpl< useProfiler, false, true,  false >;
 using ScopeTimer       = internal::SimpleTimerImpl< useProfiler, true,  true,  false >;
 using TimerWorker      = internal::SimpleTimerImpl< useProfiler, false, false, true  >;
