@@ -1114,7 +1114,7 @@ void ChemManager::genFilBindingReactions() {
     //init subsystem ptr
     FilamentBindingManager::_subSystem = _subSystem;
     double rMax, rMin;
-    
+
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
         //loop through all compartments
@@ -1364,6 +1364,7 @@ void ChemManager::genFilBindingReactions() {
                 C->addFilamentBindingManager(bManager);
                 
                 bManager->setMIndex(managerIndex++);
+
                 
                 //attach callback
                 BranchingCallback bcallback(bManager, plusEnd, onRate, offRate, _subSystem);

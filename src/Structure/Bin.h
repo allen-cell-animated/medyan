@@ -37,12 +37,14 @@ protected:
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this bin
 
     vector<Bin*> _neighbours; ///< Neighbors of the bin
-
     ///OTHER BIN PROPERTIES
     vector<double> _coords;  ///< Coordinates of this bin
     short _binGridType = -1;
 
 public:
+    vector<int> stencilID; /// template stencil has neighboring bins numbered from 0-26.
+/// stencilID vector stores which of those 27 bins are neighbors to the current bin.
+
     // Default constructor, only takes in number of dimensions
     Bin(short binGridType) : _neighbours(), _binGridType(binGridType) {}
 

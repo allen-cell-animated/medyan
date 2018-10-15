@@ -4,7 +4,7 @@
 
 #ifndef CUDA_VEC_NEIGHBORLISTIMPLCUDA_H
 #define CUDA_VEC_NEIGHBORLISTIMPLCUDA_H
-#ifdef CUDAACCL
+#ifdef CUDAACCL_TEST
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cuda_runtime_api.h>
@@ -83,6 +83,56 @@ __global__ void CylinderCylinderNLCUDA(double *coord_com, int *beadSet, int *cyl
     }
 }
 
+__global__ void resetbitonic(int* stage){
+    stage[0] = 0;//stage
+    stage[1] = 0;//substage
+}
+
+__global__ void incrementbitonic(int* stage){
+    if(stage[1] == 0) {
+        stage[0]++;
+        stage[1] = stage[0];
+    }
+    else
+        stage[1]--;
+    printf("stage %d %d\n",stage[0], stage[1]);
+}
+__global__ void bitonicsort(int* array, int* stage, int* nint){
+    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+    int vecsize = nint[0];
+    if(thread_idx < vecsize) {
+        int offset = (int)pow(2.0,stage[1]);
+        int orderlength = (int)pow(2,stage[1]);
+        int offset2 = orderlength * (thread_idx/orderlength);
+        bool ordertype = (thread_idx % (int)pow(2,stage[0] + 1))< (int)pow(2,stage[0]);
+        int pos1,pos2;
+       if(stage[1]!=0){
+            pos1 = offset2 + thread_idx;
+            pos2 = offset2 + thread_idx + offset;
+        }
+        else{
+            pos1 = 2*thread_idx;
+            pos2 = 2*thread_idx + offset;
+        }
+            printf("thread_idx %d ordertype %d pos %d %d orderlength %d offset2 %d\n",
+                   thread_idx, ordertype, pos1, pos2, orderlength, offset2);
+        if (ordertype) { //ascending
+            if(array[pos1] > array[pos2]){
+                int temp = array[pos1];
+                array[pos1] = array[pos2];
+                array[pos2] = temp;
+            }
+        }
+        else { //descending
+            if(array[pos1] < array[pos2]){
+                int temp = array[pos1];
+                array[pos1] = array[pos2];
+                array[pos2] = temp;
+            }
+        }
+    }
+    __syncthreads();
+}
 
 //__global__ void CylinderCylinderNLCUDA(double *coord_com, int *beadSet, int *cylID, int *filID, int *cmpIDlist,
 //                                       int * fvecposition, int *cylvecpospercmp, int *pair_cIndex_cmp, int

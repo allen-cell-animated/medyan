@@ -73,9 +73,23 @@ struct UpdateBrancherBindingCallback {
                 CCylinder* cc = _cylinder->getCCylinder();
                 
                 //update binding sites
-                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+                if(delta == +1) {
+#ifdef NLORIGINAL
+                    manager->addPossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->addPossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
                 
-                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+                else /* -1 */{
+#ifdef NLORIGINAL
+                    manager->removePossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->removePossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
             }
         }
     }
@@ -105,9 +119,23 @@ struct UpdateLinkerBindingCallback {
                 CCylinder* cc = _cylinder->getCCylinder();
                 
                 //update binding sites
-                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
-                
-                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+                if(delta == +1) {
+#ifdef NLORIGINAL
+                    manager->addPossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->addPossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
+
+                else /* -1 */{
+#ifdef NLORIGINAL
+                    manager->removePossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->removePossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
             }
         }
     }
@@ -137,9 +165,23 @@ struct UpdateMotorBindingCallback {
                 CCylinder* cc = _cylinder->getCCylinder();
                 
                 //update binding sites
-                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
-                
-                else /* -1 */ manager->removePossibleBindings(cc, _bindingSite);
+                if(delta == +1) {
+#ifdef NLORIGINAL
+                    manager->addPossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->addPossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
+
+                else /* -1 */{
+#ifdef NLORIGINAL
+                    manager->removePossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->removePossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
             }
         }
     }
@@ -381,7 +423,13 @@ struct BranchingCallback {
         short branchType = _bManager->getBoundInt();
         
         //choose a random binding site from manager
-        auto site = _bManager->chooseBindingSite();
+        tuple<CCylinder*, short> site;
+#ifdef NLORIGINAL
+        site = _bManager->chooseBindingSite();
+#endif
+#ifdef NLSTENCILLIST
+        site = _bManager->chooseBindingSitestencil();
+#endif
         
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
@@ -520,7 +568,13 @@ struct LinkerBindingCallback {
         float f;
         
         //choose a random binding site from manager
-        auto site = _lManager->chooseBindingSites();
+        vector<tuple<CCylinder*, short>> site;
+#ifdef NLORIGINAL
+        site = _lManager->chooseBindingSites();
+#endif
+#ifdef NLSTENCILLIST
+        site = _lManager->chooseBindingSitesstencil();
+#endif
         
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
@@ -614,7 +668,13 @@ struct MotorBindingCallback {
         short motorType = _mManager->getBoundInt();
         float f;
         //choose a random binding site from manager
-        auto site = _mManager->chooseBindingSites();
+        vector<tuple<CCylinder*, short>> site;
+#ifdef NLORIGINAL
+        site = _mManager->chooseBindingSites();
+#endif
+#ifdef NLSTENCILLIST
+        site = _mManager->chooseBindingSitesstencil();
+#endif
         
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();

@@ -44,7 +44,6 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             if(c->isMinusEnd()) nint++;
             nint++;
         }
-        std::cout<<_neighborList->getNeighbors(be).size()<<" "<<nint<<endl;
     }
     std::cout<<"value of Boundary nint "<<nint<<endl;
 
@@ -208,7 +207,7 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
     double U_i[1], U_ii=0.0;
     double* gU_i;
     U_ii = 0.0;
-    std::cout<<"Total boundary nint "<<nint<<endl;
+//    std::cout<<"Total boundary nint "<<nint<<endl;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif

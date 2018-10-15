@@ -83,14 +83,18 @@ protected:
     
     short _nlIndex = 0; ///<Index of this manager (for access of neighbor lists)
     short _mIndex = 0;  ///<Index of this manager (for access in other compartments)
+
     
     static SubSystem *_subSystem; ///< Ptr to the SubSystem
+
+#ifdef NLSTENCILLIST
+    vector<double> bindingSites;
+#endif
     
     ///helper function to update copy number and reactions
-    void updateBindingReaction(int oldN, int newN) {
+    void updateBindingReaction( int oldN, int newN) {
         
         int diff = newN - oldN;
-        
         //update copy number
         if(diff > 0) {
             while (diff != 0) {
@@ -105,13 +109,18 @@ protected:
             }
         }
         else {} //do nothing
-        
         //check if matching
-//        std::cout<<_bindingSpecies->getN()<<" "<<numBindingSites()<<endl;
+#ifdef NLORIGINAL
+
         assert((_bindingSpecies->getN() == numBindingSites())
                && "Species representing binding sites does not match \
                    number of binding sites held by the manager.");
-        
+#endif
+#ifdef NLSTENCILLIST
+                assert((_bindingSpecies->getN() == numBindingSitesstencil())
+               && "Species representing binding sites does not match \
+                   number of binding sites held by the manager.");
+#endif
         _bindingReaction->updatePropensity();
     }
     
@@ -137,7 +146,6 @@ public:
     ///add possible binding reactions that could occur
 #ifdef NLORIGINAL
     virtual void addPossibleBindings(CCylinder* cc, short bindingSite) = 0;
-#endif
 
     virtual void addPossibleBindings(CCylinder* cc) = 0;
     //@}
@@ -147,14 +155,16 @@ public:
     virtual void removePossibleBindings(CCylinder* cc, short bindingSite) = 0;
     virtual void removePossibleBindings(CCylinder* cc) = 0;
     //@}
-#ifdef NLORIGINAL
     ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings() = 0;
-#endif
-    
-    /// Get current number of binding sites
+     /// Get current number of binding sites
     virtual int numBindingSites() = 0;
-    
+
+    /// ARAVIND ADDED FEB 17 2016. append possible bindings.
+    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2)=0;
+
+    virtual void clearpossibleBindings()=0;
+#endif
     ///Get the bound species integer index
     short getBoundInt() {return _boundInt;}
     ///Get the bound species name
@@ -165,19 +175,15 @@ public:
     
     ///Set the index of this manager, for access to other managers
     void setMIndex(int index) {_mIndex = index;}
-    
     ///Check consistency and correctness of binding sites. Used for debugging.
     virtual bool isConsistent() = 0;
     
     ///get the filament that the species binds to aravind June 30, 2016.
     short getfilamentType() {return _filamentType;}
-    
-    /// ARAVIND ADDED FEB 17 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2)=0;
 
     ///aravind, June 30,2016.
     vector<string> getrxnspecies(){return _bindingReaction->getreactantspecies();}
-    virtual void clearpossibleBindings()=0;
+
 #ifdef NLSTENCILLIST
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite) = 0;
     ///update all possible binding reactions that could occur using stencil NL
@@ -188,8 +194,9 @@ public:
     virtual int numBindingSitesstencil() = 0;
     virtual void removePossibleBindingsstencil(CCylinder* cc) = 0;
     virtual void removePossibleBindingsstencil(CCylinder* cc, short bindingSite) = 0;
-#endif
     virtual void crosscheck(){};
+#endif
+
 };
 
 
@@ -209,10 +216,12 @@ private:
     #ifdef DEBUGCONSTANTSEED
     set<tuple<CCylinder*, short>> _possibleBindings;
     #else
+//    #elif defined(NLORIGINAL)
     unordered_set<tuple<CCylinder*, short>> _possibleBindings;
-    #endif
+//    #elif defined(NLSTENCILLIST)
     ///possible bindings at current state in Stencil list.
     unordered_set<tuple<CCylinder*, short>> _possibleBindingsstencil;
+    #endif
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _branchrestarttuple; //Used only during restart conditions.
 
 public:
@@ -228,7 +237,6 @@ public:
 #ifdef NLORIGINAL
     ///add possible binding reactions that could occur
     virtual void addPossibleBindings(CCylinder* cc, short bindingSite);
-#endif
 
     virtual void addPossibleBindings(CCylinder* cc);
     //@}
@@ -239,8 +247,6 @@ public:
     virtual void removePossibleBindings(CCylinder* cc);
     //@}
 
-    virtual bool isConsistent();
-#ifdef NLORIGINAL
     ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings();
 
@@ -251,11 +257,9 @@ public:
 
     /// Choose a random binding site based on current state
     tuple<CCylinder*, short> chooseBindingSite() {
-
         assert((_possibleBindings.size() != 0)
                && "Major bug: Branching manager should not have zero binding \
                   sites when called to choose a binding site.");
-
         int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
         auto it = _possibleBindings.begin();
 
@@ -284,10 +288,6 @@ public:
         _possibleBindings.clear();
         updateBindingReaction(oldN,0);
     }
-
-    vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
-        return _branchrestarttuple;
-    }
 #ifdef DEBUGCONSTANTSEED
     virtual set<tuple<CCylinder*, short>> getpossibleBindings(){
         return _possibleBindings;
@@ -297,27 +297,32 @@ public:
         return _possibleBindings;
     }
 #endif
+
 #endif
+    virtual bool isConsistent();
+    vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
+        return _branchrestarttuple;
+    }
 #ifdef NLSTENCILLIST
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
                                                tuple<CCylinder*, short> t2){
-        double oldN=numBindingSites();
+        double oldN=numBindingSitesstencil();
         _possibleBindingsstencil.insert(t1);
         _branchrestarttuple.push_back(make_tuple(t1,t2));
 //        _branchCylinder=(get<0>(t2));
-        double newN=numBindingSites();
+        double newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);}
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1){
-        double oldN=numBindingSites();
+        double oldN=numBindingSitesstencil();
         _possibleBindingsstencil.insert(t1);
 //        _branchCylinder=(get<0>(t2));
-        double newN=numBindingSites();
+        double newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);}
     virtual void clearpossibleBindingsstencil() {
-        double oldN=numBindingSites();
+        double oldN=numBindingSitesstencil();
         _possibleBindingsstencil.clear();
         updateBindingReaction(oldN,0);
     }
@@ -371,6 +376,8 @@ friend class ChemManager;
 private:
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
+    float _rMinsq; ///< Minimum reaction range squared
+    float _rMaxsq; ///< Maximum reaction range squared
 
 
     
@@ -403,7 +410,6 @@ public:
 #ifdef NLORIGINAL
     ///add possible binding reactions that could occur
     virtual void addPossibleBindings(CCylinder* cc, short bindingSite);
-#endif
 
     virtual void addPossibleBindings(CCylinder* cc);
     //@}
@@ -414,7 +420,6 @@ public:
     virtual void removePossibleBindings(CCylinder* cc);
     //@}
 
-#ifdef NLORIGINAL
     ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings();
 
@@ -465,13 +470,13 @@ public:
     virtual void updateAllPossibleBindingsstencil();
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
                                                tuple<CCylinder*, short> t2){
-        double oldN=numBindingSites();
+        double oldN=numBindingSitesstencil();
         _possibleBindingsstencil.emplace(t1,t2);
-        double newN=numBindingSites();
+        double newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);
     }
     virtual void clearpossibleBindingsstencil() {
-        double oldN=numBindingSites();
+        double oldN=numBindingSitesstencil();
         _possibleBindingsstencil.clear();
         updateBindingReaction(oldN,0);
     }
@@ -498,7 +503,7 @@ public:
     }
     virtual void removePossibleBindingsstencil(CCylinder* cc, short bindingSite);
     virtual void removePossibleBindingsstencil(CCylinder* cc);
-     virtual void crosscheck();
+    virtual void crosscheck();
 #endif
 
 #ifdef CUDAACCL_NL
@@ -539,6 +544,8 @@ private:
     
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
+    float _rMinsq; ///< Minimum reaction range squared
+    float _rMaxsq; ///< Maximum reaction range squared
     
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
@@ -570,7 +577,6 @@ public:
 #ifdef NLORIGINAL
     ///add possible binding reactions that could occur
     virtual void addPossibleBindings(CCylinder* cc, short bindingSite);
-#endif
     virtual void addPossibleBindings(CCylinder* cc);
     //@}
     
@@ -580,7 +586,6 @@ public:
     virtual void removePossibleBindings(CCylinder* cc);
     //@}
 
-#ifdef NLORIGINAL
     ///update all possible binding reactions that could occur
     virtual void updateAllPossibleBindings();
 
@@ -627,13 +632,13 @@ public:
     virtual void updateAllPossibleBindingsstencil();
     virtual void appendpossibleBindingsstencil(tuple<CCylinder*, short> t1,
                                                tuple<CCylinder*, short> t2){
-        double oldN=numBindingSites();
+        double oldN=numBindingSitesstencil();
         _possibleBindingsstencil.emplace(t1,t2);
-        double newN=numBindingSites();
+        double newN=numBindingSitesstencil();
         updateBindingReaction(oldN,newN);
     }
     virtual void clearpossibleBindingsstencil() {
-        double oldN=numBindingSites();
+        double oldN=numBindingSitesstencil();
         _possibleBindingsstencil.clear();
         updateBindingReaction(oldN,0);
     }
@@ -645,6 +650,7 @@ public:
     getpossibleBindingsstencil(){
         return _possibleBindingsstencil;
     }
+
     vector<tuple<CCylinder*, short>> chooseBindingSitesstencil() {
 
         assert((_possibleBindingsstencil.size() != 0)

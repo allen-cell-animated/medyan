@@ -140,8 +140,14 @@ void Cylinder::updatePosition() {
         auto oldCCylinder = _cCylinder.get();
         
         //Remove old ccylinder from binding managers
-        for(auto &manager : oldCompartment->getFilamentBindingManagers())
+        for(auto &manager : oldCompartment->getFilamentBindingManagers()) {
+#ifdef NLORIGINAL
             manager->removePossibleBindings(oldCCylinder);
+#endif
+#ifdef NLSTENCILLIST
+            manager->removePossibleBindingsstencil(oldCCylinder);
+#endif
+        }
         
         //clone and set new ccylinder
         CCylinder* clone = _cCylinder->clone(c);
@@ -150,8 +156,14 @@ void Cylinder::updatePosition() {
         auto newCCylinder = _cCylinder.get();
         
         //Add new ccylinder to binding managers
-        for(auto &manager : newCompartment->getFilamentBindingManagers())
-            manager->addPossibleBindings(newCCylinder);
+        for(auto &manager : newCompartment->getFilamentBindingManagers()){
+#ifdef NLORIGINAL
+            manager->removePossibleBindings(newCCylinder);
+#endif
+#ifdef NLSTENCILLIST
+            manager->removePossibleBindingsstencil(newCCylinder);
+#endif
+        }
     }
 #endif
     

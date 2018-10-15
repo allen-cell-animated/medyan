@@ -60,12 +60,10 @@ void CylinderCylinderNL::updatebin(Cylinder *cyl){
     }
 
     if(_bin != cyl->_binvec.at(_ID)) {
-
 #ifdef CHEMISTRY
         auto oldBin = cyl->_binvec.at(_ID);
         auto newBin = _bin;
 #endif
-
         //remove from old compartment, add to new
         oldBin->removeCylinder(cyl);
         cyl->_binvec.at(_ID) = newBin;
@@ -88,15 +86,15 @@ void CylinderCylinderNL::generateConnections()
                         {indices[0] * _binSize[0] + _binSize[0] / 2,
                          indices[1] * _binSize[1] + _binSize[1] / 2,
                          indices[2] * _binSize[2] + _binSize[2] / 2};
-                std::cout<<coordinates[0]<<" "<<coordinates[1]<<" "<<coordinates[2]<<endl;
                 target->setCoordinates(coordinates);
+                int stencilcount = 0;
+
                 //Go through all neighbors to get the neighbors list
-//                std::cout<<"ijk "<<i<<" "<<j<<" "<<k<<endl;
                 for(int ii: {-1,0,1}){
                     for(int jj: {-1,0,1}){
                         for(int kk: {-1,0,1}){
                             //Consider the target bin itself as a neighbor.
-//                            if(ii != 0 || jj != 0 || kk != 0) {
+                                stencilcount++;
                                 int iprime = i+ii;
                                 int jprime = j+jj;
                                 int kprime = k+kk;
@@ -106,54 +104,51 @@ void CylinderCylinderNL::generateConnections()
                                     continue;
                                 vector<size_t> currentIndices{size_t(iprime), size_t
                                         (jprime), size_t(kprime)};
-//                                std::cout<<"CI "<<currentIndices[0]<<" "
-//                                        ""<<currentIndices[1]<<" "<<currentIndices[2]<<endl;
                                 Bin *neighbor = getBin(currentIndices);
-//                            if(ii==0 && jj == 0 &&  kk == 0 )
-//                            if(neighbor->coordinates()[0] == target->coordinates()[0] &&
-//                                    neighbor->coordinates()[1] == target->coordinates()
-//                                                                  [1] &&
-//                                    neighbor->coordinates()[2] == target->coordinates()[2])
-//                                std::cout<<"Self bin added"<<endl;
                                 target->addNeighbour(neighbor);
-//                            }
+                                target->stencilID.push_back(stencilcount-1);
                         }
                     }
                 }
-//                // one neighbor to the left and right
-//                for(int ii: {-1,1})
-//                {
-//                    int iprime = i+ii;
-//                    if(iprime<0 or iprime==int(_grid[0]))
-//                        continue;
-//                    vector<size_t> currentIndices{size_t(iprime), j, k};
-//                    Bin *neighbor = getBin(currentIndices);
-//                    target->addNeighbour(neighbor);
-//                }
-//                //one neighbor to the front and back
-//                for(int jj: {-1,1})
-//                {
-//                    int jprime = j+jj;
-//                    if(jprime<0 or jprime==int(_grid[1]))
-//                        continue;
-//                    vector<size_t> currentIndices{i, size_t(jprime), k};
-//                    Bin *neighbor = getBin(currentIndices);
-//                    target->addNeighbour(neighbor);
-//                }
-//                //one neighbor to the top and bottom
-//                for(int kk: {-1,1})
-//                {
-//                    int kprime = k+kk;
-//                    if(kprime<0 or kprime==int(_grid[2]))
-//                        continue;
-//                    vector<size_t> currentIndices{i, j, size_t(kprime)};
-//                    Bin *neighbor = getBin(currentIndices);
-//                    target->addNeighbour(neighbor);
-//                }
             }
         }
     }
 
+
+        /*for(size_t i=0U; i<_grid[0]; ++i) {
+
+            for (size_t j = 0U; j < _grid[1]; ++j) {
+
+                for (size_t k = 0U; k < _grid[2]; ++k) {
+                    vector<size_t> indices{i, j, k};
+                    Bin *target = getBin(indices);
+                    std::cout << "Target " << target->coordinates()[0] << " " <<
+                              target->coordinates()[1] << " " <<
+                              target->coordinates()[2] << " " << endl;
+                    std::cout<<"Bin size "<<_binSize[0]<<endl;
+                    for (int ii: {-1, 0, 1}) {
+                        for (int jj: {-1, 0, 1}) {
+                            for (int kk: {-1, 0, 1}) {
+                                int iprime = i + ii;
+                                int jprime = j + jj;
+                                int kprime = k + kk;
+                                if (iprime < 0 or iprime == int(_grid[0]) or jprime < 0 or
+                                    jprime == int(_grid[1]) or kprime < 0 or
+                                    kprime == int(_grid[2]))
+                                    continue;
+                                vector<size_t> currentIndices{size_t(iprime), size_t
+                                        (jprime), size_t(kprime)};
+                                Bin *neighbor = getBin(currentIndices);
+                                std::cout << "Neighbor " << neighbor->coordinates()[0]
+                                          << " " <<
+                                          neighbor->coordinates()[1] << " " <<
+                                          neighbor->coordinates()[2] << " " << endl;
+                            }
+                        }
+                    }
+                }
+            }
+        }*/
 }
 
 void CylinderCylinderNL::initializeBinGrid() {
@@ -161,6 +156,7 @@ void CylinderCylinderNL::initializeBinGrid() {
 //    //Initial parameters of system
     auto _nDim = SysParams::Geometry().nDim;
     double searchdist = 1.125 * (maxcylsize + _rMax);
+    std::cout<<"searchdist "<<searchdist<<" rMax "<<_rMax<<endl;
     _binSize = {searchdist, searchdist, searchdist};
     if(_nDim >=1) {
         _size.push_back(int(SysParams::Geometry().NX * SysParams::Geometry()
@@ -204,7 +200,7 @@ void CylinderCylinderNL::initializeBinGrid() {
         if(x != 0) size*=x;
     }
     //Set the instance of this grid with given parameters
-    _binGrid = new BinGrid(size, _ID);
+    _binGrid = new BinGrid(size, _ID, _binSize);
     //Create connections based on dimensionality
     generateConnections();
 }
@@ -291,10 +287,6 @@ Bin* CylinderCylinderNL::getBin(const vector<size_t> &indices)
 }
 
 void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
-//    if(runtime)
-//        std::cout<<"Runtime is true "<<runtime<<endl;
-//    else
-//        std::cout<<"Runtime is false "<<runtime<<endl;
     //clear existing
     _list4mbin[cylinder].clear();
     auto binvec = cylinder->_binvec;//The different bins that this cylinder belongs to.
@@ -305,19 +297,75 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
     vector<Bin*> _neighboringBins = binvec.at(_ID)//Get the bin that belongs to the
                     // current binGrid of interest for this NL.
             ->getNeighbours();
-    for(auto &bin : _neighboringBins){
-//        std::cout<<bin->getCylinders().size()<<endl;
-        for(auto &ncylinder : bin->getCylinders()) {
+    //
+    int ncyls2 = 0;
+    int tcyl2 = 0;
+    int nbincount = 0;
+    auto nbinstencil = parentbin->stencilID;
+    for(auto &bin : _neighboringBins) {
+        bool isbinneeded = _binGrid->iswithincutoff(cylinder->coordinate,
+                                                     parentbin->coordinates(),
+                                                     nbinstencil.at(nbincount), _rMax);
+        nbincount++;
+        if(isbinneeded) {
+            for (auto &ncylinder : bin->getCylinders()) {
+                bool checkstatus = false;
+                if ((cylinder->getType() == NLcyltypes[0] &&
+                     ncylinder->getType() == NLcyltypes[1]) || (cylinder->getType() ==
+                                                                NLcyltypes[1] &&
+                                                                ncylinder->getType() ==
+                                                                NLcyltypes[0])) {
+                    checkstatus = true;
+                }
+                if (checkstatus) {
+                    //Don't add the same cylinder!
+                    if (cylinder == ncylinder) continue;
 
+                    //Dont add if ID is more than cylinder for half-list
+                    if (!_full && cylinder->getID() <= ncylinder->getID()) continue;
+
+                    //Don't add if belonging to same parent
+                    if (cylinder->getParent() == ncylinder->getParent()) {
+
+                        //if not cross filament, check if not neighboring
+                        auto dist = fabs(cylinder->getPosition() -
+                                         ncylinder->getPosition());
+                        if (dist <= 2) continue;
+                    }
+                    //Dont add if not within range
+                    double dist = twoPointDistance(cylinder->coordinate,
+                                                   ncylinder->coordinate);
+                    if (dist > _rMax || dist < _rMin) continue;
+                    //If we got through all of this, add it!
+                    _list4mbin[cylinder].push_back(ncylinder);
+                    ncyls2++;
+
+                    //if runtime, add to other list as well if full
+                    if (runtime && _full) {
+                        _list4mbin[ncylinder].push_back(cylinder);
+                        ncyls2++;
+                    }
+                }
+            }
+        }
+/*        std::cout<<"ncyls check "<<ncyls2<<" "<<checkstatus2<<" bin "<<bin->coordinates()
+        [0]<<" "<<bin->coordinates()[1]<<" "<<bin->coordinates()[2]<<" cyl "
+                ""<<cylinder->coordinate[0]<<" "<<cylinder->coordinate[1]<<" "
+                ""<<cylinder->coordinate[2]<<" bin "<<parentbin->coordinates()[0]<<" "
+                ""<<parentbin->coordinates()[1]<<" "
+                ""<<parentbin->coordinates()[2]<<endl;*/
+    }
+    //
+    /*int ncyls = 0;
+    int tcyl = 0;
+    for(auto &bin : _neighboringBins){
+        nbincount++;
+        tcyl += bin->getCylinders().size();
+        for(auto &ncylinder : bin->getCylinders()) {
             bool checkstatus = false;
-//            std::cout<<"parent "<<cylinder->getType()<<endl;
-//            std::cout<<"neighbor "<<ncylinder->getID()<<endl;
-//            ncylinder->printSelf();
             if ((cylinder->getType() == NLcyltypes[0] &&
                  ncylinder->getType() == NLcyltypes[1]) || (cylinder->getType() ==
-                                                            NLcyltypes[1] &&
-                                                            ncylinder->getType() ==
-                                                            NLcyltypes[0])) {
+                 NLcyltypes[1] && ncylinder->getType() == NLcyltypes[0])) {
                 checkstatus = true;
             }
             if (checkstatus) {
@@ -339,17 +387,22 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                 double dist = twoPointDistance(cylinder->coordinate,
                                                ncylinder->coordinate);
                 if (dist > _rMax || dist < _rMin) continue;
-//            std::cout<<"V "<<cylinder->_dcIndex<<" "<<ncylinder->_dcIndex<<" "<<dist<<" "<<_rMin<<" "<<_rMax<<endl;
                 //If we got through all of this, add it!
                 _list4mbin[cylinder].push_back(ncylinder);
+                ncyls++;
 
                 //if runtime, add to other list as well if full
-                if (runtime && _full)
+                if (runtime && _full) {
                     _list4mbin[ncylinder].push_back(cylinder);
+                    ncyls++;
+                }
             }
         }
 
-    }
+    }*/
+//    std::cout<<"ncyls "<<ncyls2<<endl;
+//    std::cout<<"Total cyls "<<tcyl2<<endl;
+//    std::cout<<"-----"<<endl;
 }
 vector<Cylinder*> CylinderCylinderNL::getNeighborsstencil(Cylinder* cylinder) {
 
@@ -358,10 +411,6 @@ vector<Cylinder*> CylinderCylinderNL::getNeighborsstencil(Cylinder* cylinder) {
 #endif
 
 void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
-//    if(runtime)
-//        std::cout<<"Runtime is true "<<runtime<<endl;
-//    else
-//        std::cout<<"Runtime is false "<<runtime<<endl;
 
     //clear existing
     _list[cylinder].clear();
@@ -373,9 +422,11 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
     GController::findCompartments(cylinder->coordinate,
                                   cylinder->getCompartment(),
                                   searchDist + _rMax, compartments);
+//    std::cout<<" neighboring cmps "<<compartments.size()<<endl;
+    int tcyl = 0;
     for(auto &comp : compartments) {
+        tcyl += comp->getCylinders().size();
         for(auto &ncylinder : comp->getCylinders()) {
-
             //Don't add the same cylinder!
             if(cylinder == ncylinder) continue;
 
@@ -403,6 +454,7 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
                 _list[ncylinder].push_back(cylinder);
         }
     }
+//    std::cout<<"Total cyls "<<tcyl<<endl;
 }
 
 void CylinderCylinderNL::addNeighbor(Neighbor* n) {
@@ -489,17 +541,26 @@ void CylinderCylinderNL::reset() {
 
 #endif
     //loop through all neighbor keys
-#ifdef NLORIGINAL//serial
-    _list.clear();
     int tot = 0;
+    chrono::high_resolution_clock::time_point mins, mine;
+#ifdef NLORIGINAL//serial
+    mins = chrono::high_resolution_clock::now();
+    _list.clear();
+    tot = 0;
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighbors(cylinder);
         tot += _list[cylinder].size();
     }
-    std::cout<<"NLORIGINAL size "<<" "<<tot<<endl;
-    tot = 0;
+    std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
+
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_orig(mine - mins);
+    std::cout<<"NLORIG reset time "<<elapsed_orig.count()<<endl;
 #endif
+
 #ifdef NLSTENCILLIST
+    mins = chrono::high_resolution_clock::now();
+    tot = 0;
     _list4mbin.clear();
     //check and reassign cylinders to different bins if needed.
     updateallcylinderstobin();
@@ -507,11 +568,14 @@ void CylinderCylinderNL::reset() {
         updateNeighborsbin(cylinder);
         tot += _list4mbin[cylinder].size();
     }
-    std::cout<<"NLSTENCILLIST size "<<" "<<tot<<endl;
+    std::cout<<"reset NLSTENCILLIST size "<<" "<<tot<<endl;
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_sten(mine - mins);
+    std::cout<<"NLSTEN reset time "<<elapsed_sten.count()<<endl;
 #endif
+
 //        std::cout<<cylinder->_dcIndex<<" "<<_list.size()<<" "<<vec_numpairs<<" "<<_full<<endl;
 #ifdef CUDAACCL_NL
-
         for(auto cylinder: Cylinder::getCylinders()) {
         //Find surrounding compartments (For now its conservative)
         vector<Compartment*> compartments;
@@ -536,19 +600,19 @@ void CylinderCylinderNL::reset() {
 //    }
     std::cout<<pair_cIndex_cnIndex.size()<<" "<<nint<<endl;
 
-//    int *cpu_pair_cIndex_cnIndex;
-//    cpu_pair_cIndex_cnIndex = new int[pair_cIndex_cnIndex.size()];
-//    for (auto i = 0; i < pair_cIndex_cnIndex.size(); i++)
-//        cpu_pair_cIndex_cnIndex[i] = pair_cIndex_cnIndex.at(i);
+/*    int *cpu_pair_cIndex_cnIndex;
+    cpu_pair_cIndex_cnIndex = new int[pair_cIndex_cnIndex.size()];
+    for (auto i = 0; i < pair_cIndex_cnIndex.size(); i++)
+        cpu_pair_cIndex_cnIndex[i] = pair_cIndex_cnIndex.at(i);
 
 
-//    int cpu_pair_cIndex_cmp[pair_cIndex_cmp.size()];
-//    for (auto i = 0; i < pair_cIndex_cmp.size(); i++)
-//        cpu_pair_cIndex_cmp[i] = pair_cIndex_cmp.at(i);
-//    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pair_cIndex_cmp,  pair_cIndex_cmp.size() * sizeof(int)),
-//                                "cuda data transfer", " NeighborListImpl.h");
-//    CUDAcommon::handleerror(cudaMemcpy(gpu_pair_cIndex_cmp, cpu_pair_cIndex_cmp, pair_cIndex_cmp.size()
-//                                           *sizeof(int), cudaMemcpyHostToDevice));
+    int cpu_pair_cIndex_cmp[pair_cIndex_cmp.size()];
+    for (auto i = 0; i < pair_cIndex_cmp.size(); i++)
+        cpu_pair_cIndex_cmp[i] = pair_cIndex_cmp.at(i);
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pair_cIndex_cmp,  pair_cIndex_cmp.size() * sizeof(int)),
+                                "cuda data transfer", " NeighborListImpl.h");
+    CUDAcommon::handleerror(cudaMemcpy(gpu_pair_cIndex_cmp, cpu_pair_cIndex_cmp, pair_cIndex_cmp.size()
+                                           *sizeof(int), cudaMemcpyHostToDevice));*/
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pair_cIndex_cnIndex,  pair_cIndex_cnIndex.size() * sizeof(int)),
                             "cuda data transfer", " NeighborListImpl.h");
 
@@ -663,6 +727,49 @@ void CylinderCylinderNL::reset() {
 
     CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree","NeighborListImpl.cu");
 #endif
+    int *gpu_array;
+    int *gpu_stage;
+    int *gpu_nvec;
+    int Nva[1];
+    int Nv = 64;
+    int stage[2];
+    stage[0] =-1;stage[1] = 0;
+    Nva[0]= Nv;
+    vector<int> testarray(Nv);
+    for(int i = 0; i < Nv; i++) {
+        testarray.at(i) = (rand() % Nv);
+        std::cout<<testarray.at(i)<<" ";
+    }
+//    vector<double> testarray = { 19.0, 128.0, 9.0, 101.0, 14.0, 98.0, 45.0, 32.0, 4.0, 2.0, 50.0, 30.0, 95.0, 38.0, 17.0, 40.0};
+    std::cout<<endl;
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_array, Nv*sizeof(int)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_array, testarray.data(), Nv* sizeof(int),
+                                       cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_stage, 2*sizeof(int)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_stage,stage , 2 * sizeof(int),
+                                       cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_nvec, sizeof(int)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_nvec, Nva, sizeof(int),
+                                       cudaMemcpyHostToDevice));
+
+//    resetbitonic<<<1,1>>>(gpu_stage);
+
+    for(int i = 0;i<21; i ++){
+        incrementbitonic<<<1,1>>>(gpu_stage);
+        bitonicsort<<<4,8>>>(gpu_array, gpu_stage, gpu_nvec);
+        int cpu_nvec[Nv];
+        CUDAcommon::handleerror(cudaMemcpy(cpu_nvec, gpu_array, Nv * sizeof(int),
+                                           cudaMemcpyDeviceToHost),"NL", "NLImpl.cu");
+        for(int i = 0; i < Nv; i++)
+            std::cout<<cpu_nvec[i]<<" ";
+        std::cout<<endl;
+    }
+    int cpu_nvec[Nv];
+    CUDAcommon::handleerror(cudaMemcpy(cpu_nvec, gpu_array, Nv * sizeof(int),
+                                            cudaMemcpyDeviceToHost),"NL", "NLImpl.cu");
+    for(int i = 0; i < Nv; i++)
+        std::cout<<cpu_nvec[i]<<" ";
+    std::cout<<endl;
 }
 
 

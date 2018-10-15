@@ -152,6 +152,11 @@ namespace mathfunc {
 
         return sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
     }
+
+    inline double sqmagnitude(const vector<double> &v) {
+
+        return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }
     ///ARRAY VERSION
     #ifdef CUDAACCL
     __host__ __device__
@@ -203,6 +208,15 @@ namespace mathfunc {
                     (v2[1] - v1[1]) * (v2[1] - v1[1]) +
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
+
+    inline double twoPointDistancesquared(const vector<double> &v1, const vector<double>
+                                            &v2) {
+
+        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) +
+                    (v2[1] - v1[1]) * (v2[1] - v1[1]) +
+                    (v2[2] - v1[2]) * (v2[2] - v1[2]));
+    }
+
 
     inline double twoPointDistance(const vector<double> &v1, double const *v2) {
 
@@ -534,6 +548,23 @@ namespace mathfunc {
                     ((v4[id4 + 2] + d * p4[id4 + 2]) - (v3[id3 + 2] + d * p3[id3 + 2]));
         return xx + yy + zz;
     }
+
+    inline double scalarprojection(vector<double> a, vector<double> b){
+        return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+    }
+
+    inline double maxdistbetweencylinders(const vector<double> &v1,
+                                   const vector<double> &v2,
+                                   const vector<double> &v3,
+                                   const vector<double> &v4) {
+        double maxdist = 0.0;
+        double d1 = twoPointDistancesquared(v1, v3);maxdist = max(maxdist,d1);
+        double d2 = twoPointDistancesquared(v1, v4);maxdist = max(maxdist,d2);
+        double d3 = twoPointDistancesquared(v2, v3);maxdist = max(maxdist,d3);
+        double d4 = twoPointDistancesquared(v2, v4);maxdist = max(maxdist,d4);
+        return maxdist;
+    }
+
     /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
     /// v2[x,y,z] + d*p2[x,y,z]
     inline double dotProductStretched(const vector<double> &v1,

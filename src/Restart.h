@@ -322,7 +322,12 @@ private:
                             vector<string> rxnspecies=Mgr->getrxnspecies();
                             setdiffspeciesnumber(rxnspecies,c1);
                             //@
+#ifdef NLORIGINAL
                             Mgr->appendpossibleBindings(map[one],map[two]);
+#endif
+#ifdef NLSTENCILLIST
+                            Mgr->appendpossibleBindingsstencil(map[one],map[two]);
+#endif
                             _numChemSteps++;}}
                     else if(dynamic_cast<MotorBindingManager*>(Mgr.get())) {
                         if(Mgr->getBoundName().compare(boundName)==0){
@@ -330,7 +335,12 @@ private:
                             vector<string> rxnspecies=Mgr->getrxnspecies();
                             setdiffspeciesnumber(rxnspecies,c1);
                             //@
+#ifdef NLORIGINAL
                             Mgr->appendpossibleBindings(map[one],map[two]);
+#endif
+#ifdef NLSTENCILLIST
+                            Mgr->appendpossibleBindingsstencil(map[one],map[two]);
+#endif
                             _numChemSteps++;}}
                 }//@For Mgr
             }//@IF
@@ -342,7 +352,12 @@ private:
                             vector<string> rxnspecies=Mgr->getrxnspecies();
                             setdiffspeciesnumber(rxnspecies,c1);
                             //@
+#ifdef NLORIGINAL
                             Mgr->appendpossibleBindings(map[two],map[one]);
+#endif
+#ifdef NLSTENCILLIST
+                            Mgr->appendpossibleBindingsstencil(map[two],map[one]);
+#endif
                             _numChemSteps++;}}
                     else if(dynamic_cast<MotorBindingManager*>(Mgr.get())) {
                         if(Mgr->getBoundName().compare(boundName)==0){
@@ -350,7 +365,12 @@ private:
                             vector<string> rxnspecies=Mgr->getrxnspecies();
                             setdiffspeciesnumber(rxnspecies,c1);
                             //@
+#ifdef NLORIGINAL
                             Mgr->appendpossibleBindings(map[two],map[one]);
+#endif
+#ifdef NLSTENCILLIST
+                            Mgr->appendpossibleBindingsstencil(map[two],map[one]);
+#endif
                             _numChemSteps++;}}
                 }//@For Mgr
             }//@ELSE IF
@@ -363,7 +383,12 @@ private:
                             vector<string> rxnspecies=Mgr->getrxnspecies();
                             setdiffspeciesnumber(rxnspecies,c2);
                             //@
+#ifdef NLORIGINAL
                             Mgr->appendpossibleBindings(map[two],map[one]);
+#endif
+#ifdef NLSTENCILLIST
+                            Mgr->appendpossibleBindingsstencil(map[two],map[one]);
+#endif
                             _numChemSteps++;}}
                     else if(dynamic_cast<MotorBindingManager*>(Mgr.get())) {
                         if(Mgr->getBoundName().compare(boundName)==0){
@@ -371,7 +396,12 @@ private:
                             vector<string> rxnspecies=Mgr->getrxnspecies();
                             setdiffspeciesnumber(rxnspecies,c2);
                             //@
+#ifdef NLORIGINAL
                             Mgr->appendpossibleBindings(map[two],map[one]);
+#endif
+#ifdef NLSTENCILLIST
+                            Mgr->appendpossibleBindingsstencil(map[two],map[one]);
+#endif
                             _numChemSteps++;}}
                 }//@For Mgr
             }
@@ -410,7 +440,13 @@ public:
         {temp_diffrate_vector.push_back(it->getRate());
             it->setRate(0.0);}
         C->getDiffusionReactionContainer().updatePropensityComprtment();
-        for(auto &Mgr:C->getFilamentBindingManagers()){Mgr->clearpossibleBindings();
+        for(auto &Mgr:C->getFilamentBindingManagers()){
+#ifdef NLORIGINAL
+            Mgr->clearpossibleBindings();
+#endif
+#ifdef NLSTENCILLIST
+            Mgr->clearpossibleBindingsstencil();
+#endif
         }}
 //STEP #1a: Get cylinders, passivate filament reactions.
 //        auto xxx=0;
@@ -808,7 +844,12 @@ public:
                             c1->getCompartment()->getDiffusionReactionContainer().updatePropensityComprtment();
                             counter++;
                         }
+#ifdef NLORIGINAL
                         Mgr->appendpossibleBindings(map[one],map[two]);
+#endif
+#ifdef NLSTENCILLIST
+                        Mgr->appendpossibleBindingsstencil(map[one],map[two]);
+#endif
                         _numChemSteps++;
                     }}}
         } //@brows

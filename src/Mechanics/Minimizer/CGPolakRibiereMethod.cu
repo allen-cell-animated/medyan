@@ -72,8 +72,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
-    bool *Mc_isminimizationstate;
-    bool *Mc_issafestate;
+/*    bool *Mc_isminimizationstate;
+    bool *Mc_issafestate;*/
 //    @}
 
     Mc_isminimizationstate = new bool[1];
@@ -1033,8 +1033,8 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
-    delete [] Mc_isminimizationstate;
-    delete [] Mc_issafestate;
+/*    delete [] Mc_isminimizationstate;
+    delete [] Mc_issafestate;*/
     //@}
 #endif
     //TODO make sure it calculates stretchforce in CUDA.

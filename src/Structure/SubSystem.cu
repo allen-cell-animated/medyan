@@ -79,7 +79,58 @@ void SubSystem::updateBindingManagers() {
     //cudaFree
     endresetCUDA();
 #endif
-#ifdef NLORIGINAL
+#if defined(NLORIGINAL) || defined(NLSTENCILLIST)
+#ifdef NLSTENCILLIST
+    //vectorize
+    SysParams::MParams.speciesboundvec.clear();
+    int cidx = 0;
+    vector<int> ncylvec(SysParams::CParams.numFilaments);
+    vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
+    auto cylvec = Cylinder::getCylinders();
+    int ncyl = cylvec.size();
+    vector<double> cylsqmagnitudevector;
+    std::cout<<cylsqmagnitudevector.size()<<endl;
+
+    vector<int> branchspeciesbound;
+    vector<int> linkerspeciesbound;
+    vector<int> motorspeciesbound;
+    for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
+        ncylvec.at(ftype) = cidx;
+        bspeciesoffsetvec.at(ftype) = branchspeciesbound.size();
+        cidx = 0;
+        for (auto cyl: cylvec) {
+            auto _filamentType = cyl->getParent()->getType();
+            if (_filamentType == ftype) {
+                cyl->_dcIndex = cidx;
+                auto x1 = cyl->getFirstBead()->coordinate;
+                auto x2 = cyl->getSecondBead()->coordinate;
+                vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+                cylsqmagnitudevector.push_back(sqmagnitude(X1X2));
+                auto cc = cyl->getCCylinder();
+
+                for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                     it1 !=
+                     SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
+                    branchspeciesbound.push_back(cc->getCMonomer(*it1)->speciesBound(
+                            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN());
+                    linkerspeciesbound.push_back(cc->getCMonomer(*it1)->speciesBound(
+                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN());
+                    motorspeciesbound.push_back(cc->getCMonomer(*it1)->speciesBound(
+                            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN());
+                }
+                cidx++;
+            }
+        }
+    }
+    SysParams::MParams.speciesboundvec.push_back(branchspeciesbound);
+    SysParams::MParams.speciesboundvec.push_back(linkerspeciesbound);
+    SysParams::MParams.speciesboundvec.push_back(motorspeciesbound);
+    SysParams::MParams.cylsqmagnitudevector = cylsqmagnitudevector;
+    SysParams::MParams.bsoffsetvec = bspeciesoffsetvec;
+    SysParams::MParams.ncylvec = ncylvec;
+//    std::cout<<SysParams::Mechanics().speciesboundvec.size()<<endl;
+//    std::cout<<motorspeciesbound.size()<<endl;
+#endif
 
     for(auto C : _compartmentGrid->getCompartments()) {
 
@@ -88,7 +139,12 @@ void SubSystem::updateBindingManagers() {
             manager->updateAllPossibleBindings();
 #endif
 #ifdef NLSTENCILLIST
+            chrono::high_resolution_clock::time_point mins, mine;
+            mins = chrono::high_resolution_clock::now();
             manager->updateAllPossibleBindingsstencil();
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed_orig(mine - mins);
+            std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
 #endif
 #if defined(NLORIGINAL) && defined(NLSTENCILLIST)
             manager->crosscheck();

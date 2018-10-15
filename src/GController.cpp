@@ -196,7 +196,6 @@ void GController::generateConnections()
     
 }
 
-
 CompartmentGrid* GController::initializeGrid() {
     
     //Initial parameters of system

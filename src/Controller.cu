@@ -693,8 +693,15 @@ void Controller::run() {
 //Step 4. Display the number of reactions yet to be fired. Should be zero.
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto &Mgr:C->getFilamentBindingManagers()){
-                if(Mgr->numBindingSites()==0)
-                    cout<< Mgr->numBindingSites()<<' ';
+                int numsites = 0;
+#ifdef NLORIGINAL
+                numsites = Mgr->numBindingSites();
+#endif
+#ifdef NLSTENCILLIST
+                numsites = Mgr->numBindingSitesstencil();
+#endif
+                if(numsites == 0)
+                    cout<< numsites<<" ";
                 else{
                     cout<<endl;
                     cout<<"Few reactions are not fired! Cannot restart this trajectory. Exiting ..."<<endl;
