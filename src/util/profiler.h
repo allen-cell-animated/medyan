@@ -187,7 +187,9 @@ public:
     template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
     void submit(time_count_float_t elapsedSingle) {
         ++(this->count);
-        this->elapsed += elapsedSingle;
+        auto currentElapsed = this->elapsed.load();
+        while (!this->elapsed.compare_exchange_weak(currentElapsed, currentElapsed + elapsedSingle))
+            ;
     }
     template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
     void submit(time_count_float_t elapsedSingle) {} // Do nothing
