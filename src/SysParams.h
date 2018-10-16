@@ -94,6 +94,12 @@ struct MechParams {
     int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
     //@}
     
+    //vectorization
+    double *coord;
+    vector<vector<int>> speciesboundvec;
+    vector<double> cylsqmagnitudevector;
+    vector<int> ncylvec;
+    vector<int>bsoffsetvec;
     
 };
 
@@ -252,6 +258,7 @@ class SysParams {
 friend class Controller;
 friend class SystemParser;
 friend class ChemManager;
+friend class SubSystem;
     
 #ifdef TESTING ///Public access if testing only
 public:

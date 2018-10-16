@@ -371,7 +371,8 @@ friend class ChemManager;
 private:
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
-
+    float _rMinsq; ///< Minimum reaction range
+    float _rMaxsq; ///< Maximum reaction range
 
     
     //possible bindings at current state. updated according to neighbor list
@@ -539,6 +540,8 @@ private:
     
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
+    float _rMinsq; ///< Minimum reaction range
+    float _rMaxsq; ///< Maximum reaction range
     
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
