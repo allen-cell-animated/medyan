@@ -393,10 +393,10 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
                 if(dist <= 2) continue;
             }
             //Dont add if not within range
-            double dist = twoPointDistance(cylinder->coordinate,
+            double distsq = twoPointDistancesquared(cylinder->coordinate,
                                            ncylinder->coordinate);
-            if(dist > _rMax || dist < _rMin) continue;
-//            std::cout<<"V "<<cylinder->_dcIndex<<" "<<ncylinder->_dcIndex<<" "<<dist<<" "<<_rMin<<" "<<_rMax<<endl;
+            if(distsq > (_rMax * _rMax) || distsq < (_rMin * _rMin)) continue;
+
             //If we got through all of this, add it!
             _list[cylinder].push_back(ncylinder);
 
@@ -841,12 +841,12 @@ void BubbleBubbleNL::updateNeighbors(Bubble* bb) {
     //loop through beads, add as neighbor
     for (auto &bbo : Bubble::getBubbles()) {
 
-        double dist = twoPointDistance(bb->coordinate, bbo->coordinate);
+        double distsq = twoPointDistancesquared(bb->coordinate, bbo->coordinate);
 
         if(bb->getID() <= bbo->getID()) continue;
 
         //If within range, add it
-        if(dist < _rMax) _list[bb].push_back(bbo);
+        if(distsq < (_rMax * _rMax)) _list[bb].push_back(bbo);
     }
 }
 
@@ -899,10 +899,10 @@ void BubbleCylinderNL::updateNeighbors(Bubble* bb) {
     //loop through beads, add as neighbor
     for (auto &c : Cylinder::getCylinders()) {
 
-        double dist = twoPointDistance(c->coordinate, bb->coordinate);
+        double distsq = twoPointDistancesquared(c->coordinate, bb->coordinate);
 
         //If within range, add it
-        if(dist < _rMax) _list[bb].push_back(c);
+        if(distsq < (_rMax * _rMax)) _list[bb].push_back(c);
     }
 }
 
@@ -917,7 +917,7 @@ void BubbleCylinderNL::addNeighbor(Neighbor* n) {
         for(auto it = _list.begin(); it != _list.end(); it++) {
 
             //if within range, add it
-            if(twoPointDistance(it->first->coordinate, c->coordinate) < _rMax)
+            if(twoPointDistancesquared(it->first->coordinate, c->coordinate) < (_rMax * _rMax))
                 it->second.push_back(c);
         }
     }

@@ -367,7 +367,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 
 #endif
 double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadSet, double *krep) {
-    double *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, U_i;
+    double *c1, *c2, *c3, *c4, *newc2, dsq, d, invDSquare, U, U_i;
     double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     double ATG1, ATG2, ATG3, ATG4;
 
@@ -391,8 +391,8 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
 
-            d = twoPointDistance(c1, c3);
-            invDSquare =  1 / (d * d);
+            dsq = twoPointDistancesquared(c1, c3);
+            invDSquare =  1 / dsq;
             U_i = krep[i] * invDSquare * invDSquare;
 //            std::cout<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -466,7 +466,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
                                         double *krep, double z) {
 
 
-    double d, invDSquare, U, U_i, *f1, *f2, *f3, *f4;
+    double d, dsq, invDSquare, U, U_i, *f1, *f2, *f3, *f4;
     double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     double ATG1, ATG2, ATG3, ATG4;
     double *c1us, *c2us, *c3us, *c4us;
@@ -530,8 +530,8 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
 
-            d = twoPointDistance(c1, c3);
-            invDSquare =  1 / (d * d);
+            dsq = twoPointDistancesquared(c1, c3);
+            invDSquare =  1 / dsq;
             U_i = krep[i] * invDSquare * invDSquare;
 //            std::cout<<"P Energy"<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -617,7 +617,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
 //    start = clock();
 
 //    cout.precision(dbl::max_digits10); //TODO remove precision.
-    double *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, *f1, *f2, *f3, *f4;
+    double *c1, *c2, *c3, *c4, *newc2, d, dsq, invDSquare, U, *f1, *f2, *f3, *f4;
     double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
     double ATG1, ATG2, ATG3, ATG4;
     double A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
@@ -651,8 +651,8 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
 
-            d = twoPointDistance(c1, c3);
-            invDSquare =  1 / (d * d);
+            dsq = twoPointDistancesquared(c1, c3);
+            invDSquare =  1 / dsq;
             U = krep[i] * invDSquare * invDSquare;
 
             double f0 = 4 * krep[i] * invDSquare * invDSquare * invDSquare;

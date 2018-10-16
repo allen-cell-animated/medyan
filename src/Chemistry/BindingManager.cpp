@@ -576,9 +576,9 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
                     
-                    double dist = twoPointDistance(m1, m2);
+                    double distsq = twoPointDistancesquared(m1, m2);
                     
-                    if(dist > _rMax || dist < _rMin) continue;
+                    if(distsq > _rMaxsq || distsq < _rMinsq) continue;
                     
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
@@ -1034,9 +1034,9 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
                     
-                    double dist = twoPointDistance(m1, m2);
+                    double distsq = twoPointDistancesquared(m1, m2);
                     
-                    if(dist > _rMax || dist < _rMin) continue;
+                    if(distsq > _rMaxsq || distsq < _rMinsq) continue;
                     
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
@@ -1125,13 +1125,10 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                             auto m1 = midPointCoordinate(x1, x2, mp1);
                             auto m2 = midPointCoordinate(x3, x4, mp2);
                             
-                            double dist = twoPointDistance(m1,m2);
-                            //                            std::cout<<c->_dcIndex<<" "<<cn->_dcIndex<<" "<<*it1<<" "<<*it2<<" "<<m1[0]<<" "
-                            //                                    ""<<m1[1]<<" "<<m1[2]<<" "<<m2[0]<<" "<<m2[1]<<" "<<m2[2]<<" "<<mp1<<" "<<mp2<<endl;
+                            double distsq = twoPointDistancesquared(m1, m2);
                             
-                            if(dist > _rMax || dist < _rMin) continue;
-                            //                            std::cout<<c->_dcIndex<<" "<<cn->_dcIndex<<" "<<*it1<<" "<<*it2<<" "<<m1[0]<<" "
-                            //                                    ""<<m1[1]<<" "<<m1[2]<<" "<<m2[0]<<" "<<m2[1]<<" "<<m2[2]<<" "<<mp1<<" "<<mp2<<endl;
+                            if(distsq > _rMaxsq || distsq < _rMinsq) continue;
+
                             auto t1 = tuple<CCylinder*, short>(cc, *it1);
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);
                             
@@ -1482,9 +1479,9 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
                     
-                    double dist = twoPointDistance(m1, m2);
+                    double distsq = twoPointDistancesquared(m1, m2);
                     
-                    if (dist > _rMax || dist < _rMin) continue;
+                    if(distsq > _rMaxsq || distsq < _rMinsq) continue;
                     
                     auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder *, short>(ccn, *it);
@@ -1966,9 +1963,9 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
                     
-                    double dist = twoPointDistance(m1, m2);
+                    double distsq = twoPointDistancesquared(m1, m2);
                     
-                    if(dist > _rMax || dist < _rMin) continue;
+                    if(distsq > _rMaxsq || distsq < _rMinsq) continue;
                     
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
@@ -2061,9 +2058,9 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                             auto m1 = midPointCoordinate(x1, x2, mp1);
                             auto m2 = midPointCoordinate(x3, x4, mp2);
                             
-                            double dist = twoPointDistance(m1, m2);
+                            double distsq = twoPointDistancesquared(m1, m2);
                             
-                            if(dist > _rMax || dist < _rMin) continue;
+                            if(distsq > _rMaxsq || distsq < _rMinsq) continue;
                             
                             auto t1 = tuple<CCylinder*, short>(cc, *it1);
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);

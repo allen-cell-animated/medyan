@@ -221,6 +221,12 @@ namespace mathfunc {
         return sqrt((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
+    
+    inline double twoPointDistancesquared(double const *v1, double const *v2) {
+        
+        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
+                (v2[2] - v1[2]) * (v2[2] - v1[2]));
+    }
 
     ///CUDA VERSION
     #ifdef CUDAACCL

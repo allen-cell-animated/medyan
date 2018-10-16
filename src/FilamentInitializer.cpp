@@ -56,9 +56,10 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
+                auto radius = bb->getRadius();
 
-                if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-                   (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                if((twoPointDistancesquared(bb->getBead()->coordinate, firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(bb->getBead()->coordinate, secondPoint) < (radius * radius)))
                     inBubble = true;
             }
 
@@ -96,9 +97,10 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
-
-                if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-                   (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                auto radius = bb->getRadius();
+                
+                if((twoPointDistancesquared(bb->getBead()->coordinate, firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(bb->getBead()->coordinate, secondPoint) < (radius * radius)))
                     inBubble = true;
             }
 
