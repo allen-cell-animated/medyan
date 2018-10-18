@@ -1228,8 +1228,49 @@ void SystemParser::readDyRateParams() {
                                         atof((lineVector[i].c_str())));
             }
             else {}
+        }
+        /// Manual Rate Changer
+        // It takes 5 inputs as start_time, plusend_poly, plusend_depoly, minusend_poly, minusend_depoly
+        // Currently it applies type 0 to all filament types
+        else if (line.find("MANUALSTARTTIME") != string::npos) {
+            vector<string> lineVector = split<string>(line);
             
+            if (lineVector.size() >= 2) {
+                DRParams.manualCharStartTime = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("MANUALPLUSPOLYRATIO") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+
+            if (lineVector.size() >= 2) {
+                DRParams.manualPlusPolyRate = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("MANUALPLUSDEPOLYRATIO") != string::npos) {
+            vector<string> lineVector = split<string>(line);
             
+            if (lineVector.size() >= 2) {
+                DRParams.manualPlusDepolyRate = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("MANUALMINUSPOLYRATIO") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                DRParams.manualMinusPolyRate = atof((lineVector[1].c_str()));
+            }
+            else {}
+        }
+        else if (line.find("MANUALMINUSDEPOLYRATIO") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            
+            if (lineVector.size() >= 2) {
+                DRParams.manualMinusDepolyRate = atof((lineVector[1].c_str()));
+            }
+            else {}
         }
     }
     
@@ -1299,6 +1340,7 @@ DynamicRateType SystemParser::readDynamicRateType() {
                     DRType.dBUnbindingType.push_back(lineVector[i]);
             }
         }
+    
         
     }
     return DRType;

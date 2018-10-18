@@ -250,6 +250,18 @@ struct DyRateParams {
     
     /// Option for dynamic branching point unbinding rate
     vector<double> dBranchUnbindingCharLength = {};
+    
+    /// Option for manual (de)polymerization rate changer
+    /// Start time
+    double manualCharStartTime = 100000.0;
+    /// Plusend Polymerization Rate Ratio
+    float manualPlusPolyRate = 1.0;
+    /// Plusend Depolymerization Rate Ratio
+    float manualPlusDepolyRate = 1.0;
+    /// Minusend Polymerization Rate Ratio
+    float manualMinusPolyRate = 1.0;
+    /// Minusend Depolymerization Rate Ratio
+    float manualMinusDepolyRate = 1.0;
 };
 
 /// Static class that holds all simulation parameters,
@@ -259,6 +271,7 @@ friend class Controller;
 friend class SystemParser;
 friend class ChemManager;
 friend class SubSystem;
+friend class Cylinder;
     
 #ifdef TESTING ///Public access if testing only
 public:

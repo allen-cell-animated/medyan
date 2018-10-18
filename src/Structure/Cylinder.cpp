@@ -181,15 +181,33 @@ void Cylinder::updateReactionRates() {
         
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
-            
+            float newRate;
             if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
-            
-                float newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
+                
+                //If reaching a threshold time for manual treadmilling rate changer
+                if(tau() > SysParams::DRParams.manualCharStartTime){
+                    //all bare rate will be change by a threshold ratio
+                    newRate = _polyChanger[_type]->changeRate(r->getBareRate() * SysParams::DRParams.manualPlusPolyRate, force);
+                }
+                else{
+                    newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
+                }
                 
                 r->setRateScaled(newRate);
                 r->updatePropensity();
+
+            }
+            
+            //change all plus end depolymerization rates, not force dependent
+            //If reaching a threshold time for manual treadmilling rate changer
+            if(tau() > SysParams::DRParams.manualCharStartTime){
+                if(r->getReactionType() == ReactionType::DEPOLYMERIZATIONPLUSEND) {
+                    r->setRateScaled(r->getBareRate() * SysParams::DRParams.manualPlusDepolyRate);
+                    r->updatePropensity();
+                }
             }
         }
+    
     }
     
     //load force from back (affects minus end polymerization)
@@ -200,16 +218,34 @@ void Cylinder::updateReactionRates() {
         
         //change all plus end polymerization rates
         for(auto &r : _cCylinder->getInternalReactions()) {
-            
+            float newRate;
             if(r->getReactionType() == ReactionType::POLYMERIZATIONMINUSEND) {
                 
-                float newRate =  _polyChanger[_type]->changeRate(r->getBareRate(), force);
+                //If reaching a threshold time for manual treadmilling rate changer
+                if(tau() > SysParams::DRParams.manualCharStartTime){
+                    //all bare rate will be change by a threshold ratio
+                    newRate = _polyChanger[_type]->changeRate(r->getBareRate() * SysParams::DRParams.manualMinusPolyRate, force);
+                }
+                else{
+                    newRate = _polyChanger[_type]->changeRate(r->getBareRate(), force);
+                }
                 
                 r->setRateScaled(newRate);
                 r->updatePropensity();
                 
             }
+            
+            //change all minus end depolymerization rates, not force dependent
+            //If reaching a threshold time for manual treadmilling rate changer
+            if(tau() > SysParams::DRParams.manualCharStartTime){
+
+                if(r->getReactionType() == ReactionType::DEPOLYMERIZATIONMINUSEND) {
+                    r->setRateScaled(r->getBareRate() * SysParams::DRParams.manualMinusDepolyRate);
+                    r->updatePropensity();
+                }
+            }
         }
+
     }
 }
 
