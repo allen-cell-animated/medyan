@@ -356,61 +356,50 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
         // Now p' = b0*v0 + b1*v1 + b2*v2
 
         double d = numeric_limits<double>::infinity();
-        // b0, b1 and b2 cannot all be negative at the same time, leaving 7 possible combinations
-        if(b0 >= 0) {
-            if(b1 >= 0) {
-                if(b2 >= 0) {
-                    // Inside triangle
-                    d = dotProduct(t->getGTriangle()->getUnitNormal(), vectorDifference(p, v0));
-                }
-                else {
-                    // On edge 01
-                    auto ge = t->getEdges()[0]->getGEdge();
-                    d = magnitude(vectorProduct(v0, p, v0, v1)) / ge->getLength();
-                    if(dotProduct(ge->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0) d = -d;
-                }
-            }
-            else {
-                if(b2 >= 0) {
-                    // On edge 02
-                    auto ge = t->getEdges()[2]->getGEdge();
-                    d = magnitude(vectorProduct(v0, p, v0, v2)) / ge->getLength();
-                    if(dotProduct(ge->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0) d = -d;
-                }
-                else {
-                    // On vertex 0
-                    d = twoPointDistance(v0, p);
-                    if(dotProduct(t->getVertices()[0]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0)
-                        d = -d;
-                }
-            }
-        }
-        else {
-            if(b1 >= 0) {
-                if(b2 >= 0) {
-                    // On edge 12
-                    auto ge = t->getEdges()[1]->getGEdge();
-                    d = magnitude(vectorProduct(v1, p, v1, v2)) / ge->getLength();
-                    if(dotProduct(ge->getPseudoUnitNormal(), vectorDifference(p, v1)) < 0) d = -d;
-                }
-                else {
-                    // On vertex 1
-                    d = twoPointDistance(v1, p);
-                    if(dotProduct(t->getVertices()[1]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v1)) < 0)
-                        d = -d;
-                }
-            }
-            else {
-                if(b2 >= 0) {
-                    // On vertex 2
-                    d = twoPointDistance(v2, p);
-                    if(dotProduct(t->getVertices()[2]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v2)) < 0)
-                        d = -d;
-                }
-                else {
-                    // The program should never go here
-                    throw logic_error("Hey, you know the barycentric coordinates cannot be all negative. Something has gone terribly wrong.");
-                }
+        if(b0 >= 0 && b1 >= 0 && b2 >= 0) {
+            // p' is inside the triangle
+            d = dotProduct(t->getGTriangle()->getUnitNormal(), vectorDifference(p, v0));
+        } else {
+            // p' is outside the triangle
+            const array<double, 3> r {
+                t->getEdges()[1]->getGEdge()->getLength(), // 1->2
+                t->getEdges()[2]->getGEdge()->getLength(), // 2->0
+                t->getEdges()[0]->getGEdge()->getLength()  // 0->1
+            };
+            double dot_1p_12 = scalarProduct(v1, p, v1, v2);
+            double dot_2p_20 = scalarProduct(v2, p, v2, v0);
+            double dot_0p_01 = scalarProduct(v0, p, v0, v1);
+
+            if(b0 < 0 && dot_1p_12 >= 0 && dot_1p_12 <= r[0]*r[0])) {
+                // On edge 12
+                d = magnitude(vectorProduct(v1, p, v1, v2)) / r[0];
+                if(dotProduct(t->getEdges()[1]->getGEdge()->getPseudoUnitNormal(), vectorDifference(p, v1)) < 0) d = -d;
+            } else if(b1 < 0 && dot_2p_20 >= 0 && dot_2p_20 <= r[1]*r[1])) {
+                // On edge 20
+                d = magnitude(vectorProduct(v2, p, v2, v0)) / r[1];
+                if(dotProduct(t->getEdges()[2]->getGEdge()->getPseudoUnitNormal(), vectorDifference(p, v2)) < 0) d = -d;
+            } else if(b2 < 0 && dot_0p_01 >= 0 && dot_0p_01 <= r[2]*r[2])) {
+                // On edge 01
+                d = magnitude(vectorProduct(v0, p, v0, v1)) / r[2];
+                if(dotProduct(t->getEdges()[0]->getGEdge()->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0) d = -d;
+            } else if(dot_0p_01 < 0 && dot_2p_20 > r[1]*r[1]) {
+                // On vertex 0
+                d = twoPointDistance(v0, p);
+                if(dotProduct(t->getVertices()[0]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0)
+                    d = -d;
+            } else if(dot_1p_12 < 0 && dot_0p_01 > r[2]*r[2]) {
+                // On vertex 1
+                d = twoPointDistance(v1, p);
+                if(dotProduct(t->getVertices()[1]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v1)) < 0)
+                    d = -d;
+            } else if(dot_2p_20 < 0 && dot_1p_12 > r[0]*r[0]) {
+                // On vertex 2
+                d = twoPointDistance(v2, p);
+                if(dotProduct(t->getVertices()[2]->getGVoronoiCell()->getPseudoUnitNormal(), vectorDifference(p, v2)) < 0)
+                    d = -d;
+            } else {
+                // The program should never go here
+                throw logic_error("Unknown case of point projection on the plane of triangle.");
             }
         }
 
