@@ -149,7 +149,18 @@ namespace mathfunc {
                 (v2[1] - v1[1])*(v4[1] - v3[1]) +
                 (v2[2] - v1[2])*(v4[2] - v3[2]));
     }
-    
+    template< size_t Dim >
+    inline double scalarProduct(
+        const array<double, Dim>& v1, const array<double, Dim>& v2,
+        const array<double, Dim>& v3, const array<double, Dim>& v4
+    ) {
+        double ret = 0.0;
+        for(size_t i = 0; i < Dim; ++i) {
+            ret += (v2[i] - v1[i]) * (v4[i] - v3[i]);
+        }
+        return ret;
+    }
+
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
     inline double scalarProductStretched(const vector<double>& v1,
