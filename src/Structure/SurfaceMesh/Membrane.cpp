@@ -370,15 +370,15 @@ double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const 
             double dot_2p_20 = scalarProduct(v2, p, v2, v0);
             double dot_0p_01 = scalarProduct(v0, p, v0, v1);
 
-            if(b0 < 0 && dot_1p_12 >= 0 && dot_1p_12 <= r[0]*r[0])) {
+            if(b0 < 0 && dot_1p_12 >= 0 && dot_1p_12 <= r[0]*r[0]) {
                 // On edge 12
                 d = magnitude(vectorProduct(v1, p, v1, v2)) / r[0];
                 if(dotProduct(t->getEdges()[1]->getGEdge()->getPseudoUnitNormal(), vectorDifference(p, v1)) < 0) d = -d;
-            } else if(b1 < 0 && dot_2p_20 >= 0 && dot_2p_20 <= r[1]*r[1])) {
+            } else if(b1 < 0 && dot_2p_20 >= 0 && dot_2p_20 <= r[1]*r[1]) {
                 // On edge 20
                 d = magnitude(vectorProduct(v2, p, v2, v0)) / r[1];
                 if(dotProduct(t->getEdges()[2]->getGEdge()->getPseudoUnitNormal(), vectorDifference(p, v2)) < 0) d = -d;
-            } else if(b2 < 0 && dot_0p_01 >= 0 && dot_0p_01 <= r[2]*r[2])) {
+            } else if(b2 < 0 && dot_0p_01 >= 0 && dot_0p_01 <= r[2]*r[2]) {
                 // On edge 01
                 d = magnitude(vectorProduct(v0, p, v0, v1)) / r[2];
                 if(dotProduct(t->getEdges()[0]->getGEdge()->getPseudoUnitNormal(), vectorDifference(p, v0)) < 0) d = -d;
