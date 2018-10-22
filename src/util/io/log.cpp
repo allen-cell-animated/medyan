@@ -61,7 +61,7 @@ const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelLiteral {
 };
 
 
-bool Logger::defaultLoggerInitialization(const std::string& filepath) {
+void Logger::defaultLoggerInitialization() {
     Logger& l = getDefaultLogger();
 
     LoggerOstreamContainer& scrn = l.attachOstream(&std::cout, false);
@@ -70,7 +70,7 @@ bool Logger::defaultLoggerInitialization(const std::string& filepath) {
 #else
     scrn.disp.turnOnAtLeast(LogLevel::Debug);
 #endif
-    //scrn.dispTime.turnOnAtLeast(LogLevel::Debug);
+    scrn.dispTime.turnOnAtLeast(LogLevel::Warning);
     scrn.dispFile.turnOnAtLeast(LogLevel::Warning);
     scrn.dispLine.turnOnAtLeast(LogLevel::Error);
     scrn.dispFunc.turnOnAtLeast(LogLevel::Error);
@@ -78,30 +78,6 @@ bool Logger::defaultLoggerInitialization(const std::string& filepath) {
     scrn.dispLevel.turnOn(LogLevel::Debug);
     scrn.flushLevel.turnOnAtLeast(LogLevel::Debug);
 
-    LoggerOstreamContainer& file = l.addOfstream(filepath);
-#ifdef NDEBUG
-    file.disp.turnOnAtLeast(LogLevel::Info);
-#else
-    file.disp.turnOnAtLeast(LogLevel::Debug);
-#endif
-    file.dispTime.turnOnAtLeast(LogLevel::Debug);
-    file.dispFile.turnOnAtLeast(LogLevel::Note);
-    file.dispFile.turnOn(LogLevel::Debug);
-    file.dispLine.turnOnAtLeast(LogLevel::Note);
-    file.dispLine.turnOn(LogLevel::Debug);
-    file.dispFunc.turnOnAtLeast(LogLevel::Note);
-    file.dispLevel.turnOnAtLeast(LogLevel::Debug);
-    file.flushLevel.turnOnAtLeast(LogLevel::Warning);
-
-    bool fileOpenGood = static_cast<std::ofstream*>(file.os)->is_open();
-
-    if(!fileOpenGood) {
-        l.removeOstream(file.os);
-        std::cout << "Logger cannot open file " << filepath << std::endl;
-    }
-
-    return fileOpenGood;
-    
 }
 
 namespace internal {

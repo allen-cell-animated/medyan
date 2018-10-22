@@ -127,7 +127,8 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    MEDYAN_LOG_DEFAULT_CONFIGURATION(outputDirectory + "/medyan.log");
+    // Initialize the logger
+    ::medyan::logger::Logger::defaultLoggerInitialization();
 
     //initialize and run system
     c.initialize(inputFile, inputDirectory, outputDirectory);

@@ -137,7 +137,7 @@ public:
         return l;
     }
     /// Default initialization. Returns whether the file is successfully opened.
-    static bool defaultLoggerInitialization(const std::string& filepath);
+    static void defaultLoggerInitialization();
 private:
     /// The actual stringstream
     std::ostringstream _oss;
@@ -211,6 +211,5 @@ private:
 
 /// User interface
 #define LOG(logLevel) MEDYAN_LOG_GEN(logLevel)
-#define MEDYAN_LOG_DEFAULT_CONFIGURATION(filepath) ::medyan::logger::Logger::defaultLoggerInitialization(filepath)
 
 #endif
