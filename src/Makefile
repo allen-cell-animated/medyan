@@ -24,15 +24,15 @@ OBJECTS_CU  := $(SOURCES_CU:.cu=.o)
 OBJECTS = $(OBJECTS_CPP) $(OBJECTS_CU)
 
 # Compiler and linker choice
-CXX = /usr/bin/g++ -std=c++11
+CXX = g++ -std=c++11
 NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native -g
+FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
 # Compiler flags
-INCLUDES = -I/usr/local/include -I/usr/include/boost \
+INCLUDES = -I/usr/local/include -I /a/fs-3/export/home/deepthought2/achansek/boost_1_61_0 \
 -I./ -IStructure -IStructure/Special      \
 -IStructure/SurfaceMesh                   \
 -IChemistry                               \
@@ -45,7 +45,6 @@ INCLUDES = -I/usr/local/include -I/usr/include/boost \
 -IMechanics/ForceField/Branching          \
 -IMechanics/ForceField/Filament           \
 -IMechanics/ForceField/Linker             \
--IMechanics/ForceField/Membrane           \
 -IMechanics/ForceField/MotorGhost         \
 -IMechanics/ForceField/Bubble             \
 #-IMechanics/ForceField/Membrane           \
@@ -58,10 +57,9 @@ CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 -lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linker flags
-LDLIBS = -L/usr/local/lib/ -lboost_system
+LDLIBS = -L/usr/local/lib/ -lboost_system  -L/homes/achansek/boost/boost_1_58_0/boost_files/lib/
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
-LDFLAGS_CXX = $(FAST_CXX)
-USING_CUDA := true
+LDFLAGS_CXX = $(FAST_CXX) 
 
 #################MAIN USER MACROS#################
 #
@@ -77,14 +75,11 @@ CPPFLAGS += -DCHEMISTRY
 CPPFLAGS += -DMECHANICS
 #Use dynamic rate changing
 CPPFLAGS += -DDYNAMICRATES
+#vectorized serial energy minimization
+CPPFLAGS += -DSERIAL
 #neighbors list calculations
-CPPFLAGS += -DNLORIGINAL
-#serialized energy minimization
-CPPGLAGS += -DCUDAACCL
-#CPPFLAGS += -DSERIAL
-CPPFLAGS += -DDETAILEDOUTPUT
-CPPFLAGS += -DDEBUGCONSTANTSEED
-
+#CPPFLAGS += -DNLORIGINAL
+CPPFLAGS += -DNLSTENCILLIST
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
@@ -102,6 +97,7 @@ CPPFLAGS += -DTRACK_DEPENDENTS
 #For passivating and activating reactions accordingly
 CPPFLAGS += -DTRACK_ZERO_COPY_N
 CPPFLAGS += -DTRACK_UPPER_COPY_N
+
 #Reaction signaling. Needed for all Filament, Linker,
 #Motor, and BranchingPoint reactions in system
 CPPFLAGS += -DREACTION_SIGNALING
@@ -131,13 +127,12 @@ all: medyan
 
 medyan: $(OBJECTS)
 ifeq ($(USING_CUDA), true)
-	echo "USING NVCC"
 	$(NVCC) -o MEDYAN $(OBJECTS) $(LDLIBS_NVCC)
 else
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
 endif
 
-%.o: %.cpp 
+%.o: %.cpp
 	$(CXX) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c $< -o $@
 
 %.o: %.cu
@@ -158,7 +153,7 @@ ifeq ($(USING_CUDA), true)
 	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 	[ -s $@ ] || rm -f $@'
 else
-	$(SHELL) -ec '$(CXX) -xc++ $(CPPFLAGS_CXX) $(INCLUDES)  $(filter %.cpp %.cu,$^) \
+	$(SHELL) -ec '$(CXX) -MM -xc++ $(CPPFLAGS_CXX) $(INCLUDES)  $(filter %.cpp %.cu,$^) \
 	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 	[ -s $@ ] || rm -f $@'
 endif

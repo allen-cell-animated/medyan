@@ -90,9 +90,11 @@ protected:
     bool _activated = false; ///< The compartment is activated for diffusion
     
 public:
+    short _ID;
     /// Default constructor, only takes in number of dimensions
-    Compartment() : _species(), _internal_reactions(), _diffusion_reactions(),
-                    _diffusion_rates(), _neighbours() {}
+    Compartment() : _species(), _internal_reactions(),
+    _diffusion_reactions(), _diffusion_rates(), _neighbours()  {
+        }
     
     /// Constructor which clones another compartment
     Compartment(const Compartment &C) : _species(), _internal_reactions(),
@@ -102,12 +104,13 @@ public:
         C.cloneReactions(this);
         _diffusion_rates = C._diffusion_rates;
         _activated = C._activated;
+
         // Should eventually clone beads, cylinders, boundary elements.... not clear yet
     }
     
     /// Assignment operator
     Compartment& operator=(const Compartment &other);
-    
+
     /// Destructor
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL
@@ -122,7 +125,9 @@ public:
         
         // Should eventually delete beads, cylinders, boundary elements....not yet clear
     }
-    
+
+    /// get ID
+    virtual int getID(){return _ID;}
     /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
     /// This method needs to be overriden by descendent classes that contain Species.
     virtual bool apply_impl(SpeciesVisitor &v) override;

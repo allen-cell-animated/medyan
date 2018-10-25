@@ -15,7 +15,6 @@
 #include "CompartmentGrid.h"
 #include "BindingManager.h"
 #include "BindingManagerCUDA.h"
-#include "CUDAcommon.h"
 #include "MathFunctions.h"
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
@@ -84,7 +83,8 @@ void SubSystem::updateBindingManagers() {
     //vectorize
     SysParams::MParams.speciesboundvec.clear();
     int cidx = 0;
-    vector<int> ncylvec(SysParams::CParams.numFilaments);
+    vector<int> ncylvec(SysParams::CParams.numFilaments);// Number of cylinders in each
+    // filamen type.
     vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
     auto cylvec = Cylinder::getCylinders();
     int ncyl = cylvec.size();
@@ -139,12 +139,12 @@ void SubSystem::updateBindingManagers() {
             manager->updateAllPossibleBindings();
 #endif
 #ifdef NLSTENCILLIST
-            chrono::high_resolution_clock::time_point mins, mine;
-            mins = chrono::high_resolution_clock::now();
+//            chrono::high_resolution_clock::time_point mins, mine;
+//            mins = chrono::high_resolution_clock::now();
             manager->updateAllPossibleBindingsstencil();
-            mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_orig(mine - mins);
-            std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
+//            mine= chrono::high_resolution_clock::now();
+//            chrono::duration<double> elapsed_orig(mine - mins);
+//            std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
 #endif
 #if defined(NLORIGINAL) && defined(NLSTENCILLIST)
             manager->crosscheck();
@@ -170,6 +170,54 @@ void SubSystem::updateBindingManagers() {
 //    }
 //    std::cout<<"L M B "<<l<<" "<<m<<" "<<b<<endl;
 //    std::cout<<endl;
+}
+
+void SubSystem::vectorizeCylinder() {
+    delete [] cylindervec;
+    delete [] ccylindervec;
+    int Ncyl = Cylinder::getCylinders().size();
+    cylindervec = new cylinder[Ncyl];
+    ccylindervec = new CCylinder*[Ncyl];
+    //Create cylinder structure
+    int i = 0;
+    for(auto cyl:Cylinder::getCylinders()){
+        //set _dcIndex
+        cyl->_dcIndex = i;
+        //copy attributes to a structure
+        cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getID();
+        cylindervec[i].filamentposition = cyl->getPosition();
+        cylindervec[i].bindices[0] = cyl->getFirstBead()->_dbIndex;
+        cylindervec[i].bindices[1] = cyl->getSecondBead()->_dbIndex;
+        cylindervec[i].cmpID = cyl->getCompartment()->getID();
+        cylindervec[i].cindex = i;
+        auto coord = cyl->coordinate;
+        cylindervec[i].coord[0] = coord[0];
+        cylindervec[i].coord[1] = coord[1];
+        cylindervec[i].coord[2] = coord[2];
+        cylindervec[i].type = cyl->getType();
+        cylindervec[i].ID = cyl->getID();
+        ccylindervec[i] = cyl->getCCylinder();
+        i++;
+//        for(int bsc = 0; bsc < nbs; bsc++){
+//            double c[3], bead1[3],bead2[3];
+//
+//            memcpy(bead1, &coord[3*cylindervec[i].bindices[0]], 3 * sizeof(double));
+//            memcpy(bead2, &coord[3*cylindervec[i].bindices[1]], 3 * sizeof(double));
+//            midPointCoordinate(c,bead1,bead2,bindingsitevec[bsc]);
+//            bscoord[12*i+bsc*3] = c[0];
+//            bscoord[12*i+bsc*3+1] = c[1];
+//            bscoord[12*i+bsc*3+2] = c[2];te<<endl;
+//        }
+    }
+/*    std::cout<<"print for consistency "<<endl;
+    for(int idx = 0; idx < Ncyl; idx++) {
+        if (cylindervec[idx].cindex != ccylindervec[cylindervec[idx].cindex]->getCylinder()
+                ->_dcIndex)
+            std::cout << "Fatal mismatch " << cylindervec[idx].cindex << " "
+                    ""<<ccylindervec[cylindervec[idx].cindex]->getCylinder()->_dcIndex << endl;
+    }*/
+    CUDAcommon::serlvars.ccylindervec = ccylindervec;
+    CUDAcommon::serlvars.cylindervec = cylindervec;
 }
 
 #ifdef CUDAACCL_NL

@@ -72,8 +72,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
-/*    bool *Mc_isminimizationstate;
-    bool *Mc_issafestate;*/
+    bool *Mc_isminimizationstate;
+    bool *Mc_issafestate;
 //    @}
 
     Mc_isminimizationstate = new bool[1];
@@ -531,8 +531,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
             ""<<c5<<endl;
     std::cout<<"CUDA Add "<<c5+c4+c3+c2+c1<<endl;
 #endif
-#endif //CUDAACCL
     std::cout<<"CUDA Total number of iterations "<<numIter<<endl;
+#endif //CUDAACCL
+
     numIter = 0;
 #ifdef CUDATIMETRACK_MACRO
     double s1 = 0.0;
@@ -544,6 +545,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::serltime.TcomputeF = 0.0;
 #endif
 std::cout<<"----------------------------------------"<<endl;
+    std::cout<<"maxF "<<maxF()<<endl;
 #ifdef SERIAL
     while (/* Iteration criterion */  numIter < N &&
            /* Gradient tolerance  */  (Ms_isminimizationstate )) {
@@ -1033,8 +1035,8 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 #ifdef SERIAL
     //TODO Comment during SERIAL_CUDACROSSCHECK @{
-/*    delete [] Mc_isminimizationstate;
-    delete [] Mc_issafestate;*/
+    delete [] Mc_isminimizationstate;
+    delete [] Mc_issafestate;
     //@}
 #endif
     //TODO make sure it calculates stretchforce in CUDA.

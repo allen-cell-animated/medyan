@@ -40,13 +40,16 @@ protected:
     ///OTHER BIN PROPERTIES
     vector<double> _coords;  ///< Coordinates of this bin
     short _binGridType = -1;
-
+    int* cindicesvector = NULL;
 public:
+    short _ID = 0;
     vector<int> stencilID; /// template stencil has neighboring bins numbered from 0-26.
 /// stencilID vector stores which of those 27 bins are neighbors to the current bin.
 
     // Default constructor, only takes in number of dimensions
-    Bin(short binGridType) : _neighbours(), _binGridType(binGridType) {}
+    Bin(short binGridType, short ID) : _neighbours(), _binGridType(binGridType){
+        _ID = ID;
+    }
 
     // Constructor which clones another bin
     Bin(const Bin &C) : _neighbours()
@@ -136,5 +139,6 @@ public:
     //GetType implementation just returns zero (no Bin types yet)
     virtual int getType() override {return 0;}
 
+    void vectorize();
 };
 #endif

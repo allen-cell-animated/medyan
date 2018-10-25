@@ -47,10 +47,12 @@ private:
 public:
     /// Constructor, creates a number of Compartment instances
     CompartmentGrid(int numCompartments) {
-        
         //add children
-        for(size_t i=0; i<numCompartments; ++i)
-            addChild(unique_ptr<Component>(new Compartment()));
+        for(size_t i=0; i<numCompartments; ++i) {
+            auto c = new Compartment();
+            c->_ID = i;
+            addChild(unique_ptr<Component>(c));
+        }
     }
     
     /// Get compartments that this grid holds

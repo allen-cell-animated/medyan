@@ -4,26 +4,51 @@
 
 #ifndef CUDA_VEC_CUDACOMMON_H
 #define CUDA_VEC_CUDACOMMON_H
-
-#if defined(CUDAACCL) || defined(CUDATIMETRACK)
 #include <vector>
 #include <list>
-#include <src/Mechanics/ForceField/Filament/FilamentStretchingHarmonic.h>
-#include <src/Mechanics/ForceField/Filament/FilamentBendingHarmonic.h>
-#include <src/Mechanics/ForceField/Filament/FilamentBendingCosine.h>
-#include <src/Mechanics/ForceField/Linker/LinkerStretchingHarmonic.h>
-#include <src/Mechanics/ForceField/MotorGhost/MotorGhostStretchingHarmonic.h>
-#include <src/Mechanics/ForceField/Volume/CylinderExclVolRepulsion.h>
-#include <src/Mechanics/ForceField/Branching/BranchingStretchingHarmonic.h>
-#include <src/Mechanics/ForceField/Branching/BranchingBendingCosine.h>
-#include <src/Mechanics/ForceField/Branching/BranchingDihedralCosine.h>
-#include <src/Mechanics/ForceField/Branching/BranchingPositionCosine.h>
-#include <src/Mechanics/ForceField/Boundary/BoundaryCylinderRepulsionExp.h>
-
+#include <FilamentStretchingHarmonic.h>
+#include <FilamentBendingHarmonic.h>
+#include <FilamentBendingCosine.h>
+#include <LinkerStretchingHarmonic.h>
+#include <MotorGhostStretchingHarmonic.h>
+#include <CylinderExclVolRepulsion.h>
+#include <BranchingStretchingHarmonic.h>
+#include <BranchingBendingCosine.h>
+#include <BranchingDihedralCosine.h>
+#include <BranchingPositionCosine.h>
+#include <BoundaryCylinderRepulsionExp.h>
+#include "CCylinder.h"
 #include "common.h"
 #include "string.h"
 #include "MathFunctions.h"
 using namespace mathfunc;
+
+struct bin{
+    int binID;
+    double bincoord[3];
+    int neighbors[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                          -1,-1,-1,-1,-1,-1};
+    int binstencilID[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                          -1,-1,-1,-1,-1,-1};
+};
+    struct cylinder{
+        int filamentID = -1;
+        int filamentposition = -1;
+        int bindices[2];
+        int cmpID = -1;
+        long cindex = -1;
+        double coord[3];
+        short type;
+        int ID = -1;
+        int availbscount = -1;
+    };
+struct SERLvars{
+    double *coord = NULL;
+    cylinder *cylindervec = NULL;
+    CCylinder **ccylindervec = NULL;
+
+};
+#if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     double * gpu_force = NULL;
     double * gpu_forceAux = NULL;
@@ -33,6 +58,7 @@ struct CUDAvars {
     float vectorize = 0.0;
     double * gpu_energy = NULL;
     bool * gpu_btstate = NULL;
+    cylinder* gpu_cylindervec = NULL;
 #ifdef CUDAACCL
     vector<cudaStream_t*> streamvec;
     vector<cudaEvent_t> eventvec;
@@ -71,6 +97,9 @@ struct CylCylNLvars {
     int *gpu_cmon_state_linker;
     int *gpu_cmon_state_motor;
 //    int *gpu_cylvecpospercmp;
+
+    bin* bins;
+
 };
 
 struct SERLtime {
@@ -109,16 +138,18 @@ struct CUDAtime {
     vector<double>Tlambdap;
     vector<double>Tlambdapcount;
 };
-
+#endif
 class CUDAcommon{
 public:
+    static SERLvars serlvars;
+    static const SERLvars& getSERLvars(){return serlvars;}
+#ifdef CUDAACCL
     static CUDAvars cudavars;
     static CylCylNLvars cylcylnlvars;
     static SERLtime serltime;
     static CUDAtime cudatime;
     static const CUDAvars& getCUDAvars(){return cudavars;}
     static const CylCylNLvars& getCylCylNLvars(){return cylcylnlvars;}
-#ifdef CUDAACCL
     static void handleerror(cudaError_t a){
         if(a !=cudaSuccess){
             cout<<cudaGetErrorString(a)<<endl;
@@ -174,6 +205,5 @@ public:
     }
 #endif
 };
-#endif
 #endif
 //CUDA_VEC_CUDACOMMON_H

@@ -378,7 +378,9 @@ private:
     float _rMax; ///< Maximum reaction range
     float _rMinsq; ///< Minimum reaction range squared
     float _rMaxsq; ///< Maximum reaction range squared
-
+    double minparamcyl2;
+    double maxparamcyl2;
+    vector<double> bindingsites;
 
     
     //possible bindings at current state. updated according to neighbor list
@@ -546,7 +548,9 @@ private:
     float _rMax; ///< Maximum reaction range
     float _rMinsq; ///< Minimum reaction range squared
     float _rMaxsq; ///< Maximum reaction range squared
-    
+    double minparamcyl2;
+    double maxparamcyl2;
+    vector<double> bindingsites;
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
     vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
@@ -564,6 +568,7 @@ private:
     static vector<CylinderCylinderNL*> _neighborLists;
     
 public:
+
     MotorBindingManager(ReactionBase* reaction,
                         Compartment* compartment,
                         short boundInt,

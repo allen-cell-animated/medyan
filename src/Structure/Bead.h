@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <list>
+#include <src/Mechanics/CUDAcommon.h>
 
 #include "common.h"
 
@@ -50,7 +51,7 @@ class Bead : public Component, public Trackable, public Movable{
     
 public:
     ///@note - all vectors are in x,y,z coordinates.
-    
+    static bool triggercylindervectorization;
     vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
     int _ID; ///<Bead IDs
@@ -107,8 +108,12 @@ public:
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _beads.addElement(this);}
     virtual void removeFromSubSystem() {
+        //set next bead index;
+        removedcindex.push_back(_dbIndex);
         _beads.removeElement(this);
         if(_isPinned) removeAsPinned();
+        Nbeads = _beads.getElements().size();
+        resetcoordinates();
     }
     //@}
     
@@ -246,6 +251,57 @@ private:
     static Database<Bead*> _beads; ///< Collection of beads in SubSystem
     static Database<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
+    static int maxbindex;
+    static int vectormaxsize;
+    static int Nbeads;
+    static int newsize;
+    static vector<int> removedcindex;
+    static void revectorizeifneeded(){
+        newsize = vectormaxsize;
+        if(vectormaxsize - maxbindex <= bead_cache/10 )
+            newsize = (int(Nbeads/bead_cache)+2)*bead_cache;
+        if(removedcindex.size() >= bead_cache)
+            newsize = (int(Nbeads/bead_cache)+1)*bead_cache;
+        if(newsize != vectormaxsize){
+            double *coord = CUDAcommon::serlvars.coord;
+            delete[] coord;
+            double *newcoord = new double[3 * newsize];
+            CUDAcommon::serlvars.coord = newcoord;
+            revectorize(newcoord);
+            copyvector(newcoord, coord);
+            vectormaxsize = newsize;
+            triggercylindervectorization = true;
+        }
+    }
+    static void revectorize(double* coord){
+        int idx = 0;
+        for(auto b:_beads.getElements()){
+            int index = 3 * idx;
+            coord[index] = b->coordinate[0];
+            coord[index + 1] = b->coordinate[1];
+            coord[index + 2] = b->coordinate[2];
+            b->_dbIndex = idx;
+            idx++;
+        }
+    }
+    static void copyvector(double* newcoord, double* coord){
+        int idx = 0;
+        for(auto b:_beads.getElements()){
+            idx++;
+        }
+    }
+    void  copycoordinatestovector() {
+        if(!triggercylindervectorization) {
+            CUDAcommon::getSERLvars().coord[3 * _dbIndex] = coordinate[0];
+            CUDAcommon::getSERLvars().coord[3 * _dbIndex + 1] = coordinate[1];
+            CUDAcommon::getSERLvars().coord[3 * _dbIndex + 2] = coordinate[2];
+        }
+    }
+    void resetcoordinates() {
+        CUDAcommon::getSERLvars().coord[3 * _dbIndex] = -1.0;
+        CUDAcommon::getSERLvars().coord[3 * _dbIndex + 1] = -1.0;
+        CUDAcommon::getSERLvars().coord[3 * _dbIndex + 2] = -1.0;
+    }
 };
 
 

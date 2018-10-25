@@ -29,6 +29,7 @@
 #include "GController.h"
 #include "SysParams.h"
 #include "CUDAcommon.h"
+#include <algorithm>
 
 
 using namespace mathfunc;
@@ -517,6 +518,15 @@ LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
     _bindingSpecies = _compartment->findSpeciesByName(name);
     _rMaxsq = rMax*rMax;
     _rMinsq = rMin*rMin;
+    minparamcyl2 = (float)*(SysParams::Chemistry().bindingSites[_filamentType].begin())/
+                   SysParams::Geometry().cylinderNumMon[_filamentType];
+    maxparamcyl2 = (float)(SysParams::Chemistry().bindingSites[_filamentType].back())/
+                   SysParams::Geometry().cylinderNumMon[_filamentType];
+    for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
+        it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
+        bindingsites.push_back((float)*it1 / SysParams::Geometry()
+                .cylinderNumMon[_filamentType]);
+    }
 }
 
 #ifdef NLORIGINAL
@@ -1017,30 +1027,204 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
     updateBindingReaction(oldN, newN);
 }
 void LinkerBindingManager::updateAllPossibleBindingsstencil() {
-
-
     _possibleBindingsstencil.clear();
+    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
     double min1,min2,max1,max2;
+    bool status1 = true;
+    bool status2 = true;
+    double minveca[2];
+    double maxveca[2];
+    int accepts = 0;
+    int total = 0;
+    int Ncyl = Cylinder::getCylinders().size();
+    int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
+
+    vector<double> cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
+    auto boundstate = SysParams::Mechanics().speciesboundvec;
+    double* coord = CUDAcommon::getSERLvars().coord;
+    auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
+    CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
+    auto bindingsitevec =SysParams::Chemistry().bindingSites[_filamentType];
+    int Ncylincmp =  _compartment->getCylinders().size();
+    int cindexvec[Ncylincmp]; //stores cindex of cylinders in this compartment
+    vector<vector<int>> ncindices; //cindices of cylinders in neighbor list.
+    vector<int>ncindex; //helper vector
+    long id = 0;
+    for(auto c : _compartment->getCylinders()){
+        cindexvec[id] = c->_dcIndex;
+//        totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
+        id++;
+        for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
+            if(c->getID() > cn->getID())
+                ncindex.push_back(cn->_dcIndex);
+//            else
+//                counter1++;
+        }
+        ncindices.push_back(ncindex);
+        ncindex.clear();
+    }
+    //Check 1
+/*    for(int idx = 0; idx < Ncyl; idx++) {
+        auto a1 = cylindervec[idx].cindex;
+        auto a2 = ccylvec[a1]->getCylinder()->_dcIndex;
+        if(a1 != a2)
+            std::cout <<"Cyl ID mismatch M "<<cylindervec[idx].cindex << " " <<
+                      ccylvec[a1]->getCylinder()->_dcIndex << endl;
+    }*/
+
+    for(int i=0;i<Ncylincmp;i++){
+        int cindex = cindexvec[i];
+        cylinder c = cylindervec[cindex];
+        if(c.type != _filamentType) {
+//            counter2++;
+            continue;}
+        double x1[3],x2[3];
+        memcpy(x1, &coord[3*c.bindices[0]], 3 * sizeof(double));
+        memcpy(x2, &coord[3*c.bindices[1]], 3 * sizeof(double));
+        double X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+
+        //Check 2
+/*        for(auto cndummy:ncindices[i]){
+            auto A =cylindervec[cndummy];
+            if(ccylvec[A.cindex]->getCylinder()->getID() != A.ID)
+            {
+                std::cout<<"Mismatch in neighbors L of Cyl index "<<i<<" "
+                        ""<<ccylvec[cndummy]->getCylinder()->getID()<<" "
+                        ""<<cylindervec[cndummy].ID<<endl;
+            }
+        }*/
+
+        int* cnindices = ncindices[i].data();
+        for(int arraycount = 0; arraycount < ncindices[i].size();arraycount++){
+            int cnindex = cnindices[arraycount];
+//            std::cout<<*cnindex<<endl;
+            cylinder cn = cylindervec[cnindex];
+//            if(c.ID < cn.ID) {counter++; continue;} commented as the above vector does
+// not contain ncs that will fail this cndn.
+            if(c.filamentID == cn.filamentID){
+//                counter3++;
+                continue;}
+            if(c.type != cn.type){
+//                counter4++;
+                continue;}
+
+            double x3[3], x4[3];
+            memcpy(x3, &coord[3*cn.bindices[0]], 3 * sizeof(double));
+            memcpy(x4, &coord[3*cn.bindices[1]], 3 * sizeof(double));
+            double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+            double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+            double X1X3squared = sqmagnitude(X1X3);
+            double X1X2squared = cylsqmagnitudevector.at(c.cindex);
+            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+            double X3X4squared = cylsqmagnitudevector.at(cn.cindex);
+            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
+            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+            for(int pos1 =0; pos1<nbs;pos1++) {
+                //now re add valid binding sites
+                if (areEqual(boundstate[1][offset + nbs *c.cindex + pos1], 1.0)) {
+                    auto mp1 = bindingsites.at(pos1);
+                    double A = X3X4squared;
+                    double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
+                    double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
+                    double C1 = C - _rMinsq;
+                    double C2 = C - _rMaxsq;
+                    double b2m4ac1 = B*B - 4*A*C1;
+                    double b2m4ac2 = B*B - 4*A*C2;
+                    status1 = b2m4ac1 < 0;
+                    status2 = b2m4ac2 < 0;
+                    if(status1 && status2) {
+//                    counter6++;
+                        continue;}
+                    if(!status1){
+                        min1 = (-B + sqrt(b2m4ac1))/(2*A);
+                        min2 = (-B - sqrt(b2m4ac1))/(2*A);
+                        if(min1<min2) {
+                            minveca[0] = (min1);
+                            minveca[1] = (min2);
+                        }
+                        else{
+                            minveca[0] = (min2);
+                            minveca[1] = (min1);
+                        }
+                        if(minveca[0]< minparamcyl2 && minveca[1] > maxparamcyl2) {
+//                        counter7++;
+                            continue;
+                        }
+                    }
+                    if(!status2){
+                        max1 = (-B + sqrt(b2m4ac2))/(2*A);
+                        max2 = (-B - sqrt(b2m4ac2))/(2*A);
+                        if(max1<max2) {
+                            maxveca[0] = (max1);
+                            maxveca[1] = (max2);
+                        }
+                        else{
+                            maxveca[0] = (max2);
+                            maxveca[1] = (max1);
+                        }
+                        if(maxveca[0] > maxparamcyl2 || maxveca[1] <minparamcyl2){
+//                        counter8++;
+                            continue;
+                        }
+                    }
+                    for(int pos2 = 0; pos2<nbs;pos2++){
+                        if (areEqual(boundstate[1][offset + nbs *cn.cindex + pos2], 1.0)) {
+                            total++;
+                            //check distances..
+                            auto mp2 = bindingsites.at(pos2);
+                            if(!status2) {
+                                if (mp2 < maxveca[0] || mp2 > maxveca[1]) {
+                                    {
+//                                    counter9++;
+                                        continue;}
+                                }
+                            }
+                            if(!status1){
+                                if (mp2 > minveca[0] && mp2 < minveca[1]) {
+                                    {
+//                                    counter10++;
+                                        continue;}
+                                }
+                            }
+                            accepts++;
+                            auto it1 = SysParams::Chemistry().bindingSites[_filamentType][pos1];
+                            auto it2 = SysParams::Chemistry().bindingSites[_filamentType][pos2];
+                            auto xx1 = ccylvec[cindex]->getCylinder();
+                            auto xx2 = ccylvec[cnindex]->getCylinder();
+//                            std::cout<<xx1->getID()<<" "<<c.ID<<" "<<xx2->getID()<<" "
+//                                    ""<<cn.ID<<endl;
+                            /*if(xx1->getFirstBead()->_dbIndex != c.bindices[0] ||
+                               xx1->getSecondBead()->_dbIndex != c.bindices[1])
+                                std::cout<<"DB1 "<<xx1->getFirstBead()->_dbIndex<<" "
+                                        ""<<xx1->getSecondBead()->_dbIndex<<" "<<c
+                                                 .bindices[0]<<" "<<c.bindices[1]<<endl;
+                            if(xx2->getFirstBead()->_dbIndex != cn.bindices[0] ||
+                               xx2->getSecondBead()->_dbIndex != cn.bindices[1])
+                                std::cout<<"DB2 "<<xx2->getFirstBead()->_dbIndex<<" "
+                                        ""<<xx2->getSecondBead()->_dbIndex<<" "<<cn
+                                                 .bindices[0]<<" "<<cn.bindices[1]<<endl;*/
+                            auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
+                            auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
+                            //add in correct order
+                            _possibleBindingsstencil.emplace(t1, t2);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
+    /*_possibleBindingsstencil.clear();
     chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
     double timetaken = 0.0;
     double time16 = 0.0;
-    double minparamcyl2 = (float)*(SysParams::Chemistry().bindingSites[_filamentType].begin())/
-                          SysParams::Geometry().cylinderNumMon[_filamentType];
-    double maxparamcyl2 = (float)(SysParams::Chemistry().bindingSites[_filamentType].back())/
-                          SysParams::Geometry().cylinderNumMon[_filamentType];
     double sqdisttermswithjustalpha;
-    bool status1 = true;
-    bool status2 = true;
     vector<double> maxvec;
     vector<double> minvec;
-    int accepts = 0;
-    int total = 0;
     int rejects16 = 0;
     int rejectsnavail =0;
     mints = chrono::high_resolution_clock::now();
     vector<double> bindingsites;
-    vector<double> cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
-    auto boundstate = SysParams::Mechanics().speciesboundvec;
 
     for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
         it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
@@ -1058,10 +1242,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     timetaken = 0.0;
     _possibleBindingsstencil.clear();
     mints = chrono::high_resolution_clock::now();
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
     for(auto c : _compartment->getCylinders()) {
         if (c->getType() != _filamentType) continue;
-
         auto x1 = c->getFirstBead()->coordinate;
         auto x2 = c->getSecondBead()->coordinate;
         auto cc = c->getCCylinder();
@@ -1193,11 +1375,11 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
         }
     }
     minte = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_total3(minte - mints);
-    std::cout<<"Overall time "<<elapsed_total3.count()<<endl;
+    chrono::duration<double> elapsed_total3(minte - mints);*/
+//    std::cout<<"Overall time "<<elapsed_total3.count()<<endl;
     std::cout<<"Total "<<total<<" accepts "<<accepts<<endl;
-    std::cout<<"16 loop time taken "<<time16<<endl;
-    std::cout<<"Tuple Emplace time taken "<<timetaken<<endl;
+//    std::cout<<"16 loop time taken "<<time16<<endl;
+//    std::cout<<"Tuple Emplace time taken "<<timetaken<<endl;
     std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSitesstencil();
@@ -1402,8 +1584,16 @@ MotorBindingManager::MotorBindingManager(ReactionBase* reaction,
     ConnectionBlock rcb(sd->connect(mcallback,false));
     _rMaxsq = rMax*rMax;
     _rMinsq = rMin*rMin;
-
-}
+    minparamcyl2 = (float)*(SysParams::Chemistry().bindingSites[_filamentType].begin())/
+                          SysParams::Geometry().cylinderNumMon[_filamentType];
+    maxparamcyl2 = (float)(SysParams::Chemistry().bindingSites[_filamentType].back())/
+                          SysParams::Geometry().cylinderNumMon[_filamentType];
+    for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
+        it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
+        bindingsites.push_back((float)*it1 / SysParams::Geometry()
+                .cylinderNumMon[_filamentType]);
+    }
+    }
 
 #ifdef NLORIGINAL
 void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
@@ -1962,185 +2152,444 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
 void MotorBindingManager::updateAllPossibleBindingsstencil() {
 
     _possibleBindingsstencil.clear();
+    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
     double min1,min2,max1,max2;
-    chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
-    double timetaken = 0.0;
-    double time16 = 0.0;
-    double minparamcyl2 = (float)*(SysParams::Chemistry().bindingSites[_filamentType].begin())/
-                            SysParams::Geometry().cylinderNumMon[_filamentType];
-    double maxparamcyl2 = (float)(SysParams::Chemistry().bindingSites[_filamentType].back())/
-                          SysParams::Geometry().cylinderNumMon[_filamentType];
-    double sqdisttermswithjustalpha;
     bool status1 = true;
     bool status2 = true;
-    vector<double> maxvec;
-    vector<double> minvec;
+    double minveca[2];
+    double maxveca[2];
     int accepts = 0;
     int total = 0;
-    int rejects16 = 0;
-    int rejectsnavail =0;
-    mints = chrono::high_resolution_clock::now();
-    vector<double> bindingsites;
+    int Ncyl = Cylinder::getCylinders().size();
+    int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
     vector<double> cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
+    double* coord = CUDAcommon::getSERLvars().coord;
+    auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
+    CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
 
-    for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-        it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-        bindingsites.push_back((float)*it1 / SysParams::Geometry()
-                .cylinderNumMon[_filamentType]);
+/*    vector<CCylinder*> ccylindervector;
+    for(auto cyl:Cylinder::getCylinders())
+        ccylindervector.push_back(cyl->getCCylinder());*/
+
+    auto bindingsitevec =SysParams::Chemistry().bindingSites[_filamentType];
+    int Ncylincmp =  _compartment->getCylinders().size();
+    int cindexvec[Ncylincmp];
+    vector<vector<int>> ncindices;
+    vector<int>ncindex;
+    long id = 0;
+    for(auto c : _compartment->getCylinders()){
+        cindexvec[id] = c->_dcIndex;
+//        totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
+        id++;
+        for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
+            if(c->getID() > cn->getID())
+                ncindex.push_back(cn->_dcIndex);
+//            else
+//                counter1++;
+        }
+        ncindices.push_back(ncindex);
+        ncindex.clear();
     }
+    //Check 1
+/*    for(int idx = 0; idx < Ncyl; idx++) {
+        auto a1 = cylindervec[idx].cindex;
+        auto a2 = ccylvec[a1]->getCylinder()->_dcIndex;
+        if(a1 != a2)
+            std::cout <<"Cyl ID mismatch M "<<cylindervec[idx].cindex << " " <<
+                      ccylvec[idx]->getCylinder()->_dcIndex << endl;
+    }*/
+//    chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
+//    double timetaken = 0.0;
+//    double time16 = 0.0;
+//    double sqdisttermswithjustalpha;
+//    vector<double> maxvec;
+//    vector<double> minvec;
+//    int rejects16 = 0;
+//    int rejectsnavail =0;
+//    mints = chrono::high_resolution_clock::now();
+//    start
+//    double bscoord[3* nbs * Ncyl];
+//    double bsvec[nbs * Ncyl];
+//        int totalneighbors = 0;
+//    int counter1 = 0;
+//    minte = chrono::high_resolution_clock::now();
+//    chrono::duration<double> elapsed_vec(minte - mints);
+//    std::cout<<"Vectorize time "<<elapsed_vec.count()<<endl;
+    //V3 begins
+//    int maxdistrejects = 0;
+//    int IDrejects = 0;
+//    _possibleBindingsstencil.clear();
+//    mints = chrono::high_resolution_clock::now();
+//    for(auto c : _compartment->getCylinders()) {
+//
+//        if(c->getType() != _filamentType) continue;
+//
+//        auto cc = c->getCCylinder();
+//
+//        for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
+//            it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
+//
+//            //now re add valid binding sites
+//            if (areEqual(cc->getCMonomer(*it1)->speciesBound(
+//                    SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
+//
+//                //loop through neighbors
+//                //now re add valid based on CCNL
+//                for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil
+//                        (cc->getCylinder())) {
+//
+//                    if(cn->getParent() == c->getParent()) continue;
+//                    if(cn->getType() != _filamentType) continue;
+//
+//                    auto ccn = cn->getCCylinder();
+//
+//                    for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
+//                        it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
+//
+//                        if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
+//                                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
+//
+//                            //check distances..
+//                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
+//                            auto mp2 = (float)*it2 / SysParams::Geometry().cylinderNumMon[_filamentType];
+//
+//                            auto x1 = c->getFirstBead()->coordinate;
+//                            auto x2 = c->getSecondBead()->coordinate;
+//                            auto x3 = cn->getFirstBead()->coordinate;
+//                            auto x4 = cn->getSecondBead()->coordinate;
+//
+//                            auto m1 = midPointCoordinate(x1, x2, mp1);
+//                            auto m2 = midPointCoordinate(x3, x4, mp2);
+//
+//                            double dist = twoPointDistance(m1, m2);
+//
+//                            if(dist > _rMax || dist < _rMin) continue;
+//
+//                            auto t1 = tuple<CCylinder*, short>(cc, *it1);
+//                            auto t2 = tuple<CCylinder*, short>(ccn, *it2);
+//
+//                            //add in correct order
+//                            if(c->getID() > cn->getID())
+//                                _possibleBindingsstencil.emplace(t1,t2);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    minte = chrono::high_resolution_clock::now();
+//    chrono::duration<double> elapsed_totalv3(minte - mints);
+//    std::cout<<"Overall time vec v3 "<<elapsed_totalv3.count()<<endl;
+//    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
+//    std::cout<<"maxdist rejects "<<maxdistrejects<<endl;
+//    std::cout<<"ID rejects "<<IDrejects<<endl;
+    //V3 ends
 
-    minte = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_vec(minte - mints);
-    std::cout<<"Vectorize time "<<elapsed_vec.count()<<endl;
+//    chrono::high_resolution_clock::time_point minIs, minIe, minroots, minroote ;
+//    double ttup = 0.0;
+//    double tsten = 0.0;
+//    double tdense = 0.0;
+//    int counter2 =0; int counter3 = 0; int counter4 = 0; int counter5 = 0;
+//    int counter6 =0;int counter7 = 0; int counter8 = 0; int counter9 = 0;int counter10=0;
+//    mints = chrono::high_resolution_clock::now();
+    for(int i=0;i<Ncylincmp;i++){
+        int cindex = cindexvec[i];
+        cylinder c = cylindervec[cindex];
+        if(c.type != _filamentType) {
+//            counter2++;
+            continue;}
+        double x1[3],x2[3];
+        memcpy(x1, &coord[3*c.bindices[0]], 3 * sizeof(double));
+        memcpy(x2, &coord[3*c.bindices[1]], 3 * sizeof(double));
+        double X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+        //Check 2
+/*
+        for(auto cndummy:ncindices[i]){
+            auto A =cylindervec[cndummy];
+            if(ccylvec[A.cindex]->getCylinder()->getID() != A.ID)
+            {
+                std::cout<<"Mismatch in neighbors L of Cyl index "<<i<<" "
+                        ""<<ccylvec[cndummy]->getCylinder()->getID()<<" "
+                                 ""<<cylindervec[cndummy].ID<<endl;
+            }
+        }
+*/
 
-    accepts =0;
-    total = 0;
-    time16 = 0.0;
-    timetaken = 0.0;
-    _possibleBindingsstencil.clear();
-    mints = chrono::high_resolution_clock::now();
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
-    for(auto c : _compartment->getCylinders()) {
-        if (c->getType() != _filamentType) continue;
+        int* cnindices = ncindices[i].data();
+        for(int arraycount = 0; arraycount < ncindices[i].size();arraycount++){
+            int cnindex = cnindices[arraycount];
+//            std::cout<<*cnindex<<endl;
+            cylinder cn = cylindervec[cnindex];
+//            if(c.ID < cn.ID) {counter++; continue;} commented as the above vector does
+// not contain ncs that will fail this cndn.
+            if(c.filamentID == cn.filamentID){
+//                counter3++;
+                continue;}
+            if(c.type != cn.type){
+//                counter4++;
+                 continue;}
 
-        auto x1 = c->getFirstBead()->coordinate;
-        auto x2 = c->getSecondBead()->coordinate;
-        auto cc = c->getCCylinder();
-        vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
-
-        for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder())) {
-
-            if(cn->getParent() == c->getParent()) continue;
-            if(cn->getType() != _filamentType) continue;
-            if(c->getID() < cn->getID()) continue;
-            auto ccn = cn->getCCylinder();
-            auto x3 = cn->getFirstBead()->coordinate;
-            auto x4 = cn->getSecondBead()->coordinate;
-
-            vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-            vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-            double maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
-
-            double mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
-                                                                                    x3,x4)));
-            mindistsq = mindistsq * mindistsq;
-            if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
-
+            double x3[3], x4[3];
+            memcpy(x3, &coord[3*cn.bindices[0]], 3 * sizeof(double));
+            memcpy(x4, &coord[3*cn.bindices[1]], 3 * sizeof(double));
+            double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+            double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
+            double X1X2squared = cylsqmagnitudevector.at(c.cindex);
             double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
+            double X3X4squared = cylsqmagnitudevector.at(cn.cindex);
             double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
             double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
-            mins2 = chrono::high_resolution_clock::now();
-            int i = -1;
-            for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-                i++;
-                //now re add valid binding sites
-                if (areEqual(boundstate[2][offset + SysParams::Chemistry()
-                                                   .bindingSites[_filamentType].size()
-                                           *c->_dcIndex + i], 1.0)) {
-                    auto mp1 = bindingsites.at(i);
-                    double A = X3X4squared;
-                    double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
-                    double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 *
-                                                                       X1X3dotX1X2;
-                    double C1 = C - _rMinsq;
-                    double C2 = C - _rMaxsq;
-                    double b2m4ac1 = B*B - 4*A*C1;
-                    double b2m4ac2 = B*B - 4*A*C2;
-                    status1 = b2m4ac1 < 0;
-                    status2 = b2m4ac2 < 0;
-                    if(status1 && status2) continue;
-                    maxvec.clear();
-                    minvec.clear();
-                    if(!status1){
-                        min1 = (-B + sqrt(b2m4ac1))/(2*A);
-                        min2 = (-B - sqrt(b2m4ac1))/(2*A);
-                        if(min1<min2) {
-                            minvec.push_back(min1);
-                            minvec.push_back(min2);
-                        }
-                        else{
-                            minvec.push_back(min2);
-                            minvec.push_back(min1);
-                        }
-                        if(minvec.at(0)< minparamcyl2 && minvec.at(1) > maxparamcyl2) {
-                            continue;
-                        }
+            for(int pos1 =0; pos1<nbs;pos1++) {
+            //now re add valid binding sites
+                if (areEqual(boundstate[2][offset + nbs *c.cindex + pos1], 1.0)) {
+                auto mp1 = bindingsites.at(pos1);
+                double A = X3X4squared;
+                double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
+                double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
+                double C1 = C - _rMinsq;
+                double C2 = C - _rMaxsq;
+                double b2m4ac1 = B*B - 4*A*C1;
+                double b2m4ac2 = B*B - 4*A*C2;
+                status1 = b2m4ac1 < 0;
+                status2 = b2m4ac2 < 0;
+                if(status1 && status2) {
+//                    counter6++;
+                    continue;}
+                if(!status1){
+                    min1 = (-B + sqrt(b2m4ac1))/(2*A);
+                    min2 = (-B - sqrt(b2m4ac1))/(2*A);
+                    if(min1<min2) {
+                        minveca[0] = (min1);
+                        minveca[1] = (min2);
                     }
-                    if(!status2){
-                        max1 = (-B + sqrt(b2m4ac2))/(2*A);
-                        max2 = (-B - sqrt(b2m4ac2))/(2*A);
-                        if(max1<max2) {
-                            maxvec.push_back(max1);
-                            maxvec.push_back(max2);
-                        }
-                        else{
-                            maxvec.push_back(max2);
-                            maxvec.push_back(max1);
-                        }
-                        if(maxvec.at(0) > maxparamcyl2 || maxvec.at(1) <minparamcyl2){
-                            continue;
-                        }
+                    else{
+                        minveca[0] = (min2);
+                        minveca[1] = (min1);
                     }
-                    int j =-1;
-                    for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                        it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
-                        j++;
-                        bool check2 = true;
-                        if (areEqual(boundstate[2][offset + SysParams::Chemistry()
-                                                           .bindingSites[_filamentType]
-                                                           .size()*cn->_dcIndex + j], 1.0)) {
-                            total++;
-                            //check distances..
-                            auto mp2 = bindingsites.at(j);
-
-                            if(!status2) {
-                                if (mp2 < maxvec.at(0) || mp2 > maxvec.at(1)) {
-//                                    check2 = false;
-                                    continue;
-                                }
+                    if(minveca[0]< minparamcyl2 && minveca[1] > maxparamcyl2) {
+//                        counter7++;
+                        continue;
+                    }
+                }
+                if(!status2){
+                    max1 = (-B + sqrt(b2m4ac2))/(2*A);
+                    max2 = (-B - sqrt(b2m4ac2))/(2*A);
+                    if(max1<max2) {
+                        maxveca[0] = (max1);
+                        maxveca[1] = (max2);
+                    }
+                    else{
+                        maxveca[0] = (max2);
+                        maxveca[1] = (max1);
+                    }
+                    if(maxveca[0] > maxparamcyl2 || maxveca[1] <minparamcyl2){
+//                        counter8++;
+                        continue;
+                    }
+                }
+                    for(int pos2 = 0; pos2<nbs;pos2++){
+                    if (areEqual(boundstate[2][offset + nbs *cn.cindex + pos2], 1.0)) {
+                        total++;
+                        //check distances..
+                        auto mp2 = bindingsites.at(pos2);
+                        if(!status2) {
+                            if (mp2 < maxveca[0] || mp2 > maxveca[1]) {
+                                {
+//                                    counter9++;
+                                continue;}
                             }
-                            if(!status1){
-                                if (mp2 > minvec.at(0) && mp2 < minvec.at(1)) {
-//                                    check2 = false;
-                                    continue;
-                                }
-                            }
-
-                            accepts++;
-                            if(check2) {
-                                mins = chrono::high_resolution_clock::now();
-                                auto t1 = tuple<CCylinder *, short>(cc, *it1);
-                                auto t2 = tuple<CCylinder *, short>(ccn, *it2);
-
-                                //add in correct order
-                                if (c->getID() > cn->getID()) {
-                                    _possibleBindingsstencil.emplace(t1, t2);
-                                }
-                            }
-                            mine= chrono::high_resolution_clock::now();
-                            chrono::duration<double> elapsed_emplace(mine - mins);
-                            timetaken += elapsed_emplace.count();
                         }
+                        if(!status1){
+                            if (mp2 > minveca[0] && mp2 < minveca[1]) {
+                                {
+//                                    counter10++;
+                                    continue;}
+                            }
+                        }
+                        accepts++;
+
+                        auto it1 = SysParams::Chemistry().bindingSites[_filamentType][pos1];
+                        auto it2 = SysParams::Chemistry().bindingSites[_filamentType][pos2];
+                        /*auto xx1 = ccylvec[cindex]->getCylinder();
+                        auto xx2 = ccylvec[cnindex]->getCylinder();
+//                        std::cout<<xx1->getID()<<" "<<c.ID<<" "<<xx2->getID()<<" "
+//                                ""<<cn.ID<<endl;
+                        if(xx1->getFirstBead()->_dbIndex != c.bindices[0] ||
+                                xx1->getSecondBead()->_dbIndex != c.bindices[1])
+                            std::cout<<"DB1 "<<xx1->getFirstBead()->_dbIndex<<" "
+                                ""<<xx1->getSecondBead()->_dbIndex<<" "<<c
+                                         .bindices[0]<<" "<<c.bindices[1]<<endl;
+                        if(xx2->getFirstBead()->_dbIndex != cn.bindices[0] ||
+                           xx2->getSecondBead()->_dbIndex != cn.bindices[1])
+                        std::cout<<"DB2 "<<xx2->getFirstBead()->_dbIndex<<" "
+                                ""<<xx2->getSecondBead()->_dbIndex<<" "<<cn
+                                         .bindices[0]<<" "<<cn.bindices[1]<<endl;*/
+                        auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
+                        auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
+                        //add in correct order
+                            _possibleBindingsstencil.emplace(t1, t2);
                     }
                 }
             }
-            mine2= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_run16(mine2 - mins2);
-            time16 += elapsed_run16.count();
+            }
         }
     }
-    minte = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_total3(minte - mints);
-    std::cout<<"Overall time "<<elapsed_total3.count()<<endl;
-    std::cout<<"Total "<<total<<" accepts "<<accepts<<endl;
-    std::cout<<"16 loop time taken "<<time16<<endl;
-    std::cout<<"Tuple Emplace time taken "<<timetaken<<endl;
+//    minte = chrono::high_resolution_clock::now();
+//    chrono::duration<double> elapsed_total4(minte - mints);
+//    std::cout<<"Overall time vec "<<elapsed_total4.count()<<endl;
+//    std::cout<<"Tuple time "<<ttup<<endl;
+//    std::cout<<"Stencil time "<<tsten<<endl;
+//    std::cout<<"Dense time "<<tdense<<endl;
     std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
+//    std::cout<<"Total binding site pairs "<<16*totalneighbors<<endl;
+//    std::cout<<"Count cID < cnID "<<16*counter1<<endl;
+//    std::cout<<"Count ftype "<<16*counter2<<endl;
+//    std::cout<<"Count fID "<<16*counter3<<endl;
+//    std::cout<<"Count Ctype "<<16*counter4<<endl;
+//    std::cout<<"Count maxdist "<<16*counter5<<endl;
+//    std::cout<<"Count b2-4ac "<<4*counter6<<endl;
+//    std::cout<<"Count min out of range "<<4*counter7<<endl;
+//    std::cout<<"Count max out of range "<<4*counter8<<endl;
+//    std::cout<<"Count bs2 min out of range "<<counter9<<endl;
+//    std::cout<<"Count bs2 max out of range "<<counter10<<endl;
+    std::cout<<"accepts "<<accepts<<endl;
+
+//    accepts = 0;
+//    _possibleBindingsstencil.clear();
+//    mints = chrono::high_resolution_clock::now();
+//    for(auto c : _compartment->getCylinders()) {
+//        if (c->getType() != _filamentType) continue;
+//
+//        auto x1 = c->getFirstBead()->coordinate;
+//        auto x2 = c->getSecondBead()->coordinate;
+//        auto cc = c->getCCylinder();
+//        vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+//
+//        for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
+//
+//            if(cn->getParent() == c->getParent()) continue;
+//            if(cn->getType() != _filamentType) continue;
+//            if(c->getID() < cn->getID()) continue;
+//            auto ccn = cn->getCCylinder();
+//            auto x3 = cn->getFirstBead()->coordinate;
+//            auto x4 = cn->getSecondBead()->coordinate;
+//
+//            vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+//            vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+//            double maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
+//
+//            double mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
+//                                                                                    x3,x4)));
+//            mindistsq = mindistsq * mindistsq;
+//            if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
+//
+//            double X1X3squared = sqmagnitude(X1X3);
+//            double X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
+//            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+//            double X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
+//            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
+//            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+////            mins2 = chrono::high_resolution_clock::now();
+//            int i = -1;
+//            for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
+//                it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
+//                i++;
+//                //now re add valid binding sites
+//                if (areEqual(boundstate[2][offset + SysParams::Chemistry()
+//                             .bindingSites[_filamentType].size() *c->_dcIndex + i], 1.0)) {
+//                    auto mp1 = bindingsites.at(i);
+//                    double A = X3X4squared;
+//                    double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
+//                    double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
+//                    double C1 = C - _rMinsq;
+//                    double C2 = C - _rMaxsq;
+//                    double b2m4ac1 = B*B - 4*A*C1;
+//                    double b2m4ac2 = B*B - 4*A*C2;
+//                    status1 = b2m4ac1 < 0;
+//                    status2 = b2m4ac2 < 0;
+//                    if(status1 && status2) continue;
+//                    maxvec.clear();
+//                    minvec.clear();
+//                    if(!status1){
+//                        min1 = (-B + sqrt(b2m4ac1))/(2*A);
+//                        min2 = (-B - sqrt(b2m4ac1))/(2*A);
+//                        if(min1<min2) {
+//                            minvec.push_back(min1);
+//                            minvec.push_back(min2);
+//                        }
+//                        else{
+//                            minvec.push_back(min2);
+//                            minvec.push_back(min1);
+//                        }
+//                        if(minvec.at(0)< minparamcyl2 && minvec.at(1) > maxparamcyl2) {
+//                            continue;
+//                        }
+//                    }
+//                    if(!status2){
+//                        max1 = (-B + sqrt(b2m4ac2))/(2*A);
+//                        max2 = (-B - sqrt(b2m4ac2))/(2*A);
+//                        if(max1<max2) {
+//                            maxvec.push_back(max1);
+//                            maxvec.push_back(max2);
+//                        }
+//                        else{
+//                            maxvec.push_back(max2);
+//                            maxvec.push_back(max1);
+//                        }
+//                        if(maxvec.at(0) > maxparamcyl2 || maxvec.at(1) <minparamcyl2){
+//                            continue;
+//                        }
+//                    }
+//                    int j =-1;
+//                    for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
+//                        it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
+//                        j++;
+//                        bool check2 = true;
+//                        if (areEqual(boundstate[2][offset + SysParams::Chemistry()
+//                                                                    .bindingSites[_filamentType]
+//                                                                    .size()*cn->_dcIndex + j], 1.0)) {
+//                            total++;
+//                            //check distances..
+//                            auto mp2 = bindingsites.at(j);
+//
+//                            if(!status2) {
+//                                if (mp2 < maxvec.at(0) || mp2 > maxvec.at(1)) {
+//                                    continue;
+//                                }
+//                            }
+//                            if(!status1){
+//                                if (mp2 > minvec.at(0) && mp2 < minvec.at(1)) {
+//                                    continue;
+//                                }
+//                            }
+//
+//                            accepts++;
+//
+//                            if(check2) {
+//
+//                                auto t1 = tuple<CCylinder *, short>(cc, *it1);
+//                                auto t2 = tuple<CCylinder *, short>(ccn, *it2);
+//
+//                                //add in correct order
+//                                if (c->getID() > cn->getID()) {
+//                                    _possibleBindingsstencil.emplace(t1, t2);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
+//    //end
+//    minte = chrono::high_resolution_clock::now();
+//    chrono::duration<double> elapsed_total3(minte - mints);
+//    std::cout<<"Overall time "<<elapsed_total3.count()<<endl;
+//    std::cout<<"Total "<<total<<" accepts "<<accepts<<endl;
+//    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSitesstencil();
     updateBindingReaction(oldN, newN);

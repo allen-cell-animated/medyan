@@ -80,7 +80,7 @@ void CylinderCylinderNL::generateConnections()
 
             for(size_t k=0U; k<_grid[2]; ++k) {
                 vector<size_t> indices{i,j,k};
-                Bin *target = getBin(indices);
+                Bin *target = getBin(indices);//defined in this file.
 
                 vector<double> coordinates =
                         {indices[0] * _binSize[0] + _binSize[0] / 2,
@@ -203,6 +203,28 @@ void CylinderCylinderNL::initializeBinGrid() {
     _binGrid = new BinGrid(size, _ID, _binSize);
     //Create connections based on dimensionality
     generateConnections();
+#ifdef CUDAACCL_NLS
+    binGridv = new bin[size];
+    auto binvec = _binGrid->getBins();
+    for(int i = 0; i < size; i ++){
+        auto bcoord = binvec[i]->coordinates();
+        binGridv[i].binID = binvec[i]->_ID;
+        for(int dim =0;dim<3;dim++)
+            binGridv[i].bincoord[dim] = bcoord.at(dim);
+        auto binneighbors = binvec[i]->getNeighbours();
+        int count = 0;
+        for(auto n:binneighbors) {
+            binGridv[i].neighbors[count] = n->_ID;
+            binGridv[i].binstencilID[count] = binvec[i]->stencilID[count];
+            count++;
+        }
+    }
+    if(stream_NL == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+        CUDAcommon::handleerror(cudaStreamCreate(&stream_NL));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_binGrid, size * sizeof(bin)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_binGrid, binGridv, size * sizeof(bin),
+                                       cudaMemcpyHostToDevice));
+#endif
 }
 
 //You need a vector of all grids so you can loop through and update respective coordinates.
@@ -301,8 +323,13 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
     int ncyls2 = 0;
     int tcyl2 = 0;
     int nbincount = 0;
-    auto nbinstencil = parentbin->stencilID;
+    auto nbinstencil = parentbin->stencilID;// A standard templated numbering of
+    // neighboring bins is implemented i.e. based on position w.r.t. bin of interest,
+    // neighboring bins are given a particular ID.nbinstencil stores the set of such
+    // neighbors that is close to bin of interest. Bins close to the boundary will have
+    // < 27 elements in the stencilID vector.
     for(auto &bin : _neighboringBins) {
+        bin->vectorize();
         bool isbinneeded = _binGrid->iswithincutoff(cylinder->coordinate,
                                                      parentbin->coordinates(),
                                                      nbinstencil.at(nbincount), _rMax);
@@ -322,7 +349,8 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                     if (cylinder == ncylinder) continue;
 
                     //Dont add if ID is more than cylinder for half-list
-                    if (!_full && cylinder->getID() <= ncylinder->getID()) continue;
+                    if (!_full && cylinder->getID() <= ncylinder->getID())
+                        continue;
 
                     //Don't add if belonging to same parent
                     if (cylinder->getParent() == ncylinder->getParent()) {
@@ -431,7 +459,8 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
             if(cylinder == ncylinder) continue;
 
             //Dont add if ID is more than cylinder for half-list
-            if(!_full && cylinder->getID() <= ncylinder->getID()) continue;
+            if(!_full && cylinder->getID() <= ncylinder->getID())
+                continue;
 
             //Don't add if belonging to same parent
             if(cylinder->getParent() == ncylinder->getParent()) {
@@ -542,24 +571,31 @@ void CylinderCylinderNL::reset() {
 #endif
     //loop through all neighbor keys
     int tot = 0;
+#ifdef CUDA_TIMETRACK
     chrono::high_resolution_clock::time_point mins, mine;
+#endif
 #ifdef NLORIGINAL//serial
+#ifdef CUDA_TIMETRACK
     mins = chrono::high_resolution_clock::now();
+#endif
     _list.clear();
     tot = 0;
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighbors(cylinder);
         tot += _list[cylinder].size();
     }
+#ifdef CUDA_TIMETRACK
     std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
-
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_orig(mine - mins);
     std::cout<<"NLORIG reset time "<<elapsed_orig.count()<<endl;
 #endif
+#endif
 
 #ifdef NLSTENCILLIST
+    #ifdef CUDA_TIMETRACK
     mins = chrono::high_resolution_clock::now();
+    #endif
     tot = 0;
     _list4mbin.clear();
     //check and reassign cylinders to different bins if needed.
@@ -568,10 +604,12 @@ void CylinderCylinderNL::reset() {
         updateNeighborsbin(cylinder);
         tot += _list4mbin[cylinder].size();
     }
+    #ifdef CUDA_TIMETRACK
     std::cout<<"reset NLSTENCILLIST size "<<" "<<tot<<endl;
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_sten(mine - mins);
     std::cout<<"NLSTEN reset time "<<elapsed_sten.count()<<endl;
+    #endif
 #endif
 
 //        std::cout<<cylinder->_dcIndex<<" "<<_list.size()<<" "<<vec_numpairs<<" "<<_full<<endl;
@@ -727,6 +765,7 @@ void CylinderCylinderNL::reset() {
 
     CUDAcommon::handleerror(cudaFree(gpu_params),"cudaFree","NeighborListImpl.cu");
 #endif
+#ifdef CUDAACCL_NLS
     int *gpu_array;
     int *gpu_stage;
     int *gpu_nvec;
@@ -770,6 +809,7 @@ void CylinderCylinderNL::reset() {
     for(int i = 0; i < Nv; i++)
         std::cout<<cpu_nvec[i]<<" ";
     std::cout<<endl;
+#endif
 }
 
 

@@ -24,6 +24,13 @@ using namespace mathfunc;
 
 Database<Bead*> Bead::_beads;
 Database<Bead*> Bead::_pinnedBeads;
+//static vars needed to vectorize on-the-fly
+int Bead::maxbindex = 0;
+int Bead::vectormaxsize = 0;
+int Bead::Nbeads = 0;
+int Bead::newsize = 1000;
+bool Bead::triggercylindervectorization = false;
+vector<int> Bead::removedcindex;
 
 Bead::Bead (vector<double> v, Composite* parent, int position)
 // Qin add brforce, pinforce
@@ -50,7 +57,18 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
         
         exit(EXIT_FAILURE);
     }
-          
+
+    //set bindex
+    if(removedcindex.size() == 0)
+    {_dbIndex = maxbindex;
+    maxbindex++;
+    }
+    else{
+        _dbIndex = removedcindex.at(0);
+        removedcindex.erase(removedcindex.begin());
+    }
+    Nbeads = _beads.getElements().size();
+    revectorizeifneeded();
 }
 
 Bead::Bead(Composite* parent, int position)
@@ -60,6 +78,18 @@ Bead::Bead(Composite* parent, int position)
     force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {
     
     parent->addChild(unique_ptr<Component>(this));
+    //set bindex
+    if(removedcindex.size() == 0)
+    {_dbIndex = maxbindex;
+        maxbindex++;
+    }
+    else{
+        _dbIndex = removedcindex.at(0);
+        removedcindex.erase(removedcindex.begin());
+    }
+    Nbeads = _beads.getElements().size();
+    copycoordinatestovector();
+    revectorizeifneeded();
 }
 
 void Bead::updatePosition() {

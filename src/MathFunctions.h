@@ -123,7 +123,11 @@ namespace mathfunc {
     /// Return normalized vector not in place
     inline vector<double> normalizeVector(const vector<double> &v) {
 
-        double norm = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        double x2 = v[0] * v[0];
+        double y2 = v[1] * v[1];
+        double z2 = v[2] * v[2];
+
+        double norm = sqrt( x2+y2+z2);
 
         vector<double> v1;
 
@@ -141,7 +145,11 @@ namespace mathfunc {
     #endif
     inline void normalizeVector(double *v) {
 
-        double norm = sqrt((*(v)) * (*(v)) + (*(v + 1)) * (*(v + 1)) + (*(v + 2)) * (*(v + 2)));
+        double x2 = v[0] * v[0];
+        double y2 = v[1] * v[1];
+        double z2 = v[2] * v[2];
+
+        double norm = sqrt( x2+y2+z2);
         *(v) = *(v) / norm;
         *(v + 1) = *(v + 1) / norm;
         *(v + 2) = *(v + 2) / norm;
@@ -156,6 +164,15 @@ namespace mathfunc {
     inline double sqmagnitude(const vector<double> &v) {
 
         return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }
+
+    inline double sqmagnitude(const double* v) {
+
+        double x2 = v[0] * v[0];
+        double y2 = v[1] * v[1];
+        double z2 = v[2] * v[2];
+
+        return (x2+y2+z2);
     }
     ///ARRAY VERSION
     #ifdef CUDAACCL
@@ -237,6 +254,26 @@ namespace mathfunc {
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
+    inline double twoPointDistancesquared(double const *v1, double const *v2) {
+        double dx = (v2[0] - v1[0]);
+        double dy = (v2[1] - v1[1]);
+        double dz = (v2[2] - v1[2]);
+        return(dx*dx+dy*dy+dz*dz);
+
+//        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
+//                    (v2[2] - v1[2]) * (v2[2] - v1[2]));
+    }
+
+    inline double twoPointDistancesquared(double const *v1, double const *v2, int id1,
+                                          int id2) {
+        double dx = (v2[id1] - v1[id2]);
+        double dy = (v2[id1 + 1] - v1[id2 + 1]);
+        double dz = (v2[id1 + 2] - v1[id2 + 2]);
+        return(dx*dx+dy*dy+dz*dz);
+
+//        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
+//                    (v2[2] - v1[2]) * (v2[2] - v1[2]));
+    }
     ///CUDA VERSION
     #ifdef CUDAACCL
     __host__ __device__
@@ -553,6 +590,9 @@ namespace mathfunc {
         return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
     }
 
+    inline double scalarprojection(double* a, double* b){
+        return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+    }
     inline double maxdistbetweencylinders(const vector<double> &v1,
                                    const vector<double> &v2,
                                    const vector<double> &v3,
@@ -562,6 +602,28 @@ namespace mathfunc {
         double d2 = twoPointDistancesquared(v1, v4);maxdist = max(maxdist,d2);
         double d3 = twoPointDistancesquared(v2, v3);maxdist = max(maxdist,d3);
         double d4 = twoPointDistancesquared(v2, v4);maxdist = max(maxdist,d4);
+        return maxdist;
+    }
+
+    inline double maxdistbetweencylinders(const double* v1,
+                                          const double* v2,
+                                          const double* v3,
+                                          const double* v4) {
+        double maxdist = 0.0;
+        double d1 = twoPointDistancesquared(v1, v3);maxdist = max(maxdist,d1);
+        double d2 = twoPointDistancesquared(v1, v4);maxdist = max(maxdist,d2);
+        double d3 = twoPointDistancesquared(v2, v3);maxdist = max(maxdist,d3);
+        double d4 = twoPointDistancesquared(v2, v4);maxdist = max(maxdist,d4);
+        return maxdist;
+    }
+
+    inline double maxdistsqbetweenbindingsites(const double* v1,
+                                          const double* v2) {
+        double maxdist = 0.0;
+        double d1 = twoPointDistancesquared(v1, v2,0,0);maxdist = max(maxdist,d1);
+        double d2 = twoPointDistancesquared(v1, v2,3,3);maxdist = max(maxdist,d2);
+        double d3 = twoPointDistancesquared(v2, v2,6,6);maxdist = max(maxdist,d3);
+        double d4 = twoPointDistancesquared(v2, v2,9,9);maxdist = max(maxdist,d4);
         return maxdist;
     }
 
@@ -608,10 +670,15 @@ namespace mathfunc {
                               double const *v2,
                               double const *v3,
                               double const *v4) {
-        double vx =
-                (*(v2 + 1) - *(v1 + 1)) * (*(v4 + 2) - *(v3 + 2)) - (*(v2 + 2) - *(v1 + 2)) * (*(v4 + 1) - *(v3 + 1));
-        double vy = (*(v2 + 2) - *(v1 + 2)) * (*(v4) - *(v3)) - (*(v2) - *(v1)) * (*(v4 + 2) - *(v3 + 2));
-        double vz = (*(v2) - *(v1)) * (*(v4 + 1) - *(v3 + 1)) - (*(v2 + 1) - *(v1 + 1)) * (*(v4) - *(v3));
+        double v211 = (v2[1] - v1[1]);
+        double v430 = (v4[0] - v3[0]);
+        double v212 = (v2[2] - v1[2]);
+        double v432 = (v4[2] - v3[2]);
+        double v431 = (v4[1] - v3[1]);
+        double v210 = (v2[0] - v1[0]);
+        double vx =  v211 * v432 - v212 * v431;
+        double vy = v212 * v430 - v210 * v432;
+        double vz = v210 * v431 - v211 * v430;
 
         v[0] = vx;
         v[1] = vy;
@@ -862,9 +929,10 @@ namespace mathfunc {
 #endif
     inline void midPointCoordinate(double *v, double const *v1, double const *v2, double alpha) {
 
-        *(v) = ((*v1) * (1.0 - alpha) + alpha * (*(v2)));
-        *(v + 1) = (*(v1 + 1) * (1.0 - alpha) + alpha * (*(v2 + 1)));
-        *(v + 2) = (*(v1 + 2) * (1.0 - alpha) + alpha * (*(v2 + 2)));
+        double beta = 1 - alpha;
+        v[0] = (v1[0] * beta + alpha * v2[0]);
+        v[1] = (v1[1] * beta + alpha * v2[1]);
+        v[2] = (v1[2] * beta + alpha * v2[2]);
     }
 
     //CUDA version

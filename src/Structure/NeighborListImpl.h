@@ -111,6 +111,11 @@ public:
 //                         SysParams::Geometry().cylinderSize[NLcyltypes[1]]);
 //    }
 #endif
+#ifdef CUDAACCL_NLS
+    struct bin *binGridv;
+    struct bin *gpu_binGrid;
+    cudaStream_t  stream_NL;
+#endif
     CylinderCylinderNL(float rMax, float rMin = 0.0, bool full = false, short ID = 0)
             : NeighborList(rMax, rMin), _full(full) {
 #ifdef NLSTENCILLIST
@@ -119,13 +124,13 @@ public:
         NLcyltypes[1] = 0;
         maxcylsize = max(SysParams::Geometry().cylinderSize[NLcyltypes[0]],
                          SysParams::Geometry().cylinderSize[NLcyltypes[1]]);
-        std::cout<<"Cylinder size "<<SysParams::Geometry()
-                .cylinderSize[NLcyltypes[0]]<<endl;
+//        std::cout<<"Cylinder size "<<SysParams::Geometry()
+//                .cylinderSize[NLcyltypes[0]]<<endl;
         initializeBinGrid();
         assignallcylinderstobin();
 
         _ID = SysParams::numcylcylNL;
-        std::cout<<"NL ID "<<SysParams::numcylcylNL<<endl;
+//        std::cout<<"NL ID "<<SysParams::numcylcylNL<<endl;
         SysParams::numcylcylNL++;
         //Determine binSize based on the longer of the two cylinders involved in the NL.
 

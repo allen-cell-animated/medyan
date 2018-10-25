@@ -50,6 +50,7 @@ public:
     vector<int> shrtdistVorEorPID = {0,0,1,1,0,2,2,3,3,4,1,5,2,-1,3,6,4,7,4,8,5,9,5,
                                     10,6,11,7};
     vector<int> shrtdistType = {2,1,2,1,3,1,2,1,2,1,3,1,3,0,3,1,3,1,2,1,2,1,3,1,2,1,2};
+
     /// Constructor, creates a number of Compartment instances
     BinGrid(int numBins, short bgType, vector<double> binSize):
             _bgType(bgType), _binSize(binSize) {
@@ -80,7 +81,7 @@ public:
 
         //add children
         for(size_t i=0; i<numBins; ++i)
-            addChild(unique_ptr<Component>(new Bin(bgType)));
+            addChild(unique_ptr<Component>(new Bin(bgType, i)));
     }
 
     /// Get bins that this grid holds

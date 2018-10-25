@@ -30,7 +30,6 @@ Compartment& Compartment::operator=(const Compartment &other) {
     _diffusion_rates = other._diffusion_rates;
     
     return *this;
-    
 }
     
 bool Compartment::apply_impl(SpeciesVisitor &v) {

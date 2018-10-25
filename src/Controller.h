@@ -123,6 +123,9 @@ public:
     double chemistrytime = 0.0;
     double minimizationtime = 0.0;
     double nltime = 0.0;
+    double nl2time = 0.0;
+    double bmgrvectime = 0.0;
+    double bmgrtime = 0.0;
     double rxnratetime = 0.0;
     double outputtime =0.0;
     double specialtime = 0.0;

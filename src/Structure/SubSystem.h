@@ -357,6 +357,9 @@ public:
             nl->reset();
     }
 
+    //create vectors of cylinder information.
+    void vectorizeCylinder();
+
 #ifdef CUDAACCL_NL
     void endresetCUDA(){
         for(auto gpb:gpu_possibleBindings_vec)
@@ -407,6 +410,11 @@ private:
     Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
         
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
+
+    //Cylinder vector
+    cylinder *cylindervec;
+    CCylinder** ccylindervec;
+
 #ifdef CUDAACCL_NL
     double* gpu_coord;
     double* gpu_coord_com;

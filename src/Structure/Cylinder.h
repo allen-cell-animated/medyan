@@ -32,6 +32,7 @@
 //FORWARD DECLARATIONS
 class Filament;
 class Compartment;
+class Bin;
 
 /// A container to store a MCylinder and CCylinder.
 /*!
@@ -88,7 +89,8 @@ public:
     vector<double> coordinate;
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
-    int _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector. Continuous ID assigned for
+    long _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector.
+///< Continuous ID assigned for
 ///< CUDANL calculation
     /// Constructor, initializes a cylinder
     Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,

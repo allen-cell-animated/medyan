@@ -43,6 +43,9 @@ inline void resetglobaltime() {global_time=0.0;}
 ///Some constants
 const double kT = 4.1; //in pN * nm
 
+const int cylinder_cache = 1000;
+const int bead_cache = 1000;
+
 ///To use STL containers, libraries, etc
 using namespace std;
 

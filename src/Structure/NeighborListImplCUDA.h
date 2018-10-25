@@ -87,7 +87,7 @@ __global__ void resetbitonic(int* stage){
     stage[0] = 0;//stage
     stage[1] = 0;//substage
 }
-
+//Bitonic sort involves N sub-stages in each stage N.
 __global__ void incrementbitonic(int* stage){
     if(stage[1] == 0) {
         stage[0]++;
@@ -99,7 +99,7 @@ __global__ void incrementbitonic(int* stage){
 }
 __global__ void bitonicsort(int* array, int* stage, int* nint){
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-    int vecsize = nint[0];
+    int vecsize = nint[0];//Ncylinders in the system.
     if(thread_idx < vecsize) {
         int offset = (int)pow(2.0,stage[1]);
         int orderlength = (int)pow(2,stage[1]);
@@ -132,6 +132,44 @@ __global__ void bitonicsort(int* array, int* stage, int* nint){
         }
     }
     __syncthreads();
+}
+
+//Each block is incharge of counting the frequency of a key in the array. the key is
+// given by blockIdx.x
+__global__ void getfreq(int* binarray, int* ncylm, int* ulimit, int* countvec){
+    const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+    unsigned int tid = threadIdx.x;
+    extern __shared__ int s[];
+    int *sdata = s;
+    sdata[threadIdx.x] = 0;
+    int jumplength = blockDim.x;
+    while(tid < ulimit[0]){
+        int targetbinID = blockIdx.x;
+        if(binarray[tid] == targetbinID){
+            sdata[threadIdx.x] += 1;
+            tid = tid + jumplength;
+        }
+    }
+    __syncthreads();
+    //Add the resulting shared memory array
+    int blockSize = blockDim.x;
+    if(blockSize >=2048 ) {printf("Cannot handle blocks with threads larger than 2048\n");assert(0);}
+    if (blockSize >= 1024) { if (tid < 512) { sdata[tid] += sdata[tid + 512]; } __syncthreads(); }
+    if (blockSize >= 512) { if (tid < 256) { sdata[tid] += sdata[tid + 256]; } __syncthreads(); }
+    if (blockSize >= 256) { if (tid < 128) { sdata[tid] += sdata[tid + 128]; } __syncthreads(); }
+    if (blockSize >= 128) { if (tid < 64) { sdata[tid] += sdata[tid + 64]; } __syncthreads(); }
+    if (tid < 32) {
+        if (blockSize >= 64) {sdata[tid] += sdata[tid + 32];__syncthreads(); }
+        if (blockSize >= 32) {sdata[tid] += sdata[tid + 16];__syncthreads(); }
+        if (blockSize >= 16) {sdata[tid] += sdata[tid + 8];__syncthreads(); }
+        if (blockSize >= 8) {sdata[tid] += sdata[tid + 4];__syncthreads(); }
+        if (blockSize >= 4) {sdata[tid] += sdata[tid + 2];__syncthreads(); }
+        if (blockSize >= 2) {sdata[tid] += sdata[tid + 1];__syncthreads(); }
+    }
+    if (tid == 0) {
+        /*printf("%d %f \n", blockIdx.x, sdata[0]);*/
+        atomicAdd(&countvec[blockIdx.x], sdata[0]);
+    }
 }
 
 //__global__ void CylinderCylinderNLCUDA(double *coord_com, int *beadSet, int *cylID, int *filID, int *cmpIDlist,

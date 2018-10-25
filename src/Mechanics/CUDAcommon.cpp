@@ -3,8 +3,9 @@
 //
 
 #include "CUDAcommon.h"
+SERLvars CUDAcommon::serlvars;
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
-CUDAvars   CUDAcommon::cudavars;
+CUDAvars  CUDAcommon::cudavars;
 CylCylNLvars CUDAcommon::cylcylnlvars;
 SERLtime CUDAcommon::serltime;
 CUDAtime CUDAcommon::cudatime;

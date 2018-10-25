@@ -44,7 +44,8 @@ protected:
     double *force; ///< bead forces (length 3*N)
     double *forceAux; ///< auxiliary force calculations (length 3*N)
     double *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
-    
+//    cylinder* cylindervec;
+
     /// Safe mode which chooses the safe backtracking search if the
     /// minimizer got itself into trouble.
     bool _safeMode = false;
@@ -177,7 +178,7 @@ protected:
     void printForces();
     
     /// Initialize data arrays
-    inline void allocate(long numBeadsx3) {
+    inline void allocate(long numBeadsx3, long Ncyl) {
 
         coord = new double[numBeadsx3];
         force = new double[numBeadsx3];
@@ -187,7 +188,7 @@ protected:
     
     ///Deallocation of CG arrays
     inline void deallocate() {
-        
+        coord = CUDAcommon::serlvars.coord;
         delete [] coord;
         delete [] force;
         delete [] forceAux;
@@ -195,6 +196,7 @@ protected:
     }
 public:
     static long N; ///< Number of beads in the system, set before each minimization
+    static long Ncyl;
     
     virtual ~CGMethod() {};
     

@@ -39,6 +39,7 @@
 #include "cross_check.h"
 //
 long CGMethod::N = 0;
+long CGMethod::Ncyl = 0;
 #ifdef CUDAACCL
 void CGMethod::CUDAresetlambda(cudaStream_t stream) {
     resetlambdaCUDA<<<1,1,0, stream>>>(CUDAcommon::getCUDAvars().gpu_lambda);
@@ -540,8 +541,11 @@ void CGMethod::startMinimization() {
     tbegin = chrono::high_resolution_clock::now();
 #endif
     N = 3 * Bead::getBeads().size();
+    Ncyl = Cylinder::getCylinders().size();
 //    std::cout<<3 * Bead::getBeads().size()<<endl;
-    allocate(N);
+    deallocate();
+    allocate(N, Ncyl);
+
 
     //coord management
     long i = 0;
@@ -563,6 +567,7 @@ void CGMethod::startMinimization() {
 //        force[index + 2] = 0.0;
         i++;
     }
+    CUDAcommon::serlvars.coord = coord;
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runst(tend - tbegin);
@@ -601,6 +606,8 @@ void CGMethod::startMinimization() {
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_energy, sizeof(double)));
     bool* gpu_btstate;
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_btstate, sizeof(bool)));
+    cylinder* gpu_cylindervec;
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylindervec, Ncyl*sizeof(cylinder)));
 
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_initlambdalocal, sizeof(double)));
 
@@ -640,6 +647,10 @@ void CGMethod::startMinimization() {
     bool dummy[1];dummy[0] = true;
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_btstate, dummy, sizeof(bool),
                                         cudaMemcpyHostToDevice, stream_startmin));
+
+    CUDAcommon::handleerror(cudaMemcpyAsync(gpu_cylindervec, cylindervec, Ncyl*sizeof
+                                                    (cylinder),
+                                            cudaMemcpyHostToDevice, stream_startmin));
     int *gculpritID;
     char *gculpritFF;
     char *gculpritinteraction;
@@ -672,6 +683,7 @@ void CGMethod::startMinimization() {
     cvars.culpritinteraction = culpritinteraction;
     cvars.culpritFF = culpritFF;
     cvars.gpu_btstate = gpu_btstate;
+    cvars.gpu_cylindervec = gpu_cylindervec;
     CUDAcommon::cudavars=cvars;
 //SET CERTAIN GPU PARAMETERS SET FOR EASY ACCESS DURING MINIMIZATION._
 //    int THREADSPERBLOCK;
@@ -836,10 +848,16 @@ void CGMethod::endMinimization() {
         i++;
     }
 
-    deallocate();
+//    deallocate();
 #ifdef CUDAACCL
-
-    CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_coord));
+    bool deletecndn = true;
+#ifdef CUDAACCL_NLS
+    deletecndn = false;
+#endif
+    if(deletecndn) {
+        CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_coord));
+        CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_cylindervec));
+    }
     CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_force));
     CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_forceAux));
     CUDAcommon::handleerror(cudaFree(CUDAcommon::getCUDAvars().gpu_forceAuxP));
