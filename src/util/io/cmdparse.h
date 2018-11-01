@@ -27,56 +27,93 @@ public:
     explicit ValidationError( const char* what_arg ) : std::runtime_error(what_arg) {}
 };
 
+// Argument type
+enum class ArgType { PosArg, Option, Command, Delimiter };
+
+// Positional argument
 class PosArg {
 private:
     const char * const _name;
     const bool _list;
     const bool _required;
 
-    size_t _occurenceCount = 0;
+    struct State {
+        size_t _occurenceCount = 0;
+    } _state;
+
 public:
     bool isList() const { return _list; }
     bool isRequired()const { return _required; }
 
-    size_t getOccurenceCount()const { return _occurenceCount; }
+    const std::function<void(const std::string&)> activate;
+
+    void occur() { ++_state._occurenceCount; }
+    size_t getOccurenceCount()const { return _state._occurenceCount; }
+
 };
 
 class Option {
-protected:
-    size_t _occurenceCount = 0;
+private:
+
+    const char _short; // without "-"
+    const std::string _long; // without "--"
+
+    const bool _hasVariable;
+    struct State {
+        size_t _occurenceCount = 0;
+    } _state;
 public:
-    size_t getOccurenceCount()const { return _occurenceCount; }
+    char getShortName()const { return _short; }
+    const std::string& getLongName()const { return _long; }
+
+    bool hasVariable()const { return _hasVariable; }
+
+    void occur() { ++_state._occurenceCount; }
+    size_t getOccurenceCount()const { return _state._occurenceCount; }
 };
-// Option that takes no variable
-class Option0 : public Option {
-};
-// Option that takes 1 variable
-template< typename T >
-class Option1 : public Option {
-};
+
 
 class Command {
 private:
 
+    const std::string _name;
+    const std::string _inheritedName;
+
     std::vector<std::unique_ptr<PosArg>> _posArgs;
     std::vector<std::unique_ptr<Option>> _options;
     std::vector<std::unique_ptr<Command>> _subcommands;
+    Command* const _parent = nullptr;
 
     std::function<void()> _userValidation;
 
     // Check validity of specified rules. Recursive check for subcommands.
     void _ruleCheck()const;
     // Real parsing function
-    void _parse(int argc, char** argv);
+    void _parse(std::vector<std::string>& feed, size_t argp);
     // Internal validation
     void _validation()const;
 
+    // State variable
+    struct State {
+        bool _parseAsPosArg = false; // After the delimiter, this will be set to true.
+        size_t _posArgCount = 0; // Number of positional argument encountered.
+        size_t _posArgIndex = 0; // The index for the next positional argument.
+                                 // Normally same with _posArgCount except on arg list.
+    } _state;
+
 public:
+
+    const std::string& getName()const { return _name; }
+    std::string getFullName()const { return _inheritedName + ' ' + _name; }
+
     // The parsing function used only by the root command.
     // States will be changed in this function
     void parse(int argc, char** argv) {
         _ruleCheck();
-        _parse(argc, argv);
+
+        std::vector<std::string> inputFeed(argc);
+        for(size_t i = 0; i < argc; ++i) inputFeed[i] = argv[i];
+        _parse(inputFeed, 1);
         _validation();
     }
     void printUsage()const;
