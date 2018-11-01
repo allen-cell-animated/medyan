@@ -27,9 +27,6 @@ public:
     explicit ValidationError( const char* what_arg ) : std::runtime_error(what_arg) {}
 };
 
-// Argument type
-enum class ArgType { PosArg, Option, Command, Delimiter };
-
 // Positional argument
 class PosArg {
 private:
@@ -91,7 +88,7 @@ private:
     // Real parsing function
     void _parse(std::vector<std::string>& feed, size_t argp);
     // Internal validation
-    void _validation()const;
+    void _validate()const;
 
     // State variable
     struct State {
@@ -114,7 +111,7 @@ public:
         std::vector<std::string> inputFeed(argc);
         for(size_t i = 0; i < argc; ++i) inputFeed[i] = argv[i];
         _parse(inputFeed, 1);
-        _validation();
+        _validate();
     }
     void printUsage()const;
 };

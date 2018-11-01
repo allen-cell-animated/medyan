@@ -113,7 +113,7 @@ void Command::_parse(std::vector<std::string>& feed, size_t argp) {
 }
 
 
-void Command::_validation()const {
+void Command::_validate()const {
 
 }
 
