@@ -42,6 +42,8 @@ public:
     bool isList() const { return _list; }
     bool isRequired()const { return _required; }
 
+    const char* getName()const { return _name; }
+
     const std::function<void(const std::string&)> activate;
 
     void occur() { ++_state._occurenceCount; }
@@ -52,18 +54,33 @@ public:
 class Option {
 private:
 
-    const char _short; // without "-"
+    const char _short = 0; // without "-"
     const std::string _long; // without "--"
 
     const bool _hasVariable;
+    const bool _required;
+
     struct State {
         size_t _occurenceCount = 0;
     } _state;
 public:
     char getShortName()const { return _short; }
     const std::string& getLongName()const { return _long; }
+    std::string getReadableName()const {
+        std::ostringstream oss;
+        if(_short) {
+            oss << '-' << _short;
+            if(_long.length())
+                oss << " (--" << _long << ')';
+        } else if(_long.length())
+            oss << "--" << _long;
+        return oss.str();
+    }
 
     bool hasVariable()const { return _hasVariable; }
+    bool isRequired()const { return _required; }
+
+    const std::function<void(const std::string&)> activate;
 
     void occur() { ++_state._occurenceCount; }
     size_t getOccurenceCount()const { return _state._occurenceCount; }
@@ -87,6 +104,7 @@ private:
     void _ruleCheck()const;
     // Real parsing function
     void _parse(std::vector<std::string>& feed, size_t argp);
+    void _parsePosArg(const std::string& arg); // helper
     // Internal validation
     void _validate()const;
 
@@ -96,6 +114,7 @@ private:
         size_t _posArgCount = 0; // Number of positional argument encountered.
         size_t _posArgIndex = 0; // The index for the next positional argument.
                                  // Normally same with _posArgCount except on arg list.
+        size_t _occurenceCount = 0;
     } _state;
 
 public:
@@ -103,16 +122,25 @@ public:
     const std::string& getName()const { return _name; }
     std::string getFullName()const { return _inheritedName + ' ' + _name; }
 
+    const std::function<void()> activate;
+
+    void occur() { ++_state._occurenceCount; }
     // The parsing function used only by the root command.
     // States will be changed in this function
     void parse(int argc, char** argv) {
+        occur();
+        if(activate) activate();
+
         _ruleCheck();
 
         std::vector<std::string> inputFeed(argc);
         for(size_t i = 0; i < argc; ++i) inputFeed[i] = argv[i];
         _parse(inputFeed, 1);
+
         _validate();
     }
+
+    // Auxillary function that prints usage help message
     void printUsage()const;
 };
 
