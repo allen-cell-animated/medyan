@@ -2,9 +2,10 @@
 #define MEDYAN_UTIL_IO_CMDPARSE_H
 
 #include <functional>
-#include <memory>
-#include <sstream>
-#include <stdexcept>
+#include <iostream> // ostream, cout
+#include <memory> // unique_ptr
+#include <sstream> // string format
+#include <stdexcept> // custom exception
 #include <string>
 #include <vector>
 
@@ -31,6 +32,7 @@ public:
 class PosArg {
 private:
     const char * const _name;
+    const std::string _description;
     const bool _list;
     const bool _required;
 
@@ -43,6 +45,7 @@ public:
     bool isRequired()const { return _required; }
 
     const char* getName()const { return _name; }
+    const std::string& getDescription()const { return _description; }
 
     const std::function<void(const std::string&)> activate;
 
@@ -56,8 +59,11 @@ private:
 
     const char _short = 0; // without "-"
     const std::string _long; // without "--"
+    const std::string _description;
 
     const bool _hasVariable;
+    const bool _variableName; // Useless if _hasVariable is false
+
     const bool _required;
 
     struct State {
@@ -66,16 +72,10 @@ private:
 public:
     char getShortName()const { return _short; }
     const std::string& getLongName()const { return _long; }
-    std::string getReadableName()const {
-        std::ostringstream oss;
-        if(_short) {
-            oss << '-' << _short;
-            if(_long.length())
-                oss << " (--" << _long << ')';
-        } else if(_long.length())
-            oss << "--" << _long;
-        return oss.str();
-    }
+    std::string getReadableName()const;
+    std::string getUsageName()const;
+    const std::string& getDescription()const { return _description; }
+    const std::string& getVariableName()const { return _variableName; }
 
     bool hasVariable()const { return _hasVariable; }
     bool isRequired()const { return _required; }
@@ -92,6 +92,7 @@ private:
 
     const std::string _name;
     const std::string _inheritedName;
+    const std::string _description;
 
     std::vector<std::unique_ptr<PosArg>> _posArgs;
     std::vector<std::unique_ptr<Option>> _options;
@@ -121,6 +122,7 @@ public:
 
     const std::string& getName()const { return _name; }
     std::string getFullName()const { return _inheritedName + ' ' + _name; }
+    const std::string& getDescription()const { return _description; }
 
     const std::function<void()> activate;
 
@@ -141,7 +143,7 @@ public:
     }
 
     // Auxillary function that prints usage help message
-    void printUsage()const;
+    void printUsage(std::ostream& os = std::cout)const;
 };
 
 // Helper functions

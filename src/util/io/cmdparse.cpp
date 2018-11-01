@@ -4,6 +4,61 @@
 
 namespace cmdparse {
 
+namespace {
+
+void usagePairFormatter(const std::string& key, const std::string& description, std::ostream& os) {
+    static const size_t leftMargin = 4;
+    static const size_t maxKeySize = 21;
+    static const size_t midMargin = 1;
+
+    os << std::string(leftMargin, ' ');
+
+    size_t len = key.length();
+    os << key;
+    if(len > maxKeySize) os << '\n' << std::string(leftMargin + maxKeySize + midMargin, ' ');
+    else os << std::string(maxKeySize + midMargin - len, ' ');
+
+    os << description << '\n';
+}
+
+} // namespace
+
+
+std::string Option::getReadableName()const {
+    std::ostringstream oss;
+    if(_short) {
+        oss << '-' << _short;
+        if(_long.length())
+            oss << " (--" << _long << ')';
+    } else if(_long.length())
+        oss << "--" << _long;
+    return oss.str();
+}
+
+std::string Option::getUsageName()const {
+    std::ostringstream oss;
+    if(_short) {
+        oss << '-' << _short;
+        if(_long.length()) {
+            oss << ", --" << _long;
+            if(_hasVariable) {
+                oss << "=<" << _variableName << '>';
+            }
+        } else {
+            if(_hasVariable) {
+                oss << " <" << _variableName << '>';
+            }
+        }
+    } else if(_long.length()) {
+        oss << "--" << _long;
+        if(_hasVariable) {
+            oss << "=<" << _variableName << '>';
+        }
+    }
+    return oss.str();
+}
+
+
 void Command::_ruleCheck()const {
 
     // Check positional argument positions
@@ -204,6 +259,62 @@ void Command::_validate()const {
         if(sc->_state._occurenceCount)
             sc->_validate();
     }
+}
+
+void Command::printUsage(std::ostream& os)const {
+    os << "Usage:\n";
+
+    std::ostringstream ossFullName;
+    if(_inheritedName.length()) ossFullName << _inheritedName << ' ';
+    ossFullName << _name;
+
+    size_t numReqOp = std::count_if(
+        _options.begin(), _options.end(),
+        [](const std::unique_ptr<Option>& op) { return op->isRequired(); }
+    );
+    size_t numOptOp = _options.size() - numReqOp;
+
+    // Usage of command
+    os << "    " << ossFullName.str();
+    if(numReqOp)
+        os << " <options>";
+    if(numOptOp)
+        os << " [<options>]";
+    if(_posArgs.size()) {
+        os << " [--]";
+        for(auto& pa : _posArgs) {
+            os << ' ';
+            if(!pa->isRequired()) os << '[';
+            os << '<' << pa->getName() << '>';
+            if(pa->isList()) os << "...";
+            if(!pa->isRequired()) os << ']';
+        }
+    }
+    os << '\n';
+
+    // Usage with subcommand
+    if(_subcommands.size())
+        os << "    " << ossFullName.str() << " <command>\n";
+
+    // Section of subcommand
+    if(_subcommands.size()) {
+        os << "\nCommands:\n";
+        for(auto& sc : _subcommands)
+            usagePairFormatter(sc->getName(), sc->getDescription(), os);
+    }
+
+    // Section of option
+    if(_options.size()) {
+        os << "\nOptions:\n";
+        for(auto& op : _options)
+            if(op->isRequired())
+                usagePairFormatter(op->getReadableName(), "[Required] " + op->getDescription(), os);
+        for(auto& op : _options)
+            if(!op->isRequired())
+                usagePairFormatter(op->getReadableName(), op->getDescription(), os);
+    }
+
+    os << std::endl;
 }
 
 } // namespace cmdparse
