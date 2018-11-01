@@ -72,7 +72,7 @@ private:
     const std::string _description;
 
     const bool _hasVariable;
-    const bool _variableName; // Useless if _hasVariable is false
+    const std::string _variableName; // Useless if _hasVariable is false
 
     const bool _required;
 
@@ -84,9 +84,9 @@ public:
     const std::function<void(const std::string&)> activate;
 
     Option(char shortName, const std::string& longName, const std::string& description, bool required, const std::function<void()>& activateWithoutVar) :
-        _short(shortName), _long(longName), _description(description), _hasVariable(false), _required(required),
+        _short(shortName), _long(longName), _description(description), _hasVariable(false), _variableName(), _required(required),
         activate([&activateWithoutVar](const std::string&) { activateWithoutVar(); }) {}
-    Option(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, const std::function<const std::string&>& activate):
+    Option(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, const std::function<void(const std::string&)>& activate):
         _short(shortName), _long(longName), _description(description), _hasVariable(true), _variableName(variableName), _required(required), activate(activate) {}
 
     char getShortName()const { return _short; }
@@ -162,14 +162,14 @@ public:
     template< typename T >
     PosArg* addPosArgForVar(const char* name, const std::string& description, bool required, T& var) {
         // Implies non-list
-        return addPosArg(name, description, required, false, [&var](const std::string& arg) {
+        return addPosArg(name, description, required, false, [name, &var](const std::string& arg) {
             VariableWrite<T>(std::string(name))(var, arg);
         });
     }
     template< typename T >
-    PosArg* addPosArgForVector(const char* name, const std::string& description, bool required, vector<T>& var) {
+    PosArg* addPosArgForVector(const char* name, const std::string& description, bool required, std::vector<T>& var) {
         // Implies list
-        return addPosArg(name, description, required, true, [&var](const std::string& arg) {
+        return addPosArg(name, description, required, true, [name, &var](const std::string& arg) {
             VectorAppend<T>(std::string(name))(var, arg);
         });
     }
@@ -184,7 +184,7 @@ public:
     }
     template< typename T >
     Option* addOptionWithVar(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, T& var) {
-        return addOption(shortName, longName, variableName, description, required, [&var](const std::string& arg) {
+        return addOption(shortName, longName, variableName, description, required, [&variableName, &var](const std::string& arg) {
             VariableWrite<T>(variableName)(var, arg);
         });
     }
