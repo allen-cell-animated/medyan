@@ -81,6 +81,12 @@ void Command::_ruleCheck()const {
         }
     }
 
+    // Check option names
+    for(auto& op : _options) {
+        if(op->getShortName() == 0 && op->getLongName() == "")
+            throw CommandLogicError("Command should not contain options without name.");
+    }
+
     // Recursively check all subcommands
     for(auto& sc : _subcommands) {
         sc->_ruleCheck();
@@ -180,6 +186,7 @@ void Command::_parse(std::vector<std::string>& feed, size_t argp) {
             continue;
         }
         
+        // Check if the argument is a long option.
         if(thisArg.length() > 2 && thisArg[0] == '-' && thisArg[1] == '-') {
             size_t eqIdx = thisArg.find('=');
             std::string longName = (
@@ -187,6 +194,9 @@ void Command::_parse(std::vector<std::string>& feed, size_t argp) {
                 thisArg.substr(2) :
                 thisArg.substr(2, eqIdx - 2)
             );
+
+            if(longName.length() == 0)
+                throw ParsingError("Invalid option " + thisArg);
             
             Command *p = this;
             auto longNameMatch = [&longName](const std::unique_ptr<Option>& op) { return op->getLongName() == longName; };
