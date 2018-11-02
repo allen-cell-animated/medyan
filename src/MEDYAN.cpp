@@ -72,10 +72,6 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "util/io/cmdparse.h"
 #include "util/io/log.h"
 
-void printUsage() {
-    cout << "Usage: MEDYAN -s systemFile -i inputDirectory -o outputDirectory" << endl;
-}
-
 int main(int argc, char **argv) {
 
     cout << endl;
