@@ -65,12 +65,11 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  
  */
 
-#include <getopt.h>
-
 #include "common.h"
 
 #include "Controller.h"
 #include "SubSystem.h"
+#include "util/io/cmdparse.h"
 #include "util/io/log.h"
 
 void printUsage() {
@@ -93,23 +92,29 @@ int main(int argc, char **argv) {
     Controller c(s);
 
     string inputFile, inputDirectory, outputDirectory;
-    int option;
-    
-    //parse command line args
-    while ((option = getopt(argc, argv, "s:i:o:h")) != -1) {
-        switch (option) {
-            case 's' : inputFile = optarg;
-                break;
-            case 'i' : inputDirectory = optarg;
-                break;
-            case 'o' : outputDirectory = optarg;
-                break;
-            case 'h' : printUsage();
-                exit(EXIT_FAILURE);
-            default: printUsage();
-                exit(EXIT_FAILURE);
+
+    // Parsing command line args
+    {
+        using namespace cmdparse;
+
+        Command cmdMain("MEDYAN", "");
+
+        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, inputFile);
+        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, inputDirectory);
+        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, outputDirectory);
+        cmdMain.addHelp();
+
+        try {
+            cmdMain.parse(argc, argv);
+        } catch (const ParsingError&) {
+            cmdMain.printUsage();
+            throw;
+        } catch (const ValidationError&) {
+            cmdMain.printUsage();
+            throw;
         }
     }
+
     //check for arguments
     if(inputFile == "") {
         cout << "User must specify a system input file. Exiting." << endl;

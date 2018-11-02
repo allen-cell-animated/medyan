@@ -85,7 +85,7 @@ public:
 
     Option(char shortName, const std::string& longName, const std::string& description, bool required, const std::function<void()>& activateWithoutVar) :
         _short(shortName), _long(longName), _description(description), _hasVariable(false), _variableName(), _required(required),
-        activate([&activateWithoutVar](const std::string&) { activateWithoutVar(); }) {}
+        activate([activateWithoutVar](const std::string&) { activateWithoutVar(); }) {}
     Option(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, const std::function<void(const std::string&)>& activate):
         _short(shortName), _long(longName), _description(description), _hasVariable(true), _variableName(variableName), _required(required), activate(activate) {}
 
@@ -146,6 +146,8 @@ public:
     // Public constructor, where parent and inheritedName are default
     Command(const std::string& name, const std::string& description, const std::function<void()>& activate) :
         _name(name), _description(description), activate(activate) {}
+    Command(const std::string& name, const std::string& description) :
+        _name(name), _description(description) {}
 
     const std::string& getName()const { return _name; }
     std::string getFullName()const { return _inheritedName + ' ' + _name; }
@@ -184,7 +186,7 @@ public:
     }
     template< typename T >
     Option* addOptionWithVar(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, T& var) {
-        return addOption(shortName, longName, variableName, description, required, [&variableName, &var](const std::string& arg) {
+        return addOption(shortName, longName, variableName, description, required, [variableName, &var](const std::string& arg) {
             VariableWrite<T>(variableName)(var, arg);
         });
     }
