@@ -187,7 +187,8 @@ public:
     template< typename T >
     Option* addOptionWithVar(char shortName, const std::string& longName, const std::string& variableName, const std::string& description, bool required, T& var) {
         return addOption(shortName, longName, variableName, description, required, [variableName, &var](const std::string& arg) {
-            VariableWrite<T>(variableName)(var, arg);
+            VariableWrite<T>{variableName}(var, arg);
+            // Caveat: if () is used instead of {}, then T(a)(b, c) will be considered as the definition of variable a with type T initialized with (b, c).
         });
     }
     Option* addHelp() {
