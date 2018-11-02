@@ -106,30 +106,19 @@ int main(int argc, char **argv) {
 
         try {
             cmdMain.parse(argc, argv);
-        } catch (const ParsingError&) {
+        } catch (const CommandLogicError& e) {
+            std::cerr << e.what() << std::endl;
+            // Internal error, no help message generated.
+            throw;
+        } catch (const ParsingError& e) {
+            std::cerr << e.what() << std::endl;
             cmdMain.printUsage();
             throw;
-        } catch (const ValidationError&) {
+        } catch (const ValidationError& e) {
+            std::cerr << e.what() << std::endl;
             cmdMain.printUsage();
             throw;
         }
-    }
-
-    //check for arguments
-    if(inputFile == "") {
-        cout << "User must specify a system input file. Exiting." << endl;
-        printUsage();
-        exit(EXIT_FAILURE);
-    }
-    if(inputDirectory == "") {
-        cout << "User must specify an input directory. Exiting." << endl;
-        printUsage();
-        exit(EXIT_FAILURE);
-    }
-    if(outputDirectory == "") {
-        cout << "User must specify an output directory. Exiting." << endl;
-        printUsage();
-        exit(EXIT_FAILURE);
     }
 
     // Initialize the logger

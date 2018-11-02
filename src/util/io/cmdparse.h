@@ -20,18 +20,15 @@ template< typename T > struct VectorAppend;
 // Exceptions
 class CommandLogicError : public std::logic_error {
 public:
-    explicit CommandLogicError( const std::string& what_arg ) : std::logic_error(what_arg) {}
-    explicit CommandLogicError( const char* what_arg ) : std::logic_error(what_arg) {}
+    CommandLogicError( const std::string& what_arg ) : std::logic_error("Command logic error: " + what_arg) {}
 };
 class ParsingError : public std::runtime_error {
 public:
-    explicit ParsingError( const std::string& what_arg ) : std::runtime_error(what_arg) {}
-    explicit ParsingError( const char* what_arg ) : std::runtime_error(what_arg) {}
+    ParsingError( const std::string& what_arg ) : std::runtime_error("Parsing error: " + what_arg) {}
 };
 class ValidationError : public std::runtime_error {
 public:
-    explicit ValidationError( const std::string& what_arg ) : std::runtime_error(what_arg) {}
-    explicit ValidationError( const char* what_arg ) : std::runtime_error(what_arg) {}
+    ValidationError( const std::string& what_arg ) : std::runtime_error("Validation error: " + what_arg) {}
 };
 
 // Positional argument

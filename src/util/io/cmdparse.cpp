@@ -95,7 +95,7 @@ void Command::_ruleCheck()const {
 
 void Command::_parsePosArg(const std::string& arg) {
     if(_state._posArgIndex >= _posArgs.size())
-        throw ParsingError("More positional argument specified than required.");
+        throw ParsingError("More positional argument specified than required: " + arg);
 
     ++_state._posArgCount;
 
@@ -318,10 +318,10 @@ void Command::printUsage(std::ostream& os)const {
         os << "\nOptions:\n";
         for(auto& op : _options)
             if(op->isRequired())
-                usagePairFormatter(op->getReadableName(), "[Required] " + op->getDescription(), os);
+                usagePairFormatter(op->getUsageName(), "[Required] " + op->getDescription(), os);
         for(auto& op : _options)
             if(!op->isRequired())
-                usagePairFormatter(op->getReadableName(), op->getDescription(), os);
+                usagePairFormatter(op->getUsageName(), op->getDescription(), os);
     }
 
     os << std::endl;
