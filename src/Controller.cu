@@ -222,7 +222,9 @@ void Controller::initialize(string inputFile,
 
     //setup initial network configuration
     setupInitialNetwork(p);
-
+#ifdef HYBRID_NLSTENCILLIST
+//    _subSystem->initializeHNeighborList();
+#endif
     //setup special structures
     setupSpecialStructures(p);
 }
@@ -575,6 +577,45 @@ void Controller::updatePositions() {
 
     //update all other moveables
     for(auto m : _subSystem->getMovables()) m->updatePosition();
+    //@{ check begins
+    /*std::cout<<"Check after update positions"<<endl;
+    cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
+    Cylinder** Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
+    double* coord = CUDAcommon::serlvars.coord;
+    std::cout<<"1 Total Cylinders "<<Cylinder::getCylinders().size()<<" Beads "
+            ""<<Bead::getBeads().size()<<endl;
+    for(auto cyl:Cylinder::getCylinders()){
+        int i = cyl->_dcIndex;
+        int id1 = cylindervec[i].ID;
+        int id2 = Cylinderpointervec[i]->getID();
+        auto xx = ccylindervec[i]->getCylinder();
+        int id3 = ccylindervec[i]->getCylinder()->getID();
+        if(id1 != id2 || id2 != id3 || id3 != id1)
+            std::cout<<id1<<" "<<id2<<" "<<id3<<endl;
+        auto b1 = cyl->getFirstBead();
+        auto b2 = cyl->getSecondBead();
+        long idx1 = b1->_dbIndex;
+        long idx2 = b2->_dbIndex;
+        cylinder c = cylindervec[i];
+        std::cout << "1 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
+                  " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
+        if(c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+
+            std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1] << " "
+                    "" << b1->coordinate[2] << " " << " " << b2->coordinate[0] << " "
+                              "" << b2->coordinate[1] << " " << b2->coordinate[2] << " idx "
+                      << b1->_dbIndex << " "
+                              "" << b2->_dbIndex << endl;
+
+            std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+                      << coord[3 * idx1 + 2] << " "
+                              "" << coord[3 * idx2] << " " << coord[3 * idx2 + 1] << " "
+                      << coord[3 * idx2 + 2] << endl;
+        }
+
+    }*/
+    //@ check ends
 }
 
 #ifdef DYNAMICRATES
@@ -587,17 +628,18 @@ void Controller::updateReactionRates() {
 void Controller::updateNeighborLists() {
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
+    //vectorize cylinder to have all cylinder information in a few arrays.
+//    _subSystem->vectorizeCylinder();
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runbvec(mine - mins);
+    bmgrvectime += elapsed_runbvec.count();
+    mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
     mine = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
-    mins = chrono::high_resolution_clock::now();
 #ifdef CHEMISTRY
-    _subSystem->vectorizeCylinder();
-    mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runbvec(mine - mins);
-    bmgrvectime += elapsed_runbvec.count();
     mins = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
     mine = chrono::high_resolution_clock::now();
@@ -890,6 +932,75 @@ void Controller::run() {
 //            std::cout<<"TIME "<<tau()<<endl;
 //            std::cout<<endl;
             if(tauLastMinimization >= _minimizationTime) {
+                //@{ check begins
+ /*               cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
+                Cylinder** Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+                CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
+                double* coord = CUDAcommon::serlvars.coord;
+                std::cout<<"2 Total Cylinders "<<Cylinder::getCylinders().size()<<" Beads "
+                        ""<<Bead::getBeads().size()<<endl;
+                for(auto cyl:Cylinder::getCylinders()){
+                    int i = cyl->_dcIndex;
+                    int id1 = cylindervec[i].ID;
+                    int id2 = Cylinderpointervec[i]->getID();
+                    auto xx = ccylindervec[i]->getCylinder();
+                    int id3 = ccylindervec[i]->getCylinder()->getID();
+                    if(id1 != id2 || id2 != id3 || id3 != id1)
+                        std::cout<<id1<<" "<<id2<<" "<<id3<<endl;
+                    auto b1 = cyl->getFirstBead();
+                    auto b2 = cyl->getSecondBead();
+                    long idx1 = b1->_dbIndex;
+                    long idx2 = b2->_dbIndex;
+                    cylinder c = cylindervec[i];
+                    std::cout << "2 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
+                              " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
+                    auto classcoordb1 = b1->coordinate;
+                    auto classcoordb2 = b2->coordinate;
+                    double veccoordv1[] = {coord[3 * idx1], coord[3 * idx1 + 1], coord[3 *
+                            idx1 + 2]};
+                    double veccoordv2[] = {coord[3 * idx2], coord[3 * idx2 + 1], coord[3 *
+                            idx2 + 2]};
+                    if(c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+
+                        std::cout << "Bead " << classcoordb1[0] << " " << classcoordb1[1] << " "
+                                "" << classcoordb1[2] << " " << " " << classcoordb2[0] << " "
+                                          "" <<classcoordb2[1] << " " << classcoordb2[2] << " idx "
+                                  << b1->_dbIndex << " "
+                                          "" << b2->_dbIndex << endl;
+
+                        std::cout << veccoordv1[0] << " " << veccoordv1[1] << " "
+                                  << veccoordv1[2] << " " << veccoordv2[0] << " " <<
+                                  veccoordv2[1]<< " " << veccoordv2[2] << endl;
+                    }
+
+                    double dis1 = twoPointDistancesquared(veccoordv1,classcoordb1.data());
+                    double dis2 = twoPointDistancesquared(veccoordv2,classcoordb2.data());
+                    bool printstatus = false;
+                    if(veccoordv1[0] == -1 || veccoordv1[1] == -1 || veccoordv1[2] == -1
+                       || veccoordv2[0] == -1 || veccoordv2[1] == -1 || veccoordv2[2] == -1 ){
+                        printstatus = true;
+                        std::cout<<"reset coordinates getting printed "<<endl;
+                    }
+
+                    if(dis1 !=0 || dis2!=0||printstatus){
+                        std::cout << "Bead coord mismatch " << classcoordb1[0] << " " <<
+                                                                        classcoordb1[1] << " "
+                                "" << classcoordb1[2] << " " << " " << classcoordb2[0] << " "
+                                          "" <<classcoordb2[1] << " " << classcoordb2[2] << " idx "
+                                  << b1->_dbIndex << " "
+                                          "" << b2->_dbIndex << endl;
+
+                        std::cout << veccoordv1[0] << " " << veccoordv1[1] << " "
+                                  << veccoordv1[2] << " " << veccoordv2[0] << " " <<
+                                  veccoordv2[1]<< " " << veccoordv2[2] << endl;
+                    }
+                }*/
+/*                std::cout<<"printing bead indices"<<endl;
+                for(auto b : Bead::getBeads()){
+                    std::cout<<b->_dbIndex<<" ";
+                }
+                std::cout<<endl;*/
+                //@ check ends
                 mins = chrono::high_resolution_clock::now();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();

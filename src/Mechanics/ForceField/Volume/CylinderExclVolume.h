@@ -18,6 +18,7 @@
 
 #include "CylinderVolumeInteractions.h"
 #include "NeighborListImpl.h"
+#include "HybridNeighborListImpl.h"
 
 #include "SysParams.h"
 #include "CUDAcommon.h"
@@ -31,7 +32,10 @@ class CylinderExclVolume : public CylinderVolumeInteractions {
 private:
     CVolumeInteractionType _FFType;
     CylinderCylinderNL* _neighborList;  ///< Neighbor list of cylinders
-
+#ifdef HYBRID_NLSTENCILLIST
+    HybridCylinderCylinderNL* _HneighborList;
+    short _HnlID;
+#endif
     ///Array describing the constants in calculation
     int *beadSet;
     double *krep;
@@ -52,7 +56,9 @@ public:
     
     ///Constructor
     CylinderExclVolume() {
+#ifndef HYBRID_NLSTENCILLIST
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
+#endif
 #ifdef CUDAACCL_NL
         _neighborList->cudacpyforces = true;
 #endif
@@ -71,6 +77,17 @@ public:
     virtual NeighborList* getNeighborList() {return _neighborList;}
 
     virtual const string getName() {return "Cylinder Excluded Volume";}
+
+#ifdef HYBRID_NLSTENCILLIST
+
+    virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) {
+        _HneighborList = Hnl;
+        _HnlID = Hnl->setneighborsearchparameters(0,0,true,false,SysParams::Mechanics()
+                .VolumeCutoff,0.0);
+    };
+
+    virtual HybridCylinderCylinderNL* getHNeighborList(){return _HneighborList;};
+#endif
 };
 
 #endif

@@ -77,11 +77,20 @@ double CylinderVolumeFF::computeEnergy(double *coord, double *f, double d) {
     return U;
 }
 
+#ifdef HYBRID_NLSTENCILLIST
+void CylinderVolumeFF::setHNeighborLists(HybridCylinderCylinderNL* Hnl) {
+    for (auto &interaction : _cylinderVolInteractionVector){
+        interaction->setHNeighborList(Hnl);
+    }
+};
+#endif
+
 void CylinderVolumeFF::computeForces(double *coord, double *f) {
     
     for (auto &interaction : _cylinderVolInteractionVector)
         interaction->computeForces(coord, f);
 }
+
 
 vector<NeighborList*> CylinderVolumeFF::getNeighborLists() {
     

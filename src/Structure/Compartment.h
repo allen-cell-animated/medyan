@@ -29,6 +29,7 @@
 #include "SpeciesContainer.h"
 #include "ReactionContainer.h"
 #include "BindingManager.h"
+#include "HybridBindingSearchManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
 //#include "BinGrid.h"
@@ -70,7 +71,9 @@ protected:
     
     /// All binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>> _bindingManagers;
-
+#ifdef HYBRID_NLSTENCILLIST
+    HybridBindingSearchManager* _bindingsearchManagers = NULL;
+#endif
     ///ELEMENT CONTAINERS
     unordered_set<BoundaryElement*> _boundaryElements; ///< Set of boundary element
                                                        ///< that are in this compartment
@@ -461,12 +464,26 @@ public:
     void addFilamentBindingManager(FilamentBindingManager* m) {
         _bindingManagers.emplace_back(m);
     }
-    
+#ifdef HYBRID_NLSTENCILLIST
+    void addHybridBindingSearchManager(HybridBindingSearchManager* bsm){
+        if(_bindingsearchManagers == NULL)
+            _bindingsearchManagers = bsm;
+        else{
+            cout<<"Hybrid Binding Search Manager exists. Compartment cannot have multiple"
+                    " hybrid binding search managers. Exiting.."<<endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+    HybridBindingSearchManager* getHybridBindingSearchManager(){
+        return _bindingsearchManagers;
+    }
+#endif
     /// Get binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>>& getFilamentBindingManagers() {
         return _bindingManagers;
     }
-    
+
+
     
     /// Get a specific motor binding manager from this compartment
     MotorBindingManager* getMotorBindingManager(int motorType) {

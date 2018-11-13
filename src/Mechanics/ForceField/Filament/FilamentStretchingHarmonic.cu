@@ -254,7 +254,6 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
     for(int i = 0; i < nint; i += 1) {
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
-
         dist = twoPointDistance(coord1, coord2);
         invL = 1 / dist;
 
@@ -271,18 +270,22 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         f1[0] +=  f0 * ( coord2[0] - coord1[0] );
         f1[1] +=  f0 * ( coord2[1] - coord1[1] );
         f1[2] +=  f0 * ( coord2[2] - coord1[2] );
-//        std::cout<<i<<" "<< f0 * ( coord1[0] - coord2[0] )<<" "<<
-//        f0 * ( coord1[1] - coord2[1] )<<" "<<
-//        f0 * ( coord1[2] - coord2[2] )<<" "<<
-//        f0 * ( coord2[0] - coord1[0] )<<" "<<
-//        f0 * ( coord2[1] - coord1[1] )<<" "<<
-//        f0 * ( coord2[2] - coord1[2] )<<endl;
-//        std::cout<<i<<" "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
-//        std::cout<<i<<" "<<kstr[i]<<" "<<f0<<" "<<dist<<" "<<eql[i]<<" "
-//                ""<<invL<<" "<<coord1[0]<<" "
-//                ""<<coord1[1]<<" "
-//                ""<<coord1[2]<<" "<<coord2[0]<<" "
-//                ""<<coord2[1]<<" "<<coord2[2]<<endl;
+/*        std::cout<<"Fil stretch "<<i<<" "<< f0 * ( coord1[0] - coord2[0] )<<" "<<
+        f0 * ( coord1[1] - coord2[1] )<<" "<<
+        f0 * ( coord1[2] - coord2[2] )<<" "<<
+        f0 * ( coord2[0] - coord1[0] )<<" "<<
+        f0 * ( coord2[1] - coord1[1] )<<" "<<
+        f0 * ( coord2[2] - coord1[2] )<<endl;*/
+/*        std::cout<<i<<" "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<"
+ * "<<f2[2]<<endl;*/
+/*        std::cout<<i<<" "<<beadSet[n * i]<<" "<<beadSet[n * i + 1]<<" "<<kstr[i]<<" "
+                ""<<f0<<" "
+                ""<<dist<<" "
+                ""<<eql[i]<<" "
+                ""<<invL<<" "<<coord1[0]<<" "
+                ""<<coord1[1]<<" "
+                ""<<coord1[2]<<" "<<coord2[0]<<" "
+                ""<<coord2[1]<<" "<<coord2[2]<<endl;*/
     }
 
 }

@@ -316,7 +316,6 @@ BoundaryCapsule::BoundaryCapsule(SubSystem* s, double diameter, BoundaryMove mov
     double sysX = GController::getSize()[0];
     double sysY = GController::getSize()[1];
     double sysZ = GController::getSize()[2];
-
     double height = sysZ - diameter;
     
     _boundarySurfaces.emplace_back(

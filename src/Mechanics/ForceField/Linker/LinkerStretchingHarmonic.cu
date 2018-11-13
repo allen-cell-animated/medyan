@@ -285,6 +285,8 @@ void LinkerStretchingHarmonic::checkforculprit() {
             coord2 = &coord[3 * beadSet[n * i + 1]];
             coord3 = &coord[3 * beadSet[n * i + 2]];
             coord4 = &coord[3 * beadSet[n * i + 3]];
+/*            std::cout<<"Linker beadset "<<beadSet[n * i]<<" "<<beadSet[n * i +1]<<" "
+                    ""<<beadSet[n * i +2]<<" " <<beadSet[n * i +3]<<endl;*/
 
             midPointCoordinate(v1, coord1, coord2, pos1[i]);
             midPointCoordinate(v2, coord3, coord4, pos2[i]);

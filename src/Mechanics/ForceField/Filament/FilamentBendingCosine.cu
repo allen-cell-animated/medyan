@@ -305,7 +305,8 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
         coord3 = &coord[3 * beadSet[n * i + 2]];
-
+/*        std::cout<<"Bending beadset "<<beadSet[n * i]<<" "<<beadSet[n * i + 1 ]<<" "
+                ""<<beadSet[n * i + 2]<<endl;*/
         force1 = &f[3 * beadSet[n * i]];
         force2 = &f[3 * beadSet[n * i + 1]];
         force3 = &f[3 * beadSet[n * i + 2]];

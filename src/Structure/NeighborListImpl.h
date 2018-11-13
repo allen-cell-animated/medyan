@@ -39,7 +39,7 @@ private:
     ///< The neighbors list, as a hash map
     
     bool _full; ///<Specifying whether this is a full or half list
-
+    unordered_map<Cylinder*, vector<Cylinder*>> _list4mbin;
 #ifdef CUDAACCL_NL
     vector<int> blocksnthreads;
     int nint;
@@ -58,7 +58,6 @@ private:
     ///@param runtime - specifying whether the cylinder is being
     ///created/destroyed at runtime vs at a full neighbor list update.
     void updateNeighbors(Cylinder* cylinder, bool runtime = false);
-
     
 public:
 #ifdef CUDAACCL_NL
@@ -76,7 +75,6 @@ public:
 #endif
     short _ID; //ID helps link binGridType to NeighborList.
 #ifdef NLSTENCILLIST
-    unordered_map<Cylinder*, vector<Cylinder*>> _list4mbin;
     ///< The neighbors list, as a hash map
     void generateConnections();
     void initializeBinGrid();
@@ -152,6 +150,7 @@ public:
     vector<Cylinder*> getNeighbors(Cylinder* cylinder);
     
 };
+
 
 /// An implementation of NeighborList for BoundaryElement-Cylinder interactions
 class BoundaryCylinderNL : public NeighborList {

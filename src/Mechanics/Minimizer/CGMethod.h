@@ -180,7 +180,7 @@ protected:
     /// Initialize data arrays
     inline void allocate(long numBeadsx3, long Ncyl) {
 
-        coord = new double[numBeadsx3];
+//        coord = new double[numBeadsx3];
         force = new double[numBeadsx3];
         forceAux = new double[numBeadsx3];
         forceAuxPrev = new double[numBeadsx3];
@@ -188,8 +188,8 @@ protected:
     
     ///Deallocation of CG arrays
     inline void deallocate() {
-        coord = CUDAcommon::serlvars.coord;
-        delete [] coord;
+//        coord = CUDAcommon::serlvars.coord;
+//        delete [] coord;
         delete [] force;
         delete [] forceAux;
         delete [] forceAuxPrev;

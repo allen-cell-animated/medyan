@@ -45,7 +45,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             nint++;
         }
     }
-    std::cout<<"value of Boundary nint "<<nint<<endl;
+//    std::cout<<"value of Boundary nint "<<nint<<endl;
 
     beadSet = new int[n * nint];
     krep = new double[nint];
@@ -74,6 +74,10 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
         for (ni = 0; ni < nn; ni++) {
 //            auto check=false;
+            auto neighbor = _neighborList->getNeighbors(be)[ni];
+            /*std::cout<<"Boundary with cindex "<<neighbor->_dcIndex<<" and ID "
+                    ""<<neighbor->getID()<<" with bindices "<<neighbor->getFirstBead()
+                    ->_dbIndex<<" "<<neighbor->getSecondBead()->_dbIndex<<endl;*/
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
                 bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->_dbIndex;

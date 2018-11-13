@@ -95,6 +95,11 @@ public:
         return bins;
     }
 
+    void updatecindices(){
+        for (auto &c : children())
+            ((Bin*)c.get())->updatecindices();
+    }
+
 //    /// Get a bin at certain index
     Bin* getBin(int index) {
         return (Bin*)(children()[index].get());
@@ -176,6 +181,70 @@ public:
             double d = -mathfunc::scalarprojection(planeeqn,vcoord);
             planeeqn.push_back(d);
             double dist = abs(mathfunc::getdistancefromplane(cylcoord.data(),planeeqn.data
+                    ()));
+//            std::cout<<planeeqn[0]<<" "<<planeeqn[1]<<" "<<planeeqn[2]<<" "
+//                    ""<<planeeqn[3]<<" "<<dist<<endl;
+            if(dist <= cutoff)
+                return true;
+            else return false;
+        }
+    }
+    bool iswithincutoff(double cylcoord[3], vector<double> bincoord, int
+    NbinstencilID, double cutoff){
+        int type = shrtdistType[NbinstencilID];
+        if(type ==0) return true;
+        else if(type ==1){
+            int edgeID = shrtdistVorEorPID[NbinstencilID];
+            vector<double> edgevec = {binedgevectors.at(edgeID)[0], binedgevectors.at
+                    (edgeID)[1], binedgevectors.at(edgeID)[2]};
+
+            int vertexID = edgevertexID[edgeID][0];
+            vector<double> vertexoffset = { binvertexoffset.at(vertexID)[0],
+                                            binvertexoffset.at(vertexID)[1],
+                                            binvertexoffset.at(vertexID)[2]};
+            vector<double> vcoord = {bincoord[0] + vertexoffset[0],
+                                     bincoord[1] + vertexoffset[1],
+                                     bincoord[2] + vertexoffset[2]};
+            vector<double> pointvec = {cylcoord[0] - vcoord[0],cylcoord[1] - vcoord[1],
+                                       cylcoord[2] - vcoord[2]};
+            vector<double> normal = mathfunc::normalizeVector(edgevec);
+
+            double proj = mathfunc::scalarprojection(normal,pointvec);
+            double d = mathfunc::magnitude(pointvec);
+            double dist = sqrt(d*d - proj*proj);
+/*            std::cout<<"edgeID "<<edgeID<<"  vertexID "<<vertexID<<" vcoord "
+                    ""<<vcoord[0]<<" "<<vcoord[1]<<" "<<vcoord[2]<<endl;*/
+            if(dist <= cutoff) return true;
+            else return false;
+        }
+        else if(type == 2){
+            int vertexID = shrtdistVorEorPID[NbinstencilID];
+            vector<double> vertexoffset = { binvertexoffset.at(vertexID)[0],
+                                            binvertexoffset.at(vertexID)[1],
+                                            binvertexoffset.at(vertexID)[2]};
+            vector<double> vcoord = {bincoord[0] + vertexoffset[0],
+                                     bincoord[1] + vertexoffset[1],
+                                     bincoord[2] + vertexoffset[2]};
+            double dist = mathfunc::twoPointDistance(vcoord, cylcoord);
+            if(dist <= cutoff) return true;
+            else return false;
+        }
+        else if(type == 3){
+            int planeID = shrtdistVorEorPID[NbinstencilID];
+            int vertexID = 7;
+            if(planeID<=2) vertexID = 0;
+            vector<double> vertexoffset = { binvertexoffset.at(vertexID)[0],
+                                            binvertexoffset.at(vertexID)[1],
+                                            binvertexoffset.at(vertexID)[2]};
+            vector<double> vcoord = {bincoord[0] + vertexoffset[0],
+                                     bincoord[1] + vertexoffset[1],
+                                     bincoord[2] + vertexoffset[2]};
+            vector<double> planeeqn = {binplanenormal.at(planeID)[0],
+                                       binplanenormal.at(planeID)[1],
+                                       binplanenormal.at(planeID)[2]};
+            double d = -mathfunc::scalarprojection(planeeqn,vcoord);
+            planeeqn.push_back(d);
+            double dist = abs(mathfunc::getdistancefromplane(cylcoord,planeeqn.data
                     ()));
 //            std::cout<<planeeqn[0]<<" "<<planeeqn[1]<<" "<<planeeqn[2]<<" "
 //                    ""<<planeeqn[3]<<" "<<dist<<endl;

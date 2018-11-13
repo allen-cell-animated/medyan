@@ -40,7 +40,7 @@ protected:
     ///OTHER BIN PROPERTIES
     vector<double> _coords;  ///< Coordinates of this bin
     short _binGridType = -1;
-    int* cindicesvector = NULL;
+    vector<int> cindicesvector;
 public:
     short _ID = 0;
     vector<int> stencilID; /// template stencil has neighboring bins numbered from 0-26.
@@ -139,6 +139,8 @@ public:
     //GetType implementation just returns zero (no Bin types yet)
     virtual int getType() override {return 0;}
 
-    void vectorize();
+    void updatecindices();
+
+    vector<int> getcindices(){return cindicesvector;}
 };
 #endif

@@ -28,9 +28,9 @@ Database<Bead*> Bead::_pinnedBeads;
 int Bead::maxbindex = 0;
 int Bead::vectormaxsize = 0;
 int Bead::Nbeads = 0;
-int Bead::newsize = 1000;
 bool Bead::triggercylindervectorization = false;
-vector<int> Bead::removedcindex;
+vector<int> Bead::removedbindex;//vector of bead indices that were once alloted to other
+// beads but are free to be reallocated now.
 
 Bead::Bead (vector<double> v, Composite* parent, int position)
 // Qin add brforce, pinforce
@@ -58,17 +58,22 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
         exit(EXIT_FAILURE);
     }
 
+    //revectorize if needed
+    revectorizeifneeded();
     //set bindex
-    if(removedcindex.size() == 0)
+    if(removedbindex.size() == 0)
     {_dbIndex = maxbindex;
     maxbindex++;
     }
     else{
-        _dbIndex = removedcindex.at(0);
-        removedcindex.erase(removedcindex.begin());
+//        std::cout<<"reusing bIndex "<<removedbindex.at(0)<<endl;
+        _dbIndex = removedbindex.at(0);
+        removedbindex.erase(removedbindex.begin());
     }
     Nbeads = _beads.getElements().size();
-    revectorizeifneeded();
+
+    //copy bead coordiantes to the appropriate spot in the coord vector.
+    copycoordinatestovector();
 }
 
 Bead::Bead(Composite* parent, int position)
@@ -78,18 +83,22 @@ Bead::Bead(Composite* parent, int position)
     force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {
     
     parent->addChild(unique_ptr<Component>(this));
-    //set bindex
-    if(removedcindex.size() == 0)
+    //check if you need to revectorize.
+    revectorizeifneeded();
+    //set bindex based on maxbindex if there were no beads removed.
+    if(removedbindex.size() == 0)
     {_dbIndex = maxbindex;
         maxbindex++;
     }
+    // if beads were removed earlier, allot one of the available bead indices.
     else{
-        _dbIndex = removedcindex.at(0);
-        removedcindex.erase(removedcindex.begin());
+//        std::cout<<"reusing bIndex v2"<<removedbindex.at(0)<<endl;
+        _dbIndex = removedbindex.at(0);
+        removedbindex.erase(removedbindex.begin());
     }
     Nbeads = _beads.getElements().size();
+    //copy bead coordiantes to the appropriate spot in the coord vector.
     copycoordinatestovector();
-    revectorizeifneeded();
 }
 
 void Bead::updatePosition() {

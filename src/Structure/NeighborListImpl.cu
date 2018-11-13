@@ -32,10 +32,12 @@ void CylinderCylinderNL::updateallcylinderstobin() {
     for(auto cyl:Cylinder::getCylinders())
         updatebin(cyl);
 }
+
 void CylinderCylinderNL::assignallcylinderstobin() {
     for(auto cyl:Cylinder::getCylinders())
         assignbin(cyl);
 }
+
 void CylinderCylinderNL::assignbin(Cylinder* cyl){
     Bin* _bin;
     try {_bin = getBin(cyl->coordinate);}
@@ -46,9 +48,11 @@ void CylinderCylinderNL::assignbin(Cylinder* cyl){
     _bin->addCylinder(cyl);
     cyl->_binvec.push_back(_bin);
 }
+
 void CylinderCylinderNL::unassignbin(Cylinder* cyl, Bin* bin){
     bin->removeCylinder(cyl);
 }
+
 void CylinderCylinderNL::updatebin(Cylinder *cyl){
     Bin* _bin;
 //    std::cout<<coordinate[0]<<" "<<coordinate[1]<<" "<<coordinate[2]<<endl;
@@ -71,9 +75,7 @@ void CylinderCylinderNL::updatebin(Cylinder *cyl){
     }
 }
 
-
-void CylinderCylinderNL::generateConnections()
-{
+void CylinderCylinderNL::generateConnections() {
     for(size_t i=0U; i<_grid[0]; ++i) {
 
         for(size_t j=0U; j<_grid[1]; ++j) {
@@ -155,7 +157,7 @@ void CylinderCylinderNL::initializeBinGrid() {
 
 //    //Initial parameters of system
     auto _nDim = SysParams::Geometry().nDim;
-    double searchdist = 1.125 * (maxcylsize + _rMax);
+    double searchdist = 1.125 * (_rMax);
     std::cout<<"searchdist "<<searchdist<<" rMax "<<_rMax<<endl;
     _binSize = {searchdist, searchdist, searchdist};
     if(_nDim >=1) {
@@ -228,8 +230,7 @@ void CylinderCylinderNL::initializeBinGrid() {
 }
 
 //You need a vector of all grids so you can loop through and update respective coordinates.
-Bin* CylinderCylinderNL::getBin(const vector<double> &coords)
-{
+Bin* CylinderCylinderNL::getBin(const vector<double> &coords) {
     //Check if out of bounds
     size_t index = 0;
     size_t i = 0;
@@ -268,9 +269,7 @@ Bin* CylinderCylinderNL::getBin(const vector<double> &coords)
     }
 }
 
-
-Bin* CylinderCylinderNL::getBin(const vector<size_t> &indices)
-{
+Bin* CylinderCylinderNL::getBin(const vector<size_t> &indices) {
     size_t index = 0;
     size_t i = 0;
     for(auto x: indices)
@@ -320,8 +319,8 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                     // current binGrid of interest for this NL.
             ->getNeighbours();
     //
-    int ncyls2 = 0;
-    int tcyl2 = 0;
+//    int ncyls2 = 0;
+//    int tcyl2 = 0;
     int nbincount = 0;
     auto nbinstencil = parentbin->stencilID;// A standard templated numbering of
     // neighboring bins is implemented i.e. based on position w.r.t. bin of interest,
@@ -329,7 +328,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
     // neighbors that is close to bin of interest. Bins close to the boundary will have
     // < 27 elements in the stencilID vector.
     for(auto &bin : _neighboringBins) {
-        bin->vectorize();
+//        bin->vectorize();
         bool isbinneeded = _binGrid->iswithincutoff(cylinder->coordinate,
                                                      parentbin->coordinates(),
                                                      nbinstencil.at(nbincount), _rMax);
@@ -338,10 +337,9 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
             for (auto &ncylinder : bin->getCylinders()) {
                 bool checkstatus = false;
                 if ((cylinder->getType() == NLcyltypes[0] &&
-                     ncylinder->getType() == NLcyltypes[1]) || (cylinder->getType() ==
-                                                                NLcyltypes[1] &&
-                                                                ncylinder->getType() ==
-                                                                NLcyltypes[0])) {
+                     ncylinder->getType() == NLcyltypes[1])||
+                     (cylinder->getType() == NLcyltypes[1] &&
+                     ncylinder->getType() == NLcyltypes[0])) {
                     checkstatus = true;
                 }
                 if (checkstatus) {
@@ -366,12 +364,12 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
                     if (dist > _rMax || dist < _rMin) continue;
                     //If we got through all of this, add it!
                     _list4mbin[cylinder].push_back(ncylinder);
-                    ncyls2++;
+//                    ncyls2++;
 
                     //if runtime, add to other list as well if full
                     if (runtime && _full) {
                         _list4mbin[ncylinder].push_back(cylinder);
-                        ncyls2++;
+//                        ncyls2++;
                     }
                 }
             }
@@ -432,6 +430,7 @@ void CylinderCylinderNL::updateNeighborsbin(Cylinder* cylinder, bool runtime){
 //    std::cout<<"Total cyls "<<tcyl2<<endl;
 //    std::cout<<"-----"<<endl;
 }
+
 vector<Cylinder*> CylinderCylinderNL::getNeighborsstencil(Cylinder* cylinder) {
 
     return _list4mbin[cylinder];
@@ -451,9 +450,9 @@ void CylinderCylinderNL::updateNeighbors(Cylinder* cylinder, bool runtime) {
                                   cylinder->getCompartment(),
                                   searchDist + _rMax, compartments);
 //    std::cout<<" neighboring cmps "<<compartments.size()<<endl;
-    int tcyl = 0;
+//    int tcyl = 0;
     for(auto &comp : compartments) {
-        tcyl += comp->getCylinders().size();
+//        tcyl += comp->getCylinders().size();
         for(auto &ncylinder : comp->getCylinders()) {
             //Don't add the same cylinder!
             if(cylinder == ncylinder) continue;
@@ -523,22 +522,26 @@ void CylinderCylinderNL::removeNeighbor(Neighbor* n) {
     Bin* bin = cylinder->_binvec.at(_ID);
     unassignbin(cylinder, bin);
     //remove from other lists
-    std::cout<<"Removed from cylinders ";
+//    std::cout<<"Removed from cylinders ";
     for(auto it = _list4mbin.begin(); it != _list4mbin.end(); it++) {
         auto cit = find(it->second.begin(), it->second.end(), cylinder);
         {
             if (cit != it->second.end()) {
                 it->second.erase(cit);
-                std::cout<<it->first<<" ";
+//                std::cout<<it->first<<" ";
             }
         }
     }
-    std::cout<<endl;
+//    std::cout<<endl;
 #endif
 }
 
 void CylinderCylinderNL::reset() {
-
+//    std::cout<<"Total number of bins "<< _binGrid->getBins().size()<<endl;
+//    for(auto bin:_binGrid->getBins()){
+//        std::cout<<bin->getCylinders().size()<<" ";
+//    }
+//    std::cout<<endl;
 #ifdef CUDAACCL_NL
     _list.clear();
 
@@ -584,26 +587,39 @@ void CylinderCylinderNL::reset() {
         updateNeighbors(cylinder);
         tot += _list[cylinder].size();
     }
-#ifdef CUDA_TIMETRACK
+     std::cout<<"ORIGINAL ";
+    for(auto cylinder: Cylinder::getCylinders()) {
+        std::cout<<_list4mbin[cylinder].size()<<" ";
+    }
+    std::cout<<endl;
     std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
-    mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_orig(mine - mins);
-    std::cout<<"NLORIG reset time "<<elapsed_orig.count()<<endl;
+#ifdef CUDA_TIMETRACK
+
+
 #endif
+
 #endif
+
 
 #ifdef NLSTENCILLIST
     #ifdef CUDA_TIMETRACK
     mins = chrono::high_resolution_clock::now();
     #endif
-    tot = 0;
+/*    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();*/
+//    tot = 0;
     _list4mbin.clear();
     //check and reassign cylinders to different bins if needed.
     updateallcylinderstobin();
+
     for(auto cylinder: Cylinder::getCylinders()) {
         updateNeighborsbin(cylinder);
-        tot += _list4mbin[cylinder].size();
+//        tot += _list4mbin[cylinder].size();
     }
+//    std::cout<<"reset NLSTENCILLIST size "<<" "<<tot<<endl;
+    /*mine= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_sten(mine - mins);
+    std::cout<<"NLSTEN reset time "<<elapsed_sten.count()<<endl;*/
     #ifdef CUDA_TIMETRACK
     std::cout<<"reset NLSTENCILLIST size "<<" "<<tot<<endl;
     mine= chrono::high_resolution_clock::now();
@@ -812,12 +828,10 @@ void CylinderCylinderNL::reset() {
 #endif
 }
 
-
 vector<Cylinder*> CylinderCylinderNL::getNeighbors(Cylinder* cylinder) {
 
     return _list[cylinder];
 }
-
 
 //BOUNDARYELEMENT - CYLINDER
 

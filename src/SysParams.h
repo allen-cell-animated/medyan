@@ -97,9 +97,10 @@ struct MechParams {
     //vectorization
     double *coord;
     vector<vector<int>> speciesboundvec;
-    vector<double> cylsqmagnitudevector;
+    double* cylsqmagnitudevector;
     vector<int> ncylvec;
     vector<int>bsoffsetvec;
+    unsigned long maxbindingsitespercylinder = 0;
 
     
 };

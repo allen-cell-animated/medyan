@@ -39,7 +39,12 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     for(auto ci : Cylinder::getCylinders()) {
         if(!ci->isFullLength()) continue;
         //do not calculate exvol for a non full length cylinder
-        for(auto &cn : _neighborList->getNeighbors(ci))
+#ifdef HYBRID_NLSTENCILLIST
+        auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
+#else
+        auto neighbors = _neighborList->getNeighbors(ci)
+#endif
+        for(auto &cn : neighbors)
         {
             if(!cn->isFullLength()||
                cn->getBranchingCylinder() == ci) continue;
@@ -59,12 +64,16 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     for (i = 0; i < nc; i++) {
         auto ci = Cylinder::getCylinders()[i];
         if(!ci->isFullLength()) continue;
-
-        int nn = _neighborList->getNeighbors(ci).size();
+#ifdef HYBRID_NLSTENCILLIST
+        auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
+#else
+        auto neighbors = _neighborList->getNeighbors(ci)
+#endif
+        int nn = neighbors.size();
 //        std::cout<<"Cylinder "<<i<<" "<<nn<<endl;
         for (int ni = 0; ni < nn; ni++) {
 
-            auto cin = _neighborList->getNeighbors(ci)[ni];
+            auto cin = neighbors[ni];
             if(!cin->isFullLength()||
                cin->getBranchingCylinder() == ci) continue;
             beadSet[n * (Cumnc)] = ci->getFirstBead()->_dbIndex;

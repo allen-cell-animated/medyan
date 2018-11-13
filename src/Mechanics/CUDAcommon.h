@@ -38,7 +38,7 @@ struct bin{
         int cmpID = -1;
         long cindex = -1;
         double coord[3];
-        short type;
+        short type = -1;
         int ID = -1;
         int availbscount = -1;
     };
@@ -46,6 +46,7 @@ struct SERLvars{
     double *coord = NULL;
     cylinder *cylindervec = NULL;
     CCylinder **ccylindervec = NULL;
+    Cylinder **cylinderpointervec = NULL;
 
 };
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)

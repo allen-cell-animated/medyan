@@ -26,6 +26,7 @@
 #include "common.h"
 
 #include "NeighborListImpl.h"
+#include "HybridBindingSearchManager.h"
 #include "ReactionBase.h"
 
 #include "SysParams.h"
@@ -87,6 +88,8 @@ protected:
     
     static SubSystem *_subSystem; ///< Ptr to the SubSystem
 
+
+
 #ifdef NLSTENCILLIST
     vector<double> bindingSites;
 #endif
@@ -123,7 +126,6 @@ protected:
 #endif
         _bindingReaction->updatePropensity();
     }
-    
 public:
     FilamentBindingManager(ReactionBase* reaction,
                            Compartment* compartment,
@@ -185,6 +187,7 @@ public:
     vector<string> getrxnspecies(){return _bindingReaction->getreactantspecies();}
 
 #ifdef NLSTENCILLIST
+    virtual void addPossibleBindingsstencil(CCylinder* cc) = 0;
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite) = 0;
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil() = 0;
@@ -195,7 +198,33 @@ public:
     virtual void removePossibleBindingsstencil(CCylinder* cc) = 0;
     virtual void removePossibleBindingsstencil(CCylinder* cc, short bindingSite) = 0;
     virtual void crosscheck(){};
+    virtual void replacepairPossibleBindingsstencil
+            (unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _pbs) =0;
+    virtual void setHNLID(short id, short idvec[2]) = 0;
 #endif
+    void updateBindingReaction(int newN) {
+        int oldN = _bindingSpecies->getN();
+        int diff = newN - oldN;
+        //update copy number
+        if(diff > 0) {
+            while (diff != 0) {
+                _bindingSpecies->up();
+                diff--;
+            }
+        }
+        else if(diff < 0) {
+            while (diff != 0) {
+                _bindingSpecies->down();
+                diff++;
+            }
+        }
+        else {} //do nothing
+        //check if matching
+        assert((_bindingSpecies->getN() == newN)
+               && "Species representing binding sites does not match \
+                   number of binding sites held by the manager.");
+        _bindingReaction->updatePropensity();
+    }
 
 };
 
@@ -304,6 +333,7 @@ public:
         return _branchrestarttuple;
     }
 #ifdef NLSTENCILLIST
+    virtual void addPossibleBindingsstencil(CCylinder* cc);
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
@@ -349,6 +379,9 @@ public:
     }
     virtual void removePossibleBindingsstencil(CCylinder* cc);
     virtual void crosscheck();
+    virtual void replacepairPossibleBindingsstencil
+            (unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>){};
+    virtual void setHNLID(short id, short idvec[2]){};
 #endif
 
 #ifdef CUDAACCL_NL
@@ -381,7 +414,8 @@ private:
     double minparamcyl2;
     double maxparamcyl2;
     vector<double> bindingsites;
-
+    static short HNLID;
+    static short _idvec[2];
     
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
@@ -393,8 +427,6 @@ private:
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
     #endif
-
-    
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
     
@@ -467,6 +499,7 @@ public:
     virtual bool isConsistent();
 
 #ifdef NLSTENCILLIST
+    virtual void addPossibleBindingsstencil(CCylinder* cc);
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
@@ -490,22 +523,23 @@ public:
     getpossibleBindingsstencil(){
         return _possibleBindingsstencil;
     }
-    vector<tuple<CCylinder*, short>> chooseBindingSitesstencil() {
-
-        assert((_possibleBindingsstencil.size() != 0)
-               && "Major bug: Linker binding manager should not have zero binding \
-                   sites when called to choose a binding site.");
-
-        int randomIndex = Rand::randInteger(0, _possibleBindingsstencil.size() - 1);
-        auto it = _possibleBindingsstencil.begin();
-
-        advance(it, randomIndex);
-
-        return vector<tuple<CCylinder*, short>>{it->first, it->second};
-    }
+    vector<tuple<CCylinder*, short>> chooseBindingSitesstencil();
     virtual void removePossibleBindingsstencil(CCylinder* cc, short bindingSite);
     virtual void removePossibleBindingsstencil(CCylinder* cc);
     virtual void crosscheck();
+    virtual void replacepairPossibleBindingsstencil
+            (unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _pbs){
+//        _possibleBindingsstencil.clear();
+        _possibleBindingsstencil = _pbs;
+        int oldN = _bindingSpecies->getN();
+        int newN = numBindingSitesstencil();
+        updateBindingReaction(oldN, newN);
+    }
+    virtual void setHNLID(short id, short idvec[2]){
+        HNLID = id;
+        _idvec[0] = idvec[0];
+        _idvec[1] = idvec[1];
+    };
 #endif
 
 #ifdef CUDAACCL_NL
@@ -551,6 +585,8 @@ private:
     double minparamcyl2;
     double maxparamcyl2;
     vector<double> bindingsites;
+    static short HNLID;
+    static short _idvec[2];
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
     vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
@@ -632,6 +668,7 @@ public:
     
     virtual bool isConsistent();
 #ifdef NLSTENCILLIST
+    virtual void addPossibleBindingsstencil(CCylinder* cc);
     virtual void addPossibleBindingsstencil(CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
     virtual void updateAllPossibleBindingsstencil();
@@ -655,23 +692,23 @@ public:
     getpossibleBindingsstencil(){
         return _possibleBindingsstencil;
     }
-
-    vector<tuple<CCylinder*, short>> chooseBindingSitesstencil() {
-
-        assert((_possibleBindingsstencil.size() != 0)
-               && "Major bug: Motor binding manager should not have zero binding \
-                   sites when called to choose a binding site.");
-
-        int randomIndex = Rand::randInteger(0, _possibleBindingsstencil.size() - 1);
-        auto it = _possibleBindingsstencil.begin();
-
-        advance(it, randomIndex);
-
-        return vector<tuple<CCylinder*, short>>{it->first, it->second};
-    }
+    vector<tuple<CCylinder*, short>> chooseBindingSitesstencil();
     virtual void removePossibleBindingsstencil(CCylinder* cc, short bindingSite);
     virtual void removePossibleBindingsstencil(CCylinder* cc);
     virtual void crosscheck();
+    virtual void replacepairPossibleBindingsstencil
+            (unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _pbs){
+//        _possibleBindingsstencil.clear();
+        _possibleBindingsstencil = _pbs;
+        int oldN = _bindingSpecies->getN();
+        int newN = numBindingSitesstencil();
+        updateBindingReaction(oldN, newN);
+    }
+    virtual void setHNLID(short id, short idvec[2]){
+        HNLID = id;
+        _idvec[0] = idvec[0];
+        _idvec[1] = idvec[1];
+    };
 #endif
 
 #ifdef CUDAACCL_NL
@@ -725,5 +762,4 @@ public:
 //    const vector<int>& getAllUnboundIDs() const { return _unboundIDs; }
 
 };
-
 #endif

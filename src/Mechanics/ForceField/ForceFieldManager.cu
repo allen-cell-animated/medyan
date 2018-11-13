@@ -175,7 +175,7 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
-
+//        std::cout<<ff->getName()<<" "<<tempEnergy<<endl;
         if (verbose) cout << ff->getName() << " energy = " << tempEnergy << endl;
         //if energy is infinity, exit with infinity.
         if (tempEnergy <= -1) {

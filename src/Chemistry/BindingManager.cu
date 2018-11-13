@@ -10,7 +10,7 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-
+#include "HybridBindingSearchManager.h"
 #include "BindingManager.h"
 
 #include "Compartment.h"
@@ -30,6 +30,7 @@
 #include "SysParams.h"
 #include "CUDAcommon.h"
 #include <algorithm>
+#include "SubSystem.h"
 
 
 using namespace mathfunc;
@@ -253,6 +254,12 @@ bool BranchingManager::isConsistent() {
 }
 
 #ifdef NLSTENCILLIST
+void BranchingManager::addPossibleBindingsstencil(CCylinder* cc) {
+    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+        bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++) {
+        addPossibleBindingsstencil(cc, *bit);
+    }
+}
 void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 
     if(cc->getType() != _filamentType) return;
@@ -307,7 +314,6 @@ void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSi
     updateBindingReaction(oldN, newN);
 }
 void BranchingManager::updateAllPossibleBindingsstencil() {
-
     //clear all
     _possibleBindingsstencil.clear();
     auto boundstate = SysParams::Mechanics().speciesboundvec;
@@ -940,8 +946,17 @@ bool LinkerBindingManager::isConsistent() {
     return true;
 }
 #ifdef NLSTENCILLIST
+void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
+    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+        bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++) {
+        addPossibleBindingsstencil(cc, *bit);
+    }
+}
 void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
-
+#ifdef HYBRID_NLSTENCILLIST
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
+#else
     if(cc->getType() != _filamentType) return;
 
     //if we change other managers copy number
@@ -953,7 +968,14 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 
         //loop through neighbors
         //now re add valid based on CCNL
-        for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder())) {
+        vector<Cylinder*> Neighbors;
+//#ifdef HYBRID_NLSTENCILLIST
+//        Neighbors = cc->getCompartment()->getHybridBindingSearchManager()->getHNeighbors
+//                (cc->getCylinder(),HNLID);
+//#else
+        Neighbors = _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder());
+//#endif
+        for (auto cn : Neighbors) {
 
             Cylinder* c = cc->getCylinder();
 
@@ -1025,6 +1047,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
     int newN = numBindingSitesstencil();
 
     updateBindingReaction(oldN, newN);
+#endif
 }
 void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     _possibleBindingsstencil.clear();
@@ -1038,8 +1061,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     int total = 0;
     int Ncyl = Cylinder::getCylinders().size();
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
-
-    vector<double> cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
+    int maxnbs = SysParams::Mechanics().maxbindingsitespercylinder;
+    double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     double* coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
@@ -1114,14 +1137,14 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
             double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector.at(c.cindex);
+            double X1X2squared = cylsqmagnitudevector[c.cindex];
             double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector.at(cn.cindex);
+            double X3X4squared = cylsqmagnitudevector[cn.cindex];
             double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
             double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             for(int pos1 =0; pos1<nbs;pos1++) {
                 //now re add valid binding sites
-                if (areEqual(boundstate[1][offset + nbs *c.cindex + pos1], 1.0)) {
+                if (areEqual(boundstate[1][offset + maxnbs *c.cindex + pos1], 1.0)) {
                     auto mp1 = bindingsites.at(pos1);
                     double A = X3X4squared;
                     double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
@@ -1168,7 +1191,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                         }
                     }
                     for(int pos2 = 0; pos2<nbs;pos2++){
-                        if (areEqual(boundstate[1][offset + nbs *cn.cindex + pos2], 1.0)) {
+                        if (areEqual(boundstate[1][offset + maxnbs *cn.cindex + pos2], 1.0)) {
                             total++;
                             //check distances..
                             auto mp2 = bindingsites.at(pos2);
@@ -1213,7 +1236,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
             }
         }
     }
-    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
+//    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
     /*_possibleBindingsstencil.clear();
     chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
     double timetaken = 0.0;
@@ -1377,10 +1400,10 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     minte = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_total3(minte - mints);*/
 //    std::cout<<"Overall time "<<elapsed_total3.count()<<endl;
-    std::cout<<"Total "<<total<<" accepts "<<accepts<<endl;
+//    std::cout<<"Total "<<total<<" accepts "<<accepts<<endl;
 //    std::cout<<"16 loop time taken "<<time16<<endl;
 //    std::cout<<"Tuple Emplace time taken "<<timetaken<<endl;
-    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
+//    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSitesstencil();
     updateBindingReaction(oldN, newN);
@@ -1389,10 +1412,13 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
-
         removePossibleBindingsstencil(cc, *bit);
 }
 void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
+#ifdef HYBRID_NLSTENCILLIST
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
+#else
 
     if(cc->getType() != _filamentType) return;
 
@@ -1419,6 +1445,21 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bi
     updateBindingReaction(oldN, newN);
 
     //remove all neighbors which have this binding site pair
+/*#ifdef HYBRID_NLSTENCILLIST
+    auto C = cc->getCompartment();
+    for (auto cn : C->getHybridBindingSearchManager()->getHNeighbors(cc->getCylinder(), HNLID)){
+        if(cn->getType() != _filamentType) continue;
+
+        if(cn->getCompartment() != _compartment) {
+
+            auto m = (LinkerBindingManager*)cn->getCompartment()->
+                    getFilamentBindingManagers()[_mIndex].get();
+
+            if(find(affectedManagers.begin(), affectedManagers.end(), m) == affectedManagers.end())
+                affectedManagers.push_back(m);
+        }
+    }
+#else*/
     for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder())) {
 
         if(cn->getType() != _filamentType) continue;
@@ -1432,6 +1473,7 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bi
                 affectedManagers.push_back(m);
         }
     }
+//#endif
 
     //remove, update affected
     for(auto m : affectedManagers) {
@@ -1450,6 +1492,7 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bi
 
         m->updateBindingReaction(oldNOther, newNOther);
     }
+#endif
 }
 void LinkerBindingManager::crosscheck(){
     cout<<"Linker NLORIGINAL size "<<_possibleBindings.size()<<" NLSTENCIL size "
@@ -1504,6 +1547,23 @@ void LinkerBindingManager::crosscheck(){
         cout<<"Linker. All binding site pairs are not found in Stencil list"<<endl;
             exit(EXIT_FAILURE);
     }
+}
+vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSitesstencil() {
+#ifdef HYBRID_NLSTENCILLIST
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    return HManager->chooseBindingSitesstencil(_idvec);
+#else
+    assert((_possibleBindingsstencil.size() != 0)
+           && "Major bug: Linker binding manager should not have zero binding \
+                   sites when called to choose a binding site.");
+
+    int randomIndex = Rand::randInteger(0, _possibleBindingsstencil.size() - 1);
+    auto it = _possibleBindingsstencil.begin();
+
+    advance(it, randomIndex);
+
+    return vector<tuple<CCylinder*, short>>{it->first, it->second};
+#endif
 }
 #endif
 #ifdef CUDAACCL_NL
@@ -2058,9 +2118,17 @@ bool MotorBindingManager::isConsistent() {
     return true;
 }
 #ifdef NLSTENCILLIST
-
+void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
+    for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
+        bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++) {
+        addPossibleBindingsstencil(cc, *bit);
+    }
+}
 void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
-
+#ifdef HYBRID_NLSTENCILLIST
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
+#else
     if(cc->getType() != _filamentType) return;
 
     //if we change other managers copy number
@@ -2072,7 +2140,10 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
 
         //loop through neighbors
         //now re add valid based on CCNL
-        for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder())) {
+        vector<Cylinder*> Neighbors;
+
+        Neighbors = _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder());
+        for (auto cn : Neighbors) {
 
             Cylinder* c = cc->getCylinder();
 
@@ -2148,6 +2219,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
     int newN = numBindingSitesstencil();
 
     updateBindingReaction(oldN, newN);
+#endif
 }
 void MotorBindingManager::updateAllPossibleBindingsstencil() {
 
@@ -2162,12 +2234,14 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     int total = 0;
     int Ncyl = Cylinder::getCylinders().size();
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
-    vector<double> cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
+    int maxnbs = SysParams::Mechanics().maxbindingsitespercylinder;
+    double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     double* coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
-
+    int counter1 = 0;
+    int totalneighbors = 0;
 /*    vector<CCylinder*> ccylindervector;
     for(auto cyl:Cylinder::getCylinders())
         ccylindervector.push_back(cyl->getCCylinder());*/
@@ -2180,13 +2254,13 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     long id = 0;
     for(auto c : _compartment->getCylinders()){
         cindexvec[id] = c->_dcIndex;
-//        totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
+        totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
         id++;
         for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
             if(c->getID() > cn->getID())
                 ncindex.push_back(cn->_dcIndex);
-//            else
-//                counter1++;
+            else
+                counter1++;
         }
         ncindices.push_back(ncindex);
         ncindex.clear();
@@ -2290,14 +2364,14 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //    double ttup = 0.0;
 //    double tsten = 0.0;
 //    double tdense = 0.0;
-//    int counter2 =0; int counter3 = 0; int counter4 = 0; int counter5 = 0;
-//    int counter6 =0;int counter7 = 0; int counter8 = 0; int counter9 = 0;int counter10=0;
+    int counter2 =0; int counter3 = 0; int counter4 = 0; int counter5 = 0;
+    int counter6 =0;int counter7 = 0; int counter8 = 0; int counter9 = 0;int counter10=0;
 //    mints = chrono::high_resolution_clock::now();
     for(int i=0;i<Ncylincmp;i++){
         int cindex = cindexvec[i];
         cylinder c = cylindervec[cindex];
         if(c.type != _filamentType) {
-//            counter2++;
+            counter2++;
             continue;}
         double x1[3],x2[3];
         memcpy(x1, &coord[3*c.bindices[0]], 3 * sizeof(double));
@@ -2324,10 +2398,10 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //            if(c.ID < cn.ID) {counter++; continue;} commented as the above vector does
 // not contain ncs that will fail this cndn.
             if(c.filamentID == cn.filamentID){
-//                counter3++;
+                counter3++;
                 continue;}
             if(c.type != cn.type){
-//                counter4++;
+                counter4++;
                  continue;}
 
             double x3[3], x4[3];
@@ -2336,14 +2410,14 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
             double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector.at(c.cindex);
+            double X1X2squared = cylsqmagnitudevector[c.cindex];
             double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector.at(cn.cindex);
+            double X3X4squared = cylsqmagnitudevector[cn.cindex];
             double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
             double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             for(int pos1 =0; pos1<nbs;pos1++) {
             //now re add valid binding sites
-                if (areEqual(boundstate[2][offset + nbs *c.cindex + pos1], 1.0)) {
+                if (areEqual(boundstate[2][offset + maxnbs *c.cindex + pos1], 1.0)) {
                 auto mp1 = bindingsites.at(pos1);
                 double A = X3X4squared;
                 double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
@@ -2355,7 +2429,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                 status1 = b2m4ac1 < 0;
                 status2 = b2m4ac2 < 0;
                 if(status1 && status2) {
-//                    counter6++;
+                    counter6++;
                     continue;}
                 if(!status1){
                     min1 = (-B + sqrt(b2m4ac1))/(2*A);
@@ -2369,7 +2443,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                         minveca[1] = (min1);
                     }
                     if(minveca[0]< minparamcyl2 && minveca[1] > maxparamcyl2) {
-//                        counter7++;
+                        counter7++;
                         continue;
                     }
                 }
@@ -2385,26 +2459,26 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                         maxveca[1] = (max1);
                     }
                     if(maxveca[0] > maxparamcyl2 || maxveca[1] <minparamcyl2){
-//                        counter8++;
+                        counter8++;
                         continue;
                     }
                 }
                     for(int pos2 = 0; pos2<nbs;pos2++){
-                    if (areEqual(boundstate[2][offset + nbs *cn.cindex + pos2], 1.0)) {
+                    if (areEqual(boundstate[2][offset + maxnbs *cn.cindex + pos2], 1.0)) {
                         total++;
                         //check distances..
                         auto mp2 = bindingsites.at(pos2);
                         if(!status2) {
                             if (mp2 < maxveca[0] || mp2 > maxveca[1]) {
                                 {
-//                                    counter9++;
+                                    counter9++;
                                 continue;}
                             }
                         }
                         if(!status1){
                             if (mp2 > minveca[0] && mp2 < minveca[1]) {
                                 {
-//                                    counter10++;
+                                    counter10++;
                                     continue;}
                             }
                         }
@@ -2442,19 +2516,19 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //    std::cout<<"Tuple time "<<ttup<<endl;
 //    std::cout<<"Stencil time "<<tsten<<endl;
 //    std::cout<<"Dense time "<<tdense<<endl;
-    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
-//    std::cout<<"Total binding site pairs "<<16*totalneighbors<<endl;
-//    std::cout<<"Count cID < cnID "<<16*counter1<<endl;
-//    std::cout<<"Count ftype "<<16*counter2<<endl;
-//    std::cout<<"Count fID "<<16*counter3<<endl;
-//    std::cout<<"Count Ctype "<<16*counter4<<endl;
-//    std::cout<<"Count maxdist "<<16*counter5<<endl;
-//    std::cout<<"Count b2-4ac "<<4*counter6<<endl;
-//    std::cout<<"Count min out of range "<<4*counter7<<endl;
-//    std::cout<<"Count max out of range "<<4*counter8<<endl;
-//    std::cout<<"Count bs2 min out of range "<<counter9<<endl;
-//    std::cout<<"Count bs2 max out of range "<<counter10<<endl;
-    std::cout<<"accepts "<<accepts<<endl;
+//    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
+/*    std::cout<<"Total binding site pairs "<<16*totalneighbors<<endl;
+    std::cout<<"Count cID < cnID "<<16*counter1<<endl;
+    std::cout<<"Count ftype "<<16*counter2<<endl;
+    std::cout<<"Count fID "<<16*counter3<<endl;
+    std::cout<<"Count Ctype "<<16*counter4<<endl;
+    std::cout<<"Count maxdist "<<16*counter5<<endl;
+    std::cout<<"Count b2-4ac "<<4*counter6<<endl;
+    std::cout<<"Count min out of range "<<4*counter7<<endl;
+    std::cout<<"Count max out of range "<<4*counter8<<endl;
+    std::cout<<"Count bs2 min out of range "<<counter9<<endl;
+    std::cout<<"Count bs2 max out of range "<<counter10<<endl;
+    std::cout<<"accepts "<<accepts<<endl;*/
 
 //    accepts = 0;
 //    _possibleBindingsstencil.clear();
@@ -2599,10 +2673,16 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
-
         removePossibleBindingsstencil(cc, *bit);
 }
 void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
+#ifdef HYBRID_NLSTENCILLIST
+    auto HManager = _compartment->getHybridBindingSearchManager();
+        HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
+/*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
+        C->getHybridBindingSearchManager()->checkoccupancy(_idvec);
+    }*/
+#else
 
     if(cc->getType() != _filamentType) return;
 
@@ -2614,8 +2694,7 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bin
     _possibleBindingsstencil.erase(t);
 
     //remove all tuples which have this as value
-    for (auto it = _possibleBindingsstencil.begin(); it != _possibleBindingsstencil.end();
-            ) {
+    for (auto it = _possibleBindingsstencil.begin(); it != _possibleBindingsstencil.end();) {
 
         if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
             _possibleBindingsstencil.erase(it++);
@@ -2628,7 +2707,23 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bin
 
     updateBindingReaction(oldN, newN);
 
+
     //remove all neighbors which have this binding site pair
+/*#ifdef HYBRID_NLSTENCILLIST
+    auto C = cc->getCompartment();
+    for (auto cn : C->getHybridBindingSearchManager()->getHNeighbors(cc->getCylinder(), HNLID)){
+        if(cn->getType() != _filamentType) continue;
+
+        if(cn->getCompartment() != _compartment) {
+
+            auto m = (MotorBindingManager*)cn->getCompartment()->
+                    getFilamentBindingManagers()[_mIndex].get();
+
+            if(find(affectedManagers.begin(), affectedManagers.end(), m) == affectedManagers.end())
+                affectedManagers.push_back(m);
+        }
+    }
+#else*/
     for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder())) {
 
         if(cn->getType() != _filamentType) continue;
@@ -2642,7 +2737,7 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bin
                 affectedManagers.push_back(m);
         }
     }
-
+//#endif
     //remove, update affected
     for(auto m : affectedManagers) {
 
@@ -2660,6 +2755,7 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bin
 
         m->updateBindingReaction(oldNOther, newNOther);
     }
+#endif
 }
 void MotorBindingManager::crosscheck(){
     cout<<"Motor NLORIGINAL size "<<_possibleBindings.size()<<" NLSTENCIL size "
@@ -2714,6 +2810,23 @@ void MotorBindingManager::crosscheck(){
         cout<<"Motor. All binding site pairs are not found in Stencil list"<<endl;
         exit(EXIT_FAILURE);
     }
+}
+vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSitesstencil() {
+#ifdef HYBRID_NLSTENCILLIST
+    auto HManager = _compartment->getHybridBindingSearchManager();
+    return HManager->chooseBindingSitesstencil(_idvec);
+#else
+    assert((_possibleBindingsstencil.size() != 0)
+           && "Major bug: Linker binding manager should not have zero binding \
+                   sites when called to choose a binding site.");
+
+    int randomIndex = Rand::randInteger(0, _possibleBindingsstencil.size() - 1);
+    auto it = _possibleBindingsstencil.begin();
+
+    advance(it, randomIndex);
+
+    return vector<tuple<CCylinder*, short>>{it->first, it->second};
+#endif
 }
 #endif
 #ifdef CUDAACCL_NL
@@ -2772,4 +2885,9 @@ SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CylinderCylinderNL*> LinkerBindingManager::_neighborLists;
 vector<CylinderCylinderNL*> MotorBindingManager::_neighborLists;
+short LinkerBindingManager::HNLID;
+short MotorBindingManager::HNLID;
+short LinkerBindingManager::_idvec[2];
+short MotorBindingManager::_idvec[2];
+
 

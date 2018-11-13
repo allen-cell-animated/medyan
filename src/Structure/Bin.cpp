@@ -12,13 +12,9 @@
 //------------------------------------------------------------------
 #include "Bin.h"
 #include "Cylinder.h"
-void Bin::vectorize(){
-    delete []cindicesvector;
-    std::cout<<_cylinders.size()<<endl;
-    cindicesvector = new int[_cylinders.size()];
-    int idx = 0;
-    for (auto &ncylinder : _cylinders) {
-        std::cout<<"CID "<<ncylinder->_dcIndex<<endl;
-        idx++;
-    }
+void Bin::updatecindices(){
+    cindicesvector.clear();
+    cindicesvector.reserve(_cylinders.size());
+    for(auto &c:_cylinders)
+        cindicesvector.push_back(c->_dcIndex);
 }

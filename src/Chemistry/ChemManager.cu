@@ -1114,7 +1114,7 @@ void ChemManager::genFilBindingReactions() {
     //init subsystem ptr
     FilamentBindingManager::_subSystem = _subSystem;
     double rMax, rMin;
-
+    bool status = false;
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
         //loop through all compartments
@@ -1370,7 +1370,18 @@ void ChemManager::genFilBindingReactions() {
                 BranchingCallback bcallback(bManager, plusEnd, onRate, offRate, _subSystem);
                 ConnectionBlock rcb(rxn->connect(bcallback,false));
             }
-            
+
+#ifdef HYBRID_NLSTENCILLIST
+            //If linker and motor reactions exist, create HybridBindingSearchManager
+            if(_chemData.linkerReactions[filType].size() +
+               _chemData.motorReactions[filType].size() > 0) {
+                status = true;
+            }
+                HybridBindingSearchManager* Hbsn  = new HybridBindingSearchManager(C);
+                C->addHybridBindingSearchManager(Hbsn);
+#endif
+
+
             for(auto &r: _chemData.linkerReactions[filType]) {
                 
                 vector<Species*> reactantSpecies;
@@ -1599,8 +1610,12 @@ void ChemManager::genFilBindingReactions() {
                 //attach callback
                 LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem);
                 ConnectionBlock rcb(rxn->connect(lcallback,false));
+#ifdef HYBRID_NLSTENCILLIST
+                auto Hbsm = C->getHybridBindingSearchManager();
+                Hbsm->setbindingsearchparameter(lManager, 1, 0,0,rMax,rMin);
+#endif
             }
-            
+
             for(auto &r: _chemData.motorReactions[filType]) {
                 
                 vector<Species*> reactantSpecies;
@@ -1827,13 +1842,25 @@ void ChemManager::genFilBindingReactions() {
                 //attach callback
                 MotorBindingCallback mcallback(mManager, onRate, offRate, _subSystem);
                 ConnectionBlock rcb(rxn->connect(mcallback,false));
+#ifdef HYBRID_NLSTENCILLIST
+                auto Hbsm = C->getHybridBindingSearchManager();
+                Hbsm->setbindingsearchparameter(mManager, 2, 0,0,rMax,rMin);
+#endif
             }
         }
         
         //init neighbor lists
         //get a compartment
+
         Compartment* C0 = grid->getCompartments()[0];
-        
+#ifdef HYBRID_NLSTENCILLIST
+        if(status) {
+            HybridBindingSearchManager::_HneighborList = _subSystem->getHNeighborList();
+            auto Hmanager = C0->getHybridBindingSearchManager();
+            Hmanager->addtoHNeighborList();
+        }
+        _subSystem->initializeHNeighborList();
+#else
         for(auto &manager : C0->getFilamentBindingManagers()) {
             
             LinkerBindingManager* lManager;
@@ -1842,8 +1869,10 @@ void ChemManager::genFilBindingReactions() {
             if((lManager = dynamic_cast<LinkerBindingManager*>(manager.get()))) {
                 
                 auto nl =
-                new CylinderCylinderNL(lManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
-                                   max(lManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
+                        new CylinderCylinderNL(lManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
+                                               0.0, true);
+//                new CylinderCylinderNL(lManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
+//                                   max(lManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
                 
                 //add to subsystem and manager
                 LinkerBindingManager::_neighborLists.push_back(nl);
@@ -1853,8 +1882,10 @@ void ChemManager::genFilBindingReactions() {
             else if((mManager = dynamic_cast<MotorBindingManager*>(manager.get()))) {
                 
                 auto nl =
-                new CylinderCylinderNL(mManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
-                                   max(mManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
+                        new CylinderCylinderNL(mManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
+                                               0.0, true);
+//                new CylinderCylinderNL(mManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
+//                                   max(mManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
                 
                 //add to subsystem and manager
                 MotorBindingManager::_neighborLists.push_back(nl);
@@ -1864,6 +1895,7 @@ void ChemManager::genFilBindingReactions() {
 //#endif
             }
         }
+#endif
     }
 }
 
