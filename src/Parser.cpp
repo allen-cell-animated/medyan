@@ -1340,7 +1340,6 @@ DynamicRateType SystemParser::readDynamicRateType() {
                     DRType.dBUnbindingType.push_back(lineVector[i]);
             }
         }
-    
         
     }
     return DRType;

@@ -601,14 +601,26 @@ void Controller::updateReactionRates() {
 #endif
 
 void Controller::updateNeighborLists() {
-    //    nvtxRangePushA("neighborlist");
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
-//    nvtxRangePop();
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runnl2(mine - mins);
+    nl2time += elapsed_runnl2.count();
+    mins = chrono::high_resolution_clock::now();
 #ifdef CHEMISTRY
-//    nvtxRangePushA("bindingmanager");
+    //_subSystem->vectorizeCylinder();
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runbvec(mine - mins);
+    bmgrvectime += elapsed_runbvec.count();
+    mins = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
-//    nvtxRangePop();
+    mine = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runb(mine - mins);
+    bmgrtime += elapsed_runb.count();
+    //    std::cout<<"time split "<<elapsed_runnl2.count()<<" "<<elapsed_runbvec.count()<<" "
+    //            ""<<elapsed_runb.count()<<endl;
 #endif
 }
 
@@ -743,6 +755,7 @@ void Controller::run() {
         mine= chrono::high_resolution_clock::now();
         chrono::duration<double> elapsed_runm(mine - mins);
         minimizationtime += elapsed_runm.count();
+        std::cout<<"Time taken for minimization "<<elapsed_runm.count()<<endl;
         SysParams::RUNSTATE=true;
         
         //reupdate positions and neighbor lists
@@ -816,20 +829,27 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
-//    nvtxRangePushA("mechanics_i2");
     _mController->run(false);
-//    nvtxRangePop();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
-//    nvtxRangePushA("output");
+    std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
+    
     //reupdate positions and neighbor lists
+    mins = chrono::high_resolution_clock::now();
     updatePositions();
     updateNeighborLists();
-
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runnl(mine - mins);
+    nltime += elapsed_runnl.count();
+    std::cout<<"NL time "<<elapsed_runnl.count()<<endl;
+    mins = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
     updateReactionRates();
 #endif
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runrxn(mine - mins);
+    rxnratetime += elapsed_runrxn.count();
 #endif
 
 #ifdef CHEMISTRY
@@ -849,18 +869,28 @@ void Controller::run() {
 
 #ifdef CHEMISTRY
         //activate/deactivate compartments
+        mins = chrono::high_resolution_clock::now();
         activatedeactivateComp();
+        mine= chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_runspl(mine - mins);
+        specialtime += elapsed_runspl.count();
+        
         while(tau() <= _runTime) {
             //run ccontroller
-//            nvtxRangePushA("chemistry");
+            mins = chrono::high_resolution_clock::now();
             auto var = !_cController->run(_minimizationTime);
-//            nvtxRangePop();
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed_runchem(mine - mins);
+            chemistrytime += elapsed_runchem.count();
+            
+            mins = chrono::high_resolution_clock::now();
             if(var) {
-//                nvtxRangePushA("output");
                 for(auto o: _outputs) o->print(i);
-//                nvtxRangePop();
                 break;
             }
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed_runout(mine - mins);
+            outputtime += elapsed_runout.count();
             
             //add the last step
             tauLastSnapshot += tau() - oldTau;
@@ -1035,13 +1065,19 @@ void Controller::run() {
     }
     
     //print last snapshots
-//    nvtxRangePushA("output");
     for(auto o: _outputs) o->print(i);
-//    nvtxRangePop();
-
+    
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
+    cout<< "Chemistry time for run=" << chemistrytime <<endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
+    cout<< "Neighbor list + Bmgr time for run="<<nltime<<endl;
+    cout<< "Neighbor list time "<<nl2time<<endl;
+    cout<< "Bmgr vec time "<<bmgrvectime<<endl;
+    cout<< "Bmgr time "<<bmgrtime<<endl;
+    cout<<"rxnrate time for run="<<rxnratetime<<endl;
+    cout<<"Output time for run="<<outputtime<<endl;
+    cout<<"Special time for run="<<specialtime<<endl;
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
     cout << "Total simulation time: dt=" << tau() << endl;
     cout << "Done with simulation!" << endl;
