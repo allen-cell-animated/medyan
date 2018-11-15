@@ -18,7 +18,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
-
+#include "Bubble.h"
 #include "MathFunctions.h"
 
 #ifdef CUDAACCL
@@ -217,7 +217,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
                                      double *kbend, double *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     double *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
@@ -262,7 +262,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
                                      double *kbend, double *eqt, double d ){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
@@ -312,7 +312,7 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
                                    double *kbend, double *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
-    int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     double *coord1, *coord2, *coord3, *force1, *force2, *force3,
             L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;

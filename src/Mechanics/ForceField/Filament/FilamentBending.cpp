@@ -18,6 +18,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "Bubble.h"
 #include "CGMethod.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -26,7 +27,7 @@
 template <class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::vectorize() {
 
-    int numInteractions = Bead::getBeads().size() - 2 * Filament::getFilaments().size();
+    int numInteractions = Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles();
 
     beadSet = new int[n * numInteractions];
     kbend = new double[numInteractions];
