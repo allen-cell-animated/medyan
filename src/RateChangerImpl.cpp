@@ -76,6 +76,20 @@ float MotorCatch::changeRate(float onRate, float offRate,
     double newRate = k_0 * factor;
     return newRate;
 }
+               
+float MotorSlip::numBoundHeads(float onRate, float offRate,
+                           double force, int numHeads) {
+    
+    return numHeads;
+}
+               
+float MotorSlip::changeRate(float onRate, float offRate,
+                            double numHeads, double force) {
+   
+   //calculate new rate
+   double newRate = onRate * exp(force/_F0);
+   return newRate;
+}
 
 float MotorStall::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
@@ -92,6 +106,16 @@ float MotorStall::changeRate(float onRate, float offRate,
                                / (_F0 + (force / (_alpha))));
 #endif
     
+    return newRate;
+}
+               
+float TwoHeadStall::changeRate(float onRate, float offRate,
+                            double numHeads, double force) {
+
+    //calculate new rate
+    float k_0 = _walkingRate * _stepFrac;
+    float newRate = k_0 * (1 + force / _F0);
+
     return newRate;
 }
 

@@ -164,6 +164,19 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 MotorGhost::_unbindingChangers.push_back(new HighDutyMotorCatch(motorIndex, f));
                 forceIndex++;
             }
+            else if(changer == "MOTORSLIP") {
+                
+                //if user did not specify enough parameters, return
+                if(forceIndex >= SysParams::DynamicRates().dMotorUnbindingCharForce.size())
+                    return;
+                
+                //get param
+                double f = SysParams::DynamicRates().dMotorUnbindingCharForce[forceIndex];
+                
+                //add the rate changer
+                MotorGhost::_unbindingChangers.push_back(new MotorSlip(motorIndex, f));
+                forceIndex++;
+            }
 
             else if(changer == "LOWDUTYCATCHSLIP") {
                 cout << "Catch-slip bond implementation of low duty motor not complete. Exiting." << endl;
@@ -205,6 +218,21 @@ void DRController::initialize(DynamicRateType& drTypes) {
                 
                 //add the rate changer
                 MotorGhost::_walkingChangers.push_back(new HighDutyMotorStall(motorIndex, 0, f));
+                forceIndex++;
+            }
+            else if(changer == "TWOHEADSTALL") {
+                
+                //if user did not specify enough parameters, return
+                if(forceIndex >= SysParams::DynamicRates().dMotorWalkingCharForce.size())
+                    return;
+                
+                //get the param
+                double f = SysParams::DynamicRates().dMotorWalkingCharForce[forceIndex];
+                
+                float walkingrate = SysParams::DynamicRates().dMotorWalkingRate[forceIndex];
+                
+                //add the rate changer
+                MotorGhost::_walkingChangers.push_back(new TwoHeadStall(motorIndex, 0, f, walkingrate));
                 forceIndex++;
             }
             

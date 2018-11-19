@@ -1052,7 +1052,7 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSites() {
     assert((_possibleBindings.size() != 0)
            && "Major bug: Motor binding manager should not have zero binding \
            sites when called to choose a binding site.");
-    std::cout<<"Choose binding sites"<<endl;
+    //std::cout<<"Choose binding sites"<<endl;
     int randomIndex = Rand::randInteger(0, _possibleBindings.size() - 1);
     auto it = _possibleBindings.begin();
 

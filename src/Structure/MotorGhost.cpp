@@ -239,9 +239,6 @@ void MotorGhost::updateReactionRates() {
                            _numHeads, max(0.0, forceDotDirectionC1));
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
-                std::cout<<"Motor WF1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
-                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
-                         forceDotDirectionC2<<" NH "<<_numHeads<<endl;
                 r->setRate(newRate);
                 r->updatePropensity();
 
@@ -255,9 +252,6 @@ void MotorGhost::updateReactionRates() {
                 
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
-                std::cout<<"Motor WB1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
-                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
-                         forceDotDirectionC2<<" NH "<<_numHeads<<endl;
                 r->setRate(newRate);
                 r->updatePropensity();
             }

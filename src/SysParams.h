@@ -237,6 +237,9 @@ struct DyRateParams {
     vector<double> dMotorUnbindingCharForce = {};
     
     /// Option for dynamic walking rate of motors
+    vector<double> dMotorWalkingRate = {};
+    
+    /// Option for dynamic walking rate of motors
     vector<double> dMotorWalkingCharForce = {};
     
     //Qin
