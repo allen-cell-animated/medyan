@@ -246,6 +246,47 @@ namespace mathfunc {
         return delG;
     }
     
+    float delGGenChemI(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu){
+        
+        if(reacN.size() != reacNu.size()){
+            cout << "Reactant copy number vector and stoichiometry vector mismatch" << endl;
+            return 0;
+        }
+        
+        if(prodN.size() != prodNu.size()){
+            cout << "Product copy number vector and stoichiometry vector mismatch" << endl;
+            return 0;
+        }
+        
+        vector<int> reacNminNu;
+        
+        for(int i=0; (i<reacN.size()); i++){
+            reacNminNu.push_back(-reacNu[i]);
+        }
+        
+        vector<int> prodNplusNu;
+        
+        for(int i=0; (i<prodN.size()); i++){
+            prodNplusNu.push_back(+prodNu[i]);
+        }
+        
+        float sumreacs = 0;
+        
+        for (int i=0; (i<reacN.size()); i++){
+            sumreacs += reacNminNu[i]*log(reacN[i]) ;
+        }
+        
+        float sumprods = 0;
+        
+        for (int i=0; (i<prodN.size()); i++){
+            sumprods += prodNplusNu[i]*log(prodN[i]) ;
+        }
+        
+        float delG = delGZero +  sumreacs +  sumprods;
+        
+        return delG;
+    }
+    
     float delGDifChem(species_copy_t reacN, species_copy_t prodN){
         
         if(prodN==0){
@@ -255,6 +296,7 @@ namespace mathfunc {
         // float delG =  - log(reacN) + log(prodN);
         float delG;
         delG = (reacN-1)*log(reacN-1) - reacN*log(reacN) + (prodN+1)*log(prodN+1) - prodN*log(prodN);
+        //delG = log(prodN) -log(reacN);
         
         return delG;
     }

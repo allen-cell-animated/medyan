@@ -1221,6 +1221,8 @@ namespace mathfunc {
     
     float delGGenChem(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
     
+    float delGGenChemI(float delGZero, vector<species_copy_t> reacN, vector<int> reacNu, vector<species_copy_t> prodN, vector<int> prodNu);
+    
     float delGDifChem(species_copy_t reacN ,species_copy_t prodN);
     
     

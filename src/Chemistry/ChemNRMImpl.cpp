@@ -186,6 +186,8 @@ bool ChemNRMImpl::makeStep() {
     //std::cout<<"------------"<<endl;
     //rn->printSelf();
     //std::cout<<"------------"<<endl;
+    ReactionBase* react = rn->getReaction();
+    _dt->updateDelGChem(react);
     rn->makeStep();
     
 

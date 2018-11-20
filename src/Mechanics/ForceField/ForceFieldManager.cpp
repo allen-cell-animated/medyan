@@ -191,6 +191,7 @@ void ForceFieldManager::copyForces(double *fprev, double *f) {
     
 }
 
+#ifdef CROSSCHECK
 void ForceFieldManager::resetForces() {
     
     for(auto b: Bead::getBeads()) {

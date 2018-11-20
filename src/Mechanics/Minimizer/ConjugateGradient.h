@@ -65,7 +65,6 @@ public:
         double dummyForce[1] = {0};
         
         double f = FFM.computeEnergy(coord,dummyForce,0.0);
-        cout<<"it is "<<f<<endl;
         
         
         delete [] coord;
