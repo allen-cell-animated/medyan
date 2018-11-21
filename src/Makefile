@@ -29,11 +29,10 @@ NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker
 DEBUG = -g
-#FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
-FAST_CXX = -g
+FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
 # Compiler flags
-INCLUDES = -I/usr/local/include -I/usr/local/include/boost \
+INCLUDES = -I/usr/local/include -I /a/fs-3/export/home/deepthought2/achansek/boost_1_61_0 \
 -I./ -IStructure -IStructure/Special      \
 -IStructure/SurfaceMesh                   \
 -IChemistry                               \
@@ -54,11 +53,11 @@ INCLUDES_NVCC = $(INCLUDES) -I/usr/local/include -I/usr/local/cuda/include
 
 CXXFLAGS_CXX = $(FAST_CXX) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -Wno-uninitialized -Wno-unknown-warning-option $(INCLUDES)
-CXXFLAGS_NVCC = -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
+CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 -lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linker flags
-LDLIBS = -L/usr/local/lib/ -lboost_system  -L/usr/local/lib/boost/
+LDLIBS = -L/usr/local/lib/ -lboost_system  -L/homes/achansek/boost/boost_1_58_0/boost_files/lib/
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
 LDFLAGS_CXX = $(FAST_CXX) 
 

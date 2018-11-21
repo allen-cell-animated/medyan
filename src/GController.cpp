@@ -247,37 +247,87 @@ CompartmentGrid* GController::initializeGrid() {
 Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
     
     BoundaryType type;
-    BoundaryMove move;
-    
-    if(BTypes.boundaryMove == "NONE") move = BoundaryMove::None;
-    else if(BTypes.boundaryMove == "TOP") {
-        
+    vector<BoundaryMove> move;
+    for(auto bm:BTypes.boundaryMove){
+        if(bm == "NONE") move.push_back(BoundaryMove::None);
+        else if(bm == "LEFT") {
+
 #ifndef CHEMISTRY
-        cout << "Top moving boundary cannot be executed without "
+            cout << "Top moving boundary cannot be executed without "
              << "chemistry enabled. Fix these compilation macros "
              << "and try again." << endl;
         exit(EXIT_FAILURE);
 #endif
-        move = BoundaryMove::Top;
-    }
-    else if(BTypes.boundaryMove == "ALL") {
-        
+            move.push_back(BoundaryMove::Left);
+        }
+        else if(bm == "RIGHT") {
+
 #ifndef CHEMISTRY
-        cout << "Full moving boundary cannot be executed without "
+            cout << "Top moving boundary cannot be executed without "
              << "chemistry enabled. Fix these compilation macros "
              << "and try again." << endl;
         exit(EXIT_FAILURE);
 #endif
-        
-        move = BoundaryMove::All;
-    }
-    //if nothing is specified, don't move boundaries
-    else if(BTypes.boundaryMove == "") {
-        move = BoundaryMove::None;
-    }
-    else {
-        cout << "Given boundary movement not yet implemented. Exiting." << endl;
+            move.push_back(BoundaryMove::Right);
+        }
+        else if(bm == "FRONT") {
+
+#ifndef CHEMISTRY
+            cout << "Top moving boundary cannot be executed without "
+             << "chemistry enabled. Fix these compilation macros "
+             << "and try again." << endl;
         exit(EXIT_FAILURE);
+#endif
+            move.push_back(BoundaryMove::Front);
+        }
+        else if(bm == "BACK") {
+
+#ifndef CHEMISTRY
+            cout << "Top moving boundary cannot be executed without "
+             << "chemistry enabled. Fix these compilation macros "
+             << "and try again." << endl;
+        exit(EXIT_FAILURE);
+#endif
+            move.push_back(BoundaryMove::Back);
+        }
+        else if(bm == "BOTTOM") {
+
+#ifndef CHEMISTRY
+            cout << "Top moving boundary cannot be executed without "
+             << "chemistry enabled. Fix these compilation macros "
+             << "and try again." << endl;
+        exit(EXIT_FAILURE);
+#endif
+            move.push_back(BoundaryMove::Bottom);
+        }
+        else if(bm == "TOP") {
+
+#ifndef CHEMISTRY
+            cout << "Top moving boundary cannot be executed without "
+             << "chemistry enabled. Fix these compilation macros "
+             << "and try again." << endl;
+        exit(EXIT_FAILURE);
+#endif
+            move.push_back(BoundaryMove::Top);
+        }
+        else if(bm == "ALL") {
+
+#ifndef CHEMISTRY
+            cout << "Full moving boundary cannot be executed without "
+             << "chemistry enabled. Fix these compilation macros "
+             << "and try again." << endl;
+        exit(EXIT_FAILURE);
+#endif
+            move.push_back(BoundaryMove::All);
+        }
+            //if nothing is specified, don't move boundaries
+        else if(bm == "") {
+            move.push_back(BoundaryMove::None);
+        }
+        else {
+            cout << "Given boundary movement not yet implemented. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
     }
     
     if(BTypes.boundaryShape == "CUBIC")
@@ -285,7 +335,7 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
     
     else if(BTypes.boundaryShape == "SPHERICAL") {
         
-        if(move != BoundaryMove::None) {
+        if(move[0] != BoundaryMove::None) {
             
             cout << "Moving boundaries for a spherical shape "
                  << "not yet implemented. Exiting." << endl;
@@ -298,7 +348,7 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
     
     else if(BTypes.boundaryShape == "CAPSULE") {
         
-        if(move != BoundaryMove::None) {
+        if(move[0] != BoundaryMove::None) {
             
             cout << "Moving boundaries for a capsule shape "
                  << "not yet implemented. Exiting." << endl;
@@ -310,7 +360,7 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
 
     else if(BTypes.boundaryShape == "CYLINDER") {
         
-        if(move != BoundaryMove::None) {
+        if(move[0] != BoundaryMove::None) {
             
             cout << "Moving boundaries for a cylinder shape "
             << "not yet implemented. Exiting." << endl;
@@ -402,13 +452,16 @@ vector<double> GController::getRandomCenterCoordinates(Compartment* c) {
 }
 
 vector<double> GController::getRandomCoordinates() {
-    
+
     vector<double> coords;
-    
-    coords.push_back(Rand::randDouble(0,1) * _grid[0] * _compartmentSize[0]);
-    coords.push_back(Rand::randDouble(0,1) * _grid[1] * _compartmentSize[1]);
-    coords.push_back(Rand::randDouble(0,1) * _grid[2] * _compartmentSize[2]);
-    
+    auto bboundsinit = SysParams::Boundaries().fraccompartmentspan;
+    coords.push_back(Rand::randDouble(bboundsinit[0][0],
+                                      bboundsinit[1][0]) * _grid[0] * _compartmentSize[0]);
+    coords.push_back(Rand::randDouble(bboundsinit[0][1],
+                                      bboundsinit[1][1]) * _grid[1] * _compartmentSize[1]);
+    coords.push_back(Rand::randDouble(bboundsinit[0][2],
+                                      bboundsinit[1][2]) * _grid[2] * _compartmentSize[2]);
+
     return coords;
 }
 

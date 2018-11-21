@@ -949,7 +949,7 @@ void SystemParser::readMechParams() {
                     }
                 }
                 
-                else if(lineVector[1]=="TRANSFERSHAREAXIS"){
+                /*else if(lineVector[1]=="TRANSFERSHAREAXIS"){
                     if(lineVector.size() > 3) {
                         cout <<
                         "There was an error parsing input file at Chemistry parameters. Exiting."
@@ -973,7 +973,7 @@ void SystemParser::readMechParams() {
                             << endl;
                         exit(EXIT_FAILURE);}
                 }
-            }
+            }*/
             
             else if (lineVector.size() == 5) {
 
@@ -1059,7 +1059,8 @@ void SystemParser::readBoundParams() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
-    
+    vector<int> leftfrontbottom = {0,0,0};
+    vector<int> rightbacktop = {0,0,0};
     string line;
     while(getline(_inputFile, line)) {
         
@@ -1143,9 +1144,93 @@ void SystemParser::readBoundParams() {
             }
             else {}
         }
+        else if(line.find("BOUNDARYMOVE") != string::npos){
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout << "A boundary move type needs to be specified. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                //set planes to move and transfershare axis
+                if(lineVector[1] == "LEFT")
+                    leftfrontbottom[0] = 1;
+                else if(lineVector[1] == "BOTTOM")
+                    leftfrontbottom[1] = 1;
+                else if(lineVector[1] == "FRONT")
+                    leftfrontbottom[2] = 1;
+                else if(lineVector[1] == "RIGHT")
+                    rightbacktop[0] = 1;
+                else if(lineVector[1] == "TOP")
+                    rightbacktop[1] = 1;
+                else if(lineVector[1] == "BACK")
+                    rightbacktop[2] = 1;
+            }
+        }
+        else if(line.find("TRANSFERSHAREAXIS") != string::npos){
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 3) {
+                cout <<
+                     "There was an error parsing input file at Chemistry parameters. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+
+            else{
+                cout<<"TRANSFERSHARE AXIS "<<lineVector[2]<<endl;
+                if(lineVector[2]=="X")
+                    BParams.transfershareaxis=0;
+                else if(lineVector[2]=="Y")
+                    BParams.transfershareaxis=1;
+                else if(lineVector[2]=="Z")
+                    BParams.transfershareaxis=2;
+                else if(lineVector[2]=="RADIAL") {
+                    BParams.transfershareaxis = 3;
+                    cout<<"RADIAL transfer not implemented. Change paramters. Exiting"
+                            "."<<endl;
+                    exit(EXIT_FAILURE);
+                }
+                else{
+                    cout << "There was an error parsing input file at Chemistry parameters. Exiting."
+                         << endl;
+                    exit(EXIT_FAILURE);}
+            }
+        }
+        else if(line.find("FILCREATIONBOUNDS") != string::npos){
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size()!=7) {
+                cout << "FILCREATIONBOUNDS should have 6 elements. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
+            else{
+                vector<double> tempvec;
+                vector<vector<double>> tempbounds;
+                for(int i = 1;i<4;i++)
+                    tempvec.push_back(atof((lineVector[i].c_str())));
+                tempbounds.push_back(tempvec);
+                tempvec.clear();
+                for(int i = 4;i<7;i++)
+                    tempvec.push_back(atof((lineVector[i].c_str())));
+                tempbounds.push_back(tempvec);
+                tempvec.clear();
+                BParams.fraccompartmentspan = tempbounds;
+            }
+        }
         
         else {}
     }
+
+    for(int i = 0; i < 3; i++){
+        int addthemup = leftfrontbottom[i] + rightbacktop[i];
+        if(addthemup > 0)
+            BParams.transfershareaxis = i;
+        if(addthemup == 2)
+            BParams.planestomove = 2;
+        else if(leftfrontbottom[i] == 1)
+            BParams.planestomove = 1;
+        else if(rightbacktop[i] == 1)
+            BParams.planestomove = 0;
+    }
+//    std::cout<<BParams.transfershareaxis<<" "<<BParams.planestomove<<endl;
     //Set system parameters
     SysParams::BParams = BParams;
 }
@@ -1336,7 +1421,7 @@ BoundaryType SystemParser::readBoundaryType() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2) {
-                BType.boundaryMove = lineVector[1];
+                BType.boundaryMove.push_back(lineVector[1]);
             }
         }
         //Qin, add Compartment Scaling
@@ -1809,7 +1894,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
         else if(line.find("SPECIESBULK") != string::npos) {
         
             vector<string> lineVector = split<string>(line);
-            if(lineVector.size() !=  6) {
+            if(lineVector.size() !=  6 && lineVector.size() !=  8) {
                 cout << "Error reading a bulk species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1829,10 +1914,32 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 else {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
-                
-                chem.speciesBulk.push_back(tuple<string, int, double, double, string>
-                    (lineVector[1], atoi(lineVector[2].c_str()),
-                     atof(lineVector[3].c_str()), atof(lineVector[4].c_str()), lineVector[5]));
+
+                chem.speciesBulk.push_back(tuple<string, int, double, double,
+                        string, string, double>(lineVector[1], atoi(lineVector[2].c_str()),
+                                atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
+                                lineVector[5], "NONE", 0.0));
+            }
+            else if (lineVector.size() == 8) {
+
+                if(lineVector[5] != "CONST" && lineVector[5] != "REG") {
+
+                    cout << "Option for bulk species not valid. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+
+                chem.speciesBulk.push_back(tuple<string, int, double, double,
+                        string, string, double>(lineVector[1], atoi(lineVector[2].c_str()),
+                                atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
+                                lineVector[5],lineVector[6], atof(lineVector[7].c_str())));
             }
             else {}
         }
@@ -1841,7 +1948,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
             vector<string> lineVector = split<string>(line);
             
 
-            if(lineVector.size() >  8 || lineVector.size() < 7) {
+            if(lineVector.size() >  9 || lineVector.size() < 7) {
                 cout << "Error reading a diffusing species. Exiting." << endl;
                 exit(EXIT_FAILURE);
             }
@@ -1849,7 +1956,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
                 if(lineVector[6] != "AVG") {
                     
-                    cout << "Too many arguments for a non AVG-qualified diffusing species. Exiting." << endl;
+                    cout << "Too many arguments for a non AVG-qualified diffusing "
+                            "species. Exiting." << endl;
                     exit(EXIT_FAILURE);
                 }
                 
@@ -1860,11 +1968,13 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 else {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
-                
-                chem.speciesDiffusing.push_back(tuple<string, int, double, double, double, string, int>
+                if(lineVector[6] == "AVG")
+                    chem.speciesDiffusing.push_back(tuple<string, int, double, double,
+                            double, string, int, string, double>
                     (lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
-                     atof(lineVector[5].c_str()), lineVector[6], atoi(lineVector[7].c_str())));
+                     atof(lineVector[5].c_str()), lineVector[6], atoi(lineVector[7].c_str
+                             ()),"NONE", 0.0));
             }
             else if (lineVector.size() == 7) {
                 
@@ -1882,10 +1992,35 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
                 
-                chem.speciesDiffusing.push_back(tuple<string, int, double, double, double, string, int>
+                chem.speciesDiffusing.push_back(tuple<string, int, double, double,
+                        double, string, int, string, double>
                      (lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
-                     atof(lineVector[5].c_str()), lineVector[6], 0));
+                     atof(lineVector[5].c_str()), lineVector[6], 0, "NONE", 0.0));
+            }
+            else if (lineVector.size() == 9) {
+
+                if(lineVector[6] != "REG") {
+
+                    cout << "Not enough arguments for a non REG-qualified diffusing species. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+
+                if(find(allSpeciesNames.begin(), allSpeciesNames.end(), lineVector[1]) != allSpeciesNames.end()) {
+                    cout << "Duplicate species names are not allowed. Exiting." << endl;
+                    exit(EXIT_FAILURE);
+                }
+                else {
+                    allSpeciesNames.push_back(lineVector[1]);
+                }
+
+                chem.speciesDiffusing.push_back(tuple<string, int, double, double,
+                        double, string, int, string, double>
+                                                        (lineVector[1], atoi(lineVector[2].c_str()),
+                                                         atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
+                                                         atof(lineVector[5].c_str()),
+                                                         lineVector[6], 0, lineVector[7],
+                                                         atof(lineVector[8].c_str())));
             }
             else {}
         }

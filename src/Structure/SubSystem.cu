@@ -425,6 +425,13 @@ void SubSystem::updateBindingManagers() {
 
 #ifdef HYBRID_NLSTENCILLIST
         C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencil();
+        for(auto &manager : C->getFilamentBindingManagers()) {
+#ifdef NLSTENCILLIST
+            BranchingManager* bManager;
+            if(bManager = dynamic_cast<BranchingManager *>(manager.get()))
+                manager->updateAllPossibleBindingsstencil();
+#endif
+        }
 #else
         for(auto &manager : C->getFilamentBindingManagers()) {
 #ifdef NLORIGINAL

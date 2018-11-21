@@ -293,6 +293,14 @@ void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSi
                 else
                     inZone = false;
             }
+            else if(_nucleationZone == NucleationZoneType::RIGHTBOUNDARY){
+                double dis = _subSystem->getBoundary()->getboundaryelementcoord(1) -
+                        coord[0];
+                if(dis > 0 && dis < _nucleationDistance)
+                    inZone = true;
+                else
+                    inZone = false;
+            }
 
             else inZone = true;
         }
@@ -352,7 +360,7 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
                             inZone = false;
                     }
                         //Qin, add SIDEBOUNDARY that check the distance to the side of cylinder
-                    else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
+                else if(_nucleationZone == NucleationZoneType::SIDEBOUNDARY){
                         if(_subSystem->getBoundary()->sidedistance(coord) < _nucleationDistance){
                             inZone = true;
                             //cout << "x= " << coord[1] << "y= " << coord[2] << endl;
@@ -362,6 +370,15 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
                         else
                             inZone = false;
                     }
+                    else if(_nucleationZone == NucleationZoneType::RIGHTBOUNDARY){
+                        double dis = _subSystem->getBoundary()->getboundaryelementcoord(1) -
+                                     coord[0];
+                        if(dis > 0 && dis < _nucleationDistance)
+                            inZone = true;
+                        else
+                            inZone = false;
+                    }
+
                     else inZone = true;
                 }
                 else

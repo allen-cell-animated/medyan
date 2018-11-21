@@ -1261,7 +1261,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     sconvergencecheck = true;
     //calculate first lambda
     double lambda = LAMBDAMAX;
-    std::cout<<"safe 0"<<endl;
+//    std::cout<<"safe 0"<<endl;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
     cconvergencecheck = new bool[1];
@@ -1281,7 +1281,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     //safe backtracking loop
     while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
         //new energy when moved by lambda
-        std::cout<<"safe z"<<endl;
+//        std::cout<<"safe z"<<endl;
         iter++;
         double energyLambda = FFM.computeEnergy(coord, force, lambda);
 #ifdef DETAILEDOUTPUT_ENERGY
@@ -1310,7 +1310,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
                 lambda = MAXDIST / maxF();
                 sconvergencecheck = true;
             }
-            std::cout<<"safe energyChange "<<energyChange<<" lambda "<<lambda<<endl;
+//            std::cout<<"safe energyChange "<<energyChange<<" lambda "<<lambda<<endl;
         }
 #endif
     }

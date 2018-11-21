@@ -91,7 +91,8 @@ struct MechParams {
     double pinDistance = 250; ///< 250nm pinning distance for now
     double pinK = 0.0;       ///< Tethered stiffness
     double pinTime = 0.0;    ///< Time at which to pin the filaments
-    int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
+    //int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols
+/// should be executed.
     //@}
 
     //vectorization
@@ -208,6 +209,8 @@ struct GeoParams {
     /// Minimum monomer length of a cylinder is preset
     int minCylinderNumMon = 3;
     //@}
+
+
 };
 
 /// Struct to hold Boundary parameters for the system
@@ -231,6 +234,11 @@ struct BoundParams {
     double moveStartTime = 0;
     double moveEndTime = 0;
     //@}
+    int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
+    int planestomove = -1; //tracks if both (2), left/bottom/front (1), or
+    // right/top/back(0) planes should be moved.
+    vector<vector<double>> fraccompartmentspan = { { 0, 0, 0 },
+                                                   { 0.999, 0.999, 0.999 } };
   
 };
 

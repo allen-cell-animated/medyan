@@ -29,7 +29,7 @@ class BoundaryCubic: public Boundary {
 public:
     ///Default constructor, this will create a cube with given
     ///corners at edges of current CompartmentGrid
-    BoundaryCubic(SubSystem* s, BoundaryMove move);
+    BoundaryCubic(SubSystem* s, vector<BoundaryMove> move);
     
     virtual bool within(Compartment* C);
     virtual bool within(const vector<double>& coordinates);
@@ -39,12 +39,16 @@ public:
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
     virtual double sidedistance(const vector<double>& coordinates);
+
+    virtual double getboundaryelementcoord(int i);
     
-    virtual void move(double dist);
+    virtual void move(vector<double> dist);
     
     ///Returns the normal inward at this coordinate
     //rule - takes the closest wall's normal inward.
     virtual vector<double> normal(vector<double>& coordinates);
+
+    virtual void volume();
 };
 
 /// A spherical Boundary implementation.
@@ -53,7 +57,7 @@ class BoundarySpherical: public Boundary {
 public:
     ///Default constructor, will create an sphere with given diameter
     ///@param diameter - diameter of sphere
-    BoundarySpherical(SubSystem* s, double diameter, BoundaryMove move);
+    BoundarySpherical(SubSystem* s, double diameter, vector<BoundaryMove> move);
     
     ///@note - not yet implemented correctly. Essentially checks
     ///        if the midpoint of the compartment is within the boundary.
@@ -65,12 +69,14 @@ public:
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
     virtual double sidedistance(const vector<double>& coordinates);
-    
+    virtual double getboundaryelementcoord(int i){};
     ///@note - not yet implemented.
-    virtual void move(double dist) {}
+    virtual void move(vector<double> dist) {}
     
     ///Returns the normal inward at this coordinate
     virtual vector<double> normal(vector<double>& coordinate);
+
+    virtual void volume();
 };
 
 /// A capsule Boundary implementation.
@@ -81,7 +87,7 @@ public:
     /// to current grid.
     /// @param diameter - diameter of capsule (will set half sphere radii as well as
     /// cylinder radius)
-    BoundaryCapsule(SubSystem* s, double diameter, BoundaryMove move);
+    BoundaryCapsule(SubSystem* s, double diameter, vector<BoundaryMove> move);
     
     ///@note - not yet implemented correctly. Essentially checks
     ///        if the midpoint of the compartment is within the boundary.
@@ -89,17 +95,19 @@ public:
     virtual bool within(const vector<double>& coordinates);
     
     virtual double distance(const vector<double>& coordinates);
-    
+    virtual double getboundaryelementcoord(int i){};
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
     virtual double sidedistance(const vector<double>& coordinates);
     
     ///@note - Not yet implemented.
-    virtual void move(double dist) {}
+    virtual void move(vector<double> dist) {}
     
     ///Returns the normal inward at this coordinate
     //@note - Not yet implemented.
     virtual vector<double> normal(vector<double>& coordinate) {return vector<double>{0,0,0};}
+
+    virtual void volume();
 };
 
 /// A cylinder Boundary implementation.
@@ -110,7 +118,7 @@ public:
     /// to current grid.
     /// @param diameter - diameter of capsule (will set half sphere radii as well as
     /// cylinder radius)
-    BoundaryCylinder(SubSystem* s, double diameter, BoundaryMove move);
+    BoundaryCylinder(SubSystem* s, double diameter, vector<BoundaryMove> move);
     
     ///@note - not yet implemented correctly. Essentially checks
     ///        if the midpoint of the compartment is within the boundary.
@@ -118,17 +126,19 @@ public:
     virtual bool within(const vector<double>& coordinates);
     
     virtual double distance(const vector<double>& coordinates);
-    
+    virtual double getboundaryelementcoord(int i){};
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
     virtual double sidedistance(const vector<double>& coordinates);
     
     ///@note - Not yet implemented.
-    virtual void move(double dist) {}
+    virtual void move(vector<double> dist) {}
     
     ///Returns the normal inward at this coordinate
     //@note - Not yet implemented.
     virtual vector<double> normal(vector<double>& coordinate) {return vector<double>{0,0,0};}
+
+    virtual void volume();
 };
 
 

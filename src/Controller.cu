@@ -388,7 +388,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 
 void Controller::activatedeactivateComp(){
 
-    if(SysParams::Mechanics().transfershareaxis>=0){
+    if(SysParams::Boundaries().transfershareaxis>=0){
         fCompmap.clear();
         bCompmap.clear();
         activatecompartments.clear();
@@ -424,100 +424,189 @@ void Controller::activatedeactivateComp(){
 //            std::cout<<endl;
     }
 }
+
 void Controller::ControlfrontbackEndComp(){
     Compartment* maxcomp=NULL;
     Compartment* mincomp=NULL;
-//    Bead* minbead=NULL;
-
+    int tsaxis = SysParams::Boundaries().transfershareaxis;
+    int planestomove = SysParams::Boundaries().planestomove;
+    bool maxcompstate = false;
+    bool mincompstate = false;
+    if(planestomove == 2 || planestomove == 0) maxcompstate = true;
+    if(planestomove == 2 || planestomove == 1) mincompstate = true;
+    double systemspan = 0.0;
+    double cmpsize = 0.0;
+    if(tsaxis == 0)
+    {systemspan = SysParams::Geometry().NX * SysParams::Geometry()
+                                                              .compartmentSizeX;
+    cmpsize = SysParams::Geometry().compartmentSizeX;}
+    else if(tsaxis == 1) {
+        systemspan = SysParams::Geometry().NY * SysParams::Geometry()
+                .compartmentSizeY;
+        cmpsize = SysParams::Geometry().compartmentSizeY;
+    }
+    else if(tsaxis == 2) {
+        systemspan = SysParams::Geometry().NZ * SysParams::Geometry().compartmentSizeZ;
+        cmpsize = SysParams::Geometry().compartmentSizeZ;
+    }
+    //copy vector to prevcopy
+    bounds_prev[0] = bounds[0];bounds_prev[1] = bounds[1];
+    bounds[0] = 0.0; bounds[1] =  systemspan;
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         auto cyls=C->getCylinders();
         if(cyls.size()>0){
-            if(maxcomp==NULL)
-                maxcomp=C;
-            else{
-                auto mcoord=maxcomp->coordinates();
-                auto ccord=C->coordinates();
-                if(mcoord[SysParams::Mechanics().transfershareaxis]<ccord[SysParams::Mechanics().transfershareaxis])
-                    maxcomp=C;
+            //maxcomp refers to the compartment on the right extreme of reaction volume
+            // that represents the current chemical boundary of the system.
+            if(maxcompstate) {
+                if (maxcomp == NULL)
+                    maxcomp = C;
+                else {
+                    //get current maxcomp coordinates
+                    auto mcoord = maxcomp->coordinates();
+                    //get compartment coorinates
+                    auto ccord = C->coordinates();
+                    //compare to see if the compartment is further to the right of maxcomp.
+                    if (mcoord[SysParams::Boundaries().transfershareaxis] <
+                        ccord[SysParams::Boundaries()
+                                .transfershareaxis])
+                        maxcomp = C;
+                }
             }
-            if(mincomp==NULL)
-                mincomp=C;
-            else{
-                auto mcoord=mincomp->coordinates();
-                auto ccord=C->coordinates();
-                if(mcoord[SysParams::Mechanics().transfershareaxis]>ccord[SysParams::Mechanics().transfershareaxis])
-                    mincomp=C;
+            //mincomp refers to the compartment on the left extreme of reaction volume
+            // that represents the current chemical boundary of the system.
+            if(mincompstate) {
+                if (mincomp == NULL)
+                    mincomp = C;
+                else {
+                    auto mcoord = mincomp->coordinates();
+                    auto ccord = C->coordinates();
+                    //compare to see if the compartment is further to the left of mincomp.
+                    if (mcoord[SysParams::Boundaries().transfershareaxis] >
+                        ccord[SysParams::Boundaries().transfershareaxis])
+                        mincomp = C;
+                }
             }
         }
     }
 
-    // front end
-    auto cmaxcomp=maxcomp->coordinates();
-    for(auto C:maxcomp->getNeighbours()){
-        auto cC=C->coordinates();
-        if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis])
-            maxcomp=C;
-    }
-    cmaxcomp=maxcomp->coordinates();
-    for(auto C:maxcomp->getNeighbours()){
-        auto cC=C->coordinates();
-        if(cmaxcomp[SysParams::Mechanics().transfershareaxis]<cC[SysParams::Mechanics().transfershareaxis])
-            maxcomp=C;
-    }
-    cmaxcomp=maxcomp->coordinates();
-    assert((maxcomp!=NULL) && "Non existent maxcomp. Exiting.");
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-        auto cC=C->coordinates();
-
-        if(cC[SysParams::Mechanics().transfershareaxis]>cmaxcomp[SysParams::Mechanics().transfershareaxis]){
-            if(C->isActivated())
-                fCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
+    if(maxcompstate) {
+        std::cout<<"1 maxcomp "<<maxcomp->coordinates()[0]<<endl;
+        // front end is defined two compartments away from the current maxcomp.
+        auto cmaxcomp = maxcomp->coordinates();
+        //get the neighbor who is to the right of maxcomp.
+        for (auto C:maxcomp->getNeighbours()) {
+            auto cC = C->coordinates();
+            if (cmaxcomp[SysParams::Boundaries().transfershareaxis] <
+                cC[SysParams::Boundaries().transfershareaxis])
+                maxcomp = C;
         }
-        else{
-            if(!(C->isActivated()))
-                activatecompartments.push_back(C);
+        std::cout<<"2 maxcomp "<<maxcomp->coordinates()[0]<<endl;
+        cmaxcomp = maxcomp->coordinates();
+        //get the neighbor who is to the right of maxcomp.
+        for (auto C:maxcomp->getNeighbours()) {
+            auto cC = C->coordinates();
+            if (cmaxcomp[SysParams::Boundaries().transfershareaxis] <
+                cC[SysParams::Boundaries().transfershareaxis])
+                maxcomp = C;
         }
-    }
-    //back end
-    auto cmincomp=mincomp->coordinates();
-    for(auto C:mincomp->getNeighbours()){
-        auto cC=C->coordinates();
-        if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis])
-            mincomp=C;
-    }
-    cmincomp=mincomp->coordinates();
-    for(auto C:mincomp->getNeighbours()){
-        auto cC=C->coordinates();
-        if(cmincomp[SysParams::Mechanics().transfershareaxis]>cC[SysParams::Mechanics().transfershareaxis])
-            mincomp=C;
-    }
-    cmincomp=mincomp->coordinates();
-    assert(mincomp!=NULL && "Non existent mincomp. Exiting.");
-    for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-        auto cC=C->coordinates();
-        if(cC[SysParams::Mechanics().transfershareaxis]<cmincomp[SysParams::Mechanics().transfershareaxis]){
-            auto it = std::find(activatecompartments.begin(), activatecompartments.end(), C);
-            if(it!=activatecompartments.end())
-                activatecompartments.erase(it);
-            if(C->isActivated()){
-                bCompmap.insert(pair<int,Compartment*>(cC[SysParams::Mechanics().transfershareaxis],C));
+        std::cout<<"3 maxcomp "<<maxcomp->coordinates()[0]<<endl;
+        cmaxcomp = maxcomp->coordinates();
+        assert((maxcomp != NULL) && "Non existent maxcomp. Exiting.");
+        //Loop through compartments
+        for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+            auto cC = C->coordinates();
+            //if compartment is to the right of maxcomp and activated, add to a vector to
+            // deactivate later.
+            if (cC[SysParams::Boundaries().transfershareaxis] >
+                cmaxcomp[SysParams::Boundaries().transfershareaxis]) {
+                if (C->isActivated())
+                    fCompmap.insert(pair<int, Compartment *>(
+                            cC[SysParams::Boundaries().transfershareaxis], C));
+            }
+                //if compartment is to the left of maxcomp and not active, add to a vector to
+                // activate later.
+            else {
+                if (!(C->isActivated()))
+                    activatecompartments.push_back(C);
             }
         }
+        bounds[1] = maxcomp->coordinates()[SysParams::Boundaries().transfershareaxis] +
+                cmpsize/2;
     }
-    std::cout<<"Maxcomp "<<maxcomp->coordinates()[SysParams::Mechanics().transfershareaxis]<<" ";
-    std::cout<<"Mincomp "<<mincomp->coordinates()[SysParams::Mechanics().transfershareaxis]<<endl;
-
+    //back end is defined as the compartment that is two compartments to the left of
+    // mincomp.
+    if(mincompstate) {
+        auto cmincomp = mincomp->coordinates();
+        //get the neighbor who is to the left of mincomp.
+        for (auto C:mincomp->getNeighbours()) {
+            auto cC = C->coordinates();
+            if (cmincomp[SysParams::Boundaries().transfershareaxis] >
+                cC[SysParams::Boundaries().transfershareaxis])
+                mincomp = C;
+        }
+        cmincomp = mincomp->coordinates();
+        //get the neighbor who is to the left of mincomp.
+        for (auto C:mincomp->getNeighbours()) {
+            auto cC = C->coordinates();
+            if (cmincomp[SysParams::Boundaries().transfershareaxis] >
+                cC[SysParams::Boundaries().transfershareaxis])
+                mincomp = C;
+        }
+        cmincomp = mincomp->coordinates();
+        assert(mincomp != NULL && "Non existent mincomp. Exiting.");
+        //Loop through compartments
+        for (auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
+            auto cC = C->coordinates();
+            //if compartment C is to the left of mincomp and was added to
+            // activatecompartments vector, remove. If it is already active, add to a vector
+            // to deactivate later.
+            if (cC[SysParams::Boundaries().transfershareaxis] <
+                cmincomp[SysParams::Boundaries().transfershareaxis]) {
+                auto it = std::find(activatecompartments.begin(),
+                                    activatecompartments.end(), C);
+                if (it != activatecompartments.end())
+                    activatecompartments.erase(it);
+                if (C->isActivated()) {
+                    bCompmap.insert(pair<int, Compartment *>(
+                            cC[SysParams::Boundaries().transfershareaxis], C));
+                }
+            }
+        }
+        bounds[0] = mincomp->coordinates()[SysParams::Boundaries().transfershareaxis] -
+                cmpsize/2;
+    }
+    //print the maximum (right boundary) and minimum (left boundary) compartment spans.
+    std::cout<<"Maxbound "<<bounds[1]<<" Minbound "<<bounds[0]<<endl;
 }
 
 void Controller::moveBoundary(double deltaTau) {
-
     //calculate distance to move
     double dist = SysParams::Boundaries().moveSpeed * deltaTau;
-    if(abs(dist)>0){
+
+    if(SysParams::Boundaries().transfershareaxis>=0){
+        vector<double> distvec= {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+        if(SysParams::Boundaries().transfershareaxis == 0){
+            distvec[0] = bounds[0] - bounds_prev[0];
+            distvec[1] = bounds[1] - bounds_prev[1];
+        }
+        else if(SysParams::Boundaries().transfershareaxis == 1){
+            distvec[2] = bounds[0] - bounds_prev[0];
+            distvec[3] = bounds[1] - bounds_prev[1];
+        }
+        else if(SysParams::Boundaries().transfershareaxis == 2){
+            distvec[4] = bounds[0] - bounds_prev[0];
+            distvec[5] = bounds[1] - bounds_prev[1];
+        }
+        _subSystem->getBoundary()->move(distvec);
+    }
+        //deprecated not good to use.
+    else if(abs(dist)>0){
+        vector<double> distvec = {dist, -dist, dist, -dist, dist, -dist};
         //move it
         if(tau() >= SysParams::Boundaries().moveStartTime &&
            tau() <= SysParams::Boundaries().moveEndTime)
-            _subSystem->getBoundary()->move(dist);
+            _subSystem->getBoundary()->move(distvec);
 
         //activate, deactivate necessary compartments
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
@@ -533,6 +622,8 @@ void Controller::moveBoundary(double deltaTau) {
             }
         }
     }
+    //calculate system volume.
+    _subSystem->getBoundary()->volume();
 }
 
 void Controller::executeSpecialProtocols() {
@@ -853,6 +944,26 @@ void Controller::run() {
     minimizationtime += elapsed_runm2.count();
     std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
 
+    //activate/deactivate compartments
+    mins = chrono::high_resolution_clock::now();
+    //set initial values of variables.
+    int tsaxis = SysParams::Boundaries().transfershareaxis;
+    double systemspan = 0.0;
+    if(tsaxis == 0)
+        systemspan = SysParams::Geometry().NX * SysParams::Geometry().compartmentSizeX;
+    else if(tsaxis == 1)
+        systemspan = SysParams::Geometry().NY * SysParams::Geometry().compartmentSizeY;
+    else if(tsaxis == 2)
+        systemspan = SysParams::Geometry().NZ * SysParams::Geometry().compartmentSizeZ;
+    //copy vector to prevcopy
+    bounds_prev[1] = systemspan;bounds_prev[0] = 0.0;
+    bounds[1] = systemspan; bounds[0] =  0.0;
+    activatedeactivateComp();
+    moveBoundary(0.0);
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runspl(mine - mins);
+    specialtime += elapsed_runspl.count();
+
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
     updatePositions();
@@ -899,6 +1010,7 @@ void Controller::run() {
             chrono::duration<double> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
 
+            //print output if chemistry fails.
             mins = chrono::high_resolution_clock::now();
             if(var) {
                 for(auto o: _outputs) o->print(i);
@@ -928,86 +1040,15 @@ void Controller::run() {
     //@}
 #endif
             //run mcontroller, update system
-//            std::cout<<endl;
-//            std::cout<<"TIME "<<tau()<<endl;
-//            std::cout<<endl;
             if(tauLastMinimization >= _minimizationTime) {
-                //@{ check begins
- /*               cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
-                Cylinder** Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-                CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
-                double* coord = CUDAcommon::serlvars.coord;
-                std::cout<<"2 Total Cylinders "<<Cylinder::getCylinders().size()<<" Beads "
-                        ""<<Bead::getBeads().size()<<endl;
-                for(auto cyl:Cylinder::getCylinders()){
-                    int i = cyl->_dcIndex;
-                    int id1 = cylindervec[i].ID;
-                    int id2 = Cylinderpointervec[i]->getID();
-                    auto xx = ccylindervec[i]->getCylinder();
-                    int id3 = ccylindervec[i]->getCylinder()->getID();
-                    if(id1 != id2 || id2 != id3 || id3 != id1)
-                        std::cout<<id1<<" "<<id2<<" "<<id3<<endl;
-                    auto b1 = cyl->getFirstBead();
-                    auto b2 = cyl->getSecondBead();
-                    long idx1 = b1->_dbIndex;
-                    long idx2 = b2->_dbIndex;
-                    cylinder c = cylindervec[i];
-                    std::cout << "2 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
-                              " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
-                    auto classcoordb1 = b1->coordinate;
-                    auto classcoordb2 = b2->coordinate;
-                    double veccoordv1[] = {coord[3 * idx1], coord[3 * idx1 + 1], coord[3 *
-                            idx1 + 2]};
-                    double veccoordv2[] = {coord[3 * idx2], coord[3 * idx2 + 1], coord[3 *
-                            idx2 + 2]};
-                    if(c.bindices[0] != idx1 || c.bindices[1] != idx2) {
 
-                        std::cout << "Bead " << classcoordb1[0] << " " << classcoordb1[1] << " "
-                                "" << classcoordb1[2] << " " << " " << classcoordb2[0] << " "
-                                          "" <<classcoordb2[1] << " " << classcoordb2[2] << " idx "
-                                  << b1->_dbIndex << " "
-                                          "" << b2->_dbIndex << endl;
-
-                        std::cout << veccoordv1[0] << " " << veccoordv1[1] << " "
-                                  << veccoordv1[2] << " " << veccoordv2[0] << " " <<
-                                  veccoordv2[1]<< " " << veccoordv2[2] << endl;
-                    }
-
-                    double dis1 = twoPointDistancesquared(veccoordv1,classcoordb1.data());
-                    double dis2 = twoPointDistancesquared(veccoordv2,classcoordb2.data());
-                    bool printstatus = false;
-                    if(veccoordv1[0] == -1 || veccoordv1[1] == -1 || veccoordv1[2] == -1
-                       || veccoordv2[0] == -1 || veccoordv2[1] == -1 || veccoordv2[2] == -1 ){
-                        printstatus = true;
-                        std::cout<<"reset coordinates getting printed "<<endl;
-                    }
-
-                    if(dis1 !=0 || dis2!=0||printstatus){
-                        std::cout << "Bead coord mismatch " << classcoordb1[0] << " " <<
-                                                                        classcoordb1[1] << " "
-                                "" << classcoordb1[2] << " " << " " << classcoordb2[0] << " "
-                                          "" <<classcoordb2[1] << " " << classcoordb2[2] << " idx "
-                                  << b1->_dbIndex << " "
-                                          "" << b2->_dbIndex << endl;
-
-                        std::cout << veccoordv1[0] << " " << veccoordv1[1] << " "
-                                  << veccoordv1[2] << " " << veccoordv2[0] << " " <<
-                                  veccoordv2[1]<< " " << veccoordv2[2] << endl;
-                    }
-                }*/
-/*                std::cout<<"printing bead indices"<<endl;
-                for(auto b : Bead::getBeads()){
-                    std::cout<<b->_dbIndex<<" ";
-                }
-                std::cout<<endl;*/
-                //@ check ends
                 mins = chrono::high_resolution_clock::now();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
-
+                //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
                 tauLastMinimization = 0.0;
@@ -1015,7 +1056,7 @@ void Controller::run() {
                 chrono::duration<double> elapsed_rxn2(mine - mins);
                 rxnratetime += elapsed_rxn2.count();
             }
-
+            //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {
                 mins = chrono::high_resolution_clock::now();
                 cout << "Current simulation time = "<< tau() << endl;
@@ -1027,11 +1068,10 @@ void Controller::run() {
                 outputtime += elapsed_runout2.count();
             }
 #elif defined(MECHANICS)
-
             for(auto o: _outputs) o->print(i);
             i++;
-
 #endif
+            //update reaction rates
             mins = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
             updateReactionRates();
@@ -1040,7 +1080,16 @@ void Controller::run() {
             chrono::duration<double> elapsed_rxn3(mine - mins);
             rxnratetime += elapsed_rxn3.count();
 #ifdef CHEMISTRY
-            // update neighbor lists
+            //activate/deactivate compartments
+            mins = chrono::high_resolution_clock::now();
+            activatedeactivateComp();
+            //move the boundary
+            moveBoundary(tau() - oldTau);
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed_runspl(mine - mins);
+            specialtime += elapsed_runspl.count();
+
+            // update neighbor lists & Binding Managers
             if(tauLastNeighborList >= _neighborListTime) {
                 mins = chrono::high_resolution_clock::now();
                 updateNeighborLists();
@@ -1049,15 +1098,8 @@ void Controller::run() {
                 chrono::duration<double> elapsed_runnl2(mine - mins);
                 nltime += elapsed_runnl2.count();
             }
-
-
+            //Special protocols
             mins = chrono::high_resolution_clock::now();
-
-            //activate/deactivate compartments
-            activatedeactivateComp();
-            //move the boundary
-            moveBoundary(tau() - oldTau);
-
             //special protocols
             executeSpecialProtocols();
             mine= chrono::high_resolution_clock::now();
@@ -1141,16 +1183,19 @@ void Controller::run() {
 #endif
 
 #ifdef CHEMISTRY
+            //activate/deactivate compartments
+            activatedeactivateComp();
+            //move the boundary
+            moveBoundary(tau() - oldTau);
+
             // update neighbor lists
             if(stepsLastNeighborList >= _neighborListSteps) {
                 updateNeighborLists();
                 stepsLastNeighborList = 0;
             }
 
-            //move the boundary
-            moveBoundary(tau() - oldTau);
-            //activate/deactivate compartments
-            activatedeactivateComp();
+
+
             //special protocols
             executeSpecialProtocols();
         }

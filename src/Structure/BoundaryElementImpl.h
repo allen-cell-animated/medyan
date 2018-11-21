@@ -571,7 +571,9 @@ public:
     virtual double stretchedDistance(double const *point,
                                      double const *force, double d) {return 0.0;};
     virtual const vector<double> normal(const double *point) {vector<double> a; return a;};
-    virtual const void elementeqn(double* var){} ;
+    virtual const void elementeqn(double* var){cout<<" element eqn not implemented for "
+                "CylindricalXYZ. Exiting."<<endl;
+    exit(EXIT_FAILURE);} ;
 
     //@}
 

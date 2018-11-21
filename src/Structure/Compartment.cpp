@@ -18,8 +18,6 @@
 //REMOVE LATER
 #include "ChemNRMImpl.h"
 
-
-
 Compartment& Compartment::operator=(const Compartment &other) {
     
     _species.clear();
@@ -435,7 +433,7 @@ void Compartment::activate(ChemSim* chem) {
     //add all diffusion reactions
     auto rxns = generateAllpairsDiffusionReactions();
     for(auto &r : rxns) chem->addReaction(r);
-    shareSpecies(SysParams::Mechanics().transfershareaxis);
+    shareSpecies(SysParams::Boundaries().transfershareaxis);
     
     for (auto &C: _neighbours){
         if(C->isActivated()){
@@ -464,7 +462,7 @@ void Compartment::deactivate(ChemSim* chem) {
     //set marker
     _activated = false;
     
-    transferSpecies(SysParams::Mechanics().transfershareaxis);
+    transferSpecies(SysParams::Boundaries().transfershareaxis);
     removeAllDiffusionReactions(chem);
 }
 

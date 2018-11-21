@@ -44,7 +44,7 @@ class Cylinder;
 
 ///Enumeration for nucleation zone type. Used by BranchingManager.
 enum NucleationZoneType {
-    ALL, BOUNDARY, TOPBOUNDARY, SIDEBOUNDARY
+    ALL, BOUNDARY, TOPBOUNDARY, SIDEBOUNDARY, RIGHTBOUNDARY
 };
 
 /// To store and manage binding reactions.

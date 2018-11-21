@@ -253,7 +253,7 @@ void Cylinder::updatePosition() {
         
         auto newCCylinder = _cCylinder.get();
 
-        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
+//        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
         //change both CCylinder and Compartment ID in the vector
         CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getID();
         CUDAcommon::serlvars.cylinderpointervec[_dcIndex] =  this;
@@ -265,6 +265,7 @@ void Cylinder::updatePosition() {
             manager->addPossibleBindings(newCCylinder);
 #endif
 #ifdef NLSTENCILLIST
+            //This directs call to Hybrid Binding Manager.
             manager->addPossibleBindingsstencil(newCCylinder);
 #endif
         }
