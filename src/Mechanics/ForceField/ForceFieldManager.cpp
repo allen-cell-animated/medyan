@@ -202,6 +202,7 @@ void ForceFieldManager::resetForces() {
         std::fill(b->loadForcesM.begin(), b->loadForcesM.end(), 0.0); //Set load force to zero
     }
 }
+#endif
 
 #ifdef CUDAACCL
 void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, double *f) {

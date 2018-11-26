@@ -371,6 +371,9 @@ friend class ChemManager;
 private:
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
+    float _rMinSq = _rMin * _rMin;
+    float _rMaxSq = _rMax * _rMax;
+    std::set<int> difBindInts{2,12,22,32}; /// allow diffent binding sites for linkers and motors
 
 
     
@@ -539,6 +542,8 @@ private:
     
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
+    float _rMinSq = _rMin * _rMin;
+    float _rMaxSq = _rMax * _rMax;
     
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED

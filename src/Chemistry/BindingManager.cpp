@@ -548,11 +548,16 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 
             if(cn->getParent() == c->getParent()) continue;
             if(cn->getType() != _filamentType) continue;
+            if(c->getID() < cn->getID()) continue;
 
             auto ccn = cn->getCCylinder();
 
             for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                
+                //DifBind
+                if (difBindInts.find(*it) == difBindInts.end()) continue;
+                
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
                         SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
@@ -569,9 +574,9 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                    double dist = twoPointDistance(m1, m2);
+                    double distSq = twoPointDistanceSquared(m1, m2);
 
-                    if(dist > _rMax || dist < _rMin) continue;
+                    if(distSq > _rMaxSq || distSq < _rMinSq) continue;
 
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
@@ -776,6 +781,9 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
         for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
             it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
+            
+            // DifBind
+            if (difBindInts.find(*it1) == difBindInts.end()) continue;
 
             //now re add valid binding sites
             if (areEqual(cc->getCMonomer(*it1)->speciesBound(
@@ -792,12 +800,16 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
                     if(cn->getParent() == c->getParent()) continue;
                     if(cn->getType() != _filamentType) continue;
+                    if(c->getID() < cn->getID()) continue;
 
                     auto ccn = cn->getCCylinder();
 //                                                std::cout<<c->_dcIndex<<" "<<cn->_dcIndex<<endl;
 
                     for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
                         it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
+                        
+                        // DifBind
+                        if (difBindInts.find(*it2) == difBindInts.end()) continue;
 
                         if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
                                 SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
@@ -1406,9 +1418,9 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                    double dist = twoPointDistance(m1, m2);
+                    double distSq = twoPointDistanceSquared(m1, m2);
 
-                    if (dist > _rMax || dist < _rMin) continue;
+                    if (distSq > _rMaxSq || distSq < _rMinSq) continue;
 
                     auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder *, short>(ccn, *it);

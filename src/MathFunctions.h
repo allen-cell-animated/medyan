@@ -181,6 +181,15 @@ namespace mathfunc {
                     (v2[1] - v1[1]) * (v2[1] - v1[1]) +
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
+    
+    inline double twoPointDistanceSquared(const vector<double> &v1, const vector<double> &v2) {
+        
+        double d0 = v2[0] - v1[0];
+        double d1 = v2[1] - v1[1];
+        double d2 = v2[2] - v1[2];
+        
+        return pow(d0,2) + pow(d1,2) + pow(d2,2);
+    }
 
     inline double twoPointDistance(double const *v1, const vector<double> &v2) {
 
