@@ -2139,9 +2139,13 @@ void ChemManager::updateCopyNumbers() {
                             " specified in BOUNDARYMOVE. Exiting."<<endl;
                     exit(EXIT_FAILURE);
                 }
-                else if(SysParams::Boundaries().planestomove == 1)
+                //if you are moving right, top or back boundaries, use left, bottom or
+                // front boundaries as the base.
+                else if(SysParams::Boundaries().planestomove == 0)
                     distancetocompare = cmpsize/2;
-                else if(SysParams::Boundaries().planestomove == 0) {
+                //if you are moving  left, bottom or front boundaries, use right, top or
+                // back boundaries as the base.
+                else if(SysParams::Boundaries().planestomove == 1) {
                     double systemspan = 0.0;
                     if(tsaxis == 0)
                         systemspan = SysParams::Geometry().NX * SysParams::Geometry()
@@ -2159,11 +2163,18 @@ void ChemManager::updateCopyNumbers() {
                         //find the species, increase copy number
                         Species* species = c->findSpeciesByName(name);
                         int copynum = updatedbasecopynumber - species->getN();
+                        while(copynum < 0){
+                            species->down();
+                            species->updateReactantPropensities();
+                            copynum++;
+                        }
                         while(copynum > 0) {
                             species->up();
                             species->updateReactantPropensities();
                             copynum--;
                         }
+                        std::cout<<c->coordinates()[tsaxis]<<" "
+                                  <<species->getFullName()<<" "<<species->getN()<<endl;
                     }
                 }
             }

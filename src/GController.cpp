@@ -162,8 +162,35 @@ void GController::generateConnections()
                     indices[1] * _compartmentSize[1] + _compartmentSize[1] / 2,
                     indices[2] * _compartmentSize[2] + _compartmentSize[2] / 2};
                 target->setCoordinates(coordinates);
-                
-                for(int ii: {-1,1})
+                //Go through all 27 neighbors
+                int stencilcount = 0;
+                for(int ii: {-1,0,1}){
+                    for(int jj: {-1,0,1}){
+                        for(int kk: {-1,0,1}){
+                            //Consider the target bin itself as a neighbor.
+                            stencilcount++;
+                            int iprime = i+ii;
+                            int jprime = j+jj;
+                            int kprime = k+kk;
+                            if(iprime<0 or iprime==int(_grid[0]) or jprime<0 or
+                               jprime==int(_grid[1]) or kprime<0 or
+                               kprime==int(_grid[2]))
+                                continue;
+                            vector<size_t> currentIndices{size_t(iprime), size_t
+                                    (jprime), size_t(kprime)};
+                            Compartment *neighbor = getCompartment(currentIndices);
+                            target->addenclosingNeighbour(neighbor, stencilcount -1);
+
+                            if(ii != 0 && jprime == j && kprime == k)
+                                target->addNeighbour(neighbor);
+                            else if(jj != 0 && iprime == i && kprime == k)
+                                target->addNeighbour(neighbor);
+                            else if(kk != 0 && iprime == i && jprime == j)
+                                target->addNeighbour(neighbor);
+                        }
+                    }
+                }
+                /*for(int ii: {-1,1})
                 {
                     int iprime = i+ii;
                     if(iprime<0 or iprime==int(_grid[0]))
@@ -189,7 +216,7 @@ void GController::generateConnections()
                     vector<size_t> currentIndices{i, j, size_t(kprime)};
                     Compartment *neighbor = getCompartment(currentIndices);
                     target->addNeighbour(neighbor);
-                }
+                }*/
             }
         }
     }

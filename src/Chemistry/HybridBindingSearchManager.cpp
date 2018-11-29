@@ -240,7 +240,7 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
 
     fManagervec[idx][idx2]->updateBindingReaction(newN);
     //remove all neighbors which have this binding site pair
-    auto Neighbors = _HneighborList->getNeighborsstencil(HNLID, cc->getCylinder());
+/*    auto Neighbors = _HneighborList->getNeighborsstencil(HNLID, cc->getCylinder());
     for (auto cn : Neighbors){
         short _nfilamentType = cn->getType();
         if(_nfilamentType != fIDpair[0] && _nfilamentType != fIDpair[1] ) return;
@@ -256,22 +256,28 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     }
 
     //remove, update affected
-    for(auto m : affectedHManagers) {
-        int oldN = m->_possibleBindingsstencilvec[idx][idx2].size();
-        for (auto it = m->_possibleBindingsstencilvec[idx][idx2].begin(); it !=
-             m->_possibleBindingsstencilvec[idx][idx2].end(); ) {
+    for(auto m : affectedHManagers) {*/
+    //Go through enclosing compartments to remove all entries with the current cylinder
+    // and binding site as values.
+    for(auto nc: _compartment->getenclosingNeighbours()){
+        if(nc != _compartment) {
+            auto m = nc->getHybridBindingSearchManager();
+//        int oldN = m->_possibleBindingsstencilvec[idx][idx2].size();
+            for (auto it = m->_possibleBindingsstencilvec[idx][idx2].begin(); it !=
+                 m->_possibleBindingsstencilvec[idx][idx2].end();) {
 
-            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-                m->_possibleBindingsstencilvec[idx][idx2].erase(it++);
+                if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
+                    m->_possibleBindingsstencilvec[idx][idx2].erase(it++);
 
-            else ++it;
+                else ++it;
+            }
+            int newNOther = m->_possibleBindingsstencilvec[idx][idx2].size();
+            m->fManagervec[idx][idx2]->updateBindingReaction(newNOther);
+            /*std::cout<<"Cmp "<<m->_compartment->coordinates()[0]<<" "
+                    ""<<m->_compartment->coordinates()
+            [1]<<" "<<m->_compartment->coordinates()[2]<<" pairs removed "
+                    ""<<oldN-newNOther<<endl;*/
         }
-        int newNOther = m->_possibleBindingsstencilvec[idx][idx2].size();
-        m->fManagervec[idx][idx2]->updateBindingReaction(newNOther);
-        /*std::cout<<"Cmp "<<m->_compartment->coordinates()[0]<<" "
-                ""<<m->_compartment->coordinates()
-        [1]<<" "<<m->_compartment->coordinates()[2]<<" pairs removed "
-                ""<<oldN-newNOther<<endl;*/
     }
 }
 

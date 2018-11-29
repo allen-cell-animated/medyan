@@ -342,6 +342,8 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     short ftype2 = ncylinder.type;
                     //Don't add the same cylinder
                     if (c.ID == ncylinder.ID) continue;
+                    // Testing if a half neighborlist will be stable
+                    if(c.ID <= ncylinder.ID) continue;
                     //Don't add if belonging to same parent
                     if (c.filamentID == ncylinder.filamentID) {
                         auto distsep = fabs(
@@ -375,7 +377,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                             _list4mbinvec[HNLID][currcylinder].push_back(Ncylinder);
                             //if runtime, add to other list as well if full
                             if (runtime && _fullstatusvec[idx][idx2]) {
-                                _list4mbinvec[HNLID][Ncylinder].push_back(currcylinder);
+//                                _list4mbinvec[HNLID][Ncylinder].push_back(currcylinder);
                             }
                         }
                     }

@@ -86,7 +86,13 @@ protected:
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
     #endif
     
-    vector<Compartment*> _neighbours; ///< Neighbors of the compartment
+    vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
+    // touch along faces
+    vector<Compartment*> _enclosingneighbours; ///< Neighbors that envelop the compartment
+    vector<short> _enclosingneighboursstencil;///< enclosing compartments  have unique
+    // position IDs between 0-26. This ID immediately helps us determine relative
+    // position of the Enclosing Compartment with respect to the current compartment.
+
     
     ///OTHER COMPARTMENT PROPERTIES
     vector<double> _coords;  ///< Coordinates of this compartment
@@ -575,7 +581,34 @@ public:
         if(nit!=_neighbours.end())
             _neighbours.erase(nit);
     }
-    
+
+    /// Add a neighboring compartment to this compartments list of neighbors
+    void addenclosingNeighbour(Compartment *comp, int stencilpos) {
+        auto nit = find(_enclosingneighbours.begin(),_enclosingneighbours.end(), comp);
+        if(nit==_enclosingneighbours.end()) {
+            _enclosingneighbours.push_back(comp);
+            _enclosingneighboursstencil.push_back(stencilpos);
+        }
+        else
+            throw runtime_error(
+                    "Compartment::addenclosingNeighbour(): Compartment is already a "
+                    "neighbour");
+    }
+
+    /// Remove a neighboring compartment
+    void removeenclosingNeighbour(Compartment *comp) {
+        for(int i = 0; i < _enclosingneighbours.size(); i++){
+            if(comp == _enclosingneighbours[i]){
+                _enclosingneighbours.erase(_enclosingneighbours.begin() + i);
+                _enclosingneighboursstencil.erase(_enclosingneighboursstencil.begin() + i);
+                break;
+            }
+        }
+    }
+
+    vector<Compartment*> getenclosingNeighbours(){
+        return _enclosingneighbours;
+    }
     /// Clone the species values of another compartment into this one
     void cloneSpecies (Compartment *target) const {
         assert(target->numberOfSpecies()==0);
@@ -639,6 +672,9 @@ public:
     
     /// Gives the number of neighbors to this compartment
     size_t numberOfNeighbours() const {return _neighbours.size();}
+
+    /// Gives the number of enclosing neighbors to this compartment
+    size_t numberOfenclosingNeighbours() const {return _enclosingneighbours.size();}
     
     
     ///Get the species container vector
@@ -655,6 +691,7 @@ public:
     
     /// Get the vector list of neighbors to this compartment
     vector<Compartment*>& getNeighbours() {return _neighbours;}
+
     const vector<Compartment*>& getNeighbours() const {return _neighbours;}
     
     /// Print the species in this compartment
