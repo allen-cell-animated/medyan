@@ -168,11 +168,33 @@ public:
 // Helper classes for TimerManager
 template< bool enable > struct TimerManagerMember {
     TimerManagerMember() = default;
+    void reset() {}
+    void submit(time_count_float_t elapsedSingle) {}
+
+    unsigned long long getCount()const { return 0ull; }
+    time_count_float_t getElapsed()const { return 0.0; }
 };
 template<> struct TimerManagerMember<true> {
     std::atomic<unsigned long long> count;
     std::atomic<time_count_float_t> elapsed;
     TimerManagerMember() : count(0ull), elapsed(0.0) {}
+
+    // Reset the counter and timer.
+    void reset() { elapsed = 0.0; count = 0ull; }
+
+    // submit(elapsed) will add the time to the total elapsed time, and will
+    // increase the counter by 1.
+    // Normally it should only be called by worker timer.
+    void submit(time_count_float_t elapsedSingle) {
+        ++count;
+        auto currentElapsed = elapsed.load();
+        while (!elapsed.compare_exchange_weak(currentElapsed, currentElapsed + elapsedSingle))
+            ;
+    }
+
+    // Getters
+    unsigned long long getCount()const { return count.load(); }
+    time_count_float_t getElapsed()const { return elapsed.load(); }
 };
 
 template< bool enable > struct TimerManagerPrintMember {
@@ -191,25 +213,6 @@ public:
     // Constructors
     TimerManagerImpl(const std::string& name)
         : TimerManagerPrintMember<enable>(name) {}
-
-    // Reset the counter and timer.
-    template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
-    void reset() { this->elapsed = 0.0; this->count = 0ull; }
-    template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
-    void reset() {}
-
-    // submit(elapsed) will add the time to the total elapsed time, and will
-    // increase the timer fire count by 1.
-    // Normally it should only be called by worker timer.
-    template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
-    void submit(time_count_float_t elapsedSingle) {
-        ++(this->count);
-        auto currentElapsed = this->elapsed.load();
-        while (!this->elapsed.compare_exchange_weak(currentElapsed, currentElapsed + elapsedSingle))
-            ;
-    }
-    template< typename T = void, typename std::enable_if< !enable, T >::type* = nullptr >
-    void submit(time_count_float_t elapsedSingle) {} // Do nothing
 
     // print the total time information
     template< typename T = void, typename std::enable_if< enable, T >::type* = nullptr >
