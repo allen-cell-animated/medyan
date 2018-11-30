@@ -2078,7 +2078,18 @@ void ChemManager::genSpecies(Compartment& protoCompartment) {
 }
 
 void ChemManager::updateCopyNumbers() {
-    
+    //Special protocol if move boundary protocol exists
+    int tsaxis = SysParams::Boundaries().transfershareaxis;
+    double cmpsize = 0.0;
+    //X axis
+    if(tsaxis == 0)
+        cmpsize = SysParams::Geometry().compartmentSizeX;
+        //Yaxis
+    else if(tsaxis == 1)
+        cmpsize = SysParams::Geometry().compartmentSizeY;
+        //Z axis
+    else if(tsaxis == 2)
+        cmpsize = SysParams::Geometry().compartmentSizeZ;
     auto grid = _subSystem->getCompartmentGrid();
     
     //look at copy number for each species
@@ -2116,65 +2127,61 @@ void ChemManager::updateCopyNumbers() {
                 //set zero copy number
                 if(copyNumber == 0) get<1>(s) = 0;
             }
-            //Special protocol if move boundary protocol exists
-            int tsaxis = SysParams::Boundaries().transfershareaxis;
-            double cmpsize = 0.0;
-            //X axis
-            if(tsaxis == 0)
-                cmpsize = SysParams::Geometry().compartmentSizeX;
-            //Yaxis
-            else if(tsaxis == 1)
-                cmpsize = SysParams::Geometry().compartmentSizeY;
-            //Z axis
-            else if(tsaxis == 2)
-                cmpsize = SysParams::Geometry().compartmentSizeZ;
+
             //Change copy number if moveboundary is defined and if species is NOT past
             // removal.
-            if(tsaxis >=0 && tsaxis <3 && get<1>(s) != -1 && cpynummanipulationType ==
-                "BASECONC"){
-            //set the coordinate that will help you find the necessary Base compartment
-                double distancetocompare = 0.0;
-                if(SysParams::Boundaries().planestomove == 2 && cpynummanipulationType != "NONE"){
-                    cout<<"Cannot set base concentration if both end planes are mobile as"
-                            " specified in BOUNDARYMOVE. Exiting."<<endl;
-                    exit(EXIT_FAILURE);
-                }
-                //if you are moving right, top or back boundaries, use left, bottom or
-                // front boundaries as the base.
-                else if(SysParams::Boundaries().planestomove == 0)
-                    distancetocompare = cmpsize/2;
-                //if you are moving  left, bottom or front boundaries, use right, top or
-                // back boundaries as the base.
-                else if(SysParams::Boundaries().planestomove == 1) {
-                    double systemspan = 0.0;
-                    if(tsaxis == 0)
-                        systemspan = SysParams::Geometry().NX * SysParams::Geometry()
-                                .compartmentSizeX;
-                    else if(tsaxis == 1)
-                        systemspan = SysParams::Geometry().NY * SysParams::Geometry()
-                                .compartmentSizeY;
-                    else if(tsaxis == 2)
-                        systemspan = SysParams::Geometry().NZ * SysParams::Geometry().compartmentSizeZ;
-                    distancetocompare = -cmpsize / 2 + systemspan;
-                }
-                //Find the base compartment and set copy number.
-                for(auto c:_subSystem->getCompartmentGrid()->getCompartments()){
-                    if(c->coordinates()[tsaxis] == distancetocompare){
-                        //find the species, increase copy number
-                        Species* species = c->findSpeciesByName(name);
-                        int copynum = updatedbasecopynumber - species->getN();
-                        while(copynum < 0){
-                            species->down();
-                            species->updateReactantPropensities();
-                            copynum++;
+            if(tsaxis >=0) {
+                if (tsaxis < 3 && get<1>(s) != -1 &&
+                    cpynummanipulationType ==
+                    "BASECONC") {
+                    //set the coordinate that will help you find the necessary Base compartment
+                    double distancetocompare = 0.0;
+                    if (SysParams::Boundaries().planestomove == 2 &&
+                        cpynummanipulationType != "NONE") {
+                        cout
+                                << "Cannot set base concentration if both end planes are mobile as"
+                                   " specified in BOUNDARYMOVE. Exiting." << endl;
+                        exit(EXIT_FAILURE);
+                    }
+                        //if you are moving right, top or back boundaries, use left, bottom or
+                        // front boundaries as the base.
+                    else if (SysParams::Boundaries().planestomove == 0)
+                        distancetocompare = cmpsize / 2;
+                        //if you are moving  left, bottom or front boundaries, use right, top or
+                        // back boundaries as the base.
+                    else if (SysParams::Boundaries().planestomove == 1) {
+                        double systemspan = 0.0;
+                        if (tsaxis == 0)
+                            systemspan = SysParams::Geometry().NX * SysParams::Geometry()
+                                    .compartmentSizeX;
+                        else if (tsaxis == 1)
+                            systemspan = SysParams::Geometry().NY * SysParams::Geometry()
+                                    .compartmentSizeY;
+                        else if (tsaxis == 2)
+                            systemspan = SysParams::Geometry().NZ *
+                                         SysParams::Geometry().compartmentSizeZ;
+                        distancetocompare = -cmpsize / 2 + systemspan;
+                    }
+                    //Find the base compartment and set copy number.
+                    for (auto c:_subSystem->getCompartmentGrid()->getCompartments()) {
+                        if (c->coordinates()[tsaxis] == distancetocompare) {
+                            //find the species, increase copy number
+                            Species *species = c->findSpeciesByName(name);
+                            int copynum = updatedbasecopynumber - species->getN();
+                            while (copynum < 0) {
+                                species->down();
+                                species->updateReactantPropensities();
+                                copynum++;
+                            }
+                            while (copynum > 0) {
+                                species->up();
+                                species->updateReactantPropensities();
+                                copynum--;
+                            }
+                            std::cout << c->coordinates()[tsaxis] << " "
+                                      << species->getFullName() << " " << species->getN()
+                                      << endl;
                         }
-                        while(copynum > 0) {
-                            species->up();
-                            species->updateReactantPropensities();
-                            copynum--;
-                        }
-                        std::cout<<c->coordinates()[tsaxis]<<" "
-                                  <<species->getFullName()<<" "<<species->getN()<<endl;
                     }
                 }
             }
