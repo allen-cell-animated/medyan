@@ -923,52 +923,68 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
-//                nvtxRangePushA("update_pos");
+                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
+                
+                mins = chrono::high_resolution_clock::now();
                 updatePositions();
-//                nvtxRangePop();
                 tauLastMinimization = 0.0;
+                mine= chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed_rxn2(mine - mins);
+                rxnratetime += elapsed_rxn2.count();
             }
 
             if(tauLastSnapshot >= _snapshotTime) {
+                mins = chrono::high_resolution_clock::now();
                 cout << "Current simulation time = "<< tau() << endl;
-//                nvtxRangePushA("output");
                 for(auto o: _outputs) o->print(i);
-//                nvtxRangePop();
                 i++;
                 tauLastSnapshot = 0.0;
+                mine= chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed_runout2(mine - mins);
+                outputtime += elapsed_runout2.count();
             }
 #elif defined(MECHANICS)
-            nvtxRangePushA("output");
+//            nvtxRangePushA("output");
             for(auto o: _outputs) o->print(i);
             i++;
-            nvtxRangePop();
+//            nvtxRangePop();
 #endif
+            mins = chrono::high_resolution_clock::now();
 
 #ifdef DYNAMICRATES
 //            nvtxRangePushA("rate");
             updateReactionRates();
 //            nvtxRangePop();
 #endif
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed_rxn3(mine - mins);
+            rxnratetime += elapsed_rxn3.count();
             
 #ifdef CHEMISTRY
             // update neighbor lists
             if(tauLastNeighborList >= _neighborListTime) {
-//                nvtxRangePushA("NL");
+                mins = chrono::high_resolution_clock::now();
                 updateNeighborLists();
-//                nvtxRangePop();
                 tauLastNeighborList = 0.0;
+                mine= chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed_runnl2(mine - mins);
+                nltime += elapsed_runnl2.count();
             }
 
-
+            mins = chrono::high_resolution_clock::now();
+            
             //activate/deactivate compartments
             activatedeactivateComp();
             //move the boundary
             moveBoundary(tau() - oldTau);
-
+            
             //special protocols
             executeSpecialProtocols();
-
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed_runspl2(mine - mins);
+            specialtime += elapsed_runspl2.count();
             oldTau = tau();
+            
 #ifdef CUDAACCL
 //            nvtxRangePushA("device reset");
             //reset CUDA context
