@@ -65,7 +65,8 @@ private:
     //possible bindings at current state. updated according to neighbor list stencil
     vector<vector<unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>>>
             _possibleBindingsstencilvec;
-
+    vector<vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*,
+    short>>>>>_reversepossibleBindingsstencilvec;
     //static neighbor list
 
     static HybridCylinderCylinderNL* _HneighborList;

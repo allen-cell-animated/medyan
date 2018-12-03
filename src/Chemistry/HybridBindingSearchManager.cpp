@@ -33,6 +33,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
         (FilamentBindingManager* fmanager, short bstatepos, short ftype1, short
                         ftype2, float rMax, float rMin){
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> temp;
+    unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> rtemp;
     bool isfound = false;
     vector<short> ftypepairs;
     if(ftype1 < ftype2)
@@ -48,6 +49,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
             _rMinsqvec[idx].push_back(rMin *rMin);
             fManagervec[idx].push_back(fmanager);
             _possibleBindingsstencilvec[idx].push_back(temp);
+            _reversepossibleBindingsstencilvec[idx].push_back(rtemp);
             bstateposvec[idx].push_back(bstatepos);
             break;
         }
@@ -55,7 +57,10 @@ void HybridBindingSearchManager::setbindingsearchparameter
     if(isfound == false){
         vector<unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*,
                 short>>> temp2;
+        vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>>>
+        rtemp2;
         temp2.push_back(temp);
+        rtemp2.push_back(rtemp);
         vector<float> localrmaxsq ={rMax * rMax};
         vector<float> localrminsq = {rMin * rMin};
         vector<FilamentBindingManager*> localfmanager;
@@ -66,6 +71,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
         fManagervec.push_back(localfmanager);
         _filamentIDvec.push_back(ftypepairs);
         _possibleBindingsstencilvec.push_back(temp2);
+        _reversepossibleBindingsstencilvec.push_back(rtemp2);
         bstateposvec.push_back(localbstateposvec);
         vector<double> bs1, bs2;
         vector<float> minvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
@@ -168,22 +174,23 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2], CCyl
                     if(c->getID() > cn->getID())
                     {
                         _possibleBindingsstencilvec[idx][idx2].emplace(t1,t2);
+                        _reversepossibleBindingsstencilvec[idx][idx2][t2].push_back(t1);
                     }
 
                     else {
                         //add in this compartment
                         if(cn->getCompartment() == _compartment) {
-
                             _possibleBindingsstencilvec[idx][idx2].emplace(t2,t1);
+                            _reversepossibleBindingsstencilvec[idx][idx2][t1].push_back(t2);
                         }
                             //add in other
                         else {
-
                             auto m = cn->getCompartment()->getHybridBindingSearchManager();
 
                             affectedHManagers.push_back(m);
 
                             m->_possibleBindingsstencilvec[idx][idx2].emplace(t2,t1);
+                            m->_reversepossibleBindingsstencilvec[idx][idx2][t1].push_back(t2);
                         }
                     }
                 }
@@ -222,61 +229,62 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
     _possibleBindingsstencilvec[idx][idx2].erase(t);
 
     //remove all tuples which have this as value
-    for (auto it = _possibleBindingsstencilvec[idx][idx2].begin(); it !=
-            _possibleBindingsstencilvec[idx][idx2].end();) {
-
-        if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite) {
-
-            _possibleBindingsstencilvec[idx][idx2].erase(it++);
+    //Iterate through the reverse map
+    auto keys = _reversepossibleBindingsstencilvec[idx][idx2][t];//keys that contain t as
+    // value in possiblebindings
+    for(auto k:keys){
+        //get the iterator range that corresponds to this key.
+        auto range = _possibleBindingsstencilvec[idx][idx2].equal_range(k);
+        //iterate through the range
+        for(auto it = range.first; it != range.second;){
+            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite) {
+                _possibleBindingsstencilvec[idx][idx2].erase(it++);
+            }
+            else ++it;
         }
-
-        else ++it;
     }
+    //remove from the reverse map.
+    _reversepossibleBindingsstencilvec[idx][idx2][t].clear();
 
     int newN = _possibleBindingsstencilvec[idx][idx2].size();
-    /*std::cout<<"Cyl "<<cc->getCylinder()->getID()<<" bs "<<bindingSite<<endl;
-    std::cout<<"Cmp "<<_compartment->coordinates()[0]<<" "<<_compartment->coordinates()
-    [1]<<" "<<_compartment->coordinates()[2]<<" pairs removed "<<oldN-newN<<endl;*/
-
     fManagervec[idx][idx2]->updateBindingReaction(newN);
     //remove all neighbors which have this binding site pair
-/*    auto Neighbors = _HneighborList->getNeighborsstencil(HNLID, cc->getCylinder());
-    for (auto cn : Neighbors){
-        short _nfilamentType = cn->getType();
-        if(_nfilamentType != fIDpair[0] && _nfilamentType != fIDpair[1] ) return;
-        //inaccurate. replace later.
-        if(cn->getCompartment() != _compartment) {
-
-            auto m = cn->getCompartment()->getHybridBindingSearchManager();
-
-            if(find(affectedHManagers.begin(), affectedHManagers.end(), m) ==
-                    affectedHManagers.end())
-                affectedHManagers.push_back(m);
-        }
-    }
-
-    //remove, update affected
-    for(auto m : affectedHManagers) {*/
     //Go through enclosing compartments to remove all entries with the current cylinder
     // and binding site as values.
     for(auto nc: _compartment->getenclosingNeighbours()){
         if(nc != _compartment) {
             auto m = nc->getHybridBindingSearchManager();
+
+            //Iterate through the reverse map
+            auto keys = m->_reversepossibleBindingsstencilvec[idx][idx2][t];//keys that
+            // contain t as
+            // value in possiblebindings
+            for(auto k:keys){
+                //get the iterator range that corresponds to this key.
+                auto range = m->_possibleBindingsstencilvec[idx][idx2].equal_range(k);
+                //iterate through the range
+                for(auto it = range.first; it != range.second;){
+                    if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite) {
+                        m->_possibleBindingsstencilvec[idx][idx2].erase(it++);
+                    }
+                    else ++it;
+                }
+            }
+            //remove from the reverse map.
+            m->_reversepossibleBindingsstencilvec[idx][idx2][t].clear();
+
 //        int oldN = m->_possibleBindingsstencilvec[idx][idx2].size();
-            for (auto it = m->_possibleBindingsstencilvec[idx][idx2].begin(); it !=
+
+/*            for (auto it = m->_possibleBindingsstencilvec[idx][idx2].begin(); it !=
                  m->_possibleBindingsstencilvec[idx][idx2].end();) {
 
                 if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
                     m->_possibleBindingsstencilvec[idx][idx2].erase(it++);
 
                 else ++it;
-            }
+            }*/
             int newNOther = m->_possibleBindingsstencilvec[idx][idx2].size();
             m->fManagervec[idx][idx2]->updateBindingReaction(newNOther);
-            /*std::cout<<"Cmp "<<m->_compartment->coordinates()[0]<<" "
-                    ""<<m->_compartment->coordinates()
-            [1]<<" "<<m->_compartment->coordinates()[2]<<" pairs removed "
-                    ""<<oldN-newNOther<<endl;*/
         }
     }
 }
@@ -323,6 +331,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
         int countbounds = _rMaxsqvec[idx].size();
     for (int idx2 = 0; idx2 < countbounds; idx2++) {
         _possibleBindingsstencilvec[idx][idx2].clear();
+        _reversepossibleBindingsstencilvec[idx][idx2].clear();
     }
     }
 
@@ -553,6 +562,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
                                                                         it2);
                                     //add in correct order
                                     _possibleBindingsstencilvec[idx][idx2].emplace(t1, t2);
+                                    _reversepossibleBindingsstencilvec[idx][idx2][t2]
+                                    .push_back(t1);
                                 }
                             }
                         }

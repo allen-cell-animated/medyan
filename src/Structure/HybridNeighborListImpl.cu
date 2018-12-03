@@ -340,14 +340,13 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     int ncindex = cindicesvec[iter];
                     cylinder ncylinder = cylindervec[ncindex];
                     short ftype2 = ncylinder.type;
-                    //Don't add the same cylinder
-                    if (c.ID == ncylinder.ID) continue;
+//                    //Don't add the same cylinder
+//                    if (c.ID == ncylinder.ID) continue;
                     // Testing if a half neighborlist will be stable
                     if(c.ID <= ncylinder.ID) continue;
                     //Don't add if belonging to same parent
                     if (c.filamentID == ncylinder.filamentID) {
-                        auto distsep = fabs(
-                                c.filamentposition - ncylinder.filamentposition);
+                        auto distsep = fabs(c.filamentposition - ncylinder.filamentposition);
                         //if not cross filament, check if not neighboring
                         if (distsep <= 2) continue;
                     }
@@ -365,8 +364,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                         if (dist < _smallestrMinsq || dist > _largestrMaxsq) continue;
                         for (int idx2 = 0; idx2 < countbounds; idx2++) {
                             //Dont add if ID is more than cylinder for half-list
-                            if (!_fullstatusvec[idx][idx2] && c.ID <= ncylinder.ID) continue;
-//                        if(!isbinneededvec[idx][idx2]) continue;
+//                            if (!_fullstatusvec[idx][idx2] && c.ID <= ncylinder.ID) continue;
                             //Dont add if not within range
                             if (dist > _rMaxsqvec[idx][idx2] ||
                                 dist < _rMinsqvec[idx][idx2])
@@ -376,9 +374,9 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                             Cylinder *Ncylinder = cylinderpointervec[ncindex];
                             _list4mbinvec[HNLID][currcylinder].push_back(Ncylinder);
                             //if runtime, add to other list as well if full
-                            if (runtime && _fullstatusvec[idx][idx2]) {
-//                                _list4mbinvec[HNLID][Ncylinder].push_back(currcylinder);
-                            }
+/*                            if (runtime && _fullstatusvec[idx][idx2]) {
+                                _list4mbinvec[HNLID][Ncylinder].push_back(currcylinder);
+                            }*/
                         }
                     }
                 }
