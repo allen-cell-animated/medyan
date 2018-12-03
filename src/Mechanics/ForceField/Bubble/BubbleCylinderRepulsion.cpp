@@ -26,12 +26,12 @@ using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
 void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
-    cout << "Add later!" <<endl;
+    //cout << "Add later!" <<endl;
 }
 
 template <class BRepulsionInteractionType>
 void BubbleCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
-    cout << "Add later!" <<endl;
+    //cout << "Add later!" <<endl;
 }
 
 template <class BRepulsionInteractionType>

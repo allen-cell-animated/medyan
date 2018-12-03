@@ -20,12 +20,12 @@
 
 template <class BRepulsionInteractionType>
 void BubbleBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
-    cout << "Add later!" <<endl;
+    //cout << "Add later!" <<endl;
 }
 
 template <class BRepulsionInteractionType>
 void BubbleBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
-    cout << "Add later!" <<endl;
+    //cout << "Add later!" <<endl;
 }
 
 

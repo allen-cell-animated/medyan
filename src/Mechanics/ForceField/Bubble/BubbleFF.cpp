@@ -29,17 +29,17 @@
 BubbleFF::BubbleFF (string type, string mtoc) {
     
     //general bubble interactions
-//    if (type == "REPULSIONEXP") {
-//        _bubbleInteractionVector.emplace_back(
-//        new BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>());
-//        _bubbleInteractionVector.emplace_back(
-//        new BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>());
-//    }
-//    else if(type == "") {}
-//    else {
-//        cout << "Bubble FF not recognized. Exiting." << endl;
-//        exit(EXIT_FAILURE);
-//    }
+    if (type == "REPULSIONEXP") {
+        _bubbleInteractionVector.emplace_back(
+        new BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>());
+        _bubbleInteractionVector.emplace_back(
+        new BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>());
+    }
+    else if(type == "") {}
+    else {
+        cout << "Bubble FF not recognized. Exiting." << endl;
+        exit(EXIT_FAILURE);
+    }
     
     //specifically for MTOC
     if (mtoc == "ATTACHMENTHARMONIC") {
@@ -60,7 +60,7 @@ void BubbleFF::vectorize() {
 }
 
 void BubbleFF::cleanup() {
-    
+        
     for (auto &interaction : _bubbleInteractionVector)
     interaction->deallocate();
 }
