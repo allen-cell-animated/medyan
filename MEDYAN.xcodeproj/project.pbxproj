@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2337CCBD21B496C100EA25B2 /* BubbleCylinderRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCAE21B496BD00EA25B2 /* BubbleCylinderRepulsionExp.cpp */; };
+		2337CCBE21B496C100EA25B2 /* MTOCAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCB221B496BF00EA25B2 /* MTOCAttachment.cpp */; };
+		2337CCBF21B496C100EA25B2 /* BubbleBubbleRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCB421B496BF00EA25B2 /* BubbleBubbleRepulsion.cpp */; };
+		2337CCC021B496C100EA25B2 /* MTOCAttachmentHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCB621B496BF00EA25B2 /* MTOCAttachmentHarmonic.cpp */; };
+		2337CCC121B496C100EA25B2 /* BubbleCylinderRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCB721B496BF00EA25B2 /* BubbleCylinderRepulsion.cpp */; };
+		2337CCC221B496C100EA25B2 /* BubbleBubbleRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCB921B496C000EA25B2 /* BubbleBubbleRepulsionExp.cpp */; };
+		2337CCC321B496C100EA25B2 /* BubbleFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCBB21B496C000EA25B2 /* BubbleFF.cpp */; };
 		23EC735920F937ED0037DD00 /* CylinderVolumeInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735820F937ED0037DD00 /* CylinderVolumeInteractions.cpp */; };
 		23EC735A20F937ED0037DD00 /* CylinderVolumeInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735820F937ED0037DD00 /* CylinderVolumeInteractions.cpp */; };
 		23EC735C20F9396C0037DD00 /* BoundaryInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735B20F9396B0037DD00 /* BoundaryInteractions.cpp */; };
@@ -17,12 +24,8 @@
 		23EC736320F9398E0037DD00 /* MotorGhostInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC736120F9398E0037DD00 /* MotorGhostInteractions.cpp */; };
 		23EC736520F9399C0037DD00 /* LinkerInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC736420F9399C0037DD00 /* LinkerInteractions.cpp */; };
 		23EC736620F9399C0037DD00 /* LinkerInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC736420F9399C0037DD00 /* LinkerInteractions.cpp */; };
-		23EC736C20F93B8E0037DD00 /* BoundaryBubbleRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = 23EC736820F93B8D0037DD00 /* BoundaryBubbleRepulsion.h */; };
 		23EC736D20F93B8E0037DD00 /* BoundaryBubbleRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC736920F93B8D0037DD00 /* BoundaryBubbleRepulsion.cpp */; };
-		23EC736E20F93B8E0037DD00 /* BoundaryBubbleRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC736920F93B8D0037DD00 /* BoundaryBubbleRepulsion.cpp */; };
-		23EC736F20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 23EC736A20F93B8D0037DD00 /* BoundaryBubbleRepulsionExp.h */; };
 		23EC737020F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC736B20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp */; };
-		23EC737120F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC736B20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp */; };
 		23EC737420F947990037DD00 /* BoundaryCylinderRepulsionIn.h in Headers */ = {isa = PBXBuildFile; fileRef = 23EC737220F947980037DD00 /* BoundaryCylinderRepulsionIn.h */; };
 		23EC737520F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC737320F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp */; };
 		23EC737620F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC737320F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp */; };
@@ -272,16 +275,30 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2337CCAE21B496BD00EA25B2 /* BubbleCylinderRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleCylinderRepulsionExp.cpp; path = Bubble/BubbleCylinderRepulsionExp.cpp; sourceTree = "<group>"; };
+		2337CCAF21B496BD00EA25B2 /* BubbleInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleInteractions.h; path = Bubble/BubbleInteractions.h; sourceTree = "<group>"; };
+		2337CCB021B496BE00EA25B2 /* BubbleBubbleRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleBubbleRepulsionExp.h; path = Bubble/BubbleBubbleRepulsionExp.h; sourceTree = "<group>"; };
+		2337CCB121B496BE00EA25B2 /* BubbleBubbleRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleBubbleRepulsion.h; path = Bubble/BubbleBubbleRepulsion.h; sourceTree = "<group>"; };
+		2337CCB221B496BF00EA25B2 /* MTOCAttachment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCAttachment.cpp; path = Bubble/MTOCAttachment.cpp; sourceTree = "<group>"; };
+		2337CCB321B496BF00EA25B2 /* MTOCAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTOCAttachment.h; path = Bubble/MTOCAttachment.h; sourceTree = "<group>"; };
+		2337CCB421B496BF00EA25B2 /* BubbleBubbleRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleBubbleRepulsion.cpp; path = Bubble/BubbleBubbleRepulsion.cpp; sourceTree = "<group>"; };
+		2337CCB521B496BF00EA25B2 /* BubbleCylinderRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleCylinderRepulsion.h; path = Bubble/BubbleCylinderRepulsion.h; sourceTree = "<group>"; };
+		2337CCB621B496BF00EA25B2 /* MTOCAttachmentHarmonic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCAttachmentHarmonic.cpp; path = Bubble/MTOCAttachmentHarmonic.cpp; sourceTree = "<group>"; };
+		2337CCB721B496BF00EA25B2 /* BubbleCylinderRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleCylinderRepulsion.cpp; path = Bubble/BubbleCylinderRepulsion.cpp; sourceTree = "<group>"; };
+		2337CCB821B496C000EA25B2 /* BubbleCylinderRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleCylinderRepulsionExp.h; path = Bubble/BubbleCylinderRepulsionExp.h; sourceTree = "<group>"; };
+		2337CCB921B496C000EA25B2 /* BubbleBubbleRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleBubbleRepulsionExp.cpp; path = Bubble/BubbleBubbleRepulsionExp.cpp; sourceTree = "<group>"; };
+		2337CCBA21B496C000EA25B2 /* BubbleFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleFF.h; path = Bubble/BubbleFF.h; sourceTree = "<group>"; };
+		2337CCBB21B496C000EA25B2 /* BubbleFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleFF.cpp; path = Bubble/BubbleFF.cpp; sourceTree = "<group>"; };
+		2337CCBC21B496C100EA25B2 /* MTOCAttachmentHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTOCAttachmentHarmonic.h; path = Bubble/MTOCAttachmentHarmonic.h; sourceTree = "<group>"; };
 		23EC735820F937ED0037DD00 /* CylinderVolumeInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CylinderVolumeInteractions.cpp; path = Volume/CylinderVolumeInteractions.cpp; sourceTree = "<group>"; };
 		23EC735B20F9396B0037DD00 /* BoundaryInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryInteractions.cpp; path = Boundary/BoundaryInteractions.cpp; sourceTree = "<group>"; };
 		23EC735E20F9397B0037DD00 /* BranchingInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingInteractions.cpp; path = Branching/BranchingInteractions.cpp; sourceTree = "<group>"; };
 		23EC736120F9398E0037DD00 /* MotorGhostInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MotorGhostInteractions.cpp; path = MotorGhost/MotorGhostInteractions.cpp; sourceTree = "<group>"; };
 		23EC736420F9399C0037DD00 /* LinkerInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkerInteractions.cpp; path = Linker/LinkerInteractions.cpp; sourceTree = "<group>"; };
-		23EC736720F93B620037DD00 /* Bubble */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Bubble; sourceTree = "<group>"; };
-		23EC736820F93B8D0037DD00 /* BoundaryBubbleRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryBubbleRepulsion.h; path = Boundary/BoundaryBubbleRepulsion.h; sourceTree = "<group>"; };
-		23EC736920F93B8D0037DD00 /* BoundaryBubbleRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryBubbleRepulsion.cpp; path = Boundary/BoundaryBubbleRepulsion.cpp; sourceTree = "<group>"; };
-		23EC736A20F93B8D0037DD00 /* BoundaryBubbleRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryBubbleRepulsionExp.h; path = Boundary/BoundaryBubbleRepulsionExp.h; sourceTree = "<group>"; };
-		23EC736B20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryBubbleRepulsionExp.cpp; path = Boundary/BoundaryBubbleRepulsionExp.cpp; sourceTree = "<group>"; };
+		23EC736820F93B8D0037DD00 /* BoundaryBubbleRepulsion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryBubbleRepulsion.h; path = Bubble/BoundaryBubbleRepulsion.h; sourceTree = "<group>"; };
+		23EC736920F93B8D0037DD00 /* BoundaryBubbleRepulsion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryBubbleRepulsion.cpp; path = Bubble/BoundaryBubbleRepulsion.cpp; sourceTree = "<group>"; };
+		23EC736A20F93B8D0037DD00 /* BoundaryBubbleRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryBubbleRepulsionExp.h; path = Bubble/BoundaryBubbleRepulsionExp.h; sourceTree = "<group>"; };
+		23EC736B20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryBubbleRepulsionExp.cpp; path = Bubble/BoundaryBubbleRepulsionExp.cpp; sourceTree = "<group>"; };
 		23EC737220F947980037DD00 /* BoundaryCylinderRepulsionIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundaryCylinderRepulsionIn.h; path = Boundary/BoundaryCylinderRepulsionIn.h; sourceTree = "<group>"; };
 		23EC737320F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryCylinderRepulsionIn.cpp; path = Boundary/BoundaryCylinderRepulsionIn.cpp; sourceTree = "<group>"; };
 		23EC737720F948AD0037DD00 /* BoundaryCylinderRepulsionExpIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryCylinderRepulsionExpIn.cpp; path = Boundary/BoundaryCylinderRepulsionExpIn.cpp; sourceTree = "<group>"; };
@@ -536,6 +553,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2337CCAD21B4969600EA25B2 /* Bubble */ = {
+			isa = PBXGroup;
+			children = (
+				2337CCB421B496BF00EA25B2 /* BubbleBubbleRepulsion.cpp */,
+				2337CCB121B496BE00EA25B2 /* BubbleBubbleRepulsion.h */,
+				2337CCB921B496C000EA25B2 /* BubbleBubbleRepulsionExp.cpp */,
+				2337CCB021B496BE00EA25B2 /* BubbleBubbleRepulsionExp.h */,
+				2337CCB721B496BF00EA25B2 /* BubbleCylinderRepulsion.cpp */,
+				2337CCB521B496BF00EA25B2 /* BubbleCylinderRepulsion.h */,
+				2337CCAE21B496BD00EA25B2 /* BubbleCylinderRepulsionExp.cpp */,
+				2337CCB821B496C000EA25B2 /* BubbleCylinderRepulsionExp.h */,
+				2337CCBB21B496C000EA25B2 /* BubbleFF.cpp */,
+				2337CCBA21B496C000EA25B2 /* BubbleFF.h */,
+				2337CCAF21B496BD00EA25B2 /* BubbleInteractions.h */,
+				2337CCB221B496BF00EA25B2 /* MTOCAttachment.cpp */,
+				2337CCB321B496BF00EA25B2 /* MTOCAttachment.h */,
+				2337CCB621B496BF00EA25B2 /* MTOCAttachmentHarmonic.cpp */,
+				2337CCBC21B496C100EA25B2 /* MTOCAttachmentHarmonic.h */,
+				23EC736920F93B8D0037DD00 /* BoundaryBubbleRepulsion.cpp */,
+				23EC736820F93B8D0037DD00 /* BoundaryBubbleRepulsion.h */,
+				23EC736B20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp */,
+				23EC736A20F93B8D0037DD00 /* BoundaryBubbleRepulsionExp.h */,
+			);
+			name = Bubble;
+			sourceTree = "<group>";
+		};
 		B52F64BE19BA230000A2B9FD /* Structure */ = {
 			isa = PBXGroup;
 			children = (
@@ -707,10 +750,6 @@
 				F75259FA1A7023A4007A4E9F /* BoundaryFF.h */,
 				23EC735B20F9396B0037DD00 /* BoundaryInteractions.cpp */,
 				F75259FB1A7023A4007A4E9F /* BoundaryInteractions.h */,
-				23EC736920F93B8D0037DD00 /* BoundaryBubbleRepulsion.cpp */,
-				23EC736820F93B8D0037DD00 /* BoundaryBubbleRepulsion.h */,
-				23EC736B20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp */,
-				23EC736A20F93B8D0037DD00 /* BoundaryBubbleRepulsionExp.h */,
 				F75259FC1A7023A4007A4E9F /* BoundaryCylinderRepulsion.cpp */,
 				F75259FD1A7023A4007A4E9F /* BoundaryCylinderRepulsion.h */,
 				23EC737320F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp */,
@@ -808,7 +847,7 @@
 		F777FA0719C1F3A800D2850A /* ForceField */ = {
 			isa = PBXGroup;
 			children = (
-				23EC736720F93B620037DD00 /* Bubble */,
+				2337CCAD21B4969600EA25B2 /* Bubble */,
 				F2291E5A1F50CAC800494109 /* Filament */,
 				F25568CE1F507C6200176DD0 /* cross_check.h */,
 				F2C1F8971F60CB810067E937 /* cross_check.cpp */,
@@ -910,7 +949,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				23EC736F20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.h in Headers */,
 				F2A4A15F1F50D2A400326562 /* FilamentStretchingHarmonic.h in Headers */,
 				F2A4A15E1F50D29200326562 /* FilamentStretching.h in Headers */,
 				F2A4A15D1F50D28C00326562 /* FilamentInteractions.h in Headers */,
@@ -940,7 +978,6 @@
 				F735B7781A2D16F200AE21D1 /* GController.h in Headers */,
 				F735B76E1A2D16F200AE21D1 /* CController.h in Headers */,
 				F7401C391AF9388D00BA97A5 /* ReactionBase.h in Headers */,
-				23EC736C20F93B8E0037DD00 /* BoundaryBubbleRepulsion.h in Headers */,
 				F735B79D1A2D172800AE21D1 /* ChemManager.h in Headers */,
 				F7525A3B1A7023EF007A4E9F /* CylinderExclVolume.h in Headers */,
 				F735B7A61A2D172800AE21D1 /* ChemSimpleGillespieImpl.h in Headers */,
@@ -1149,7 +1186,6 @@
 				F7C9D0091A2D165D0087434A /* Filament.cpp in Sources */,
 				F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */,
 				F735B79A1A2D172800AE21D1 /* ChemGillespieImpl.cpp in Sources */,
-				23EC736E20F93B8E0037DD00 /* BoundaryBubbleRepulsion.cpp in Sources */,
 				F713BEA51D416996005386E0 /* BoundaryCylinderAttachment.cpp in Sources */,
 				F7525A631A70241E007A4E9F /* BranchingStretchingHarmonic.cpp in Sources */,
 				23EC736620F9399C0037DD00 /* LinkerInteractions.cpp in Sources */,
@@ -1164,7 +1200,6 @@
 				F7199B2A1A30B8F700CD5DCC /* BranchingPoint.cpp in Sources */,
 				F7401C3B1AF9388D00BA97A5 /* RSpecies.cpp in Sources */,
 				F7401C3D1AF9388D00BA97A5 /* Species.cpp in Sources */,
-				23EC737120F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp in Sources */,
 				F735B7831A2D16F200AE21D1 /* SysParams.cpp in Sources */,
 				F7525A021A7023A4007A4E9F /* BoundaryFF.cpp in Sources */,
 				BF365D871ABC728F006EE099 /* NeighborListImpl.cpp in Sources */,
@@ -1226,12 +1261,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2337CCBD21B496C100EA25B2 /* BubbleCylinderRepulsionExp.cpp in Sources */,
+				2337CCC121B496C100EA25B2 /* BubbleCylinderRepulsion.cpp in Sources */,
 				23EC735920F937ED0037DD00 /* CylinderVolumeInteractions.cpp in Sources */,
+				2337CCC221B496C100EA25B2 /* BubbleBubbleRepulsionExp.cpp in Sources */,
 				23EC736520F9399C0037DD00 /* LinkerInteractions.cpp in Sources */,
+				2337CCBF21B496C100EA25B2 /* BubbleBubbleRepulsion.cpp in Sources */,
 				23EC736D20F93B8E0037DD00 /* BoundaryBubbleRepulsion.cpp in Sources */,
 				23EC736220F9398E0037DD00 /* MotorGhostInteractions.cpp in Sources */,
+				2337CCC321B496C100EA25B2 /* BubbleFF.cpp in Sources */,
 				23EC737920F948AE0037DD00 /* BoundaryCylinderRepulsionExpIn.cpp in Sources */,
 				23EC737520F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp in Sources */,
+				2337CCC021B496C100EA25B2 /* MTOCAttachmentHarmonic.cpp in Sources */,
+				2337CCBE21B496C100EA25B2 /* MTOCAttachment.cpp in Sources */,
 				23EC735F20F9397C0037DD00 /* BranchingInteractions.cpp in Sources */,
 				23EC737020F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp in Sources */,
 				F735B7AB1A2D172D00AE21D1 /* MEDYAN.cpp in Sources */,

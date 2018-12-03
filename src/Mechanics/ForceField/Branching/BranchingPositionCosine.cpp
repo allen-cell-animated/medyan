@@ -230,7 +230,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 
         U += U_i;
     }
-    delete mp;
+    delete[] mp;
     return U;
 }
 
@@ -282,8 +282,8 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 
         U += U_i;
     }
-    delete mp;
-    delete vzero;
+    delete[] mp;
+    delete[] vzero;
     return U;
 }
 
@@ -357,5 +357,5 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
         f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
         f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
     }
-    delete mp;
+    delete[] mp;
 }

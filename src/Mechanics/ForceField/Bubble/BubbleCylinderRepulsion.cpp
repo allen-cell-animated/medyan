@@ -25,7 +25,17 @@
 using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
-double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
+void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
+    cout << "Add later!" <<endl;
+}
+
+template <class BRepulsionInteractionType>
+void BubbleCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
+    cout << "Add later!" <<endl;
+}
+
+template <class BRepulsionInteractionType>
+double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, double *f, double d) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -43,7 +53,7 @@ double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double 
                 auto f = (Filament*)c->getParent();
                 
                 if(find(filaments.begin(), filaments.end(), f) != filaments.end())
-                    continue;
+                continue;
             }
             
             double kRep = bb->getRepulsionConst();
@@ -56,14 +66,14 @@ double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double 
             //potential acts on second bead unless this is a minus end
             Bead* bd2;
             if(c->isMinusEnd())
-                bd2 = c->getFirstBead();
+            bd2 = c->getFirstBead();
             else
-                bd2 = c->getSecondBead();
+            bd2 = c->getSecondBead();
             
             if (d == 0.0)
-                U_i =  _FFType.energy(bd1, bd2, radius, kRep, screenLength);
+            U_i =  _FFType.energy(bd1, bd2, radius, kRep, screenLength);
             else
-                U_i = _FFType.energy(bd1, bd2, radius, kRep, screenLength, d);
+            U_i = _FFType.energy(bd1, bd2, radius, kRep, screenLength, d);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
@@ -75,7 +85,7 @@ double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double 
                 return -1;
             }
             else
-                U += U_i;
+            U += U_i;
         }
     }
     
@@ -83,7 +93,7 @@ double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double 
 }
 
 template <class BRepulsionInteractionType>
-void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
+void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
     
     for (auto bb : Bubble::getBubbles()) {
         
@@ -98,7 +108,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
                 auto f = (Filament*)c->getParent();
                 
                 if(find(filaments.begin(), filaments.end(), f) != filaments.end())
-                    continue;
+                continue;
             }
             
             double kRep = bb->getRepulsionConst();
@@ -111,9 +121,9 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
             //potential acts on second bead unless this is a minus end
             Bead* bd2;
             if(c->isMinusEnd())
-                bd2 = c->getFirstBead();
+            bd2 = c->getFirstBead();
             else
-                bd2 = c->getSecondBead();
+            bd2 = c->getSecondBead();
             
             _FFType.forces(bd1, bd2, radius, kRep, screenLength);
             
@@ -122,44 +132,44 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForces() {
 }
 
 
-template <class BRepulsionInteractionType>
-void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux() {
-    
-    for (auto bb : Bubble::getBubbles()) {
-        
-        for(auto &c : _neighborList->getNeighbors(bb)) {
-            
-            //if part of an MTOC, skip
-            if(bb->isMTOC()) {
-                
-                auto mtoc = (MTOC*)bb->getParent();
-                auto filaments = mtoc->getFilaments();
-                
-                auto f = (Filament*)c->getParent();
-                
-                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
-                    continue;
-            }
-            
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
-            
-            double radius = bb->getRadius();
-            
-            Bead* bd1 = bb->getBead();
-            
-            //potential acts on second bead unless this is a minus end
-            Bead* bd2;
-            if(c->isMinusEnd())
-                bd2 = c->getFirstBead();
-            else
-                bd2 = c->getSecondBead();
-            
-            _FFType.forcesAux(bd1, bd2, radius, kRep, screenLength);
-            
-        }
-    }
-}
+//template <class BRepulsionInteractionType>
+//void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux(double *coord, double *f) {
+//
+//    for (auto bb : Bubble::getBubbles()) {
+//
+//        for(auto &c : _neighborList->getNeighbors(bb)) {
+//
+//            //if part of an MTOC, skip
+//            if(bb->isMTOC()) {
+//
+//                auto mtoc = (MTOC*)bb->getParent();
+//                auto filaments = mtoc->getFilaments();
+//
+//                auto f = (Filament*)c->getParent();
+//
+//                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+//                    continue;
+//            }
+//
+//            double kRep = bb->getRepulsionConst();
+//            double screenLength = bb->getScreeningLength();
+//
+//            double radius = bb->getRadius();
+//
+//            Bead* bd1 = bb->getBead();
+//
+//            //potential acts on second bead unless this is a minus end
+//            Bead* bd2;
+//            if(c->isMinusEnd())
+//                bd2 = c->getFirstBead();
+//            else
+//                bd2 = c->getSecondBead();
+//
+//            _FFType.forcesAux(bd1, bd2, radius, kRep, screenLength);
+//
+//        }
+//    }
+//}
 
 template <class BRepulsionInteractionType>
 void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
@@ -177,7 +187,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 auto f = (Filament*)c->getParent();
                 
                 if(find(filaments.begin(), filaments.end(), f) != filaments.end())
-                    continue;
+                continue;
             }
             
             double kRep = bb->getRepulsionConst();
@@ -211,7 +221,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
-
+                    
                     double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
                     bd2->loadForcesP[bd2->lfip++] += proj * loadForce;
                 }
@@ -240,7 +250,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
-
+                    
                     double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
                     bd2->loadForcesM[bd2->lfim++] += proj * loadForce;
                 }
@@ -254,7 +264,12 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 
 
 ///Template specializations
-template double BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(double d);
-template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForces();
-template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForcesAux();
+template double BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(double *coord, double *f, double d);
+template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForces(double *coord, double *f);
+//template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForcesAux(double *coord, double *f);
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeLoadForces();
+template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::vectorize();
+template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::deallocate();
+
+
+

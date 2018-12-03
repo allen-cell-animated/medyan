@@ -29,17 +29,17 @@
 BubbleFF::BubbleFF (string type, string mtoc) {
     
     //general bubble interactions
-    if (type == "REPULSIONEXP") {
-        _bubbleInteractionVector.emplace_back(
-        new BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>());
-        _bubbleInteractionVector.emplace_back(
-        new BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>());
-    }
-    else if(type == "") {}
-    else {
-        cout << "Bubble FF not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
-    }
+//    if (type == "REPULSIONEXP") {
+//        _bubbleInteractionVector.emplace_back(
+//        new BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>());
+//        _bubbleInteractionVector.emplace_back(
+//        new BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>());
+//    }
+//    else if(type == "") {}
+//    else {
+//        cout << "Bubble FF not recognized. Exiting." << endl;
+//        exit(EXIT_FAILURE);
+//    }
     
     //specifically for MTOC
     if (mtoc == "ATTACHMENTHARMONIC") {
@@ -51,6 +51,18 @@ BubbleFF::BubbleFF (string type, string mtoc) {
         cout << "MTOC FF not recognized. Exiting." << endl;
         exit(EXIT_FAILURE);
     }
+}
+
+void BubbleFF::vectorize() {
+    
+    for (auto &interaction : _bubbleInteractionVector)
+    interaction->vectorize();
+}
+
+void BubbleFF::cleanup() {
+    
+    for (auto &interaction : _bubbleInteractionVector)
+    interaction->deallocate();
 }
 
 void BubbleFF::whoIsCulprit() {
@@ -69,14 +81,14 @@ void BubbleFF::whoIsCulprit() {
 }
 
 
-double BubbleFF::computeEnergy(double d) {
+double BubbleFF::computeEnergy(double *coord, double *f, double d) {
     
     double U= 0.0;
     double U_i=0.0;
     
     for (auto &interaction : _bubbleInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(coord, f, d);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -89,17 +101,17 @@ double BubbleFF::computeEnergy(double d) {
     return U;
 }
 
-void BubbleFF::computeForces() {
+void BubbleFF::computeForces(double *coord, double *f) {
     
     for (auto &interaction : _bubbleInteractionVector)
-        interaction->computeForces();
+        interaction->computeForces(coord, f);
 }
 
-void BubbleFF::computeForcesAux() {
-    
-    for (auto &interaction : _bubbleInteractionVector)
-        interaction->computeForcesAux();
-}
+//void BubbleFF::computeForcesAux() {
+//    
+//    for (auto &interaction : _bubbleInteractionVector)
+//        interaction->computeForcesAux();
+//}
 
 void BubbleFF::computeLoadForces() {
     

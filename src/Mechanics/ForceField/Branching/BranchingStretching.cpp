@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include <CGMethod.h>
+//#include <CGMethod.h>
 #include "BranchingStretching.h"
 
 #include "BranchingStretchingHarmonic.h"

@@ -38,12 +38,15 @@ public:
     /// Initialize the forcefields
     BubbleFF(string type, string mtoc);
     
+    virtual void vectorize();
+    virtual void cleanup();
+    
     virtual string getName() {return "Bubble";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual void computeForces(double *coord, double *f);
+//    virtual void computeForcesAux();
     
     /// BubbleFF can compute load forces on all Bead from Bubble elements
     virtual void computeLoadForces();
