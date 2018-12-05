@@ -833,7 +833,7 @@ void Controller::run() {
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
-    std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
+//    std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
     
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
@@ -842,7 +842,7 @@ void Controller::run() {
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runnl(mine - mins);
     nltime += elapsed_runnl.count();
-    std::cout<<"NL time "<<elapsed_runnl.count()<<endl;
+//    std::cout<<"NL time "<<elapsed_runnl.count()<<endl;
     mins = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
     updateReactionRates();
@@ -923,7 +923,7 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
-                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
+//                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
                 
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
