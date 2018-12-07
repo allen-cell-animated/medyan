@@ -77,6 +77,7 @@ struct LoggerOstreamContainer {
 
     /// Display flags
     LoggerLevelFlag disp; ///< Main switch
+    LoggerLevelFlag dispColor;
     LoggerLevelFlag dispTime;
     LoggerLevelFlag dispFile;
     LoggerLevelFlag dispLine;
@@ -90,6 +91,8 @@ struct LoggerOstreamContainer {
 };
 
 struct LoggerSettings {
+    bool supressColorIfRedirected = true;
+
     std::string delimiterBefore = "[";
     std::string delimiterAfter = "]";
     bool spaceAfterDelimiter = true;

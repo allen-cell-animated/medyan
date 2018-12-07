@@ -5,10 +5,36 @@
 #include <iomanip>
 #include <unordered_map>
 
+#include "util/platform.h"
+
+#ifdef PLATFORM_UNIX_LIKE
+    #include <unistd.h>
+#endif
+
 namespace medyan {
 namespace logger {
 
 namespace {
+
+// Internal configuration
+bool stdoutRedirected = false;
+bool stderrRedirected = false;
+
+// Helper functions
+bool isStdoutRedirected() {
+#ifdef PLATFORM_UNIX_LIKE
+    return !isatty(STDOUT_FILENO);
+#else
+    return false;
+#endif
+}
+bool isStderrRedirected() {
+#ifdef PLATFORM_UNIX_LIKE
+    return !isatty(STDERR_FILENO);
+#else
+    return false;
+#endif
+}
 
 std::string timeLiteralGeneration() {
     using namespace std::chrono;
@@ -60,9 +86,25 @@ const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelLiteral {
     {LogLevel::Fatal,   "Fatal"}
 };
 
+// Level color codes. Notice that we no longer need to supply hash since c++14.
+const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelColorAnsi {
+    {LogLevel::Debug,   "\033[37m"}, // White
+    {LogLevel::Info,    "\033[97m"}, // Bright white
+    {LogLevel::Step,    "\033[96m"}, // Bright cyan
+    {LogLevel::Note,    "\033[92m"}, // Bright green
+    {LogLevel::Warning, "\033[93m"}, // Bright yellow
+    {LogLevel::Error,   "\033[91m"}, // Bright red
+    {LogLevel::Fatal,   "\033[91m"}  // Bright red
+};
+const char const* resetAnsi = "\033[0m";
+
 
 void Logger::defaultLoggerInitialization() {
     Logger& l = getDefaultLogger();
+
+    // Detect output redirection
+    stdoutRedirected = isStdoutRedirected();
+    stderrRedirected = isStderrRedirected();
 
     LoggerOstreamContainer& scrn = l.attachOstream(&std::cout, false);
 #ifdef NDEBUG
@@ -70,6 +112,7 @@ void Logger::defaultLoggerInitialization() {
 #else
     scrn.disp.turnOnAtLeast(LogLevel::Debug);
 #endif
+    if(!(stdoutRedirected && l.settings.supressColorIfRedirected)) scrn.dispColor.turnOnAtLeast(LogLevel::Debug);
     scrn.dispTime.turnOnAtLeast(LogLevel::Warning);
     scrn.dispFile.turnOnAtLeast(LogLevel::Warning);
     scrn.dispLine.turnOnAtLeast(LogLevel::Error);
@@ -94,6 +137,9 @@ void LogWriter::logDispatch() {
             std::ostringstream finalOss;
 
             // Prefix generation
+            if(eachOs.dispColor.isOnWith(_lv)) {
+                finalOss << logLevelColorAnsi.find(_lv)->second;
+            }
             if(eachOs.dispTime.isOnWith(_lv)) {
                 if(genTime) {
                     strTime = timeLiteralGeneration();
@@ -123,6 +169,9 @@ void LogWriter::logDispatch() {
             finalOss << _oss.str();
 
             // Suffix generation
+            if(eachOs.dispColor.isOnWith(_lv)) {
+                finalOss << resetAnsi;
+            }
             if(settings.newLineAfterLog) finalOss << '\n';
 
             // This output should not cause data races
