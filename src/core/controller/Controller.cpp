@@ -13,6 +13,7 @@
 
 #include <random>
 #include <chrono>
+#include <unordered_set>
 
 #include "core/controller/Controller.h"
 
@@ -44,6 +45,7 @@
 #include <tuple>
 #include <vector>
 #include <algorithm>
+#include "Rand.h"
 #include "Restart.h"
 using namespace mathfunc;
 
@@ -317,6 +319,35 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         } else if( ! regionInMembrane->contains(vector2Array<double, 3>(c->coordinates()))) {
             // Compartment is outside the membrane
             _cController->deactivate(c);
+        }
+    }
+
+    // Transfer species from all the inactive compartments
+    {
+        vector<Compartment*> ac, ic;
+        for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
+            if(c->isActivated()) ac.push_back(c);
+            else                 ic.push_back(c);
+        }
+        auto nac = ac.size();
+        for(auto c : ic) {
+            for(auto &sp : c->getSpeciesContainer().species()) {
+                int copyNumber = sp->getN();
+                unordered_set<Species*> sp_targets;
+                if(sp->getFullName().find("Bound") == string::npos) {
+                    while(copyNumber > 0) {
+                        sp->down();
+                        auto tc = ac[Rand::randInteger(1, nac-1)];
+                        auto sp_target = tc->findSpeciesByName(sp->getName());
+                        sp_targets.insert(sp_target);
+                        sp_target->up();
+                        --copyNumber;
+                    }
+                }
+                for(auto sp_target : sp_targets)
+                    sp_target->updateReactantPropensities();
+                sp->updateReactantPropensities();
+            }
         }
     }
 
