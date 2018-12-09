@@ -96,7 +96,7 @@ const std::unordered_map<LogLevel, const char*, LogLevelHash> logLevelColorAnsi 
     {LogLevel::Error,   "\033[91m"}, // Bright red
     {LogLevel::Fatal,   "\033[91m"}  // Bright red
 };
-const char const* resetAnsi = "\033[0m";
+constexpr const char * resetAnsi = "\033[0m";
 
 
 void Logger::defaultLoggerInitialization() {
