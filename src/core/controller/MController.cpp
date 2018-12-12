@@ -24,6 +24,7 @@
 #include "CylinderVolumeFF.h"
 #include "MembraneFF.h"
 #include "TriangleCylinderVolumeFF.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
 
 #include "ConjugateGradient.h"
 
@@ -78,6 +79,10 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     _FFManager._forceFields.push_back(
         new MembraneFF(forceFields.MemStretchingFFType,
                        forceFields.MemBendingFFType));
+
+    _FFManager._forceFields.push_back(
+        new VolumeConservationFF(forceFields.VolumeConservationFFType)
+    );
     
     //These FF's have a neighbor list associated with them
     //add to the subsystem's database of neighbor lists.

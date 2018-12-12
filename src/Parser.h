@@ -253,6 +253,9 @@ struct MechanicsFFType {
     string MemStretchingFFType     = "";
     string MemBendingFFType        = "";
     string MemCylinderVolumeFFType = "";
+
+    /// Volume conservation ff type
+    string VolumeConservationFFType = "";
     
 };
 
