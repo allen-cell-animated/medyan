@@ -56,14 +56,39 @@ It would be easier if the implementation and the mesh representation are coupled
 the current surface meshwork system. But additional variables should be introduced and
 it might not be appropriate to mess them up with the original structure.
 
-Mesh representation
-    - The mesh is orientable, mainfold, and the faces are all triangles.
-    - The SurfaceMesh class stores a list of vertices, halfedges and triangles.
-    - A vertex contains the point coordinate information.
-        - It should be easy for a vertex to retrieve the neighboring halfedges and faces.
-        - The vertex stores the index of ONE neighboring triangle, and ONE neighboring edge.
-        - If the vertex is v0 and the halfedge is (v0, v1), then the triangle must be (v0, v1, v2)
-    - A halfedge should contain indices of the vertex (v0, v1)
-        - It should also contain the index of the opposite halfedge (v1, v0)
-    - A triangle should contain indices of the vertex in the outward facing order.
+Overlaying a new set of variables with the current implementation of the meshwork might
+be a good idea as well.
+
 */
+
+#ifndef ADAPTIVE_MESH_HPP
+#define ADAPTIVE_MESH_HPP
+
+#include <vector>
+
+using Float = double;
+
+struct MeshForce {
+    const std::vector< Vertex* >& vertices;
+    std::vector< char > mask;
+    std::vector< size_t > activeVertexIndices;
+    some_array operator()(some_array coord) {
+        // The size of coord must be exactly 3 times the size of vertex array.
+        for(size_t i : activeVertexIndices) {
+            Vector3 p = vertices[i] -> point;
+            for(Vertex* v : vertices[i] -> neighborVertices) {
+                if
+            }
+        }
+    }
+};
+
+// 2nd order Runge Kutta method on a set of coordinates.
+void rk2(coord, calc_force, Float dt, Float epsilon) {
+    force = calc_force(coord);
+    coord_halfway = coord + force * dt / 2;
+    force_halfway = calc_force(coord_halfway);
+    coord += force_halfway * dt;
+}
+
+#endif
