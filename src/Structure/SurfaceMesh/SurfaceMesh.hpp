@@ -1,6 +1,7 @@
 #ifndef MEDYAN_SurfaceMesh_hpp
 #define MEDYAN_SurfaceMesh_hpp
 
+#include <algorithm>
 #include <array>
 #include <vector>
 
@@ -34,6 +35,8 @@ public:
         size_t triangleIndex;
         size_t targetVertexIndex;
         size_t oppositeHalfEdgeIndex;
+        size_t nextHalfEdgeIndex;
+        size_t prevHalfEdgeIndex;
         size_t edgeIndex;
     };
     struct Edge {
@@ -65,7 +68,72 @@ public:
     ~SurfaceMesh();
 
     // Initialize the meshwork using triangle vertex index lists. Throws on error.
-    void init(const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList);
+    void init(
+        size_t numVertices,
+        const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
+    ) {
+        _vertices.resize(numVertices);
+        const size_t numTriangles = triangleVertexIndexList.size();
+        _triangles.resize(numTriangles);
+        const size_t numHalfEdges = 3 * numTriangles;
+        _halfEdges.reserve(numHalfEdges);
+        _edges.reserve(numHalfEdges / 2); // Might be more than this number with borders.
+
+        struct VertexAdditionalInfo {
+            bool hasTargetingHalfEdge = false;
+            std::vector< size_t > leavingHalfEdgeIndices;
+        };
+        std::vector< VertexAdditionalInfo > vai(numVertices);
+
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
+            const auto& t = triangleVertexIndexList[ti];
+            _triangles[ti].halfEdgeIndex = _halfEdges.size(); // The next inserted halfedge index
+            for(size_t i = 0; i < 3; ++i) {
+                _halfEdges.emplace_back();
+                HalfEdge& he = _halfEdges.back();
+                const size_t hei = _halfEdges.size() - 1;
+                he.hasOpposite = false;
+                he.triangleIndex = ti;
+                he.targetVertexIndex = t[i];
+                he.nextHalfEdgeIndex = (i == 2 ? hei - 2 : hei + 1);
+                he.prevHalfEdgeIndex = (i == 0 ? hei + 2 : hei - 1);
+
+                // Remembering this edge in the vertices.
+                const size_t leftVertexIndex = t[i == 0 ? 2 : i - 1];
+                vai[leftVertexIndex].leavingHalfEdgeIndices.push_back(hei);
+                // Search in the target vertex, whether there's an opposite halfedge leaving
+                const auto findRes = std::find_if(
+                    vai[t[i]].leavingHalfEdgeIndices.begin(),
+                    vai[t[i]].leavingHalfEdgeIndices.end(),
+                    [this, leftVertexIndex](size_t leavingHalfEdgeIndex) {
+                        return leftVertexIndex == _halfEdges[leavingHalfEdgeIndex].targetVertexIndex;
+                    }
+                );
+                if(findRes == vai[t[i]].leavingHalfEdgeIndices.end()) {
+                    // opposite not found
+                    _edges.emplace_back();
+                    _edges.back().halfEdgeIndex = hei;
+                    he.edgeIndex = _edges.size() - 1;
+                } else {
+                    // opposite found
+                    he.hasOpposite = true;
+                    he.oppositeHalfEdgeIndex = *findRes;
+                    he.edgeIndex = _halfEdges[he.oppositeHalfEdgeIndex].edgeIndex;
+
+                    _halfEdges[he.oppositeHalfEdgeIndex].hasOpposite = true;
+                    _halfEdges[he.oppositeHalfEdgeIndex].oppositeHalfEdgeIndex = hei;
+                }
+
+                // Set vertex half edge index
+                if(!vai[t[i]].hasTargetingHalfEdge) {
+                    _vertices[t[i]].halfEdgeIndex = hei;
+                    vai[t[i]].hasTargetingHalfEdge = true;
+                }
+            }
+        }
+
+        // TODO: validation
+    }
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
     vector<Triangle*>& getTriangleVector() {return _triangleVector;}
