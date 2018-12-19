@@ -295,41 +295,117 @@ public:
             mesh._registerEdge(ei3,       hei3,   hei3_o);
         }
     };
+    // Edge collapse
+    struct EdgeCollapse {
+        static constexpr int deltaNumVertex = -1;
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
+            auto& edges = mesh._edges;
+            auto& halfEdges = mesh._halfEdges;
+            auto& vertices = mesh._vertices;
+            auto& triangles = mesh._triangles;
+
+            // TODO preconditions
+
+            // Get index of current elements
+            const size_t ohei = edges[edgeIndex].halfEdgeIndex;
+            const size_t ohei_n = mesh.next(ohei);
+            const size_t ohei_p = mesh.prev(ohei);
+            const size_t ohei_o = mesh.opposite(ohei);
+            const size_t ohei_on = mesh.next(ohei_o);
+            const size_t ohei_op = mesh.prev(ohei_o);
+            const size_t ot0 = mesh.triangle(ohei);
+            const size_t ot1 = mesh.triangle(ohei_o);
+            const size_t ov0 = mesh.target(ohei); // Will collapse to this vertex
+            const size_t ov1 = mesh.target(ohei_o); // Will be removed
+            const size_t oei1 = mesh.edge(ohei_n); // Will collapse to this edge
+            const size_t oei2 = mesh.edge(ohei_p); // Will be removed
+            const size_t oei3 = mesh.edge(ohei_op); // Will collapse on this edge
+            const size_t oei4 = mesh.edge(ohei_on); // Will be removed
+
+            // Retarget all halfedges pointing v1 to v0
+            for(size_t hei1 = mesh.opposite(ohei_on); hei1 != ohei_p; hei1 = mesh.opposite(mesh.next(hei1))) {
+                halfEdges[hei1].targetVertexIndex = ov0;
+            }
+            vertices[ov0].halfEdgeIndex = ohei_on;
+
+            // Collapse edges
+            mesh._registerEdge(oei1, mesh.opposite(ohei_n), mesh.opposite(ohei_p));
+            mesh._registerEdge(oei2, mesh.opposite(ohei_op), mesh.opposite(ohei_on));
+
+            // Remove elements
+            vertices.erase(ov1);
+            edges.erase(edgeIndex);
+            edges.erase(oei2);
+            edges.erase(oei4);
+            halfEdges.erase(ohei);   halfEdges.erase(ohei_n);  halfEdges.erase(ohei_p);
+            halfEdges.erase(ohei_o); halfEdges.erase(ohei_on); halfEdges.erase(ohei_op);
+            triangles.erase(ot0);
+            triangles.erase(ot1);
+        }
+    };
+    // Edge flip
+    struct EdgeFlip {
+        static constexpr int deltaNumVertex = 0;
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex) {
+            auto& edges = mesh._edges;
+            auto& halfEdges = mesh._halfEdges;
+            auto& vertices = mesh._vertices;
+            auto& triangles = mesh._triangles;
+
+            // TODO precondition
+
+            // Get index of current elements
+            const size_t ohei = edges[edgeIndex].halfEdgeIndex;
+            const size_t ohei_n = mesh.next(ohei);
+            const size_t ohei_p = mesh.prev(ohei);
+            const size_t ohei_o = mesh.opposite(ohei);
+            const size_t ohei_on = mesh.next(ohei_o);
+            const size_t ohei_op = mesh.prev(ohei_o);
+            const size_t ov0 = mesh.target(ohei);
+            const size_t ov1 = mesh.target(ohei_n);
+            const size_t ov2 = mesh.target(ohei_o);
+            const size_t ov3 = mesh.target(ohei_on);
+            const size_t ot0 = mesh.triangle(ohei);
+            const size_t ot1 = mesh.triangle(ohei_o);
+
+            // Retarget vertices
+            halfEdges[ohei].targetVertexIndex = ov1;
+            halfEdges[ohei_o].targetVertexIndex = ov3;
+            vertices[ov0].halfEdgeIndex = ohei_op;
+            vertices[ov2].halfEdgeIndex = ohei_p;
+
+            // Remake triangles
+            mesh._registerTriangle(ot0, ohei, ohei_p, ohei_on);
+            mesh._registerTriangle(ot1, ohei_o, ohei_op, ohei_n);
+
+        }
+    };
 
     // triangle subdivision, introduces 3 new vertices
-    void triangleSubdivision(size_t triangleIndex) {
-        // TODO pre-conditions
-    }
+    struct TriangleSubdivision {
+        static constexpr int deltaNumVertex = 3;
+        void operator()(SurfaceTriangularMesh& mesh, size_t triangleIndex) {
+            auto& edges = mesh._edges;
+            auto& halfEdges = mesh._halfEdges;
+            auto& vertices = mesh._vertices;
+            auto& triangles = mesh._triangles;
 
-    /// Get vector of triangles/edges/vertices that this membrane contains.
-    vector<Triangle*>& getTriangleVector() {return _triangleVector;}
-    vector<Edge*>& getEdgeVector() { return _edgeVector; }
-    vector<Vertex*>& getVertexVector() { return _vertexVector; }
+            // TODO pre-conditions
 
-    // Get Id
-    int getId()const { return _id; }
-    
-    
-    // SubSystem management, inherited from Trackable
-    virtual void addToSubSystem()override { _membranes.addElement(this); }
-    virtual void removeFromSubSystem()override { _membranes.removeElement(this); }
-    
-    /// Get all instances of this class from the SubSystem
-    static const vector<Membrane*>& getMembranes() {
-        return _membranes.getElements();
-    }
-    /// Get the number of membranes in this system
-    static int numMembranes() {
-        return _membranes.countElements();
-    }
+            const size_t ohei = triangles[triangleIndex].halfEdgeIndex;
+            const size_t ohei_n = mesh.next(ohei);
+            const size_t ohei_p = mesh.prev(ohei);
+            VertexInsertionOnEdge()(mesh, mesh.edge(ohei)); // ohei, ohei_n, ohei_p still have the same target
 
-    //@{
-    /// Implements Component
-    // Get type
-    int getType()override { return _memType; }
-    // Print self information
-    virtual void printSelf()const override;
-    //@}
+            // Get the edge for future flipping.
+            const size_t eFlip = mesh.edge(mesh.prev(ohei));
+
+            VertexInsertionOnEdge()(mesh, mesh.edge(ohei_n));
+            VertexInsertionOnEdge()(mesh, mesh.edge(ohei_p));
+            EdgeFlip()(mesh, eFlip);
+        }
+    };
+
 
     /**************************************************************************
     Geometric
