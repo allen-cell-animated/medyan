@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <set>
 #include <vector>
 
 /******************************************************************************
@@ -21,16 +22,88 @@ edge:       The undirected edge of this halfedge.
 All the other elements must have at least one index pointing to a halfedge.
 ******************************************************************************/
 
+template< typename T > class DeletableVector {
+public:
+    struct Deletable {
+        bool markedAsDeleted = false;
+        T data;
+    };
+    struct IndexMove {
+        size_t from, to;
+        bool valid;
+    };
+
+private:
+    std::vector< Deletable > _value;
+    std::set< size_t > _deletedIndices;
+
+public:
+    // Insert a new element. Returns the new index.
+    size_t insert() {
+        if(_deletedIndices.empty()) {
+            _value.emplace_back();
+            return _value.size() - 1;
+        } else {
+            auto it = _deletedIndices.cbegin(); // minimum
+            const size_t res = *it;
+            _value[res].markedAsDeleted = false;
+            _deletedIndices.erase(it);
+            return res;
+        }
+    }
+
+    void erase(size_t index) {
+        _value[index].markedAsDeleted = true;
+        _deletedIndices.insert(index);
+    }
+
+    bool isDeleted(size_t index) const { return _value[index].markedAsDeleted; }
+
+    // Move the last undeleted element to the first deleted location.
+    // Returns the index of the element moved.
+    IndexMove makeMove() {
+        IndexMove res;
+
+        // Remove trailing deleted elements.
+        while(!_value.empty() && _value.back().markedAsDeleted) {
+            _value.pop_back();
+            _deletedIndices.erase(_deletedIndices.crbegin()); // Remove maximum index
+        }
+
+        if(_deletedIndices.empty()) {
+            res.valid = false; // Invalid move
+        } else {
+            const auto it = _deletedIndices.cbegin(); // minimum index
+            res.from = _value.size() - 1;
+            res.to = *it;
+            res.valid = true;
+            _value[res.to] = std::move(_value[res.from]);
+            _value.pop_back();
+            _deletedIndices.erase(it);
+        }
+
+        return res;
+    }
+
+    size_t size_raw() const noexcept { return _value.size(); }
+    size_t size() const { return _value.size() - _deletedIndices.size(); }
+
+    T&       operator[](size_t index)       { return _value[index].data; }
+    const T& operator[](size_t index) const { return _value[index].data; }
+
+    // This function should only be called during initialization
+    std::vector< Deletable >& getValue() { return _value; }
+    
+};
+
 class SurfaceTriangularMesh {
 public:
 
     // The elements should be trivially copyable.
     struct Vertex {
-        bool markedAsDeleted = false;
         size_t halfEdgeIndex; // Only one HalfEdge targeting the vertex is needed.
     };
     struct HalfEdge {
-        bool markedAsDeleted = false;
         bool hasOpposite;
         size_t triangleIndex;
         size_t targetVertexIndex;
@@ -40,23 +113,39 @@ public:
         size_t edgeIndex;
     };
     struct Edge {
-        bool markedAsDeleted = false;
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
     };
     struct Triangle {
-        bool markedAsDeleted = false;
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
     };
 
 private:
 
-    std::vector<Triangle> _triangles; // collection of triangles
-    std::vector<HalfEdge> _halfEdges; // collection of halfedges
-    std::vector<Edge> _edges; // collection of edges
-    std::vector<Vertex> _vertices; // collection of vertices
+    DeletableVector<Triangle> _triangles; // collection of triangles
+    DeletableVector<HalfEdge> _halfEdges; // collection of halfedges
+    DeletableVector<Edge> _edges; // collection of edges
+    DeletableVector<Vertex> _vertices; // collection of vertices
 
     bool _isClosed = true; // Whether the meshwork is topologically closed
     int _genus = 0; // Genus of the surface. Normally 0, as for a topologically spherical shape
+
+    // Meshwork registration helper
+    void _registerTriangle(size_t ti, size_t hei0, size_t hei1, size_t hei2) {
+        _triangles[ti].halfEdgeIndex = hei0;
+        _halfEdges[hei0].nextHalfEdgeIndex = hei1;
+        _halfEdges[hei1].nextHalfEdgeIndex = hei2;
+        _halfEdges[hei2].nextHalfEdgeIndex = hei0;
+        _halfEdges[hei0].prevHalfEdgeIndex = hei2;
+        _halfEdges[hei1].prevHalfEdgeIndex = hei0;
+        _halfEdges[hei2].prevHalfEdgeIndex = hei1;
+    }
+    void _registerEdge(size_t ei, size_t hei0, size_t hei1) {
+        _edges[ei].halfEdgeIndex = hei0;
+        _halfEdges[hei0].hasOpposite = true;
+        _halfEdges[hei0].oppositeHalfEdgeIndex = hei1;
+        _halfEdges[hei1].hasOpposite = true;
+        _halfEdges[hei1].oppositeHalfEdgeIndex = hei0;
+    }
 
 public:
     // Constructors
@@ -72,12 +161,12 @@ public:
         size_t numVertices,
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
     ) {
-        _vertices.resize(numVertices);
+        _vertices.getValue().resize(numVertices);
         const size_t numTriangles = triangleVertexIndexList.size();
-        _triangles.resize(numTriangles);
+        _triangles.getValue().resize(numTriangles);
         const size_t numHalfEdges = 3 * numTriangles;
-        _halfEdges.reserve(numHalfEdges);
-        _edges.reserve(numHalfEdges / 2); // Might be more than this number with borders.
+        _halfEdges.getValue().reserve(numHalfEdges);
+        _edges.getValue().reserve(numHalfEdges / 2); // Might be more than this number with borders.
 
         struct VertexAdditionalInfo {
             bool hasTargetingHalfEdge = false;
@@ -87,11 +176,10 @@ public:
 
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             const auto& t = triangleVertexIndexList[ti];
-            _triangles[ti].halfEdgeIndex = _halfEdges.size(); // The next inserted halfedge index
+            _triangles[ti].halfEdgeIndex = _halfEdges.size_raw(); // The next inserted halfedge index
             for(size_t i = 0; i < 3; ++i) {
-                _halfEdges.emplace_back();
-                HalfEdge& he = _halfEdges.back();
-                const size_t hei = _halfEdges.size() - 1;
+                const size_t hei = _halfEdges.insert();
+                HalfEdge& he = _halfEdges[hei];
                 he.hasOpposite = false;
                 he.triangleIndex = ti;
                 he.targetVertexIndex = t[i];
@@ -111,9 +199,8 @@ public:
                 );
                 if(findRes == vai[t[i]].leavingHalfEdgeIndices.end()) {
                     // opposite not found
-                    _edges.emplace_back();
-                    _edges.back().halfEdgeIndex = hei;
-                    he.edgeIndex = _edges.size() - 1;
+                    _edges[_edges.insert()].halfEdgeIndex = hei;
+                    he.edgeIndex = _edges.size_raw() - 1;
                 } else {
                     // opposite found
                     he.hasOpposite = true;
@@ -133,6 +220,80 @@ public:
         }
 
         // TODO: validation
+    }
+
+
+    // Meshwork traverse
+    bool hasOpposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].hasOpposite; }
+    size_t opposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].oppositeHalfEdgeIndex; }
+    size_t next(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].nextHalfEdgeIndex; }
+    size_t prev(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].prevHalfEdgeIndex; }
+    size_t triangle(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].triangleIndex; }
+    size_t target(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].targetVertexIndex; }
+    size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
+
+    // Vertex insertion on edge.
+    struct VertexInsertionOnEdge {
+        static constexpr int deltaNumVertex = 1;
+
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
+            auto& edges = mesh._edges;
+            auto& halfEdges = mesh._halfEdges;
+            auto& vertices = mesh._vertices;
+            auto& triangles = mesh._triangles;
+
+            // Get index of current elements
+            const size_t ohei       = edges[edgeIndex].halfEdgeIndex;
+            const size_t ohei_n     = mesh.next(ohei);
+            const size_t ohei_p     = mesh.prev(ohei);
+            const size_t ohei_o     = mesh.opposite(ohei);
+            const size_t ohei_on    = mesh.next(ohei_o);
+            const size_t ohei_op    = mesh.prev(ohei_o);
+            const size_t oti0       = mesh.triangle(ohei);
+            const size_t oti2       = mesh.triangle(ohei_o);
+            const size_t vi0        = mesh.target(ohei);
+            const size_t vi1        = mesh.target(ohei_n);
+            const size_t vi2        = mesh.target(ohei_o);
+            const size_t vi3        = mesh.target(ohei_on);
+
+            // Create new elements
+            const size_t vi     = vertices.insert();
+            const size_t ei2    = edges.insert(); // New edge created by splitting
+            const size_t hei0_o = halfEdges.insert(); // Targeting new vertex, oppositing ohei
+            const size_t hei2_o = halfEdges.insert(); // Targeting new vertex, oppositing ohei_o
+            const size_t ei1    = edges.insert(); // New edge cutting t0
+            const size_t hei1   = halfEdges.insert(); // Leaving new vertex
+            const size_t hei1_o = halfEdges.insert(); // Targeting new vertex
+            const size_t ei3    = edges.insert(); // New edge cutting t2
+            const size_t hei3   = halfEdges.insert(); // Leaving new vertex
+            const size_t hei3_o = halfEdges.insert(); // Targeting new vertex
+            const size_t ti1    = triangles.insert();
+            const size_t ti3    = triangles.insert();
+
+            // Adjust vertex
+            vertices[vi].halfEdgeIndex = hei0_o;
+            halfEdges[hei0_o].targetVertexIndex = vi;
+            halfEdges[hei2_o].targetVertexIndex = vi;
+            halfEdges[hei1_o].targetVertexIndex = vi;
+            halfEdges[hei3_o].targetVertexIndex = vi;
+
+            // Adjust triangle
+            mesh._registerTriangle(oti0, ohei,   ohei_n,  hei1_o);
+            mesh._registerTriangle(ti1,  hei1,   ohei_p,  hei2_o);
+            mesh._registerTriangle(oti2, ohei_o, ohei_on, hei3_o);
+            mesh._registerTriangle(ti3,  hei3,   ohei_op, hei0_o);
+
+            // Adjust edge
+            mesh._registerEdge(edgeIndex, ohei,   hei0_o);
+            mesh._registerEdge(ei1,       hei1,   hei1_o);
+            mesh._registerEdge(ei2,       ohei_o, hei2_o);
+            mesh._registerEdge(ei3,       hei3,   hei3_o);
+        }
+    };
+
+    // triangle subdivision, introduces 3 new vertices
+    void triangleSubdivision(size_t triangleIndex) {
+        // TODO pre-conditions
     }
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
