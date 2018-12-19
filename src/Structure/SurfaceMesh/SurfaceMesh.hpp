@@ -133,18 +133,23 @@ private:
     void _registerTriangle(size_t ti, size_t hei0, size_t hei1, size_t hei2) {
         _triangles[ti].halfEdgeIndex = hei0;
         _halfEdges[hei0].nextHalfEdgeIndex = hei1;
-        _halfEdges[hei1].nextHalfEdgeIndex = hei2;
-        _halfEdges[hei2].nextHalfEdgeIndex = hei0;
         _halfEdges[hei0].prevHalfEdgeIndex = hei2;
+        _halfEdges[hei0].triangleIndex = ti;
+        _halfEdges[hei1].nextHalfEdgeIndex = hei2;
         _halfEdges[hei1].prevHalfEdgeIndex = hei0;
+        _halfEdges[hei1].triangleIndex = ti;
+        _halfEdges[hei2].nextHalfEdgeIndex = hei0;
         _halfEdges[hei2].prevHalfEdgeIndex = hei1;
+        _halfEdges[hei2].triangleIndex = ti;
     }
     void _registerEdge(size_t ei, size_t hei0, size_t hei1) {
         _edges[ei].halfEdgeIndex = hei0;
         _halfEdges[hei0].hasOpposite = true;
         _halfEdges[hei0].oppositeHalfEdgeIndex = hei1;
+        _halfEdges[hei0].edgeIndex = ei;
         _halfEdges[hei1].hasOpposite = true;
         _halfEdges[hei1].oppositeHalfEdgeIndex = hei0;
+        _halfEdges[hei1].edgeIndex = ei;
     }
 
 public:
