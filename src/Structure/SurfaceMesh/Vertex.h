@@ -63,7 +63,7 @@ private:
 
 public:
     ///Main constructor
-    Vertex(vector<double> v, Composite* parent, size_t numNeighbors);
+    Vertex(vector<double> v, Composite* parent);
     
     // Get geo Voronoi cell
     GVoronoiCell* getGVoronoiCell() { return _gVoronoiCell.get(); }
@@ -103,11 +103,6 @@ public:
     //@}
 
 
-};
-
-// Used in SurfaceTriangularMeshData
-struct VertexData {
-    Vertex* vertex;
 };
 
 

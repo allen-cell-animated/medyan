@@ -84,9 +84,4 @@ public:
 
 };
 
-// Used in SurfaceTriangularMeshData
-struct EdgeData {
-    Edge* edge;
-};
-
 #endif

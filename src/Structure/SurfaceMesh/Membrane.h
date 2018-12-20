@@ -12,18 +12,47 @@
 #include "Composite.h"
 
 #include "GMembrane.h"
+#include "MathFunctions.h"
 #include "MMembrane.h"
+#include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
 
-// FORWARD DECLARATIONS
-class SubSystem;
+// Mesh type specification
+struct MembraneMeshAttribute {
+    struct VertexAttribute {
+        using coordinate_type = decltype(Vertex::coordinate);
+        Vertex* vertex;
 
-// Element data specification
-struct HalfEdgeData {};
-using MembraneMeshData = SurfaceTriangularMesh::TriangularMeshAttribute< VertexData, EdgeData, HalfEdgeData, TriangleData >;
+        coordinate_type& getCoordinate() { return vertex->coordinate; }
+
+        // TODO adaptive
+    };
+    struct EdgeAttribute {
+        Edge* edge;
+        // TODO geometry / adaptive
+    };
+    struct HalfEdgeAttribute {};
+    struct TriangleAttribute {
+        Triangle* triangle;
+        // TODO geometry / adaptive
+    };
+    struct MetaAttribute {
+        SubSystem *s;
+        Membrane *m;
+    };
+
+    using coordinate_type = VertexAttribute::coordinate_type;
+
+    template< typename Mesh > static void newVertex(const MetaAttribute& meta, Mesh& mesh, size_t v, const typename Mesh::VertexInsertionOnEdge::InsertMid& op) {
+        coordinate_type c0 = mesh.getVertexAttribute(op.v0).getCoordinate();
+        coordinate_type c1 = mesh.getVertexAttribute(op.v1).getCoordinate();
+        coordinate_type c = mathfunc::midPointCoordinate(c0, c1, 0.5);
+        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(c, meta.m, 0); // TODO remove 0
+    }
+};
 
 /******************************************************************************
 Topologically, the membrane is represented by a 2d surface with 2 sides (which
@@ -39,7 +68,7 @@ class Membrane: public Composite, public Trackable, public Geometric {
 
 private:
 
-    SurfaceTriangularMeshData<MembraneMeshData> _mesh;
+    SurfaceTriangularMesh< MembraneMeshAttribute > _mesh;
 
     vector<Triangle*> _triangleVector; // collection of triangles
     vector<Edge*> _edgeVector; // collection of edges

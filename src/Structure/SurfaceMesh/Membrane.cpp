@@ -29,6 +29,7 @@ Database<Membrane*> Membrane::_membranes;
 Membrane::Membrane(SubSystem* s, short membraneType,
     const vector<tuple<array<double, 3>, vector<size_t>>>& membraneData):
     Trackable(false, false, false, false, true), Geometric(),
+    _mesh(MembraneMeshAttribute::MetaAttribute{s, this}),
     _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
     
     // Build the meshwork using vertex and neighbor information

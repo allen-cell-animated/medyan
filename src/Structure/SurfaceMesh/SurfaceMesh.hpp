@@ -105,12 +105,18 @@ public:
     
 };
 
-class SurfaceTriangularMesh {
+template< typename Attribute > class SurfaceTriangularMeshBase {
 public:
+
+    using VertexAttribute   = Attribute::VertexAttribute;
+    using EdgeAttribute     = Attribute::EdgeAttribute;
+    using HalfEdgeAttribute = Attribute::HalfEdgeAttribute;
+    using TriangleAttribute = Attribute::TriangleAttribute;
 
     // The elements should be trivially copyable.
     struct Vertex {
         size_t halfEdgeIndex; // Only one HalfEdge targeting the vertex is needed.
+        VertexAttribute attr;
     };
     struct HalfEdge {
         bool hasOpposite;
@@ -120,39 +126,25 @@ public:
         size_t nextHalfEdgeIndex;
         size_t prevHalfEdgeIndex;
         size_t edgeIndex;
+        HalfEdgeAttribute attr;
     };
     struct Edge {
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
+        EdgeAttribute attr;
     };
     struct Triangle {
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
+        TriangleAttribute attr;
     };
 
-    template<
-        typename VData,
-        typename EData,
-        typename HData,
-        typename TData
-    > struct TriangularMeshAttribute {
-        DeletableVector< VData > vertexData;
-        DeletableVector< EData > edgeData;
-        DeletableVector< HData > halfEdgeData;
-        DeletableVector< TData > triangleData;
-
-        void resizeFromMesh(SurfaceTriangularMesh& mesh) {
-            vertexData.resizeFrom(mesh._vertices);
-            edgeData.resizeFrom(mesh._edges);
-            halfEdgeData.resizeFrom(mesh._halfEdges);
-            triangleData.resizeFrom(mesh._triangles);
-        }
-    };
-
-private:
+protected:
 
     DeletableVector<Triangle> _triangles; // collection of triangles
     DeletableVector<HalfEdge> _halfEdges; // collection of halfedges
     DeletableVector<Edge>     _edges;     // collection of edges
     DeletableVector<Vertex>   _vertices;  // collection of vertices
+
+    Attribute::MetaAttribute _meta;
 
     bool _isClosed = true; // Whether the meshwork is topologically closed
     int _genus = 0; // Genus of the surface. Normally 0, as for a topologically spherical shape
@@ -180,14 +172,16 @@ private:
         _halfEdges[hei1].edgeIndex = ei;
     }
 
-public:
-    // Constructors
-    SurfaceMesh(SubSystem* s, short membraneType,
-        const vector<tuple<array<double, 3>, vector<size_t>>>& membraneData);
+    template< typename Operation > size_t _newVertex(const Operation& op) {
+        size_t index = _vertices.insert();
+        Attribute::newVertex(_meta, *this, index, op);
+        return index;
+    }
 
-    // This destructor is called when a membrane is to be removed from the system.
-    // Removes all vertices, edges and triangles associated with the membrane.
-    ~SurfaceMesh();
+public:
+
+    // Constructors
+    SurfaceTriangularMeshBase(const Attribute::MetaAttribute& meta) : _meta(meta) {}
 
     // Initialize the meshwork using triangle vertex index lists. Throws on error.
     void init(
@@ -255,6 +249,15 @@ public:
         // TODO: validation
     }
 
+    // Attribute accessor
+    VertexAttribute&       getVertexAttribute(size_t index)       { return _vertices[index].attr; }
+    const VertexAttribute& getVertexAttribute(size_t index) const { return _vertices[index].attr; }
+    EdgeAttribute&       getEdgeAttribute(size_t index)       { return _edges[index].attr; }
+    const EdgeAttribute& getEdgeAttribute(size_t index) const { return _edges[index].attr; }
+    HalfEdgeAttribute&       getHalfEdgeAttribute(size_t index)       { return _halfEdges[index].attr; }
+    const HalfEdgeAttribute& getHalfEdgeAttribute(size_t index) const { return _halfEdges[index].attr; }
+    TriangleAttribute&       getTriangleAttribute(size_t index)       { return _triangles[index].attr; }
+    const TriangleAttribute& getTriangleAttribute(size_t index) const { return _triangles[index].attr; }
 
     // Meshwork traverse
     bool hasOpposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].hasOpposite; }
@@ -270,6 +273,8 @@ public:
     // Vertex insertion on edge.
     struct VertexInsertionOnEdge {
         static constexpr int deltaNumVertex = 1;
+
+        struct InsertMid { size_t v0, v1; }
 
         void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
             auto& edges = mesh._edges;
@@ -292,7 +297,7 @@ public:
             const size_t vi3        = mesh.target(ohei_on);
 
             // Create new elements
-            const size_t vi     = vertices.insert();
+            const size_t vi     = mesh._newVertex(InsertMid{vi0, vi2});
             const size_t ei2    = edges.insert(); // New edge created by splitting
             const size_t hei0_o = halfEdges.insert(); // Targeting new vertex, oppositing ohei
             const size_t hei2_o = halfEdges.insert(); // Targeting new vertex, oppositing ohei_o
@@ -438,38 +443,15 @@ public:
 
 };
 
-// Usage: Attributes must be of different types. Otherwise get attribute will only return the first attribute with the given type.
-template< typename ... Attributes > struct SurfaceTriangularMeshAttribute;
-template< typename Attribute, typename ... OtherAttributes > struct SurfaceTriangularMeshAttribute< Attribute, OtherAttributes... > {
-    Attribute attribute;
-    SurfaceTriangularMeshAttribute< OtherAttributes... > others;
+// Type GeometricAttribute::VertexData must implement getCoordinate() function
+template< typename GeometricAttribute > class SurfaceTriangularMesh : public SurfaceTriangularMeshBase< GeometricAttribute > {
+public:
+    using coordinate_type = GeometricAttribute::VertexData::coordinate_type;
 
-    template< typename T, typename U = std::enable_if< std::is_same<T, Attribute>::value, void > >
-    T& getAttribute() { return attribute; }
-    template< typename T, typename U = std::enable_if< std::is_same<T, Attribute>::value, void > >
-    const T& getAttribute() const { return attribute; }
-    template< typename T, typename U = std::enable_if< !std::is_same<T, Attribute>::value, void > >
-    T& getAttribute() { return others.getAttribute(); }
-    template< typename T, typename U = std::enable_if< !std::is_same<T, Attribute>::value, void > >
-    const T& getAttribute() const { return others.getAttribute(); }
+    // Constructors
+    SurfaceTriangularMesh(const GeometricAttribute::MetaAttribute& meta) : SurfaceTriangularMeshBase(meta) {}
 
-    void resizeFromMesh(SurfaceTriangularMesh& mesh) {
-        attribute.resizeFromMesh(mesh);
-        others.resizeFromMesh(mesh);
-    }
 };
-template<> struct SurfaceTriangularMeshAttribute<> {
-    void resizeFromMesh(SurfaceTriangularMesh& mesh) {}
-};
-
-template< typename ... Attributes > struct SurfaceTriangularMeshData {
-    SurfaceTriangularMesh mesh;
-    SurfaceTriangularMeshAttribute< Attributes ... > attributes;
-
-    void resizeFromMesh() { attributes.resizeFromMesh(mesh); }
-};
-
-
 
 
 
