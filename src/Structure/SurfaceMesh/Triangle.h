@@ -99,5 +99,9 @@ public:
 
 };
 
+// Used in SurfaceTriangularMeshData
+struct TriangleData {
+    Triangle* triangle;
+};
 
 #endif

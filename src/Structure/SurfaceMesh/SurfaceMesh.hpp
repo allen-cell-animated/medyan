@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <array>
 #include <set>
+#include <type_traits>
 #include <vector>
 
 /******************************************************************************
@@ -55,6 +56,14 @@ public:
     void erase(size_t index) {
         _value[index].markedAsDeleted = true;
         _deletedIndices.insert(index);
+    }
+
+    // Make the indices an exact copy from another DeletableVector
+    template< typename U >
+    void resizeFrom(const DeletableVector<U>& rhs) {
+        _deletedIndices = rhs._deletedIndices;
+        _value.resize(rhs._value.size());
+        for(size_t i : _deletedIndices) _value[i]._markedAsDeleted = true;
     }
 
     bool isDeleted(size_t index) const { return _value[index].markedAsDeleted; }
@@ -119,12 +128,31 @@ public:
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
     };
 
+    template<
+        typename VData,
+        typename EData,
+        typename HData,
+        typename TData
+    > struct TriangularMeshAttribute {
+        DeletableVector< VData > vertexData;
+        DeletableVector< EData > edgeData;
+        DeletableVector< HData > halfEdgeData;
+        DeletableVector< TData > triangleData;
+
+        void resizeFromMesh(SurfaceTriangularMesh& mesh) {
+            vertexData.resizeFrom(mesh._vertices);
+            edgeData.resizeFrom(mesh._edges);
+            halfEdgeData.resizeFrom(mesh._halfEdges);
+            triangleData.resizeFrom(mesh._triangles);
+        }
+    };
+
 private:
 
     DeletableVector<Triangle> _triangles; // collection of triangles
     DeletableVector<HalfEdge> _halfEdges; // collection of halfedges
-    DeletableVector<Edge> _edges; // collection of edges
-    DeletableVector<Vertex> _vertices; // collection of vertices
+    DeletableVector<Edge>     _edges;     // collection of edges
+    DeletableVector<Vertex>   _vertices;  // collection of vertices
 
     bool _isClosed = true; // Whether the meshwork is topologically closed
     int _genus = 0; // Genus of the surface. Normally 0, as for a topologically spherical shape
@@ -236,6 +264,8 @@ public:
     size_t triangle(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].triangleIndex; }
     size_t target(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].targetVertexIndex; }
     size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
+
+    // The following are basic mesh topology operators
 
     // Vertex insertion on edge.
     struct VertexInsertionOnEdge {
@@ -406,55 +436,37 @@ public:
         }
     };
 
+};
 
-    /**************************************************************************
-    Geometric
-    **************************************************************************/
-    /**
-     * Implements Geometric.
-     * If calcDerivative is true, most implementation would assume d is zero
-     *   regardless of the actual passed d value. If calcDerivative is false,
-     *   most implementation would store the result in member variables with
-     *   "stretched" in their name.
-     */
-    virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
+// Usage: Attributes must be of different types. Otherwise get attribute will only return the first attribute with the given type.
+template< typename ... Attributes > struct SurfaceTriangularMeshAttribute;
+template< typename Attribute, typename ... OtherAttributes > struct SurfaceTriangularMeshAttribute< Attribute, OtherAttributes... > {
+    Attribute attribute;
+    SurfaceTriangularMeshAttribute< OtherAttributes... > others;
 
-    // Get geo membrane
-    GMembrane* getGMembrane() { return _gMembrane.get(); }
+    template< typename T, typename U = std::enable_if< std::is_same<T, Attribute>::value, void > >
+    T& getAttribute() { return attribute; }
+    template< typename T, typename U = std::enable_if< std::is_same<T, Attribute>::value, void > >
+    const T& getAttribute() const { return attribute; }
+    template< typename T, typename U = std::enable_if< !std::is_same<T, Attribute>::value, void > >
+    T& getAttribute() { return others.getAttribute(); }
+    template< typename T, typename U = std::enable_if< !std::is_same<T, Attribute>::value, void > >
+    const T& getAttribute() const { return others.getAttribute(); }
 
-    /**
-     * Use pseudo normal signed distance field method to get the signed distance to a point.
-     * If the point is outside, the result is positive and vice versa.
-     * Throws an exception if the membrane is not closed.
-     * The function will search through the whole meshwork, so it might not be efficient.
-     * However, if the "safe" flag is turned off and neighboring compartments happen to contain membrane elements,
-     *   search space will be limited to those compartments to save time. In this case meshwork size should be
-     *   much smaller than the compartment size.
-     */
-    double signedDistance(const std::array<double, 3>& p, bool safe=false)const;
-    /**
-     * Use signed distance or other methods to judge whether a point is inside membrane.
-     * Throws an exception if the membrane is not closed.
-     */
-    bool contains(const std::array<double, 3>& point)const;
+    void resizeFromMesh(SurfaceTriangularMesh& mesh) {
+        attribute.resizeFromMesh(mesh);
+        others.resizeFromMesh(mesh);
+    }
+};
+template<> struct SurfaceTriangularMeshAttribute<> {
+    void resizeFromMesh(SurfaceTriangularMesh& mesh) {}
+};
 
-    // Function to monitor the quality of the meshwork
-    double meshworkQuality()const; // Must be used after updating the geometry
-                                   // Returns a value between 0 and 1,
-                                   // 1 being best and 0 being worst.
+template< typename ... Attributes > struct SurfaceTriangularMeshData {
+    SurfaceTriangularMesh mesh;
+    SurfaceTriangularMeshAttribute< Attributes ... > attributes;
 
-    /**************************************************************************
-    Topological
-    **************************************************************************/
-    bool isClosed()const { return _isClosed; }
-
-    /**************************************************************************
-    Mechanics
-    **************************************************************************/
-    // Get mech membrane
-    MMembrane* getMMembrane() { return _mMembrane.get(); }
-
-
+    void resizeFromMesh() { attributes.resizeFromMesh(mesh); }
 };
 
 

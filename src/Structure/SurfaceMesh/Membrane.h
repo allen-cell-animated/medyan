@@ -13,12 +13,17 @@
 
 #include "GMembrane.h"
 #include "MMembrane.h"
+#include "Structure/SurfaceMesh/Edge.h"
+#include "Structure/SurfaceMesh/SurfaceMesh.hpp"
+#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 
 // FORWARD DECLARATIONS
 class SubSystem;
-class Triangle;
-class Edge;
-class Vertex;
+
+// Element data specification
+struct HalfEdgeData {};
+using MembraneMeshData = SurfaceTriangularMesh::TriangularMeshAttribute< VertexData, EdgeData, HalfEdgeData, TriangleData >;
 
 /******************************************************************************
 Topologically, the membrane is represented by a 2d surface with 2 sides (which
@@ -33,6 +38,8 @@ class.
 class Membrane: public Composite, public Trackable, public Geometric {
 
 private:
+
+    SurfaceTriangularMeshData<MembraneMeshData> _mesh;
 
     vector<Triangle*> _triangleVector; // collection of triangles
     vector<Edge*> _edgeVector; // collection of edges

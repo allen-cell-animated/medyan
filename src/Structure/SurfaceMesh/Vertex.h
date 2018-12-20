@@ -105,5 +105,10 @@ public:
 
 };
 
+// Used in SurfaceTriangularMeshData
+struct VertexData {
+    Vertex* vertex;
+};
+
 
 #endif
