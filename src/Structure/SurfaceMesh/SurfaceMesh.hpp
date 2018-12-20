@@ -108,10 +108,11 @@ public:
 template< typename Attribute > class SurfaceTriangularMeshBase {
 public:
 
-    using VertexAttribute   = Attribute::VertexAttribute;
-    using EdgeAttribute     = Attribute::EdgeAttribute;
-    using HalfEdgeAttribute = Attribute::HalfEdgeAttribute;
-    using TriangleAttribute = Attribute::TriangleAttribute;
+    using VertexAttribute   = typename Attribute::VertexAttribute;
+    using EdgeAttribute     = typename Attribute::EdgeAttribute;
+    using HalfEdgeAttribute = typename Attribute::HalfEdgeAttribute;
+    using TriangleAttribute = typename Attribute::TriangleAttribute;
+    using MetaAttribute     = typename Attribute::MetaAttribute;
 
     // The elements should be trivially copyable.
     struct Vertex {
@@ -144,7 +145,7 @@ protected:
     DeletableVector<Edge>     _edges;     // collection of edges
     DeletableVector<Vertex>   _vertices;  // collection of vertices
 
-    Attribute::MetaAttribute _meta;
+    MetaAttribute _meta;
 
     bool _isClosed = true; // Whether the meshwork is topologically closed
     int _genus = 0; // Genus of the surface. Normally 0, as for a topologically spherical shape
@@ -181,7 +182,7 @@ protected:
 public:
 
     // Constructors
-    SurfaceTriangularMeshBase(const Attribute::MetaAttribute& meta) : _meta(meta) {}
+    SurfaceTriangularMeshBase(const MetaAttribute& meta) : _meta(meta) {}
 
     // Initialize the meshwork using triangle vertex index lists. Throws on error.
     void init(
@@ -274,9 +275,9 @@ public:
     struct VertexInsertionOnEdge {
         static constexpr int deltaNumVertex = 1;
 
-        struct InsertMid { size_t v0, v1; }
+        struct InsertMid { size_t v0, v1; };
 
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
+        void operator()(SurfaceTriangularMeshBase& mesh, size_t edgeIndex)const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -316,6 +317,8 @@ public:
             halfEdges[hei2_o].targetVertexIndex = vi;
             halfEdges[hei1_o].targetVertexIndex = vi;
             halfEdges[hei3_o].targetVertexIndex = vi;
+            halfEdges[hei1].targetVertexIndex = vi1;
+            halfEdges[hei3].targetVertexIndex = vi3;
 
             // Adjust triangle
             mesh._registerTriangle(oti0, ohei,   ohei_n,  hei1_o);
@@ -333,7 +336,7 @@ public:
     // Edge collapse
     struct EdgeCollapse {
         static constexpr int deltaNumVertex = -1;
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
+        void operator()(SurfaceTriangularMeshBase& mesh, size_t edgeIndex)const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -365,7 +368,7 @@ public:
 
             // Collapse edges
             mesh._registerEdge(oei1, mesh.opposite(ohei_n), mesh.opposite(ohei_p));
-            mesh._registerEdge(oei2, mesh.opposite(ohei_op), mesh.opposite(ohei_on));
+            mesh._registerEdge(oei3, mesh.opposite(ohei_op), mesh.opposite(ohei_on));
 
             // Remove elements
             vertices.erase(ov1);
@@ -381,7 +384,7 @@ public:
     // Edge flip
     struct EdgeFlip {
         static constexpr int deltaNumVertex = 0;
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex) {
+        void operator()(SurfaceTriangularMeshBase& mesh, size_t edgeIndex) {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -419,7 +422,7 @@ public:
     // triangle subdivision, introduces 3 new vertices
     struct TriangleSubdivision {
         static constexpr int deltaNumVertex = 3;
-        void operator()(SurfaceTriangularMesh& mesh, size_t triangleIndex) {
+        void operator()(SurfaceTriangularMeshBase& mesh, size_t triangleIndex) {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -446,10 +449,16 @@ public:
 // Type GeometricAttribute::VertexData must implement getCoordinate() function
 template< typename GeometricAttribute > class SurfaceTriangularMesh : public SurfaceTriangularMeshBase< GeometricAttribute > {
 public:
-    using coordinate_type = GeometricAttribute::VertexData::coordinate_type;
+    using VertexAttribute   = typename SurfaceTriangularMeshBase< GeometricAttribute >::VertexAttribute;
+    using EdgeAttribute     = typename SurfaceTriangularMeshBase< GeometricAttribute >::EdgeAttribute;
+    using HalfEdgeAttribute = typename SurfaceTriangularMeshBase< GeometricAttribute >::HalfEdgeAttribute;
+    using TriangleAttribute = typename SurfaceTriangularMeshBase< GeometricAttribute >::TriangleAttribute;
+    using MetaAttribute     = typename SurfaceTriangularMeshBase< GeometricAttribute >::MetaAttribute;
+
+    using coordinate_type = typename GeometricAttribute::VertexAttribute::coordinate_type;
 
     // Constructors
-    SurfaceTriangularMesh(const GeometricAttribute::MetaAttribute& meta) : SurfaceTriangularMeshBase(meta) {}
+    SurfaceTriangularMesh(const MetaAttribute& meta) : SurfaceTriangularMeshBase< GeometricAttribute >(meta) {}
 
 };
 

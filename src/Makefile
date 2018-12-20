@@ -16,7 +16,7 @@ SOURCES_TEST             := $(shell find ./TESTS -name 'test_*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
 SOURCES                  =  $(SOURCES_CPP)
-HEADERS                  := $(shell find . -name '*.h')
+HEADERS                  := $(shell find . -name '*.h' -o -name '*.hpp')
 
 OBJECTS_TEST             := $(SOURCES_TEST:.cpp=.o)
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
