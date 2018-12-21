@@ -52,9 +52,18 @@ struct MembraneMeshAttribute {
         coordinate_type c = mathfunc::midPointCoordinate(c0, c1, 0.5);
         mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(c, meta.m, 0); // TODO remove 0
     }
-    template< typename Mesh > static void newVertex(const MetaAttribute& meta, Mesh& mesh, size_t v, const coordinate_type& coord, const typename Mesh::VertexInit& op) {
+    template< typename Mesh > static void newVertex(const MetaAttribute& meta, Mesh& mesh, size_t v, const coordinate_type& coord, const typename Mesh::GeometricVertexInit& op) {
         mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(coord, meta.m, 0); // TODO remove 0
     }
+    template< typename Mesh > static void newEdge(const MetaAttribute& meta, Mesh& mesh, size_t e, const typename Mesh::GeometricEdgeInit& op) {
+        mesh.getEdgeAttribute(e).edge = meta.s->addTrackable<Edge>(); // TODO fix ctor
+    }
+    template< typename Mesh > static void newHalfEdge(const MetaAttribute& meta, Mesh& mesh, size_t he, const typename Mesh::GeometricHalfEdgeInit& op) {
+    }
+    template< typename Mesh > static void newTriangle(const MetaAttribute& meta, Mesh& mesh, size_t t, const typename Mesh::GeometricTriangleInit& op) {
+        mesh.getTriangleAttribute(t).triangle = meta.s->addTrackable<Triangle>(); // TODO fix ctor
+    }
+
 };
 
 /******************************************************************************
@@ -101,7 +110,8 @@ public:
     ~Membrane();
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
-    vector<Triangle*>& getTriangleVector() {return _triangleVector;}
+    const SurfaceTriangularMesh< MembraneMeshAttribute >& getMesh() const { return _mesh; }
+    vector<Triangle*>& getTriangleVector() { return _triangleVector; }
     vector<Edge*>& getEdgeVector() { return _edgeVector; }
     vector<Vertex*>& getVertexVector() { return _vertexVector; }
 

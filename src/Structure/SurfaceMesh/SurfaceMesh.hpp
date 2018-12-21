@@ -322,6 +322,8 @@ public:
     size_t target(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].targetVertexIndex; }
     size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
 
+    // TODO mesh neighbor iterators
+
     // The following are basic mesh topology operators
 
     // Vertex insertion on edge.
@@ -504,19 +506,23 @@ template< typename GeometricAttribute > class SurfaceTriangularMesh : public Sur
 public:
     using Base = SurfaceTriangularMeshBase< GeometricAttribute >;
 
-    using VertexAttribute   = typename Base::VertexAttribute;
-    using EdgeAttribute     = typename Base::EdgeAttribute;
-    using HalfEdgeAttribute = typename Base::HalfEdgeAttribute;
-    using TriangleAttribute = typename Base::TriangleAttribute;
-    using MetaAttribute     = typename Base::MetaAttribute;
+    using Base::VertexAttribute;
+    using Base::EdgeAttribute;
+    using Base::HalfEdgeAttribute;
+    using Base::TriangleAttribute;
+    using Base::MetaAttribute;
 
     struct GeometricVertexInit {};
+    struct GeometricEdgeInit {};
+    struct GeometricHalfEdgeInit {};
+    struct GeometricTriangleInit {};
 
     using coordinate_type = typename GeometricAttribute::VertexAttribute::coordinate_type;
 
     // Constructors
     SurfaceTriangularMesh(const MetaAttribute& meta) : Base(meta) {}
 
+    // Initialize using vertex coordinates and triangle vertex index list
     void init(
         const std::vector< coordinate_type >& vertexCoordinateList,
         const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
@@ -526,9 +532,9 @@ public:
         Base::init(numVertices, triangleVertexIndexList);
 
         for(size_t i = 0; i < numVertices; ++i) Attribute::newVertex(_meta, *this, i, vertexCoordinateList[i], GeometricVertexInit{});
-        for(auto& ei : _edges) Attribute::newEdge(_meta, *this, ei, GeometricVertexInit{});
-        // TODO Perform other initialization steps
-
+        for(size_t i = 0; i < _edges.size(); ++i) Attribute::newEdge(_meta, *this, i, GeometricEdgeInit{});
+        for(size_t i = 0; i < _halfEdges.size(); ++i) Attribute::newHalfEdge(_meta, *this, i, GeometricHalfEdgeInit{});
+        for(size_t i = 0; i < _triangles.size(); ++i) Attribute::newTriangle(_meta, *this, i, GeometricTriangleInit{});
 
     }
 

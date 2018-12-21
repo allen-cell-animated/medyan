@@ -37,6 +37,8 @@ class Vertex:
     friend class Membrane; // Membrane class can manage id of this vertex
 
 private:
+    size_t _topoIndex; // Index in the meshwork topology.
+
     unique_ptr<GVoronoiCell> _gVoronoiCell; // pointer to Voronoi cell geometric information
     unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
 
@@ -63,7 +65,7 @@ private:
 
 public:
     ///Main constructor
-    Vertex(vector<double> v, Composite* parent);
+    Vertex(vector<double> v, Composite* parent, size_t topoIndex);
     
     // Get geo Voronoi cell
     GVoronoiCell* getGVoronoiCell() { return _gVoronoiCell.get(); }
