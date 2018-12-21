@@ -52,6 +52,9 @@ struct MembraneMeshAttribute {
         coordinate_type c = mathfunc::midPointCoordinate(c0, c1, 0.5);
         mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(c, meta.m, 0); // TODO remove 0
     }
+    template< typename Mesh > static void newVertex(const MetaAttribute& meta, Mesh& mesh, size_t v, const coordinate_type& coord, const typename Mesh::VertexInit& op) {
+        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(coord, meta.m, 0); // TODO remove 0
+    }
 };
 
 /******************************************************************************

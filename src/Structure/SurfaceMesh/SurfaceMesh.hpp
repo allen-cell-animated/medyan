@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <array>
+#include <cstddef> // ptrdiff_t
+#include <iterator>
 #include <set>
 #include <type_traits>
 #include <vector>
@@ -38,7 +40,58 @@ private:
     std::vector< Deletable > _value;
     std::set< size_t > _deletedIndices;
 
+    template< bool constIt > class IndexIteratorImpl {
+    public:
+        using iterator_category = std::bidirectional_iterator_tag;
+        using value_type = int;
+        using difference_type = std::ptrdiff_t;
+        using pointer = typename std::conditional_t< constIt, const int*, int* >;
+        using reference = typename std::conditional_t< constIt, const int&, int& >;
+
+    private:
+        int _pos; // index in _value
+        std::vector< Deletable >* _storage;
+
+    public:
+        explicit IndexIteratorImpl(int pos, std::vector< Deletable >* storage) : _pos(pos), _storage(storage) {
+            while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted) ++_pos;
+        }
+
+        reference operator*()const { return _pos; }
+        pointer operator->()const { return &_pos; }
+
+        IndexIteratorImpl& operator++() {
+            do ++_pos; while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted);
+            return *this;
+        }
+        IndexIteratorImpl operator++(int) {
+            IndexIteratorImpl res = *this;
+            do ++_pos; while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted);
+            return res;
+        }
+        IndexIteratorImpl& operator--() {
+            do --_pos; while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted);
+            return *this;
+        }
+        IndexIteratorImpl operator--(int) {
+            IndexIteratorImpl res = *this;
+            do --_pos; while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted);
+            return res;
+        }
+
+        template< bool rhsConstIt >
+        bool operator==(const IndexIteratorImpl< rhsConstIt >& rhs)const { return _storage == rhs._storage && _pos == rhs.pos; }
+    };
+
 public:
+
+    using iterator       = IndexIteratorImpl< false >;
+    using const_iterator = IndexIteratorImpl< true >;
+    iterator       begin() noexcept       { return iterator(0, _value); }
+    const_iterator begin() const noexcept { return const_iterator(0, _value); }
+    iterator       end() noexcept       { return iterator(_value.size(), _value); }
+    const_iterator end() const noexcept { return const_iterator(_value.size(), _value); }
+
     // Insert a new element. Returns the new index.
     size_t insert() {
         if(_deletedIndices.empty()) {
@@ -102,7 +155,7 @@ public:
 
     // This function should only be called during initialization
     std::vector< Deletable >& getValue() { return _value; }
-    
+
 };
 
 template< typename Attribute > class SurfaceTriangularMeshBase {
@@ -449,16 +502,35 @@ public:
 // Type GeometricAttribute::VertexData must implement getCoordinate() function
 template< typename GeometricAttribute > class SurfaceTriangularMesh : public SurfaceTriangularMeshBase< GeometricAttribute > {
 public:
-    using VertexAttribute   = typename SurfaceTriangularMeshBase< GeometricAttribute >::VertexAttribute;
-    using EdgeAttribute     = typename SurfaceTriangularMeshBase< GeometricAttribute >::EdgeAttribute;
-    using HalfEdgeAttribute = typename SurfaceTriangularMeshBase< GeometricAttribute >::HalfEdgeAttribute;
-    using TriangleAttribute = typename SurfaceTriangularMeshBase< GeometricAttribute >::TriangleAttribute;
-    using MetaAttribute     = typename SurfaceTriangularMeshBase< GeometricAttribute >::MetaAttribute;
+    using Base = SurfaceTriangularMeshBase< GeometricAttribute >;
+
+    using VertexAttribute   = typename Base::VertexAttribute;
+    using EdgeAttribute     = typename Base::EdgeAttribute;
+    using HalfEdgeAttribute = typename Base::HalfEdgeAttribute;
+    using TriangleAttribute = typename Base::TriangleAttribute;
+    using MetaAttribute     = typename Base::MetaAttribute;
+
+    struct GeometricVertexInit {};
 
     using coordinate_type = typename GeometricAttribute::VertexAttribute::coordinate_type;
 
     // Constructors
-    SurfaceTriangularMesh(const MetaAttribute& meta) : SurfaceTriangularMeshBase< GeometricAttribute >(meta) {}
+    SurfaceTriangularMesh(const MetaAttribute& meta) : Base(meta) {}
+
+    void init(
+        const std::vector< coordinate_type >& vertexCoordinateList,
+        const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
+    ) {
+        const size_t numVertices = vertexCoordinateList.size();
+
+        Base::init(numVertices, triangleVertexIndexList);
+
+        for(size_t i = 0; i < numVertices; ++i) Attribute::newVertex(_meta, *this, i, vertexCoordinateList[i], GeometricVertexInit{});
+        for(auto& ei : _edges) Attribute::newEdge(_meta, *this, ei, GeometricVertexInit{});
+        // TODO Perform other initialization steps
+
+
+    }
 
 };
 
