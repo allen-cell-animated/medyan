@@ -66,6 +66,8 @@ private:
 public:
     ///Main constructor
     Vertex(vector<double> v, Composite* parent, size_t topoIndex);
+
+    void setTopoIndex(size_t index) { _topoIndex = index; }
     
     // Get geo Voronoi cell
     GVoronoiCell* getGVoronoiCell() { return _gVoronoiCell.get(); }

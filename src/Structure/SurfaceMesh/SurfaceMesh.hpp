@@ -157,23 +157,103 @@ protected:
         Attribute::newVertex(_meta, *this, index, op);
         return index;
     }
+    template< typename Operation > size_t _newEdge(const Operation& op) {
+        size_t index = _edges.insert();
+        Attribute::newEdge(_meta, *this, index, op);
+        return index;
+    }
+    template< typename Operation > size_t _newHalfEdge(const Operation& op) {
+        size_t index = _halfEdges.insert();
+        Attribute::newHalfEdge(_meta, *this, index, op);
+        return index;
+    }
+    template< typename Operation > size_t _newTriangle(const Operation& op) {
+        size_t index = _triangles.insert();
+        Attribute::newTriangle(_meta, *this, index, op);
+        return index;
+    }
 
-    template< typename Operation > void _removeVertex(size_t index, const Operation& op) {
+    void _removeVertex(size_t index) {
+        Attribute::removeVertex(_meta, *this, index);
         auto moveIndex = _vertices.erase(index);
-        // TODO other steps for removing vertex.
         if(moveIndex.valid) {
             // Need to update all stored indices/reference/pointer to the vertex.
             forEachHalfEdgeTargetingVertex(index, [this, index](size_t hei) {
                 _halfEdges[hei].targetVertexIndex = index;
             });
-            // TODO other steps for updating index/reference/pointer to the vertex.
+            _vertices[index].attr.setIndex(index);
         }
+    }
+    void _removeHalfEdge(size_t index) {
+        Attribute::removeHalfEdge(_meta, *this, index);
+        auto moveIndex = _halfEdges.erase(index);
+        if(moveIndex.valid) {
+            if(hasOpposite(index)) _edges[opposite(index)].oppositeHalfEdgeIndex = index;
+            if(_triangles[triangle(index)].halfEdgeIndex == moveIndex.from)
+                _triangles[triangle(index)].halfEdgeIndex = index;
+            if(_vertices[target(index)].halfEdgeIndex == moveIndex.from)
+                _vertices[target(index)].halfEdgeIndex = index;
+            if(_edges[edge(index)].halfEdgeIndex == moveIndex.from)
+                _edges[edge(index)].halfEdgeIndex = index;
+            _halfEdges[next(index)].prevHalfEdgeIndex = index;
+            _halfEdges[prev(index)].nextHalfEdgeIndex = index;
+            _halfEdges[index].attr.setIndex(index);
+        }
+    }
+    void _removeEdge(size_t index) {
+        Attribute::removeEdge(_meta, *this, index);
+        auto moveIndex = _edges.erase(index);
+        if(moveIndex.valid) {
+            forEachHalfEdgeInEdge(index, [this, index](size_t hei) {
+                _halfEdges[hei].edgeIndex = index;
+            });
+            _edges[index].attr.setIndex(index);
+        }
+    }
+    void _removeTriangle(size_t index) {
+        Attribute::removeTriangle(_meta, *this, index);
+        auto moveIndex = _triangles.erase(index);
+        if(moveIndex.valid) {
+            forEachHalfEdgeInTriangle(index, [this, index](size_t hei) {
+                _halfEdges[hei].triangleIndex = index;
+            });
+            _triangles[index].attr.setIndex(index);
+        }
+    }
+
+    void _clearVertex() {
+        for(size_t idxAfter = _vertices.size(); idxAfter != 0; --idxAfter)
+            _removeVertex(idxAfter - 1);
+    }
+    void _clearHalfEdge() {
+        for(size_t idxAfter = _vertices.size(); idxAfter != 0; --idxAfter)
+            _removeHalfEdge(idxAfter - 1);
+    }
+    void _clearEdge() {
+        for(size_t idxAfter = _vertices.size(); idxAfter != 0; --idxAfter)
+            _removeEdge(idxAfter - 1);
+    }
+    void _clearTriangle() {
+        for(size_t idxAfter = _vertices.size(); idxAfter != 0; --idxAfter)
+            _removeTriangle(idxAfter - 1);
+    }
+
+    void _clear() {
+        _clearVertex();
+        _clearHalfEdge();
+        _clearEdge();
+        _clearTriangle();
     }
 
 public:
 
     // Constructors
     SurfaceTriangularMeshBase(const MetaAttribute& meta) : _meta(meta) {}
+
+    // Destructor
+    ~SurfaceTriangularMeshBase() {
+        _clear();
+    }
 
     // Initialize the meshwork using triangle vertex index lists. Throws on error.
     void init(
@@ -238,7 +318,9 @@ public:
             }
         }
 
-        // TODO: validation
+        // Attribute initialization will be implemented by descendants
+
+        // TODO: topo validation
     }
 
     // Attribute accessor
@@ -317,17 +399,17 @@ public:
 
             // Create new elements
             const size_t vi     = mesh._newVertex(InsertMid{vi0, vi2});
-            const size_t ei2    = edges.insert(); // New edge created by splitting
-            const size_t hei0_o = halfEdges.insert(); // Targeting new vertex, oppositing ohei
-            const size_t hei2_o = halfEdges.insert(); // Targeting new vertex, oppositing ohei_o
-            const size_t ei1    = edges.insert(); // New edge cutting t0
-            const size_t hei1   = halfEdges.insert(); // Leaving new vertex
-            const size_t hei1_o = halfEdges.insert(); // Targeting new vertex
-            const size_t ei3    = edges.insert(); // New edge cutting t2
-            const size_t hei3   = halfEdges.insert(); // Leaving new vertex
-            const size_t hei3_o = halfEdges.insert(); // Targeting new vertex
-            const size_t ti1    = triangles.insert();
-            const size_t ti3    = triangles.insert();
+            const size_t ei2    = mesh._newEdge(InsertMid{}); // New edge created by splitting
+            const size_t hei0_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex, oppositing ohei
+            const size_t hei2_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex, oppositing ohei_o
+            const size_t ei1    = mesh._newEdge(InsertMid{}); // New edge cutting t0
+            const size_t hei1   = mesh._newHalfEdge(InsertMid{}); // Leaving new vertex
+            const size_t hei1_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex
+            const size_t ei3    = mesh._newEdge(InsertMid{}); // New edge cutting t2
+            const size_t hei3   = mesh._newHalfEdge(InsertMid{}); // Leaving new vertex
+            const size_t hei3_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex
+            const size_t ti1    = mesh._newTriangle(InsertMid{});
+            const size_t ti3    = mesh._newTriangle(InsertMid{});
 
             // Adjust vertex
             vertices[vi].halfEdgeIndex = hei0_o;
@@ -389,14 +471,14 @@ public:
             mesh._registerEdge(oei3, mesh.opposite(ohei_op), mesh.opposite(ohei_on));
 
             // Remove elements
-            vertices.erase(ov1);
-            edges.erase(edgeIndex);
-            edges.erase(oei2);
-            edges.erase(oei4);
-            halfEdges.erase(ohei);   halfEdges.erase(ohei_n);  halfEdges.erase(ohei_p);
-            halfEdges.erase(ohei_o); halfEdges.erase(ohei_on); halfEdges.erase(ohei_op);
-            triangles.erase(ot0);
-            triangles.erase(ot1);
+            mesh._removeVertex(ov1);
+            mesh._removeEdge(edgeIndex);
+            mesh._removeEdge(oei2);
+            mesh._removeEdge(oei4);
+            mesh._removeHalfEdge(ohei);   mesh._removeHalfEdge(ohei_n);  mesh._removeHalfEdge(ohei_p);
+            mesh._removeHalfEdge(ohei_o); mesh._removeHalfEdge(ohei_on); mesh._removeHalfEdge(ohei_op);
+            mesh._removeTriangle(ot0);
+            mesh._removeTriangle(ot1);
         }
     };
     // Edge flip

@@ -7,9 +7,9 @@
 
 Database<Triangle*> Triangle::_triangles;
 
-Triangle::Triangle(Composite* parent, Vertex* v1, Vertex* v2, Vertex* v3):
+Triangle::Triangle(Composite* parent, size_t topoIndex):
     Trackable(true, false, true, false),
-    _v{{v1, v2, v3}}, _edges{{nullptr, nullptr, nullptr}}, _id(_triangles.getID()) {
+    _topoIndex{topoIndex}, _edges{{nullptr, nullptr, nullptr}}, _id(_triangles.getID()) {
     
     parent -> addChild(unique_ptr<Component>(this));
 

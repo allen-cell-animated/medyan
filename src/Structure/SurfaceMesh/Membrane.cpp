@@ -198,12 +198,6 @@ Membrane::Membrane(SubSystem* s, short membraneType,
 
 }
 
-Membrane::~Membrane() {
-    for(auto& v: _vertexVector) _subSystem->removeTrackable<Vertex>(v);
-    for(auto& e: _edgeVector) _subSystem->removeTrackable<Edge>(e);
-    for(auto& t: _triangleVector) _subSystem->removeTrackable<Triangle>(t);
-}
-
 void Membrane::printSelf()const {
     
     cout << endl;

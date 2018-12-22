@@ -7,9 +7,9 @@
 
 Database<Edge*> Edge::_edges;
 
-Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
+Edge::Edge(Composite* parent, size_t topoIndex):
     Trackable(),
-    _v{{v1, v2}}, _id(_edges.getID()) {
+    _topoIndex{topoIndex}, _id(_edges.getID()) {
     
     parent -> addChild(unique_ptr<Component>(this));
 
@@ -25,7 +25,7 @@ Edge::Edge(Composite* parent, Vertex* v1, Vertex* v2):
             printSelf();
             exit(EXIT_FAILURE);
         }
-    _compartment->addEdge(this);
+        _compartment->addEdge(this);
     }
 }
 

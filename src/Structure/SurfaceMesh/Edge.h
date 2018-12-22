@@ -30,6 +30,9 @@ class Edge:
     public Trackable {
 
 private:
+
+    size_t _topoIndex; // Index in the meshwork topology.
+
     // Pointers to the vertices.
     std::array<Vertex*, 2> _v;
 
@@ -45,7 +48,9 @@ private:
     Compartment* _compartment = nullptr; // The compartment containing this edge
 
 public:
-    Edge(Composite *parent, Vertex* v1, Vertex* v2);
+    Edge(Composite *parent, topoIndex);
+
+    void setTopoIndex(size_t index) { _topoIndex = index; }
 
     std::array<double, 3> coordinate; // Coordinate of the mid point, updated with updateCoordiante()
 

@@ -38,6 +38,8 @@ class Triangle:
     public DynamicNeighbor {
 
 private:
+    size_t _topoIndex; // Index in the meshwork topology.
+
     // Pointers to 3 vertices. The rotation of vertices must be pointing outside.
     array<Vertex*, 3> _v;
 
@@ -59,8 +61,9 @@ private:
 public:
     std::array<double, 3> coordinate; // Coordinate of the center point, updated with updateCoordiante()
 
-    Triangle(Composite *parent, Vertex *v1, Vertex *v2, Vertex *v3);
+    Triangle(Composite *parent, size_t topoIndex);
 
+    void setTopoIndex(size_t index) { _topoIndex = index; }
     // Get Beads
     array<Vertex*, 3>& getVertices() { return _v; }
     array<Edge*, 3>& getEdges() { return _edges; }

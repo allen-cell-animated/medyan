@@ -28,15 +28,30 @@ struct MembraneMeshAttribute {
 
         coordinate_type& getCoordinate() { return vertex->coordinate; }
 
+        void setIndex(size_t index) {
+            vertex->setTopoIndex(index);
+        }
+
         // TODO adaptive
     };
     struct EdgeAttribute {
         Edge* edge;
+
+        void setIndex(size_t index) {
+            edge->setTopoIndex(index);
+        }
         // TODO geometry / adaptive
     };
-    struct HalfEdgeAttribute {};
+    struct HalfEdgeAttribute {
+        void setIndex(size_t index) {
+        }
+    };
     struct TriangleAttribute {
         Triangle* triangle;
+
+        void setIndex(size_t index) {
+            triangle->setTopoIndex(index);
+        }
         // TODO geometry / adaptive
     };
     struct MetaAttribute {
@@ -50,18 +65,30 @@ struct MembraneMeshAttribute {
         coordinate_type c0 = mesh.getVertexAttribute(op.v0).getCoordinate();
         coordinate_type c1 = mesh.getVertexAttribute(op.v1).getCoordinate();
         coordinate_type c = mathfunc::midPointCoordinate(c0, c1, 0.5);
-        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(c, meta.m, 0); // TODO remove 0
+        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(c, meta.m, v);
     }
     template< typename Mesh > static void newVertex(const MetaAttribute& meta, Mesh& mesh, size_t v, const coordinate_type& coord, const typename Mesh::GeometricVertexInit& op) {
-        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(coord, meta.m, 0); // TODO remove 0
+        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(coord, meta.m, v);
     }
-    template< typename Mesh > static void newEdge(const MetaAttribute& meta, Mesh& mesh, size_t e, const typename Mesh::GeometricEdgeInit& op) {
-        mesh.getEdgeAttribute(e).edge = meta.s->addTrackable<Edge>(); // TODO fix ctor
+    template< typename Mesh, typename Operation > static void newEdge(const MetaAttribute& meta, Mesh& mesh, size_t e, const Operation& op) {
+        mesh.getEdgeAttribute(e).edge = meta.s->addTrackable<Edge>(meta.m, e);
     }
-    template< typename Mesh > static void newHalfEdge(const MetaAttribute& meta, Mesh& mesh, size_t he, const typename Mesh::GeometricHalfEdgeInit& op) {
+    template< typename Mesh, typename Operation > static void newHalfEdge(const MetaAttribute& meta, Mesh& mesh, size_t he, const Operation& op) {
     }
-    template< typename Mesh > static void newTriangle(const MetaAttribute& meta, Mesh& mesh, size_t t, const typename Mesh::GeometricTriangleInit& op) {
-        mesh.getTriangleAttribute(t).triangle = meta.s->addTrackable<Triangle>(); // TODO fix ctor
+    template< typename Mesh, typename Operation > static void newTriangle(const MetaAttribute& meta, Mesh& mesh, size_t t, const Operation& op) {
+        mesh.getTriangleAttribute(t).triangle = meta.s->addTrackable<Triangle>(meta.m, t);
+    }
+
+    template< typename Mesh > static void removeVertex(const MetaAttribute& meta, Mesh& mesh, size_t v) {
+        meta.s->removeTrackable<Vertex>(mesh.getVertexAttribute(v).vertex);
+    }
+    template< typename Mesh > static void removeEdge(const MetaAttribute& meta, Mesh& mesh, size_t e) {
+        meta.s->removeTrackable<Edge>(mesh.getEdgeAttribute(e).edge);
+    }
+    template< typename Mesh > static void removeHalfEdge(const MetaAttribute& meta, Mesh& mesh, size_t he) {
+    }
+    template< typename Mesh > static void removeTriangle(const MetaAttribute& meta, Mesh& mesh, size_t t) {
+        meta.s->removeTrackable<Triangle>(mesh.getEdgeAttribute(t).triangle);
     }
 
 };
@@ -104,10 +131,6 @@ public:
     // This constructor creates a membrane according to vertex and neighbor data
     Membrane(SubSystem* s, short membraneType,
         const vector<tuple<array<double, 3>, vector<size_t>>>& membraneData);
-
-    // This destructor is called when a membrane is to be removed from the system.
-    // Removes all vertices, edges and triangles associated with the membrane.
-    ~Membrane();
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
     const SurfaceTriangularMesh< MembraneMeshAttribute >& getMesh() const { return _mesh; }
