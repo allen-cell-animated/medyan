@@ -126,8 +126,8 @@ protected:
 
     MetaAttribute _meta;
 
-    bool _isClosed = true; // Whether the meshwork is topologically closed
-    int _genus = 0; // Genus of the surface. Normally 0, as for a topologically spherical shape
+    bool _isClosed;
+    int _genus = 0; // Genus of the surface. Currently it is not tracked.
 
     // Meshwork registration helper
     void _registerTriangle(size_t ti, size_t hei0, size_t hei1, size_t hei2) {
@@ -320,8 +320,15 @@ public:
 
         // Attribute initialization will be implemented by descendants
 
-        // TODO: topo validation
+        // Future: topo validation
     }
+
+    bool updateClosedness() {
+        _isClosed = true;
+        for(const auto& he : _halfEdges) if(!he.hasOpposite) { _isClosed = false; break; }
+        return _isClosed;
+    }
+    bool isClosed()const noexcept { return _isClosed; }
 
     // Attribute accessor
     VertexAttribute&       getVertexAttribute(size_t index)       { return _vertices[index].attr; }

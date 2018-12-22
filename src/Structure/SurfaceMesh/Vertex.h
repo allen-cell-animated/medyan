@@ -75,7 +75,7 @@ public:
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 
     // Get number of tethered neighbors
-    size_t getNeighborNum()const { return _neighborVertices.size(); }
+    [[deprecated]] size_t getNeighborNum()const;
 
     // Get tethered neighbors
     std::vector<Vertex*>& getNeighborVertices() { return _neighborVertices; }

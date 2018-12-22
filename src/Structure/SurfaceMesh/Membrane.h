@@ -129,8 +129,12 @@ private:
 public:
     // Constructors
     // This constructor creates a membrane according to vertex and neighbor data
-    Membrane(SubSystem* s, short membraneType,
-        const vector<tuple<array<double, 3>, vector<size_t>>>& membraneData);
+    Membrane(
+        SubSystem* s,
+        short membraneType,
+        const std::vector< coordinate_type >& vertexCoordinateList,
+        const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
+    );
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
     const SurfaceTriangularMesh< MembraneMeshAttribute >& getMesh() const { return _mesh; }

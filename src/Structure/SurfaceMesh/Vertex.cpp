@@ -1,4 +1,6 @@
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.h"
+
+#include "Structure/SurfaceMesh/Membrane.h" // Membrane::getMesh()
 
 Database<Vertex*> Vertex::_vertices;
 
@@ -13,4 +15,11 @@ Vertex::Vertex(vector<double> v, Composite* parent, size_t topoIndex):
     _mVoronoiCell->setVertex(this);
 #endif
 
+}
+
+size_t Vertex::getNeighborNum()const {
+    const auto& mesh = static_cast<Membrane*>(_parent)->getMesh();
+    size_t num = 0;
+    mesh.forEachHalfEdgeTargetingVertex(_topoIndex, [&num](size_t hei) { ++num; });
+    return num;
 }
