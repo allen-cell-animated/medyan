@@ -25,136 +25,62 @@ edge:       The undirected edge of this halfedge.
 All the other elements must have at least one index pointing to a halfedge.
 ******************************************************************************/
 
+// The DeletableVector is a thin wrapper for std::vector.
+// This container is designed for trivially_copyable types.
+// When an element is removed, instead of doing vector::erase,
+// it essentially swaps the element with the last one, and pops the vector.
 template< typename T > class DeletableVector {
 public:
-    struct Deletable {
-        bool markedAsDeleted = false;
-        T data;
-    };
     struct IndexMove {
         size_t from, to;
         bool valid;
     };
 
 private:
-    std::vector< Deletable > _value;
-    std::set< size_t > _deletedIndices;
-
-    template< bool constIt > class IndexIteratorImpl {
-    public:
-        using iterator_category = std::bidirectional_iterator_tag;
-        using value_type = int;
-        using difference_type = std::ptrdiff_t;
-        using pointer = typename std::conditional_t< constIt, const int*, int* >;
-        using reference = typename std::conditional_t< constIt, const int&, int& >;
-
-    private:
-        int _pos; // index in _value
-        std::vector< Deletable >* _storage;
-
-    public:
-        explicit IndexIteratorImpl(int pos, std::vector< Deletable >* storage) : _pos(pos), _storage(storage) {
-            while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted) ++_pos;
-        }
-
-        reference operator*()const { return _pos; }
-        pointer operator->()const { return &_pos; }
-
-        IndexIteratorImpl& operator++() {
-            do ++_pos; while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted);
-            return *this;
-        }
-        IndexIteratorImpl operator++(int) {
-            IndexIteratorImpl res = *this;
-            do ++_pos; while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted);
-            return res;
-        }
-        IndexIteratorImpl& operator--() {
-            do --_pos; while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted);
-            return *this;
-        }
-        IndexIteratorImpl operator--(int) {
-            IndexIteratorImpl res = *this;
-            do --_pos; while(_pos >= 0 && _pos < _storage->size() && (*_storage)[_pos].markedAsDeleted);
-            return res;
-        }
-
-        template< bool rhsConstIt >
-        bool operator==(const IndexIteratorImpl< rhsConstIt >& rhs)const { return _storage == rhs._storage && _pos == rhs.pos; }
-    };
+    std::vector< T > _value;
 
 public:
 
-    using iterator       = IndexIteratorImpl< false >;
-    using const_iterator = IndexIteratorImpl< true >;
-    iterator       begin() noexcept       { return iterator(0, _value); }
-    const_iterator begin() const noexcept { return const_iterator(0, _value); }
-    iterator       end() noexcept       { return iterator(_value.size(), _value); }
-    const_iterator end() const noexcept { return const_iterator(_value.size(), _value); }
+    using iterator       = std::vector< T >::iterator;
+    using const_iterator = std::vector< T >::const_iterator;
+    iterator       begin() noexcept       { return _value.begin(); }
+    const_iterator begin() const noexcept { return _value.begin(); }
+    iterator       end() noexcept       { return _value.end(); }
+    const_iterator end() const noexcept { return _value.end(); }
 
     // Insert a new element. Returns the new index.
     size_t insert() {
-        if(_deletedIndices.empty()) {
-            _value.emplace_back();
-            return _value.size() - 1;
-        } else {
-            auto it = _deletedIndices.cbegin(); // minimum
-            const size_t res = *it;
-            _value[res].markedAsDeleted = false;
-            _deletedIndices.erase(it);
-            return res;
-        }
+        _value.emplace_back();
+        return _value.size() - 1;
     }
 
-    void erase(size_t index) {
-        _value[index].markedAsDeleted = true;
-        _deletedIndices.insert(index);
-    }
-
-    // Make the indices an exact copy from another DeletableVector
-    template< typename U >
-    void resizeFrom(const DeletableVector<U>& rhs) {
-        _deletedIndices = rhs._deletedIndices;
-        _value.resize(rhs._value.size());
-        for(size_t i : _deletedIndices) _value[i]._markedAsDeleted = true;
-    }
-
-    bool isDeleted(size_t index) const { return _value[index].markedAsDeleted; }
-
-    // Move the last undeleted element to the first deleted location.
-    // Returns the index of the element moved.
-    IndexMove makeMove() {
+    // Remove an element from the container.
+    // Might change the position of certain elements, indicated by the return value.
+    // If index is out of range, the behavior is undefined.
+    IndexMove erase(size_t index) {
         IndexMove res;
-
-        // Remove trailing deleted elements.
-        while(!_value.empty() && _value.back().markedAsDeleted) {
+        size_t lastIndex = _value.size() - 1;
+        if(index == lastIndex) {
             _value.pop_back();
-            _deletedIndices.erase(_deletedIndices.crbegin()); // Remove maximum index
-        }
-
-        if(_deletedIndices.empty()) {
-            res.valid = false; // Invalid move
+            res.valid = false;
         } else {
-            const auto it = _deletedIndices.cbegin(); // minimum index
-            res.from = _value.size() - 1;
-            res.to = *it;
-            res.valid = true;
-            _value[res.to] = std::move(_value[res.from]);
+            // Move value from lastIndex to index
+            _value[index] = _value[lastIndex];
             _value.pop_back();
-            _deletedIndices.erase(it);
+            res.from = lastIndex;
+            res.to = index;
+            res.valid = true;
         }
-
         return res;
     }
 
-    size_t size_raw() const noexcept { return _value.size(); }
-    size_t size() const { return _value.size() - _deletedIndices.size(); }
+    size_t size() const noexcept { return _value.size(); }
 
-    T&       operator[](size_t index)       { return _value[index].data; }
-    const T& operator[](size_t index) const { return _value[index].data; }
+    T&       operator[](size_t index)       { return _value[index]; }
+    const T& operator[](size_t index) const { return _value[index]; }
 
     // This function should only be called during initialization
-    std::vector< Deletable >& getValue() { return _value; }
+    std::vector< T >& getValue() { return _value; }
 
 };
 
@@ -232,6 +158,18 @@ protected:
         return index;
     }
 
+    template< typename Operation > void _removeVertex(size_t index, const Operation& op) {
+        auto moveIndex = _vertices.erase(index);
+        // TODO other steps for removing vertex.
+        if(moveIndex.valid) {
+            // Need to update all stored indices/reference/pointer to the vertex.
+            forEachHalfEdgeTargetingVertex(index, [this, index](size_t hei) {
+                _halfEdges[hei].targetVertexIndex = index;
+            });
+            // TODO other steps for updating index/reference/pointer to the vertex.
+        }
+    }
+
 public:
 
     // Constructors
@@ -257,7 +195,7 @@ public:
 
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             const auto& t = triangleVertexIndexList[ti];
-            _triangles[ti].halfEdgeIndex = _halfEdges.size_raw(); // The next inserted halfedge index
+            _triangles[ti].halfEdgeIndex = _halfEdges.size(); // The next inserted halfedge index
             for(size_t i = 0; i < 3; ++i) {
                 const size_t hei = _halfEdges.insert();
                 HalfEdge& he = _halfEdges[hei];
@@ -281,7 +219,7 @@ public:
                 if(findRes == vai[t[i]].leavingHalfEdgeIndices.end()) {
                     // opposite not found
                     _edges[_edges.insert()].halfEdgeIndex = hei;
-                    he.edgeIndex = _edges.size_raw() - 1;
+                    he.edgeIndex = _edges.size() - 1;
                 } else {
                     // opposite found
                     he.hasOpposite = true;
@@ -322,7 +260,32 @@ public:
     size_t target(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].targetVertexIndex; }
     size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
 
-    // TODO mesh neighbor iterators
+    // Mesh neighbor iterators
+    template< typename Func >
+    void forEachHalfEdgeTargetingVertex(size_t vi, Func&& func) {
+        size_t hei0 = _vertices[vi].halfEdgeIndex;
+        size_t hei = hei0;
+        do {
+            func(hei);
+            if(!hasOpposite(hei)) break;
+            hei = prev(opposite(hei));
+        } while(hei != hei0);
+    }
+    template< typename Func >
+    void forEachHalfEdgeInTriangle(size_t ti, Func&& func) {
+        size_t hei0 = _triangles[ti].halfEdgeIndex;
+        size_t hei = hei0;
+        do {
+            func(hei);
+            hei = next(hei);
+        } while(hei != hei0);
+    }
+    template< typename Func >
+    void forEachHalfEdgeInEdge(size_t ei, Func&& func) {
+        size_t hei0 = _edges[ei].halfEdgeIndex;
+        func(hei0);
+        if(hasOpposite(hei0)) func(opposite(hei0));
+    }
 
     // The following are basic mesh topology operators
 
