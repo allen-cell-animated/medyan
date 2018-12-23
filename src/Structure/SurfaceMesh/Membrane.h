@@ -16,7 +16,7 @@
 #include "MMembrane.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"
-#include "Structure/SurfaceMesh/HalfEdge.h"
+#include "Structure/SurfaceMesh/GHalfEdge.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
@@ -100,9 +100,11 @@ Topologically, the membrane is represented by a 2d surface with 2 sides (which
 means no Klein bottles are allowed!). The surface is constructed by
 interconnected vertices, edges and triangles.
 
-The Membrane class is a container holding all the relative vertices, edges and
-triangles. Meshwork initialization and geometry update are all managed by this
-class.
+The Membrane class is a manager for constructing the mesh and computing the
+geometry. It contains a meshwork instance that's responsible for adding and
+removing vertices, edges (halfedges) and triangles to/from the SubSystem.
+However, the ownership of all elements is in this Membrane class through
+inheriting Composite.
 ******************************************************************************/
 
 class Membrane: public Composite, public Trackable, public Geometric {
