@@ -16,6 +16,7 @@
 #include "MMembrane.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"
+#include "Structure/SurfaceMesh/HalfEdge.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
@@ -43,8 +44,9 @@ struct MembraneMeshAttribute {
         // TODO geometry / adaptive
     };
     struct HalfEdgeAttribute {
-        void setIndex(size_t index) {
-        }
+        GHalfEdge gHalfEdge;
+
+        void setIndex(size_t index) {}
     };
     struct TriangleAttribute {
         Triangle* triangle;
