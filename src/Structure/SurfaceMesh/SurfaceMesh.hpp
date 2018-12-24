@@ -330,6 +330,12 @@ public:
     }
     bool isClosed()const noexcept { return _isClosed; }
 
+    // Data accessors
+    const auto& getTriangles()const { return _triangles; }
+    const auto& getHalfEdges()const { return _halfEdges; }
+    const auto& getEdges()const { return _edges; }
+    const auto& getVertices()const { return _vertices; }
+
     // Attribute accessor
     VertexAttribute&       getVertexAttribute(size_t index)       { return _vertices[index].attr; }
     const VertexAttribute& getVertexAttribute(size_t index) const { return _vertices[index].attr; }

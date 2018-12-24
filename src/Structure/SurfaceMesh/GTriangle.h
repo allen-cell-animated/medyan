@@ -11,18 +11,11 @@ class Triangle;
 Storing the geometric properties of the triangle patches.
 ******************************************************************************/
 
-class GTriangle {
+struct GTriangle {
 
-private:
-    Triangle* _pTriangle; // Parent triangle
-
-    double _currentArea; // Current area
-    std::array<std::array<double, 3>, 3> _dCurrentArea; // The derivative of the area. _dCurrentArea[vtxIdx][xyz]
-    double _stretchedArea; // Temporarily store the stretched area
-
-    std::array<double, 3> _theta; // The angles corresponding to each vertex
-    std::array<std::array<std::array<double, 3>, 3>, 3> _dTheta; // The derivative of the angles. _dTheta[angleIdx][vtxIdx][xyz]
-                                                          // For example, _dTheta[0][2][1] means d(_theta[0]) / dy for vertex 2.
+    double area; // Current area
+    std::array<std::array<double, 3>, 3> dArea; // The derivative of the area. _dCurrentArea[vtxIdx][xyz]
+    double sArea; // Temporarily store the stretched area
 
     std::array<double, 3> _sinTheta;
     std::array<std::array<std::array<double, 3>, 3>, 3> _dSinTheta;
@@ -33,10 +26,13 @@ private:
     std::array<double, 3> _stretchedSinTheta;
     std::array<double, 3> _stretchedCotTheta;
 
-    std::array<double, 3> _unitNormal; // The unit normal vector pointing outward (since the meshwork is orientable)
-    std::array<double, 3> _stretchedUnitNormal; // Temporarily stores unit normal under stretched conditions.
+    std::array<double, 3> unitNormal; // The unit normal vector pointing outward (since the meshwork is orientable)
+    std::array<double, 3> sUnitNormal; // Temporarily stores unit normal under stretched conditions.
 
-public:
+    double coneVolume; // Volume of the tetrahedral formed by this triangle and the origin (0, 0, 0)
+    std::array<std::array<double, 3>, 3> dConeVolume; // The derivative of the cone volume.
+    double sConeVolume;
+
     GTriangle() {}
 
     /// Set parent 

@@ -1,32 +1,25 @@
-#ifndef MEDYAN_GVoronoiCell_h
-#define MEDYAN_GVoronoiCell_h
+#ifndef MEDYAN_GVertex_h
+#define MEDYAN_GVertex_h
 
 #include <array>
 #include <vector>
 
 class Vertex; // Forward declaration
 
-class GVoronoiCell {
-
-private:
-    Vertex* _pVertex; // Parent vertex
+struct GVertex {
 
     // Note: vectors must initially be resized to the number of neighbors around the vertex.
-    double _currentArea; // Current area
-    std::array<double, 3> _dCurrentArea; // Derivative of area on the central vertex
-    std::vector<std::array<double, 3>> _dNeighborCurrentArea; // Derivative of the area on the neighboring vertices
-    double _stretchedArea; // Temporarily store the stretched area
+    double area; // Current area
+    std::array<double, 3> dArea; // Derivative of area on the central vertex, derivative on neighbors are stored in half edges
+    double sArea; // Temporarily store the stretched area
 
-    double _currentCurv; // Current mean curvature
-    std::array<double, 3> _dCurrentCurv;
-    std::vector<std::array<double, 3>> _dNeighborCurrentCurv; // Derivative of the mean curv on the neighboring vertices
-    double _stretchedCurv; // Temporarily store the stretched mean curvature
+    double curv; // Current mean curvature
+    std::array<double, 3> dCurv;
+    double sCurv; // Temporarily store the stretched mean curvature
 
-    std::array<double, 3> _pseudoUnitNormal; // Pseudo unit normal around the vertex
-    std::array<double, 3> _stretchedPseudoUnitNormal; // Pseudo unit normal under stretch
+    std::array<double, 3> pseudoUnitNormal; // Pseudo unit normal around the vertex
+    std::array<double, 3> sPseudoUnitNormal; // Pseudo unit normal under stretch
 
-public:
-    GVoronoiCell(size_t numNeighbors);
 
     /// Set parent 
     void setVertex(Vertex* v) { _pVertex = v; }

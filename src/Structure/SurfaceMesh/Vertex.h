@@ -10,7 +10,6 @@
 
 #include "Edge.h"
 #include "Triangle.h"
-#include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
 
 // Forward declarations

@@ -16,7 +16,10 @@
 #include "MMembrane.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/Edge.h"
+#include "Structure/SurfaceMesh/GEdge.h"
 #include "Structure/SurfaceMesh/GHalfEdge.h"
+#include "Structure/SurfaceMesh/GTriangle.h"
+#include "Structure/SurfaceMesh/GVertex.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
@@ -26,6 +29,8 @@ struct MembraneMeshAttribute {
     struct VertexAttribute {
         using coordinate_type = decltype(Vertex::coordinate);
         Vertex* vertex;
+
+        GVertex gVertex;
 
         coordinate_type& getCoordinate() { return vertex->coordinate; }
 
@@ -37,6 +42,8 @@ struct MembraneMeshAttribute {
     };
     struct EdgeAttribute {
         Edge* edge;
+
+        GEdge gEdge;
 
         void setIndex(size_t index) {
             edge->setTopoIndex(index);
@@ -50,6 +57,8 @@ struct MembraneMeshAttribute {
     };
     struct TriangleAttribute {
         Triangle* triangle;
+
+        GTriangle gTriangle;
 
         void setIndex(size_t index) {
             triangle->setTopoIndex(index);
@@ -181,6 +190,7 @@ public:
      *   most implementation would store the result in member variables with
      *   "stretched" in their name.
      */
+    void updateGeometryValue();
     virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
 
     // Get geo membrane

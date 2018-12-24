@@ -5,19 +5,17 @@
 
 class Edge; // Forward declaration
 
-class GEdge {
+struct GEdge {
 
-private:
     Edge* _pEdge; // Parent edge
 
-    double _currentLength; // Current length
-    std::array<std::array<double, 3>, 2> _dCurrentLength; // The derivative of the length. _dCurrentLength[vtxIdx][xyz]
-    double _stretchedLength; // Temporarily store the stretched length
+    double length; // Current length
+    std::array<std::array<double, 3>, 2> dLength; // The derivative of the length. _dCurrentLength[vtxIdx][xyz]
+    double sLength; // Temporarily store the stretched length
 
-    std::array<double, 3> _pseudoUnitNormal; // The pseudo unit normal vector at the edge pointing outward.
-    std::array<double, 3> _stretchedPseudoUnitNormal; // The pseudo normal under stretch
+    std::array<double, 3> pseudoUnitNormal; // The pseudo unit normal vector at the edge pointing outward.
+    std::array<double, 3> sPseudoUnitNormal; // The pseudo normal under stretch
 
-public:
     GEdge() {}
 
     /// Set parent 
