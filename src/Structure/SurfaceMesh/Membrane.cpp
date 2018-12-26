@@ -233,115 +233,107 @@ void Membrane::updateGeometryValue() {
     const size_t numTriangles = triangles.size();
 
     // Calculate angles stored in half edges
-    {
-        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            // The angle is (v0, v1, v2)
-            const size_t vi0 = _mesh.target(_mesh.prev(hei));
-            const size_t vi1 = _mesh.target(hei);
-            const size_t vi2 = _mesh.target(_mesh.next(hei));
-            const auto& c0 = vertices[vi0].attr.vertex->coordinate;
-            const auto& c1 = vertices[vi1].attr.vertex->coordinate;
-            const auto& c2 = vertices[vi2].attr.vertex->coordinate;
-            auto& heag = _mesh.getHalfEdgeAttribute(hei).gHalfEdge;
+    for(size_t hei = 0; hei < numHalfEdges; ++hei) {
+        // The angle is (v0, v1, v2)
+        const size_t vi0 = _mesh.target(_mesh.prev(hei));
+        const size_t vi1 = _mesh.target(hei);
+        const size_t vi2 = _mesh.target(_mesh.next(hei));
+        const auto& c0 = vertices[vi0].attr.vertex->coordinate;
+        const auto& c1 = vertices[vi1].attr.vertex->coordinate;
+        const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+        auto& heag = _mesh.getHalfEdgeAttribute(hei).gHalfEdge;
 
-            const auto vp = vectorProduct(c1, c0, c1, c2);
-            const auto sp = scalarProduct(c1, c0, c1, c2);
-            const auto ct = heag.cotTheta = sp / magnitude(vp);
-            heag.theta = M_PI_2 - atan(ct);
-        }
+        const auto vp = vectorProduct(c1, c0, c1, c2);
+        const auto sp = scalarProduct(c1, c0, c1, c2);
+        const auto ct = heag.cotTheta = sp / magnitude(vp);
+        heag.theta = M_PI_2 - atan(ct);
     }
 
     // Calculate triangle area, unit normal and cone volume
-    {
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
-            const size_t hei = triangles[ti].halfEdgeIndex;
-            const size_t vi0 = _mesh.target(hei);
-            const size_t vi1 = _mesh.target(_mesh.next(hei));
-            const size_t vi2 = _mesh.target(_mesh.prev(hei));
-            const auto& c0 = vertices[vi0].attr.vertex->coordinate;
-            const auto& c1 = vertices[vi1].attr.vertex->coordinate;
-            const auto& c2 = vertices[vi2].attr.vertex->coordinate;
-            auto& tag = _mesh.getTriangleAttribute(ti).gTriangle;
+    for(size_t ti = 0; ti < numTriangles; ++ti) {
+        const size_t hei = triangles[ti].halfEdgeIndex;
+        const size_t vi0 = _mesh.target(hei);
+        const size_t vi1 = _mesh.target(_mesh.next(hei));
+        const size_t vi2 = _mesh.target(_mesh.prev(hei));
+        const auto& c0 = vertices[vi0].attr.vertex->coordinate;
+        const auto& c1 = vertices[vi1].attr.vertex->coordinate;
+        const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+        auto& tag = _mesh.getTriangleAttribute(ti).gTriangle;
 
-            const auto vp = vectorProduct(c0, c1, c0, c2);
+        const auto vp = vectorProduct(c0, c1, c0, c2);
 
-            // area
-            tag.area = magnitude(vp) * 0.5;
+        // area
+        tag.area = magnitude(vp) * 0.5;
 
-            // unit normal
-            tag.unitNormal = normalize(vp);
+        // unit normal
+        tag.unitNormal = vector2Vec<3, double>(normalize(vp));
 
-            // cone volume
-            tag.coneVolume = dotProduct(c0, vp) / 6;
-        }
+        // cone volume
+        tag.coneVolume = dotProduct(c0, vp) / 6;
     }
 
     // Calculate edge length and pesudo unit normal
-    {
-        for(size_t ei = 0; ei < numEdges; ++ei) {
-            const size_t hei = edges[ei].halfEdgeIndex;
-            const size_t vi0 = _mesh.target(hei);
-            const size_t vi1 = _mesh.target(_mesh.prev(hei));
+    for(size_t ei = 0; ei < numEdges; ++ei) {
+        const size_t hei = edges[ei].halfEdgeIndex;
+        const size_t vi0 = _mesh.target(hei);
+        const size_t vi1 = _mesh.target(_mesh.prev(hei));
 
-            // length
-            _mesh.getEdgeAttribute(ei).gEdge.length = twoPointDistance(vertices[vi0].attr.vertex->coordinate, vertices[vi1].attr.vertex->coordinate);
+        // length
+        _mesh.getEdgeAttribute(ei).gEdge.length = twoPointDistance(vertices[vi0].attr.vertex->coordinate, vertices[vi1].attr.vertex->coordinate);
 
-            // pseudo unit normal
-            if(halfEdges[hei].hasOpposite) {
-                const size_t ti0 = _mesh.triangle(hei);
-                const size_t ti1 = _mesh.triangle(_mesh.opposite(hei));
-                _mesh.getEdgeAttribute(ei).gEdge.pseudoUnitNormal = normalize(
-                    vectorSum(triangles[ti0].attr.gTriangle.unitNormal, triangles[ti1].attr.gTriangle.unitNormal)
-                );
-            }
+        // pseudo unit normal
+        if(halfEdges[hei].hasOpposite) {
+            const size_t ti0 = _mesh.triangle(hei);
+            const size_t ti1 = _mesh.triangle(_mesh.opposite(hei));
+            _mesh.getEdgeAttribute(ei).gEdge.pseudoUnitNormal = normalize(
+                triangles[ti0].attr.gTriangle.unitNormal + triangles[ti1].attr.gTriangle.unitNormal
+            );
         }
     }
 
     // Calculate vcell area, curvature and vertex pseudo unit normal
-    {
-        for(size_t vi = 0; vi < numVertices; ++vi) {
-            auto& vag = _mesh.getVertexAttribute(vi).gVertex;
+    for(size_t vi = 0; vi < numVertices; ++vi) {
+        auto& vag = _mesh.getVertexAttribute(vi).gVertex;
 
-            // clearing
-            vag.area = 0.0;
-            vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
+        // clearing
+        vag.area = 0.0;
+        vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
 
-            // k1 = 2A * k, where k is the result of LB operator
-            Vec3 k1;
+        // k1 = 2A * k, where k is the result of LB operator
+        Vec3 k1 {};
 
-            _mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh = _mesh, &edges, &halfEdges, &vertices, &triangles, &vi, &vag, &k1](size_t hei) {
-                const size_t hei_o = mesh.opposite(hei);
-                const size_t ti0 = mesh.triangle(hei);
-                const size_t ti1 = mesh.triangle(hei_o);
-                const size_t vn = mesh.target(hei_o);
-                const size_t hei_n = mesh.next(hei);
-                const size_t hei_on = mesh.next(hei_o);
-                const auto& ci = vertices[vi].attr.vertex->coordinate;
-                const auto& cn = vertices[vn].attr.vertex->coordinate;
+        _mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh = _mesh, &edges, &halfEdges, &vertices, &triangles, &vi, &vag, &k1](size_t hei) {
+            const size_t hei_o = mesh.opposite(hei);
+            const size_t ti0 = mesh.triangle(hei);
+            const size_t ti1 = mesh.triangle(hei_o);
+            const size_t vn = mesh.target(hei_o);
+            const size_t hei_n = mesh.next(hei);
+            const size_t hei_on = mesh.next(hei_o);
+            const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
+            const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
 
-                const auto dist = mesh.getEdgeAttribute(mesh.edge(hei)).gEdge.length;
-                const auto dist2 = dist * dist;
-                const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
+            const auto dist = mesh.getEdgeAttribute(mesh.edge(hei)).gEdge.length;
+            const auto dist2 = dist * dist;
+            const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
 
-                const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
+            const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
 
-                Vec3 diff = ci - cn;
+            Vec3 diff = ci - cn;
 
-                vag.area += sumCotTheta * dist2 * 0.125;
+            vag.area += sumCotTheta * dist2 * 0.125;
 
-                k1 += sumCotTheta * diff;
-                vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
-            });
+            k1 += sumCotTheta * diff;
+            vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+        });
 
-            const double invA = 1 / vag.area;
-            const double magK1 = magnitude(k1);
+        const double invA = 1 / vag.area;
+        const double magK1 = magnitude(k1);
 
-            normalize(vag.pseudoUnitNormal);
+        normalize(vag.pseudoUnitNormal);
 
-            const int flippingCurv = (dotProduct(k1, vag.pseudoUnitNormal) > 0 ? 1 : -1);
+        const int flippingCurv = (dotProduct(k1, vag.pseudoUnitNormal) > 0 ? 1 : -1);
 
-            vag.curv = fliipingCurv * magK1 * 0.25 * invA;
-        }
+        vag.curv = fliipingCurv * magK1 * 0.25 * invA;
     }
 }
 

@@ -4,6 +4,8 @@
 #include <array>
 #include <vector>
 
+#include "MathFunctions.h"
+
 // FORWARD DECLARATIONS
 class Membrane;
 
@@ -11,17 +13,12 @@ class Membrane;
 Stores geometric properties of the membrane.
 ******************************************************************************/
 
-class GMembrane {
+struct GMembrane {
 
-private:
+    double volume; // The volume of the enclosed membrane
+    std::vector<mathfunc::Vec3> dVolume; // The derivative of volume on vertices.
+    double sVolume; // The stretched volume
 
-    Membrane* _pMembrane; // Parent membrane
-
-    double _volume; // The volume of the enclosed membrane
-    std::vector<std::array<double, 3>> _dVolume; // The derivative of volume on vertices.
-    double _stretchedVolume; // The stretched volume
-
-public:
     // Constructors
     GMembrane() {}
 

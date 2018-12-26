@@ -3,20 +3,18 @@
 
 #include <array>
 
+#include "MathFunctions.h"
+
 class Edge; // Forward declaration
 
 struct GEdge {
 
-    Edge* _pEdge; // Parent edge
-
     double length; // Current length
-    std::array<std::array<double, 3>, 2> dLength; // The derivative of the length. _dCurrentLength[vtxIdx][xyz]
+    std::array<mathfunc::Vec3, 2> dLength; // The derivative of the length. _dCurrentLength[vtxIdx][xyz]
     double sLength; // Temporarily store the stretched length
 
-    std::array<double, 3> pseudoUnitNormal; // The pseudo unit normal vector at the edge pointing outward.
-    std::array<double, 3> sPseudoUnitNormal; // The pseudo normal under stretch
-
-    GEdge() {}
+    mathfunc::Vec3 pseudoUnitNormal; // The pseudo unit normal vector at the edge pointing outward.
+    mathfunc::Vec3 sPseudoUnitNormal; // The pseudo normal under stretch
 
     /// Set parent 
     void setEdge(Edge* e) { _pEdge = e; }

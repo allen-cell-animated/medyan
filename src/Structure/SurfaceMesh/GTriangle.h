@@ -4,6 +4,8 @@
 #include <array>
 #include <vector>
 
+#include "MathFunctions.h"
+
 // Forward declaration
 class Triangle;
 
@@ -14,7 +16,7 @@ Storing the geometric properties of the triangle patches.
 struct GTriangle {
 
     double area; // Current area
-    std::array<std::array<double, 3>, 3> dArea; // The derivative of the area. _dCurrentArea[vtxIdx][xyz]
+    std::array<mathfunc::Vec3, 3> dArea; // The derivative of the area. _dCurrentArea[vtxIdx][xyz]
     double sArea; // Temporarily store the stretched area
 
     std::array<double, 3> _sinTheta;
@@ -26,18 +28,13 @@ struct GTriangle {
     std::array<double, 3> _stretchedSinTheta;
     std::array<double, 3> _stretchedCotTheta;
 
-    std::array<double, 3> unitNormal; // The unit normal vector pointing outward (since the meshwork is orientable)
-    std::array<double, 3> sUnitNormal; // Temporarily stores unit normal under stretched conditions.
+    mathfunc::Vec3 unitNormal; // The unit normal vector pointing outward (since the meshwork is orientable)
+    mathfunc::Vec3 sUnitNormal; // Temporarily stores unit normal under stretched conditions.
 
     double coneVolume; // Volume of the tetrahedral formed by this triangle and the origin (0, 0, 0)
-    std::array<std::array<double, 3>, 3> dConeVolume; // The derivative of the cone volume.
+    std::array<mathfunc::Vec3, 3> dConeVolume; // The derivative of the cone volume.
     double sConeVolume;
 
-    GTriangle() {}
-
-    /// Set parent 
-    void setTriangle(Triangle* t) { _pTriangle = t; }
-    Triangle* getTriangle() { return _pTriangle; }
 
     // Not allowing setting the area: void setArea(double area) { _currentArea = area; }
     double getArea() { return _currentArea; }

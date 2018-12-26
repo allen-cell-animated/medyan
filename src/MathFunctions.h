@@ -24,6 +24,19 @@
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
+
+// A simple coordinate type that makes operations easier
+// Can be replaced by linalg/tensor libraries in the future
+template< size_t dim, typename Float = double > struct Vec {
+    std::array< Float, dim > value;
+
+    using size_type = std::array< Float, dim >::size_type;
+
+    constexpr       Float& operator[](size_type pos)       { return value[pos]; }
+    constexpr const Float& operator[](size_type pos) const { return value[pos]; }
+};
+
+using Vec3 = Vec<3>;
     
     /// Normalize a vector
     inline void normalize(vector<double>& v) {
@@ -31,13 +44,6 @@ namespace mathfunc {
         double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
         
         v[0] /= norm; v[1] /= norm; v[2] /= norm;
-    }
-    template<size_t Dim>
-    inline void normalize(array<double, Dim>& v) {
-        double norm = 0.0;
-        for(double& it: v) norm += it * it;
-        norm = sqrt(norm);
-        for(double& it: v) it /= norm;
     }
     
     /// Return normalized vector
@@ -51,24 +57,35 @@ namespace mathfunc {
         
         return v1;
     }
-    template<size_t Dim>
-    inline array<double, Dim> normalizedVector(const array<double, Dim>& v) {
-        array<double, Dim> res = v;
-        normalize(res);
-        return res;
-    }
     
     /// Get the magnitude of a vector
     inline double magnitude(const vector<double>& v) {
         
         return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     }
-    template<size_t Dim>
-    inline double magnitude(const array<double, Dim>& v) {
-        double mag2 = 0;
-        for(auto it: v) mag2 += it * it;
-        return sqrt(mag2);
-    }
+
+template< size_t dim, typename Float >
+inline Float magnitude2(const Vec<dim, Float>& v) {
+    Float mag2 = 0.0;
+    for(size_t i = 0; i < dim; ++i) mag2 += v[i] * v[i];
+    return mag2;
+}
+template< size_t dim, typename Float >
+inline Float magnitude(const Vec<dim, Float>& v) {
+    return sqrt(magnitude2(v));
+}
+
+template< size_t dim, typename Float >
+inline void normalize(Vec<dim, Float>& v) {
+    Float norm = magnitude(v);
+    for(size_t i = 0; i < dim; ++i) v[i] /= norm;
+}
+template< size_t dim, typename Float >
+inline auto normalizedVector(const Vec<dim, Float>& v) {
+    Vec<dim, Float> res = v;
+    normalize(res);
+    return res;
+}
     
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     inline double twoPointDistance(const vector<double>& v1, const vector<double>& v2) {
@@ -77,15 +94,24 @@ namespace mathfunc {
                     (v2[1]-v1[1])*(v2[1]-v1[1]) +
                     (v2[2]-v1[2])*(v2[2]-v1[2]));
     }
-    template<size_t Dim>
-    inline double twoPointDistance(const array<double, Dim>& v1, const array<double, Dim>& v2) {
-        double res = 0.0;
-        for(size_t idx = 0; idx < Dim; ++idx) {
-            res += (v2[idx] - v1[idx]) * (v2[idx] - v1[idx]);
-        }
-        res = sqrt(res);
-        return res;
+template< size_t dim, typename Float >
+inline Float dist2(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+    Float res = 0.0;
+    for(size_t idx = 0; idx < dim; ++idx) {
+        res += (v2[idx] - v1[idx]) * (v2[idx] - v1[idx]);
     }
+    return res;
+}
+template< size_t dim, typename Float >
+inline Float dist2(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+    Float res = 0.0;
+    for(size_t idx = 0; idx < dim; ++idx) {
+        res += (v2[idx] - v1[idx]) * (v2[idx] - v1[idx]);
+    }
+    res = sqrt(res);
+    return res;
+}
+
     
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
@@ -117,13 +143,13 @@ namespace mathfunc {
     inline double dotProduct(const vector<double>& v1, const vector<double>& v2) {
         return v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2];
     }
-    template<size_t Dim>
-    inline double dotProduct(const array<double, Dim>& v1, const array<double, Dim>& v2) {
-        double res = 0.0;
-        for(size_t idx = 0; idx < Dim; ++idx)
-            res += v1[idx] * v2[idx];
-        return res;
-    }
+template< size_t dim, typename Float >
+inline Float dot(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+    Float res = 0.0;
+    for(size_t idx = 0; idx < dim; ++idx)
+        res += v1[idx] * v2[idx];
+    return res;
+}
     
     /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
     /// v2[x,y,z] + d*p2[x,y,z]
@@ -291,77 +317,70 @@ namespace mathfunc {
         return v;
     };
 
-    /// Vector and array converter. Need to ensure the vector has size of _Size
-    // No need for move semantics because normally we use this for copying integers or doubles
-    template<typename Ty, size_t Size>
-    inline array<Ty, Size> vector2Array(const vector<Ty>& v) {
-        // Assert v.size() == Size
-        array<Ty, Size> res;
-        for(size_t idx = 0; idx < Size; ++idx){
-            res[idx] = v[idx];
-        }
-        return res;
+/// Vector and array converter. Need to ensure the vector has size of _Size
+// No need for move semantics because normally we use this for copying integers or doubles
+template< size_t dim, typename Float >
+inline auto vector2Vec(const vector<Float>& v) {
+    // Assert v.size() == Size
+    Vec<dim, Float> res;
+    for(size_t idx = 0; idx < dim; ++idx){
+        res[idx] = v[idx];
     }
-    template<typename Ty, size_t Size>
-    inline vector<Ty> array2Vector(const array<Ty, Size>& a) {
-        return vector<Ty>(a.begin(), a.end());
-    }
+    return res;
+}
+template< size_t dim, typename Float >
+inline auto vec2Vector(const Vec<dim, Float>& a) {
+    return vector<Float>(a.value.begin(), a.value.end());
+}
 
-    /// Get the negative of the vector
-    template<size_t Dim>
-    inline array<double, Dim> vectorNegative(const array<double, Dim>& v){
-        array<double, Dim> res;
-        for(size_t idx = 0; idx < Dim; ++idx){
-            res[idx] = -v[idx];
-        }
-        return res;
+template< size_t dim, typename Float >
+inline auto operator-(const Vec<dim, Float>& v){
+    Vec<dim, Float> res;
+    for(size_t idx = 0; idx < dim; ++idx){
+        res[idx] = -v[idx];
     }
-    /// Vector sum.
-    template<size_t Dim>
-    inline array<double, Dim> vectorSum(const array<double, Dim>& v1,
-                                        const array<double, Dim>& v2) {
-        array<double, Dim> res;
-        for(size_t idx1 = 0; idx1 < Dim; ++idx1) {
-            res[idx1] = v1[idx1] + v2[idx1];
-        }
-        return res;
+    return res;
+}
+template< size_t dim, typename Float >
+inline auto operator+(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+    Vec<dim, Float> res;
+    for(size_t idx1 = 0; idx1 < dim; ++idx1) {
+        res[idx1] = v1[idx1] + v2[idx1];
     }
-    /// Increase vector 1 by vector 2.
-    template<size_t Dim>
-    inline array<double, Dim>& vectorIncrease(array<double, Dim>& v1,
-                                        const array<double, Dim>& v2) {
-        for(size_t idx = 0; idx < Dim; ++idx) {
-            v1[idx] += v2[idx];
-        }
-        return v1;
+    return res;
+}
+template< size_t dim, typename Float >
+inline auto& operator+=(Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+    for(size_t idx = 0; idx < dim; ++idx) {
+        v1[idx] += v2[idx];
     }
-    /// Vector difference.
-    template<size_t Dim>
-    inline array<double, Dim> vectorDifference(const array<double, Dim>& v1,
-                                               const array<double, Dim>& v2) {
-        array<double, Dim> res;
-        for(size_t idx1 = 0; idx1 < Dim; ++idx1) {
-            res[idx1] = v1[idx1] - v2[idx1];
-        }
-        return res;
+    return v1;
+}
+template< size_t dim, typename Float >
+inline auto operator-(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+    Vec<dim, Float> res;
+    for(size_t idx1 = 0; idx1 < dim; ++idx1) {
+        res[idx1] = v1[idx1] - v2[idx1];
     }
-    /// Vector multiply.
-    template<size_t Dim>
-    inline array<double, Dim> vectorMultiply(const array<double, Dim>& v,
-                                             const double k) {
-        array<double, Dim> res;
-        for(size_t idx = 0; idx < Dim; ++idx){
-            res[idx] = v[idx] * k;
-        }
-        return res;
+    return res;
+}
+template< size_t dim, typename Float >
+inline auto operator*(const Vec<dim, Float>& v, Float k) {
+    Vec<dim, Float> res;
+    for(size_t idx = 0; idx < dim; ++idx){
+        res[idx] = v[idx] * k;
     }
-    /// Vector expand
-    template<size_t Dim>
-    inline array<double, Dim>& vectorExpand(array<double, Dim>& v,
-                                            const double k) {
-        for(auto& it: v) it *= k;
-        return v;
-    }
+    return res;
+}
+template< size_t dim, typename Float >
+inline auto operator*(Float k, const Vec<dim, Float>& v) {
+    return v * k;
+}
+template< size_t dim, typename Float >
+inline auto& operator*=(Vec<dim, Float>& v, double k) {
+    for(size_t i = 0l i < dim; ++i) v[i] *= k;
+    return v;
+}
 
     /// Get the negative of the matrix
     template<size_t Dim1, size_t Dim2=Dim1>

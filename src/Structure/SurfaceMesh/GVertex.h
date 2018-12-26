@@ -4,21 +4,23 @@
 #include <array>
 #include <vector>
 
+#include "MathFunctions.h"
+
 class Vertex; // Forward declaration
 
 struct GVertex {
 
     // Note: vectors must initially be resized to the number of neighbors around the vertex.
     double area; // Current area
-    std::array<double, 3> dArea; // Derivative of area on the central vertex, derivative on neighbors are stored in half edges
+    mathfunc::Vec3 dArea; // Derivative of area on the central vertex, derivative on neighbors are stored in half edges
     double sArea; // Temporarily store the stretched area
 
     double curv; // Current mean curvature
-    std::array<double, 3> dCurv;
+    mathfunc::Vec3 dCurv;
     double sCurv; // Temporarily store the stretched mean curvature
 
-    std::array<double, 3> pseudoUnitNormal; // Pseudo unit normal around the vertex
-    std::array<double, 3> sPseudoUnitNormal; // Pseudo unit normal under stretch
+    mathfunc::Vec3 pseudoUnitNormal; // Pseudo unit normal around the vertex
+    mathfunc::Vec3 sPseudoUnitNormal; // Pseudo unit normal under stretch
 
 
     /// Set parent 
