@@ -336,7 +336,126 @@ void Membrane::updateGeometryValue() {
         vag.curv = fliipingCurv * magK1 * 0.25 * invA;
     }
 }
+void Membrane::updateGeometryValueWithDerivative() {
 
+    const auto& vertices = _mesh.getVertices();
+    const auto& halfEdges = _mesh.getHalfEdges();
+    const auto& edges = _mesh.getEdges();
+    const auto& triangles = _mesh.getTriangles();
+
+    const size_t numVertices = vertices.size();
+    const size_t numHalfEdges = halfEdges.size();
+    const size_t numEdges = edges.size();
+    const size_t numTriangles = triangles.size();
+
+    // Calculate edge length with deriviative
+    for(size_t ei = 0; ei < numEdges; ++ei) {
+        // The edge must have an opposite
+        const size_t hei = edges[ei].halfEdgeIndex;
+        const size_t hei_o = _mesh.opposite(hei);
+        const size_t vi0 = _mesh.target(hei);
+        const size_t vi1 = _mesh.target(hei_o);
+        const auto c0 = vector2Vec<3, double>(vertices[vi0].attr.vertex->coordinate);
+        const auto c1 = vector2Vec<3, double>(vertices[vi1].attr.vertex->coordinate);
+
+        const auto length = _mesh.getEdgeAttribute(ei).gEdge.length = dist(c0, c1);
+        _mesh.getHalfEdgeAttribute(hei).gHalfEdge.dEdgeLength = (c0 - c1) / length;
+        _mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dEdgeLength = (c1 - c0) / length;
+    }
+
+    // Calculate angles and triangle areas with derivative
+    for(size_t ti = 0; ti < numTriangles; ++ti) {
+        // The angle is (v0, v1, v2)
+        size_t hei[3];
+        hei[0] = triangles[ti].halfEdgeIndex;
+        hei[1] = _mesh.next(hei[0]);
+        hei[2] = _mesh.next(hei[1]);
+        auto& tag = _mesh.getTriangleAttribute(ti).gTriangle;
+
+        const size_t vi[] {_mesh.target(hei[2]), _mesh.target(hei[0]), _mesh.target(hei[1])};
+        const Vec3 c[] {
+            vector2Vec<3, double>(vertices[vi[0]].attr.vertex->coordinate),
+            vector2Vec<3, double>(vertices[vi[1]].attr.vertex->coordinate),
+            vector2Vec<3, double>(vertices[vi[2]].attr.vertex->coordinate)
+        };
+
+        const double l[] {
+            edges[_mesh.edge(hei[0])].attr.length,
+            edges[_mesh.edge(hei[1])].attr.length,
+            edges[_mesh.edge(hei[2])].attr.length
+        };
+
+        const double dots[] {
+            dot(c[1] - c[0], c[2] - c[0]),
+            dot(c[2] - c[1], c[0] - c[1]),
+            dot(c[0] - c[2], c[1] - c[2])
+        };
+
+        const auto cp = cross(c[1] - c[0], c[2] - c[0]);
+
+        const auto r0 = cross(c[1], c[2]); // Used in cone volume
+
+        // Calculate area
+        const auto area = tag.area = magnitude(cp) * 0.5;
+        const auto invA = 1.0 / area;
+
+        // Calculate area gradients
+        {
+            const auto r01 = c[1] - c[0];
+            const auto r02 = c[2] - c[0];
+        }
+        const auto ct = heag.cotTheta = sp * cpMagInv;
+        heag.theta = M_PI_2 - atan(ct);
+
+        heag.dCotTheta[1] =
+                        -(tmpR01 + tmpR02) * cpMagInv
+                        - dp * arrDArea[9*idx + 3*angleIdx + coordIdx] * cpMagInv * cpMagInv * 2;
+
+    }
+
+
+            // Calculate area gradients
+            for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+                double tmpR01 = arrCoord[b[1] + coordIdx] - arrCoord[b[0] + coordIdx];
+                double tmpR02 = arrCoord[b[2] + coordIdx] - arrCoord[b[0] + coordIdx];
+
+                arrDArea[9*idx + 0 + coordIdx] = (-l[0]*l[0]*tmpR02 - l[2]*l[2]*tmpR01 + dots[0]*(tmpR01 + tmpR02)) * invA * 0.25;
+                arrDArea[9*idx + 3 + coordIdx] = (l[2]*l[2]*tmpR01 - dots[0]*tmpR02) * invA * 0.25;
+                arrDArea[9*idx + 6 + coordIdx] = (l[0]*l[0]*tmpR02 - dots[0]*tmpR01) * invA * 0.25;
+            }
+
+            // calculate thetas and gradients
+            for(size_t angleIdx = 0; angleIdx < 3; ++angleIdx) {
+                size_t angleIdx1 = (angleIdx + 1) % 3;
+                size_t angleIdx2 = (angleIdx + 2) % 3;
+
+                arrCotTheta[3*idx + angleIdx] = dots[angleIdx] * invA * 0.5;
+                arrTheta[3*idx + angleIdx] = M_PI_2 - atan(arrCotTheta[3*idx + angleIdx]);
+
+                double dCotThetaToDThetaFactor = -1.0 / (1.0 + arrCotTheta[3*idx + angleIdx] * arrCotTheta[3*idx + angleIdx]);
+                for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+                    double tmpR01 = arrCoord[b[angleIdx1] + coordIdx] - arrCoord[b[angleIdx] + coordIdx];
+                    double tmpR02 = arrCoord[b[angleIdx2] + coordIdx] - arrCoord[b[angleIdx] + coordIdx];
+                    arrDCotTheta[27*idx + 9*angleIdx + 3*angleIdx + coordIdx] =
+                        -(tmpR01 + tmpR02) * invA * 0.5
+                        - dots[angleIdx] * arrDArea[9*idx + 3*angleIdx + coordIdx] * invA * invA * 0.5;
+                    arrDCotTheta[27*idx + 9*angleIdx + 3*angleIdx1 + coordIdx] =
+                        tmpR02 * invA * 0.5 - dots[angleIdx] * arrDArea[9*idx + 3*angleIdx1 + coordIdx] * invA * invA * 0.5;
+                    arrDCotTheta[27*idx + 9*angleIdx + 3*angleIdx2 + coordIdx] =
+                        tmpR01 * invA * 0.5 - dots[angleIdx] * arrDArea[9*idx + 3*angleIdx2 + coordIdx] * invA * invA * 0.5;
+                    arrDTheta[27*idx + 9*angleIdx + 3*angleIdx + coordIdx] = arrDCotTheta[27*idx + 9*angleIdx + 3*angleIdx + coordIdx] * dCotThetaToDThetaFactor;
+                    arrDTheta[27*idx + 9*angleIdx + 3*angleIdx1 + coordIdx] = arrDCotTheta[27*idx + 9*angleIdx + 3*angleIdx1 + coordIdx] * dCotThetaToDThetaFactor;
+                    arrDTheta[27*idx + 9*angleIdx + 3*angleIdx2 + coordIdx] = arrDCotTheta[27*idx + 9*angleIdx + 3*angleIdx2 + coordIdx] * dCotThetaToDThetaFactor;
+                }
+            } // End loop angles
+
+            // Calculate unit normal
+            normalizedVector(arrUnitNormal + 3*idx, vp);
+
+            // Calculate cone volume
+            arrConeVolume[idx] = dotProduct(arrCoord + b[0], r0) / 6;
+
+        } // End loop triangles
 void Membrane::updateGeometry(bool calcDerivative, double d) {
     /**************************************************************************
     Updates the geometric properties of all the elements of the membrane. This

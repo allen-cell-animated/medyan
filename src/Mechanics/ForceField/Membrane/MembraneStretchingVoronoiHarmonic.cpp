@@ -27,37 +27,23 @@ double MembraneStretchingVoronoiHarmonic::energy(double areaStretched,
     return 0.5 * kElastic * distStretched * distStretched / eqArea;
 }
 
-void MembraneStretchingVoronoiHarmonic::forces(Vertex* vCenter, const std::vector<Vertex*>& v,
-                                               double area, const std::array<double, 3>& dArea, const std::vector<std::array<double, 3>>& dNeighborArea,
-                                               double kElastic, double eqArea) {
+void MembraneStretchingVoronoiHarmonic::forces(
+    Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
+) {
     // F_i = -grad_i U = -k / A_0 * (A - A_0) * grad_i A
     // A(rea) and grad_i A(rea) are obtained as function parameters
 
-    size_t n = v.size();
+    const auto deltaF = (- kElastic * (area - eqArea) / eqArea) * dArea;
 
-    double coeff = -kElastic / eqArea * (area - eqArea);
-
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        vCenter->force[coordIdx] += coeff * dArea[coordIdx];
-        for(size_t nIdx = 0; nIdx < n; ++nIdx) {
-            v[nIdx]->force[coordIdx] += coeff * dNeighborArea[nIdx][coordIdx];
-        }
-    }
+    for(size_t i = 0; i < 3; ++i) v->force[i] += deltaF[i]; // v->force += deltaF;
 }
 
-void MembraneStretchingVoronoiHarmonic::forcesAux(Vertex* vCenter, const std::vector<Vertex*>& v,
-                                                  double area, const std::array<double, 3>& dArea, const std::vector<std::array<double, 3>>& dNeighborArea,
-                                                  double kElastic, double eqArea) {
+void MembraneStretchingVoronoiHarmonic::forcesAux(
+    Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
+) {
     // Same as force calculation
 
-    size_t n = v.size();
+    const auto deltaF = (- kElastic * (area - eqArea) / eqArea) * dArea;
 
-    double coeff = -kElastic / eqArea * (area - eqArea);
-
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        vCenter->forceAux[coordIdx] += coeff * dArea[coordIdx];
-        for(size_t nIdx = 0; nIdx < n; ++nIdx) {
-            v[nIdx]->forceAux[coordIdx] += coeff * dNeighborArea[nIdx][coordIdx];
-        }
-    }
+    for(size_t i = 0; i < 3; ++i) v->forceAux[i] += deltaF[i]; // v->force += deltaF;
 }

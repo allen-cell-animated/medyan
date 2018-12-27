@@ -151,9 +151,6 @@ public:
 
     /// Get vector of triangles/edges/vertices that this membrane contains.
     const SurfaceTriangularMesh< MembraneMeshAttribute >& getMesh() const { return _mesh; }
-    vector<Triangle*>& getTriangleVector() { return _triangleVector; }
-    vector<Edge*>& getEdgeVector() { return _edgeVector; }
-    vector<Vertex*>& getVertexVector() { return _vertexVector; }
 
     // Get Id
     int getId()const { return _id; }

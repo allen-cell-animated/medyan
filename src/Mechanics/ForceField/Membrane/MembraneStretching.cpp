@@ -16,29 +16,24 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(doub
     double U_i;
 
     for(auto m: Membrane::getMembranes()) {
-        U_i = 0;
 
         if(d == 0.0) {
-            for(Vertex* v: m->getVertexVector()) {
-                double kElastic = v->getMVoronoiCell()->getElasticModulus();
-                double eqArea = v->getMVoronoiCell()->getEqArea();
+            const auto kElastic = m->getMMembrane()->getKElastic();
+            const auto eqArea = m->getMMembrane()->getEqArea();
 
-                // The calculation requires that the current area has already been calculated
-                double area = v->getGVoronoiCell()->getArea();
+            double area = 0.0;
+            for(const auto& v : m->getMesh().getVertices()) area += v.attr.gVertex.area;
 
-                U_i += _FFType.energy(area, kElastic, eqArea); 
-            }
+            U_i = _FFType.energy(area, kElastic, eqArea); 
+
         } else {
-            for(Vertex *v: m->getVertexVector()) {
-                double kElastic = v->getMVoronoiCell()->getElasticModulus();
-                double eqArea = v->getMVoronoiCell()->getEqArea();
+            const auto kElastic = m->getMMembrane()->getKElastic();
+            const auto eqArea = m->getMMembrane()->getEqArea();
 
-                // The calculation requires that the current stretched area has already been calculated
-                // As a result, d is just a dummy variable due to its universality
-                double areaStretched = v->getGVoronoiCell()->getStretchedArea();
+            double sArea = 0.0;
+            for(const auto& v : m->getMesh().getVertices()) sArea += v.attr.gVertex.sArea;
 
-                U_i += _FFType.energy(areaStretched, kElastic, eqArea, d);
-            }
+            U_i = _FFType.energy(sArea, kElastic, eqArea, d);
         }
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -57,17 +52,26 @@ template<>
 void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
-    
-        for(Vertex* v : m->getVertexVector()){
-            
-            double kElastic = v->getMVoronoiCell()->getElasticModulus();
-            double eqArea = v->getMVoronoiCell()->getEqArea();
 
-            double area = v->getGVoronoiCell()->getArea();
-            std::array<double, 3>& dArea = v->getGVoronoiCell()->getDArea();
-            std::vector<std::array<double, 3>>& dNeighborArea = v->getGVoronoiCell()->getDNeighborArea();
+        const auto& mesh = m->getMesh();
+
+        const auto kElastic = m->getMMembrane()->getKElastic();
+        const auto eqArea = m->getMMembrane()->getEqArea();
+
+        double area = 0.0;
+        for(const auto& v : m->getMesh().getVertices()) area += v.attr.gVertex.area;
+
+        const size_t numVertices = m->getMesh().getVertices().size();
+        for(size_t vi = 0; vi < numVertices; ++vi) {
+            const auto& v = m->getMesh().getVertices()[vi];
            
-            _FFType.forces(v, v->getNeighborVertices(), area, dArea, dNeighborArea, kElastic, eqArea);
+            _FFType.forces(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
+
+            // Position of this vertex also affects neighbor vcell areas
+            mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
+                const auto& dArea = mesh.getEdgeAttribute(hei).gHalfEdge.dNeighborArea;
+                _FFType.forces(v.attr.vertex, area, dArea, kElastic, eqArea);
+            });
         }
     }
 }
@@ -77,16 +81,25 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
     
-        for(Vertex* v : m->getVertexVector()){
-            
-            double kElastic = v->getMVoronoiCell()->getElasticModulus();
-            double eqArea = v->getMVoronoiCell()->getEqArea();
+        const auto& mesh = m->getMesh();
 
-            double area = v->getGVoronoiCell()->getArea();
-            std::array<double, 3>& dArea = v->getGVoronoiCell()->getDArea();
-            std::vector<std::array<double, 3>>& dNeighborArea = v->getGVoronoiCell()->getDNeighborArea();
+        const auto kElastic = m->getMMembrane()->getKElastic();
+        const auto eqArea = m->getMMembrane()->getEqArea();
+
+        double area = 0.0;
+        for(const auto& v : m->getMesh().getVertices()) area += v.attr.gVertex.area;
+
+        const size_t numVertices = m->getMesh().getVertices().size();
+        for(size_t vi = 0; vi < numVertices; ++vi) {
+            const auto& v = m->getMesh().getVertices()[vi];
            
-            _FFType.forcesAux(v, v->getNeighborVertices(), area, dArea, dNeighborArea, kElastic, eqArea);
+            _FFType.forcesAux(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
+
+            // Position of this vertex also affects neighbor vcell areas
+            mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
+                const auto& dArea = mesh.getEdgeAttribute(hei).gHalfEdge.dNeighborArea;
+                _FFType.forcesAux(v.attr.vertex, area, dArea, kElastic, eqArea);
+            });
         }
     }
 }

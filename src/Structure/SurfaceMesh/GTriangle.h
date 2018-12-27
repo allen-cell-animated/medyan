@@ -16,7 +16,6 @@ Storing the geometric properties of the triangle patches.
 struct GTriangle {
 
     double area; // Current area
-    std::array<mathfunc::Vec3, 3> dArea; // The derivative of the area. _dCurrentArea[vtxIdx][xyz]
     double sArea; // Temporarily store the stretched area
 
     std::array<double, 3> _sinTheta;

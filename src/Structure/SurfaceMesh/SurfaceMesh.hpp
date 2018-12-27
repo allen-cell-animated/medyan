@@ -345,6 +345,8 @@ public:
     const HalfEdgeAttribute& getHalfEdgeAttribute(size_t index) const { return _halfEdges[index].attr; }
     TriangleAttribute&       getTriangleAttribute(size_t index)       { return _triangles[index].attr; }
     const TriangleAttribute& getTriangleAttribute(size_t index) const { return _triangles[index].attr; }
+    MetaAttribute&       getMetaAttribute()       { return _meta; }
+    const MetaAttribute& getMetaAttribute() const { return _meta; }
 
     // Meshwork traverse
     bool hasOpposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].hasOpposite; }

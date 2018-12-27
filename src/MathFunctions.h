@@ -289,14 +289,13 @@ inline Float dot(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
         
         return v;
     };
-    inline array<double, 3> crossProduct(const array<double, 3>& v1,
-                                         const array<double, 3>& v2) {
-        return array<double, 3> {{
-            v1[1]*v2[2] - v1[2]*v2[1],
-            v1[2]*v2[0] - v1[0]*v2[2],
-            v1[0]*v2[1] - v1[1]*v2[0]
-        }};
-    }
+inline Vec3 cross(const Vec3& v1, const Vec3& v2) {
+    return Vec3 {{{
+        v1[1]*v2[2] - v1[2]*v2[1],
+        v1[2]*v2[0] - v1[0]*v2[2],
+        v1[0]*v2[1] - v1[1]*v2[0]
+    }}};
+}
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
     inline vector<double> crossProductStretched(const vector<double>& v1,
