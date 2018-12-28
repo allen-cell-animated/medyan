@@ -10,7 +10,6 @@ class Vertex; // Forward declaration
 
 struct GVertex {
 
-    // Note: vectors must initially be resized to the number of neighbors around the vertex.
     double area; // Current area
     mathfunc::Vec3 dArea; // Derivative of area on the central vertex, derivative on neighbors are stored in half edges
     double sArea; // Temporarily store the stretched area
@@ -18,6 +17,8 @@ struct GVertex {
     double curv; // Current mean curvature
     mathfunc::Vec3 dCurv;
     double sCurv; // Temporarily store the stretched mean curvature
+
+    mathfunc::Vec3 dVolume; // Derivative of volume on this vertex
 
     mathfunc::Vec3 pseudoUnitNormal; // Pseudo unit normal around the vertex
     mathfunc::Vec3 sPseudoUnitNormal; // Pseudo unit normal under stretch

@@ -9,9 +9,8 @@
 struct GHalfEdge {
 
     double theta; // Angle formed by (this, opposite(next(this)))
-    std::array<mathfunc::Vec3, 3> dTheta; // Indexed by [(source, target, target(next))][coord]
     double cotTheta;
-    std::array<mathfunc::Vec3, 3> dCotTheta;
+    std::array<mathfunc::Vec3, 3> dCotTheta; // Indexed by [(source, target, target(next))][coord]
 
     mathfunc::Vec3 dEdgeLength; // Derivative of length of edge on target. FIXME the source derivative wont exist if at boundary.
     mathfunc::Vec3 dTriangleArea; // Derivative of area of triangle on target

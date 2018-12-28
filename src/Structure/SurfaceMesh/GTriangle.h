@@ -31,7 +31,6 @@ struct GTriangle {
     mathfunc::Vec3 sUnitNormal; // Temporarily stores unit normal under stretched conditions.
 
     double coneVolume; // Volume of the tetrahedral formed by this triangle and the origin (0, 0, 0)
-    std::array<mathfunc::Vec3, 3> dConeVolume; // The derivative of the cone volume.
     double sConeVolume;
 
 
