@@ -25,18 +25,15 @@ double MembraneStretchingHarmonic::energy(double areaStretched,
     return 0.5 * kElastic * distStretched * distStretched / eqArea;
 }
 
-void MembraneStretchingHarmonic::forces(const std::array<Vertex*, 3>& v,
-                                        double area, const std::array<std::array<double, 3>, 3>& dArea,
-                                        double kElastic, double eqArea) {
+void MembraneStretchingHarmonic::forces(
+    Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
+) {
     // F_i = -grad_i U = -k / A_0 * (A - A_0) * grad_i A
     // A(rea) and grad_i A(rea) are obtained as function parameters
 
-    double coeff = -kElastic / eqArea * (area - eqArea);
-    for(size_t vtxIdx = 0; vtxIdx < 3; ++vtxIdx) {
-        for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-            v[vtxIdx]->force[coordIdx] += coeff * dArea[vtxIdx][coordIdx];
-        }
-    }
+    const auto deltaF = (- kElastic * (area - eqArea) / eqArea) * dArea;
+
+    for(size_t i = 0; i < 3; ++i) v->force[i] += deltaF[i]; // v->force += deltaF;
 }
 
 void MembraneStretchingHarmonic::forcesAux(const std::array<Vertex*, 3>& v,
@@ -44,10 +41,7 @@ void MembraneStretchingHarmonic::forcesAux(const std::array<Vertex*, 3>& v,
                                            double kElastic, double eqArea) {
     // Same as force calculation
 
-    double coeff = -kElastic / eqArea * (area - eqArea);
-    for(size_t vtxIdx = 0; vtxIdx < 3; ++vtxIdx) {
-        for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-            v[vtxIdx]->forceAux[coordIdx] += coeff * dArea[vtxIdx][coordIdx];
-        }
-    }
+    const auto deltaF = (- kElastic * (area - eqArea) / eqArea) * dArea;
+
+    for(size_t i = 0; i < 3; ++i) v->forceAux[i] += deltaF[i]; // v->force += deltaF;
 }

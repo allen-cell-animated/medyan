@@ -27,43 +27,33 @@ double MembraneBendingVoronoiHelfrich::energy(double areaStretched, double curvS
     return 2 * kBending * distStretched * distStretched * areaStretched;
 }
 
-void MembraneBendingVoronoiHelfrich::forces(Vertex* vCenter, const std::vector<Vertex*>& v,
-                                            double area, const std::array<double, 3>& dArea, const std::vector<std::array<double, 3>>& dNeighborArea,
-                                            double curv, const std::array<double, 3>& dCurv, const std::vector<std::array<double, 3>>& dNeighborCurv,
-                                            double kBending, double eqCurv) {
+void MembraneBendingVoronoiHelfrich::forces(
+    Vertex* v,
+    double area, const mathfunc::Vec3& dArea,
+    double curv, const mathfunc::Vec3& dCurv,
+    double kBending, double eqCurv
+) {
     // F_i = -grad_i U = -4k (H - c0) A (grad_i H) - 2k (H - c0)^2 (grad_i A)
     // A(area), grad_i A(area), H(curv) and grad_i H(curv) are obtained as function parameters
 
-    size_t n = v.size();
-
     double dist = curv - eqCurv;
     double coeff1 = -4 * kBending * dist * area;
     double coeff2 = -2 * kBending * dist * dist;
 
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        vCenter->force[coordIdx] += coeff1 * dCurv[coordIdx] + coeff2 * dArea[coordIdx];
-        for(size_t nIdx = 0; nIdx < n; ++nIdx) {
-            v[nIdx]->force[coordIdx] += coeff1 * dNeighborCurv[nIdx][coordIdx] + coeff2 * dNeighborArea[nIdx][coordIdx];
-        }
-    }
+    for(size_t i = 0; i < 3; ++i) v->force[i] += coeff1 * dCurv[i] + coeff2 * dArea[i];
 }
 
-void MembraneBendingVoronoiHelfrich::forcesAux(Vertex* vCenter, const std::vector<Vertex*>& v,
-                                               double area, const std::array<double, 3>& dArea, const std::vector<std::array<double, 3>>& dNeighborArea,
-                                               double curv, const std::array<double, 3>& dCurv, const std::vector<std::array<double, 3>>& dNeighborCurv,
-                                               double kBending, double eqCurv) {
+void MembraneBendingVoronoiHelfrich::forcesAux(
+    Vertex* v,
+    double area, const mathfunc::Vec3& dArea,
+    double curv, const mathfunc::Vec3& dCurv,
+    double kBending, double eqCurv
+) {
     // Same as force calculation
-
-    size_t n = v.size();
 
     double dist = curv - eqCurv;
     double coeff1 = -4 * kBending * dist * area;
     double coeff2 = -2 * kBending * dist * dist;
 
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        vCenter->forceAux[coordIdx] += coeff1 * dCurv[coordIdx] + coeff2 * dArea[coordIdx];
-        for(size_t nIdx = 0; nIdx < n; ++nIdx) {
-            v[nIdx]->forceAux[coordIdx] += coeff1 * dNeighborCurv[nIdx][coordIdx] + coeff2 * dNeighborArea[nIdx][coordIdx];
-        }
-    }
+    for(size_t i = 0; i < 3; ++i) v->forceAux[i] += coeff1 * dCurv[i] + coeff2 * dArea[i];
 }

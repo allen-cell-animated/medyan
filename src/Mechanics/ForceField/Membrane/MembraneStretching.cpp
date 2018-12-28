@@ -48,6 +48,8 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(doub
     return U;
 }
 
+// Force on each vertex is calculated one-time using derivative of vcell area and
+// the derivative of neighbor vcell areas on the center vertex.
 template<>
 void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
     
@@ -59,11 +61,11 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
         const auto eqArea = m->getMMembrane()->getEqArea();
 
         double area = 0.0;
-        for(const auto& v : m->getMesh().getVertices()) area += v.attr.gVertex.area;
+        for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.area;
 
-        const size_t numVertices = m->getMesh().getVertices().size();
+        const size_t numVertices = mesh.getVertices().size();
         for(size_t vi = 0; vi < numVertices; ++vi) {
-            const auto& v = m->getMesh().getVertices()[vi];
+            const auto& v = mesh.getVertices()[vi];
            
             _FFType.forces(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
 
@@ -87,11 +89,11 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
         const auto eqArea = m->getMMembrane()->getEqArea();
 
         double area = 0.0;
-        for(const auto& v : m->getMesh().getVertices()) area += v.attr.gVertex.area;
+        for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.area;
 
-        const size_t numVertices = m->getMesh().getVertices().size();
+        const size_t numVertices = mesh.getVertices().size();
         for(size_t vi = 0; vi < numVertices; ++vi) {
-            const auto& v = m->getMesh().getVertices()[vi];
+            const auto& v = mesh.getVertices()[vi];
            
             _FFType.forcesAux(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
 
@@ -114,30 +116,23 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
 
     for(auto m: Membrane::getMembranes()) {
 
-        U_i = 0;
+        if(d == 0.0) {
+            const auto kElastic = m->getMMembrane()->getKElastic();
+            const auto eqArea = m->getMMembrane()->getEqArea();
 
-        if(d == 0.0){
-            for(Triangle* it: m->getTriangleVector()){
-                double kElastic = it->getMTriangle()->getElasticModulus();
-                double eqArea = it->getMTriangle()->getEqArea();
+            double area = 0.0;
+            for(const auto& t : m->getMesh().getTriangles()) area += t.attr.gTriangle.area;
 
-                double area = it->getGTriangle()->getArea();
-
-                // The calculation requires that the current area has already been calculated
-                U_i += _FFType.energy(area, kElastic, eqArea);
-            }
+            U_i = _FFType.energy(area, kElastic, eqArea); 
 
         } else {
-            for(Triangle* it: m->getTriangleVector()){
-                double kElastic = it->getMTriangle()->getElasticModulus();
-                double eqArea = it->getMTriangle()->getEqArea();
+            const auto kElastic = m->getMMembrane()->getKElastic();
+            const auto eqArea = m->getMMembrane()->getEqArea();
 
-                // The calculation requires that the current stretched area has been calculated
-                double areaStretched = it->getGTriangle()->getStretchedArea();
+            double sArea = 0.0;
+            for(const auto& t : m->getMesh().getTriangles()) sArea += t.attr.gTriangle.sArea;
 
-                // Currently, d is a dummy variable, as the stretched areaStretched is already dependent on d.
-                U_i += _FFType.energy(areaStretched, kElastic, eqArea, d);
-            }
+            U_i = _FFType.energy(sArea, kElastic, eqArea, d);
         }
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -156,20 +151,27 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
     return U;
 }
 
+// Currently force calculation using triangles are different with the one using vcells.
+// Using triangles, looping through triangles and forces are accumulated on the vertices.
 template<>
 void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
     
-        for(Triangle* it : m->getTriangleVector()){
-            
-            double kElastic = it->getMTriangle()->getElasticModulus();
-            double eqArea = it->getMTriangle()->getEqArea();
+        const auto& mesh = m->getMesh();
 
-            double area = it->getGTriangle()->getArea();
-            std::array<std::array<double, 3>, 3>& dArea = it->getGTriangle()->getDArea();
-           
-            _FFType.forces(it->getVertices(), area, dArea, kElastic, eqArea);
+        const auto kElastic = m->getMMembrane()->getKElastic();
+        const auto eqArea = m->getMMembrane()->getEqArea();
+
+        double area = 0.0;
+        for(const auto& t : mesh.getTriangles()) area += t.attr.gTriangle.area;
+
+        const size_t numTriangles = mesh.getTriangles().size();
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
+            mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
+                const auto& dArea = mesh.getEdgeAttribute(hei).gHalfEdge.dTriangleArea;
+                _FFType.forces(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
+            });
         }
     }
 }
@@ -179,15 +181,20 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
     
-        for(Triangle* it : m->getTriangleVector()){
-            
-            double kElastic = it->getMTriangle()->getElasticModulus();
-            double eqArea = it->getMTriangle()->getEqArea();
+        const auto& mesh = m->getMesh();
 
-            double area = it->getGTriangle()->getArea();
-            std::array<std::array<double, 3>, 3>& dArea = it->getGTriangle()->getDArea();
-           
-            _FFType.forcesAux(it->getVertices(), area, dArea, kElastic, eqArea);
+        const auto kElastic = m->getMMembrane()->getKElastic();
+        const auto eqArea = m->getMMembrane()->getEqArea();
+
+        double area = 0.0;
+        for(const auto& t : mesh.getTriangles()) area += t.attr.gTriangle.area;
+
+        const size_t numTriangles = mesh.getTriangles().size();
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
+            mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
+                const auto& dArea = mesh.getEdgeAttribute(hei).gHalfEdge.dTriangleArea;
+                _FFType.forces(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
+            });
         }
     }
 }

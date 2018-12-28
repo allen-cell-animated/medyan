@@ -4,6 +4,7 @@
 #include <array>
 
 #include "common.h"
+#include "MathFunctions.h"
 
 //FORWARD DECLARATIONS
 class Vertex;
@@ -16,8 +17,8 @@ public:
     double energy(double, double, double);
     double energy(double, double, double, double);
     
-    void forces(const std::array<Vertex*, 3>&, double, const std::array<std::array<double, 3>, 3>&, double, double);
-    void forcesAux(const std::array<Vertex*, 3>&, double, const std::array<std::array<double, 3>, 3>&, double, double);
+    void forces(Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea);
+    void forcesAux(Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea);
 };
 
 #endif
