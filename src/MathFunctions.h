@@ -364,6 +364,13 @@ inline auto operator-(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
     return res;
 }
 template< size_t dim, typename Float >
+inline auto& operator-=(Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+    for(size_t idx = 0; idx < dim; ++idx) {
+        v1[idx] -= v2[idx];
+    }
+    return v1;
+}
+template< size_t dim, typename Float >
 inline auto operator*(const Vec<dim, Float>& v, Float k) {
     Vec<dim, Float> res;
     for(size_t idx = 0; idx < dim; ++idx){

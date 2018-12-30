@@ -316,7 +316,7 @@ void Membrane::updateGeometryValue() {
 
             const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
 
-            const Vec3 diff = ci - cn;
+            const auto diff = ci - cn;
             const auto dist2 = magnitude2(diff);
 
             vag.area += sumCotTheta * dist2 * 0.125;
@@ -468,8 +468,10 @@ void Membrane::updateGeometryValueWithDerivative() {
             const size_t hei_n = mesh.next(hei);
             const size_t hei_on = mesh.next(hei_o);
             const size_t hei_right = mesh.opposite(mesh.next(hei_on)); // hei_left is hei_n
+            const size_t vi_right = mesh.target(hei_right);
             const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
             const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
+            const auto c_right = vector2Vec<3, double>(vertices[vi_right].attr.vertex->coordinate);
 
             const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
             const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
@@ -477,7 +479,7 @@ void Membrane::updateGeometryValueWithDerivative() {
 
             const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
 
-            const Vec3 diff = ci - cn;
+            const auto diff = ci - cn;
             const auto dist2 = magnitude2(diff);
 
             vag.area += sumCotTheta * dist2 * 0.125;
@@ -494,88 +496,99 @@ void Membrane::updateGeometryValueWithDerivative() {
             mesh.getHalfEdgeAttribute(hei_right).gHalfEdge.dNeighborArea +=
                 dCotThetaRight[1] * (dist2 * 0.125);
 
+            // Accumulate k1
             k1 += sumCotTheta * diff;
+
+            // Accumulate pseudo unit normal
             vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+
+            // Added to derivative of sum of cone volume
+            const auto cp = cross(cn, c_right);
+            vag.dVolume += cp * (1.0 / 6);
         });
+
+        const auto invA = 1.0 / vag.area;
+        const auto magK1 = magnitude(k1);
+
+        // Calculate pseudo unit normal
+        normalize(vag.pseudoUnitNormal);
+
+        // Calculate mean curvature H = |k1| / 4A
+        // dH = (dK1)K1 / 4A|K1| - |K1|dA / 4A^2
+        const int flippingCurv = (dot(k1, vag.pseudoUnitNormal) > 0 ? 1 : -1);
+        const auto dCurvFac1 = 0.25 * invA * flippingCurv / magK1;
+        const auto dCurvFac2 = -0.25 * invA * invA * magK1 * flippingCurv;
+
+        vag.curv = flippingCurv * magK1 * 0.25 * invA;
+        // Derivative will be processed later.
 
         // Calculate derivative of k1 and curvature
         // Using another loop because k1 is needed for curvature derivative
-        Mat3 dK1 {}; // On center vertex
-        _mesh.forEachHalfEdgeTargetingVertex(vi, [this, vi, &vag, &dK1](size_t hei) {
-            const size_t hei_o = mesh.opposite(hei);
-            const size_t vn = mesh.target(hei_o);
-            const size_t hei_n = mesh.next(hei);
-            const size_t hei_on = mesh.next(hei_o);
-            const size_t hei_right = mesh.opposite(mesh.next(hei_on)); // hei_left is hei_n
+        std::array<Vec, 3> dK1 {}; // On center vertex, indexed by [k1x, k1y, k1z]
+        _mesh.forEachHalfEdgeTargetingVertex(vi, [this, &vertices, vi, &vag, &k1, &dK1, dCurvFac1, dCurvFac2](size_t hei) {
+            const size_t hei_o = _mesh.opposite(hei);
+            const size_t vn = _mesh.target(hei_o);
+            const size_t hei_n = _mesh.next(hei);
+            const size_t hei_on = _mesh.next(hei_o);
+            const size_t hei_right = _mesh.opposite(_mesh.next(hei_on)); // hei_left is hei_n
+            const size_t vi_left = _mesh.target(hei_n);
+            const size_t vi_right = _mesh.target(hei_right);
             const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
             const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
+            const auto c_left = vector2Vec<3, double>(vertices[vi_left].attr.vertex->coordinate);
+            const auto c_right = vector2Vec<3, double>(vertices[vi_right].attr.vertex->coordinate);
 
-            // Accumulate dK1 on the center vertex
-            dK1 += tensorTmp0 + Eye3CArray * sumCotTheta;
-            where tensorTmp0 = (<sum-of-d-cot-theta>)T * diff;
+            const auto sumCotTheta = _mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + _mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
+            const auto& dCotThetaLeft = _mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
+            const auto& dCotThetaRight = _mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.dCotTheta;
+            const auto sumDCotThetaCenter = dCotThetaLeft[0] + dCotThetaRight[2];
+            const auto sumDCotThetaNeighbor = dCotThetaLeft[2] + dCotThetaRight[0];
 
-            // Calculate dK1 on target vertex
+            const auto diff = ci - cn;
+            // Accumulate dK1 on the center vertex vi
+            dK1[0] += sumDCotThetaCenter[0] * diff;
+            dK1[1] += sumDCotThetaCenter[1] * diff;
+            dK1[2] += sumDCotThetaCenter[2] * diff;
+            dK1[0][0] += sumCotTheta;
+            dK1[1][1] += sumCotTheta;
+            dK1[2][2] += sumCotTheta; // dK1 += I * sumCotTheta, where I is gradient of diff (identity)
+
+            // Calculate dK1 and derivative of curvature on neighbor vertex vn
+            std::array<Vec, 3> dK1_n {};
             // As direct target
+            dK1_n[0] = sumDCotThetaNeighbor[0] * diff;
+            dK1_n[1] = sumDCotThetaNeighbor[1] * diff;
+            dK1_n[2] = sumDCotThetaNeighbor[2] * diff;
+            dK1_n[0][0] -= sumCotTheta;
+            dK1_n[1][1] -= sumCotTheta;
+            dK1_n[2][2] -= sumCotTheta; // dK1 += (-I) * sumCotTheta
+
+            // As target for left and right
+            const auto diff_left = ci - c_left;
+            const auto diff_right = ci - c_right;
+            const auto& dCotThetaLeft = _mesh.getHalfEdgeAttribute(_mesh.next(hei_n)).gHalfEdge.dCotTheta[1];
+            const auto& dCotThetaRight = _mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dCotTheta[1];
+            dK1_n[0] += dCotThetaLeft[0] * diff_left;
+            dK1_n[1] += dCotThetaLeft[1] * diff_left;
+            dK1_n[2] += dCotThetaLeft[2] * diff_left;
+            dK1_n[0] += dCotThetaRight[0] * diff_right;
+            dK1_n[1] += dCotThetaRight[1] * diff_right;
+            dK1_n[2] += dCotThetaRight[2] * diff_right;
+
+            // Derivative of curvature
+            const Vec3 mp {{{
+                dot(dK1_n[0], k1),
+                dot(dK1_n[1], k1),
+                dot(dK1_n[2], k1)
+            }}}; // A matrix product dK1_n * k1
+            _mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv =
+                dCurvFac1 * mp + dCurvFac2 * _mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
         });
-        // TODO
 
-            // Temporary variables
-            double matTmp1[9], matTmp2[9];
-            double vecTmp[3];
-
-            // NOTE: Not necessarily correct for peripheral vertices
-            for(size_t nIdx = 0; nIdx < nN; ++nIdx) {
-
-                double diff[3];
-
-                // Calculate area, K1 (= 2A * 2H * normal) and their derivatives. Also calcs pseudo unit normal w/o normalization
-                arrArea[idx] += sumCotTheta * dist2 * 0.125;
-
-                // Now, dDiff is Eye3, and dNDiff is -Eye3
-                double tensorTmp0[9];
-                double tensorTmp1[9];
-                double tensorTmpL[9];
-                double tensorTmpR[9];
-                tensorProduct(tensorTmp0, vectorSum(vecTmp, arrDCotThetaTriangle + 27*triLIdx + 9*triLIdx1 + 3*triLIdx0, arrDCotThetaTriangle + 27*triRIdx + 9*triRIdx2 + 3*triRIdx0), diff);
-                tensorProduct(tensorTmp1, vectorSum(vecTmp, arrDCotThetaTriangle + 27*triLIdx + 9*triLIdx1 + 3*triLIdx2, arrDCotThetaTriangle + 27*triRIdx + 9*triRIdx2 + 3*triRIdx1), diff);
-                tensorProduct(tensorTmpL, arrDCotThetaTriangle + 27*triLIdx + 9*triLIdx1 + 3*triLIdx1, diff);
-                tensorProduct(tensorTmpR, arrDCotThetaTriangle + 27*triRIdx + 9*triRIdx2 + 3*triRIdx2, diff);
-
-                matrixIncrease(dK1, matrixSum(matTmp2, tensorTmp0, matrixMultiply(matTmp1, Eye3CArray, sumCotTheta)));
-                matrixIncrease(dNeighborK1.get() + 9*nIdx, matrixDifference(matTmp2, tensorTmp1, matrixMultiply(matTmp1, Eye3CArray, sumCotTheta)));
-                matrixIncrease(dNeighborK1.get() + 9*nIdxP, tensorTmpL);
-                matrixIncrease(dNeighborK1.get() + 9*nIdxN, tensorTmpR);
-
-                // Added to derivative of sum of cone volume
-                crossProduct(vecTmp, arrCoord + 3*arrVCellTopoInfo[idx0BIdx + 1 + nIdx], arrCoord + 3*arrVCellTopoInfo[idx0BIdx + 1 + nIdxN]);
-                arrDVolumeVertex[3*idx + 0] += vecTmp[0] / 6;
-                arrDVolumeVertex[3*idx + 1] += vecTmp[1] / 6;
-                arrDVolumeVertex[3*idx + 2] += vecTmp[2] / 6;
-            } // End loop neighbors
-
-            const double invA = 1 / arrArea[idx];
-            const double magK1 = magnitude(k1);
-
-            // Calculate pseudo unit normal
-            normalize(arrPseudoUnitNormal + 3*idx);
-
-            // Calculate mean curvature H = |k1| / 4A
-            // dH = (dK1)K1 / 4A|K1| - |K1|dA / 4A^2
-            const int flippingCurv = (dotProduct(k1, arrPseudoUnitNormal + 3*idx) > 0 ? 1 : -1);
-            const double dCurvFac1 = 0.25 * invA / magK1;
-            const double dCurvFac2 = -0.25 * invA * invA * magK1;
-
-            matrixVectorProduct(vecTmp, dK1, k1);
-            for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-                arrDCurv[3*bsIdx + coordIdx] = flippingCurv * (dCurvFac1 * vecTmp[coordIdx] + dCurvFac2 * arrDArea[3*bsIdx + coordIdx]);
-            }
-            for(size_t nIdx = 0; nIdx < nN; ++nIdx) {
-                matrixVectorProduct(vecTmp, dNeighborK1.get() + 9*nIdx, k1);
-                for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-                    arrDCurv[3*bsIdx + 3*(nIdx+1) + coordIdx] = flippingCurv * (dCurvFac1 * vecTmp[coordIdx] + dCurvFac2 * arrDArea[3*bsIdx + 3*(nIdx+1) + coordIdx]);
-                }
-            }
-            arrCurv[idx] = flippingCurv * magK1 * 0.25 * invA;
+        // Also the derivative of curvature on central vertex
+        vag.dCurv =
+            dCurvFac1 * Vec3{ dot(dK1[0], k1), dot(dk1[1], k1), dot(dk1[2], k1) }
+            + dCurvFac2 * vag.dArea;
 
     } // End loop vertices (V cells)
 }
