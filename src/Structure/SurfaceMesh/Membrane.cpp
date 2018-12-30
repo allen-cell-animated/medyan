@@ -302,7 +302,7 @@ void Membrane::updateGeometryValue() {
         // k1 = 2A * k, where k is the result of LB operator
         Vec3 k1 {};
 
-        _mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh = _mesh, &edges, &halfEdges, &vertices, &triangles, &vi, &vag, &k1](size_t hei) {
+        _mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh = _mesh, &vertices, &vi, &vag, &k1](size_t hei) {
             const size_t hei_o = mesh.opposite(hei);
             const size_t ti0 = mesh.triangle(hei);
             const size_t ti1 = mesh.triangle(hei_o);
@@ -312,13 +312,12 @@ void Membrane::updateGeometryValue() {
             const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
             const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
 
-            const auto dist = mesh.getEdgeAttribute(mesh.edge(hei)).gEdge.length;
-            const auto dist2 = dist * dist;
             const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
 
             const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
 
-            Vec3 diff = ci - cn;
+            const Vec3 diff = ci - cn;
+            const auto dist2 = magnitude2(diff);
 
             vag.area += sumCotTheta * dist2 * 0.125;
 
@@ -439,47 +438,86 @@ void Membrane::updateGeometryValueWithDerivative() {
 
     }
 
-    // TODO vcell
+    // Clear derivative of vcell area on neighbors
+    for(size_t hei = 0; hei < numHalfEdges; ++hei) {
+        _mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea = {0.0, 0.0, 0.0};
+    }
 
-        {
-        double *arrArea = areaVCell.data();
-        double *arrDArea = dAreaVCell.data();
-        double *arrCurv = curvVCell.data();
-        double *arrDCurv = dCurvVCell.data();
-        double *arrPseudoUnitNormal = pseudoUnitNormalVertex.data();
-        double *arrDVolumeVertex = dVolumeVertex.data();
-        
-        const double *arrLengthEdge = lengthEdge.data();
-        const double *arrDLengthEdge = dLengthEdge.data();
-        const double *arrThetaTriangle = thetaTriangle.data();
-        const double *arrCotThetaTriangle = cotThetaTriangle.data();
-        const double *arrDCotThetaTriangle = dCotThetaTriangle.data();
-        const double *arrUnitNormalTriangle = unitNormalTriangle.data();
-        const size_t *arrNumNeighbors = numNeighbors.data();
-        const size_t *arrVCellTopoInfo = vCellTopoInfo.data();
-        const size_t *arrVCellTopoIndex = vCellTopoIndex.data();
+    // Calculate vcell area, curvature with derivative
+    // Calculate vertex pseudo unit normal
+    // Calculate derivative of volume on vertices
+    for(size_t vi = 0; vi < numVertices; ++vi) {
+        auto& vag = _mesh.getVertexAttribute(vi).gVertex;
 
-        for(size_t idx = 0; idx < numVertices; ++idx) {
-            const size_t nN = arrNumNeighbors[idx];
-            const size_t idx0 = arrVCellTopoIndex[idx]; // start idx of v cell topo info
-            const size_t bsIdx = arrVCellTopoInfo[idx0]; // start idx of data with length (1 + N_N) every group
+        // clearing
+        vag.area = 0.0;
+        vag.dArea = {0.0, 0.0, 0.0};
+        vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
+        vag.dVolume = {0.0, 0.0, 0.0};
 
-            const size_t idx0BIdx = idx0 + 1;
-            const size_t idx0EIdx = idx0 + 2 + nN;
-            const size_t idx0EHead = idx0 + 2 + 2*nN;
-            const size_t idx0TIdx = idx0 + 2 + 3*nN;
-            const size_t idx0THead = idx0 + 2 + 4*nN;
+        // K = 2*H*n is the result of LB operator
+        // And let k1 = 2*A*k (as an intermediate variable)
+        Vec3 k1 {};
 
-            // Clearing field
-            arrArea[idx] = 0;
-            std::fill(arrDArea + 3*bsIdx, arrDArea + 3*(bsIdx + nN) + 3, 0.0);
-            std::fill(arrPseudoUnitNormal + 3*idx, arrPseudoUnitNormal + 3*idx + 3, 0.0);
-            std::fill(arrDVolumeVertex + 3*idx, arrDVolumeVertex + 3*idx + 3, 0.0);
+        // derivative of k1 and curvature will be calculated in the next loop
+        _mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh = _mesh, &vertices, &vi, &vag, &k1](size_t hei) {
+            const size_t hei_o = mesh.opposite(hei);
+            const size_t ti0 = mesh.triangle(hei);
+            const size_t ti1 = mesh.triangle(hei_o);
+            const size_t vn = mesh.target(hei_o);
+            const size_t hei_n = mesh.next(hei);
+            const size_t hei_on = mesh.next(hei_o);
+            const size_t hei_right = mesh.opposite(mesh.next(hei_on)); // hei_left is hei_n
+            const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
+            const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
 
-            // k1 = 2*A*k
-            double k1[3] = {}; // Result of Laplace-Beltrami operator
-            double dK1[9] = {};
-            std::unique_ptr<double[]> dNeighborK1(new double[9*nN]());
+            const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
+            const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
+            const auto& dCotThetaRight = mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.dCotTheta;
+
+            const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
+
+            const Vec3 diff = ci - cn;
+            const auto dist2 = magnitude2(diff);
+
+            vag.area += sumCotTheta * dist2 * 0.125;
+
+            // Area derivative
+            vag.dArea +=
+                (dCotThetaLeft[0] + dCotThetaRight[2]) * (dist2 * 0.125)
+                + (sumCotTheta * 0.25) * diff; // d(dist2) / dx = 2 * diff
+            mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea +=
+                (dCotThetaLeft[2] + dCotThetaRight[0]) * (dist2 * 0.125)
+                - (sumCotTheta * 0.25) * diff; // d(dist2) / dx = -2 * diff
+            mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dNeighborArea +=
+                dCotThetaLeft[1] * (dist2 * 0.125);
+            mesh.getHalfEdgeAttribute(hei_right).gHalfEdge.dNeighborArea +=
+                dCotThetaRight[1] * (dist2 * 0.125);
+
+            k1 += sumCotTheta * diff;
+            vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+        });
+
+        // Calculate derivative of k1 and curvature
+        // Using another loop because k1 is needed for curvature derivative
+        Mat3 dK1 {}; // On center vertex
+        _mesh.forEachHalfEdgeTargetingVertex(vi, [this, vi, &vag, &dK1](size_t hei) {
+            const size_t hei_o = mesh.opposite(hei);
+            const size_t vn = mesh.target(hei_o);
+            const size_t hei_n = mesh.next(hei);
+            const size_t hei_on = mesh.next(hei_o);
+            const size_t hei_right = mesh.opposite(mesh.next(hei_on)); // hei_left is hei_n
+            const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
+            const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
+
+            // Accumulate dK1 on the center vertex
+            dK1 += tensorTmp0 + Eye3CArray * sumCotTheta;
+            where tensorTmp0 = (<sum-of-d-cot-theta>)T * diff;
+
+            // Calculate dK1 on target vertex
+            // As direct target
+        });
+        // TODO
 
             // Temporary variables
             double matTmp1[9], matTmp2[9];
@@ -487,45 +525,11 @@ void Membrane::updateGeometryValueWithDerivative() {
 
             // NOTE: Not necessarily correct for peripheral vertices
             for(size_t nIdx = 0; nIdx < nN; ++nIdx) {
-                const size_t nIdxN = (nIdx + 1) % nN;
-                const size_t nIdxP = (nIdx + nN - 1) % nN;
-
-                // Think about the triangles Right(center, nIdx, nIdx+1) and Left(center, nIdx-1, nIdx)
-                const size_t triRIdx = arrVCellTopoInfo[idx0TIdx + nIdx];
-                const size_t triLIdx = arrVCellTopoInfo[idx0TIdx + nIdxP];
-                const size_t triRIdx0 = (3 - arrVCellTopoInfo[idx0THead + nIdx]) % 3;
-                const size_t triRIdx1 = (4 - arrVCellTopoInfo[idx0THead + nIdx]) % 3;
-                const size_t triRIdx2 = (5 - arrVCellTopoInfo[idx0THead + nIdx]) % 3;
-                const size_t triLIdx0 = (3 - arrVCellTopoInfo[idx0THead + nIdxP]) % 3;
-                const size_t triLIdx1 = (4 - arrVCellTopoInfo[idx0THead + nIdxP]) % 3;
-                const size_t triLIdx2 = (5 - arrVCellTopoInfo[idx0THead + nIdxP]) % 3;
-
-                // Think about the edge (center, nIdx)
-                const size_t edgeIdx = arrVCellTopoInfo[idx0EIdx + nIdx];
-                const size_t edgeIdx0 = (2 - arrVCellTopoInfo[idx0EHead + nIdx]) % 2;
-                const size_t edgeIdx1 = (3 - arrVCellTopoInfo[idx0EHead + nIdx]) % 2;
-
-                const double dist2 = arrLengthEdge[edgeIdx] * arrLengthEdge[edgeIdx];
-                const double sumCotTheta = arrCotThetaTriangle[3*triLIdx + triLIdx1] + arrCotThetaTriangle[3*triRIdx + triRIdx2];
-                const double theta = arrThetaTriangle[3*triRIdx + triRIdx0];
 
                 double diff[3];
 
                 // Calculate area, K1 (= 2A * 2H * normal) and their derivatives. Also calcs pseudo unit normal w/o normalization
                 arrArea[idx] += sumCotTheta * dist2 * 0.125;
-                for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx){
-                    arrDArea[3*bsIdx + coordIdx] += ((arrDCotThetaTriangle[27*triLIdx + 9*triLIdx1 + 3*triLIdx0 + coordIdx] + dCotThetaTriangle[27*triRIdx + 9*triRIdx2 + 3*triRIdx0 + coordIdx]) * dist2
-                        + sumCotTheta * 2 * arrLengthEdge[edgeIdx] * arrDLengthEdge[6*edgeIdx + 3*edgeIdx0 + coordIdx]) * 0.125;
-                    arrDArea[3*bsIdx + 3*(nIdx + 1) + coordIdx] += ((arrDCotThetaTriangle[27*triLIdx + 9*triLIdx1 + 3*triLIdx2 + coordIdx] + dCotThetaTriangle[27*triRIdx + 9*triRIdx2 + 3*triRIdx1 + coordIdx]) * dist2
-                        + sumCotTheta * 2 * arrLengthEdge[edgeIdx] * arrDLengthEdge[6*edgeIdx + 3*edgeIdx1 + coordIdx]) * 0.125;
-                    arrDArea[3*bsIdx + 3*(nIdxP + 1) + coordIdx] += arrDCotThetaTriangle[27*triLIdx + 9*triLIdx1 + 3*triLIdx1 + coordIdx] * dist2 * 0.125;
-                    arrDArea[3*bsIdx + 3*(nIdxN + 1) + coordIdx] += arrDCotThetaTriangle[27*triRIdx + 9*triRIdx2 + 3*triRIdx2 + coordIdx] * dist2 * 0.125;
-
-                    diff[coordIdx] = arrCoord[3*arrVCellTopoInfo[idx0BIdx] + coordIdx] - arrCoord[3*arrVCellTopoInfo[idx0BIdx + nIdx + 1] + coordIdx];
-                    k1[coordIdx] += sumCotTheta * diff[coordIdx];
-
-                    arrPseudoUnitNormal[3*idx + coordIdx] += theta * arrUnitNormalTriangle[3*triRIdx + coordIdx];
-                }
 
                 // Now, dDiff is Eye3, and dNDiff is -Eye3
                 double tensorTmp0[9];
@@ -573,7 +577,7 @@ void Membrane::updateGeometryValueWithDerivative() {
             }
             arrCurv[idx] = flippingCurv * magK1 * 0.25 * invA;
 
-        } // End loop vertices (V cells)
+    } // End loop vertices (V cells)
 }
 
 void Membrane::updateGeometry(bool calcDerivative, double d) {
