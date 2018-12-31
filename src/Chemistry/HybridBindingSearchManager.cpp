@@ -28,6 +28,12 @@ using namespace mathfunc;
 HybridBindingSearchManager::HybridBindingSearchManager(Compartment* compartment){
     _compartment = compartment;
     totaluniquefIDpairs = 0;
+//    const uint N = 8000;
+//    dist::dOut<2U> bspairsoutX;
+//    bspairsoutX.init_dout(N,{30.0f,40.0f,175.0f,225.0f});
+//    bspairsout = bspairsoutX;
+//    bspairsout.init_dout(N, {5.0f, 12.0f, 6.0f, 13.0f});
+//    bspairsout.init_dout(N,{30.0f,40.0f,175.0f,225.0f});
 };
 void HybridBindingSearchManager::setbindingsearchparameter
         (FilamentBindingManager* fmanager, short bstatepos, short ftype1, short
@@ -99,6 +105,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
 }
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2], CCylinder* cc,
                                     short bindingSite) {
+#ifndef SIMDBINDINGSEARCH
 //    std::cout<<"Adding "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     short idx = idvec[0];
     short idx2 = idvec[1];
@@ -207,6 +214,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2], CCyl
     //update this manager
     int newN = _possibleBindingsstencilvec[idx][idx2].size();
     fManagervec[idx][idx2]->updateBindingReaction(newN);
+#endif
 }
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
@@ -322,6 +330,44 @@ void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
     }
 }
 void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
+#ifdef SIMDBINDINGSEARCH
+    int i = 0;
+    dist::dOut<2U> bspairsoutS;
+//    uint N = max({_compartment->bscoords.size(),ncmp->bscoords.size()});
+    uint N = 6000;
+    bspairsoutS.init_dout(N,{30.0f,40.0f,175.0f,225.0f});
+
+    for(auto ncmp: _compartment->getenclosingNeighbours()){
+        dist::dOut<2U> bspairsoutX(N,{30.0f,40.0f,175.0f,225.0f});
+        std::cout<<++i<<" Cmp IDs "<<_compartment->getID()<<" "<<ncmp->getID()<<endl;
+        std::cout<<_compartment->bscoords.x.size()<<" "<<ncmp->bscoords.x.size()<<endl;
+        dist::tag_simd<dist::simd_no,   float>   t_serial;
+        dist::tag_simd<dist::simd_avx,  float>   t_avx;
+        bspairsoutX.reset_counters();
+        bspairsoutS.reset_counters();
+        if(_compartment->bscoords.size()>ncmp->bscoords.size()) {
+/*            dist::find_distances(bspairsoutS, _compartment->bscoords, ncmp->bscoords,
+                                 t_serial);*/
+//            report_contact_stats(bspairsoutS);
+//            std::cout<<"**********************"<<endl;
+            dist::find_distances(bspairsoutX, _compartment->bscoords, ncmp->bscoords,
+                                 t_avx);
+            report_contact_stats(bspairsoutX);
+        }
+        else {
+/*            dist::find_distances(bspairsoutS, ncmp->bscoords, _compartment->bscoords,
+                                 t_serial);*/
+//            report_contact_stats(bspairsoutS);
+//            std::cout<<"**********************"<<endl;
+            dist::find_distances(bspairsoutX, ncmp->bscoords, _compartment->bscoords,
+                    t_avx);
+            report_contact_stats(bspairsoutX);
+        }
+        /*bspairsoutX.reset_counters();
+        dist::find_distances(bspairsoutX, _compartment->bscoords, t_avx);
+        report_contact_stats(bspairsoutX);*/
+    }
+#else
     int counter1, counter2, counter3, counter4, counter5, counter6, counter7, counter8,
             counter9, counter10;
     counter1 = 0;counter2 = 0;counter3 = 0;counter4 = 0;counter5 = 0;counter6 = 0;
@@ -501,7 +547,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
                                     if (!status2) {
                                         if (mp2 < maxveca[0] || mp2 > maxveca[1]) {
                                             {
-                                    counter9++;
+                                                counter9++;
                                                 continue;
                                             }
                                         }
@@ -509,7 +555,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
                                     if (!status1) {
                                         if (mp2 > minveca[0] && mp2 < minveca[1]) {
                                             {
-                                    counter10++;
+                                                counter10++;
                                                 continue;
                                             }
                                         }
@@ -597,6 +643,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
 //    int oldN = _bindingSpecies->getN();
 //    int newN = numBindingSitesstencil();
 //    updateBindingReaction(oldN, newN);
+#endif
 }
 void HybridBindingSearchManager::addtoHNeighborList(){
     HNLIDvec.reserve(totaluniquefIDpairs);

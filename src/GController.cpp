@@ -179,7 +179,12 @@ void GController::generateConnections()
                             vector<size_t> currentIndices{size_t(iprime), size_t
                                     (jprime), size_t(kprime)};
                             Compartment *neighbor = getCompartment(currentIndices);
-                            target->addenclosingNeighbour(neighbor, stencilcount -1);
+                            if(jj==0 && kk>=0 && ii <=0)
+                                target->addenclosingNeighbour(neighbor, stencilcount -1);
+                            else if(jj==0 && kk==1 && ii == 1)
+                                target->addenclosingNeighbour(neighbor, stencilcount -1);
+                            else if(jj == 1)
+                                target->addenclosingNeighbour(neighbor, stencilcount -1);
 
                             if(ii != 0 && jprime == j && kprime == k)
                                 target->addNeighbour(neighbor);

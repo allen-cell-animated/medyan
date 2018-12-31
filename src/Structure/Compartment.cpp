@@ -17,6 +17,46 @@
 #include "Parser.h"
 //REMOVE LATER
 #include "ChemNRMImpl.h"
+#include "Filament.h"
+#include "Cylinder.h"
+
+#ifdef SIMDBINDINGSEARCH
+void Compartment::SIMDcoordinates(){
+    //setting size to the number of maximum binding sites per cylinder * number of
+    // cylinders in compartment.
+    int N = _cylinders.size() * SysParams::Mechanics().maxbindingsitespercylinder;
+    vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(N), bindsitecoordinatesZ(N);
+    vector<int> cindex_bs(N);
+
+    short _filamentType = 0;
+    bool checkftype = false;
+    if(SysParams::Chemistry().numFilaments >1)
+        checkftype = true;
+    int i = 0;
+    for(auto cyl:_cylinders){
+        if(checkftype)
+            short _filamentType = ((Filament*) cyl->getParent())->getType();
+        auto x1 = cyl->getFirstBead()->coordinate;
+        auto x2 = cyl->getSecondBead()->coordinate;
+        for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+            it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+
+            auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
+            auto coord = midPointCoordinate(x1, x2, mp);
+            bindsitecoordinatesX[i] = coord[0];
+            bindsitecoordinatesY[i] = coord[1];
+            bindsitecoordinatesZ[i] = coord[2];
+            //cindex is the integral part while bs is in the fractional part
+            cindex_bs[i] = cyl->_dcIndex;
+            //+ *it/100.0;
+            i++;
+        }
+    }
+    //Create input vector for SIMD calculations
+    bscoords.init_coords(bindsitecoordinatesX,bindsitecoordinatesY,bindsitecoordinatesZ,
+            cindex_bs);
+}
+#endif
 
 Compartment& Compartment::operator=(const Compartment &other) {
     

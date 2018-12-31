@@ -2850,8 +2850,7 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSitesstencil(
 void MotorBindingManager::assigncudavars() {
 
 //    if(gpu_numpairs == NULL) {
-        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_numpairs, sizeof(int)), "cuda data transfer", " "
-                "BindingManager.cu");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_numpairs, sizeof(int)), "cuda data transfer", "BindingManager.cu");
 //    int n[1];
 //    n[0] = 0;
 //    CUDAcommon::handleerror(cudaMemcpy(gpu_numpairs, n, sizeof(int), cudaMemcpyHostToDevice));

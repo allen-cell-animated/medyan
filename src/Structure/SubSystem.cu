@@ -19,6 +19,8 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
+#include "dist_driver.h"
+#include "dist_coords.h"
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
 #ifdef CUDAACCL_NL
@@ -263,6 +265,7 @@ void SubSystem::resetNeighborLists() {
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_NL(mine - mins);
     std::cout<<"NLSTEN reset time "<<elapsed_NL.count()<<endl;*/
+
 }
 void SubSystem::updateBindingManagers() {
 #ifdef CUDAACCL_NL
@@ -334,12 +337,12 @@ void SubSystem::updateBindingManagers() {
     int ncyl = cylvec.size();
     delete [] cylsqmagnitudevector;
     cylsqmagnitudevector = new double[Cylinder::vectormaxsize];
-    unsigned long maxbindingsitesprecyl = 0;
+    unsigned long maxbindingsitespercyl = 0;
     for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
-        maxbindingsitesprecyl = max(maxbindingsitesprecyl,SysParams::Chemistry()
+        maxbindingsitespercyl = max(maxbindingsitespercyl,SysParams::Chemistry()
                 .bindingSites[ftype].size());
     }
-    long vectorsize = maxbindingsitesprecyl * Cylinder::vectormaxsize;
+    long vectorsize = maxbindingsitespercyl * Cylinder::vectormaxsize;
     vector<int> branchspeciesbound(vectorsize);
     vector<int> linkerspeciesbound(vectorsize);
     vector<int> motorspeciesbound(vectorsize);//stores species bound corresponding to each cylinder.
@@ -363,13 +366,13 @@ void SubSystem::updateBindingManagers() {
         int idx = 0;
         for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
              it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-            branchspeciesbound[maxbindingsitesprecyl * cyl->_dcIndex + idx] =
+            branchspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN());
-            linkerspeciesbound[maxbindingsitesprecyl * cyl->_dcIndex + idx] =
+            linkerspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN());
-            motorspeciesbound[maxbindingsitesprecyl * cyl->_dcIndex + idx] =
+            motorspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().motorBoundIndex[_filamentType])->getN());
             idx++;
@@ -412,7 +415,7 @@ void SubSystem::updateBindingManagers() {
     SysParams::MParams.speciesboundvec.push_back(branchspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(linkerspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(motorspeciesbound);
-    SysParams::MParams.maxbindingsitespercylinder = maxbindingsitesprecyl;
+    SysParams::MParams.maxbindingsitespercylinder = maxbindingsitespercyl;
     SysParams::MParams.cylsqmagnitudevector = cylsqmagnitudevector;
     SysParams::MParams.bsoffsetvec = bspeciesoffsetvec;
     SysParams::MParams.ncylvec = ncylvec;
@@ -421,6 +424,12 @@ void SubSystem::updateBindingManagers() {
 #endif
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
+    //SIMD cylinder update
+#ifdef SIMDBINDINGSEARCH
+    for(auto C : _compartmentGrid->getCompartments()) {
+        C->SIMDcoordinates();
+    }
+#endif
     for(auto C : _compartmentGrid->getCompartments()) {
 
 #ifdef HYBRID_NLSTENCILLIST
@@ -457,6 +466,7 @@ void SubSystem::updateBindingManagers() {
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_sten(mine - mins);
     std::cout<<"BMgr update time "<<elapsed_sten.count()<<endl;*/
+
 }
 
 void SubSystem::vectorizeCylinder() {
@@ -509,6 +519,7 @@ void SubSystem::vectorizeCylinder() {
     CUDAcommon::serlvars.ccylindervec = ccylindervec;
     CUDAcommon::serlvars.cylindervec = cylindervec;
     CUDAcommon::serlvars.cylinderpointervec = cylinderpointervec;
+
 }
 
 #ifdef CUDAACCL_NL

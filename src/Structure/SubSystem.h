@@ -38,6 +38,9 @@
 #include "GController.h"
 #include "HybridNeighborList.h"
 #include "HybridNeighborListImpl.h"
+
+#include <initializer_list>
+#include "dist_common.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -222,7 +225,7 @@ public:
         return _staticgrid;
     }
 private:
-
+    dist::Coords temptest;
     double _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
     

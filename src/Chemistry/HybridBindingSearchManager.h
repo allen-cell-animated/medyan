@@ -27,6 +27,7 @@
 #include "SysParams.h"
 #include "Rand.h"
 #include "BindingManager.h"
+#include "dist_driver.h"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -84,7 +85,6 @@ public:
 
     bool isConsistent();
 
-
     void addPossibleBindingsstencil(short idvec[2], CCylinder* cc, short bindingSite);
     void removePossibleBindingsstencil(short idvec[2], CCylinder* cc, short bindingSite);
     ///update all possible binding reactions that could occur using stencil NL
@@ -116,10 +116,7 @@ public:
 
     void checkoccupancy(short idvec[2]);
 
-private:
-
 
 };
-
 #endif
 #endif

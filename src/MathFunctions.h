@@ -26,6 +26,10 @@
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
+    struct temp{
+        int a;
+        int b;
+    };
 #if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 
 #else

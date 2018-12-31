@@ -32,6 +32,11 @@
 #include "HybridBindingSearchManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
+
+#include "dist_driver.h"
+#include "dist_coords.h"
+#include "MathFunctions.h"
+
 //#include "BinGrid.h"
 //#include "Bin.h"
 //FORWARD DECLARATIONS
@@ -66,7 +71,7 @@ protected:
     
     unordered_map<int,float> _diffusion_rates; ///< Diffusion rates of Species
                                                ///< in compartment
-    
+
 
     
     /// All binding managers for this compartment
@@ -484,13 +489,18 @@ public:
         return _bindingsearchManagers;
     }
 #endif
+//    Coords bscoords;
+   // Coords getbscoords(){return bscoords;}
+    mathfunc::temp teststruct;
+    dist::Coords bscoords;
+#ifdef SIMDBINDINGSEARCH
+    void SIMDcoordinates();
+#endif
     /// Get binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>>& getFilamentBindingManagers() {
         return _bindingManagers;
     }
 
-
-    
     /// Get a specific motor binding manager from this compartment
     MotorBindingManager* getMotorBindingManager(int motorType) {
         

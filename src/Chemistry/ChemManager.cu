@@ -1621,6 +1621,7 @@ void ChemManager::genFilBindingReactions() {
                 ConnectionBlock rcb(rxn->connect(lcallback,false));
 #ifdef HYBRID_NLSTENCILLIST
                 auto Hbsm = C->getHybridBindingSearchManager();
+                //1 refers to linker binding manager
                 Hbsm->setbindingsearchparameter(lManager, 1, 0,0,rMax,rMin);
 #endif
             }
@@ -1854,6 +1855,7 @@ void ChemManager::genFilBindingReactions() {
                 ConnectionBlock rcb(rxn->connect(mcallback,false));
 #ifdef HYBRID_NLSTENCILLIST
                 auto Hbsm = C->getHybridBindingSearchManager();
+                //2 let's it identify with a motor binding manager
                 Hbsm->setbindingsearchparameter(mManager, 2, 0,0,rMax,rMin);
 #endif
             }

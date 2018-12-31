@@ -45,6 +45,7 @@ public:
     short _ID = 0;
     vector<int> stencilID; /// template stencil has neighboring bins numbered from 0-26.
 /// stencilID vector stores which of those 27 bins are neighbors to the current bin.
+/// 13 refers to self
 
     // Default constructor, only takes in number of dimensions
     Bin(short binGridType, short ID) : _neighbours(), _binGridType(binGridType){
