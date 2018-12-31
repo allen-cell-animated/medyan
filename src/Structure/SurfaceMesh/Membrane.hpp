@@ -10,7 +10,6 @@
 #include "Trackable.h"
 #include "Composite.h"
 
-#include "GMembrane.h"
 #include "MathFunctions.h"
 #include "MMembrane.h"
 #include "Structure/SubSystem.h"
@@ -121,11 +120,6 @@ private:
 
     SurfaceTriangularMesh< MembraneMeshAttribute > _mesh;
 
-    vector<Triangle*> _triangleVector; // collection of triangles
-    vector<Edge*> _edgeVector; // collection of edges
-    vector<Vertex*> _vertexVector; // collection of vertices
-
-    unique_ptr<GMembrane> _gMembrane; // pointer to geometric membrane object
     unique_ptr<MMembrane> _mMembrane; // pointer to mechanical membrane object
 
     short _memType; // Membrane type

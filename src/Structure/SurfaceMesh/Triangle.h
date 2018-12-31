@@ -39,15 +39,7 @@ class Triangle:
 private:
     size_t _topoIndex; // Index in the meshwork topology.
 
-    // Pointers to 3 vertices. The rotation of vertices must be pointing outside.
-    array<Vertex*, 3> _v;
-
     unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
-
-    // ptr to 3 edges. Order is (b0, b1), (b1, b2), (b2, b0)
-    std::array<Edge*, 3> _edges;
-    std::array<size_t, 3> _edgeHead; // The index of edge head vertex.
-                                     // e.g. {1, 0, 1} means _edges' heads (Edge->v[0]) are at v1, v1, v0.
 
     static Database<Triangle*> _triangles; // Collection of triangles in SubSystem
     int _id; // Unique integer id of this triangle
@@ -64,11 +56,6 @@ public:
     void setTopoIndex(size_t index) { _topoIndex = index; }
     size_t getTopoIndex() const { return _topoIndex; }
 
-    // Get Beads
-    array<Vertex*, 3>& getVertices() { return _v; }
-    array<Edge*, 3>& getEdges() { return _edges; }
-    array<size_t, 3>& getEdgeHead() { return _edgeHead; }
-    
     // Get mech triangle
     MTriangle* getMTriangle() { return _mTriangle.get(); }
 

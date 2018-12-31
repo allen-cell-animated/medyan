@@ -23,20 +23,6 @@ struct GVertex {
     template< bool stretched > double& getCurv() { return stretched ? sCurv : curv; }
     template< bool stretched > mathfunc::Vec3& getPseudoUnitNormal() { return stretched ? sPseudoUnitNormal : pseudoUnitNormal; }
 
-
-    double getCurv() { return _currentCurv; }
-    std::array<double, 3>& getDCurv() { return _dCurrentCurv; }
-    std::vector<std::array<double, 3>>& getDNeighborCurv() { return _dNeighborCurrentCurv; }
-    void calcCurv();
-    double getStretchedCurv() { return _stretchedCurv; }
-    void calcStretchedCurv(double d); // Calculates the stretched mean curvature, and store the result in _stretchedCurv.
-                                      // Does not calculate the derivatives.
-    
-    std::array<double, 3>& getPseudoUnitNormal() { return _pseudoUnitNormal; }
-    void calcPseudoUnitNormal(); // Calculates the pseudo unit normal w/o derivatives
-    std::array<double, 3>& getStretchedPseudoUnitNormal() { return _stretchedPseudoUnitNormal; }
-    void calcStretchedPseudoUnitNormal(double d); // Calculates the pseudo unit normal w/o derivatives
-
 };
 
 

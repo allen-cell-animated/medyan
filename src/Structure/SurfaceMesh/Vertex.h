@@ -1,7 +1,6 @@
 #ifndef MEDYAN_Vertex_h
 #define MEDYAN_Vertex_h
 
-#include<unordered_map>
 #include<vector>
 
 #include "common.h"
@@ -38,20 +37,7 @@ class Vertex:
 private:
     size_t _topoIndex; // Index in the meshwork topology.
 
-    unique_ptr<GVoronoiCell> _gVoronoiCell; // pointer to Voronoi cell geometric information
     unique_ptr<MVoronoiCell> _mVoronoiCell; // pointer to Voronoi cell mechanical information
-
-    // The following vectors on neighbor vertices, triangles, edges must have the same size
-    std::vector<Vertex*> _neighborVertices; // tethered neighbors in counter-clockwise direction
-    std::unordered_map<Vertex*, size_t> _neighborVertexIndices; // maps vertex pointers back to indices
-    std::vector<Triangle*> _neighborTriangles; // triangles around the vertex. each index i corresponds to
-                                       // the triangle (this, _neighborVertices[i], _neighborVertices[i+1])
-    std::vector<size_t> _triangleHead; // The index of triangle 0th vertex
-                                       // ...[2] = 1 means the 2nd triangle has vertices at (2, 3, center)
-                                       // ...[4] = 2 means the 4th triangle has vertices at (5, center, 4)
-    std::vector<Edge*> _neighborEdges; // The tethers, with the same order as neighbor vertices.
-    std::vector<size_t> _edgeHead; // The index of edge head vertex
-                                   // ...[2] = 0 means the 2nd edge has 0th vertex at center
     
     static Database<Vertex*> _vertices; // Collection of vertices in SubSystem
     int _id; // Unique integer id of this vertex
@@ -68,21 +54,11 @@ public:
 
     void setTopoIndex(size_t index) { _topoIndex = index; }
     
-    // Get geo Voronoi cell
-    GVoronoiCell* getGVoronoiCell() { return _gVoronoiCell.get(); }
     // Get mech Voronoi cell
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 
     // Get number of tethered neighbors
     [[deprecated]] size_t getNeighborNum()const;
-
-    // Get tethered neighbors
-    std::vector<Vertex*>& getNeighborVertices() { return _neighborVertices; }
-    std::unordered_map<Vertex*, size_t>& getNeighborVertexIndices() { return _neighborVertexIndices; }
-    std::vector<Edge*>& getNeighborEdges() { return _neighborEdges; }
-    std::vector<Triangle*>& getNeighborTriangles() { return _neighborTriangles; }
-    std::vector<size_t>& getEdgeHead() { return _edgeHead; }
-    std::vector<size_t>& getTriangleHead() { return _triangleHead; }
 
     /// Get all instances of this class from the SubSystem
     static const vector<Vertex*>& getVertices() {

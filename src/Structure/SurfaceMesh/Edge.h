@@ -33,13 +33,6 @@ private:
 
     size_t _topoIndex; // Index in the meshwork topology.
 
-    // Pointers to the vertices.
-    std::array<Vertex*, 2> _v;
-
-    std::array<Triangle*, 2> _triangles; // Neighbor triangles (v0, v1, other1) and (v1, v0, other2)
-
-    unique_ptr<GEdge> _gEdge; // pointer to mech edge
-
     static Database<Edge*> _edges; // Collection of edges in SubSystem
     int _id; // Unique integer id of this edge
 
@@ -53,14 +46,6 @@ public:
     void setTopoIndex(size_t index) { _topoIndex = index; }
 
     std::array<double, 3> coordinate; // Coordinate of the mid point, updated with updateCoordiante()
-
-    // Get vertices
-    std::array<Vertex*, 2>& getVertices() { return _v; }
-    // Get neighbor triangles
-    std::array<Triangle*, 2>& getTriangles() { return _triangles; }
-
-    // Get mech edge
-    GEdge* getGEdge() { return _gEdge.get(); }
 
     /// Get all instances of this class from the SubSystem
     static const vector<Edge*>& getEdges() {

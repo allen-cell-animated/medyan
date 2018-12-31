@@ -18,30 +18,11 @@ struct GTriangle {
     double coneVolume; // Volume of the tetrahedral formed by this triangle and the origin (0, 0, 0)
     double sConeVolume;
 
-
     // Auxilliary getters
     template< bool stretched > double& getArea() { return stretched ? sArea : area; }
     template< bool stretched > mathfunc::Vec3& getUnitNormal() { return stretched ? sUnitNormal : unitNormal; }
     template< bool stretched > double& getConeVolume() { return stretched ? sConeVolume : coneVolume; }
 
-    std::array<double, 3>& getTheta() { return _theta; }
-    std::array<double, 3>& getSinTheta() { return _sinTheta; }
-    std::array<double, 3>& getCotTheta() { return _cotTheta; }
-    std::array<std::array<std::array<double, 3>, 3>, 3>& getDTheta() { return _dTheta; }
-    std::array<std::array<std::array<double, 3>, 3>, 3>& getDSinTheta() { return _dSinTheta; }
-    std::array<std::array<std::array<double, 3>, 3>, 3>& getDCotTheta() { return _dCotTheta; }
-    void calcTheta(); // would calculate all variables related to theta
-    std::array<double, 3>& getStretchedTheta() { return _stretchedTheta; }
-    std::array<double, 3>& getStretchedSinTheta() { return _stretchedSinTheta; }
-    std::array<double, 3>& getStretchedCotTheta() { return _stretchedCotTheta; }
-    void calcStretchedTheta(double d); // Calculates angles under stretched conditions (w/o derivatives)
-                                       // The results are stored in _stretchedXxx variables.
-    
-    std::array<double, 3>& getUnitNormal() { return _unitNormal; }
-    void calcUnitNormal(); // Calculates the unit normal of the triangle (w/o derivatives)
-    std::array<double, 3>& getStretchedUnitNormal() { return _stretchedUnitNormal; }
-    void calcStretchedUnitNormal(double d); // Calculates the unit normal under stretched conditions (w/o derivatives)
-    
 };
 
 
