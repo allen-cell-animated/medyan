@@ -7,7 +7,7 @@
 #include "MathFunctions.h"
 using namespace mathfunc;
 
-#include "Membrane.h"
+#include "Membrane.hpp"
 #include "Vertex.h"
 
 // Forward declarations

@@ -1,13 +1,7 @@
 #ifndef MEDYAN_GTriangle_h
 #define MEDYAN_GTriangle_h
 
-#include <array>
-#include <vector>
-
 #include "MathFunctions.h"
-
-// Forward declaration
-class Triangle;
 
 /******************************************************************************
 Storing the geometric properties of the triangle patches.
@@ -18,15 +12,6 @@ struct GTriangle {
     double area; // Current area
     double sArea; // Temporarily store the stretched area
 
-    std::array<double, 3> _sinTheta;
-    std::array<std::array<std::array<double, 3>, 3>, 3> _dSinTheta;
-    std::array<double, 3> _cotTheta;
-    std::array<std::array<std::array<double, 3>, 3>, 3> _dCotTheta;
-    // The following variables temporarily store the angles under stretched conditions.
-    std::array<double, 3> _stretchedTheta;
-    std::array<double, 3> _stretchedSinTheta;
-    std::array<double, 3> _stretchedCotTheta;
-
     mathfunc::Vec3 unitNormal; // The unit normal vector pointing outward (since the meshwork is orientable)
     mathfunc::Vec3 sUnitNormal; // Temporarily stores unit normal under stretched conditions.
 
@@ -34,13 +19,10 @@ struct GTriangle {
     double sConeVolume;
 
 
-    // Not allowing setting the area: void setArea(double area) { _currentArea = area; }
-    double getArea() { return _currentArea; }
-    std::array<std::array<double, 3>, 3>& getDArea() { return _dCurrentArea; }
-    void calcArea();
-    double getStretchedArea() { return _stretchedArea; }
-    void calcStretchedArea(double d); // Calculates the stretched area, and store the result in _stretchedArea
-                                      // Does not calculate derivatives.
+    // Auxilliary getters
+    template< bool stretched > double& getArea() { return stretched ? sArea : area; }
+    template< bool stretched > mathfunc::Vec3& getUnitNormal() { return stretched ? sUnitNormal : unitNormal; }
+    template< bool stretched > double& getConeVolume() { return stretched ? sConeVolume : coneVolume; }
 
     std::array<double, 3>& getTheta() { return _theta; }
     std::array<double, 3>& getSinTheta() { return _sinTheta; }

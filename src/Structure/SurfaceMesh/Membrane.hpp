@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Membrane_h
-#define MEDYAN_Membrane_h
+#ifndef MEDYAN_Membrane_hpp
+#define MEDYAN_Membrane_hpp
 
 #include <array>
 #include <tuple>
@@ -179,7 +179,7 @@ public:
     /**************************************************************************
     Geometric
     **************************************************************************/
-    void updateGeometryValue();
+    template< bool stretched > void updateGeometryValue();
     void updateGeometryValueWithDerivative();
 
     // Get geo membrane

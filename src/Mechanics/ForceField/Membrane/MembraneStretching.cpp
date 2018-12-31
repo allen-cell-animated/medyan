@@ -2,7 +2,7 @@
 
 #include "MembraneStretching.h"
 
-#include "Membrane.h"
+#include "Membrane.hpp"
 #include "Triangle.h"
 #include "Vertex.h"
 

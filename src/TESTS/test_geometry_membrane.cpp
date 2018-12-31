@@ -34,7 +34,7 @@ using namespace mathfunc;
 #    include "GVoronoiCell.h"
 #    include "GEdge.h"
 #    include "GTriangle.h"
-#    include "Membrane.h"
+#    include "Membrane.hpp"
 #    include "MembraneHierarchy.h"
 
 namespace {

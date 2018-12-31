@@ -1,4 +1,4 @@
-#include "Membrane.h"
+#include "Membrane.hpp"
 
 #include <limits>
 #include <stdexcept>
@@ -221,7 +221,7 @@ void Membrane::printSelf()const {
     
 }
 
-void Membrane::updateGeometryValue() {
+template< bool stretched > void Membrane::updateGeometryValue() {
     const auto& vertices = _mesh.getVertices();
     const auto& halfEdges = _mesh.getHalfEdges();
     const auto& edges = _mesh.getEdges();
@@ -238,15 +238,15 @@ void Membrane::updateGeometryValue() {
         const size_t vi0 = _mesh.target(_mesh.prev(hei));
         const size_t vi1 = _mesh.target(hei);
         const size_t vi2 = _mesh.target(_mesh.next(hei));
-        const auto& c0 = vertices[vi0].attr.vertex->coordinate;
-        const auto& c1 = vertices[vi1].attr.vertex->coordinate;
-        const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+        const auto& c0 = vertices[vi0].attr.vertex->getCoordinate<stretched>();
+        const auto& c1 = vertices[vi1].attr.vertex->getCoordinate<stretched>();
+        const auto& c2 = vertices[vi2].attr.vertex->getCoordinate<stretched>();
         auto& heag = _mesh.getHalfEdgeAttribute(hei).gHalfEdge;
 
         const auto vp = vectorProduct(c1, c0, c1, c2);
         const auto sp = scalarProduct(c1, c0, c1, c2);
-        const auto ct = heag.cotTheta = sp / magnitude(vp);
-        heag.theta = M_PI_2 - atan(ct);
+        const auto ct = heag.getCotTheta<stretched>() = sp / magnitude(vp);
+        heag.getTheta<stretched>() = M_PI_2 - atan(ct);
     }
 
     // Calculate triangle area, unit normal and cone volume
@@ -255,21 +255,21 @@ void Membrane::updateGeometryValue() {
         const size_t vi0 = _mesh.target(hei);
         const size_t vi1 = _mesh.target(_mesh.next(hei));
         const size_t vi2 = _mesh.target(_mesh.prev(hei));
-        const auto& c0 = vertices[vi0].attr.vertex->coordinate;
-        const auto& c1 = vertices[vi1].attr.vertex->coordinate;
-        const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+        const auto& c0 = vertices[vi0].attr.vertex->getCoordinate<stretched>();
+        const auto& c1 = vertices[vi1].attr.vertex->getCoordinate<stretched>();
+        const auto& c2 = vertices[vi2].attr.vertex->getCoordinate<stretched>();
         auto& tag = _mesh.getTriangleAttribute(ti).gTriangle;
 
         const auto vp = vectorProduct(c0, c1, c0, c2);
 
         // area
-        tag.area = magnitude(vp) * 0.5;
+        tag.getArea<stretched>() = magnitude(vp) * 0.5;
 
         // unit normal
-        tag.unitNormal = vector2Vec<3, double>(normalize(vp));
+        tag.getUnitNormal<stretched>() = vector2Vec<3, double>(normalize(vp));
 
         // cone volume
-        tag.coneVolume = dotProduct(c0, vp) / 6;
+        tag.getConeVolume<stretched>() = dotProduct(c0, vp) / 6;
     }
 
     // Calculate edge length and pesudo unit normal
@@ -279,14 +279,18 @@ void Membrane::updateGeometryValue() {
         const size_t vi1 = _mesh.target(_mesh.prev(hei));
 
         // length
-        _mesh.getEdgeAttribute(ei).gEdge.length = twoPointDistance(vertices[vi0].attr.vertex->coordinate, vertices[vi1].attr.vertex->coordinate);
+        _mesh.getEdgeAttribute(ei).gEdge.getLength<stretched>() = twoPointDistance(
+            vertices[vi0].attr.vertex->getCoordinate<stretched>(),
+            vertices[vi1].attr.vertex->getCoordinate<stretched>()
+        );
 
         // pseudo unit normal
         if(halfEdges[hei].hasOpposite) {
             const size_t ti0 = _mesh.triangle(hei);
             const size_t ti1 = _mesh.triangle(_mesh.opposite(hei));
-            _mesh.getEdgeAttribute(ei).gEdge.pseudoUnitNormal = normalize(
-                triangles[ti0].attr.gTriangle.unitNormal + triangles[ti1].attr.gTriangle.unitNormal
+            _mesh.getEdgeAttribute(ei).gEdge.getPseudoUnitNormal<stretched>() = normalize(
+                triangles[ti0].attr.gTriangle.getUnitNormal<stretched>()
+                + triangles[ti1].attr.gTriangle.getUnitNormal<stretched>()
             );
         }
     }
@@ -296,8 +300,8 @@ void Membrane::updateGeometryValue() {
         auto& vag = _mesh.getVertexAttribute(vi).gVertex;
 
         // clearing
-        vag.area = 0.0;
-        vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
+        vag.getArea<stretched>() = 0.0;
+        vag.getPseudoUnitNormal<stretched>() = {0.0, 0.0, 0.0};
 
         // k1 = 2A * k, where k is the result of LB operator
         Vec3 k1 {};
@@ -309,32 +313,38 @@ void Membrane::updateGeometryValue() {
             const size_t vn = mesh.target(hei_o);
             const size_t hei_n = mesh.next(hei);
             const size_t hei_on = mesh.next(hei_o);
-            const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
-            const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
+            const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->getCoordinate<stretched>());
+            const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->getCoordinate<stretched>());
 
-            const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
+            const auto sumCotTheta =
+                mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.getCotTheta<stretched>()
+                + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.getCotTheta<stretched>();
 
-            const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
+            const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.getTheta<stretched>();
 
             const auto diff = ci - cn;
             const auto dist2 = magnitude2(diff);
 
-            vag.area += sumCotTheta * dist2 * 0.125;
+            vag.getArea<stretched>() += sumCotTheta * dist2 * 0.125;
 
             k1 += sumCotTheta * diff;
-            vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+            vag.getPseudoUnitNormal<stretched>() += theta * mesh.getTriangleAttribute(ti0).gTriangle.getUnitNormal<stretched>();
         });
 
-        const double invA = 1 / vag.area;
+        const double invA = 1 / vag.getArea<stretched>();
         const double magK1 = magnitude(k1);
 
-        normalize(vag.pseudoUnitNormal);
+        normalize(vag.getPseudoUnitNormal<stretched>());
 
-        const int flippingCurv = (dotProduct(k1, vag.pseudoUnitNormal) > 0 ? 1 : -1);
+        const int flippingCurv = (dotProduct(k1, vag.getPseudoUnitNormal<stretched>()) > 0 ? 1 : -1);
 
-        vag.curv = fliipingCurv * magK1 * 0.25 * invA;
+        vag.getCurv<stretched>() = fliipingCurv * magK1 * 0.25 * invA;
     }
 }
+// Explicit instantiation
+template void Membrane::updateGeometryValue<false>();
+template void Membrane::updateGeometryValue<true>();
+
 void Membrane::updateGeometryValueWithDerivative() {
 
     const auto& vertices = _mesh.getVertices();

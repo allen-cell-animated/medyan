@@ -33,7 +33,7 @@
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
-#include "Membrane.h"
+#include "Membrane.hpp"
 #include "MembraneHierarchy.h"
 #include "MembraneRegion.h"
 

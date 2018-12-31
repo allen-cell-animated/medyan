@@ -22,7 +22,7 @@ using namespace mathfunc;
 #include "Vertex.h"
 #include "Cylinder.h"
 #include "Bead.h"
-#include "Structure/SurfaceMesh/Membrane.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 template <class TriangleCylinderExclVolumeInteractionType>
 double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(bool stretched) {

@@ -1,7 +1,7 @@
 #include "MembraneRegion.h"
 
 #include "MembraneHierarchy.h"
-#include "Membrane.h"
+#include "Membrane.hpp"
 #include "Boundary.h"
 
 #include "MathFunctions.h"

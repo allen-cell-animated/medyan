@@ -1,6 +1,6 @@
 #include "Structure/SurfaceMesh/Vertex.h"
 
-#include "Structure/SurfaceMesh/Membrane.h" // Membrane::getMesh()
+#include "Structure/SurfaceMesh/Membrane.hpp" // Membrane::getMesh()
 
 Database<Vertex*> Vertex::_vertices;
 

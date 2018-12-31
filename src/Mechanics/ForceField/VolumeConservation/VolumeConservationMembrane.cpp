@@ -2,7 +2,7 @@
 
 #include "SysParams.h"
 
-#include "Membrane.h"
+#include "Membrane.hpp"
 #include "MMembrane.h"
 #include "GMembrane.h"
 #include "Vertex.h"

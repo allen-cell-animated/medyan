@@ -18,18 +18,11 @@ struct GVertex {
     mathfunc::Vec3 pseudoUnitNormal; // Pseudo unit normal around the vertex
     mathfunc::Vec3 sPseudoUnitNormal; // Pseudo unit normal under stretch
 
+    // Auxilliary getters
+    template< bool stretched > double& getArea() { return stretched ? sArea : area; }
+    template< bool stretched > double& getCurv() { return stretched ? sCurv : curv; }
+    template< bool stretched > mathfunc::Vec3& getPseudoUnitNormal() { return stretched ? sPseudoUnitNormal : pseudoUnitNormal; }
 
-    /// Set parent 
-    void setVertex(Vertex* v) { _pVertex = v; }
-    Vertex* getVertex() { return _pVertex; }
-
-    double getArea() { return _currentArea; }
-    std::array<double, 3>& getDArea() { return _dCurrentArea; }
-    std::vector<std::array<double, 3>>& getDNeighborArea() { return _dNeighborCurrentArea; }
-    void calcArea();
-    double getStretchedArea() { return _stretchedArea; }
-    void calcStretchedArea(double d); // Calculates the stretched area, and store the result in _stretchedArea.
-                                      // Does not calculate the derivatives.
 
     double getCurv() { return _currentCurv; }
     std::array<double, 3>& getDCurv() { return _dCurrentCurv; }

@@ -26,7 +26,7 @@
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
 #include "Boundary.h"
-#include "Membrane.h"
+#include "Membrane.hpp"
 
 #include "BindingManager.h"
 

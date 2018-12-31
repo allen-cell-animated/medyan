@@ -29,7 +29,7 @@ using namespace mathfunc;
 #    include "core/controller/GController.h"
 #    include "SubSystem.h"
 
-#    include "Membrane.h"
+#    include "Membrane.hpp"
 #    include "Vertex.h"
 
 #    include "VolumeConservationInteractions.h"

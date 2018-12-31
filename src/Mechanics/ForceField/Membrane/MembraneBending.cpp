@@ -1,6 +1,6 @@
 #include "MembraneBending.h"
 
-#include "Membrane.h"
+#include "Membrane.hpp"
 #include "Vertex.h"
 #include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
