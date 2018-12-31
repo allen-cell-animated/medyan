@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class BAttachmentInteractionType>
-double BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(double d) {
+double BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -30,10 +30,7 @@ double BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(dou
     
         double kAttr = SysParams::Mechanics().pinK;
             
-        if (d == 0.0)
-            U_i =  _FFType.energy(b, kAttr);
-        else
-            U_i =  _FFType.energy(b, kAttr, d);
+        U_i =  _FFType.energy(b, kAttr, stretched);
             
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {

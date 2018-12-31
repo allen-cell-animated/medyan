@@ -26,8 +26,8 @@ class Bead;
 class BubbleBubbleRepulsionExp {
     
 public:
-    double energy(Bead*, Bead*, double, double, double, double);
-    double energy(Bead*, Bead*, double, double, double, double, double);
+    double energy(Bead*, Bead*, double, double, double, double, bool stretched);
+    [[deprecated]] double energy(Bead*, Bead*, double, double, double, double, double);
     
     void forces(Bead*, Bead*, double, double, double, double);
     void forcesAux(Bead*, Bead*, double, double, double, double);

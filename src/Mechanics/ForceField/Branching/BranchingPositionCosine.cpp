@@ -24,21 +24,25 @@
 using namespace mathfunc;
 
 double BranchingPositionCosine::energy(Bead* b1, Bead* b2, Bead* b3,
-                                       double kPosition, double position){
-    
+                                       double kPosition, double position, bool stretched){
+
+    const auto& c1 = stretched ? b1->getCoordinate<true>() : b1->getCoordinate<false>();
+    const auto& c2 = stretched ? b2->getCoordinate<true>() : b2->getCoordinate<false>();
+    const auto& c3 = stretched ? b3->getCoordinate<true>() : b3->getCoordinate<false>();
+
     double X = sqrt(scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate));
+    midPointCoordinate(c1, c2, position),c2,
+    midPointCoordinate(c1, c2, position),c2));
     
     double D = sqrt(scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate));
+    midPointCoordinate(c1, c2, position), c3,
+    midPointCoordinate(c1, c2, position), c3));
     
     double XD = X*D;
     
     double xd = scalarProduct(
-    midPointCoordinate(b1->coordinate, b2->coordinate, position),b2->coordinate,
-    midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    midPointCoordinate(c1, c2, position),c2,
+    midPointCoordinate(c1, c2, position), c3);
     
     double theta = safeacos(xd / XD);
     double eqTheta = 0.5*M_PI;

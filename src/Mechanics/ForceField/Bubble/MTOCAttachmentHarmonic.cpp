@@ -19,9 +19,12 @@
 
 using namespace mathfunc;
 
-double MTOCAttachmentHarmonic::energy(Bead* b1, Bead* b2, double kStretch, double radius){
+double MTOCAttachmentHarmonic::energy(Bead* b1, Bead* b2, double kStretch, double radius, bool stretched){
 
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate) - radius;
+    const auto& c1 = stretched ? b1->getCoordinate<true>() : b1->getCoordinate<false>();
+    const auto& c2 = stretched ? b2->getCoordinate<true>() : b2->getCoordinate<false>();
+
+    double dist = twoPointDistance(c1, c2) - radius;
     return 0.5 * kStretch* dist * dist;
     
 }

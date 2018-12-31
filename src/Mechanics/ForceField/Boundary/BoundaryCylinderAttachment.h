@@ -43,7 +43,7 @@ public:
     /// Constructor
     BoundaryCylinderAttachment() {}
     
-    virtual double computeEnergy(double d);
+    virtual double computeEnergy(bool stretched) override;
     
     virtual void computeForces();
     virtual void computeForcesAux();

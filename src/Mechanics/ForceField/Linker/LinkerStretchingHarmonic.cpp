@@ -21,10 +21,15 @@ using namespace mathfunc;
 
 double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                         double position1, double position2,
-                                        double kStretch, double eqLength) {
-    
-    auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
-    auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
+                                        double kStretch, double eqLength, bool stretched) {
+
+    const auto& c1 = stretched ? b1->getCoordinate<true>() : b1->getCoordinate<false>();
+    const auto& c2 = stretched ? b2->getCoordinate<true>() : b2->getCoordinate<false>();
+    const auto& c3 = stretched ? b3->getCoordinate<true>() : b3->getCoordinate<false>();
+    const auto& c4 = stretched ? b4->getCoordinate<true>() : b4->getCoordinate<false>();
+
+    auto v1 = midPointCoordinate(c1, c2, position1);
+    auto v2 = midPointCoordinate(c3, c4, position2);
     
     double dist = twoPointDistance(v1, v2) - eqLength;
     return 0.5 * kStretch * dist * dist;

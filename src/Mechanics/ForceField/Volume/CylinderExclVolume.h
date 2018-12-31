@@ -38,7 +38,7 @@ public:
         _neighborList = new CylinderCylinderNL(SysParams::Mechanics().VolumeCutoff);
     }
     
-    virtual double computeEnergy(double d);
+    virtual double computeEnergy(bool stretched) override;
     virtual void computeForces();
     virtual void computeForcesAux();
 

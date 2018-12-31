@@ -19,14 +19,6 @@ double MembraneBendingVoronoiHelfrich::energy(double area, double curv,
     
 }
 
-double MembraneBendingVoronoiHelfrich::energy(double areaStretched, double curvStretched,
-                                              double kBending, double eqCurv, double d){
-    // In fact, d is a dummy variable here, as areaStretched is already dependent on d.
-
-    double distStretched = curvStretched - eqCurv;
-    return 2 * kBending * distStretched * distStretched * areaStretched;
-}
-
 void MembraneBendingVoronoiHelfrich::forces(
     Vertex* v,
     double area, const mathfunc::Vec3& dArea,

@@ -19,14 +19,6 @@ double MembraneStretchingVoronoiHarmonic::energy(double area,
     
 }
 
-double MembraneStretchingVoronoiHarmonic::energy(double areaStretched,
-                                                 double kElastic, double eqArea, double d){
-    // In fact, d is a dummy variable here, as areaStretched is already dependent on d.
-
-    double distStretched = areaStretched - eqArea;
-    return 0.5 * kElastic * distStretched * distStretched / eqArea;
-}
-
 void MembraneStretchingVoronoiHarmonic::forces(
     Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
 ) {

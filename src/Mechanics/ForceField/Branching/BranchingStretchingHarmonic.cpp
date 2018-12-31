@@ -20,11 +20,15 @@ using namespace mathfunc;
 
 double BranchingStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
                                            double position, double kStretch,
-                                           double eqLength){
+                                           double eqLength, bool stretched){
+
+    const auto& c1 = stretched ? b1->getCoordinate<true>() : b1->getCoordinate<false>();
+    const auto& c2 = stretched ? b2->getCoordinate<true>() : b2->getCoordinate<false>();
+    const auto& c3 = stretched ? b3->getCoordinate<true>() : b3->getCoordinate<false>();
+
+    auto v1 = midPointCoordinate(c1, c2, position);
     
-    auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position);
-    
-    double dist = twoPointDistance(v1, b3->coordinate) - eqLength;
+    double dist = twoPointDistance(v1, c3) - eqLength;
     
     double energy =  0.5 * kStretch * dist * dist ;
 

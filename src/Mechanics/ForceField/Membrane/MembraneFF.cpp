@@ -62,14 +62,14 @@ void MembraneFF::whoIsCulprit() {
 }
 
 
-double MembraneFF::computeEnergy(double d) {
+double MembraneFF::computeEnergy(bool stretched) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _membraneInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(stretched);
         
         if(U_i <= -1) {
             //set culprit and return

@@ -42,7 +42,7 @@ public:
     virtual string getName() {return "Boundary";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
+    virtual double computeEnergy(bool stretched);
     virtual void computeForces();
     virtual void computeForcesAux();
     

@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class LStretchingInteractionType>
-double LinkerStretching<LStretchingInteractionType>::computeEnergy(double d){
+double LinkerStretching<LStretchingInteractionType>::computeEnergy(bool stretched){
     
     double U = 0.0;
     double U_i=0.0;
@@ -36,10 +36,7 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(double d){
         double pos1 = l->getFirstPosition();
         double pos2 = l->getSecondPosition();
         
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-        else
-            U_i = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, d);
+        U_i = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, stretched);
         
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {

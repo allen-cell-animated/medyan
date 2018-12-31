@@ -47,7 +47,38 @@ public:
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
     /// @param print - prints detailed info about energies
-    double computeEnergy(double d, bool verbose = false);
+    template< bool stretched = false > double computeEnergy(bool verbose = false) {
+        double energy = 0;
+        for(auto &f : _forceFields) {
+            
+            auto tempEnergy = f->computeEnergy(stretched);
+            
+            if(verbose) cout << f->getName() << " energy = " << tempEnergy << endl;
+            
+            //if energy is infinity, exit with infinity.
+            if(tempEnergy <= -1) {
+                
+                //if this is the current energy, exit ungracefully
+                if(!stretched) {
+                    
+                    cout << "Energy = " << tempEnergy << endl;
+                    
+                    cout << "Energy of system became infinite. Try adjusting minimization parameters." << endl;
+                    cout << "The culprit was ... " << f->getName() << endl;
+                    
+                    //get the culprit in output
+                    f->whoIsCulprit();
+                    
+                    exit(EXIT_FAILURE);
+                }
+                //if this is a minimization try, just return infinity
+                else return numeric_limits<double>::infinity();
+            }
+            else energy += tempEnergy;
+        }
+        return energy;
+
+    }
     
     /// Compute the forces of all force fields 
     void computeForces();

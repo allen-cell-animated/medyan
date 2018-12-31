@@ -20,9 +20,12 @@
 using namespace mathfunc;
 
 double BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, double r1, double r2,
-                                        double kRep, double screenLength) {
-    
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+                                        double kRep, double screenLength, bool stretched) {
+
+    const auto& c1 = stretched ? b1->getCoordinate<true>() : b1->getCoordinate<false>();
+    const auto& c2 = stretched ? b2->getCoordinate<true>() : b2->getCoordinate<false>();
+
+    double dist = twoPointDistance(c1, c2);
     
     double effd = dist - r1 - r2;
     

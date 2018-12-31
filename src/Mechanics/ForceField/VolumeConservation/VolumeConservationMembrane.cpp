@@ -10,7 +10,7 @@
 #include "VolumeConservationMembraneHarmonic.h"
 
 template<>
-double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEnergy(double d) {
+double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEnergy(bool stretched) {
     double U = 0;
     double U_i;
 

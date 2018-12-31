@@ -19,9 +19,9 @@
 
 using namespace mathfunc;
 
-double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr) {
+double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr, bool stretched) {
     
-    double dist = twoPointDistance(b->coordinate, b->pinnedPosition);
+    double dist = twoPointDistance(stretched ? b->getCoordinate<true>() : b->getCoordinate<false>(), b->pinnedPosition);
     return 0.5 * kAttr * dist * dist;
 }
 

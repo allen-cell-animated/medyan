@@ -15,7 +15,6 @@ class MembraneStretchingVoronoiHarmonic {
     
 public:
     double energy(double, double, double);
-    double energy(double, double, double, double);
     
     void forces(Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea);
     void forcesAux(Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea);

@@ -19,7 +19,7 @@
 #include "Bead.h"
 
 template <class CVolumeInteractionType>
-double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
+double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -41,10 +41,7 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double d) {
             Bead* b4 = cn->getSecondBead();
             double kRepuls = ci->getMCylinder()->getExVolConst();
             
-            if (d == 0.0)
-                U_i = _FFType.energy(b1, b2, b3, b4, kRepuls);
-            else
-                U_i = _FFType.energy(b1, b2, b3, b4, kRepuls, d);
+            U_i = _FFType.energy(b1, b2, b3, b4, kRepuls, stretched);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {

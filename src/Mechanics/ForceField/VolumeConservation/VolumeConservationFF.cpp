@@ -41,14 +41,14 @@ void VolumeConservationFF::whoIsCulprit() {
     cout << endl;
 }
 
-double VolumeConservationFF::computeEnergy(double d) {
+double VolumeConservationFF::computeEnergy(bool stretched) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _volumeConservationInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(stretched);
                 
         if(U_i <= -1) {
             //set culprit and return

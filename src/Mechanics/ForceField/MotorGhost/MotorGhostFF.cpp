@@ -42,14 +42,14 @@ void MotorGhostFF::whoIsCulprit() {
     cout << endl;
 }
 
-double MotorGhostFF::computeEnergy(double d) {
+double MotorGhostFF::computeEnergy(bool stretched) {
     
     double U= 0.0;
     double U_i=0.0;
     
     for (auto &interaction : _motorGhostInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(stretched);
         
         if(U_i <= -1) {
             //set culprit and return

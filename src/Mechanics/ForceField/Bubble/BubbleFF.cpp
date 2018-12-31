@@ -69,14 +69,14 @@ void BubbleFF::whoIsCulprit() {
 }
 
 
-double BubbleFF::computeEnergy(double d) {
+double BubbleFF::computeEnergy(bool stretched) {
     
     double U= 0.0;
     double U_i=0.0;
     
     for (auto &interaction : _bubbleInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(bool stretched);
         
         if(U_i <= -1) {
             //set culprit and return

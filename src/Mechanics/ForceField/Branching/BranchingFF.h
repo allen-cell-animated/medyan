@@ -41,7 +41,7 @@ public:
     virtual string getName() {return "Branching";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
+    virtual double computeEnergy(bool stretched) override;
     virtual void computeForces();
     virtual void computeForcesAux();
     

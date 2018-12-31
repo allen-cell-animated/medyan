@@ -21,7 +21,7 @@
 #include "Bead.h"
 
 template <class FBendingInteractionType>
-double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
+double FilamentBending<FBendingInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -32,33 +32,17 @@ double FilamentBending<FBendingInteractionType>::computeEnergy(double d) {
         
         if (f->getCylinderVector().size() > 1){
             
-            if (d == 0.0){
-                for (auto it = f->getCylinderVector().begin()+1;
-                          it != f->getCylinderVector().end(); it++){
-                    
-                    auto it2 = it - 1;
-                    Bead* b1 = (*it2)->getFirstBead();
-                    Bead* b2 = (*it)->getFirstBead();
-                    Bead* b3 = (*it)->getSecondBead();
-                    double kBend = (*it)->getMCylinder()->getBendingConst();
-                    double eqTheta = (*it)->getMCylinder()->getEqTheta();
-                    
-                    U_i += _FFType.energy(b1, b2, b3, kBend, eqTheta);
-                }
-            }
-            else {
-                for (auto it = f->getCylinderVector().begin()+1;
-                          it != f->getCylinderVector().end(); it++){
-                        
-                    auto it2 = it - 1;
-                    Bead* b1 = (*it2)->getFirstBead();
-                    Bead* b2 = (*it)->getFirstBead();
-                    Bead* b3 = (*it)->getSecondBead();
-                    double kBend = (*it)->getMCylinder()->getBendingConst();
-                    double eqTheta = (*it)->getMCylinder()->getEqTheta();
-                    
-                    U_i += _FFType.energy(b1, b2, b3, kBend, eqTheta, d);
-                }
+            for (auto it = f->getCylinderVector().begin()+1;
+                        it != f->getCylinderVector().end(); it++){
+                
+                auto it2 = it - 1;
+                Bead* b1 = (*it2)->getFirstBead();
+                Bead* b2 = (*it)->getFirstBead();
+                Bead* b3 = (*it)->getSecondBead();
+                double kBend = (*it)->getMCylinder()->getBendingConst();
+                double eqTheta = (*it)->getMCylinder()->getEqTheta();
+                
+                U_i += _FFType.energy(b1, b2, b3, kBend, eqTheta, stretched);
             }
         }
         

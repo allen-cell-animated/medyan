@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class FStretchingInteractionType>
-double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
+double FilamentStretching<FStretchingInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -28,25 +28,15 @@ double FilamentStretching<FStretchingInteractionType>::computeEnergy(double d) {
     for (auto f: Filament::getFilaments()) {
         
         U_i = 0;
-        if (d == 0.0){
-            for(auto it : f->getCylinderVector()){
-                
-                Bead* b1 = it->getFirstBead();
-                Bead* b2 = it->getSecondBead();
-                double kStretch = it->getMCylinder()->getStretchingConst();
-                double eqLength = it->getMCylinder()->getEqLength();
-                U_i += _FFType.energy(b1, b2, kStretch, eqLength);
-            }
+        for(auto it : f->getCylinderVector()){
+            
+            Bead* b1 = it->getFirstBead();
+            Bead* b2 = it->getSecondBead();
+            double kStretch = it->getMCylinder()->getStretchingConst();
+            double eqLength = it->getMCylinder()->getEqLength();
+            U_i += _FFType.energy(b1, b2, kStretch, eqLength, stretched);
         }
-        else {
-            for(auto it : f->getCylinderVector()){
-                Bead* b1 = it->getFirstBead();
-                Bead* b2 = it->getSecondBead();
-                double kStretch =it->getMCylinder()->getStretchingConst();
-                double eqLength = it->getMCylinder()->getEqLength();
-                U_i += _FFType.energy(b1, b2, kStretch, eqLength, d);
-            }
-        }
+
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
             

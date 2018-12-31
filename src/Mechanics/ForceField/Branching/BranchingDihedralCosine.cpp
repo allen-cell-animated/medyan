@@ -20,15 +20,20 @@
 using namespace mathfunc;
 
 double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                       double kDihed, double position){
+                                       double kDihed, double position, bool stretched){
     
     
-    vector<double> n1 = vectorProduct(midPointCoordinate(b1->coordinate, b2->coordinate, position), b2->coordinate,
-                                      midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    const auto& c1 = stretched ? b1->getCoordinate<true>() : b1->getCoordinate<false>();
+    const auto& c2 = stretched ? b2->getCoordinate<true>() : b2->getCoordinate<false>();
+    const auto& c3 = stretched ? b3->getCoordinate<true>() : b3->getCoordinate<false>();
+    const auto& c4 = stretched ? b4->getCoordinate<true>() : b4->getCoordinate<false>();
+
+    vector<double> n1 = vectorProduct(midPointCoordinate(c1, c2, position), c2,
+                                      midPointCoordinate(c1, c2, position), c3);
     
     
-    vector<double> n2 = vectorProduct(b3->coordinate, b4->coordinate,
-                        midPointCoordinate(b1->coordinate, b2->coordinate, position), b3->coordinate);
+    vector<double> n2 = vectorProduct(c3, c4,
+                        midPointCoordinate(c1, c2, position), c3);
     
     auto n1_norm = normalizedVector(n1);
     auto n2_norm = normalizedVector(n2);

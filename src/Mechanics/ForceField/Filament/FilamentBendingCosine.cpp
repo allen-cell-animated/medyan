@@ -19,16 +19,20 @@
 using namespace mathfunc;
 
 double FilamentBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3,
-                                     double kBend, double eqTheta){
-    
-    double L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
-                                   b1->coordinate, b2->coordinate));
-    double L2 = sqrt(scalarProduct(b2->coordinate, b3->coordinate,
-                                   b2->coordinate, b3->coordinate));
+                                     double kBend, double eqTheta, bool stretched){
+
+    const auto& c1 = stretched ? b1->getCoordinate<true>() : b1->getCoordinate<false>();
+    const auto& c2 = stretched ? b2->getCoordinate<true>() : b2->getCoordinate<false>();
+    const auto& c3 = stretched ? b3->getCoordinate<true>() : b3->getCoordinate<false>();
+
+    double L1 = sqrt(scalarProduct(c1, c2,
+                                   c1, c2));
+    double L2 = sqrt(scalarProduct(c2, c3,
+                                   c2, c3));
     
     double L1L2 = L1*L2;
-    double l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
-                                b2->coordinate, b3->coordinate);
+    double l1l2 = scalarProduct(c1, c2,
+                                c2, c3);
     
     double phi = safeacos(l1l2 / L1L2);
     double dPhi = phi-eqTheta;

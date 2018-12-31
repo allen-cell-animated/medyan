@@ -23,7 +23,7 @@
 using namespace mathfunc;
 
 template <class BStretchingInteractionType>
-double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d) {
+double BranchingStretching<BStretchingInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -38,10 +38,7 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double d) 
         double eqLength = b->getMBranchingPoint()->getEqLength();
         double position = b->getPosition();
         
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, position, kStretch, eqLength);
-        else
-            U_i = _FFType.energy(b1, b2, b3, position, kStretch, eqLength, d);
+        U_i = _FFType.energy(b1, b2, b3, position, kStretch, eqLength, stretched);
         
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {

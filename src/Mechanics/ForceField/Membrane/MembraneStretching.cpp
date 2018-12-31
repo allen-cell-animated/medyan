@@ -11,30 +11,20 @@
 
 // Using the area of the Voronoi cells
 template<>
-double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(double d) {
+double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(bool stretched) {
     double U = 0;
     double U_i;
 
     for(auto m: Membrane::getMembranes()) {
 
-        if(d == 0.0) {
-            const auto kElastic = m->getMMembrane()->getKElastic();
-            const auto eqArea = m->getMMembrane()->getEqArea();
+        const auto kElastic = m->getMMembrane()->getKElastic();
+        const auto eqArea = m->getMMembrane()->getEqArea();
 
-            double area = 0.0;
-            for(const auto& v : m->getMesh().getVertices()) area += v.attr.gVertex.area;
+        double area = 0.0;
+        for(const auto& v : m->getMesh().getVertices())
+            area += stretched ? v.attr.gVertex.sArea : v.attr.gVertex.area;
 
-            U_i = _FFType.energy(area, kElastic, eqArea); 
-
-        } else {
-            const auto kElastic = m->getMMembrane()->getKElastic();
-            const auto eqArea = m->getMMembrane()->getEqArea();
-
-            double sArea = 0.0;
-            for(const auto& v : m->getMesh().getVertices()) sArea += v.attr.gVertex.sArea;
-
-            U_i = _FFType.energy(sArea, kElastic, eqArea, d);
-        }
+        U_i = _FFType.energy(area, kElastic, eqArea); 
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
             || U_i != U_i || U_i < -1.0) {

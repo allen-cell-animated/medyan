@@ -24,7 +24,7 @@ using namespace mathfunc;
 #include "Bead.h"
 
 template <class TriangleCylinderExclVolumeInteractionType>
-double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(double d) {
+double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0;
     double U_i;

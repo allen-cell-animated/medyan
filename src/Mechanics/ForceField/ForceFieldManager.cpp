@@ -20,39 +20,6 @@ void ForceFieldManager::updateGeometries(bool calcDerivative, double d) {
     for(auto g : _subSystem->getGeometrics()) g->updateGeometry(calcDerivative, d);
 }
 
-double ForceFieldManager::computeEnergy(double d, bool verbose) {
-    
-    double energy = 0;
-    for(auto &f : _forceFields) {
-        
-        auto tempEnergy = f->computeEnergy(d);
-        
-        if(verbose) cout << f->getName() << " energy = " << tempEnergy << endl;
-        
-        //if energy is infinity, exit with infinity.
-        if(tempEnergy <= -1) {
-            
-            //if this is the current energy, exit ungracefully
-            if(d == 0.0) {
-                
-                cout << "Energy = " << tempEnergy << endl;
-                
-                cout << "Energy of system became infinite. Try adjusting minimization parameters." << endl;
-                cout << "The culprit was ... " << f->getName() << endl;
-                
-                //get the culprit in output
-                f->whoIsCulprit();
-                
-                exit(EXIT_FAILURE);
-            }
-            //if this is a minimization try, just return infinity
-            else return numeric_limits<double>::infinity();
-        }
-        else energy += tempEnergy;
-    }
-    return energy;
-}
-
 void ForceFieldManager::computeForces() {
     
     //reset

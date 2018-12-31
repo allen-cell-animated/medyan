@@ -25,7 +25,7 @@
 using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
-double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
+double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -60,10 +60,7 @@ double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double 
             else
                 bd2 = c->getSecondBead();
             
-            if (d == 0.0)
-                U_i =  _FFType.energy(bd1, bd2, radius, kRep, screenLength);
-            else
-                U_i = _FFType.energy(bd1, bd2, radius, kRep, screenLength, d);
+            U_i =  _FFType.energy(bd1, bd2, radius, kRep, screenLength, stretched);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {

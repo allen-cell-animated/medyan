@@ -23,8 +23,8 @@ class Bead;
 class FilamentBendingHarmonic {
     
 public:
-    double energy(Bead*, Bead*, Bead*, double, double);
-    double energy(Bead*, Bead*, Bead*, double, double, double);
+    double energy(Bead*, Bead*, Bead*, double, double, bool stretched);
+    [[deprecated]] double energy(Bead*, Bead*, Bead*, double, double, double);
     
     void forces(Bead*, Bead*, Bead*, double, double);
     void forcesAux(Bead*, Bead*, Bead*, double, double);

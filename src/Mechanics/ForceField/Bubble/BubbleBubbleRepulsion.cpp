@@ -19,7 +19,7 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
+double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -37,12 +37,8 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d)
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
             
-            if (d == 0.0)
-                U_i =  _FFType.energy(
-                bd1, bd2, radius1, radius2, kRep, screenLength);
-            else
-                U_i = _FFType.energy(
-                bd1, bd2, radius1, radius2, kRep, screenLength, d);
+            U_i =  _FFType.energy(
+                bd1, bd2, radius1, radius2, kRep, screenLength, stretched);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {

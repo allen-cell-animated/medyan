@@ -43,14 +43,14 @@ void TriangleCylinderVolumeFF::whoIsCulprit() {
     cout << endl;
 }
 
-double TriangleCylinderVolumeFF::computeEnergy(double d) {
+double TriangleCylinderVolumeFF::computeEnergy(bool stretched) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _triangleCylinderVolInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(stretched);
                 
         if(U_i <= -1) {
             //set culprit and return

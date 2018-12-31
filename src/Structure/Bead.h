@@ -52,6 +52,7 @@ public:
     ///@note - all vectors are in x,y,z coordinates.
     
     vector<double> coordinate;  ///< Coordinates of the bead
+    vector<double> coordinateStretched; ///< Coordinates of stretched coordinate in CG minimization line search
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
     vector<double> coordinateB; ///< Prev coordinate of bead before CG minimization
     int _ID; ///<Bead IDs
@@ -93,6 +94,9 @@ public:
     ///Default constructor
     Bead(Composite* parent, int position);
     
+    /// Auxilliary coordinate getter
+    template< bool stretched = false > const vector<double>& getCoordinate() const;
+
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
     
@@ -245,5 +249,7 @@ private:
                                          ///< (attached to some element in SubSystem)
 };
 
+template<> inline const vector<double>& Bead::getCoordinate<true>() const { return coordinateStretched; }
+template<> inline const vector<double>& Bead::getCoordinate<false>() const { return coordinate; }
 
 #endif

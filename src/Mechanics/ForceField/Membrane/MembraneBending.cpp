@@ -9,7 +9,7 @@
 
 // Using the Helfrich Hamiltonian of mean curvature in Voronoi cells
 template<>
-double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(double d) {
+double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(bool stretched) {
     double U = 0;
     double U_i;
 
@@ -18,29 +18,14 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(double d) 
 
         U_i = 0;
 
-        if(d == 0.0) {
-            for(const auto& v : mesh.getVertices()) {
-                const auto kBending = v.vertex->getMVoronoiCell()->getBendingModulus();
-                const auto eqCurv = v.vertex->getMVoronoiCell()->getEqCurv();
+        for(const auto& v : mesh.getVertices()) {
+            const auto kBending = v.vertex->getMVoronoiCell()->getBendingModulus();
+            const auto eqCurv = v.vertex->getMVoronoiCell()->getEqCurv();
 
-                const auto area = v.attr.gVertex.area;
-                const auto curv = v.attr.gVertex.curv;
+            const auto area = stretched ? v.attr.gVertex.sArea : v.attr.gVertex.area;
+            const auto curv = stretched ? v.attr.gVertex.sCurv : v.attr.gVertex.curv;
 
-                U_i += _FFType.energy(area, curv, kBending, eqCurv);
-            }
-
-        } else {
-            for(const auto& v : mesh.getVertices()) {
-                const auto kBending = v.vertex->getMVoronoiCell()->getBendingModulus();
-                const auto eqCurv = v.vertex->getMVoronoiCell()->getEqCurv();
-
-                // The calculation requires that the current stretched area and mean curvature have already been calculated
-                // As a result, d is just a dummy variable due to its universality
-                const auto sArea = v.attr.gVertex.sArea;
-                const auto sCurv = v.attr.gVertex.sCurv;
-
-                U_i += _FFType.energy(sArea, sCurv, kBending, eqCurv, d);
-            }
+            U_i += _FFType.energy(area, curv, kBending, eqCurv);
         }
 
         if(fabs(U_i) == numeric_limits<double>::infinity()

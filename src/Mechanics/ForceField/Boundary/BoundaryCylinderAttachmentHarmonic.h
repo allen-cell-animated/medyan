@@ -26,8 +26,8 @@ class Bead;
 class BoundaryCylinderAttachmentHarmonic {
     
 public:
-    double energy(Bead*, double);
-    double energy(Bead*, double, double);
+    double energy(Bead*, double, bool stretched);
+    [[deprecated]] double energy(Bead*, double, double);
     
     void forces(Bead*, double);
     void forcesAux(Bead*, double);

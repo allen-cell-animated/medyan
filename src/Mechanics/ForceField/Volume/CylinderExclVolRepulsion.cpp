@@ -41,13 +41,13 @@ using namespace mathfunc;
 
 double CylinderExclVolRepulsion::energy(Bead* b1, Bead* b2,
                                         Bead* b3, Bead* b4,
-                                        double kRepuls) {
-    
-    auto c1 = b1->coordinate;
-    auto c2 = b2->coordinate;
-    auto c3 = b3->coordinate;
-    auto c4 = b4->coordinate;
-    
+                                        double kRepuls, bool stretched) {
+
+    auto c1 = stretched ? b1->getCoordinate<true>() : b1->getCoordinate<false>();
+    auto c2 = stretched ? b2->getCoordinate<true>() : b2->getCoordinate<false>();
+    auto c3 = stretched ? b3->getCoordinate<true>() : b3->getCoordinate<false>();
+    auto c4 = stretched ? b4->getCoordinate<true>() : b4->getCoordinate<false>();
+
     //check if parallel
     if(areParallel(c1, c2, c3, c4)) {
         

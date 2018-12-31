@@ -70,6 +70,8 @@ protected:
     
     /// Move beads in search direction by d
     void moveBeads(double d);
+    /// Calculate stretched position by moving along search direction by d
+    static void calcStretchedCoordinate(double d);
     /// Reset to previous position
     void resetBeads();
     /// Update the previous position

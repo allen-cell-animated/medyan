@@ -78,14 +78,14 @@ void BoundaryFF::whoIsCulprit() {
 }
 
 
-double BoundaryFF::computeEnergy(double d) {
+double BoundaryFF::computeEnergy(bool stretched) {
     
     double U= 0.0;
     double U_i=0.0;
     
     for (auto &interaction : _boundaryInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(stretched);
         
         if(U_i <= -1) {
             //set culprit and return

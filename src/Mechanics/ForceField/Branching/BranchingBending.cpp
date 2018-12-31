@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class BBendingInteractionType>
-double BranchingBending<BBendingInteractionType>::computeEnergy(double d) {
+double BranchingBending<BBendingInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -34,10 +34,7 @@ double BranchingBending<BBendingInteractionType>::computeEnergy(double d) {
         double kBend = b->getMBranchingPoint()->getBendingConstant();
         double eqTheta = b->getMBranchingPoint()->getEqTheta();
         
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, b4, kBend, eqTheta);
-        else
-            U_i = _FFType.energy(b1, b2, b3, b4, kBend, eqTheta, d);
+        U_i = _FFType.energy(b1, b2, b3, b4, kBend, eqTheta, stretched);
         
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {

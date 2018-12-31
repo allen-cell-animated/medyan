@@ -59,14 +59,14 @@ void FilamentFF::whoIsCulprit() {
 }
 
 
-double FilamentFF::computeEnergy(double d) {
+double FilamentFF::computeEnergy(bool stretched) {
     
     double U= 0.0;
     double U_i=0.0;
     
     for (auto &interaction : _filamentInteractionVector) {
         
-        U_i = interaction->computeEnergy(d);
+        U_i = interaction->computeEnergy(stretched);
         
         if(U_i <= -1) {
             //set culprit and return

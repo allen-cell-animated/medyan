@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class BDihedralInteractionType>
-double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double d) {
+double BranchingDihedral<BDihedralInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -35,10 +35,7 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double d) {
         
         double position = b->getPosition();
         
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, b4, kDihedr, position);
-        else
-            U_i = _FFType.energy(b1, b2, b3, b4, kDihedr, position, d);
+        U_i = _FFType.energy(b1, b2, b3, b4, kDihedr, position, stretched);
         
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {

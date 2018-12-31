@@ -41,7 +41,7 @@ public:
         _neighborList = new BoundaryCylinderNL(SysParams::Boundaries().BoundaryCutoff);
     }
     
-    virtual double computeEnergy(double d);
+    virtual double computeEnergy(bool stretched) override;
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.

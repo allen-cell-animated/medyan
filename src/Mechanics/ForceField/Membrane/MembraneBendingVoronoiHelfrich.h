@@ -15,7 +15,6 @@ class MembraneBendingVoronoiHelfrich {
     
 public:
     double energy(double, double, double, double);
-    double energy(double, double, double, double, double);
     
     void forces(Vertex*,
         double area, const mathfunc::Vec3& dArea,

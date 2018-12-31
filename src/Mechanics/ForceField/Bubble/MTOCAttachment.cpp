@@ -22,7 +22,7 @@
 #include "Bead.h"
 
 template <class MTOCInteractionType>
-double MTOCAttachment<MTOCInteractionType>::computeEnergy(double d) {
+double MTOCAttachment<MTOCInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -41,10 +41,7 @@ double MTOCAttachment<MTOCInteractionType>::computeEnergy(double d) {
             double kStretch = c->getMCylinder()->getStretchingConst();
             double radius = mtoc->getBubble()->getRadius();
             
-            if (d == 0.0)
-                U_i = _FFType.energy(b1, b2, kStretch, radius);
-            else
-                U_i = _FFType.energy(b1, b2, kStretch, radius, d);
+            U_i = _FFType.energy(b1, b2, kStretch, radius, stretched);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {

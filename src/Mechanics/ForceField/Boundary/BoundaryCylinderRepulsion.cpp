@@ -24,7 +24,7 @@
 using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
-double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
+double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -42,10 +42,7 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
                 
                 bd = c->getFirstBead();
                 
-                if (d == 0.0)
-                    U_i =  _FFType.energy(bd, be->distance(bd->coordinate), kRep, screenLength);
-                else
-                    U_i = _FFType.energy(bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
+                U_i =  _FFType.energy(bd, be->distance(stretched ? bd->getCoordinate<true>() : bd->getCoordinate<false>()), kRep, screenLength);
                 
                 if(fabs(U_i) == numeric_limits<double>::infinity()
                    || U_i != U_i || U_i < -1.0) {
@@ -63,10 +60,7 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
                 
                 bd = c->getSecondBead();
                     
-                if (d == 0.0)
-                    U_i =  _FFType.energy(bd, be->distance(bd->coordinate), kRep, screenLength);
-                else
-                    U_i = _FFType.energy(bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
+                U_i =  _FFType.energy(bd, be->distance(stretched ? bd->getCoordinate<true>() : bd->getCoordinate<false>()), kRep, screenLength);
                     
                 if(fabs(U_i) == numeric_limits<double>::infinity()
                     || U_i != U_i || U_i < -1.0) {
@@ -86,10 +80,7 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
             else {
                 bd = c->getSecondBead();
                 
-                if (d == 0.0)
-                    U_i =  _FFType.energy(bd, be->distance(bd->coordinate), kRep, screenLength);
-                else
-                    U_i = _FFType.energy(bd, be->stretchedDistance(bd->coordinate, bd->force, d), kRep, screenLength);
+                U_i =  _FFType.energy(bd, be->distance(stretched ? bd->getCoordinate<true>() : bd->getCoordinate<false>()), kRep, screenLength);
                 
                 if(fabs(U_i) == numeric_limits<double>::infinity()
                    || U_i != U_i || U_i < -1.0) {

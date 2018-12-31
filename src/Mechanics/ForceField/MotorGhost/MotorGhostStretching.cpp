@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class MStretchingInteractionType>
-double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double d) {
+double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -37,10 +37,7 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double d)
         double pos1 = m->getFirstPosition();
         double pos2 = m->getSecondPosition();
         
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength);
-        else
-            U_i = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, d);
+        U_i = _FFType.energy(b1, b2, b3, b4, pos1, pos2, kStretch, eqLength, stretched);
         
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {

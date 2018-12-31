@@ -40,7 +40,7 @@ public:
         _neighborList = new TriangleCylinderNL(SysParams::Mechanics().MemCylinderVolumeCutoff);
     }
     
-    virtual double computeEnergy(double d);
+    virtual double computeEnergy(bool stretched) override;
     virtual void computeForces();
     virtual void computeForcesAux();
 

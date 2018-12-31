@@ -20,7 +20,7 @@
 #include "Bead.h"
 
 template <class BPositionInteractionType>
-double BranchingPosition<BPositionInteractionType>::computeEnergy(double d) {
+double BranchingPosition<BPositionInteractionType>::computeEnergy(bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -34,10 +34,7 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(double d) {
         double kPosition = b->getMBranchingPoint()->getPositionConstant();
         double position = b->getPosition();
         
-        if (d == 0.0)
-            U_i = _FFType.energy(b1, b2, b3, kPosition, position);
-        else
-            U_i = _FFType.energy(b1, b2, b3, kPosition, position, d);
+        U_i = _FFType.energy(b1, b2, b3, kPosition, position, stretched);
         
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {

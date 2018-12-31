@@ -100,6 +100,14 @@ void CGMethod::moveBeads(double d)
 
 	}
 }
+void CGMethod::calcStretchedCoordinate(double d)
+{
+	for(auto b: Bead::getBeads()) {
+        b->coordinateStretched[0] = b->coordinate[0] + d * b->force[0];
+        b->coordinateStretched[1] = b->coordinate[1] + d * b->force[1];
+        b->coordinateStretched[2] = b->coordinate[2] + d * b->force[2];
+    }
+}
 
 void CGMethod::resetBeads() {
     
@@ -146,14 +154,15 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
     //calculate first lambda
     double lambda = min(LAMBDAMAX, MAXDIST / f);
     // The unstretched geometry should be already avaliable before calling this function.
-    double currentEnergy = FFM.computeEnergy(0.0);
+    double currentEnergy = FFM.computeEnergy();
     
     //backtracking loop
     while(true) {
         
         //new energy when moved by lambda
+        calcStretchedCoordinate(lambda);
         FFM.updateGeometries(false, lambda);
-        double energyLambda = FFM.computeEnergy(lambda);
+        double energyLambda = FFM.computeEnergy<true>();
         
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
         double energyChange = energyLambda - currentEnergy;
