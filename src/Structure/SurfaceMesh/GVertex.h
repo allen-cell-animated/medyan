@@ -1,12 +1,7 @@
 #ifndef MEDYAN_GVertex_h
 #define MEDYAN_GVertex_h
 
-#include <array>
-#include <vector>
-
 #include "MathFunctions.h"
-
-class Vertex; // Forward declaration
 
 struct GVertex {
 

@@ -17,24 +17,17 @@ double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEn
     for(auto m: Membrane::getMembranes()) {
         U_i = 0;
 
-        if(d == 0.0) {
-            double kBulk = SysParams::Mechanics().BulkModulus;
+        const auto& mesh = m->getMesh();
 
-            double eqVolume = m->getMMembrane()->getEqVolume();
+        double kBulk = SysParams::Mechanics().BulkModulus;
 
-            double volume = m->getGMembrane()->getVolume();
+        double eqVolume = m->getMMembrane()->getEqVolume();
 
-            U_i += _FFType.energy(volume, kBulk, eqVolume);
+        double volume = 0.0;
+        for(const auto& t : mesh.getTriangles())
+            volume += stretched ? t.attr.gTriagnle.sConeVolume : t.attr.gTriangle.coneVolume;
 
-        } else {
-            double kBulk = SysParams::Mechanics().BulkModulus;
-
-            double eqVolume = m->getMMembrane()->getEqVolume();
-
-            double stretchedVolume = m->getGMembrane()->getStretchedVolume();
-
-            U_i += _FFType.energy(stretchedVolume, kBulk, eqVolume, d);
-        }
+        U_i += _FFType.energy(volume, kBulk, eqVolume);
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
             || U_i != U_i || U_i < -1.0) {
@@ -57,10 +50,16 @@ void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForc
 
         double eqVolume = m->getMMembrane()->getEqVolume();
 
-        double volume = m->getGMembrane()->getVolume();
-        std::vector<std::array<double,3>>& dVolume = m->getGMembrane()->getDVolume();
+        double volume = 0.0;
+        for(const auto& t : mesh.getTriangles()) volume += t.attr.gTriangle.coneVolume;
 
-        _FFType.forces(m->getVertexVector(), volume, dVolume, kBulk, eqVolume);
+        const size_t numVertices = mesh.getVertices().size();
+        for(size_t vi = 0; vi < numVertices; ++vi) {
+            Vertex* const v = mesh.getVertexAttribute(vi).vertex;
+            const auto& dVolume = mesh.getVertexAttribute(vi).gVertex.dVolume;
+
+            _FFType.forces(v, volume, dVolume, kBulk, eqVolume);
+        }
     }
 }
 
@@ -73,9 +72,15 @@ void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForc
 
         double eqVolume = m->getMMembrane()->getEqVolume();
 
-        double volume = m->getGMembrane()->getVolume();
-        std::vector<std::array<double,3>>& dVolume = m->getGMembrane()->getDVolume();
+        double volume = 0.0;
+        for(const auto& t : mesh.getTriangles()) volume += t.attr.gTriangle.coneVolume;
 
-        _FFType.forcesAux(m->getVertexVector(), volume, dVolume, kBulk, eqVolume);
+        const size_t numVertices = mesh.getVertices().size();
+        for(size_t vi = 0; vi < numVertices; ++vi) {
+            Vertex* const v = mesh.getVertexAttribute(vi).vertex;
+            const auto& dVolume = mesh.getVertexAttribute(vi).gVertex.dVolume;
+
+            _FFType.forces(v, volume, dVolume, kBulk, eqVolume);
+        }
     }
 }
