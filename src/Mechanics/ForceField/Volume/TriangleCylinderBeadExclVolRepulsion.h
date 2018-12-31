@@ -14,10 +14,10 @@
 #ifndef MEDYAN_TriangleCylinderBeadExclVolRepulsion_h
 #define MEDYAN_TriangleCylinderBeadExclVolRepulsion_h
 
-#include "common.h"
+#include "MathFunctions.h"
 
 //FORWARD DECLARATIONS
-class Triangle;
+class Vertex;
 class Bead;
 
 /// Represents a repulsive excluded volume potential used by the
@@ -25,13 +25,23 @@ class Bead;
 class TriangleCylinderBeadExclVolRepulsion {
     
 public:
-    double energy(Triangle*, Bead*, double kExVol);
-    double energy(Triangle*, Bead*, double kExVol, double d);
+    double energy(Vertex*, Vertex*, Vertex*, Bead*, double area, double kExVol, bool stretched);
     
-    void forces(Triangle*, Bead*, double kExVol);
-    void forcesAux(Triangle*, Bead*, double kExVol);
+    void forces(
+        Vertex*, Vertex*, Vertex*, Bead*,
+        double area, const mathfunc::Vec3&, const mathfunc::Vec3&, const mathfunc::Vec3&,
+        double kExVol
+    );
+    void forcesAux(
+        Vertex*, Vertex*, Vertex*, Bead*,
+        double area, const mathfunc::Vec3&, const mathfunc::Vec3&, const mathfunc::Vec3&,
+        double kExVol
+    );
 
-    array<double, 3> loadForces(Triangle*, const array<double, 3>&, double kExVol);
+    mathfunc::Vec3 loadForces(
+        Vertex* v0, Vertex* v1, Vertex* v2, const Vec3& coord,
+        double area, double kExVol
+    );
 };
 
 

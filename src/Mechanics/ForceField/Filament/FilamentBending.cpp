@@ -106,9 +106,9 @@ void FilamentBending<FBendingInteractionType>::computeForcesAux()
 }
 
 ///Template specializations
-template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(double d);
+template double FilamentBending<FilamentBendingHarmonic>::computeEnergy(bool stretched);
 template void FilamentBending<FilamentBendingHarmonic>::computeForces();
 template void FilamentBending<FilamentBendingHarmonic>::computeForcesAux();
-template double FilamentBending<FilamentBendingCosine>::computeEnergy(double d);
+template double FilamentBending<FilamentBendingCosine>::computeEnergy(bool stretched);
 template void FilamentBending<FilamentBendingCosine>::computeForces();
 template void FilamentBending<FilamentBendingCosine>::computeForcesAux();

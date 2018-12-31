@@ -237,7 +237,7 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
 
 
 ///Template specializations
-template double BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy(double d);
+template double BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy(bool stretched);
 template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForces();
 template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForcesAux();
 template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeLoadForces();

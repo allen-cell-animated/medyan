@@ -95,7 +95,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(double d);
+template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(bool stretched);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces();
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForcesAux();
 

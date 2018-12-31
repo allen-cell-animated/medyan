@@ -99,6 +99,6 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(double d);
+template double BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(bool stretched);
 template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForces();
 template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForcesAux();

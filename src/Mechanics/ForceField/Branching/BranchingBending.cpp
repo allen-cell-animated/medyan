@@ -88,6 +88,6 @@ void BranchingBending<BBendingInteractionType>::computeForcesAux() {
 
 
 ///Template specializations
-template double BranchingBending<BranchingBendingCosine>::computeEnergy(double d);
+template double BranchingBending<BranchingBendingCosine>::computeEnergy(bool stretched);
 template void BranchingBending<BranchingBendingCosine>::computeForces();
 template void BranchingBending<BranchingBendingCosine>::computeForcesAux();

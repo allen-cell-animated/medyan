@@ -105,6 +105,6 @@ void MTOCAttachment<MTOCInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(double d);
+template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(bool stretched);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces();
 template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux();

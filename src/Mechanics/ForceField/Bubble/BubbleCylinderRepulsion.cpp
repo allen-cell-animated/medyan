@@ -253,7 +253,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 
 
 ///Template specializations
-template double BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(double d);
+template double BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(bool stretched);
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForces();
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForcesAux();
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeLoadForces();

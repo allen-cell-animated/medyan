@@ -22,6 +22,7 @@ using namespace mathfunc;
 #include "Vertex.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "Structure/SurfaceMesh/Membrane.h"
 
 template <class TriangleCylinderExclVolumeInteractionType>
 double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(bool stretched) {
@@ -30,10 +31,20 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
     double U_i;
 
     for(auto t: Triangle::getTriangles()) {
+
+        const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+        const size_t ti = t->getTopoIndex();
+        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+        const size_t hei1 = mesh.next(hei0);
+        const size_t hei2 = mesh.next(hei1);
+        const Vertex* v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
+        const Vertex* v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
+        const Vertex* v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
+
+        const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+        double kExVol = t->getMTriangle()->getExVolConst();
         
         for(auto &c : _neighborList->getNeighbors(t)) {
-
-            double kExVol = t->getMTriangle()->getExVolConst();
 
             // Use only 1st bead unless the cylinder is at plus end
             size_t numBeads = (c->isPlusEnd()? 2: 1);
@@ -41,10 +52,7 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
             for(size_t idx = 0; idx < numBeads; ++idx) {
                 Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
                 
-                if (d == 0.0)
-                    U_i = _FFType.energy(t, b, kExVol);
-                else
-                    U_i = _FFType.energy(t, b, kExVol, d);
+                U_i = _FFType.energy(v0, v1, v2, b, area, kExVol, stretched);
                 
                 if(fabs(U_i) == numeric_limits<double>::infinity()
                 || U_i != U_i || U_i < -1.0) {
@@ -68,10 +76,23 @@ template <class TriangleCylinderExclVolumeInteractionType>
 void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeForces() {
 
     for(auto t: Triangle::getTriangles()) {
-        
-        for(auto &c: _neighborList->getNeighbors(t)) {
 
-            double kExVol = t->getMTriangle()->getExVolConst();
+        const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+        const size_t ti = t->getTopoIndex();
+        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+        const size_t hei1 = mesh.next(hei0);
+        const size_t hei2 = mesh.next(hei1);
+        const Vertex* v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
+        const Vertex* v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
+        const Vertex* v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
+
+        const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+        const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dArea;
+        const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dArea;
+        const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dArea;
+        double kExVol = t->getMTriangle()->getExVolConst();
+
+        for(auto &c: _neighborList->getNeighbors(t)) {
 
             // Use only 1st bead unless the cylinder is at plus end
             size_t numBeads = (c->isPlusEnd()? 2: 1);
@@ -79,7 +100,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
             for(size_t idx = 0; idx < numBeads; ++idx) {
                 Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
             
-                _FFType.forces(t, b, kExVol);
+                _FFType.forces(v0, v1, v2, b, area, dArea0, dArea1, dArea2, kExVol);
             }
         }
     }
@@ -90,10 +111,23 @@ template <class TriangleCylinderExclVolumeInteractionType>
 void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeForcesAux() {
 
     for(auto t: Triangle::getTriangles()) {
+
+        const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+        const size_t ti = t->getTopoIndex();
+        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+        const size_t hei1 = mesh.next(hei0);
+        const size_t hei2 = mesh.next(hei1);
+        const Vertex* v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
+        const Vertex* v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
+        const Vertex* v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
+
+        const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+        const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dArea;
+        const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dArea;
+        const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dArea;
+        double kExVol = t->getMTriangle()->getExVolConst();
         
         for(auto &c: _neighborList->getNeighbors(t)) {
-
-            double kExVol = t->getMTriangle()->getExVolConst();
 
             // Use only 1st bead unless the cylinder is at plus end
             size_t numBeads = (c->isPlusEnd()? 2: 1);
@@ -101,7 +135,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
             for(size_t idx = 0; idx < numBeads; ++idx) {
                 Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
             
-                _FFType.forcesAux(t, b, kExVol);
+                _FFType.forcesAux(v0, v1, v2, b, area, dArea0, dArea1, dArea2, kExVol);
             }
         }
     }
@@ -111,10 +145,20 @@ template <class TriangleCylinderExclVolumeInteractionType>
 void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeLoadForces() {
 
     for(auto t: Triangle::getTriangles()) {
+
+        const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+        const size_t ti = t->getTopoIndex();
+        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
+        const size_t hei1 = mesh.next(hei0);
+        const size_t hei2 = mesh.next(hei1);
+        const Vertex* v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
+        const Vertex* v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
+        const Vertex* v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
+
+        const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+        double kExVol = t->getMTriangle()->getExVolConst();
         
         for(auto &c: _neighborList->getNeighbors(t)) {
-
-            double kExVol = t->getMTriangle()->getExVolConst();
 
             // potential acts on second cylinder bead if it is a plus  end
             // potential acts on first  cylinder bead if it is a minus end
@@ -126,7 +170,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bo = c->getFirstBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = vector2Array<double, 3>(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = vector2Vec<3, double>(twoPointDirection(bo->coordinate, bd->coordinate));
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -135,14 +179,14 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
-                    array<double, 3> newCoord {{
+                    Vec3 newCoord {
                         bd->coordinate[0] + i * normal[0] * monSize,
                         bd->coordinate[1] + i * normal[1] * monSize,
                         bd->coordinate[2] + i * normal[2] * monSize
-                    }};
+                    };
                     
-                    array<double, 3> loadForce = _FFType.loadForces(t, newCoord, kExVol);
-                    double effLoadForce = -dotProduct(normal, loadForce);
+                    auto loadForce = _FFType.loadForces(v0, v1, v2, newCoord, area, kExVol);
+                    double effLoadForce = -dot(normal, loadForce);
                     if(effLoadForce < 0.0) effLoadForce = 0.0;
 
                     bd->loadForcesP[bd->lfip++] += effLoadForce;
@@ -157,7 +201,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bo = c->getSecondBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = vector2Array<double, 3>(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = vector2Vec<3, double>(twoPointDirection(bo->coordinate, bd->coordinate));
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -167,14 +211,14 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bd->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
-                    array<double, 3> newCoord {{
+                    Vec3 newCoord {
                         bd->coordinate[0] + i * normal[0] * monSize,
                         bd->coordinate[1] + i * normal[1] * monSize,
                         bd->coordinate[2] + i * normal[2] * monSize
-                    }};
+                    };
                     
-                    array<double, 3> loadForce = _FFType.loadForces(t, newCoord, kExVol);
-                    double effLoadForce = -dotProduct(normal, loadForce);
+                    auto loadForce = _FFType.loadForces(v0, v1, v2, newCoord, area, kExVol);
+                    double effLoadForce = -dot(normal, loadForce);
                     if(effLoadForce < 0.0) effLoadForce = 0.0;
 
                     bd->loadForcesM[bd->lfim++] += effLoadForce;
@@ -189,8 +233,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 }
 
 ///Template specializations
-template double TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(double d);
+template double TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(bool stretched);
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces();
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForcesAux();
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeLoadForces();
-

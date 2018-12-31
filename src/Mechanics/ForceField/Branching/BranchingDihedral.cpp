@@ -92,6 +92,6 @@ void BranchingDihedral<BDihedralInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(double d);
+template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(bool stretched);
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces();
 template void BranchingDihedral<BranchingDihedralCosine>::computeForcesAux();

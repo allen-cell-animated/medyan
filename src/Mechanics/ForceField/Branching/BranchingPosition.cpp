@@ -87,6 +87,6 @@ void BranchingPosition<BPositionInteractionType>::computeForcesAux() {
 
 
 ///Template specializations
-template double BranchingPosition<BranchingPositionCosine>::computeEnergy(double d);
+template double BranchingPosition<BranchingPositionCosine>::computeEnergy(bool stretched);
 template void BranchingPosition<BranchingPositionCosine>::computeForces();
 template void BranchingPosition<BranchingPositionCosine>::computeForcesAux();

@@ -68,6 +68,6 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForcesAux() 
 }
 
 ///Template specializations
-template double BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(double d);
+template double BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(bool stretched);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces();
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForcesAux();

@@ -94,6 +94,6 @@ void LinkerStretching<LStretchingInteractionType>::computeForcesAux() {
 }
 
 ///Temlate specializations
-template double LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(double d);
+template double LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(bool stretched);
 template void LinkerStretching<LinkerStretchingHarmonic>::computeForces();
 template void LinkerStretching<LinkerStretchingHarmonic>::computeForcesAux();

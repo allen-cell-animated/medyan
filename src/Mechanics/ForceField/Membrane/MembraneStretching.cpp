@@ -100,30 +100,20 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
 
 // Using the areas of the triangles
 template<>
-double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(double d) {
+double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(bool stretched) {
     double U = 0;
     double U_i;
 
     for(auto m: Membrane::getMembranes()) {
 
-        if(d == 0.0) {
-            const auto kElastic = m->getMMembrane()->getKElastic();
-            const auto eqArea = m->getMMembrane()->getEqArea();
+        const auto kElastic = m->getMMembrane()->getKElastic();
+        const auto eqArea = m->getMMembrane()->getEqArea();
 
-            double area = 0.0;
-            for(const auto& t : m->getMesh().getTriangles()) area += t.attr.gTriangle.area;
+        double area = 0.0;
+        for(const auto& t : m->getMesh().getTriangles())
+            area += stretched ? t.attr.gTriangle.sArea : t.attr.gTriangle.area;
 
-            U_i = _FFType.energy(area, kElastic, eqArea); 
-
-        } else {
-            const auto kElastic = m->getMMembrane()->getKElastic();
-            const auto eqArea = m->getMMembrane()->getEqArea();
-
-            double sArea = 0.0;
-            for(const auto& t : m->getMesh().getTriangles()) sArea += t.attr.gTriangle.sArea;
-
-            U_i = _FFType.energy(sArea, kElastic, eqArea, d);
-        }
+        U_i = _FFType.energy(area, kElastic, eqArea); 
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) { // (U_i != U_i) => (U_i == NaN)

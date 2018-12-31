@@ -88,6 +88,6 @@ void FilamentStretching<FStretchingInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(double d);
+template double FilamentStretching<FilamentStretchingHarmonic>::computeEnergy(bool stretched);
 template void FilamentStretching<FilamentStretchingHarmonic>::computeForces();
 template void FilamentStretching<FilamentStretchingHarmonic>::computeForcesAux();

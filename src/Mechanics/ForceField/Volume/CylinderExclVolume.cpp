@@ -110,7 +110,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(double d);
+template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(bool stretched);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces();
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForcesAux();
 

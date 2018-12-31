@@ -95,6 +95,6 @@ void BranchingStretching<BStretchingInteractionType>::computeForcesAux() {
 
 ///Template specializations
 template double
-BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(double d);
+BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(bool stretched);
 template void BranchingStretching<BranchingStretchingHarmonic>::computeForces();
 template void BranchingStretching<BranchingStretchingHarmonic>::computeForcesAux();
