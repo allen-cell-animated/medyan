@@ -21,7 +21,6 @@
 
 #include "Trackable.h"
 #include "Database.h"
-#include "Geometric.h"
 #include "Movable.h"
 #include "Reactable.h"
 
@@ -73,8 +72,6 @@ public:
         
         if(t->_reactable) addReactable((Reactable*)t);
 
-        if(t->_geometric) addGeometric((Geometric*)t);
-        
         //if neighbor, add
         if(t->_dneighbor) {
             for(auto nlist : _neighborLists.getElements())
@@ -103,8 +100,6 @@ public:
         
         if(t->_reactable) removeReactable((Reactable*)t);
 
-        if(t->_geometric) removeGeometric((Geometric*)t);
-        
         //if neighbor, remove
         if(t->_dneighbor) {
             for(auto nlist : _neighborLists.getElements())
@@ -139,17 +134,6 @@ public:
     /// Get all Reactable
     const unordered_set<Reactable*>& getReactables() {return _reactables;}
     
-    //@{
-    /// Setter functions for Geometric
-    void addGeometric(Geometric* geo) { _geometrics.insert(geo); }
-    void removeGeometric(Geometric* geo) {
-        auto it = _geometrics.find(geo);
-        if(it != _geometrics.end()) _geometrics.erase(it);
-    }
-    //@}
-    /// Get all Geometric
-    const unordered_set<Geometric*>& getGeometrics() {return _geometrics;}
-
     /// Get the subsystem boundary
     Boundary* getBoundary() {return _boundary;}
     /// Add a boundary to this subsystem
@@ -187,7 +171,6 @@ private:
     
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
-    unordered_set<Geometric*> _geometrics; ///< All geometrics in the subsystem
         
     Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
         

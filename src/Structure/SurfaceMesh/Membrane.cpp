@@ -593,42 +593,6 @@ void Membrane::updateGeometryValueWithDerivative() {
     } // End loop vertices (V cells)
 }
 
-void Membrane::updateGeometry(bool calcDerivative, double d) {
-    /**************************************************************************
-    Updates the geometric properties of all the elements of the membrane. This
-    MUST be called before any energy calculation of the membrane.
-
-    Due to the geometry dependencies, the operation order below is important.
-
-    Some of the geometric properties are not needed in energy computation, so
-    for efficiency, they are not updated in this function. They must be updated
-    manually before use. They are:
-        - <None>
-    **************************************************************************/
-
-    for(auto& e: _edgeVector) {
-        auto ge = e->getGEdge();
-        if(calcDerivative) ge->calcLength(); else ge->calcStretchedLength(d);
-    }
-    for(auto& t: _triangleVector) {
-        auto gt = t->getGTriangle();
-        if(calcDerivative) gt->calcTheta(); else gt->calcStretchedTheta(d);
-        if(calcDerivative) gt->calcArea(); else gt->calcStretchedArea(d);
-        if(calcDerivative) gt->calcUnitNormal(); else gt->calcStretchedUnitNormal(d);
-    }
-    for(auto& e: _edgeVector) {
-        auto ge = e->getGEdge();
-        if(calcDerivative) ge->calcPseudoUnitNormal(); else ge->calcStretchedPseudoUnitNormal(d);
-    }
-    for(auto& v: _vertexVector) {
-        auto gv = v->getGVoronoiCell();
-        if(calcDerivative) gv->calcArea(); else gv->calcStretchedArea(d);
-        if(calcDerivative) gv->calcCurv(); else gv->calcStretchedCurv(d);
-        if(calcDerivative) gv->calcPseudoUnitNormal(); else gv->calcStretchedPseudoUnitNormal(d);
-    }
-    if(calcDerivative) _gMembrane->calcVolume(); else _gMembrane->calcStretchedVolume(d);
-}
-
 double Membrane::signedDistance(const std::array<double, 3>& p, bool safe)const {
     if(!_isClosed) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
 

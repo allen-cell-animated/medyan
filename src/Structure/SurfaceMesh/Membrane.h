@@ -7,7 +7,6 @@
 #include <memory>
 
 #include "Database.h"
-#include "Geometric.h"
 #include "Trackable.h"
 #include "Composite.h"
 
@@ -116,7 +115,7 @@ However, the ownership of all elements is in this Membrane class through
 inheriting Composite.
 ******************************************************************************/
 
-class Membrane: public Composite, public Trackable, public Geometric {
+class Membrane: public Composite, public Trackable {
 
 private:
 
@@ -180,15 +179,8 @@ public:
     /**************************************************************************
     Geometric
     **************************************************************************/
-    /**
-     * Implements Geometric.
-     * If calcDerivative is true, most implementation would assume d is zero
-     *   regardless of the actual passed d value. If calcDerivative is false,
-     *   most implementation would store the result in member variables with
-     *   "stretched" in their name.
-     */
     void updateGeometryValue();
-    virtual void updateGeometry(bool calcDerivative=false, double d=0.0)override;
+    void updateGeometryValueWithDerivative();
 
     // Get geo membrane
     GMembrane* getGMembrane() { return _gMembrane.get(); }
