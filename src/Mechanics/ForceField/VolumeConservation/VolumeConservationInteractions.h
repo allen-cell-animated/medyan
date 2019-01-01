@@ -1,8 +1,6 @@
 #ifndef MEDYAN_VolumeConservationInteractions_h
 #define MEDYAN_VolumeConservationInteractions_h
 
-#include "common.h"
-
 //FORWARD DECLARATIONS
 class Membrane;
 

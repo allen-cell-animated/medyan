@@ -4,7 +4,6 @@
 
 #include "Membrane.hpp"
 #include "MMembrane.h"
-#include "GMembrane.h"
 #include "Vertex.h"
 
 #include "VolumeConservationMembraneHarmonic.h"

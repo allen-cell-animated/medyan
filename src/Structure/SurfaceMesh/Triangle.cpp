@@ -16,8 +16,7 @@ Triangle::Triangle(Composite* parent, size_t topoIndex):
 
 #ifdef MECHANICS
     // eqArea cannot be obtained at this moment
-    _mTriangle = unique_ptr<MTriangle>(new MTriangle(getType()));
-    _mTriangle->setTriangle(this);
+    _mTriangle = std::make_unique<MTriangle>(getType());
 #endif
 
     // Set coordinate and add to compartment

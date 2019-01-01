@@ -1,10 +1,8 @@
-#include "Vertex.h"
-#include "MVoronoiCell.h"
+#include "Structure/SurfaceMesh/MVoronoiCell.h"
+
+#include "SysParams.h"
 
 MVoronoiCell::MVoronoiCell(short membraneType) {
-    
-    if(!SysParams::Mechanics().MemElasticK.empty())
-        _kElastic = SysParams::Mechanics().MemElasticK[membraneType];
     
     if(!SysParams::Mechanics().MemBendingK.empty())
         _kBending = SysParams::Mechanics().MemBendingK[membraneType];
