@@ -95,7 +95,7 @@ inline auto normalizedVector(const Vec<dim, Float>& v) {
                     (v2[2]-v1[2])*(v2[2]-v1[2]));
     }
 template< size_t dim, typename Float >
-inline Float dist2(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+inline Float distance2(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
     Float res = 0.0;
     for(size_t idx = 0; idx < dim; ++idx) {
         res += (v2[idx] - v1[idx]) * (v2[idx] - v1[idx]);
@@ -103,13 +103,8 @@ inline Float dist2(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
     return res;
 }
 template< size_t dim, typename Float >
-inline Float dist2(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
-    Float res = 0.0;
-    for(size_t idx = 0; idx < dim; ++idx) {
-        res += (v2[idx] - v1[idx]) * (v2[idx] - v1[idx]);
-    }
-    res = sqrt(res);
-    return res;
+inline Float distance(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
+    return sqrt(distance2(v1, v2));
 }
 
     
