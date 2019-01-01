@@ -14,6 +14,7 @@ An unordered edge contains 2 vertices.
 #include "Trackable.h"
 #include "DynamicNeighbor.h"
 #include "Component.h"
+#include "MathFunctions.h"
 #include "Movable.h"
 
 #include "Vertex.h"
@@ -45,7 +46,7 @@ public:
 
     void setTopoIndex(size_t index) { _topoIndex = index; }
 
-    std::array<double, 3> coordinate; // Coordinate of the mid point, updated with updateCoordiante()
+    mathfunc::Vec3 coordinate; // Coordinate of the mid point, updated with updateCoordiante()
 
     /// Get all instances of this class from the SubSystem
     static const vector<Edge*>& getEdges() {

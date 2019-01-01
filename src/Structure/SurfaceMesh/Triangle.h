@@ -10,6 +10,7 @@
 #include "Movable.h"
 //#include "Reactable.h"
 #include "DynamicNeighbor.h"
+#include "MathFunctions.h"
 #include "Component.h"
 
 #include "Vertex.h"
@@ -49,7 +50,7 @@ private:
     Compartment* _compartment = nullptr; // The compartment containing this triangle
 
 public:
-    std::array<double, 3> coordinate; // Coordinate of the center point, updated with updateCoordiante()
+    mathfunc::Vec3 coordinate; // Coordinate of the center point, updated with updateCoordiante()
 
     Triangle(Composite *parent, size_t topoIndex);
 

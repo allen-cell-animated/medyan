@@ -28,7 +28,7 @@ MembraneRegion::MembraneRegion(Boundary* b, MembraneHierarchy* parentOfExcluded)
     }
 }
 
-bool MembraneRegion::contains(const std::array<double, 3>& point)const {
+bool MembraneRegion::contains(const mathfunc::Vec3& point)const {
     /**************************************************************************
     This function checks whether a certain point is in the region. If a point
     is in the region, it must satisfy all of the following.
@@ -37,7 +37,7 @@ bool MembraneRegion::contains(const std::array<double, 3>& point)const {
         - not in any of the membranes in _hierIn
     **************************************************************************/
     if(_boundary) {
-        auto p = mathfunc::array2Vector(point);
+        auto p = mathfunc::vec2Vector(point);
         if(!_boundary->within(p)) return false;
     }
 

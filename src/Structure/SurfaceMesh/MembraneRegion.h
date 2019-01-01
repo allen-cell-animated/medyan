@@ -5,6 +5,8 @@
 #include <vector>
 #include <memory>
 
+#include "MathFunctions.h"
+
 // Forward Declarations
 class MembraneHierarchy;
 class Boundary;
@@ -37,7 +39,7 @@ public:
     MembraneRegion(Boundary* b, MembraneHierarchy* parentOfExcluded);
 
     /// Is point inside region
-    bool contains(const std::array<double, 3>& point)const;
+    bool contains(const mathfunc::Vec3& point)const;
 
     /**************************************************************************
     Getters and Setters

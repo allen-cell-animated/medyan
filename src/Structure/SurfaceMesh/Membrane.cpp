@@ -213,8 +213,6 @@ void Membrane::printSelf()const {
     
     cout << endl;
     
-    cout << endl;
-    
 }
 
 double Membrane::meshworkQuality()const {

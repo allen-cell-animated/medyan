@@ -4,6 +4,7 @@
 #include "Compartment.h"
 #include "core/controller/GController.h"
 #include "MathFunctions.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 Database<Edge*> Edge::_edges;
 
@@ -13,13 +14,10 @@ Edge::Edge(Composite* parent, size_t topoIndex):
     
     parent -> addChild(unique_ptr<Component>(this));
 
-    _gEdge = unique_ptr<GEdge>(new GEdge);
-    _gEdge->setEdge(this);
-
     // Set coordinate and add to compartment
     updateCoordinate();
     if(medyan::Global::readGlobal().mode == medyan::GlobalVar::RunMode::Simulation) {
-        try { _compartment = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
+        try { _compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
         catch (exception& e) {
             cout << e.what() << endl;
             printSelf();
@@ -30,8 +28,17 @@ Edge::Edge(Composite* parent, size_t topoIndex):
 }
 
 void Edge::updateCoordinate() {
+    const auto& mesh = static_cast<Membrane*>getParent()->getMesh();
+    const size_t hei0 = mesh.getEdges()[_topoIndex].halfEdgeIndex;
+    const size_t hei1 = mesh.opposite(hei0);
+    const size_t v0 = mesh.target(hei0);
+    const size_t v1 = mesh.target(hei1);
+
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        coordinate[coordIdx] = (_v[0]->coordinate[coordIdx] + _v[1]->coordinate[coordIdx]) / 2;
+        coordinate[coordIdx] = (
+            mesh.getVertexAttribute(v0).vertex->coordinate[coordIdx]
+            + mesh.getVertexAttribute(v1).vertex->coordinate[coordIdx]
+        ) / 2;
     }
 }
 
@@ -40,7 +47,7 @@ void Edge::updatePosition() {
     
     // Get the current compartment
     Compartment *c;
-    try { c = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
+    try { c = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
     catch (exception& e) {
         cout << e.what() << endl;
         printSelf();
@@ -64,12 +71,5 @@ void Edge::printSelf()const {
     cout << "Edge ID = " << _id << endl;
     cout << "Parent ptr = " << getParent() << endl;
         
-    cout << endl;
-
-    cout << "Vertex information..." << endl;
-    
-    _v[0]->printSelf();
-    _v[1]->printSelf();
-    
     cout << endl;
 }

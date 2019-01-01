@@ -7,7 +7,7 @@
 #include "MathFunctions.h"
 using namespace mathfunc;
 
-#include "Membrane.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Vertex.h"
 
 // Forward declarations
@@ -56,7 +56,7 @@ void MembraneHierarchy::addMembrane(Membrane* m, MembraneHierarchy& root) {
     auto& rootChildren = root.children();
 
     // Pick a point on the membrane and check the containing relationship with other membranes
-    array<double, 3> p = vector2Array<double, 3>(m->getVertexVector().at(0)->coordinate);
+    const auto p = vector2Vec<3, double>(m->getMesh().getVertexAttribute(0).vertex->coordinate);
 
     // Recursively search
     for(auto& childPtr: rootChildren) {
@@ -68,7 +68,7 @@ void MembraneHierarchy::addMembrane(Membrane* m, MembraneHierarchy& root) {
             throw runtime_error("The child node does not point to a specific membrane.");
         }
 
-        if(hiePtr->_membrane->isClosed() && hiePtr->_membrane->signedDistance(p, true) < 0) { // Is inside one of the child nodes
+        if(hiePtr->_membrane->isClosed() && hiePtr->_membrane->contains(p)) { // Is inside one of the child nodes
             MembraneHierarchy::addMembrane(m, *hiePtr); // Search that child
             return;
         }
@@ -87,9 +87,9 @@ void MembraneHierarchy::addMembrane(Membrane* m, MembraneHierarchy& root) {
 
             MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
-            array<double, 3> hieP = vector2Array<double, 3>(hiePtr->_membrane->getVertexVector().at(0)->coordinate);
+            const auto hieP = vector2Vec<3, double>(hiePtr->_membrane->getMesh().getVertexAttribute(0).vertex->coordinate);
 
-            if(m->signedDistance(hieP, true) < 0) { // The child membrane is inside new membrane
+            if(m->contains(hieP)) { // The child membrane is inside new membrane
 
                 // Add child to the new node
                 newNode->addChild(move(childPtr)); // Now the content of childPtr is moved and becomes the new child of the new node.

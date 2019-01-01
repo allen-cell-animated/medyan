@@ -4,17 +4,16 @@
 #include "Compartment.h"
 #include "MathFunctions.h"
 #include "core/controller/GController.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 Database<Triangle*> Triangle::_triangles;
 
 Triangle::Triangle(Composite* parent, size_t topoIndex):
     Trackable(true, false, true, false),
-    _topoIndex{topoIndex}, _edges{{nullptr, nullptr, nullptr}}, _id(_triangles.getID()) {
+    _topoIndex{topoIndex}, _id(_triangles.getID()) {
     
     parent -> addChild(unique_ptr<Component>(this));
 
-    _gTriangle = unique_ptr<GTriangle>(new GTriangle);
-    _gTriangle->setTriangle(this);
 #ifdef MECHANICS
     // eqArea cannot be obtained at this moment
     _mTriangle = unique_ptr<MTriangle>(new MTriangle(getType()));
@@ -24,7 +23,7 @@ Triangle::Triangle(Composite* parent, size_t topoIndex):
     // Set coordinate and add to compartment
     updateCoordinate();
     if(medyan::Global::readGlobal().mode == medyan::GlobalVar::RunMode::Simulation) {
-        try { _compartment = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
+        try { _compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
         catch (exception& e) {
             cout << e.what() << endl;
             printSelf();
@@ -36,8 +35,20 @@ Triangle::Triangle(Composite* parent, size_t topoIndex):
 }
 
 void Triangle::updateCoordinate() {
+    const auto& mesh = static_cast<Membrane*>getParent()->getMesh();
+    const size_t hei0 = mesh.getTriangles()[_topoIndex].halfEdgeIndex;
+    const size_t hei1 = mesh.next(hei0);
+    const size_t hei2 = mesh.next(hei1);
+    const size_t v0 = mesh.target(hei0);
+    const size_t v1 = mesh.target(hei1);
+    const size_t v2 = mesh.target(hei2);
+
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        coordinate[coordIdx] = (_v[0]->coordinate[coordIdx] + _v[1]->coordinate[coordIdx] + _v[2]->coordinate[coordIdx]) / 3;
+        coordinate[coordIdx] = (
+            mesh.getVertexAttribute(v0).vertex->coordinate[coordIdx]
+            + mesh.getVertexAttribute(v1).vertex->coordinate[coordIdx]
+            + mesh.getVertexAttribute(v2).vertex->coordinate[coordIdx]
+        ) / 3;
     }
 }
 
@@ -46,7 +57,7 @@ void Triangle::updatePosition() {
     
     // Get the current compartment
     Compartment *c;
-    try { c = GController::getCompartment(mathfunc::array2Vector(coordinate)); }
+    try { c = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
     catch (exception& e) {
         cout << e.what() << endl;
         printSelf();
@@ -110,12 +121,4 @@ void Triangle::printSelf()const {
     
     cout << endl;
     */
-    
-    cout << "Vertex information..." << endl;
-    
-    _v[0]->printSelf();
-    _v[1]->printSelf();
-    _v[2]->printSelf();
-    
-    cout << endl;
 }
