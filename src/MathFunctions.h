@@ -30,7 +30,15 @@ namespace mathfunc {
 template< size_t dim, typename Float = double > struct Vec {
     std::array< Float, dim > value;
 
-    using size_type = std::array< Float, dim >::size_type;
+    using storage_type = std::array< Float, dim >;
+    using size_type = typename storage_type::size_type;
+    using iterator = typename storage_type::iterator;
+    using const_iterator = typename storage_type::const_iterator;
+
+    constexpr iterator       begin()       noexcept { return value.begin(); }
+    constexpr const_iterator begin() const noexcept { return value.begin(); }
+    constexpr iterator       end()       noexcept { return value.end(); }
+    constexpr const_iterator end() const noexcept { return value.end(); }
 
     constexpr       Float& operator[](size_type pos)       { return value[pos]; }
     constexpr const Float& operator[](size_type pos) const { return value[pos]; }

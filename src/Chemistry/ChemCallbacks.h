@@ -806,8 +806,8 @@ struct FilamentCreationCallback {
                     _ps->getBoundary()->within(npp) &&
                     c->isActivated() &&
                     (c->getVolumeFrac() >= 1.0 ||
-                        Membrane::getMembranes()[0]->signedDistance(vector2Array<double, 3>(position)) < 0.0 &&
-                        Membrane::getMembranes()[0]->signedDistance(vector2Array<double, 3>(npp)) < 0.0)
+                        Membrane::getMembranes()[0]->contains(vector2Vec<3, double>(position)) &&
+                        Membrane::getMembranes()[0]->contains(vector2Vec<3, double>(npp)))
                 ) break;
             }
             

@@ -316,7 +316,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             c->getSlicedVolumeArea();
             _cController->updateActivation(c);
 
-        } else if( ! regionInMembrane->contains(vector2Array<double, 3>(c->coordinates()))) {
+        } else if( ! regionInMembrane->contains(vector2Vec<3, double>(c->coordinates()))) {
             // Compartment is outside the membrane
             _cController->deactivate(c);
         }
@@ -630,7 +630,7 @@ void Controller::updateActiveCompartments() {
             } else if(c->boundaryInteresting) { // Interesting last round but now empty
                 bool inMembrane = (
                     (!theMembrane->isClosed()) ||
-                    (theMembrane->signedDistance(vector2Array<double, 3>(c->coordinates()), false) < 0.0)
+                    (theMembrane->contains(vector2Vec<3, double>(c->coordinates())))
                 );
                 if(inMembrane) {
                     // Fully activate the compartment

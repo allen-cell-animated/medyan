@@ -48,8 +48,8 @@ void OutputStructFilament::getFromSystemWithoutChildren() {
     // Store coordinates
     _coords.reserve(_numBeads);
     for (auto cylinder : _filament->getCylinderVector())
-        _coords.push_back(vector2Array<double, 3>(cylinder->getFirstBead()->coordinate));
-    _coords.push_back(vector2Array<double, 3>(_filament->getCylinderVector().back()->getSecondBead()->coordinate));
+        _coords.push_back(vector2Vec<3, double>(cylinder->getFirstBead()->coordinate));
+    _coords.push_back(vector2Vec<3, double>(_filament->getCylinderVector().back()->getSecondBead()->coordinate));
         
 }
 
@@ -105,12 +105,12 @@ void OutputStructLinker::getFromSystemWithoutChildren() {
 
     // Store coordinates
     _coords = {{
-        vector2Array<double, 3>(midPointCoordinate(
+        vector2Vec<3, double>(midPointCoordinate(
             _linker->getFirstCylinder()->getFirstBead()->coordinate,
             _linker->getFirstCylinder()->getSecondBead()->coordinate,
             _linker->getFirstPosition()
         )),
-        vector2Array<double, 3>(midPointCoordinate(
+        vector2Vec<3, double>(midPointCoordinate(
             _linker->getSecondCylinder()->getFirstBead()->coordinate,
             _linker->getSecondCylinder()->getSecondBead()->coordinate,
             _linker->getSecondPosition()
@@ -160,12 +160,12 @@ void OutputStructMotor::getFromSystemWithoutChildren() {
 
     // Store coordinates
     _coords = {{
-        vector2Array<double, 3>(midPointCoordinate(
+        vector2Vec<3, double>(midPointCoordinate(
             _motor->getFirstCylinder()->getFirstBead()->coordinate,
             _motor->getFirstCylinder()->getSecondBead()->coordinate,
             _motor->getFirstPosition()
         )),
-        vector2Array<double, 3>(midPointCoordinate(
+        vector2Vec<3, double>(midPointCoordinate(
             _motor->getSecondCylinder()->getFirstBead()->coordinate,
             _motor->getSecondCylinder()->getSecondBead()->coordinate,
             _motor->getSecondPosition()
@@ -216,7 +216,7 @@ void OutputStructBrancher::getFromSystemWithoutChildren() {
     _type = _brancher->getType();
 
     // Store coordinates
-    _coord = vector2Array<double, 3>(_brancher->coordinate);
+    _coord = vector2Vec<3, double>(_brancher->coordinate);
         
 }
 
@@ -258,7 +258,7 @@ void OutputStructBubble::getFromSystemWithoutChildren() {
     _type = _bubble->getType();
 
     // Store coordinates
-    _coord = vector2Array<double, 3>(_bubble->coordinate);
+    _coord = vector2Vec<3, double>(_bubble->coordinate);
         
 }
 
@@ -311,7 +311,7 @@ void OutputStructMembrane::getFromSystemWithoutChildren() {
         auto& coord = get<0>(vtxInfo);
         auto& neighborIndices = get<1>(vtxInfo);
             
-        coord = vector2Array<double, 3>(vertices[idx]->coordinate);
+        coord = vector2Vec<3, double>(vertices[idx]->coordinate);
         
         auto& neighbors = vertices[idx]->getNeighborVertices();
         size_t numNeighbors = neighbors.size();

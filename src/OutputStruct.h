@@ -7,6 +7,8 @@
 #include <tuple>
 #include <vector>
 
+#include "MathFunctions.h"
+
 ///FORWARD DECLARATIONS
 class BranchingPoint;
 class Bubble;
@@ -65,7 +67,7 @@ public:
 
     int getId()const { return _id; }
     int getNumBeads()const { return _numBeads; }
-    const std::vector<std::array<double, 3>>& getCoords()const { return _coords; }
+    const auto& getCoords()const { return _coords; }
 
 private:
     /// Data
@@ -75,7 +77,7 @@ private:
     short _deltaMinusEnd;
     short _deltaPlusEnd;
 
-    std::vector<std::array<double, 3>> _coords;
+    std::vector<mathfunc::Vec3> _coords;
 
     /// Non data
     Filament* _filament;
@@ -93,7 +95,7 @@ public:
     virtual void outputFromStoredWithoutChildren(std::ostream& os)override;
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
-    const std::array<std::array<double, 3>, 2>& getCoords()const { return _coords; }
+    const auto& getCoords()const { return _coords; }
 
 private:
 
@@ -101,7 +103,7 @@ private:
     int _id;
     int _type;
 
-    std::array<std::array<double, 3>, 2> _coords;
+    std::array<mathfunc::Vec3, 2> _coords;
 
     /// Non data
     Linker* _linker;
@@ -119,7 +121,7 @@ public:
     virtual void outputFromStoredWithoutChildren(std::ostream& os)override;
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
-    const std::array<std::array<double, 3>, 2>& getCoords()const { return _coords; }
+    const auto& getCoords()const { return _coords; }
 
 private:
 
@@ -128,7 +130,7 @@ private:
     int _type;
     int _bound = 1;
 
-    std::array<std::array<double, 3>, 2> _coords;
+    std::array<mathfunc::Vec3, 2> _coords;
 
     /// Non data
     MotorGhost* _motor;
