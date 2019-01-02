@@ -118,7 +118,7 @@ inline Float distance(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
     
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
-    inline double twoPointDistanceStretched(const vector<double>& v1,
+    [[deprecated]] inline double twoPointDistanceStretched(const vector<double>& v1,
                                             const vector<double>& p1,
                                             const vector<double>& v2,
                                             const vector<double>& p2, double d){
@@ -156,7 +156,7 @@ inline Float dot(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
     
     /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
     /// v2[x,y,z] + d*p2[x,y,z]
-    inline double dotProductStretched(const vector<double>& v1,
+    [[deprecated]] inline double dotProductStretched(const vector<double>& v1,
                                       const vector<double>& p1,
                                       const vector<double>& v2,
                                       const vector<double>& p2,
@@ -192,7 +192,7 @@ inline Float dot(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
 
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
-    inline double scalarProductStretched(const vector<double>& v1,
+    [[deprecated]] inline double scalarProductStretched(const vector<double>& v1,
                                          const vector<double>& p1,
                                          const vector<double>& v2,
                                          const vector<double>& p2,
@@ -245,7 +245,7 @@ inline Float dot(const Vec<dim, Float>& v1, const Vec<dim, Float>& v2) {
     
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3), but with v -> v+d*p. Returns a 3d vector.
-    inline vector<double> vectorProductStretched (const vector<double>& v1,
+    [[deprecated]] inline vector<double> vectorProductStretched (const vector<double>& v1,
                                                   const vector<double>& p1,
                                                   const vector<double>& v2,
                                                   const vector<double>& p2,
@@ -301,7 +301,7 @@ inline Vec3 cross(const Vec3& v1, const Vec3& v2) {
 }
     
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
-    inline vector<double> crossProductStretched(const vector<double>& v1,
+    [[deprecated]] inline vector<double> crossProductStretched(const vector<double>& v1,
                                                 const vector<double>& p1,
                                                 const vector<double>& v2,
                                                 const vector<double>& p2,
@@ -393,7 +393,7 @@ inline auto& operator*=(Vec<dim, Float>& v, double k) {
 
     /// Get the negative of the matrix
     template<size_t Dim1, size_t Dim2=Dim1>
-    inline array<array<double, Dim2>, Dim1> matrixNegative(const array<array<double, Dim2>, Dim1>& m){
+    [[deprecated]] inline array<array<double, Dim2>, Dim1> matrixNegative(const array<array<double, Dim2>, Dim1>& m){
         array<array<double, Dim2>, Dim1> res;
 
         for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
@@ -405,7 +405,7 @@ inline auto& operator*=(Vec<dim, Float>& v, double k) {
     }
     /// Matrix sum. MUST have same dimension
     template<size_t Dim1, size_t Dim2=Dim1>
-    inline array<array<double, Dim2>, Dim1> matrixSum(const array<array<double, Dim2>, Dim1>& m1,
+    [[deprecated]] inline array<array<double, Dim2>, Dim1> matrixSum(const array<array<double, Dim2>, Dim1>& m1,
                                                       const array<array<double, Dim2>, Dim1>& m2) {
         array<array<double, Dim2>, Dim1> res;
         for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
@@ -417,7 +417,7 @@ inline auto& operator*=(Vec<dim, Float>& v, double k) {
     }
     /// Add matrix2 to matrix1. Returns a reference to the modified vector
     template<size_t Dim1, size_t Dim2=Dim1>
-    inline array<array<double, Dim2>, Dim1>& matrixIncrease(array<array<double, Dim2>, Dim1>& m1,
+    [[deprecated]] inline array<array<double, Dim2>, Dim1>& matrixIncrease(array<array<double, Dim2>, Dim1>& m1,
                                                       const array<array<double, Dim2>, Dim1>& m2) {
         for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
             for(size_t idx2 = 0; idx2 < Dim2; ++idx2){
@@ -428,7 +428,7 @@ inline auto& operator*=(Vec<dim, Float>& v, double k) {
     }
     /// Matrix difference. MUST have same dimension
     template<size_t Dim1, size_t Dim2=Dim1>
-    inline array<array<double, Dim2>, Dim1> matrixDifference(const array<array<double, Dim2>, Dim1>& m1,
+    [[deprecated]] inline array<array<double, Dim2>, Dim1> matrixDifference(const array<array<double, Dim2>, Dim1>& m1,
                                                              const array<array<double, Dim2>, Dim1>& m2) {
         array<array<double, Dim2>, Dim1> res;
         for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
@@ -440,7 +440,7 @@ inline auto& operator*=(Vec<dim, Float>& v, double k) {
     }
     /// Matrix multiply.
     template<size_t Dim1, size_t Dim2=Dim1>
-    inline array<array<double, Dim2>, Dim1> matrixMultiply(const array<array<double, Dim2>, Dim1>& m,
+    [[deprecated]] inline array<array<double, Dim2>, Dim1> matrixMultiply(const array<array<double, Dim2>, Dim1>& m,
                                                            const double k) {
         array<array<double, Dim2>, Dim1> res;
         for(size_t idx1 = 0; idx1 < Dim1; ++idx1){
@@ -452,11 +452,11 @@ inline auto& operator*=(Vec<dim, Float>& v, double k) {
     }
 
     /// Identity matrix 3x3. Internal linkage applied implicitly by using "const".
-    constexpr array<array<double, 3>, 3> Eye3 = {{ {{1, 0, 0}}, {{0, 1, 0}}, {{0, 0, 1}} }};
+    [[deprecated]] constexpr array<array<double, 3>, 3> Eye3 = {{ {{1, 0, 0}}, {{0, 1, 0}}, {{0, 0, 1}} }};
 
     /// Tensor product of two vectors, notated as a matrix with size dim(v1) x dim(v2)
     template<size_t Dim1, size_t Dim2=Dim1>
-    inline array<array<double, Dim2>, Dim1> tensorProduct(const array<double, Dim1>& v1,
+    [[deprecated]] inline array<array<double, Dim2>, Dim1> tensorProduct(const array<double, Dim1>& v1,
                                                           const array<double, Dim2>& v2) {
         array<array<double, Dim2>, Dim1> res;
         for(size_t idx1 = 0; idx1 < Dim1; ++idx1) {
@@ -469,7 +469,7 @@ inline auto& operator*=(Vec<dim, Float>& v, double k) {
 
     /// Matrix (d1*d2) times vector (d2). Returns a vector with dimension d1
     template<size_t Dim1, size_t Dim2=Dim1>
-    inline array<double, Dim1> matrixProduct(const array<array<double, Dim2>, Dim1>& m,
+    [[deprecated]] inline array<double, Dim1> matrixProduct(const array<array<double, Dim2>, Dim1>& m,
                                              const array<double, Dim2>& v) {
         array<double, Dim1> res = {};
         
@@ -506,7 +506,7 @@ inline auto& operator*=(Vec<dim, Float>& v, double k) {
     
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
-    inline vector<double> midPointCoordinateStretched(const vector<double>& v1,
+    [[deprecated]] inline vector<double> midPointCoordinateStretched(const vector<double>& v1,
                                                       const vector<double>& p1,
                                                       const vector<double>& v2,
                                                       const vector<double>& p2,

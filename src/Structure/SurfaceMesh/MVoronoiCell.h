@@ -13,12 +13,6 @@ private:
 public:
     MVoronoiCell(short membraneType);
 
-    [[deprecated]] void setEqArea(double eqArea) { _eqArea = eqArea; }
-    [[deprecated]] double getEqArea() { return _eqArea; }
-
-    [[deprecated]] void setElasticModulus(double kElastic) { _kElastic = kElastic; }
-    [[deprecated]] double getElasticModulus() { return _kElastic; }
-
     void setBendingModulus(double kBending) { _kBending = kBending; }
     double getBendingModulus() { return _kBending; }
 
