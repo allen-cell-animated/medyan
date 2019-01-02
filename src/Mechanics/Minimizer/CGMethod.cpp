@@ -161,7 +161,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         
         //new energy when moved by lambda
         calcStretchedCoordinate(lambda);
-        FFM.updateGeometries(false, lambda);
+        FFM.updateGeometryValue<true>();
         double energyLambda = FFM.computeEnergy<true>();
         
         double idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
@@ -193,7 +193,8 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     //backtracking loop
     while(true) {
         //new energy when moved by lambda
-        FFM.updateGeometries(false, lambda);
+        calcStretchedCoordinate(lambda);
+        FFM.updateGeometryValue<true>();
         double energyLambda = FFM.computeEnergy(lambda);
         double energyChange = energyLambda - currentEnergy;
         

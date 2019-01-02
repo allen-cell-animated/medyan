@@ -40,8 +40,9 @@ public:
     ForceFieldManager(SubSystem* s) { _subSystem = s; }
     
     /// Update the geometry of all elements in the system
-    void updateGeometries(bool calcDerivative=false, double d=0.0);
-    
+    template< bool stretched > void updateGeometryValue() const;
+    void updateGeometryValueWithDerivative() const;
+
     /// Compute the energy using all available force fields
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this

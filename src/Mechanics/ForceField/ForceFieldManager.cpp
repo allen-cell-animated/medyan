@@ -15,9 +15,17 @@
 #include <algorithm>
 
 #include "SubSystem.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
-void ForceFieldManager::updateGeometries(bool calcDerivative, double d) {
-    for(auto g : _subSystem->getGeometrics()) g->updateGeometry(calcDerivative, d);
+template< bool stretched > void ForceFieldManager::updateGeometryValue() const {
+    for(auto m : Membrane::getMembranes()) m->updateGeometryValue<stretched>();
+}
+// Explicit instantiation
+template void ForceFieldManager::updateGeometryValue<true>() const;
+template void ForceFieldManager::updateGeometryValue<false>() const;
+
+void ForceFieldManager::updateGeometryValueWithDerivative() const {
+    for(auto m : Membrane::getMembranes()) m->updateGeometryValueWithDerivative();
 }
 
 void ForceFieldManager::computeForces() {
