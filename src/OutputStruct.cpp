@@ -85,7 +85,7 @@ void OutputStructFilament::getFromOutput(std::istream& is, std::istringstream& i
     _coords.clear();
     double tmp;
     while(newIss >> tmp) {
-        std::array<double, 3> coord;
+        mathfunc::Vec3 coord;
         coord[0] = tmp;
         newIss >> coord[1] >> coord[2];
         _coords.push_back(coord);

@@ -34,7 +34,7 @@ Triangle::Triangle(Composite* parent, size_t topoIndex):
 }
 
 void Triangle::updateCoordinate() {
-    const auto& mesh = static_cast<Membrane*>getParent()->getMesh();
+    const auto& mesh = static_cast<Membrane*>(getParent())->getMesh();
     const size_t hei0 = mesh.getTriangles()[_topoIndex].halfEdgeIndex;
     const size_t hei1 = mesh.next(hei0);
     const size_t hei2 = mesh.next(hei1);

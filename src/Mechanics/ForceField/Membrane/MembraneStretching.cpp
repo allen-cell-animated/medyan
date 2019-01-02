@@ -61,7 +61,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
 
             // Position of this vertex also affects neighbor vcell areas
             mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getEdgeAttribute(hei).gHalfEdge.dNeighborArea;
+                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea;
                 _FFType.forces(v.attr.vertex, area, dArea, kElastic, eqArea);
             });
         }
@@ -89,7 +89,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
 
             // Position of this vertex also affects neighbor vcell areas
             mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getEdgeAttribute(hei).gHalfEdge.dNeighborArea;
+                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea;
                 _FFType.forcesAux(v.attr.vertex, area, dArea, kElastic, eqArea);
             });
         }
@@ -149,7 +149,7 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
         const size_t numTriangles = mesh.getTriangles().size();
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getEdgeAttribute(hei).gHalfEdge.dTriangleArea;
+                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
                 _FFType.forces(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
             });
         }
@@ -172,7 +172,7 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
         const size_t numTriangles = mesh.getTriangles().size();
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getEdgeAttribute(hei).gHalfEdge.dTriangleArea;
+                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
                 _FFType.forces(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
             });
         }

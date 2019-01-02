@@ -154,7 +154,7 @@ private:
     int _id;
     int _type;
 
-    std::array<double, 3> _coord;
+    mathfunc::Vec3 _coord;
 
     /// Non data
     BranchingPoint* _brancher;
@@ -178,7 +178,7 @@ private:
     int _id;
     int _type;
 
-    std::array<double, 3> _coord;
+    mathfunc::Vec3 _coord;
 
     /// Non data
     Bubble* _bubble;

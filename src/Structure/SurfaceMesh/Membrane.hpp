@@ -248,7 +248,7 @@ struct MembraneMeshAttribute {
             const auto c0 = vector2Vec<3, double>(vertices[vi0].attr.vertex->coordinate);
             const auto c1 = vector2Vec<3, double>(vertices[vi1].attr.vertex->coordinate);
 
-            const auto length = mesh.getEdgeAttribute(ei).gEdge.length = dist(c0, c1);
+            const auto length = mesh.getEdgeAttribute(ei).gEdge.length = distance(c0, c1);
             mesh.getHalfEdgeAttribute(hei).gHalfEdge.dEdgeLength = (c0 - c1) / length;
             mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dEdgeLength = (c1 - c0) / length;
         }
@@ -270,9 +270,9 @@ struct MembraneMeshAttribute {
             };
 
             const double l[] {
-                edges[mesh.edge(hei[0])].attr.length,
-                edges[mesh.edge(hei[1])].attr.length,
-                edges[mesh.edge(hei[2])].attr.length
+                edges[mesh.edge(hei[0])].attr.gEdge.length,
+                edges[mesh.edge(hei[1])].attr.gEdge.length,
+                edges[mesh.edge(hei[2])].attr.gEdge.length
             };
 
             const double dots[] {
@@ -306,7 +306,7 @@ struct MembraneMeshAttribute {
                 heag.theta = M_PI_2 - atan(ct);
 
                 const size_t ai_n = (ai + 1) % 3;
-                const sizs_t ai_p = (ai + 2) % 3;
+                const size_t ai_p = (ai + 2) % 3;
                 auto& heag_n = mesh.getHalfEdgeAttribute(hei[ai_n]).gHalfEdge;
                 auto& heag_p = mesh.getHalfEdgeAttribute(hei[ai_p]).gHalfEdge;
 
@@ -415,7 +415,7 @@ struct MembraneMeshAttribute {
 
             // Calculate derivative of k1 and curvature
             // Using another loop because k1 is needed for curvature derivative
-            std::array<Vec, 3> dK1 {}; // On center vertex, indexed by [k1x, k1y, k1z]
+            std::array<Vec3, 3> dK1 {}; // On center vertex, indexed by [k1x, k1y, k1z]
             mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, vi, &vag, &k1, &dK1, dCurvFac1, dCurvFac2](size_t hei) {
                 const size_t hei_o = mesh.opposite(hei);
                 const size_t vn = mesh.target(hei_o);
@@ -445,7 +445,7 @@ struct MembraneMeshAttribute {
                 dK1[2][2] += sumCotTheta; // dK1 += I * sumCotTheta, where I is gradient of diff (identity)
 
                 // Calculate dK1 and derivative of curvature on neighbor vertex vn
-                std::array<Vec, 3> dK1_n {};
+                std::array<Vec3, 3> dK1_n {};
                 // As direct target
                 dK1_n[0] = sumDCotThetaNeighbor[0] * diff;
                 dK1_n[1] = sumDCotThetaNeighbor[1] * diff;
@@ -632,6 +632,8 @@ private:
     int _id; // Unique integer id of this membrane
 
 public:
+    using coordinate_type = MembraneMeshAttribute::coordinate_type;
+
     // Constructors
     // This constructor creates a membrane according to vertex and neighbor data
     Membrane(
@@ -693,7 +695,7 @@ public:
      * Use signed distance or other methods to judge whether a point is inside membrane.
      * Throws an exception if the membrane is not closed.
      */
-    bool contains(const mathfunc::Vec3& point) const {
+    bool contains(const mathfunc::Vec3& p) const {
         if(!isClosed()) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
         return MembraneMeshAttribute::contains(_mesh, p);
     }

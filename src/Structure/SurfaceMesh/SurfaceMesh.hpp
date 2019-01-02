@@ -41,8 +41,8 @@ private:
 
 public:
 
-    using iterator       = std::vector< T >::iterator;
-    using const_iterator = std::vector< T >::const_iterator;
+    using iterator       = typename std::vector< T >::iterator;
+    using const_iterator = typename std::vector< T >::const_iterator;
     iterator       begin() noexcept       { return _value.begin(); }
     const_iterator begin() const noexcept { return _value.begin(); }
     iterator       end() noexcept       { return _value.end(); }
@@ -188,7 +188,7 @@ protected:
         Attribute::removeHalfEdge(_meta, *this, index);
         auto moveIndex = _halfEdges.erase(index);
         if(moveIndex.valid) {
-            if(hasOpposite(index)) _edges[opposite(index)].oppositeHalfEdgeIndex = index;
+            if(hasOpposite(index)) _halfEdges[opposite(index)].oppositeHalfEdgeIndex = index;
             if(_triangles[triangle(index)].halfEdgeIndex == moveIndex.from)
                 _triangles[triangle(index)].halfEdgeIndex = index;
             if(_vertices[target(index)].halfEdgeIndex == moveIndex.from)
@@ -359,7 +359,7 @@ public:
 
     // Mesh neighbor iterators
     template< typename Func >
-    void forEachHalfEdgeTargetingVertex(size_t vi, Func&& func) {
+    void forEachHalfEdgeTargetingVertex(size_t vi, Func&& func) const {
         size_t hei0 = _vertices[vi].halfEdgeIndex;
         size_t hei = hei0;
         do {
@@ -369,7 +369,7 @@ public:
         } while(hei != hei0);
     }
     template< typename Func >
-    void forEachHalfEdgeInTriangle(size_t ti, Func&& func) {
+    void forEachHalfEdgeInTriangle(size_t ti, Func&& func) const {
         size_t hei0 = _triangles[ti].halfEdgeIndex;
         size_t hei = hei0;
         do {
@@ -378,7 +378,7 @@ public:
         } while(hei != hei0);
     }
     template< typename Func >
-    void forEachHalfEdgeInEdge(size_t ei, Func&& func) {
+    void forEachHalfEdgeInEdge(size_t ei, Func&& func) const {
         size_t hei0 = _edges[ei].halfEdgeIndex;
         func(hei0);
         if(hasOpposite(hei0)) func(opposite(hei0));
@@ -591,10 +591,10 @@ public:
 
         Base::init(numVertices, triangleVertexIndexList);
 
-        for(size_t i = 0; i < numVertices; ++i) Attribute::newVertex(_meta, *this, i, vertexCoordinateList[i], GeometricVertexInit{});
-        for(size_t i = 0; i < _edges.size(); ++i) Attribute::newEdge(_meta, *this, i, GeometricEdgeInit{});
-        for(size_t i = 0; i < _halfEdges.size(); ++i) Attribute::newHalfEdge(_meta, *this, i, GeometricHalfEdgeInit{});
-        for(size_t i = 0; i < _triangles.size(); ++i) Attribute::newTriangle(_meta, *this, i, GeometricTriangleInit{});
+        for(size_t i = 0; i < numVertices; ++i) GeometricAttribute::newVertex(_meta, *this, i, vertexCoordinateList[i], GeometricVertexInit{});
+        for(size_t i = 0; i < _edges.size(); ++i) GeometricAttribute::newEdge(_meta, *this, i, GeometricEdgeInit{});
+        for(size_t i = 0; i < _halfEdges.size(); ++i) GeometricAttribute::newHalfEdge(_meta, *this, i, GeometricHalfEdgeInit{});
+        for(size_t i = 0; i < _triangles.size(); ++i) GeometricAttribute::newTriangle(_meta, *this, i, GeometricTriangleInit{});
 
     }
 

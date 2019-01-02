@@ -15,7 +15,7 @@ Vertex::Vertex(vector<double> v, Composite* parent, size_t topoIndex):
 }
 
 size_t Vertex::getNeighborNum()const {
-    const auto& mesh = static_cast<Membrane*>(_parent)->getMesh();
+    const auto& mesh = static_cast<const Membrane*>(getParent())->getMesh();
     size_t num = 0;
     mesh.forEachHalfEdgeTargetingVertex(_topoIndex, [&num](size_t hei) { ++num; });
     return num;

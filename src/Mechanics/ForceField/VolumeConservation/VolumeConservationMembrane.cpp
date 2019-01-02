@@ -24,7 +24,7 @@ double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEn
 
         double volume = 0.0;
         for(const auto& t : mesh.getTriangles())
-            volume += stretched ? t.attr.gTriagnle.sConeVolume : t.attr.gTriangle.coneVolume;
+            volume += stretched ? t.attr.gTriangle.sConeVolume : t.attr.gTriangle.coneVolume;
 
         U_i += _FFType.energy(volume, kBulk, eqVolume);
 
@@ -44,7 +44,9 @@ template<>
 void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForces() {
     
     for (auto m: Membrane::getMembranes()) {
-    
+
+        const auto& mesh = m->getMesh();
+
         double kBulk = SysParams::Mechanics().BulkModulus;
 
         double eqVolume = m->getMMembrane()->getEqVolume();
@@ -66,7 +68,9 @@ template<>
 void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForcesAux() {
     
     for (auto m: Membrane::getMembranes()) {
-    
+
+        const auto& mesh = m->getMesh();
+
         double kBulk = SysParams::Mechanics().BulkModulus;
 
         double eqVolume = m->getMMembrane()->getEqVolume();

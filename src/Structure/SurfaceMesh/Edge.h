@@ -42,7 +42,7 @@ private:
     Compartment* _compartment = nullptr; // The compartment containing this edge
 
 public:
-    Edge(Composite *parent, topoIndex);
+    Edge(Composite *parent, size_t topoIndex);
 
     void setTopoIndex(size_t index) { _topoIndex = index; }
 

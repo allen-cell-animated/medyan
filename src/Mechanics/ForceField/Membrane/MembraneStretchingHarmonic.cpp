@@ -28,9 +28,9 @@ void MembraneStretchingHarmonic::forces(
     for(size_t i = 0; i < 3; ++i) v->force[i] += deltaF[i]; // v->force += deltaF;
 }
 
-void MembraneStretchingHarmonic::forcesAux(const std::array<Vertex*, 3>& v,
-                                           double area, const std::array<std::array<double, 3>, 3>& dArea,
-                                           double kElastic, double eqArea) {
+void MembraneStretchingHarmonic::forcesAux(
+    Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
+) {
     // Same as force calculation
 
     const auto deltaF = (- kElastic * (area - eqArea) / eqArea) * dArea;

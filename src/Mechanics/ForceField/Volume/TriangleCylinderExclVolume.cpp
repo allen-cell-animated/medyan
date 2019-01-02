@@ -151,9 +151,9 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);
         const size_t hei2 = mesh.next(hei1);
-        const Vertex* v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
-        const Vertex* v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
-        const Vertex* v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
+        Vertex* const v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
+        Vertex* const v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
+        Vertex* const v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
 
         const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
         double kExVol = t->getMTriangle()->getExVolConst();

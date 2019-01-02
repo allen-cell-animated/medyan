@@ -9,7 +9,7 @@ double VolumeConservationMembraneHarmonic::energy(double volume, double kBulk, d
 
 void VolumeConservationMembraneHarmonic::forces(
     Vertex* v,
-    double volume, const Vec3& dVolume,
+    double volume, const mathfunc::Vec3& dVolume,
     double kBulk, double eqVolume
 ) {
     // F_i = -grad_i U = -k / V_0 * (V - V_0) * grad_i V
@@ -23,7 +23,7 @@ void VolumeConservationMembraneHarmonic::forces(
 
 void VolumeConservationMembraneHarmonic::forcesAux(
     Vertex* v,
-    double volume, const Vec3& dVolume,
+    double volume, const mathfunc::Vec3& dVolume,
     double kBulk, double eqVolume
 ) {
     // Same as force calculation

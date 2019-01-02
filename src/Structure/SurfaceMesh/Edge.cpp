@@ -28,7 +28,7 @@ Edge::Edge(Composite* parent, size_t topoIndex):
 }
 
 void Edge::updateCoordinate() {
-    const auto& mesh = static_cast<Membrane*>getParent()->getMesh();
+    const auto& mesh = static_cast<Membrane*>(getParent())->getMesh();
     const size_t hei0 = mesh.getEdges()[_topoIndex].halfEdgeIndex;
     const size_t hei1 = mesh.opposite(hei0);
     const size_t v0 = mesh.target(hei0);

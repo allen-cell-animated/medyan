@@ -23,7 +23,7 @@ using namespace mathfunc;
 #include "ChemNRMImpl.h"
 
 
-
+#include "Structure/SurfaceMesh/Membrane.hpp"
 #include "GTriangle.h"
 #include "Triangle.h"
 
@@ -62,25 +62,28 @@ void Compartment::getSlicedVolumeArea() {
     size_t numTriangle = _triangles.size();
     if(numTriangle) {
         double sumArea = 0.0;
-        array<double, 3> sumNormal {};
-        array<double, 3> sumPos {};
+        Vec3 sumNormal {};
+        Vec3 sumPos {};
         for(Triangle* t: _triangles) {
-            double area = t->getGTriangle()->getArea();
-            vectorIncrease(sumNormal, vectorMultiply(t->getGTriangle()->getUnitNormal(), area));
-            vectorIncrease(sumPos, vectorMultiply(t->coordinate, area));
+            const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+            const size_t ti = t->getTopoIndex();
+            const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+            const auto& unitNormal = mesh.getTriangleAttribute(ti).gTriangle.unitNormal;
+            sumNormal += unitNormal * area;
+            sumPos += t->coordinate * area;
             sumArea += area;
         }
         double oneOverSumArea = 1.0 / sumArea;
-        vectorExpand(sumNormal, oneOverSumArea);
-        vectorExpand(sumPos, oneOverSumArea);
+        normalize(sumNormal);
+        sumPos *= oneOverSumArea;
 
         PlaneCuboidSlicingResult res = PlaneCuboidSlicer() (
             sumPos, sumNormal,
-            {{
+            {
                 _coords[0] - SysParams::Geometry().compartmentSizeX * 0.5,
                 _coords[1] - SysParams::Geometry().compartmentSizeY * 0.5,
                 _coords[2] - SysParams::Geometry().compartmentSizeZ * 0.5
-            }},
+            },
             {{
                 SysParams::Geometry().compartmentSizeX,
                 SysParams::Geometry().compartmentSizeY,
