@@ -7,6 +7,7 @@
 #include <iterator>
 #include <set>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 /******************************************************************************
@@ -255,72 +256,99 @@ public:
         _clear();
     }
 
-    // Initialize the meshwork using triangle vertex index lists. Throws on error.
-    void init(
-        size_t numVertices,
-        const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
-    ) {
-        _vertices.getValue().resize(numVertices);
-        const size_t numTriangles = triangleVertexIndexList.size();
-        _triangles.getValue().resize(numTriangles);
-        const size_t numHalfEdges = 3 * numTriangles;
-        _halfEdges.getValue().reserve(numHalfEdges);
-        _edges.getValue().reserve(numHalfEdges / 2); // Might be more than this number with borders.
-
-        struct VertexAdditionalInfo {
-            bool hasTargetingHalfEdge = false;
-            std::vector< size_t > leavingHalfEdgeIndices;
+    struct VertexTriangleInitializer {
+        struct Info {
+            size_t numVertices;
+            std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
         };
-        std::vector< VertexAdditionalInfo > vai(numVertices);
 
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
-            const auto& t = triangleVertexIndexList[ti];
-            _triangles[ti].halfEdgeIndex = _halfEdges.size(); // The next inserted halfedge index
-            for(size_t i = 0; i < 3; ++i) {
-                const size_t hei = _halfEdges.insert();
-                HalfEdge& he = _halfEdges[hei];
-                he.hasOpposite = false;
-                he.triangleIndex = ti;
-                he.targetVertexIndex = t[i];
-                he.nextHalfEdgeIndex = (i == 2 ? hei - 2 : hei + 1);
-                he.prevHalfEdgeIndex = (i == 0 ? hei + 2 : hei - 1);
+        void init(
+            SurfaceTriangularMeshBase& mesh,
+            size_t numVertices,
+            const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
+        ) const {
+            mesh._vertices.getValue().resize(numVertices);
+            const size_t numTriangles = triangleVertexIndexList.size();
+            mesh._triangles.getValue().resize(numTriangles);
+            const size_t numHalfEdges = 3 * numTriangles;
+            mesh._halfEdges.getValue().reserve(numHalfEdges);
+            mesh._edges.getValue().reserve(numHalfEdges / 2); // Might be more than this number with borders.
 
-                // Remembering this edge in the vertices.
-                const size_t leftVertexIndex = t[i == 0 ? 2 : i - 1];
-                vai[leftVertexIndex].leavingHalfEdgeIndices.push_back(hei);
-                // Search in the target vertex, whether there's an opposite halfedge leaving
-                const auto findRes = std::find_if(
-                    vai[t[i]].leavingHalfEdgeIndices.begin(),
-                    vai[t[i]].leavingHalfEdgeIndices.end(),
-                    [this, leftVertexIndex](size_t leavingHalfEdgeIndex) {
-                        return leftVertexIndex == _halfEdges[leavingHalfEdgeIndex].targetVertexIndex;
+            struct VertexAdditionalInfo {
+                bool hasTargetingHalfEdge = false;
+                std::vector< size_t > leavingHalfEdgeIndices;
+            };
+            std::vector< VertexAdditionalInfo > vai(numVertices);
+
+            for(size_t ti = 0; ti < numTriangles; ++ti) {
+                const auto& t = triangleVertexIndexList[ti];
+                mesh._triangles[ti].halfEdgeIndex = mesh._halfEdges.size(); // The next inserted halfedge index
+                for(size_t i = 0; i < 3; ++i) {
+                    const size_t hei = mesh._halfEdges.insert();
+                    HalfEdge& he = mesh._halfEdges[hei];
+                    he.hasOpposite = false;
+                    he.triangleIndex = ti;
+                    he.targetVertexIndex = t[i];
+                    he.nextHalfEdgeIndex = (i == 2 ? hei - 2 : hei + 1);
+                    he.prevHalfEdgeIndex = (i == 0 ? hei + 2 : hei - 1);
+
+                    // Remembering this edge in the vertices.
+                    const size_t leftVertexIndex = t[i == 0 ? 2 : i - 1];
+                    vai[leftVertexIndex].leavingHalfEdgeIndices.push_back(hei);
+                    // Search in the target vertex, whether there's an opposite halfedge leaving
+                    const auto findRes = std::find_if(
+                        vai[t[i]].leavingHalfEdgeIndices.begin(),
+                        vai[t[i]].leavingHalfEdgeIndices.end(),
+                        [&mesh, leftVertexIndex](size_t leavingHalfEdgeIndex) {
+                            return leftVertexIndex == mesh._halfEdges[leavingHalfEdgeIndex].targetVertexIndex;
+                        }
+                    );
+                    if(findRes == vai[t[i]].leavingHalfEdgeIndices.end()) {
+                        // opposite not found
+                        mesh._edges[mesh._edges.insert()].halfEdgeIndex = hei;
+                        he.edgeIndex = mesh._edges.size() - 1;
+                    } else {
+                        // opposite found
+                        he.hasOpposite = true;
+                        he.oppositeHalfEdgeIndex = *findRes;
+                        he.edgeIndex = mesh._halfEdges[he.oppositeHalfEdgeIndex].edgeIndex;
+
+                        mesh._halfEdges[he.oppositeHalfEdgeIndex].hasOpposite = true;
+                        mesh._halfEdges[he.oppositeHalfEdgeIndex].oppositeHalfEdgeIndex = hei;
                     }
-                );
-                if(findRes == vai[t[i]].leavingHalfEdgeIndices.end()) {
-                    // opposite not found
-                    _edges[_edges.insert()].halfEdgeIndex = hei;
-                    he.edgeIndex = _edges.size() - 1;
-                } else {
-                    // opposite found
-                    he.hasOpposite = true;
-                    he.oppositeHalfEdgeIndex = *findRes;
-                    he.edgeIndex = _halfEdges[he.oppositeHalfEdgeIndex].edgeIndex;
 
-                    _halfEdges[he.oppositeHalfEdgeIndex].hasOpposite = true;
-                    _halfEdges[he.oppositeHalfEdgeIndex].oppositeHalfEdgeIndex = hei;
-                }
-
-                // Set vertex half edge index
-                if(!vai[t[i]].hasTargetingHalfEdge) {
-                    _vertices[t[i]].halfEdgeIndex = hei;
-                    vai[t[i]].hasTargetingHalfEdge = true;
-                }
-            }
+                    // Set vertex half edge index
+                    if(!vai[t[i]].hasTargetingHalfEdge) {
+                        mesh._vertices[t[i]].halfEdgeIndex = hei;
+                        vai[t[i]].hasTargetingHalfEdge = true;
+                    }
+                } // end loop halfedges
+            } // end loop triangles
         }
 
-        // Attribute initialization will be implemented by descendants
+        Info extract(const SurfaceTriangularMeshBase& mesh) const {
+            Info info;
+            info.numVertices = mesh._vertices.size();
+            const size_t numTriangles = mesh._triangles.size();
+            info.triangleVertexIndexList.resize(numTriangles);
 
-        // Future: topo validation
+            for(size_t ti = 0; ti < numTriangles; ++ti) {
+                size_t i = 0;
+                mesh.forEachHalfEdgeInTriangle(ti, [&i, &info](size_t hei) {
+                    info.triangleVertexIndexList[i++] = mesh.target(hei);
+                });
+            }
+
+            return info;
+        }
+    };
+
+    // Initialize the meshwork using triangle vertex index lists. Throws on error.
+    template< typename Initializer, typename... Args > void init(Args&&... args) {
+        Initializer().init(*this, std::forward<Args>(args)...);
+    }
+    template< typename Initializer > auto extract() const {
+        return Initializer().extract(*this);
     }
 
     bool updateClosedness() {
@@ -499,7 +527,7 @@ public:
     // Edge flip
     struct EdgeFlip {
         static constexpr int deltaNumVertex = 0;
-        void operator()(SurfaceTriangularMeshBase& mesh, size_t edgeIndex) {
+        void operator()(SurfaceTriangularMeshBase& mesh, size_t edgeIndex) const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -537,7 +565,7 @@ public:
     // triangle subdivision, introduces 3 new vertices
     struct TriangleSubdivision {
         static constexpr int deltaNumVertex = 3;
-        void operator()(SurfaceTriangularMeshBase& mesh, size_t triangleIndex) {
+        void operator()(SurfaceTriangularMeshBase& mesh, size_t triangleIndex) const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -561,7 +589,7 @@ public:
 
 };
 
-// Type GeometricAttribute::VertexData must implement getCoordinate() function
+// Type GeometricAttribute::VertexAttribute must implement getCoordinate() function, and define coordinate_type
 template< typename GeometricAttribute > class SurfaceTriangularMesh : public SurfaceTriangularMeshBase< GeometricAttribute > {
 public:
     using Base = SurfaceTriangularMeshBase< GeometricAttribute >;
@@ -582,21 +610,48 @@ public:
     // Constructors
     SurfaceTriangularMesh(const MetaAttribute& meta) : Base(meta) {}
 
-    // Initialize using vertex coordinates and triangle vertex index list
-    void init(
-        const std::vector< coordinate_type >& vertexCoordinateList,
-        const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
-    ) {
-        const size_t numVertices = vertexCoordinateList.size();
+    struct GeometricVertexTriangleInitializer {
+        struct Info {
+            std::vector< coordinate_type >& vertexCoordinateList;
+            std::vector< std::array< size_t, 3 > >& triangleVertexIndexList;
+        };
 
-        Base::init(numVertices, triangleVertexIndexList);
+        void init(
+            SurfaceTriangularMesh& mesh,
+            const std::vector< coordinate_type >& vertexCoordinateList,
+            const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
+        ) const {
+            const size_t numVertices = vertexCoordinateList.size();
+            typename Base::VertexTriangleInitializer().init(
+                mesh,
+                numVertices,
+                triangleVertexIndexList
+            );
 
-        for(size_t i = 0; i < numVertices; ++i) GeometricAttribute::newVertex(_meta, *this, i, vertexCoordinateList[i], GeometricVertexInit{});
-        for(size_t i = 0; i < _edges.size(); ++i) GeometricAttribute::newEdge(_meta, *this, i, GeometricEdgeInit{});
-        for(size_t i = 0; i < _halfEdges.size(); ++i) GeometricAttribute::newHalfEdge(_meta, *this, i, GeometricHalfEdgeInit{});
-        for(size_t i = 0; i < _triangles.size(); ++i) GeometricAttribute::newTriangle(_meta, *this, i, GeometricTriangleInit{});
+            const size_t numEdges = mesh._edges.size();
+            const size_t numHalfEdges = mesh._halfEdges.size();
+            const size_t numTriangles = mesh._triangles.size();
+            for(size_t i = 0; i < numVertices; ++i) GeometricAttribute::newVertex(mesh._meta, mesh, i, vertexCoordinateList[i], GeometricVertexInit{});
+            for(size_t i = 0; i < numEdges; ++i) GeometricAttribute::newEdge(mesh._meta, mesh, i, GeometricEdgeInit{});
+            for(size_t i = 0; i < numHalfEdges; ++i) GeometricAttribute::newHalfEdge(mesh._meta, mesh, i, GeometricHalfEdgeInit{});
+            for(size_t i = 0; i < numTriangles; ++i) GeometricAttribute::newTriangle(mesh._meta, mesh, i, GeometricTriangleInit{});
+        }
 
-    }
+        Info extract(const SurfaceTriangularMesh& mesh) const {
+            Info info;
+
+            auto topoInfo = typename Base::VertexTriangleInitializer().extract(mesh);
+
+            info.vertexCoordinateList.reserve(topoInfo.numVertices);
+            info.triangleVertexIndexList = std::move(topoInfo.triangleVertexIndexList);
+
+            for(size_t vi = 0; vi < topoInfo.numVertices; ++vi) {
+                info.vertexCoordinateList.emplace_back(mesh._vertices[vi].attr.getCoordinate());
+            }
+
+            return info;
+        }
+    };
 
 };
 

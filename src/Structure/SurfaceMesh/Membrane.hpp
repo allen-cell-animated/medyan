@@ -617,10 +617,13 @@ However, the ownership of all elements is in this Membrane class through
 inheriting Composite.
 ******************************************************************************/
 class Membrane: public Composite, public Trackable {
+public:
+    using coordinate_type = MembraneMeshAttribute::coordinate_type;
+    using mesh_type = SurfaceTriangularMesh< MembraneMeshAttribute >;
 
 private:
 
-    SurfaceTriangularMesh< MembraneMeshAttribute > _mesh;
+    mesh_type _mesh;
 
     unique_ptr<MMembrane> _mMembrane; // pointer to mechanical membrane object
 
@@ -632,7 +635,6 @@ private:
     int _id; // Unique integer id of this membrane
 
 public:
-    using coordinate_type = MembraneMeshAttribute::coordinate_type;
 
     // Constructors
     // This constructor creates a membrane according to vertex and neighbor data

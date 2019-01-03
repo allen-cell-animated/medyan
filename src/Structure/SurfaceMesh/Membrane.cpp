@@ -28,7 +28,7 @@ Membrane::Membrane(
     _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
     
     // Build the meshwork using vertex and triangle information
-    _mesh.init(vertexCoordinateList, triangleVertexIndexList);
+    _mesh.init<typename mesh_type::GeometricVertexTriangleInitializer>(vertexCoordinateList, triangleVertexIndexList);
 
     // Update geometry
     updateGeometryValue<false>();
