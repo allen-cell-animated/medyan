@@ -299,28 +299,9 @@ void OutputStructMembrane::getFromSystemWithoutChildren() {
     _id = _membrane->getId();
     _type = _membrane->getType();
 
-    auto& vertices = _membrane->getVertexVector();
-    _numVertices = vertices.size();
-
-    // Store coordinates with neighbor indices
-    _memInfo.reserve(_numVertices);
-    for(size_t idx = 0; idx < _numVertices; ++idx) {
-
-        _memInfo.emplace_back();
-        auto& vtxInfo = _memInfo.back();
-        auto& coord = get<0>(vtxInfo);
-        auto& neighborIndices = get<1>(vtxInfo);
-            
-        coord = vector2Vec<3, double>(vertices[idx]->coordinate);
-        
-        auto& neighbors = vertices[idx]->getNeighborVertices();
-        size_t numNeighbors = neighbors.size();
-        neighborIndices.reserve(numNeighbors);
-
-        for(size_t nIdx = 0; nIdx < numNeighbors; ++nIdx) {
-            neighborIndices.push_back(neighbors[nIdx]->getMembraneVertexIdx());
-        }
-    }
+    _memInfo = _membrane->getMesh().extract< Initializer >();
+    _numVertices = _memInfo.vertexCoordinateList.size();
+    _numTriangles = _memInfo.triangleVertexIndexList.size();
         
 }
 
@@ -333,61 +314,56 @@ void OutputStructMembrane::outputFromStoredWithoutChildren(std::ostream& os) {
     os << name << " "
         << _id << " "
         << _type << " "
-        << _numVertices << std::endl;
+        << _numVertices << ' '
+        << _numTriangles << '\n';
 
-    for(auto& vtxInfo: _memInfo) {
-        
-        // print coordinates
-        for(double value: get<0>(vtxInfo))
-            os << value << " ";
+    // print coordinates
+    for(const auto& it : _memInfo.vertexCoordinateList) {
+        for(double value : it) os << value << ' ';
+        os << '\n';
+    }
 
-        // print neighbor indices
-        for(size_t value: get<1>(vtxInfo))
-            os << value << " ";
-
-        os << std::endl;
-        
+    // print neighbor indices
+    for(const auto& it : _memInfo.triangleVertexIndexList) {
+        for(size_t value : it) os << value << ' ';
+        os << '\n';
     }
 }
 
 void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& iss) {
     iss >> _id
         >> _type
-        >> _numVertices;
+        >> _numVertices
+        >> _numTriangles;
 
-    _memInfo.reserve(_numVertices);
-    for(size_t idx = 0; idx < _numVertices; ++idx) {
+    _memInfo.vertexCoordinateList.reserve(_numVertices);
+    _memInfo.triangleVertexIndexList.reserve(_numTriangles);
+    for(size_t i = 0; i < _numVertices; ++i) {
         std::string nextLine;
         std::getline(is, nextLine);
         std::istringstream newIss(nextLine);
 
-        _memInfo.emplace_back();
-        auto& vtxInfo = _memInfo.back();
-        auto& coord = get<0>(vtxInfo);
-        auto& neighborIndices = get<1>(vtxInfo);
+        _memInfo.vertexCoordinateList.emplace_back(3);
+        auto& coord = _memInfo.vertexCoordinateList.back();
 
         // Record coordinates
         for(double& value: coord)
             newIss >> value;
-        
-        // Record neighbor indices
-        neighborIndices = vector<size_t>(istream_iterator<size_t>(newIss), istream_iterator<size_t>());
+    }
+    for(size_t i = 0; i < _numTriangles; ++i) {
+        std::string nextLine;
+        std::getline(is, nextLine);
+        std::istringstream newIss(nextLine);
 
+        _memInfo.triangleVertexIndexList.emplace_back(3);
+        auto& indices = _memInfo.triangleVertexIndexList.back();
+
+        // Record indices
+        for(size_t& value: indices)
+            newIss >> value;
     }
 }
 
-size_t OutputStructMembrane::getNumEdges()const {
-    if(_membrane) {
-        return _membrane->getEdgeVector().size();
-    } else {
-        size_t numEdges = 0;
-        for(const VertexInfo& v: _memInfo) {
-            numEdges += get<1>(v).size(); // Add number of neighbors
-        }
-        numEdges /= 2;
-        return numEdges;
-    }
-}
 //@}
 
 /******************************************************************************

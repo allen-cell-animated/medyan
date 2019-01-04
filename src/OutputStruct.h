@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "MathFunctions.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 ///FORWARD DECLARATIONS
 class BranchingPoint;
@@ -187,8 +188,8 @@ private:
 
 class OutputStructMembrane: public OutputStruct {
 public:
-    using VertexInfo = std::tuple<std::array<double, 3>, std::vector<size_t>>;
-    using MembraneInfo = std::vector<VertexInfo>;
+    using Initializer = Membrane::mesh_type::GeometricVertexTriangleInitializer;
+    using MembraneInfo = Initializer::Info;
 
     static constexpr char name[] = "MEMBRANE";
 
@@ -199,8 +200,7 @@ public:
     virtual void outputFromStoredWithoutChildren(std::ostream& os)override;
     virtual void getFromOutput(std::istream& is, std::istringstream& iss)override;
 
-    size_t getNumEdges()const;
-    size_t getNumVertices()const { return static_cast<size_t>(_numVertices); }
+    size_t getNumVertices()const { return _numVertices; }
     const MembraneInfo& getMembraneInfo()const { return _memInfo; }
 
     Membrane* getMembrane()const { return _membrane; }
@@ -210,7 +210,8 @@ private:
     /// Data
     int _id;
     int _type;
-    int _numVertices;
+    size_t _numVertices;
+    size_t _numTriangles;
 
     MembraneInfo _memInfo;
 
