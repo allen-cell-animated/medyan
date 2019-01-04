@@ -24,6 +24,8 @@
 
 #include "common.h"
 #include "utility.h"
+#include "structure/Bead.h"
+#include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 
 /// Struct to hold output types;
 struct OutputTypes {
@@ -423,16 +425,16 @@ class MembraneParser : public Parser {
     
 public:
     MembraneParser(string inputFileName) : Parser(inputFileName) {}
-    ~MembraneParser() {}
-    
-    typedef array<double, 3>                  positionInfo;
-    typedef vector<size_t>                    neighborInfo;
-    typedef tuple<positionInfo, neighborInfo> vertexInfo;
-    typedef vector<vertexInfo>                membraneInfo;
+
+    struct MembraneInfo {
+        using coordinate_type = decltype(Bead::coordinate);
+        std::vector< coordinate_type > vertexCoordinateList;
+        std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
+    };
 
     /// Reads membrane vertex input file.
     /// @note - Does not check for coordinate correctness.
-    vector<membraneInfo> readMembranes();
+    vector<MembraneInfo> readMembranes();
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.

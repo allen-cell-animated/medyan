@@ -676,7 +676,7 @@ public:
     /**************************************************************************
     Geometric
     **************************************************************************/
-    template< bool stretched > void updateGeometryValue() {
+    template< bool stretched = false > void updateGeometryValue() {
         MembraneMeshAttribute::updateGeometryValue<stretched>(_mesh);
     }
     void updateGeometryValueWithDerivative() {

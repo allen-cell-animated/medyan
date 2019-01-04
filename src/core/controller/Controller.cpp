@@ -271,10 +271,10 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     
     cout << "---" << endl;
     cout << "Initializing membranes...";
-    
+
+    std::vector< MembraneParser::MembraneInfo > membraneData;
     if(MemSetup.inputFile != "") {
-        MembraneParser memp(_inputDirectory + MemSetup.inputFile);
-        membraneData = memp.readMembranes();
+        membraneData = MembraneParser(_inputDirectory + MemSetup.inputFile).readMembranes();
     }
     // Membrane auto initializer is currently not provided,
     // which means that the input file is the only source of membrane information.
@@ -289,10 +289,15 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             exit(EXIT_FAILURE);
         }
 
-        Membrane* newMembrane = _subSystem->addTrackable<Membrane>(_subSystem, type, it);
+        Membrane* newMembrane = _subSystem->addTrackable<Membrane>(
+            _subSystem,
+            type,
+            it.vertexCoordinateList,
+            it.triangleVertexIndexList
+        );
 
         // Update membrane geometry
-        newMembrane->updateGeometry(true);
+        newMembrane->updateGeometryValue();
 
         // Add to the global membrane hierarchy
         MembraneHierarchy::addMembrane(newMembrane);

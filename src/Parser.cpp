@@ -1895,11 +1895,13 @@ tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<strin
     return returnVector;
 }
 
-vector<MembraneParser::membraneInfo> MembraneParser::readMembranes() {
+vector<MembraneParser::MembraneInfo> MembraneParser::readMembranes() {
 
-    vector<membraneInfo> res;
+    vector<MembraneInfo> res;
     
     bool wasEmpty = true;
+    int stage; // 0: init, number of vertices; 1: vertex coordinate; 2: triangle vertex index
+    size_t numVertices;
     
     string line;
     while(getline(_inputFile, line)) {
@@ -1907,45 +1909,55 @@ vector<MembraneParser::membraneInfo> MembraneParser::readMembranes() {
         bool isEmpty = (line.empty() || line.find("#") != string::npos); // empty line or line with '#'
 
         if(wasEmpty && !isEmpty) { // New membrane
-            res.emplace_back(membraneInfo());
+            res.emplace_back();
+            stage = 0;
         }
 
         wasEmpty = isEmpty;
         if(isEmpty) continue;
-
-        if(res.empty()) {
-            cout << "This line should never be executed. Something is wrong when reading membrane information. "
-                 << "Exiting." <<endl;
-            exit(EXIT_FAILURE);
-        }
 
         auto& activeMem = res.back();
 
         vector<string> lineVector = split<string>(line);
         size_t lineVectorSize = lineVector.size();
 
-        if(lineVectorSize < 3) {
-            cout << "Error occured when reading membrane files. "
-                 << "Each vertex should have 3 doubles for position. "
-                 << "Exiting." << endl;
-            exit(EXIT_FAILURE);
-        }
-        else {
-            activeMem.emplace_back(vertexInfo());
-            auto& activeVertex = activeMem.back();
-            auto& activePosition = get<0>(activeVertex);
-            auto& activeNeighbor = get<1>(activeVertex);
+        switch(stage) {
+        case 0: // init, number of vertices
+            if(lineVectorSize != 1) cout << "First line of membrane should be number of vertices." << endl;
+            numVertices = atoi(lineVector[0].c_str());
+            activeMem.vertexCoordinateList.reserve(numVertices);
+            stage = 1;
+            break;
+        case 1: // vertex coordinate
+            {
+                if(lineVectorSize != 3) {
+                    cout << "Each vertex should have 3 coordinates" << endl;
+                }
 
-            // Parse coordinate information
-            for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-                activePosition[coordIdx] = atof(lineVector[coordIdx].c_str());
+                activeMem.vertexCoordinateList.emplace_back(3); // coordinate_type is vector<double>
+                auto& activeCoord = activeMem.vertexCoordinateList.back();
+
+                // Parse coordinate information
+                for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
+                    activeCoord[coordIdx] = atof(lineVector[coordIdx].c_str());
+                }
             }
 
-            // Parse neighbor indices
-            activeNeighbor.reserve(lineVectorSize - 3);
-            for(size_t nIdx = 0; nIdx < lineVectorSize - 3; ++nIdx) {
-                activeNeighbor.push_back((size_t)atoi(lineVector[nIdx + 3].c_str()));
+            if(activeMem.vertexCoordinateList.size() == numVertices) stage = 2;
+            break;
+        case 2: // triangle vertex indices
+            {
+                if(lineVectorSize != 3) {
+                    cout << "Each triangle should have 3 indices" << endl;
+                }
+
+                activeMem.triangleVertexIndexList.emplace_back();
+                auto& activeTriangle = activeMem.triangleVertexIndexList.back();
+
+                for(size_t i = 0; i < 3; ++i)
+                    activeTriangle[i] = atoi(lineVector[i].c_str());
             }
+            break;
         }
     }
 

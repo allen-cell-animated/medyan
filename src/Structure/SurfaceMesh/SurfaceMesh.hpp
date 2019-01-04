@@ -612,8 +612,8 @@ public:
 
     struct GeometricVertexTriangleInitializer {
         struct Info {
-            std::vector< coordinate_type >& vertexCoordinateList;
-            std::vector< std::array< size_t, 3 > >& triangleVertexIndexList;
+            std::vector< coordinate_type > vertexCoordinateList;
+            std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
         };
 
         void init(
