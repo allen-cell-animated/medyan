@@ -21,6 +21,7 @@
 #include <vector>
 #include "dist_driver.h"
 #include "dist_coords.h"
+#include "Cylinder.h"
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
 #ifdef CUDAACCL_NL
@@ -429,7 +430,143 @@ void SubSystem::updateBindingManagers() {
     for(auto C : _compartmentGrid->getCompartments()) {
         C->SIMDcoordinates();
     }
+//test
+// Loop through compartments
+// Loop through neighbors
+// Call find_distances
+
+    cout << "Number of binding sites "<<endl;
+    for(auto C : _compartmentGrid->getCompartments()) {
+        cout << C->bscoords.size()<<" ";
+    }
+    cout<<endl;
+    //@{ BEGINS
+    uint N1, N2, N;
+    N = 6000;
+    short _filamentType = 0;
+    dist::Coords bscoord1, bscoord2;
+    vector<double> x1, x2, y1, y2, z1, z2;
+    vector<int> idx1, idx2;
+    dist::dOut<2U> bspairsoutX;
+    bspairsoutX.init_dout(N,{30.0f,40.0f,175.0f,225.0f});
+    dist::tag_simd<dist::simd_no,   float>   t_serial;
+    dist::tag_simd<dist::simd_avx,  float>   t_avx;
+    // Code strategy 2
+    cout<< " Address of bscoord "<<&bscoord1<<endl;
+    for(auto C : _compartmentGrid->getCompartments()) {
+        auto cyls1 = C->getCylinders();
+        N1 = 4 * cyls1.size();
+        x1.resize(N1);
+        y1.resize(N1);
+        z1.resize(N1);
+        idx1.resize(N1);
+        int i = 0;
+        for(auto c:cyls1){
+            auto fcoord = c->getFirstBead()->coordinate;
+            auto scoord = c->getSecondBead()->coordinate;
+            for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
+                auto coord = midPointCoordinate(fcoord, scoord, mp);
+                x1[i] = coord[0];
+                y1[i] = coord[1];
+                z1[i] = coord[2];
+                idx1[i] = i;
+                i++;
+            }
+        }
+        bscoord1.init_coords(x1, y1, z1, idx1);
+        for(auto nC : C->getenclosingNeighbours()){
+            if(true){
+                //get Coords
+                auto cyls2 = nC->getCylinders();
+                N2 = 4 * cyls2.size();
+                x2.resize(N2);
+                y2.resize(N2);
+                z2.resize(N2);
+                idx2.resize(N2);
+                i = 0;
+                for(auto c:cyls2){
+                    auto fcoord = c->getFirstBead()->coordinate;
+                    auto scoord = c->getSecondBead()->coordinate;
+                    for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                        it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                        auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto coord = midPointCoordinate(fcoord, scoord, mp);
+                        x2[i] = coord[0];
+                        y2[i] = coord[1];
+                        z2[i] = coord[2];
+                        idx2[i] = i;
+                        i++;
+                    }
+                }
+                bscoord2.init_coords(x2, y2, z2, idx2);
+                std::cout << "Cmp IDs " << C->getID() << " " << nC->getID() << endl;
+                std::cout << bscoord1.x.size() << " " << bscoord2.x.size() << endl;
+                bspairsoutX.reset_counters();
+                dist::find_distances(bspairsoutX, bscoord1, bscoord2, t_avx);
+                std::cout << C->bscoords.x.size() << " " << nC->bscoords.x.size() << endl;
+//                report_contact_stats(bspairsoutX);
+                std::cout << "**********************" << endl;
+            }
+        }
+    }
+    //@} ENDS
+    //@{ Code strategy 1
+    vector<dist::Coords> veccoord; // vector storing Coord structs corresponding to each
+    // compartment
+    veccoord.resize(_compartmentGrid->getCompartments().size());
+    for(auto C : _compartmentGrid->getCompartments()) {
+        auto cyls1 = C->getCylinders();
+        N1 = 4 * cyls1.size();// 4 binding sites per cylinder
+        x1.resize(N1);
+        y1.resize(N1);
+        z1.resize(N1);
+        idx1.resize(N1);
+        int i = 0;
+        for(auto c:cyls1){
+            auto fcoord = c->getFirstBead()->coordinate;
+            auto scoord = c->getSecondBead()->coordinate;
+            //Loop through binding sites in each cylinder
+            for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
+                //Find coordinate of binding site
+                auto coord = midPointCoordinate(fcoord, scoord, mp);
+                x1[i] = coord[0];
+                y1[i] = coord[1];
+                z1[i] = coord[2];
+                idx1[i] = i;// dummy ID temporarily alloted for testing purposes
+                i++;
+            }
+        }
+        //initialize
+        veccoord[C->getID()].init_coords(x1, y1, z1, idx1);
+//        cout<< C->getID()<<" ";
+    }
+//    cout<<endl;
+    cout<< " Address of veccoord "<<&veccoord[0]<<endl;
+    // Calculate pair-wise "contacts" that obey distance bounds.
+    //Loop through Compartments
+    for(auto C : _compartmentGrid->getCompartments()) {
+        //Loop through neighbors that will result in unique pair-wise search of the
+        // compartments.
+        for(auto nC : C->getenclosingNeighbours()){
+            std::cout << "Cmp IDs " << C->getID() << " " << nC->getID() << endl;
+            std::cout<<"binding sites "<<veccoord[C->getID()].size()<<" "
+            <<veccoord[nC->getID()].size()<<endl;
+            //Call SIMD function
+            dist::find_distances(bspairsoutX, veccoord[C->getID()], veccoord[nC->getID()
+            ], t_avx)
+            //reset counters
+            bspairsoutX.reset_counters();
+//            dist::find_distances(bspairsoutX, C->bscoords, nC->bscoords, t_avx);
+//            bspairsoutX.reset_counters();
+        }
+    }
+    //@}
 #endif
+
     for(auto C : _compartmentGrid->getCompartments()) {
 
 #ifdef HYBRID_NLSTENCILLIST
