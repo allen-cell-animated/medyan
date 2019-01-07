@@ -263,6 +263,16 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         chain = 'E';
         atomCount = 0;
         resSeq = 0;
+
+
+        // Generate bonds. Currently using only the topology at the first frame.
+        if(idx == 0) {
+            size_t numBonds = 0;
+            for(const auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumTriangles() * 3 / 2;
+            psfGen.genNbond(numBonds);
+            psfGen.genBondStart();
+        }
+
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
             /*
             bool buildMembrane = !eachMembrane.getMembrane();
@@ -294,12 +304,11 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
             size_t atomIdSoFar = atomId;
 
-            for(auto& vInfo: eachMembrane.getMembraneInfo()) {
+            for(const auto& v: eachMembrane.getMembraneInfo().attributeInitializerInfo.vertexCoordinateList) {
                 ++atomSerial;
                 ++atomId;
                 ++atomCount;
                 ++resSeq;
-                auto& v = get<0>(vInfo);
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     v[0], v[1], v[2]
@@ -310,29 +319,30 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             }
             ++resSeq;
 
-            // Generate bonds. Currently using only the topology at the first frame.
+            // Assuming no holes on the membrane
             if(idx == 0) {
-                size_t numBonds = 0;
-                for(auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumEdges();
-                psfGen.genNbond(numBonds);
-                psfGen.genBondStart();
-
-                size_t numVertices = eachMembrane.getMembraneInfo().size();
-                for(size_t vIdx = 0; vIdx < numVertices; ++vIdx) {
-                    for(auto eachNeighbor: get<1>(eachMembrane.getMembraneInfo()[vIdx])) {
-                        if(vIdx < eachNeighbor) {
+                const auto& tlist = eachMembrane.getMembraneInfo().triangleVertexIndexList;
+                for(const auto& t : tlist) {
+                    for(size_t i = 0; i < 3; ++i) {
+                        size_t i_next = (i+1) % 3;
+                        if(t[i] < t[i_next]) {
                             psfGen.genBond(
-                                atomIdSoFar + vIdx + 1,
-                                atomIdSoFar + eachNeighbor + 1
+                                atomIdSoFar + t[i] + 1,
+                                atomIdSoFar + t[i_next] + 1
                             );
                         }
                     }
                 }
-
-                psfGen.genBondEnd();
-                LOG(INFO) << "Bond info generated.";
             }
+
         }
+
+        // Finish generating bond
+        if(idx == 0) {
+            psfGen.genBondEnd();
+            LOG(INFO) << "Bond info generated.";
+        }
+
         while(atomCount < maxBead.membrane) {
             ++atomSerial;
             ++atomId;
