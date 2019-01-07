@@ -615,30 +615,31 @@ struct CaMKIIBindingCallback {
         auto camkiiPosDir = camkiiProjection(n, p, l, s, t);
         auto bd = get<0>(camkiiPosDir); auto bp = get<1>(camkiiPosDir);
 
-        //create a new filament
-        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
-
-        //mark first cylinder
-        Cylinder* c = f->getCylinderVector().front();
-        c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
-
-        //create new camkii
-            CMonomer* x=c->getCCylinder()->getCMonomer(0);
-            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                            }
-            //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-        vector<Cylinder*> cy{c1,c};
+//        //create a new filament
+//        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
+//
+//        //mark first cylinder
+//        Cylinder* c = f->getCylinderVector().front();
+//        c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+//
+//        //create new camkii
+//            CMonomer* x=c->getCCylinder()->getCMonomer(0);
+//            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+//                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
+//                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+//                            }
+//            //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+//        vector<Cylinder*> cy{c1,c};
             
-        b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
+        	b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
 
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+                auto xx =c1->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+                auto yy =c1->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
+                auto zz =c1->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+
                 //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
             }
             //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
@@ -655,8 +656,8 @@ struct CaMKIIBindingCallback {
                     c=get<0>(get<1>(T));
                     check = true;
                     break;
-                }}
-            if(check){
+                }
+            } if(check) {
                 auto cyl = c->getCylinder();
                 //std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
             //std::cout<<c->getCylinder()->getID()<<endl;
