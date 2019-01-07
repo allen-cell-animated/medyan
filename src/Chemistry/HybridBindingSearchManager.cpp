@@ -331,7 +331,7 @@ void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
 }
 void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
 #ifdef SIMDBINDINGSEARCH
-    int i = 0;
+    /*int i = 0;
     dist::dOut<2U> bspairsoutS, bspairsoutX;
 //    uint N = max({_compartment->bscoords.size(),ncmp->bscoords.size()});
     uint N = 6000;
@@ -340,14 +340,14 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
     auto ncmp = _compartment->getenclosingNeighbours()[0];
     dist::tag_simd<dist::simd_no,   float>   t_serial;
     dist::tag_simd<dist::simd_avx,  float>   t_avx;
-/*    for(int count = 0; count < 10; count++) {
+*//*    for(int count = 0; count < 10; count++) {
         bspairsoutX.reset_counters();
         if (_compartment->bscoords.size() > ncmp->bscoords.size()) {
             dist::find_distances(bspairsoutX, _compartment->bscoords, ncmp->bscoords,
                                  t_avx);
             report_contact_stats(bspairsoutX);
         }
-    }*/
+    }*//*
     //for(auto ncmp: _compartment->getenclosingNeighbours()){
 
         std::cout<<++i<<" Cmp IDs "<<_compartment->getID()<<" "<<ncmp->getID()<<endl;
@@ -364,19 +364,19 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencil() {
 //                                 t_avx);
 //            report_contact_stats(bspairsoutX);
 //        }
-/*        else {
-*//*            dist::find_distances(bspairsoutS, ncmp->bscoords, _compartment->bscoords,
+*//*        else {
+*//**//*            dist::find_distances(bspairsoutS, ncmp->bscoords, _compartment->bscoords,
                     t_serial);
-            report_contact_stats(bspairsoutS);*//*
+            report_contact_stats(bspairsoutS);*//**//*
             std::cout<<"**********************"<<endl;
             dist::find_distances(bspairsoutX, ncmp->bscoords, _compartment->bscoords,
                     t_avx);
             report_contact_stats(bspairsoutX);
-        }*/
-        /*bspairsoutX.reset_counters();
+        }*//*
+        *//*bspairsoutX.reset_counters();
         dist::find_distances(bspairsoutX, _compartment->bscoords, t_avx);
-        report_contact_stats(bspairsoutX);*/
-    //}
+        report_contact_stats(bspairsoutX);*//*
+    //}*/
 #else
     int counter1, counter2, counter3, counter4, counter5, counter6, counter7, counter8,
             counter9, counter10;

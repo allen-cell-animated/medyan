@@ -14,25 +14,27 @@
 ##################################################
 
 TESTS	:= $(shell find ./TESTS -name 'test_*')
-SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*')
+SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_module/*')
+SOURCES_CPP += ./dist_module/dist_coords.cpp ./dist_module/dist_mod_vars.cpp ./dist_module/dist_bench.cpp ./dist_module/dist_test.cpp ./dist_module/dist_example.cpp
 SOURCES_CU  := $(shell find . -name '*.cu'  ! -path './TESTS/*')
 SOURCES = $(SOURCES_CPP) $(SOURCES_CU)
-HEADERS := $(shell find . -name '*.h')
+HEADERS := $(shell find . -name '*.h' ! -path './dist_module/*')
+HEADERS += ./dist_module/umesimd/UMESimd.h
 
 OBJECTS_CPP := $(SOURCES_CPP:.cpp=.o)
 OBJECTS_CU  := $(SOURCES_CU:.cu=.o)
 OBJECTS = $(OBJECTS_CPP) $(OBJECTS_CU)
 
 # Compiler and linker choice
-CXX = g++ -std=c++11
+CXX = g++ -std=c++14
 NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
+FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
 
 # Compiler flags
-INCLUDES = -I/usr/local/include -I /a/fs-3/export/home/deepthought2/achansek/boost_1_61_0 \
+INCLUDES = -I./dist_module -I./dist_module/umesimd/ -I/usr/local/include \
 -I./ -IStructure -IStructure/Special      \
 -IStructure/SurfaceMesh                   \
 -IChemistry                               \
@@ -57,7 +59,7 @@ CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 -lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linker flags
-LDLIBS = -L/usr/local/lib/ -lboost_system  -L/homes/achansek/boost/boost_1_58_0/boost_files/lib/
+LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_module/umesimd -static-libstdc++ -pthread 
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
 LDFLAGS_CXX = $(FAST_CXX) 
 
@@ -81,6 +83,7 @@ CPPFLAGS += -DSERIAL
 #CPPFLAGS += -DNLORIGINAL
 CPPFLAGS += -DNLSTENCILLIST
 CPPFLAGS += -DHYBRID_NLSTENCILLIST
+CPPFLAGS += -DSIMDBINDINGSEARCH
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536

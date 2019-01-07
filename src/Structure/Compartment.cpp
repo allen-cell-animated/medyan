@@ -22,6 +22,8 @@
 
 #ifdef SIMDBINDINGSEARCH
 void Compartment::SIMDcoordinates(){
+    //bscoords = new dist::Coords;
+    std::cout<<"Address of Coords "<<&bscoords<<endl;
     //setting size to the number of maximum binding sites per cylinder * number of
     // cylinders in compartment.
     int N = _cylinders.size() * SysParams::Mechanics().maxbindingsitespercylinder;

@@ -435,12 +435,12 @@ void SubSystem::updateBindingManagers() {
 // Loop through neighbors
 // Call find_distances
 
-    cout << "Number of binding sites "<<endl;
+/*    cout << "Number of binding sites "<<endl;
     for(auto C : _compartmentGrid->getCompartments()) {
-        cout << C->bscoords.size()<<" ";
+        cout << C->bscoords->size()<<" ";
     }
-    cout<<endl;
-    //@{ BEGINS
+    cout<<endl;*/
+
     uint N1, N2, N;
     N = 6000;
     short _filamentType = 0;
@@ -451,8 +451,9 @@ void SubSystem::updateBindingManagers() {
     bspairsoutX.init_dout(N,{30.0f,40.0f,175.0f,225.0f});
     dist::tag_simd<dist::simd_no,   float>   t_serial;
     dist::tag_simd<dist::simd_avx,  float>   t_avx;
+    //@{ BEGINS
     // Code strategy 2
-    cout<< " Address of bscoord "<<&bscoord1<<endl;
+    /*cout<< " Address of bscoord "<<&bscoord1<<endl;
     for(auto C : _compartmentGrid->getCompartments()) {
         auto cyls1 = C->getCylinders();
         N1 = 4 * cyls1.size();
@@ -510,7 +511,7 @@ void SubSystem::updateBindingManagers() {
                 std::cout << "**********************" << endl;
             }
         }
-    }
+    }*/
     //@} ENDS
     //@{ Code strategy 1
     vector<dist::Coords> veccoord; // vector storing Coord structs corresponding to each
@@ -544,8 +545,8 @@ void SubSystem::updateBindingManagers() {
         veccoord[C->getID()].init_coords(x1, y1, z1, idx1);
 //        cout<< C->getID()<<" ";
     }
+    cout<<"Veccoord address "<<&veccoord[0]<<endl;
 //    cout<<endl;
-    cout<< " Address of veccoord "<<&veccoord[0]<<endl;
     // Calculate pair-wise "contacts" that obey distance bounds.
     //Loop through Compartments
     for(auto C : _compartmentGrid->getCompartments()) {
@@ -557,11 +558,12 @@ void SubSystem::updateBindingManagers() {
             <<veccoord[nC->getID()].size()<<endl;
             //Call SIMD function
             dist::find_distances(bspairsoutX, veccoord[C->getID()], veccoord[nC->getID()
-            ], t_avx)
+            ], t_avx);
             //reset counters
             bspairsoutX.reset_counters();
-//            dist::find_distances(bspairsoutX, C->bscoords, nC->bscoords, t_avx);
-//            bspairsoutX.reset_counters();
+/*            cout<<(C->bscoords).size()<<endl;
+            dist::find_distances(bspairsoutX, (C->bscoords), (nC->bscoords), t_avx);
+            bspairsoutX.reset_counters();*/
         }
     }
     //@}
