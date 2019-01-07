@@ -12,7 +12,8 @@
 
 /******************************************************************************
 The data structure for an orientable, manifold 2d triangular meshwork in 3d
-space.
+space. The data structure only provides topological relationship, and is
+completed by the Attribute class.
 
 The connectivity is similar to CGAL library, which is halfedge based.
 
@@ -85,7 +86,20 @@ public:
 
 };
 
-template< typename Attribute > class SurfaceTriangularMeshBase {
+// The Attribute class must implement
+//   - Type VertexAttribute
+//     - void setIndex(size_t)
+//   - Type EdgeAttribute
+//     - void setIndex(size_t)
+//   - Type HalfEdgeAttribute
+//     - void setIndex(size_t)
+//   - Type TriangleAttribute
+//     - void setIndex(size_t)
+//   - Type MetaAttribute
+//   - Type AttributeInitializerInfo
+//   - void init(Mesh, const AttributeInitializerInfo&)
+//   - AttributeInitializerInfo extract(Mesh)
+template< typename Attribute > class SurfaceTriangularMesh {
 public:
 
     using VertexAttribute   = typename Attribute::VertexAttribute;
@@ -155,27 +169,27 @@ protected:
 
     template< typename Operation > size_t _newVertex(const Operation& op) {
         size_t index = _vertices.insert();
-        Attribute::newVertex(_meta, *this, index, op);
+        Attribute::newVertex(*this, index, op);
         return index;
     }
     template< typename Operation > size_t _newEdge(const Operation& op) {
         size_t index = _edges.insert();
-        Attribute::newEdge(_meta, *this, index, op);
+        Attribute::newEdge(*this, index, op);
         return index;
     }
     template< typename Operation > size_t _newHalfEdge(const Operation& op) {
         size_t index = _halfEdges.insert();
-        Attribute::newHalfEdge(_meta, *this, index, op);
+        Attribute::newHalfEdge(*this, index, op);
         return index;
     }
     template< typename Operation > size_t _newTriangle(const Operation& op) {
         size_t index = _triangles.insert();
-        Attribute::newTriangle(_meta, *this, index, op);
+        Attribute::newTriangle(*this, index, op);
         return index;
     }
 
     void _removeVertex(size_t index) {
-        Attribute::removeVertex(_meta, *this, index);
+        Attribute::removeVertex(*this, index);
         auto moveIndex = _vertices.erase(index);
         if(moveIndex.valid) {
             // Need to update all stored indices/reference/pointer to the vertex.
@@ -186,7 +200,7 @@ protected:
         }
     }
     void _removeHalfEdge(size_t index) {
-        Attribute::removeHalfEdge(_meta, *this, index);
+        Attribute::removeHalfEdge(*this, index);
         auto moveIndex = _halfEdges.erase(index);
         if(moveIndex.valid) {
             if(hasOpposite(index)) _halfEdges[opposite(index)].oppositeHalfEdgeIndex = index;
@@ -202,7 +216,7 @@ protected:
         }
     }
     void _removeEdge(size_t index) {
-        Attribute::removeEdge(_meta, *this, index);
+        Attribute::removeEdge(*this, index);
         auto moveIndex = _edges.erase(index);
         if(moveIndex.valid) {
             forEachHalfEdgeInEdge(index, [this, index](size_t hei) {
@@ -212,7 +226,7 @@ protected:
         }
     }
     void _removeTriangle(size_t index) {
-        Attribute::removeTriangle(_meta, *this, index);
+        Attribute::removeTriangle(*this, index);
         auto moveIndex = _triangles.erase(index);
         if(moveIndex.valid) {
             forEachHalfEdgeInTriangle(index, [this, index](size_t hei) {
@@ -249,10 +263,10 @@ protected:
 public:
 
     // Constructors
-    SurfaceTriangularMeshBase(const MetaAttribute& meta) : _meta(meta) {}
+    SurfaceTriangularMesh(const MetaAttribute& meta) : _meta(meta) {}
 
     // Destructor
-    ~SurfaceTriangularMeshBase() {
+    ~SurfaceTriangularMesh() {
         _clear();
     }
 
@@ -260,12 +274,14 @@ public:
         struct Info {
             size_t numVertices;
             std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
+            Attribute::AttributeInitializerInfo attributeInitializerInfo;
         };
 
         void init(
             SurfaceTriangularMeshBase& mesh,
             size_t numVertices,
-            const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
+            const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList,
+            const Attribute::AttributeInitializerInfo& attributeInitializerInfo
         ) const {
             mesh._vertices.getValue().resize(numVertices);
             const size_t numTriangles = triangleVertexIndexList.size();
@@ -324,9 +340,12 @@ public:
                     }
                 } // end loop halfedges
             } // end loop triangles
+
+            // Initialize attributes
+            Attribute::init(mesh, attributeInitializerInfo);
         }
 
-        Info extract(const SurfaceTriangularMeshBase& mesh) const {
+        Info extract(const SurfaceTriangularMesh& mesh) const {
             Info info;
             info.numVertices = mesh._vertices.size();
             const size_t numTriangles = mesh._triangles.size();
@@ -338,6 +357,8 @@ public:
                     info.triangleVertexIndexList[i++] = mesh.target(hei);
                 });
             }
+
+            res.attributeInitializerInfo = Attribute::extract(mesh);
 
             return info;
         }
@@ -420,7 +441,7 @@ public:
 
         struct InsertMid { size_t v0, v1; };
 
-        void operator()(SurfaceTriangularMeshBase& mesh, size_t edgeIndex)const {
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -479,7 +500,7 @@ public:
     // Edge collapse
     struct EdgeCollapse {
         static constexpr int deltaNumVertex = -1;
-        void operator()(SurfaceTriangularMeshBase& mesh, size_t edgeIndex)const {
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -527,7 +548,7 @@ public:
     // Edge flip
     struct EdgeFlip {
         static constexpr int deltaNumVertex = 0;
-        void operator()(SurfaceTriangularMeshBase& mesh, size_t edgeIndex) const {
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex) const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -565,7 +586,7 @@ public:
     // triangle subdivision, introduces 3 new vertices
     struct TriangleSubdivision {
         static constexpr int deltaNumVertex = 3;
-        void operator()(SurfaceTriangularMeshBase& mesh, size_t triangleIndex) const {
+        void operator()(SurfaceTriangularMesh& mesh, size_t triangleIndex) const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -588,73 +609,5 @@ public:
     };
 
 };
-
-// Type GeometricAttribute::VertexAttribute must implement getCoordinate() function, and define coordinate_type
-template< typename GeometricAttribute > class SurfaceTriangularMesh : public SurfaceTriangularMeshBase< GeometricAttribute > {
-public:
-    using Base = SurfaceTriangularMeshBase< GeometricAttribute >;
-
-    using Base::VertexAttribute;
-    using Base::EdgeAttribute;
-    using Base::HalfEdgeAttribute;
-    using Base::TriangleAttribute;
-    using Base::MetaAttribute;
-
-    struct GeometricVertexInit {};
-    struct GeometricEdgeInit {};
-    struct GeometricHalfEdgeInit {};
-    struct GeometricTriangleInit {};
-
-    using coordinate_type = typename GeometricAttribute::VertexAttribute::coordinate_type;
-
-    // Constructors
-    SurfaceTriangularMesh(const MetaAttribute& meta) : Base(meta) {}
-
-    struct GeometricVertexTriangleInitializer {
-        struct Info {
-            std::vector< coordinate_type > vertexCoordinateList;
-            std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
-        };
-
-        void init(
-            SurfaceTriangularMesh& mesh,
-            const std::vector< coordinate_type >& vertexCoordinateList,
-            const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
-        ) const {
-            const size_t numVertices = vertexCoordinateList.size();
-            typename Base::VertexTriangleInitializer().init(
-                mesh,
-                numVertices,
-                triangleVertexIndexList
-            );
-
-            const size_t numEdges = mesh._edges.size();
-            const size_t numHalfEdges = mesh._halfEdges.size();
-            const size_t numTriangles = mesh._triangles.size();
-            for(size_t i = 0; i < numVertices; ++i) GeometricAttribute::newVertex(mesh._meta, mesh, i, vertexCoordinateList[i], GeometricVertexInit{});
-            for(size_t i = 0; i < numEdges; ++i) GeometricAttribute::newEdge(mesh._meta, mesh, i, GeometricEdgeInit{});
-            for(size_t i = 0; i < numHalfEdges; ++i) GeometricAttribute::newHalfEdge(mesh._meta, mesh, i, GeometricHalfEdgeInit{});
-            for(size_t i = 0; i < numTriangles; ++i) GeometricAttribute::newTriangle(mesh._meta, mesh, i, GeometricTriangleInit{});
-        }
-
-        Info extract(const SurfaceTriangularMesh& mesh) const {
-            Info info;
-
-            auto topoInfo = typename Base::VertexTriangleInitializer().extract(mesh);
-
-            info.vertexCoordinateList.reserve(topoInfo.numVertices);
-            info.triangleVertexIndexList = std::move(topoInfo.triangleVertexIndexList);
-
-            for(size_t vi = 0; vi < topoInfo.numVertices; ++vi) {
-                info.vertexCoordinateList.emplace_back(mesh._vertices[vi].attr.getCoordinate());
-            }
-
-            return info;
-        }
-    };
-
-};
-
-
 
 #endif

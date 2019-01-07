@@ -300,7 +300,7 @@ void OutputStructMembrane::getFromSystemWithoutChildren() {
     _type = _membrane->getType();
 
     _memInfo = _membrane->getMesh().extract< Initializer >();
-    _numVertices = _memInfo.vertexCoordinateList.size();
+    _numVertices = _memInfo.attributeInitializerInfo.vertexCoordinateList.size();
     _numTriangles = _memInfo.triangleVertexIndexList.size();
         
 }
@@ -318,7 +318,7 @@ void OutputStructMembrane::outputFromStoredWithoutChildren(std::ostream& os) {
         << _numTriangles << '\n';
 
     // print coordinates
-    for(const auto& it : _memInfo.vertexCoordinateList) {
+    for(const auto& it : _memInfo.attributeInitializerInfo.vertexCoordinateList) {
         for(double value : it) os << value << ' ';
         os << '\n';
     }
@@ -336,15 +336,15 @@ void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& i
         >> _numVertices
         >> _numTriangles;
 
-    _memInfo.vertexCoordinateList.reserve(_numVertices);
+    _memInfo.attributeInitializerInfo.vertexCoordinateList.reserve(_numVertices);
     _memInfo.triangleVertexIndexList.reserve(_numTriangles);
     for(size_t i = 0; i < _numVertices; ++i) {
         std::string nextLine;
         std::getline(is, nextLine);
         std::istringstream newIss(nextLine);
 
-        _memInfo.vertexCoordinateList.emplace_back(3);
-        auto& coord = _memInfo.vertexCoordinateList.back();
+        _memInfo.attributeInitializerInfo.vertexCoordinateList.emplace_back(3);
+        auto& coord = _memInfo.attributeInitializerInfo.vertexCoordinateList.back();
 
         // Record coordinates
         for(double& value: coord)

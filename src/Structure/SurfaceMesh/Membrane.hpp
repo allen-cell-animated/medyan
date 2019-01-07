@@ -72,34 +72,59 @@ struct MembraneMeshAttribute {
 
     using coordinate_type = VertexAttribute::coordinate_type;
 
-    template< typename Mesh > static void newVertex(const MetaAttribute& meta, Mesh& mesh, size_t v, const typename Mesh::VertexInsertionOnEdge::InsertMid& op) {
+    struct AttributeInitializerInfo {
+        std::vector< coordinate_type > vertexCoordinateList;
+    };
+
+    // Mesh element changing
+    template< typename Mesh > static void newVertex(Mesh& mesh, size_t v, const typename Mesh::VertexInsertionOnEdge::InsertMid& op) {
+        const MetaAttribute& meta = mesh.getMetaAttribute();
         coordinate_type c0 = mesh.getVertexAttribute(op.v0).getCoordinate();
         coordinate_type c1 = mesh.getVertexAttribute(op.v1).getCoordinate();
         coordinate_type c = mathfunc::midPointCoordinate(c0, c1, 0.5);
         mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(c, meta.m, v);
     }
-    template< typename Mesh > static void newVertex(const MetaAttribute& meta, Mesh& mesh, size_t v, const coordinate_type& coord, const typename Mesh::GeometricVertexInit& op) {
-        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(coord, meta.m, v);
+    template< typename Mesh, typename Operation > static void newEdge(Mesh& mesh, size_t e, const Operation& op) {
+        mesh.getEdgeAttribute(e).edge = mesh.getMetaAttribute().s->addTrackable<Edge>(mesh.getMetaAttribute().m, e);
     }
-    template< typename Mesh, typename Operation > static void newEdge(const MetaAttribute& meta, Mesh& mesh, size_t e, const Operation& op) {
-        mesh.getEdgeAttribute(e).edge = meta.s->addTrackable<Edge>(meta.m, e);
+    template< typename Mesh, typename Operation > static void newHalfEdge(Mesh& mesh, size_t he, const Operation& op) {
     }
-    template< typename Mesh, typename Operation > static void newHalfEdge(const MetaAttribute& meta, Mesh& mesh, size_t he, const Operation& op) {
-    }
-    template< typename Mesh, typename Operation > static void newTriangle(const MetaAttribute& meta, Mesh& mesh, size_t t, const Operation& op) {
-        mesh.getTriangleAttribute(t).triangle = meta.s->addTrackable<Triangle>(meta.m, t);
+    template< typename Mesh, typename Operation > static void newTriangle(Mesh& mesh, size_t t, const Operation& op) {
+        mesh.getTriangleAttribute(t).triangle = mesh.getMetaAttribute().s->addTrackable<Triangle>(mesh.getMetaAttribute().m, t);
     }
 
-    template< typename Mesh > static void removeVertex(const MetaAttribute& meta, Mesh& mesh, size_t v) {
-        meta.s->removeTrackable<Vertex>(mesh.getVertexAttribute(v).vertex);
+    template< typename Mesh > static void removeVertex(Mesh& mesh, size_t v) {
+        mesh.getMetaAttribute().s->removeTrackable<Vertex>(mesh.getVertexAttribute(v).vertex);
     }
-    template< typename Mesh > static void removeEdge(const MetaAttribute& meta, Mesh& mesh, size_t e) {
-        meta.s->removeTrackable<Edge>(mesh.getEdgeAttribute(e).edge);
+    template< typename Mesh > static void removeEdge(Mesh& mesh, size_t e) {
+        mesh.getMetaAttribute().s->removeTrackable<Edge>(mesh.getEdgeAttribute(e).edge);
     }
-    template< typename Mesh > static void removeHalfEdge(const MetaAttribute& meta, Mesh& mesh, size_t he) {
+    template< typename Mesh > static void removeHalfEdge(Mesh& mesh, size_t he) {
     }
-    template< typename Mesh > static void removeTriangle(const MetaAttribute& meta, Mesh& mesh, size_t t) {
-        meta.s->removeTrackable<Triangle>(mesh.getEdgeAttribute(t).triangle);
+    template< typename Mesh > static void removeTriangle(Mesh& mesh, size_t t) {
+        mesh.getMetaAttribute().s->removeTrackable<Triangle>(mesh.getEdgeAttribute(t).triangle);
+    }
+
+    // Mesh attribute initializing and extracting
+    template< typename Mesh > static void init(Mesh& mesh, const AttributeInitializerInfo& info) {
+        const MetaAttribute& meta = mesh.getMetaAttribute();
+        const size_t numVertices = mesh.getVertices.size();
+        for(size_t i = 0; i < numVertices; ++i) {
+            mesh.getVertexAttribute(i).vertex = meta.s->addTrackable<Vertex>(info.vertexCoordinateList[i], meta.m, i);
+        }
+    }
+    template< typename Mesh > static auto extract(Mesh& mesh) {
+        AttributeInitializerInfo info;
+
+        const MetaAttribute& meta = mesh.getMetaAttribute();
+        const size_t numVertices = mesh.getVertices.size();
+
+        info.vertexCoordinateList.reserve(numVertices);
+        for(size_t i = 0; i < numVertices; ++i) {
+            info.vertexCoordinateList.push_back(mesh.getVertexAttribute(i).vertex->coordinate);
+        }
+
+        return info;
     }
 
     // Geometries

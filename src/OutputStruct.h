@@ -188,7 +188,7 @@ private:
 
 class OutputStructMembrane: public OutputStruct {
 public:
-    using Initializer = Membrane::mesh_type::GeometricVertexTriangleInitializer;
+    using Initializer = Membrane::mesh_type::VertexTriangleInitializer;
     using MembraneInfo = Initializer::Info;
 
     static constexpr char name[] = "MEMBRANE";
