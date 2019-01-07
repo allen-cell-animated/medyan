@@ -20,8 +20,8 @@ struct GHalfEdge {
     mathfunc::Vec3 dNeighborCurv; // Derivative of curv of vcell of source on target
     
     // Auxilliary getters
-    template< bool stretched > double& getTheta() { return stretched ? sTheta : theta; }
-    template< bool stretched > double& getCotTheta() { return stretched ? sCotTheta : cotTheta; }
+    template< bool stretched > auto& getTheta() { return stretched ? sTheta : theta; }
+    template< bool stretched > auto& getCotTheta() { return stretched ? sCotTheta : cotTheta; }
 };
 
 

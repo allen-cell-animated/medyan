@@ -31,7 +31,7 @@ Membrane::Membrane(
     _mesh.init<typename mesh_type::VertexTriangleInitializer>(
         vertexCoordinateList.size(),
         triangleVertexIndexList,
-        vertexCoordinateList
+        MembraneMeshAttribute::AttributeInitializerInfo{ vertexCoordinateList }
     );
 
     // Update geometry

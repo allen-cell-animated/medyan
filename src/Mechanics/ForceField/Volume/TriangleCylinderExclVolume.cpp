@@ -87,9 +87,9 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
         Vertex* const v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
 
         const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
-        const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dArea;
-        const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dArea;
-        const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dArea;
+        const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dTriangleArea;
+        const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dTriangleArea;
+        const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dTriangleArea;
         double kExVol = t->getMTriangle()->getExVolConst();
 
         for(auto &c: _neighborList->getNeighbors(t)) {
@@ -122,9 +122,9 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
         Vertex* const v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
 
         const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
-        const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dArea;
-        const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dArea;
-        const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dArea;
+        const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dTriangleArea;
+        const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dTriangleArea;
+        const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dTriangleArea;
         double kExVol = t->getMTriangle()->getExVolConst();
         
         for(auto &c: _neighborList->getNeighbors(t)) {

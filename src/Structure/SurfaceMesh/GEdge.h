@@ -12,8 +12,8 @@ struct GEdge {
     mathfunc::Vec3 sPseudoUnitNormal; // The pseudo normal under stretch
 
     // Auxilliary getters
-    template< bool stretched > double& getLength() { return stretched ? sLength : length; }
-    template< bool stretched > double& getPseudoUnitNormal() { return stretched ? sPseudoUnitNormal : pseudoUnitNormal; }
+    template< bool stretched > auto& getLength() { return stretched ? sLength : length; }
+    template< bool stretched > auto& getPseudoUnitNormal() { return stretched ? sPseudoUnitNormal : pseudoUnitNormal; }
     
 };
 

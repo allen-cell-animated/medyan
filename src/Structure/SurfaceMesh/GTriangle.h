@@ -19,9 +19,9 @@ struct GTriangle {
     double sConeVolume;
 
     // Auxilliary getters
-    template< bool stretched > double& getArea() { return stretched ? sArea : area; }
-    template< bool stretched > mathfunc::Vec3& getUnitNormal() { return stretched ? sUnitNormal : unitNormal; }
-    template< bool stretched > double& getConeVolume() { return stretched ? sConeVolume : coneVolume; }
+    template< bool stretched > auto& getArea() { return stretched ? sArea : area; }
+    template< bool stretched > auto& getUnitNormal() { return stretched ? sUnitNormal : unitNormal; }
+    template< bool stretched > auto& getConeVolume() { return stretched ? sConeVolume : coneVolume; }
 
 };
 

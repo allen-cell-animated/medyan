@@ -102,13 +102,13 @@ struct MembraneMeshAttribute {
     template< typename Mesh > static void removeHalfEdge(Mesh& mesh, size_t he) {
     }
     template< typename Mesh > static void removeTriangle(Mesh& mesh, size_t t) {
-        mesh.getMetaAttribute().s->removeTrackable<Triangle>(mesh.getEdgeAttribute(t).triangle);
+        mesh.getMetaAttribute().s->removeTrackable<Triangle>(mesh.getTriangleAttribute(t).triangle);
     }
 
     // Mesh attribute initializing and extracting
     template< typename Mesh > static void init(Mesh& mesh, const AttributeInitializerInfo& info) {
         const MetaAttribute& meta = mesh.getMetaAttribute();
-        const size_t numVertices = mesh.getVertices.size();
+        const size_t numVertices = mesh.getVertices().size();
         for(size_t i = 0; i < numVertices; ++i) {
             mesh.getVertexAttribute(i).vertex = meta.s->addTrackable<Vertex>(info.vertexCoordinateList[i], meta.m, i);
         }
@@ -117,7 +117,7 @@ struct MembraneMeshAttribute {
         AttributeInitializerInfo info;
 
         const MetaAttribute& meta = mesh.getMetaAttribute();
-        const size_t numVertices = mesh.getVertices.size();
+        const size_t numVertices = mesh.getVertices().size();
 
         info.vertexCoordinateList.reserve(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
@@ -175,7 +175,7 @@ struct MembraneMeshAttribute {
             tag.getArea<stretched>() = magnitude(vp) * 0.5;
 
             // unit normal
-            tag.getUnitNormal<stretched>() = vector2Vec<3, double>(normalize(vp));
+            tag.getUnitNormal<stretched>() = vector2Vec<3, double>(normalizedVector(vp));
 
             // cone volume
             tag.getConeVolume<stretched>() = dotProduct(c0, vp) / 6;
@@ -197,9 +197,9 @@ struct MembraneMeshAttribute {
             if(halfEdges[hei].hasOpposite) {
                 const size_t ti0 = mesh.triangle(hei);
                 const size_t ti1 = mesh.triangle(mesh.opposite(hei));
-                mesh.getEdgeAttribute(ei).gEdge.getPseudoUnitNormal<stretched>() = normalize(
-                    triangles[ti0].attr.gTriangle.getUnitNormal<stretched>()
-                    + triangles[ti1].attr.gTriangle.getUnitNormal<stretched>()
+                mesh.getEdgeAttribute(ei).gEdge.getPseudoUnitNormal<stretched>() = normalizedVector(
+                    mesh.getTriangleAttribute(ti0).gTriangle.getUnitNormal<stretched>()
+                    + mesh.getTriangleAttribute(ti1).gTriangle.getUnitNormal<stretched>()
                 );
             }
         }
@@ -245,9 +245,9 @@ struct MembraneMeshAttribute {
 
             normalize(vag.getPseudoUnitNormal<stretched>());
 
-            const int flippingCurv = (dotProduct(k1, vag.getPseudoUnitNormal<stretched>()) > 0 ? 1 : -1);
+            const int flippingCurv = (dot(k1, vag.getPseudoUnitNormal<stretched>()) > 0 ? 1 : -1);
 
-            vag.getCurv<stretched>() = fliipingCurv * magK1 * 0.25 * invA;
+            vag.getCurv<stretched>() = flippingCurv * magK1 * 0.25 * invA;
         }
     }
     template< typename Mesh > static void updateGeometryValueWithDerivative(Mesh& mesh) {
@@ -274,8 +274,9 @@ struct MembraneMeshAttribute {
             const auto c1 = vector2Vec<3, double>(vertices[vi1].attr.vertex->coordinate);
 
             const auto length = mesh.getEdgeAttribute(ei).gEdge.length = distance(c0, c1);
-            mesh.getHalfEdgeAttribute(hei).gHalfEdge.dEdgeLength = (c0 - c1) / length;
-            mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dEdgeLength = (c1 - c0) / length;
+            const auto invL = 1.0 / length;
+            mesh.getHalfEdgeAttribute(hei).gHalfEdge.dEdgeLength = (c0 - c1) * invL;
+            mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dEdgeLength = (c1 - c0) * invL;
         }
 
         // Calculate angles and triangle areas with derivative
@@ -318,9 +319,9 @@ struct MembraneMeshAttribute {
             {
                 const auto r01 = c[1] - c[0];
                 const auto r02 = c[2] - c[0];
-                mesh.getHalfEdgeAttribute(hei[0]).gHalfEdge.dArea = (-l[1]*l[1]* r02 - l[0]*l[0]* r01 + dots[0]*(r01 + r02)) * (invA * 0.25);
-                mesh.getHalfEdgeAttribute(hei[1]).gHalfEdge.dArea = (l[0]*l[0]* r01 - dots[0]* r02) * (invA * 0.25);
-                mesh.getHalfEdgeAttribute(hei[2]).gHalfEdge.dArea = (l[1]*l[1]* r02 - dots[0]* r01) * (invA * 0.25);
+                mesh.getHalfEdgeAttribute(hei[0]).gHalfEdge.dTriangleArea = (-l[1]*l[1]* r02 - l[0]*l[0]* r01 + dots[0]*(r01 + r02)) * (invA * 0.25);
+                mesh.getHalfEdgeAttribute(hei[1]).gHalfEdge.dTriangleArea = (l[0]*l[0]* r01 - dots[0]* r02) * (invA * 0.25);
+                mesh.getHalfEdgeAttribute(hei[2]).gHalfEdge.dTriangleArea = (l[1]*l[1]* r02 - dots[0]* r01) * (invA * 0.25);
             }
 
             // Calculate thetas and gradients
@@ -340,9 +341,9 @@ struct MembraneMeshAttribute {
 
                 heag.dCotTheta[1] =
                     -(r01 + r02) * (invA * 0.5)
-                    -(dots[ai] * invA * invA * 0.5) * heag.dArea;
-                heag.dCotTheta[2] = r02 * (invA * 0.5) - (dots[ai] * invA * invA * 0.5) * heag_n.dArea;
-                heag.dCotTheta[0] = r01 * (invA * 0.5) - (dots[ai] * invA * invA * 0.5) * heag_p.dArea;
+                    -(dots[ai] * invA * invA * 0.5) * heag.dTriangleArea;
+                heag.dCotTheta[2] = r02 * (invA * 0.5) - (dots[ai] * invA * invA * 0.5) * heag_n.dTriangleArea;
+                heag.dCotTheta[0] = r01 * (invA * 0.5) - (dots[ai] * invA * invA * 0.5) * heag_p.dTriangleArea;
             }
 
             // Calculate unit normal
@@ -482,14 +483,14 @@ struct MembraneMeshAttribute {
                 // As target for left and right
                 const auto diff_left = ci - c_left;
                 const auto diff_right = ci - c_right;
-                const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(mesh.next(hei_n)).gHalfEdge.dCotTheta[1];
-                const auto& dCotThetaRight = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dCotTheta[1];
-                dK1_n[0] += dCotThetaLeft[0] * diff_left;
-                dK1_n[1] += dCotThetaLeft[1] * diff_left;
-                dK1_n[2] += dCotThetaLeft[2] * diff_left;
-                dK1_n[0] += dCotThetaRight[0] * diff_right;
-                dK1_n[1] += dCotThetaRight[1] * diff_right;
-                dK1_n[2] += dCotThetaRight[2] * diff_right;
+                const auto& dCotThetaOfLeft = mesh.getHalfEdgeAttribute(mesh.next(hei_n)).gHalfEdge.dCotTheta[1];
+                const auto& dCotThetaOfRight = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dCotTheta[1];
+                dK1_n[0] += dCotThetaOfLeft[0] * diff_left;
+                dK1_n[1] += dCotThetaOfLeft[1] * diff_left;
+                dK1_n[2] += dCotThetaOfLeft[2] * diff_left;
+                dK1_n[0] += dCotThetaOfRight[0] * diff_right;
+                dK1_n[1] += dCotThetaOfRight[1] * diff_right;
+                dK1_n[2] += dCotThetaOfRight[2] * diff_right;
 
                 // Derivative of curvature
                 const Vec3 mp {{{
@@ -503,7 +504,7 @@ struct MembraneMeshAttribute {
 
             // Also the derivative of curvature on central vertex
             vag.dCurv =
-                dCurvFac1 * Vec3{ dot(dK1[0], k1), dot(dk1[1], k1), dot(dk1[2], k1) }
+                dCurvFac1 * Vec3{ dot(dK1[0], k1), dot(dK1[1], k1), dot(dK1[2], k1) }
                 + dCurvFac2 * vag.dArea;
 
         } // End loop vertices (V cells)
@@ -603,15 +604,15 @@ struct MembraneMeshAttribute {
                 } else if(dot_0p_01 < 0 && dot_2p_20 > r[1]*r[1]) {
                     // On vertex 0
                     d = distance(c[0], p);
-                    if(dot(mesh.getVertexAttribute(vi[0]).gVertex.pesudoUnitNormal, r0p) < 0) d = -d;
+                    if(dot(mesh.getVertexAttribute(vi[0]).gVertex.pseudoUnitNormal, r0p) < 0) d = -d;
                 } else if(dot_1p_12 < 0 && dot_0p_01 > r[2]*r[2]) {
                     // On vertex 1
                     d = distance(c[1], p);
-                    if(dot(mesh.getVertexAttribute(vi[1]).gVertex.pesudoUnitNormal, r1p) < 0) d = -d;
+                    if(dot(mesh.getVertexAttribute(vi[1]).gVertex.pseudoUnitNormal, r1p) < 0) d = -d;
                 } else if(dot_2p_20 < 0 && dot_1p_12 > r[0]*r[0]) {
                     // On vertex 2
                     d = distance(c[2], p);
-                    if(dot(mesh.getVertexAttribute(vi[2]).gVertex.pesudoUnitNormal, r2p) < 0) d = -d;
+                    if(dot(mesh.getVertexAttribute(vi[2]).gVertex.pseudoUnitNormal, r2p) < 0) d = -d;
                 } else {
                     // The program should never come here
                     throw logic_error("Unknown case of point projection on the plane of triangle.");

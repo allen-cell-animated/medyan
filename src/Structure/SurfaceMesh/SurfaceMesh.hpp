@@ -274,14 +274,14 @@ public:
         struct Info {
             size_t numVertices;
             std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
-            Attribute::AttributeInitializerInfo attributeInitializerInfo;
+            typename Attribute::AttributeInitializerInfo attributeInitializerInfo;
         };
 
         void init(
-            SurfaceTriangularMeshBase& mesh,
+            SurfaceTriangularMesh& mesh,
             size_t numVertices,
             const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList,
-            const Attribute::AttributeInitializerInfo& attributeInitializerInfo
+            const typename Attribute::AttributeInitializerInfo& attributeInitializerInfo
         ) const {
             mesh._vertices.getValue().resize(numVertices);
             const size_t numTriangles = triangleVertexIndexList.size();
