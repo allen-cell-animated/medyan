@@ -2,7 +2,6 @@
 
 #include "Membrane.hpp"
 #include "Vertex.h"
-#include "GVoronoiCell.h"
 #include "MVoronoiCell.h"
 
 #include "MembraneBendingVoronoiHelfrich.h"
@@ -19,8 +18,8 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(bool stret
         U_i = 0;
 
         for(const auto& v : mesh.getVertices()) {
-            const auto kBending = v.vertex->getMVoronoiCell()->getBendingModulus();
-            const auto eqCurv = v.vertex->getMVoronoiCell()->getEqCurv();
+            const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
+            const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
 
             const auto area = stretched ? v.attr.gVertex.sArea : v.attr.gVertex.area;
             const auto curv = stretched ? v.attr.gVertex.sCurv : v.attr.gVertex.curv;
@@ -51,8 +50,8 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
         for(size_t vi = 0; vi < numVertices; ++vi) {
             const auto& v = mesh.getVertices()[vi];
 
-            const auto kBending = v.vertex->getMVoronoiCell()->getBendingModulus();
-            const auto eqCurv = v.vertex->getMVoronoiCell()->getEqCurv();
+            const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
+            const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
 
             const auto area = v.attr.gVertex.area;
             const auto curv = v.attr.gVertex.curv;
@@ -67,8 +66,8 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
             mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, area, curv, kBending, eqCurv](size_t hei) {
                 const size_t hei_o = mesh.opposite(hei);
                 auto vt = mesh.getVertexAttribute(mesh.target(hei_o)).vertex;
-                const auto& dArea = mesh.getEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
-                const auto& dCurv = mesh.getEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
+                const auto& dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
+                const auto& dCurv = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
                 _FFType.forces(vt, area, dArea, curv, dCurv, kBending, eqCurv);
             });
         }
@@ -87,8 +86,8 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForcesAux() {
         for(size_t vi = 0; vi < numVertices; ++vi) {
             const auto& v = mesh.getVertices()[vi];
 
-            const auto kBending = v.vertex->getMVoronoiCell()->getBendingModulus();
-            const auto eqCurv = v.vertex->getMVoronoiCell()->getEqCurv();
+            const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
+            const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
 
             const auto area = v.attr.gVertex.area;
             const auto curv = v.attr.gVertex.curv;
@@ -103,8 +102,8 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForcesAux() {
             mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, area, curv, kBending, eqCurv](size_t hei) {
                 const size_t hei_o = mesh.opposite(hei);
                 auto vt = mesh.getVertexAttribute(mesh.target(hei_o)).vertex;
-                const auto& dArea = mesh.getEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
-                const auto& dCurv = mesh.getEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
+                const auto& dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
+                const auto& dCurv = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
                 _FFType.forcesAux(vt, area, dArea, curv, dCurv, kBending, eqCurv);
             });
         }

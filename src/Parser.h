@@ -24,7 +24,6 @@
 
 #include "common.h"
 #include "utility.h"
-#include "structure/Bead.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 
 /// Struct to hold output types;
@@ -427,7 +426,7 @@ public:
     MembraneParser(string inputFileName) : Parser(inputFileName) {}
 
     struct MembraneInfo {
-        using coordinate_type = decltype(Bead::coordinate);
+        using coordinate_type = std::vector< double >; // Future: Change this to a universal type
         std::vector< coordinate_type > vertexCoordinateList;
         std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
     };
