@@ -29,12 +29,6 @@ double MTOCAttachmentHarmonic::energy(Bead* b1, Bead* b2, double kStretch, doubl
     
 }
 
-double MTOCAttachmentHarmonic::energy(Bead* b1, Bead* b2, double kStretch, double radius, double d){
-    
-    double dist = twoPointDistanceStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, d) - radius;
-    return 0.5 * kStretch* dist * dist;
-}
-
 void MTOCAttachmentHarmonic::forces(Bead* b1, Bead* b2, double kStretch, double radius){
     
     

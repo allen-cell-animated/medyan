@@ -39,28 +39,6 @@ double FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
   
 }
 
-double FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
-                                       double kBend, double eqTheta, double d){
-    
-    double L1 = sqrt(scalarProductStretched(b1->coordinate, b1->force,
-                                            b2->coordinate, b2->force,
-                                            b1->coordinate, b1->force,
-                                            b2->coordinate, b2->force, d));
-    double L2 = sqrt(scalarProductStretched(b2->coordinate, b2->force,
-                                            b3->coordinate, b3->force,
-                                            b2->coordinate, b2->force,
-                                            b3->coordinate, b3->force, d));
-    
-    double L1L2 = L1*L2;
-    double l1l2 = scalarProductStretched(b1->coordinate, b1->force,
-                                         b2->coordinate, b2->force,
-                                         b2->coordinate, b2->force,
-                                         b3->coordinate, b3->force, d);
-    
-    return kBend * ( 1 - l1l2 / L1L2 );
- 
-}
-
 void FilamentBendingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
                                      double kBend, double eqTheta){
     

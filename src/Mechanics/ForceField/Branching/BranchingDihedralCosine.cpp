@@ -44,26 +44,6 @@ double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
 }
 
 
-double BranchingDihedralCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                       double kDihed, double position, double d){
-    
-    vector<double> zero (3,0); //Aux zero vector;
-    
-    vector<double> n1 = vectorProductStretched(
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero,  b2->coordinate, b2->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero, b3->coordinate, b3->force, d);
-    
-    vector<double> n2 = vectorProductStretched(b3->coordinate,b3->force, b4->coordinate, b4->force,
-    midPointCoordinateStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, position, d), zero, b3->coordinate, b3->force, d);
-    
-    auto n1_norm = normalizedVector(n1);
-    auto n2_norm = normalizedVector(n2);
-    
-    double n1n2 = dotProduct(n1_norm, n2_norm);
-    
-    return kDihed * ( 1 - n1n2 );
-}
-
 double BranchingDihedralCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                      double kDihed, double position){
     

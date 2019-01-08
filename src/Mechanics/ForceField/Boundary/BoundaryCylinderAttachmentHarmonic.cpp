@@ -25,14 +25,6 @@ double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr, bool st
     return 0.5 * kAttr * dist * dist;
 }
 
-double BoundaryCylinderAttachmentHarmonic::energy(Bead* b, double kAttr, double d) {
-    
-    vector<double> zeros{0,0,0};
-    
-    double dist = twoPointDistanceStretched(b->coordinate, b->force, b->pinnedPosition, zeros, d);
-    return 0.5 * kAttr * dist * dist;
-}
-
 void BoundaryCylinderAttachmentHarmonic::forces(Bead* b, double kAttr) {
     
     

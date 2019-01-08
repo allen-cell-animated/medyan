@@ -25,7 +25,6 @@ class CylinderExclVolRepulsion {
     
 public:
     double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, bool stretched);
-    [[deprecated]] double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, double d);
     
     void forces(Bead*, Bead*, Bead*, Bead*, double Krepuls);
     void forcesAux(Bead*, Bead*, Bead*, Bead*, double Krepuls);

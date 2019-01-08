@@ -48,33 +48,6 @@ double BranchingBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     
 }
 
-double BranchingBendingCosine::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                      double kBend, double eqTheta, double d){
-    
-    double L1 = sqrt(scalarProductStretched(b1->coordinate, b1->force,
-                                            b2->coordinate, b2->force,
-                                            b1->coordinate, b1->force,
-                                            b2->coordinate, b2->force, d));
-    double L2 = sqrt(scalarProductStretched(b3->coordinate, b3->force,
-                                            b4->coordinate, b4->force,
-                                            b3->coordinate, b3->force,
-                                            b4->coordinate, b4->force, d));
-    
-    double L1L2 = L1*L2;
-    double l1l2 = scalarProductStretched(b1->coordinate, b1->force,
-                                         b2->coordinate, b2->force,
-                                         b3->coordinate, b3->force,
-                                         b4->coordinate, b4->force, d);
-    
-    double theta = safeacos(l1l2 / L1L2);
-    double dtheta = theta-eqTheta;
-    
-    double energy = kBend * ( 1 - cos(dtheta) );
-
-    return energy;
-    
-}
-
 double BranchingBendingCosine::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                     double kBend, double eqTheta ){
     

@@ -33,17 +33,6 @@ double BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, double r1, double r2
     return kRep * exp(R);
 }
 
-double BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, double r1, double r2,
-                                        double kRep, double screenLength, double d) {
-    
-    double dist = twoPointDistanceStretched(b1->coordinate, b1->force,
-                                            b2->coordinate, b2->force, d);
-    double effd = dist - r1 - r2;
-    
-    double R = -effd / screenLength;
-    return kRep * exp(R);
-}
-
 void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, double r1, double r2,
                                       double kRep, double screenLength) {
     

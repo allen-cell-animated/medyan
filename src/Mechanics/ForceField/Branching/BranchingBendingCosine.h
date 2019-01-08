@@ -24,7 +24,6 @@ class BranchingBendingCosine {
     
 public:
     double energy(Bead*, Bead*, Bead*, Bead*, double, double, bool stretched);
-    [[deprecated]] double energy(Bead*, Bead*, Bead*, Bead*, double, double, double);
     
     double forces(Bead*, Bead*, Bead*, Bead*, double, double);
     void forcesAux(Bead*, Bead*, Bead*, Bead*, double, double);

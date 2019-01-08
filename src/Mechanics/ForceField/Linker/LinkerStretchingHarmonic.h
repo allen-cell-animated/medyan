@@ -26,9 +26,6 @@ public:
     double energy(Bead*, Bead*, Bead*, Bead*,
                   double position1, double position2,
                   double kStretch, double eqLength, bool stretched);
-    [[deprecated]] double energy(Bead*, Bead*, Bead*, Bead*,
-                  double position1, double position2,
-                  double kStretch, double eqLength, double d);
     
     double forces(Bead*, Bead*, Bead*, Bead*,
                 double position1, double position2,

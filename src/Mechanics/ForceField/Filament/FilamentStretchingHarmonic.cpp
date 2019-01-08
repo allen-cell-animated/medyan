@@ -30,15 +30,6 @@ double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
     
 }
 
-double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
-                                          double kStretch, double eqLength, double d){
-
-    double distStretched = twoPointDistanceStretched(b1->coordinate,
-                                                     b1->force, b2->coordinate,
-                                                     b2->force, d) - eqLength;
-    return 0.5 * kStretch * distStretched * distStretched;
-}
-
 void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
                                         double kStretch, double eqLength ){
     

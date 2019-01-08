@@ -35,19 +35,6 @@ double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     return 0.5 * kStretch * dist * dist;
 }
 
-double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                        double position1, double position2,
-                                        double kStretch, double eqLength, double d ){
-    
-    auto v1 = midPointCoordinateStretched(b1->coordinate, b1->force,
-                                          b2->coordinate, b2->force, position1, d);
-    auto v2 = midPointCoordinateStretched(b3->coordinate, b3->force,
-                                          b4->coordinate, b4->force, position2, d);
-    
-    double distStretched = twoPointDistance(v1, v2) - eqLength;
-    return 0.5 * kStretch * distStretched * distStretched ;
-
-}
 double LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
                                         double position1, double position2,
                                         double kStretch, double eqLength){
