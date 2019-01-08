@@ -387,7 +387,7 @@ inline auto operator*(Float k, const Vec<dim, Float>& v) {
 }
 template< size_t dim, typename Float >
 inline auto& operator*=(Vec<dim, Float>& v, double k) {
-    for(size_t i = 0l i < dim; ++i) v[i] *= k;
+    for(size_t i = 0; i < dim; ++i) v[i] *= k;
     return v;
 }
 

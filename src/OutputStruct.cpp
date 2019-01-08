@@ -355,7 +355,7 @@ void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& i
         std::getline(is, nextLine);
         std::istringstream newIss(nextLine);
 
-        _memInfo.triangleVertexIndexList.emplace_back(3);
+        _memInfo.triangleVertexIndexList.emplace_back();
         auto& indices = _memInfo.triangleVertexIndexList.back();
 
         // Record indices

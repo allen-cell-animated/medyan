@@ -353,8 +353,8 @@ public:
 
             for(size_t ti = 0; ti < numTriangles; ++ti) {
                 size_t i = 0;
-                mesh.forEachHalfEdgeInTriangle(ti, [&mesh, &i, &info](size_t hei) {
-                    info.triangleVertexIndexList[i++] = mesh.target(hei);
+                mesh.forEachHalfEdgeInTriangle(ti, [&mesh, ti, &i, &info](size_t hei) {
+                    info.triangleVertexIndexList[ti][i++] = mesh.target(hei);
                 });
             }
 

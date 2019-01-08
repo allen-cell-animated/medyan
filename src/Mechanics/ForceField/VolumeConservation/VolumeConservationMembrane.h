@@ -13,7 +13,7 @@ public:
     virtual void computeForces();
     virtual void computeForcesAux();
 
-    virtual string getName()const { return "Membrane Volume Conservation"; }
+    virtual std::string getName()const { return "Membrane Volume Conservation"; }
 };
 
 

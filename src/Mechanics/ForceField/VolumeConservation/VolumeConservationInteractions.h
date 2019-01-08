@@ -1,6 +1,8 @@
 #ifndef MEDYAN_VolumeConservationInteractions_h
 #define MEDYAN_VolumeConservationInteractions_h
 
+#include <string>
+
 //FORWARD DECLARATIONS
 class Membrane;
 
@@ -22,7 +24,7 @@ public:
     virtual void computeForcesAux() = 0;
     
     /// Get the name of this interaction
-    virtual string getName()const = 0;
+    virtual std::string getName()const = 0;
 };
 
 
