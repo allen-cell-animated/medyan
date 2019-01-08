@@ -353,12 +353,12 @@ public:
 
             for(size_t ti = 0; ti < numTriangles; ++ti) {
                 size_t i = 0;
-                mesh.forEachHalfEdgeInTriangle(ti, [&i, &info](size_t hei) {
+                mesh.forEachHalfEdgeInTriangle(ti, [&mesh, &i, &info](size_t hei) {
                     info.triangleVertexIndexList[i++] = mesh.target(hei);
                 });
             }
 
-            res.attributeInitializerInfo = Attribute::extract(mesh);
+            info.attributeInitializerInfo = Attribute::extract(mesh);
 
             return info;
         }

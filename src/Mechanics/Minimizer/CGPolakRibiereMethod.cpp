@@ -91,7 +91,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         if(b != nullptr) b->getParent()->printSelf();
         
         cout << "System energy..." << endl;
-        FFM.computeEnergy(0.0, true);
+        FFM.computeEnergy();
         
         cout << endl;
     }

@@ -76,7 +76,7 @@ double BubbleFF::computeEnergy(bool stretched) {
     
     for (auto &interaction : _bubbleInteractionVector) {
         
-        U_i = interaction->computeEnergy(bool stretched);
+        U_i = interaction->computeEnergy(stretched);
         
         if(U_i <= -1) {
             //set culprit and return

@@ -267,9 +267,9 @@ void Forces::print(int snapshot) {
             membrane->getType() << endl;
         
         //print force
-        for(auto vertex : membrane->getVertexVector()) {
+        for(const auto& v : membrane->getMesh().getVertices()) {
             
-            double forceMag = sqrt(vertex->FDotF());
+            double forceMag = sqrt(v.attr.vertex->FDotF());
             _outputFile << forceMag << " ";
             
         }        

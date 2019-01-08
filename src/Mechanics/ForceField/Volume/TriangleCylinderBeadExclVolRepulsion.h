@@ -39,7 +39,7 @@ public:
     );
 
     mathfunc::Vec3 loadForces(
-        Vertex* v0, Vertex* v1, Vertex* v2, const Vec3& coord,
+        Vertex* v0, Vertex* v1, Vertex* v2, const mathfunc::Vec3& coord,
         double area, double kExVol
     );
 };
