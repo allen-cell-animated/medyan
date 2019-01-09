@@ -102,6 +102,8 @@ public:
 template< typename Attribute > class SurfaceTriangularMesh {
 public:
 
+    using AttributeType = Attribute;
+
     using VertexAttribute   = typename Attribute::VertexAttribute;
     using EdgeAttribute     = typename Attribute::EdgeAttribute;
     using HalfEdgeAttribute = typename Attribute::HalfEdgeAttribute;
@@ -132,7 +134,7 @@ public:
         TriangleAttribute attr;
     };
 
-protected:
+private:
 
     DeletableVector<Triangle> _triangles; // collection of triangles
     DeletableVector<HalfEdge> _halfEdges; // collection of halfedges
@@ -380,10 +382,14 @@ public:
     bool isClosed()const noexcept { return _isClosed; }
 
     // Data accessors
-    const auto& getTriangles()const { return _triangles; }
-    const auto& getHalfEdges()const { return _halfEdges; }
-    const auto& getEdges()const { return _edges; }
-    const auto& getVertices()const { return _vertices; }
+    auto numVertices()  const noexcept { return _vertices.size(); }
+    auto numHalfEdges() const noexcept { return _halfEdges.size(); }
+    auto numEdges()     const noexcept { return _edges.size(); }
+    auto numTriangles() const noexcept { return _triangles.size(); }
+    const auto& getTriangles() const { return _triangles; }
+    const auto& getHalfEdges() const { return _halfEdges; }
+    const auto& getEdges()     const { return _edges; }
+    const auto& getVertices()  const { return _vertices; }
 
     // Attribute accessor
     VertexAttribute&       getVertexAttribute(size_t index)       { return _vertices[index].attr; }
@@ -407,9 +413,8 @@ public:
     size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
 
     // Mesh neighbor iterators
-    template< typename Func >
-    void forEachHalfEdgeTargetingVertex(size_t vi, Func&& func) const {
-        size_t hei0 = _vertices[vi].halfEdgeIndex;
+    template< typename Func > void forEachHalfEdgeTargetingVertex(const Vertex& v, Func&& func) const {
+        size_t hei0 = v.halfEdgeIndex;
         size_t hei = hei0;
         do {
             func(hei);
@@ -417,20 +422,27 @@ public:
             hei = prev(opposite(hei));
         } while(hei != hei0);
     }
-    template< typename Func >
-    void forEachHalfEdgeInTriangle(size_t ti, Func&& func) const {
-        size_t hei0 = _triangles[ti].halfEdgeIndex;
+    template< typename Func > void forEachHalfEdgeTargetingVertex(size_t vi, Func&& func) const {
+        forEachHalfEdgeTargetingVertex(_vertices[vi], std::forward<Func>(func));
+    }
+    template< typename Func > void forEachHalfEdgeInTriangle(const Triangle& t, Func&& func) const {
+        size_t hei0 = t.halfEdgeIndex;
         size_t hei = hei0;
         do {
             func(hei);
             hei = next(hei);
         } while(hei != hei0);
     }
-    template< typename Func >
-    void forEachHalfEdgeInEdge(size_t ei, Func&& func) const {
+    template< typename Func > void forEachHalfEdgeInTriangle(size_t ti, Func&& func) const {
+        forEachHalfEdgeInTriangle(_triangles[ti], std::forward<Func>(func));
+    }
+    template< typename Func > void forEachHalfEdgeInEdge(const Edge& e, Func&& func) const {
         size_t hei0 = _edges[ei].halfEdgeIndex;
         func(hei0);
         if(hasOpposite(hei0)) func(opposite(hei0));
+    }
+    template< typename Func > void forEachHalfEdgeInEdge(size_t ei, Func&& func) const {
+        forEachHalfEdgeInEdge(_edges[ei], std::forward<Func>(func));
     }
 
     // The following are basic mesh topology operators

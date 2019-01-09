@@ -61,13 +61,172 @@ be a good idea as well.
 
 */
 
-#ifndef ADAPTIVE_MESH_HPP
-#define ADAPTIVE_MESH_HPP
+#ifndef MEDYAN_AdaptiveMesh_hpp
+#define MEDYAN_AdaptiveMesh_hpp
 
+#include <algorithm> // max min
 #include <vector>
 
-using Float = double;
+#include "MathFunctions.h"
 
+#include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+
+
+template< typename Mesh >
+void calc_data_for_affected(Mesh& mesh) {
+    for(size_t i = 0; i < mesh.numVertices(); ++i) {
+        if(affected(i, lv1)) {
+            calc_curv_and_gaussian_curv();
+            const double l0 = <some-external-value>
+            const double l1 = 1.0 / sqrt(std::max(2 * curv * curv - gaussianCurv, 0.0));
+            const double l = std::min(l0, l1);
+            mesh.getVertexAttribute(i).adapt.density0 = c0 * alphaInvSqr / (l*l);
+        }
+    }
+    for(size_t i = 0; i < mesh.numVertices(); ++i) {
+        if(affected(i, lv2)) {
+            mesh.getVertexAttribute(i).adapt.densityAvg = 0.5 * (
+                mesh.getVertexAttribute(i).adapt.density0
+                + sumNeighborDensity0
+            );
+        }
+    }
+
+    for(size_t i = 0; i < mesh.)
+    double L0 = <some-external-value>
+}
+
+template< typename Mesh > void calc_l0_all(Mesh& mesh) {
+    static const double sqrt2C0 = std::sqrt(2 * c0);
+
+    for(size_t i = 0; i < mesh.numVertices(); ++i) {
+        calc_curv_and_gaussian_curv();
+        const auto l0 = <some-external-value>
+        const auto l1 = 1.0 / sqrt(std::max(2 * curv * curv - gaussianCurv, 0.0));
+        const auto l = std::min(l0, l1);
+        mesh.getVertexAttribute(i).adapt.density0 = c0 * alphaInvSqr / (l*l);
+    }
+    for(size_t i = 0; i < mesh.numVertices(); ++i) {
+        double sumNeighborDensity0 = 0.0;
+        size_t numNeighbors = 0;
+        mesh.forEachHalfEdgeTargetingVertex(i, [&mesh, &sumNeighborDensity0, &numNeighbors](size_t hei) {
+            sumNeighborDensity0 += mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).adapt.density0;
+            ++numNeighbors;
+        });
+        mesh.getVertexAttribute(i).adapt.densityAvg = 0.5 * (
+            mesh.getVertexAttribute(i).adapt.density0
+            + sumNeighborDensity0 / numNeighbors;
+        );
+    }
+    for(size_t i = 0; i < mesh.numTriangles(); ++i) {
+        double sumDensityAvg = 0.0;
+        mesh.forEachHalfEdgeInTriangle(i, [&mesh, &sumDensityAvg](size_t hei) {
+            sumDensityAvg += mesh.getVertexAttribute(mesh.target(hei)).adapt.densityAvg;
+        });
+        mesh.getTriangleAttribute(i).adapt.area0 = 1.5 / sumDensityAvg;
+    }
+    for(size_t i = 0; i < mesh.numVertices(); ++i) {
+        double sumNeighborWeightedArea0 = 0.0;
+        size_t numNeighbors = 0;
+        mesh.forEachHalfEdgeTargetingVertex(i, [&mesh, &sumNeighborWeightedArea0, &numNeighbors](size_t hei) {
+            const size_t tInner = mesh.triangle(hei);
+            const size_t tOuter = mesh.triangle(mesh.opposite(mesh.prev(hei)));
+            sumNeighborWeightedArea0 +=
+                mesh.getTriangleAttribute(tInner).adapt.area0 * 5.0 / 6.0
+                + mesh.getTriangleAttribute(tOuter).adapt.area0 / 6.0;
+            ++numNeighbors;
+        });
+        mesh.getVertexAttribute(i).adapt.l0Aux = sqrt2C0 * sumNeighborWeightedArea0 / numNeighbors;
+    }
+    for(size_t i = 0; i < mesh.numEdges(); ++i) {
+        double suml0Aux = 0.0;
+        mesh.forEachHalfEdgeInEdge(i, [&mesh, &suml0Aux](size_t hei) {
+            suml0Aux += mesh.getVertexAttribute(mesh.target(hei)).adapt.l0Aux;
+        });
+        mesh.getEdgeAttribute(i).adapt.l0 = suml0Aux * 0.5;
+    }
+}
+
+template< typename Mesh > auto compute_all_forces(const Mesh& mesh, const mathfunc::VecMut< mathfunc::Vec3 >& coords) {
+    mathfunc::VecMut< mathfunc::Vec3 > forces(coords.size());
+    double maxMag2F = 0.0;
+
+    std::transform(
+        mesh.getVertices().begin(), mesh.getVertices().end(),
+        coords.begin(),
+        forces.begin(),
+        [&coords, &maxForce](const auto& v, const auto& c) {
+            mathfunc::Vec3 f {};
+            mesh.forEachHalfEdgeTargetingVertex(v, [&](size_t hei) {
+                const auto l0 = mesh.getEdgeAttribute(mesh.edge(hei)).adapt.l0;
+                const auto r = coords[mesh.target(mesh.opposite(hei))] - c;
+                const auto mag = mathfunc::magnitude(r);
+                f += r * (1.0 - l0 / mag);
+            });
+
+            const auto& un = v.attr.adapt.unitNormal;
+            f -= un * dot(un, f); // remove normal component
+
+            const auto mag2F = mathfunc::magnitude2(f);
+            if(mag2F > maxMag2F) maxMag2F = mag2F;
+
+            return f;
+        }
+    );
+
+    return std::make_tuple(std::move(forces), maxMag2F);
+}
+// 2nd order Runge Kutta method on a set of coordinates.
+void rk2(coord, calc_force, Float dt, Float epsilon) {
+    force = calc_force(coord);
+    coord_halfway = coord + force * dt / 2;
+    force_halfway = calc_force(coord_halfway);
+    coord += force_halfway * dt;
+}
+
+template< typename Mesh > void global_relaxation(Mesh& mesh) {
+    using coordinate_type = typename Mesh::VertexAttribute::coordinate_type;
+
+    // TODO Need epsilonSqr
+    // normal is obtained from curvature computation
+    double maxMag2F;
+    const size_t numVertices = mesh.numVertices();
+
+    mathfunc::VecMut< mathfunc::Vec3 > coords(numVertices);
+
+    // Copy coordinates to a vector
+    std::transform(
+        mesh.getVertices().begin(), mesh.getVertices().end(),
+        coords.begin(),
+        [](const auto& v) { return vector2Vec<3, double>(v.attr.vertex->coordinate); }
+    );
+    // Compute forces
+    mathfunc::VecMut< mathfunc::Vec3 > forces;
+
+    std::tie(forces, maxMag2F) = compute_all_forces(mesh, coords);
+
+    while(maxMag2F >= epsilonSqr) {
+        // TODO: runge kutta with coords, forces
+
+        std::tie(forces, maxMag2F) = compute_all_forces(mesh, coords);
+    }
+}
+// general algorithm procedure
+template< typename Mesh >
+void adaptive_mesh(Mesh& mesh) {
+    calc_l0_all();
+    until(density critieria are met) {
+        global_relaxation(); // Lowers the force
+        while(exists density criteria violation) {
+            violation = 1st violation;
+            correct(violation);
+            local_remesh(around corrected element);
+            update_local_criteria(around corrected element);
+        }
+
+    }
+}
 struct MeshForce {
     const std::vector< Vertex* >& vertices;
     std::vector< char > mask;
@@ -82,13 +241,5 @@ struct MeshForce {
         }
     }
 };
-
-// 2nd order Runge Kutta method on a set of coordinates.
-void rk2(coord, calc_force, Float dt, Float epsilon) {
-    force = calc_force(coord);
-    coord_halfway = coord + force * dt / 2;
-    force_halfway = calc_force(coord_halfway);
-    coord += force_halfway * dt;
-}
 
 #endif
