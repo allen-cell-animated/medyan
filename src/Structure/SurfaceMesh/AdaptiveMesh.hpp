@@ -175,14 +175,40 @@ template< typename Mesh > auto compute_all_forces(const Mesh& mesh, const mathfu
         }
     );
 
-    return std::make_tuple(std::move(forces), maxMag2F);
+    return forces;
 }
+
+auto maxMag2(const mathfunc::VecMut< mathfunc::Vec3 >& v) {
+    double res = 0.0;
+    for(const auto& i : v) {
+        double mag2 = mathfunc::magnitude2(i);
+        if(mag2 > res) res = mag2;
+    }
+    return res;
+}
+
 // 2nd order Runge Kutta method on a set of coordinates.
-void rk2(coord, calc_force, Float dt, Float epsilon) {
-    force = calc_force(coord);
-    coord_halfway = coord + force * dt / 2;
-    force_halfway = calc_force(coord_halfway);
-    coord += force_halfway * dt;
+template< typename VecType, typename Func >
+void rk2(VecType& coords, Func&& calc_force, double dt, double epsilonSqr) {
+    auto forces = calc_force(coords);
+    auto maxMag2F = maxMag2(forces);
+
+    while(maxMag2F >= epsilonSqr) {
+        // Test move halfway
+        auto coords_halfway = coords;
+        coords_halfway += forces * (0.5 * dt);
+
+        // Force at halfway
+        const auto forces_halfway = calc_force(coords_halfway);
+
+        // Real move
+        coords += forces_halfway * dt;
+
+        // Compute new forces
+        forces = calc_force(coords);
+        maxMag2F = maxMag2(forces);
+    }
+
 }
 
 template< typename Mesh > void global_relaxation(Mesh& mesh) {
@@ -204,13 +230,8 @@ template< typename Mesh > void global_relaxation(Mesh& mesh) {
     // Compute forces
     mathfunc::VecMut< mathfunc::Vec3 > forces;
 
-    std::tie(forces, maxMag2F) = compute_all_forces(mesh, coords);
+    rk2(coords, compute_all_forces, dt, epsilonSqr);
 
-    while(maxMag2F >= epsilonSqr) {
-        // TODO: runge kutta with coords, forces
-
-        std::tie(forces, maxMag2F) = compute_all_forces(mesh, coords);
-    }
 }
 // general algorithm procedure
 template< typename Mesh >

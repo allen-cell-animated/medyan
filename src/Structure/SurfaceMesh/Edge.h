@@ -18,7 +18,6 @@ An unordered edge contains 2 vertices.
 #include "Movable.h"
 
 #include "Vertex.h"
-#include "GEdge.h"
 
 // Forward declarations
 class Vertex;
