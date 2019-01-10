@@ -150,13 +150,12 @@ template< typename Mesh > void calc_l0_all(Mesh& mesh) {
 
 template< typename Mesh > auto compute_all_forces(const Mesh& mesh, const mathfunc::VecMut< mathfunc::Vec3 >& coords) {
     mathfunc::VecMut< mathfunc::Vec3 > forces(coords.size());
-    double maxMag2F = 0.0;
 
     std::transform(
         mesh.getVertices().begin(), mesh.getVertices().end(),
         coords.begin(),
         forces.begin(),
-        [&coords, &maxForce](const auto& v, const auto& c) {
+        [&mesh, &coords](const auto& v, const auto& c) {
             mathfunc::Vec3 f {};
             mesh.forEachHalfEdgeTargetingVertex(v, [&](size_t hei) {
                 const auto l0 = mesh.getEdgeAttribute(mesh.edge(hei)).adapt.l0;
@@ -168,15 +167,44 @@ template< typename Mesh > auto compute_all_forces(const Mesh& mesh, const mathfu
             const auto& un = v.attr.adapt.unitNormal;
             f -= un * dot(un, f); // remove normal component
 
-            const auto mag2F = mathfunc::magnitude2(f);
-            if(mag2F > maxMag2F) maxMag2F = mag2F;
-
             return f;
         }
     );
 
     return forces;
 }
+struct LocalForceCalculator {
+    std::vector<size_t> vertexIndex;
+
+    template< typename Mesh >
+    auto operator()(const Mesh& mesh, const mathfunc::VecMut< mathfunc::Vec3 >& coords) {
+        // The coords must have the same dimension as vertexIndex
+
+        mathfunc::VecMut< mathfunc::Vec3 > forces(coords.size());
+
+        std::transform(
+            vertexIndex.begin(), vertexIndex.end(),
+            coords.begin(),
+            forces.begin(),
+            [this, &mesh, &coords](size_t v, const auto& c) {
+                mathfunc::Vec3 f {};
+                mesh.forEachHalfEdgeTargetingVertex(v, [&](size_t hei) {
+                    const auto l0 = mesh.getEdgeAttribute(mesh.edge(hei)).adapt.l0;
+                    const auto r = vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->coordinate) - c;
+                    const auto mag = mathfunc::magnitude(r);
+                    f += r * (1.0 - l0 / mag);
+                });
+
+                const auto& un = mesh.getVertexAttribute(v).adapt.unitNormal;
+                f -= un * dot(un, f); // remove normal component
+
+                return f;
+            }
+        );
+
+        return forces;
+    }
+};
 
 auto maxMag2(const mathfunc::VecMut< mathfunc::Vec3 >& v) {
     double res = 0.0;
@@ -237,8 +265,11 @@ template< typename Mesh > void global_relaxation(Mesh& mesh) {
 template< typename Mesh >
 void adaptive_mesh(Mesh& mesh) {
     calc_l0_all();
-    until(density critieria are met) {
-        global_relaxation(); // Lowers the force
+    global_relaxation(); // Lowers the force
+    edge_flip_list = find_potential_edge_flip();
+    for(each_edge_flip : edge_flip_list) do(each_edge_flip);
+    loop_through_all_elements(triangles, vertices) {
+
         while(exists density criteria violation) {
             violation = 1st violation;
             correct(violation);
