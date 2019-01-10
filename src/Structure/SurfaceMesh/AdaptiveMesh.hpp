@@ -174,7 +174,7 @@ template< typename Mesh > auto compute_all_forces(const Mesh& mesh, const mathfu
     return forces;
 }
 struct LocalForceCalculator {
-    std::vector<size_t> vertexIndex;
+    const std::vector<size_t>& vertexIndex;
 
     template< typename Mesh >
     auto operator()(const Mesh& mesh, const mathfunc::VecMut< mathfunc::Vec3 >& coords) {
@@ -190,7 +190,7 @@ struct LocalForceCalculator {
                 mathfunc::Vec3 f {};
                 mesh.forEachHalfEdgeTargetingVertex(v, [&](size_t hei) {
                     const auto l0 = mesh.getEdgeAttribute(mesh.edge(hei)).adapt.l0;
-                    const auto r = vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->coordinate) - c;
+                    const auto r = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->coordinate) - c;
                     const auto mag = mathfunc::magnitude(r);
                     f += r * (1.0 - l0 / mag);
                 });
@@ -242,9 +242,8 @@ void rk2(VecType& coords, Func&& calc_force, double dt, double epsilonSqr) {
 template< typename Mesh > void global_relaxation(Mesh& mesh) {
     using coordinate_type = typename Mesh::VertexAttribute::coordinate_type;
 
-    // TODO Need epsilonSqr
+    // TODO Need dt and epsilonSqr
     // normal is obtained from curvature computation
-    double maxMag2F;
     const size_t numVertices = mesh.numVertices();
 
     mathfunc::VecMut< mathfunc::Vec3 > coords(numVertices);
@@ -253,14 +252,32 @@ template< typename Mesh > void global_relaxation(Mesh& mesh) {
     std::transform(
         mesh.getVertices().begin(), mesh.getVertices().end(),
         coords.begin(),
-        [](const auto& v) { return vector2Vec<3, double>(v.attr.vertex->coordinate); }
+        [](const auto& v) { return mathfunc::vector2Vec<3, double>(v.attr.vertex->coordinate); }
     );
-    // Compute forces
-    mathfunc::VecMut< mathfunc::Vec3 > forces;
 
     rk2(coords, compute_all_forces, dt, epsilonSqr);
 
 }
+template< typename Mesh > void local_relaxation(Mesh& mesh, const std::vector<size_t>& vertexIndex) {
+    using coordinate_type = typename Mesh::VertexAttribute::coordinate_type;
+
+    // TODO Need dt and epsilonSqr
+    // normal is obtained from curvature computation
+    const size_t numVertices = vertexIndex.size();
+
+    mathfunc::VecMut< mathfunc::Vec3 > coords(numVertices);
+
+    // Copy coordinates to a vector
+    std::transform(
+        vertexIndex.begin(), vertexIndex.end(),
+        coords.begin(),
+        [&mesh](size_t v) { return mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v).vertex->coordinate); }
+    );
+
+    rk2(coords, LocalForceCalculator{vertexIndex}, dt, epsilonSqr);
+
+}
+
 // general algorithm procedure
 template< typename Mesh >
 void adaptive_mesh(Mesh& mesh) {
