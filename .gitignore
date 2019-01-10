@@ -24,6 +24,3 @@ MEDYAN
 
 *.traj
 
-# Xcode binaries
-*.pbxproj
-*.xcworkspacedata
