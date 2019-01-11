@@ -713,11 +713,11 @@ struct CaMKIIBundlingCallback {
     : _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
-    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+    	cout << "CAMKII bundling"<< __LINE__ <<" "<< __FILE__ << endl;
     	CaMKIIingPoint* b;
         float frate;
         short camkiiType = _bManager->getBoundInt();
-        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
         
         //choose a random binding site from manager
         auto site = _bManager->chooseBindingSite();
@@ -745,7 +745,8 @@ struct CaMKIIBundlingCallback {
             t = SysParams::Mechanics().CaMKIIBendingTheta[camkiiType];
         }
         else {
-            cout << "CaMKIIing initialization cannot occur unless mechanical parameters are specified."
+            // TODO
+            cout << "CaMKIIing  bundling initialization cannot occur unless mechanical parameters are specified."
             << " Using default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
             << endl;
             l = 10.0;
