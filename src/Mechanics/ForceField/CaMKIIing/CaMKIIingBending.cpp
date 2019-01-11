@@ -33,6 +33,7 @@ double CaMKIIingBending<BBendingInteractionType>::computeEnergy(double d) {
         Bead* b4 = b->getSecondCylinder()->getSecondBead();
         double kBend = b->getMCaMKIIingPoint()->getBendingConstant();
         double eqTheta = b->getMCaMKIIingPoint()->getEqTheta();
+#if 0
         
         if (d == 0.0)
             U_i = _FFType.energy(b1, b2, b3, b4, kBend, eqTheta);
@@ -49,6 +50,7 @@ double CaMKIIingBending<BBendingInteractionType>::computeEnergy(double d) {
         }
         else
             U += U_i;
+#endif
     }
     
     return U;
@@ -65,8 +67,8 @@ void CaMKIIingBending<BBendingInteractionType>::computeForces() {
         Bead* b4 = b->getSecondCylinder()->getSecondBead();
         double kBend = b->getMCaMKIIingPoint()->getBendingConstant();
         double eqTheta = b->getMCaMKIIingPoint()->getEqTheta();
-      
-        _FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
+        // TODO fix to iterate over each of the _bonds according to coordination number
+        //_FFType.forces(b1, b2, b3, b4, kBend, eqTheta);
     }
 }
 
@@ -81,8 +83,8 @@ void CaMKIIingBending<BBendingInteractionType>::computeForcesAux() {
         Bead* b4 = b->getSecondCylinder()->getSecondBead();
         double kBend = b->getMCaMKIIingPoint()->getBendingConstant();
         double eqTheta = b->getMCaMKIIingPoint()->getEqTheta();
-        
-        _FFType.forcesAux(b1, b2, b3, b4, kBend, eqTheta);
+        // TODO fix to iterate over each of the _bonds according to coordination number
+        //_FFType.forcesAux(b1, b2, b3, b4, kBend, eqTheta);
     }
 }
 

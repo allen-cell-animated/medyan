@@ -37,7 +37,8 @@ double CaMKIIingStretching<BStretchingInteractionType>::computeEnergy(double d) 
         double kStretch = b->getMCaMKIIingPoint()->getStretchingConstant();
         double eqLength = b->getMCaMKIIingPoint()->getEqLength();
         double position = b->getPosition();
-        
+// TODO fix to iterate over each of the _bonds according to coordination number
+#if 0
         if (d == 0.0)
             U_i = _FFType.energy(b1, b2, b3, position, kStretch, eqLength);
         else
@@ -53,6 +54,7 @@ double CaMKIIingStretching<BStretchingInteractionType>::computeEnergy(double d) 
         }
         else
             U += U_i;
+#endif
     }
     return U;
 }
@@ -71,8 +73,8 @@ void CaMKIIingStretching<BStretchingInteractionType>::computeForces() {
         double kStretch = b->getMCaMKIIingPoint()->getStretchingConstant();
         double eqLength = b->getMCaMKIIingPoint()->getEqLength();
         double position = b->getPosition();
-        
-        _FFType.forces(b1, b2, b3, position, kStretch, eqLength);
+        // TODO fix to iterate over each of the _bonds according to coordination number
+        //_FFType.forces(b1, b2, b3, position, kStretch, eqLength);
     }
 }
 
@@ -89,8 +91,8 @@ void CaMKIIingStretching<BStretchingInteractionType>::computeForcesAux() {
         double kStretch = b->getMCaMKIIingPoint()->getStretchingConstant();
         double eqLength = b->getMCaMKIIingPoint()->getEqLength();
         double position = b->getPosition();
-        
-        _FFType.forcesAux(b1, b2, b3, position, kStretch, eqLength);
+        // TODO fix to iterate over each of the _bonds according to coordination number
+        //_FFType.forcesAux(b1, b2, b3, position, kStretch, eqLength);
     }
 }
 

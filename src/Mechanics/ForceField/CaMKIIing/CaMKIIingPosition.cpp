@@ -33,7 +33,9 @@ double CaMKIIingPosition<BPositionInteractionType>::computeEnergy(double d) {
         
         double kPosition = b->getMCaMKIIingPoint()->getPositionConstant();
         double position = b->getPosition();
-        
+
+// TODO fix me to CaMKII
+#if 0        
         if (d == 0.0)
             U_i = _FFType.energy(b1, b2, b3, kPosition, position);
         else
@@ -49,6 +51,7 @@ double CaMKIIingPosition<BPositionInteractionType>::computeEnergy(double d) {
         }
         else
             U += U_i;
+#endif
     }
     
     return U;
@@ -66,7 +69,8 @@ void CaMKIIingPosition<BPositionInteractionType>::computeForces() {
         double kPosition = b->getMCaMKIIingPoint()->getPositionConstant();
         double position = b->getPosition();
         
-        _FFType.forces(b1, b2, b3, kPosition, position);
+//TODO camkii
+        //_FFType.forces(b1, b2, b3, kPosition, position);
     }
     
 }
@@ -83,8 +87,8 @@ void CaMKIIingPosition<BPositionInteractionType>::computeForcesAux() {
         
         double kPosition = b->getMCaMKIIingPoint()->getPositionConstant();
         double position = b->getPosition();
-        
-        _FFType.forcesAux(b1, b2, b3, kPosition, position);
+        //TODO camkii
+        //_FFType.forcesAux(b1, b2, b3, kPosition, position);
     }
 }
 

@@ -34,7 +34,8 @@ double CaMKIIingDihedral<BDihedralInteractionType>::computeEnergy(double d) {
         double kDihedr = b->getMCaMKIIingPoint()->getDihedralConstant();
         
         double position = b->getPosition();
-        
+        // TODO fix to iterate over each of the _bonds according to coordination number
+#if 0
         if (d == 0.0)
             U_i = _FFType.energy(b1, b2, b3, b4, kDihedr, position);
         else
@@ -50,8 +51,8 @@ double CaMKIIingDihedral<BDihedralInteractionType>::computeEnergy(double d) {
         }
         else
             U += U_i;
+#endif
     }
-    
     return U;
     
 }
@@ -68,8 +69,8 @@ void CaMKIIingDihedral<BDihedralInteractionType>::computeForces() {
         double kDihedr = b->getMCaMKIIingPoint()->getDihedralConstant();
         
         double position = b->getPosition();
-        
-        _FFType.forces(b1, b2, b3, b4, kDihedr, position);
+        // TODO fix to iterate over each of the _bonds according to coordination number
+        // _FFType.forces(b1, b2, b3, b4, kDihedr, position);
     }
 }
 
@@ -86,7 +87,8 @@ void CaMKIIingDihedral<BDihedralInteractionType>::computeForcesAux() {
         
         double position = b->getPosition();
         
-        _FFType.forcesAux(b1, b2, b3, b4, kDihedr, position);
+        // TODO fix to iterate over each of the _bonds according to coordination number
+        //_FFType.forcesAux(b1, b2, b3, b4, kDihedr, position);
     }
 }
 
