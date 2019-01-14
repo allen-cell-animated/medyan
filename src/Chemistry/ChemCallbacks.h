@@ -554,7 +554,7 @@ struct CaMKIIBindingCallback {
 
     CaMKIIBindingManager* _bManager; ///< CaMKIIing manager for this compartment
 
-    short _plusEnd;        ///< Plus end marker of new cylinder
+    //short _plusEnd;        ///< Plus end marker of new cylinder
 
     float _onRate;         ///< Rate of the binding reaction
     float _offRate;        ///< Rate of the unbinding reaction
@@ -703,13 +703,17 @@ struct CaMKIIBundlingCallback {
     
     CaMKIIBundlingManager* _bManager; ///< CaMKIIing manager for this compartment
     
-    short _plusEnd;        ///< Plus end marker of new cylinder
+    //short _plusEnd;        ///< Plus end marker of new cylinder
     
     float _onRate;         ///< Rate of the binding reaction
     float _offRate;        ///< Rate of the unbinding reaction
     
+    float _minSearchDist = 100; ///Minimum search distance
+    float _maxSearchDist = 200; ///Maximum search distance
+    float _maxcoordNumber = 3;
+
     CaMKIIBundlingCallback(CaMKIIBundlingManager* bManager, float onRate, float offRate, SubSystem* ps)
-    
+    //TODO add minSearchDist maxSearchDist maxcoordNumber as local data members
     : _ps(ps), _bManager(bManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
@@ -720,6 +724,7 @@ struct CaMKIIBundlingCallback {
         cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
         
         //choose a random binding site from manager
+        //TODO Find a CAMKII with coordination number less than max number
         auto site = _bManager->chooseBindingSite();
         
         //get info from site
@@ -764,24 +769,27 @@ struct CaMKIIBundlingCallback {
         auto camkiiPosDir = camkiiProjection(n, p, l, s, t);
         auto bd = get<0>(camkiiPosDir); auto bp = get<1>(camkiiPosDir);
         
-        //create a new filament
-        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
-        
-        //mark first cylinder
-        Cylinder* c = f->getCylinderVector().front();
-        //c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
-        
-        //create new camkii
-            CMonomer* x=c->getCCylinder()->getCMonomer(0);
-            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
-                            }
-            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
-            vector<Cylinder*> cy{c1,c};
-            b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
+        //TODO Search for new filament
+//        //create a new filament
+//        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
+//
+//        //mark first cylinder
+//        Cylinder* c = f->getCylinderVector().front();
+//        //c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
+//
+//        //create new camkii
+//            CMonomer* x=c->getCCylinder()->getCMonomer(0);
+//            for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
+//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+//                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
+//                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
+//                            }
+//            std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
+//            vector<Cylinder*> cy{c1,c};
+        //TODO Update new CAMKII to update coordination number
+        //TODO Create the bonds between CAMKII and filament
+        //b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
             
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
                 auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
