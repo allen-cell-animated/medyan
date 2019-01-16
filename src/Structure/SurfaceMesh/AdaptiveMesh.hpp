@@ -72,7 +72,76 @@ be a good idea as well.
 #include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
+template< typename Mesh >
+class MeshAdapter {
+private:
+    Mesh& _mesh;
 
+public:
+    MeshAdapter(Mesh& mesh) : _mesh(mesh) {}
+
+};
+
+bool try_flip_edge() {
+    if(target-already-has-an-edge) {
+        issue-a-warning();
+        return false;
+    }
+    if(topo_constraint_not_satisfied) return false;
+    if(not-coplanar) return false;
+    if(triangle-quality-can-not-be-improved) return false;
+    flip_edge();
+}
+
+bool try_split_edge() {
+    edge_split(); // Bezier curve?
+    for_quad_edges_around_the_vertex { try_edge_flip(); }
+    return true;
+}
+bool try_collapse_edge() {
+    delta_shape_quality = { try_remove_vertex_1(), try_remove_vertex_2() };
+    if(max{delta_shape_quality} < threshold) return false;
+    if(deg[0] < deg[1]) {
+        remove_vertex_1();
+    } else {
+        remove_vertex_2();
+    }
+    return true;
+}
+
+void global_relaxation_with_edge_flipping() {
+    until( <no-flipping-available> && <relaxation-complete> ) {
+        loop_N_times(global_relaxation);
+        for_all_edges(try_flipping);
+    }
+}
+void algo() {
+    init();
+
+    compute_normal_and_size_measures();
+    while( <size-measure-not-satisfied> ) {
+        bool topoModified = false;
+        do {
+            loop_all_edges {
+                mark_edge_as_inspection_ready;
+            }
+            loop_all_edges {
+                if( <edge-is-inspection-ready> )
+                    if( <edge-too-long> ) {
+                        try_split_edge();
+                        topoModified = true;
+                    } else if( <edge-too-short> ) {
+                        try_collapse_edge();
+                        topoModified = true;
+                    }
+            }
+        } while( !topoModified );
+
+        global_relaxation_with_edge_flipping();
+
+        compute_normal_and_size_measures();
+    };
+}
 template< typename Mesh >
 void calc_data_for_affected(Mesh& mesh) {
     for(size_t i = 0; i < mesh.numVertices(); ++i) {
