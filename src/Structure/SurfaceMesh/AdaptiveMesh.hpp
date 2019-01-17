@@ -82,6 +82,10 @@ template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
     static constexpr double best = 1.0;
     static constexpr double worst = std::numeric_limits<double>::infinity();
     static constexpr bool better(double q1, double q2) { return q1 < q2; }
+    static constexpr auto betterOne(double q1, double q2) { return better(q1, q2) ? q1 : q2; }
+    static constexpr bool worse(double q1, double q2) { return q1 > q2; }
+    static constexpr auto worseOne(double q1, double q2) { return worse(q1, q2) ? q1 : q2; }
+    static constexpr auto improvement(double q0, double q1) { return q0 / q1; }
 
     template< typename VecType >
     auto operator()(const VecType& v0, const VecType& v1, const VecType& v2) const {
@@ -152,13 +156,13 @@ public:
         if(dot(un013, un231) < _minDotNormal) return false;
 
         // Check whether triangle quality can be improved.
-        const auto qBefore = std::min(
+        const auto qBefore = TriangleQualityType::betterOne(
             mesh.getTriangleAttribute(t0).aTriangle.quality,
             mesh.getTriangleAttribute(t1).aTriangle.quality
         );
         const auto q013 = TriangleQualityType{}(c0, c1, c3);
         const auto q231 = TriangleQualityType{}(c2, c3, c1);
-        const auto qAfter = std::min(q013, q231);
+        const auto qAfter = TriangleQualityType::betterOne(q013, q231);
         if( !TriangleQualityType::better(qAfter, qBefore) ) return false;
 
         // All checks complete. Do the flip.
@@ -204,8 +208,6 @@ public:
     bool trySplit(Mesh& mesh, size_t ei, const EdgeFlipManagerType& efm) const {
         using namespace mathfunc;
 
-        // A new vertex with degree 4 will be introduced
-
         const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
         const size_t hei_o = mesh.opposite(hei);
         const size_t hei_n = mesh.next(hei);
@@ -224,6 +226,7 @@ public:
         const size_t e3 = mesh.edge(hei_op); // v3 - v1
 
         // Check topology constraints
+        // A new vertex with degree 4 will always be introduced
         if(
             <neighbor-number-v1> >= _maxDegree ||
             <neighbor-number-v3> >= _maxDegree
@@ -245,6 +248,116 @@ public:
 
         return true;
 
+    }
+};
+
+template< typename Mesh, TriangleQualityCriteria c > class EdgeCollapseManager {
+public:
+    using TriangleQualityType = TriangleQuality< c >;
+
+private:
+    size_t _minDegree;
+    size_t _maxDegree;
+    double _minQualityImprovement; // If smaller than 1, then some degradation is allowed.
+
+public:
+    // Returns whether the edge is collapsed
+    // Requires
+    //   - Triangle quality
+    bool tryCollapse(Mesh& mesh, size_t ei) const {
+        using namespace mathfunc;
+
+        const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
+        const size_t hei_o = mesh.opposite(hei);
+        const size_t hei_n = mesh.next(hei);
+        const size_t hei_p = mesh.prev(hei);
+        const size_t hei_on = mesh.next(hei_o);
+        const size_t hei_op = mesh.prev(hei_o);
+
+        const size_t v0 = mesh.target(hei);
+        const size_t v1 = mesh.target(hei_n);
+        const size_t v2 = mesh.target(hei_o);
+        const size_t v3 = mesh.target(hei_on);
+        // Currently the edge connects v0 and v2.
+        // If the edge collapses, v0 and v2 would become one point.
+
+        const size_t t0 = mesh.triangle(hei);
+        const size_t t1 = mesh.triangle(hei_o);
+
+        // Check topology constraints
+        if(
+            <neighbor-number-v0> + <neighbor-number-v2> > _maxDegree ||
+            <neighbor-number-v1> <= _minDegree ||
+            <neighbor-number-v3> <= _minDegree
+        ) return false;
+
+        // Future: maybe also geometric constraints (gap, smoothness, etc)
+
+        // Check triangle quality constraints
+        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
+        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
+
+        // Calculate previous triangle qualities around a vertex
+        // if v0 is removed
+        double q0Before = TriangleQualityType::worst;
+        double q0After = TriangleQualityType::worst;
+        mesh.forEachHalfEdgeTargetingVertex(v0, [&](size_t hei) {
+            const size_t ti = mesh.triangle(hei);
+            q0Before = TriangleQualityType::betterOne(
+                mesh.getTriangleAttribute(ti).aTriangle.quality,
+                q0Before
+            );
+            if(ti != t0 && ti != t1) {
+                const size_t vn = mesh.target(mesh.next(hei));
+                const size_t vp = mesh.target(mesh.prev(hei));
+                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
+                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
+                q0After = TriangleQualityType::betterOne(
+                    TriangleQualityType{}(cp, c2, cn),
+                    q0After
+                );
+            }
+        });
+        const auto imp0 = TriangleQualityType::improvement(q0Before, q0After);
+
+        // if v2 is removed
+        double q2Before = TriangleQualityType::worst;
+        double q2After = TriangleQualityType::worst;
+        mesh.forEachHalfEdgeTargetingVertex(v2, [&](size_t hei) {
+            const size_t ti = mesh.triangle(hei);
+            q2Before = TriangleQualityType::betterOne(
+                mesh.getTriangleAttribute(ti).aTriangle.quality,
+                q2Before
+            );
+            if(ti != t0 && ti != t1) {
+                const size_t vn = mesh.target(mesh.next(hei));
+                const size_t vp = mesh.target(mesh.prev(hei));
+                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
+                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
+                q2After = TriangleQualityType::betterOne(
+                    TriangleQualityType{}(cp, c0, cn),
+                    q2After
+                );
+            }
+        });
+        const auto imp2 = TriangleQualityType::improvement(q2Before, q2After);
+
+        if(imp0 < _minQualityImprovement && imp2 < _minQualityImprovement) return false;
+
+        if(imp0 > imp2) {
+            // Remove v0, collapse onto v2
+            typename Mesh::EdgeCollapse {}(mesh, hei_o);
+        } else {
+            // Remove v2, collapse onto v0
+            typename Mesh::EdgeCollapse {}(mesh, hei);
+        }
+
+        // TODO: update vertex degrees
+        // TODO: update triangle normals and qualities
+        // Do not update edge preferred lengths
+        // TODO: update edge lengths?
+
+        return true;
     }
 };
 

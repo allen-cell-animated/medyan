@@ -511,7 +511,10 @@ public:
     // Edge collapse
     struct EdgeCollapse {
         static constexpr int deltaNumVertex = -1;
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
+
+        // The target of the halfedge ohei will be preserved
+        // Notice that halfedge index (not edge index) is used in this function.
+        void operator()(SurfaceTriangularMesh& mesh, size_t ohei)const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -520,7 +523,7 @@ public:
             // TODO preconditions
 
             // Get index of current elements
-            const size_t ohei = edges[edgeIndex].halfEdgeIndex;
+            const size_t oei = mesh.edge(ohei);
             const size_t ohei_n = mesh.next(ohei);
             const size_t ohei_p = mesh.prev(ohei);
             const size_t ohei_o = mesh.opposite(ohei);
@@ -547,7 +550,7 @@ public:
 
             // Remove elements
             mesh._removeVertex(ov1);
-            mesh._removeEdge(edgeIndex);
+            mesh._removeEdge(oei);
             mesh._removeEdge(oei2);
             mesh._removeEdge(oei4);
             mesh._removeHalfEdge(ohei);   mesh._removeHalfEdge(ohei_n);  mesh._removeHalfEdge(ohei_p);
