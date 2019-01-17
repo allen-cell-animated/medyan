@@ -17,7 +17,7 @@ struct AdaptiveMeshAttribute {
         double l0;
     };
     struct TriangleAttribute {
-        double area0;
+        double quality;
     };
 };
 

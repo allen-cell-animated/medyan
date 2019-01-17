@@ -14,6 +14,7 @@
 #include "MathFunctions.h"
 #include "MMembrane.h"
 #include "Structure/SubSystem.h"
+#include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Edge.h"
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
@@ -28,8 +29,9 @@ struct MembraneMeshAttribute {
         Vertex* vertex;
 
         GVertex gVertex;
+        AdaptiveMeshAttribute::VertexAttribute aVertex;
 
-        coordinate_type& getCoordinate() { return vertex->coordinate; }
+        coordinate_type& getCoordinate() const { return vertex->coordinate; }
 
         void setIndex(size_t index) {
             vertex->setTopoIndex(index);
@@ -41,6 +43,7 @@ struct MembraneMeshAttribute {
         Edge* edge;
 
         GEdge gEdge;
+        AdaptiveMeshAttribute::EdgeAttribute aEdge;
 
         void setIndex(size_t index) {
             edge->setTopoIndex(index);
@@ -49,6 +52,7 @@ struct MembraneMeshAttribute {
     };
     struct HalfEdgeAttribute {
         GHalfEdge gHalfEdge;
+        AdaptiveMeshAttribute::HalfEdgeAttribute aHalfEdge;
 
         void setIndex(size_t index) {}
     };
@@ -56,6 +60,7 @@ struct MembraneMeshAttribute {
         Triangle* triangle;
 
         GTriangle gTriangle;
+        AdaptiveMeshAttribute::TriangleAttribute aTriangle;
 
         void setIndex(size_t index) {
             triangle->setTopoIndex(index);

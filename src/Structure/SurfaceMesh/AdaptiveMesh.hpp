@@ -65,12 +65,110 @@ be a good idea as well.
 #define MEDYAN_AdaptiveMesh_hpp
 
 #include <algorithm> // max min
+#include <cstdint>
+#include <limits>
 #include <vector>
 
 #include "MathFunctions.h"
 
 #include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+
+enum class TriangleQualityCriteria {
+    RadiusRatio     // Circumradius / (2 * Inradius), [1, inf)
+};
+template< TriangleQualityCriteria > struct TriangleQuality;
+template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
+    static constexpr double best = 1.0;
+    static constexpr double worst = std::numeric_limits<double>::infinity();
+    static constexpr bool better(double q1, double q2) { return q1 < q2; }
+
+    template< typename VecType >
+    auto operator()(const VecType& v0, const VecType& v1, const VecType& v2) const {
+        using namespace mathfunc;
+        const auto d0 = distance(v1, v2);
+        const auto d1 = distance(v2, v0);
+        const auto d2 = distance(v0, v1);
+        const auto p = 0.5 * (d0 + d1 + d2);
+        return d0 * d1 * d2 / (8 * (p - d0) * (p - d1) * (p - d2));
+    }
+}
+
+template< typename Mesh, TriangleQualityCriteria c > class EdgeFlipManager {
+public:
+    using TriangleQualityType = TriangleQuality< c >;
+
+private:
+    size_t _minDegree;
+    size_t _maxDegree;
+    double _minDotNormal; // To assess whether triangles are coplanar.
+
+public:
+    // Requires
+    //   - vertex degrees
+    //   - triangle unit normal and quality
+    bool tryFlip(Mesh& mesh, size_t ei) const {
+        using namespace mathfunc;
+
+        const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
+        const size_t hei_o = mesh.opposite(hei);
+        const size_t hei_n = mesh.next(hei);
+        const size_t hei_p = mesh.prev(hei);
+        const size_t hei_on = mesh.next(hei_o);
+        const size_t hei_op = mesh.prev(hei_o);
+
+        const size_t v0 = mesh.target(hei);
+        const size_t v1 = mesh.target(hei_n);
+        const size_t v2 = mesh.target(hei_o);
+        const size_t v3 = mesh.target(hei_on);
+        // Currently the edge connects v0 and v2.
+        // If the edge flips, the connection would be between v1 and v3.
+
+        const size_t t0 = mesh.triangle(hei);
+        const size_t t1 = mesh.triangle(hei_o);
+
+        // Check if topo constraint is satisfied.
+        if(
+            <neighbor-number-v0> <= _minDegree ||
+            <neighbor-number-v2> <= _minDegree ||
+            <neighbor-number-v1> >= _maxDegree ||
+            <neighbor-number-v3> >= _maxDegree
+        ) return false;
+
+        // Check if the current triangles are coplanar.
+        if(dot(
+            mesh.getTriangleAttribute(t0).gTriangle.unitNormal,
+            mesh.getTriangleAttribute(t1).gTriangle.unitNormal
+        ) < _minDotNormal) return false;
+
+        // Check if the target triangles are coplanar.
+        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
+        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
+        const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(v3).getCoordinate());
+        const auto un013 = normalizedVector(cross(c1 - c0, c3 - c0));
+        const auto un231 = normalizedVector(cross(c3 - c2, c1 - c2));
+        if(dot(un013, un231) < _minDotNormal) return false;
+
+        // Check whether triangle quality can be improved.
+        const auto qBefore = std::min(
+            mesh.getTriangleAttribute(t0).aTriangle.quality,
+            mesh.getTriangleAttribute(t1).aTriangle.quality
+        );
+        const auto q013 = TriangleQualityType{}(c0, c1, c3);
+        const auto q231 = TriangleQualityType{}(c2, c3, c1);
+        const auto qAfter = std::min(q013, q231);
+        if( !TriangleQualityType::better(qAfter, qBefore) ) return false;
+
+        // All checks complete. Do the flip.
+        typename Mesh::EdgeFlip{}(mesh, ei);
+
+        // TODO: update vertex degrees
+        // TODO: set new triangle attributes
+        // TODO: set new edge length (?)
+        return true;
+    }
+};
 
 template< typename Mesh >
 class MeshAdapter {
@@ -81,17 +179,6 @@ public:
     MeshAdapter(Mesh& mesh) : _mesh(mesh) {}
 
 };
-
-bool try_flip_edge() {
-    if(target-already-has-an-edge) {
-        issue-a-warning();
-        return false;
-    }
-    if(topo_constraint_not_satisfied) return false;
-    if(not-coplanar) return false;
-    if(triangle-quality-can-not-be-improved) return false;
-    flip_edge();
-}
 
 bool try_split_edge() {
     edge_split(); // Bezier curve?
