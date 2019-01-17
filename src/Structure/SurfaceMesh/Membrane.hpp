@@ -79,12 +79,10 @@ struct MembraneMeshAttribute {
     };
 
     // Mesh element changing
-    template< typename Mesh > static void newVertex(Mesh& mesh, size_t v, const typename Mesh::VertexInsertionOnEdge::InsertMid& op) {
-        const MetaAttribute& meta = mesh.getMetaAttribute();
-        coordinate_type c0 = mesh.getVertexAttribute(op.v0).getCoordinate();
-        coordinate_type c1 = mesh.getVertexAttribute(op.v1).getCoordinate();
-        coordinate_type c = mathfunc::midPointCoordinate(c0, c1, 0.5);
-        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(c, meta.m, v);
+    template< typename Mesh, typename VertexInsertionMethod >
+    static void newVertex(Mesh& mesh, size_t v, const VertexInsertionMethod& op) {
+        const auto& meta = mesh.getMetaAttribute();
+        mesh.getVertexAttribute(v).vertex = meta.s->addTrackable<Vertex>(op.coordinate(mesh, v), meta.m, v);
     }
     template< typename Mesh, typename Operation > static void newEdge(Mesh& mesh, size_t e, const Operation& op) {
         mesh.getEdgeAttribute(e).edge = mesh.getMetaAttribute().s->addTrackable<Edge>(mesh.getMetaAttribute().m, e);

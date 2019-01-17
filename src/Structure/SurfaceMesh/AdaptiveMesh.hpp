@@ -104,6 +104,7 @@ private:
     double _minDotNormal; // To assess whether triangles are coplanar.
 
 public:
+    // Returns whether the edge is flipped.
     // Requires
     //   - vertex degrees
     //   - triangle unit normal and quality
@@ -167,6 +168,83 @@ public:
         // TODO: set new triangle attributes
         // TODO: set new edge length (?)
         return true;
+    }
+};
+
+enum class EdgeSplitVertexInsertionMethod {
+    MidPoint
+};
+template< EdgeSplitVertexInsertionMethod > struct EdgeSplitVertexInsertion;
+template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidPoint > {
+    size_t v0, v1;
+    template< typename Mesh >
+    auto coordinate(const Mesh& mesh, size_t v) const {
+        const auto& c0 = mesh.getVertexAttribute(v0).getCoordinate();
+        const auto& c1 = mesh.getVertexAttribute(v1).getCoordinate();
+        return mathfunc::midPointCoordinate(c0, c1, 0.5);
+    }
+};
+
+template<
+    typename Mesh,
+    TriangleQualityCriteria c,
+    EdgeSplitVertexInsertionMethod m
+> class EdgeSplitManager {
+public:
+    using EdgeFlipManagerType = EdgeFlipManager< Mesh, c >;
+    using EdgeSplitVertexInsertionType = EdgeSplitVertexInsertion< m >;
+
+private:
+    size_t _maxDegree;
+
+public:
+    // Returns whether a new vertex is inserted.
+    // Requires
+    //   - Vertex degree
+    bool trySplit(Mesh& mesh, size_t ei, const EdgeFlipManagerType& efm) const {
+        using namespace mathfunc;
+
+        // A new vertex with degree 4 will be introduced
+
+        const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
+        const size_t hei_o = mesh.opposite(hei);
+        const size_t hei_n = mesh.next(hei);
+        const size_t hei_p = mesh.prev(hei);
+        const size_t hei_on = mesh.next(hei_o);
+        const size_t hei_op = mesh.prev(hei_o);
+
+        const size_t v0 = mesh.target(hei);
+        const size_t v1 = mesh.target(hei_n);
+        const size_t v2 = mesh.target(hei_o);
+        const size_t v3 = mesh.target(hei_on);
+
+        const size_t e0 = mesh.edge(hei_n); // v0 - v1
+        const size_t e1 = mesh.edge(hei_p); // v1 - v2
+        const size_t e2 = mesh.edge(hei_on); // v2 - v3
+        const size_t e3 = mesh.edge(hei_op); // v3 - v1
+
+        // Check topology constraints
+        if(
+            <neighbor-number-v1> >= _maxDegree ||
+            <neighbor-number-v3> >= _maxDegree
+        ) return false;
+
+        // All checks passed. Do the splitting.
+        typename Mesh::VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei);
+
+        // TODO: update vertex degrees
+        // TODO: set new triangle attributes
+        // TODO: update edge preferred lengths
+        // TODO: update edge lengths (?)
+
+        // Propose edge flipping on surrounding quad edges
+        efm.tryFlip(mesh, e0);
+        efm.tryFilp(mesh, e1);
+        efm.tryFlip(mesh, e2);
+        efm.tryFlip(mesh, e3);
+
+        return true;
+
     }
 };
 

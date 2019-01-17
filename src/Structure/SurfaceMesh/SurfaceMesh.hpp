@@ -448,10 +448,9 @@ public:
     // The following are basic mesh topology operators
 
     // Vertex insertion on edge.
+    template< typename InsertionMethod >
     struct VertexInsertionOnEdge {
         static constexpr int deltaNumVertex = 1;
-
-        struct InsertMid { size_t v0, v1; };
 
         void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
             auto& edges = mesh._edges;
@@ -474,7 +473,7 @@ public:
             const size_t vi3        = mesh.target(ohei_on);
 
             // Create new elements
-            const size_t vi     = mesh._newVertex(InsertMid{vi0, vi2});
+            const size_t vi     = mesh._newVertex(InsertionMethod{vi0, vi2});
             const size_t ei2    = mesh._newEdge(InsertMid{}); // New edge created by splitting
             const size_t hei0_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex, oppositing ohei
             const size_t hei2_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex, oppositing ohei_o
@@ -596,7 +595,7 @@ public:
     };
 
     // triangle subdivision, introduces 3 new vertices
-    struct TriangleSubdivision {
+    [[deprecated]] template< typename InsertionMethod > struct TriangleSubdivision {
         static constexpr int deltaNumVertex = 3;
         void operator()(SurfaceTriangularMesh& mesh, size_t triangleIndex) const {
             auto& edges = mesh._edges;
@@ -609,13 +608,13 @@ public:
             const size_t ohei = triangles[triangleIndex].halfEdgeIndex;
             const size_t ohei_n = mesh.next(ohei);
             const size_t ohei_p = mesh.prev(ohei);
-            VertexInsertionOnEdge()(mesh, mesh.edge(ohei)); // ohei, ohei_n, ohei_p still have the same target
+            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei)); // ohei, ohei_n, ohei_p still have the same target
 
             // Get the edge for future flipping.
             const size_t eFlip = mesh.edge(mesh.prev(ohei));
 
-            VertexInsertionOnEdge()(mesh, mesh.edge(ohei_n));
-            VertexInsertionOnEdge()(mesh, mesh.edge(ohei_p));
+            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei_n));
+            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei_p));
             EdgeFlip()(mesh, eFlip);
         }
     };
