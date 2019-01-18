@@ -122,43 +122,43 @@ public:
         const size_t hei_on = mesh.next(hei_o);
         const size_t hei_op = mesh.prev(hei_o);
 
-        const size_t v0 = mesh.target(hei);
-        const size_t v1 = mesh.target(hei_n);
-        const size_t v2 = mesh.target(hei_o);
-        const size_t v3 = mesh.target(hei_on);
+        const size_t vi0 = mesh.target(hei);
+        const size_t vi1 = mesh.target(hei_n);
+        const size_t vi2 = mesh.target(hei_o);
+        const size_t vi3 = mesh.target(hei_on);
         // Currently the edge connects v0 and v2.
         // If the edge flips, the connection would be between v1 and v3.
 
-        const size_t t0 = mesh.triangle(hei);
-        const size_t t1 = mesh.triangle(hei_o);
+        const size_t ti0 = mesh.triangle(hei);
+        const size_t ti1 = mesh.triangle(hei_o);
 
         // Check if topo constraint is satisfied.
         if(
-            <neighbor-number-v0> <= _minDegree ||
-            <neighbor-number-v2> <= _minDegree ||
-            <neighbor-number-v1> >= _maxDegree ||
-            <neighbor-number-v3> >= _maxDegree
+            mesh.degree(vi0) <= _minDegree ||
+            mesh.degree(vi2) <= _minDegree ||
+            mesh.degree(vi1) >= _maxDegree ||
+            mesh.degree(vi3) >= _maxDegree
         ) return false;
 
         // Check if the current triangles are coplanar.
         if(dot(
-            mesh.getTriangleAttribute(t0).gTriangle.unitNormal,
-            mesh.getTriangleAttribute(t1).gTriangle.unitNormal
+            mesh.getTriangleAttribute(ti0).gTriangle.unitNormal,
+            mesh.getTriangleAttribute(ti1).gTriangle.unitNormal
         ) < _minDotNormal) return false;
 
         // Check if the target triangles are coplanar.
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
-        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
-        const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(v3).getCoordinate());
+        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
+        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
+        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
+        const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(vi3).getCoordinate());
         const auto un013 = normalizedVector(cross(c1 - c0, c3 - c0));
         const auto un231 = normalizedVector(cross(c3 - c2, c1 - c2));
         if(dot(un013, un231) < _minDotNormal) return false;
 
         // Check whether triangle quality can be improved.
         const auto qBefore = TriangleQualityType::betterOne(
-            mesh.getTriangleAttribute(t0).aTriangle.quality,
-            mesh.getTriangleAttribute(t1).aTriangle.quality
+            mesh.getTriangleAttribute(ti0).aTriangle.quality,
+            mesh.getTriangleAttribute(ti1).aTriangle.quality
         );
         const auto q013 = TriangleQualityType{}(c0, c1, c3);
         const auto q231 = TriangleQualityType{}(c2, c3, c1);
@@ -168,7 +168,6 @@ public:
         // All checks complete. Do the flip.
         typename Mesh::EdgeFlip{}(mesh, ei);
 
-        // TODO: update vertex degrees
         // TODO: set new triangle attributes
         // TODO: set new edge length (?)
         return true;
@@ -215,36 +214,35 @@ public:
         const size_t hei_on = mesh.next(hei_o);
         const size_t hei_op = mesh.prev(hei_o);
 
-        const size_t v0 = mesh.target(hei);
-        const size_t v1 = mesh.target(hei_n);
-        const size_t v2 = mesh.target(hei_o);
-        const size_t v3 = mesh.target(hei_on);
+        const size_t vi0 = mesh.target(hei);
+        const size_t vi1 = mesh.target(hei_n);
+        const size_t vi2 = mesh.target(hei_o);
+        const size_t vi3 = mesh.target(hei_on);
 
-        const size_t e0 = mesh.edge(hei_n); // v0 - v1
-        const size_t e1 = mesh.edge(hei_p); // v1 - v2
-        const size_t e2 = mesh.edge(hei_on); // v2 - v3
-        const size_t e3 = mesh.edge(hei_op); // v3 - v1
+        const size_t ei0 = mesh.edge(hei_n); // v0 - v1
+        const size_t ei1 = mesh.edge(hei_p); // v1 - v2
+        const size_t ei2 = mesh.edge(hei_on); // v2 - v3
+        const size_t ei3 = mesh.edge(hei_op); // v3 - v1
 
         // Check topology constraints
         // A new vertex with degree 4 will always be introduced
         if(
-            <neighbor-number-v1> >= _maxDegree ||
-            <neighbor-number-v3> >= _maxDegree
+            mesh.degree(vi1) >= _maxDegree ||
+            mesh.degree(vi3) >= _maxDegree
         ) return false;
 
         // All checks passed. Do the splitting.
         typename Mesh::VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei);
 
-        // TODO: update vertex degrees
         // TODO: set new triangle attributes
         // TODO: update edge preferred lengths
         // TODO: update edge lengths (?)
 
         // Propose edge flipping on surrounding quad edges
-        efm.tryFlip(mesh, e0);
-        efm.tryFilp(mesh, e1);
-        efm.tryFlip(mesh, e2);
-        efm.tryFlip(mesh, e3);
+        efm.tryFlip(mesh, ei0);
+        efm.tryFilp(mesh, ei1);
+        efm.tryFlip(mesh, ei2);
+        efm.tryFlip(mesh, ei3);
 
         return true;
 
@@ -274,40 +272,41 @@ public:
         const size_t hei_on = mesh.next(hei_o);
         const size_t hei_op = mesh.prev(hei_o);
 
-        const size_t v0 = mesh.target(hei);
-        const size_t v1 = mesh.target(hei_n);
-        const size_t v2 = mesh.target(hei_o);
-        const size_t v3 = mesh.target(hei_on);
+        const size_t vi0 = mesh.target(hei);
+        const size_t vi1 = mesh.target(hei_n);
+        const size_t vi2 = mesh.target(hei_o);
+        const size_t vi3 = mesh.target(hei_on);
         // Currently the edge connects v0 and v2.
         // If the edge collapses, v0 and v2 would become one point.
 
-        const size_t t0 = mesh.triangle(hei);
-        const size_t t1 = mesh.triangle(hei_o);
+        const size_t ti0 = mesh.triangle(hei);
+        const size_t ti1 = mesh.triangle(hei_o);
 
         // Check topology constraints
         if(
-            <neighbor-number-v0> + <neighbor-number-v2> > _maxDegree ||
-            <neighbor-number-v1> <= _minDegree ||
-            <neighbor-number-v3> <= _minDegree
+            mesh.degree(vi0) + mesh.degree(vi2) - 4 > _maxDegree ||
+            mesh.degree(vi0) + mesh.degree(vi2) - 4 < _minDegree ||
+            mesh.degree(vi1) <= _minDegree ||
+            mesh.degree(vi3) <= _minDegree
         ) return false;
 
         // Future: maybe also geometric constraints (gap, smoothness, etc)
 
         // Check triangle quality constraints
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
+        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
+        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
 
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
         double q0Before = TriangleQualityType::worst;
         double q0After = TriangleQualityType::worst;
-        mesh.forEachHalfEdgeTargetingVertex(v0, [&](size_t hei) {
+        mesh.forEachHalfEdgeTargetingVertex(vi0, [&](size_t hei) {
             const size_t ti = mesh.triangle(hei);
             q0Before = TriangleQualityType::betterOne(
                 mesh.getTriangleAttribute(ti).aTriangle.quality,
                 q0Before
             );
-            if(ti != t0 && ti != t1) {
+            if(ti != ti0 && ti != ti1) {
                 const size_t vn = mesh.target(mesh.next(hei));
                 const size_t vp = mesh.target(mesh.prev(hei));
                 const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
@@ -323,13 +322,13 @@ public:
         // if v2 is removed
         double q2Before = TriangleQualityType::worst;
         double q2After = TriangleQualityType::worst;
-        mesh.forEachHalfEdgeTargetingVertex(v2, [&](size_t hei) {
+        mesh.forEachHalfEdgeTargetingVertex(vi2, [&](size_t hei) {
             const size_t ti = mesh.triangle(hei);
             q2Before = TriangleQualityType::betterOne(
                 mesh.getTriangleAttribute(ti).aTriangle.quality,
                 q2Before
             );
-            if(ti != t0 && ti != t1) {
+            if(ti != ti0 && ti != ti1) {
                 const size_t vn = mesh.target(mesh.next(hei));
                 const size_t vp = mesh.target(mesh.prev(hei));
                 const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
@@ -352,7 +351,6 @@ public:
             typename Mesh::EdgeCollapse {}(mesh, hei);
         }
 
-        // TODO: update vertex degrees
         // TODO: update triangle normals and qualities
         // Do not update edge preferred lengths
         // TODO: update edge lengths?
@@ -371,21 +369,6 @@ public:
 
 };
 
-bool try_split_edge() {
-    edge_split(); // Bezier curve?
-    for_quad_edges_around_the_vertex { try_edge_flip(); }
-    return true;
-}
-bool try_collapse_edge() {
-    delta_shape_quality = { try_remove_vertex_1(), try_remove_vertex_2() };
-    if(max{delta_shape_quality} < threshold) return false;
-    if(deg[0] < deg[1]) {
-        remove_vertex_1();
-    } else {
-        remove_vertex_2();
-    }
-    return true;
-}
 
 void global_relaxation_with_edge_flipping() {
     until( <no-flipping-available> && <relaxation-complete> ) {

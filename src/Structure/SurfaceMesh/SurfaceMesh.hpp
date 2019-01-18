@@ -113,6 +113,7 @@ public:
     // The elements should be trivially copyable.
     struct Vertex {
         size_t halfEdgeIndex; // Only one HalfEdge targeting the vertex is needed.
+        size_t degree; // Number of neighbors
         VertexAttribute attr;
     };
     struct HalfEdge {
@@ -343,6 +344,11 @@ public:
                 } // end loop halfedges
             } // end loop triangles
 
+            // Registering vertex degrees (not accurate when there are holes)
+            for(size_t vi = 0; vi < numVertices; ++vi) {
+                mesh._vertices[vi].degree = vai[vi].leavingHalfEdgeIndices.size();
+            }
+
             // Initialize attributes
             Attribute::init(mesh, attributeInitializerInfo);
         }
@@ -411,6 +417,8 @@ public:
     size_t triangle(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].triangleIndex; }
     size_t target(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].targetVertexIndex; }
     size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
+
+    size_t degree(size_t vertexIndex) const { return _vertices[vertexIndex].degree; }
 
     // Mesh neighbor iterators
     template< typename Func > void forEachHalfEdgeTargetingVertex(const Vertex& v, Func&& func) const {
@@ -495,6 +503,10 @@ public:
             halfEdges[hei1].targetVertexIndex = vi1;
             halfEdges[hei3].targetVertexIndex = vi3;
 
+            vertices[vi].degree = 4;
+            ++vertices[vi1].degree;
+            ++vertices[vi3].degree;
+
             // Adjust triangle
             mesh._registerTriangle(oti0, ohei,   ohei_n,  hei1_o);
             mesh._registerTriangle(ti1,  hei1,   ohei_p,  hei2_o);
@@ -548,6 +560,11 @@ public:
             mesh._registerEdge(oei1, mesh.opposite(ohei_n), mesh.opposite(ohei_p));
             mesh._registerEdge(oei3, mesh.opposite(ohei_op), mesh.opposite(ohei_on));
 
+            // Adjust vertex degrees
+            vertices[ov0].degree += vertices[ov1].degree - 4;
+            --vertices[mesh.target(ohei_n)].degree;
+            --vertices[mesh.target(ohei_on)].degree;
+
             // Remove elements
             mesh._removeVertex(ov1);
             mesh._removeEdge(oei);
@@ -589,6 +606,11 @@ public:
             halfEdges[ohei_o].targetVertexIndex = ov3;
             vertices[ov0].halfEdgeIndex = ohei_op;
             vertices[ov2].halfEdgeIndex = ohei_p;
+
+            --vertices[ov0].degree;
+            --vertices[ov2].degree;
+            ++vertices[ov1].degree;
+            ++vertices[ov3].degree;
 
             // Remake triangles
             mesh._registerTriangle(ot0, ohei, ohei_p, ohei_on);
