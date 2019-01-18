@@ -6,12 +6,14 @@
 // Additional attributes needed for meshwork
 struct AdaptiveMeshAttribute {
     struct VertexAttribute {
-        double density0;
-        double densityAvg;
-        double l0Aux;
+        double size;
+        [[deprecated]] double density0;
+        [[deprecated]] double densityAvg;
+        [[deprecated]] double l0Aux;
         mathfunc::Vec3 unitNormal;
     };
     struct HalfEdgeAttribute {
+        double theta;
     };
     struct EdgeAttribute {
         double eqLength;

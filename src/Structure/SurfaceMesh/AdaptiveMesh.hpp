@@ -2,42 +2,14 @@
 
 Adaptive mesh algorithm
 
-Implementation based on
-"An Adaptive Mesh Algorithm for Evolving Surfaces: Simulations of Drop Breakup and Coalescence"
-by Vittorio Cristini, Jerzy Blawzdziewicz and Michael Loewenberg.
+Implementation inspired by
+"An Adaptive Mesh Algorithm for Evolving Surfaces: Simulations of Drop Breakup and Coalescence" (2001)
+by Vittorio Cristini, Jerzy Blawzdziewicz and Michael Loewenberg,
+"About surface remeshing" (2000) by Pascal J. Frey,
+"Geometric surface mesh optimization" (1998) by Pascal J. Frey and Houman Borouchaki
 
-Performs mesh relaxation and topological transformation.
-
-Ending criteria:
-    1. Relaxation terminates.
-    2. in a local region, number of nodes n is near n_0.
-    3. no more node reconnection.
-
-The following values are stored and updated
-    - L computed on each vertex.
-        - L_0 is generally universal, as an upper limit
-        - L_1 uses local curvature information.
-        - L_2 and above are not used currently.
-    - rho computed on each vertex. rho = c_0 / (alpha * L)^2
-        - c_0 is a geometric factor (2 / sqrt(3))
-        - alpha_0 is resolution of the surface (ref: 0.2-0.3)
-    - rho_avg computed on each vertex. (1-ring weighted avg of rho)
-    - A_0 computed an each triangle. Uses rho_avg on vertices.
-
-For mesh relaxation, the following values are also needed
-    - l_0' computed on each vertex. Uses weighted sum of neighboring A_0.
-    - l_0 computed on each edge. An average of l_0' on the two vertex.
-    - normal computed on vertices.
-    - v (velocity) on vertices, Uses l_0 and n.
-
-For topological transformation, the following values are also needed
-    - S_loc computed on each vertex
-    - S_0 computed on a local region. Uses A_0 in the region.
-    - n_0 computed on a local region. n_0 = n * S_loc / S_0. (fraction of border nodes will be counted to n).
-
-We might need to redistribute the surface area globally or locally depending on the operation,
-if we are using patched area energy computation (i.e. use sum of local area energy instead of
-energy from sum of area)
+Performs mesh relaxation and topological transformation to improve mesh size
+quality and shape quality, while maintaining the geometrical accuracy.
 
 The algorithm was not introduced explicity in the article, and we'll formalize it as follows
 
@@ -51,13 +23,6 @@ Loop
         Update affected per-element quantities and local averaged quantites
     End
 Until all criteria are met
-
-It would be easier if the implementation and the mesh representation are coupled with
-the current surface meshwork system. But additional variables should be introduced and
-it might not be appropriate to mess them up with the original structure.
-
-Overlaying a new set of variables with the current implementation of the meshwork might
-be a good idea as well.
 
 */
 
@@ -373,8 +338,8 @@ enum class RelaxationType {
 };
 template< RelaxationType > struct RelaxationForceField;
 template<> struct RelaxationForceField< RelaxationType::GlobalElastic > {
-    ; // The size must be prepared outside.
 
+    // The function requires the vertex unit normal information
     template< typename Mesh, typename VecType >
     void computeForces(std::vector<VecType>& forces, const Mesh& mesh, const std::vector<VecType>& coords) {
         // The size of forces should be the same as the size of coords.
@@ -507,6 +472,95 @@ public:
     }
 };
 
+enum class SizeMeasureCriteria {
+    Curvature
+};
+template< SizeMeasureCriteria > struct VertexSizeMeasure;
+template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
+    double resolution; // size = res * min_radius_curvature
+    double upperLimit; // maximum size
+
+    // Requires
+    //   - Vertex unit normal
+    template< typename Mesh > auto vertexMaxSize(Mesh& mesh, size_t vi) const {
+        double minRadiusCurvature = std::numeric_limits<double>::infinity();
+        const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
+        const auto ci = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(vi).vertex->getCoordinate());
+        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+            const auto r = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->getCoordinate()) - ci;
+            minRadiusCurvature = std::min(
+                std::abs(0.5 * mathfunc::magnitude2(r) / mathfunc::dot(un, r)),
+                minRadiusCurvature
+            );
+        });
+        
+        return std::min(resolution * minRadiusCurvature, upperLimit);
+    }
+};
+
+template< SizeMeasureCriteria... > struct VertexSizeMeasureCombined;
+template< SizeMeasureCriteria c, SizeMeasureCriteria... cs >
+struct VertexSizeMeasureCombined< c, cs... > {
+    template< typename Mesh >
+    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) const {
+        return std::min(vsm.vertexMaxSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...));
+    }
+};
+template< SizeMeasureCriteria c >
+struct VertexSizeMeasureCombined< c > {
+    template< typename Mesh >
+    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) const {
+        return vsm.vertexMaxSize(mesh, vi);
+    }
+};
+
+template< typename Mesh > class SizeMeasureManager {
+private:
+
+    double _curvRes; // resolution used in radius curvature
+    double _maxSize; // Hard upper bound of size
+    size_t _diffuseIter; // Diffusion iterations used in gradation control
+
+    template< SizeMeasureCriteria... cs >
+    auto _vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<cs>&... vsms) const {
+        return VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...);
+    }
+    template< SizeMeasureCriteria... cs >
+    void _updateVertexMaxSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
+        const size_t numVertices = mesh.getVertices().size();
+        for(size_t i = 0; i < numVertices; ++i) {
+            mesh.getVertexAttribute(i).aVertex.size = _vertexMaxSize(mesh, i, vsms...);
+        }
+    }
+
+    void _updateEdgeEqLength(Mesh& mesh) const {
+        const size_t numEdges = mesh.getEdges().size();
+        for(size_t i = 0; i < numEdges; ++i) {
+            auto& l0 = mesh.getEdgeAttribute(i).aEdge.eqLength;
+            l0 = 0.0;
+            mesh.forEachHalfEdgeInEdge(i, [&](size_t hei) {
+                l0 += 0.5 * mesh.getVertexAttribute(mesh.target(hei)).aVertex.size;
+            });
+        }
+    }
+
+public:
+
+    // Requires
+    //   - Unit normal on each vertex
+    void computeSizeMeasure(Mesh& mesh) const {
+        VertexSizeMeasure< SizeMeasureCriteria::Curvature > vsmCurv {_curvRes, _maxSize};
+
+        // Compute size on each vertex
+        _updateVertexMaxSize(mesh, vsmCurv);
+
+        // Diffuse size on vertices
+        // TODO
+
+        // Compute preferred length of edges
+        _updateEdgeEqLength(mesh);
+    }
+};
 template< typename Mesh >
 class MeshAdapter {
 private:
