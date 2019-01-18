@@ -108,6 +108,15 @@ private:
     double _minDotNormal; // To assess whether triangles are coplanar.
 
 public:
+
+    // Constructor
+    // Parameters
+    //   - minDegree: minimum number of neighbors of any vertex
+    //   - maxDegree: maximum number of neighbors of any vertex
+    //   - minDotNormal: minimum dot product required between neighboring triangles. Range (-1, 1)
+    EdgeFlipManager(size_t minDegree, size_t maxDegree, double minDotNormal) :
+        _minDegree(minDegree), _maxDegree(maxDegree), _minDotNormal(minDotNormal) {}
+
     // Returns whether the edge is flipped.
     // Requires
     //   - vertex degrees
@@ -359,6 +368,145 @@ public:
     }
 };
 
+enum class RelaxationType {
+    GlobalElastic // E = (l - l_0)^2 / (2 l_0), with const elastic modulus 1.0
+};
+template< RelaxationType > struct RelaxationForceField;
+template<> struct RelaxationForceField< RelaxationType::GlobalElastic > {
+    ; // The size must be prepared outside.
+
+    template< typename Mesh, typename VecType >
+    void computeForces(std::vector<VecType>& forces, const Mesh& mesh, const std::vector<VecType>& coords) {
+        // The size of forces should be the same as the size of coords.
+        // Resizing of forces should be done by the caller.
+        const size_t numVertices = coords.size();
+        for(size_t i = 0; i < numVertices; ++i) {
+            VecType f {};
+            mesh.forEachHalfEdgeTargetingVertex(i, [&](size_t hei) {
+                const auto l0 = mesh.getEdgeAttribute(mesh.edge(hei)).aEdge.eqLength;
+                const auto r = coords[mesh.target(mesh.opposite(hei))] - coords[i];
+                const auto mag = mathfunc::magnitude(r);
+                f += r * (1.0 / l0 - 1.0 / mag);
+            });
+
+            const auto& un = mesh.getVertexAttribute(v).aVertex.unitNormal;
+            f -= un * mathfunc::dot(un, f); // Remove normal component
+
+            forces[i] = f;
+        }
+    }
+};
+
+// For the purpose of global relaxation, we create a coordinate list and do work on them.
+template<
+    typename Mesh,
+    RelaxationType r,
+    TriangleQualityCriteria c
+> class GlobalRelaxationManager {
+public:
+    using RelaxationForceFieldType = RelaxationForceField< r >;
+    using EdgeFlipManagerType = EdgeFlipManager< Mesh, c >;
+
+private:
+    double _epsilon2; // Square of force tolerance
+    double _dt; // Step size for Runge Kutta method
+    size_t _maxIterRelocation;
+    size_t _maxIterRelaxation; // each iteration: (relocation + edge flipping)
+
+    // Utility for max force magnitude squared
+    template< typename VecType > static auto _maxMag2(std::vector<VecType>& v) {
+        double res = 0.0;
+        for(const auto& i : v) {
+            double mag2 = mathfunc::magnitude2(i);
+            if(mag2 > res) res = mag2;
+        }
+        return res;
+    }
+
+    // Relocates vertices using 2nd order Runge Kutta method
+    // Returns whether the final forces are below threshold.
+    template< typename VecType > bool _vertexRelocation(
+        std::vector<VecType>& coords,
+        std::vector<VecType>& forces,
+        std::vector<VecType>& coordsHalfway,
+        std::vector<VecType>& forcesHalfway,
+        const Mesh& mesh
+    ) const {
+        const size_t numVertices = coords.size();
+
+        RelaxationForceFieldType().computeForces(forces, mesh, coords);
+        auto maxMag2F = _maxMag2(forces);
+
+        size_t iter = 0;
+        while(maxMag2F >= _epsilon2 && iter < _maxIterRelocation) {
+            ++iter;
+
+            // Test move halfway
+            for(size_t i = 0; i < numVertices; ++i)
+                coordsHalfway[i] = coords[i] + (0.5 * dt) * forces[i];
+
+            // Force at halfway
+            RelaxationForceFieldType().computeForces(forcesHalfway, mesh, coordsHalfway);
+
+            // Real move
+            for(size_t i = 0; i < numVertices; ++i)
+                coords[i] += forcesHalfway[i] * dt;
+
+            // Compute new forces
+            RelaxationForceFieldType().computeForces(forces, mesh, coords);
+            maxMag2F = _maxMag2(forces);
+        }
+
+        if(maxMag2F >= _epsilon2) return false;
+        else return true;
+    }
+
+    // Returns whether at least 1 edge is flipped
+    bool _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+        // Edge flipping does not change edge id or total number of edges
+        bool res = false;
+        const size_t numEdges = mesh.getEdges().size();
+        for(size_t i = 0; i < numEdges; ++i) {
+            if(efm.tryFlip(mesh, i)) res = true;
+        }
+        return res;
+    }
+
+public:
+    // Returns whether relaxation is complete.
+    bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+        // Initialization
+        const size_t numVertices = mesh.getVertices().size();
+        std::vector< mathfunc::Vec3 > coords(numVertices);
+        for(size_t i = 0; i < numVertices; ++i) {
+            coords[i] = vector2Vec<3, double>(mesh.getVertexAttribute(i).vertex->getCoordinate());
+        }
+
+        // Aux variables
+        std::vector< mathfunc::Vec3 > forces(numVertices);
+        std::vector< mathfunc::Vec3 > coordsHalfway(numVertices);
+        std::vector< mathfunc::Vec3 > forcesHalfway(numVertices);
+
+        // Main loop
+        bool needRelocation = true;
+        bool needFlipping = true;
+        size_t iter = 0;
+        while( (needRelocation || needFlipping) && iter < _maxIterRelaxation) {
+            ++iter;
+            needRelocation = !_vertexRelocation(coords, forces, coordsHalfway, forcesHalfway, mesh);
+            needFlipping = _edgeFlipping(mesh, efm);
+        }
+
+        // Reassign coordinates
+        for(size_t i = 0; i < numVertices; ++i) {
+            mesh.getVertexAttribute(i).vertex->getCoordinate() = vec2Vector(coords[i]);
+        }
+
+        if(needRelocation || needFlipping) return false;
+        else return true;
+    }
+};
+
 template< typename Mesh >
 class MeshAdapter {
 private:
@@ -370,12 +518,6 @@ public:
 };
 
 
-void global_relaxation_with_edge_flipping() {
-    until( <no-flipping-available> && <relaxation-complete> ) {
-        loop_N_times(global_relaxation);
-        for_all_edges(try_flipping);
-    }
-}
 void algo() {
     init();
 
@@ -478,135 +620,6 @@ template< typename Mesh > void calc_l0_all(Mesh& mesh) {
     }
 }
 
-template< typename Mesh > auto compute_all_forces(const Mesh& mesh, const mathfunc::VecMut< mathfunc::Vec3 >& coords) {
-    mathfunc::VecMut< mathfunc::Vec3 > forces(coords.size());
-
-    std::transform(
-        mesh.getVertices().begin(), mesh.getVertices().end(),
-        coords.begin(),
-        forces.begin(),
-        [&mesh, &coords](const auto& v, const auto& c) {
-            mathfunc::Vec3 f {};
-            mesh.forEachHalfEdgeTargetingVertex(v, [&](size_t hei) {
-                const auto l0 = mesh.getEdgeAttribute(mesh.edge(hei)).adapt.l0;
-                const auto r = coords[mesh.target(mesh.opposite(hei))] - c;
-                const auto mag = mathfunc::magnitude(r);
-                f += r * (1.0 - l0 / mag);
-            });
-
-            const auto& un = v.attr.adapt.unitNormal;
-            f -= un * dot(un, f); // remove normal component
-
-            return f;
-        }
-    );
-
-    return forces;
-}
-struct LocalForceCalculator {
-    const std::vector<size_t>& vertexIndex;
-
-    template< typename Mesh >
-    auto operator()(const Mesh& mesh, const mathfunc::VecMut< mathfunc::Vec3 >& coords) {
-        // The coords must have the same dimension as vertexIndex
-
-        mathfunc::VecMut< mathfunc::Vec3 > forces(coords.size());
-
-        std::transform(
-            vertexIndex.begin(), vertexIndex.end(),
-            coords.begin(),
-            forces.begin(),
-            [this, &mesh, &coords](size_t v, const auto& c) {
-                mathfunc::Vec3 f {};
-                mesh.forEachHalfEdgeTargetingVertex(v, [&](size_t hei) {
-                    const auto l0 = mesh.getEdgeAttribute(mesh.edge(hei)).adapt.l0;
-                    const auto r = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->coordinate) - c;
-                    const auto mag = mathfunc::magnitude(r);
-                    f += r * (1.0 - l0 / mag);
-                });
-
-                const auto& un = mesh.getVertexAttribute(v).adapt.unitNormal;
-                f -= un * dot(un, f); // remove normal component
-
-                return f;
-            }
-        );
-
-        return forces;
-    }
-};
-
-auto maxMag2(const mathfunc::VecMut< mathfunc::Vec3 >& v) {
-    double res = 0.0;
-    for(const auto& i : v) {
-        double mag2 = mathfunc::magnitude2(i);
-        if(mag2 > res) res = mag2;
-    }
-    return res;
-}
-
-// 2nd order Runge Kutta method on a set of coordinates.
-template< typename VecType, typename Func >
-void rk2(VecType& coords, Func&& calc_force, double dt, double epsilonSqr) {
-    auto forces = calc_force(coords);
-    auto maxMag2F = maxMag2(forces);
-
-    while(maxMag2F >= epsilonSqr) {
-        // Test move halfway
-        auto coords_halfway = coords;
-        coords_halfway += forces * (0.5 * dt);
-
-        // Force at halfway
-        const auto forces_halfway = calc_force(coords_halfway);
-
-        // Real move
-        coords += forces_halfway * dt;
-
-        // Compute new forces
-        forces = calc_force(coords);
-        maxMag2F = maxMag2(forces);
-    }
-
-}
-
-template< typename Mesh > void global_relaxation(Mesh& mesh) {
-    using coordinate_type = typename Mesh::VertexAttribute::coordinate_type;
-
-    // TODO Need dt and epsilonSqr
-    // normal is obtained from curvature computation
-    const size_t numVertices = mesh.numVertices();
-
-    mathfunc::VecMut< mathfunc::Vec3 > coords(numVertices);
-
-    // Copy coordinates to a vector
-    std::transform(
-        mesh.getVertices().begin(), mesh.getVertices().end(),
-        coords.begin(),
-        [](const auto& v) { return mathfunc::vector2Vec<3, double>(v.attr.vertex->coordinate); }
-    );
-
-    rk2(coords, compute_all_forces, dt, epsilonSqr);
-
-}
-template< typename Mesh > void local_relaxation(Mesh& mesh, const std::vector<size_t>& vertexIndex) {
-    using coordinate_type = typename Mesh::VertexAttribute::coordinate_type;
-
-    // TODO Need dt and epsilonSqr
-    // normal is obtained from curvature computation
-    const size_t numVertices = vertexIndex.size();
-
-    mathfunc::VecMut< mathfunc::Vec3 > coords(numVertices);
-
-    // Copy coordinates to a vector
-    std::transform(
-        vertexIndex.begin(), vertexIndex.end(),
-        coords.begin(),
-        [&mesh](size_t v) { return mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v).vertex->coordinate); }
-    );
-
-    rk2(coords, LocalForceCalculator{vertexIndex}, dt, epsilonSqr);
-
-}
 
 // general algorithm procedure
 template< typename Mesh >
@@ -626,19 +639,5 @@ void adaptive_mesh(Mesh& mesh) {
 
     }
 }
-struct MeshForce {
-    const std::vector< Vertex* >& vertices;
-    std::vector< char > mask;
-    std::vector< size_t > activeVertexIndices;
-    some_array operator()(some_array coord) {
-        // The size of coord must be exactly 3 times the size of vertex array.
-        for(size_t i : activeVertexIndices) {
-            Vector3 p = vertices[i] -> point;
-            for(Vertex* v : vertices[i] -> neighborVertices) {
-                if
-            }
-        }
-    }
-};
 
 #endif

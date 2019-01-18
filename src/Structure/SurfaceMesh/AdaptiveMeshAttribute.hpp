@@ -14,7 +14,7 @@ struct AdaptiveMeshAttribute {
     struct HalfEdgeAttribute {
     };
     struct EdgeAttribute {
-        double l0;
+        double eqLength;
     };
     struct TriangleAttribute {
         double quality;
