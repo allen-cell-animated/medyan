@@ -15,7 +15,6 @@ struct AdaptiveMeshAttribute {
         mathfunc::Vec3 unitNormal;
     };
     struct HalfEdgeAttribute {
-        double theta;
     };
     struct EdgeAttribute {
         double eqLength;

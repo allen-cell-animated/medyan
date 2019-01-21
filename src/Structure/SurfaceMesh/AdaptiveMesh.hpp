@@ -594,43 +594,120 @@ public:
         _updateEdgeEqLength(mesh);
     }
 };
+
 template< typename Mesh >
 class MeshAdapter {
-private:
-    Mesh& _mesh;
-
 public:
-    MeshAdapter(Mesh& mesh) : _mesh(mesh) {}
+    static constexpr auto relaxationType = RelaxationType::GlobalElastic;
+    static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
+
+private:
+    SizeMeasureManager< Mesh > _sizeMeasureManager;
+    GlobalRelaxationManager< Mesh, relaxationType, triangleQualityCriteria > _globalRelaxationManager;
+    EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
+
+    void _computeTriangleNormals(Mesh& mesh) const {
+        const size_t numTriangles = mesh.getTriangles().size();
+
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
+            const size_t hei = triangles[ti].halfEdgeIndex;
+            const size_t vi0 = mesh.target(hei);
+            const size_t vi1 = mesh.target(mesh.next(hei));
+            const size_t vi2 = mesh.target(mesh.prev(hei));
+            const auto& c0 = vertices[vi0].attr.vertex->coordinate;
+            const auto& c1 = vertices[vi1].attr.vertex->coordinate;
+            const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+            auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
+
+            const auto vp = mathfunc::vectorProduct(c0, c1, c0, c2);
+
+            // unit normal
+            tag.unitNormal = mathfunc::vector2Vec<3, double>(mathfunc::normalizedVector(vp));
+        }
+    }
+
+    void _computeAngles(Mesh& mesh) const {
+        const size_t numHalfEdges = mesh.getHalfEdges().size();
+
+        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
+            // The angle is (v0, v1, v2)
+            const size_t vi0 = mesh.target(mesh.prev(hei));
+            const size_t vi1 = mesh.target(hei);
+            const size_t vi2 = mesh.target(mesh.next(hei));
+            const auto& c0 = vertices[vi0].attr.vertex->coordinate;
+            const auto& c1 = vertices[vi1].attr.vertex->coordinate;
+            const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+            auto& heag = mesh.getHalfEdgeAttribute(hei).gHalfEdge;
+
+            const auto vp = mathfunc::vectorProduct(c1, c0, c1, c2);
+            const auto sp = mathfunc::scalarProduct(c1, c0, c1, c2);
+            const auto ct = heag.cotTheta = sp / mathfunc::magnitude(vp);
+            heag.theta = M_PI_2 - std::atan(ct);
+        }
+    }
+
+    // Requires
+    //   - Unit normals in triangles (geometric)
+    //   - Angles in halfedges (geometric)
+    void _computeVertexNormals(Mesh& mesh) const {
+        const size_t numVertices = mesh.getVertices().size();
+
+        // Using pseudo normal (weighted by angles)
+        for(size_t vi = 0; vi < numVertices; ++vi) {
+            auto& vaa = mesh.getVertexAttribute(vi).aVertex;
+
+            // clearing
+            vaa.unitNormal = {0.0, 0.0, 0.0};
+
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+                const size_t ti0 = mesh.triangle(hei);
+                const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
+                vaa.unitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+            });
+
+            mathfunc::normalize(vaa.unitNormal);
+        }
+
+    }
+
+    void _computeSizeMeasures(Mesh& mesh) const {
+        _computeTriangleNormals(mesh);
+        _computeAngles(mesh);
+        _computeVertexNormals(mesh);
+        _sizeMeasureManager.computeSizeMeasure(mesh);
+    }
+public:
+    MeshAdapter() {}
+
+    void adapt(Mesh& mesh) const {
+        init();
+
+        _computeSizeMeasures();
+        while( <size-measure-not-satisfied> ) {
+            bool topoModified = false;
+            do {
+                loop_all_edges {
+                    mark_edge_as_inspection_ready;
+                }
+                loop_all_edges {
+                    if( <edge-is-inspection-ready> )
+                        if( <edge-too-long> ) {
+                            try_split_edge();
+                            topoModified = true;
+                        } else if( <edge-too-short> ) {
+                            try_collapse_edge();
+                            topoModified = true;
+                        }
+                }
+            } while( !topoModified );
+
+            _globalRelaxationManager.relax(mesh, _edgeFlipManager);
+
+            _computeSizeMeasures();
+        }
+    }
 
 };
 
-
-void algo() {
-    init();
-
-    compute_normal_and_size_measures();
-    while( <size-measure-not-satisfied> ) {
-        bool topoModified = false;
-        do {
-            loop_all_edges {
-                mark_edge_as_inspection_ready;
-            }
-            loop_all_edges {
-                if( <edge-is-inspection-ready> )
-                    if( <edge-too-long> ) {
-                        try_split_edge();
-                        topoModified = true;
-                    } else if( <edge-too-short> ) {
-                        try_collapse_edge();
-                        topoModified = true;
-                    }
-            }
-        } while( !topoModified );
-
-        global_relaxation_with_edge_flipping();
-
-        compute_normal_and_size_measures();
-    };
-}
 
 #endif
