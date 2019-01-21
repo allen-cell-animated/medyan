@@ -1696,12 +1696,15 @@ void ChemManager::genFilBindingReactions() {
                 //Create reaction
                 float onRate = get<2>(r);
                 float offRate = get<3>(r);
-                auto temp=SysParams::BUBBareRate;
+                auto temp=SysParams::BUBBareRate; //TODO BUB to CUB
                 if(temp.size()>0)
                     temp[camkiierInt]=offRate;
                 else
                     temp.push_back(offRate);
-                SysParams::BUBBareRate=temp;
+                SysParams::BUBBareRate=temp; //TODO BUB to CUB
+                rMin = get<4>(r);
+                rMax = get<5>(r);
+
                 cout << "CAMKIIBundling rS_size:"<<reactantSpecies.size()<<" pS_size:" <<productSpecies.size()<<" " << __LINE__ <<" "<< __FILE__ << endl;
                 ReactionBase* rxn = new Reaction<1,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::CAMKIIBUNDLING);
@@ -1709,7 +1712,7 @@ void ChemManager::genFilBindingReactions() {
                 C->addInternalReaction(rxn);
                 cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //create manager
-                CaMKIIBundlingManager* bManager = new CaMKIIBundlingManager(rxn, C, camkiierInt, camkiierName, filType);
+                CaMKIIBundlingManager* bManager = new CaMKIIBundlingManager(rxn, C, camkiierInt, camkiierName, filType,rMax,rMin);
                 C->addFilamentBindingManager(bManager);
                 cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 bManager->setMIndex(managerIndex++);

@@ -334,14 +334,25 @@ class CaMKIIBundlingManager : public FilamentBindingManager {
 friend class ChemManager;
 
 private:
+	float _rMin; ///< Minimum reaction range
+	float _rMax; ///< Maximum reaction range
     ///possible bindings at current state
-    unordered_set<tuple<CCylinder*, short>> _possibleBindings;
+    unordered_multimap<CaMKIIingPoint*, tuple<CCylinder*, short>> _possibleBindings;
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _camkiirestarttuple; //Used only during restart conditions.
+
+    //TODO Neighbor list for CaMKII
+    //static neighbor list
+    static vector<CylinderCylinderNL*> _neighborLists;
+
+
+
 public:
     CaMKIIBundlingManager(ReactionBase* reaction,
                      Compartment* compartment,
                      short boundInt, string boundName,
-                     short filamentType);
+                     short filamentType,
+                     float rMax, float rMin);
+
     ~CaMKIIBundlingManager() {}
 
     //@{
@@ -365,7 +376,7 @@ public:
     }
 
     /// Choose a random binding site based on current state
-    tuple<CCylinder*, short> chooseBindingSite() {
+    tuple<CaMKIIingPoint*, tuple<CCylinder*, short>> chooseBindingSites() {
 
         assert((_possibleBindings.size() != 0)
                && "Major bug: CaMKIIing manager should not have zero binding \
@@ -375,27 +386,40 @@ public:
         auto it = _possibleBindings.begin();
 
         advance(it, randomIndex);
+        auto b = tuple<CCylinder*, short>(it->second);
+        auto a = it->first;
 
-        return *it;
+        return tuple<CaMKIIingPoint*, tuple<CCylinder*, short>> (a,b);
+
+        //return vector<tuple<CCylinder*, short>>{it->first, it->second};
     }
 
     virtual bool isConsistent();
     /// ARAVIND ADDED FEB 17 2016. append possible bindings.
-    virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
-        double oldN=numBindingSites();
-        _possibleBindings.insert(t1);
-        _camkiirestarttuple.push_back(make_tuple(t1,t2));
+	virtual void appendpossibleBindings(tuple<CCylinder*, short> t1, tuple<CCylinder*, short> t2){
+        // TODO fix restart for CAMKII
+		double oldN=numBindingSites();
+       // _possibleBindings.emplace(t1,t2);
+       // _camkiirestarttuple.push_back(make_tuple(t1,t2));
 //        _camkiiCylinder=(get<0>(t2));
-        double newN=numBindingSites();
-        updateBindingReaction(oldN,newN);}
+    //    double newN=numBindingSites();
+     //   updateBindingReaction(oldN,newN);
+	}
     virtual void clearpossibleBindings() {
         double oldN=numBindingSites();
         _possibleBindings.clear();
         updateBindingReaction(oldN,0);
     }
+
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> getbtuple() {
         return _camkiirestarttuple;
     }
+
+    //@{
+    /// Getters for distances
+    float getRMin() {return _rMin;}
+    float getRMax() {return _rMax;}
+    //@}
 };
 
 /// Manager for Linker binding.
@@ -471,7 +495,7 @@ public:
     //@}
     
     /// Choose random binding sites based on current state
-    vector<tuple<CCylinder*, short>> chooseBindingSites() {
+	vector<tuple<CCylinder*, short>> chooseBindingSites() {
         
         assert((_possibleBindings.size() != 0)
                && "Major bug: Linker binding manager should not have zero binding \

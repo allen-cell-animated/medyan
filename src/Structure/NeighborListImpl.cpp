@@ -18,11 +18,17 @@
 #include "Cylinder.h"
 #include "Bubble.h"
 #include "BoundaryElement.h"
+#include "CaMKIIingPoint.h"
+
 
 #include "GController.h"
 #include "MathFunctions.h"
 
 using namespace mathfunc;
+
+//TODO CaMKIIingPoint-Cylinder Neighbor List, updateNeighbors, addNeighbor, removeNeighbor, reset, and getNeighbors
+
+
 
 //CYLINDER-CYLINDER
 

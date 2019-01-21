@@ -708,6 +708,7 @@ struct CaMKIIBundlingCallback {
     float _onRate;         ///< Rate of the binding reaction
     float _offRate;        ///< Rate of the unbinding reaction
     
+    //TODO propagate min and max search Distance
     float _minSearchDist = 100; ///Minimum search distance
     float _maxSearchDist = 200; ///Maximum search distance
     float _maxcoordNumber = 3;
@@ -725,7 +726,17 @@ struct CaMKIIBundlingCallback {
         
         //choose a random binding site from manager
         //TODO Find a CAMKII with coordination number less than max number
-        auto site = _bManager->chooseBindingSite();
+        auto site = _bManager->chooseBindingSites();
+
+        CaMKIIingPoint* cp = site[0];
+        Cylinder*       c2 = get<0>(site[1])->getCylinder();
+        short           pos = get<1>(site[1])->getCylinder();
+        cp->addBond(c2, pos);
+
+//TODO CJY make sure isn't needed before cleaning
+#if 0
+
+        // CamKIIingPoint cylinder pair filament with
         
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
@@ -774,7 +785,13 @@ struct CaMKIIBundlingCallback {
 //        Filament* f = _ps->addTrackable<Filament>(_ps, filType, bp, bd, true, true);
 //
 //        //mark first cylinder
-//        Cylinder* c = f->getCylinderVector().front();
+
+        auto bindingSite = _bManager->chooseBindingSite();
+        auto ccx = get<0>(bindingSite);
+        auto cylin = ccx->getCylinder();
+        short bs = get<1>(ccx);
+
+        Cylinder* c = f->getCylinderVector().front();
 //        //c->getCCylinder()->getCMonomer(0)->speciesPlusEnd(_plusEnd)->up();
 //
 //        //create new camkii
@@ -841,11 +858,11 @@ struct CaMKIIBundlingCallback {
                 cout<<"CaMKIIer Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
                 //exit(EXIT_FAILURE);
         }
-        
+#endif
         //create off reaction
         auto cCaMKIIer = b->getCCaMKIIingPoint();
         
-        cCaMKIIer->setRates(_onRate, frate);
+        cCaMKIIer->setRates(_onRate, _offRate);
         cCaMKIIer->createOffReaction(r, _ps);
         cCaMKIIer->getOffReaction()->setBareRate(SysParams::BUBBareRate[camkiiType]);
     }

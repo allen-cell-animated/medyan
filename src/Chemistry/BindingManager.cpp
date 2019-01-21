@@ -402,11 +402,16 @@ bool CaMKIIBindingManager::isConsistent() {
 CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
                                    Compartment* compartment,
                                    short boundInt, string boundName,
-                                   short filamentType)
+                                   short filamentType,
+				                   float rMax, float rMin)
 
     : FilamentBindingManager(reaction, compartment, boundInt, boundName, filamentType) {
 
-    //find the single binding species
+    //added for CaMKII
+	_rMax=rMax;
+    _rMin=rMin;
+
+	//find the single binding species
     RSpecies** rs = reaction->rspecies();
     cout << "CAMKIIBundling "<< __LINE__ <<" "<< __FILE__ << endl;
     string name = rs[C2_RXN_INDEX]->getSpecies().getName();
@@ -1161,4 +1166,5 @@ SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CylinderCylinderNL*> LinkerBindingManager::_neighborLists;
 vector<CylinderCylinderNL*> MotorBindingManager::_neighborLists;
+vector<CylinderCylinderNL*> CaMKIIBundlingManager::_neighborLists; //TODO fix the cype on NL
 

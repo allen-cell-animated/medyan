@@ -273,6 +273,10 @@ public:
     static vector<float> MUBBareRate;
     static vector<float> LUBBareRate;
     static vector<float> BUBBareRate;
+
+    //TODO Need to modify CaMKII Bundling BUB to CUB
+    static vector<float> CUBBareRate;
+
     //@
     static const MechParams& Mechanics() {return MParams;}
     static const ChemParams& Chemistry() {return CParams;}
