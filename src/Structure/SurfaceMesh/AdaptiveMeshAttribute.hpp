@@ -7,6 +7,8 @@
 struct AdaptiveMeshAttribute {
     struct VertexAttribute {
         double size;
+        double maxSize;
+        double sizeAux; // Used in diffusing
         [[deprecated]] double density0;
         [[deprecated]] double densityAvg;
         [[deprecated]] double l0Aux;

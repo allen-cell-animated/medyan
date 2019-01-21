@@ -529,7 +529,40 @@ private:
     void _updateVertexMaxSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
         const size_t numVertices = mesh.getVertices().size();
         for(size_t i = 0; i < numVertices; ++i) {
-            mesh.getVertexAttribute(i).aVertex.size = _vertexMaxSize(mesh, i, vsms...);
+            mesh.getVertexAttribute(i).aVertex.maxSize = _vertexMaxSize(mesh, i, vsms...);
+        }
+    }
+
+    void _diffuseSize(Mesh& mesh) const {
+        const size_t numVertices = mesh.getVertices().size();
+
+        // Initialize with max size
+        for(size_t i = 0; i < numVertices; ++i) {
+            auto& av = mesh.getVertexAttribute(i).aVertex;
+            av.size = av.maxSize;
+        }
+
+        // Diffuse, with D * Delta t = 0.5, and uniformly weighted Laplace operator
+        // l_new = l_old / 2 - (sum of neighbor l_old) / (2 * numNeighbors)
+        for(size_t iter = 0; iter < _diffuseIter; ++iter) {
+            for(size_t i = 0; i < numVertices; ++i) {
+                auto& av = mesh.getVertexAttribute(i).aVertex;
+                const size_t deg = mesh.degree(i);
+    
+                double sumSizeNeighbor = 0.0;
+                mesh.forEachHalfEdgeTargetingVertex(i, [&](size_t hei) {
+                    sumSizeNeighbor += mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).aVertex.size;
+                });
+
+                av.sizeAux = std::min(
+                    0.5 * av.size - 0.5 * sumSizeNeighbor / deg,
+                    av.maxSize
+                ); // capped by maxSize
+            }
+            for(size_t i = 0; i < numVertices; ++i) {
+                auto& av = mesh.getVertexAttribute(i).aVertex;
+                av.size = av.sizeAux;
+            }
         }
     }
 
@@ -555,7 +588,7 @@ public:
         _updateVertexMaxSize(mesh, vsmCurv);
 
         // Diffuse size on vertices
-        // TODO
+        _diffuseSize(mesh);
 
         // Compute preferred length of edges
         _updateEdgeEqLength(mesh);
@@ -598,100 +631,6 @@ void algo() {
 
         compute_normal_and_size_measures();
     };
-}
-template< typename Mesh >
-void calc_data_for_affected(Mesh& mesh) {
-    for(size_t i = 0; i < mesh.numVertices(); ++i) {
-        if(affected(i, lv1)) {
-            calc_curv_and_gaussian_curv();
-            const double l0 = <some-external-value>
-            const double l1 = 1.0 / sqrt(std::max(2 * curv * curv - gaussianCurv, 0.0));
-            const double l = std::min(l0, l1);
-            mesh.getVertexAttribute(i).adapt.density0 = c0 * alphaInvSqr / (l*l);
-        }
-    }
-    for(size_t i = 0; i < mesh.numVertices(); ++i) {
-        if(affected(i, lv2)) {
-            mesh.getVertexAttribute(i).adapt.densityAvg = 0.5 * (
-                mesh.getVertexAttribute(i).adapt.density0
-                + sumNeighborDensity0
-            );
-        }
-    }
-
-    for(size_t i = 0; i < mesh.)
-    double L0 = <some-external-value>
-}
-
-template< typename Mesh > void calc_l0_all(Mesh& mesh) {
-    static const double sqrt2C0 = std::sqrt(2 * c0);
-
-    for(size_t i = 0; i < mesh.numVertices(); ++i) {
-        calc_curv_and_gaussian_curv();
-        const auto l0 = <some-external-value>
-        const auto l1 = 1.0 / sqrt(std::max(2 * curv * curv - gaussianCurv, 0.0));
-        const auto l = std::min(l0, l1);
-        mesh.getVertexAttribute(i).adapt.density0 = c0 * alphaInvSqr / (l*l);
-    }
-    for(size_t i = 0; i < mesh.numVertices(); ++i) {
-        double sumNeighborDensity0 = 0.0;
-        size_t numNeighbors = 0;
-        mesh.forEachHalfEdgeTargetingVertex(i, [&mesh, &sumNeighborDensity0, &numNeighbors](size_t hei) {
-            sumNeighborDensity0 += mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).adapt.density0;
-            ++numNeighbors;
-        });
-        mesh.getVertexAttribute(i).adapt.densityAvg = 0.5 * (
-            mesh.getVertexAttribute(i).adapt.density0
-            + sumNeighborDensity0 / numNeighbors;
-        );
-    }
-    for(size_t i = 0; i < mesh.numTriangles(); ++i) {
-        double sumDensityAvg = 0.0;
-        mesh.forEachHalfEdgeInTriangle(i, [&mesh, &sumDensityAvg](size_t hei) {
-            sumDensityAvg += mesh.getVertexAttribute(mesh.target(hei)).adapt.densityAvg;
-        });
-        mesh.getTriangleAttribute(i).adapt.area0 = 1.5 / sumDensityAvg;
-    }
-    for(size_t i = 0; i < mesh.numVertices(); ++i) {
-        double sumNeighborWeightedArea0 = 0.0;
-        size_t numNeighbors = 0;
-        mesh.forEachHalfEdgeTargetingVertex(i, [&mesh, &sumNeighborWeightedArea0, &numNeighbors](size_t hei) {
-            const size_t tInner = mesh.triangle(hei);
-            const size_t tOuter = mesh.triangle(mesh.opposite(mesh.prev(hei)));
-            sumNeighborWeightedArea0 +=
-                mesh.getTriangleAttribute(tInner).adapt.area0 * 5.0 / 6.0
-                + mesh.getTriangleAttribute(tOuter).adapt.area0 / 6.0;
-            ++numNeighbors;
-        });
-        mesh.getVertexAttribute(i).adapt.l0Aux = sqrt2C0 * sumNeighborWeightedArea0 / numNeighbors;
-    }
-    for(size_t i = 0; i < mesh.numEdges(); ++i) {
-        double suml0Aux = 0.0;
-        mesh.forEachHalfEdgeInEdge(i, [&mesh, &suml0Aux](size_t hei) {
-            suml0Aux += mesh.getVertexAttribute(mesh.target(hei)).adapt.l0Aux;
-        });
-        mesh.getEdgeAttribute(i).adapt.l0 = suml0Aux * 0.5;
-    }
-}
-
-
-// general algorithm procedure
-template< typename Mesh >
-void adaptive_mesh(Mesh& mesh) {
-    calc_l0_all();
-    global_relaxation(); // Lowers the force
-    edge_flip_list = find_potential_edge_flip();
-    for(each_edge_flip : edge_flip_list) do(each_edge_flip);
-    loop_through_all_elements(triangles, vertices) {
-
-        while(exists density criteria violation) {
-            violation = 1st violation;
-            correct(violation);
-            local_remesh(around corrected element);
-            update_local_criteria(around corrected element);
-        }
-
-    }
 }
 
 #endif
