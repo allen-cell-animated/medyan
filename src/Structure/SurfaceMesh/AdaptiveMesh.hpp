@@ -338,16 +338,34 @@ public:
 
         if(imp0 < _minQualityImprovement && imp2 < _minQualityImprovement) return false;
 
-        if(imp0 > imp2) {
-            // Remove v0, collapse onto v2
-            typename Mesh::EdgeCollapse {}(mesh, hei_o);
-        } else {
-            // Remove v2, collapse onto v0
-            typename Mesh::EdgeCollapse {}(mesh, hei);
+        auto attributeSetter = [](
+            Mesh& mesh, size_t hei_begin, size_t hei_end, size_t ov0
+        ) {
+            for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
+                const size_t hei1_n = mesh.next(hei1);
+                const size_t ti = mesh.triangle(hei1);
+                typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+                mesh.forEachHalfEdgeInTriangle(ti, [](size_t hei) {
+                    typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+                });
+            }
+
+            typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
+            typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.opposite(hei_begin)));
+            for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
+                typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.next(hei1)));
+            }
         }
 
-        // TODO: update triangle normals
-        // Do not update edge preferred lengths
+        if(imp0 > imp2) {
+            // Remove v0, collapse onto v2
+            typename Mesh::EdgeCollapse {}(mesh, hei_o, attributeSetter);
+        } else {
+            // Remove v2, collapse onto v0
+            typename Mesh::EdgeCollapse {}(mesh, hei, attributeSetter);
+        }
+
+        // Does not update edge preferred lengths
 
         return true;
     }

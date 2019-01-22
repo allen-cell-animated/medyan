@@ -544,13 +544,14 @@ public:
 
         // The target of the halfedge ohei will be preserved
         // Notice that halfedge index (not edge index) is used in this function.
-        void operator()(SurfaceTriangularMesh& mesh, size_t ohei)const {
+        template< typename AttributeSetter >
+        void operator()(SurfaceTriangularMesh& mesh, size_t ohei, AttributeSetter&& as)const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
             auto& triangles = mesh._triangles;
 
-            // TODO preconditions
+            // Preconditions should be handled by the caller
 
             // Get index of current elements
             const size_t oei = mesh.edge(ohei);
@@ -569,10 +570,12 @@ public:
             const size_t oei4 = mesh.edge(ohei_on); // Will be removed
 
             // Retarget all halfedges pointing v1 to v0
-            for(size_t hei1 = mesh.opposite(ohei_on); hei1 != ohei_p; hei1 = mesh.opposite(mesh.next(hei1))) {
+            const size_t hei_begin = mesh.opposite(ohei_on); // Changed halfedge begin
+            const size_t hei_end = mesh.opposite(ohei_n);    // Changed halfedge end
+            for(size_t hei1 = hei_begin; hei1 != ohei_p; hei1 = mesh.opposite(mesh.next(hei1))) {
                 halfEdges[hei1].targetVertexIndex = ov0;
             }
-            vertices[ov0].halfEdgeIndex = ohei_on;
+            vertices[ov0].halfEdgeIndex = hei_begin;
 
             // Collapse edges
             mesh._registerEdge(oei1, mesh.opposite(ohei_n), mesh.opposite(ohei_p));
@@ -592,6 +595,21 @@ public:
             mesh._removeHalfEdge(ohei_o); mesh._removeHalfEdge(ohei_on); mesh._removeHalfEdge(ohei_op);
             mesh._removeTriangle(ot0);
             mesh._removeTriangle(ot1);
+
+            // Update attributes for affected elements
+            as(
+                mesh,
+                hei_begin, hei_end, // Range of changed halfedges targeting ov0, ordered clockwise
+                ov0
+            );
+        }
+
+        void operator()(SurfaceTriangularMesh& mesh, size_t ohei)const {
+            this->operator()(mesh, ohei, [](
+                SurfaceTriangularMesh& mesh,
+                size_t hei_begin, size_t hei_end,
+                size_t ov0
+            ) {});
         }
     };
     // Edge flip
