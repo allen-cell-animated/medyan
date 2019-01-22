@@ -11,15 +11,19 @@
 #include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Edge.h"
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
-#include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
 
-// Implements the attributes of the meshwork used by the membrane,
-// mainly geometric attribute and adaptive mesh attributes.
-//
-// This struct can connect the topological meshwork with the actual system
-// objects.
+/******************************************************************************
+Implements the attributes of the meshwork used by the membrane, mainly
+geometric attribute and adaptive mesh attributes.
+
+Geometric attributes are mainly used in force field computations.
+Adaptive attributes provides additional attributes mainly used in adaptive mesh
+algorithm.
+
+This struct can connect the topological meshwork with the actual system objects.
+******************************************************************************/
 struct MembraneMeshAttribute {
     struct VertexAttribute {
         using coordinate_type = decltype(Vertex::coordinate);
@@ -507,7 +511,7 @@ struct MembraneMeshAttribute {
         } // End loop vertices (V cells)
     }
 
-    // Signed distance (the inefficient way)
+    // Signed distance using geometric attributes (the inefficient way)
     /**************************************************************************
     The function works in the following procedure:
 
@@ -625,6 +629,78 @@ struct MembraneMeshAttribute {
     template< typename Mesh > static bool contains(const Mesh& mesh, const mathfunc::Vec3& p) {
         return signedDistance(mesh, p) < 0.0;
     }
+
+    // Attribute computation in adaptive remeshing algorithms
+
+    // Triangle normal (Geometric attribute) used in adaptive remeshing
+    template< typename Mesh > static void adaptiveComputeTriangleNormal(Mesh& mesh, size_t ti) {
+        const size_t hei = triangles[ti].halfEdgeIndex;
+        const size_t vi0 = mesh.target(hei);
+        const size_t vi1 = mesh.target(mesh.next(hei));
+        const size_t vi2 = mesh.target(mesh.prev(hei));
+        const auto& c0 = vertices[vi0].attr.vertex->coordinate;
+        const auto& c1 = vertices[vi1].attr.vertex->coordinate;
+        const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+        auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
+
+        const auto vp = mathfunc::vectorProduct(c0, c1, c0, c2);
+
+        // unit normal
+        tag.unitNormal = mathfunc::vector2Vec<3, double>(mathfunc::normalizedVector(vp));
+    }
+
+    // Triangle quality (Adaptive attribute) used in adaptive remeshing
+    template< typename Mesh, typename TriangleQualityCalculator >
+    static void adaptiveTriangleQuality(mesh& mesh, size_t ti, const TriangleQualityCalculator& tqc) {
+        const size_t hei = triangles[ti].halfEdgeIndex;
+        const size_t vi0 = mesh.target(hei);
+        const size_t vi1 = mesh.target(mesh.next(hei));
+        const size_t vi2 = mesh.target(mesh.prev(hei));
+        const auto c0 = mathfunc::vector2Vec<3, double>(vertices[vi0].attr.vertex->coordinate);
+        const auto c1 = mathfunc::vector2Vec<3, double>(vertices[vi1].attr.vertex->coordinate);
+        const auto c2 = mathfunc::vector2Vec<3, double>(vertices[vi2].attr.vertex->coordinate);
+
+        mesh.getTriangleAttribute(ti).aTriangle.quality = tqc(c0, c1, c2);
+    }
+
+    // Triangle angles (Geometric attribute, halfedge) used in adaptive remeshing
+    template< typename Mesh > static void adaptiveComputeAngle(Mesh& mesh, size_t hei) {
+        // The angle is (v0, v1, v2)
+        const size_t vi0 = mesh.target(mesh.prev(hei));
+        const size_t vi1 = mesh.target(hei);
+        const size_t vi2 = mesh.target(mesh.next(hei));
+        const auto& c0 = vertices[vi0].attr.vertex->coordinate;
+        const auto& c1 = vertices[vi1].attr.vertex->coordinate;
+        const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+        auto& heag = mesh.getHalfEdgeAttribute(hei).gHalfEdge;
+
+        const auto vp = mathfunc::vectorProduct(c1, c0, c1, c2);
+        const auto sp = mathfunc::scalarProduct(c1, c0, c1, c2);
+        const auto ct = heag.cotTheta = sp / mathfunc::magnitude(vp);
+        heag.theta = M_PI_2 - std::atan(ct);
+    }
+
+    // Vertex unit normals (Adaptive attribute) used in adaptive remeshing
+    // Requires
+    //   - Unit normals in triangles (geometric)
+    //   - Angles in halfedges (geometric)
+    template< typename Mesh > static void adaptiveComputeVertexNormal(Mesh& mesh, size_t vi) {
+        // Using pseudo normal (weighted by angles)
+        auto& vaa = mesh.getVertexAttribute(vi).aVertex;
+
+        // clearing
+        vaa.unitNormal = {0.0, 0.0, 0.0};
+
+        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+            const size_t ti0 = mesh.triangle(hei);
+            const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
+            vaa.unitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+        });
+
+        mathfunc::normalize(vaa.unitNormal);
+    }
+
+
 
 };
 

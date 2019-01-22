@@ -85,7 +85,7 @@ public:
     // Returns whether the edge is flipped.
     // Requires
     //   - vertex degrees
-    //   - triangle unit normal and quality
+    //   - triangle unit normal
     bool tryFlip(Mesh& mesh, size_t ei) const {
         using namespace mathfunc;
 
@@ -130,10 +130,9 @@ public:
         if(dot(un013, un231) < _minDotNormal) return false;
 
         // Check whether triangle quality can be improved.
-        const auto qBefore = TriangleQualityType::betterOne(
-            mesh.getTriangleAttribute(ti0).aTriangle.quality,
-            mesh.getTriangleAttribute(ti1).aTriangle.quality
-        );
+        const auto q012 = TriangleQualityType{}(c0, c1, c2);
+        const auto q230 = TriangleQualityType{}(c2, c3, c0);
+        const auto qBefore = TriangleQualityType::betterOne(q012, q230);
         const auto q013 = TriangleQualityType{}(c0, c1, c3);
         const auto q231 = TriangleQualityType{}(c2, c3, c1);
         const auto qAfter = TriangleQualityType::betterOne(q013, q231);
@@ -209,7 +208,6 @@ public:
 
         // TODO: set new triangle attributes
         // TODO: update edge preferred lengths
-        // TODO: update edge lengths (?)
 
         // Propose edge flipping on surrounding quad edges
         efm.tryFlip(mesh, ei0);
@@ -234,7 +232,7 @@ private:
 public:
     // Returns whether the edge is collapsed
     // Requires
-    //   - Triangle quality
+    //   - <None>
     bool tryCollapse(Mesh& mesh, size_t ei) const {
         using namespace mathfunc;
 
@@ -275,15 +273,15 @@ public:
         double q0After = TriangleQualityType::worst;
         mesh.forEachHalfEdgeTargetingVertex(vi0, [&](size_t hei) {
             const size_t ti = mesh.triangle(hei);
+            const size_t vn = mesh.target(mesh.next(hei));
+            const size_t vp = mesh.target(mesh.prev(hei));
+            const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
+            const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
             q0Before = TriangleQualityType::betterOne(
-                mesh.getTriangleAttribute(ti).aTriangle.quality,
+                TriangleQualityType{}(cp, c0, cn),
                 q0Before
             );
             if(ti != ti0 && ti != ti1) {
-                const size_t vn = mesh.target(mesh.next(hei));
-                const size_t vp = mesh.target(mesh.prev(hei));
-                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
-                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
                 q0After = TriangleQualityType::betterOne(
                     TriangleQualityType{}(cp, c2, cn),
                     q0After
@@ -297,15 +295,15 @@ public:
         double q2After = TriangleQualityType::worst;
         mesh.forEachHalfEdgeTargetingVertex(vi2, [&](size_t hei) {
             const size_t ti = mesh.triangle(hei);
+            const size_t vn = mesh.target(mesh.next(hei));
+            const size_t vp = mesh.target(mesh.prev(hei));
+            const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
+            const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
             q2Before = TriangleQualityType::betterOne(
-                mesh.getTriangleAttribute(ti).aTriangle.quality,
+                TriangleQualityType{}(cp, c2, cn),
                 q2Before
             );
             if(ti != ti0 && ti != ti1) {
-                const size_t vn = mesh.target(mesh.next(hei));
-                const size_t vp = mesh.target(mesh.prev(hei));
-                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
-                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
                 q2After = TriangleQualityType::betterOne(
                     TriangleQualityType{}(cp, c0, cn),
                     q2After
@@ -324,9 +322,8 @@ public:
             typename Mesh::EdgeCollapse {}(mesh, hei);
         }
 
-        // TODO: update triangle normals and qualities
+        // TODO: update triangle normals
         // Do not update edge preferred lengths
-        // TODO: update edge lengths?
 
         return true;
     }

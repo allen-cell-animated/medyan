@@ -20,7 +20,6 @@ struct AdaptiveMeshAttribute {
         double eqLength;
     };
     struct TriangleAttribute {
-        double quality;
     };
 };
 
