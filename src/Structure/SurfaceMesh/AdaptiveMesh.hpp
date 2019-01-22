@@ -139,9 +139,14 @@ public:
         if( !TriangleQualityType::better(qAfter, qBefore) ) return false;
 
         // All checks complete. Do the flip.
-        typename Mesh::EdgeFlip{}(mesh, ei);
+        typename Mesh::EdgeFlip{}(mesh, ei, [](
+            Mesh& mesh, std::array<size_t, 2> tis, std::array<size_t, 6> heis, std::array<size_t, 4> vis
+        ) {
+            for(auto ti  : tis ) typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+            for(auto hei : heis) typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+            for(auto vi  : vis ) typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+        });
 
-        // TODO: set new triangle attributes
         return true;
     }
 };
@@ -437,7 +442,7 @@ private:
 public:
     // Returns whether relaxation is complete.
     // Requires:
-    //   - Normals on vertices (not updated during relaxation)
+    //   - Normals on vertices (not updated during vertex relocation; might be updated by edge flipping)
     //   - Preferred lengths of edges (not updated during relaxation)
     bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         // Initialization
@@ -610,7 +615,7 @@ private:
     EdgeSplitManager< Mesh, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
     EdgeCollapseManager< Mesh, triangleQualityCriteria > _edgeCollapseManager;
 
-    void _computeTriangleNormals(Mesh& mesh) const {
+    void _computeAllTriangleNormals(Mesh& mesh) const {
         const size_t numTriangles = mesh.getTriangles().size();
 
         for(size_t ti = 0; ti < numTriangles; ++ti) {
@@ -630,7 +635,7 @@ private:
         }
     }
 
-    void _computeAngles(Mesh& mesh) const {
+    void _computeAllAngles(Mesh& mesh) const {
         const size_t numHalfEdges = mesh.getHalfEdges().size();
 
         for(size_t hei = 0; hei < numHalfEdges; ++hei) {
@@ -653,7 +658,7 @@ private:
     // Requires
     //   - Unit normals in triangles (geometric)
     //   - Angles in halfedges (geometric)
-    void _computeVertexNormals(Mesh& mesh) const {
+    void _computeAllVertexNormals(Mesh& mesh) const {
         const size_t numVertices = mesh.getVertices().size();
 
         // Using pseudo normal (weighted by angles)
@@ -675,9 +680,9 @@ private:
     }
 
     void _computeSizeMeasures(Mesh& mesh) const {
-        _computeTriangleNormals(mesh);
-        _computeAngles(mesh);
-        _computeVertexNormals(mesh);
+        _computeAllTriangleNormals(mesh);
+        _computeAllAngles(mesh);
+        _computeAllVertexNormals(mesh);
         _sizeMeasureManager.computeSizeMeasure(mesh);
     }
 public:

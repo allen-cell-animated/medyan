@@ -619,12 +619,22 @@ public:
             mesh._registerTriangle(ot1, ohei_o, ohei_op, ohei_n);
 
             // Update attributes of affected elements
-            as(ot0, ot1);
+            as(
+                mesh,
+                {ot0, ot1},
+                {ohei, ohei_p, ohei_on, ohei_o, ohei_op, ohei_n},
+                {ov0, ov1, ov2, ov3}
+            );
 
         }
 
         void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex) const {
-            this->operator()(mesh, edgeIndex, [](size_t t0, size_t t1) {});
+            this->operator()(mesh, edgeIndex, [](
+                SurfaceTriangularMesh& mesh,
+                std::array<size_t, 2> tis,
+                std::array<size_t, 6> heis,
+                std::array<size_t, 4> vis
+            ) {});
         }
 
     };
