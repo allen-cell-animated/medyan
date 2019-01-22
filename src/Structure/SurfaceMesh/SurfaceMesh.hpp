@@ -445,7 +445,7 @@ public:
         forEachHalfEdgeInTriangle(_triangles[ti], std::forward<Func>(func));
     }
     template< typename Func > void forEachHalfEdgeInEdge(const Edge& e, Func&& func) const {
-        size_t hei0 = _edges[ei].halfEdgeIndex;
+        size_t hei0 = e.halfEdgeIndex;
         func(hei0);
         if(hasOpposite(hei0)) func(opposite(hei0));
     }
@@ -674,7 +674,7 @@ public:
     };
 
     // triangle subdivision, introduces 3 new vertices
-    [[deprecated]] template< typename InsertionMethod > struct TriangleSubdivision {
+    template< typename InsertionMethod > [[deprecated]] struct TriangleSubdivision {
         static constexpr int deltaNumVertex = 3;
         void operator()(SurfaceTriangularMesh& mesh, size_t triangleIndex) const {
             auto& edges = mesh._edges;
