@@ -40,7 +40,7 @@ Until all criteria are met
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
 enum class TriangleQualityCriteria {
-    RadiusRatio     // Circumradius / (2 * Inradius), [1, inf)
+    RadiusRatio     // Circumradius / (2 * Inradius), range [1, inf)
 };
 template< TriangleQualityCriteria > struct TriangleQuality;
 template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
@@ -143,7 +143,6 @@ public:
         typename Mesh::EdgeFlip{}(mesh, ei);
 
         // TODO: set new triangle attributes
-        // TODO: set new edge length (?)
         return true;
     }
 };

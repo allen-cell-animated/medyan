@@ -1,15 +1,10 @@
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
-#include <unordered_set>
-
 #include "Compartment.h"
 #include "core/controller/GController.h"
 #include "SubSystem.h"
 #include "SysParams.h"
 
-#include "Triangle.h"
-#include "Edge.h"
-#include "Vertex.h"
 #include "MTriangle.h"
 #include "MVoronoiCell.h"
 #include "MMembrane.h"
