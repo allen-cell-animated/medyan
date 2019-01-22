@@ -579,13 +579,15 @@ public:
     // Edge flip
     struct EdgeFlip {
         static constexpr int deltaNumVertex = 0;
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex) const {
+
+        template< typename AttributeSetter >
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex, const AttributeSetter& as) const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
             auto& triangles = mesh._triangles;
 
-            // TODO precondition
+            // Preconditions (like topology) should be handled by the caller.
 
             // Get index of current elements
             const size_t ohei = edges[edgeIndex].halfEdgeIndex;
@@ -616,7 +618,15 @@ public:
             mesh._registerTriangle(ot0, ohei, ohei_p, ohei_on);
             mesh._registerTriangle(ot1, ohei_o, ohei_op, ohei_n);
 
+            // Update attributes of affected elements
+            as(ot0, ot1);
+
         }
+
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex) const {
+            this->operator()(mesh, edgeIndex, [](size_t t0, size_t t1) {});
+        }
+
     };
 
     // triangle subdivision, introduces 3 new vertices
