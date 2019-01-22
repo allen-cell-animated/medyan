@@ -184,6 +184,10 @@ private:
     size_t _maxDegree;
 
 public:
+
+    // Constructor
+    EdgeSplitManager(size_t maxDegree) : _maxDegree(maxDegree) {}
+
     // Returns whether a new vertex is inserted.
     // Requires
     //   - Vertex degree
@@ -254,6 +258,11 @@ private:
     double _minQualityImprovement; // If smaller than 1, then some degradation is allowed.
 
 public:
+
+    // Constructor
+    EdgeCollapseManager(size_t minDegree, size_t maxDegree, double minQualityImprovement) :
+        _minDegree(minDegree), _maxDegree(maxDegree), _minQualityImprovement(minQualityImprovement) {}
+
     // Returns whether the edge is collapsed
     // Requires
     //   - <None>
@@ -477,6 +486,18 @@ private:
     }
 
 public:
+    // Constructor
+    GlobalRelaxationManager(
+        double epsilon2,
+        double dt,
+        size_t maxIterRelocation,
+        size_t maxIterRelaxation
+    ) : _epsilon2(epsilon2),
+        _dt(dt),
+        _maxIterRelocation(maxIterRelocation),
+        _maxIterRelaxation(maxIterRelaxation)
+    {}
+
     // Returns whether relaxation is complete.
     // Requires:
     //   - Normals on vertices (not updated during vertex relocation; might be updated by edge flipping)
@@ -621,6 +642,10 @@ private:
 
 public:
 
+    // Constructor
+    SizeMeasureManager(size_t curvRes, size_t maxSize, size_t diffuseIter) :
+        _curvRes(curvRes), _maxSize(maxSize), _diffuseIter(diffuseIter) {}
+
     // Requires
     //   - Unit normal on each vertex
     void computeSizeMeasure(Mesh& mesh) const {
@@ -644,6 +669,25 @@ public:
     static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
     static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::MidPoint;
 
+    struct Parameter {
+        // Topology
+        size_t minDegree;
+        size_t maxDegree;
+        double edgeFlipMinDotNormal;
+        double edgeCollapseMinQualityImprovement;
+
+        // Relaxation
+        double relaxationEpsilon;
+        double relaxationDt;
+        size_t relaxationMaxIterRelocation;
+        size_t relaxationMaxIterRelaxation;
+
+        // Size diffusion
+        double curvatureResolution;
+        double maxSize;
+        size_t diffuseIter;
+    };
+
 private:
     SizeMeasureManager< Mesh > _sizeMeasureManager;
     GlobalRelaxationManager< Mesh, relaxationType, triangleQualityCriteria > _globalRelaxationManager;
@@ -656,19 +700,7 @@ private:
         const size_t numTriangles = mesh.getTriangles().size();
 
         for(size_t ti = 0; ti < numTriangles; ++ti) {
-            const size_t hei = triangles[ti].halfEdgeIndex;
-            const size_t vi0 = mesh.target(hei);
-            const size_t vi1 = mesh.target(mesh.next(hei));
-            const size_t vi2 = mesh.target(mesh.prev(hei));
-            const auto& c0 = vertices[vi0].attr.vertex->coordinate;
-            const auto& c1 = vertices[vi1].attr.vertex->coordinate;
-            const auto& c2 = vertices[vi2].attr.vertex->coordinate;
-            auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
-
-            const auto vp = mathfunc::vectorProduct(c0, c1, c0, c2);
-
-            // unit normal
-            tag.unitNormal = mathfunc::vector2Vec<3, double>(mathfunc::normalizedVector(vp));
+            typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
         }
     }
 
@@ -676,19 +708,7 @@ private:
         const size_t numHalfEdges = mesh.getHalfEdges().size();
 
         for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            // The angle is (v0, v1, v2)
-            const size_t vi0 = mesh.target(mesh.prev(hei));
-            const size_t vi1 = mesh.target(hei);
-            const size_t vi2 = mesh.target(mesh.next(hei));
-            const auto& c0 = vertices[vi0].attr.vertex->coordinate;
-            const auto& c1 = vertices[vi1].attr.vertex->coordinate;
-            const auto& c2 = vertices[vi2].attr.vertex->coordinate;
-            auto& heag = mesh.getHalfEdgeAttribute(hei).gHalfEdge;
-
-            const auto vp = mathfunc::vectorProduct(c1, c0, c1, c2);
-            const auto sp = mathfunc::scalarProduct(c1, c0, c1, c2);
-            const auto ct = heag.cotTheta = sp / mathfunc::magnitude(vp);
-            heag.theta = M_PI_2 - std::atan(ct);
+            typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
         }
     }
 
@@ -698,22 +718,9 @@ private:
     void _computeAllVertexNormals(Mesh& mesh) const {
         const size_t numVertices = mesh.getVertices().size();
 
-        // Using pseudo normal (weighted by angles)
         for(size_t vi = 0; vi < numVertices; ++vi) {
-            auto& vaa = mesh.getVertexAttribute(vi).aVertex;
-
-            // clearing
-            vaa.unitNormal = {0.0, 0.0, 0.0};
-
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-                const size_t ti0 = mesh.triangle(hei);
-                const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
-                vaa.unitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
-            });
-
-            mathfunc::normalize(vaa.unitNormal);
+            typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         }
-
     }
 
     void _computeSizeMeasures(Mesh& mesh) const {
@@ -723,14 +730,26 @@ private:
         _sizeMeasureManager.computeSizeMeasure(mesh);
     }
 public:
-    MeshAdapter() {}
+    // Constructor
+    MeshAdapter(Parameter param) :
+        _sizeMeasureManager(param.curvatureResolution, param.maxSize, param.diffuseIter),
+        _globalRelaxationManager(
+            param.relaxationEpsilon * param.relaxationEpsilon,
+            param.relaxationDt,
+            param.relaxationMaxIterRelocation,
+            param.relaxationMaxIterRelaxation
+        ),
+        _edgeFlipManager(param.minDegree, param.maxDegree, param.edgeFlipMinDotNormal),
+        _edgeSplitManager(param.maxDegree),
+        _edgeCollapseManager(param.minDegree, param.maxDegree, param.edgeCollapseMinQualityImprovement)
+    {}
 
     void adapt(Mesh& mesh) const {
         using namespace mathfunc;
 
         init();
 
-        _computeSizeMeasures();
+        _computeSizeMeasures(mesh);
 
         while(true) {
             bool sizeMeasureSatisfied = true;
@@ -774,7 +793,7 @@ public:
 
             _globalRelaxationManager.relax(mesh, _edgeFlipManager);
 
-            _computeSizeMeasures();
+            _computeSizeMeasures(mesh);
         } // End loop TopoModifying-Relaxation
     }
 
