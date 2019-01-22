@@ -460,7 +460,8 @@ public:
     struct VertexInsertionOnEdge {
         static constexpr int deltaNumVertex = 1;
 
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
+        template< typename AttributeSetter >
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex, AttributeSetter&& as)const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -518,6 +519,23 @@ public:
             mesh._registerEdge(ei1,       hei1,   hei1_o);
             mesh._registerEdge(ei2,       ohei_o, hei2_o);
             mesh._registerEdge(ei3,       hei3,   hei3_o);
+
+            // Update attributes of affected elements
+            as(
+                mesh,
+                {oti0, ti1, oti2, ti3},
+                {vi, vi0, vi1, vi2, vi3},
+                {edgeIndex, ei1, ei2, ei3}
+            );
+        }
+
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex)const {
+            this->operator()(mesh, edgeIndex, [](
+                SurfaceTriangularMesh& mesh,
+                std::array<size_t, 4> tis,
+                std::array<size_t, 5> vis,
+                std::array<size_t, 4> eis
+            ) {});
         }
     };
     // Edge collapse
@@ -581,7 +599,7 @@ public:
         static constexpr int deltaNumVertex = 0;
 
         template< typename AttributeSetter >
-        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex, const AttributeSetter& as) const {
+        void operator()(SurfaceTriangularMesh& mesh, size_t edgeIndex, AttributeSetter&& as) const {
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
@@ -622,8 +640,7 @@ public:
             as(
                 mesh,
                 {ot0, ot1},
-                {ohei, ohei_p, ohei_on, ohei_o, ohei_op, ohei_n},
-                {ov0, ov1, ov2, ov3}
+                {ov0, ov1, ov2, ov3},
             );
 
         }
@@ -632,7 +649,6 @@ public:
             this->operator()(mesh, edgeIndex, [](
                 SurfaceTriangularMesh& mesh,
                 std::array<size_t, 2> tis,
-                std::array<size_t, 6> heis,
                 std::array<size_t, 4> vis
             ) {});
         }

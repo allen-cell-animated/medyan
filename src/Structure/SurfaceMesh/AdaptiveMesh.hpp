@@ -140,12 +140,18 @@ public:
 
         // All checks complete. Do the flip.
         typename Mesh::EdgeFlip{}(mesh, ei, [](
-            Mesh& mesh, std::array<size_t, 2> tis, std::array<size_t, 6> heis, std::array<size_t, 4> vis
+            Mesh& mesh, std::array<size_t, 2> tis, std::array<size_t, 4> vis
         ) {
-            for(auto ti  : tis ) typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-            for(auto hei : heis) typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
-            for(auto vi  : vis ) typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto ti : tis) {
+                typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+                mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
+                    typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+                });
+            }
+            for(auto vi : vis) typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         });
+
+        // Does not change the edge preferrable length
 
         return true;
     }
@@ -209,10 +215,23 @@ public:
         ) return false;
 
         // All checks passed. Do the splitting.
-        typename Mesh::VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei);
+        typename Mesh::VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
+            Mesh& mesh, std::array<size_t, 4> tis, std::array<size_t, 5> vis, std::array<size_t, 4> eis
+        ) {
+            for(auto ti : tis) {
+                typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+                mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
+                    typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+                });
+            }
+            for(auto vi : vis) typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
 
-        // TODO: set new triangle attributes
-        // TODO: update edge preferred lengths
+            // Set preferrable length of edges to be the same as before
+            const auto eqLength = mesh.getEdgeAttribute(eis[0]).aEdge.eqLength;
+            mesh.getEdgeAttribute(eis[1]).aEdge.eqLength = eqLength;
+            mesh.getEdgeAttribute(eis[2]).aEdge.eqLength = eqLength;
+            mesh.getEdgeAttribute(eis[3]).aEdge.eqLength = eqLength;
+        });
 
         // Propose edge flipping on surrounding quad edges
         efm.tryFlip(mesh, ei0);
