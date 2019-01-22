@@ -429,6 +429,7 @@ private:
     // Returns whether at least 1 edge is flipped
     bool _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         // Edge flipping does not change edge id or total number of edges
+        // Also the preferred length does not need to be changed
         bool res = false;
         const size_t numEdges = mesh.getEdges().size();
         for(size_t i = 0; i < numEdges; ++i) {
@@ -439,6 +440,9 @@ private:
 
 public:
     // Returns whether relaxation is complete.
+    // Requires:
+    //   - Normals on vertices (not updated during relaxation)
+    //   - Preferred lengths of edges (not updated during relaxation)
     bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         // Initialization
         const size_t numVertices = mesh.getVertices().size();
@@ -600,11 +604,15 @@ class MeshAdapter {
 public:
     static constexpr auto relaxationType = RelaxationType::GlobalElastic;
     static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
+    static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::MidPoint;
 
 private:
     SizeMeasureManager< Mesh > _sizeMeasureManager;
     GlobalRelaxationManager< Mesh, relaxationType, triangleQualityCriteria > _globalRelaxationManager;
+
     EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
+    EdgeSplitManager< Mesh, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
+    EdgeCollapseManager< Mesh, triangleQualityCriteria > _edgeCollapseManager;
 
     void _computeTriangleNormals(Mesh& mesh) const {
         const size_t numTriangles = mesh.getTriangles().size();
@@ -680,31 +688,56 @@ public:
     MeshAdapter() {}
 
     void adapt(Mesh& mesh) const {
+        using namespace mathfunc;
+
         init();
 
         _computeSizeMeasures();
-        while( <size-measure-not-satisfied> ) {
-            bool topoModified = false;
+
+        while(true) {
+            bool sizeMeasureSatisfied = true;
+
+            size_t countTopoModified;
             do {
-                loop_all_edges {
-                    mark_edge_as_inspection_ready;
+                countTopoModified = 0;
+                for(size_t ei = 0; ei < mesh.getEdges().size(); /* No increment here */) {
+                    const size_t hei0 = mesh.getEdges()[ei].halfEdgeIndex;
+                    const size_t v0 = mesh.target(hei0);
+                    const size_t v1 = mesh.target(mesh.opposite(hei0));
+
+                    const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
+                    const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+                    const double length2 = distance2(c0, c1);
+
+                    const double eqLength = mesh.getEdgeAttribute(ei).aEdge.eqLength;
+                    const double eqLength2 = eqLength * eqLength;
+
+                    if(length2 >= 2 * eqLength2) { // Too long
+                        sizeMeasureSatisfied = false;
+                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager))
+                            // Edge splitting happened. Will check edge ei again next round
+                            ++countTopoModified;
+                        else
+                            ++ei;
+                    } else if(2 * length2 <= eqLength2) { // Too short
+                        sizeMeasureSatisfied = false;
+                        if(_edgeCollapseManager.tryCollapse(mesh, ei))
+                            // Edge collapsing happened. The edge at ei will be different next round
+                            ++countTopoModified;
+                        else
+                            ++ei;
+                    } else { // Check passed
+                        ++ei;
+                    }
                 }
-                loop_all_edges {
-                    if( <edge-is-inspection-ready> )
-                        if( <edge-too-long> ) {
-                            try_split_edge();
-                            topoModified = true;
-                        } else if( <edge-too-short> ) {
-                            try_collapse_edge();
-                            topoModified = true;
-                        }
-                }
-            } while( !topoModified );
+            } while(countTopoModified); // If any topology was modified, will loop through all edges again.
+
+            if(sizeMeasureSatisfied) break;
 
             _globalRelaxationManager.relax(mesh, _edgeFlipManager);
 
             _computeSizeMeasures();
-        }
+        } // End loop TopoModifying-Relaxation
     }
 
 };
