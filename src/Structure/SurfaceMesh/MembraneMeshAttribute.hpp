@@ -649,20 +649,6 @@ struct MembraneMeshAttribute {
         tag.unitNormal = mathfunc::vector2Vec<3, double>(mathfunc::normalizedVector(vp));
     }
 
-    // Triangle quality (Adaptive attribute) used in adaptive remeshing
-    template< typename Mesh, typename TriangleQualityCalculator >
-    static void adaptiveTriangleQuality(mesh& mesh, size_t ti, const TriangleQualityCalculator& tqc) {
-        const size_t hei = triangles[ti].halfEdgeIndex;
-        const size_t vi0 = mesh.target(hei);
-        const size_t vi1 = mesh.target(mesh.next(hei));
-        const size_t vi2 = mesh.target(mesh.prev(hei));
-        const auto c0 = mathfunc::vector2Vec<3, double>(vertices[vi0].attr.vertex->coordinate);
-        const auto c1 = mathfunc::vector2Vec<3, double>(vertices[vi1].attr.vertex->coordinate);
-        const auto c2 = mathfunc::vector2Vec<3, double>(vertices[vi2].attr.vertex->coordinate);
-
-        mesh.getTriangleAttribute(ti).aTriangle.quality = tqc(c0, c1, c2);
-    }
-
     // Triangle angles (Geometric attribute, halfedge) used in adaptive remeshing
     template< typename Mesh > static void adaptiveComputeAngle(Mesh& mesh, size_t hei) {
         // The angle is (v0, v1, v2)
