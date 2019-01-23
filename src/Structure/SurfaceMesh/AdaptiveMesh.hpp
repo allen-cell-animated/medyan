@@ -144,12 +144,12 @@ public:
             Mesh& mesh, std::array<size_t, 2> tis, std::array<size_t, 4> vis
         ) {
             for(auto ti : tis) {
-                typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+                Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
                 mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
-                    typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+                    Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         });
 
         // Does not change the edge preferrable length
@@ -220,16 +220,16 @@ public:
         ) return false;
 
         // All checks passed. Do the splitting.
-        typename Mesh::VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
+        typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
             Mesh& mesh, std::array<size_t, 4> tis, std::array<size_t, 5> vis, std::array<size_t, 4> eis
         ) {
             for(auto ti : tis) {
-                typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+                Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
                 mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
-                    typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+                    Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
 
             // Set preferrable length of edges to be the same as before
             const auto eqLength = mesh.getEdgeAttribute(eis[0]).aEdge.eqLength;
@@ -354,16 +354,16 @@ public:
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
                 const size_t hei1_n = mesh.next(hei1);
                 const size_t ti = mesh.triangle(hei1);
-                typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+                Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
                 mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
-                    typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+                    Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
 
-            typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
-            typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.opposite(hei_begin)));
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.opposite(hei_begin)));
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
-                typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.next(hei1)));
+                Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.next(hei1)));
             }
         };
 
@@ -504,17 +504,19 @@ public:
     //   - Normals on vertices (not updated during vertex relocation; might be updated by edge flipping)
     //   - Preferred lengths of edges (not updated during relaxation)
     bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+        using namespace mathfunc;
+
         // Initialization
         const size_t numVertices = mesh.getVertices().size();
-        std::vector< mathfunc::Vec3 > coords(numVertices);
+        std::vector< Vec3 > coords(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
             coords[i] = vector2Vec<3, double>(mesh.getVertexAttribute(i).vertex->getCoordinate());
         }
 
         // Aux variables
-        std::vector< mathfunc::Vec3 > forces(numVertices);
-        std::vector< mathfunc::Vec3 > coordsHalfway(numVertices);
-        std::vector< mathfunc::Vec3 > forcesHalfway(numVertices);
+        std::vector< Vec3 > forces(numVertices);
+        std::vector< Vec3 > coordsHalfway(numVertices);
+        std::vector< Vec3 > forcesHalfway(numVertices);
 
         // Main loop
         bool needRelocation = true;
@@ -701,7 +703,7 @@ private:
         const size_t numTriangles = mesh.getTriangles().size();
 
         for(size_t ti = 0; ti < numTriangles; ++ti) {
-            typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
         }
     }
 
@@ -709,7 +711,7 @@ private:
         const size_t numHalfEdges = mesh.getHalfEdges().size();
 
         for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+            Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
         }
     }
 
@@ -720,7 +722,7 @@ private:
         const size_t numVertices = mesh.getVertices().size();
 
         for(size_t vi = 0; vi < numVertices; ++vi) {
-            typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         }
     }
 

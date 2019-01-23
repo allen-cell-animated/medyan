@@ -675,7 +675,7 @@ public:
     };
 
     // triangle subdivision, introduces 3 new vertices
-    template< typename InsertionMethod > [[deprecated]] struct TriangleSubdivision {
+    template< typename InsertionMethod > struct [[deprecated]] TriangleSubdivision {
         static constexpr int deltaNumVertex = 3;
         void operator()(SurfaceTriangularMesh& mesh, size_t triangleIndex) const {
             auto& edges = mesh._edges;
