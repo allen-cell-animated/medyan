@@ -36,8 +36,9 @@ Until all criteria are met
 
 #include "MathFunctions.h"
 
-#include "Structure/SurfaceMesh/AdaptiveMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+
+namespace adaptive_mesh {
 
 enum class TriangleQualityCriteria {
     RadiusRatio     // Circumradius / (2 * Inradius), range [1, inf)
@@ -435,7 +436,7 @@ private:
         return res;
     }
 
-    // Relocates vertices using 2nd order Runge Kutta method
+    // Relocates vertices using 2nd order Runge Kutta method of overdamped dynamics
     // Returns whether the final forces are below threshold.
     template< typename VecType > bool _vertexRelocation(
         std::vector<VecType>& coords,
@@ -799,5 +800,8 @@ public:
 
 };
 
+using MembraneMeshAdapter = MeshAdapter< typename Membrane::mesh_type >;
+
+} // namespace adaptive_mesh
 
 #endif

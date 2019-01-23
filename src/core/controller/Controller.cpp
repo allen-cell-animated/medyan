@@ -217,6 +217,29 @@ void Controller::initialize(string inputFile,
     if(!SysParams::checkDyRateParameters(DRTypes))
         exit(EXIT_FAILURE);
 #endif
+
+    // Initialize the membrane mesh adapter
+    // Currently the values are simply represented as magic numbers
+    _meshAdapter = std::make_unique< adaptive_mesh::MembraneMeshAdapter >(
+        typename adaptive_mesh::MembraneMeshAdapter::Parameter {
+            // Topology
+            4, // minDegree
+            9, // maxDegree
+            0.96, // edgeFlipMinDotNormal
+            0.6, // edgeCollapseMinQualityImprovement
+
+            // Relaxation
+            0.05, // relaxationEpsilon (unitless speed/force). The tolerance (l / l_0 - 1)
+            15, // relaxationDt (has unit of length) (around maxSize / (iterRelocation * avgForce))
+            5, // relaxationMaxIterRelocation
+            3, // relaxationMaxIterRelaxation
+
+            // Size diffusion
+            0.25, // curvatureResolution. cos of which should be slightly bigger than minDotNormal
+            50, // maxSize. Related to the resolution of the system
+            3 // diffuseIter
+        }
+    );
     
     cout << "Done." << endl;
     
@@ -310,6 +333,9 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         MembraneRegion::makeByChildren(&MembraneHierarchy::getRoot()):
         make_unique<MembraneRegion>(_subSystem->getBoundary())
     );
+
+    // Optimize the membrane
+    membraneAdaptiveRemesh();
 
     // Deactivate all the compartments outside membrane, and mark boundaries as interesting
     for(auto c : _subSystem->getCompartmentGrid()->getCompartments()) {
@@ -786,6 +812,13 @@ void Controller::pinLowerBoundaryFilaments() {
     }
 }
 
+void Controller::membraneAdaptiveRemesh() const {
+    // Requires _meshAdapter to be already initialized
+    for(auto m : Membrane::getMembranes()) {
+        _meshAdapter->adapt(m->getMesh());
+    }
+}
+
 void Controller::run() {
     
 #ifdef CHEMISTRY
@@ -903,7 +936,8 @@ void Controller::run() {
 #ifdef MECHANICS
      cout<<"Minimizing energy"<<endl;
     _mController->run(false);
-    
+    membraneAdaptiveRemesh();
+
     //reupdate positions and neighbor lists
     updatePositions();
     updateNeighborLists();
@@ -948,6 +982,9 @@ void Controller::run() {
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
                 _mController->run();
+                // Membrane remeshing
+                membraneAdaptiveRemesh();
+
                 updatePositions();
 
                 // Update activation of the compartments
@@ -1016,6 +1053,9 @@ void Controller::run() {
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
                 _mController->run();
+                // Membrane remeshing
+                membraneAdaptiveRemesh();
+
                 updatePositions();
                 
                 // Update activation of the compartments

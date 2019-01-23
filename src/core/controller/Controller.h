@@ -14,6 +14,8 @@
 #ifndef MEDYAN_Controller_h
 #define MEDYAN_Controller_h
 
+#include <memory> // unique_ptr
+
 #include "common.h"
 
 #include "Output.h"
@@ -21,6 +23,7 @@
 #include "core/controller/GController.h"
 #include "core/controller/CController.h"
 #include "core/controller/DRController.h"
+#include "Structure/SurfaceMesh/AdaptiveMesh.hpp"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -60,6 +63,8 @@ private:
     
     double _minimizationTime;  ///< Frequency of mechanical minimization
     double _neighborListTime;  ///< Frequency of neighbor list updates
+
+    std::unique_ptr<adaptive_mesh::MembraneMeshAdapter> _meshAdapter; ///< Used in adaptive remeshing algorithm
     
     //@{
     /// Same parameter set as timestep, but in terms of chemical
@@ -126,6 +131,9 @@ private:
     void pinBoundaryFilaments();
     //Qin
     void pinLowerBoundaryFilaments();
+
+    /// Helper function to remesh the membranes
+    void membraneAdaptiveRemesh() const;
     
 public:
     Controller(SubSystem* s);
