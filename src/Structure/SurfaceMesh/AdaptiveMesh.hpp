@@ -62,7 +62,7 @@ template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
         const auto p = 0.5 * (d0 + d1 + d2);
         return d0 * d1 * d2 / (8 * (p - d0) * (p - d1) * (p - d2));
     }
-}
+};
 
 template< typename Mesh, TriangleQualityCriteria c > class EdgeFlipManager {
 public:
@@ -240,7 +240,7 @@ public:
 
         // Propose edge flipping on surrounding quad edges
         efm.tryFlip(mesh, ei0);
-        efm.tryFilp(mesh, ei1);
+        efm.tryFlip(mesh, ei1);
         efm.tryFlip(mesh, ei2);
         efm.tryFlip(mesh, ei3);
 
@@ -355,7 +355,7 @@ public:
                 const size_t hei1_n = mesh.next(hei1);
                 const size_t ti = mesh.triangle(hei1);
                 typename Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-                mesh.forEachHalfEdgeInTriangle(ti, [](size_t hei) {
+                mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
                     typename Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
@@ -365,7 +365,7 @@ public:
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
                 typename Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.next(hei1)));
             }
-        }
+        };
 
         if(imp0 > imp2) {
             // Remove v0, collapse onto v2
@@ -402,7 +402,7 @@ template<> struct RelaxationForceField< RelaxationType::GlobalElastic > {
                 f += r * (1.0 / l0 - 1.0 / mag);
             });
 
-            const auto& un = mesh.getVertexAttribute(v).aVertex.unitNormal;
+            const auto& un = mesh.getVertexAttribute(i).aVertex.unitNormal;
             f -= un * mathfunc::dot(un, f); // Remove normal component
 
             forces[i] = f;
@@ -456,14 +456,14 @@ private:
 
             // Test move halfway
             for(size_t i = 0; i < numVertices; ++i)
-                coordsHalfway[i] = coords[i] + (0.5 * dt) * forces[i];
+                coordsHalfway[i] = coords[i] + (0.5 * _dt) * forces[i];
 
             // Force at halfway
             RelaxationForceFieldType().computeForces(forcesHalfway, mesh, coordsHalfway);
 
             // Real move
             for(size_t i = 0; i < numVertices; ++i)
-                coords[i] += forcesHalfway[i] * dt;
+                coords[i] += forcesHalfway[i] * _dt;
 
             // Compute new forces
             RelaxationForceFieldType().computeForces(forces, mesh, coords);
@@ -528,7 +528,7 @@ public:
 
         // Reassign coordinates
         for(size_t i = 0; i < numVertices; ++i) {
-            mesh.getVertexAttribute(i).vertex->getCoordinate() = vec2Vector(coords[i]);
+            mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(coords[i]);
         }
 
         if(needRelocation || needFlipping) return false;
@@ -566,14 +566,14 @@ template< SizeMeasureCriteria... > struct VertexSizeMeasureCombined;
 template< SizeMeasureCriteria c, SizeMeasureCriteria... cs >
 struct VertexSizeMeasureCombined< c, cs... > {
     template< typename Mesh >
-    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) const {
+    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
         return std::min(vsm.vertexMaxSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...));
     }
 };
 template< SizeMeasureCriteria c >
 struct VertexSizeMeasureCombined< c > {
     template< typename Mesh >
-    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) const {
+    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) {
         return vsm.vertexMaxSize(mesh, vi);
     }
 };
@@ -747,8 +747,6 @@ public:
 
     void adapt(Mesh& mesh) const {
         using namespace mathfunc;
-
-        init();
 
         _computeSizeMeasures(mesh);
 

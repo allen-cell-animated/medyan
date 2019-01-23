@@ -634,13 +634,13 @@ struct MembraneMeshAttribute {
 
     // Triangle normal (Geometric attribute) used in adaptive remeshing
     template< typename Mesh > static void adaptiveComputeTriangleNormal(Mesh& mesh, size_t ti) {
-        const size_t hei = triangles[ti].halfEdgeIndex;
+        const size_t hei = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t vi0 = mesh.target(hei);
         const size_t vi1 = mesh.target(mesh.next(hei));
         const size_t vi2 = mesh.target(mesh.prev(hei));
-        const auto& c0 = vertices[vi0].attr.vertex->coordinate;
-        const auto& c1 = vertices[vi1].attr.vertex->coordinate;
-        const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+        const auto& c0 = mesh.getVertexAttribute(vi0).vertex->coordinate;
+        const auto& c1 = mesh.getVertexAttribute(vi1).vertex->coordinate;
+        const auto& c2 = mesh.getVertexAttribute(vi2).vertex->coordinate;
         auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
 
         const auto vp = mathfunc::vectorProduct(c0, c1, c0, c2);
@@ -655,9 +655,9 @@ struct MembraneMeshAttribute {
         const size_t vi0 = mesh.target(mesh.prev(hei));
         const size_t vi1 = mesh.target(hei);
         const size_t vi2 = mesh.target(mesh.next(hei));
-        const auto& c0 = vertices[vi0].attr.vertex->coordinate;
-        const auto& c1 = vertices[vi1].attr.vertex->coordinate;
-        const auto& c2 = vertices[vi2].attr.vertex->coordinate;
+        const auto& c0 = mesh.getVertexAttribute(vi0).vertex->coordinate;
+        const auto& c1 = mesh.getVertexAttribute(vi1).vertex->coordinate;
+        const auto& c2 = mesh.getVertexAttribute(vi2).vertex->coordinate;
         auto& heag = mesh.getHalfEdgeAttribute(hei).gHalfEdge;
 
         const auto vp = mathfunc::vectorProduct(c1, c0, c1, c2);

@@ -482,18 +482,19 @@ public:
             const size_t vi3        = mesh.target(ohei_on);
 
             // Create new elements
-            const size_t vi     = mesh._newVertex(InsertionMethod{vi0, vi2});
-            const size_t ei2    = mesh._newEdge(InsertMid{}); // New edge created by splitting
-            const size_t hei0_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex, oppositing ohei
-            const size_t hei2_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex, oppositing ohei_o
-            const size_t ei1    = mesh._newEdge(InsertMid{}); // New edge cutting t0
-            const size_t hei1   = mesh._newHalfEdge(InsertMid{}); // Leaving new vertex
-            const size_t hei1_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex
-            const size_t ei3    = mesh._newEdge(InsertMid{}); // New edge cutting t2
-            const size_t hei3   = mesh._newHalfEdge(InsertMid{}); // Leaving new vertex
-            const size_t hei3_o = mesh._newHalfEdge(InsertMid{}); // Targeting new vertex
-            const size_t ti1    = mesh._newTriangle(InsertMid{});
-            const size_t ti3    = mesh._newTriangle(InsertMid{});
+            const InsertionMethod insertionMethod{ vi0, vi2 };
+            const size_t vi     = mesh._newVertex(insertionMethod);
+            const size_t ei2    = mesh._newEdge(insertionMethod); // New edge created by splitting
+            const size_t hei0_o = mesh._newHalfEdge(insertionMethod); // Targeting new vertex, oppositing ohei
+            const size_t hei2_o = mesh._newHalfEdge(insertionMethod); // Targeting new vertex, oppositing ohei_o
+            const size_t ei1    = mesh._newEdge(insertionMethod); // New edge cutting t0
+            const size_t hei1   = mesh._newHalfEdge(insertionMethod); // Leaving new vertex
+            const size_t hei1_o = mesh._newHalfEdge(insertionMethod); // Targeting new vertex
+            const size_t ei3    = mesh._newEdge(insertionMethod); // New edge cutting t2
+            const size_t hei3   = mesh._newHalfEdge(insertionMethod); // Leaving new vertex
+            const size_t hei3_o = mesh._newHalfEdge(insertionMethod); // Targeting new vertex
+            const size_t ti1    = mesh._newTriangle(insertionMethod);
+            const size_t ti3    = mesh._newTriangle(insertionMethod);
 
             // Adjust vertex
             vertices[vi].halfEdgeIndex = hei0_o;
@@ -658,7 +659,7 @@ public:
             as(
                 mesh,
                 {ot0, ot1},
-                {ov0, ov1, ov2, ov3},
+                {ov0, ov1, ov2, ov3}
             );
 
         }

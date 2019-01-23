@@ -24,7 +24,6 @@ using namespace mathfunc;
 
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "GTriangle.h"
 #include "Triangle.h"
 
 Compartment::Compartment():
