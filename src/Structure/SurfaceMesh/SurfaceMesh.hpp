@@ -61,7 +61,7 @@ public:
     // If index is out of range, the behavior is undefined.
     IndexMove erase(size_t index) {
         IndexMove res;
-        size_t lastIndex = _value.size() - 1;
+        const size_t lastIndex = _value.size() - 1;
         if(index == lastIndex) {
             _value.pop_back();
             res.valid = false;
@@ -81,7 +81,7 @@ public:
     T&       operator[](size_t index)       { return _value[index]; }
     const T& operator[](size_t index) const { return _value[index]; }
 
-    // This function should only be called during initialization
+    // This function should only be called during initialization/finalization
     std::vector< T >& getValue() { return _value; }
 
 };
@@ -103,6 +103,7 @@ template< typename Attribute > class SurfaceTriangularMesh {
 public:
 
     using AttributeType = Attribute;
+    using MeshType = SurfaceTriangularMesh;
 
     using VertexAttribute   = typename Attribute::VertexAttribute;
     using EdgeAttribute     = typename Attribute::EdgeAttribute;
@@ -146,6 +147,16 @@ private:
 
     bool _isClosed;
     int _genus = 0; // Genus of the surface. Currently it is not tracked.
+
+    // Element accessor
+    template< typename Element, std::enable_if_t<std::is_same<Element, Triangle>::value, void>* = nullptr>
+    auto& _getElements() { return _triangles; }
+    template< typename Element, std::enable_if_t<std::is_same<Element, HalfEdge>::value, void>* = nullptr>
+    auto& _getElements() { return _halfEdges; }
+    template< typename Element, std::enable_if_t<std::is_same<Element, Edge>::value, void>* = nullptr>
+    auto& _getElements() { return _edges; }
+    template< typename Element, std::enable_if_t<std::is_same<Element, Vertex>::value, void>* = nullptr>
+    auto& _getElements() { return _vertices; }
 
     // Meshwork registration helper
     void _registerTriangle(size_t ti, size_t hei0, size_t hei1, size_t hei2) {
@@ -239,28 +250,18 @@ private:
         }
     }
 
-    void _clearVertex() {
-        for(size_t idxAfter = _vertices.size(); idxAfter != 0; --idxAfter)
-            _removeVertex(idxAfter - 1);
-    }
-    void _clearHalfEdge() {
-        for(size_t idxAfter = _vertices.size(); idxAfter != 0; --idxAfter)
-            _removeHalfEdge(idxAfter - 1);
-    }
-    void _clearEdge() {
-        for(size_t idxAfter = _vertices.size(); idxAfter != 0; --idxAfter)
-            _removeEdge(idxAfter - 1);
-    }
-    void _clearTriangle() {
-        for(size_t idxAfter = _vertices.size(); idxAfter != 0; --idxAfter)
-            _removeTriangle(idxAfter - 1);
+    template< typename Element > void _clearElement() {
+        auto& elements = _getElements< Element >();
+        for(size_t i = 0; i < elements.size(); ++i)
+            Attribute::template removeElement<MeshType, Element>(*this, i);
+        elements.getValue().clear();
     }
 
     void _clear() {
-        _clearVertex();
-        _clearHalfEdge();
-        _clearEdge();
-        _clearTriangle();
+        _clearElement<Vertex>();
+        _clearElement<HalfEdge>();
+        _clearElement<Edge>();
+        _clearElement<Triangle>();
     }
 
 public:
@@ -374,6 +375,7 @@ public:
 
     // Initialize the meshwork using triangle vertex index lists. Throws on error.
     template< typename Initializer, typename... Args > void init(Args&&... args) {
+        _clear(); // Clear all the current topology
         Initializer().init(*this, std::forward<Args>(args)...);
     }
     template< typename Initializer > auto extract() const {

@@ -79,31 +79,40 @@ struct MembraneMeshAttribute {
         std::vector< coordinate_type > vertexCoordinateList;
     };
 
-    // Mesh element changing
+    // Mesh element modification (not used in initialization/finalization)
     template< typename Mesh, typename VertexInsertionMethod >
     static void newVertex(Mesh& mesh, size_t v, const VertexInsertionMethod& op) {
         const auto& meta = mesh.getMetaAttribute();
         mesh.getVertexAttribute(v).vertex = meta.s->template addTrackable<Vertex>(op.coordinate(mesh, v), meta.m, v);
     }
-    template< typename Mesh, typename Operation > static void newEdge(Mesh& mesh, size_t e, const Operation& op) {
+    template< typename Mesh, typename Operation >
+    static void newEdge(Mesh& mesh, size_t e, const Operation& op) {
         mesh.getEdgeAttribute(e).edge = mesh.getMetaAttribute().s->template addTrackable<Edge>(mesh.getMetaAttribute().m, e);
     }
-    template< typename Mesh, typename Operation > static void newHalfEdge(Mesh& mesh, size_t he, const Operation& op) {
+    template< typename Mesh, typename Operation >
+    static void newHalfEdge(Mesh& mesh, size_t he, const Operation& op) {
+        // Do nothing
     }
-    template< typename Mesh, typename Operation > static void newTriangle(Mesh& mesh, size_t t, const Operation& op) {
+    template< typename Mesh, typename Operation >
+    static void newTriangle(Mesh& mesh, size_t t, const Operation& op) {
         mesh.getTriangleAttribute(t).triangle = mesh.getMetaAttribute().s->template addTrackable<Triangle>(mesh.getMetaAttribute().m, t);
     }
 
-    template< typename Mesh > static void removeVertex(Mesh& mesh, size_t v) {
-        mesh.getMetaAttribute().s->template removeTrackable<Vertex>(mesh.getVertexAttribute(v).vertex);
+    template< typename Mesh, typename Element, std::enable_if_t<std::is_same<Element, typename Mesh::Vertex>::value, void>* = nullptr >
+    static void removeElement(Mesh& mesh, size_t i) {
+        mesh.getMetaAttribute().s->template removeTrackable<Vertex>(mesh.getVertexAttribute(i).vertex);
     }
-    template< typename Mesh > static void removeEdge(Mesh& mesh, size_t e) {
-        mesh.getMetaAttribute().s->template removeTrackable<Edge>(mesh.getEdgeAttribute(e).edge);
+    template< typename Mesh, typename Element, std::enable_if_t<std::is_same<Element, typename Mesh::Edge>::value, void>* = nullptr >
+    static void removeElement(Mesh& mesh, size_t i) {
+        mesh.getMetaAttribute().s->template removeTrackable<Edge>(mesh.getEdgeAttribute(i).edge);
     }
-    template< typename Mesh > static void removeHalfEdge(Mesh& mesh, size_t he) {
+    template< typename Mesh, typename Element, std::enable_if_t<std::is_same<Element, typename Mesh::HalfEdge>::value, void>* = nullptr >
+    static void removeElement(Mesh& mesh, size_t i) {
+        // Do nothing
     }
-    template< typename Mesh > static void removeTriangle(Mesh& mesh, size_t t) {
-        mesh.getMetaAttribute().s->template removeTrackable<Triangle>(mesh.getTriangleAttribute(t).triangle);
+    template< typename Mesh, typename Element, std::enable_if_t<std::is_same<Element, typename Mesh::Triangle>::value, void>* = nullptr >
+    static void removeElement(Mesh& mesh, size_t i) {
+        mesh.getMetaAttribute().s->template removeTrackable<Triangle>(mesh.getTriangleAttribute(i).triangle);
     }
 
     // Mesh attribute initializing and extracting
