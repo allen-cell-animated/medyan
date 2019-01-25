@@ -609,7 +609,7 @@ private:
         }
 
         // Diffuse, with D * Delta t = 0.5, and uniformly weighted Laplace operator
-        // l_new = l_old / 2 - (sum of neighbor l_old) / (2 * numNeighbors)
+        // l_new = l_old / 2 + (sum of neighbor l_old) / (2 * numNeighbors)
         for(size_t iter = 0; iter < _diffuseIter; ++iter) {
             for(size_t i = 0; i < numVertices; ++i) {
                 auto& av = mesh.getVertexAttribute(i).aVertex;
@@ -621,7 +621,7 @@ private:
                 });
 
                 av.sizeAux = std::min(
-                    0.5 * av.size - 0.5 * sumSizeNeighbor / deg,
+                    0.5 * av.size + 0.5 * sumSizeNeighbor / deg,
                     av.maxSize
                 ); // capped by maxSize
             }
@@ -646,7 +646,7 @@ private:
 public:
 
     // Constructor
-    SizeMeasureManager(size_t curvRes, size_t maxSize, size_t diffuseIter) :
+    SizeMeasureManager(double curvRes, double maxSize, size_t diffuseIter) :
         _curvRes(curvRes), _maxSize(maxSize), _diffuseIter(diffuseIter) {}
 
     // Requires

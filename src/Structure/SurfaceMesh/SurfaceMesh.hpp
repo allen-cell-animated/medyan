@@ -203,7 +203,7 @@ private:
     }
 
     void _removeVertex(size_t index) {
-        Attribute::removeVertex(*this, index);
+        Attribute::removeElement<MeshType, Vertex>(*this, index);
         auto moveIndex = _vertices.erase(index);
         if(moveIndex.valid) {
             // Need to update all stored indices/reference/pointer to the vertex.
@@ -214,7 +214,7 @@ private:
         }
     }
     void _removeHalfEdge(size_t index) {
-        Attribute::removeHalfEdge(*this, index);
+        Attribute::removeElement<MeshType, HalfEdge>(*this, index);
         auto moveIndex = _halfEdges.erase(index);
         if(moveIndex.valid) {
             if(hasOpposite(index)) _halfEdges[opposite(index)].oppositeHalfEdgeIndex = index;
@@ -230,7 +230,7 @@ private:
         }
     }
     void _removeEdge(size_t index) {
-        Attribute::removeEdge(*this, index);
+        Attribute::removeElement<MeshType, Edge>(*this, index);
         auto moveIndex = _edges.erase(index);
         if(moveIndex.valid) {
             forEachHalfEdgeInEdge(index, [this, index](size_t hei) {
@@ -240,7 +240,7 @@ private:
         }
     }
     void _removeTriangle(size_t index) {
-        Attribute::removeTriangle(*this, index);
+        Attribute::removeElement<MeshType, Triangle>(*this, index);
         auto moveIndex = _triangles.erase(index);
         if(moveIndex.valid) {
             forEachHalfEdgeInTriangle(index, [this, index](size_t hei) {
