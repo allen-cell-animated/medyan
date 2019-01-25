@@ -27,6 +27,12 @@
 		2337CCD821B5C77400EA25B2 /* BoundaryBubbleRepulsion.h in Headers */ = {isa = PBXBuildFile; fileRef = 23EC736820F93B8D0037DD00 /* BoundaryBubbleRepulsion.h */; };
 		2337CCD921B5C77400EA25B2 /* BoundaryBubbleRepulsionExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC736B20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp */; };
 		2337CCDA21B5C77400EA25B2 /* BoundaryBubbleRepulsionExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 23EC736A20F93B8D0037DD00 /* BoundaryBubbleRepulsionExp.h */; };
+		23B936CF21FA3ACF00AEDA5E /* MTOCBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */; };
+		23B936D021FA3ACF00AEDA5E /* MTOCBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */; };
+		23B936D321FA3AF300AEDA5E /* MTOCBending.h in Headers */ = {isa = PBXBuildFile; fileRef = 23B936D221FA3AF300AEDA5E /* MTOCBending.h */; };
+		23B936D521FA3C3D00AEDA5E /* MTOCBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B936D421FA3C3D00AEDA5E /* MTOCBendingCosine.cpp */; };
+		23B936D621FA3C3D00AEDA5E /* MTOCBendingCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B936D421FA3C3D00AEDA5E /* MTOCBendingCosine.cpp */; };
+		23B936D821FA3C5200AEDA5E /* MTOCBendingCosine.h in Headers */ = {isa = PBXBuildFile; fileRef = 23B936D721FA3C5200AEDA5E /* MTOCBendingCosine.h */; };
 		23EC735920F937ED0037DD00 /* CylinderVolumeInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735820F937ED0037DD00 /* CylinderVolumeInteractions.cpp */; };
 		23EC735A20F937ED0037DD00 /* CylinderVolumeInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735820F937ED0037DD00 /* CylinderVolumeInteractions.cpp */; };
 		23EC735C20F9396C0037DD00 /* BoundaryInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23EC735B20F9396B0037DD00 /* BoundaryInteractions.cpp */; };
@@ -301,6 +307,10 @@
 		2337CCBA21B496C000EA25B2 /* BubbleFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleFF.h; path = Bubble/BubbleFF.h; sourceTree = "<group>"; };
 		2337CCBB21B496C000EA25B2 /* BubbleFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleFF.cpp; path = Bubble/BubbleFF.cpp; sourceTree = "<group>"; };
 		2337CCBC21B496C100EA25B2 /* MTOCAttachmentHarmonic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTOCAttachmentHarmonic.h; path = Bubble/MTOCAttachmentHarmonic.h; sourceTree = "<group>"; };
+		23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCBending.cpp; path = Bubble/MTOCBending.cpp; sourceTree = "<group>"; };
+		23B936D221FA3AF300AEDA5E /* MTOCBending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTOCBending.h; path = Bubble/MTOCBending.h; sourceTree = "<group>"; };
+		23B936D421FA3C3D00AEDA5E /* MTOCBendingCosine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCBendingCosine.cpp; path = Bubble/MTOCBendingCosine.cpp; sourceTree = "<group>"; };
+		23B936D721FA3C5200AEDA5E /* MTOCBendingCosine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTOCBendingCosine.h; path = Bubble/MTOCBendingCosine.h; sourceTree = "<group>"; };
 		23EC735820F937ED0037DD00 /* CylinderVolumeInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CylinderVolumeInteractions.cpp; path = Volume/CylinderVolumeInteractions.cpp; sourceTree = "<group>"; };
 		23EC735B20F9396B0037DD00 /* BoundaryInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundaryInteractions.cpp; path = Boundary/BoundaryInteractions.cpp; sourceTree = "<group>"; };
 		23EC735E20F9397B0037DD00 /* BranchingInteractions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BranchingInteractions.cpp; path = Branching/BranchingInteractions.cpp; sourceTree = "<group>"; };
@@ -582,6 +592,10 @@
 				2337CCB321B496BF00EA25B2 /* MTOCAttachment.h */,
 				2337CCB621B496BF00EA25B2 /* MTOCAttachmentHarmonic.cpp */,
 				2337CCBC21B496C100EA25B2 /* MTOCAttachmentHarmonic.h */,
+				23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */,
+				23B936D221FA3AF300AEDA5E /* MTOCBending.h */,
+				23B936D421FA3C3D00AEDA5E /* MTOCBendingCosine.cpp */,
+				23B936D721FA3C5200AEDA5E /* MTOCBendingCosine.h */,
 				23EC736920F93B8D0037DD00 /* BoundaryBubbleRepulsion.cpp */,
 				23EC736820F93B8D0037DD00 /* BoundaryBubbleRepulsion.h */,
 				23EC736B20F93B8E0037DD00 /* BoundaryBubbleRepulsionExp.cpp */,
@@ -964,6 +978,7 @@
 				F2A4A15E1F50D29200326562 /* FilamentStretching.h in Headers */,
 				F2A4A15D1F50D28C00326562 /* FilamentInteractions.h in Headers */,
 				F2A4A15C1F50D28500326562 /* FilamentFF.h in Headers */,
+				23B936D821FA3C5200AEDA5E /* MTOCBendingCosine.h in Headers */,
 				F2A4A15B1F50D27A00326562 /* FilamentBendingHarmonic.h in Headers */,
 				F2A4A15A1F50D26B00326562 /* FilamentBendingCosine.h in Headers */,
 				F2A4A1591F50D26300326562 /* FilamentBending.h in Headers */,
@@ -1031,6 +1046,7 @@
 				F7C9D01C1A2D165D0087434A /* Neighbor.h in Headers */,
 				F7401C3E1AF9388D00BA97A5 /* Species.h in Headers */,
 				F7401C371AF9388D00BA97A5 /* Reaction.h in Headers */,
+				23B936D321FA3AF300AEDA5E /* MTOCBending.h in Headers */,
 				F735B7A11A2D172800AE21D1 /* ChemRNode.h in Headers */,
 				F7C9D0061A2D165D0087434A /* Cylinder.h in Headers */,
 				F735B8091A2D175800AE21D1 /* ForceFieldManager.h in Headers */,
@@ -1209,8 +1225,10 @@
 				F7C9D0091A2D165D0087434A /* Filament.cpp in Sources */,
 				F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */,
 				F735B79A1A2D172800AE21D1 /* ChemGillespieImpl.cpp in Sources */,
+				23B936D621FA3C3D00AEDA5E /* MTOCBendingCosine.cpp in Sources */,
 				F713BEA51D416996005386E0 /* BoundaryCylinderAttachment.cpp in Sources */,
 				F7525A631A70241E007A4E9F /* BranchingStretchingHarmonic.cpp in Sources */,
+				23B936D021FA3ACF00AEDA5E /* MTOCBending.cpp in Sources */,
 				23EC736620F9399C0037DD00 /* LinkerInteractions.cpp in Sources */,
 				F735B8081A2D175800AE21D1 /* ForceFieldManager.cpp in Sources */,
 				F7C9CFF91A2D165D0087434A /* CCylinder.cpp in Sources */,
@@ -1291,6 +1309,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23B936D521FA3C3D00AEDA5E /* MTOCBendingCosine.cpp in Sources */,
+				23B936CF21FA3ACF00AEDA5E /* MTOCBending.cpp in Sources */,
 				23EC735920F937ED0037DD00 /* CylinderVolumeInteractions.cpp in Sources */,
 				23EC736520F9399C0037DD00 /* LinkerInteractions.cpp in Sources */,
 				23EC736220F9398E0037DD00 /* MotorGhostInteractions.cpp in Sources */,

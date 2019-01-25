@@ -410,9 +410,9 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
 
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
-            std::cout<<"old c2 "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
+//            std::cout<<"old c2 "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
             c2 = newc2;
-            std::cout<<"new c2 "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
+//            std::cout<<"new c2 "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
         }
 
         a = scalarProduct(c1, c2, c1, c2);

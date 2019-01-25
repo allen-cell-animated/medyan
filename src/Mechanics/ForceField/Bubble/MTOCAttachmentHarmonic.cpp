@@ -32,7 +32,7 @@ double MTOCAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
         int nint = mtoc->getFilaments().size();
         
         coord1 = &coord[0]; //coordinate of MTOC
-        
+
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];
             

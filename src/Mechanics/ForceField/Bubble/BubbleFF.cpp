@@ -22,6 +22,9 @@
 #include "MTOCAttachment.h"
 #include "MTOCAttachmentHarmonic.h"
 
+#include "MTOCBending.h"
+#include "MTOCBendingCosine.h"
+
 #include "Bubble.h"
 #include "Bead.h"
 #include "Component.h"
@@ -45,6 +48,9 @@ BubbleFF::BubbleFF (string type, string mtoc) {
     if (mtoc == "ATTACHMENTHARMONIC") {
         _bubbleInteractionVector.emplace_back(
         new MTOCAttachment<MTOCAttachmentHarmonic>());
+        //Have both FFs for now
+        _bubbleInteractionVector.emplace_back(
+        new MTOCBending<MTOCBendingCosine>());
     }
     else if(mtoc == "") {}
     else {
