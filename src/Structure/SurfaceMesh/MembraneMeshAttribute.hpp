@@ -120,9 +120,14 @@ struct MembraneMeshAttribute {
     // Initialization should happen only once, as it allocates resources
     template< typename Mesh > static void init(Mesh& mesh, const AttributeInitializerInfo& info) {
         const MetaAttribute& meta = mesh.getMetaAttribute();
-        const size_t numVertices = mesh.getVertices().size();
-        for(size_t i = 0; i < numVertices; ++i) {
+        for(size_t i = 0; i < mesh.getVertices().size(); ++i) {
             mesh.getVertexAttribute(i).vertex = meta.s->addTrackable<Vertex>(info.vertexCoordinateList[i], meta.m, i);
+        }
+        for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
+            mesh.getEdgeAttribute(i).edge = meta.s->addTrackable<Edge>(meta.m, i);
+        }
+        for(size_t i = 0; i < mesh.getTriangles().size(); ++i) {
+            mesh.getTriangleAttribute(i).triangle = meta.s->addTrackable<Triangle>(meta.m, i);
         }
     }
     // Extraction can be done multiple times without allocating/deallocating
