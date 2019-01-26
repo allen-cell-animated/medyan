@@ -32,11 +32,6 @@ All the other elements must have at least one index pointing to a halfedge.
 // When an element is removed, instead of doing vector::erase,
 // it essentially swaps the element with the last one, and pops the vector.
 template< typename T > class DeletableVector {
-public:
-    struct IndexMove {
-        size_t from, to;
-        bool valid;
-    };
 
 private:
     std::vector< T > _value;
@@ -56,24 +51,75 @@ public:
         return _value.size() - 1;
     }
 
+    //-------------------------------------------------------------------------
     // Remove an element from the container.
-    // Might change the position of certain elements, indicated by the return value.
-    // If index is out of range, the behavior is undefined.
-    IndexMove erase(size_t index) {
-        IndexMove res;
+    // Might change the position of certain elements.
+    // If index for deletion is out of range, the behavior is undefined.
+    //
+    // Uses swap-delete algorithm:
+    //   - If the item is the last in the vector, pop it;
+    //   - Otherwise, swap the item with the last one and pop back. (As a result,
+    //     the indices pointing to the last element will be INVALIDATED, so the
+    //     caller must manually retarget all indices to the last element.)
+    template< typename Retargeter > // The retargeter must implement operation()(from, to)
+    void erase(size_t index, Retargeter&& r) {
         const size_t lastIndex = _value.size() - 1;
         if(index == lastIndex) {
             _value.pop_back();
-            res.valid = false;
         } else {
             // Move value from lastIndex to index
             _value[index] = _value[lastIndex];
             _value.pop_back();
-            res.from = lastIndex;
-            res.to = index;
-            res.valid = true;
+            r(lastIndex, index);
         }
-        return res;
+    }
+
+    //-------------------------------------------------------------------------
+    // Remove several items at once.
+    // This function is needed because deleting one element might invalidate
+    // other indices to be removed, so sequential one-by-one deletion is not
+    // safe.
+    //
+    // Invalidates any indices bigger than the final size.
+    //
+    // If there are any index out of range, or there are repeated indices, the
+    // behavior is undefined.
+    //
+    // The algorithm works as follows:
+    //   - Computes the final size
+    //   - Removes to-be-deleted items with indices larger than the final size
+    //   - Moves the not-to-be-deleted items with indices larger than the final
+    //     size to the to-be-deleted items with indices smaller than the final
+    //     size.
+    //   - Adjust the size to the final size
+    template< size_t n, typename Retargeter > // The retargeter must implement operation()(from, to)
+    void erase(const std::array< size_t, n >& indices, Retargeter&& r) {
+        // isDeleted[i]: whether _value[finalSize + i] should be deleted. initialized to false
+        std::array< bool, n > isDeleted {};
+        const size_t currentSize = _value.size();
+        const size_t finalSize = currentSize - n;
+
+        // Mark to-be-deleted items with bigger indices as deleted
+        for(size_t i = 0; i < n; ++i) {
+            if(indices[i] >= finalSize) {
+                isDeleted[indices[i] - finalSize] = true;
+            }
+        }
+        // Move the not-to-be-deleted items with bigger indices to the to-be-deleted items with small indices
+        for(size_t indAfterFinal = 0, i = 0; indAfterFinal < n; ++indAfterFinal) {
+            if(!isDeleted[indAfterFinal]) {
+                while(i < n && indices[i] >= finalSize) ++i; // Find (including current i) the next i with small index
+                if(i < n) {
+                    // Found. This should always be satisfied.
+                    _value[indices[i]] = _value[finalSize + indAfterFinal];
+                    r(finalSize + indAfterFinal, indices[i]);
+                }
+                ++i;
+            }
+        }
+
+        // Remove garbage
+        _value.resize(finalSize);
     }
 
     size_t size() const noexcept { return _value.size(); }
@@ -202,52 +248,56 @@ private:
         return index;
     }
 
-    void _removeVertex(size_t index) {
-        Attribute::removeElement<MeshType, Vertex>(*this, index);
-        auto moveIndex = _vertices.erase(index);
-        if(moveIndex.valid) {
-            // Need to update all stored indices/reference/pointer to the vertex.
-            forEachHalfEdgeTargetingVertex(index, [this, index](size_t hei) {
-                _halfEdges[hei].targetVertexIndex = index;
-            });
-            _vertices[index].attr.setIndex(index);
-        }
+    template< typename Element, std::enable_if_t<std::is_same<Element, Vertex>::value, void>* = nullptr >
+    void _retargetElement(size_t from, size_t to) {
+        // Need to update all stored indices/reference/pointer to the vertex.
+        forEachHalfEdgeTargetingVertex(to, [this, &](size_t hei) {
+            _halfEdges[hei].targetVertexIndex = to;
+        });
+        _vertices[to].attr.setIndex(to);
     }
-    void _removeHalfEdge(size_t index) {
-        Attribute::removeElement<MeshType, HalfEdge>(*this, index);
-        auto moveIndex = _halfEdges.erase(index);
-        if(moveIndex.valid) {
-            if(hasOpposite(index)) _halfEdges[opposite(index)].oppositeHalfEdgeIndex = index;
-            if(_triangles[triangle(index)].halfEdgeIndex == moveIndex.from)
-                _triangles[triangle(index)].halfEdgeIndex = index;
-            if(_vertices[target(index)].halfEdgeIndex == moveIndex.from)
-                _vertices[target(index)].halfEdgeIndex = index;
-            if(_edges[edge(index)].halfEdgeIndex == moveIndex.from)
-                _edges[edge(index)].halfEdgeIndex = index;
-            _halfEdges[next(index)].prevHalfEdgeIndex = index;
-            _halfEdges[prev(index)].nextHalfEdgeIndex = index;
-            _halfEdges[index].attr.setIndex(index);
-        }
+    template< typename Element, std::enable_if_t<std::is_same<Element, HalfEdge>::value, void>* = nullptr >
+    void _retargetElement(size_t from, size_t to) {
+        if(hasOpposite(to)) _halfEdges[opposite(to)].oppositeHalfEdgeIndex = to;
+        if(_triangles[triangle(to)].halfEdgeIndex == from)
+            _triangles[triangle(to)].halfEdgeIndex = to;
+        if(_vertices[target(to)].halfEdgeIndex == from)
+            _vertices[target(to)].halfEdgeIndex = to;
+        if(_edges[edge(to)].halfEdgeIndex == from)
+            _edges[edge(to)].halfEdgeIndex = to;
+        _halfEdges[next(to)].prevHalfEdgeIndex = to;
+        _halfEdges[prev(to)].nextHalfEdgeIndex = to;
+        _halfEdges[to].attr.setIndex(to);
     }
-    void _removeEdge(size_t index) {
-        Attribute::removeElement<MeshType, Edge>(*this, index);
-        auto moveIndex = _edges.erase(index);
-        if(moveIndex.valid) {
-            forEachHalfEdgeInEdge(index, [this, index](size_t hei) {
-                _halfEdges[hei].edgeIndex = index;
-            });
-            _edges[index].attr.setIndex(index);
-        }
+    template< typename Element, std::enable_if_t<std::is_same<Element, Edge>::value, void>* = nullptr >
+    void _retargetElement(size_t from, size_t to) {
+        forEachHalfEdgeInEdge(to, [this, to](size_t hei) {
+            _halfEdges[hei].edgeIndex = to;
+        });
+        _edges[to].attr.setIndex(to);
     }
-    void _removeTriangle(size_t index) {
-        Attribute::removeElement<MeshType, Triangle>(*this, index);
-        auto moveIndex = _triangles.erase(index);
-        if(moveIndex.valid) {
-            forEachHalfEdgeInTriangle(index, [this, index](size_t hei) {
-                _halfEdges[hei].triangleIndex = index;
-            });
-            _triangles[index].attr.setIndex(index);
+    template< typename Element, std::enable_if_t<std::is_same<Element, Triangle>::value, void>* = nullptr >
+    void _retargetElement(size_t from, size_t to) {
+        forEachHalfEdgeInTriangle(to, [this, to](size_t hei) {
+            _halfEdges[hei].triangleIndex = to;
+        });
+        _triangles[to].attr.setIndex(to);
+    }
+    template< typename Element > struct ElementRetargeter {
+        SurfaceTriangularMesh& mesh;
+
+        void operator()(size_t from, size_t to) {
+            mesh._retargetElement< Element >(from, to);
         }
+    };
+
+    template< typename Element > void _removeElement(size_t index) {
+        Attribute::template removeElement< MeshType, Element >(*this, index);
+        _getElements<Element>().erase(index, ElementRetargeter<Element>{*this});
+    }
+    template< typename Element, size_t n > void _removeElements(std::array< size_t, n >& indices) {
+        for(size_t i : indices) Attribute::template removeElement< MeshType, Element >(*this, i);
+        _getElements<Element>().erase(indices, ElementRetargeter<Element>{*this});
     }
 
     template< typename Element > void _clearElement() {
@@ -590,14 +640,13 @@ public:
             --vertices[mesh.target(ohei_on)].degree;
 
             // Remove elements
-            mesh._removeVertex(ov1);
-            mesh._removeEdge(oei);
-            mesh._removeEdge(oei2);
-            mesh._removeEdge(oei4);
-            mesh._removeHalfEdge(ohei);   mesh._removeHalfEdge(ohei_n);  mesh._removeHalfEdge(ohei_p);
-            mesh._removeHalfEdge(ohei_o); mesh._removeHalfEdge(ohei_on); mesh._removeHalfEdge(ohei_op);
-            mesh._removeTriangle(ot0);
-            mesh._removeTriangle(ot1);
+            mesh._removeElement<Vertex>(ov1);
+            mesh._removeElements<Edge, 3>({oei, oei2, oei4});
+            mesh._removeElements<HalfEdge, 6>({
+                ohei,   ohei_n,  ohei_p,
+                ohei_o, ohei_on, ohei_op
+            });
+            mesh._removeElements<Triangle, 2>({ot0, ot1});
 
             // Update attributes for affected elements
             as(
