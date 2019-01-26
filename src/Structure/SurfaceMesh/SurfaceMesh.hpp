@@ -629,6 +629,8 @@ public:
                 halfEdges[hei1].targetVertexIndex = ov0;
             }
             vertices[ov0].halfEdgeIndex = hei_begin;
+            vertices[mesh.target(ohei_n)].halfEdgeIndex = mesh.opposite(ohei_p);
+            vertices[mesh.target(ohei_on)].halfEdgeIndex = mesh.opposite(ohei_op);
 
             // Collapse edges
             mesh._registerEdge(oei1, mesh.opposite(ohei_n), mesh.opposite(ohei_p));
@@ -639,6 +641,13 @@ public:
             --vertices[mesh.target(ohei_n)].degree;
             --vertices[mesh.target(ohei_on)].degree;
 
+            // Update attributes for affected elements
+            as(
+                mesh,
+                hei_begin, hei_end, // Range of changed halfedges targeting ov0, ordered clockwise
+                ov0
+            );
+
             // Remove elements
             mesh._removeElement<Vertex>(ov1);
             mesh._removeElements<Edge, 3>({oei, oei2, oei4});
@@ -647,13 +656,6 @@ public:
                 ohei_o, ohei_on, ohei_op
             });
             mesh._removeElements<Triangle, 2>({ot0, ot1});
-
-            // Update attributes for affected elements
-            as(
-                mesh,
-                hei_begin, hei_end, // Range of changed halfedges targeting ov0, ordered clockwise
-                ov0
-            );
         }
 
         void operator()(SurfaceTriangularMesh& mesh, size_t ohei)const {
