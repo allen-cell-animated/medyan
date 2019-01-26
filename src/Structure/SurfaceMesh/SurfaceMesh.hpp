@@ -251,7 +251,7 @@ private:
     template< typename Element, std::enable_if_t<std::is_same<Element, Vertex>::value, void>* = nullptr >
     void _retargetElement(size_t from, size_t to) {
         // Need to update all stored indices/reference/pointer to the vertex.
-        forEachHalfEdgeTargetingVertex(to, [this, &](size_t hei) {
+        forEachHalfEdgeTargetingVertex(to, [&](size_t hei) {
             _halfEdges[hei].targetVertexIndex = to;
         });
         _vertices[to].attr.setIndex(to);
@@ -295,7 +295,7 @@ private:
         Attribute::template removeElement< MeshType, Element >(*this, index);
         _getElements<Element>().erase(index, ElementRetargeter<Element>{*this});
     }
-    template< typename Element, size_t n > void _removeElements(std::array< size_t, n >& indices) {
+    template< typename Element, size_t n > void _removeElements(const std::array< size_t, n >& indices) {
         for(size_t i : indices) Attribute::template removeElement< MeshType, Element >(*this, i);
         _getElements<Element>().erase(indices, ElementRetargeter<Element>{*this});
     }
