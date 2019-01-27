@@ -689,6 +689,9 @@ public:
         double curvatureResolution;
         double maxSize;
         size_t diffuseIter;
+
+        // Main loop
+        size_t samplingAdjustmentMaxIter;
     };
 
 private:
@@ -698,6 +701,8 @@ private:
     EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
     EdgeSplitManager< Mesh, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
     EdgeCollapseManager< Mesh, triangleQualityCriteria > _edgeCollapseManager;
+
+    size_t _samplingAdjustmentMaxIter; // Maximum number of scans used in sampling.
 
     void _computeAllTriangleNormals(Mesh& mesh) const {
         const size_t numTriangles = mesh.getTriangles().size();
@@ -744,7 +749,8 @@ public:
         ),
         _edgeFlipManager(param.minDegree, param.maxDegree, param.edgeFlipMinDotNormal),
         _edgeSplitManager(param.maxDegree),
-        _edgeCollapseManager(param.minDegree, param.maxDegree, param.edgeCollapseMinQualityImprovement)
+        _edgeCollapseManager(param.minDegree, param.maxDegree, param.edgeCollapseMinQualityImprovement),
+        _samplingAdjustmentMaxIter(param.samplingAdjustmentMaxIter)
     {}
 
     void adapt(Mesh& mesh) const {
@@ -756,6 +762,7 @@ public:
             bool sizeMeasureSatisfied = true;
 
             size_t countTopoModified;
+            size_t iter = 0;
             do {
                 countTopoModified = 0;
                 for(size_t ei = 0; ei < mesh.getEdges().size(); /* No increment here */) {
@@ -788,7 +795,9 @@ public:
                         ++ei;
                     }
                 }
-            } while(countTopoModified); // If any topology was modified, will loop through all edges again.
+
+                ++iter;
+            } while(countTopoModified && iter < _samplingAdjustmentMaxIter); // If any topology was modified, will loop through all edges again.
 
             if(sizeMeasureSatisfied) break;
 

@@ -237,7 +237,10 @@ void Controller::initialize(string inputFile,
             // Size diffusion
             0.25, // curvatureResolution. cos of which should be slightly bigger than minDotNormal
             50, // maxSize. Related to the resolution of the system
-            3 // diffuseIter
+            3, // diffuseIter
+
+            // Main loop
+            8 // Max times of scanning all the edges for sampling adjustment
         }
     );
     
