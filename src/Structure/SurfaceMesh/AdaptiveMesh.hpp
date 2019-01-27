@@ -133,10 +133,10 @@ public:
         // Check whether triangle quality can be improved.
         const auto q012 = TriangleQualityType{}(c0, c1, c2);
         const auto q230 = TriangleQualityType{}(c2, c3, c0);
-        const auto qBefore = TriangleQualityType::betterOne(q012, q230);
+        const auto qBefore = TriangleQualityType::worseOne(q012, q230);
         const auto q013 = TriangleQualityType{}(c0, c1, c3);
         const auto q231 = TriangleQualityType{}(c2, c3, c1);
-        const auto qAfter = TriangleQualityType::betterOne(q013, q231);
+        const auto qAfter = TriangleQualityType::worseOne(q013, q231);
         if( !TriangleQualityType::better(qAfter, qBefore) ) return false;
 
         // All checks complete. Do the flip.
@@ -303,20 +303,20 @@ public:
 
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
-        double q0Before = TriangleQualityType::worst;
-        double q0After = TriangleQualityType::worst;
+        double q0Before = TriangleQualityType::best;
+        double q0After = TriangleQualityType::best;
         mesh.forEachHalfEdgeTargetingVertex(vi0, [&](size_t hei) {
             const size_t ti = mesh.triangle(hei);
             const size_t vn = mesh.target(mesh.next(hei));
             const size_t vp = mesh.target(mesh.prev(hei));
             const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
             const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
-            q0Before = TriangleQualityType::betterOne(
+            q0Before = TriangleQualityType::worseOne(
                 TriangleQualityType{}(cp, c0, cn),
                 q0Before
             );
             if(ti != ti0 && ti != ti1) {
-                q0After = TriangleQualityType::betterOne(
+                q0After = TriangleQualityType::worseOne(
                     TriangleQualityType{}(cp, c2, cn),
                     q0After
                 );
@@ -325,20 +325,20 @@ public:
         const auto imp0 = TriangleQualityType::improvement(q0Before, q0After);
 
         // if v2 is removed
-        double q2Before = TriangleQualityType::worst;
-        double q2After = TriangleQualityType::worst;
+        double q2Before = TriangleQualityType::best;
+        double q2After = TriangleQualityType::best;
         mesh.forEachHalfEdgeTargetingVertex(vi2, [&](size_t hei) {
             const size_t ti = mesh.triangle(hei);
             const size_t vn = mesh.target(mesh.next(hei));
             const size_t vp = mesh.target(mesh.prev(hei));
             const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
             const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
-            q2Before = TriangleQualityType::betterOne(
+            q2Before = TriangleQualityType::worseOne(
                 TriangleQualityType{}(cp, c2, cn),
                 q2Before
             );
             if(ti != ti0 && ti != ti1) {
-                q2After = TriangleQualityType::betterOne(
+                q2After = TriangleQualityType::worseOne(
                     TriangleQualityType{}(cp, c0, cn),
                     q2After
                 );
