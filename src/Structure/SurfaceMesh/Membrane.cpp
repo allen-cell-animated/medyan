@@ -28,11 +28,10 @@ Membrane::Membrane(
         triangleVertexIndexList,
         MembraneMeshAttribute::AttributeInitializerInfo{ vertexCoordinateList }
     );
+    _mesh.updateClosedness();
 
     // Update geometry
     updateGeometryValue<false>();
-
-    size_t numTriangles = _mesh.getTriangles().size();
 
 #ifdef MECHANICS
     // Calculate the total area and volume to set the equilibrium area and volume
