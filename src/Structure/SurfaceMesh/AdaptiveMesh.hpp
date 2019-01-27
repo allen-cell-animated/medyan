@@ -525,12 +525,12 @@ public:
         while( (needRelocation || needFlipping) && iter < _maxIterRelaxation) {
             ++iter;
             needRelocation = !_vertexRelocation(coords, forces, coordsHalfway, forcesHalfway, mesh);
+            // Reassign coordinates
+            for (size_t i = 0; i < numVertices; ++i) {
+                mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(coords[i]);
+            }
+            // Try flipping
             needFlipping = _edgeFlipping(mesh, efm);
-        }
-
-        // Reassign coordinates
-        for(size_t i = 0; i < numVertices; ++i) {
-            mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(coords[i]);
         }
 
         if(needRelocation || needFlipping) return false;
