@@ -68,6 +68,12 @@ template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
 template< typename Mesh, TriangleQualityCriteria c > class EdgeFlipManager {
 public:
     using TriangleQualityType = TriangleQuality< c >;
+    enum class State {
+        Success,
+        InvalidTopo,
+        NonCoplanar,
+        BadQuality
+    };
 
 private:
     size_t _minDegree;
@@ -88,7 +94,7 @@ public:
     // Requires
     //   - vertex degrees
     //   - triangle unit normal
-    bool tryFlip(Mesh& mesh, size_t ei) const {
+    State tryFlip(Mesh& mesh, size_t ei) const {
         using namespace mathfunc;
 
         const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
@@ -114,13 +120,13 @@ public:
             mesh.degree(vi2) <= _minDegree ||
             mesh.degree(vi1) >= _maxDegree ||
             mesh.degree(vi3) >= _maxDegree
-        ) return false;
+        ) return State::InvalidTopo;
 
         // Check if the current triangles are coplanar.
         if(dot(
             mesh.getTriangleAttribute(ti0).gTriangle.unitNormal,
             mesh.getTriangleAttribute(ti1).gTriangle.unitNormal
-        ) < _minDotNormal) return false;
+        ) < _minDotNormal) return State::NonCoplanar;
 
         // Check if the target triangles are coplanar.
         const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
@@ -129,7 +135,7 @@ public:
         const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(vi3).getCoordinate());
         const auto un013 = normalizedVector(cross(c1 - c0, c3 - c0));
         const auto un231 = normalizedVector(cross(c3 - c2, c1 - c2));
-        if(dot(un013, un231) < _minDotNormal) return false;
+        if(dot(un013, un231) < _minDotNormal) return State::NonCoplanar;
 
         // Check whether triangle quality can be improved.
         const auto q012 = TriangleQualityType{}(c0, c1, c2);
@@ -138,7 +144,7 @@ public:
         const auto q013 = TriangleQualityType{}(c0, c1, c3);
         const auto q231 = TriangleQualityType{}(c2, c3, c1);
         const auto qAfter = TriangleQualityType::worseOne(q013, q231);
-        if( !TriangleQualityType::better(qAfter, qBefore) ) return false;
+        if( !TriangleQualityType::better(qAfter, qBefore) ) return State::BadQuality;
 
         // All checks complete. Do the flip.
         typename Mesh::EdgeFlip{}(mesh, ei, [](
@@ -155,7 +161,7 @@ public:
 
         // Does not change the edge preferrable length
 
-        return true;
+        return State::Success;
     }
 };
 
@@ -482,7 +488,7 @@ private:
         size_t res = 0;
         const size_t numEdges = mesh.getEdges().size();
         for(size_t i = 0; i < numEdges; ++i) {
-            if(efm.tryFlip(mesh, i)) ++res;
+            if(efm.tryFlip(mesh, i) == EdgeFlipManagerType::State::Success) ++res;
         }
         return res;
     }
