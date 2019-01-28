@@ -473,16 +473,16 @@ private:
 
         if(maxMag2F >= _epsilon2) return false;
         else return true;
-    }
+        }
 
     // Returns whether at least 1 edge is flipped
-    bool _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+    size_t _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         // Edge flipping does not change edge id or total number of edges
         // Also the preferred length does not need to be changed
-        bool res = false;
+        size_t res = 0;
         const size_t numEdges = mesh.getEdges().size();
         for(size_t i = 0; i < numEdges; ++i) {
-            if(efm.tryFlip(mesh, i)) res = true;
+            if(efm.tryFlip(mesh, i)) ++res;
         }
         return res;
     }
@@ -521,9 +521,9 @@ public:
 
         // Main loop
         bool needRelocation = true;
-        bool needFlipping = true;
+        size_t flippingCount = 0;
         size_t iter = 0;
-        while( (needRelocation || needFlipping) && iter < _maxIterRelaxation) {
+        while( (needRelocation || flippingCount) && iter < _maxIterRelaxation) {
             ++iter;
             needRelocation = !_vertexRelocation(coords, forces, coordsHalfway, forcesHalfway, mesh);
             // Reassign coordinates
@@ -531,10 +531,10 @@ public:
                 mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(coords[i]);
             }
             // Try flipping
-            needFlipping = _edgeFlipping(mesh, efm);
+            flippingCount = _edgeFlipping(mesh, efm);
         }
 
-        if(needRelocation || needFlipping) return false;
+        if(needRelocation || flippingCount) return false;
         else return true;
     }
 };
