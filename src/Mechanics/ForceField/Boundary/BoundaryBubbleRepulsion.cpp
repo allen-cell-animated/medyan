@@ -20,7 +20,17 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-double BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
+void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
+    //cout << "Add later!" <<endl;
+}
+
+template <class BRepulsionInteractionType>
+void BoundaryBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
+    //cout << "Add later!" <<endl;
+}
+
+template <class BRepulsionInteractionType>
+double BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double *coord, double *f, double d) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -61,7 +71,7 @@ double BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double 
 }
 
 template <class BRepulsionInteractionType>
-void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
+void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
     
     for (auto be: BoundaryElement::getBoundaryElements()) {
         
@@ -82,28 +92,32 @@ void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
 }
 
 
-template <class BRepulsionInteractionType>
-void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
-    
-    for (auto be: BoundaryElement::getBoundaryElements()) {
-        
-        for(auto &bb : _neighborList->getNeighbors(be)) {
-            
-            double kRep = be->getRepulsionConst();
-            double screenLength = be->getScreeningLength();
-            double radius = bb->getRadius();
-            
-            Bead* bd = bb->getBead();
-            
-            auto normal = be->normal(bd->coordinate);
-            _FFType.forcesAux(bd, be->distance(bd->coordinate),
-                              radius, normal, kRep, screenLength);
-            
-        }
-    }
-}
+//template <class BRepulsionInteractionType>
+//void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
+//
+//    for (auto be: BoundaryElement::getBoundaryElements()) {
+//
+//        for(auto &bb : _neighborList->getNeighbors(be)) {
+//
+//            double kRep = be->getRepulsionConst();
+//            double screenLength = be->getScreeningLength();
+//            double radius = bb->getRadius();
+//
+//            Bead* bd = bb->getBead();
+//
+//            auto normal = be->normal(bd->coordinate);
+//            _FFType.forcesAux(bd, be->distance(bd->coordinate),
+//                              radius, normal, kRep, screenLength);
+//
+//        }
+//    }
+//}
 
 ///Template specializations
-template double BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(double d);
-template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForces();
-template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForcesAux();
+template double BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(double *coord, double *f, double d);
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForces(double *coord, double *f);
+//template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForcesAux();
+//template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeLoadForces();
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::vectorize();
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::deallocate();
+

@@ -25,8 +25,8 @@ template <class MTOCInteractionType>
 void MTOCBending<MTOCInteractionType>::vectorize() {
     
     for(auto mtoc : MTOC::getMTOCs()) {
-        beadSet = new int[n *  mtoc->getFilaments().size() + 1];
-        kbend = new double[Cylinder::getCylinders().size() + 1];
+        beadSet = new int[2 * n *  mtoc->getFilaments().size() + 1];
+        kbend = new double[2 * n *  mtoc->getFilaments().size() + 1];
         
         beadSet[0] = mtoc->getBubble()->getBead()->_dbIndex;
         kbend[0] = 0;
@@ -36,10 +36,13 @@ void MTOCBending<MTOCInteractionType>::vectorize() {
         for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
             Filament *f = mtoc->getFilaments()[fIndex];
             
-            beadSet[n * i] = f->getMinusEndCylinder()->getFirstBead()->_dbIndex;
+            beadSet[2 * n * i - 1] = f->getMinusEndCylinder()->getFirstBead()->_dbIndex;
+            beadSet[2 * n * i] = f->getMinusEndCylinder()->getSecondBead()->_dbIndex;
             
-            kbend[i] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
-            
+            kbend[2 * n * i - 1] = 1000;
+            kbend[2 * n * i] = 1000;
+//            kbend[2 * n * i - 1] = f->getMinusEndCylinder()->getMCylinder()->getBendingConst();
+//            kbend[2 * n * i] = f->getMinusEndCylinder()->getMCylinder()->getBendingConst();
             i++;
         }
     }

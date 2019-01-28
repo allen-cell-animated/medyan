@@ -21,6 +21,7 @@
 
 //FORWARD DECLARATIONS
 class Bead;
+class BoundaryElement;
 
 /// A exponential repulsive potential used by the BoundaryBubbleRepulsion template.
 class BoundaryBubbleRepulsionExp {
