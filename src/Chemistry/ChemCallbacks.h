@@ -114,6 +114,38 @@ struct UpdateCaMKIIerBindingCallback {
     }
 };
 
+struct UpdateCaMKIIerBundlingCallback {
+
+    Cylinder* _cylinder; ///< cylinder to update
+
+    short _bindingSite;  ///< binding site to update
+
+    //Constructor, sets members
+    UpdateCaMKIIerBundlingCallback(Cylinder* cylinder, short bindingSite)
+
+    : _cylinder(cylinder), _bindingSite(bindingSite) {}
+
+    //callback
+    void operator() (RSpecies *r, int delta) {
+
+        //update this cylinder
+        Compartment* c = _cylinder->getCompartment();
+
+        for(auto &manager : c->getFilamentBindingManagers()) {
+
+            if(dynamic_cast<CaMKIIBundlingManager*>(manager.get())) {
+
+                CCylinder* cc = _cylinder->getCCylinder();
+
+                //update binding sites
+                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+
+                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+            }
+        }
+    }
+};
+
 struct UpdateLinkerBindingCallback {
     
     Cylinder* _cylinder; ///< cylinder to update
@@ -728,9 +760,9 @@ struct CaMKIIBundlingCallback {
         //TODO Find a CAMKII with coordination number less than max number
         auto site = _bManager->chooseBindingSites();
 
-        CaMKIIingPoint* cp = site[0];
-        Cylinder*       c2 = get<0>(site[1])->getCylinder();
-        short           pos = get<1>(site[1])->getCylinder();
+        CaMKIIingPoint* cp  = get<0>(site);
+        Cylinder*       c2  = get<0>(get<1>(site))->getCylinder();
+        short           pos = get<1>(get<1>(site));
         cp->addBond(c2, pos);
 
 //TODO CJY make sure isn't needed before cleaning

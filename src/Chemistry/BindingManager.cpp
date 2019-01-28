@@ -432,7 +432,7 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
         SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
 
         auto t = tuple<CCylinder*, short>(cc, bindingSite);
-        _possibleBindings.insert(t);
+        _possibleBindings.insert(cp,t);
     }
 
     int oldN = _bindingSpecies->getN();
@@ -447,7 +447,7 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc) {
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
              bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
 
-        addPossibleBindings(cc, *bit);
+        addPossibleBindings(cp, cc, *bit);
 }
 
 void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingSite) {
@@ -455,7 +455,7 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
     if(cc->getType() != _filamentType) return;
 
     //remove tuple which has this ccylinder
-    _possibleBindings.erase(tuple<CCylinder*, short>(cc, bindingSite));
+    _possibleBindings.erase(cp);
 
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSites();
@@ -469,7 +469,7 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
              bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++)
 
-        removePossibleBindings(cc, *bit);
+        removePossibleBindings(cp, cc, *bit);
 }
 
 
