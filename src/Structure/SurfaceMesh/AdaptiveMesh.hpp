@@ -187,6 +187,10 @@ template<
 public:
     using EdgeFlipManagerType = EdgeFlipManager< Mesh, c >;
     using EdgeSplitVertexInsertionType = EdgeSplitVertexInsertion< m >;
+    enum class State {
+        Success,
+        InvalidTopo
+    };
 
 private:
     size_t _maxDegree;
@@ -199,7 +203,7 @@ public:
     // Returns whether a new vertex is inserted.
     // Requires
     //   - Vertex degree
-    bool trySplit(Mesh& mesh, size_t ei, const EdgeFlipManagerType& efm) const {
+    State trySplit(Mesh& mesh, size_t ei, const EdgeFlipManagerType& efm) const {
         using namespace mathfunc;
 
         const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
@@ -224,7 +228,7 @@ public:
         if(
             mesh.degree(vi1) >= _maxDegree ||
             mesh.degree(vi3) >= _maxDegree
-        ) return false;
+        ) return State::InvalidTopo;
 
         // All checks passed. Do the splitting.
         typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
@@ -251,7 +255,7 @@ public:
         efm.tryFlip(mesh, ei2);
         efm.tryFlip(mesh, ei3);
 
-        return true;
+        return State::Success;
 
     }
 };
@@ -259,6 +263,11 @@ public:
 template< typename Mesh, TriangleQualityCriteria c > class EdgeCollapseManager {
 public:
     using TriangleQualityType = TriangleQuality< c >;
+    enum class State {
+        Success,
+        InvalidTopo,
+        BadQuality
+    };
 
 private:
     size_t _minDegree;
@@ -274,7 +283,7 @@ public:
     // Returns whether the edge is collapsed
     // Requires
     //   - <None>
-    bool tryCollapse(Mesh& mesh, size_t ei) const {
+    State tryCollapse(Mesh& mesh, size_t ei) const {
         using namespace mathfunc;
 
         const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
@@ -300,7 +309,7 @@ public:
             mesh.degree(vi0) + mesh.degree(vi2) - 4 < _minDegree ||
             mesh.degree(vi1) <= _minDegree ||
             mesh.degree(vi3) <= _minDegree
-        ) return false;
+        ) return State::InvalidTopo;
 
         // Future: maybe also geometric constraints (gap, smoothness, etc)
 
@@ -353,7 +362,7 @@ public:
         });
         const auto imp2 = TriangleQualityType::improvement(q2Before, q2After);
 
-        if(imp0 < _minQualityImprovement && imp2 < _minQualityImprovement) return false;
+        if(imp0 < _minQualityImprovement && imp2 < _minQualityImprovement) return State::BadQuality;
 
         auto attributeSetter = [](
             Mesh& mesh, size_t hei_begin, size_t hei_end, size_t ov0
@@ -384,7 +393,7 @@ public:
 
         // Does not update edge preferred lengths
 
-        return true;
+        return State::Success;
     }
 };
 
@@ -786,14 +795,14 @@ public:
 
                     if(length2 >= 2 * eqLength2) { // Too long
                         sizeMeasureSatisfied = false;
-                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager))
+                        if(_edgeSplitManager.trySplit(mesh, ei, _edgeFlipManager) == decltype(_edgeSplitManager)::State::Success)
                             // Edge splitting happened. Will check edge ei again next round
                             ++countTopoModified;
                         else
                             ++ei;
                     } else if(2 * length2 <= eqLength2) { // Too short
                         sizeMeasureSatisfied = false;
-                        if(_edgeCollapseManager.tryCollapse(mesh, ei))
+                        if(_edgeCollapseManager.tryCollapse(mesh, ei) == decltype(_edgeCollapseManager)::State::Success)
                             // Edge collapsing happened. The edge at ei will be different next round
                             ++countTopoModified;
                         else
