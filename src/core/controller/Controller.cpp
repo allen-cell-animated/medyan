@@ -819,6 +819,7 @@ void Controller::membraneAdaptiveRemesh() const {
     // Requires _meshAdapter to be already initialized
     for(auto m : Membrane::getMembranes()) {
         _meshAdapter->adapt(m->getMesh());
+        m->updateGeometryValue();
     }
 }
 
