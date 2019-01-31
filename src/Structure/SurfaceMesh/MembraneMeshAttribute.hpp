@@ -103,6 +103,7 @@ struct MembraneMeshAttribute {
     template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Vertex>::value, void>* = nullptr >
     static void removeElement(MeshType& mesh, size_t i) {
         mesh.getMetaAttribute().s->template removeTrackable<Vertex>(mesh.getVertexAttribute(i).vertex);
+        mesh.getMetaAttribute().m->removeChild(mesh.getVertexAttribute(i).vertex);
     }
     template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Edge>::value, void>* = nullptr >
     static void removeElement(MeshType& mesh, size_t i) {
