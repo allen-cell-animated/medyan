@@ -33,6 +33,10 @@ Triangle::Triangle(Composite* parent, size_t topoIndex):
    
 }
 
+Triangle::~Triangle() {
+    _compartment->removeTriangle(this);
+}
+
 void Triangle::updateCoordinate() {
     const auto& mesh = static_cast<Membrane*>(getParent())->getMesh();
     const size_t hei0 = mesh.getTriangles()[_topoIndex].halfEdgeIndex;

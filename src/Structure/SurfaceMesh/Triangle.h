@@ -53,6 +53,7 @@ public:
     mathfunc::Vec3 coordinate; // Coordinate of the center point, updated with updateCoordiante()
 
     Triangle(Composite *parent, size_t topoIndex);
+    ~Triangle();
 
     void setTopoIndex(size_t index) { _topoIndex = index; }
     size_t getTopoIndex() const { return _topoIndex; }

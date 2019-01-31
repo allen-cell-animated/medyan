@@ -42,6 +42,7 @@ private:
 
 public:
     Edge(Composite *parent, size_t topoIndex);
+    ~Edge();
 
     void setTopoIndex(size_t index) { _topoIndex = index; }
 
