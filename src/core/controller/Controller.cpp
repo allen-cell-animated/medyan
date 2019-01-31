@@ -371,7 +371,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                 if(sp->getFullName().find("Bound") == string::npos) {
                     while(copyNumber > 0) {
                         sp->down();
-                        auto tc = ac[Rand::randInteger(1, nac-1)];
+                        auto tc = ac[Rand::randInteger(0, nac-1)];
                         auto sp_target = tc->findSpeciesByName(sp->getName());
                         sp_targets.insert(sp_target);
                         sp_target->up();
