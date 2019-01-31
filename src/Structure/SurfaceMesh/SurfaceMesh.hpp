@@ -7,7 +7,7 @@
 #include <iterator>
 #include <set>
 #include <type_traits>
-#include <utility>
+#include <utility> // move
 #include <vector>
 
 /******************************************************************************
@@ -28,7 +28,7 @@ All the other elements must have at least one index pointing to a halfedge.
 ******************************************************************************/
 
 // The DeletableVector is a thin wrapper for std::vector.
-// This container is designed for trivially_copyable types.
+// This container is designed for types with assignment operators.
 // When an element is removed, instead of doing vector::erase,
 // it essentially swaps the element with the last one, and pops the vector.
 template< typename T > class DeletableVector {
@@ -68,7 +68,7 @@ public:
             _value.pop_back();
         } else {
             // Move value from lastIndex to index
-            _value[index] = _value[lastIndex];
+            _value[index] = std::move(_value[lastIndex]);
             _value.pop_back();
             r(lastIndex, index);
         }
@@ -111,7 +111,7 @@ public:
                 while(i < n && indices[i] >= finalSize) ++i; // Find (including current i) the next i with small index
                 if(i < n) {
                     // Found. This should always be satisfied.
-                    _value[indices[i]] = _value[finalSize + indAfterFinal];
+                    _value[indices[i]] = std::move([finalSize + indAfterFinal]);
                     r(finalSize + indAfterFinal, indices[i]);
                 }
                 ++i;

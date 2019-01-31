@@ -64,7 +64,7 @@ void Compartment::getSlicedVolumeArea() {
         Vec3 sumNormal {};
         Vec3 sumPos {};
         for(Triangle* t: _triangles) {
-            const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+            const auto& mesh = t->getParent()->getMesh();
             const size_t ti = t->getTopoIndex();
             const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
             const auto& unitNormal = mesh.getTriangleAttribute(ti).gTriangle.unitNormal;

@@ -23,7 +23,7 @@ Membrane::Membrane(
     _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
     
     // Build the meshwork topology using vertex and triangle information
-    _mesh.init<typename mesh_type::VertexTriangleInitializer>(
+    _mesh.init<typename MeshType::VertexTriangleInitializer>(
         vertexCoordinateList.size(),
         triangleVertexIndexList,
         MembraneMeshAttribute::AttributeInitializerInfo{ vertexCoordinateList }

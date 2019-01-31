@@ -825,7 +825,7 @@ public:
 
 };
 
-using MembraneMeshAdapter = MeshAdapter< typename Membrane::mesh_type >;
+using MembraneMeshAdapter = MeshAdapter< typename Membrane::MeshType >;
 
 } // namespace adaptive_mesh
 

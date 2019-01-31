@@ -8,12 +8,10 @@
 
 Database<Edge*> Edge::_edges;
 
-Edge::Edge(Composite* parent, size_t topoIndex):
+Edge::Edge(Membrane* parent, size_t topoIndex):
     Trackable(),
-    _topoIndex{topoIndex}, _id(_edges.getID()) {
+    _parent(parent), _topoIndex{topoIndex}, _id(_edges.getID()) {
     
-    parent -> addChild(unique_ptr<Component>(this));
-
     // Set coordinate and add to compartment
     updateCoordinate();
     if(medyan::Global::readGlobal().mode == medyan::GlobalVar::RunMode::Simulation) {
@@ -32,7 +30,7 @@ Edge::~Edge() {
 }
 
 void Edge::updateCoordinate() {
-    const auto& mesh = static_cast<Membrane*>(getParent())->getMesh();
+    const auto& mesh = _parent->getMesh();
     const size_t hei0 = mesh.getEdges()[_topoIndex].halfEdgeIndex;
     const size_t hei1 = mesh.opposite(hei0);
     const size_t v0 = mesh.target(hei0);
@@ -66,6 +64,10 @@ void Edge::updatePosition() {
         _compartment = c;
         _compartment->addEdge(this);
     }
+}
+
+int Edge::getType()const {
+    return getParent()->getType();
 }
 
 void Edge::printSelf()const {

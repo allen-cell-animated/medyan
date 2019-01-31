@@ -32,7 +32,7 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
 
     for(auto t: Triangle::getTriangles()) {
 
-        const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+        const auto& mesh = t->getParent()->getMesh();
         const size_t ti = t->getTopoIndex();
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);
@@ -77,7 +77,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 
     for(auto t: Triangle::getTriangles()) {
 
-        const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+        const auto& mesh = t->getParent()->getMesh();
         const size_t ti = t->getTopoIndex();
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);
@@ -112,7 +112,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 
     for(auto t: Triangle::getTriangles()) {
 
-        const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+        const auto& mesh = t->getParent()->getMesh();
         const size_t ti = t->getTopoIndex();
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);
@@ -146,7 +146,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 
     for(auto t: Triangle::getTriangles()) {
 
-        const auto& mesh = static_cast<Membrane*>(t->getParent())->getMesh();
+        const auto& mesh = t->getParent()->getMesh();
         const size_t ti = t->getTopoIndex();
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);

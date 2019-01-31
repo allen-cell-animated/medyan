@@ -3,6 +3,7 @@
 
 #include <array>
 #include <limits> // numeric_limits
+#include <memory> // unique_ptr
 #include <stdexcept> // logic_error
 #include <vector>
 
@@ -24,7 +25,11 @@ algorithm.
 
 This struct can connect the topological meshwork with the actual system objects.
 ******************************************************************************/
+template< template< typename > MeshTopology >
 struct MembraneMeshAttribute {
+
+    using MeshType = MeshTopology< MembraneMeshAttribute >;
+
     struct VertexAttribute {
         using coordinate_type = decltype(Vertex::coordinate);
         Vertex* vertex;
@@ -38,10 +43,9 @@ struct MembraneMeshAttribute {
             vertex->setTopoIndex(index);
         }
 
-        // TODO adaptive
     };
     struct EdgeAttribute {
-        Edge* edge;
+        std::unique_ptr<Edge> edge;
 
         GEdge gEdge;
         AdaptiveMeshAttribute::EdgeAttribute aEdge;
@@ -49,7 +53,6 @@ struct MembraneMeshAttribute {
         void setIndex(size_t index) {
             edge->setTopoIndex(index);
         }
-        // TODO geometry / adaptive
     };
     struct HalfEdgeAttribute {
         GHalfEdge gHalfEdge;
@@ -58,7 +61,7 @@ struct MembraneMeshAttribute {
         void setIndex(size_t index) {}
     };
     struct TriangleAttribute {
-        Triangle* triangle;
+        std::unique_ptr<Triangle> triangle;
 
         GTriangle gTriangle;
         AdaptiveMeshAttribute::TriangleAttribute aTriangle;
@@ -66,7 +69,6 @@ struct MembraneMeshAttribute {
         void setIndex(size_t index) {
             triangle->setTopoIndex(index);
         }
-        // TODO geometry / adaptive
     };
     struct MetaAttribute {
         SubSystem *s;
@@ -80,58 +82,58 @@ struct MembraneMeshAttribute {
     };
 
     // Mesh element modification (not used in initialization/finalization)
-    template< typename Mesh, typename VertexInsertionMethod >
-    static void newVertex(Mesh& mesh, size_t v, const VertexInsertionMethod& op) {
+    template< typename VertexInsertionMethod >
+    static void newVertex(MeshType& mesh, size_t v, const VertexInsertionMethod& op) {
         const auto& meta = mesh.getMetaAttribute();
         mesh.getVertexAttribute(v).vertex = meta.s->template addTrackable<Vertex>(op.coordinate(mesh, v), meta.m, v);
     }
-    template< typename Mesh, typename Operation >
-    static void newEdge(Mesh& mesh, size_t e, const Operation& op) {
-        mesh.getEdgeAttribute(e).edge = mesh.getMetaAttribute().s->template addTrackable<Edge>(mesh.getMetaAttribute().m, e);
+    template< typename Operation >
+    static void newEdge(MeshType& mesh, size_t e, const Operation& op) {
+        mesh.getEdgeAttribute(e).edge.reset(mesh.getMetaAttribute().s->template addTrackable<Edge>(mesh.getMetaAttribute().m, e));
     }
-    template< typename Mesh, typename Operation >
-    static void newHalfEdge(Mesh& mesh, size_t he, const Operation& op) {
+    template< typename Operation >
+    static void newHalfEdge(MeshType& mesh, size_t he, const Operation& op) {
         // Do nothing
     }
-    template< typename Mesh, typename Operation >
-    static void newTriangle(Mesh& mesh, size_t t, const Operation& op) {
-        mesh.getTriangleAttribute(t).triangle = mesh.getMetaAttribute().s->template addTrackable<Triangle>(mesh.getMetaAttribute().m, t);
+    template< typename Operation >
+    static void newTriangle(MeshType& mesh, size_t t, const Operation& op) {
+        mesh.getTriangleAttribute(t).triangle.reset(mesh.getMetaAttribute().s->template addTrackable<Triangle>(mesh.getMetaAttribute().m, t));
     }
 
-    template< typename Mesh, typename Element, std::enable_if_t<std::is_same<Element, typename Mesh::Vertex>::value, void>* = nullptr >
-    static void removeElement(Mesh& mesh, size_t i) {
+    template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Vertex>::value, void>* = nullptr >
+    static void removeElement(MeshType& mesh, size_t i) {
         mesh.getMetaAttribute().s->template removeTrackable<Vertex>(mesh.getVertexAttribute(i).vertex);
     }
-    template< typename Mesh, typename Element, std::enable_if_t<std::is_same<Element, typename Mesh::Edge>::value, void>* = nullptr >
-    static void removeElement(Mesh& mesh, size_t i) {
-        mesh.getMetaAttribute().s->template removeTrackable<Edge>(mesh.getEdgeAttribute(i).edge);
+    template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Edge>::value, void>* = nullptr >
+    static void removeElement(MeshType& mesh, size_t i) {
+        mesh.getMetaAttribute().s->template removeTrackable<Edge>(mesh.getEdgeAttribute(i).edge.get());
     }
-    template< typename Mesh, typename Element, std::enable_if_t<std::is_same<Element, typename Mesh::HalfEdge>::value, void>* = nullptr >
-    static void removeElement(Mesh& mesh, size_t i) {
+    template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::HalfEdge>::value, void>* = nullptr >
+    static void removeElement(MeshType& mesh, size_t i) {
         // Do nothing
     }
-    template< typename Mesh, typename Element, std::enable_if_t<std::is_same<Element, typename Mesh::Triangle>::value, void>* = nullptr >
-    static void removeElement(Mesh& mesh, size_t i) {
-        mesh.getMetaAttribute().s->template removeTrackable<Triangle>(mesh.getTriangleAttribute(i).triangle);
+    template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Triangle>::value, void>* = nullptr >
+    static void removeElement(MeshType& mesh, size_t i) {
+        mesh.getMetaAttribute().s->template removeTrackable<Triangle>(mesh.getTriangleAttribute(i).triangle.get());
     }
 
     // Mesh attribute initializing and extracting
     // These operations do not follow the RAII idiom.
     // Initialization should happen only once, as it allocates resources
-    template< typename Mesh > static void init(Mesh& mesh, const AttributeInitializerInfo& info) {
+    static void init(MeshType& mesh, const AttributeInitializerInfo& info) {
         const MetaAttribute& meta = mesh.getMetaAttribute();
         for(size_t i = 0; i < mesh.getVertices().size(); ++i) {
             mesh.getVertexAttribute(i).vertex = meta.s->addTrackable<Vertex>(info.vertexCoordinateList[i], meta.m, i);
         }
         for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
-            mesh.getEdgeAttribute(i).edge = meta.s->addTrackable<Edge>(meta.m, i);
+            mesh.getEdgeAttribute(i).edge.reset(meta.s->addTrackable<Edge>(meta.m, i));
         }
         for(size_t i = 0; i < mesh.getTriangles().size(); ++i) {
-            mesh.getTriangleAttribute(i).triangle = meta.s->addTrackable<Triangle>(meta.m, i);
+            mesh.getTriangleAttribute(i).triangle.reset(meta.s->addTrackable<Triangle>(meta.m, i));
         }
     }
     // Extraction can be done multiple times without allocating/deallocating
-    template< typename Mesh > static auto extract(Mesh& mesh) {
+    static auto extract(MeshType& mesh) {
         AttributeInitializerInfo info;
 
         const size_t numVertices = mesh.getVertices().size();
@@ -145,7 +147,7 @@ struct MembraneMeshAttribute {
     }
 
     // Geometries
-    template< bool stretched, typename Mesh > static void updateGeometryValue(Mesh& mesh) {
+    template< bool stretched > static void updateGeometryValue(MeshType& mesh) {
         using namespace mathfunc;
 
         const auto& vertices = mesh.getVertices();
@@ -267,7 +269,7 @@ struct MembraneMeshAttribute {
             vag.template getCurv<stretched>() = flippingCurv * magK1 * 0.25 * invA;
         }
     }
-    template< typename Mesh > static void updateGeometryValueWithDerivative(Mesh& mesh) {
+    static void updateGeometryValueWithDerivative(MeshType& mesh) {
         using namespace mathfunc;
 
         const auto& vertices = mesh.getVertices();
@@ -550,7 +552,7 @@ struct MembraneMeshAttribute {
     boundary potential. However, this field is not C1-continuous everywhere,
     which is detrimental to conjugate gradient methods.
     **************************************************************************/
-    template< typename Mesh > static double signedDistance(const Mesh& mesh, const mathfunc::Vec3& p) {
+    static double signedDistance(const MeshType& mesh, const mathfunc::Vec3& p) {
         using namespace mathfunc;
 
         const size_t numTriangles = mesh.getTriangles().size();
@@ -642,14 +644,14 @@ struct MembraneMeshAttribute {
         
         return minAbsDistance;
     }
-    template< typename Mesh > static bool contains(const Mesh& mesh, const mathfunc::Vec3& p) {
+    static bool contains(const MeshType& mesh, const mathfunc::Vec3& p) {
         return signedDistance(mesh, p) < 0.0;
     }
 
     // Attribute computation in adaptive remeshing algorithms
 
     // Triangle normal (Geometric attribute) used in adaptive remeshing
-    template< typename Mesh > static void adaptiveComputeTriangleNormal(Mesh& mesh, size_t ti) {
+    static void adaptiveComputeTriangleNormal(MeshType& mesh, size_t ti) {
         const size_t hei = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t vi0 = mesh.target(hei);
         const size_t vi1 = mesh.target(mesh.next(hei));
@@ -666,7 +668,7 @@ struct MembraneMeshAttribute {
     }
 
     // Triangle angles (Geometric attribute, halfedge) used in adaptive remeshing
-    template< typename Mesh > static void adaptiveComputeAngle(Mesh& mesh, size_t hei) {
+    static void adaptiveComputeAngle(MeshType& mesh, size_t hei) {
         // The angle is (v0, v1, v2)
         const size_t vi0 = mesh.target(mesh.prev(hei));
         const size_t vi1 = mesh.target(hei);
@@ -686,7 +688,7 @@ struct MembraneMeshAttribute {
     // Requires
     //   - Unit normals in triangles (geometric)
     //   - Angles in halfedges (geometric)
-    template< typename Mesh > static void adaptiveComputeVertexNormal(Mesh& mesh, size_t vi) {
+    static void adaptiveComputeVertexNormal(MeshType& mesh, size_t vi) {
         // Using pseudo normal (weighted by angles)
         auto& vaa = mesh.getVertexAttribute(vi).aVertex;
 
@@ -701,8 +703,6 @@ struct MembraneMeshAttribute {
 
         mathfunc::normalize(vaa.unitNormal);
     }
-
-
 
 };
 

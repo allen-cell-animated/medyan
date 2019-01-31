@@ -4,23 +4,17 @@
 #include <array>
 
 #include "common.h"
-
 #include "Database.h"
 #include "Trackable.h"
 #include "Movable.h"
 //#include "Reactable.h"
 #include "DynamicNeighbor.h"
 #include "MathFunctions.h"
-#include "Component.h"
-
-#include "Vertex.h"
-#include "Edge.h"
-#include "MTriangle.h"
+#include "Structure/SurfaceMesh/MTriangle.h"
 
 // Forward declarations
-class Edge;
-class Vertex;
 class Compartment;
+class Membrane;
 
 /******************************************************************************
 Triangles are the only element in the meshwork that has area and act as patches
@@ -31,13 +25,13 @@ The triangle patches have geometric and mechanical properties.
 The Triangle class has pointers to the vertices and edges.
 ******************************************************************************/
 class Triangle:
-    public Component,
     public Trackable,
     public Movable,
     // public Reactable,
     public DynamicNeighbor {
 
 private:
+    Membrane* _parent; // Pointer to the meshwork it belongs to.
     size_t _topoIndex; // Index in the meshwork topology.
 
     unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
@@ -52,9 +46,10 @@ private:
 public:
     mathfunc::Vec3 coordinate; // Coordinate of the center point, updated with updateCoordiante()
 
-    Triangle(Composite *parent, size_t topoIndex);
+    Triangle(Membrane *parent, size_t topoIndex);
     ~Triangle();
 
+    Membrane* getParent()const { return _parent; }
     void setTopoIndex(size_t index) { _topoIndex = index; }
     size_t getTopoIndex() const { return _topoIndex; }
 
@@ -74,11 +69,8 @@ public:
     virtual void removeFromSubSystem()override { _triangles.removeElement(this); }
     //@}
 
-    //@{
-    /// Implements Component
-    virtual int getType() override { return getParent()->getType(); }
-    virtual void printSelf()const override;
-    //@}
+    int getType()const;
+    void printSelf()const;
 
     //@{
     /// Implements Movable

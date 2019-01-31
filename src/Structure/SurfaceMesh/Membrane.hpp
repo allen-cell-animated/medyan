@@ -31,11 +31,12 @@ inheriting Composite.
 class Membrane: public Composite, public Trackable {
 public:
     using coordinate_type = MembraneMeshAttribute::coordinate_type;
-    using mesh_type = SurfaceTriangularMesh< MembraneMeshAttribute >;
+    using MembraneMeshAttributeType = MembraneMeshAttribute< SurfaceTriangularMesh >;
+    using MeshType = SurfaceTriangularMesh< MembraneMeshAttributeType >;
 
 private:
 
-    mesh_type _mesh;
+    MeshType _mesh;
 
     unique_ptr<MMembrane> _mMembrane; // pointer to mechanical membrane object
 

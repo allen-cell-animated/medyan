@@ -8,11 +8,9 @@
 
 Database<Triangle*> Triangle::_triangles;
 
-Triangle::Triangle(Composite* parent, size_t topoIndex):
+Triangle::Triangle(Membrane* parent, size_t topoIndex):
     Trackable(true, false, true, false),
-    _topoIndex{topoIndex}, _id(_triangles.getID()) {
-    
-    parent -> addChild(unique_ptr<Component>(this));
+    _parent(parent), _topoIndex{topoIndex}, _id(_triangles.getID()) {
 
 #ifdef MECHANICS
     // eqArea cannot be obtained at this moment
@@ -38,7 +36,7 @@ Triangle::~Triangle() {
 }
 
 void Triangle::updateCoordinate() {
-    const auto& mesh = static_cast<Membrane*>(getParent())->getMesh();
+    const auto& mesh = _parent->getMesh();
     const size_t hei0 = mesh.getTriangles()[_topoIndex].halfEdgeIndex;
     const size_t hei1 = mesh.next(hei0);
     const size_t hei2 = mesh.next(hei1);
@@ -103,6 +101,10 @@ void Triangle::updatePosition() {
 */
     }
 
+}
+
+int Triangle::getType()const {
+    return _parent->getType();
 }
 
 void Triangle::printSelf()const {

@@ -13,24 +13,20 @@ An unordered edge contains 2 vertices.
 
 #include "Trackable.h"
 #include "DynamicNeighbor.h"
-#include "Component.h"
 #include "MathFunctions.h"
 #include "Movable.h"
 
-#include "Vertex.h"
-
 // Forward declarations
-class Vertex;
-class Triangle;
 class Compartment;
+class Membrane;
 
 class Edge:
-    public Component,
     public Movable,
     public Trackable {
 
 private:
 
+    Membrane* _parent;
     size_t _topoIndex; // Index in the meshwork topology.
 
     static Database<Edge*> _edges; // Collection of edges in SubSystem
@@ -41,9 +37,10 @@ private:
     Compartment* _compartment = nullptr; // The compartment containing this edge
 
 public:
-    Edge(Composite *parent, size_t topoIndex);
+    Edge(Membrane *parent, size_t topoIndex);
     ~Edge();
 
+    Membrane* getParent()const { return _parent; }
     void setTopoIndex(size_t index) { _topoIndex = index; }
 
     mathfunc::Vec3 coordinate; // Coordinate of the mid point, updated with updateCoordiante()
@@ -55,11 +52,8 @@ public:
     /// Get Id
     int getId()const { return _id; }
 
-    //@{
-    /// Implements Component
-    virtual int getType() override { return getParent()->getType(); }
-    virtual void printSelf()const override;
-    //@}
+    int getType()const;
+    void printSelf()const;
 
     //@{
     /// SubSystem management, inherited from Trackable
