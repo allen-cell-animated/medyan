@@ -40,7 +40,7 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion& mr,
     Boundary *b = mr.getBoundary();
     
     //Qin, if boundary shape is cylinder, create filament in the center of system and vertical to Z axis
-    if(b->getShape() == BoundaryShape::Cylinder) {
+    if(b && b->getShape() == BoundaryShape::Cylinder) {
         
         while (filamentCounter < numFilaments) {
 
