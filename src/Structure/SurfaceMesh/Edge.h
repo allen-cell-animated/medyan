@@ -10,7 +10,7 @@ An unordered edge contains 2 vertices.
 #include <array>
 
 #include "common.h"
-
+#include "Database.h"
 #include "Trackable.h"
 #include "DynamicNeighbor.h"
 #include "MathFunctions.h"

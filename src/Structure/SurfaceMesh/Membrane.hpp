@@ -30,8 +30,8 @@ inheriting Composite.
 ******************************************************************************/
 class Membrane: public Composite, public Trackable {
 public:
-    using coordinate_type = MembraneMeshAttribute::coordinate_type;
     using MembraneMeshAttributeType = MembraneMeshAttribute< SurfaceTriangularMesh >;
+    using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
     using MeshType = SurfaceTriangularMesh< MembraneMeshAttributeType >;
 
 private:
@@ -90,10 +90,10 @@ public:
     Geometric
     **************************************************************************/
     template< bool stretched = false > void updateGeometryValue() {
-        MembraneMeshAttribute::updateGeometryValue<stretched>(_mesh);
+        MembraneMeshAttributeType::template updateGeometryValue<stretched>(_mesh);
     }
     void updateGeometryValueWithDerivative() {
-        MembraneMeshAttribute::updateGeometryValueWithDerivative(_mesh);
+        MembraneMeshAttributeType::updateGeometryValueWithDerivative(_mesh);
     }
 
     /**
@@ -104,7 +104,7 @@ public:
      */
     double signedDistance(const mathfunc::Vec3& p) const {
         if(!isClosed()) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
-        return MembraneMeshAttribute::signedDistance(_mesh, p);
+        return MembraneMeshAttributeType::signedDistance(_mesh, p);
     }
     /**
      * Use signed distance or other methods to judge whether a point is inside membrane.
@@ -112,7 +112,7 @@ public:
      */
     bool contains(const mathfunc::Vec3& p) const {
         if(!isClosed()) throw std::logic_error("Membrane is not closed while trying to find signed distance field.");
-        return MembraneMeshAttribute::contains(_mesh, p);
+        return MembraneMeshAttributeType::contains(_mesh, p);
     }
 
     // Function to monitor the quality of the meshwork

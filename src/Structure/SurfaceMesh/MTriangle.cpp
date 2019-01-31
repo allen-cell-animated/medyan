@@ -1,5 +1,6 @@
-#include "Triangle.h"
-#include "MTriangle.h"
+#include "Structure/SurfaceMesh/MTriangle.h"
+
+#include "SysParams.h"
 
 MTriangle::MTriangle(short membraneType) {
     if(!SysParams::Mechanics().MemCylinderVolumeK.empty())

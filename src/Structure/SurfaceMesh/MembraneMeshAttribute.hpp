@@ -25,7 +25,7 @@ algorithm.
 
 This struct can connect the topological meshwork with the actual system objects.
 ******************************************************************************/
-template< template< typename > MeshTopology >
+template< template< typename > class MeshTopology > // C++17: class -> typename
 struct MembraneMeshAttribute {
 
     using MeshType = MeshTopology< MembraneMeshAttribute >;
@@ -75,7 +75,7 @@ struct MembraneMeshAttribute {
         Membrane *m;
     };
 
-    using coordinate_type = VertexAttribute::coordinate_type;
+    using coordinate_type = typename VertexAttribute::coordinate_type;
 
     struct AttributeInitializerInfo {
         std::vector< coordinate_type > vertexCoordinateList;
@@ -133,7 +133,7 @@ struct MembraneMeshAttribute {
         }
     }
     // Extraction can be done multiple times without allocating/deallocating
-    static auto extract(MeshType& mesh) {
+    static auto extract(const MeshType& mesh) {
         AttributeInitializerInfo info;
 
         const size_t numVertices = mesh.getVertices().size();

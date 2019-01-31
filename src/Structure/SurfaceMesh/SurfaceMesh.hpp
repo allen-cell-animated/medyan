@@ -111,7 +111,7 @@ public:
                 while(i < n && indices[i] >= finalSize) ++i; // Find (including current i) the next i with small index
                 if(i < n) {
                     // Found. This should always be satisfied.
-                    _value[indices[i]] = std::move([finalSize + indAfterFinal]);
+                    _value[indices[i]] = std::move(_value[finalSize + indAfterFinal]);
                     r(finalSize + indAfterFinal, indices[i]);
                 }
                 ++i;
@@ -292,18 +292,18 @@ private:
     };
 
     template< typename Element > void _removeElement(size_t index) {
-        Attribute::template removeElement< MeshType, Element >(*this, index);
+        Attribute::template removeElement< Element >(*this, index);
         _getElements<Element>().erase(index, ElementRetargeter<Element>{*this});
     }
     template< typename Element, size_t n > void _removeElements(const std::array< size_t, n >& indices) {
-        for(size_t i : indices) Attribute::template removeElement< MeshType, Element >(*this, i);
+        for(size_t i : indices) Attribute::template removeElement< Element >(*this, i);
         _getElements<Element>().erase(indices, ElementRetargeter<Element>{*this});
     }
 
     template< typename Element > void _clearElement() {
         auto& elements = _getElements< Element >();
         for(size_t i = 0; i < elements.size(); ++i)
-            Attribute::template removeElement<MeshType, Element>(*this, i);
+            Attribute::template removeElement<Element>(*this, i);
         elements.getValue().clear();
     }
 

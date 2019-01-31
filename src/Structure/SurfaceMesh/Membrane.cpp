@@ -16,17 +16,17 @@ Database<Membrane*> Membrane::_membranes;
 Membrane::Membrane(
     SubSystem* s,
     short membraneType,
-    const std::vector< MembraneMeshAttribute::coordinate_type >& vertexCoordinateList,
+    const std::vector< coordinate_type >& vertexCoordinateList,
     const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
 ) : Trackable(false, false, false, false),
-    _mesh(MembraneMeshAttribute::MetaAttribute{s, this}),
+    _mesh(typename MembraneMeshAttributeType::MetaAttribute{s, this}),
     _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
     
     // Build the meshwork topology using vertex and triangle information
     _mesh.init<typename MeshType::VertexTriangleInitializer>(
         vertexCoordinateList.size(),
         triangleVertexIndexList,
-        MembraneMeshAttribute::AttributeInitializerInfo{ vertexCoordinateList }
+        typename MembraneMeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
     );
     _mesh.updateClosedness();
 
