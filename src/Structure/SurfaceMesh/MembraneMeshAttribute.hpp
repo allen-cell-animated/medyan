@@ -124,13 +124,13 @@ struct MembraneMeshAttribute {
     static void init(MeshType& mesh, const AttributeInitializerInfo& info) {
         const MetaAttribute& meta = mesh.getMetaAttribute();
         for(size_t i = 0; i < mesh.getVertices().size(); ++i) {
-            mesh.getVertexAttribute(i).vertex = meta.s->addTrackable<Vertex>(info.vertexCoordinateList[i], meta.m, i);
+            mesh.getVertexAttribute(i).vertex = meta.s->template addTrackable<Vertex>(info.vertexCoordinateList[i], meta.m, i);
         }
         for(size_t i = 0; i < mesh.getEdges().size(); ++i) {
-            mesh.getEdgeAttribute(i).edge.reset(meta.s->addTrackable<Edge>(meta.m, i));
+            mesh.getEdgeAttribute(i).edge.reset(meta.s->template addTrackable<Edge>(meta.m, i));
         }
         for(size_t i = 0; i < mesh.getTriangles().size(); ++i) {
-            mesh.getTriangleAttribute(i).triangle.reset(meta.s->addTrackable<Triangle>(meta.m, i));
+            mesh.getTriangleAttribute(i).triangle.reset(meta.s->template addTrackable<Triangle>(meta.m, i));
         }
     }
     // Extraction can be done multiple times without allocating/deallocating
