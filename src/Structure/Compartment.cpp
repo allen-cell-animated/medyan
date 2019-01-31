@@ -425,7 +425,7 @@ void Compartment::updateActivation(ChemSim* chem) {
     }
 }
 
-void Compartment::deactivate(ChemSim* chem) {
+void Compartment::deactivate(ChemSim* chem, bool init) {
     
     //assert no cylinders in this compartment
     assert((_cylinders.size() == 0)
@@ -436,7 +436,7 @@ void Compartment::deactivate(ChemSim* chem) {
     //set marker
     _activated = false;
     
-    transferSpecies(SysParams::Mechanics().transfershareaxis);
+    if(!init) transferSpecies(SysParams::Mechanics().transfershareaxis);
     removeAllDiffusionReactions(chem);
 }
 

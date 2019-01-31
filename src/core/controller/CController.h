@@ -57,7 +57,7 @@ public:
     /// Update activation of a compartment. Wrapper function for Compartment::updateActivation()
     void updateActivation(Compartment* C) { C->updateActivation(_chemSim); }
     ///Deactivate a compartment. Wrapper function for Compartment::deactivate().
-    void deactivate(Compartment* C) {C->deactivate(_chemSim);}
+    void deactivate(Compartment* C, bool init=false) {C->deactivate(_chemSim, init);}
     
     /// Initialize the ChemSim algorithm as well as the ChemManager
     ///@param chemAlgorithm - a string defining the chemical algorithm to be used

@@ -352,7 +352,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 
         } else if( ! regionInMembrane->contains(vector2Vec<3, double>(c->coordinates()))) {
             // Compartment is outside the membrane
-            _cController->deactivate(c);
+            _cController->deactivate(c, true);
         }
     }
 

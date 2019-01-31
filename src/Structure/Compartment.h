@@ -169,7 +169,7 @@ public:
     ///    If there are no neighboring active compartments, an error will result.
     /// 2) Removes all diffusion reactions involving diffusing species
     ///    in this compartment.
-    virtual void deactivate(ChemSim* chem);
+    virtual void deactivate(ChemSim* chem, bool init=false);
     
     ///Check if compartment is activated
     virtual bool isActivated() {return _activated;}
