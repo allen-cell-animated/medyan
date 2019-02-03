@@ -269,8 +269,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         if(idx == 0) {
             size_t numBonds = 0;
             for(const auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumTriangles() * 3 / 2;
-            psfGen.genNbond(numBonds);
-            psfGen.genBondStart();
         }
 
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
@@ -321,6 +319,8 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
             // Assuming no holes on the membrane
             if(idx == 0) {
+                psfGen.genNbond(numBonds);
+                psfGen.genBondStart();
                 const auto& tlist = eachMembrane.getMembraneInfo().triangleVertexIndexList;
                 for(const auto& t : tlist) {
                     for(size_t i = 0; i < 3; ++i) {
