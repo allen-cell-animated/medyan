@@ -29,7 +29,7 @@ void MTOCBending<MTOCInteractionType>::vectorize() {
         kbend = new double[2 * n *  mtoc->getFilaments().size() + 1];
         
         beadSet[0] = mtoc->getBubble()->getBead()->_dbIndex;
-        kbend[0] = 0;
+        kbend[0] = 0.0;
         
         int i = 1;
         
@@ -39,8 +39,10 @@ void MTOCBending<MTOCInteractionType>::vectorize() {
             beadSet[2 * n * i - 1] = f->getMinusEndCylinder()->getFirstBead()->_dbIndex;
             beadSet[2 * n * i] = f->getMinusEndCylinder()->getSecondBead()->_dbIndex;
             
-            kbend[2 * n * i - 1] = 1000;
-            kbend[2 * n * i] = 1000;
+            double kk = mtoc->getBubble()->getMTOCBendingK();
+            kbend[2 * n * i - 1] = kk;
+            kbend[2 * n * i] = kk;
+            
 //            kbend[2 * n * i - 1] = f->getMinusEndCylinder()->getMCylinder()->getBendingConst();
 //            kbend[2 * n * i] = f->getMinusEndCylinder()->getMCylinder()->getBendingConst();
             i++;

@@ -929,6 +929,13 @@ void SystemParser::readMechParams() {
                 MParams.numBubbleTypes = atoi(lineVector[1].c_str());
             }
         }
+        else if (line.find("MTOCBENDINGK") != string::npos){
+            vector<string> lineVector = split<string>(line);
+            if (lineVector.size() >= 2) {
+                for(int i = 1; i < lineVector.size(); i++)
+                MParams.MTOCBendingK.push_back(atof((lineVector[i].c_str())));
+            }
+        }
         
         if (line.find("SPECIALPROTOCOL") != string::npos) {
             
