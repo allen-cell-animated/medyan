@@ -264,13 +264,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         atomCount = 0;
         resSeq = 0;
 
-
-        // Generate bonds. Currently using only the topology at the first frame.
-        if(idx == 0) {
-            size_t numBonds = 0;
-            for(const auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumTriangles() * 3 / 2;
-        }
-
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
             /*
             bool buildMembrane = !eachMembrane.getMembrane();
@@ -317,10 +310,16 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             }
             ++resSeq;
 
-            // Assuming no holes on the membrane
-            if(idx == 0) {
-                psfGen.genNbond(numBonds);
-                psfGen.genBondStart();
+        }
+
+        // Generating bond
+        if(idx == 0) {
+            size_t numBonds = 0;
+            for(const auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumTriangles() * 3 / 2;
+            psfGen.genNbond(numBonds);
+            psfGen.genBondStart();
+
+            for(const auto& eachMembrane: snapshots[idx].membraneStruct) {
                 const auto& tlist = eachMembrane.getMembraneInfo().triangleVertexIndexList;
                 for(const auto& t : tlist) {
                     for(size_t i = 0; i < 3; ++i) {
@@ -335,10 +334,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 }
             }
 
-        }
-
-        // Finish generating bond
-        if(idx == 0) {
             psfGen.genBondEnd();
             LOG(INFO) << "Bond info generated.";
         }
