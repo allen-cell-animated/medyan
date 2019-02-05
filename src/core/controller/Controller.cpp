@@ -240,7 +240,8 @@ void Controller::initialize(string inputFile,
             3, // diffuseIter
 
             // Main loop
-            8 // Max times of scanning all the edges for sampling adjustment
+            8, // Max times of scanning all the edges for sampling adjustment
+            8 // Soft cap of iterations of the main loop
         }
     );
     

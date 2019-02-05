@@ -708,6 +708,7 @@ public:
 
         // Main loop
         size_t samplingAdjustmentMaxIter;
+        size_t mainLoopSoftMaxIter;
     };
 
 private:
@@ -719,6 +720,7 @@ private:
     EdgeCollapseManager< Mesh, triangleQualityCriteria > _edgeCollapseManager;
 
     size_t _samplingAdjustmentMaxIter; // Maximum number of scans used in sampling.
+    size_t _mainLoopSoftMaxIter; // Maximum iterations of the main loop if topology changes can be reduced to 0
 
     void _computeAllTriangleNormals(Mesh& mesh) const {
         const size_t numTriangles = mesh.getTriangles().size();
@@ -766,7 +768,8 @@ public:
         _edgeFlipManager(param.minDegree, param.maxDegree, param.edgeFlipMinDotNormal),
         _edgeSplitManager(param.maxDegree),
         _edgeCollapseManager(param.minDegree, param.maxDegree, param.edgeCollapseMinQualityImprovement),
-        _samplingAdjustmentMaxIter(param.samplingAdjustmentMaxIter)
+        _samplingAdjustmentMaxIter(param.samplingAdjustmentMaxIter),
+        _mainLoopSoftMaxIter(param.mainLoopSoftMaxIter)
     {}
 
     void adapt(Mesh& mesh) const {
@@ -774,6 +777,7 @@ public:
 
         _computeSizeMeasures(mesh);
 
+        size_t mainLoopIter = 0;
         while(true) {
             bool sizeMeasureSatisfied = true;
 
@@ -815,11 +819,19 @@ public:
                 ++iter;
             } while(countTopoModified && iter < _samplingAdjustmentMaxIter); // If any topology was modified, will loop through all edges again.
 
-            if(sizeMeasureSatisfied) break;
+            if(
+                sizeMeasureSatisfied
+                || (
+                    countTopoModified == 0
+                    && mainLoopIter >= _mainLoopSoftMaxIter
+                )
+            ) break;
 
             _globalRelaxationManager.relax(mesh, _edgeFlipManager);
 
             _computeSizeMeasures(mesh);
+
+            ++mainLoopIter;
         } // End loop TopoModifying-Relaxation
     }
 
