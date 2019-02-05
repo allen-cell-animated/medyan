@@ -265,7 +265,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         resSeq = 0;
 
         std::vector< std::pair< size_t, size_t >> bondList;
-        const bondFrame = 0;
+        const size_t bondFrame = 0;
 
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
             /*
