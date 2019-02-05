@@ -529,9 +529,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     //@}
 #endif
     //TODO make sure it calculates stretchforce in CUDA.
-#ifdef CUDAACCL
+
     FFM.assignallforcemags();
-#endif
+
     endMinimization();
     FFM.computeLoadForces();
     //std::cout<<"End Minimization************"<<endl;

@@ -657,6 +657,7 @@
 				F7525A931A702461007A4E9F /* LinkerStretchingHarmonic.h */,
 			);
 			name = Linker;
+			path = Mechanics/ForceField;
 			sourceTree = "<group>";
 		};
 		F75259E61A7021B8007A4E9F /* MotorGhost */ = {
@@ -821,7 +822,6 @@
 				F75259E91A7021D5007A4E9F /* Boundary */,
 				F75259E81A7021C5007A4E9F /* Branching */,
 				F75259E61A7021B8007A4E9F /* MotorGhost */,
-				F75259E51A7021B0007A4E9F /* Linker */,
 			);
 			name = ForceField;
 			path = src/Mechanics/ForceField;
@@ -891,6 +891,7 @@
 				F763ED091548FFC70069DA61 /* Chemistry */,
 				B52F64BE19BA230000A2B9FD /* Structure */,
 				F79CA34919BA055100008021 /* Mechanics */,
+				F75259E51A7021B0007A4E9F /* Linker */,
 			);
 			path = src;
 			sourceTree = "<group>";

@@ -221,9 +221,9 @@ void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, doubl
     CUDAcommon::handleerror( cudaGetLastError(),"copyForcesCUDA", "ForceFieldManager.cu");
 }
 
+#endif
 void ForceFieldManager::assignallforcemags() {
-
+    
     for(auto &ff : _forceFields)
         ff->assignforcemags();
 }
-#endif

@@ -48,10 +48,10 @@ void MotorGhostFF::whoIsCulprit() {
 
 void MotorGhostFF::vectorize() {
     //Reset stretching forces to 0.
-    for(auto m:MotorGhost::getMotorGhosts()){
+    /*for(auto m:MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
         m->getMMotorGhost()->stretchForce = 0.0;
-    }
+    }*/
 
 
     for (auto &interaction : _motorGhostInteractionVector)
