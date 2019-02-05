@@ -189,13 +189,13 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     //calculate first lambda
     double lambda = LAMBDAMAX;
     // The unstretched geometry should be already avaliable before calling this function.
-    double currentEnergy = FFM.computeEnergy(0.0);
+    double currentEnergy = FFM.computeEnergy();
     //backtracking loop
     while(true) {
         //new energy when moved by lambda
         calcStretchedCoordinate(lambda);
         FFM.updateGeometryValue<true>();
-        double energyLambda = FFM.computeEnergy(lambda);
+        double energyLambda = FFM.computeEnergy<true>(lambda);
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
