@@ -264,6 +264,9 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         atomCount = 0;
         resSeq = 0;
 
+        std::vector< std::pair< size_t, size_t >> bondList;
+        const bondFrame = 0;
+
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
             /*
             bool buildMembrane = !eachMembrane.getMembrane();
@@ -310,28 +313,31 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             }
             ++resSeq;
 
-        }
-
-        // Generating bond
-        if(idx == 0) {
-            size_t numBonds = 0;
-            for(const auto& eachMembrane: snapshots[idx].membraneStruct) numBonds += eachMembrane.getNumTriangles() * 3 / 2;
-            psfGen.genNbond(numBonds);
-            psfGen.genBondStart();
-
-            for(const auto& eachMembrane: snapshots[idx].membraneStruct) {
+            if(idx == bondFrame) {
                 const auto& tlist = eachMembrane.getMembraneInfo().triangleVertexIndexList;
                 for(const auto& t : tlist) {
                     for(size_t i = 0; i < 3; ++i) {
                         size_t i_next = (i+1) % 3;
                         if(t[i] < t[i_next]) {
-                            psfGen.genBond(
+                            bondList.emplace_back(
                                 atomIdSoFar + t[i] + 1,
                                 atomIdSoFar + t[i_next] + 1
                             );
                         }
                     }
                 }
+            }
+
+        }
+
+        // Generating bond
+        if(idx == bondFrame) {
+            size_t numBonds = bondList.size();
+            psfGen.genNbond(numBonds);
+            psfGen.genBondStart();
+
+            for(const auto& bond : bondList) {
+                psfGen.genBond(bond.first, bond.second);
             }
 
             psfGen.genBondEnd();
