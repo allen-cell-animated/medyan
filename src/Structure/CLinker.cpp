@@ -49,7 +49,7 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
 //    std::cout<<"Linker "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
 //            ""<<_position2<<" linkerType "<<linkerType<<endl;
-////    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
+//    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
 //    std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
 //    std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
 //    std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;

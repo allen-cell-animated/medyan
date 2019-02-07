@@ -328,7 +328,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 
             double d = twoPointDistance(coord1, coord2);
             vector<double> tau = twoPointDirection(coord1, coord2);
-            int numSegment = d / SysParams::Geometry().cylinderSize[type];
+            int numSegment = static_cast<int>(round(d / SysParams::Geometry().cylinderSize[type]));
             // check how many segments can fit between end-to-end of the filament
             if (numSegment == 0)
                 _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2, FSetup.projectionType);

@@ -588,6 +588,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 //                        _possibleBindings.emplace(t1, t2);
 #else
                         _possibleBindings.emplace(t1, t2);
+                        _reversePossibleBindings[t2].push_back(t1);
 #endif
                     }
                     else {
@@ -599,6 +600,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 //                            _possibleBindings.emplace(t1, t2);
 #else
                             _possibleBindings.emplace(t1, t2);
+                            _reversePossibleBindings[t2].push_back(t1);
 #endif
                         }
                             //add in other
@@ -613,6 +615,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 //                            m->_possibleBindings.emplace(t2,t1);
 #else
                             m->_possibleBindings.emplace(t2,t1);
+                            m->_reversePossibleBindings[t1].push_back(t2);
 #endif
                         }
                     }
@@ -682,13 +685,25 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
     _possibleBindings.erase(t);
 
     //remove all tuples which have this as value
-    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
-
-        if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-            _possibleBindings.erase(it++);
-
-        else ++it;
-    }
+    
+    //Iterate through the reverse map
+       auto keys = _reversePossibleBindings[t];//keys that contain t as
+       // value in possiblebindings
+       for(auto k:keys){
+               //get the iterator range that corresponds to this key.
+               auto range = _possibleBindings.equal_range(k);
+               //iterate through the range
+               for(auto it = range.first; it != range.second;){
+                       if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite) {
+                            _possibleBindings.erase(it++);
+                           }
+                       else ++it;
+               }
+       }
+    
+    //remove from the reverse map.
+    _reversePossibleBindings[t].clear();
+    
 #endif
 
     int oldN = _bindingSpecies->getN();
@@ -709,28 +724,36 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
             if(find(affectedManagers.begin(), affectedManagers.end(), m) == affectedManagers.end())
                 affectedManagers.push_back(m);
         }
+        
+        
     }
+    
+    // cout<<affectedManagers.size()<<endl;;
 
     //remove, update affected
     for(auto m : affectedManagers) {
+    
 
-#ifdef DEBUGCONSTANTSEED
-        m->erasepossibleBindings(cc,bindingSite);
-//        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-//
-//            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-//                m->_possibleBindings.erase(it++);
-//            else ++it;
-//        }
-#else
-        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-
-            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-                m->_possibleBindings.erase(it++);
-            else ++it;
+        
+        //Iterate through the reverse map
+        auto keys = m->_reversePossibleBindings[t];//keys that contain t as
+        // value in possiblebindings
+        for(auto k:keys){
+            //get the iterator range that corresponds to this key.
+            auto range = m->_possibleBindings.equal_range(k);
+            //iterate through the range
+            for(auto it = range.first; it != range.second;){
+                if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite) {
+                    m->_possibleBindings.erase(it++);
+                }
+                else ++it;
+            }
         }
-#endif
-
+        
+        //remove from the reverse map.
+        m->_reversePossibleBindings[t].clear();
+        
+        
         int oldNOther = m->_bindingSpecies->getN();
         int newNOther = m->numBindingSites();
 
@@ -845,6 +868,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 //                                _possibleBindings.emplace(t1, t2);
 #else
                                 _possibleBindings.emplace(t1, t2);
+                                _reversePossibleBindings[t2].push_back(t1);
 #endif
                             }
                         }
@@ -1432,6 +1456,8 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 //                        _possibleBindings.emplace(t1, t2);
 #else
                         _possibleBindings.emplace(t1, t2);
+                        _reversePossibleBindings[t2].push_back(t1);
+
 #endif
                     } else {
                         //add in this compartment
@@ -1442,6 +1468,8 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 //                            _possibleBindings.emplace(t1, t2);
 #else
                                 _possibleBindings.emplace(t1, t2);
+                                _reversePossibleBindings[t2].push_back(t1);
+
 #endif
                             }
                                 //add in other
@@ -1457,6 +1485,8 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 //                            m->_possibleBindings.emplace(t2,t1);
 #else
                                 m->_possibleBindings.emplace(t2,t1);
+                                m->_reversePossibleBindings[t1].push_back(t2);
+
 #endif
                             }
                         }
@@ -1527,13 +1557,25 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
     _possibleBindings.erase(t);
 
     //remove all tuples which have this as value
-    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
-
-        if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-            _possibleBindings.erase(it++);
-
-        else ++it;
+    //Iterate through the reverse map
+    auto keys = _reversePossibleBindings[t];//keys that contain t as
+    // value in possiblebindings
+    for(auto k:keys){
+        //get the iterator range that corresponds to this key.
+        auto range = _possibleBindings.equal_range(k);
+        //iterate through the range
+        for(auto it = range.first; it != range.second;){
+            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite) {
+                _possibleBindings.erase(it++);
+            }
+            else ++it;
+        }
     }
+    
+    //remove from the reverse map.
+    _reversePossibleBindings[t].clear();
+    
+
 #endif
 
     int oldN = _bindingSpecies->getN();
@@ -1559,25 +1601,25 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
     //remove, update affected
     for(auto m : affectedManagers) {
 
-#ifdef DEBUGCONSTANTSEED
-        m->erasepossibleBindings(cc,bindingSite);
+        //Iterate through the reverse map
+        auto keys = m->_reversePossibleBindings[t];//keys that contain t as
+        // value in possiblebindings
+        for(auto k:keys){
+            //get the iterator range that corresponds to this key.
+            auto range = m->_possibleBindings.equal_range(k);
+            //iterate through the range
+            for(auto it = range.first; it != range.second;){
+                if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite) {
+                    m->_possibleBindings.erase(it++);
+                }
+                else ++it;
+            }
 
-//        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-//
-//            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-//                m->_possibleBindings.erase(it++);
-//
-//            else ++it;
-//        }
-#else
-        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-
-            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-                m->_possibleBindings.erase(it++);
-
-            else ++it;
         }
-#endif
+
+        //remove from the reverse map.
+        m->_reversePossibleBindings[t].clear();
+
 
         int oldNOther = m->_bindingSpecies->getN();
         int newNOther = m->numBindingSites();
@@ -1684,6 +1726,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
 //                                _possibleBindings.emplace(t1, t2);
 #else
                                 _possibleBindings.emplace(t1, t2);
+                                _reversePossibleBindings[t2].push_back(t1);
+
 #endif
 //                                std::cout<<"M pb Cyl "<<cc->getCylinder()->getID()<<" bs "
 //                                        ""<<*it1<<" Cyl "<<ccn->getCylinder()->getID()<<""

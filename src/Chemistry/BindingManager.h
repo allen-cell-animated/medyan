@@ -383,6 +383,10 @@ private:
 //    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
 #else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
+    
+    unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> _reversePossibleBindings;
+    
+    
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
@@ -552,6 +556,10 @@ private:
 #else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     _possibleBindings;
+    
+    unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> _reversePossibleBindings;
+    
+    
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
