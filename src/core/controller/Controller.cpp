@@ -230,8 +230,8 @@ void Controller::initialize(string inputFile,
 
             // Relaxation
             0.05, // relaxationEpsilon (unitless speed/force). The tolerance (l / l_0 - 1)
-            15, // relaxationDt (has unit of length) (around maxSize / (iterRelocation * avgForce))
-            5, // relaxationMaxIterRelocation
+            2, // relaxationDt (has unit of length) (around minSize / (iterRelocation * avgForce))
+            10, // relaxationMaxIterRelocation
             3, // relaxationMaxIterRelaxation
 
             // Size diffusion
