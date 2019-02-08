@@ -9,6 +9,8 @@
 
 #ifdef PLATFORM_UNIX_LIKE
     #include <unistd.h>
+#elif defined(PLATFORM_WINDOWS)
+    #include <Windows.h>
 #endif
 
 namespace medyan {
@@ -21,18 +23,35 @@ bool stdoutRedirected = false;
 bool stderrRedirected = false;
 
 // Helper functions
-bool isStdoutRedirected() {
+void initializeTerminal() {
 #ifdef PLATFORM_UNIX_LIKE
-    return !isatty(STDOUT_FILENO);
-#else
-    return false;
-#endif
-}
-bool isStderrRedirected() {
-#ifdef PLATFORM_UNIX_LIKE
-    return !isatty(STDERR_FILENO);
-#else
-    return false;
+    // Detect redirection
+    stdoutRedirected = !isatty(STDOUT_FILENO);
+    stderrRedirected = !isatty(STDERR_FILENO);
+#elif defined(PLATFORM_WINDOWS)
+    // Detect redirection and set VT mode
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    if(hOut == INVALID_HANDLE_VALUE) {
+        stdoutRedirected = true;
+    } else {
+        DWORD mode = 0;
+        stdoutRedirected = !GetConsoleMode(hOut, &mode);
+        if(!stdoutRedirected) {
+            mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            SetConsoleMode(hOut, mode);
+        }
+    }
+    HANDLE hErr = GetStdHandle(STD_ERROR_HANDLE);
+    if(hErr == INVALID_HANDLE_VALUE) {
+        stderrRedirected = true;
+    } else {
+        DWORD mode = 0;
+        stderrRedirected = !GetConsoleMode(hErr, &mode);
+        if(!stderrRedirected) {
+            mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            SetConsoleMode(hErr, mode);
+        }
+    }
 #endif
 }
 
@@ -102,9 +121,10 @@ constexpr const char * resetAnsi = "\033[0m";
 void Logger::defaultLoggerInitialization() {
     Logger& l = getDefaultLogger();
 
-    // Detect output redirection
-    stdoutRedirected = isStdoutRedirected();
-    stderrRedirected = isStderrRedirected();
+    // Detect output redirection, set console environment, etc.
+    initializeTerminal();
+
+    std::cout << "out, err: " << stdoutRedirected << ' ' << stderrRedirected << std::endl;
 
     LoggerOstreamContainer& scrn = l.attachOstream(&std::cout, false);
 #ifdef NDEBUG
