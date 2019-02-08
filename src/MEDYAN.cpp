@@ -70,11 +70,11 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "analysis/io/read_snapshot.h"
 #include "core/controller/Controller.h"
 #include "core/io/command_line.h"
-#include "core/io/log.h"
 #include "core/globals.h"
 #include "Rand.h"
 #include "Structure/SubSystem.h"
 #include "utility.h"
+#include "util/io/log.h"
 
 using namespace medyan;
 
@@ -100,8 +100,8 @@ int main(int argc, char **argv) {
     SubSystem* s = nullptr;
     Controller c(s);
 
-    // Initialize logger
-    MEDYAN_LOG_DEFAULT_CONFIGURATION(Global::readGlobal().outputDirectory + "/" + Global::readGlobal().logFileName);
+    // Initialize the logger
+    ::medyan::logger::Logger::defaultLoggerInitialization();
 
     // Seed global random generator
     if(!Global::readGlobal().randomGenSeedFixed) {

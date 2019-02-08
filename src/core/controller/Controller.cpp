@@ -47,6 +47,7 @@
 #include <algorithm>
 #include "Rand.h"
 #include "Restart.h"
+#include "util/io/log.h"
 using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
@@ -70,9 +71,8 @@ void Controller::initialize(string inputFile,
     
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
-    cout << "If dynamic rates is turned on, chemistry and mechanics must be "
-         << "defined. Please set these compilation macros and try again. Exiting."
-         << endl;
+    LOG(FATAL) << "If dynamic rates is turned on, chemistry and mechanics must be "
+         << "defined. Please set these compilation macros and try again. Exiting.";
     exit(EXIT_FAILURE);
 #endif
     
@@ -104,20 +104,20 @@ void Controller::initialize(string inputFile,
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
     cout << "---" << endl;
-    cout << "Initializing geometry...";
+    LOG(STEP) << "Initializing geometry...";
     _gController->initializeGrid();
-    cout << "Done." << endl;
+    LOG(INFO) << "Done.";
     
     //Initialize boundary
     cout << "---" << endl;
-    cout << "Initializing boundary...";
+    LOG(STEP) << "Initializing boundary...";
     
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
     
     //initialize
     _gController->initializeBoundary(BTypes);
-    cout << "Done." <<endl;
+    LOG(INFO) << "Done.";
     
 #ifdef MECHANICS
     //read algorithm and types
@@ -129,9 +129,9 @@ void Controller::initialize(string inputFile,
     
     //Initialize Mechanical controller
     cout << "---" << endl;
-    cout << "Initializing mechanics...";
+    LOG(STEP) << "Initializing mechanics...";
     _mController->initialize(MTypes, MAlgorithm);
-    cout << "Done." <<endl;
+    LOG(INFO) << "Done.";
 
 #endif
     
@@ -144,7 +144,7 @@ void Controller::initialize(string inputFile,
     
     //Initialize chemical controller
     cout << "---" << endl;
-    cout << "Initializing chemistry...";
+    LOG(STEP) << "Initializing chemistry...";
     //read algorithm
     auto CAlgorithm = p.readChemistryAlgorithm();
     auto CSetup = p.readChemistrySetup();
@@ -171,11 +171,11 @@ void Controller::initialize(string inputFile,
         _chemData=ChemData;
     }
     else {
-        cout << "Need to specify a chemical input file. Exiting." << endl;
+        LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
         exit(EXIT_FAILURE);
     }
     _cController->initialize(CAlgorithm.algorithm, ChemData);
-    cout << "Done." << endl;
+    LOG(INFO) << "Done.";
     
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
@@ -189,7 +189,7 @@ void Controller::initialize(string inputFile,
     
 #ifdef DYNAMICRATES
     cout << "---" << endl;
-    cout << "Initializing dynamic rates...";
+    LOG(STEP) << "Initializing dynamic rates...";
     //read dynamic rate parameters
     p.readDyRateParams();
     
@@ -198,13 +198,13 @@ void Controller::initialize(string inputFile,
     
     //init controller
     _drController->initialize(DRTypes);
-    cout << "Done." << endl;
+    LOG(INFO) << "Done.";
     
 #endif
 
     //Check consistency of all chemistry and mechanics parameters
     cout << "---" << endl;
-    cout << "Checking cross-parameter consistency...";
+    LOG(STEP) << "Checking cross-parameter consistency...";
 #ifdef CHEMISTRY
     if(!SysParams::checkChemParameters(ChemData))
         exit(EXIT_FAILURE);
@@ -245,7 +245,7 @@ void Controller::initialize(string inputFile,
         }
     );
     
-    cout << "Done." << endl;
+    LOG(INFO) << "Done.";
     
     //setup initial network configuration
     setupInitialNetwork(p);
