@@ -131,6 +131,10 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         resSeq = 0;
         auto filamentPtr = snapshots[idx].filamentStruct.begin();
         size_t filamentAlloc = maxBead.filament.size();
+
+        std::vector< std::pair< size_t, size_t >> bondList;
+        const size_t bondFrame = 0;
+
         for(size_t i = 0; i < filamentAlloc; ++i) {
             atomCount = 0;
 
@@ -146,7 +150,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                         eachCoord[0], eachCoord[1], eachCoord[2]
                     );
-                    if(idx == 0) {
+                    if(idx == bondFrame) {
                         psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                     }
                 }
@@ -159,7 +163,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                         allCoords.back()[0], allCoords.back()[1], allCoords.back()[2]
                     );
-                    if(idx == 0) {
+                    if(idx == bondFrame) {
                         psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                     }
                 }
@@ -175,7 +179,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     pg.genAtom(
                         atomSerial, " CA ", ' ', "ARG", chain, resSeq
                     );
-                    if(idx == 0) {
+                    if(idx == bondFrame) {
                         psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                     }
                 }
@@ -199,7 +203,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
-                if(idx == 0) {
+                if(idx == bondFrame) {
                     psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
@@ -214,7 +218,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq
                 );
-                if(idx == 0) {
+                if(idx == bondFrame) {
                     psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
@@ -236,7 +240,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     eachCoord[0], eachCoord[1], eachCoord[2]
                 );
-                if(idx == 0) {
+                if(idx == bondFrame) {
                     psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
@@ -251,7 +255,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 pg.genAtom(
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq
                 );
-                if(idx == 0) {
+                if(idx == bondFrame) {
                     psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
@@ -263,9 +267,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         chain = 'E';
         atomCount = 0;
         resSeq = 0;
-
-        std::vector< std::pair< size_t, size_t >> bondList;
-        const size_t bondFrame = 0;
 
         for(auto& eachMembrane: snapshots[idx].membraneStruct) {
             /*
@@ -307,7 +308,7 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                     atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
                     v[0], v[1], v[2]
                 );
-                if(idx == 0) {
+                if(idx == bondFrame) {
                     psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
                 }
             }
@@ -330,6 +331,19 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
 
         }
 
+        while(atomCount < maxBead.membrane) {
+            ++atomSerial;
+            ++atomId;
+            ++atomCount;
+            ++resSeq;
+            pg.genAtom(
+                atomSerial, " CA ", ' ', "ARG", chain, resSeq
+            );
+            if(idx == bondFrame) {
+                psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+            }
+        }
+
         // Generating bond
         if(idx == bondFrame) {
             size_t numBonds = bondList.size();
@@ -344,18 +358,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
             LOG(INFO) << "Bond info generated.";
         }
 
-        while(atomCount < maxBead.membrane) {
-            ++atomSerial;
-            ++atomId;
-            ++atomCount;
-            ++resSeq;
-            pg.genAtom(
-                atomSerial, " CA ", ' ', "ARG", chain, resSeq
-            );
-            if(idx == 0) {
-                psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
-            }
-        }
         pg.genTer(++atomSerial, "ARG", chain, resSeq);
 
         // End of model
