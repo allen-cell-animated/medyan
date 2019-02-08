@@ -133,9 +133,12 @@ public:
         const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
         const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
         const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(vi3).getCoordinate());
-        const auto un013 = normalizedVector(cross(c1 - c0, c3 - c0));
-        const auto un231 = normalizedVector(cross(c3 - c2, c1 - c2));
-        if(dot(un013, un231) < _minDotNormal) return State::NonCoplanar;
+        const auto n013 = cross(c1 - c0, c3 - c0);
+        const auto mag_n013 = magnitude(n013);
+        const auto n231 = cross(c3 - c2, c1 - c2);
+        const auto mag_n231 = magnitude(n231);
+        if(mag_n013 == 0.0 || mag_n231 == 0.0) return State::BadQuality; // Degenerate case
+        if(dot(n013, n231) < _minDotNormal * mag_n013 * mag_n231) return State::NonCoplanar;
 
         // Check whether triangle quality can be improved.
         const auto q012 = TriangleQualityType{}(c0, c1, c2);
