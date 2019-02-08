@@ -343,12 +343,10 @@ void Compartment::shareSpecies(int i) {
     }
 }
 
-void Compartment::activate(ChemSim* chem, bool init) {
+void Compartment::activate(ChemSim* chem) {
     /**************************************************************************
-    If the function is used in initialization, then only "outward" diffusion-
-    reactions will be created. But if it is an "add-on" activation, then the
-    diffusion-reactions with the already activated neighbors would be added for
-    both directions.
+    The diffusion-reactions with the already activated neighbors would be added
+    for both directions.
     **************************************************************************/
     
     assert(!_activated && "Compartment is already activated.");
@@ -356,24 +354,13 @@ void Compartment::activate(ChemSim* chem, bool init) {
     //set marker
     _activated = true;
     //add all diffusion reactions
-    auto rxns = generateAllDiffusionReactions(init);
-    for(auto &r : rxns) chem->addReaction(r);
-    shareSpecies(SysParams::Mechanics().transfershareaxis);
-    
-    for (auto &C: _neighbours){
-        if(C->isActivated()){
-            for(auto &r : C->_diffusion_reactions.reactions()) {
-                auto rs = r.get()->rspecies()[1];
-                if(rs->getSpecies().getParent() == this) {
-                    auto rs1 = r.get()->rspecies()[0];
-                    if(rs1->getN()>0 && r->isPassivated()){
-                        r->activateReaction();
-                    }
-        }
+    auto rxns = generateAllDiffusionReactions(false);
+
+    for(auto &r : rxns) {
+        chem->addReaction(r);
+        r->activateReaction(); // Conditionally activate the new diffusion reactions
     }
-        }
-    }
-    
+
 }
 
 void Compartment::updateActivation(ChemSim* chem) {
@@ -415,7 +402,7 @@ void Compartment::updateActivation(ChemSim* chem) {
 
         }
     } else {
-        activate(chem, false);
+        activate(chem);
     }
 
     // Update the internal reaction rates

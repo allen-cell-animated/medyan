@@ -53,7 +53,7 @@ public:
     CController(SubSystem* s) : _subSystem(s) {}
     
     ///Activate a compartment. Wrapper function for Compartment::activate().
-    void activate(Compartment* C, bool init=true) {C->activate(_chemSim, init);}
+    void activate(Compartment* C) {C->activate(_chemSim);}
     /// Update activation of a compartment. Wrapper function for Compartment::updateActivation()
     void updateActivation(Compartment* C) { C->updateActivation(_chemSim); }
     ///Deactivate a compartment. Wrapper function for Compartment::deactivate().

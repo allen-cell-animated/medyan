@@ -150,7 +150,8 @@ public:
     /// Activate a compartment. Has the following side effects:
     /// 1) Adds diffusion reactions between this compartment's diffusing
     ///    species and its neighboring active compartments
-    virtual void activate(ChemSim* chem, bool init=true);
+    /// Note: should not be called during initialization.
+    virtual void activate(ChemSim* chem);
     /// Update the activation status of a compartment, having following effects:
     /// 1) Updates diffusion reaction rates between this and neighbors if not
     ///    activated. Otherwise activate the compartment additively.
