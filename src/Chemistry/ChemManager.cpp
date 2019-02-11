@@ -3047,13 +3047,13 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             
             Species* cs = cc->getCMonomer(i)->speciesBound(
                           SysParams::CParams.camkiierBoundIndex[filType]);
-            ConnectionBlock rcbcamkii(cs->connect(camkiicallback,false));
+            ConnectionBlock rcbcamkii(cs->connect(camkiibindingcallback,false));
 
             UpdateCaMKIIerBundlingCallback camkiibundlingcallback(c, i);
 
             Species* cs2 = cc->getCMonomer(i)->speciesBound(
                           SysParams::CParams.camkiierBoundIndex[filType]);
-            ConnectionBlock rcb2camkii(cs->connect(camkiicallback,false));
+            ConnectionBlock rcb2camkii(cs2->connect(camkiibundlingcallback,false));
 
             UpdateLinkerBindingCallback lcallback(c, i);
             

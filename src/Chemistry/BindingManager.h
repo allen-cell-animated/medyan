@@ -336,11 +336,11 @@ friend class ChemManager;
 private:
 	float _rMin; ///< Minimum reaction range
 	float _rMax; ///< Maximum reaction range
-    ///possible bindings at current state
-    unordered_multimap<CaMKIIingPoint*, tuple<CCylinder*, short>> _possibleBindings;
+
+	///possible bindings at current state
+    unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
     vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> _camkiirestarttuple; //Used only during restart conditions.
 
-    //TODO Neighbor list for CaMKII
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
 
@@ -349,7 +349,8 @@ private:
 public:
     CaMKIIBundlingManager(ReactionBase* reaction,
                      Compartment* compartment,
-                     short boundInt, string boundName,
+                     short boundInt,
+                     string boundName,
                      short filamentType,
                      float rMax, float rMin);
 
@@ -376,7 +377,7 @@ public:
     }
 
     /// Choose a random binding site based on current state
-    tuple<CaMKIIingPoint*, tuple<CCylinder*, short>> chooseBindingSites() {
+    tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> chooseBindingSites() {
 
         assert((_possibleBindings.size() != 0)
                && "Major bug: CaMKIIing manager should not have zero binding \
@@ -389,7 +390,7 @@ public:
         auto b = tuple<CCylinder*, short>(it->second);
         auto a = it->first;
 
-        return tuple<CaMKIIingPoint*, tuple<CCylinder*, short>> (a,b);
+        return tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>> (a,b);
 
         //return vector<tuple<CCylinder*, short>>{it->first, it->second};
     }
