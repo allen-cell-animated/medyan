@@ -453,8 +453,8 @@ void Controller::activatedeactivateComp(double timecheck){
                             for(auto sd : _chemData.speciesDiffusing) {
                                 //std::cout<<C->isActivated()<<" "<<C->coordinates()[0];
                                     string name = get<0>(sd);
-                                    auto s = C->findSpeciesByName(name);
-                                   auto copyNum = s->getN();
+//                                    auto s = C->findSpeciesByName(name);
+//                                   auto copyNum = s->getN();
                     
                                 //std::cout << name <<" "<< copyNum;
                                }
@@ -474,9 +474,9 @@ void Controller::activatedeactivateComp(double timecheck){
 }
 void Controller::ControlfrontbackEndComp(double timecheck){
     Compartment* maxcomp=NULL;
-    Bead* maxbead=NULL;
+//    Bead* maxbead=NULL;
     Compartment* mincomp=NULL;
-    Bead* minbead=NULL;
+//    Bead* minbead=NULL;
 
     for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
         auto cyls=C->getCylinders();
@@ -549,7 +549,7 @@ void Controller::ControlfrontbackEndComp(double timecheck){
 }
 void Controller::ControlfrontEndCompobsolete(){
     Compartment* maxcomp=NULL;
-    //Bead* maxbead;
+    Bead* maxbead;
     Filament* maxfil;
 //    for(auto b:Bead::getBeads()){
  //       auto comp=b->getCompartment();
@@ -912,20 +912,20 @@ void Controller::run() {
         auto i=0;
         for (auto b: BranchingPoint::getBranchingPoints()) {
             
-            Bead* b1 = b->getFirstCylinder()->getFirstBead();
-            Bead* b2 = b->getFirstCylinder()->getSecondBead();
-            Bead* b3 = b->getSecondCylinder()->getFirstBead();
-            Bead* b4 = b->getSecondCylinder()->getSecondBead();
+//            Bead* b1 = b->getFirstCylinder()->getFirstBead();
+//            Bead* b2 = b->getFirstCylinder()->getSecondBead();
+//            Bead* b3 = b->getSecondCylinder()->getFirstBead();
+//            Bead* b4 = b->getSecondCylinder()->getSecondBead();
             auto c = b->getSecondCylinder();
             auto filType = c->getType();
             //std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
             i++;
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
-                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+//              auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//              auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
+//              auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+//                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
                 //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
             }
         }
@@ -933,20 +933,20 @@ void Controller::run() {
         auto j=0;
         for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
             
-            Bead* b1 = b->getCylinder(0)->getFirstBead();
-            Bead* b2 = b->getCylinder(0)->getSecondBead();
-            Bead* b3 = b->getCylinder(1)->getFirstBead();
-            Bead* b4 = b->getCylinder(1)->getSecondBead();
+//            Bead* b1 = b->getCylinder(0)->getFirstBead();
+//            Bead* b2 = b->getCylinder(0)->getSecondBead();
+//            Bead* b3 = b->getCylinder(1)->getFirstBead();
+//            Bead* b4 = b->getCylinder(1)->getSecondBead();
             auto c = b->getCylinder(1);
             auto filType = c->getType();
             //std::cout<<j<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
             j++;
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(b->getType());
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
-                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+//                auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(b->getType());
+//                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+//                auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
                 //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
             }
         }
@@ -995,20 +995,20 @@ void Controller::run() {
                 auto i=0;
                 for (auto b: BranchingPoint::getBranchingPoints()) {
                     
-                    Bead* b1 = b->getFirstCylinder()->getFirstBead();
-                    Bead* b2 = b->getFirstCylinder()->getSecondBead();
-                    Bead* b3 = b->getSecondCylinder()->getFirstBead();
-                    Bead* b4 = b->getSecondCylinder()->getSecondBead();
+//                    Bead* b1 = b->getFirstCylinder()->getFirstBead();
+//                    Bead* b2 = b->getFirstCylinder()->getSecondBead();
+//                    Bead* b3 = b->getSecondCylinder()->getFirstBead();
+//                    Bead* b4 = b->getSecondCylinder()->getSecondBead();
                     auto c = b->getSecondCylinder();
                     auto filType = c->getType();
                     //std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
                     i++;
                     for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
-                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
-                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+//                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(b->getType());
+//                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+//                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
                         //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                     }
                 }
@@ -1016,8 +1016,8 @@ void Controller::run() {
                 auto j=0;
                 for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
                     
-                    Bead* b1 = b->getCylinder(0)->getFirstBead();
-                    Bead* b2 = b->getCylinder(0)->getSecondBead();
+//                    Bead* b1 = b->getCylinder(0)->getFirstBead();
+//                    Bead* b2 = b->getCylinder(0)->getSecondBead();
                     //Bead* b3 = b->getCylinder(1)->getFirstBead();
                     //Bead* b4 = b->getCylinder(1)->getSecondBead();
                     auto c = b->getCylinder(0);
@@ -1025,11 +1025,11 @@ void Controller::run() {
                     //std::cout<<j<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
                     j++;
                     for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(b->getType());
-                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
-                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
-                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
+//                        auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+//                        auto yy =c->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(b->getType());
+//                        auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                        auto aa =c->getCCylinder()->getCMonomer(p)->speciesMinusEnd(0);
+//                        auto bb =c->getCCylinder()->getCMonomer(p)->speciesPlusEnd(0);
                         //std::cout<<c->getID()<<" "<<p<<" "<<aa->getN()<<" "<<bb->getN()<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                     }
                 }

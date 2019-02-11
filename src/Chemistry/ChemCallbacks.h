@@ -492,9 +492,9 @@ struct BranchingCallback {
         //create new branch
             CMonomer* x=c->getCCylinder()->getCMonomer(0);
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
+//                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
                 //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                             }
             std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
@@ -502,9 +502,9 @@ struct BranchingCallback {
         b= _ps->addTrackable<BranchingPoint>(c1, c, branchType, pos);
             
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
-                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                auto xx =  c->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                auto yy =c->getCCylinder()->getCMonomer(p)->speciesBrancher(branchType);
+//                auto zz =c->getCCylinder()->getCMonomer(p)->speciesFilament(0);
                 //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
             }
             //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
@@ -523,14 +523,14 @@ struct BranchingCallback {
                     break;
                 }}
             if(check){
-                auto cyl = c->getCylinder();
+///                auto cyl = c->getCylinder();
                 //std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
             //std::cout<<c->getCylinder()->getID()<<endl;
                 CMonomer* x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
-                    auto zz =c->getCMonomer(p)->speciesFilament(0);
+//                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
+//                    auto zz =c->getCMonomer(p)->speciesFilament(0);
                     //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                 }
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
@@ -539,9 +539,9 @@ struct BranchingCallback {
                 
                 x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
-                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
-                    auto zz =c->getCMonomer(p)->speciesFilament(0);
+//                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().brancherBoundIndex[filType]);
+//                    auto yy =c->getCMonomer(p)->speciesBrancher(branchType);
+//                    auto zz =c->getCMonomer(p)->speciesFilament(0);
                     //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                 }
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
@@ -668,9 +668,9 @@ struct CaMKIIBindingCallback {
         	b= _ps->addTrackable<CaMKIIingPoint>(c1, camkiiType, pos);
 
             for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                auto xx =c1->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-                auto yy =c1->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-                auto zz =c1->getCCylinder()->getCMonomer(p)->speciesFilament(0);
+//                auto xx =c1->getCCylinder()->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+//                auto yy =c1->getCCylinder()->getCMonomer(p)->speciesCaMKIIer(camkiiType);
+//                auto zz =c1->getCCylinder()->getCMonomer(p)->speciesFilament(0);
 
                 //std::cout<<c->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
             }
@@ -690,14 +690,14 @@ struct CaMKIIBindingCallback {
                     break;
                 }
             } if(check) {
-                auto cyl = c->getCylinder();
+//                auto cyl = c->getCylinder();
                 //std::cout<<twoPointDistance(cyl->getFirstBead()->coordinate,cyl->getSecondBead()->coordinate)<<" ";
             //std::cout<<c->getCylinder()->getID()<<endl;
                 CMonomer* x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-                    auto yy =c->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-                    auto zz =c->getCMonomer(p)->speciesFilament(0);
+//                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+//                    auto yy =c->getCMonomer(p)->speciesCaMKIIer(camkiiType);
+ //                   auto zz =c->getCMonomer(p)->speciesFilament(0);
                     //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                 }
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
@@ -706,9 +706,9 @@ struct CaMKIIBindingCallback {
 
                 x=c->getCMonomer(0);
                 for(auto p = 0; p <SysParams::Geometry().cylinderNumMon[filType];p++){
-                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
-                    auto yy =c->getCMonomer(p)->speciesCaMKIIer(camkiiType);
-                    auto zz =c->getCMonomer(p)->speciesFilament(0);
+//                    auto xx =  c->getCMonomer(p)->speciesBound(SysParams::Chemistry().camkiierBoundIndex[filType]);
+//                    auto yy =c->getCMonomer(p)->speciesCaMKIIer(camkiiType);
+//                    auto zz =c->getCMonomer(p)->speciesFilament(0);
                     //std::cout<<c->getCylinder()->getID()<<" "<<p<<" "<<xx->getN()<<" "<<yy->getN()<<" "<<zz->getN()<<endl;
                 }
                 //std::cout<<x->speciesFilament(0)->getN()<<" "<<x->speciesMinusEnd(0)->getN()<<endl;
@@ -752,7 +752,7 @@ struct CaMKIIBundlingCallback {
     void operator() (ReactionBase *r) {
     	cout << "CAMKII bundling"<< __LINE__ <<" "<< __FILE__ << endl;
     	CaMKIIingPoint* b;
-        float frate;
+//        float frate;
         short camkiiType = _bManager->getBoundInt();
         cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
         
@@ -987,10 +987,10 @@ struct MotorUnbindingCallback {
     void operator() (ReactionBase *r) {
         
         //find the motor binding manager associated with this species
-        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
+//        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
         
-        Compartment* c = static_cast<Compartment*>(sd->getParent());
-        auto mManager = c->getMotorBindingManager(_motor->getType());
+//        Compartment* c = static_cast<Compartment*>(sd->getParent());
+//        auto mManager = c->getMotorBindingManager(_motor->getType());
         
         //DEPRECATED AS OF 9/8/16
 //        
