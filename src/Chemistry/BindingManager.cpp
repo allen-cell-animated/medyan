@@ -427,7 +427,7 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 
     bool inZone = true;
     //if we change other managers copy number
-    vector<LinkerBindingManager*> affectedManagers;
+    vector<CaMKIIBundlingManager*> affectedManagers;
 
     //Code based on linker
     //add valid binding sites
@@ -486,7 +486,7 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
                             }
                             //add in other
                             else {
-                                auto m = (LinkerBindingManager*)cn->getCompartment()->
+                                auto m = (CaMKIIBundlingManager*)cn->getCompartment()->
                                           getFilamentBindingManagers()[_mIndex].get();
 
                                 affectedManagers.push_back(m);
@@ -541,7 +541,7 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
     if(cc->getType() != _filamentType) return;
 
     //if we change other managers copy number
-    vector<LinkerBindingManager*> affectedManagers;
+    vector<CaMKIIBundlingManager*> affectedManagers;
 
     //remove all tuples which have this ccylinder as key
     auto t = tuple<CCylinder*, short>(cc, bindingSite);
@@ -568,7 +568,7 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc, short bindingS
 
         if(cn->getCompartment() != _compartment) {
 
-            auto m = (LinkerBindingManager*)cn->getCompartment()->
+            auto m = (CaMKIIBundlingManager*)cn->getCompartment()->
                       getFilamentBindingManagers()[_mIndex].get();
 
             if(find(affectedManagers.begin(), affectedManagers.end(), m) == affectedManagers.end())
