@@ -5,8 +5,6 @@
 
 #include "MathFunctions.h"
 
-#include "Structure/SurfaceMesh/Membrane.hpp"
-
 enum class TriangleQualityCriteria {
     RadiusRatio     // Circumradius / (2 * Inradius), range [1, inf)
 };
