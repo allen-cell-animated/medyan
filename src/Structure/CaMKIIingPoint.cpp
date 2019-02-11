@@ -64,7 +64,30 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double bond
     _mCaMKIIingPoint = unique_ptr<MCaMKIIingPoint>(new MCaMKIIingPoint(camkiiType));
     _mCaMKIIingPoint->setCaMKIIingPoint(this);
 #endif
-        
+
+    Composite* parent, Bead* b1, Bead* b2, short type, int position,
+
+	//choose length
+	Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
+
+	double length = 0.0;
+
+	//length = SysParams::Geometry().monomerSize[_filType];
+	//length = SysParams::Geometry().monomerSize[_filType];
+    //length = SysParams::Geometry().minCylinderSize[_filType];
+
+	//auto pos2 = nextPointProjection(position, length, direction);
+
+	Bead* b2 = _subSystem->addTrackable<Bead>(pos1, this, 1);
+
+	//create cylinder
+	Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0);
+
+	c0->setPlusEnd(true);
+	c0->setMinusEnd(true);
+	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, ));
+
+
 }
 
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {
