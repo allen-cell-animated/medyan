@@ -179,9 +179,9 @@ struct MembraneMeshQualityCheck {
             const size_t v0 = mesh.target(hei);
             const size_t v1 = mesh.target(mesh.next(hei));
             const size_t v2 = mesh.target(mesh.prev(hei));
-            const auto c0 = mathfunc::vector2Vec<3, double>(mesh.getTriangleAttribute(v0).getCoordinate());
-            const auto c1 = mathfunc::vector2Vec<3, double>(mesh.getTriangleAttribute(v1).getCoordinate());
-            const auto c2 = mathfunc::vector2Vec<3, double>(mesh.getTriangleAttribute(v2).getCoordinate());
+            const auto c0 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
+            const auto c1 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+            const auto c2 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
 
             const auto q = TriangleQualityType{}(c0, c1, c2);
 
