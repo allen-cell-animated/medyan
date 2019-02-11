@@ -13,6 +13,9 @@
 
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
+bool SysParams::INITIALIZEDSTATUS=false;
+int SysParams::exvolcounter[3] = {0,0,0};
+long long SysParams::exvolcounterz[3] = {0,0,0};
 #ifdef NLSTENCILLIST
 short SysParams::numcylcylNL = 0;
 #endif
@@ -504,5 +507,6 @@ ChemParams   SysParams::CParams;
 GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
+
 
 

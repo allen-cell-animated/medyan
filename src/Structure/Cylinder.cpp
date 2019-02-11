@@ -183,11 +183,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
     _cCylinder->setCylinder(this);
-          
-    //init using chem manager
-    _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
-                                      extensionBack, initialization);
-#endif
+
     //copy further components to the array
     cylindervec[_dcIndex].cmpID = _compartment->getID();
     cylindervec[_dcIndex].cindex = _dcIndex;
@@ -196,6 +192,19 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     //other arrays needed
     ccylindervec[_dcIndex] = _cCylinder.get();
     cylinderpointervec[_dcIndex] = this;
+
+    //init using chem manager
+    _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
+                                      extensionBack, initialization);
+#endif
+    /*//copy further components to the array
+    cylindervec[_dcIndex].cmpID = _compartment->getID();
+    cylindervec[_dcIndex].cindex = _dcIndex;
+    cylindervec[_dcIndex].type = _type;
+    cylindervec[_dcIndex].ID = _ID;
+    //other arrays needed
+    ccylindervec[_dcIndex] = _cCylinder.get();
+    cylinderpointervec[_dcIndex] = this;*/
 }
 
 Cylinder::~Cylinder() noexcept {

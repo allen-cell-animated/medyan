@@ -93,6 +93,7 @@ public:
         T *t = new T(forward<Args>(args)...);
         t->addToSubSystem();
 
+
         //if movable or reactable, add
         if (t->_movable) addMovable((Movable *) t);
 
@@ -100,9 +101,16 @@ public:
 
         //if neighbor, add
         if (t->_dneighbor) {
+#ifdef HYBRID_NLSTENCILLIST
+            _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
+            //Remove boundary neighbors
+            for (auto nlist : __bneighborLists.getElements())
+                nlist->addDynamicNeighbor((DynamicNeighbor *) t);
+#else
             for (auto nlist : _neighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
-            _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
+#endif
+
         } else if (t->_neighbor) {
             for (auto nlist : _neighborLists.getElements())
                 nlist->addNeighbor((Neighbor *) t);
@@ -116,7 +124,6 @@ public:
     /// callback and/or controlling function.
     template<class T>
     void removeTrackable(T *t) {
-
         //remove from subsystem
         t->removeFromSubSystem();
 
@@ -127,9 +134,16 @@ public:
 
         //if neighbor, remove
         if (t->_dneighbor) {
+#ifdef HYBRID_NLSTENCILLIST
+            _HneighborList->removeDynamicNeighbor((DynamicNeighbor *) t);
+            //Remove boundary neighbors
+            for (auto nlist : __bneighborLists.getElements())
+                nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
+#else
             for (auto nlist : _neighborLists.getElements())
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
-            _HneighborList->removeDynamicNeighbor((DynamicNeighbor *) t);
+#endif
+
         } else if (t->_neighbor) {
             for (auto nlist : _neighborLists.getElements())
                 nlist->removeNeighbor((Neighbor *) t);
@@ -170,6 +184,8 @@ public:
 
     /// Add a neighbor list to the subsystem
     void addNeighborList(NeighborList *nl) { _neighborLists.addElement(nl); }
+
+    void addBNeighborList(NeighborList *nl) { __bneighborLists.addElement(nl); }
 
     /// Reset all neighbor lists in subsystem
     void resetNeighborLists();
@@ -224,6 +240,10 @@ public:
     static CompartmentGrid* getstaticgrid(){
         return _staticgrid;
     }
+
+    static double SIMDtime;
+    static double SIMDtimeV2;
+    static double HYBDtime;
 private:
     dist::Coords temptest;
     double _energy = 0; ///< Energy of this subsystem
@@ -233,6 +253,8 @@ private:
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
         
     Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
+    Database<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.
+    // Used only in Hybrid binding Manager cases
 #ifdef HYBRID_NLSTENCILLIST
     HybridCylinderCylinderNL* _HneighborList;
 #endif
@@ -245,6 +267,8 @@ private:
     Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
     double* cylsqmagnitudevector;
+    static bool initialize;
+    chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
 #ifdef CUDAACCL_NL
     double* gpu_coord;
     double* gpu_coord_com;

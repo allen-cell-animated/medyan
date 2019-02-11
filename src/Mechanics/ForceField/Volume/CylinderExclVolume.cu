@@ -42,7 +42,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 #ifdef HYBRID_NLSTENCILLIST
         auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
 #else
-        auto neighbors = _neighborList->getNeighbors(ci)
+        auto neighbors = _neighborList->getNeighbors(ci);
 #endif
         for(auto &cn : neighbors)
         {
@@ -67,7 +67,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 #ifdef HYBRID_NLSTENCILLIST
         auto neighbors = _HneighborList->getNeighborsstencil(_HnlID, ci);
 #else
-        auto neighbors = _neighborList->getNeighbors(ci)
+        auto neighbors = _neighborList->getNeighbors(ci);
 #endif
         int nn = neighbors.size();
 //        std::cout<<"Cylinder "<<i<<" "<<nn<<endl;

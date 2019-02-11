@@ -738,7 +738,7 @@ struct MotorWalkingCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        
+//        cout<<"Motor walking begins"<<endl;
         //get species
         CCylinder* cc = _c->getCCylinder();
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
@@ -748,8 +748,13 @@ struct MotorWalkingCallback {
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
-        
+
+
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
+/*        cout<<"cylinder size "<<cylinderSize<<endl;
+        cout<<"oldpos "<<_oldPosition<<endl;
+        cout<<"newpos "<<_newPosition<<endl;
+        cout<<"-----------"<<endl;*/
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
         

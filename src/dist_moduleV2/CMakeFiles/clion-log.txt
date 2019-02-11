@@ -1,0 +1,4 @@
+/home/aravind/clion-2018.2.6/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE= -DCMAKE_C_COMPILER=/usr/bin/gcc-6 -DCMAKE_CXX_COMPILER=/usr/bin/g++-6 -G "CodeBlocks - Unix Makefiles" /home/aravind/Research/dist_moduleV2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/aravind/Research/dist_moduleV2

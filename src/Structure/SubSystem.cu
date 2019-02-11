@@ -21,6 +21,7 @@
 #include <vector>
 #include "dist_driver.h"
 #include "dist_coords.h"
+#include "dist_common.h"
 #include "Cylinder.h"
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
@@ -253,6 +254,8 @@ void SubSystem::resetNeighborLists() {
     mins = chrono::high_resolution_clock::now();
 #ifdef HYBRID_NLSTENCILLIST
     _HneighborList->reset();
+    for (auto nlist : __bneighborLists.getElements())
+        nlist->reset();
 #elif defined(NLORIGINAL) || defined(NLSTENCILLIST)
     for (auto nl: _neighborLists.getElements())
             nl->reset();
@@ -333,7 +336,7 @@ void SubSystem::updateBindingManagers() {
     int cidx = 0;
     vector<int> ncylvec(SysParams::CParams.numFilaments);// Number of cylinders
     // corresponding to each filament type.
-    vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
+//    vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
     auto cylvec = Cylinder::getCylinders();
     int ncyl = cylvec.size();
     delete [] cylsqmagnitudevector;
@@ -344,21 +347,24 @@ void SubSystem::updateBindingManagers() {
                 .bindingSites[ftype].size());
     }
     long vectorsize = maxbindingsitespercyl * Cylinder::vectormaxsize;
-    vector<int> branchspeciesbound(vectorsize);
-    vector<int> linkerspeciesbound(vectorsize);
-    vector<int> motorspeciesbound(vectorsize);//stores species bound corresponding to each cylinder.
+    vector<bool> branchspeciesbound(vectorsize);
+    vector<bool> linkerspeciesbound(vectorsize);
+    vector<bool> motorspeciesbound(vectorsize);//stores species bound corresponding to each
+    // cylinder.
 
     //set the size of each species bound vector
     fill(branchspeciesbound.begin(),branchspeciesbound.begin()+vectorsize, 0);
     fill(linkerspeciesbound.begin(),linkerspeciesbound.begin()+vectorsize, 0);
     fill(motorspeciesbound.begin(),motorspeciesbound.begin()+vectorsize, 0);
+
     //fill with appropriate values.
     for (auto cyl: cylvec) {
+//        cout<<cyl->_dcIndex<<" "<<cyl->getID()<<endl;
 /*        if(cyl->_dcIndex > Cylinder::vectormaxsize)
             std::cout<<"Cindex "<<cyl->_dcIndex<<" greater than vectorsize "
                     ""<<Cylinder::vectormaxsize<<endl;*/
         //cyl->_dcIndex = cidx;
-        auto _filamentType = cyl->getParent()->getType();
+        auto _filamentType = cyl->getType();
         auto x1 = cyl->getFirstBead()->coordinate;
         auto x2 = cyl->getSecondBead()->coordinate;
         vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
@@ -367,6 +373,7 @@ void SubSystem::updateBindingManagers() {
         int idx = 0;
         for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
              it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
+
             branchspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN());
@@ -413,201 +420,170 @@ void SubSystem::updateBindingManagers() {
     std::cout<<"max cindex "<<Cylinder::maxcindex<<" removed cylinders "
             ""<<Cylinder::removedcindex.size()<<endl;
     std::cout<<"speciesbound size "<<branchspeciesbound.size()<<endl;*/
+
+
     SysParams::MParams.speciesboundvec.push_back(branchspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(linkerspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(motorspeciesbound);
-    SysParams::MParams.maxbindingsitespercylinder = maxbindingsitespercyl;
+    SysParams::CParams.maxbindingsitespercylinder = maxbindingsitespercyl;
     SysParams::MParams.cylsqmagnitudevector = cylsqmagnitudevector;
-    SysParams::MParams.bsoffsetvec = bspeciesoffsetvec;
+//    SysParams::MParams.bsoffsetvec = bspeciesoffsetvec;
     SysParams::MParams.ncylvec = ncylvec;
 //    std::cout<<SysParams::Mechanics().speciesboundvec.size()<<endl;
 //    std::cout<<motorspeciesbound.size()<<endl;
 #endif
+
     chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
+
     //SIMD cylinder update
 #ifdef SIMDBINDINGSEARCH
+    mins = chrono::high_resolution_clock::now();
+    minsSIMD = chrono::high_resolution_clock::now();
     for(auto C : _compartmentGrid->getCompartments()) {
         C->SIMDcoordinates();
+        C->SIMDcoordinates4linkersearch(1);
+        C->SIMDcoordinates4motorsearch(1);
+        C->getHybridBindingSearchManager()->resetpossibleBindings();
     }
-//test
-// Loop through compartments
-// Loop through neighbors
-// Call find_distances
 
-/*    cout << "Number of binding sites "<<endl;
-    for(auto C : _compartmentGrid->getCompartments()) {
-        cout << C->bscoords->size()<<" ";
+    if(!initialize) {
+        HybridBindingSearchManager::setdOut();
+        initialize = true;
     }
-    cout<<endl;*/
 
-    uint N1, N2, N;
-    N = 6000;
-    short _filamentType = 0;
-    dist::Coords bscoord1, bscoord2;
-    vector<double> x1, x2, y1, y2, z1, z2;
-    vector<int> idx1, idx2;
-    dist::dOut<2U> bspairsoutX;
-    bspairsoutX.init_dout(N,{30.0f,40.0f,175.0f,225.0f});
-    dist::tag_simd<dist::simd_no,   float>   t_serial;
-    dist::tag_simd<dist::simd_avx,  float>   t_avx;
-    //@{ BEGINS
-    // Code strategy 2
-    /*cout<< " Address of bscoord "<<&bscoord1<<endl;
-    for(auto C : _compartmentGrid->getCompartments()) {
-        auto cyls1 = C->getCylinders();
-        N1 = 4 * cyls1.size();
-        x1.resize(N1);
-        y1.resize(N1);
-        z1.resize(N1);
-        idx1.resize(N1);
-        int i = 0;
-        for(auto c:cyls1){
-            auto fcoord = c->getFirstBead()->coordinate;
-            auto scoord = c->getSecondBead()->coordinate;
-            for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
-                auto coord = midPointCoordinate(fcoord, scoord, mp);
-                x1[i] = coord[0];
-                y1[i] = coord[1];
-                z1[i] = coord[2];
-                idx1[i] = i;
-                i++;
-            }
-        }
-        bscoord1.init_coords(x1, y1, z1, idx1);
-        for(auto nC : C->getenclosingNeighbours()){
-            if(true){
-                //get Coords
-                auto cyls2 = nC->getCylinders();
-                N2 = 4 * cyls2.size();
-                x2.resize(N2);
-                y2.resize(N2);
-                z2.resize(N2);
-                idx2.resize(N2);
-                i = 0;
-                for(auto c:cyls2){
-                    auto fcoord = c->getFirstBead()->coordinate;
-                    auto scoord = c->getSecondBead()->coordinate;
-                    for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                        it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                        auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
-                        auto coord = midPointCoordinate(fcoord, scoord, mp);
-                        x2[i] = coord[0];
-                        y2[i] = coord[1];
-                        z2[i] = coord[2];
-                        idx2[i] = i;
-                        i++;
-                    }
-                }
-                bscoord2.init_coords(x2, y2, z2, idx2);
-                std::cout << "Cmp IDs " << C->getID() << " " << nC->getID() << endl;
-                std::cout << bscoord1.x.size() << " " << bscoord2.x.size() << endl;
-                bspairsoutX.reset_counters();
-                dist::find_distances(bspairsoutX, bscoord1, bscoord2, t_avx);
-                std::cout << C->bscoords.x.size() << " " << nC->bscoords.x.size() << endl;
-//                report_contact_stats(bspairsoutX);
-                std::cout << "**********************" << endl;
-            }
-        }
-    }*/
-    //@} ENDS
-    //@{ Code strategy 1
-    vector<dist::Coords> veccoord; // vector storing Coord structs corresponding to each
-    // compartment
-    veccoord.resize(_compartmentGrid->getCompartments().size());
-    for(auto C : _compartmentGrid->getCompartments()) {
-        auto cyls1 = C->getCylinders();
-        N1 = 4 * cyls1.size();// 4 binding sites per cylinder
-        x1.resize(N1);
-        y1.resize(N1);
-        z1.resize(N1);
-        idx1.resize(N1);
-        int i = 0;
-        for(auto c:cyls1){
-            auto fcoord = c->getFirstBead()->coordinate;
-            auto scoord = c->getSecondBead()->coordinate;
-            //Loop through binding sites in each cylinder
-            for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
-                //Find coordinate of binding site
-                auto coord = midPointCoordinate(fcoord, scoord, mp);
-                x1[i] = coord[0];
-                y1[i] = coord[1];
-                z1[i] = coord[2];
-                idx1[i] = i;// dummy ID temporarily alloted for testing purposes
-                i++;
-            }
-        }
-        //initialize
-        veccoord[C->getID()].init_coords(x1, y1, z1, idx1);
-//        cout<< C->getID()<<" ";
-    }
-    cout<<"Veccoord address "<<&veccoord[0]<<endl;
-//    cout<<endl;
-    // Calculate pair-wise "contacts" that obey distance bounds.
-    //Loop through Compartments
-    for(auto C : _compartmentGrid->getCompartments()) {
-        //Loop through neighbors that will result in unique pair-wise search of the
-        // compartments.
-        for(auto nC : C->getenclosingNeighbours()){
-            std::cout << "Cmp IDs " << C->getID() << " " << nC->getID() << endl;
-            std::cout<<"binding sites "<<veccoord[C->getID()].size()<<" "
-            <<veccoord[nC->getID()].size()<<endl;
-            //Call SIMD function
-            dist::find_distances(bspairsoutX, veccoord[C->getID()], veccoord[nC->getID()
-            ], t_avx);
-            //reset counters
-            bspairsoutX.reset_counters();
-/*            cout<<(C->bscoords).size()<<endl;
-            dist::find_distances(bspairsoutX, (C->bscoords), (nC->bscoords), t_avx);
-            bspairsoutX.reset_counters();*/
-        }
-    }
-    //@}
+    mineSIMD = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runSIMD2(mineSIMD - minsSIMD);
+    SIMDtime += elapsed_runSIMD2.count();
+    cout<<"SIMD create time "<<elapsed_runSIMD2.count()<<endl;
 #endif
 
-    for(auto C : _compartmentGrid->getCompartments()) {
 
+
+
+    //PROTOCOL 1 This call calculates Binding pairs according to SIMD protocol V1
+#ifdef SIMDBINDINGSEARCH
+    if(false) {
+        minsSIMD = chrono::high_resolution_clock::now();
+        for (auto C : _compartmentGrid->getCompartments()) {
 #ifdef HYBRID_NLSTENCILLIST
-        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencil();
-        for(auto &manager : C->getFilamentBindingManagers()) {
+
+            C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencil();
+//        C->getHybridBindingSearchManager()->checkoccupancy(_idvec);
+            for (auto &manager : C->getFilamentBindingManagers()) {
 #ifdef NLSTENCILLIST
-            BranchingManager* bManager;
-            if(bManager = dynamic_cast<BranchingManager *>(manager.get()))
+                BranchingManager *bManager;
+                if (bManager = dynamic_cast<BranchingManager *>(manager.get()))
+                    manager->updateAllPossibleBindingsstencil();
+#endif
+            }
+#else
+            for(auto &manager : C->getFilamentBindingManagers()) {
+#ifdef NLORIGINAL
+                manager->updateAllPossibleBindings();
+#endif
+#ifdef NLSTENCILLIST
                 manager->updateAllPossibleBindingsstencil();
 #endif
-        }
-#else
-        for(auto &manager : C->getFilamentBindingManagers()) {
-#ifdef NLORIGINAL
-            manager->updateAllPossibleBindings();
-#endif
-#ifdef NLSTENCILLIST
-            manager->updateAllPossibleBindingsstencil();
-#endif
 #if defined(NLORIGINAL) && defined(NLSTENCILLIST)
-            manager->crosscheck();
+                manager->crosscheck();
+#endif
+            }
 #endif
         }
-#endif
+        mineSIMD = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_runSIMD(mineSIMD - minsSIMD);
+        SIMDtime += elapsed_runSIMD.count();
+        cout << "SIMD time " << elapsed_runSIMD.count() << endl;
+        cout << "find time " << HybridBindingSearchManager::findtime << endl;
     }
+    //PRINT
+/*    for(auto C : _compartmentGrid->getCompartments()) {
+       C->getHybridBindingSearchManager()->printbindingsizes();
+    }*/
+
+
+
+    //PROTOCOL #2 SIMD V2
+/*    for(auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->resetpossibleBindings();
+    }*/
+
+    //This call calculates Binding pairs according to SIMD protocol V2
+    if(false) {
+        minsSIMD = chrono::high_resolution_clock::now();
+        for (auto C : _compartmentGrid->getCompartments()) {
+#ifdef HYBRID_NLSTENCILLIST
+
+            C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV2();
+
+            /*for(auto &manager : C->getFilamentBindingManagers()) {
+    #ifdef NLSTENCILLIST
+                BranchingManager* bManager;
+                if(bManager = dynamic_cast<BranchingManager *>(manager.get()))
+                    manager->updateAllPossibleBindingsstencil();
+    #endif
+            }*/
+#endif
+        }
+        //PRINT
+        /*    for(auto C : _compartmentGrid->getCompartments()) {
+                C->getHybridBindingSearchManager()->printbindingsizes();
+            }*/
+        mineSIMD = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_runSIMDV2(mineSIMD - minsSIMD);
+        SIMDtimeV2 += elapsed_runSIMDV2.count();
+        cout << "SIMDV2 time " << elapsed_runSIMDV2.count() << endl;
+        cout << "findV2 time " << HybridBindingSearchManager::findtimeV2 << endl;
+        cout << "Append time " << HybridBindingSearchManager::appendtime << endl;
+        cout << "Time taken to parse SIMD " << HybridBindingSearchManager::SIMDparse1
+             << endl;
+        cout << "Time taken to merge SIMD " << HybridBindingSearchManager::SIMDparse2
+             << endl;
+        cout << "Time taken to copy to main google map "
+                "" << HybridBindingSearchManager::SIMDparse3 << endl;
+        cout << "Time taken to update bs "
+                "" << HybridBindingSearchManager::SIMDcountbs << endl;
+
+    }
+#endif
+
+    //PROTOCOL #3 This call calculates Binding pairs according to HYBRID protocol
+    // (non-SIMD).
+if(true) {
+/*    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->resetpossibleBindings();
+    }*/
+
+    minsHYBD = chrono::high_resolution_clock::now();
+    for (auto C : _compartmentGrid->getCompartments()) {
+#ifdef HYBRID_NLSTENCILLIST
+        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
+/*        for (auto &manager : C->getFilamentBindingManagers()) {
+#ifdef NLSTENCILLIST
+            BranchingManager *bManager;
+            if (bManager = dynamic_cast<BranchingManager *>(manager.get()))
+                manager->updateAllPossibleBindingsstencil();
+#endif
+        }*/
+    }
+#endif
+    mineHYBD = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runHYBD(mineHYBD - minsHYBD);
+    HYBDtime += elapsed_runHYBD.count();
+    cout << "HYBD time " << elapsed_runHYBD.count() << endl;
+}
+
+
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_orig(mine - mins);
     std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
-    /*mins = chrono::high_resolution_clock::now();
-    for(auto C : _compartmentGrid->getCompartments()) {
-        for(auto &manager : C->getFilamentBindingManagers()) {
-            manager->updateAllPossibleBindingsstencil();
-        }}
-    mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_sten(mine - mins);
-    std::cout<<"BMgr update time "<<elapsed_sten.count()<<endl;*/
-
+    //PRINT
+/*    for(auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->printbindingsizes();
+    }*/
+//    exit(EXIT_FAILURE);
 }
-
+//OBSOLETE
 void SubSystem::vectorizeCylinder() {
     delete [] cylindervec;
     delete [] ccylindervec;
@@ -1052,5 +1028,9 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
 
 #endif
 CompartmentGrid* SubSystem::_staticgrid;
+bool SubSystem::initialize = false;
+double SubSystem::SIMDtime  = 0.0;
+double SubSystem::SIMDtimeV2  = 0.0;
+double SubSystem::HYBDtime  = 0.0;
 
 

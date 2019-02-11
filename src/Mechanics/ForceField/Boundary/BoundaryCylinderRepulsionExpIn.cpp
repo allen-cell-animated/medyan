@@ -12,7 +12,9 @@
 //------------------------------------------------------------------
 
 #include "BoundaryCylinderRepulsionExpIn.h"
+#include "BoundaryCylinderRepulsion.h"
 
+#include "BoundaryElement.h"
 #include "Bead.h"
 
 double BoundaryCylinderRepulsionExpIn::energy(Bead* b, double r,
@@ -56,3 +58,118 @@ double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double 
     return kRep * exp(R)/screenLength;
     
 }
+
+double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
+                                            double *krep, double *slen, int *nneighbors) {
+
+    int nb, nc;
+    double *coord1, R, r, U_i;
+    double U = 0.0;
+    int Cumnc=0;
+    auto beList = BoundaryElement::getBoundaryElements();
+    nb = beList.size();
+
+    for (int ib = 0; ib < nb; ib++) {
+
+        auto be = beList[ib];
+        nc = nneighbors[ib];
+
+        for (int ic = 0; ic < nc; ic++) {
+
+            coord1 = &coord[3 * beadSet[Cumnc + ic]];
+            r = be->distance(coord1);
+
+            R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
+            U_i = krep[Cumnc + ic] * exp(R);
+
+            if (fabs(U_i) == numeric_limits<double>::infinity()
+                || U_i != U_i || U_i < -1.0) {
+
+                //set culprit and return
+                BoundaryInteractions::_boundaryElementCulprit = be;
+                ///TODO
+                //BoundaryInteractions::_otherCulprit;
+
+                return -1;
+            }
+            U += U_i;
+        }
+        Cumnc += nc;
+    }
+    return U;
+}
+
+double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
+                                            double *krep, double *slen, int *nneighbors, double d) {
+
+    int nb, nc;
+    double *coord1, *force1, R, r, U_i;
+    double U = 0.0;
+    int Cumnc=0;
+    auto beList = BoundaryElement::getBoundaryElements();
+    nb = beList.size();
+
+    for (int ib = 0; ib < nb; ib++) {
+
+        auto be = beList[ib];
+        nc = nneighbors[ib];
+
+        for(int ic = 0; ic < nc; ic++) {
+
+            coord1 = &coord[3 * beadSet[Cumnc + ic]];
+            force1 = &f[3 * beadSet[Cumnc + ic]];
+
+            r = be->stretchedDistance(coord1, force1, d);
+
+            R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
+
+            U_i = krep[Cumnc + ic] * exp(R);
+
+            if(fabs(U_i) == numeric_limits<double>::infinity()
+               || U_i != U_i || U_i < -1.0) {
+
+                //set culprit and return
+                BoundaryInteractions::_boundaryElementCulprit = be;
+                ///TODO
+                //BoundaryInteractions::_otherCulprit;
+
+                return -1;
+            }
+            U += U_i;
+        }
+        Cumnc+=nc;
+    }
+    return U;
+}
+
+
+
+void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadSet,
+                                          double *krep, double *slen, int *nneighbors) {
+    int nb, nc;
+    double *coord1, *force1, R, r, f0;
+    double *F_i;
+
+    auto beList = BoundaryElement::getBoundaryElements();
+    nb = beList.size();
+    int Cumnc=0;
+
+    for (int ib = 0; ib < nb; ib++) {
+
+        auto be = beList[ib];
+        nc = nneighbors[ib];
+        for(int ic = 0; ic < nc; ic++) {
+            coord1 = &coord[3 * beadSet[ Cumnc + ic]];
+            force1 = &f[3 * beadSet[ Cumnc + ic]];
+            r = be->distance(coord1);
+            auto norm = be->normal(coord1);
+
+            R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
+            f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
+            force1[0] += f0 *norm[0];
+            force1[1] += f0 *norm[1];
+            force1[2] += f0 *norm[2];
+
+        }
+        Cumnc+=nc;
+    }}

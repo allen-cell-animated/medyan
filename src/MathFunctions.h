@@ -56,7 +56,7 @@ namespace mathfunc {
     return __longlong_as_double(old);
   }
 #endif
-#ifdef CUDAACCL
+#ifdef CUDAACCLareParallel
      __host__ inline int nextPowerOf2( int n)
     {
         n--;

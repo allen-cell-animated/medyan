@@ -97,11 +97,10 @@ struct MechParams {
 
     //vectorization
     double *coord;
-    vector<vector<int>> speciesboundvec;
+    vector<vector<bool>> speciesboundvec;
     double* cylsqmagnitudevector;
     vector<int> ncylvec;
     vector<int>bsoffsetvec;
-    unsigned long maxbindingsitespercylinder = 0;
 
     
 };
@@ -133,6 +132,8 @@ struct ChemParams {
     /// Number of binding sites per cylinder
     /// Vector corresponds to each filament type
     vector<short> numBindingSites = {};
+
+    short maxbindingsitespercylinder = 0;
     
     //@{
     ///Extra motor parameters
@@ -270,6 +271,7 @@ friend class Controller;
 friend class SystemParser;
 friend class ChemManager;
 friend class SubSystem;
+friend class Cylinder;
     
 #ifdef TESTING ///Public access if testing only
 public:
@@ -285,8 +287,14 @@ public:
 #ifdef NLSTENCILLIST
     static short numcylcylNL;
 #endif
+    //counter to check excluded volume.
+    static int exvolcounter[3]; //positions 0, 1, and 2 correspond to parallel,
+    // in-plane and regular cases.
+    static long long exvolcounterz[3];
     ///Const getter
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
+    static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
+    // corresponds to an on-going initialization state.
     //aravind July11,2016
     static vector<float> MUBBareRate;
     static vector<float> LUBBareRate;

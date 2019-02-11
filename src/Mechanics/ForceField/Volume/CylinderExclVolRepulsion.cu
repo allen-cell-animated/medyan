@@ -351,7 +351,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
 
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
-
+//            SysParams::exvolcounter[0] += 1;
             d = twoPointDistance(c1, c3);
             invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
@@ -368,11 +368,14 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
 
         //check if in same plane
         if(areInPlane(c1, c2, c3, c4)) {
-
+//            SysParams::exvolcounter[1] += 1;
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
             c2 = newc2;
         }
+//        else
+//            SysParams::exvolcounter[2] += 1;
+
 
         a = scalarProduct(c1, c2, c1, c2);
         b = scalarProduct(c3, c4, c3, c4);
@@ -487,7 +490,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 //                 c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
-
+//            SysParams::exvolcounterz[0] += 1;
             d = twoPointDistance(c1, c3);
             invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
@@ -504,7 +507,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 
         //check if in same plane
         if(areInPlane(c1, c2, c3, c4)) {
-
+//            SysParams::exvolcounterz[1] += 1;
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
             c2 = newc2;
@@ -513,6 +516,9 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 //                    ""<<c3[1]<<" "
 //                             ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<" "<<U_i<<endl;
         }
+//        else{
+//            SysParams::exvolcounterz[2] += 1;
+//        }
         a = scalarProduct(c1, c2, c1, c2);
         b = scalarProduct(c3, c4, c3, c4);
         c = scalarProduct(c3, c1, c3, c1);

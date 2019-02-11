@@ -92,7 +92,12 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     for(auto nl : boundaryFF->getNeighborLists()) {
         
         if(nl != nullptr)
+#if defined(NLSTENCILLIST) || defined(NLORIGINAL)
             _subSystem->addNeighborList(nl);
+#endif
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+        _subSystem->addBNeighborList(nl);
+#endif
     }
     
 //    auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,

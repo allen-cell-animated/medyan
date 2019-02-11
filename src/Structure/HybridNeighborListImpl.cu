@@ -218,20 +218,26 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
     {
         //Flatten the coordinates to 1D, get integer index
         if(i == 0) {
-            if(x < 0 || x >= (_binSize[0] * _grid[0]))
+            if(x < 0 || x >= (_binSize[0] * _grid[0])) {
+                cout<<"get Bin coords x"<<endl;
                 throw OutOfBoundsException();
+            }
 
             index += int(x / _binSize[0]);
         }
         else if(i == 1) {
-            if(x < 0 || x >= (_binSize[1] * _grid[1]))
+            if(x < 0 || x >= (_binSize[1] * _grid[1])) {
+                cout<<"get Bin coords y"<<endl;
                 throw OutOfBoundsException();
+            }
 
             index += int(x / _binSize[1]) * _grid[0];
         }
         else {
-            if(x < 0 || x >= (_binSize[2] * _grid[2]))
+            if(x < 0 || x >= (_binSize[2] * _grid[2])) {
+                cout<<"get Bin coords z"<<endl;
                 throw OutOfBoundsException();
+            }
 
             index += int(x / _binSize[2]) * _grid[0] * _grid[1];
         }
@@ -256,20 +262,26 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<size_t> &indices) {
     {
         //Flatten the indices to 1D
         if(i == 0) {
-            if(x >= _grid[0])
+            if(x >= _grid[0]) {
+                cout<<"get Bin x"<<endl;
                 throw OutOfBoundsException();
+            }
 
             index += x;
         }
         else if(i == 1) {
-            if(x >= _grid[1])
+            if(x >= _grid[1]) {
+                cout<<"get Bin y"<<endl;
                 throw OutOfBoundsException();
+            }
 
             index += x * _grid[0];
         }
         else {
-            if(x >= _grid[2])
+            if(x >= _grid[2]) {
+                cout << "get Bin z" << endl;
                 throw OutOfBoundsException();
+            }
 
             index += x * _grid[0] * _grid[1];
         }
@@ -418,7 +430,7 @@ void HybridCylinderCylinderNL::removeNeighbor(Neighbor* n) {
             //remove from other lists
 //            std::cout << "Removed from cylinders ";
             for (auto it = _list4mbinvec[HNLID].begin();
-                 it != _list4mbinvec[idx].end(); it++) {
+                 it != _list4mbinvec[HNLID].end(); it++) {
                 auto cit = find(it->second.begin(), it->second.end(), cylinder);
                 {
                     if (cit != it->second.end()) {

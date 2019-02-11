@@ -515,7 +515,7 @@ void CylinderCylinderNL::removeNeighbor(Neighbor* n) {
     }
 #endif
 #ifdef NLSTENCILLIST
-    std::cout<<"Removing neighbors of "<<cylinder<<" from NL "<<_ID<<endl;
+//    std::cout<<"Removing neighbors of "<<cylinder<<" from NL "<<_ID<<endl;
     //Remove from NeighborList
     _list4mbin.erase(cylinder);
     //Remove from bin
@@ -901,9 +901,9 @@ void BoundaryCylinderNL::reset() {
     _list.clear();
 
     //loop through all neighbor keys
-    for(auto boundary: BoundaryElement::getBoundaryElements())
-
+    for(auto boundary: BoundaryElement::getBoundaryElements()) {
         updateNeighbors(boundary);
+    }
 }
 
 vector<Cylinder*> BoundaryCylinderNL::getNeighbors(BoundaryElement* be) {

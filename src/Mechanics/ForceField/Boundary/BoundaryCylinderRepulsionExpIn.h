@@ -28,13 +28,13 @@ class BoundaryCylinderRepulsionExpIn {
 public:
     //TODO needs implementation @{
     double energy(double *coord, double *f, int *beadSet,
-                  double *krep, double *slen, int *nneighbors){return 0.0;};
+                  double *krep, double *slen, int *nneighbors);
 
     double energy(double *coord, double *f, int *beadSet,
-                  double *krep, double *slen, int *nnneighbors, double d){return 0.0;};
+                  double *krep, double *slen, int *nnneighbors, double d);
 
     void forces(double *coord, double *f, int *beadSet,
-                double *krep, double *slen, int *nneighbors){};
+                double *krep, double *slen, int *nneighbors);
     //@}
     double energy(Bead*, double, double, double);
     void forces(Bead*, double, vector<double>& norm, double, double);

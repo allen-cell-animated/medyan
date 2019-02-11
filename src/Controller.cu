@@ -66,6 +66,8 @@ void Controller::initialize(string inputFile,
                             string inputDirectory,
                             string outputDirectory) {
 
+    SysParams::INITIALIZEDSTATUS = false;
+
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
     cout << "If dynamic rates is turned on, chemistry and mechanics must be "
@@ -227,6 +229,8 @@ void Controller::initialize(string inputFile,
 #endif
     //setup special structures
     setupSpecialStructures(p);
+
+    SysParams::INITIALIZEDSTATUS = true;
 }
 
 void Controller::setupInitialNetwork(SystemParser& p) {
@@ -271,6 +275,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 //    FilamentData filaments;
 
     cout << "---" << endl;
+    HybridBindingSearchManager::setdOut();
     cout << "Initializing filaments...";
 
     if(FSetup.inputFile != "") {
@@ -302,11 +307,13 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             exit(EXIT_FAILURE);
         }
         vector<vector<double>> coords = {coord1, coord2};
+
         if(coord2.size()==3){
 
             double d = twoPointDistance(coord1, coord2);
             vector<double> tau = twoPointDirection(coord1, coord2);
-            int numSegment = d / SysParams::Geometry().cylinderSize[type];
+            int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[type]));
+
             // check how many segments can fit between end-to-end of the filament
             if (numSegment == 0)
                 _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2, FSetup.projectionType);
@@ -327,7 +334,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
     }
     cout << "Done. " << fil.size() << " filaments created." << endl;
-
+    cout<<"Total cylinders "<<Cylinder::getCylinders().size()<<endl;
 }
 
 void Controller::setupSpecialStructures(SystemParser& p) {
@@ -997,7 +1004,7 @@ void Controller::run() {
 #ifdef CHEMISTRY
         //activate/deactivate compartments
         mins = chrono::high_resolution_clock::now();
-        activatedeactivateComp();
+        //activatedeactivateComp();
         mine= chrono::high_resolution_clock::now();
         chrono::duration<double> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
@@ -1055,6 +1062,7 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_rxn2(mine - mins);
                 rxnratetime += elapsed_rxn2.count();
+
             }
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {
@@ -1101,7 +1109,7 @@ void Controller::run() {
             //Special protocols
             mins = chrono::high_resolution_clock::now();
             //special protocols
-            executeSpecialProtocols();
+            //executeSpecialProtocols();
             mine= chrono::high_resolution_clock::now();
             chrono::duration<double> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
@@ -1204,7 +1212,13 @@ void Controller::run() {
 
     //print last snapshots
     for(auto o: _outputs) o->print(i);
-
+//    cout<<"Printing Excluded volume counters"<<endl;
+//    cout<<"Parallel "<<SysParams::exvolcounter[0]<<endl;
+//    cout<<"In-plane "<<SysParams::exvolcounter[1]<<endl;
+//    cout<<"Rest "<<SysParams::exvolcounter[2]<<endl;
+//    cout<<"Z Parallel "<<SysParams::exvolcounterz[0]<<endl;
+//    cout<<"Z In-plane "<<SysParams::exvolcounterz[1]<<endl;
+//    cout<<"Z Rest "<<SysParams::exvolcounterz[2]<<endl;
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
@@ -1212,6 +1226,8 @@ void Controller::run() {
     cout<< "Neighbor list + Bmgr time for run="<<nltime<<endl;
     cout<< "Neighbor list time "<<nl2time<<endl;
     cout<< "Bmgr vec time "<<bmgrvectime<<endl;
+    cout<< "SIMD time "<<SubSystem::SIMDtime<<endl;
+    cout<< "HYBD time "<<SubSystem::HYBDtime<<endl;
     cout<< "Bmgr time "<<bmgrtime<<endl;
     cout<<"rxnrate time for run="<<rxnratetime<<endl;
     cout<<"Output time for run="<<outputtime<<endl;

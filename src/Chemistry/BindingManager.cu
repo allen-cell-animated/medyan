@@ -964,6 +964,8 @@ bool LinkerBindingManager::isConsistent() {
 }
 #ifdef NLSTENCILLIST
 void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
+/*    std::cout<<"Adding possible bindings of cylinder with ID "<<cc->getCylinder()
+            ->getID()<<" with cindex "<<cc->getCylinder()->_dcIndex<<endl;*/
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++) {
         addPossibleBindingsstencil(cc, *bit);
@@ -1078,7 +1080,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     int total = 0;
     int Ncyl = Cylinder::getCylinders().size();
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
-    int maxnbs = SysParams::Mechanics().maxbindingsitespercylinder;
+    int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     double* coord = CUDAcommon::getSERLvars().coord;
@@ -1435,6 +1437,9 @@ void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bi
 #ifdef HYBRID_NLSTENCILLIST
     auto HManager = _compartment->getHybridBindingSearchManager();
     HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
+/*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
+        C->getHybridBindingSearchManager()->checkoccupancySIMD(_idvec);
+    }*/
 #else
 
     if(cc->getType() != _filamentType) return;
@@ -2136,6 +2141,8 @@ bool MotorBindingManager::isConsistent() {
 }
 #ifdef NLSTENCILLIST
 void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
+/*    std::cout<<"Adding possible bindings of cylinder with ID "<<cc->getCylinder()
+            ->getID()<<" with cindex "<<cc->getCylinder()->_dcIndex<<endl;*/
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++) {
         addPossibleBindingsstencil(cc, *bit);
@@ -2143,8 +2150,10 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 }
 void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #ifdef HYBRID_NLSTENCILLIST
+//    cout<<"Adding "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
     HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
+//    HManager->checkoccupancySIMD(_idvec);
 #else
     if(cc->getType() != _filamentType) return;
 
@@ -2241,7 +2250,8 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
 void MotorBindingManager::updateAllPossibleBindingsstencil() {
 
     _possibleBindingsstencil.clear();
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
+    int offset = 0;
+            //SysParams::Mechanics().bsoffsetvec.at(_filamentType);
     double min1,min2,max1,max2;
     bool status1 = true;
     bool status2 = true;
@@ -2251,7 +2261,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     int total = 0;
     int Ncyl = Cylinder::getCylinders().size();
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
-    int maxnbs = SysParams::Mechanics().maxbindingsitespercylinder;
+    int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     double* coord = CUDAcommon::getSERLvars().coord;
@@ -2694,10 +2704,11 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 }
 void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #ifdef HYBRID_NLSTENCILLIST
+//    cout<<"Removing "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
         HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
 /*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
-        C->getHybridBindingSearchManager()->checkoccupancy(_idvec);
+        C->getHybridBindingSearchManager()->checkoccupancySIMD(_idvec);
     }*/
 #else
 

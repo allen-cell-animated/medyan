@@ -45,7 +45,6 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             nint++;
         }
     }
-//    std::cout<<"value of Boundary nint "<<nint<<endl;
 
     beadSet = new int[n * nint];
     krep = new double[nint];

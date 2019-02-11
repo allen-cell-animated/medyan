@@ -94,6 +94,9 @@ protected:
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
     // touch along faces
     vector<Compartment*> _enclosingneighbours; ///< Neighbors that envelop the compartment
+    vector<Compartment*> _uniquepermuteneighbours; //Neighbors tht help to parse
+    // through unique pairs of compartments to get all necessary binding sites.
+    vector<short> _uniquepermuteneighboursstencil;
     vector<short> _enclosingneighboursstencil;///< enclosing compartments  have unique
     // position IDs between 0-26. This ID immediately helps us determine relative
     // position of the Enclosing Compartment with respect to the current compartment.
@@ -105,6 +108,8 @@ protected:
     
 public:
     short _ID;
+    vector<uint16_t> cindex_bs;
+    vector<uint32_t> cID_bs;
     /// Default constructor, only takes in number of dimensions
     Compartment() : _species(), _internal_reactions(),
     _diffusion_reactions(), _diffusion_rates(), _neighbours()  {
@@ -485,16 +490,27 @@ public:
             exit(EXIT_FAILURE);
         }
     }
+
     HybridBindingSearchManager* getHybridBindingSearchManager(){
         return _bindingsearchManagers;
     }
 #endif
-//    Coords bscoords;
-   // Coords getbscoords(){return bscoords;}
-    mathfunc::temp teststruct;
     dist::Coords bscoords;
+    dist::Coords bscoordslinker;
+    dist::Coords bscoordsmotor;
+    vector<int> Cyldcindexvec;
+    vector<int> CylcIDvec;
+    template<bool LinkerorMotor>
+    dist::Coords& getSIMDcoords(){
+        if(LinkerorMotor)
+            return bscoordslinker;
+        else
+            return bscoordsmotor;
+    }
 #ifdef SIMDBINDINGSEARCH
     void SIMDcoordinates();
+    void SIMDcoordinates4linkersearch(bool isvectorizedgather);
+    void SIMDcoordinates4motorsearch(bool isvectorizedgather);
 #endif
     /// Get binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>>& getFilamentBindingManagers() {
@@ -605,6 +621,19 @@ public:
                     "neighbour");
     }
 
+
+    void adduniquepermuteNeighbour(Compartment *comp, int stencilpos) {
+        auto nit = find(_uniquepermuteneighbours.begin(),_uniquepermuteneighbours.end(), comp);
+        if(nit==_uniquepermuteneighbours.end()) {
+            _uniquepermuteneighbours.push_back(comp);
+            _uniquepermuteneighboursstencil.push_back(stencilpos);
+        }
+        else
+            throw runtime_error(
+                    "Compartment::addenuniquepermuteNeighbour(): Compartment is already a "
+                    "neighbour");
+    }
+
     /// Remove a neighboring compartment
     void removeenclosingNeighbour(Compartment *comp) {
         for(int i = 0; i < _enclosingneighbours.size(); i++){
@@ -619,6 +648,21 @@ public:
     vector<Compartment*> getenclosingNeighbours(){
         return _enclosingneighbours;
     }
+
+    void removeuniquepermuteNeighbour(Compartment *comp) {
+        for(int i = 0; i < _uniquepermuteneighbours.size(); i++){
+            if(comp == _uniquepermuteneighbours[i]){
+                _uniquepermuteneighbours.erase(_uniquepermuteneighbours.begin() + i);
+                _uniquepermuteneighboursstencil.erase(_uniquepermuteneighboursstencil.begin() + i);
+                break;
+            }
+        }
+    }
+
+    vector<Compartment*> getuniquepermuteNeighbours(){
+        return _uniquepermuteneighbours;
+    }
+
     /// Clone the species values of another compartment into this one
     void cloneSpecies (Compartment *target) const {
         assert(target->numberOfSpecies()==0);
