@@ -270,6 +270,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2], CCyl
         SIMDcountbs += elapsed_countsites.count();
     }
 #else
+
 //    std::cout<<"Adding "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
     short idx = idvec[0];
     short idx2 = idvec[1];
@@ -594,6 +595,7 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
         }
     }
 #else
+
     short idx = idvec[0];
     short idx2 = idvec[1];
     auto fIDpair = _filamentIDvec[idx].data();
@@ -3152,7 +3154,7 @@ void HybridBindingSearchManager::addtoHNeighborList(){
 
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
-#ifdef SIMD_BINDINGSEARCH
+#ifdef SIMDBINDINGSEARCH
     short idx = idvec[0];
     short idx2 = idvec[1];
     auto fpairs = _filamentIDvec[idx].data();
@@ -3232,7 +3234,6 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
     short idx = idvec[0];
     short idx2 = idvec[1];
     int pbsSize = _possibleBindingsstencilvec[idx][idx2].size() ;
-    cout<<idvec[0]<<" "<<idvec[1]<<" "<<_possibleBindingsstencilvec[idx][idx2].size()<<endl;
     assert((pbsSize!= 0)
            && "Major bug: Linker binding manager should not have zero binding \
                    sites when called to choose a binding site.");
