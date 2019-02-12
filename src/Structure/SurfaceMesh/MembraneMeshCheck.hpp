@@ -162,6 +162,38 @@ struct MembraneMeshTopologyCheck {
 
 };
 
+struct MembraneMeshSizeQualityCheck {
+    double cosDihedralError;
+    double cosDihedralWarning;
+
+    bool operator()(const MeshType& mesh, bool report = false) const {
+        bool res = true;
+
+        const size_t numEdges = mesh.getEdges().size();
+        // Requires triangle unit normals
+        for(size_t i = 0; i < numEdges; ++i) {
+            const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
+            if(mesh.hasOpposite(hei)) {
+                const size_t t0 = mesh.triangle(hei);
+                const size_t t1 = mesh.triangle(mesh.opposite(hei));
+                const auto& un0 = mesh.getTriangleAttribute(t0).aTriangle.unitNormal;
+                const auto& un1 = mesh.getTriangleAttribute(t1).aTriangle.unitNormal;
+                const auto cosDihedral = mathfunc::dot(un0, un1);
+                if(cosDihedral < cosDihedralError) {
+                    res = false;
+                    if(report)
+                        LOG(ERROR) << "Dihedral on edge " << i << " is too low: " << cosDihedral;
+                } else if(cosDihedral < cosDihedralWarning) {
+                    if(report)
+                        LOG(WARNING) << "Dihedral on edge " << i << " is low: " << cosDihedral;
+                }
+            }
+        }
+
+        return res;
+    }
+};
+
 template< TriangleQualityCriteria c >
 struct MembraneMeshQualityCheck {
     using TriangleQualityType = TriangleQuality< c >;
@@ -169,8 +201,6 @@ struct MembraneMeshQualityCheck {
     double qualityWarning;
 
     bool operator()(const MeshType& mesh, bool report = false) const {
-        assert(TriangleQualityType::better(qualityWarning, qualityError));
-
         bool res = true;
 
         const size_t numTriangles = mesh.getTriangles().size();
