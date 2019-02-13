@@ -302,7 +302,7 @@ private:
                 // Triangle quality after and Dihedral angle after
                 if(ti != ti0 && ti != ti1) {
                     // Quality
-                    q0After = TriangleQualityType::worseOne(
+                    qAfter = TriangleQualityType::worseOne(
                         TriangleQualityType{}(cp, c0, cn),
                         qAfter
                     );
