@@ -225,8 +225,9 @@ void Controller::initialize(string inputFile,
             // Topology
             4, // minDegree
             9, // maxDegree
-            0.96, // edgeFlipMinDotNormal
+            0.95, // edgeFlipMinDotNormal
             0.6, // edgeCollapseMinQualityImprovement
+            0.9, // edgeCollapseMinDotNormal
 
             // Relaxation
             0.05, // relaxationEpsilon (unitless speed/force). The tolerance (l / l_0 - 1)

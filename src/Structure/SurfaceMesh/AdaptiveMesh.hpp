@@ -245,6 +245,7 @@ public:
     enum class State {
         Success,
         InvalidTopo,
+        NonCoplanar,
         BadQuality
     };
 
@@ -252,12 +253,102 @@ private:
     size_t _minDegree;
     size_t _maxDegree;
     double _minQualityImprovement; // If smaller than 1, then some degradation is allowed.
+    double _minDotNormal; // Coplanarness requirement after collapse
+
+    struct PrequalifyResult {
+        double qBefore, qAfter;
+        double minCosDihedral;
+    };
+    // Prequalify the collapse
+    // hei is the direction of collapsing (source gets removed, and target is preserved)
+    static auto _prequalify(const Mesh& mesh, size_t hei) {
+        using namespace mathfunc;
+
+        const auto hei_o = mesh.opposite(hei); // targeting vi1
+        const auto hei_n = mesh.next(hei);
+        const auto hei_p = mesh.prev(hei); // targeting vi1
+        const auto hei_ono = mesh.opposite(mesh.next(hei_o)); // targeting vi1
+        const auto hei_opo = mesh.opposite(mesh.prev(hei_o));
+
+        const auto vi0 = mesh.target(hei); // preserved
+        const auto vi1 = mesh.target(hei_o); // to be removed
+        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
+        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
+
+        const auto ti0 = mesh.triangle(hei);
+        const auto ti1 = mesh.triangle(hei_o);
+
+        double qBefore = TriangleQualityType::best;
+        double qAfter = TriangleQualityType::best;
+        double minCosDihedral = 1.0; // Coplanar case (best)
+
+        {
+            auto chei = hei_o;
+            Vec3 lastUnitNormal = mesh.getTriangleAttribute(mesh.triangle(mesh.opposite(hei_n))).gTriangle.unitNormal;
+            do {
+                const auto ti = mesh.triangle(chei);
+                const auto chei_po = mesh.opposite(mesh.prev(chei));
+                const auto vn = mesh.target(mesh.next(chei));
+                const auto vp = mesh.target(mesh.prev(chei));
+                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
+                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
+
+                // Triangle quality before
+                qBefore = TriangleQualityType::worseOne(
+                    TriangleQualityType{}(cp, c1, cn),
+                    qBefore
+                );
+
+                // Triangle quality after and Dihedral angle after
+                if(ti != ti0 && ti != ti1) {
+                    // Quality
+                    q0After = TriangleQualityType::worseOne(
+                        TriangleQualityType{}(cp, c0, cn),
+                        qAfter
+                    );
+
+                    // Dihedral angle
+                    auto n_0np = cross(cn - c0, cp - c0);
+                    const auto mag_n_0np = magnitude(n_0np);
+                    if(mag_n_0np == 0.0) {
+                        minCosDihedral = -1.0;
+                        break;
+                    } else {
+                        n_0np *= (1.0 / mag_n_0np);
+                        // Dihedral angle with last triangle
+                        minCosDihedral = std::min(
+                            minCosDihedral,
+                            dot(n_0np, lastUnitNormal)
+                        );
+                        lastUnitNormal = n_0np;
+                        // Dihedral angle with outside triangle
+                        minCosDihedral = std::min(
+                            minCosDihedral,
+                            dot(n_0np, mesh.getTriangleAttribute(mesh.triangle(chei_po)).gTriangle.unitNormal)
+                        );
+                        // Special dihedral angle
+                        if(chei == hei_ono) {
+                            minCosDihedral = std::min(
+                                minCosDihedral,
+                                dot(n_0np, mesh.getTriangleAttribute(mesh.triangle(hei_opo)).gTriangle.unitNormal)
+                            );
+                        }
+                    }
+                }
+
+                // Change chei
+                chei = mesh.prev(mesh.opposite(chei)); // counter clockwise around vi1
+            } while(chei != hei_o);
+        }
+
+        return PrequalifyResult{ qBefore, qAfter, minCosDihedral };
+    }
 
 public:
 
     // Constructor
-    EdgeCollapseManager(size_t minDegree, size_t maxDegree, double minQualityImprovement) :
-        _minDegree(minDegree), _maxDegree(maxDegree), _minQualityImprovement(minQualityImprovement) {}
+    EdgeCollapseManager(size_t minDegree, size_t maxDegree, double minQualityImprovement, double minDotNormal) :
+        _minDegree(minDegree), _maxDegree(maxDegree), _minQualityImprovement(minQualityImprovement), _minDotNormal(minDotNormal) {}
 
     // Returns whether the edge is collapsed
     // Requires
@@ -298,50 +389,24 @@ public:
 
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
-        double q0Before = TriangleQualityType::best;
-        double q0After = TriangleQualityType::best;
-        mesh.forEachHalfEdgeTargetingVertex(vi0, [&](size_t hei) {
-            const size_t ti = mesh.triangle(hei);
-            const size_t vn = mesh.target(mesh.next(hei));
-            const size_t vp = mesh.target(mesh.prev(hei));
-            const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
-            const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
-            q0Before = TriangleQualityType::worseOne(
-                TriangleQualityType{}(cp, c0, cn),
-                q0Before
-            );
-            if(ti != ti0 && ti != ti1) {
-                q0After = TriangleQualityType::worseOne(
-                    TriangleQualityType{}(cp, c2, cn),
-                    q0After
-                );
-            }
-        });
+        const auto prequalifyResult0 = _prequalify(mesh, hei_o);
+        const double q0Before = prequalifyResult0.qBefore;
+        const double q0After  = prequalifyResult0.qAfter;
         const auto imp0 = TriangleQualityType::improvement(q0Before, q0After);
+        const double minCosDihedral0 = prequalifyResult0.minCosDihedral;
 
         // if v2 is removed
-        double q2Before = TriangleQualityType::best;
-        double q2After = TriangleQualityType::best;
-        mesh.forEachHalfEdgeTargetingVertex(vi2, [&](size_t hei) {
-            const size_t ti = mesh.triangle(hei);
-            const size_t vn = mesh.target(mesh.next(hei));
-            const size_t vp = mesh.target(mesh.prev(hei));
-            const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
-            const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
-            q2Before = TriangleQualityType::worseOne(
-                TriangleQualityType{}(cp, c2, cn),
-                q2Before
-            );
-            if(ti != ti0 && ti != ti1) {
-                q2After = TriangleQualityType::worseOne(
-                    TriangleQualityType{}(cp, c0, cn),
-                    q2After
-                );
-            }
-        });
+        const auto prequalifyResult2 = _prequalify(mesh, hei);
+        const double q2Before = prequalifyResult2.qBefore;
+        const double q2After  = prequalifyResult2.qAfter;
         const auto imp2 = TriangleQualityType::improvement(q2Before, q2After);
+        const double minCosDihedral2 = prequalifyResult2.minCosDihedral;
 
         if(imp0 < _minQualityImprovement && imp2 < _minQualityImprovement) return State::BadQuality;
+        if(
+            (imp0 > imp2 && minCosDihedral0 < _minDotNormal) ||
+            (imp0 <= imp2 && minCosDihedral2 < _minDotNormal)
+        ) return State::NonCoplanar;
 
         auto attributeSetter = [](
             Mesh& mesh, size_t hei_begin, size_t hei_end, size_t ov0
@@ -673,6 +738,7 @@ public:
         size_t maxDegree;
         double edgeFlipMinDotNormal;
         double edgeCollapseMinQualityImprovement;
+        double edgeCollapseMinDotNormal;
 
         // Relaxation
         double relaxationEpsilon;
@@ -746,7 +812,12 @@ public:
         ),
         _edgeFlipManager(param.minDegree, param.maxDegree, param.edgeFlipMinDotNormal),
         _edgeSplitManager(param.maxDegree),
-        _edgeCollapseManager(param.minDegree, param.maxDegree, param.edgeCollapseMinQualityImprovement),
+        _edgeCollapseManager(
+            param.minDegree,
+            param.maxDegree,
+            param.edgeCollapseMinQualityImprovement,
+            param.edgeCollapseMinDotNormal
+        ),
         _samplingAdjustmentMaxIter(param.samplingAdjustmentMaxIter),
         _mainLoopSoftMaxIter(param.mainLoopSoftMaxIter)
     {}
