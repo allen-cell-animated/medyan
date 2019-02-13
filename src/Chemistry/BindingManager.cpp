@@ -777,6 +777,7 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc) {
 void LinkerBindingManager::updateAllPossibleBindings() {
 
     _possibleBindings.clear();
+    _reversePossibleBindings.clear();
 #ifdef DEBUGCONSTANTSEED
     struct Orderset
     {
@@ -1645,6 +1646,7 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc) {
 void MotorBindingManager::updateAllPossibleBindings() {
 
     _possibleBindings.clear();
+    _reversePossibleBindings.clear();
 #ifdef DEBUGCONSTANTSEED
     struct Orderset
     {
