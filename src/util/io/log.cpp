@@ -5,8 +5,6 @@
 #include <iomanip>
 #include <unordered_map>
 
-#include "util/platform.h"
-
 #ifdef PLATFORM_UNIX_LIKE
     #include <unistd.h>
 #elif defined(PLATFORM_WINDOWS)
