@@ -10,6 +10,8 @@
 #include <vector>
 #include <utility>
 
+#include "util/environment.h"
+
 namespace medyan {
 namespace logger {
 
@@ -200,7 +202,14 @@ private:
 } // namespace medyan
 
 /// Exposed macro
-#define MEDYAN_WRITE_LOG(whichLogger, logLevel) ::medyan::logger::internal::LogWriter(__FILE__, __LINE__, __func__, logLevel, whichLogger)
+#if defined(COMPILER_CLANG) || defined(COMPILER_GCC)
+    #define MEDYAN_LOG_FUNC __PRETTY_FUNCTION__
+#elif defined(COMPILER_MSVC)
+    #define MEDYAN_LOG_FUNC __FUNCSIG__
+#else
+    #define MEDYAN_LOG_FUNC __func__
+#endif
+#define MEDYAN_WRITE_LOG(whichLogger, logLevel) ::medyan::logger::internal::LogWriter(__FILE__, __LINE__, MEDYAN_LOG_FUNC, logLevel, whichLogger)
 
 #define MEDYAN_LOG_GEN_DEBUG(whichLogger)   MEDYAN_WRITE_LOG(whichLogger, ::medyan::logger::LogLevel::Debug)
 #define MEDYAN_LOG_GEN_INFO(whichLogger)    MEDYAN_WRITE_LOG(whichLogger, ::medyan::logger::LogLevel::Info)
