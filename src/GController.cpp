@@ -172,6 +172,7 @@ void GController::generateConnections()
                             int iprime = i+ii;
                             int jprime = j+jj;
                             int kprime = k+kk;
+
                             if(iprime<0 or iprime==int(_grid[0]) or jprime<0 or
                                jprime==int(_grid[1]) or kprime<0 or
                                kprime==int(_grid[2]))

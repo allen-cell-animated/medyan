@@ -50,6 +50,7 @@ public:
     vector<int> shrtdistVorEorPID = {0,0,1,1,0,2,2,3,3,4,1,5,2,-1,3,6,4,7,4,8,5,9,5,
                                     10,6,11,7};
     vector<int> shrtdistType = {2,1,2,1,3,1,2,1,2,1,3,1,3,0,3,1,3,1,2,1,2,1,3,1,2,1,2};
+    //0 self, 1 edge sharing, 2 vertex sharing, 3 face sharing.
 
     /// Constructor, creates a number of Compartment instances
     BinGrid(int numBins, short bgType, vector<double> binSize):
@@ -253,5 +254,15 @@ public:
             else return false;
         }
     }
+
+#ifdef SIMDBINDINGSEARCH2
+    void createSIMDcoordinates(){
+        for(auto bin: getBins()){
+            bin->createSIMDcoordinates();
+            bin->createSIMDcoordinates4linkersearch(true);
+            bin->createSIMDcoordinates4motorsearch(true);
+        }
+    }
+#endif
 };
 #endif //MEDYAN_BINGRID_H

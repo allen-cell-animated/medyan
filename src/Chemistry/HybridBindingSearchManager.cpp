@@ -1062,10 +1062,16 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                                     auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex],
                                                                         it2);
 
+
+                                    minsmap = chrono::high_resolution_clock::now();
                                     //add in correct order
                                     _possibleBindingsstencilvec[idx][idx2].emplace(t1, t2);
                                     _reversepossibleBindingsstencilvec[idx][idx2][t2]
                                             .push_back(t1);
+                                    minemap = chrono::high_resolution_clock::now();
+                                    chrono::duration<double> elapsedmap(minemap - minsmap);
+                                    HYBDappendtime += elapsedmap.count();
+
                                 }
                             }
                         }
@@ -3128,7 +3134,7 @@ void HybridBindingSearchManager::addtoHNeighborList(){
         float minrMinsq = *min_element(temprMinsq.begin(), temprMinsq.end());
         for(short idx2 = 0; idx2<temprMaxsq.size();idx2++) {
                         short temp = 0;
-#ifndef SIMDBINDINGSEARCH
+#if defined(SIMDBINDINGSEARCH2) || defined(HYBRID_BINDINGSEARCH)
             temp = _HneighborList->setneighborsearchparameters(ftypepair[0], ftypepair[1],
                           false, true, localmaxcylsize + sqrt(_rMaxsqvec[idx][idx2]),
                           max( sqrt(_rMinsqvec[idx][idx2]) - localmaxcylsize,float(0.0)));
@@ -3233,7 +3239,7 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 #else
     short idx = idvec[0];
     short idx2 = idvec[1];
-    int pbsSize = _possibleBindingsstencilvec[idx][idx2].size() ;
+    int pbsSize = _possibleBindingsstencilvec[idx][idx2].size();
     assert((pbsSize!= 0)
            && "Major bug: Linker binding manager should not have zero binding \
                    sites when called to choose a binding site.");
@@ -3245,7 +3251,6 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
 
 #endif
-
 }
 
 HybridCylinderCylinderNL* HybridBindingSearchManager::_HneighborList;
@@ -3274,7 +3279,7 @@ double HybridBindingSearchManager::SIMDparse1 = 0.0;
 double HybridBindingSearchManager::SIMDparse2 = 0.0;
 double HybridBindingSearchManager::SIMDparse3 = 0.0;
 double HybridBindingSearchManager::SIMDcountbs = 0.0;
-
+double HybridBindingSearchManager::HYBDappendtime = 0.0;
 
 /*///Template specializations
 template void HybridBindingSearchManager::calculatebspairsself<1,true>();
@@ -3286,4 +3291,5 @@ template void HybridBindingSearchManager::calculatebspairsself<3,false>();
 template void HybridBindingSearchManager::calculatebspairsself<4,true>();
 template void HybridBindingSearchManager::calculatebspairsself<4,false>();*/
 #endif
+
 

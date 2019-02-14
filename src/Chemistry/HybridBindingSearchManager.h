@@ -12,6 +12,7 @@
 //------------------------------------------------------------------
 #ifndef MEDYAN_HybridBindingSearchManager_h
 #define MEDYAN_HybridBindingSearchManager_h
+
 #ifdef HYBRID_NLSTENCILLIST
 #include <unordered_map>
 #include <unordered_set>
@@ -44,9 +45,11 @@ class Compartment;
 class Cylinder;
 class FilamentBindingManager;
 typedef dense_hash_map<uint32_t , vector<uint32_t>, hash<uint32_t>> gdmap;
+typedef dense_hash_map<CCylinder* , vector<uint32_t>, hash<uint32_t>> gdmap2;
 
 typedef tuple<gdmap, gdmap, gdmap, gdmap, gdmap, gdmap, gdmap, gdmap, gdmap, gdmap,
         gdmap, gdmap, gdmap, gdmap, gdmap, gdmap> TUPLEGDMAP;
+
 class HybridBindingSearchManager {
 
     friend class ChemManager;
@@ -124,13 +127,16 @@ private:
     {
         return data[a]<data[b];
     }*/
-    chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD,
-    minsfind, minefind;
-    Compartment* _compartment;
+
 //    float _rMin; ///< Minimum reaction range
 //    float _rMax; ///< Maximum reaction range
 //    float _rMinsq; ///< Minimum reaction range squared
 //    float _rMaxsq; ///< Maximum reaction range squared
+
+    chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD,
+            minsfind, minefind, minsmap, minemap;
+    Compartment* _compartment;
+
     vector<vector<double>> bindingsites1;
     vector<vector<double>> bindingsites2;
     vector<vector<float>> _rMaxsqvec; //squared maxdistance cutoff
@@ -138,31 +144,35 @@ private:
     vector<vector<short>> _filamentIDvec;//filament ID pairs considered
     static vector<short> HNLIDvec; //Hybrid NL ID to track the total number of
     // neighborilists in the system
+
     vector<vector<short>> bstateposvec;
     vector<vector<float>> minparamcyl2;
     vector<vector<float>> maxparamcyl2;
     vector<vector<int>> Nbindingpairs;
     int totaluniquefIDpairs = 0;
-    const uint getD(){return 2;}
-    vector<vector<FilamentBindingManager*>> fManagervec;
-    //possible bindings at current state. updated according to neighbor list
 
+    vector<vector<FilamentBindingManager*>> fManagervec;
+
+    //possible bindings at current state. updated according to neighbor list
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindings;
 
-/*    //possible bindings at current state. updated according to neighbor list stencil
+/*    possible bindings at current state. updated according to neighbor list stencil
     vector<vector<unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>>>
             _possibleBindingsstencilvec;*/
 
-
     vector<vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*,
     short>>>>>_reversepossibleBindingsstencilvec;
-    vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>_reversepossibleBindingsstencilvecuint;
+
+    vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
+                                                    _reversepossibleBindingsstencilvecuint;
+
     vector<uint32_t> linker1, linker2;
     vector<uint32_t> motor1, motor2;
     uint Npairs = 0;
-    vector<vector<gdmap>>  googlepossible;
-    vector<vector<gdmap>>   googlereversepossible;
+
+    vector<vector<gdmap>> googlepossible;
+    vector<vector<gdmap>>  googlereversepossible;
     gdmap googlepossiblel;
     gdmap googlepossiblem;
     gdmap googlereversepossiblel;
@@ -171,7 +181,6 @@ private:
     gdmap googlereversepossibleORIG;
 
     //static neighbor list
-
     static HybridCylinderCylinderNL* _HneighborList;
 
     //SIMD variables
@@ -180,6 +189,7 @@ private:
     static const dist::tag_simd<dist::simd_avx,  float>   t_avx;
     static const dist::tag_simd<dist::simd_no,   float>   t_serial;
     bool initialized = false;
+
     //D = 1
     static dist::dOut<1U,true> bspairs1self;
     static dist::dOut<1U,false> bspairs1;
@@ -194,35 +204,31 @@ private:
     vector<vector<bool>> pairvaluespecieslinker;
     vector<vector<bool>> pairvaluespeciesmotor;
 
-    template <uint D, bool SELF, bool LinkerorMotor> void calculatebspairsLMself
-    (dist::dOut<D, SELF>& bspairs, short idvec[2]);
+    template <uint D, bool SELF, bool LinkerorMotor>
+    void calculatebspairsLMself(dist::dOut<D, SELF>& bspairs, short idvec[2]);
 
-    template <uint D, bool SELF, bool LinkerorMotor> void calculatebspairsLMenclosed
-    (dist::dOut<D, SELF>& bspairs, short idvec[2]);
+    template <uint D, bool SELF, bool LinkerorMotor>
+    void calculatebspairsLMenclosed(dist::dOut<D, SELF>& bspairs, short idvec[2]);
 
     template<uint D, bool SELF, bool LinkerorMotor>
-    void parseSIMDout(dist::dOut<D,SELF>& bspairsoutS, short idvec[2], Compartment* ncmp
-    = NULL);
+    void parseSIMDout(dist::dOut<D,SELF>& bspairsoutS, short idvec[2],
+            Compartment* ncmp = NULL);
 
     template<uint D, bool SELF=true, bool LinkerorMotor>
     void threadwritepairsself(uint startID, uint endID, dist::dOut<D,SELF>& bspairsoutS,
-            short idvec[2],
-            gdmap tempmap[],
-            short threadID);
+            short idvec[2], gdmap tempmap[], short threadID);
 
     template<uint D, bool SELF=false, bool LinkerorMotor>
     void threadwritepairs(Compartment* ncmp, dist::dOut<D,SELF>& bspairsoutS,
-            gdmap tempmap[],
-            gdmap tempNmap[],
-            uint startID, uint endID, short idvec[2], short threadID );
+            gdmap tempmap[], gdmap tempNmap[], uint startID, uint endID,
+            short idvec[2], short threadID );
 
     //V2
     template<uint D, bool SELF=true, bool LinkerorMotor>
     void threadwritepairsselfV2(uint startID, uint endID, dist::dOut<D,SELF>& bspairsoutS,
                               short idvec[2],
                               dense_hash_map<uint32_t , uint, hash<uint32_t>> tempmap[],
-                              vector<vector<uint32_t>> valuematrixvec[],
-                              short threadID);
+                              vector<vector<uint32_t>> valuematrixvec[], short threadID);
 
     //V3
     template<uint D, bool SELF=true, bool LinkerorMotor>
@@ -232,8 +238,8 @@ private:
 
     template<uint D, bool SELF=false, bool LinkerorMotor>
     void threadwritepairsV3(Compartment* ncmp,
-    dist::dOut<D, SELF> &bspairsoutS,
-            uint startID, uint endID, short idvec[2], short threadID);
+    dist::dOut<D, SELF> &bspairsoutS, uint startID, uint endID, short idvec[2],
+                        short threadID);
 
 
     template<uint D, bool LinkerorMotor>
@@ -255,11 +261,9 @@ private:
     template<uint D, bool LinkerorMotor>
     void singlepassparseSIMDout(short idvec[2]);
 
-    static const short nthreads = 8;
+    static const short nthreads = 1;
     gdmap vecmapL[2 * nthreads];
     gdmap vecmapM[2 * nthreads];
-
-
 
     deque<gdmap> dqvecmap;
 
@@ -267,11 +271,8 @@ private:
 
     dense_hash_map<uint32_t , uint, hash<uint32_t>> vecmapV2[2 * nthreads];
     dense_hash_map<uint32_t , uint, hash<uint32_t>> vecNmapV2[2 * nthreads];
-    vector<vector<uint32_t>> valuematrixvec[2*nthreads];
 
-    void threadtest(int i ){
-        cout<<"thread # "<<i<<endl;
-    }
+    vector<vector<uint32_t>> valuematrixvec[2*nthreads];
 
     template<bool LinkerorMotor>
     vector<uint>& getLinkerorMotor(const short oneortwo){
@@ -290,7 +291,8 @@ private:
     }
 
     //getters for vectors.
-    template<bool LinkerorMotor> vector<bool>& getfilID_fpospairs(){
+    template<bool LinkerorMotor>
+    vector<bool>& getfilID_fpospairs(){
         if(LinkerorMotor){
             return filID_fpos_pairL;
         }
@@ -299,7 +301,8 @@ private:
         }
     }
 
-    template<bool LinkerorMotor> vector<uint32_t>& getpairsLinkerorMotor(){
+    template<bool LinkerorMotor>
+    vector<uint32_t>& getpairsLinkerorMotor(){
         if(LinkerorMotor){
             return pairslinker;
         }
@@ -308,8 +311,8 @@ private:
         }
     }
 
-
-    template<bool LinkerorMotor> vector<vector<bool>>& getboundspeciesLinkerorMotor(){
+    template<bool LinkerorMotor>
+    vector<vector<bool>>& getboundspeciesLinkerorMotor(){
         if(LinkerorMotor){
             return pairvaluespecieslinker;
         }
@@ -351,7 +354,6 @@ private:
         }
     }
 
-
     template<bool LinkerorMotor>
     void copytogooglemap(){
         short partnerID = 0;
@@ -371,9 +373,11 @@ private:
     template <uint D, bool SELF, bool LinkerorMotor>
     void gatherCylinderIDfromcIndex(dist::dOut<D,SELF>& bspairsoutS, int start, int end,
             uint prev_size, Compartment* nCmp = NULL);
+
     //D = 2
     static dist::dOut<2U,true> bspairs2self;
     static dist::dOut<2U,false> bspairs2;
+
 /*    static dist::dOut<1U,false> bspairs2_D1;
     static dist::dOut<1U,false> bspairs2_D2;
     //D = 3
@@ -383,18 +387,20 @@ private:
     /*dist::dOut<4U,true> bspairs4self;
     dist::dOut<4U,false> bspairs4;*/
 
-    template <uint D, bool SELF> void calculatebspairsself(dist::dOut<D, SELF>& bspairs);
-    template <uint D, bool SELF> void calculatebspairsenclosed(dist::dOut<D, SELF>&
-            bspairs);
+    template <uint D, bool SELF>
+    void calculatebspairsself(dist::dOut<D, SELF>& bspairs);
+    template <uint D, bool SELF>
+    void calculatebspairsenclosed(dist::dOut<D, SELF>& bspairs);
 
     template <bool LinkerorMotor>
     void calculatebspairsforacylinder(short idvec[2], uint cIndex, CCylinder* cCylinder,
-            short bindingSite, dist::dOut<1, true>& bspairsself,
-            dist::dOut<1, false>& bspairs, dist::Coords& coord);
+                                      short bindingSite, dist::dOut<1, true>& bspairsself,
+                                      dist::dOut<1, false>& bspairs, dist::Coords& coord);
 
     template <uint D, bool SELF>
     void parsebspairsforacylinder(short idvec[2], dist::dOut<D, SELF>& bspairs,
-            Compartment* ncmp, uint cIndex1, short bindingsite, short complimentaryfID);
+                                  Compartment* ncmp, uint cIndex1, short bindingsite,
+                                  short complimentaryfID);
 
     static short Totallinkermotor;
 
@@ -424,7 +430,9 @@ private:
     }*/
 
    void countKeys(vector<uint16_t>& keyvec, vector<unsigned int long>& bounds,
-           vector<int>&  countvec, vector<uint32_t>& bindingskey, uint prev, uint next);
+                  vector<int>&  countvec, vector<uint32_t>& bindingskey,
+                  uint prev, uint next);
+
    void countNpairsfound(short idvec[2]);
 
 public:
@@ -433,7 +441,7 @@ public:
             _possibleBindingsstencilvec;
 
     vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
-            _possibleBindingsstencilvecuint;
+                                                            _possibleBindingsstencilvecuint;
 
     //constructors
      HybridBindingSearchManager(Compartment* compartment);
@@ -450,15 +458,17 @@ public:
 
     void addPossibleBindingsstencil(short idvec[2], CCylinder* cc, short bindingSite);
     void removePossibleBindingsstencil(short idvec[2], CCylinder* cc, short bindingSite);
+
     ///update all possible binding reactions that could occur using stencil NL
     void updateAllPossibleBindingsstencil();
     void updateAllPossibleBindingsstencilSIMDV2();
     void updateAllPossibleBindingsstencilHYBD();
+
     vector<tuple<CCylinder*, short>> chooseBindingSitesstencil(short idvec[2]);
 
-    void setbindingsearchparameter( FilamentBindingManager* fmanager, short bstatepos,
-                                    short ftype1 = 0, short ftype2 = 0, float rMax = 0.0, float
-                                    rMin = 0.0);
+    void setbindingsearchparameter(FilamentBindingManager* fmanager, short bstatepos,
+                                   short ftype1 = 0, short ftype2 = 0, float rMax = 0.0,
+                                   float rMin = 0.0);
 
     void addtoHNeighborList();
 
@@ -508,8 +518,10 @@ public:
         Totallinkermotor = 2;
         bspairs2self.init_dout(10000, {900.0f, 1600.0f, 30625.0f, 50625.0f});
         bspairs2.init_dout(10000, {900.0f, 1600.0f, 30625.0f, 50625.0f});
+
 /*        bspairs2_D1.init_dout(10000,{900.0f,1600.0f});
         bspairs2_D2.init_dout(10000,{30625.0f, 50625.0f});*/
+
         // V2
         bspairslinkerself.init_dout(10000,{900.0f,1600.0f});
         bspairslinker.init_dout(10000,{900.0f,1600.0f});
@@ -526,6 +538,7 @@ public:
     static double SIMDparse2;
     static double SIMDparse3;
     static double SIMDcountbs;
+    static double HYBDappendtime;
     bool googlevar = false;
 };
 #endif
