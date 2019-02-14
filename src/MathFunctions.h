@@ -19,32 +19,12 @@
 #include <vector>
 
 #include "common.h"
+#include "util/math/vec.hpp"
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
-
-// A simple coordinate type that makes operations easier
-// Can be replaced by linalg/tensor libraries in the future
-template< size_t dim, typename Float = double > struct Vec {
-    std::array< Float, dim > value;
-
-    using storage_type = std::array< Float, dim >;
-    using size_type = typename storage_type::size_type;
-    using iterator = typename storage_type::iterator;
-    using const_iterator = typename storage_type::const_iterator;
-
-    constexpr iterator       begin()       noexcept { return value.begin(); }
-    constexpr const_iterator begin() const noexcept { return value.begin(); }
-    constexpr iterator       end()       noexcept { return value.end(); }
-    constexpr const_iterator end() const noexcept { return value.end(); }
-
-    constexpr       Float& operator[](size_type pos)       { return value[pos]; }
-    constexpr const Float& operator[](size_type pos) const { return value[pos]; }
-};
-
-using Vec3 = Vec<3>;
     
     /// Normalize a vector
     inline void normalize(vector<double>& v) {
