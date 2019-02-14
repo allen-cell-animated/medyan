@@ -35,7 +35,7 @@ template< size_t dim, typename Float > inline
 std::ostream& operator<<(std::ostream& os, const Vec<dim, Float>& v) {
     os << '(';
     for(size_t i = 0; i < dim - 1; ++i) os << v[i] << ", ";
-    os << v.v[dim - 1] << ')';
+    os << v[dim - 1] << ')';
     return os;
 }
 
