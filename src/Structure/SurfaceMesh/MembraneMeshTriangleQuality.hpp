@@ -24,6 +24,10 @@ template<> struct TriangleQuality< TriangleQualityCriteria::RadiusRatio > {
         const auto d0 = distance(v1, v2);
         const auto d1 = distance(v2, v0);
         const auto d2 = distance(v0, v1);
+        return operator()(d0, d1, d2);
+    }
+
+    auto operator()(double d0, double d1, double d2) const {
         const auto p = 0.5 * (d0 + d1 + d2);
         // Note that the abs is needed to avoid extreme cases where the result is negative.
         return std::abs(d0 * d1 * d2 / (8 * (p - d0) * (p - d1) * (p - d2)));

@@ -227,6 +227,34 @@ struct MembraneMeshQualityCheck {
 
         return res;
     }
+
+    bool sizeQuality(const MeshType& mesh, bool report = false) const {
+        bool res = true;
+
+        const size_t numTriangles = mesh.getTriangles().size();
+        for(size_t i = 0; i < numTriangles; ++i) {
+            const size_t hei = mesh.getTriangles()[i].halfEdgeIndex;
+            const size_t e0 = mesh.edge(hei);
+            const size_t e1 = mesh.edge(mesh.next(hei));
+            const size_t e2 = mesh.edge(mesh.prev(hei));
+            const auto l0 = mesh.getEdgeAttribute(e0).aEdge.eqLength;
+            const auto l1 = mesh.getEdgeAttribute(e1).aEdge.eqLength;
+            const auto l2 = mesh.getEdgeAttribute(e2).aEdge.eqLength;
+
+            const auto q = TriangleQualityType{}(l0, l1, l2);
+
+            if(TriangleQualityType::worse(q, qualityError)) {
+                res = false;
+                if(report)
+                    LOG(ERROR) << "Quality of size of triangle " << i << " is too low: " << q;
+            } else if(TriangleQualityType::worse(q, qualityWarning)) {
+                if(report)
+                    LOG(WARNING) << "Quality of size of triangle " << i << " is low: " << q;
+            }
+        }
+
+        return res;
+    }
 };
 
 } // namespace membrane_mesh_check
