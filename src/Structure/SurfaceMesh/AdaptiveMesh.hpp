@@ -532,7 +532,7 @@ private:
 
         if(maxMag2F >= _epsilon2) return false;
         else return true;
-        }
+    }
 
     // Returns whether at least 1 edge is flipped
     size_t _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
@@ -574,6 +574,7 @@ public:
         }
 
         // Aux variables
+        std::vector< Vec3 > coordsOriginal = coords;
         std::vector< Vec3 > forces(numVertices);
         std::vector< Vec3 > coordsHalfway(numVertices);
         std::vector< Vec3 > forcesHalfway(numVertices);
@@ -585,6 +586,20 @@ public:
         while( (needRelocation || flippingCount) && iter < _maxIterRelaxation) {
             ++iter;
             needRelocation = !_vertexRelocation(coords, forces, coordsHalfway, forcesHalfway, mesh);
+
+            // Readjust coordinates (max move: size / 3)
+            for(size_t i = 0; i < numVertices; ++i) {
+                const Vec3 diff = coords[i] - coordsOriginal[i];
+                const auto magDiff = magnitude(diff);
+                const auto size = mesh.getVertexAttribute(i).aVertex.size;
+                const auto desiredDiff = (
+                    magDiff == 0.0
+                    ? diff
+                    : diff * (std::min(size * 0.33, magDiff) / magDiff)
+                );
+                coords[i] = coordsOriginal[i] + desiredDiff;
+            }
+
             // Reassign coordinates
             for (size_t i = 0; i < numVertices; ++i) {
                 mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(coords[i]);
