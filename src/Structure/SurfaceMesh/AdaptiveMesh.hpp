@@ -192,7 +192,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
                 throw std::runtime_error("Unit normal is parallel to edge.");
             }
 
-            res0 = c0 + r0 * un0 + ro0 * (std::abs(r0) / mag_ro0));
+            res0 = c0 + r0 * un0 + ro0 * (std::abs(r0) / mag_ro0);
         }
 
         if(std::abs(r1) == std::numeric_limits<double>::infinity()) {
@@ -206,7 +206,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
                 throw std::runtime_error("Unit normal is parallel to edge.");
             }
 
-            res1 = c1 + r1 * un1 + ro1 * (std::abs(r1) / mag_ro1));
+            res1 = c1 + r1 * un1 + ro1 * (std::abs(r1) / mag_ro1);
         }
 
         return vec2Vector(0.5 * (res0 + res1));
