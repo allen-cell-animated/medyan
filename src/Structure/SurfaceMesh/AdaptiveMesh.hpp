@@ -32,6 +32,7 @@ Until all criteria are met
 #include <algorithm> // max min
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
 #include <vector>
 
 #include "MathFunctions.h"
@@ -145,7 +146,8 @@ public:
 };
 
 enum class EdgeSplitVertexInsertionMethod {
-    MidPoint
+    MidPoint,
+    AvgCurv     // Mid point snapped to the sphere of curvature, averaged
 };
 template< EdgeSplitVertexInsertionMethod > struct EdgeSplitVertexInsertion;
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidPoint > {
@@ -157,6 +159,59 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidP
         return mathfunc::midPointCoordinate(c0, c1, 0.5);
     }
 };
+template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgCurv > {
+    size_t v0, v1;
+    // Requires
+    //   - Vertex unit normal
+    template< typename Mesh >
+    auto coordinate(const Mesh& mesh, size_t v) const {
+        using namespace mathfunc;
+        const auto& c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
+        const auto& c1 = vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+        const auto& un0 = mesh.getVertexAttribute(v0).aVertex.unitNormal;
+        const auto& un1 = mesh.getVertexAttribute(v1).aVertex.unitNormal;
+
+        const auto r = c1 - c0;
+        const auto mag2_r = magnitude2(r);
+
+        // Compute radius of curvature (for both vertices)
+        // negative: convex; positive: concave
+        const auto r0 = mag2_r / (2 * dot(un0, r));
+        const auto r1 = -mag2_r / (2 * dot(un1, r));
+
+        Vec3 res0, res1;
+
+        if(std::abs(r0) == std::numeric_limits<double>::infinity()) {
+            res0 = 0.5 * (c0 + c1);
+        } else {
+            // Compute vector from center of sphere to mid point
+            const auto ro0 = 0.5 * r - r0 * un0;
+            const auto mag_ro0 = magnitude(ro0);
+
+            if(mag_ro0 == 0.0) {
+                throw std::runtime_error("Unit normal is parallel to edge.");
+            }
+
+            res0 = c0 + r0 * un0 + ro0 * (std::abs(r0) / mag_ro0));
+        }
+
+        if(std::abs(r1) == std::numeric_limits<double>::infinity()) {
+            res1 = 0.5 * (c0 + c1);
+        } else {
+            // Compute vector from center of sphere to mid point
+            const auto ro1 = -0.5 * r - r1 * un1;
+            const auto mag_ro1 = magnitude(ro1);
+
+            if(mag_ro1 == 0.0) {
+                throw std::runtime_error("Unit normal is parallel to edge.");
+            }
+
+            res1 = c1 + r1 * un1 + ro1 * (std::abs(r1) / mag_ro1));
+        }
+
+        return vec2Vector(0.5 * (res0 + res1));
+    }
+}
 
 template<
     typename Mesh,
