@@ -211,7 +211,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
 
         return vec2Vector(0.5 * (res0 + res1));
     }
-}
+};
 
 template<
     typename Mesh,
