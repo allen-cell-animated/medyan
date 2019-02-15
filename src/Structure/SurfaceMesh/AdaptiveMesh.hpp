@@ -441,6 +441,133 @@ public:
     }
 };
 
+enum class SizeMeasureCriteria {
+    Curvature
+};
+template< SizeMeasureCriteria > struct VertexSizeMeasure;
+template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
+    double resolution; // size = res * min_radius_curvature
+    double upperLimit; // maximum size
+
+    // Requires
+    //   - Vertex unit normal
+    template< typename Mesh > auto vertexMaxSize(Mesh& mesh, size_t vi) const {
+        double minRadiusCurvature = std::numeric_limits<double>::infinity();
+        const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
+        const auto ci = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(vi).vertex->getCoordinate());
+        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+            const auto r = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->getCoordinate()) - ci;
+            minRadiusCurvature = std::min(
+                std::abs(0.5 * mathfunc::magnitude2(r) / mathfunc::dot(un, r)),
+                minRadiusCurvature
+            );
+        });
+        
+        return std::min(resolution * minRadiusCurvature, upperLimit);
+    }
+};
+
+template< SizeMeasureCriteria... > struct VertexSizeMeasureCombined;
+template< SizeMeasureCriteria c, SizeMeasureCriteria... cs >
+struct VertexSizeMeasureCombined< c, cs... > {
+    template< typename Mesh >
+    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
+        return std::min(vsm.vertexMaxSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...));
+    }
+};
+template< SizeMeasureCriteria c >
+struct VertexSizeMeasureCombined< c > {
+    template< typename Mesh >
+    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) {
+        return vsm.vertexMaxSize(mesh, vi);
+    }
+};
+
+template< typename Mesh > class SizeMeasureManager {
+private:
+
+    double _curvRes; // resolution used in radius curvature
+    double _maxSize; // Hard upper bound of size
+    size_t _diffuseIter; // Diffusion iterations used in gradation control
+
+    template< SizeMeasureCriteria... cs >
+    auto _vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<cs>&... vsms) const {
+        return VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...);
+    }
+    template< SizeMeasureCriteria... cs >
+    void _updateVertexMaxSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
+        const size_t numVertices = mesh.getVertices().size();
+        for(size_t i = 0; i < numVertices; ++i) {
+            mesh.getVertexAttribute(i).aVertex.maxSize = _vertexMaxSize(mesh, i, vsms...);
+        }
+    }
+
+    void _diffuseSize(Mesh& mesh) const {
+        const size_t numVertices = mesh.getVertices().size();
+
+        // Initialize with max size
+        for(size_t i = 0; i < numVertices; ++i) {
+            auto& av = mesh.getVertexAttribute(i).aVertex;
+            av.size = av.maxSize;
+        }
+
+        // Diffuse, with D * Delta t = 0.5, and uniformly weighted Laplace operator
+        // l_new = l_old / 2 + (sum of neighbor l_old) / (2 * numNeighbors)
+        for(size_t iter = 0; iter < _diffuseIter; ++iter) {
+            for(size_t i = 0; i < numVertices; ++i) {
+                auto& av = mesh.getVertexAttribute(i).aVertex;
+                const size_t deg = mesh.degree(i);
+    
+                double sumSizeNeighbor = 0.0;
+                mesh.forEachHalfEdgeTargetingVertex(i, [&](size_t hei) {
+                    sumSizeNeighbor += mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).aVertex.size;
+                });
+
+                av.sizeAux = std::min(
+                    0.5 * av.size + 0.5 * sumSizeNeighbor / deg,
+                    av.maxSize
+                ); // capped by maxSize
+            }
+            for(size_t i = 0; i < numVertices; ++i) {
+                auto& av = mesh.getVertexAttribute(i).aVertex;
+                av.size = av.sizeAux;
+            }
+        }
+    }
+
+    void _updateEdgeEqLength(Mesh& mesh) const {
+        const size_t numEdges = mesh.getEdges().size();
+        for(size_t i = 0; i < numEdges; ++i) {
+            auto& l0 = mesh.getEdgeAttribute(i).aEdge.eqLength;
+            l0 = 0.0;
+            mesh.forEachHalfEdgeInEdge(i, [&](size_t hei) {
+                l0 += 0.5 * mesh.getVertexAttribute(mesh.target(hei)).aVertex.size;
+            });
+        }
+    }
+
+public:
+
+    // Constructor
+    SizeMeasureManager(double curvRes, double maxSize, size_t diffuseIter) :
+        _curvRes(curvRes), _maxSize(maxSize), _diffuseIter(diffuseIter) {}
+
+    // Requires
+    //   - Unit normal on each vertex
+    void computeSizeMeasure(Mesh& mesh) const {
+        VertexSizeMeasure< SizeMeasureCriteria::Curvature > vsmCurv {_curvRes, _maxSize};
+
+        // Compute size on each vertex
+        _updateVertexMaxSize(mesh, vsmCurv);
+
+        // Diffuse size on vertices
+        _diffuseSize(mesh);
+
+        // Compute preferred length of edges
+        _updateEdgeEqLength(mesh);
+    }
+};
+
 enum class RelaxationType {
     GlobalElastic // E = (l - l_0)^2 / (2 l_0), with const elastic modulus 1.0
 };
@@ -610,133 +737,6 @@ public:
 
         if(needRelocation || flippingCount) return false;
         else return true;
-    }
-};
-
-enum class SizeMeasureCriteria {
-    Curvature
-};
-template< SizeMeasureCriteria > struct VertexSizeMeasure;
-template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
-    double resolution; // size = res * min_radius_curvature
-    double upperLimit; // maximum size
-
-    // Requires
-    //   - Vertex unit normal
-    template< typename Mesh > auto vertexMaxSize(Mesh& mesh, size_t vi) const {
-        double minRadiusCurvature = std::numeric_limits<double>::infinity();
-        const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
-        const auto ci = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(vi).vertex->getCoordinate());
-        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const auto r = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->getCoordinate()) - ci;
-            minRadiusCurvature = std::min(
-                std::abs(0.5 * mathfunc::magnitude2(r) / mathfunc::dot(un, r)),
-                minRadiusCurvature
-            );
-        });
-        
-        return std::min(resolution * minRadiusCurvature, upperLimit);
-    }
-};
-
-template< SizeMeasureCriteria... > struct VertexSizeMeasureCombined;
-template< SizeMeasureCriteria c, SizeMeasureCriteria... cs >
-struct VertexSizeMeasureCombined< c, cs... > {
-    template< typename Mesh >
-    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
-        return std::min(vsm.vertexMaxSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...));
-    }
-};
-template< SizeMeasureCriteria c >
-struct VertexSizeMeasureCombined< c > {
-    template< typename Mesh >
-    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) {
-        return vsm.vertexMaxSize(mesh, vi);
-    }
-};
-
-template< typename Mesh > class SizeMeasureManager {
-private:
-
-    double _curvRes; // resolution used in radius curvature
-    double _maxSize; // Hard upper bound of size
-    size_t _diffuseIter; // Diffusion iterations used in gradation control
-
-    template< SizeMeasureCriteria... cs >
-    auto _vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<cs>&... vsms) const {
-        return VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...);
-    }
-    template< SizeMeasureCriteria... cs >
-    void _updateVertexMaxSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
-        const size_t numVertices = mesh.getVertices().size();
-        for(size_t i = 0; i < numVertices; ++i) {
-            mesh.getVertexAttribute(i).aVertex.maxSize = _vertexMaxSize(mesh, i, vsms...);
-        }
-    }
-
-    void _diffuseSize(Mesh& mesh) const {
-        const size_t numVertices = mesh.getVertices().size();
-
-        // Initialize with max size
-        for(size_t i = 0; i < numVertices; ++i) {
-            auto& av = mesh.getVertexAttribute(i).aVertex;
-            av.size = av.maxSize;
-        }
-
-        // Diffuse, with D * Delta t = 0.5, and uniformly weighted Laplace operator
-        // l_new = l_old / 2 + (sum of neighbor l_old) / (2 * numNeighbors)
-        for(size_t iter = 0; iter < _diffuseIter; ++iter) {
-            for(size_t i = 0; i < numVertices; ++i) {
-                auto& av = mesh.getVertexAttribute(i).aVertex;
-                const size_t deg = mesh.degree(i);
-    
-                double sumSizeNeighbor = 0.0;
-                mesh.forEachHalfEdgeTargetingVertex(i, [&](size_t hei) {
-                    sumSizeNeighbor += mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).aVertex.size;
-                });
-
-                av.sizeAux = std::min(
-                    0.5 * av.size + 0.5 * sumSizeNeighbor / deg,
-                    av.maxSize
-                ); // capped by maxSize
-            }
-            for(size_t i = 0; i < numVertices; ++i) {
-                auto& av = mesh.getVertexAttribute(i).aVertex;
-                av.size = av.sizeAux;
-            }
-        }
-    }
-
-    void _updateEdgeEqLength(Mesh& mesh) const {
-        const size_t numEdges = mesh.getEdges().size();
-        for(size_t i = 0; i < numEdges; ++i) {
-            auto& l0 = mesh.getEdgeAttribute(i).aEdge.eqLength;
-            l0 = 0.0;
-            mesh.forEachHalfEdgeInEdge(i, [&](size_t hei) {
-                l0 += 0.5 * mesh.getVertexAttribute(mesh.target(hei)).aVertex.size;
-            });
-        }
-    }
-
-public:
-
-    // Constructor
-    SizeMeasureManager(double curvRes, double maxSize, size_t diffuseIter) :
-        _curvRes(curvRes), _maxSize(maxSize), _diffuseIter(diffuseIter) {}
-
-    // Requires
-    //   - Unit normal on each vertex
-    void computeSizeMeasure(Mesh& mesh) const {
-        VertexSizeMeasure< SizeMeasureCriteria::Curvature > vsmCurv {_curvRes, _maxSize};
-
-        // Compute size on each vertex
-        _updateVertexMaxSize(mesh, vsmCurv);
-
-        // Diffuse size on vertices
-        _diffuseSize(mesh);
-
-        // Compute preferred length of edges
-        _updateEdgeEqLength(mesh);
     }
 };
 
