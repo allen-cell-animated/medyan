@@ -42,9 +42,10 @@ private:
 
 public:
     /// Constructor, initializes a cylinder
-	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Composite* parent, Bead* b1, Bead* b2, short type, int position,
+    // composte is set to NULL and we use only one bead
+	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position,
              bool extensionFront = false, bool extensionBack  = false,
-			 bool initialization = false):Cylinder(parent, b1, b2, type, position, extensionFront, extensionBack, initialization), camkiiPoint(camkiiPoint){
+			 bool initialization = false):Cylinder(NULL, b1, NULL, type, position, extensionFront, extensionBack, initialization), camkiiPoint(camkiiPoint){
 	}
 
 };
