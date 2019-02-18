@@ -173,7 +173,7 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
-                _FFType.forces(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
+                _FFType.forcesAux(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
             });
         }
     }
