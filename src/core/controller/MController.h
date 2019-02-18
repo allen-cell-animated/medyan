@@ -14,7 +14,7 @@
 #ifndef MEDYAN_MController_h
 #define MEDYAN_MController_h
 
-#include <vector>
+#include <memory> // unique_ptr
 
 #include "common.h"
 
@@ -39,8 +39,7 @@ class MController {
 private:
     ForceFieldManager _FFManager;  ///< Container and methods for all force
                                    ///< fields in system
-    vector<Minimizer*> _minimizerAlgorithms; ///< Vector with algorithms
-                                             ///< for system minimization
+    std::unique_ptr<Minimizer> _minimizerAlgorithm; ///< Algorithm for system minimization
     
     SubSystem* _subSystem; ///< A pointer to the subsystem
 
@@ -48,20 +47,20 @@ private:
     void initializeFF (MechanicsFFType& forceFields);
     
     /// Initialize the minimization algorithms used in the simulation
-    void initializeMinAlgorithms (MechanicsAlgorithm& Minimizers);
+    void initializeMinAlgorithm (MechanicsAlgorithm& minimizer);
 
 public:
     /// Constructor which sets a subsystem pointer
     MController(SubSystem* s): _FFManager(s) {_subSystem = s;}
     
     /// Initialze the force fields and minimizers used
-    void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers) {
+    void initialize(MechanicsFFType forceFields, MechanicsAlgorithm minimizer) {
         initializeFF(forceFields);
-        initializeMinAlgorithms(Minimizers);
+        initializeMinAlgorithm(minimizer);
     }
 
     /// Run a minimization on the system using the chosen algorithm
-    void run(bool steplimit = true) {  _minimizerAlgorithms[0]->equlibrate(_FFManager, steplimit); }
+    void run(bool steplimit = true) {  _minimizerAlgorithm->equlibrate(_FFManager, steplimit); }
     
 };
 

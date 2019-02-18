@@ -27,27 +27,28 @@
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
 
 #include "ConjugateGradient.h"
+#include "util/io/log.h"
 
-void MController::initializeMinAlgorithms (MechanicsAlgorithm& MAlgorithm) {
+void MController::initializeMinAlgorithm (MechanicsAlgorithm& MAlgorithm) {
     
     if (MAlgorithm.ConjugateGradient == "FLETCHERRIEVES")
-        _minimizerAlgorithms.push_back(
+        _minimizerAlgorithm.reset(
         new ConjugateGradient<FletcherRieves>(MAlgorithm.gradientTolerance,
                                               MAlgorithm.maxDistance,
                                               MAlgorithm.lambdaMax));
     else if (MAlgorithm.ConjugateGradient == "POLAKRIBIERE")
-        _minimizerAlgorithms.push_back(
+        _minimizerAlgorithm.reset(
         new ConjugateGradient<PolakRibiere>(MAlgorithm.gradientTolerance,
                                             MAlgorithm.maxDistance,
                                             MAlgorithm.lambdaMax));
     else if (MAlgorithm.ConjugateGradient == "STEEPESTDESCENT")
-        _minimizerAlgorithms.push_back(
+        _minimizerAlgorithm.reset(
         new ConjugateGradient<SteepestDescent>(MAlgorithm.gradientTolerance,
                                                MAlgorithm.maxDistance,
                                                MAlgorithm.lambdaMax));
     
     else {
-        cout << "Conjugate gradient method not recognized. Exiting." << endl;
+        LOG(FATAL) << "Conjugate gradient method not recognized. Exiting.";
         exit(EXIT_FAILURE);
     }
 }
