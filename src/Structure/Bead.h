@@ -142,7 +142,15 @@ public:
     virtual void printSelf();
     
     //GetType implementation just returns type of parent
-    virtual int getType() {return getParent()->getType();}
+    virtual int getType() {
+    	cout << "parent getType before" << "\n" << endl;
+    	auto parent = getParent();
+    	cout << "parent getType" << parent << "\n" << endl;
+    	if (parent)
+    		return parent->getType();
+    	else
+    		return 0;
+    }
     //Aravind get ID
     int getID() {return _ID;}
     //Aravind return static

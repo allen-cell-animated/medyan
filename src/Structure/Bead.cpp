@@ -32,7 +32,9 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
       _position(position), _birthTime(tau()) {
     
-    parent->addChild(unique_ptr<Component>(this));
+	cout << "parent: " << parent  << "\n" << endl;
+	if (parent)
+		parent->addChild(unique_ptr<Component>(this));
           
     loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);
     loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0);

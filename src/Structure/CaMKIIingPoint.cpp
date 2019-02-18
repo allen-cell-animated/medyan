@@ -70,12 +70,12 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short posit
 
     //Composite* parent, Bead* b1, Bead* b2, short type, int position;
 
-    updatePosition();
+   // updatePosition();
 
 
     //Dummy Cylinder for CaMKII
     //choose length
-    Composite* Dummy; //TODO used for readable purposes
+    Composite *Dummy = NULL; //TODO used for readable purposes
     Bead* b1 = _subSystem->addTrackable<Bead>(_coordinate, Dummy, 0);
 
 	double length = 0.0;
