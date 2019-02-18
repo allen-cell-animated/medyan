@@ -53,10 +53,13 @@ private:
                        ///< camkii point, managed by the Database
     
     float _birthTime;  ///<Birth time
+    short _filType;  //TODO number
 
     Compartment* _compartment; ///< Where this camkii point is
     
     static Database<CaMKIIingPoint*> _camkiiingPoints; ///< Collection in SubSystem
+
+    vector<double> _coordinate; //TODO check if shouldn't be an int
 
     ///Helper to get coordinate
     void updateCoordinate();
@@ -65,7 +68,7 @@ public:
     vector<double> coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()
     
-    CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double position = 0.5);
+    CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short position);
     virtual ~CaMKIIingPoint() noexcept;
     
     //@{
@@ -74,7 +77,7 @@ public:
     Cylinder* getCylinder(int n) { return get<0>(getBond(n));}
     void addBond(Cylinder* c, short pos) { _bonds.push_back(tuple<Cylinder*, short>(c, pos));}
     Cylinder* getFirstCylinder() { return get<0>(_bonds.at(0)); }
-    Cylinder* getSecondCylinder() { return get<0>(_bonds.at(0)); } //TODO fix
+    Cylinder* getSecondCylinder() { return get<0>(_bonds.at(1)); } //TODO fix
     int getCoordinationNumber() { return _bonds.size(); }
     //@}
     

@@ -25,6 +25,7 @@
 #include "MathFunctions.h"
 #include "Rand.h"
 
+
 using namespace mathfunc;
 
 void CaMKIIingPoint::updateCoordinate() {
@@ -35,11 +36,13 @@ void CaMKIIingPoint::updateCoordinate() {
                                     get<1>(_bonds.at(0)));
 }
 
-CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double bondPos)
+CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short position)
 
     : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
 
-    addBond(cylinder, bondPos);
+	_filType=1000; //TODO fix it
+
+    addBond(cylinder, position);
     //Find compartment
     updateCoordinate();
         
@@ -52,7 +55,7 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double bond
         exit(EXIT_FAILURE);
     }
         
-    int pos = int(bondPos * SysParams::Geometry().cylinderNumMon[getCylinder(0)->getType()]);
+    int pos = int(position * SysParams::Geometry().cylinderNumMon[getCylinder(0)->getType()]);
           //std::cout<<c1->getID()<<" "<<c2->getID()<<" "<<pos<<endl;
 #ifdef CHEMISTRY
     _cCaMKIIingPoint = unique_ptr<CCaMKIIingPoint>(
@@ -65,10 +68,15 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double bond
     _mCaMKIIingPoint->setCaMKIIingPoint(this);
 #endif
 
-    Composite* parent, Bead* b1, Bead* b2, short type, int position,
+    //Composite* parent, Bead* b1, Bead* b2, short type, int position;
 
-	//choose length
-	Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
+    updatePosition();
+
+
+    //Dummy Cylinder for CaMKII
+    //choose length
+    Composite* Dummy; //TODO used for readable purposes
+    Bead* b1 = _subSystem->addTrackable<Bead>(_coordinate, Dummy, 0);
 
 	double length = 0.0;
 
@@ -78,14 +86,14 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, double bond
 
 	//auto pos2 = nextPointProjection(position, length, direction);
 
-	Bead* b2 = _subSystem->addTrackable<Bead>(pos1, this, 1);
+	Bead* b2 = _subSystem->addTrackable<Bead>(_coordinate, Dummy, 1);
 
 	//create cylinder
-	Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0);
+	Cylinder* c0 = _subSystem->addTrackable<Cylinder>(Dummy, b1, b2, _filType, 0);
 
 	c0->setPlusEnd(true);
 	c0->setMinusEnd(true);
-	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, ));
+	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, b1, _filType, 0)); // init the dummy cylinder for CaMKII
 
 
 }
@@ -182,7 +190,7 @@ void CaMKIIingPoint::updatePosition() {
 #ifdef CHEMISTRY
     //update ccylinders
     for (int i=0; i<_bonds.size(); i++) {
-        _cCaMKIIingPoint->setFirstCCylinder(getCylinder(i)->getCCylinder());
+        _cCaMKIIingPoint->setConnectedCCylinder(getCylinder(i)->getCCylinder());
     }
     
 #endif

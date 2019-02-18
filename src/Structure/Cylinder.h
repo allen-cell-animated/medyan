@@ -91,7 +91,7 @@ public:
     ///< Coordinates of midpoint, updated with updatePosition()
                                        
     /// Constructor, initializes a cylinder
-    Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
+	Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
              bool extensionFront = false,
              bool extensionBack  = false,
              bool initialization = false);

@@ -751,7 +751,7 @@ struct CaMKIIBundlingCallback {
     
     void operator() (ReactionBase *r) {
     	cout << "CAMKII bundling"<< __LINE__ <<" "<< __FILE__ << endl;
-    	CaMKIIingPoint* b;
+    	CaMKIIingPoint* cp;
 //        float frate;
         short camkiiType = _bManager->getBoundInt();
         cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
@@ -760,10 +760,12 @@ struct CaMKIIBundlingCallback {
         //TODO Find a CAMKII with coordination number less than max number
         auto site = _bManager->chooseBindingSites();
 
-        CaMKIIingPoint* cp  = get<0>(site);
+        Cylinder*       c1  = get<0>(get<0>(site))->getCylinder();
+        short           pos1 = get<1>(get<0>(site));
+
         Cylinder*       c2  = get<0>(get<1>(site))->getCylinder();
-        short           pos = get<1>(get<1>(site));
-        cp->addBond(c2, pos);
+        short           pos2 = get<1>(get<1>(site));
+        cp->addBond(c1, pos1);
 
 //TODO CJY make sure isn't needed before cleaning
 #if 0
@@ -892,7 +894,7 @@ struct CaMKIIBundlingCallback {
         }
 #endif
         //create off reaction
-        auto cCaMKIIer = b->getCCaMKIIingPoint();
+        auto cCaMKIIer = cp->getCCaMKIIingPoint();
         
         cCaMKIIer->setRates(_onRate, _offRate);
         cCaMKIIer->createOffReaction(r, _ps);

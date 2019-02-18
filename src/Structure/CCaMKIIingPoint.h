@@ -60,6 +60,7 @@ public:
           //set rates
           setOnRate(rhs._onRate);
           setOffRate(rhs._offRate);
+
     }
     
     /// Assignment is not allowed
@@ -80,6 +81,8 @@ public:
     CaMKIIingPoint* getCaMKIIingPoint() {return _pCaMKIIingPoint;}
     
     virtual void createOffReaction(ReactionBase* onRxn, SubSystem* ps);
+
+    void setConnectedCCylinder(CCylinder* cc){}; //TODO implement
 };
 
 #endif
