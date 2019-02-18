@@ -83,7 +83,7 @@ void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForc
             Vertex* const v = mesh.getVertexAttribute(vi).vertex;
             const auto& dVolume = mesh.getVertexAttribute(vi).gVertex.dVolume;
 
-            _FFType.forces(v, volume, dVolume, kBulk, eqVolume);
+            _FFType.forcesAux(v, volume, dVolume, kBulk, eqVolume);
         }
     }
 }
