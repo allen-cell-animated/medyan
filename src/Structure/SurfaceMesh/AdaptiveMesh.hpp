@@ -223,7 +223,8 @@ public:
     using EdgeSplitVertexInsertionType = EdgeSplitVertexInsertion< m >;
     enum class State {
         Success,
-        InvalidTopo
+        InvalidTopo,
+        NotLongestEdge
     };
 
 private:
@@ -263,6 +264,21 @@ public:
             mesh.degree(vi1) >= _maxDegree ||
             mesh.degree(vi3) >= _maxDegree
         ) return State::InvalidTopo;
+
+        // Check whether the current edge is the longest in the triangle
+        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
+        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
+        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
+        const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(vi3).getCoordinate());
+        const auto l2_e = distance2(c0, c2);
+        const auto l2_01 = distance2(c0, c1);
+        const auto l2_12 = distance2(c1, c2);
+        const auto l2_23 = distance2(c2, c3);
+        const auto l2_30 = distance2(c3, c0);
+        if( !(
+            l2_e >= l2_01 && l2_e >= l2_12 &&
+            l2_e >= l2_23 && l2_e >= l2_30
+        )) return State::NotLongestEdge;
 
         // All checks passed. Do the splitting.
         typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
