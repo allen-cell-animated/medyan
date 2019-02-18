@@ -195,7 +195,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
         //new energy when moved by lambda
         calcStretchedCoordinate(lambda);
         FFM.updateGeometryValue<true>();
-        double energyLambda = FFM.computeEnergy<true>(lambda);
+        double energyLambda = FFM.computeEnergy<true>();
         double energyChange = energyLambda - currentEnergy;
         
         //return if ok
