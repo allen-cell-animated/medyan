@@ -912,6 +912,8 @@ public:
         using namespace mathfunc;
 
         _computeSizeMeasures(mesh);
+        LOG(INFO) << "Before mesh adapting..."
+        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}();
 
         size_t mainLoopIter = 0;
         while(true) {
@@ -969,7 +971,10 @@ public:
 
             ++mainLoopIter;
         } // End loop TopoModifying-Relaxation
-    }
+
+        LOG(INFO) << "After mesh adapting..."
+        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}();
+    } // End function adapt(...)
 
 };
 

@@ -257,6 +257,59 @@ struct MembraneMeshQualityCheck {
     }
 };
 
+template< TriangleQualityCriteria c >
+struct MembraneMeshQualityReport {
+    using TriangleQualityType = TriangleQuality< c >;
+
+    void operator()(const MeshType& mesh) const {
+        const size_t numEdges = mesh.getEdges().size();
+        const size_t numTriangles = mesh.getTriangles().size();
+
+        // Check triangle quality
+        double worstQuality = TriangleQualityType::best;
+        double avgQuality = 0.0;
+        for(size_t i = 0; i < numTriangles; ++i) {
+            const size_t hei = mesh.getTriangles()[i].halfEdgeIndex;
+            const size_t v0 = mesh.target(hei);
+            const size_t v1 = mesh.target(mesh.next(hei));
+            const size_t v2 = mesh.target(mesh.prev(hei));
+            const auto c0 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
+            const auto c1 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+            const auto c2 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
+
+            const auto q = TriangleQualityType{}(c0, c1, c2);
+
+            if(TriangleQualityType::worse(q, worstQuality)) {
+                worstQuality = q;
+            }
+            avgQuality += q;
+        }
+        avgQuality /= numTriangles;
+        LOG(INFO) << "Quality of triangles: Avg " << avgQuality << " Worst " << worstQuality;
+
+        // Check dihedral angle
+        double minDotNormal = 1.0;
+        double avgDotNormal = 0.0;
+        for(size_t i = 0; i < numEdges; ++i) {
+            const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
+            if(mesh.hasOpposite(hei)) {
+                const size_t t0 = mesh.triangle(hei);
+                const size_t t1 = mesh.triangle(mesh.opposite(hei));
+                const auto& un0 = mesh.getTriangleAttribute(t0).gTriangle.unitNormal;
+                const auto& un1 = mesh.getTriangleAttribute(t1).gTriangle.unitNormal;
+                const auto cosDihedral = mathfunc::dot(un0, un1);
+
+                if(cosDihedral < minDotNormal) {
+                    minDotNormal = cosDihedral;
+                }
+                avgDotNormal += cosDihedral;
+            }
+        }
+        avgDotNormal /= numEdges;
+        LOG(INFO) << "Cosine of dihedral angles: Avg " << avgDotNormal << " Worst " << minDotNormal;
+    }
+};
+
 } // namespace membrane_mesh_check
 
 #endif
