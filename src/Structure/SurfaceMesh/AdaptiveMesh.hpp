@@ -913,7 +913,7 @@ public:
 
         _computeSizeMeasures(mesh);
         LOG(INFO) << "Before mesh adapting...";
-        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}();
+        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}(mesh);
 
         size_t mainLoopIter = 0;
         while(true) {
@@ -973,7 +973,7 @@ public:
         } // End loop TopoModifying-Relaxation
 
         LOG(INFO) << "After mesh adapting...";
-        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}();
+        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}(mesh);
     } // End function adapt(...)
 
 };
