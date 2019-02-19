@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Condition="'$(Configuration)'!='TestDebug' And '$(Configuration)'!='TestRelease'" Include="..\..\src\**\*.cpp" Exclude="..\..\src\TESTS\**\*.cpp"/>
-    <ClCompile Condition="'$(Configuration)'=='TestDebug' Or '$(Configuration)'=='TestRelease'" Include="..\..\src\**\*.cpp" Exclude="..\..\src\MEDYAN.cpp"/>
-    <ClInclude Condition="'$(Configuration)'!='TestDebug' And '$(Configuration)'!='TestRelease'" Include="..\..\src\**\*.h;..\..\src\**\*.hpp" Exclude="..\..\src\TESTS\**\*.h"/>
-    <ClInclude Condition="'$(Configuration)'=='TestDebug' Or '$(Configuration)'=='TestRelease'" Include="..\..\src\**\*.h;..\..\src\**\*.hpp"/>
+    <ClCompile Condition="!$(Configuration.Contains('Test'))" Include="..\..\src\**\*.cpp" Exclude="..\..\src\TESTS\**\*.cpp"/>
+    <ClCompile Condition="$(Configuration.Contains('Test'))" Include="..\..\src\**\*.cpp" Exclude="..\..\src\MEDYAN.cpp"/>
+    <ClInclude Condition="!$(Configuration.Contains('Test'))" Include="..\..\src\**\*.h;..\..\src\**\*.hpp" Exclude="..\..\src\TESTS\**\*.h"/>
+    <ClInclude Condition="$(Configuration.Contains('Test'))" Include="..\..\src\**\*.h;..\..\src\**\*.hpp"/>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -31,26 +31,13 @@
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+  <PropertyGroup Condition="$(Configuration.Contains('Debug'))" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TestDebug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TestRelease|x64'" Label="Configuration">
+  <PropertyGroup Condition="$(Configuration.Contains('Release'))" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
@@ -106,13 +93,13 @@
       </PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+  <ItemDefinitionGroup Condition="$(Configuration.Contains('Debug'))">
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)'=='TestDebug' Or '$(Configuration)'=='TestRelease'">
+  <ItemDefinitionGroup Condition="$(Configuration.Contains('Test'))">
     <ClCompile>
       <AdditionalIncludeDirectories>
         $(SolutionDir)..\..\src\TESTS;
