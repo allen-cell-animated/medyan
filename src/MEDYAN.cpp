@@ -111,6 +111,9 @@ int main(int argc, char **argv) {
     }
     Rand::eng.seed(Global::readGlobal().randomGenSeed);
 
+    // Visual
+    visual::init();
+
     /**************************************************************************
     Start program 
     **************************************************************************/
