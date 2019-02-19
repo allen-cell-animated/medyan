@@ -36,7 +36,7 @@ Until all criteria are met
 #include <vector>
 
 #include "MathFunctions.h"
-
+#include "Structure/SurfaceMesh/MembraneMeshCheck.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
