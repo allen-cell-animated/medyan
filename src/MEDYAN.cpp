@@ -75,6 +75,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "Structure/SubSystem.h"
 #include "utility.h"
 #include "util/io/log.h"
+#include "visual/window.hpp"
 
 using namespace medyan;
 
