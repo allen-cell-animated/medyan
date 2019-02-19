@@ -9,6 +9,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
+		VisualDebug|x64 = VisualDebug|x64
+		VisualRelease|x64 = VisualRelease|x64
 		TestDebug|x64 = TestDebug|x64
 		TestRelease|x64 = TestRelease|x64
 	EndGlobalSection
@@ -17,6 +19,10 @@ Global
 		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.Debug|x64.Build.0 = Debug|x64
 		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.Release|x64.ActiveCfg = Release|x64
 		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.Release|x64.Build.0 = Release|x64
+		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.VisualDebug|x64.ActiveCfg = VisualDebug|x64
+		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.VisualDebug|x64.Build.0 = VisualDebug|x64
+		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.VisualRelease|x64.ActiveCfg = VisualRelease|x64
+		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.VisualRelease|x64.Build.0 = VisualRelease|x64
 		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.TestDebug|x64.ActiveCfg = TestDebug|x64
 		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.TestDebug|x64.Build.0 = TestDebug|x64
 		{42B694F4-C6FE-4039-8F68-EB063A43ED0F}.TestRelease|x64.ActiveCfg = TestRelease|x64

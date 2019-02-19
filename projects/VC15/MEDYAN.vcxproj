@@ -9,6 +9,14 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="VisualDebug|x64">
+      <Configuration>VisualDebug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="VisualRelease|x64">
+      <Configuration>VisualRelease</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="TestDebug|x64">
       <Configuration>TestDebug</Configuration>
       <Platform>x64</Platform>
@@ -98,6 +106,20 @@
       <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="$(Configuration.Contains('Visual'))">
+    <ClCompile>
+      <AdditionalIncludeDirectories>
+        %USERPROFILE%\Documents\Repos\glfw\include;
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+    </ClCompile>
+    <PreprocessorDefinitions>
+      VISUAL;%(PreprocessorDefinitions)
+    </PreprocessorDefinitions>
+    <Link>
+      <AdditionalDependencies>%USERPROFILE%\Documents\Repos\glfw\src\Debug\glfw3.lib</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="$(Configuration.Contains('Test'))">
     <ClCompile>
