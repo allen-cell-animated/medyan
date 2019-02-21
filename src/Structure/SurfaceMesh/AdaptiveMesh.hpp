@@ -763,7 +763,7 @@ private:
     }
 
     template< typename VecType > void _laplacianSmoothing(
-        std::vector< mathfunc::Vec3 >& targets,
+        std::vector< VecType >& targets,
         Mesh& mesh
     ) const {
         using namespace mathfunc;
