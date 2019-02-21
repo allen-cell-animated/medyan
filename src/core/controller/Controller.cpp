@@ -225,9 +225,9 @@ void Controller::initialize(string inputFile,
             // Topology
             4, // minDegree
             9, // maxDegree
-            0.95, // edgeFlipMinDotNormal
+            0.9, // edgeFlipMinDotNormal
             0.6, // edgeCollapseMinQualityImprovement
-            0.9, // edgeCollapseMinDotNormal
+            0.85, // edgeCollapseMinDotNormal
 
             // Relaxation
             0.05, // relaxationEpsilon (unitless speed/force). The tolerance (l / l_0 - 1)
@@ -236,7 +236,7 @@ void Controller::initialize(string inputFile,
             3, // relaxationMaxIterRelaxation
 
             // Size diffusion
-            0.25, // curvatureResolution. cos of which should be slightly bigger than minDotNormal
+            0.3, // curvatureResolution. cos of which should be slightly bigger than minDotNormal
             50, // maxSize. Related to the resolution of the system
             3, // diffuseIter
 
