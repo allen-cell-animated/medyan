@@ -177,11 +177,12 @@ private:
                     //append with other binding sites.
                     while(ObSite.back() < SysParams::Geometry().cylinderNumMon[filType] && ObSite.size() < bSitecyl.size())
                         ObSite.push_back(ObSite.back() + deltaBinding);
+                    
                     for(auto i = ObSite.size(); i < bSitecyl.size(); i++){
                         if(ObSite.front() - deltaBinding >0){
                             ObSite.push_back(ObSite.back());
-                            for(auto i = ObSite.size()-2; i >0; i--){
-                                ObSite.at(i+1)  = ObSite.at(i);
+                            for(auto j = ObSite.size()-2; j >0; j--){
+                                ObSite.at(j+1)  = ObSite.at(j);
                             }
                             ObSite.at(0)  =ObSite.at(0)- deltaBinding;
                         }
