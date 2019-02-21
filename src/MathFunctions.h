@@ -366,9 +366,17 @@ inline auto operator*(Float k, const Vec<dim, Float>& v) {
     return v * k;
 }
 template< size_t dim, typename Float >
-inline auto& operator*=(Vec<dim, Float>& v, double k) {
+inline auto& operator*=(Vec<dim, Float>& v, Float k) {
     for(size_t i = 0; i < dim; ++i) v[i] *= k;
     return v;
+}
+template< size_t dim, typename Float >
+inline auto operator/(const Vec<dim, Float>& v, Float k) {
+    return v * (1.0 / k);
+}
+template< size_t dim, typename Float >
+inline auto& operator/=(Vec<dim, Float>& v, Float k) {
+    return v *= (1.0 / k);
 }
 
     /// Get the negative of the matrix

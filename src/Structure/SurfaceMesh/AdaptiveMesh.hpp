@@ -637,7 +637,36 @@ public:
         // Compute preferred length of edges
         _updateEdgeEqLength(mesh);
     }
-};
+}; // End SizeMesasureManager
+
+template< typename Mesh > struct GeometryManager {
+    static void computeAllTriangleNormals(Mesh& mesh) {
+        const size_t numTriangles = mesh.getTriangles().size();
+
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
+            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
+        }
+    }
+
+    static void computeAllAngles(Mesh& mesh) {
+        const size_t numHalfEdges = mesh.getHalfEdges().size();
+
+        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
+            Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
+        }
+    }
+
+    // Requires
+    //   - Unit normals in triangles (geometric)
+    //   - Angles in halfedges (geometric)
+    static void computeAllVertexNormals(Mesh& mesh) {
+        const size_t numVertices = mesh.getVertices().size();
+
+        for(size_t vi = 0; vi < numVertices; ++vi) {
+            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+        }
+    }
+}; // End GeometryManager
 
 enum class RelaxationType {
     GlobalElastic // E = (l - l_0)^2 / (2 l_0), with const elastic modulus 1.0
@@ -677,6 +706,7 @@ template<
 public:
     using RelaxationForceFieldType = RelaxationForceField< r >;
     using EdgeFlipManagerType = EdgeFlipManager< Mesh, c >;
+    using GeometryManagerType = GeometryManager< Mesh >;
 
 private:
     double _epsilon2; // Square of force tolerance
@@ -732,6 +762,40 @@ private:
         else return true;
     }
 
+    template< typename VecType > void _laplacianSmoothing(
+        std::vector< mathfunc::Vec3 >& targets,
+        Mesh& mesh
+    ) const {
+        using namespace mathfunc;
+
+        const size_t numVertices = mesh.getVertices().size();
+
+        for(size_t i = 0; i < numVertices; ++i) {
+            targets[i] = Vec3 {};
+            double weightTot = 0.0;
+            const auto ci = vector2Vec<3, double>(mesh.getVertexAttribute(i).getCoordinate());
+            mesh.forEachHalfEdgeTargetingVertex(i, [&](size_t hei) {
+                const size_t vn = mesh.target(mesh.next(hei));
+                const size_t vp = mesh.target(mesh.prev(hei));
+                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
+                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
+                const auto centroid = (ci + cn + cp) / 3.0;
+                const auto len = distance(ci, centroid);
+                targets[i] += len * centroid;
+                weightTot += len;
+            });
+            targets[i] /= weightTot;
+
+            // Project to tangent plane
+            const auto& un = mesh.getVertexAttribute(i).aVertex.unitNormal;
+            targets[i] -= un * dot(targets[i] - ci, un);
+        }
+
+        for(size_t i = 0; i < numVertices; ++i) {
+            mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(targets[i]);
+        }
+    } // End function _laplacianSmoothing(Mesh&)
+
     // Returns whether at least 1 edge is flipped
     size_t _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         // Edge flipping does not change edge id or total number of edges
@@ -776,6 +840,7 @@ public:
         std::vector< Vec3 > forces(numVertices);
         std::vector< Vec3 > coordsHalfway(numVertices);
         std::vector< Vec3 > forcesHalfway(numVertices);
+        std::vector< Vec3 > targets(numVertices); // used in smoothing
 
         // Main loop
         bool needRelocation = true;
@@ -802,6 +867,18 @@ public:
             for (size_t i = 0; i < numVertices; ++i) {
                 mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(coords[i]);
             }
+
+            // Smooth out the folded geometry, without updating normals
+            while(!membrane_mesh_check::MembraneMeshDihedralCheck{0.0, 0.0}(mesh, true)) {
+                // Apply Laplacian smoothing
+                _laplacianSmoothing(targets, mesh); 
+            }
+
+            // Update normals
+            GeometryManagerType::computeAllTriangleNormals(mesh);
+            GeometryManagerType::computeAllAngles(mesh);
+            GeometryManagerType::computeAllVertexNormals(mesh);
+
             // Try flipping
             flippingCount = _edgeFlipping(mesh, efm);
         }
@@ -814,6 +891,8 @@ public:
 template< typename Mesh >
 class MeshAdapter {
 public:
+    using GeometryManagerType = GeometryManager< Mesh >;
+
     static constexpr auto relaxationType = RelaxationType::GlobalElastic;
     static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
     static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::MidPoint;
@@ -853,37 +932,10 @@ private:
     size_t _samplingAdjustmentMaxIter; // Maximum number of scans used in sampling.
     size_t _mainLoopSoftMaxIter; // Maximum iterations of the main loop if topology changes can be reduced to 0
 
-    void _computeAllTriangleNormals(Mesh& mesh) const {
-        const size_t numTriangles = mesh.getTriangles().size();
-
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
-            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-        }
-    }
-
-    void _computeAllAngles(Mesh& mesh) const {
-        const size_t numHalfEdges = mesh.getHalfEdges().size();
-
-        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
-        }
-    }
-
-    // Requires
-    //   - Unit normals in triangles (geometric)
-    //   - Angles in halfedges (geometric)
-    void _computeAllVertexNormals(Mesh& mesh) const {
-        const size_t numVertices = mesh.getVertices().size();
-
-        for(size_t vi = 0; vi < numVertices; ++vi) {
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
-        }
-    }
-
     void _computeSizeMeasures(Mesh& mesh) const {
-        _computeAllTriangleNormals(mesh);
-        _computeAllAngles(mesh);
-        _computeAllVertexNormals(mesh);
+        GeometryManagerType::computeAllTriangleNormals(mesh);
+        GeometryManagerType::computeAllAngles(mesh);
+        GeometryManagerType::computeAllVertexNormals(mesh);
         _sizeMeasureManager.computeSizeMeasure(mesh);
     }
 public:

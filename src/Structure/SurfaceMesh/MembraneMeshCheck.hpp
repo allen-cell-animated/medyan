@@ -162,7 +162,7 @@ struct MembraneMeshTopologyCheck {
 
 };
 
-struct MembraneMeshSizeQualityCheck {
+struct MembraneMeshDihedralCheck {
     double cosDihedralError;
     double cosDihedralWarning;
 
