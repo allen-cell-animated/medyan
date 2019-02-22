@@ -1,6 +1,8 @@
 #ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshCheck_hpp
 #define MEDYAN_Structure_SurfaceMesh_MembraneMeshCheck_hpp
 
+#include <unordered_map>
+#include <unordered_set>
 #include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "util/io/log.h"
@@ -9,6 +11,46 @@ namespace membrane_mesh_check {
 
 using MeshType = Membrane::MeshType;
 
+struct MembraneMeshInfoDump {
+    void addInfo1Ring(
+        std::unordered_set<size_t> vs, std::unordered_set<size_t> es,
+        const MeshType& mesh, size_t vi
+    ) const {
+        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+            const size_t hei_p = mesh.prev(hei);
+            const size_t vp = mesh.target(hei_p);
+            es.insert(mesh.edge(hei));
+            es.insert(mesh.edge(hei_p));
+            vs.insert(vp);
+        });
+        vs.insert(vi);
+    }
+    void operator()(const MeshType& mesh, size_t vi, size_t ring) const {
+        std::unordered_set<size_t> vs, es, cvs;
+        cvs.insert(vi);
+        for(size_t curRing = 1; curRing <= ring; ++curRing) {
+            for(auto i : cvs) addInfo1Ring(vs, es, mesh, i);
+            std::unordered_set<size_t> vs_next;
+            for (auto i : vs) if (cvs.find(i) != cvs.end()) {
+                vs_next.insert(i);
+            }
+            cvs = vs_next;
+        }
+
+        // Output
+        std::unordered_map<size_t, size_t> vri;
+        size_t index = 0; // 1 based index
+        for (auto i : vs) {
+            std::cout << mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(i).getCoordinate()) << std::endl;
+            vri[i] = (++index);
+        }
+        for (auto i : es) {
+            const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
+            std::cout << vri[mesh.target(hei)] << ' ' << vri[mesh.target(mesh.opposite(hei))] << std::endl;
+        }
+
+    }
+};
 struct MembraneMeshTopologyCheck {
     size_t minDegree;
     size_t maxDegree;
