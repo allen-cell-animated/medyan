@@ -30,17 +30,18 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void FilamentBendingCosine::deallocate(){
-    if(!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(stream));
+//    if(!(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
     CUDAcommon::handleerror(cudaFree(ginteraction));
 }
-void FilamentBendingCosine::optimalblocksnthreads( int nint){
-    //CUDA stream create
-    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+void FilamentBendingCosine::optimalblocksnthreads( int nint, cudaStream_t stream_pass){
+//    //CUDA stream create
+//    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    stream = stream_pass;
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -55,6 +56,7 @@ void FilamentBendingCosine::optimalblocksnthreads( int nint){
         blockSize = 0;
 
         cudaOccupancyMaxPotentialBlockSizeVariableSMem(&minGridSize, &blockSize,
+//                                                       FilamentBendingCosineenergyz, blockToSmemZero, 0);
                                                        FilamentBendingCosineenergyz, blockToSmemFB2, 0);
         blocksnthreadsez.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsez.push_back(blockSize);
@@ -76,8 +78,10 @@ void FilamentBendingCosine::optimalblocksnthreads( int nint){
         char b[] = "Filament Bending Cosine";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
         CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
-        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
-        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpyAsync(gFF, a, 100 * sizeof(char),
+                                            cudaMemcpyHostToDevice, stream));
+        CUDAcommon::handleerror(cudaMemcpyAsync(ginteraction, b, 100 * sizeof(char),
+                                            cudaMemcpyHostToDevice, stream));
 
     }
     else{
@@ -113,42 +117,27 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
 
 double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, double *z, int *params) {
-//    nvtxRangePushA("E_wait");
-//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
-//    nvtxRangePop();
-    if(blocksnthreadse[1]>0) {
-        FilamentBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, z, CUDAcommon::getCUDAvars()
-                .gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
-//        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.push_back(&stream);
-//        CUDAcommon::cudavars = cvars;
-//        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
-//        return gU_sum;
-    }
+
+//    if(blocksnthreadse[1]>0) {
+//        FilamentBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
+//                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, z, CUDAcommon::getCUDAvars()
+//                .gculpritID,
+//                CUDAcommon::getCUDAvars().gculpritFF,
+//                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+//        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
+//    }
 
     if(blocksnthreadsez[1]>0) {
+        auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
         FilamentBendingCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
-                                          sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z,
-                                          CUDAcommon::getCUDAvars().gculpritID,
+//        FilamentBendingCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (0) *
+                sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i,
+                                        CUDAcommon::cudavars.gpu_energyvec, z,
+                                        CUDAcommon::getCUDAvars().gculpritID,
                                           CUDAcommon::getCUDAvars().gculpritFF,
-                                          CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+                                          CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction, boolvarvec.at(0),
+                boolvarvec.at(1) );
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
-//        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.push_back(&stream);
-//        CUDAcommon::cudavars = cvars;
-//        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//
-//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
-//        return gU_sum;
     }
     if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
         return NULL;
@@ -156,18 +145,12 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
+#ifdef CUDA_INDIVIDUAL_ESUM
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-
-//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        cudaStreamSynchronize(stream);
-//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
-//                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
         resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
         addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
-//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
+#endif
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         return gU_sum;
     }
@@ -177,7 +160,7 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
                                    double *kbend, double *eqt, int *params){
     if(blocksnthreadsf[1]>0) {
         FilamentBendingCosineforces << < blocksnthreadsf[0], blocksnthreadsf[1], (9 * blocksnthreadsf[1]) *
-                                                                                 sizeof(double), stream >> > (coord, f, beadSet, kbend, eqt, params);
+                                    sizeof(double), stream >> > (coord, f, beadSet, kbend, eqt, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -322,7 +305,8 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
         coord3 = &coord[3 * beadSet[n * i + 2]];
-
+/*        std::cout<<"Bending beadset "<<beadSet[n * i]<<" "<<beadSet[n * i + 1 ]<<" "
+                ""<<beadSet[n * i + 2]<<endl;*/
         force1 = &f[3 * beadSet[n * i]];
         force2 = &f[3 * beadSet[n * i + 1]];
         force3 = &f[3 * beadSet[n * i + 2]];

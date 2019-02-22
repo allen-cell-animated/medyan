@@ -92,7 +92,8 @@ FilamentData RandomFilamentDist::createFilaments(Boundary* b, int numFilaments,
 
             vector<double> secondPoint =
             nextPointProjection(firstPoint,(double)lenFilaments *
-                                SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
+                                SysParams::Geometry().cylinderSize[filamentType] - 0.01,
+                                direction);
 
             //check if these points are outside bubbles
             bool inBubble = false;

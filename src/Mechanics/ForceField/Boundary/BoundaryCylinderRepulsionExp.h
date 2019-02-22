@@ -38,7 +38,7 @@ public:
     double loadForces(double r, double krep , double slen);
 
 #ifdef CUDAACCL
-    void optimalblocksnthreads(int nint);
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
 
     double* energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
                    int* nintvec, double* beListplane, int *params);

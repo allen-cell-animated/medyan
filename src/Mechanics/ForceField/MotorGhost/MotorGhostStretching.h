@@ -49,6 +49,7 @@ private:
     double *gpu_pos2;
     double *F_i;
     double *gpu_Mstretchforce;
+    cudaStream_t stream = NULL;
 #endif
     
 public:

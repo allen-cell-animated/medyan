@@ -69,6 +69,11 @@ public:
 #ifdef CUDAACCL
     vector<int> blocksnthreads;
     int *gpu_nint;
+    //@{
+    vector<int> bntaddvec2;
+    int *gpu_params;
+    vector<int> params;
+    //@}
     void assignallforcemags();
 #endif
 };

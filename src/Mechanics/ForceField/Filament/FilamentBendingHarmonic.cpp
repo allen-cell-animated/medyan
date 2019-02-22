@@ -29,17 +29,18 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void FilamentBendingHarmonic::deallocate(){
-    if(!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(stream));
+//    if(!(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
     CUDAcommon::handleerror(cudaFree(ginteraction));
 }
-void FilamentBendingHarmonic::optimalblocksnthreads( int nint){
-    //CUDA stream create
-    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+void FilamentBendingHarmonic::optimalblocksnthreads( int nint, cudaStream_t stream_pass){
+//    //CUDA stream create
+//    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    stream = stream_pass;
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -118,11 +119,12 @@ double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
 double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, double *z, int *params) {
     if(blocksnthreadsez[1]>0) {
+
         FilamentBendingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
                                             sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i,
                                             z, CUDAcommon::getCUDAvars().gculpritID,
                                             CUDAcommon::getCUDAvars().gculpritFF,
-                                            CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
+                                            CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;

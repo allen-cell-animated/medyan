@@ -77,7 +77,7 @@ private:
      multimap<int,Compartment*> fCompmap;
      multimap<int,Compartment*> bCompmap;
     //@}
-    
+    double bounds[2], bounds_prev[2];
     ///INITIALIZATION HELPER FUNCTIONS
     
     /// Set up an initial configuration of a network

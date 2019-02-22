@@ -29,17 +29,18 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void FilamentStretchingHarmonic::deallocate(){
-    if(!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(stream));
+//    if(!(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
     CUDAcommon::handleerror(cudaFree(ginteraction));
 }
-void FilamentStretchingHarmonic::optimalblocksnthreads( int nint){
+void FilamentStretchingHarmonic::optimalblocksnthreads(int nint, cudaStream_t stream_pass){
     //CUDA stream create
-    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+//    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    stream = stream_pass;
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -54,27 +55,31 @@ void FilamentStretchingHarmonic::optimalblocksnthreads( int nint){
         blockSize = 0;
 
         cudaOccupancyMaxPotentialBlockSizeVariableSMem(&minGridSize, &blockSize,
-                                                       FilamentStretchingHarmonicenergyz, blockToSmem, 0);
+                                                       FilamentStretchingHarmonicenergyz, blockToSmemZero, 0);
+//                                                       FilamentStretchingHarmonicenergyz, blockToSmem, 0);
         blocksnthreadsez.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsez.push_back(blockSize);
         blockSize = 0;
 
         cudaOccupancyMaxPotentialBlockSizeVariableSMem(&minGridSize, &blockSize,
                                                        FilamentStretchingHarmonicforces, blockToSmemF, 0);
+//                                                       FilamentStretchingHarmonicforces, blockToSmemZero, 0);
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
+        CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof(double),stream));
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
         char a[] = "FilamentFF";
         char b[] = "Filament Stretching Harmonic";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
         CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
-        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
-        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpyAsync(gFF, a, 100 * sizeof(char),
+                                            cudaMemcpyHostToDevice, stream));
+        CUDAcommon::handleerror(cudaMemcpyAsync(ginteraction, b, 100 * sizeof(char),
+                                           cudaMemcpyHostToDevice, stream));
     }
     else{
         blocksnthreadse.push_back(0);
@@ -111,42 +116,27 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
 
 double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
                                              double *kstr, double *eql, double *z, int *params) {
-//    nvtxRangePushA("E_wait");
-//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
-//    nvtxRangePop();
-    if(blocksnthreadse[1]>0) {
-        FilamentStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (6 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kstr, eql, params, gU_i, z, CUDAcommon::getCUDAvars()
-                .gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        CUDAcommon::handleerror( cudaGetLastError(),"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
-//        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.push_back(&stream);
-//        CUDAcommon::cudavars = cvars;
+
+//    if(blocksnthreadse[1]>0) {
+//        FilamentStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (6 * blocksnthreadse[1]) * sizeof
+//                (double), stream>>> (coord, f, beadSet, kstr, eql, params, gU_i, z, CUDAcommon::getCUDAvars()
+//                .gculpritID,
+//                CUDAcommon::getCUDAvars().gculpritFF,
+//                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
 //        CUDAcommon::handleerror( cudaGetLastError(),"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
-//        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
-    }
+//    }
 
     if(blocksnthreadsez[1]>0) {
-        FilamentStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (12 * blocksnthreadsez[1]) *
-                                                sizeof(double), stream>> > (coord, f, beadSet, kstr, eql, params, gU_i,
+        auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
+//        FilamentStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (12 * blocksnthreadsez[1]) *
+        FilamentStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (0 )*
+                                                sizeof(double), stream>> > (coord, f, beadSet,
+                                                kstr, eql, params, gU_i,
+                                                CUDAcommon::cudavars.gpu_energyvec,
                                                 z, CUDAcommon::getCUDAvars().gculpritID,
                                                 CUDAcommon::getCUDAvars().gculpritFF,
-                                                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-        CUDAcommon::handleerror( cudaGetLastError(),"FilamentStretchingHarmonicenergyz", "FilamentStretchingHarmonic"
-                ".cu");
-//        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.push_back(&stream);
-//        CUDAcommon::cudavars = cvars;
-//        CUDAcommon::handleerror(cudaGetLastError(),"FilamentStretchingHarmonicenergyz", "FilamentStretchingHarmonic"
-//                ".cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        CUDAcommon::handleerror(cudaGetLastError(),"FilamentStretchingHarmonicenergyz", "FilamentStretchingHarmonic"
-//                ".cu");
+                                                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction, boolvarvec.at(0),
+                                                boolvarvec.at(1));
     }
     if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
         return NULL;
@@ -154,24 +144,12 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
+#ifdef CUDA_INDIVIDUAL_ESUM
         double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
-//        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//            double Sum[1];
-//        CUDAcommon::handleerror(cudaMemcpy(Sum, gU_sum, sizeof(double), cudaMemcpyDeviceToHost));
-//        double *gU_sum2;
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum2, sizeof(double)));
-//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
-//                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
         resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
         addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
-//        double Sum2[1];
-//        CUDAcommon::handleerror(cudaMemcpy(Sum2, gU_sum2, sizeof(double), cudaMemcpyDeviceToHost));
-//        cudaFree(gU_sum2);
-//        std::cout<<Sum[0]<<" "<<Sum2[0]<<endl;
-//        cudaStreamSynchronize(stream);
+#endif
         CUDAcommon::handleerror( cudaGetLastError() ,"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
         return gU_sum;}
 }
@@ -180,6 +158,7 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
                                           double *kstr, double *eql, int *params){
     if(blocksnthreadsf[1]>0) {
         FilamentStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (6 * blocksnthreadsf[1]) *
+//        FilamentStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (0) *
                                                 sizeof(double), stream >> > (coord, f, beadSet, kstr, eql, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
@@ -275,7 +254,6 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
     for(int i = 0; i < nint; i += 1) {
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
-
         dist = twoPointDistance(coord1, coord2);
         invL = 1 / dist;
 
@@ -292,32 +270,22 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         f1[0] +=  f0 * ( coord2[0] - coord1[0] );
         f1[1] +=  f0 * ( coord2[1] - coord1[1] );
         f1[2] +=  f0 * ( coord2[2] - coord1[2] );
-        
-        if(f0 > 1e4){
-            cout << "High streching force" << endl;
-            cout << "coord1 = " << coord1[0] << " " << coord1[1] << " " << coord1[2] << endl;
-            cout << "coord2 = " << coord2[0] << " " << coord2[1] << " " << coord2[2] << endl;
-            cout << "f0 = " << f0 << endl;
-            cout << "dist = " << dist << endl;
-            cout << "nint = " << nint<<endl;
-            Bead::getBeads()[beadSet[n * i]]->printSelf();
-            Bead::getBeads()[beadSet[n * i+1]]->printSelf();
-        }
-
-//        std::cout<<i<<" "<< f0 * ( coord1[0] - coord2[0] )<<" "<<
-//        f0 * ( coord1[1] - coord2[1] )<<" "<<
-//        f0 * ( coord1[2] - coord2[2] )<<" "<<
-//        f0 * ( coord2[0] - coord1[0] )<<" "<<
-//        f0 * ( coord2[1] - coord1[1] )<<" "<<
-//        f0 * ( coord2[2] - coord1[2] )<<endl;
-//        std::cout<<i<<" "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
-//        std::cout<<i<<" "<<kstr[i]<<" "<<f0<<" "<<dist<<" "<<eql[i]<<" "
-//                ""<<invL<<" "<<coord1[0]<<" "
-//                ""<<coord1[1]<<" "
-//                ""<<coord1[2]<<" "<<coord2[0]<<" "
-//                ""<<coord2[1]<<" "<<coord2[2]<<endl;
+/*        std::cout<<"Fil stretch "<<i<<" "<< f0 * ( coord1[0] - coord2[0] )<<" "<<
+        f0 * ( coord1[1] - coord2[1] )<<" "<<
+        f0 * ( coord1[2] - coord2[2] )<<" "<<
+        f0 * ( coord2[0] - coord1[0] )<<" "<<
+        f0 * ( coord2[1] - coord1[1] )<<" "<<
+        f0 * ( coord2[2] - coord1[2] )<<endl;*/
+/*        std::cout<<i<<" "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<"
+ * "<<f2[2]<<endl;*/
+/*        std::cout<<i<<" "<<beadSet[n * i]<<" "<<beadSet[n * i + 1]<<" "<<kstr[i]<<" "
+                ""<<f0<<" "
+                ""<<dist<<" "
+                ""<<eql[i]<<" "
+                ""<<invL<<" "<<coord1[0]<<" "
+                ""<<coord1[1]<<" "
+                ""<<coord1[2]<<" "<<coord2[0]<<" "
+                ""<<coord2[1]<<" "<<coord2[2]<<endl;*/
     }
 
 }
-
-

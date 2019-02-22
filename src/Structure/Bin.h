@@ -20,6 +20,12 @@
 
 #include "common.h"
 #include "Composite.h"
+
+#ifdef SIMDBINDINGSEARCH2
+#include "dist_driver.h"
+#include "dist_coords.h"
+#endif
+
 //#include "Cylinder.h"
 /*!
  * Bin is a spatial voxel subset of reaction volume. Bin is exclusively used to calculate
@@ -37,14 +43,22 @@ protected:
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this bin
 
     vector<Bin*> _neighbours; ///< Neighbors of the bin
-
+    vector<Bin*> _uniquepermutationneighbours;
     ///OTHER BIN PROPERTIES
     vector<double> _coords;  ///< Coordinates of this bin
     short _binGridType = -1;
+    vector<int> cindicesvector;
 
 public:
+    short _ID = 0;
+    vector<int> stencilID; /// template stencil has neighboring bins numbered from 0-26.
+/// stencilID vector stores which of those 27 bins are neighbors to the current bin.
+/// 13 refers to self
+
     // Default constructor, only takes in number of dimensions
-    Bin(short binGridType) : _neighbours(), _binGridType(binGridType) {}
+    Bin(short binGridType, short ID) : _neighbours(), _binGridType(binGridType){
+        _ID = ID;
+    }
 
     // Constructor which clones another bin
     Bin(const Bin &C) : _neighbours()
@@ -111,6 +125,24 @@ public:
             _neighbours.erase(nit);
     }
 
+    //Add unique permutation neighbor
+    void adduniquepermutationNeighbour(Bin *comp) {
+        auto nit = find(_uniquepermutationneighbours.begin(),
+                _uniquepermutationneighbours.end(), comp);
+        if(nit==_uniquepermutationneighbours.end())
+            _uniquepermutationneighbours.push_back(comp);
+        else
+            throw runtime_error(
+                    "Bin::addNeighbour(): Bin is already a unique permutation neighbour");
+    }
+
+    void removeuniquepermutationNeighbour(Bin *comp) {
+        auto nit = find(_uniquepermutationneighbours.begin(),
+                _uniquepermutationneighbours.end(), comp);
+        if(nit!=_uniquepermutationneighbours.end())
+            _uniquepermutationneighbours.erase(nit);
+    }
+
     /// Clone a bin
     /// @note - this does not clone the neighbors, just reactions and species
 //    virtual Bin* clone() {
@@ -125,6 +157,8 @@ public:
     vector<Bin*> getNeighbours() {return _neighbours;}
 //    const vector<Bin*>& getNeighbours() const {return _neighbours;}
 
+    vector<Bin*> getuniquepermutationNeighbours() {return _uniquepermutationneighbours;}
+
     /// Print properties of this bin
     virtual void printSelf() override {
         cout << this->getFullName() << "\n"
@@ -134,5 +168,30 @@ public:
     //GetType implementation just returns zero (no Bin types yet)
     virtual int getType() override {return 0;}
 
+    void updatecindices();
+
+    vector<int> getcindices(){return cindicesvector;}
+
+    //TESTING
+#ifdef SIMDBINDINGSEARCH2
+        vector<uint16_t> cindex_bs;
+        vector<uint32_t> cID_bs;
+        vector<int> Cyldcindexvec;
+        vector<int> CylcIDvec;
+        dist::Coords bscoords;
+        dist::Coords bscoordslinker;
+        dist::Coords bscoordsmotor;
+
+    template<bool LinkerorMotor>
+    dist::Coords& getSIMDcoords(){
+        if(LinkerorMotor)
+            return bscoordslinker;
+        else
+            return bscoordsmotor;
+    }
+        void createSIMDcoordinates();
+        void createSIMDcoordinates4linkersearch(bool isvectorizedgather);
+        void createSIMDcoordinates4motorsearch(bool isvectorizedgather);
+#endif
 };
 #endif

@@ -54,18 +54,20 @@ using namespace mathfunc;
 //
 //};
 void CylinderExclVolRepulsion::deallocate(){
-    if(!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(stream),"cuda stream", "CylinderExclVolume.cu");
+//    if(!(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamDestroy(stream),"cuda stream",
+// "CylinderExclVolumeRepulsion.cu");
     CUDAcommon::handleerror(cudaFree(gU_i),"cudaFree", "CylinderExclVolume.cu");
     CUDAcommon::handleerror(cudaFree(gU_sum),"cudaFree", "CylinderExclVolume.cu");
     CUDAcommon::handleerror(cudaFree(gFF),"cudaFree", "CylinderExclVolume.cu");
     CUDAcommon::handleerror(cudaFree(ginteraction),"cudaFree", "CylinderExclVolume.cu");
 }
-void CylinderExclVolRepulsion::optimalblocksnthreads( int nint) {
-    //CUDA stream create
-    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamCreate(&stream),"cuda stream", "CylinderExclVolume.cu");
+void CylinderExclVolRepulsion::optimalblocksnthreads( int nint, cudaStream_t stream_pass) {
+//    //CUDA stream create
+//    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamCreate(&stream),"cuda stream", "CylinderExclVolume.cu");
     //
+    stream = stream_pass;
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -103,18 +105,21 @@ void CylinderExclVolRepulsion::optimalblocksnthreads( int nint) {
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)),"cuda data transfer",
+        CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof(double), stream),
+                                "cuda data transfer",
                                 "CylinderExclVolume.cu");
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)),"cuda data transfer",
-//                                "CylinderExclVolume.cu");
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)),"cuda data transfer",
+                                "CylinderExclVolume.cu");
         CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)),"cuda data transfer",
                                 "CylinderExclVolume.cu");
         char a[] = "Excluded Volume";
         char b[] =  "Cylinder Excluded Volume";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
         CUDAcommon::handleerror(cudaMalloc((void **) &ginteraction, 100 * sizeof(char)));
-        CUDAcommon::handleerror(cudaMemcpy(gFF, a, 100 * sizeof(char), cudaMemcpyHostToDevice));
-        CUDAcommon::handleerror(cudaMemcpy(ginteraction, b, 100 * sizeof(char), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpyAsync(gFF, a, 100 * sizeof(char),
+                                            cudaMemcpyHostToDevice, stream));
+        CUDAcommon::handleerror(cudaMemcpyAsync(ginteraction, b, 100 * sizeof(char),
+                                            cudaMemcpyHostToDevice, stream));
 
 
 }
@@ -132,27 +137,26 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
                                         double *krep, int *params) {
 //    if(blocksnthreadse[1]>0) {
 //
-//        nvtxRangePushA("cceecalc");
+
 //        CUDAExclVolRepulsionenergy << < blocksnthreadse[0], blocksnthreadse[1],
 //                (12 * blocksnthreadse[1]) * sizeof(double), stream >> >(coord, f, beadSet, krep, params, gU_i,
 //                CUDAcommon::getCUDAvars().gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
 ////        CUDAcommon::handleerror(cudaEventRecord(event, stream));
-//        nvtxRangePop();
-//        nvtxRangePushA("cceeError");
+
+
 //        CUDAcommon::handleerror(cudaGetLastError(),"CUDAExclVolRepulsionenergy", "CylinderExclVolumeRepulsion.cu");
-//        nvtxRangePop();
-//        nvtxRangePushA("cceeadd");
+
 //        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0, stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        nvtxRangePop();
+
 //        auto cvars = CUDAcommon::getCUDAvars();
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
-//        nvtxRangePushA("cceeError");
+
 //        CUDAcommon::handleerror( cudaGetLastError() ,"CUDAExclVolRepulsionenergy", "CylinderExclVolumeRepulsion.cu");
-//        nvtxRangePop();
+
 //
 //        return gU_sum;
 //    }
@@ -160,83 +164,39 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 }
 
 double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, double *krep, double *z, int *params) {
-//    nvtxRangePushA("E_wait");
-//    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
-//    nvtxRangePop();
 
-    if(blocksnthreadse[1]>0) {
-
-//        nvtxRangePushA("cceecalc");
-        CUDAExclVolRepulsionenergy << < blocksnthreadse[0], blocksnthreadse[1],
-                (12 * blocksnthreadse[1]) * sizeof(double), stream >> >(coord, f, beadSet, krep, params, gU_i, z,
-                CUDAcommon::getCUDAvars().gculpritID,
-                CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-//        CUDAcommon::handleerror(cudaEventRecord(event, stream));
-//        nvtxRangePop();
-//        nvtxRangePushA("cceeError");
-        CUDAcommon::handleerror(cudaGetLastError(),"CUDAExclVolRepulsionenergy", "CylinderExclVolumeRepulsion.cu");
-//        nvtxRangePop();
-//        nvtxRangePushA("cceeadd");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0, stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        nvtxRangePop();
-//        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.push_back(&stream);
-//        CUDAcommon::cudavars = cvars;
-//        nvtxRangePushA("cceeError");
-//        CUDAcommon::handleerror( cudaGetLastError() ,"CUDAExclVolRepulsionenergy", "CylinderExclVolumeRepulsion.cu");
-//        nvtxRangePop();
-//
-//        return gU_sum;
-    }
+//    if(blocksnthreadse[1]>0) {
+//        CUDAExclVolRepulsionenergy << < blocksnthreadse[0], blocksnthreadse[1],
+//                (12 * blocksnthreadse[1]) * sizeof(double), stream >> >(coord, f, beadSet, krep, params, gU_i, z,
+//                CUDAcommon::getCUDAvars().gculpritID,
+//                CUDAcommon::getCUDAvars().gculpritFF,
+//                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
+//        CUDAcommon::handleerror(cudaGetLastError(),"CUDAExclVolRepulsionenergy", "CylinderExclVolumeRepulsion.cu");
+//    }
     if(blocksnthreadsez[1]>0) {
-
-//        nvtxRangePushA("cceezcalc");
+        auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
         CUDAExclVolRepulsionenergyz << < blocksnthreadsez[0], blocksnthreadsez[1],
-                12 * blocksnthreadsez[1] * sizeof(double),stream >> > (coord, f, beadSet, krep, params, gU_i, z,
+                12 * blocksnthreadsez[1] * sizeof(double),stream >> > (coord, f, beadSet,
+                krep, params, gU_i, CUDAcommon::cudavars.gpu_energyvec, z,
                 CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
-                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-//        cudaEventRecord(event, stream);
-//        nvtxRangePop();
-//        nvtxRangePushA("cceezError");
-        CUDAcommon::handleerror(cudaGetLastError(),"CUDAExclVolRepulsionenergyz", "CylinderExclVolumeRepulsion.cu");
-//        nvtxRangePop();
-//        nvtxRangePushA("cceezadd");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0, stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//
-//        nvtxRangePop();
-//        auto cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.push_back(&stream);
-//        CUDAcommon::cudavars = cvars;
-//        nvtxRangePushA("cceezError");
-//        CUDAcommon::handleerror( cudaGetLastError(),"CUDAExclVolRepulsionenergyz", "CylinderExclVolumeRepulsion.cu");
-//        nvtxRangePop();
-//        return gU_sum;
+                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction, boolvarvec.at(0),
+                boolvarvec.at(1));
     }
     if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
         return NULL;
     else{
-//        nvtxRangePushA("cceeadd");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-//        addvector<<<1,1,0, stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
-//        cudaStreamSynchronize(stream);
-//        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
-//                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
-                params, gU_sum, gpu_Utot);
-//        nvtxRangePop();
+#ifdef CUDA_INDIVIDUAL_ESUM
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-//        nvtxRangePushA("cceeError");
-        CUDAcommon::handleerror( cudaGetLastError() ,"CUDAExclVolRepulsionenergy", "CylinderExclVolumeRepulsion.cu");
-//        nvtxRangePop();
+        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+                params, gU_sum, gpu_Utot);
+#endif
+                CUDAcommon::handleerror( cudaGetLastError() ,"CUDAExclVolRepulsionenergy",
+"CylinderExclVolumeRepulsion.cu");
         return gU_sum;
     }
 }
@@ -377,6 +337,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
     U_i = 0.0;
     U = 0.0;
     newc2 = new double[3];
+//    std::cout<<"SERL ecvol nint "<<nint<<endl;
     for (int i = 0; i < nint; i++) {
 
         c1 = &coord[3 * beadSet[n * i]];
@@ -390,11 +351,11 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
 
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
-
-            dsq = twoPointDistancesquared(c1, c3);
-            invDSquare =  1 / dsq;
+//            SysParams::exvolcounter[0] += 1;
+            d = twoPointDistance(c1, c3);
+            invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
-//            std::cout<<U_i<<endl;
+//            std::cout<<i<<" "<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
 
@@ -407,13 +368,14 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
 
         //check if in same plane
         if(areInPlane(c1, c2, c3, c4)) {
-
+//            SysParams::exvolcounter[1] += 1;
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
-//            std::cout<<"old c2 "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
             c2 = newc2;
-//            std::cout<<"new c2 "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<endl;
         }
+//        else
+//            SysParams::exvolcounter[2] += 1;
+
 
         a = scalarProduct(c1, c2, c1, c2);
         b = scalarProduct(c3, c4, c3, c4);
@@ -442,8 +404,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
 
         U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-//        std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" ";
-//        std::cout<<U_i<<endl;
+//        std::cout<<i<<" "<<U_i<<endl;
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
 
@@ -529,9 +490,9 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 //                 c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
-
-            dsq = twoPointDistancesquared(c1, c3);
-            invDSquare =  1 / dsq;
+//            SysParams::exvolcounterz[0] += 1;
+            d = twoPointDistance(c1, c3);
+            invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
 //            std::cout<<"P Energy"<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<double>::infinity()
@@ -546,7 +507,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 
         //check if in same plane
         if(areInPlane(c1, c2, c3, c4)) {
-
+//            SysParams::exvolcounterz[1] += 1;
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
             c2 = newc2;
@@ -555,6 +516,9 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 //                    ""<<c3[1]<<" "
 //                             ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<" "<<U_i<<endl;
         }
+//        else{
+//            SysParams::exvolcounterz[2] += 1;
+//        }
         a = scalarProduct(c1, c2, c1, c2);
         b = scalarProduct(c3, c4, c3, c4);
         c = scalarProduct(c3, c1, c3, c1);

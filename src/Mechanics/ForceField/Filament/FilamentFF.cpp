@@ -80,9 +80,7 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
     double U_i=0.0;
 
     for (auto &interaction : _filamentInteractionVector) {
-//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_filamentInteractionVector.size()<<endl;
         U_i = interaction->computeEnergy(coord, f, d);
-//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentFF","FilamentFF");
         if(U_i <= -1) {
             //set culprit and return
             _culpritInteraction = interaction.get();
@@ -101,7 +99,6 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
 void FilamentFF::computeForces(double *coord, double *f) {
 //    double *F_i = new double[CGMethod::N];
     for (auto &interaction : _filamentInteractionVector) {
-//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_filamentInteractionVector.size()<<endl;
         interaction->computeForces(coord, f);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 

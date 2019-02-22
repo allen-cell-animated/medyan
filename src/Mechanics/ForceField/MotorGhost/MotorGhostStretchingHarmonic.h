@@ -33,7 +33,7 @@ public:
                 double *kstr, double *eql, double *pos1, double *pos2, double
                 *stretchforce);
 #ifdef CUDAACCL
-    void optimalblocksnthreads(int nint);
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
 
     double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql,
                   double *pos1, double *pos2, int *params);

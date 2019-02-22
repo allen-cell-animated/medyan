@@ -20,6 +20,7 @@
 
 //FORWARD DECLARATIONS
 class NeighborList;
+class HybridNeighborList;
 
 /// An abstract class to represent various force field calculations
 /*!
@@ -42,6 +43,7 @@ public:
     /// @return  the energy value if valid. If an inf or NaN value has been
     /// calculated, return -1.
     virtual double computeEnergy(double *coord, double *f, double d) = 0;
+
     /// Compute forces of this forcefield in the system. Update Bead
     /// forces accordingly.
     virtual void computeForces(double *coord, double *f) = 0;
@@ -56,7 +58,8 @@ public:
     
     /// Get all neighbor lists associated with a ForceField
     virtual vector<NeighborList*> getNeighborLists() = 0;
-    
+
+    virtual void setHNeighborLists(HybridNeighborList* Hnl){};
     // assign stretchforces for Linker and Motor. Can be extended to other FFs as well.
     virtual void assignforcemags(){};
 };

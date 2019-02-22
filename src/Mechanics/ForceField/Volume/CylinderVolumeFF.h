@@ -15,6 +15,7 @@
 #define MEDYAN_CylinderVolumeFF_h
 
 #include <vector>
+#include <HybridNeighborListImpl.h>
 
 #include "common.h"
 
@@ -51,6 +52,9 @@ public:
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists();
+#ifdef HYBRID_NLSTENCILLIST
+    virtual void setHNeighborLists(HybridCylinderCylinderNL* Hnl);
+#endif
 };
 
 #endif

@@ -4,26 +4,69 @@
 
 #ifndef CUDA_VEC_CUDACOMMON_H
 #define CUDA_VEC_CUDACOMMON_H
-
-#ifdef CUDAACCL
 #include <vector>
 #include <list>
-#include <src/Mechanics/ForceField/Filament/FilamentStretchingHarmonic.h>
-#include <src/Mechanics/ForceField/Filament/FilamentBendingHarmonic.h>
-#include <src/Mechanics/ForceField/Filament/FilamentBendingCosine.h>
-#include <src/Mechanics/ForceField/Linker/LinkerStretchingHarmonic.h>
-#include <src/Mechanics/ForceField/MotorGhost/MotorGhostStretchingHarmonic.h>
-#include <src/Mechanics/ForceField/Volume/CylinderExclVolRepulsion.h>
-#include <src/Mechanics/ForceField/Branching/BranchingStretchingHarmonic.h>
-#include <src/Mechanics/ForceField/Branching/BranchingBendingCosine.h>
-#include <src/Mechanics/ForceField/Branching/BranchingDihedralCosine.h>
-#include <src/Mechanics/ForceField/Branching/BranchingPositionCosine.h>
-#include <src/Mechanics/ForceField/Boundary/BoundaryCylinderRepulsionExp.h>
-
+#include <FilamentStretchingHarmonic.h>
+#include <FilamentBendingHarmonic.h>
+#include <FilamentBendingCosine.h>
+#include <LinkerStretchingHarmonic.h>
+#include <MotorGhostStretchingHarmonic.h>
+#include <CylinderExclVolRepulsion.h>
+#include <BranchingStretchingHarmonic.h>
+#include <BranchingBendingCosine.h>
+#include <BranchingDihedralCosine.h>
+#include <BranchingPositionCosine.h>
+#include <BoundaryCylinderRepulsionExp.h>
+#include "CCylinder.h"
 #include "common.h"
 #include "string.h"
 #include "MathFunctions.h"
+#include "dist_driver.h"
 using namespace mathfunc;
+struct bin{
+    int binID;
+    double bincoord[3];
+    int neighbors[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                          -1,-1,-1,-1,-1,-1};
+    int binstencilID[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+                          -1,-1,-1,-1,-1,-1};
+};
+    struct cylinder{
+        int filamentID = -1;
+        int filamentposition = -1;
+        int bindices[2];
+        int cmpID = -1;
+        long cindex = -1;
+        double coord[3];
+        short type = -1;
+        int ID = -1;
+        int availbscount = -1;
+    };
+struct SERLvars{
+    double *coord = NULL;
+    cylinder *cylindervec = NULL;
+    CCylinder **ccylindervec = NULL;
+    Cylinder **cylinderpointervec = NULL;
+    uint N = 6000;
+
+};
+template <uint D>
+dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> params) {
+
+    if (dim == 1) {
+        dist::dOut<1> out_serialdim(N1, params);
+        return out_serialdim;
+    }
+    else if (dim == 2) {
+        dist::dOut<2> out_serialdim(N1, params);
+        return out_serialdim;
+    }
+    else if (dim == 3){
+        dist::dOut<3> out_serialdim(N1, params);
+        return out_serialdim;
+    }
+}
+#if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     double * gpu_force = NULL;
     double * gpu_forceAux = NULL;
@@ -33,8 +76,11 @@ struct CUDAvars {
     float vectorize = 0.0;
     double * gpu_energy = NULL;
     bool * gpu_btstate = NULL;
+    cylinder* gpu_cylindervec = NULL;
+#ifdef CUDAACCL
     vector<cudaStream_t*> streamvec;
     vector<cudaEvent_t> eventvec;
+#endif
     int* culpritID = NULL;
     int* gculpritID = NULL;
     char* gculpritFF = NULL;
@@ -43,6 +89,9 @@ struct CUDAvars {
     char* culpritinteraction = NULL;
     size_t memincuda = 0;
     bool conservestreams = true;
+    int offset_E = 0;
+    double *gpu_energyvec = NULL;
+    vector<bool*> backtrackbools;
 //    cudaEvent_t *event;
 
 //    float Ccforce = 0.0;
@@ -66,12 +115,57 @@ struct CylCylNLvars {
     int *gpu_cmon_state_linker;
     int *gpu_cmon_state_motor;
 //    int *gpu_cylvecpospercmp;
+
+    bin* bins;
+
 };
 
+struct SERLtime {
+    double TvectorizeFF = 0.0;
+    double TcomputeE = 0.0;
+    double TcomputeEiter = 0.0;
+    int Ecount = 0;
+    double TcomputeF= 0.0;
+    double Tlambda = 0.0;
+    double TshiftGrad= 0.0;
+    double TmaxF= 0.0;
+    double Tcalculatedot = 0.0;
+    vector<double>TvecvectorizeFF;
+    vector<double>TveccomputeE;
+    vector<double>TveccomputeF;
+    vector<double>Tlambdavec;
+    vector<double>Tlambdap;
+    vector<double>Tlambdapcount;
+};
+
+struct CUDAtime {
+    double TvectorizeFF = 0.0;
+    double TcomputeE = 0.0;
+    double TcomputeEiter = 0.0;
+    int Ecount = 0;
+    double TcomputeF= 0.0;
+    double Tlambda = 0.0;
+    double TshiftGrad= 0.0;
+    double TmaxF= 0.0;
+    double Tcalculatedot = 0.0;
+    double Tstartmin = 0.0;
+    vector<double>TvecvectorizeFF;
+    vector<double>TveccomputeE;
+    vector<double>TveccomputeF;
+    vector<double>Tlambdavec;
+    vector<double>Tlambdap;
+    vector<double>Tlambdapcount;
+};
+#endif
 class CUDAcommon{
 public:
+    static SERLvars serlvars;
+    static const SERLvars& getSERLvars(){return serlvars;}
+#ifdef CUDAACCL
     static CUDAvars cudavars;
     static CylCylNLvars cylcylnlvars;
+    static SERLtime serltime;
+    static CUDAtime cudatime;
     static const CUDAvars& getCUDAvars(){return cudavars;}
     static const CylCylNLvars& getCylCylNLvars(){return cylcylnlvars;}
     static void handleerror(cudaError_t a){
@@ -127,8 +221,7 @@ public:
         cout << "The culprit was ... " << tag1 << endl;
         cout << "Culprit interaction = " << tag2 << endl;
     }
-
-};
 #endif
+};
 #endif
 //CUDA_VEC_CUDACOMMON_H

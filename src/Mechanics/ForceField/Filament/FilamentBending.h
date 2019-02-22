@@ -42,6 +42,7 @@ private:
     int * gpu_params;
     CUDAvars cvars;
     double *F_i;
+    cudaStream_t stream = NULL;
 #endif
 public:
     

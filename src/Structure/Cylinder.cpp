@@ -26,9 +26,83 @@
 
 using namespace mathfunc;
 
+//static vars needed to vectorize on-the-fly
+int Cylinder::maxcindex = 0;
+int Cylinder::vectormaxsize = 0;
+int Cylinder::Ncyl = 0;
+//bool Cylinder::triggercylindervectorization = false;
+vector<int> Cylinder::removedcindex;//vector of bead indices that were once alloted to other
+// beads but are free to be reallocated now.
+void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
+                        CCylinder** ccylindervec){
+    int i = 0;
+    for(auto cyl:_cylinders.getElements()){
+        //set _dcIndex
+        cyl->_dcIndex = i;
+        //copy attributes to a structure array
+        cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getID();
+        cylindervec[i].filamentposition = cyl->getPosition();
+        cylindervec[i].bindices[0] = cyl->getFirstBead()->_dbIndex;
+        cylindervec[i].bindices[1] = cyl->getSecondBead()->_dbIndex;
+        cylindervec[i].cmpID = cyl->getCompartment()->getID();
+        cylindervec[i].cindex = i;
+        auto coord = cyl->coordinate;
+        cylindervec[i].coord[0] = coord[0];
+        cylindervec[i].coord[1] = coord[1];
+        cylindervec[i].coord[2] = coord[2];
+        cylindervec[i].type = cyl->getType();
+        cylindervec[i].ID = cyl->getID();
+        //other arrays needed
+        ccylindervec[i] = cyl->getCCylinder();
+        cylinderpointervec[i] = cyl;
+        i++;
+    }
+    removedcindex.clear();
+    Ncyl = _cylinders.getElements().size();
+    maxcindex = Ncyl;
+}
+
+void  Cylinder::copytoarrays() {
+    long i =_dcIndex;
+    cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
+    Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
+    //copy attributes to a structure array
+    cylindervec[i].filamentID = dynamic_cast<Filament*>(this->getParent())->getID();
+    cylindervec[i].filamentposition = _position;
+    cylindervec[i].bindices[0] = _b1->_dbIndex;
+    cylindervec[i].bindices[1] = _b2->_dbIndex;
+    cylindervec[i].cmpID = _compartment->getID();
+    cylindervec[i].cindex = i;
+    cylindervec[i].type = _type;
+    cylindervec[i].ID = _ID;
+    //update coordinate in updatecoordinate
+/*    auto coord = coordinate;
+    cylindervec[i].coord[0] = coord[0];
+    cylindervec[i].coord[1] = coord[1];
+    cylindervec[i].coord[2] = coord[2];*/
+
+    //other arrays needed
+/*    ccylindervec[i] = _cCylinder.get();
+    cylinderpointervec[i] = this;*/
+}
+
+void Cylinder::resetarrays() {
+    cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
+    Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
+    resetcylinderstruct(cylindervec, _dcIndex);
+    cylinderpointervec[_dcIndex] = NULL;
+    ccylindervec[_dcIndex] = NULL;
+}
+
 void Cylinder::updateCoordinate() {
-    
     coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
+    //update the coordiante in cylinder structure.
+    cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
+    cylindervec[_dcIndex].coord[0] = coordinate[0];
+    cylindervec[_dcIndex].coord[1] = coordinate[1];
+    cylindervec[_dcIndex].coord[2] = coordinate[2];
 }
 
 
@@ -39,19 +113,39 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
       _b1(b1), _b2(b2), _type(type), _position(position), _ID(_cylinders.getID()) {
     
     parent->addChild(unique_ptr<Component>(this));
-          
+    //revectorize if needed
+    revectorizeifneeded();
+    //set cindex based on maxbindex if there were no cylinders removed.
+    if(removedcindex.size() == 0)
+    {_dcIndex = maxcindex;
+        maxcindex++;
+    }
+        // if cylinders were removed earlier, allot one of the available bead indices.
+    else{
+//        std::cout<<"reusing cindex "<<*removedcindex.begin()<<" with ID "<<_ID<<endl;
+        _dcIndex = *removedcindex.begin();
+        removedcindex.erase(removedcindex.begin());
+    }
+    Ncyl = _cylinders.getElements().size();
+    //check if you need to revectorize.
+    cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
+    Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
+    //copy attributes to a structure array
+    cylindervec[_dcIndex].filamentID = dynamic_cast<Filament*>(this->getParent())->getID();
+    cylindervec[_dcIndex].filamentposition = _position;
+    cylindervec[_dcIndex].bindices[0] = _b1->_dbIndex;
+    cylindervec[_dcIndex].bindices[1] = _b2->_dbIndex;
+
     //Set coordinate
     updateCoordinate();
 
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what() << endl;
-
-//        cout << "Creating Cylinder: ptr = " << this << endl;
-        
         exit(EXIT_FAILURE);
     }
-                   
+
    //add to compartment
    _compartment->addCylinder(this);
           
@@ -89,17 +183,31 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
     _cCylinder->setCylinder(this);
-          
+
+    //copy further components to the array
+    cylindervec[_dcIndex].cmpID = _compartment->getID();
+    cylindervec[_dcIndex].cindex = _dcIndex;
+    cylindervec[_dcIndex].type = _type;
+    cylindervec[_dcIndex].ID = _ID;
+    //other arrays needed
+    ccylindervec[_dcIndex] = _cCylinder.get();
+    cylinderpointervec[_dcIndex] = this;
+
     //init using chem manager
     _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
                                       extensionBack, initialization);
 #endif
-
-        
+    /*//copy further components to the array
+    cylindervec[_dcIndex].cmpID = _compartment->getID();
+    cylindervec[_dcIndex].cindex = _dcIndex;
+    cylindervec[_dcIndex].type = _type;
+    cylindervec[_dcIndex].ID = _ID;
+    //other arrays needed
+    ccylindervec[_dcIndex] = _cCylinder.get();
+    cylinderpointervec[_dcIndex] = this;*/
 }
 
 Cylinder::~Cylinder() noexcept {
-//    std::cout<<"Removing cylinder from Cmpt "<<this<<endl;
     //remove from compartment
     _compartment->removeCylinder(this);
     
@@ -114,7 +222,6 @@ void Cylinder::updatePosition() {
     updateCoordinate();
 
     Compartment* c;
-//    std::cout<<coordinate[0]<<" "<<coordinate[1]<<" "<<coordinate[2]<<endl;
     try {c = GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what();
@@ -135,23 +242,42 @@ void Cylinder::updatePosition() {
         _compartment->removeCylinder(this);
         _compartment = c;
         _compartment->addCylinder(this);
-        
+
 #ifdef CHEMISTRY
         auto oldCCylinder = _cCylinder.get();
         
         //Remove old ccylinder from binding managers
-        for(auto &manager : oldCompartment->getFilamentBindingManagers())
+        for(auto &manager : oldCompartment->getFilamentBindingManagers()) {
+#ifdef NLORIGINAL
             manager->removePossibleBindings(oldCCylinder);
-        
+#endif
+#ifdef NLSTENCILLIST
+            manager->removePossibleBindingsstencil(oldCCylinder);
+#endif
+        }
+
         //clone and set new ccylinder
         CCylinder* clone = _cCylinder->clone(c);
         setCCylinder(clone);
         
         auto newCCylinder = _cCylinder.get();
+
+//        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
+        //change both CCylinder and Compartment ID in the vector
+        CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getID();
+        CUDAcommon::serlvars.cylinderpointervec[_dcIndex] =  this;
+        CUDAcommon::serlvars.ccylindervec[_dcIndex] =  _cCylinder.get();
         
         //Add new ccylinder to binding managers
-        for(auto &manager : newCompartment->getFilamentBindingManagers())
+        for(auto &manager : newCompartment->getFilamentBindingManagers()){
+#ifdef NLORIGINAL
             manager->addPossibleBindings(newCCylinder);
+#endif
+#ifdef NLSTENCILLIST
+            //This directs call to Hybrid Binding Manager.
+            manager->addPossibleBindingsstencil(newCCylinder);
+#endif
+        }
     }
 #endif
     

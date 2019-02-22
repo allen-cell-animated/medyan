@@ -102,13 +102,9 @@ void BranchingFF::whoIsCulprit() {
 
 double BranchingFF::computeEnergy(double *coord, double *f, double d) {
 
-    double U= 0.0;
+    double U = 0.0;
     double U_i=0.0;
-#ifdef SERIAL_CUDACROSSCHECK
-//    std::cout<<"-----------"<<endl;
-#endif
     for (auto &interaction : _branchingInteractionVector) {
-//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_branchingInteractionVector.size()<<endl;
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
 //        std::cout<<interaction->getName()<<endl;

@@ -73,6 +73,7 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
                    int numBeads, string projectionType)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
+
     
     //create a projection of beads
     vector<vector<double>> tmpBeadsCoord;
@@ -95,7 +96,6 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
         
     Bead* b1 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[0], this, 0);
     Bead* b2 = _subSystem->addTrackable<Bead>(tmpBeadsCoord[1], this, 1);
-    
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b1, b2, _filType, 0,
                                                       false, false, true);
         
@@ -261,6 +261,7 @@ void Filament::extendMinusEnd(short minusEnd) {
     CMonomer* m = newCCylinder->getCMonomer(newCCylinder->getSize() - 1);
     
     m->speciesMinusEnd(minusEnd)->up();
+
 #endif
     
 #ifdef DYNAMICRATES
@@ -348,6 +349,13 @@ void Filament::polymerizePlusEnd() {
     
     b2->coordinate = nextPointProjection(b2->coordinate,
     SysParams::Geometry().monomerSize[_filType], direction);
+    //update vector structure
+    int cidx = cBack->_dcIndex;
+    int bidx = b2->_dbIndex;
+    for(int i=0; i < 3; i++) {
+        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->coordinate[i];
+        CUDAcommon::serlvars.coord[3 * bidx + i] = b2->coordinate[i];
+    }
     
 #ifdef MECHANICS
     //increment load
@@ -380,6 +388,13 @@ void Filament::polymerizeMinusEnd() {
     
     b1->coordinate = nextPointProjection(b1->coordinate,
     SysParams::Geometry().monomerSize[_filType], direction);
+    //update vector structure
+    int cidx = cFront->_dcIndex;
+    int bidx = b1->_dbIndex;
+    for(int i=0; i < 3; i++) {
+        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->coordinate[i];
+        CUDAcommon::serlvars.coord[3 * bidx + i] = b1->coordinate[i];
+    }
 
 #ifdef MECHANICS
     
@@ -413,6 +428,13 @@ void Filament::depolymerizePlusEnd() {
     
     b2->coordinate = nextPointProjection(b2->coordinate,
     SysParams::Geometry().monomerSize[_filType], direction);
+    //update vector structure
+    int cidx = cBack->_dcIndex;
+    int bidx = b2->_dbIndex;
+    for(int i=0; i < 3; i++) {
+        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->coordinate[i];
+        CUDAcommon::serlvars.coord[3 * bidx + i] = b2->coordinate[i];
+    }
     
 #ifdef MECHANICS
     
@@ -444,6 +466,13 @@ void Filament::depolymerizeMinusEnd() {
     
     b1->coordinate = nextPointProjection(b1->coordinate,
     SysParams::Geometry().monomerSize[_filType], direction);
+    //update vector structure
+    int cidx = cFront->_dcIndex;
+    int bidx = b1->_dbIndex;
+    for(int i=0; i < 3; i++) {
+        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->coordinate[i];
+        CUDAcommon::serlvars.coord[3 * bidx + i] = b1->coordinate[i];
+    }
     
 #ifdef MECHANICS
     

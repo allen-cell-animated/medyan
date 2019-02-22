@@ -27,7 +27,7 @@
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
 #endif
-    
+
 #ifdef BOOST_POOL_MEM_PQNODE
 boost::pool<> allocator_pqnode(sizeof(PQNode),BOOL_POOL_NSIZE);
 #endif
@@ -43,7 +43,7 @@ void PQNode::operator delete(void* ptr) noexcept {
     boost::fast_pool_allocator<PQNode>::deallocate((PQNode*)ptr);
 }
 #endif
- 
+
 #ifdef BOOST_POOL_MEM_RNODENRM
 void* RNodeNRM::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<RNodeNRM>::allocate();
@@ -95,7 +95,7 @@ void RNodeNRM::updateHeap() {
 void RNodeNRM::generateNewRandTau() {
     double newTau;
     reComputePropensity();//calculated new _a
-    
+
 #ifdef TRACK_ZERO_COPY_N
     newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
@@ -136,7 +136,7 @@ ChemNRMImpl::~ChemNRMImpl() {
 
 double ChemNRMImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
-    
+
     _exp_distr.param(pm);
 #ifdef DEBUGCONSTANTSEED
     Rand::counter++;
@@ -182,9 +182,9 @@ bool ChemNRMImpl::makeStep() {
 
     _t=tau_top;
     syncGlobalTime();
-    //std::cout<<"------------"<<endl;
-    //rn->printSelf();
-    //std::cout<<"------------"<<endl;
+/*    std::cout<<"------------"<<endl;
+    rn->printSelf();
+    std::cout<<"------------"<<endl;*/
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){

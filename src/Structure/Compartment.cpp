@@ -17,23 +17,263 @@
 #include "Parser.h"
 //REMOVE LATER
 #include "ChemNRMImpl.h"
-#include "GController.h"
+#include "Filament.h"
+#include "Cylinder.h"
+#include <stdint.h>
 
+#ifdef SIMDBINDINGSEARCH
+void Compartment::SIMDcoordinates(){
+    //bscoords = new dist::Coords;
+//    std::cout<<"Address of Coords "<<&bscoords<<endl;
+    //setting size to the number of maximum binding sites per cylinder * number of
+    // cylinders in compartment.
+    int N = _cylinders.size() * SysParams::Chemistry().maxbindingsitespercylinder;
+    if(N) {
+        vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(
+                N), bindsitecoordinatesZ(N);
+        cindex_bs.resize(N);
+        //cID_bs.resize(N);
+        Cyldcindexvec.resize(_cylinders.size());
+        CylcIDvec.resize(_cylinders.size());
 
+        short _filamentType = 0;
+        bool checkftype = false;
+        if (SysParams::Chemistry().numFilaments > 1)
+            checkftype = true;
+        unsigned int i = 0;
+        uint16_t k = 0;
+        for (auto cyl:_cylinders) {
+            int cindex = cyl->_dcIndex;
+            auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+            if (checkftype)
+                short _filamentType = cylinderstruct.type;
+            auto x1 = cyl->getFirstBead()->coordinate;
+            auto x2 = cyl->getSecondBead()->coordinate;
+            uint16_t shiftedindex = (i << 4);
+            //uint32_t shiftedCID = cyl->getID()<<4;
+            Cyldcindexvec[i] = cyl->_dcIndex;
+            CylcIDvec[i] = cyl->getID();
+            i++;
+            uint16_t j = 0;
+            for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+
+                auto mp = (float) *it / SysParams::Geometry().cylinderNumMon[_filamentType];
+                auto coord = midPointCoordinate(x1, x2, mp);
+                bindsitecoordinatesX[k] = coord[0];
+                bindsitecoordinatesY[k] = coord[1];
+                bindsitecoordinatesZ[k] = coord[2];
+                //last 4 bits are binding site while first 12 bits are cylinder index.
+                cindex_bs[k] = shiftedindex | j;
+                //cID_bs[k] = shiftedCID |j;
+                k++;
+                j++;
+
+            }
+        }
+//    assert(k<65536);
+        //Create input vector for SIMD calculations
+        bscoords.init_coords(bindsitecoordinatesX, bindsitecoordinatesY,
+                             bindsitecoordinatesZ, cindex_bs);
+    }
+}
+void Compartment::SIMDcoordinates4linkersearch(bool isvectorizedgather){
+    //setting size to the number of maximum binding sites per cylinder * number of
+    // cylinders in compartment.
+    short bstatepos = 1;
+    auto boundstate = SysParams::Mechanics().speciesboundvec;
+    short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
+
+    int N = _cylinders.size() * maxnbs;
+    if(N) {
+        vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(N),
+                       bindsitecoordinatesZ(N);
+        vector<uint16_t> cindex_bs(N);
+        Cyldcindexvec.resize(_cylinders.size());
+
+        short _filamentType = 0;
+        bool checkftype = false;
+        if (SysParams::Chemistry().numFilaments > 1)
+            checkftype = true;
+        unsigned int i = 0;
+        uint16_t k = 0;
+        if(isvectorizedgather) {
+            for (auto cyl:_cylinders) {
+                int cindex = cyl->_dcIndex;
+                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                if (checkftype)
+                    short _filamentType = cylinderstruct.type;
+                auto x1 = cyl->getFirstBead()->coordinate;
+                auto x2 = cyl->getSecondBead()->coordinate;
+                uint16_t shiftedindex = (i << 4);
+                Cyldcindexvec[i] = cindex;
+                i++;
+                uint16_t j = 0;
+                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                    if (boundstate[bstatepos][maxnbs * cindex + j]) {
+                        auto mp = (float) *it /
+                                  SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto coord = midPointCoordinate(x1, x2, mp);
+                        bindsitecoordinatesX[k] = coord[0];
+                        bindsitecoordinatesY[k] = coord[1];
+                        bindsitecoordinatesZ[k] = coord[2];
+                        //last 4 bits are binding site while first 12 bits are cylinder index.
+                        cindex_bs[k] = shiftedindex | j;
+                        k++;
+                    }
+                    j++;
+                }
+            }
+        }
+        else{
+            for (auto cyl:_cylinders) {
+                int cindex = cyl->_dcIndex;
+                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                if (checkftype)
+                    short _filamentType = cylinderstruct.type;
+                auto x1 = cyl->getFirstBead()->coordinate;
+                auto x2 = cyl->getSecondBead()->coordinate;
+                uint16_t shiftedindex = (i << 4);
+                Cyldcindexvec[i] = cindex;
+                i++;
+                uint16_t j = 0;
+                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                    if(cyl->getCCylinder()->getCMonomer(*it)->speciesBound(
+                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN
+                            () == 1.0) {
+                        auto mp = (float) *it /
+                                  SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto coord = midPointCoordinate(x1, x2, mp);
+                        bindsitecoordinatesX[k] = coord[0];
+                        bindsitecoordinatesY[k] = coord[1];
+                        bindsitecoordinatesZ[k] = coord[2];
+                        //last 4 bits are binding site while first 12 bits are cylinder index.
+                        cindex_bs[k] = shiftedindex | j;
+                        k++;
+                    }
+                    j++;
+                }
+            }
+        }
+//    assert(k<65536);
+        //Create input vector for SIMD calculations
+        bscoordslinker.init_coords(bindsitecoordinatesX, bindsitecoordinatesY,
+                             bindsitecoordinatesZ,
+                             cindex_bs);
+    }
+}
+
+void Compartment::SIMDcoordinates4motorsearch(bool isvectorizedgather){
+    //setting size to the number of maximum binding sites per cylinder * number of
+    // cylinders in compartment.
+    short bstatepos = 2;
+    auto boundstate = SysParams::Mechanics().speciesboundvec;
+    short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
+    int N = _cylinders.size() * maxnbs;
+    if(N) {
+        vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(N),
+                bindsitecoordinatesZ(N);
+        vector<uint16_t> cindex_bs(N);
+        Cyldcindexvec.resize(_cylinders.size());
+
+        short _filamentType = 0;
+        bool checkftype = false;
+        if (SysParams::Chemistry().numFilaments > 1)
+            checkftype = true;
+        unsigned int i = 0;
+        uint16_t k = 0;
+        if(isvectorizedgather) {
+            for (auto cyl:_cylinders) {
+                int cindex = cyl->_dcIndex;
+                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                if (checkftype)
+                    short _filamentType = cylinderstruct.type;
+                auto x1 = cyl->getFirstBead()->coordinate;
+                auto x2 = cyl->getSecondBead()->coordinate;
+                uint16_t shiftedindex = (i << 4);
+                Cyldcindexvec[i] = cindex;
+                i++;
+                uint16_t j = 0;
+                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                    if (boundstate[bstatepos][maxnbs * cindex + j]) {
+                        int A = boundstate[bstatepos][maxnbs * cindex + j] -
+                                cyl->getCCylinder()->getCMonomer(*it)->speciesBound(
+                                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN
+                                ();
+                        if(abs(A) != 0){
+                            cout<<"OOPS Problematic! Occupies sites are passed to "
+                                  "SIMD"<<endl;
+                            cout<<"Cylinder "<<cyl->getID()<<" "<<*it<<endl;
+                        }
+                        auto mp = (float) *it /
+                                  SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto coord = midPointCoordinate(x1, x2, mp);
+                        bindsitecoordinatesX[k] = coord[0];
+                        bindsitecoordinatesY[k] = coord[1];
+                        bindsitecoordinatesZ[k] = coord[2];
+                        //last 4 bits are binding site while first 12 bits are cylinder index.
+                        cindex_bs[k] = shiftedindex | j;
+                        k++;
+                    }
+                    j++;
+                }
+            }
+        }
+        else{
+            for (auto cyl:_cylinders) {
+                int cindex = cyl->_dcIndex;
+                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                if (checkftype)
+                    short _filamentType = cylinderstruct.type;
+                auto x1 = cyl->getFirstBead()->coordinate;
+                auto x2 = cyl->getSecondBead()->coordinate;
+                uint16_t shiftedindex = (i << 4);
+                Cyldcindexvec[i] = cindex;
+                i++;
+                uint16_t j = 0;
+                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                    if (cyl->getCCylinder()->getCMonomer(*it)->speciesBound(
+                            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN
+                            () == 1.0) {
+                        auto mp = (float) *it /
+                                  SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto coord = midPointCoordinate(x1, x2, mp);
+                        bindsitecoordinatesX[k] = coord[0];
+                        bindsitecoordinatesY[k] = coord[1];
+                        bindsitecoordinatesZ[k] = coord[2];
+                        //last 4 bits are binding site while first 12 bits are cylinder index.
+                        cindex_bs[k] = shiftedindex | j;
+                        k++;
+                    }
+                    j++;
+                }
+            }
+        }
+//    assert(k<65536);
+        //Create input vector for SIMD calculations
+        bscoordsmotor.init_coords(bindsitecoordinatesX, bindsitecoordinatesY,
+                             bindsitecoordinatesZ,
+                             cindex_bs);
+    }
+}
+#endif
 
 Compartment& Compartment::operator=(const Compartment &other) {
-    
+
     _species.clear();
     _internal_reactions.clear();
     _diffusion_reactions.clear();
     other.cloneSpecies(this);
     other.cloneReactions(this);
     _diffusion_rates = other._diffusion_rates;
-    
+
     return *this;
-    
 }
-    
+
 bool Compartment::apply_impl(SpeciesVisitor &v) {
     for(auto &s : _species.species()) {
         v.visit(s.get());
@@ -52,9 +292,9 @@ void Compartment::getNonSlicedVolumeArea() {
     auto sizex = SysParams::Geometry().compartmentSizeX;
     auto sizey = SysParams::Geometry().compartmentSizeY;
     auto sizez = SysParams::Geometry().compartmentSizeZ;
-    
+
     _partialArea = {{sizey * sizez, sizey * sizez, sizex * sizez, sizex * sizez, sizex * sizey, sizex * sizey}};
-    
+
     _partialVolume = 1.0;
 }
 
@@ -86,27 +326,27 @@ void Compartment::getSlicedVolumeArea() {
     auto sizey = SysParams::Geometry().compartmentSizeY;
     auto sizez = SysParams::Geometry().compartmentSizeZ;
     auto r = SysParams::Boundaries().diameter / 2; //radius
-    
+
     //get geometry center of the compartment
     auto x = _coords[0];
     auto y = _coords[1];
-    
+
     auto leftx = x - sizex / 2;
     auto rightx = x + sizex / 2;
     auto lowy = y - sizey / 2;
     auto upy = y + sizey / 2;
-    
+
     float pleft, pright, plow, pup, lleft, lright, llow, lup, VolumeIn;
     vector<float> edge;
     // edge_index = intersection points at left = 1, at right = 2, at low = 4 and at up = 5 in 2D;
     vector<int> edge_index;
-    
+
     //1. find intersection points at left or right edges
     //if at lower or upper phase
     if(y < r){
         pleft = r - sqrt(r * r - (leftx - r) * (leftx - r));
         pright = r - sqrt(r * r - (rightx - r) * (rightx - r));
-        
+
         //if the intersection is not inside the compartment, use the full compartlent size
         if(pleft > upy || pleft < lowy) lleft = sizey;
         else{
@@ -114,19 +354,19 @@ void Compartment::getSlicedVolumeArea() {
             edge.push_back(lleft);
             edge_index.push_back(1);
         }
-        
+
         if(pright > upy || pright < lowy) lright = sizey;
         else{
             lright = upy - pright;
             edge.push_back(lright);
             edge_index.push_back(2);
-            
+
         }
     }
     else if(y > r){
         pleft = r + sqrt(r * r - (leftx - r) * (leftx - r));
         pright = r + sqrt(r * r - (rightx - r) * (rightx - r));
-        
+
         //if the intersection is not inside the compartment, use the full compartlent size
         if(pleft > upy || pleft < lowy) lleft = sizey;
         else{
@@ -134,7 +374,7 @@ void Compartment::getSlicedVolumeArea() {
             edge.push_back(lleft);
             edge_index.push_back(1);
         }
-        
+
         if(pright > upy || pright < lowy) lright = sizey;
         else{
             lright = pright - lowy;
@@ -145,13 +385,13 @@ void Compartment::getSlicedVolumeArea() {
     else {
         cout<<"Even number of compartments in X or Y direction is not yet supportted."<<endl;
     }
-    
+
     //1. find intersection points at lower or upper edges
     //if at left or right phase
     if(x < r){
         plow = r - sqrt(r * r - (lowy - r) * (lowy - r));
         pup = r - sqrt(r * r - (upy - r) * (upy - r));
-        
+
         //if the intersection is not inside the compartment, use the full compartlent size
         if(plow > rightx || plow < leftx) llow = sizex;
         else{
@@ -159,7 +399,7 @@ void Compartment::getSlicedVolumeArea() {
             edge.push_back(llow);
             edge_index.push_back(4);
         }
-        
+
         if(pup > rightx || pup < leftx) lup = sizex;
         else{
             lup = rightx - pup;
@@ -170,7 +410,7 @@ void Compartment::getSlicedVolumeArea() {
     else if (x > r){
         plow = r + sqrt(r * r - (lowy - r) * (lowy - r));
         pup = r + sqrt(r * r - (upy - r) * (upy - r));
-        
+
         //if the intersection is not inside the compartment, use the full compartlent size
         if(plow > rightx || plow < leftx) llow = sizex;
         else{
@@ -178,7 +418,7 @@ void Compartment::getSlicedVolumeArea() {
             edge.push_back(llow);
             edge_index.push_back(4);
         }
-        
+
         if(pup > rightx || pup < leftx) lup = sizex;
         else{
             lup = pup - leftx;
@@ -189,14 +429,14 @@ void Compartment::getSlicedVolumeArea() {
     else{
         cout<<"Even number of compartments in X or Y direction is not yet supportted."<<endl;
     }
-    
+
     _partialArea = {{lleft * sizez, lright * sizez, llow * sizez, lup * sizez, sizex * sizey, sizex * sizey}};
-    
+
     if(!areEqual(sizex,sizey))
         cout << "Volume calculation requires X dimension and Y dimension to be the same." << endl;
-    
+
     float totalVol = sizex * sizey * sizez;
-    
+
     //there are either 2 intersection points or 0 intersection points
     if(edge.size() == 2 && edge_index.size() == 2){
         //case 1, trapezoid
@@ -249,13 +489,13 @@ void Compartment::getSlicedVolumeArea() {
         }
         _partialVolume = 0.5 * a1 * sizex * sizez / totalVol;
     }
-    else{ 
+    else{
         cout <<"There are "<< edge.size() <<" intersection points for this compartment:"<< endl;
         cout << "x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
         cout << "Something goes wrong!" << endl;
     }
-    
-    
+
+
 
 
 //        _partialVolume = res.volumeIn;
@@ -267,16 +507,16 @@ void Compartment::getSlicedVolumeArea() {
 vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
     // The compartment C and "this" must be neighbors of each other, and
     // "this" must be an active compartment.
-    
+
     vector<ReactionBase*> rxns;
-    
+
     cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
-    
+
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();
         float diff_rate = _diffusion_rates[molecule];
         if(diff_rate<0)  continue;
-        
+
         if(C->isActivated()) {
             // Scale the diffusion rate according to the contacting areas
             size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
@@ -284,11 +524,11 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             //double scaleFactor = 1.0;
             cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
             cout << "scaleFactor = " << scaleFactor << endl;
-            
+
             float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
             cout << "VolumeFraction = " << volumeFrac << endl;
-            
+
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             //Diffusion reaction from "this" compartment to C.
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour}, actualDiffRate, false, volumeFrac);
@@ -297,7 +537,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
 
         }
     }
-    
+
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
 }
 
@@ -309,26 +549,26 @@ vector<ReactionBase*> Compartment::generateScaleDiffusionReactions(Compartment* 
     cout << "neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] <<endl;
     auto factor = generateScaleFactor(C);
     cout << "factor = " << factor << endl;
-    
+
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();
         float diff_rate = _diffusion_rates[molecule];
         if(diff_rate<0)  continue;
-        
+
         if(C->isActivated()) {
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
-            
+
             auto diff_rate_s = diff_rate * factor;
-       
+
             ReactionBase *R = new DiffusionReaction({sp_this.get(),sp_neighbour},diff_rate_s);
             this->addDiffusionReaction(R);
             rxns.push_back(R);
         }
-        
+
 
     }
 
-    
+
     return vector<ReactionBase*>(rxns.begin(), rxns.end());
 }
 
@@ -336,24 +576,24 @@ vector<ReactionBase*> Compartment::generateScaleDiffusionReactions(Compartment* 
 double Compartment::generateScaleFactor(Compartment* C)
 {
     vector<ReactionBase*> rxns;
-    
+
     //get compartment sizes in X,Y and the radius of cylinder
     auto lx = SysParams::Geometry().compartmentSizeX;
     auto ly = SysParams::Geometry().compartmentSizeY;
     auto lz = SysParams::Geometry().compartmentSizeZ;
     auto r = SysParams::Boundaries().diameter / 2; //radius
     //float c1;
-    
+
     if((_coords[0] - lx/2) < r && (_coords[0] + lx/2) > r) {
         cout << "Diffusion Scaling failed" << endl;
         return 1.0;
     }
-    
+
     if((_coords[1] - ly/2) < r && (_coords[1] + ly/2) > r) {
         cout << "Diffusion Scaling failed" << endl;
         return 1.0;
     }
-    
+
     //get geometry center of the compartment
     auto x = _coords[0];
     auto y = _coords[1];
@@ -364,12 +604,12 @@ double Compartment::generateScaleFactor(Compartment* C)
     double c1;
     //c2 is the intersection between boundary and c1
     double c2;
-    
+
     //scale diffusion rate based on compartment area
     //1. find the location of the neighbor compartment
     //if transport along x axis
     if(ny == y) {
-        
+
         //2. calculate the interection point
         //if at lower half of the system
         if(y < r) {
@@ -378,7 +618,7 @@ double Compartment::generateScaleFactor(Compartment* C)
             //if transport to the right neighbor
             else c1 = x + lx/2;
             c2 = r - sqrt(r * r - (c1 - r) * (c1 - r));
-            
+
             //3. calculate scaling factor
             //check if intersection is within this compartment
             if(c2 < (y + ly/2) && c2 > (y - ly/2)) {
@@ -394,10 +634,10 @@ double Compartment::generateScaleFactor(Compartment* C)
             if(nx < x) c1 = x - lx/2;
 
             else c1 = x + lx/2; //right
-            
+
             c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
 
-            
+
             //3. calculate scaling factor
             if(c2 < (y + ly/2) && c2 > (y - ly/2)) {
                 float factor = (c2 - y + ly/2) / ly;
@@ -407,7 +647,7 @@ double Compartment::generateScaleFactor(Compartment* C)
 
         }
     }
-    
+
     else if(nx == x){
         //2. calculate the interection point
         //if at left part
@@ -417,9 +657,9 @@ double Compartment::generateScaleFactor(Compartment* C)
 
             //if at upper
             else c1 = y + ly/2;
-            
+
             c2 = r - sqrt(r * r - (c1 - r) * (c1 - r));
-            
+
             //3. calculate scaling factor
             //check if interaction is within compartment
             if(c2 < (x + lx/2) && c2 > (x - lx/2)) {
@@ -427,7 +667,7 @@ double Compartment::generateScaleFactor(Compartment* C)
                 return factor;
             }
             else return 1;
-            
+
         }
         //if at right part
         else {
@@ -435,30 +675,30 @@ double Compartment::generateScaleFactor(Compartment* C)
             if(ny < y) c1 = y - ly/2;
 
             else c1 = y + ly/2; //right
-            
+
             c2 = r + sqrt(r * r - (c1 - r) * (c1 - r));
-            
+
             //3. calculate scaling factor
             if(c2 < (x + lx/2) && c2 > (x - lx/2)) {
                 float factor = (c2 - x + lx/2) / lx;
                 return factor;
             }
             else return 1;
-            
+
         }
 
     }
-    
+
 }
 
 
 vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
-    
+
     vector<ReactionBase*> rxns;
 
     if(_activated) {
         for (auto &C: _neighbours) {
-            
+
             auto newRxns = generateDiffusionReactions(C);
             rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
         }
@@ -467,9 +707,9 @@ vector<ReactionBase*> Compartment::generateAllDiffusionReactions() {
 }
 
 vector<ReactionBase*> Compartment::generateAllpairsDiffusionReactions() {
-    
+
     vector<ReactionBase*> rxns;
-    
+
     if(_activated) {
         for (auto &C: _neighbours) {
             if(C->isActivated()){
@@ -478,7 +718,7 @@ vector<ReactionBase*> Compartment::generateAllpairsDiffusionReactions() {
                  rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
             newRxns = C->generateDiffusionReactions(this);
                  rxns.insert(rxns.begin(), newRxns.begin(), newRxns.end());
-               
+
             }
         }
     }
@@ -491,35 +731,35 @@ void Compartment::removeDiffusionReactions(ChemSim* chem, Compartment* C)
     vector<ReactionBase*> to_remove;
 
     for(auto &r : C->_diffusion_reactions.reactions()) {
-        
+
         auto rs = r.get()->rspecies()[1];
         if(rs->getSpecies().getParent() == this) {
 
             r->passivateReaction();
-            
+
             chem->removeReaction(r.get());
-            
+
             to_remove.push_back(r.get());
         }
 
     }
-    
+
     //remove them
     for(auto &r : to_remove)
         C->_diffusion_reactions.removeReaction(r);
-    
+
 }
 
 void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
-    
+
     //remove all diffusion reactions that this has ownership of
     for(auto &r : _diffusion_reactions.reactions()) {
         r->passivateReaction();
         chem->removeReaction(r.get());
     }
-    
+
     _diffusion_reactions.clear();
-    
+
     //remove neighboring diffusing reactions with this compartment
     for (auto &C: _neighbours)
         removeDiffusionReactions(chem, C);
@@ -534,7 +774,7 @@ void Compartment::transferSpecies(int i) {
     //3 all directions
     //get active neighbors
     vector<Compartment*> activeNeighbors;
-    
+
     for(auto &neighbor : _neighbours){
         auto ncoord=neighbor->coordinates();
 
@@ -544,52 +784,52 @@ void Compartment::transferSpecies(int i) {
             else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
                 activeNeighbors.push_back(neighbor);
         }}
-    
+
     assert(activeNeighbors.size() != 0
            && "Cannot transfer species to another compartment... no neighbors are active");
     if(i<3 && activeNeighbors.size()>1){
         cout<<"Error transferring species along an axis. More than 1 neighbor. Exiting. "<< endl;
         exit(EXIT_FAILURE);
     }
-    
+
     //go through species
     Species* sp_neighbor;
     vector<Species*> sp_neighbors;
-    
+
     for(auto &sp : _species.species()) {
-        
+
         int copyNumber = sp->getN();
         auto nit = activeNeighbors.begin();
-        
+
         if(sp->getFullName().find("Bound") == string::npos){
             while(copyNumber > 0) {
                 sp->down();
-                
+
                 //choose a random active neighbor
                 auto neighbor = *nit;
-                
+
                 sp_neighbor = neighbor->findSpeciesByName(sp->getName());
-                
+
                 //add to list if not already
                 auto spit = find(sp_neighbors.begin(),
                                  sp_neighbors.end(),
                                  sp_neighbor);
-                
+
                 if(spit == sp_neighbors.end())
                     sp_neighbors.push_back(sp_neighbor);
-                
+
                 //increase copy number
-                
+
                 sp_neighbor->up();
-                
+
                 //reset if we've looped through
                 if(++nit == activeNeighbors.end())
                     nit = activeNeighbors.begin();
                 copyNumber--;
-                
+
             }
         }
-        
+
         //activate all reactions changed
         for(auto spn : sp_neighbors)
             spn->updateReactantPropensities();
@@ -606,7 +846,7 @@ void Compartment::shareSpecies(int i) {
     //3 all directions
     //get active neighbors
     vector<Compartment*> activeNeighbors;
-    
+
     for(auto &neighbor : _neighbours){
         auto ncoord=neighbor->coordinates();
     if(neighbor->isActivated()){
@@ -615,7 +855,7 @@ void Compartment::shareSpecies(int i) {
         else if(mathfunc::twoPointDistance(ncoord,_coords)==(abs(_coords[i]-ncoord[i])))
         activeNeighbors.push_back(neighbor);
     }}
-    
+
     assert(activeNeighbors.size() != 0
            && "Cannot share species to another compartment... no neighbors are active");
     if(i<3 && activeNeighbors.size()>1){
@@ -625,7 +865,7 @@ void Compartment::shareSpecies(int i) {
     //go through species
     Species* sp_neighbor;
     vector<Species*> sp_neighbors;
-    
+
     for(auto &sp : _species.species()) {
         auto nit = activeNeighbors.begin();
         auto neighbor = *nit;
@@ -635,15 +875,15 @@ void Compartment::shareSpecies(int i) {
         if(sp->getFullName().find("Bound") == string::npos){
             while(copyNumber > lowerlimit) {
                 sp_neighbor->down();
-                
+
                 //add to list if not already
                 auto spit = find(sp_neighbors.begin(),
                                  sp_neighbors.end(),
                                  sp_neighbor);
-                
+
                 if(spit == sp_neighbors.end())
                     sp_neighbors.push_back(sp_neighbor);
-                
+
                 //increase copy number
                 sp->up();
                 //reset if we've looped through
@@ -652,7 +892,7 @@ void Compartment::shareSpecies(int i) {
                 neighbor = *nit;
                 sp_neighbor = neighbor->findSpeciesByName(sp->getName());
                 copyNumber--;
-                
+
             }
         }
 
@@ -661,21 +901,21 @@ void Compartment::shareSpecies(int i) {
             spn->updateReactantPropensities();
         for(auto &sp : _species.species())
             sp->updateReactantPropensities();
-        
+
     }
 }
 
 void Compartment::activate(ChemSim* chem) {
-    
+
     assert(!_activated && "Compartment is already activated.");
-    
+
     //set marker
     _activated = true;
     //add all diffusion reactions
     auto rxns = generateAllpairsDiffusionReactions();
     for(auto &r : rxns) chem->addReaction(r);
-    shareSpecies(SysParams::Mechanics().transfershareaxis);
-    
+    shareSpecies(SysParams::Boundaries().transfershareaxis);
+
     for (auto &C: _neighbours){
         if(C->isActivated()){
             for(auto &r : C->_diffusion_reactions.reactions()) {
@@ -689,21 +929,21 @@ void Compartment::activate(ChemSim* chem) {
     }
         }
     }
-    
+
 }
 
 void Compartment::deactivate(ChemSim* chem) {
-    
+
     //assert no cylinders in this compartment
     assert((_cylinders.size() == 0)
            && "Compartment cannot be deactivated when containing active cylinders.");
-    
+
     assert(_activated && "Compartment is already deactivated.");
-    
+
     //set marker
     _activated = false;
-    
-    transferSpecies(SysParams::Mechanics().transfershareaxis);
+
+    transferSpecies(SysParams::Boundaries().transfershareaxis);
     removeAllDiffusionReactions(chem);
 }
 
@@ -711,10 +951,10 @@ bool operator==(const Compartment& a, const Compartment& b) {
     if(a.numberOfSpecies()!=b.numberOfSpecies() or
        a.numberOfInternalReactions()!=b.numberOfInternalReactions())
         return false;
-    
+
     if(typeid(a)!=typeid(b))
         return false;
-    
+
     bool spec_bool = false;
     auto sit_pair = mismatch(a._species.species().begin(),
                              a._species.species().end(),
@@ -723,8 +963,8 @@ bool operator==(const Compartment& a, const Compartment& b) {
             {return (*A)==(*B); });
     if(sit_pair.first==a._species.species().end())
         spec_bool=true;
-    
-    
+
+
     bool reac_bool = false;
     auto rit_pair = mismatch(a._internal_reactions.reactions().begin(),
                              a._internal_reactions.reactions().end(),
@@ -733,6 +973,6 @@ bool operator==(const Compartment& a, const Compartment& b) {
             {return (*A)==(*B);});
     if(rit_pair.first==a._internal_reactions.reactions().end())
         reac_bool=true;
-    
+
     return spec_bool && reac_bool;
 }

@@ -14,25 +14,27 @@
 ##################################################
 
 TESTS	:= $(shell find ./TESTS -name 'test_*')
-SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*')
+SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_module/*')
+SOURCES_CPP += ./dist_module/dist_coords.cpp ./dist_module/dist_mod_vars.cpp ./dist_module/dist_bench.cpp ./dist_module/dist_test.cpp ./dist_module/dist_example.cpp
 SOURCES_CU  := $(shell find . -name '*.cu'  ! -path './TESTS/*')
 SOURCES = $(SOURCES_CPP) $(SOURCES_CU)
-HEADERS := $(shell find . -name '*.h')
+HEADERS := $(shell find . -name '*.h' ! -path './dist_module/*')
+HEADERS += ./dist_module/umesimd/UMESimd.h
 
 OBJECTS_CPP := $(SOURCES_CPP:.cpp=.o)
 OBJECTS_CU  := $(SOURCES_CU:.cu=.o)
 OBJECTS = $(OBJECTS_CPP) $(OBJECTS_CU)
 
 # Compiler and linker choice
-CXX = /usr/bin/g++ -std=c++11
+CXX = g++ -std=c++14
 NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native -g
+FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
 
 # Compiler flags
-INCLUDES = -I/usr/local/include -I/usr/include/boost \
+INCLUDES = -I./dist_module -I./dist_module/umesimd/ -I/usr/local/include \
 -I./ -IStructure -IStructure/Special      \
 -IStructure/SurfaceMesh                   \
 -IChemistry                               \
@@ -45,7 +47,6 @@ INCLUDES = -I/usr/local/include -I/usr/include/boost \
 -IMechanics/ForceField/Branching          \
 -IMechanics/ForceField/Filament           \
 -IMechanics/ForceField/Linker             \
--IMechanics/ForceField/Membrane           \
 -IMechanics/ForceField/MotorGhost         \
 -IMechanics/ForceField/Bubble             \
 #-IMechanics/ForceField/Membrane           \
@@ -58,9 +59,9 @@ CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 -lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linker flags
-LDLIBS = -L/usr/local/lib/ -lboost_system
+LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_module/umesimd -static-libstdc++ -pthread 
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
-LDFLAGS_CXX = $(FAST_CXX)
+LDFLAGS_CXX = $(FAST_CXX) 
 
 #################MAIN USER MACROS#################
 #
@@ -76,13 +77,13 @@ CPPFLAGS += -DCHEMISTRY
 CPPFLAGS += -DMECHANICS
 #Use dynamic rate changing
 CPPFLAGS += -DDYNAMICRATES
-#neighbors list calculations
-CPPFLAGS += -DNLORIGINAL
-#serialized energy minimization
+#vectorized serial energy minimization
 CPPFLAGS += -DSERIAL
-CPPFLAGS += -DDETAILEDOUTPUT
-CPPFLAGS += -DDEBUGCONSTANTSEED
-
+#neighbors list calculations
+#CPPFLAGS += -DNLORIGINAL
+CPPFLAGS += -DNLSTENCILLIST
+CPPFLAGS += -DHYBRID_NLSTENCILLIST
+CPPFLAGS += -DSIMDBINDINGSEARCH
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
@@ -100,6 +101,7 @@ CPPFLAGS += -DTRACK_DEPENDENTS
 #For passivating and activating reactions accordingly
 CPPFLAGS += -DTRACK_ZERO_COPY_N
 CPPFLAGS += -DTRACK_UPPER_COPY_N
+
 #Reaction signaling. Needed for all Filament, Linker,
 #Motor, and BranchingPoint reactions in system
 CPPFLAGS += -DREACTION_SIGNALING
@@ -134,7 +136,7 @@ else
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
 endif
 
-%.o: %.cpp 
+%.o: %.cpp
 	$(CXX) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c $< -o $@
 
 %.o: %.cu

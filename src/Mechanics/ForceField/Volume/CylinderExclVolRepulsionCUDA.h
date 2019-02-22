@@ -142,12 +142,6 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
 
                 U_i[thread_idx] = 0.5 * krep[thread_idx] / JJ *
                                   (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
-//        U_i[thread_idx] =a;
-//        gU_i[thread_idx] = U_i[thread_idx];
-//        for(auto j=0; j<3; j++) {
-//            gc1[3 * threadIdx.x + j] = c1[3 * threadIdx.x + j];
-//            gc2[3 * threadIdx.x + j] = c2[3 * threadIdx.x + j];
-//        }
 
                 if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
                     || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
@@ -177,101 +171,53 @@ __global__ void CUDAExclVolRepulsionenergy(double *coord, double *force, int *be
                 }
             }
         }
-//    else {
-//        U_i[thread_idx] = 0.0;
-////        gU_i[thread_idx] = U_i[thread_idx];
-////        for(auto j=0; j<3; j++) {
-////            gc1[3 * threadIdx.x + j] = 0.0;
-////            gc2[3 * threadIdx.x + j] = 0.0;
-////        }
-//    }
-//    printf("E %.16f \n", U_i[thread_idx] );
-//    checkU[threadIdx.x]=0.0;
-//    __syncthreads();
-
-//    for(int offset = blockDim.x / 2;
-//        offset > blockDim.x / 4; offset >>= 1)
-//    {
-//        if(threadIdx.x < offset)
-//        {
-////            if(U_i[threadIdx.x + offset]==-1.0||U_i[threadIdx.x]==-1.0)
-////                U_i[threadIdx.x]=-1;
-////            //add a partial sum upstream to our own
-////            else
-//            U_i[threadIdx.x] += U_i[threadIdx.x + offset];
-//            checkU[threadIdx.x]=U_i[threadIdx.x];
-////            gU_i[threadIdx.x]=U_i[threadIdx.x];
-////                U_i[threadIdx.x]=offset;
-//        }
-////        if(threadIdx.x==0) {
-////            int i=0;
-////            int frac=offset;
-////            while(frac!=1)
-////            {frac=frac/2;i=i+1;}
-////            checkU[threadIdx.x + i] = U_i[threadIdx.x];
-////        }
-//
-//        // wait until all threads in the block have updated their partial sums
-//        __syncthreads();
-//
-//    }
-//
-//    __syncthreads();
-//    // thread 0 writes the final result
-//    if(threadIdx.x == 0)
-//    {
-//        U[blockIdx.x] = U_i[0];
-//    }
-//    __syncthreads();
     }
 }
 
 
 __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadSet,
-                                            double *krep, int *params, double *U_i, double *z, int *culpritID,
+                                            double *krep, int *params, double *U_i,
+                                            double *U_vec, double *z, int *culpritID,
                                             char* culpritFF, char* culpritinteraction, char* FField, char*
-                                            interaction) {
-    if(z[0] != 0.0) {
-
+                                            interaction, bool*
+                                            conv_state1, bool* conv_state2){
+    if(conv_state1[0]||conv_state2[0]) return;
+    if(z[0] == 0.0) {
         extern __shared__ double s[];
-
+//    double *coord_image=s;
+//    double *c1 = &coord_image[3 * blockDim.x];
         double *c1 = s;
         double *c2 = &c1[3 * blockDim.x];
         double *c3 = &c2[3 * blockDim.x];
         double *c4 = &c3[3 * blockDim.x];
-
-
         double d, invDSquare;
         double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
         double ATG1, ATG2, ATG3, ATG4;
         int nint = params[1];
         int n = params[0];
+        int offset = max(params[2] -1 , 0 );
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
 
         if (thread_idx < nint) {
+//            if(thread_idx == 0){
+//                printf("Offset %d, nint %d \n", offset, nint);
+//            }
             U_i[thread_idx] = 0.0;
             for (auto i = 0; i < 3; i++) {
-                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i]
-                                          + z[0] * f[3 * beadSet[n * thread_idx] + i];
-                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i]
-                                          + z[0] * f[3 * beadSet[n * thread_idx + 1] + i];
-                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i]
-                                          + z[0] * f[3 * beadSet[n * thread_idx + 2] + i];
-                c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i]
-                                          + z[0] * f[3 * beadSet[n * thread_idx + 3] + i];
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i];
+                c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i];
             }
 
-//        }
-//        __syncthreads();
-//
-//        if (thread_idx < nint) {
             //check if parallel
             if (areParallel(c1, c2, c3, c4, 3 * threadIdx.x)) {
 
                 d = twoPointDistance(c1, c3, 3 * threadIdx.x);
                 invDSquare = 1 / (d * d);
                 U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
-
+                U_vec[offset + thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
+//                printf("%d %f P\n", thread_idx, U_i[thread_idx]);
                 if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000) //infinity
                     || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                     U_i[thread_idx] = -1.0;
@@ -292,25 +238,16 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                     assert(0);
                     __syncthreads();
                 }
+
             } else {
-//            auto jj=3;
+
                 //check if in same plane
                 if (areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
-//            jj=2;
+
                     //slightly move point
                     movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
-//            printf("%i %i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f \n",thread_idx, jj,
-//                           c1[3 * threadIdx.x], c1[3 *
-//                                                                                                                                       threadIdx.x + 1], c1[3 * threadIdx.x + 2]
-//                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
-//                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
                 }
-                // else
-//            printf("%i %i %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f %.16f\n"
-//                           ,thread_idx, jj, c1[3 * threadIdx.x], c1[3 *
-//                                                                                                                                       threadIdx.x + 1], c1[3 * threadIdx.x + 2]
-//                    , c2[3 * threadIdx.x], c2[3 * threadIdx.x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x], c3[3 * threadIdx.x + 1],
-//                   c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x], c4[3 * threadIdx.x + 1], c4[3 * threadIdx.x + 2]);
+
                 a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
                 b = scalarProduct(c3, c4, c3, c4, 3 * threadIdx.x);
                 c = scalarProduct(c3, c1, c3, c1, 3 * threadIdx.x);
@@ -339,13 +276,139 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
 
                 U_i[thread_idx] = 0.5 * krep[thread_idx] / JJ *
                                   (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
-//        U_i[thread_idx] =a;
-//        for(auto j=0; j<3; j++) {
-//            gc1[3 * threadIdx.x + j] = f[3 * beadSet[n * thread_idx] + j];
-//            gc2[3 * threadIdx.x + j] = f[3 * beadSet[n * thread_idx + 1] + j];
-//        }
-
+                U_vec[offset + thread_idx] = 0.5 * krep[thread_idx] / JJ *
+                                  (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
+//                printf("%d %f NP\n", thread_idx, U_i[thread_idx]);
                 if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
+                    || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+                    U_i[thread_idx] = -1.0;
+                    culpritID[0] = beadSet[n * thread_idx];
+                    culpritID[1] = beadSet[n * thread_idx + 1];
+                    culpritID[2] = beadSet[n * thread_idx + 2];
+                    culpritID[3] = beadSet[n * thread_idx + 3];
+                    int j = 0;
+                    while (FField[j] != 0) {
+                        culpritFF[j] = FField[j];
+                        j++;
+                    }
+                    j = 0;
+                    while (interaction[j] != 0) {
+                        culpritinteraction[j] = interaction[j];
+                        j++;
+                    }
+                    printf("Coordiantes \n %f %f %f \n %f %f %f \n %f %f %f \n %f %f %f \n", c1[3 * threadIdx.x ],
+                           c1[3 * threadIdx
+                                   .x + 1], c1[3 * threadIdx.x + 2], c2[3 * threadIdx.x ], c2[3 * threadIdx
+                                    .x + 1], c2[3 * threadIdx.x + 2], c3[3 * threadIdx.x ], c3[3 * threadIdx
+                                    .x + 1], c3[3 * threadIdx.x + 2], c4[3 * threadIdx.x ], c4[3 * threadIdx
+                                    .x + 1], c4[3 * threadIdx.x + 2]);
+                    assert(0);
+                    __syncthreads();
+                }
+            }
+        }
+    }
+
+    else if(z[0] != 0.0) {
+
+        extern __shared__ double s[];
+
+        double *c1 = s;
+        double *c2 = &c1[3 * blockDim.x];
+        double *c3 = &c2[3 * blockDim.x];
+        double *c4 = &c3[3 * blockDim.x];
+
+        double d, invDSquare;
+        double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+        double ATG1, ATG2, ATG3, ATG4;
+        int nint = params[1];
+        int n = params[0];
+        int offset = max(params[2] - 1 , 0);
+        const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
+
+        if (thread_idx < nint) {
+//            if(thread_idx == 0){
+//                printf("Offset %d \n", offset);
+//            }
+            U_i[thread_idx] = 0.0;
+            for (auto i = 0; i < 3; i++) {
+                c1[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx] + i]
+                                          + z[0] * f[3 * beadSet[n * thread_idx] + i];
+                c2[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 1] + i]
+                                          + z[0] * f[3 * beadSet[n * thread_idx + 1] + i];
+                c3[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 2] + i]
+                                          + z[0] * f[3 * beadSet[n * thread_idx + 2] + i];
+                c4[3 * threadIdx.x + i] = coord[3 * beadSet[n * thread_idx + 3] + i]
+                                          + z[0] * f[3 * beadSet[n * thread_idx + 3] + i];
+            }
+
+            //check if parallel
+            if (areParallel(c1, c2, c3, c4, 3 * threadIdx.x)) {
+
+                d = twoPointDistance(c1, c3, 3 * threadIdx.x);
+                invDSquare = 1 / (d * d);
+                U_i[thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
+                U_vec[offset + thread_idx] = krep[thread_idx] * invDSquare * invDSquare;
+
+                if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000) //infinity
+                    || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+                    U_i[thread_idx] = -1.0;
+                    culpritID[0] = beadSet[n * thread_idx];
+                    culpritID[1] = beadSet[n * thread_idx + 1];
+                    culpritID[2] = beadSet[n * thread_idx + 2];
+                    culpritID[3] = beadSet[n * thread_idx + 3];
+                    int j = 0;
+                    while (FField[j] != 0) {
+                        culpritFF[j] = FField[j];
+                        j++;
+                    }
+                    j = 0;
+                    while (interaction[j] != 0) {
+                        culpritinteraction[j] = interaction[j];
+                        j++;
+                    }
+                    assert(0);
+                    __syncthreads();
+                }
+            } else {
+                //check if in same plane
+                if (areInPlane(c1, c2, c3, c4, 3 * threadIdx.x)) {
+                    //slightly move point
+                    movePointOutOfPlane(c1, c2, c3, c4, 2, 0.01, 3 * threadIdx.x);
+                }
+                // else
+                a = scalarProduct(c1, c2, c1, c2, 3 * threadIdx.x);
+                b = scalarProduct(c3, c4, c3, c4, 3 * threadIdx.x);
+                c = scalarProduct(c3, c1, c3, c1, 3 * threadIdx.x);
+                d = scalarProduct(c1, c2, c3, c4, 3 * threadIdx.x);
+                e = scalarProduct(c1, c2, c3, c1, 3 * threadIdx.x);
+                F = scalarProduct(c3, c4, c3, c1, 3 * threadIdx.x);
+
+                AA = sqrt(a * c - e * e);
+                BB = sqrt(b * c - F * F);
+
+                CC = d * e - a * F;
+                DD = b * e - d * F;
+
+                EE = sqrt(a * (b + c - 2 * F) - (d - e) * (d - e));
+                FF = sqrt(b * (a + c + 2 * e) - (d + F) * (d + F));
+
+                GG = d * d - a * b - CC;
+                HH = CC + GG - DD;
+                JJ = c * (GG + CC) + e * DD - F * CC;
+
+
+                ATG1 = atan((a + e) / AA) - atan(e / AA);
+                ATG2 = atan((a + e - d) / EE) - atan((e - d) / EE);
+                ATG3 = atan((F) / BB) - atan((F - b) / BB);
+                ATG4 = atan((d + F) / FF) - atan((d + F - b) / FF);
+
+                U_i[thread_idx] = 0.5 * krep[thread_idx] / JJ *
+                                  (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
+                U_vec[offset + thread_idx] = 0.5 * krep[thread_idx] / JJ *
+                                  (CC / AA * ATG1 + GG / EE * ATG2 + DD / BB * ATG3 + HH / FF * ATG4);
+
+                /*if (U_i[thread_idx] == __longlong_as_double(0x7ff0000000000000)
                     || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
                     U_i[thread_idx] = -1.0;
                     culpritID[0] = beadSet[n * thread_idx];
@@ -376,43 +439,9 @@ __global__ void CUDAExclVolRepulsionenergyz(double *coord, double *f, int *beadS
                            f[3 * beadSet[n * thread_idx+3] + 1], f[3 * beadSet[n * thread_idx+3] + 2]);
                     assert(0);
                     __syncthreads();
-                }
+                }*/
             }
         }
-//    else {
-//        U_i[thread_idx] = 0.0;
-////        for(auto j=0; j<3; j++) {
-////            gc1[3 * threadIdx.x + j] = 0.0;
-////            gc2[3 * threadIdx.x + j] = 0.0;
-////        }
-//    }
-        //printf("%.16f \n", U_i[thread_idx]);
-
-//    __syncthreads();
-
-//    for(int offset = blockDim.x / 2;
-//        offset > 0; offset >>= 1)
-//    {
-//        if(threadIdx.x < offset)
-//        {
-////            if(U_i[threadIdx.x + offset]==-1.0||U_i[threadIdx.x]==-1.0)
-////                U_i[threadIdx.x]=-1;
-////            //add a partial sum upstream to our own
-////            else
-//            U_i[threadIdx.x] += U_i[threadIdx.x + offset];
-////                U_i[threadIdx.x]=offset;
-//        }
-//        // wait until all threads in the block have updated their partial sums
-//        __syncthreads();
-//    }
-//
-//    __syncthreads();
-//    // thread 0 writes the final result
-//    if(threadIdx.x == 0)
-//    {
-//        U[blockIdx.x] = U_i[0];
-//    }
-//    __syncthreads();
     }
 }
 

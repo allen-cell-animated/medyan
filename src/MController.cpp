@@ -77,18 +77,27 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     //add to the subsystem's database of neighbor lists.
     auto volumeFF = new CylinderVolumeFF(forceFields.VolumeFFType);
     _FFManager._forceFields.push_back(volumeFF);
+
+    //Get the force field access to the HNLID
     for(auto nl : volumeFF->getNeighborLists()) {
-        
+#ifdef HYBRID_NLSTENCILLIST
+            volumeFF->setHNeighborLists(_subSystem->getHNeighborList());
+#endif
         if(nl != nullptr)
             _subSystem->addNeighborList(nl);
     }
-    
+
     auto boundaryFF = new BoundaryFF(forceFields.BoundaryFFType);
     _FFManager._forceFields.push_back(boundaryFF);
     for(auto nl : boundaryFF->getNeighborLists()) {
         
         if(nl != nullptr)
+#if defined(NLSTENCILLIST) || defined(NLORIGINAL)
             _subSystem->addNeighborList(nl);
+#endif
+#if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
+        _subSystem->addBNeighborList(nl);
+#endif
     }
 
     auto bubbleFF = new BubbleFF(forceFields.BubbleFFType,
