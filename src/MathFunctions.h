@@ -230,14 +230,6 @@ namespace mathfunc {
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
-    inline double twoPointDistancesquared(const vector<double> &v1, const vector<double>
-                                            &v2) {
-
-        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) +
-                    (v2[1] - v1[1]) * (v2[1] - v1[1]) +
-                    (v2[2] - v1[2]) * (v2[2] - v1[2]));
-    }
-
 
     inline double twoPointDistance(const vector<double> &v1, double const *v2) {
 
@@ -264,12 +256,6 @@ namespace mathfunc {
 
         return sqrt((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
-    }
-
-    inline double twoPointDistancesquared(double const *v1, double const *v2) {
-
-        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
-                (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
     inline double twoPointDistancesquared(double const *v1, double const *v2) {
@@ -556,21 +542,6 @@ namespace mathfunc {
         return xx + yy + zz;
     }
 
-    inline double scalarprojection(vector<double> a, vector<double> b){
-        return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
-    }
-
-    inline double maxdistbetweencylinders(const vector<double> &v1,
-                                          const vector<double> &v2,
-                                          const vector<double> &v3,
-                                          const vector<double> &v4) {
-        double maxdist = 0.0;
-        double d1 = twoPointDistancesquared(v1, v3);maxdist = max(maxdist,d1);
-        double d2 = twoPointDistancesquared(v1, v4);maxdist = max(maxdist,d2);
-        double d3 = twoPointDistancesquared(v2, v3);maxdist = max(maxdist,d3);
-        double d4 = twoPointDistancesquared(v2, v4);maxdist = max(maxdist,d4);
-        return maxdist;
-    }
 
     #ifdef CUDAACCL
     __host__ __device__

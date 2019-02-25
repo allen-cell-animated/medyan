@@ -32,10 +32,13 @@
 #include "HybridBindingSearchManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
-
+#ifdef SIMDBINDINGSEARCH
 #include "dist_driver.h"
 #include "dist_coords.h"
+#endif
+
 #include "MathFunctions.h"
+
 
 //#include "BinGrid.h"
 //#include "Bin.h"
@@ -92,6 +95,9 @@ protected:
     #endif
 
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that
+    unordered_map<Compartment*, size_t> _neighborIndex; ///< Spacial index of the neighbors of the same order as _neighbors
+    ///< In 3D, the indices are in the order (x-, x+, y-, y+, z-, z+)
+    
     // touch along faces
     vector<Compartment*> _enclosingneighbours; ///< Neighbors that envelop the compartment
     vector<Compartment*> _uniquepermuteneighbours; //Neighbors tht help to parse
@@ -501,6 +507,7 @@ public:
         return _bindingsearchManagers;
     }
 #endif
+#ifdef SIMDBINDINGSEARCH
     dist::Coords bscoords;
     dist::Coords bscoordslinker;
     dist::Coords bscoordsmotor;
@@ -513,7 +520,6 @@ public:
         else
             return bscoordsmotor;
     }
-#ifdef SIMDBINDINGSEARCH
     void SIMDcoordinates();
     void SIMDcoordinates4linkersearch(bool isvectorizedgather);
     void SIMDcoordinates4motorsearch(bool isvectorizedgather);
@@ -614,7 +620,7 @@ public:
         auto nit = find(_neighbours.begin(),_neighbours.end(), comp);
         if(nit!=_neighbours.end())
             _neighbours.erase(nit);
-            _neighborIndex.erase(comp);
+        _neighborIndex.erase(comp);
     }
 
     /// Add a neighboring compartment to this compartments list of neighbors

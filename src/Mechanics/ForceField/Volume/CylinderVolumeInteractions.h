@@ -14,7 +14,7 @@
 #ifndef MEDYAN_CylinderVolumeInteractions_h
 #define MEDYAN_CylinderVolumeInteractions_h
 
-#include <HybridNeighborListImpl.h>
+#include "HybridNeighborListImpl.h"
 #include "common.h"
 
 //FORWARD DECLARATIONS

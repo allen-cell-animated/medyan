@@ -19,6 +19,7 @@
 #include "ChemNRMImpl.h"
 #include "Filament.h"
 #include "Cylinder.h"
+#include "GController.h"
 #include <stdint.h>
 
 #ifdef SIMDBINDINGSEARCH

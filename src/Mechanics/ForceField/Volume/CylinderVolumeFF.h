@@ -15,7 +15,7 @@
 #define MEDYAN_CylinderVolumeFF_h
 
 #include <vector>
-#include <HybridNeighborListImpl.h>
+#include "HybridNeighborListImpl.h"
 
 #include "common.h"
 

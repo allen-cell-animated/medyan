@@ -382,17 +382,6 @@ void ForceFieldManager::copyForces(double *fprev, double *f) {
 
 }
 
-void ForceFieldManager::resetForces() {
-
-    for(auto b: Bead::getBeads()) {
-        b->force.assign (3, 0); //Set force to zero;
-        //std::memset((void*)(&b->loadForcesP[0]), 0, sizeof(b->loadForcesP));  //Set load force to zero;
-        //std::memset((void*)(&b->loadForcesM[0]), 0, sizeof(b->loadForcesM));  //Set load force to zero;
-        std::fill(b->loadForcesP.begin(), b->loadForcesP.end(), 0.0); //Set load force to zero
-        std::fill(b->loadForcesM.begin(), b->loadForcesM.end(), 0.0); //Set load force to zero
-    }
-}
-
 #ifdef CUDAACCL
 
 void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, double *f) {

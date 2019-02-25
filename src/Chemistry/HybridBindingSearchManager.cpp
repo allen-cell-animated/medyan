@@ -112,8 +112,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
             fManagervec[idx].push_back(fmanager);
             _possibleBindingsstencilvec[idx].push_back(temp);
             _reversepossibleBindingsstencilvec[idx].push_back(rtemp);
-            _possibleBindingsstencilvecuint[idx].push_back(tempuint);
-            _reversepossibleBindingsstencilvecuint[idx].push_back(rtempuint);
+
             googlepossible[idx].push_back(tempgoogle);
             googlereversepossible[idx].push_back(rtempgoogle);
             bstateposvec[idx].push_back(bstatepos);
@@ -157,8 +156,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
         _filamentIDvec.push_back(ftypepairs);
         _possibleBindingsstencilvec.push_back(temp2);
         _reversepossibleBindingsstencilvec.push_back(rtemp2);
-        _possibleBindingsstencilvecuint.push_back(temp2uint);
-        _reversepossibleBindingsstencilvecuint.push_back(rtemp2uint);
+
         googlepossible.push_back(temp2google);
         googlereversepossible.push_back(rtemp2google);
 

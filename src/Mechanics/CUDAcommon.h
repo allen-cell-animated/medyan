@@ -2,26 +2,28 @@
 // Created by aravind on 9/18/17.
 //
 
-#ifndef CUDA_VEC_CUDACOMMON_H
-#define CUDA_VEC_CUDACOMMON_H
+#ifndef MEDYAN_CUDAcommon_h
+#define MEDYAN_CUDAcommon_h
 #include <vector>
 #include <list>
-#include <FilamentStretchingHarmonic.h>
-#include <FilamentBendingHarmonic.h>
-#include <FilamentBendingCosine.h>
-#include <LinkerStretchingHarmonic.h>
-#include <MotorGhostStretchingHarmonic.h>
-#include <CylinderExclVolRepulsion.h>
-#include <BranchingStretchingHarmonic.h>
-#include <BranchingBendingCosine.h>
-#include <BranchingDihedralCosine.h>
-#include <BranchingPositionCosine.h>
-#include <BoundaryCylinderRepulsionExp.h>
+#include "FilamentStretchingHarmonic.h"
+#include "FilamentBendingHarmonic.h"
+#include "FilamentBendingCosine.h"
+#include "LinkerStretchingHarmonic.h"
+#include "MotorGhostStretchingHarmonic.h"
+#include "CylinderExclVolRepulsion.h"
+#include "BranchingStretchingHarmonic.h"
+#include "BranchingBendingCosine.h"
+#include "BranchingDihedralCosine.h"
+#include "BranchingPositionCosine.h"
+#include "BoundaryCylinderRepulsionExp.h"
 #include "CCylinder.h"
 #include "common.h"
 #include "string.h"
 #include "MathFunctions.h"
+#ifdef SIMDBINDINGSEARCH
 #include "dist_driver.h"
+#endif
 using namespace mathfunc;
 struct bin{
     int binID;
@@ -50,6 +52,7 @@ struct SERLvars{
     uint N = 6000;
 
 };
+#ifdef SIMDBINDINGSEARCH
 template <uint D>
 dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> params) {
 
@@ -66,6 +69,7 @@ dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> p
         return out_serialdim;
     }
 }
+#endif
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     double * gpu_force = NULL;

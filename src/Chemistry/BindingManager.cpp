@@ -1884,7 +1884,6 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 
     updateBindingReaction(oldN, newN);
 }
-#endif
 
 void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
     //    auto cylcoord = cc->getCylinder()->coordinate;
@@ -2234,6 +2233,7 @@ void MotorBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
     updateBindingReaction(oldN,newN);
 }
 #endif
+
 bool MotorBindingManager::isConsistent() {
 
 #ifdef NLORIGINAL

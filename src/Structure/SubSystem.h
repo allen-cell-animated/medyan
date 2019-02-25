@@ -42,7 +42,9 @@
 #include "HybridNeighborListImpl.h"
 
 #include <initializer_list>
+#ifdef SIMDBINDINGSEARCH
 #include "dist_common.h"
+#endif
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -247,7 +249,6 @@ public:
     static double SIMDtimeV2;
     static double HYBDtime;
 private:
-    dist::Coords temptest;
     double _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
     

@@ -18,7 +18,6 @@
 #include <unordered_set>
 #include <random>
 #include <algorithm>
-#include <sparsehash/dense_hash_map>
 
 #include "common.h"
 
@@ -29,13 +28,16 @@
 #include "SysParams.h"
 #include "Rand.h"
 #include "BindingManager.h"
+#ifdef SIMDBINDINGSEARCH
+#include <sparsehash/dense_hash_map>
 #include "dist_driver.h"
+
+#endif
 /*#include <deque>
 #include <tuple>
 #include <thrust/binary_search.h>*/
 
 
-using google::dense_hash_map;      // namespace where class lives by default
 //using __gnu_cxx::hash;  // or __gnu_cxx::hash, or maybe tr1::hash, depending on your OS
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -44,11 +46,13 @@ class CCylinder;
 class Compartment;
 class Cylinder;
 class FilamentBindingManager;
+#ifdef SIMDBINDINGSEARCH
+using google::dense_hash_map;      // namespace where class lives by default
 typedef dense_hash_map<uint32_t , vector<uint32_t>, hash<uint32_t>> gdmap;
 typedef dense_hash_map<CCylinder* , vector<uint32_t>, hash<uint32_t>> gdmap2;
-
 typedef tuple<gdmap, gdmap, gdmap, gdmap, gdmap, gdmap, gdmap, gdmap, gdmap, gdmap,
         gdmap, gdmap, gdmap, gdmap, gdmap, gdmap> TUPLEGDMAP;
+#endif
 
 class HybridBindingSearchManager {
 
@@ -163,9 +167,8 @@ private:
 
     vector<vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*,
     short>>>>>_reversepossibleBindingsstencilvec;
+#ifdef SIMDBINDINGSEARCH
 
-    vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
-                                                    _reversepossibleBindingsstencilvecuint;
 
     vector<uint32_t> linker1, linker2;
     vector<uint32_t> motor1, motor2;
@@ -179,10 +182,11 @@ private:
     gdmap googlereversepossiblem;
     gdmap googlepossibleORIG;
     gdmap googlereversepossibleORIG;
-
+#endif
     //static neighbor list
     static HybridCylinderCylinderNL* _HneighborList;
-
+    
+#ifdef SIMDBINDINGSEARCH
     //SIMD variables
     unsigned mask = (1 << 4) - 1;
     static const dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par;
@@ -434,14 +438,12 @@ private:
                   uint prev, uint next);
 
    void countNpairsfound(short idvec[2]);
-
+#endif
 public:
     //possible bindings at current state. updated according to neighbor list stencil
     vector<vector<unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>>>
             _possibleBindingsstencilvec;
 
-    vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
-                                                            _possibleBindingsstencilvecuint;
 
     //constructors
      HybridBindingSearchManager(Compartment* compartment);
@@ -477,11 +479,11 @@ public:
     }
 
     void checkoccupancy(short idvec[2]);
-
+#ifdef SIMDBINDINGSEARCH
     void checkoccupancySIMD(short idvec[2]);
 
     void checkoccupancySIMD(short idvec[2], gdmap& map);
-
+#endif
     void printbindingsizes(){
         int idx, idx2;
         for(idx = 0; idx<totaluniquefIDpairs; idx++){
@@ -502,18 +504,18 @@ public:
 
                 _possibleBindingsstencilvec[idx][idx2].clear();
                 _reversepossibleBindingsstencilvec[idx][idx2].clear();
-                _possibleBindingsstencilvecuint[idx][idx2].clear();
-                _reversepossibleBindingsstencilvecuint[idx][idx2].clear();
+#ifdef SIMDBINDINGSEARCH
                 googlepossible[idx][idx2].clear();
                 googlereversepossible[idx][idx2].clear();
                 getfilID_fpospairs<true>().clear();
                 getfilID_fpospairs<false>().clear();
                 getpairsLinkerorMotor<true>().clear();
                 getpairsLinkerorMotor<false>().clear();
+#endif
             }
         }
     }
-
+#ifdef SIMDBINDINGSEARCH
     static void setdOut(){
         Totallinkermotor = 2;
         bspairs2self.init_dout(10000, {900.0f, 1600.0f, 30625.0f, 50625.0f});
@@ -528,6 +530,7 @@ public:
         bspairsmotorself.init_dout(10000,{30625.0f, 50625.0f});
         bspairsmotor.init_dout(10000,{30625.0f, 50625.0f});
     }
+#endif
 
     static double SIMDtime;
     static double HYBDtime;

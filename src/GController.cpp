@@ -191,11 +191,11 @@ void GController::generateConnections()
                                 target->adduniquepermuteNeighbour(neighbor, stencilcount -1);
 
                             if(ii != 0 && jprime == j && kprime == k)
-                                target->addNeighbour(neighbor);
+                                target->addNeighbour(neighbor, (ii < 0? 0: 1));
                             else if(jj != 0 && iprime == i && kprime == k)
-                                target->addNeighbour(neighbor);
+                                target->addNeighbour(neighbor, (jj < 0? 2: 3));
                             else if(kk != 0 && iprime == i && jprime == j)
-                                target->addNeighbour(neighbor);
+                                target->addNeighbour(neighbor, (kk < 0? 4: 5));
                         }
                     }
                 }

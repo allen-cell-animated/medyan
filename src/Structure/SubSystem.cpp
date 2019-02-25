@@ -19,10 +19,14 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
+#ifdef SIMDBINDINGSEARCH
 #include "dist_driver.h"
 #include "dist_coords.h"
-#include "dist_common.h"
+#endif
 #include "Cylinder.h"
+#include "HybridBindingSearchManager.h"
+
+
 using namespace mathfunc;
 void SubSystem::resetNeighborLists() {
 #ifdef CUDAACCL_NL
@@ -511,11 +515,11 @@ void SubSystem::updateBindingManagers() {
     }*/
 
     //This call calculates Binding pairs according to SIMD protocol V2
+#ifdef SIMDBINDINGSEARCH
 
     if(true) {
         minsSIMD = chrono::high_resolution_clock::now();
         for (auto C : _compartmentGrid->getCompartments()) {
-#ifdef SIMDBINDINGSEARCH
             C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV2();
 
             /*for(auto &manager : C->getFilamentBindingManagers()) {
@@ -525,7 +529,7 @@ void SubSystem::updateBindingManagers() {
                     manager->updateAllPossibleBindingsstencil();
     #endif
             }*/
-#endif
+
         }
         //PRINT
         /*    for(auto C : _compartmentGrid->getCompartments()) {
@@ -559,7 +563,7 @@ void SubSystem::updateBindingManagers() {
         std::cout<<"SIMD NL time "<<elapsed_simd_NL.count()<<endl;
         cout<<"SIMD calculate time "<<_HneighborList->findtimeV2<<endl;
     }
-
+#endif
     //PROTOCOL #3 This call calculates Binding pairs according to HYBRID protocol
     // (non-SIMD).
 #ifdef HYBRID_NLSTENCILLIST
@@ -572,13 +576,13 @@ if(true) {
     for (auto C : _compartmentGrid->getCompartments()) {
 #ifdef HYBRID_NLSTENCILLIST
         C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
-/*        for (auto &manager : C->getFilamentBindingManagers()) {
+        for (auto &manager : C->getFilamentBindingManagers()) {
 #ifdef NLSTENCILLIST
             BranchingManager *bManager;
             if (bManager = dynamic_cast<BranchingManager *>(manager.get()))
                 manager->updateAllPossibleBindingsstencil();
 #endif
-        }*/
+        }
     }
 #endif
     mineHYBD = chrono::high_resolution_clock::now();
