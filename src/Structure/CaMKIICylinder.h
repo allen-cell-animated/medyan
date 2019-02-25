@@ -37,16 +37,19 @@ class CaMKIIingPoint;
  */
 class CaMKIICylinder : public Cylinder {
 
-private:
+protected:
 	CaMKIIingPoint *camkiiPoint;
+	void updateCoordinate() override;
+    void updatePosition() override;
+    bool within(Cylinder* other, double dist) override;
+
 
 public:
     /// Constructor, initializes a cylinder
     // composte is set to NULL and we use only one bead
 	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position,
              bool extensionFront = false, bool extensionBack  = false,
-			 bool initialization = false):Cylinder(NULL, b1, NULL, type, position, extensionFront, extensionBack, initialization), camkiiPoint(camkiiPoint){
-	}
+			 bool initialization = false):Cylinder(nullptr, b1, b1, type, position, extensionFront, extensionBack, initialization), camkiiPoint(camkiiPoint){};
 
 };
 

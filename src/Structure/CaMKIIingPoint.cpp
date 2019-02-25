@@ -72,25 +72,30 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short posit
 
    // updatePosition();
 
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
     //Dummy Cylinder for CaMKII
     //choose length
-    Composite *Dummy = NULL; //TODO used for readable purposes
-    Bead* b1 = _subSystem->addTrackable<Bead>(_coordinate, Dummy, 0);
+    //Composite *Dummy = NULL; //TODO used for readable purposes
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+    Bead* b1 = _subSystem->addTrackable<Bead>(_coordinate, nullptr, 0);
 
 	double length = 0.0;
+
 
 	//length = SysParams::Geometry().monomerSize[_filType];
 	//length = SysParams::Geometry().monomerSize[_filType];
     //length = SysParams::Geometry().minCylinderSize[_filType];
 
 	//auto pos2 = nextPointProjection(position, length, direction);
-
-	Bead* b2 = _subSystem->addTrackable<Bead>(_coordinate, Dummy, 1);
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+	Bead* b2 = _subSystem->addTrackable<Bead>(_coordinate, nullptr, 1);
 
 	//create cylinder
-	Cylinder* c0 = _subSystem->addTrackable<Cylinder>(Dummy, b1, b2, _filType, 0);
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+	Cylinder* c0 = _subSystem->addTrackable<Cylinder>(nullptr, b1, b2, _filType, 0);
 
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 	c0->setPlusEnd(true);
 	c0->setMinusEnd(true);
 	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, b1, _filType, 0)); // init the dummy cylinder for CaMKII

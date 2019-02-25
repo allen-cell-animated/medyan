@@ -52,11 +52,9 @@ class Cylinder : public Component, public Trackable, public Movable,
     
 friend class CController;
 friend class DRController;
-    
-private:
-    Bead* _b1;  ///< Pointer to the first bead.
-    Bead* _b2; ///< Pointer to the end bead.
-    
+
+
+protected:
     unique_ptr<MCylinder> _mCylinder; ///< Pointer to mech cylinder
     unique_ptr<CCylinder> _cCylinder; ///< Pointer to chem cylinder
     
@@ -82,11 +80,13 @@ private:
                                        
     static ChemManager* _chemManager; ///< A pointer to the ChemManager,
                                       ///< intiailized by CController
-    
     ///Helper to get coordinate
-    void updateCoordinate();
+    virtual void updateCoordinate();
     
 public:
+    Bead* _b1;  ///< Pointer to the first bead.
+    Bead* _b2; ///< Pointer to the end bead.
+
     vector<double> coordinate;
     ///< Coordinates of midpoint, updated with updatePosition()
                                        
