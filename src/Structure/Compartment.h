@@ -32,10 +32,6 @@
 #include "HybridBindingSearchManager.h"
 #include "Composite.h"
 #include "ChemSim.h"
-#ifdef SIMDBINDINGSEARCH
-#include "dist_driver.h"
-#include "dist_coords.h"
-#endif
 
 #include "MathFunctions.h"
 
@@ -506,23 +502,6 @@ public:
     HybridBindingSearchManager* getHybridBindingSearchManager(){
         return _bindingsearchManagers;
     }
-#endif
-#ifdef SIMDBINDINGSEARCH
-    dist::Coords bscoords;
-    dist::Coords bscoordslinker;
-    dist::Coords bscoordsmotor;
-    vector<int> Cyldcindexvec;
-    vector<int> CylcIDvec;
-    template<bool LinkerorMotor>
-    dist::Coords& getSIMDcoords(){
-        if(LinkerorMotor)
-            return bscoordslinker;
-        else
-            return bscoordsmotor;
-    }
-    void SIMDcoordinates();
-    void SIMDcoordinates4linkersearch(bool isvectorizedgather);
-    void SIMDcoordinates4motorsearch(bool isvectorizedgather);
 #endif
     /// Get binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>>& getFilamentBindingManagers() {

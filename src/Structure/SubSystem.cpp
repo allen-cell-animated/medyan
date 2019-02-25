@@ -19,10 +19,7 @@
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 #include <vector>
-#ifdef SIMDBINDINGSEARCH
-#include "dist_driver.h"
-#include "dist_coords.h"
-#endif
+
 #include "Cylinder.h"
 #include "HybridBindingSearchManager.h"
 
@@ -260,13 +257,13 @@ void SubSystem::resetNeighborLists() {
     _HneighborList->reset();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_H(mine - mins);
-    std::cout<<"H NLSTEN reset time "<<elapsed_H.count()<<endl;
+//    std::cout<<"H NLSTEN reset time "<<elapsed_H.count()<<endl;
     mins = chrono::high_resolution_clock::now();
     for (auto nlist : __bneighborLists.getElements())
         nlist->reset();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_B(mine - mins);
-    std::cout<<"H NLSTEN B reset time "<<elapsed_B.count()<<endl;
+//    std::cout<<"H NLSTEN B reset time "<<elapsed_B.count()<<endl;
 #elif defined(NLORIGINAL) || defined(NLSTENCILLIST)
 #ifndef HYBRID_NLSTENCILLIST
     for (auto nl: _neighborLists.getElements())
@@ -349,7 +346,9 @@ void SubSystem::updateBindingManagers() {
 //    vector<int> bspeciesoffsetvec(SysParams::CParams.numFilaments);
     auto cylvec = Cylinder::getCylinders();
     int ncyl = cylvec.size();
-    delete [] cylsqmagnitudevector;
+    if(cylsqmagnitudevector != NULL)
+        delete [] cylsqmagnitudevector;
+    
     cylsqmagnitudevector = new double[Cylinder::vectormaxsize];
     unsigned long maxbindingsitespercyl = 0;
     for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
@@ -443,129 +442,8 @@ void SubSystem::updateBindingManagers() {
 //    std::cout<<motorspeciesbound.size()<<endl;
 #endif
 
-    chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
-    //SIMD cylinder update
-#ifdef SIMDBINDINGSEARCH
-    minsSIMD = chrono::high_resolution_clock::now();
-    for(auto C : _compartmentGrid->getCompartments()) {
-        C->SIMDcoordinates();
-        C->SIMDcoordinates4linkersearch(1);
-        C->SIMDcoordinates4motorsearch(1);
-        C->getHybridBindingSearchManager()->resetpossibleBindings();
-    }
+    chrono::high_resolution_clock::time_point minsHYBD, mineHYBD, mins, mine;
 
-    if(!initialize) {
-        HybridBindingSearchManager::setdOut();
-        initialize = true;
-    }
-
-    mineSIMD = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runSIMD2(mineSIMD - minsSIMD);
-    SIMDtime += elapsed_runSIMD2.count();
-    cout<<"SIMD create time "<<elapsed_runSIMD2.count()<<endl;
-#endif
-
-    //PROTOCOL 1 This call calculates Binding pairs according to SIMD protocol V1
-    if(false) {
-        minsSIMD = chrono::high_resolution_clock::now();
-        for (auto C : _compartmentGrid->getCompartments()) {
-#ifdef SIMBDINDINGSEARCH
-
-            C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencil();
-//        C->getHybridBindingSearchManager()->checkoccupancy(_idvec);
-            for (auto &manager : C->getFilamentBindingManagers()) {
-#ifdef NLSTENCILLIST
-                BranchingManager *bManager;
-                if (bManager = dynamic_cast<BranchingManager *>(manager.get()))
-                    manager->updateAllPossibleBindingsstencil();
-#endif
-            }
-#else
-            for(auto &manager : C->getFilamentBindingManagers()) {
-#ifdef NLORIGINAL
-                manager->updateAllPossibleBindings();
-#endif
-#ifdef NLSTENCILLIST
-                manager->updateAllPossibleBindingsstencil();
-#endif
-#if defined(NLORIGINAL) && defined(NLSTENCILLIST)
-                manager->crosscheck();
-#endif
-            }
-#endif
-        }
-        mineSIMD = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runSIMD(mineSIMD - minsSIMD);
-        SIMDtime += elapsed_runSIMD.count();
-        cout << "SIMD time " << elapsed_runSIMD.count() << endl;
-        cout << "find time " << HybridBindingSearchManager::findtime << endl;
-    }
-
-    //PRINT
-/*    for(auto C : _compartmentGrid->getCompartments()) {
-       C->getHybridBindingSearchManager()->printbindingsizes();
-    }*/
-
-
-
-    //PROTOCOL #2 SIMD V2
-/*    for(auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->resetpossibleBindings();
-    }*/
-
-    //This call calculates Binding pairs according to SIMD protocol V2
-#ifdef SIMDBINDINGSEARCH
-
-    if(true) {
-        minsSIMD = chrono::high_resolution_clock::now();
-        for (auto C : _compartmentGrid->getCompartments()) {
-            C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV2();
-
-            /*for(auto &manager : C->getFilamentBindingManagers()) {
-    #ifdef NLSTENCILLIST
-                BranchingManager* bManager;
-                if(bManager = dynamic_cast<BranchingManager *>(manager.get()))
-                    manager->updateAllPossibleBindingsstencil();
-    #endif
-            }*/
-
-        }
-        //PRINT
-        /*    for(auto C : _compartmentGrid->getCompartments()) {
-                C->getHybridBindingSearchManager()->printbindingsizes();
-            }*/
-        mineSIMD = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runSIMDV2(mineSIMD - minsSIMD);
-        SIMDtimeV2 += elapsed_runSIMDV2.count();
-        cout << "SIMDV2 time " << elapsed_runSIMDV2.count() << endl;
-        cout << "findV2 time " << HybridBindingSearchManager::findtimeV2 << endl;
-        cout << "Append time " << HybridBindingSearchManager::appendtime << endl;
-        cout << "Time taken to parse SIMD " << HybridBindingSearchManager::SIMDparse1
-             << endl;
-        cout << "Time taken to merge SIMD " << HybridBindingSearchManager::SIMDparse2
-             << endl;
-        cout << "Time taken to copy to main google map "
-                "" << HybridBindingSearchManager::SIMDparse3 << endl;
-        cout << "Time taken to update bs "
-                "" << HybridBindingSearchManager::SIMDcountbs << endl;
-
-    }
-
-    //PROTOCOL #2b This call calculates Binding pairs according to SIMD protocol
-    // operating on HybringNeighborListImpl
-    if(true){
-        minsHYBD = chrono::high_resolution_clock::now();
-        _HneighborList->setdOut();
-        _HneighborList->updateSIMDbindingsites();
-        mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_simd_NL(mine - mins);
-        std::cout<<"SIMD NL time "<<elapsed_simd_NL.count()<<endl;
-        cout<<"SIMD calculate time "<<_HneighborList->findtimeV2<<endl;
-    }
-#endif
-    //PROTOCOL #3 This call calculates Binding pairs according to HYBRID protocol
-    // (non-SIMD).
 #ifdef HYBRID_NLSTENCILLIST
 if(true) {
 /*    for (auto C : _compartmentGrid->getCompartments()) {
@@ -588,19 +466,14 @@ if(true) {
     mineHYBD = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runHYBD(mineHYBD - minsHYBD);
     HYBDtime += elapsed_runHYBD.count();
-    cout << "HYBD time " << elapsed_runHYBD.count() << endl;
-    cout<<"HYBD map time "<<HybridBindingSearchManager::HYBDappendtime<<endl;
+//    cout << "HYBD time " << elapsed_runHYBD.count() << endl;
+//    cout<<"HYBD map time "<<HybridBindingSearchManager::HYBDappendtime<<endl;
 }
 #endif
 
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_orig(mine - mins);
-    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
-    //PRINT
-    for(auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->printbindingsizes();
-    }
-    exit(EXIT_FAILURE);
+//    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
 }
 
 //OBSOLETE
@@ -1049,6 +922,4 @@ void SubSystem::assigntorespectivebindingmanagersCUDA(){
 #endif
 CompartmentGrid* SubSystem::_staticgrid;
 bool SubSystem::initialize = false;
-double SubSystem::SIMDtime  = 0.0;
-double SubSystem::SIMDtimeV2  = 0.0;
 double SubSystem::HYBDtime  = 0.0;

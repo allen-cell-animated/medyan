@@ -21,11 +21,6 @@
 #include "common.h"
 #include "Composite.h"
 
-#ifdef SIMDBINDINGSEARCH2
-#include "dist_driver.h"
-#include "dist_coords.h"
-#endif
-
 //#include "Cylinder.h"
 /*!
  * Bin is a spatial voxel subset of reaction volume. Bin is exclusively used to calculate
@@ -172,26 +167,6 @@ public:
 
     vector<int> getcindices(){return cindicesvector;}
 
-    //TESTING
-#ifdef SIMDBINDINGSEARCH2
-        vector<uint16_t> cindex_bs;
-        vector<uint32_t> cID_bs;
-        vector<int> Cyldcindexvec;
-        vector<int> CylcIDvec;
-        dist::Coords bscoords;
-        dist::Coords bscoordslinker;
-        dist::Coords bscoordsmotor;
 
-    template<bool LinkerorMotor>
-    dist::Coords& getSIMDcoords(){
-        if(LinkerorMotor)
-            return bscoordslinker;
-        else
-            return bscoordsmotor;
-    }
-        void createSIMDcoordinates();
-        void createSIMDcoordinates4linkersearch(bool isvectorizedgather);
-        void createSIMDcoordinates4motorsearch(bool isvectorizedgather);
-#endif
 };
 #endif

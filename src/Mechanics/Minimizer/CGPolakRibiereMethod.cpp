@@ -546,8 +546,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::serltime.TcomputeE = 0.0;
     CUDAcommon::serltime.TcomputeF = 0.0;
 #endif
-std::cout<<"----------------------------------------"<<endl;
-    std::cout<<"maxF "<<maxF()<<endl;
+//std::cout<<"----------------------------------------"<<endl;
+//    std::cout<<"maxF "<<maxF()<<endl;
 #ifdef SERIAL
     while (/* Iteration criterion */  numIter < N &&
            /* Gradient tolerance  */  (Ms_isminimizationstate )) {
@@ -695,7 +695,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
     }
 #endif //SERIAL
-    std::cout<<"SERL Total number of iterations "<<numIter<<endl;
+//    std::cout<<"SERL Total number of iterations "<<numIter<<endl;
 #ifdef CUDATIMETRACK_MACRO
     std::cout<<"SERL Energy time taken (s) "<<CUDAcommon::serltime.TcomputeE<<" for total "
             "iters "<<CUDAcommon::serltime.Ecount<<endl;

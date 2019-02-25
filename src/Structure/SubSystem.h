@@ -42,9 +42,7 @@
 #include "HybridNeighborListImpl.h"
 
 #include <initializer_list>
-#ifdef SIMDBINDINGSEARCH
-#include "dist_common.h"
-#endif
+
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -245,8 +243,6 @@ public:
         return _staticgrid;
     }
 
-    static double SIMDtime;
-    static double SIMDtimeV2;
     static double HYBDtime;
 private:
     double _energy = 0; ///< Energy of this subsystem
@@ -269,9 +265,8 @@ private:
     CCylinder** ccylindervec;
     Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
-    double* cylsqmagnitudevector;
+    double* cylsqmagnitudevector = NULL;
     static bool initialize;
-    chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
 #ifdef CUDAACCL_NL
     double* gpu_coord;
     double* gpu_coord_com;

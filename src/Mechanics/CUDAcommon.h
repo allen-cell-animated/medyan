@@ -21,9 +21,6 @@
 #include "common.h"
 #include "string.h"
 #include "MathFunctions.h"
-#ifdef SIMDBINDINGSEARCH
-#include "dist_driver.h"
-#endif
 using namespace mathfunc;
 struct bin{
     int binID;
@@ -52,24 +49,7 @@ struct SERLvars{
     uint N = 6000;
 
 };
-#ifdef SIMDBINDINGSEARCH
-template <uint D>
-dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> params) {
 
-    if (dim == 1) {
-        dist::dOut<1> out_serialdim(N1, params);
-        return out_serialdim;
-    }
-    else if (dim == 2) {
-        dist::dOut<2> out_serialdim(N1, params);
-        return out_serialdim;
-    }
-    else if (dim == 3){
-        dist::dOut<3> out_serialdim(N1, params);
-        return out_serialdim;
-    }
-}
-#endif
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     double * gpu_force = NULL;

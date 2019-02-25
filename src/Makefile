@@ -14,58 +14,38 @@
 ##################################################
 
 TESTS	:= $(shell find ./TESTS -name 'test_*')
-SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_module/*')
-SOURCES_CPP += ./dist_module/dist_coords.cpp ./dist_module/dist_mod_vars.cpp ./dist_module/dist_bench.cpp ./dist_module/dist_test.cpp ./dist_module/dist_example.cpp
-SOURCES_CU  := $(shell find . -name '*.cu'  ! -path './TESTS/*')
-SOURCES = $(SOURCES_CPP) $(SOURCES_CU)
-HEADERS := $(shell find . -name '*.h' ! -path './dist_module/*')
-HEADERS += ./dist_module/umesimd/UMESimd.h
+SOURCES := $(shell find . -name '*.cpp' ! -path './TESTS/*')
+HEADERS := $(shell find . -name '*.h')
 
-OBJECTS_CPP := $(SOURCES_CPP:.cpp=.o)
-OBJECTS_CU  := $(SOURCES_CU:.cu=.o)
-OBJECTS = $(OBJECTS_CPP) $(OBJECTS_CU)
+OBJECTS := $(SOURCES:.cpp=.o)
 
-# Compiler and linker choice
-CXX = g++ -std=c++14
-NVCC = nvcc -std=c++11
-
-# Flags used by compiler and linker
+#CPP COMPILER CHOICE AND FLAGS
+CXX = g++ -std=c++11
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
+FAST = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native
 
-# Compiler flags
-INCLUDES = -I./dist_module -I./dist_module/umesimd/ -I/usr/local/include \
+LDLIBS = -L/usr/local/lib/ -lboost_system -L/a/fs-3/export/home/deepthought2/qni/local/lib/
+LDFLAGS = $(FAST)
+
+CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
+-Wno-uninitialized -Wno-unknown-warning-option \
+-I/a/fs-3/export/home/deepthought2/qni/local/include -I/a/fs-3/export/home/deepthought2/qni/local/include/boost \
 -I./ -IStructure -IStructure/Special      \
--IStructure/SurfaceMesh                   \
 -IChemistry                               \
--IMechanics/                              \
 -IMechanics/Minimizer                     \
 -IMechanics/ForceField                    \
 -IMechanics/ForceField/Volume             \
--IMechanics/ForceField/VolumeConservation \
 -IMechanics/ForceField/Boundary           \
 -IMechanics/ForceField/Branching          \
 -IMechanics/ForceField/Filament           \
 -IMechanics/ForceField/Linker             \
 -IMechanics/ForceField/MotorGhost         \
 -IMechanics/ForceField/Bubble             \
-#-IMechanics/ForceField/Membrane           \
 
-INCLUDES_NVCC = $(INCLUDES) -I/usr/local/include -I/usr/local/cuda/include
-
-CXXFLAGS_CXX = $(FAST_CXX) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
--Wno-uninitialized -Wno-unknown-warning-option $(INCLUDES)
-CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
--lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
-
-# Linker flags
-LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_module/umesimd -static-libstdc++ -pthread 
-LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
-LDFLAGS_CXX = $(FAST_CXX) 
 
 #################MAIN USER MACROS#################
 #
-# Please set these macros according to the
+# Please set these macros according to the 	
 # desired simulation type. See the install
 # and usage guides for more details.
 #
@@ -75,15 +55,9 @@ LDFLAGS_CXX = $(FAST_CXX)
 CPPFLAGS += -DCHEMISTRY
 #Initialize mechanical components of system
 CPPFLAGS += -DMECHANICS
-#Use dynamic rate changing
+#Use dynamic rate changing 
 CPPFLAGS += -DDYNAMICRATES
-#vectorized serial energy minimization
-CPPFLAGS += -DSERIAL
-#neighbors list calculations
-#CPPFLAGS += -DNLORIGINAL
-CPPFLAGS += -DNLSTENCILLIST
-CPPFLAGS += -DHYBRID_NLSTENCILLIST
-CPPFLAGS += -DSIMDBINDINGSEARCH
+
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
@@ -91,60 +65,50 @@ CPPFLAGS += -DBOOL_POOL_NSIZE=65536
 #if compiling the testing suite
 #CPPFLAGS += -DTESTING
 
-#Detailed chemistry macros.
+#serialized energy minimization                                                          
+CPPFLAGS += -DSERIAL
+
+#Detailed chemistry macros. 
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!
 
 #Track dependents. Needed for Gillespie and NRM algorithm
 CPPFLAGS += -DTRACK_DEPENDENTS
 
-#Track zero copy and max copy number.
+#Track zero copy and max copy number. 
 #For passivating and activating reactions accordingly
 CPPFLAGS += -DTRACK_ZERO_COPY_N
 CPPFLAGS += -DTRACK_UPPER_COPY_N
 
-#Reaction signaling. Needed for all Filament, Linker,
+#Reaction signaling. Needed for all Filament, Linker, 
 #Motor, and BranchingPoint reactions in system
 CPPFLAGS += -DREACTION_SIGNALING
 
 #Species signaling
 CPPFLAGS += -DRSPECIES_SIGNALING
 
-#CUDA specific
-CPPFLAGS_NVCC = $(CPPFLAGS) -DCUDAACCL
+#PLoS version of motor stall model
+CPPFLAGS += -PLOSSTALLFEEDBACK
 
-#Non-CUDA specific
-CPPFLAGS_CXX = $(CPPFLAGS)
+CPPFLAGS += -HYBRID_NLSTENCILLIST
+CPPFLAGS += -NLSTENCILLIST
 
 ################MAKEFILE OPTIONS###################
 #
-#
+#	
 #   make [all]        - makes everything
 #   make Makefile.dep - makes dependencies
-#   make clean	      - remove all files
+#   make clean	      - remove all files 
 #						generated by make
-#
-#	Use USING_CUDA=true to make cuda version
 #
 ##################################################
 
-all: medyan
+all: MEDYAN
 
-medyan: $(OBJECTS)
-ifeq ($(USING_CUDA), true)
-	$(NVCC) -o MEDYAN $(OBJECTS) $(LDLIBS_NVCC)
-else
-	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
-endif
+MEDYAN: $(OBJECTS)
+	$(CXX) $(LDFLAGS) -o MEDYAN $(OBJECTS) $(LDLIBS)
 
-%.o: %.cpp
-	$(CXX) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c $< -o $@
-
-%.o: %.cu
-ifeq ($(USING_CUDA), true)
-	$(NVCC) $(CPPFLAGS_NVCC) $(CXXFLAGS_NVCC) -c $< -o $@
-else
-	$(CXX) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -xc++ -c $< -o $@
-endif
+%.o: %.cpp 
+	$(CXX) $(CPPFLAGS) -c $< -o $@
 
 clean:
 	\find . -name '*.o' -delete
@@ -152,14 +116,8 @@ clean:
 
 Makefile.dep: $(SOURCES) $(HEADERS)
 	@echo "Updating the dependency file: Makefile.dep"
-ifeq ($(USING_CUDA), true)
-	$(SHELL) -ec '$(NVCC) -MM $(CPPFLAGS_NVCC) $(INCLUDES_NVCC)  $(filter %.cpp %.cu,$^) \
+	$(SHELL) -ec '$(CXX) -MM $(CPPFLAGS) $(INCLUDES)  $(filter %.cpp,$^) \
 	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 	[ -s $@ ] || rm -f $@'
-else
-	$(SHELL) -ec '$(CXX) -MM -xc++ $(CPPFLAGS_CXX) $(INCLUDES)  $(filter %.cpp %.cu,$^) \
-	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
-	[ -s $@ ] || rm -f $@'
-endif
 
 include Makefile.dep

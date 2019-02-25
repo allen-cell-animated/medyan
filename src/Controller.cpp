@@ -288,9 +288,6 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 //    FilamentData filaments;
 
     cout << "---" << endl;
-#ifdef SIMDBINDINGSEARCH
-    HybridBindingSearchManager::setdOut();
-#endif
     cout << "Initializing filaments...";
 
     if(FSetup.inputFile != "") {
@@ -1084,7 +1081,7 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
-                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
+//                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
@@ -1257,7 +1254,6 @@ void Controller::run() {
     cout<< "Neighbor list + Bmgr time for run="<<nltime<<endl;
     cout<< "Neighbor list time "<<nl2time<<endl;
     cout<< "Bmgr vec time "<<bmgrvectime<<endl;
-    cout<< "SIMD time "<<SubSystem::SIMDtime<<endl;
     cout<< "HYBD time "<<SubSystem::HYBDtime<<endl;
     cout<< "Bmgr time "<<bmgrtime<<endl;
     cout<<"rxnrate time for run="<<rxnratetime<<endl;
