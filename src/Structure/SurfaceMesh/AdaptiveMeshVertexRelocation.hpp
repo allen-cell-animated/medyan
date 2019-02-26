@@ -44,7 +44,7 @@ template<> struct RelaxationForceField< VertexRelaxationType::GlobalElastic > {
 
 template<
     typename Mesh,
-    VertexRelaxationType r,
+    VertexRelaxationType r
 > class GlobalRelaxationManager {
 public:
     using RelaxationForceFieldType = RelaxationForceField< r >;
