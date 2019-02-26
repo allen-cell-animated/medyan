@@ -171,7 +171,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
 //    //Initial parameters of system
     auto _nDim = SysParams::Geometry().nDim;
     double searchdist = 1.125 * (sqrt(_largestrMaxsq));
-    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
+//    std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
     _binSize = {searchdist, searchdist, searchdist};
     if(_nDim >=1) {
         _size.push_back(int(SysParams::Geometry().NX * SysParams::Geometry()

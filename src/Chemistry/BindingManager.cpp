@@ -151,7 +151,7 @@ void BranchingManager::updateAllPossibleBindings() {
     //clear all
     _possibleBindings.clear();
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
+    //int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
 
     for(auto &c : _compartment->getCylinders()) {
 
@@ -330,8 +330,8 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
     //clear all
     _possibleBindingsstencil.clear();
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
-
+    //int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
+    int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     for(auto &c : _compartment->getCylinders()) {
 
         if(c->getType() != _filamentType) continue;
@@ -389,9 +389,7 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
                 else
                 inZone = false;
             }
-            if (areEqual(boundstate[0][offset + SysParams::Chemistry()
-                                                        .bindingSites[_filamentType]
-                                                        .size()*c->_dcIndex + j], 1.0) && inZone) {
+            if (areEqual(boundstate[0][maxnbs * c->_dcIndex + j], 1.0) && inZone) {
 //                output test
 //                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 //                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
@@ -809,7 +807,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     timetaken = 0.0;
     _possibleBindings.clear();
     mints = chrono::high_resolution_clock::now();
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
+    //int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
     for(auto c : _compartment->getCylinders()) {
         if (c->getType() != _filamentType) continue;
 
@@ -1153,7 +1151,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 }
 void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     _possibleBindingsstencil.clear();
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
+    //int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
     double min1,min2,max1,max2;
     bool status1 = true;
     bool status2 = true;
@@ -1246,7 +1244,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
             double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             for(int pos1 =0; pos1<nbs;pos1++) {
                 //now re add valid binding sites
-                if (areEqual(boundstate[1][offset + maxnbs *c.cindex + pos1], 1.0)) {
+                if (areEqual(boundstate[1][maxnbs *c.cindex + pos1], 1.0)) {
                     auto mp1 = bindingsites.at(pos1);
                     double A = X3X4squared;
                     double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
@@ -1293,7 +1291,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                         }
                     }
                     for(int pos2 = 0; pos2<nbs;pos2++){
-                        if (areEqual(boundstate[1][offset + maxnbs *cn.cindex + pos2], 1.0)) {
+                        if (areEqual(boundstate[1][maxnbs *cn.cindex + pos2], 1.0)) {
                             total++;
                             //check distances..
                             auto mp2 = bindingsites.at(pos2);
@@ -2040,7 +2038,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
     timetaken = 0.0;
     _possibleBindings.clear();
     mints = chrono::high_resolution_clock::now();
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
+    //int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
     for(auto c : _compartment->getCylinders()) {
         if (c->getType() != _filamentType) continue;
 

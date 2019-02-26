@@ -1120,6 +1120,11 @@ void ChemManager::genFilBindingReactions() {
     FilamentBindingManager::_subSystem = _subSystem;
     double rMax, rMin;
     bool status = false;
+    for(auto C : grid->getCompartments()) {
+        HybridBindingSearchManager* Hbsn  = new HybridBindingSearchManager(C);
+        C->addHybridBindingSearchManager(Hbsn);
+    }
+    
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
 
         //loop through all compartments
@@ -1390,8 +1395,7 @@ void ChemManager::genFilBindingReactions() {
                _chemData.motorReactions[filType].size() > 0) {
                 status = true;
             }
-                HybridBindingSearchManager* Hbsn  = new HybridBindingSearchManager(C);
-                C->addHybridBindingSearchManager(Hbsn);
+
 #endif
 
 
