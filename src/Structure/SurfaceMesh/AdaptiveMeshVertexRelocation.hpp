@@ -4,16 +4,13 @@
 #include "MathFunctions.h"
 #include "Structure/SurfaceMesh/MembraneMeshCheck.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 namespace adaptive_mesh {
 
 // Different methods can be used in vertex relocation
 //   - Vertex relaxations are vertex movement via moving along assigned force fields
 //   - Direct vertex relocations are to move the vertex to the optimal location
-enum class VertexRelocationMethod {
-    Relaxation, DirectRelocation
-};
-template< VertexRelocationMethod > struct VertexRelocation;
 
 // Vertex relaxation as method of vertex relocation
 enum class VertexRelaxationType {
@@ -237,8 +234,104 @@ public:
 };
 
 // Direct vertex relocation as method of vertex relocation
-// TODO
+enum class OptimalVertexLocationMethod {
+    Barycenter // of points that forms equilateral triangles
+};
+template< OptimalVertexLocationMethod > struct OptimalVertexLocation;
+template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::Barycenter > {
+    static mathfunc::Vec3 findEquilateralTriangle(
+        const mathfunc::Vec3& v1,
+        const mathfunc::Vec3& v2,
+        const mathfunc::Vec3& un
+    ) {
+        return 0.5 * (v1 + v2) + mathfunc::cross(un, v2 - v1) * (std::sqrt(3.0) * 0.5);
+    }
+    template< typename Mesh >
+    VecType operator()(const Mesh& mesh, size_t vi) const {
+        using namespace mathfunc;
 
+        Vec3 target {};
+        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+            const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.next(hei))).getCoordinate());
+            const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.prev(hei))).getCoordinate());
+            const auto& un = mesh.getTriangleAttribute(mesh.triangle(hei)).gTriangle.unitNormal;
+            target += findEquilateralTriangle(cp, cn, un);
+        });
+        target /= mesh.degree(vi);
+
+        // project onto tangent plane
+        const auto ci = vector2Vec<3, double>(mesh.getVertexAttribute(vi).getCoordinate());
+        const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
+        target -= un * dot(un, target - ci);
+
+        return target;
+    }
+};
+
+template<
+    typename Mesh,
+    OptimalVertexLocationMethod opt
+> class DirectVertexRelocationManager {
+public:
+    using OptimalVertexLocationType = OptimalVertexLocaion< opt >;
+    using GeometryManagerType = GeometryManager< Mesh >;
+
+private:
+    size_t _maxIterRelocation;
+    size_t _maxIter; // each iteration: (relocation + edge flipping)
+
+public:
+    // Constructor
+    DirectVertexRelocationManager(size_t maxIterRelocation, size_t maxIter)
+        : _maxIterRelocation(maxIterRelocation), _maxIter(maxIter) {}
+
+    template< typename EdgeFlipManagerType >
+    void operator()(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+        using namespace mathfunc;
+
+        const size_t numVertices = mesh.getVertices().size();
+
+        // Main loop
+        size_t flippingCount = 0;
+        size_t iter = 0;
+        while( flippingCount && iter < _maxIterRelaxation) {
+            ++iter;
+
+            // Move coordinates (max move: size / 3)
+            for(size_t i = 0; i < numVertices; ++i) {
+                const auto coordOriginal = vector2Vec<3>(mesh.getVertexAttribute(i).getCoordinate());
+                const auto target = OptimalVertexLocationType{}(mesh, i);
+                /*const auto diff = target - coordOriginal;
+                const auto magDiff = magnitude(diff);
+                const auto size = mesh.getVertexAttribute(i).aVertex.size;
+                const auto desiredDiff = (
+                    magDiff == 0.0
+                    ? diff
+                    : diff * (std::min(size * 0.33, magDiff) / magDiff)
+                );
+                coords[i] = coordsOriginal[i] + desiredDiff;*/
+                mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(target);
+            }
+
+            // Smooth out the folded geometry, without updating normals
+            /*while(!membrane_mesh_check::MembraneMeshDihedralCheck{0.0, 0.0}(mesh, true)) {
+                // Apply Laplacian smoothing
+                _laplacianSmoothing(targets, mesh); 
+            }*/
+
+            // Update normals
+            GeometryManagerType::computeAllTriangleNormals(mesh);
+            GeometryManagerType::computeAllAngles(mesh);
+            GeometryManagerType::computeAllVertexNormals(mesh);
+
+            // Try flipping
+            flippingCount = _edgeFlipping(mesh, efm);
+        }
+
+        if(flippingCount) return false;
+        else return true;
+    }
+};
 
 } // namespace adaptive_mesh
 
