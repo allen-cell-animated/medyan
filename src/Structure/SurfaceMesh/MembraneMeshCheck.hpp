@@ -350,6 +350,33 @@ struct MembraneMeshQualityReport {
         avgDotNormal /= numEdges;
         LOG(INFO) << "Cosine of dihedral angles: Avg " << avgDotNormal << " Worst " << minDotNormal;
     }
+
+    void sizeQuality(const MeshType& mesh) const {
+        const size_t numTriangles = mesh.getTriangles().size();
+
+        // Check triangle quality
+        double worstQuality = TriangleQualityType::best;
+        double avgQuality = 0.0;
+        for(size_t i = 0; i < numTriangles; ++i) {
+            const size_t hei = mesh.getTriangles()[i].halfEdgeIndex;
+            const size_t e0 = mesh.edge(hei);
+            const size_t e1 = mesh.edge(mesh.next(hei));
+            const size_t e2 = mesh.edge(mesh.prev(hei));
+            const auto l0 = mesh.getEdgeAttribute(e0).aEdge.eqLength;
+            const auto l1 = mesh.getEdgeAttribute(e1).aEdge.eqLength;
+            const auto l2 = mesh.getEdgeAttribute(e2).aEdge.eqLength;
+
+            const auto q = TriangleQualityType{}(l0, l1, l2);
+
+            if(TriangleQualityType::worse(q, worstQuality)) {
+                worstQuality = q;
+            }
+            avgQuality += q;
+        }
+        avgQuality /= numTriangles;
+        LOG(INFO) << "EXPECTED quality of triangles: Avg " << avgQuality << " Worst " << worstQuality;
+    }
+
 };
 
 } // namespace membrane_mesh_check
