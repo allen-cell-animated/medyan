@@ -16,8 +16,8 @@ namespace adaptive_mesh {
 enum class VertexRelaxationType {
     GlobalElastic // E = (l - l_0)^2 / (2 l_0), with const elastic modulus 1.0
 };
-template< RelaxationType > struct RelaxationForceField;
-template<> struct RelaxationForceField< RelaxationType::GlobalElastic > {
+template< VertexRelaxationType > struct RelaxationForceField;
+template<> struct RelaxationForceField< VertexRelaxationType::GlobalElastic > {
 
     // The function requires the vertex unit normal information
     template< typename Mesh, typename VecType >
@@ -44,7 +44,7 @@ template<> struct RelaxationForceField< RelaxationType::GlobalElastic > {
 
 template<
     typename Mesh,
-    RelaxationType r,
+    VertexRelaxationType r,
 > class GlobalRelaxationManager {
 public:
     using RelaxationForceFieldType = RelaxationForceField< r >;

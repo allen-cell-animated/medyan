@@ -646,7 +646,7 @@ class MeshAdapter {
 public:
     using GeometryManagerType = GeometryManager< Mesh >;
 
-    static constexpr auto relaxationType = RelaxationType::GlobalElastic;
+    static constexpr auto vertexRelaxationType = VertexRelaxationType::GlobalElastic;
     static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
     static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::MidPoint;
 
@@ -676,7 +676,7 @@ public:
 
 private:
     SizeMeasureManager< Mesh > _sizeMeasureManager;
-    GlobalRelaxationManager< Mesh, relaxationType, triangleQualityCriteria > _globalRelaxationManager;
+    GlobalRelaxationManager< Mesh, vertexRelaxationType > _globalRelaxationManager;
 
     EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
     EdgeSplitManager< Mesh, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
