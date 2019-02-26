@@ -247,7 +247,7 @@ template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::Barycenter
         return 0.5 * (v1 + v2) + mathfunc::cross(un, v2 - v1) * (std::sqrt(3.0) * 0.5);
     }
     template< typename Mesh >
-    VecType operator()(const Mesh& mesh, size_t vi) const {
+    mathfunc::Vec3 operator()(const Mesh& mesh, size_t vi) const {
         using namespace mathfunc;
 
         Vec3 target {};
