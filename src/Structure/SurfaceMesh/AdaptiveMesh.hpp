@@ -647,6 +647,7 @@ public:
     using GeometryManagerType = GeometryManager< Mesh >;
 
     static constexpr auto vertexRelaxationType = VertexRelaxationType::GlobalElastic;
+    static constexpr auto optimalVertexLocationMethod = OptimalVertexLocationMethod::Barycenter;
     static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
     static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::MidPoint;
 
@@ -677,6 +678,7 @@ public:
 private:
     SizeMeasureManager< Mesh > _sizeMeasureManager;
     GlobalRelaxationManager< Mesh, vertexRelaxationType > _globalRelaxationManager;
+    DirectVertexRelocationManager< Mesh, optimalVertexLocationMethod > _directVertexRelocationManager;
 
     EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
     EdgeSplitManager< Mesh, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
@@ -700,6 +702,10 @@ public:
             param.relaxationDt,
             param.relaxationMaxIterRelocation,
             param.relaxationMaxIterRelaxation
+        ),
+        _directVertexRelocationManager(
+            param.relaxationMaxIterRelocation,
+            param.relaxationMaxIterRelaxation // TODO parameter name change
         ),
         _edgeFlipManager(param.minDegree, param.maxDegree, param.edgeFlipMinDotNormal),
         _edgeSplitManager(param.maxDegree),

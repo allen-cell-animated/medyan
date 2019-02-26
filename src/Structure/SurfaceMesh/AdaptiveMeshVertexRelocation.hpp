@@ -294,23 +294,25 @@ public:
         // Main loop
         size_t flippingCount = 0;
         size_t iter = 0;
-        while( flippingCount && iter < _maxIterRelaxation) {
+        while( flippingCount && iter < _maxIter) {
             ++iter;
 
             // Move coordinates (max move: size / 3)
-            for(size_t i = 0; i < numVertices; ++i) {
-                const auto coordOriginal = vector2Vec<3>(mesh.getVertexAttribute(i).getCoordinate());
-                const auto target = OptimalVertexLocationType{}(mesh, i);
-                /*const auto diff = target - coordOriginal;
-                const auto magDiff = magnitude(diff);
-                const auto size = mesh.getVertexAttribute(i).aVertex.size;
-                const auto desiredDiff = (
-                    magDiff == 0.0
-                    ? diff
-                    : diff * (std::min(size * 0.33, magDiff) / magDiff)
-                );
-                coords[i] = coordsOriginal[i] + desiredDiff;*/
-                mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(target);
+            for(size_t iterRelo = 0; iterRelo < _maxIterRelocation; ++iterRelo) {
+                for(size_t i = 0; i < numVertices; ++i) {
+                    const auto coordOriginal = vector2Vec<3>(mesh.getVertexAttribute(i).getCoordinate());
+                    const auto target = OptimalVertexLocationType{}(mesh, i);
+                    /*const auto diff = target - coordOriginal;
+                    const auto magDiff = magnitude(diff);
+                    const auto size = mesh.getVertexAttribute(i).aVertex.size;
+                    const auto desiredDiff = (
+                        magDiff == 0.0
+                        ? diff
+                        : diff * (std::min(size * 0.33, magDiff) / magDiff)
+                    );
+                    coords[i] = coordsOriginal[i] + desiredDiff;*/
+                    mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(target);
+                }
             }
 
             // Smooth out the folded geometry, without updating normals
