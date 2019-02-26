@@ -138,7 +138,7 @@ private:
         }
     } // End function _laplacianSmoothing(Mesh&)
 
-    // Returns whether at least 1 edge is flipped
+    // Returns number of edges flipped
     template< typename EdgeFlipManagerType >
     size_t _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         // Edge flipping does not change edge id or total number of edges
@@ -280,6 +280,19 @@ private:
     size_t _maxIterRelocation;
     size_t _maxIter; // each iteration: (relocation + edge flipping)
 
+    // Returns number of edges flipped
+    template< typename EdgeFlipManagerType >
+    size_t _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+        // Edge flipping does not change edge id or total number of edges
+        // Also the preferred length does not need to be changed
+        size_t res = 0;
+        const size_t numEdges = mesh.getEdges().size();
+        for(size_t i = 0; i < numEdges; ++i) {
+            if(efm.tryFlip(mesh, i) == EdgeFlipManagerType::State::Success) ++res;
+        }
+        return res;
+    }
+
 public:
     // Constructor
     DirectVertexRelocationManager(size_t maxIterRelocation, size_t maxIter)
@@ -329,9 +342,6 @@ public:
             // Try flipping
             flippingCount = _edgeFlipping(mesh, efm);
         }
-
-        if(flippingCount) return false;
-        else return true;
     }
 };
 
