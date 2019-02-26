@@ -31,7 +31,7 @@
 		23591AF322248E4F0025098C /* HybridNeighborListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916BC222461DC0025098C /* HybridNeighborListImpl.h */; };
 		23591AF422248E620025098C /* CUDAcommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 235916362224561E0025098C /* CUDAcommon.cpp */; };
 		23591AF522248E650025098C /* CUDAcommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916372224561E0025098C /* CUDAcommon.h */; };
-		23591AF622248EC10025098C /* HybridNeighborListImpl.cu in Sources */ = {isa = PBXBuildFile; fileRef = 235916BE22247A220025098C /* HybridNeighborListImpl.cu */; };
+		23591AF622248EC10025098C /* HybridNeighborListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 235916BE22247A220025098C /* HybridNeighborListImpl.cpp */; };
 		23591AF722248F240025098C /* Bin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 235916312224560D0025098C /* Bin.cpp */; };
 		23591AF822248F260025098C /* Bin.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916342224560E0025098C /* Bin.h */; };
 		23591AF922248F280025098C /* BinGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916332224560E0025098C /* BinGrid.h */; };
@@ -346,7 +346,7 @@
 		23591645222457150025098C /* MotorGhostStretchingHarmonicCUDA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MotorGhostStretchingHarmonicCUDA.h; path = MotorGhost/MotorGhostStretchingHarmonicCUDA.h; sourceTree = "<group>"; };
 		235916BC222461DC0025098C /* HybridNeighborListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybridNeighborListImpl.h; sourceTree = "<group>"; };
 		235916BD222461DC0025098C /* HybridNeighborList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybridNeighborList.h; sourceTree = "<group>"; };
-		235916BE22247A220025098C /* HybridNeighborListImpl.cu */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = HybridNeighborListImpl.cu; sourceTree = "<group>"; };
+		235916BE22247A220025098C /* HybridNeighborListImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = HybridNeighborListImpl.cpp; sourceTree = "<group>"; };
 		23591AEF222487C70025098C /* Boundary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Boundary.cpp; sourceTree = "<group>"; };
 		23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCBending.cpp; path = Bubble/MTOCBending.cpp; sourceTree = "<group>"; };
 		23B936D221FA3AF300AEDA5E /* MTOCBending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTOCBending.h; path = Bubble/MTOCBending.h; sourceTree = "<group>"; };
@@ -648,7 +648,7 @@
 			children = (
 				235916BD222461DC0025098C /* HybridNeighborList.h */,
 				23591AEF222487C70025098C /* Boundary.cpp */,
-				235916BE22247A220025098C /* HybridNeighborListImpl.cu */,
+				235916BE22247A220025098C /* HybridNeighborListImpl.cpp */,
 				235916BC222461DC0025098C /* HybridNeighborListImpl.h */,
 				235916312224560D0025098C /* Bin.cpp */,
 				235916342224560E0025098C /* Bin.h */,
@@ -1298,7 +1298,7 @@
 				F7525A5A1A70241E007A4E9F /* BranchingFF.cpp in Sources */,
 				F7E9F8311AD5CD4600E0CBBC /* CGSteepestDescent.cpp in Sources */,
 				F7C9CFF31A2D165D0087434A /* BoundaryImpl.cpp in Sources */,
-				23591AF622248EC10025098C /* HybridNeighborListImpl.cu in Sources */,
+				23591AF622248EC10025098C /* HybridNeighborListImpl.cpp in Sources */,
 				F7C9D0091A2D165D0087434A /* Filament.cpp in Sources */,
 				23B936E021FBAEF800AEDA5E /* BoundaryBubbleRepulsionExp.cpp in Sources */,
 				F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */,

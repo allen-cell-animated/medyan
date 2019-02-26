@@ -41,7 +41,7 @@ CPPFLAGS = $(FAST) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
 -IMechanics/ForceField/Linker             \
 -IMechanics/ForceField/MotorGhost         \
 -IMechanics/ForceField/Bubble             \
-
+-IMechanics                               \
 
 #################MAIN USER MACROS#################
 #
@@ -87,10 +87,10 @@ CPPFLAGS += -DREACTION_SIGNALING
 CPPFLAGS += -DRSPECIES_SIGNALING
 
 #PLoS version of motor stall model
-CPPFLAGS += -PLOSSTALLFEEDBACK
+CPPFLAGS += -DPLOSSTALLFEEDBACK
 
-CPPFLAGS += -HYBRID_NLSTENCILLIST
-CPPFLAGS += -NLSTENCILLIST
+CPPFLAGS += -DHYBRID_NLSTENCILLIST
+CPPFLAGS += -DNLSTENCILLIST
 
 ################MAKEFILE OPTIONS###################
 #
