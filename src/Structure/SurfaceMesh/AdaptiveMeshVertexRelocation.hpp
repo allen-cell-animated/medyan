@@ -273,7 +273,7 @@ template<
     OptimalVertexLocationMethod opt
 > class DirectVertexRelocationManager {
 public:
-    using OptimalVertexLocationType = OptimalVertexLocaion< opt >;
+    using OptimalVertexLocationType = OptimalVertexLocation< opt >;
     using GeometryManagerType = GeometryManager< Mesh >;
 
 private:
