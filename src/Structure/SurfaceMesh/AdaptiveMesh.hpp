@@ -36,10 +36,11 @@ Until all criteria are met
 #include <vector>
 
 #include "MathFunctions.h"
+#include "Structure/SurfaceMesh/AdaptiveMeshGeometryManager.hpp"
 #include "Structure/SurfaceMesh/AdaptiveMeshVertexRelocation.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshCheck.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
-#include "Structure/SurfaceMesh/Membrane.hpp"
 
 namespace adaptive_mesh {
 
@@ -639,35 +640,6 @@ public:
         _updateEdgeEqLength(mesh);
     }
 }; // End SizeMesasureManager
-
-template< typename Mesh > struct GeometryManager {
-    static void computeAllTriangleNormals(Mesh& mesh) {
-        const size_t numTriangles = mesh.getTriangles().size();
-
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
-            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-        }
-    }
-
-    static void computeAllAngles(Mesh& mesh) {
-        const size_t numHalfEdges = mesh.getHalfEdges().size();
-
-        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
-        }
-    }
-
-    // Requires
-    //   - Unit normals in triangles (geometric)
-    //   - Angles in halfedges (geometric)
-    static void computeAllVertexNormals(Mesh& mesh) {
-        const size_t numVertices = mesh.getVertices().size();
-
-        for(size_t vi = 0; vi < numVertices; ++vi) {
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
-        }
-    }
-}; // End GeometryManager
 
 template< typename Mesh >
 class MeshAdapter {

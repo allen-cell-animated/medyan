@@ -2,8 +2,8 @@
 #define MEDYAN_Structure_SurfaceMesh_AdaptiveMeshVertexRelocation_hpp
 
 #include "MathFunctions.h"
+#include "Structure/SurfaceMesh/AdaptiveMeshGeometryManager.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshCheck.hpp"
-#include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
 namespace adaptive_mesh {
@@ -45,11 +45,9 @@ template<> struct RelaxationForceField< RelaxationType::GlobalElastic > {
 template<
     typename Mesh,
     RelaxationType r,
-    TriangleQualityCriteria c
 > class GlobalRelaxationManager {
 public:
     using RelaxationForceFieldType = RelaxationForceField< r >;
-    using EdgeFlipManagerType = EdgeFlipManager< Mesh, c >;
     using GeometryManagerType = GeometryManager< Mesh >;
 
 private:
@@ -141,6 +139,7 @@ private:
     } // End function _laplacianSmoothing(Mesh&)
 
     // Returns whether at least 1 edge is flipped
+    template< typename EdgeFlipManagerType >
     size_t _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         // Edge flipping does not change edge id or total number of edges
         // Also the preferred length does not need to be changed
@@ -170,6 +169,7 @@ public:
     //   - Normals on vertices (not updated during vertex relocation; might be updated by edge flipping)
     //   - Preferred lengths of edges (not updated during relaxation)
     // For the purpose of global relaxation, we create a coordinate list and do work on them.
+    template< typename EdgeFlipManagerType >
     bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         using namespace mathfunc;
 
