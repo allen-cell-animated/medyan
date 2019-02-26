@@ -42,6 +42,8 @@
 		187E01932118F3DE00F91778 /* CaMKIIingPositionCosine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01742118F39A00F91778 /* CaMKIIingPositionCosine.cpp */; };
 		187E01942118F3DE00F91778 /* CaMKIIingStretching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E016C2118F39900F91778 /* CaMKIIingStretching.cpp */; };
 		187E01952118F3DE00F91778 /* CaMKIIingStretchingHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 187E01752118F39A00F91778 /* CaMKIIingStretchingHarmonic.cpp */; };
+		18C39C572225CD2100763B02 /* CaMKIICylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 18C39C562225CD1F00763B02 /* CaMKIICylinder.cpp */; };
+		18C39C592225CD6200763B02 /* CaMKIICylinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 18C39C582225CD5F00763B02 /* CaMKIICylinder.h */; };
 		BF365D871ABC728F006EE099 /* NeighborListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */; };
 		BF365D881ABC728F006EE099 /* NeighborListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BF365D861ABC728F006EE099 /* NeighborListImpl.h */; };
 		BF9A59341B0B68DE00ADF902 /* Database.h in Headers */ = {isa = PBXBuildFile; fileRef = BF9A59321B0B68DE00ADF902 /* Database.h */; };
@@ -326,6 +328,8 @@
 		187E01762118F39A00F91778 /* CaMKIIingDihedral.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingDihedral.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingDihedral.cpp; sourceTree = SOURCE_ROOT; };
 		187E01772118F39A00F91778 /* CaMKIIingFF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaMKIIingFF.h; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingFF.h; sourceTree = SOURCE_ROOT; };
 		187E01782118F39A00F91778 /* CaMKIIingFF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIIingFF.cpp; path = src/Mechanics/ForceField/CaMKIIing/CaMKIIingFF.cpp; sourceTree = SOURCE_ROOT; };
+		18C39C562225CD1F00763B02 /* CaMKIICylinder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CaMKIICylinder.cpp; path = src/Structure/CaMKIICylinder.cpp; sourceTree = "<group>"; };
+		18C39C582225CD5F00763B02 /* CaMKIICylinder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CaMKIICylinder.h; path = src/Structure/CaMKIICylinder.h; sourceTree = "<group>"; };
 		BF365D851ABC728F006EE099 /* NeighborListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeighborListImpl.cpp; sourceTree = "<group>"; };
 		BF365D861ABC728F006EE099 /* NeighborListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeighborListImpl.h; sourceTree = "<group>"; };
 		BF9A59321B0B68DE00ADF902 /* Database.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Database.h; sourceTree = "<group>"; };
@@ -823,6 +827,8 @@
 		F763ECFB1548FFC70069DA61 = {
 			isa = PBXGroup;
 			children = (
+				18C39C582225CD5F00763B02 /* CaMKIICylinder.h */,
+				18C39C562225CD1F00763B02 /* CaMKIICylinder.cpp */,
 				F7A202D7194271C7005A9B5C /* gtest.framework */,
 				F763ED071548FFC70069DA61 /* Products */,
 				F7954C4A197D98BE00074A12 /* src */,
@@ -1009,6 +1015,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18C39C592225CD6200763B02 /* CaMKIICylinder.h in Headers */,
 				187E01832118F3C700F91778 /* CaMKIIingBending.h in Headers */,
 				187E01842118F3C700F91778 /* CaMKIIingBendingCosine.h in Headers */,
 				187E01852118F3C700F91778 /* CaMKIIingDihedral.h in Headers */,
@@ -1240,6 +1247,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18C39C572225CD2100763B02 /* CaMKIICylinder.cpp in Sources */,
 				18491A0521E7D364000B1B5B /* CaMKIIingBending.h in Sources */,
 				187E018D2118F3DE00F91778 /* CaMKIIingBending.cpp in Sources */,
 				187E018E2118F3DE00F91778 /* CaMKIIingBendingCosine.cpp in Sources */,
