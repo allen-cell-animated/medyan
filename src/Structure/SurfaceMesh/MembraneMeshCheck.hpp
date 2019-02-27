@@ -13,7 +13,7 @@ using MeshType = Membrane::MeshType;
 
 struct MembraneMeshInfoDump {
     void addInfo1Ring(
-        std::unordered_set<size_t> vs, std::unordered_set<size_t> es,
+        std::unordered_set<size_t>& vs, std::unordered_set<size_t>& es,
         const MeshType& mesh, size_t vi
     ) const {
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
@@ -31,10 +31,10 @@ struct MembraneMeshInfoDump {
         for(size_t curRing = 1; curRing <= ring; ++curRing) {
             for(auto i : cvs) addInfo1Ring(vs, es, mesh, i);
             std::unordered_set<size_t> vs_next;
-            for (auto i : vs) if (cvs.find(i) != cvs.end()) {
+            for (auto i : vs) if (cvs.find(i) == cvs.end()) {
                 vs_next.insert(i);
             }
-            cvs = vs_next;
+            cvs = std::move(vs_next);
         }
 
         // Output
