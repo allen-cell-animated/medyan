@@ -43,7 +43,7 @@ protected:
     ///< Data vectors for calculation
     double *coord;  ///<bead coordinates (length 3*N)
     
-    double *force; ///< bead forces (length 3*N)
+    double *force = nullptr; ///< bead forces (length 3*N)
     double *forceAux = nullptr; ///< auxiliary force calculations (length 3*N)
     double *forceAuxPrev = nullptr; ///<auxiliary force calculation previously (length 3*N)
 //    cylinder* cylindervec;

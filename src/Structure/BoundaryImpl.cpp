@@ -660,8 +660,9 @@ double BoundaryCylinder::sidedistance(const vector<double>& coordinates) {
 }
 
 void BoundaryCylinder::volume(){
-    cout<<" element eqn not implemented for "
-            "CylindricalXYZ. Exiting."<<endl;
-    exit(EXIT_FAILURE);
+    double radius = GController::getSize()[0];
+    double sysZ = GController::getSize()[2];
+
+    Boundary::systemvolume = radius * radius * 3.14159 * sysZ;
 }
 
