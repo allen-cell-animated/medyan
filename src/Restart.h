@@ -103,6 +103,7 @@ private:
 
             vector<int> bVpos; //position in boundVector
             vector<short> bSite; //binding Sites occupied
+            vector<short> orginal_bSite; //store orginal bSite
             vector<short> ObSite; //ordered binding Sites occupied
             vector<short> bSitecyl; //all binding sites available in the cylinder.
             vector<short> IDs;
@@ -200,59 +201,84 @@ private:
                         //exit(EXIT_FAILURE);
                     }
                     else if(abs(mean1-mean2)!=0 && vecpos == branchcylIDs.end()){
+                        
+                        orginal_bSite = bSite;
                     //move COM to get the necessary translation.
-                    for(auto i = 0; i < bSite.size(); i++){
-                        bSite[i] = bSite[i] + mean1 - mean2;
-                        if(flag ==0){
-                            //FIND the binding site closest to it.
-                            int lo=0;
-                            int mm;
-                            vector<short> test;
-                            for(mm=0;mm<=bSitecyl.size();mm++){
-                                test.push_back(abs(bSitecyl[mm]-bSite[i]));}
-                            for(mm=0;mm<=bSitecyl.size();mm++){
-                                if(test[mm]<test[lo])
-                                    lo=mm;}
+                        for(auto i = 0; i < bSite.size(); i++){
+                            bSite[i] = bSite[i] + mean1 - mean2;
+                            if(flag ==0){ //if it is a linker/motor
+                                //FIND the binding site closest to it.
+                                int lo=0;
+                                int mm;
+                                vector<short> test;
+                                for(mm=0;mm<=bSitecyl.size();mm++){
+                                    test.push_back(abs(bSitecyl[mm]-bSite[i]));}
+                                
+                                for(mm=0;mm<=bSitecyl.size();mm++){
+                                    if(test[mm]<test[lo])
+                                        lo=mm;}
 
-                            _unsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSitecyl[lo])});
+                                _unsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSitecyl[lo])});
+                            }
+                            else
+                                //TO DO, check if bSite should be replaced by bSitecyl
+                                _bunsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
                         }
-                        else
-                            _bunsortedpairings.insert({bVpos[i],make_tuple(x->getCCylinder(),bSite[i])});
-                    }
-                    //FIX CCYLINDER
-                    auto cc = x->getCCylinder();
-                    int nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
-                    //TURN DOWN OLD MINUS AND PLUS END
-                    CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
-                    m1->speciesMinusEnd(0)->down();
-                    m1 = cc->getCMonomer(cc->getSize() - 1);
-                    m1->speciesPlusEnd(0)->down();
-                    //TURN UP NEW MINUS AND PLUS ENDS.
-                    //get the first and last Beads
-                    short minus = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + mean1 - mean2;
-                    short plus  = SysParams::Geometry().cylinderNumMon[filType] -1 + mean1 - mean2;
-                    
-                    m1 = cc->getCMonomer(minus);
-                    m1->speciesMinusEnd(0)->up();
-                    m1 = cc->getCMonomer(plus);
-                    m1->speciesPlusEnd(0)->up();
-                    
-                    for(int i = 0; i < cc->getSize(); i++) {
-                        if(i>minus && i <plus){ //first CMonomer should be MinusEnd
-                            if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 0)
-                                cc->getCMonomer(i)->speciesFilament(0)->up();
-                            for(auto j : SysParams::Chemistry().bindingIndices[filType]){
-                                if(cc->getCMonomer(i)->speciesBound(j)->getN() == 0)
-                                    cc->getCMonomer(i)->speciesBound(j)->up();}
-                        } //@IF
-                        else{
-                             if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 1)
-                                 cc->getCMonomer(i)->speciesFilament(0)->down();
-                            for(auto j : SysParams::Chemistry().bindingIndices[filType]){
-                                if(cc->getCMonomer(i)->speciesBound(j)->getN() == 1)
-                                    cc->getCMonomer(i)->speciesBound(j)->down();}
-                        } //@ELSE
-                    }
+                        //FIX CCYLINDER
+                        auto cc = x->getCCylinder();
+                        int nummonomers = min((int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
+                        //TURN DOWN OLD MINUS AND PLUS END
+                        CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
+                        m1->speciesMinusEnd(0)->down();
+                        m1 = cc->getCMonomer(cc->getSize() - 1);
+                        m1->speciesPlusEnd(0)->down();
+                        //TURN UP NEW MINUS AND PLUS ENDS.
+                        //get the first and last Beads
+                        short minus = SysParams::Geometry().cylinderNumMon[filType] - nummonomers + mean1 - mean2;
+                        short plus  = SysParams::Geometry().cylinderNumMon[filType] -1 + mean1 - mean2;
+                        
+                        //check if minus < 0 or plus > cylinder monomer limit
+                        //if yes, force minus end and plus end to be in the range
+                        if(minus < 0){
+                            minus = 0;
+                            plus = nummonomers - 1;
+                            cout << "Watch out! A minus end index is forced to be 0. Orginal binding site index:" << endl;
+                            for (int bindexout = 0; bindexout < orginal_bSite.size(); bindexout++){
+                                cout << orginal_bSite[bindexout] << " ";
+                            }
+                            cout << endl;
+                        }
+                        else if (plus > (SysParams::Geometry().cylinderNumMon[filType] - 1)){
+                            plus = SysParams::Geometry().cylinderNumMon[filType] - 1;
+                            minus = SysParams::Geometry().cylinderNumMon[filType] - nummonomers;
+                            cout << "Watch out! A plus end index is forced to be " << plus <<". Orginal binding site index:" << endl;
+                            for (int bindexout = 0; bindexout < orginal_bSite.size(); bindexout++){
+                                cout << orginal_bSite[bindexout] << " ";
+                            }
+                            cout << endl;
+                        }
+                        
+                        m1 = cc->getCMonomer(minus);
+                        m1->speciesMinusEnd(0)->up();
+                        m1 = cc->getCMonomer(plus);
+                        m1->speciesPlusEnd(0)->up();
+                        
+                        for(int i = 0; i < cc->getSize(); i++) {
+                            if(i>minus && i <plus){ //first CMonomer should be MinusEnd
+                                if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 0)
+                                    cc->getCMonomer(i)->speciesFilament(0)->up();
+                                for(auto j : SysParams::Chemistry().bindingIndices[filType]){
+                                    if(cc->getCMonomer(i)->speciesBound(j)->getN() == 0)
+                                        cc->getCMonomer(i)->speciesBound(j)->up();}
+                            } //@IF
+                            else{
+                                 if(cc->getCMonomer(i)->speciesFilament(0)->getN() == 1)
+                                     cc->getCMonomer(i)->speciesFilament(0)->down();
+                                for(auto j : SysParams::Chemistry().bindingIndices[filType]){
+                                    if(cc->getCMonomer(i)->speciesBound(j)->getN() == 1)
+                                        cc->getCMonomer(i)->speciesBound(j)->down();}
+                            } //@ELSE
+                        }
 
                     //FIXED CCYLINDER
                     }

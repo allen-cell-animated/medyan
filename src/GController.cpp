@@ -379,11 +379,13 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
 
     else if(BTypes.boundaryShape == "SPHERICAL") {
 
-        if(move[0] != BoundaryMove::None) {
+        if(move.size() > 0) {
+            if(move[0] != BoundaryMove::None){
 
-            cout << "Moving boundaries for a spherical shape "
-                 << "not yet implemented. Exiting." << endl;
-            exit(EXIT_FAILURE);
+                cout << "Moving boundaries for a spherical shape "
+                     << "not yet implemented. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
         }
 
         _boundary = new BoundarySpherical(_subSystem,
@@ -392,11 +394,13 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
 
     else if(BTypes.boundaryShape == "CAPSULE") {
 
-        if(move[0] != BoundaryMove::None) {
+        if(move.size() > 0) {
+            if(move[0] != BoundaryMove::None){
 
-            cout << "Moving boundaries for a capsule shape "
-                 << "not yet implemented. Exiting." << endl;
-            exit(EXIT_FAILURE);
+                cout << "Moving boundaries for a capsule shape "
+                     << "not yet implemented. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
         }
         _boundary = new BoundaryCapsule(_subSystem,
                     SysParams::Boundaries().diameter, move);
@@ -404,11 +408,13 @@ Boundary* GController::initializeBoundary(BoundaryType& BTypes) {
 
     else if(BTypes.boundaryShape == "CYLINDER") {
 
-        if(move[0] != BoundaryMove::None) {
+        if(move.size() > 0) {
+            if(move[0] != BoundaryMove::None){
 
-            cout << "Moving boundaries for a cylinder shape "
-            << "not yet implemented. Exiting." << endl;
-            exit(EXIT_FAILURE);
+                cout << "Moving boundaries for a cylinder shape "
+                << "not yet implemented. Exiting." << endl;
+                exit(EXIT_FAILURE);
+            }
         }
         _boundary = new BoundaryCylinder(_subSystem,
                                         SysParams::Boundaries().diameter, move);
