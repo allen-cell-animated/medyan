@@ -449,7 +449,10 @@ private:
             {cout <<
                 "Restart file reaction numbers do not match with diffusing species number."
                 << endl;
-                exit(EXIT_FAILURE);}
+                //TO DO, force start now, need to fix later
+//                exit(EXIT_FAILURE);
+                
+            }
             events=events+(c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().getN();
             (c->getCompartment()->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(events);
             c->getCompartment()->getDiffusionReactionContainer().updatePropensityComprtment();
