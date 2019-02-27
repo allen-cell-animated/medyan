@@ -257,7 +257,7 @@ template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::Barycenter
             const auto& un = mesh.getTriangleAttribute(mesh.triangle(hei)).gTriangle.unitNormal;
             target += findEquilateralTriangle(cp, cn, un);
         });
-        target /= mesh.degree(vi);
+        target *= (1.0 / mesh.degree(vi));
 
         // project onto tangent plane
         const auto ci = vector2Vec<3, double>(mesh.getVertexAttribute(vi).getCoordinate());
