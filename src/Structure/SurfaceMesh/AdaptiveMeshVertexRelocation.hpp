@@ -170,7 +170,7 @@ public:
     //   - Preferred lengths of edges (not updated during relaxation)
     // For the purpose of global relaxation, we create a coordinate list and do work on them.
     template< typename EdgeFlipManagerType >
-    bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
+    [[deprecated]] bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
         using namespace mathfunc;
 
         // Initialization

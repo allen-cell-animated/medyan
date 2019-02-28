@@ -800,7 +800,7 @@ public:
                 )
             ) break;
 
-            _globalRelaxationManager.relax(mesh, _edgeFlipManager);
+            _directVertexRelocationManager(mesh, _edgeFlipManager);
 
             _computeSizeMeasures(mesh);
 
