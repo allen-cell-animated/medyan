@@ -55,7 +55,7 @@ constexpr double edge_collapse_min_dot_normal = 0.85;
 // Vertex relocation operations
 constexpr double vertex_relaxation_epsilon = 0.05; // (unitless speed/force). The tolerance (l / l_0 - 1)
 constexpr double vertex_relaxation_dt = 2.0; // (has unit of length) (around minSize / (iterRelocation * avgForce))
-constexpr size_t vertex_relocation_max_iter = 10;
+constexpr size_t vertex_relocation_max_iter_relocation = 10;
 constexpr size_t vertex_relocation_max_iter_tot = 3; // (vertex relocation + edge flipping) as 1 iter
 // Size diffusion
 constexpr double size_measure_curvature_resolution = 0.3; // cos of which should be slightly bigger than flip minDotNormal
@@ -673,7 +673,7 @@ public:
     static constexpr auto vertexRelaxationType = VertexRelaxationType::GlobalElastic;
     static constexpr auto optimalVertexLocationMethod = OptimalVertexLocationMethod::Barycenter;
     static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
-    static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::MidPoint;
+    static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::AvgCurv;
 
     struct Parameter {
         // Topology
@@ -687,7 +687,7 @@ public:
         double relaxationEpsilon;
         double relaxationDt;
         size_t relaxationMaxIterRelocation;
-        size_t relaxationMaxIterRelaxation;
+        size_t relaxationMaxIterTotal;
 
         // Size diffusion
         double curvatureResolution;
@@ -701,7 +701,7 @@ public:
 
 private:
     SizeMeasureManager< Mesh > _sizeMeasureManager;
-    GlobalRelaxationManager< Mesh, vertexRelaxationType > _globalRelaxationManager;
+    [[deprecated]] GlobalRelaxationManager< Mesh, vertexRelaxationType > _globalRelaxationManager;
     DirectVertexRelocationManager< Mesh, optimalVertexLocationMethod > _directVertexRelocationManager;
 
     EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
@@ -721,15 +721,9 @@ public:
     // Constructor
     MeshAdapter(Parameter param) :
         _sizeMeasureManager(param.curvatureResolution, param.maxSize, param.diffuseIter),
-        _globalRelaxationManager(
-            param.relaxationEpsilon * param.relaxationEpsilon,
-            param.relaxationDt,
-            param.relaxationMaxIterRelocation,
-            param.relaxationMaxIterRelaxation
-        ),
         _directVertexRelocationManager(
             param.relaxationMaxIterRelocation,
-            param.relaxationMaxIterRelaxation // TODO parameter name change
+            param.relaxationMaxIterTotal
         ),
         _edgeFlipManager(param.minDegree, param.maxDegree, param.edgeFlipMinDotNormal),
         _edgeSplitManager(param.maxDegree),

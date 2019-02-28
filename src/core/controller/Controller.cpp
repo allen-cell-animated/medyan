@@ -231,7 +231,7 @@ void Controller::initialize(string inputFile,
             // Relocation
             adaptive_mesh::vertex_relaxation_epsilon,
             adaptive_mesh::vertex_relaxation_dt,
-            adaptive_mesh::vertex_relocation_max_iter,
+            adaptive_mesh::vertex_relocation_max_iter_relocation,
             adaptive_mesh::vertex_relocation_max_iter_tot,
             // Size diffusion
             adaptive_mesh::size_measure_curvature_resolution,
