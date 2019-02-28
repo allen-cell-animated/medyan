@@ -223,26 +223,23 @@ void Controller::initialize(string inputFile,
     _meshAdapter = std::make_unique< adaptive_mesh::MembraneMeshAdapter >(
         typename adaptive_mesh::MembraneMeshAdapter::Parameter {
             // Topology
-            4, // minDegree
-            9, // maxDegree
-            0.9, // edgeFlipMinDotNormal
-            0.6, // edgeCollapseMinQualityImprovement
-            0.85, // edgeCollapseMinDotNormal
-
-            // Relaxation
-            0.05, // relaxationEpsilon (unitless speed/force). The tolerance (l / l_0 - 1)
-            2, // relaxationDt (has unit of length) (around minSize / (iterRelocation * avgForce))
-            10, // relaxationMaxIterRelocation
-            3, // relaxationMaxIterRelaxation
-
+            adaptive_mesh::surface_mesh_min_degree,
+            adaptive_mesh::surface_mesh_max_degree,
+            adaptive_mesh::edge_flip_min_dot_normal,
+            adaptive_mesh::edge_collapse_min_quality_improvement,
+            adaptive_mesh::edge_collapse_min_dot_normal,
+            // Relocation
+            adaptive_mesh::vertex_relaxation_epsilon,
+            adaptive_mesh::vertex_relaxation_dt,
+            adaptive_mesh::vertex_relocation_max_iter,
+            adaptive_mesh::vertex_relocation_max_iter_tot,
             // Size diffusion
-            0.3, // curvatureResolution. cos of which should be slightly bigger than minDotNormal
-            50, // maxSize. Related to the resolution of the system
-            3, // diffuseIter
-
+            adaptive_mesh::size_measure_curvature_resolution,
+            adaptive_mesh::size_measure_max,
+            adaptive_mesh::size_measure_diffuse_iter,
             // Main loop
-            8, // Max times of scanning all the edges for sampling adjustment
-            8 // Soft cap of iterations of the main loop
+            adaptive_mesh::mesh_adaptation_topology_max_iter,
+            adaptive_mesh::mesh_adaptation_soft_max_iter
         }
     );
     

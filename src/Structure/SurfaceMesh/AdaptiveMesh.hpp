@@ -44,6 +44,30 @@ Until all criteria are met
 
 namespace adaptive_mesh {
 
+// Recommended adaptive mesh parameters
+//-------------------------------------
+// Topological operations
+constexpr size_t surface_mesh_min_degree = 4;
+constexpr size_t surface_mesh_max_degree = 9;
+constexpr double edge_flip_min_dot_normal = 0.9;
+constexpr double edge_collapse_min_quality_improvement = 0.6;
+constexpr double edge_collapse_min_dot_normal = 0.85;
+// Vertex relocation operations
+constexpr double vertex_relaxation_epsilon = 0.05; // (unitless speed/force). The tolerance (l / l_0 - 1)
+constexpr double vertex_relaxation_dt = 2.0; // (has unit of length) (around minSize / (iterRelocation * avgForce))
+constexpr size_t vertex_relocation_max_iter = 10;
+constexpr size_t vertex_relocation_max_iter_tot = 3; // (vertex relocation + edge flipping) as 1 iter
+// Size diffusion
+constexpr double size_measure_curvature_resolution = 0.3; // cos of which should be slightly bigger than flip minDotNormal
+constexpr double size_measure_max = 50; // Related to the resolution of the system
+constexpr size_t size_measure_diffuse_iter = 3;
+// Main loop
+constexpr size_t mesh_adaptation_topology_max_iter = 8; // Max times of scanning all the edges for sampling adjustment
+constexpr size_t mesh_adaptation_soft_max_iter = 8;
+
+// Implementation
+//-------------------------------------
+
 template< typename Mesh, TriangleQualityCriteria c > class EdgeFlipManager {
 public:
     using TriangleQualityType = TriangleQuality< c >;
