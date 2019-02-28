@@ -305,11 +305,11 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 ++atomCount;
                 ++resSeq;
                 pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
+                    atomSerial, " CA ", ' ', "ARG", chain, 1/* resSeq */, ' ',
                     v[0], v[1], v[2]
                 );
                 if(idx == bondFrame) {
-                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                    psfGen.genAtom(atomId, "", 1/* resSeq */, "ARG", "CA", "CA");
                 }
             }
             ++resSeq;
