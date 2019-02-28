@@ -239,6 +239,9 @@ enum class OptimalVertexLocationMethod {
 };
 template< OptimalVertexLocationMethod > struct OptimalVertexLocation;
 template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::Barycenter > {
+    // Given vertex v1, v2, and unit normal un,
+    // Find the vertex v0 such that triangle (v0, v1, v2) is equilateral
+    // and un is the normal direction of the triangle.
     static mathfunc::Vec3 findEquilateralTriangle(
         const mathfunc::Vec3& v1,
         const mathfunc::Vec3& v2,
@@ -246,6 +249,7 @@ template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::Barycenter
     ) {
         return 0.5 * (v1 + v2) + mathfunc::cross(un, v2 - v1) * (std::sqrt(3.0) * 0.5);
     }
+
     template< typename Mesh >
     mathfunc::Vec3 operator()(const Mesh& mesh, size_t vi) const {
         using namespace mathfunc;
@@ -307,23 +311,16 @@ public:
         // Main loop
         size_t flippingCount = 0;
         size_t iter = 0;
-        while( flippingCount && iter < _maxIter) {
+        do {
             ++iter;
 
-            // Move coordinates (max move: size / 3)
+            // Move vertices
             for(size_t iterRelo = 0; iterRelo < _maxIterRelocation; ++iterRelo) {
                 for(size_t i = 0; i < numVertices; ++i) {
                     const auto coordOriginal = vector2Vec<3>(mesh.getVertexAttribute(i).getCoordinate());
                     const auto target = OptimalVertexLocationType{}(mesh, i);
                     /*const auto diff = target - coordOriginal;
-                    const auto magDiff = magnitude(diff);
-                    const auto size = mesh.getVertexAttribute(i).aVertex.size;
-                    const auto desiredDiff = (
-                        magDiff == 0.0
-                        ? diff
-                        : diff * (std::min(size * 0.33, magDiff) / magDiff)
-                    );
-                    coords[i] = coordsOriginal[i] + desiredDiff;*/
+                    const auto magDiff = magnitude(diff);*/
                     mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(target);
                 }
             }
@@ -341,7 +338,7 @@ public:
 
             // Try flipping
             flippingCount = _edgeFlipping(mesh, efm);
-        }
+        } while(flippingCount && iter < _maxIter);
     }
 };
 
