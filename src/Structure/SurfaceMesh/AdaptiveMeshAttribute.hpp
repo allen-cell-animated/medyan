@@ -7,7 +7,7 @@
 struct AdaptiveMeshAttribute {
     struct VertexAttribute {
         double size;
-        double maxSize;
+        [[deprecated]] double maxSize;
         double sizeAux; // Used in diffusing
         mathfunc::Vec3 unitNormal;
     };

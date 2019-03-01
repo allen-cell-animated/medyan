@@ -548,7 +548,7 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
 
     // Requires
     //   - Vertex unit normal
-    template< typename Mesh > auto vertexMaxSize(Mesh& mesh, size_t vi) const {
+    template< typename Mesh > auto vertexSize(Mesh& mesh, size_t vi) const {
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
         const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
         const auto ci = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(vi).vertex->getCoordinate());
@@ -568,15 +568,15 @@ template< SizeMeasureCriteria... > struct VertexSizeMeasureCombined;
 template< SizeMeasureCriteria c, SizeMeasureCriteria... cs >
 struct VertexSizeMeasureCombined< c, cs... > {
     template< typename Mesh >
-    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
-        return std::min(vsm.vertexMaxSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...));
+    static auto vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
+        return std::min(vsm.vertexSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexSize(mesh, vi, vsms...));
     }
 };
 template< SizeMeasureCriteria c >
 struct VertexSizeMeasureCombined< c > {
     template< typename Mesh >
-    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) {
-        return vsm.vertexMaxSize(mesh, vi);
+    static auto vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) {
+        return vsm.vertexSize(mesh, vi);
     }
 };
 
@@ -588,14 +588,14 @@ private:
     size_t _diffuseIter; // Diffusion iterations used in gradation control
 
     template< SizeMeasureCriteria... cs >
-    auto _vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<cs>&... vsms) const {
-        return VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...);
+    auto _vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<cs>&... vsms) const {
+        return VertexSizeMeasureCombined<cs...>::vertexSize(mesh, vi, vsms...);
     }
     template< SizeMeasureCriteria... cs >
-    void _updateVertexMaxSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
+    void _updateVertexSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
         const size_t numVertices = mesh.getVertices().size();
         for(size_t i = 0; i < numVertices; ++i) {
-            mesh.getVertexAttribute(i).aVertex.maxSize = _vertexMaxSize(mesh, i, vsms...);
+            mesh.getVertexAttribute(i).aVertex.size = _vertexSize(mesh, i, vsms...);
         }
     }
 
@@ -605,7 +605,7 @@ private:
         // Initialize with max size
         for(size_t i = 0; i < numVertices; ++i) {
             auto& av = mesh.getVertexAttribute(i).aVertex;
-            av.size = av.maxSize;
+            av.size = std::min(av.size, _maxSize);
         }
 
         // Diffuse, with D * Delta t = 0.5, and uniformly weighted Laplace operator
@@ -622,8 +622,8 @@ private:
 
                 av.sizeAux = std::min(
                     0.5 * av.size + 0.5 * sumSizeNeighbor / deg,
-                    av.maxSize
-                ); // capped by maxSize
+                    _maxSize
+                ); // capped by _maxSize
             }
             for(size_t i = 0; i < numVertices; ++i) {
                 auto& av = mesh.getVertexAttribute(i).aVertex;
@@ -655,7 +655,7 @@ public:
         VertexSizeMeasure< SizeMeasureCriteria::Curvature > vsmCurv {_curvRes, _maxSize};
 
         // Compute size on each vertex
-        _updateVertexMaxSize(mesh, vsmCurv);
+        _updateVertexSize(mesh, vsmCurv);
 
         // Diffuse size on vertices
         _diffuseSize(mesh);
