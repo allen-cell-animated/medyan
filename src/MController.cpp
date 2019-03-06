@@ -96,8 +96,8 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
             _subSystem->addNeighborList(nl);
 #endif
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-//        _subSystem->addBNeighborList(nl);
-        _subSystem->addNeighborList(nl);
+        _subSystem->addBNeighborList(nl);
+//        _subSystem->addNeighborList(nl);
 #endif
     }
 
@@ -107,7 +107,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     for(auto nl : bubbleFF->getNeighborLists()) {
 
         if(nl != nullptr)
-            _subSystem->addNeighborList(nl);
+            _subSystem->addBNeighborList(nl);
     }
 }
 

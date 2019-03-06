@@ -31,7 +31,7 @@ double MTOCBendingCosine::energy(double *coord, double *f, int *beadSet,
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
         
-        coord1 = &coord[0]; //coordinate of MTOC
+        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
         
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];
@@ -79,7 +79,7 @@ double MTOCBendingCosine::energy(double *coord, double *f, int *beadSet,
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
         
-        coord1 = &coord[0]; //coordinate of MTOC
+        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
         
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];
@@ -126,8 +126,8 @@ void MTOCBendingCosine::forces(double *coord, double *f, int *beadSet,
         double *coord1, *coord2, *coord3, *force1, *force2, *force3,
         L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
         
-        coord1 = &coord[0]; //coordinate of MTOC
-        force1 = &f[0];
+        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
+        force1 = &f[3 * beadSet[0]];
         
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];

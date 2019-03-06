@@ -31,7 +31,7 @@ double MTOCAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
         
-        coord1 = &coord[0]; //coordinate of MTOC
+        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
 
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];
@@ -55,8 +55,8 @@ double MTOCAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
     for(auto mtoc : MTOC::getMTOCs()) {
         int nint = mtoc->getFilaments().size();
         
-        coord1 = &coord[0]; //coordinate of MTOC
-        f1 = &f[0];
+        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
+        f1 = &f[3 * beadSet[0]];
         
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];
@@ -82,8 +82,8 @@ void MTOCAttachmentHarmonic::forces(double *coord, double *f, int *beadSet,
         double *coord1, *coord2, dist, invL;
         double f0, *f1, *f2;
         
-        coord1 = &coord[0]; //coordinate of MTOC
-        f1 = &f[0];
+        coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
+        f1 = &f[3 * beadSet[0]];
         
         for(int i = 1; i < nint + 1; i+=1){
             coord2 = &coord[3 * beadSet[n * i]];

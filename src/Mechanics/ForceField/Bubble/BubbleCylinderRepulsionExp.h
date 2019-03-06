@@ -34,7 +34,7 @@ public:
     
     void forces(double *coord, double *f, int *beadSet, int *bubbleSet,
                 double *krep, double *slen, double *radius, int *nneighbors);
-    void forcesAux(Bead*, Bead*, double, double, double);
+//    void forcesAux(Bead*, Bead*, double, double, double);
     
     double loadForces(Bead*, Bead*, double, double, double);
 };

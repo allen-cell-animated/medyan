@@ -132,6 +132,7 @@ void BubbleCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet, 
         nc = nneighbors[ib];
         auto bradius = radius[ib];
         
+        
         for (int ic = 0; ic < nc; ic++) {
             
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
@@ -139,19 +140,17 @@ void BubbleCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet, 
             double dist = twoPointDistance(coordb, coord1);
             invL = 1 / dist;
             double effd = dist - bradius;
-//            auto norm =
             
             R = -effd / slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic] * invL;
             
-            fb[0] +=  f0 * ( coord1[0] - coordb[0] );
-            fb[1] +=  f0 * ( coord1[1] - coordb[1] );
-            fb[2] +=  f0 * ( coord1[2] - coordb[2] );
+            fb[0] +=  f0 * ( coordb[0] - coord1[0] );
+            fb[1] +=  f0 * ( coordb[1] - coord1[1] );
+            fb[2] +=  f0 * ( coordb[2] - coord1[2] );
             
-            f1[0] +=  f0 * ( coordb[0] - coord1[0] );
-            f1[1] +=  f0 * ( coordb[1] - coord1[1] );
-            f1[2] +=  f0 * ( coordb[2] - coord1[2] );
-            
+            f1[0] +=  f0 * ( coord1[0] - coordb[0] );
+            f1[1] +=  f0 * ( coord1[1] - coordb[1] );
+            f1[2] +=  f0 * ( coord1[2] - coordb[2] );
 
         }
         Cumnc += nc;
@@ -161,29 +160,29 @@ void BubbleCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet, 
 
 }
 
-void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
-                                           double kRep, double screenLength) {
-    
-    //get dist
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
-    
-    double effd = dist - radius;
-    
-    double R = -effd / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
-    
-    //get norm
-    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
-    
-    b1->force[0] += - f0 *norm[0];
-    b1->force[1] += - f0 *norm[1];
-    b1->force[2] += - f0 *norm[2];
-    
-    b2->force[0] += f0 *norm[0];
-    b2->force[1] += f0 *norm[1];
-    b2->force[2] += f0 *norm[2];
-    
-}
+//void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
+//                                           double kRep, double screenLength) {
+//    
+//    //get dist
+//    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+//    
+//    double effd = dist - radius;
+//    
+//    double R = -effd / screenLength;
+//    double f0 = kRep * exp(R) / screenLength;
+//    
+//    //get norm
+//    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
+//    
+//    b1->force[0] += - f0 *norm[0];
+//    b1->force[1] += - f0 *norm[1];
+//    b1->force[2] += - f0 *norm[2];
+//    
+//    b2->force[0] += f0 *norm[0];
+//    b2->force[1] += f0 *norm[1];
+//    b2->force[2] += f0 *norm[2];
+//    
+//}
 
 double BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, double radius,
                                               double kRep, double screenLength) {

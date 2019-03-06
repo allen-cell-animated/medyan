@@ -105,9 +105,8 @@ public:
         if (t->_dneighbor) {
 #ifdef HYBRID_NLSTENCILLIST
             _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
-            //Remove boundary neighbors
-//            for (auto nlist : __bneighborLists.getElements())
-            for (auto nlist : _neighborLists.getElements())
+            //Remove boundary and bubble neighbors
+            for (auto nlist : __bneighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #else
             for (auto nlist : _neighborLists.getElements())
@@ -140,8 +139,7 @@ public:
 #ifdef HYBRID_NLSTENCILLIST
             _HneighborList->removeDynamicNeighbor((DynamicNeighbor *) t);
             //Remove boundary neighbors
-//            for (auto nlist : __bneighborLists.getElements())
-            for (auto nlist : _neighborLists.getElements())
+            for (auto nlist : __bneighborLists.getElements())
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
 #else
             for (auto nlist : _neighborLists.getElements())
