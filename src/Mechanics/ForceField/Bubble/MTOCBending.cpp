@@ -23,7 +23,7 @@
 
 template <class MTOCInteractionType>
 void MTOCBending<MTOCInteractionType>::vectorize() {
-    
+    //Watch out! Only one MTOC is allowed
     for(auto mtoc : MTOC::getMTOCs()) {
         beadSet = new int[2 * n *  mtoc->getFilaments().size() + 1];
         kbend = new double[2 * n *  mtoc->getFilaments().size() + 1];

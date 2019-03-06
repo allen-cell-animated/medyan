@@ -26,10 +26,14 @@ class Bead;
 class BubbleCylinderRepulsionExp {
     
 public:
-    double energy(Bead*, Bead*, double, double, double);
-    double energy(Bead*, Bead*, double, double, double, double);
+    double energy(double *coord, double *f, int *beadSet, int *bubbleSet,
+                  double *krep, double *slen, double *radius, int *nneighbors);
     
-    void forces(Bead*, Bead*, double, double, double);
+    double energy(double *coord, double *f, int *beadSet, int *bubbleSet,
+                  double *krep, double *slen, double *radius, int *nnneighbors, double d);
+    
+    void forces(double *coord, double *f, int *beadSet, int *bubbleSet,
+                double *krep, double *slen, double *radius, int *nneighbors);
     void forcesAux(Bead*, Bead*, double, double, double);
     
     double loadForces(Bead*, Bead*, double, double, double);

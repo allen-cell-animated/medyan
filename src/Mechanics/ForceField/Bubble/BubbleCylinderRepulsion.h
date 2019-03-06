@@ -33,6 +33,17 @@ class BubbleCylinderRepulsion : public BubbleInteractions {
 private:
     BRepulsionInteractionType _FFType;
     BubbleCylinderNL* _neighborList; ///<Neighbor list of Bubble-Cylinder
+    
+    int *beadSet;
+    int *nneighbors;
+    int *bubbleSet;
+//    int *nintvec;
+    
+    ///Array describing the constants in calculation
+    double *krep;
+    double *slen;
+    double *radius;
+    int nint = 0;
 public:
     
     /// Constructor

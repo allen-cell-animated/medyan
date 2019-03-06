@@ -26,14 +26,20 @@ class BubbleInteractions {
     
 friend class BubbleFF;
     
-protected:
-    //@{
-    /// In the case of an error
-    Bubble* _bubbleCulprit = nullptr;
-    Component* _otherCulprit = nullptr;
-    //@}
+//protected:
+//    //@{
+//    /// In the case of an error
+//    Bubble* _bubbleCulprit = nullptr;
+//    Component* _otherCulprit = nullptr;
+//    //@}
     
 public:
+    
+    //@{
+    /// In the case of an error
+    static Bubble* _bubbleCulprit;
+    static Component* _otherCulprit;
+    //@}
     
     ///Vectorize the bead interactions for minimization
     virtual void vectorize() = 0;

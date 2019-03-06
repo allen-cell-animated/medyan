@@ -59,8 +59,8 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* c
                || U_i != U_i || U_i < -1.0) {
                 
                 //set culprits and return
-                _otherCulprit = bbo;
-                _bubbleCulprit = bb;
+//                _otherCulprit = bbo;
+//                _bubbleCulprit = bb;
                 
                 return -1;
             }

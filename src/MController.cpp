@@ -96,7 +96,8 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
             _subSystem->addNeighborList(nl);
 #endif
 #if defined(HYBRID_NLSTENCILLIST) || defined(SIMDBINDINGSEARCH)
-        _subSystem->addBNeighborList(nl);
+//        _subSystem->addBNeighborList(nl);
+        _subSystem->addNeighborList(nl);
 #endif
     }
 
