@@ -22,6 +22,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "Bubble.h"
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
@@ -861,6 +862,20 @@ struct FilamentCreationCallback {
                 auto npp = nextPointProjection(position,
                                                SysParams::Geometry().cylinderSize[_filType], direction);
                 
+                bool inbubble = false;
+                //check if within bubble
+                for(auto bb : Bubble::getBubbles()) {
+                    auto radius = bb->getRadius();
+                    
+                    if((twoPointDistancesquared(bb->getBead()->coordinate, position) < (radius * radius)) ||
+                       (twoPointDistancesquared(bb->getBead()->coordinate, npp) < (radius * radius))){
+                        inbubble = true;
+                        break;
+                    }
+                }
+                
+                if(inbubble) break;
+                
                 //check if within boundary && if within REPULSIONEXPIN region (set as 125nm)
                 if(_ps->getBoundary()->within(position) &&
                    _ps->getBoundary()->within(npp)){
@@ -892,6 +907,20 @@ struct FilamentCreationCallback {
                 
                 auto npp = nextPointProjection(position,
                                                SysParams::Geometry().cylinderSize[_filType], direction);
+                
+                bool inbubble = false;
+                //check if within bubble
+                for(auto bb : Bubble::getBubbles()) {
+                    auto radius = bb->getRadius();
+                    
+                    if((twoPointDistancesquared(bb->getBead()->coordinate, position) < (radius * radius)) ||
+                       (twoPointDistancesquared(bb->getBead()->coordinate, npp) < (radius * radius))){
+                        inbubble = true;
+                        break;
+                    }
+                }
+                
+                if(inbubble) break;
                 
                 //check if within boundary
                 if(_ps->getBoundary()->within(position) &&
