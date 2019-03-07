@@ -727,31 +727,6 @@ public:
 
     };
 
-    // triangle subdivision, introduces 3 new vertices
-    template< typename InsertionMethod > struct [[deprecated]] TriangleSubdivision {
-        static constexpr int deltaNumVertex = 3;
-        void operator()(SurfaceTriangularMesh& mesh, size_t triangleIndex) const {
-            auto& edges = mesh._edges;
-            auto& halfEdges = mesh._halfEdges;
-            auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
-
-            // TODO pre-conditions
-
-            const size_t ohei = triangles[triangleIndex].halfEdgeIndex;
-            const size_t ohei_n = mesh.next(ohei);
-            const size_t ohei_p = mesh.prev(ohei);
-            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei)); // ohei, ohei_n, ohei_p still have the same target
-
-            // Get the edge for future flipping.
-            const size_t eFlip = mesh.edge(mesh.prev(ohei));
-
-            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei_n));
-            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei_p));
-            EdgeFlip()(mesh, eFlip);
-        }
-    };
-
 };
 
 #endif

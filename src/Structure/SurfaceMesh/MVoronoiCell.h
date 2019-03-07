@@ -5,8 +5,6 @@ class MVoronoiCell {
 
 private:
 
-    [[deprecated]] double _eqArea; // Length of unstretched area, determined at mesh generation
-    [[deprecated]] double _kElastic; // Local elastic modulus
     double _kBending; // Local bending modulus
     double _eqCurv; // Local spontaneous curvature
 

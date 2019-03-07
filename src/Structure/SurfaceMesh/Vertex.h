@@ -57,9 +57,6 @@ public:
     // Get mech Voronoi cell
     MVoronoiCell* getMVoronoiCell() { return _mVoronoiCell.get(); }
 
-    // Get number of tethered neighbors
-    [[deprecated]] size_t getNeighborNum()const;
-
     /// Get all instances of this class from the SubSystem
     static const vector<Vertex*>& getVertices() {
         return _vertices.getElements();

@@ -701,7 +701,6 @@ public:
 
 private:
     SizeMeasureManager< Mesh > _sizeMeasureManager;
-    [[deprecated]] GlobalRelaxationManager< Mesh, vertexRelaxationType > _globalRelaxationManager;
     DirectVertexRelocationManager< Mesh, optimalVertexLocationMethod > _directVertexRelocationManager;
 
     EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
