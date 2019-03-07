@@ -37,6 +37,12 @@
 		23591AF922248F280025098C /* BinGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916332224560E0025098C /* BinGrid.h */; };
 		23591AFA222494480025098C /* HybridNeighborList.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916BD222461DC0025098C /* HybridNeighborList.h */; };
 		23591AFB222494500025098C /* NeighborListImplCUDA.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916322224560D0025098C /* NeighborListImplCUDA.h */; };
+		23591AFE2230A3110025098C /* BubbleCylinderAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23591AFC2230A3110025098C /* BubbleCylinderAttachment.cpp */; };
+		23591AFF2230A3110025098C /* BubbleCylinderAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23591AFC2230A3110025098C /* BubbleCylinderAttachment.cpp */; };
+		23591B002230A3110025098C /* BubbleCylinderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 23591AFD2230A3110025098C /* BubbleCylinderAttachment.h */; };
+		23591B032230A3680025098C /* BubbleCylinderAttachmentHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23591B012230A3680025098C /* BubbleCylinderAttachmentHarmonic.cpp */; };
+		23591B042230A3680025098C /* BubbleCylinderAttachmentHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23591B012230A3680025098C /* BubbleCylinderAttachmentHarmonic.cpp */; };
+		23591B052230A3680025098C /* BubbleCylinderAttachmentHarmonic.h in Headers */ = {isa = PBXBuildFile; fileRef = 23591B022230A3680025098C /* BubbleCylinderAttachmentHarmonic.h */; };
 		23B936CF21FA3ACF00AEDA5E /* MTOCBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */; };
 		23B936D021FA3ACF00AEDA5E /* MTOCBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */; };
 		23B936D321FA3AF300AEDA5E /* MTOCBending.h in Headers */ = {isa = PBXBuildFile; fileRef = 23B936D221FA3AF300AEDA5E /* MTOCBending.h */; };
@@ -348,6 +354,10 @@
 		235916BD222461DC0025098C /* HybridNeighborList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybridNeighborList.h; sourceTree = "<group>"; };
 		235916BE22247A220025098C /* HybridNeighborListImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = HybridNeighborListImpl.cpp; sourceTree = "<group>"; };
 		23591AEF222487C70025098C /* Boundary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Boundary.cpp; sourceTree = "<group>"; };
+		23591AFC2230A3110025098C /* BubbleCylinderAttachment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleCylinderAttachment.cpp; path = Bubble/BubbleCylinderAttachment.cpp; sourceTree = "<group>"; };
+		23591AFD2230A3110025098C /* BubbleCylinderAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BubbleCylinderAttachment.h; path = Bubble/BubbleCylinderAttachment.h; sourceTree = "<group>"; };
+		23591B012230A3680025098C /* BubbleCylinderAttachmentHarmonic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BubbleCylinderAttachmentHarmonic.cpp; sourceTree = "<group>"; };
+		23591B022230A3680025098C /* BubbleCylinderAttachmentHarmonic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BubbleCylinderAttachmentHarmonic.h; sourceTree = "<group>"; };
 		23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCBending.cpp; path = Bubble/MTOCBending.cpp; sourceTree = "<group>"; };
 		23B936D221FA3AF300AEDA5E /* MTOCBending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTOCBending.h; path = Bubble/MTOCBending.h; sourceTree = "<group>"; };
 		23B936D421FA3C3D00AEDA5E /* MTOCBendingCosine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCBendingCosine.cpp; path = Bubble/MTOCBendingCosine.cpp; sourceTree = "<group>"; };
@@ -624,6 +634,10 @@
 				2337CCB121B496BE00EA25B2 /* BubbleBubbleRepulsion.h */,
 				2337CCB921B496C000EA25B2 /* BubbleBubbleRepulsionExp.cpp */,
 				2337CCB021B496BE00EA25B2 /* BubbleBubbleRepulsionExp.h */,
+				23591AFC2230A3110025098C /* BubbleCylinderAttachment.cpp */,
+				23591AFD2230A3110025098C /* BubbleCylinderAttachment.h */,
+				23591B012230A3680025098C /* BubbleCylinderAttachmentHarmonic.cpp */,
+				23591B022230A3680025098C /* BubbleCylinderAttachmentHarmonic.h */,
 				2337CCB721B496BF00EA25B2 /* BubbleCylinderRepulsion.cpp */,
 				2337CCB521B496BF00EA25B2 /* BubbleCylinderRepulsion.h */,
 				2337CCAE21B496BD00EA25B2 /* BubbleCylinderRepulsionExp.cpp */,
@@ -1109,6 +1123,7 @@
 				F735B8071A2D175800AE21D1 /* ForceField.h in Headers */,
 				F7525A5E1A70241E007A4E9F /* BranchingPosition.h in Headers */,
 				F735B7861A2D16F200AE21D1 /* Visitor.h in Headers */,
+				23591B002230A3110025098C /* BubbleCylinderAttachment.h in Headers */,
 				23591AFB222494500025098C /* NeighborListImplCUDA.h in Headers */,
 				2337CCCC21B5C76800EA25B2 /* BubbleBubbleRepulsionExp.h in Headers */,
 				F7A5201A1AA0DA07003C49E0 /* RateChangerImpl.h in Headers */,
@@ -1151,6 +1166,7 @@
 				F735B77F1A2D16F200AE21D1 /* Output.h in Headers */,
 				F735B77B1A2D16F200AE21D1 /* MathFunctions.h in Headers */,
 				F7525A531A70241E007A4E9F /* BranchingBending.h in Headers */,
+				23591B052230A3680025098C /* BubbleCylinderAttachmentHarmonic.h in Headers */,
 				2337CCD121B5C77400EA25B2 /* BubbleFF.h in Headers */,
 				F7C9CFED1A2D165D0087434A /* Boundary.h in Headers */,
 				23591AF522248E650025098C /* CUDAcommon.h in Headers */,
@@ -1335,6 +1351,7 @@
 				F7525A561A70241E007A4E9F /* BranchingDihedral.cpp in Sources */,
 				F7C9CFF11A2D165D0087434A /* BoundaryElementImpl.cpp in Sources */,
 				F7C9CFFF1A2D165D0087434A /* CMotorGhost.cpp in Sources */,
+				23591B042230A3680025098C /* BubbleCylinderAttachmentHarmonic.cpp in Sources */,
 				F735B7771A2D16F200AE21D1 /* GController.cpp in Sources */,
 				F713BEA91D416C74005386E0 /* BoundaryCylinderAttachmentHarmonic.cpp in Sources */,
 				F735B7751A2D16F200AE21D1 /* Controller.cpp in Sources */,
@@ -1365,6 +1382,7 @@
 				2337CCD321B5C77400EA25B2 /* MTOCAttachment.cpp in Sources */,
 				F77745921BCEE9FA00F3AB4C /* common.cpp in Sources */,
 				F7525A941A702461007A4E9F /* LinkerFF.cpp in Sources */,
+				23591AFF2230A3110025098C /* BubbleCylinderAttachment.cpp in Sources */,
 				F735B7B41A2D173F00AE21D1 /* CGFletcherRievesMethod.cpp in Sources */,
 				F735B7801A2D16F200AE21D1 /* Parser.cpp in Sources */,
 				F7525A521A70241E007A4E9F /* BranchingBending.cpp in Sources */,
@@ -1400,7 +1418,9 @@
 				23EC737520F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp in Sources */,
 				2337CCC021B496C100EA25B2 /* MTOCAttachmentHarmonic.cpp in Sources */,
 				23EC735F20F9397C0037DD00 /* BranchingInteractions.cpp in Sources */,
+				23591B032230A3680025098C /* BubbleCylinderAttachmentHarmonic.cpp in Sources */,
 				F735B7AB1A2D172D00AE21D1 /* MEDYAN.cpp in Sources */,
+				23591AFE2230A3110025098C /* BubbleCylinderAttachment.cpp in Sources */,
 				23EC735C20F9396C0037DD00 /* BoundaryInteractions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
