@@ -238,7 +238,6 @@ struct MembraneMeshAttribute {
             mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, &vi, &vag, &k1](size_t hei) {
                 const size_t hei_o = mesh.opposite(hei);
                 const size_t ti0 = mesh.triangle(hei);
-                const size_t ti1 = mesh.triangle(hei_o);
                 const size_t vn = mesh.target(hei_o);
                 const size_t hei_n = mesh.next(hei);
                 const size_t hei_on = mesh.next(hei_o);
@@ -400,7 +399,6 @@ struct MembraneMeshAttribute {
             mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, vi, &vag, &k1](size_t hei) {
                 const size_t hei_o = mesh.opposite(hei);
                 const size_t ti0 = mesh.triangle(hei);
-                const size_t ti1 = mesh.triangle(hei_o);
                 const size_t vn = mesh.target(hei_o);
                 const size_t hei_n = mesh.next(hei);
                 const size_t hei_on = mesh.next(hei_o);
@@ -462,7 +460,7 @@ struct MembraneMeshAttribute {
             // Calculate derivative of k1 and curvature
             // Using another loop because k1 is needed for curvature derivative
             std::array<Vec3, 3> dK1 {}; // On center vertex, indexed by [k1x, k1y, k1z]
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, vi, &vag, &k1, &dK1, dCurvFac1, dCurvFac2](size_t hei) {
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, vi, &k1, &dK1, dCurvFac1, dCurvFac2](size_t hei) {
                 const size_t hei_o = mesh.opposite(hei);
                 const size_t vn = mesh.target(hei_o);
                 const size_t hei_n = mesh.next(hei);
