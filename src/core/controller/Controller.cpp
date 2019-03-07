@@ -239,7 +239,8 @@ void Controller::initialize(string inputFile,
             adaptive_mesh::size_measure_diffuse_iter,
             // Main loop
             adaptive_mesh::mesh_adaptation_topology_max_iter,
-            adaptive_mesh::mesh_adaptation_soft_max_iter
+            adaptive_mesh::mesh_adaptation_soft_max_iter,
+            adaptive_mesh::mesh_adaptation_hard_max_iter
         }
     );
     

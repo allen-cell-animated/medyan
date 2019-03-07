@@ -11,18 +11,13 @@ by Vittorio Cristini, Jerzy Blawzdziewicz and Michael Loewenberg,
 Performs mesh relaxation and topological transformation to improve mesh size
 quality and shape quality, while maintaining the geometrical accuracy.
 
-The algorithm was not introduced explicity in the article, and we'll formalize it as follows
+The algorithm works as follows.
 
-Init: Find per-element quantities for all elements.
 Loop
-    Global relaxation
-    Update per-element quantities and local averaged quantities
-    For all places that does not satisfy criteria 2, 3
-        Local topological transformation
-        Local relaxation
-        Update affected per-element quantities and local averaged quantites
-    End
-Until all criteria are met
+    Update size measures
+    Resample vertex to fulfill size quality by inserting/deleting vertex
+    Relocate vertex to optimize triangle quality
+Until all criteria are met or maximum iterations reached
 
 */
 
@@ -64,6 +59,7 @@ constexpr size_t size_measure_diffuse_iter = 4;
 // Main loop
 constexpr size_t mesh_adaptation_topology_max_iter = 8; // Max times of scanning all the edges for sampling adjustment
 constexpr size_t mesh_adaptation_soft_max_iter = 8;
+constexpr size_t mesh_adaptation_hard_max_iter = 25;
 
 // Implementation
 //-------------------------------------
@@ -697,6 +693,7 @@ public:
         // Main loop
         size_t samplingAdjustmentMaxIter;
         size_t mainLoopSoftMaxIter;
+        size_t mainLoopHardMaxIter;
     };
 
 private:
@@ -709,6 +706,7 @@ private:
 
     size_t _samplingAdjustmentMaxIter; // Maximum number of scans used in sampling.
     size_t _mainLoopSoftMaxIter; // Maximum iterations of the main loop if topology changes can be reduced to 0
+    size_t _mainLoopHardMaxIter; // Maximum iterations of the main loop (hard cap)
 
     void _computeSizeMeasures(Mesh& mesh) const {
         GeometryManagerType::computeAllTriangleNormals(mesh);
@@ -733,18 +731,17 @@ public:
             param.edgeCollapseMinDotNormal
         ),
         _samplingAdjustmentMaxIter(param.samplingAdjustmentMaxIter),
-        _mainLoopSoftMaxIter(param.mainLoopSoftMaxIter)
+        _mainLoopSoftMaxIter(param.mainLoopSoftMaxIter),
+        _mainLoopHardMaxIter(param.mainLoopHardMaxIter)
     {}
 
     void adapt(Mesh& mesh) const {
         using namespace mathfunc;
 
-        _computeSizeMeasures(mesh);
-        LOG(INFO) << "Before mesh adapting...";
-        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}(mesh);
-
         size_t mainLoopIter = 0;
         while(true) {
+            _computeSizeMeasures(mesh);
+
             bool sizeMeasureSatisfied = true;
 
             size_t countTopoModified;
@@ -791,17 +788,14 @@ public:
                     countTopoModified == 0
                     && mainLoopIter >= _mainLoopSoftMaxIter
                 )
+                || mainLoopIter >= _mainLoopHardMaxIter
             ) break;
 
             _directVertexRelocationManager(mesh, _edgeFlipManager);
 
-            _computeSizeMeasures(mesh);
-
             ++mainLoopIter;
         } // End loop TopoModifying-Relaxation
 
-        LOG(INFO) << "After mesh adapting...";
-        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}(mesh);
     } // End function adapt(...)
 
 };
