@@ -46,6 +46,10 @@ private:
     int nint = 0;
 public:
     
+    ///Array describing indexed set of interactions
+    ///For bubble, this is a 1-bead potential + 1 fixed bubble bead
+    const static int n = 1;
+    
     /// Constructor
     BubbleCylinderRepulsion() {
         _neighborList = new BubbleCylinderNL(SysParams::Mechanics().BubbleCutoff);

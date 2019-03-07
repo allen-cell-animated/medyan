@@ -33,9 +33,9 @@ double MTOCBendingCosine::energy(double *coord, double *f, int *beadSet,
         
         coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
         
-        for(int i = 1; i < nint + 1; i+=1){
-            coord2 = &coord[3 * beadSet[n * i]];
-            coord3 = &coord[3 * beadSet[n * i + 1]];
+        for(int i = 0; i < nint; i+=1){
+            coord2 = &coord[3 * beadSet[n * i + 1]];
+            coord3 = &coord[3 * beadSet[n * i + 2]];
             
             L1 = sqrt(scalarProduct(coord1, coord2,
                                     coord1, coord2));
@@ -81,9 +81,10 @@ double MTOCBendingCosine::energy(double *coord, double *f, int *beadSet,
         
         coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
         
-        for(int i = 1; i < nint + 1; i+=1){
-            coord2 = &coord[3 * beadSet[n * i]];
-            coord3 = &coord[3 * beadSet[n * i + 1]];
+        for(int i = 0; i < nint; i+=1){
+            coord2 = &coord[3 * beadSet[n * i + 1]];
+            coord3 = &coord[3 * beadSet[n * i + 2]];
+            
             
             L1 = sqrt(scalarProduct(coord1, coord2,
                                     coord1, coord2));
@@ -129,12 +130,12 @@ void MTOCBendingCosine::forces(double *coord, double *f, int *beadSet,
         coord1 = &coord[3 * beadSet[0]]; //coordinate of MTOC
         force1 = &f[3 * beadSet[0]];
         
-        for(int i = 1; i < nint + 1; i+=1){
-            coord2 = &coord[3 * beadSet[n * i]];
-            coord3 = &coord[3 * beadSet[n * i + 1]];
+        for(int i = 0; i < nint; i+=1){
+            coord2 = &coord[3 * beadSet[n * i + 1]];
+            coord3 = &coord[3 * beadSet[n * i + 2]];
             
-            force2 = &f[3 * beadSet[n * i]];
-            force3 = &f[3 * beadSet[n * i + 1]];
+            force2 = &f[3 * beadSet[n * i + 1]];
+            force3 = &f[3 * beadSet[n * i + 2]];
             
             L1 = sqrt(scalarProduct(coord1, coord2,
                                     coord1, coord2));
@@ -188,24 +189,5 @@ void MTOCBendingCosine::forces(double *coord, double *f, int *beadSet,
     
 }
 
-//void MTOCAttachmentHarmonic::forcesAux(Bead* b1, Bead* b2, double kStretch, double radius){
-//
-//    cout << "MTOCAttachmentHarmonic::forcesAux should not be used in vectorized version." << endl;
-//
-//    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
-//    double invL = 1 / dist;
-//
-//    double f0 = kStretch * ( dist - radius ) * invL;
-//
-//    //force on i
-//    b2->forceAux[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );
-//    b2->forceAux[1] +=  f0 * ( b1->coordinate[1] - b2->coordinate[1] );
-//    b2->forceAux[2] +=  f0 * ( b1->coordinate[2] - b2->coordinate[2] );
-//
-//    // force i-1
-//    b1->forceAux[0] +=  f0 * ( b2->coordinate[0] - b1->coordinate[0] );
-//    b1->forceAux[1] +=  f0 * ( b2->coordinate[1] - b1->coordinate[1] );
-//    b1->forceAux[2] +=  f0 * ( b2->coordinate[2] - b1->coordinate[2] );
-//}
 
 
