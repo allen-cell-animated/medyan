@@ -77,15 +77,15 @@ void BubbleFF::whoIsCulprit() {
     
     cout << "Culprit interaction = " << _culpritInteraction->getName() << endl;
     
-//    cout << "Printing the culprit bubble..." << endl;
-//    if(_culpritInteraction->_bubbleCulprit != nullptr)
-//        _culpritInteraction->_bubbleCulprit->printSelf();
-//    
+    cout << "Printing the culprit bubble..." << endl;
+    if(_culpritInteraction->_bubbleCulprit != nullptr)
+        _culpritInteraction->_bubbleCulprit->printSelf();
+    
 //    cout << "Printing the other culprit structure..." << endl;
 //    if(_culpritInteraction->_otherCulprit != nullptr)
 //        _culpritInteraction->_otherCulprit->printSelf();
-//    
-//    cout << endl;
+    
+    cout << endl;
 }
 
 

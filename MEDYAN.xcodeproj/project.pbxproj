@@ -37,6 +37,8 @@
 		23591AF922248F280025098C /* BinGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916332224560E0025098C /* BinGrid.h */; };
 		23591AFA222494480025098C /* HybridNeighborList.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916BD222461DC0025098C /* HybridNeighborList.h */; };
 		23591AFB222494500025098C /* NeighborListImplCUDA.h in Headers */ = {isa = PBXBuildFile; fileRef = 235916322224560D0025098C /* NeighborListImplCUDA.h */; };
+		23591B072231BB8C0025098C /* BubbleInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23591B062231BB8C0025098C /* BubbleInteractions.cpp */; };
+		23591B082231BB8C0025098C /* BubbleInteractions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23591B062231BB8C0025098C /* BubbleInteractions.cpp */; };
 		23B936CF21FA3ACF00AEDA5E /* MTOCBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */; };
 		23B936D021FA3ACF00AEDA5E /* MTOCBending.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */; };
 		23B936D321FA3AF300AEDA5E /* MTOCBending.h in Headers */ = {isa = PBXBuildFile; fileRef = 23B936D221FA3AF300AEDA5E /* MTOCBending.h */; };
@@ -348,6 +350,7 @@
 		235916BD222461DC0025098C /* HybridNeighborList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybridNeighborList.h; sourceTree = "<group>"; };
 		235916BE22247A220025098C /* HybridNeighborListImpl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = HybridNeighborListImpl.cpp; sourceTree = "<group>"; };
 		23591AEF222487C70025098C /* Boundary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Boundary.cpp; sourceTree = "<group>"; };
+		23591B062231BB8C0025098C /* BubbleInteractions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleInteractions.cpp; path = Bubble/BubbleInteractions.cpp; sourceTree = "<group>"; };
 		23B936CD21FA3ACF00AEDA5E /* MTOCBending.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCBending.cpp; path = Bubble/MTOCBending.cpp; sourceTree = "<group>"; };
 		23B936D221FA3AF300AEDA5E /* MTOCBending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MTOCBending.h; path = Bubble/MTOCBending.h; sourceTree = "<group>"; };
 		23B936D421FA3C3D00AEDA5E /* MTOCBendingCosine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MTOCBendingCosine.cpp; path = Bubble/MTOCBendingCosine.cpp; sourceTree = "<group>"; };
@@ -630,6 +633,7 @@
 				2337CCB821B496C000EA25B2 /* BubbleCylinderRepulsionExp.h */,
 				2337CCBB21B496C000EA25B2 /* BubbleFF.cpp */,
 				2337CCAF21B496BD00EA25B2 /* BubbleInteractions.h */,
+				23591B062231BB8C0025098C /* BubbleInteractions.cpp */,
 				2337CCBA21B496C000EA25B2 /* BubbleFF.h */,
 				2337CCB221B496BF00EA25B2 /* MTOCAttachment.cpp */,
 				2337CCB321B496BF00EA25B2 /* MTOCAttachment.h */,
@@ -1303,6 +1307,7 @@
 				23B936E021FBAEF800AEDA5E /* BoundaryBubbleRepulsionExp.cpp in Sources */,
 				F7C9D02E1A2D165D0087434A /* SubSystem.cpp in Sources */,
 				F735B79A1A2D172800AE21D1 /* ChemGillespieImpl.cpp in Sources */,
+				23591B082231BB8C0025098C /* BubbleInteractions.cpp in Sources */,
 				23B936D621FA3C3D00AEDA5E /* MTOCBendingCosine.cpp in Sources */,
 				F713BEA51D416996005386E0 /* BoundaryCylinderAttachment.cpp in Sources */,
 				F7525A631A70241E007A4E9F /* BranchingStretchingHarmonic.cpp in Sources */,
@@ -1397,6 +1402,7 @@
 				23EC736220F9398E0037DD00 /* MotorGhostInteractions.cpp in Sources */,
 				235916382224561E0025098C /* CUDAcommon.cpp in Sources */,
 				23EC737920F948AE0037DD00 /* BoundaryCylinderRepulsionExpIn.cpp in Sources */,
+				23591B072231BB8C0025098C /* BubbleInteractions.cpp in Sources */,
 				23EC737520F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp in Sources */,
 				2337CCC021B496C100EA25B2 /* MTOCAttachmentHarmonic.cpp in Sources */,
 				23EC735F20F9397C0037DD00 /* BranchingInteractions.cpp in Sources */,

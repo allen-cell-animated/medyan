@@ -34,7 +34,19 @@ class BoundaryBubbleRepulsion : public BoundaryInteractions {
 private:
     BRepulsionInteractionType _FFType;
     BoundaryBubbleNL* _neighborList; ///<Neighbor list of Bubble's bead - BoundaryElement
+    
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *krep;
+    double *slen;
+    double *U_i;
+    int nint = 0;
+    ///Array describing the number of neighbors for each boundary element (num boundary elements long)
+    int *nneighbors;
 public:
+    
+    const static int n = 1;
     
     /// Constructor
     BoundaryBubbleRepulsion() {

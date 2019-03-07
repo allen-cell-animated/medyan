@@ -52,8 +52,7 @@ double BubbleCylinderRepulsionExp::energy(double *coord, double *f, int *beadSet
                 || U_i != U_i || U_i < -1.0) {
                 
                 //set culprit and return
-//                BubbleInteractions::_bubbleCulprit = be;
-
+                BubbleInteractions::_bubbleCulprit = be;
                 
                 return -1;
             }
@@ -100,8 +99,7 @@ double BubbleCylinderRepulsionExp::energy(double *coord, double *f, int *beadSet
                 || U_i != U_i || U_i < -1.0) {
                 
                 //set culprit and return
-//                BubbleInteractions::_bubbleCulprit = be;
-                
+                BubbleInteractions::_bubbleCulprit = be;
                 
                 return -1;
             }
