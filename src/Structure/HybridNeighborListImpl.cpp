@@ -213,10 +213,20 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
              endl;
         exit(EXIT_FAILURE);
     }
+    
     int size = 1;
-    for(auto x: _grid) {
-        if(x != 0) size*=x;
+    if(_grid.size() > 3){
+        for(int x = 0; x < 3; x++) {
+            if(_grid[x] != 0) size*=_grid[x];
+        }
     }
+    else{
+        for(auto x: _grid) {
+            if(x != 0) size*=x;
+        }
+    }
+
+    cout<<"grid number and size: " << endl;
     cout<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
     cout<<size<<endl;
     //Set the instance of this grid with given parameters

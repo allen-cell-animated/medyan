@@ -43,8 +43,8 @@ private:
 public:
     
     ///Array describing indexed set of interactions
-    ///For MTOC, this is a 1-bead potential
-    const static int n = 1;
+    ///For MTOC, this is a 2-bead potential + fixed MTOC bead
+    const static int n = 2;
     
     virtual void vectorize();
     virtual void deallocate();

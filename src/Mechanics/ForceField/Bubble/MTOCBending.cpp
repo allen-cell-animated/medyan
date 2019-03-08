@@ -25,8 +25,8 @@ template <class MTOCInteractionType>
 void MTOCBending<MTOCInteractionType>::vectorize() {
     //Watch out! Only one MTOC is allowed
     for(auto mtoc : MTOC::getMTOCs()) {
-        beadSet = new int[2 * n *  mtoc->getFilaments().size() + 1];
-        kbend = new double[2 * n *  mtoc->getFilaments().size() + 1];
+        beadSet = new int[n *  mtoc->getFilaments().size() + 1];
+        kbend = new double[n *  mtoc->getFilaments().size() + 1];
         
         beadSet[0] = mtoc->getBubble()->getBead()->_dbIndex;
         kbend[0] = 0.0;
@@ -36,12 +36,12 @@ void MTOCBending<MTOCInteractionType>::vectorize() {
         for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
             Filament *f = mtoc->getFilaments()[fIndex];
             
-            beadSet[2 * n * i - 1] = f->getMinusEndCylinder()->getFirstBead()->_dbIndex;
-            beadSet[2 * n * i] = f->getMinusEndCylinder()->getSecondBead()->_dbIndex;
+            beadSet[n * i - 1] = f->getMinusEndCylinder()->getFirstBead()->_dbIndex;
+            beadSet[n * i] = f->getMinusEndCylinder()->getSecondBead()->_dbIndex;
             
             double kk = mtoc->getBubble()->getMTOCBendingK();
-            kbend[2 * n * i - 1] = kk;
-            kbend[2 * n * i] = kk;
+            kbend[n * i - 1] = kk;
+            kbend[n * i] = kk;
             
 //            kbend[2 * n * i - 1] = f->getMinusEndCylinder()->getMCylinder()->getBendingConst();
 //            kbend[2 * n * i] = f->getMinusEndCylinder()->getMCylinder()->getBendingConst();
