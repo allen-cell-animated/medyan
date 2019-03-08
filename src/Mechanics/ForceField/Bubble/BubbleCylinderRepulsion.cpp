@@ -69,17 +69,16 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
         nneighbors[idb] = 0;
         int idx = 0;
         
-        //neighbor cylinder index
-        int ni = 0;
-        
-        for(auto &c : _neighborList->getNeighbors(bb)) {
+        //total number of neighbor cylinders
+        int cmax = _neighborList->getNeighbors(bb).size();
+        for(int ni = 0; ni < cmax; ni++){
             //if part of an MTOC, skip
             if(bb->isMTOC()) {
                 
                 auto mtoc = (MTOC*)bb->getParent();
                 auto filaments = mtoc->getFilaments();
                 
-                auto f = (Filament*)c->getParent();
+                auto f = (Filament*)_neighborList->getNeighbors(bb)[ni]->getParent();
                 
                 if(find(filaments.begin(), filaments.end(), f) != filaments.end())
                     continue;
@@ -99,8 +98,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             krep[cumnn+idx] = bb->getRepulsionConst();
             slen[cumnn+idx] = bb->getScreeningLength();
             idx++;
-            
-            ni++;
+
         }
         nneighbors[idb] = idx;
         bubbleSet[idb] = bb->getBead()->_dbIndex;
@@ -148,52 +146,14 @@ _FFType.forces(coord, f, beadSet, bubbleSet, krep, slen, radius, nneighbors);
     
 }
 
-
-//template <class BRepulsionInteractionType>
-//void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeForcesAux(double *coord, double *f) {
-//
-//    for (auto bb : Bubble::getBubbles()) {
-//
-//        for(auto &c : _neighborList->getNeighbors(bb)) {
-//
-//            //if part of an MTOC, skip
-//            if(bb->isMTOC()) {
-//
-//                auto mtoc = (MTOC*)bb->getParent();
-//                auto filaments = mtoc->getFilaments();
-//
-//                auto f = (Filament*)c->getParent();
-//
-//                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
-//                    continue;
-//            }
-//
-//            double kRep = bb->getRepulsionConst();
-//            double screenLength = bb->getScreeningLength();
-//
-//            double radius = bb->getRadius();
-//
-//            Bead* bd1 = bb->getBead();
-//
-//            //potential acts on second bead unless this is a minus end
-//            Bead* bd2;
-//            if(c->isMinusEnd())
-//                bd2 = c->getFirstBead();
-//            else
-//                bd2 = c->getSecondBead();
-//
-//            _FFType.forcesAux(bd1, bd2, radius, kRep, screenLength);
-//
-//        }
-//    }
-//}
-
 template <class BRepulsionInteractionType>
 void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
     
     for (auto bb : Bubble::getBubbles()) {
         
-        for(auto &c : _neighborList->getNeighbors(bb)) {
+        //total number of neighbor cylinders
+        int cmax = _neighborList->getNeighbors(bb).size();
+        for(int ni = 0; ni < cmax; ni++){
             
             //if part of an MTOC, skip
             if(bb->isMTOC()) {
@@ -201,7 +161,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 auto mtoc = (MTOC*)bb->getParent();
                 auto filaments = mtoc->getFilaments();
                 
-                auto f = (Filament*)c->getParent();
+                auto f = (Filament*) _neighborList->getNeighbors(bb)[ni]->getParent();
                 
                 if(find(filaments.begin(), filaments.end(), f) != filaments.end())
                 continue;
@@ -217,9 +177,9 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
             //potential acts on second bead unless this is a minus end
             Bead* bd2;
             Bead* bo;
-            if(c->isPlusEnd()) {
-                bd2 = c->getSecondBead();
-                bo = c->getFirstBead();
+            if(_neighborList->getNeighbors(bb)[ni]->isPlusEnd()) {
+                bd2 = _neighborList->getNeighbors(bb)[ni]->getSecondBead();
+                bo = _neighborList->getNeighbors(bb)[ni]->getFirstBead();
                 
                 ///this normal is in the direction of polymerization
                 auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd2->coordinate));
@@ -246,9 +206,9 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bd2->lfip = 0;
                 
             }
-            if(c->isMinusEnd()) {
-                bd2 = c->getFirstBead();
-                bo = c->getSecondBead();
+            if(_neighborList->getNeighbors(bb)[ni]->isMinusEnd()) {
+                bd2 = _neighborList->getNeighbors(bb)[ni]->getFirstBead();
+                bo = _neighborList->getNeighbors(bb)[ni]->getSecondBead();
                 
                 ///this normal is in the direction of polymerization
                 auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd2->coordinate));
@@ -274,7 +234,6 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 //reset lfi
                 bd2->lfim = 0;
             }
-            
         }
     }
 }
