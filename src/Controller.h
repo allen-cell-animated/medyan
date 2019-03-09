@@ -136,7 +136,7 @@ public:
     ///Initialize the system, given an input and output directory
     void initialize(string inputFile,
                     string inputDirectory,
-                    string outputDirectory);
+                    string outputDirectory, int nthreads);
     ///Run the simulation
     void run();
 };

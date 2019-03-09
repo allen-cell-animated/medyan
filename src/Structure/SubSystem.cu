@@ -442,7 +442,7 @@ void SubSystem::updateBindingManagers() {
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
     //SIMD cylinder update
-#ifdef SIMDBINDINGSEARCH
+#ifdef SIMDBINDINGSEARCH2
     minsSIMD = chrono::high_resolution_clock::now();
     for(auto C : _compartmentGrid->getCompartments()) {
         C->SIMDcoordinates();
@@ -450,16 +450,28 @@ void SubSystem::updateBindingManagers() {
         C->SIMDcoordinates4motorsearch(1);
         C->getHybridBindingSearchManager()->resetpossibleBindings();
     }
+#endif
 
     if(!initialize) {
         HybridBindingSearchManager::setdOut();
         initialize = true;
     }
 
+#ifdef SIMDBINDINGSEARCH3
     mineSIMD = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runSIMD2(mineSIMD - minsSIMD);
     SIMDtime += elapsed_runSIMD2.count();
     cout<<"SIMD create time "<<elapsed_runSIMD2.count()<<endl;
+
+    minsSIMD = chrono::high_resolution_clock::now();
+    for(auto C : _compartmentGrid->getCompartments()) {
+        C->SIMDcoordinates_section();
+        C->SIMDcoordinates4linkersearch_section(1);
+        C->SIMDcoordinates4motorsearch_section(1);
+    }
+    mineSIMD = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_SIMDpart(mineSIMD - minsSIMD);
+    cout<<"SIMD create time "<<elapsed_SIMDpart.count()<<endl;
 #endif
 
     //PROTOCOL 1 This call calculates Binding pairs according to SIMD protocol V1
@@ -511,24 +523,31 @@ void SubSystem::updateBindingManagers() {
     }*/
 
     //This call calculates Binding pairs according to SIMD protocol V2
-
     if(true) {
+/*        int totalupn = 0;
+        for (auto C : _compartmentGrid->getCompartments()) {
+            totalupn += C->getuniquepermuteNeighbours().size();
+            cout<<C->getuniquepermuteNeighbours().size()<<" ";
+        }
+        cout<<endl;
+        cout<<"Unique permutation neighbors "<<totalupn<<endl;*/
+		#ifdef SIMDBINDINGSEARCH2
         minsSIMD = chrono::high_resolution_clock::now();
         for (auto C : _compartmentGrid->getCompartments()) {
-#ifdef SIMDBINDINGSEARCH
+
             C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV2();
 
-            /*for(auto &manager : C->getFilamentBindingManagers()) {
+            /*for(auto &manager : C->getFilamentBindingManagers()) {ad
     #ifdef NLSTENCILLIST
                 BranchingManager* bManager;
                 if(bManager = dynamic_cast<BranchingManager *>(manager.get()))
                     manager->updateAllPossibleBindingsstencil();
     #endif
             }*/
-#endif
+
         }
         //PRINT
-        /*    for(auto C : _compartmentGrid->getCompartments()) {
+/*            for(auto C : _compartmentGrid->getCompartments()) {
                 C->getHybridBindingSearchManager()->printbindingsizes();
             }*/
         mineSIMD = chrono::high_resolution_clock::now();
@@ -537,33 +556,36 @@ void SubSystem::updateBindingManagers() {
         cout << "SIMDV2 time " << elapsed_runSIMDV2.count() << endl;
         cout << "findV2 time " << HybridBindingSearchManager::findtimeV2 << endl;
         cout << "Append time " << HybridBindingSearchManager::appendtime << endl;
-        cout << "Time taken to parse SIMD " << HybridBindingSearchManager::SIMDparse1
-             << endl;
-        cout << "Time taken to merge SIMD " << HybridBindingSearchManager::SIMDparse2
-             << endl;
+/*        cout << "Time taken to parse SIMD " << HybridBindingSearchManager::SIMDparse1SIMDparse1 << endl;
+        cout << "Time taken to merge SIMD " << HybridBindingSearchManager::SIMDparse2 << endl;
         cout << "Time taken to copy to main google map "
                 "" << HybridBindingSearchManager::SIMDparse3 << endl;
         cout << "Time taken to update bs "
-                "" << HybridBindingSearchManager::SIMDcountbs << endl;
+                "" << HybridBindingSearchManager::SIMDcountbs << endl;*/
+        #endif
 
     }
 
-    //PROTOCOL #2b This call calculates Binding pairs according to SIMD protocol
-    // operating on HybringNeighborListImpl
-    if(true){
-        minsHYBD = chrono::high_resolution_clock::now();
-        _HneighborList->setdOut();
-        _HneighborList->updateSIMDbindingsites();
-        mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_simd_NL(mine - mins);
-        std::cout<<"SIMD NL time "<<elapsed_simd_NL.count()<<endl;
-        cout<<"SIMD calculate time "<<_HneighborList->findtimeV2<<endl;
+#ifdef SIMDBINDINGSEARCH3
+    for (auto C : _compartmentGrid->getCompartments())
+        C->getHybridBindingSearchManager()->resetpossibleBindings();
+    minsSIMD = chrono::high_resolution_clock::now();
+    HybridBindingSearchManager::findtimeV3 = 0.0;
+    HybridBindingSearchManager::SIMDV3appendtime = 0.0;
+    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3(0);
     }
-
+    mineSIMD = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed_runSIMDV3(mineSIMD - minsSIMD);
+    cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
+    cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
+    cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
+    cout<<"-------"<<endl;
+#endif
     //PROTOCOL #3 This call calculates Binding pairs according to HYBRID protocol
     // (non-SIMD).
 #ifdef HYBRID_NLSTENCILLIST
-if(true) {
+if(false) {
 /*    for (auto C : _compartmentGrid->getCompartments()) {
         C->getHybridBindingSearchManager()->resetpossibleBindings();
     }*/
@@ -593,10 +615,10 @@ if(true) {
     chrono::duration<double> elapsed_orig(mine - mins);
     std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
     //PRINT
-    for(auto C : _compartmentGrid->getCompartments()) {
+/*    for(auto C : _compartmentGrid->getCompartments()) {
         C->getHybridBindingSearchManager()->printbindingsizes();
-    }
-    exit(EXIT_FAILURE);
+    }*/
+//    exit(EXIT_FAILURE);
 }
 
 //OBSOLETE

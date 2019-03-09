@@ -1119,6 +1119,21 @@ void ChemManager::genFilBindingReactions() {
     FilamentBindingManager::_subSystem = _subSystem;
     double rMax, rMin;
     bool status = false;
+	#ifdef HYBRID_NLSTENCILLIST
+	//If linker and motor reactions exist, create HybridBindingSearchManager
+	short totalreactions = 0;
+	for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+		totalreactions += _chemData.linkerReactions[filType].size() +
+		    _chemData.motorReactions[filType].size();
+	}
+	if(totalreactions)
+		status = true;
+	for (auto C : grid->getCompartments()) {
+		HybridBindingSearchManager *Hbsn = new HybridBindingSearchManager(C);
+		C->addHybridBindingSearchManager(Hbsn);
+	}
+	#endif
+
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
     
         //loop through all compartments
@@ -1376,16 +1391,6 @@ void ChemManager::genFilBindingReactions() {
                 BranchingCallback bcallback(bManager, plusEnd, onRate, offRate, _subSystem);
                 ConnectionBlock rcb(rxn->connect(bcallback,false));
             }
-
-#ifdef HYBRID_NLSTENCILLIST
-            //If linker and motor reactions exist, create HybridBindingSearchManager
-            if(_chemData.linkerReactions[filType].size() +
-               _chemData.motorReactions[filType].size() > 0) {
-                status = true;
-            }
-                HybridBindingSearchManager* Hbsn  = new HybridBindingSearchManager(C);
-                C->addHybridBindingSearchManager(Hbsn);
-#endif
 
 
             for(auto &r: _chemData.linkerReactions[filType]) {
@@ -1857,20 +1862,13 @@ void ChemManager::genFilBindingReactions() {
                 Hbsm->setbindingsearchparameter(mManager, 2, 0,0,rMax,rMin);
 #endif
             }
-        }
+        } // Loop through Compartment
         
         //init neighbor lists
         //get a compartment
-
         Compartment* C0 = grid->getCompartments()[0];
-#ifdef HYBRID_NLSTENCILLIST
-        if(status) {
-            HybridBindingSearchManager::_HneighborList = _subSystem->getHNeighborList();
-            auto Hmanager = C0->getHybridBindingSearchManager();
-            Hmanager->addtoHNeighborList();
-        }
-        _subSystem->initializeHNeighborList();
-#else
+        //if NOT DEFINED
+#ifndef HYBRID_NLSTENCILLIST
         for(auto &manager : C0->getFilamentBindingManagers()) {
             
             LinkerBindingManager* lManager;
@@ -1906,7 +1904,18 @@ void ChemManager::genFilBindingReactions() {
             }
         }
 #endif
-    }
+    } //Loop through Filament types
+    #ifdef HYBRID_NLSTENCILLIST
+	Compartment *C0 = grid->getCompartments()[0];
+	//status checks if there are linker and motor binding reactions for this
+	// filamentType
+	if (status) {
+		HybridBindingSearchManager::_HneighborList = _subSystem->getHNeighborList();
+		auto Hmanager = C0->getHybridBindingSearchManager();
+		Hmanager->addtoHNeighborList();
+	}
+	_subSystem->initializeHNeighborList();
+	#endif
 }
 
 void ChemManager::genSpecies(Compartment& protoCompartment) {

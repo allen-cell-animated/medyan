@@ -17,6 +17,7 @@ A multithreaded versio of the code for both AVX and AVX2 calculations.
 #include <queue> 
 #include <atomic>
 #include <thread>
+#include "SysParams.h"
 
 // #include "xtensor/xarray.hpp"
 // #include "xtensor/xbuilder.hpp"
@@ -136,13 +137,14 @@ namespace dist {
 		
 		for(uint i=0; i<2; ++i)
 			ncontacts_global_h[i]=0;
-		
+
 		unsigned int nthreads = std::thread::hardware_concurrency();
 
 #ifdef NPROCS
 		nthreads = NPROCS;
-#endif	
-	
+#endif
+		nthreads = SysParams::numthreads;
+//		cout<<"#threads "<<nthreads<<endl;
 //		cout << "find_distances(...tag_simd<simd_avx_par, float>...) nthreads=" << nthreads << endl;
 		
 		std::vector<std::thread> threads_avx;

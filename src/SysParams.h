@@ -134,6 +134,7 @@ struct ChemParams {
     vector<short> numBindingSites = {};
 
     short maxbindingsitespercylinder = 0;
+    short minbindingsitespercylinder = 32767;
     
     //@{
     ///Extra motor parameters
@@ -197,6 +198,8 @@ struct GeoParams {
     double compartmentSizeZ = 0;
     
     double largestCompartmentSide = 0;
+
+    double largestCylinderSize = 0;
     
     vector<double> monomerSize = {};
     
@@ -295,6 +298,7 @@ public:
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
     // corresponds to an on-going initialization state.
+    static int numthreads;
     //aravind July11,2016
     static vector<float> MUBBareRate;
     static vector<float> LUBBareRate;

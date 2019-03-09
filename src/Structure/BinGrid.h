@@ -255,14 +255,5 @@ public:
         }
     }
 
-#ifdef SIMDBINDINGSEARCH2
-    void createSIMDcoordinates(){
-        for(auto bin: getBins()){
-            bin->createSIMDcoordinates();
-            bin->createSIMDcoordinates4linkersearch(true);
-            bin->createSIMDcoordinates4motorsearch(true);
-        }
-    }
-#endif
 };
 #endif //MEDYAN_BINGRID_H

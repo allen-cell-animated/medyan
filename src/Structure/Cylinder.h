@@ -93,6 +93,10 @@ public:
     ///< Coordinates of midpoint, updated with updatePosition()
     vector<Bin*> _hbinvec;
     long _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector.
+
+    static bool setpositionupdatedstate; //Setter to check if position has been
+    // updated.
+
 ///< Continuous ID assigned for
 ///< CUDANL calculation
     /// Constructor, initializes a cylinder

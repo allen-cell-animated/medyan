@@ -635,10 +635,10 @@ struct MotorUnbindingCallback {
 //        //re-add unbound ID to motor binding manager
 //        mManager->addUnboundID(_motor->getID());
 
-//        //@{
-//        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "<<_motor->getFirstPosition()
-//                  <<" "<<_motor->getSecondCylinder()->getID()<<" "<<_motor->getSecondPosition()<<endl;
-//        //@}
+        //@{
+        /*std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "<<_motor->getFirstPosition()
+                  <<" "<<_motor->getSecondCylinder()->getID()<<" "<<_motor->getSecondPosition()<<endl;*/
+        //@}
 
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
@@ -751,7 +751,8 @@ struct MotorWalkingCallback {
 
 
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
-/*        cout<<"cylinder size "<<cylinderSize<<endl;
+        /*cout<<"filament Type "<<filType<<endl;
+        cout<<"cylinder size "<<cylinderSize<<endl;
         cout<<"oldpos "<<_oldPosition<<endl;
         cout<<"newpos "<<_newPosition<<endl;
         cout<<"-----------"<<endl;*/

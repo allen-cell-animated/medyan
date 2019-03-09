@@ -289,6 +289,7 @@ private:
         }
     }
     static void revectorize(double* coord){
+        cout<<"Revectorizing for reallocate cIndices"<<endl;
         /*for(auto b : _beads.getElements()){
             std::cout<<b->_dbIndex<<" ";
         }

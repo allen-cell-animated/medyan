@@ -64,10 +64,10 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
 
 void Controller::initialize(string inputFile,
                             string inputDirectory,
-                            string outputDirectory) {
-
+                            string outputDirectory, int threads) {
+    cout<<threads<<endl;
     SysParams::INITIALIZEDSTATUS = false;
-
+    SysParams::numthreads = threads;
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
     cout << "If dynamic rates is turned on, chemistry and mechanics must be "
@@ -671,7 +671,13 @@ void Controller::executeSpecialProtocols() {
 void Controller::updatePositions() {
 
     //NEED TO UPDATE CYLINDERS FIRST
-    for(auto c : Cylinder::getCylinders()) c->updatePosition();
+
+    //Reset Cylinder update position state
+    Cylinder::setpositionupdatedstate = false;
+    for(auto c : Cylinder::getCylinders())
+    	c->updatePosition();
+    //Reset state to updated state
+	Cylinder::setpositionupdatedstate = true;
 
     //update all other moveables
     for(auto m : _subSystem->getMovables()) m->updatePosition();
@@ -720,7 +726,9 @@ void Controller::updatePositions() {
 void Controller::updateReactionRates() {
     /// update all reactables
     for(auto r : _subSystem->getReactables()) r->updateReactionRates();
+	cout<<"Rxn rates updated"<<endl;
 }
+
 #endif
 
 void Controller::updateNeighborLists() {

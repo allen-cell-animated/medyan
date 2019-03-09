@@ -55,6 +55,7 @@ class HybridBindingSearchManager {
     friend class ChemManager;
 
 private:
+    static const uint switchfactor  = 10;
     /*struct gdmapstruct{
         gdmap gdmap1;
         gdmap gdmap2;
@@ -154,18 +155,22 @@ private:
     vector<vector<FilamentBindingManager*>> fManagervec;
 
     //possible bindings at current state. updated according to neighbor list
-    unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
-            _possibleBindings;
+    //possible bindings at current state. updated according to neighbor list stencil
 
-/*    possible bindings at current state. updated according to neighbor list stencil
     vector<vector<unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>>>
-            _possibleBindingsstencilvec;*/
+            _possibleBindingsstencilvec;
+
+    vector<vector<unordered_multimap<uint32_t, uint32_t>>>
+            _mpossibleBindingsstencilvecuint;
+
+    vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
+            _possibleBindingsstencilvecuint;
 
     vector<vector<unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*,
     short>>>>>_reversepossibleBindingsstencilvec;
 
     vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
-                                                    _reversepossibleBindingsstencilvecuint;
+    _reversepossibleBindingsstencilvecuint;
 
     vector<uint32_t> linker1, linker2;
     vector<uint32_t> motor1, motor2;
@@ -197,12 +202,22 @@ private:
     static dist::dOut<1U,true> bspairslinkerself;
     static dist::dOut<1U,false> bspairsmotor;
     static dist::dOut<1U,true> bspairsmotorself;
+    static dist::dOut<1U,false> bspairslinker2;
+    static dist::dOut<1U,false> bspairsmotor2;
     vector<uint32_t> pairslinker;
     vector<uint32_t> pairsmotor;
     vector<bool> filID_fpos_pairL;
     vector<bool> filID_fpos_pairM;
     vector<vector<bool>> pairvaluespecieslinker;
     vector<vector<bool>> pairvaluespeciesmotor;
+
+    /*Partitioned volume refers to partitioning compartment volume in to smaller sub
+volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in the
+ vector corresponds to stencil ID. the data corresponds to the position in the
+ partioned coordinate vector of vectors. 27 is a dummy entry and should never be
+ called.*/
+    uint partitioned_volume_ID[27] = {27, 27, 27, 27, 5, 7, 19, 9, 21, 27, 27, 27, 27, 0, 1,
+                                      11, 3, 13, 27, 27, 27, 27, 27, 15, 23, 17, 25};
 
     template <uint D, bool SELF, bool LinkerorMotor>
     void calculatebspairsLMself(dist::dOut<D, SELF>& bspairs, short idvec[2]);
@@ -241,14 +256,22 @@ private:
     dist::dOut<D, SELF> &bspairsoutS, uint startID, uint endID, short idvec[2],
                         short threadID);
 
+    template <uint D, bool SELF, bool LinkerorMotor>
+    void calculatebspairsLMselfV3(dist::dOut<D, SELF>& bspairs, short idvec[2], short
+    maptag);
+
+    template <uint D, bool SELF, bool LinkerorMotor>
+    void calculatebspairsLMenclosedV3(dist::dOut<D, SELF>& bspairs, dist::dOut<D, SELF>&
+            bspairs2, short idvec[2], short maptag);
+
+    template <uint D, bool SELF, bool LinkerorMotor>
+    void checkcontacts(dist::dOut<D, SELF>& bspairs, dist::dOut<D, SELF>& bspairs2);
 
     template<uint D, bool LinkerorMotor>
     void threadedsingleparse(uint prev, uint next, short i);
 
-/*    template<uint D, bool LinkerorMotor>
-    void threadedsingleparseV2(gdmap tempmap[],
-                               vector<uint32_t>& cmpID, vector<uint32_t>& ncmpID,
-                               uint prev, uint next, short i);*/
+	template<uint D, bool LinkerorMotor>
+	void threadedsingleparse_serial(uint first, uint last, gdmap& temp, gdmap& rtemp);
 
     template<bool LinkerorMotor>
     void mergemaps(short threadID, short offset);
@@ -374,6 +397,10 @@ private:
     void gatherCylinderIDfromcIndex(dist::dOut<D,SELF>& bspairsoutS, int start, int end,
             uint prev_size, Compartment* nCmp = NULL);
 
+    template <uint D, bool SELF, bool LinkerorMotor>
+    void gatherCylinderIDfromcIndexV3(dist::dOut<D,SELF>& bspairsoutS, int first, int
+    last, short idvec[2], short maptag, Compartment* nCmp = NULL);
+
     //D = 2
     static dist::dOut<2U,true> bspairs2self;
     static dist::dOut<2U,false> bspairs2;
@@ -436,12 +463,6 @@ private:
    void countNpairsfound(short idvec[2]);
 
 public:
-    //possible bindings at current state. updated according to neighbor list stencil
-    vector<vector<unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>>>
-            _possibleBindingsstencilvec;
-
-    vector<vector<unordered_map<uint32_t, vector<uint32_t>>>>
-                                                            _possibleBindingsstencilvecuint;
 
     //constructors
      HybridBindingSearchManager(Compartment* compartment);
@@ -462,6 +483,7 @@ public:
     ///update all possible binding reactions that could occur using stencil NL
     void updateAllPossibleBindingsstencil();
     void updateAllPossibleBindingsstencilSIMDV2();
+    void updateAllPossibleBindingsstencilSIMDV3(short maptag);
     void updateAllPossibleBindingsstencilHYBD();
 
     vector<tuple<CCylinder*, short>> chooseBindingSitesstencil(short idvec[2]);
@@ -503,6 +525,7 @@ public:
                 _possibleBindingsstencilvec[idx][idx2].clear();
                 _reversepossibleBindingsstencilvec[idx][idx2].clear();
                 _possibleBindingsstencilvecuint[idx][idx2].clear();
+	            _mpossibleBindingsstencilvecuint[idx][idx2].clear();
                 _reversepossibleBindingsstencilvecuint[idx][idx2].clear();
                 googlepossible[idx][idx2].clear();
                 googlereversepossible[idx][idx2].clear();
@@ -527,6 +550,9 @@ public:
         bspairslinker.init_dout(10000,{900.0f,1600.0f});
         bspairsmotorself.init_dout(10000,{30625.0f, 50625.0f});
         bspairsmotor.init_dout(10000,{30625.0f, 50625.0f});
+
+        bspairslinker2.init_dout(10000,{900.0f,1600.0f});
+        bspairsmotor2.init_dout(10000,{30625.0f, 50625.0f});
     }
 
     static double SIMDtime;
@@ -539,6 +565,8 @@ public:
     static double SIMDparse3;
     static double SIMDcountbs;
     static double HYBDappendtime;
+    static double SIMDV3appendtime;
+	static double findtimeV3;
     bool googlevar = false;
 };
 #endif

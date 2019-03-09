@@ -212,45 +212,6 @@ public:
     /// Get all cylinder neighbors
     vector<Cylinder*> getNeighbors(Cylinder* cylinder);
 
-    //TESTING
-#ifdef SIMDBINDINGSEARCH2
-    chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD,
-            minsfind, minefind;
-    static dist::dOut<1U,false> bspairslinker;
-    static dist::dOut<1U,true> bspairslinkerself;
-    static dist::dOut<1U,false> bspairsmotor;
-    static dist::dOut<1U,true> bspairsmotorself;
-    void updateSIMDbindingsites();
-    //SIMD variables
-    unsigned mask = (1 << 4) - 1;
-    static const dist::tag_simd<dist::simd_avx_par,  float>  t_avx_par;
-    static const dist::tag_simd<dist::simd_avx,  float>   t_avx;
-    static const dist::tag_simd<dist::simd_no,   float>   t_serial;
-
-    template <uint D, bool SELF, bool LinkerorMotor>
-    void calculatebspairsLMself(Bin* bin, dist::dOut<D, SELF>& bspairs, short idvec[2]);
-
-    template <uint D, bool SELF, bool LinkerorMotor>
-    void calculatebspairsLMenclosed(Bin* bin, dist::dOut<D, SELF>& bspairs, short idvec[2]);
-
-    static void setdOut(){
-        bspairslinkerself.init_dout(10000,{900.0f,1600.0f});
-        bspairslinker.init_dout(10000,{900.0f,1600.0f});
-        bspairsmotorself.init_dout(10000,{30625.0f, 50625.0f});
-        bspairsmotor.init_dout(10000,{30625.0f, 50625.0f});
-    }
-
-    static double SIMDtime;
-    static double HYBDtime;
-    static double findtime;
-    static double findtimeV2;
-    static double appendtime;
-    static double SIMDparse1;
-    static double SIMDparse2;
-    static double SIMDparse3;
-    static double SIMDcountbs;
-
-#endif
 };
 #endif
 #endif

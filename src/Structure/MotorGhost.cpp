@@ -195,7 +195,8 @@ void MotorGhost::updateReactionRates() {
     
     //walking rate changer
     if(!_walkingChangers.empty()) {
-        
+        /*cout<<"Walking URNrate "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
+        <<_position2<<endl;*/
         auto x1 = _c1->getFirstBead()->coordinate;
         auto x2 = _c1->getSecondBead()->coordinate;
         auto x3 = _c2->getFirstBead()->coordinate;

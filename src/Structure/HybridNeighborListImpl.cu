@@ -169,10 +169,12 @@ void HybridCylinderCylinderNL::generateConnections() {
 void HybridCylinderCylinderNL::initializeBinGrid() {
 
 //    //Initial parameters of system
+    //Creates bins based on the largest rMax in the system.
     auto _nDim = SysParams::Geometry().nDim;
     double searchdist = 1.125 * (sqrt(_largestrMaxsq));
     std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
     _binSize = {searchdist, searchdist, searchdist};
+
     if(_nDim >=1) {
         _size.push_back(int(SysParams::Geometry().NX * SysParams::Geometry()
                 .compartmentSizeX));
@@ -180,8 +182,8 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
             _grid.push_back(_size[0]/_binSize[0]);
         else
             _grid.push_back(_size[0]/_binSize[0] + 1);
-        cout<<_grid[0]<<" "<<_size[0]<<" "<<_binSize[0]<<endl;
     }
+
     if (_nDim >= 2) {
         _size.push_back(int(SysParams::Geometry().NY * SysParams::Geometry()
                 .compartmentSizeY));
@@ -189,8 +191,8 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
             _grid.push_back(_size[1]/_binSize[1]);
         else
             _grid.push_back(_size[1]/_binSize[1] + 1);
-        cout<<_grid[1]<<" "<<_size[1]<<" "<<_binSize[1]<<endl;
     }
+
     if (_nDim == 3) {
         _size.push_back(int(SysParams::Geometry().NZ * SysParams::Geometry()
                 .compartmentSizeZ));
@@ -198,15 +200,12 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
             _grid.push_back(_size[2]/_binSize[2]);
         else
             _grid.push_back(_size[2]/_binSize[2] + 1);
-        cout<<_grid[2]<<" "<<_size[2]<<" "<<_binSize[2]<<endl;
     }
 
     //Check that grid and compartmentSize match nDim
-    if((_nDim == 3 &&
-        _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 &&
-        _binSize[0] != 0 &&
-        _binSize[1] != 0 &&
-        _binSize[2] != 0)){
+    if((_nDim == 3 && _grid[0] != 0 && _grid[1] != 0 && _grid[2]!=0 && _binSize[0] != 0 &&
+        _binSize[1] != 0 && _binSize[2] != 0)){
+        //Do nothing
     }
     else {
         cout << "Bin parameters for CylinderCylinderNeighborLists are invalid. Exiting." <<
@@ -217,12 +216,13 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
     for(auto x: _grid) {
         if(x != 0) size*=x;
     }
-    cout<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
-    cout<<size<<endl;
+    cout<<"Grid size "<<_grid[0]<<" "<<_grid[1]<<" "<<_grid[2]<<endl;
+    cout<<"Total number of bins "<<size<<endl;
     //Set the instance of this grid with given parameters
     _binGrid = new BinGrid(size, _ID, _binSize);
     //Create connections based on dimensionality
     generateConnections();
+    cout<<"connections generated"<<endl;
 }
 
 //You need a vector of all grids so you can loop through and update respective coordinates.
@@ -235,7 +235,7 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
         //Flatten the coordinates to 1D, get integer index
         if(i == 0) {
             if(x < 0 || x >= (_binSize[0] * _grid[0])) {
-                cout<<"get Bin coords x"<<endl;
+
                 throw OutOfBoundsException();
             }
 
@@ -243,7 +243,7 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
         }
         else if(i == 1) {
             if(x < 0 || x >= (_binSize[1] * _grid[1])) {
-                cout<<"get Bin coords y"<<endl;
+
                 throw OutOfBoundsException();
             }
 
@@ -251,7 +251,7 @@ Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
         }
         else {
             if(x < 0 || x >= (_binSize[2] * _grid[2])) {
-                cout<<"get Bin coords z"<<endl;
+
                 throw OutOfBoundsException();
             }
 
@@ -521,172 +521,5 @@ void HybridCylinderCylinderNL::reset() {
         }
     }*/
 }
-
-void HybridCylinderCylinderNL::updateSIMDbindingsites(){
-
-    //check and reassign cylinders to different bins if needed.
-    chrono::high_resolution_clock::time_point minscreate, minecreate;
-    minscreate = chrono::high_resolution_clock::now();
-    updateallcylinderstobin();
-    _binGrid->updatecindices();
-    _binGrid->createSIMDcoordinates();
-    minecreate = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_create(minecreate - minscreate);
-    cout<<"SIMD NL create time "<<elapsed_create.count()<<endl;
-    short idvecL[2] = {0,0};
-    short idvecM[2] = {0,1};
-    minscreate = chrono::high_resolution_clock::now();
-    for(auto bin:_binGrid->getBins()){
-    calculatebspairsLMself<1,true, true>(bin, bspairslinkerself, idvecL);
-    calculatebspairsLMenclosed<1,false, true>(bin, bspairslinker,idvecL);
-    }
-    minecreate = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_calculate(minecreate - minscreate);
-    cout<<"SIMD NL calculate time L "<<elapsed_calculate.count()<<endl;
-    minscreate = chrono::high_resolution_clock::now();
-    for(auto bin:_binGrid->getBins()){
-            calculatebspairsLMself<1,true, false>(bin, bspairsmotorself, idvecM);
-            calculatebspairsLMenclosed<1,false, false>(bin, bspairsmotor,idvecM);
-    }
-    minecreate = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_calculateM(minecreate - minscreate);
-    cout<<"SIMD NL calculate time M "<<elapsed_calculateM.count()<<endl;
-}
-
-template <uint D, bool SELF, bool LinkerorMotor>
-void HybridCylinderCylinderNL::calculatebspairsLMself(Bin* bin, dist::dOut<D, SELF>&
-bspairsoutSself, short idvec[2]){
-
-    auto boundstate = SysParams::Mechanics().speciesboundvec;
-    CCylinder **ccylvec = CUDAcommon::getSERLvars().ccylindervec;
-    auto cylcmp1 = bin->Cyldcindexvec;
-
-    minsfind = chrono::high_resolution_clock::now();
-    if(bin->getSIMDcoords<LinkerorMotor>().size()) {
-        bspairsoutSself.reset_counters();
-        dist::find_distances(bspairsoutSself, bin->getSIMDcoords<LinkerorMotor>(),
-                             t_avx_par);
-    }
-    minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runfind(minefind - minsfind);
-    findtimeV2 += elapsed_runfind.count();
-/*    cout<<bin->getSIMDcoords<LinkerorMotor>().size()<<" "<<bspairsoutSself
-    .counter[D-1]<<endl;*/
-    //@{
-    /*if(false) {
-
-        uint N = bspairsoutSself.counter[D-1];
-        uint prev_size = getfilID_fpospairs<LinkerorMotor>().size();
-        getpairsLinkerorMotor<LinkerorMotor>().resize
-                (getpairsLinkerorMotor<LinkerorMotor>().size() + 2*N);
-        getfilID_fpospairs<LinkerorMotor>().resize(getfilID_fpospairs<LinkerorMotor>()
-                                                           .size() + N);
-
-        minsfind = chrono::high_resolution_clock::now();
-        std::vector<std::thread> threads_avx;
-        uint nt = nthreads;
-        threads_avx.reserve(nt);
-        uint prev = 0;
-        uint frac = N / nt;
-        uint next = frac + N % nt;
-        for (uint i = 0; i < nt; ++i) {
-            threads_avx.push_back(std::thread(
-                    &HybridBindingSearchManager::gatherCylinderIDfromcIndex<D, SELF,
-                            LinkerorMotor>, this, std::ref(bspairsoutSself), prev,
-                    next, prev_size, _compartment));
-            prev = next;
-            next = min(N, prev + frac);
-        }
-
-        //Join
-        for (auto &t : threads_avx)
-            t.join();
-        threads_avx.clear();
-
-        minefind = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_append(minefind - minsfind);
-        appendtime += elapsed_append.count();
-    }*/
-    //@}
-}
-
-template<uint D, bool SELF, bool LinkerorMotor>
-void HybridCylinderCylinderNL::calculatebspairsLMenclosed (Bin* bin, dist::dOut<D,SELF>&
-bspairsoutS, short idvec[2]){
-    auto boundstate = SysParams::Mechanics().speciesboundvec;
-    CCylinder **ccylvec = CUDAcommon::getSERLvars().ccylindervec;
-    int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-    auto cylcmp1 = bin->Cyldcindexvec;
-
-    for(auto nbin: bin->getuniquepermutationNeighbours()){
-
-        minsfind = chrono::high_resolution_clock::now();
-
-        if(bin->getSIMDcoords<LinkerorMotor>().size() > 0 &&
-        nbin->getSIMDcoords<LinkerorMotor>().size() > 0) {
-            bspairsoutS.reset_counters();
-            dist::find_distances(bspairsoutS, bin->getSIMDcoords<LinkerorMotor>(),
-                                 nbin->getSIMDcoords<LinkerorMotor>(), t_avx_par);
-        }
-        minefind = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runfind(minefind - minsfind);
-        findtimeV2 += elapsed_runfind.count();
-        /*cout<<bin->getSIMDcoords<LinkerorMotor>().size()<<" "
-            <<nbin->getSIMDcoords<LinkerorMotor>().size()<<" "
-            <<bspairsoutS.counter[D-1]<<endl;*/
-        //MERGE INTO single vector
-        //@{
-        /*if(false) {
-            minsfind = chrono::high_resolution_clock::now();
-            short dim = 0;
-            uint N = bspairsoutS.counter[dim];
-            uint prev_size = getfilID_fpospairs<LinkerorMotor>().size();
-            getpairsLinkerorMotor<LinkerorMotor>().resize
-                    (getpairsLinkerorMotor<LinkerorMotor>().size() + 2*N);
-            getfilID_fpospairs<LinkerorMotor>().resize(getfilID_fpospairs<LinkerorMotor>()
-                                                               .size() + N);
-
-            std::vector<std::thread> threads_avx;
-            uint nt = nthreads;
-            threads_avx.reserve(nt);
-            uint prev = 0;
-            uint frac = N / nt;
-            uint next = frac + N % nt;
-            for (uint i = 0; i < nt; ++i) {
-                threads_avx.push_back(std::thread
-                                              (&HybridBindingSearchManager::gatherCylinderIDfromcIndex<D, SELF,
-                                                       LinkerorMotor>, this,
-                                               std::ref(bspairsoutS), prev,
-                                               next, prev_size, ncmp));
-                prev = next;
-                next = min(N, prev + frac);
-            }
-
-            //Join
-            for (auto &t : threads_avx)
-                t.join();
-            threads_avx.clear();
-
-            minefind = chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_append(minefind - minsfind);
-            appendtime += elapsed_append.count();
-        }*/
-        //@}
-    }
-}
-double HybridCylinderCylinderNL::SIMDtime = 0.0;
-double HybridCylinderCylinderNL::HYBDtime = 0.0;
-double HybridCylinderCylinderNL::findtime = 0.0;
-double HybridCylinderCylinderNL::appendtime = 0.0;
-double HybridCylinderCylinderNL::findtimeV2 = 0.0;
-double HybridCylinderCylinderNL::SIMDparse1 = 0.0;
-double HybridCylinderCylinderNL::SIMDparse2 = 0.0;
-double HybridCylinderCylinderNL::SIMDparse3 = 0.0;
-double HybridCylinderCylinderNL::SIMDcountbs = 0.0;
-
-dist::dOut<1U,false> HybridCylinderCylinderNL::bspairslinker;
-dist::dOut<1U,true> HybridCylinderCylinderNL::bspairslinkerself;
-dist::dOut<1U,false> HybridCylinderCylinderNL::bspairsmotor;
-dist::dOut<1U,true> HybridCylinderCylinderNL::bspairsmotorself;
 
 #endif

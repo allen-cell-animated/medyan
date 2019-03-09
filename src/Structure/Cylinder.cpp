@@ -217,59 +217,62 @@ Cylinder::~Cylinder() noexcept {
 int Cylinder::getType() {return _type;}
 
 void Cylinder::updatePosition() {
+	if(!setpositionupdatedstate) {
 
-    //check if were still in same compartment, set new position
-    updateCoordinate();
+		//check if were still in same compartment, set new position
+		updateCoordinate();
 
-    Compartment* c;
-    try {c = GController::getCompartment(coordinate);}
-    catch (exception& e) {
-        cout << e.what();
-        
-        printSelf();
-        
-        exit(EXIT_FAILURE);
-    }
-    
-    if(c != _compartment) {
+		Compartment *c;
+		try { c = GController::getCompartment(coordinate); }
+		catch (exception &e) {
+			cout << e.what();
+
+			printSelf();
+
+			exit(EXIT_FAILURE);
+		}
+
+		if (c != _compartment) {
 
 #ifdef CHEMISTRY
-        auto oldCompartment = _compartment;
-        auto newCompartment = c;
+			auto oldCompartment = _compartment;
+			auto newCompartment = c;
 #endif
-        
-        //remove from old compartment, add to new
-        _compartment->removeCylinder(this);
-        _compartment = c;
-        _compartment->addCylinder(this);
+
+			//remove from old compartment, add to new
+			_compartment->removeCylinder(this);
+			_compartment = c;
+			_compartment->addCylinder(this);
 
 #ifdef CHEMISTRY
-        auto oldCCylinder = _cCylinder.get();
-        
-        //Remove old ccylinder from binding managers
-        for(auto &manager : oldCompartment->getFilamentBindingManagers()) {
+			auto oldCCylinder = _cCylinder.get();
+
+			//Remove old ccylinder from binding managers
+			//Removed March 8, 2019 Aravind. Unnecessary as all UpdatePosition calls are
+			// immediately followed by UpdateNeighborLists call in Controller.cpp/.cu
+/*        for(auto &manager : oldCompartment->getFilamentBindingManagers()) {
 #ifdef NLORIGINAL
             manager->removePossibleBindings(oldCCylinder);
 #endif
 #ifdef NLSTENCILLIST
             manager->removePossibleBindingsstencil(oldCCylinder);
 #endif
-        }
+        }*/
 
-        //clone and set new ccylinder
-        CCylinder* clone = _cCylinder->clone(c);
-        setCCylinder(clone);
-        
-        auto newCCylinder = _cCylinder.get();
+			//clone and set new ccylinder
+			CCylinder *clone = _cCylinder->clone(c);
+			setCCylinder(clone);
+
+			auto newCCylinder = _cCylinder.get();
 
 //        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
-        //change both CCylinder and Compartment ID in the vector
-        CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getID();
-        CUDAcommon::serlvars.cylinderpointervec[_dcIndex] =  this;
-        CUDAcommon::serlvars.ccylindervec[_dcIndex] =  _cCylinder.get();
-        
-        //Add new ccylinder to binding managers
-        for(auto &manager : newCompartment->getFilamentBindingManagers()){
+			//change both CCylinder and Compartment ID in the vector
+			CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getID();
+			CUDAcommon::serlvars.cylinderpointervec[_dcIndex] = this;
+			CUDAcommon::serlvars.ccylindervec[_dcIndex] = _cCylinder.get();
+
+			//Add new ccylinder to binding managers
+/*        for(auto &manager : newCompartment->getFilamentBindingManagers()){
 #ifdef NLORIGINAL
             manager->addPossibleBindings(newCCylinder);
 #endif
@@ -277,16 +280,16 @@ void Cylinder::updatePosition() {
             //This directs call to Hybrid Binding Manager.
             manager->addPossibleBindingsstencil(newCCylinder);
 #endif
-        }
-    }
-#endif
-    
-#ifdef MECHANICS
-    //update length
-    _mCylinder->setLength(twoPointDistance(_b1->coordinate,
-                                           _b2->coordinate));
+        }*/
+		}
 #endif
 
+#ifdef MECHANICS
+		//update length
+		_mCylinder->setLength(twoPointDistance(_b1->coordinate,
+		                                       _b2->coordinate));
+#endif
+	}
 }
 
 /// @note -  The function uses the bead load force to calculate this changed rate.
@@ -398,3 +401,4 @@ vector<FilamentRateChanger*> Cylinder::_polyChanger;
 ChemManager* Cylinder::_chemManager = 0;
 
 Database<Cylinder*> Cylinder::_cylinders;
+bool Cylinder::setpositionupdatedstate = false;

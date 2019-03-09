@@ -93,15 +93,17 @@ int main(int argc, char **argv) {
 
     string inputFile, inputDirectory, outputDirectory;
     int option;
-    
+    int threadcount = 0;
     //parse command line args
-    while ((option = getopt(argc, argv, "s:i:o:h")) != -1) {
+    while ((option = getopt(argc, argv, "s:i:o:t:h")) != -1) {
         switch (option) {
             case 's' : inputFile = optarg;
                 break;
             case 'i' : inputDirectory = optarg;
                 break;
             case 'o' : outputDirectory = optarg;
+                break;
+            case 't' : threadcount = atoi(optarg);
                 break;
             case 'h' : printUsage();
                 exit(EXIT_FAILURE);
@@ -125,9 +127,16 @@ int main(int argc, char **argv) {
         printUsage();
         exit(EXIT_FAILURE);
     }
-    
+#ifdef SIMDBINDINGSEARCH
+    if(threadcount == 0){
+        cout << "User must specify a non zero thread count while using SIMD version. "
+                "Exiting." << endl;
+        printUsage();
+        exit(EXIT_FAILURE);
+    }
+#endif
     //initialize and run system
-    c.initialize(inputFile, inputDirectory, outputDirectory);
+    c.initialize(inputFile, inputDirectory, outputDirectory, threadcount);
     c.run();
 
 }

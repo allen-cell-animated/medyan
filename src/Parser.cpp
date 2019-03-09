@@ -204,6 +204,8 @@ void SystemParser::readChemParams() {
 
         CParams.maxbindingsitespercylinder = max(CParams.maxbindingsitespercylinder,
                                                  CParams.numBindingSites[i]);
+        CParams.minbindingsitespercylinder = max(CParams.minbindingsitespercylinder,
+                                                 CParams.numBindingSites[i]);
     
         vector<short> tempBindingSites;
         
@@ -1644,6 +1646,10 @@ void SystemParser::readGeoParams() {
     //find max compartment side
     GParams.largestCompartmentSide = max(GParams.compartmentSizeX,
                                      max(GParams.compartmentSizeY, GParams.compartmentSizeZ));
+    //find max Cylinder size
+    GParams.largestCylinderSize = 0;
+    for(auto l:GParams.cylinderSize)
+        GParams.largestCylinderSize = max(GParams.largestCylinderSize, l);
     SysParams::GParams = GParams;
 }
 

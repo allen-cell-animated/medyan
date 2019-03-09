@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -10,11 +9,6 @@
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
 //------------------------------------------------------------------
-#include "Bin.h"
-#include "Cylinder.h"
-void Bin::updatecindices(){
-    cindicesvector.clear();
-    cindicesvector.reserve(_cylinders.size());
-    for(auto &c:_cylinders)
-        cindicesvector.push_back(c->_dcIndex);
-}
+
+#include "Boundary.h"
+double Boundary::systemvolume = 0.0;

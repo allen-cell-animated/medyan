@@ -524,7 +524,6 @@ int* BranchingManager::getnumpairsCUDA(){
 #endif
 
 //LINKER
-
 LinkerBindingManager::LinkerBindingManager(ReactionBase* reaction,
                                            Compartment* compartment,
                                            short boundInt, string boundName,

@@ -31,7 +31,7 @@ namespace dist {
         alignas(32) std::array<float,2*D> dt; // distance thresholds' vector - lower/upper
         alignas(32) std::array<uvec8_f, 2*D> v_dt; // UME::SIMD versions of dt: i.e. dt elements broadcasted to __m256 registers and wrapped
 		int N1, N2;
-		int COMPRESS=8;
+		int COMPRESS=1;
 
 		std::array<uint,D> counter; // number of found contacts
 		
