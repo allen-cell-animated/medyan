@@ -61,6 +61,7 @@ private:
     double _minimizationTime;  ///< Frequency of mechanical minimization
     double _neighborListTime;  ///< Frequency of neighbor list updates
     
+    
     //@{
     /// Same parameter set as timestep, but in terms of chemical
     /// reaction steps. Useful for small runs and debugging.
@@ -100,6 +101,9 @@ private:
     void ControlfrontbackEndComp();
     /// Update the positions of all elements in the system
     void updatePositions();
+    
+    void updateBubblePositions();
+
     
 #ifdef DYNAMICRATES
     /// Update the reaction rates of all elements in the system

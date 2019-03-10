@@ -226,8 +226,11 @@ FilamentData MTOCFilamentDist::createFilaments(Boundary* b, int numFilaments,
     int filamentCounter = 0;
     while (filamentCounter < numFilaments) {
         
-        double l = Rand::randDouble(0,2 * M_PI);
-        double h = Rand::randDouble(-M_PI/2, M_PI/2);
+        //restrict filament creation
+        double l = Rand::randDouble(0,M_PI);
+        double h = Rand::randDouble(-M_PI/4, M_PI/4);
+//        double l = Rand::randDouble(0,2 * M_PI);
+//        double h = Rand::randDouble(-M_PI/2, M_PI/2);
         
         vector<double> point1;
         point1.push_back(_coordMTOC[0] + _radius * cos(l) * cos(h));

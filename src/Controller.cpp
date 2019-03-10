@@ -365,7 +365,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         //create the bubble in top part of grid, centered in x,y
         double bcoordx = GController::getSize()[0] / 2;
         double bcoordy = GController::getSize()[1] / 2;
-        double bcoordz = GController::getSize()[2] * 5 / 6;
+        double bcoordz = 1000;
 
         vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
@@ -681,11 +681,18 @@ void Controller::executeSpecialProtocols() {
 
 void Controller::updatePositions() {
 
+    //update bubble
+    for(auto b : Bubble::getBubbles()) {
+        b->updatePositionManually();
+    }
+    
     //NEED TO UPDATE CYLINDERS FIRST
     for(auto c : Cylinder::getCylinders()) c->updatePosition();
-
+    
     //update all other moveables
     for(auto m : _subSystem->getMovables()) m->updatePosition();
+
+
     //@{ check begins
     /*std::cout<<"Check after update positions"<<endl;
     cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
@@ -726,6 +733,13 @@ void Controller::updatePositions() {
     }*/
     //@ check ends
 }
+
+void Controller::updateBubblePositions() {
+    
+    //update bubble again based on time
+    for(auto b : Bubble::getBubbles()) b->updatePositionManually();
+}
+
 
 #ifdef DYNAMICRATES
 void Controller::updateReactionRates() {
@@ -1060,19 +1074,7 @@ void Controller::run() {
             tauLastNeighborList += tau() - oldTau;
 #endif
 #if defined(MECHANICS) && defined(CHEMISTRY)
-#ifdef CUDAACCL
-            //@{
-    size_t free, total;
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    cudaFree(0);
-    CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-    std::cout<<"Free VRAM before CUDA operations in bytes "<<free<<". Total VRAM in bytes "
-             <<total<<endl;
-            auto cvars = CUDAcommon::getCUDAvars();
-            cvars.memincuda = free;
-            CUDAcommon::cudavars = cvars;
-    //@}
-#endif
+
             //run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
 
@@ -1084,13 +1086,20 @@ void Controller::run() {
 //                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
                 //update position
                 mins = chrono::high_resolution_clock::now();
+                for(auto b : Bubble::getBubbles()) {
+                    cout << "test1 = " << b->getBead()->coordinate[2] << endl;
+                }
                 updatePositions();
+                for(auto b : Bubble::getBubbles()) {
+                    cout << "test3 = " << b->getBead()->coordinate[2] << endl;
+                }
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_rxn2(mine - mins);
                 rxnratetime += elapsed_rxn2.count();
 
             }
+
             //output snapshot
             if(tauLastSnapshot >= _snapshotTime) {
                 mins = chrono::high_resolution_clock::now();
@@ -1141,6 +1150,10 @@ void Controller::run() {
             chrono::duration<double> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
+            
+            for(auto b : Bubble::getBubbles()) {
+                cout << "test2 = " << b->getBead()->coordinate[2] << endl;
+            }
 
 #ifdef CUDAACCL
 

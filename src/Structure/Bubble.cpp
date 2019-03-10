@@ -44,6 +44,22 @@ void Bubble::updatePosition() {
     coordinate = _bead->coordinate;
 }
 
+void Bubble::updatePositionManually() {
+    //if reaching the desire position
+    if(iter > 100.1) {
+        iter = 0;
+        stepTotal++;
+    }
+    if(tau() > (stepTotal* stepFreq + iter * 0.01)){
+        
+        vector<double> newcoord = {coordinate[0], coordinate[1], coordinate[2] + step};
+        coordinate = newcoord;
+        _bead->coordinate = newcoord;
+        iter++;
+    }
+
+}
+
 void Bubble::printSelf() {
     
     cout << endl;

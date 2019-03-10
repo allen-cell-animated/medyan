@@ -153,12 +153,13 @@ void MTOCBendingCosine::forces(double *coord, double *f, int *beadSet,
             
             k = kbend[i];
             
-            force1[0] +=  k * ((-coord3[0] + coord2[0])*A +
-                               (coord2[0] - coord1[0])*B );
-            force1[1] +=  k * ((-coord3[1] + coord2[1])*A +
-                               (coord2[1] - coord1[1])*B );
-            force1[2] +=  k * ((-coord3[2] + coord2[2])*A +
-                               (coord2[2] - coord1[2])*B );
+            //Do not apply force to bubble
+//            force1[0] +=  k * ((-coord3[0] + coord2[0])*A +
+//                               (coord2[0] - coord1[0])*B );
+//            force1[1] +=  k * ((-coord3[1] + coord2[1])*A +
+//                               (coord2[1] - coord1[1])*B );
+//            force1[2] +=  k * ((-coord3[2] + coord2[2])*A +
+//                               (coord2[2] - coord1[2])*B );
             
             
             //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
