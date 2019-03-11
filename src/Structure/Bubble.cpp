@@ -17,6 +17,7 @@
 #include "Bead.h"
 
 #include "SysParams.h"
+#include "CUDAcommon.h"
 
 Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
 
@@ -51,6 +52,10 @@ void Bubble::updatePositionManually() {
         stepTotal++;
     }
     if(tau() > (stepTotal* stepFreq + iter * 0.01)){
+        double *bcoord, *coord;
+        coord = CUDAcommon::serlvars.coord;
+        bcoord = &coord[_bead->_dbIndex];
+        bcoord[2] = coordinate[2] + step;
         
         vector<double> newcoord = {coordinate[0], coordinate[1], coordinate[2] + step};
         coordinate = newcoord;

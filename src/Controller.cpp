@@ -1086,13 +1086,8 @@ void Controller::run() {
 //                std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
                 //update position
                 mins = chrono::high_resolution_clock::now();
-                for(auto b : Bubble::getBubbles()) {
-                    cout << "test1 = " << b->getBead()->coordinate[2] << endl;
-                }
                 updatePositions();
-                for(auto b : Bubble::getBubbles()) {
-                    cout << "test3 = " << b->getBead()->coordinate[2] << endl;
-                }
+ 
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_rxn2(mine - mins);
@@ -1150,11 +1145,6 @@ void Controller::run() {
             chrono::duration<double> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
-            
-            for(auto b : Bubble::getBubbles()) {
-                cout << "test2 = " << b->getBead()->coordinate[2] << endl;
-            }
-
 #ifdef CUDAACCL
 
             //reset CUDA context
