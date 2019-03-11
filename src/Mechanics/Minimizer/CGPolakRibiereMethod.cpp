@@ -161,9 +161,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         auto maxForce = maxF();
         Ms_isminimizationstate = maxForce > GRADTOL;
         
-        for(auto b : Bubble::getBubbles()) {
-            cout << "test_end = " << b->getBead()->coordinate[2] << endl;
-        }
+
 
     }
 #endif //SERIAL
