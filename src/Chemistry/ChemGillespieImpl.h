@@ -141,15 +141,9 @@ class ChemGillespieImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ///and the number of reactions to 0
-#ifdef DEBUGCONSTANTSEED
     ChemGillespieImpl() :
-            ChemSimImpl(), _exp_distr(0.0),
-            _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
-#else
-    ChemGillespieImpl() :
-    ChemSimImpl(), _exp_distr(0.0),_eng(rdtsc()),
-    _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
-#endif
+        ChemSimImpl(), _exp_distr(0.0),
+        _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed
     ChemGillespieImpl(const ChemGillespieImpl &rhs) = delete;
@@ -255,9 +249,6 @@ private:
 private:
     unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie
                                                                           ///< objects, representing the reaction network
-#ifndef DEBUGCONSTANTSEED
-    mt19937 _eng; ///< Random number generator
-#endif
     exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<double> _uniform_distr;
     double _t; ///< global time

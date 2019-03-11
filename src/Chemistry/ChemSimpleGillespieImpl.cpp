@@ -27,20 +27,12 @@ double ChemSimpleGillespieImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
     _exp_distr.param(pm);
     Rand::counter++;
-#ifdef DEBUGCONSTANTSEED
-    return _exp_distr(Rand::_eng);
-#else
-    return _exp_distr(_eng);
-#endif
+    return _exp_distr(Rand::eng);
 }
 
 double ChemSimpleGillespieImpl::generateUniform(){
     Rand::counter++;
-#ifdef DEBUGCONSTANTSEED
-    return _uniform_distr(Rand::_eng);
-#else
-    return _uniform_distr(_eng);
-#endif
+    return _uniform_distr(Rand::eng);
 }
 
 double ChemSimpleGillespieImpl::computeTotalA(){

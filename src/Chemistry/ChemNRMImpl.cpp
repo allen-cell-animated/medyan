@@ -142,11 +142,7 @@ double ChemNRMImpl::generateTau(double a){
     Rand::Ncounter++;
 //    std::cout<<"Counters N "<<Rand::Ncounter<<" D "<<Rand::Dcounter<<" T "<<Rand::counter<<
 //            endl;
-#ifdef DEBUGCONSTANTSEED
-    return _exp_distr(Rand::_eng);
-#else
-    return _exp_distr(_eng);
-#endif
+    return _exp_distr(Rand::eng);
 }
 
 bool ChemNRMImpl::makeStep() {
