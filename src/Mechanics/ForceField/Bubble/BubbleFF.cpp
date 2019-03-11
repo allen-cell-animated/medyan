@@ -49,8 +49,8 @@ BubbleFF::BubbleFF (string type, string mtoc) {
         _bubbleInteractionVector.emplace_back(
         new MTOCAttachment<MTOCAttachmentHarmonic>());
         //Have both FFs for now
-        _bubbleInteractionVector.emplace_back(
-        new MTOCBending<MTOCBendingCosine>());
+//        _bubbleInteractionVector.emplace_back(
+//        new MTOCBending<MTOCBendingCosine>());
     }
     else if(mtoc == "") {}
     else {
