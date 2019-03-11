@@ -64,6 +64,9 @@ private:
     ///Helper to get coordinate
     void updateCoordinate();
     
+    void updateCaMKIIingPointCoM();
+
+
 public:
     vector<double> coordinate; ///< coordinate of midpoint,
                                ///< updated with updatePosition()

@@ -38,13 +38,15 @@ void CaMKIIingPoint::updateCoordinate() {
 
 CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short position)
 
-    : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()) {
+    : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()), _coordinate(3,0.0) {
+
 
 	_filType=1000; //TODO fix it
 
     addBond(cylinder, position);
     //Find compartment
     updateCoordinate();
+
         
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) {
@@ -78,6 +80,9 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short posit
     //choose length
     //Composite *Dummy = NULL; //TODO used for readable purposes
     cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
+    updateCaMKIIingPointCoM();
+
     Bead* b1 = _subSystem->addTrackable<Bead>(_coordinate, nullptr, 0);
 
 	double length = 0.0;
@@ -93,14 +98,30 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short posit
 
 	//create cylinder
 	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
-	Cylinder* c0 = _subSystem->addTrackable<Cylinder>(nullptr, b1, b2, _filType, 0);
+	//Cylinder* c0 = _subSystem->addTrackable<CaMKIICylinder>(nullptr, b1, b2, _filType, 0);
 
 	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
-	c0->setPlusEnd(true);
-	c0->setMinusEnd(true);
+	//c0->setPlusEnd(true);
+	//c0->setMinusEnd(true);
 	_camkiiCylinder = unique_ptr<CaMKIICylinder>(new CaMKIICylinder(this, b1, _filType, 0)); // init the dummy cylinder for CaMKII
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+}
 
 
+void CaMKIIingPoint::updateCaMKIIingPointCoM(){
+
+	vector<double> temp(3, 0.0);
+	for (int i=0; i<_bonds.size(); i++) {
+		 Cylinder *bond = get<0>(_bonds[i]);
+		 auto pos = get<1>(_bonds[i]);
+		 auto mp = midPointCoordinate(bond->_b1->coordinate, bond->_b2->coordinate, pos);
+		 temp[0] += mp[0];
+		 temp[1] += mp[1];
+		 temp[2] += mp[2];
+	}
+	_coordinate[0] = temp[0]/_bonds.size();
+	_coordinate[1] = temp[1]/_bonds.size();
+	_coordinate[2] = temp[2]/_bonds.size();
 }
 
 CaMKIIingPoint::~CaMKIIingPoint() noexcept {

@@ -49,7 +49,6 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //Set coordinate
 
-
     try {_compartment = GController::getCompartment(coordinate);}
     catch (exception& e) {
         cout << e.what() << endl;
@@ -59,14 +58,16 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
         exit(EXIT_FAILURE);
     }
                    
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+   cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
    //add to compartment
    _compartment->addCylinder(this);
    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
           
 #ifdef MECHANICS
           //set eqLength according to cylinder size
-   	   	   	   cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+   	   // cout << "CAMKII "<< __LINE__ <<" "<<  << __FILE__ << endl;
+   	   cout << "CAMKII "<< __LINE__ <<" "<< b1->coordinate[0] << __FILE__ << endl;
+   	   cout << "CAMKII "<< __LINE__ <<" "<< b2 << __FILE__ << endl;
               double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
               cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
           if(!SysParams::RUNSTATE) //RESTARTPHASE
@@ -105,11 +106,12 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
           _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
           _mCylinder->setCylinder(this);
 #endif
-          cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+     cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     _cCylinder->setCylinder(this);
-          
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //init using chem manager
     _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
                                       extensionBack, initialization);
