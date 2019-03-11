@@ -16,6 +16,7 @@
 
 #include "BoundaryElement.h"
 #include "Bead.h"
+#include "Bubble.h"
 //TODO added for temporary CUDA force.
 #include "CGMethod.h"
 #include "BoundaryCylinderRepulsionExpCUDA.h"
@@ -214,6 +215,7 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
 
     int nb, nc;
     double *coord1, R, r, U_i;
+    double z, dz;
     double U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
@@ -233,6 +235,16 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
 
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             r = be->distance(coord1);
+            
+            //recheck the upper plane based on bubble position
+            for (auto bb : Bubble::getBubbles()){
+                z = bb->coordinate[2] - 25;
+            }
+            dz = z - coord1[2];
+            
+            if(dz < r){
+                r = dz;
+            }
 
             R = -r / slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
@@ -265,6 +277,7 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
 
     int nb, nc;
     double *coord1, *force1, R, r, U_i;
+    double z, dz;
     double U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
@@ -281,6 +294,16 @@ double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadS
             force1 = &f[3 * beadSet[Cumnc + ic]];
 
             r = be->stretchedDistance(coord1, force1, d);
+            
+            //recheck the upper plane based on bubble position
+            for (auto bb : Bubble::getBubbles()){
+                z = bb->coordinate[2] - 25;
+            }
+            dz = z - coord1[2];
+            
+            if(dz < r){
+                r = dz;
+            }
 
             R = -r / slen[Cumnc + ic];
 
@@ -315,6 +338,7 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
                                           double *krep, double *slen, int *nneighbors) {
     int nb, nc;
     double *coord1, *force1, R, r, f0;
+    double z, dz;
     double *F_i;
 //    double *forcecopy;
 //    forcecopy = new double[CGMethod::N];
@@ -334,6 +358,19 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
             force1 = &f[3 * beadSet[ Cumnc + ic]];
             r = be->distance(coord1);
             auto norm = be->normal(coord1);
+            
+            //recheck the upper plane based on bubble position
+            for (auto bb : Bubble::getBubbles()){
+                z = bb->coordinate[2] - 25;
+            }
+            dz = z - coord1[2];
+            
+            if(dz < r){
+                norm[0] = 0;
+                norm[1] = 0;
+                norm[2] = -1;
+                r = dz;
+            }
 
             R = -r / slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
@@ -346,7 +383,7 @@ void BoundaryCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet
     }}
 
 double BoundaryCylinderRepulsionExp::loadForces(double r, double kRep, double screenLength) {
-
+    
     double R = -r/screenLength;
     return kRep * exp(R)/screenLength;
 

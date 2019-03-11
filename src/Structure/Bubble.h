@@ -101,7 +101,7 @@ public:
     
     void updatePositionManually();
     double iter = 1;
-    double stepFreq = 0.2;
+    double stepFreq = 100;
     int stepTotal = 1;
     double step = 5; //move 5*100 nm at a time
 

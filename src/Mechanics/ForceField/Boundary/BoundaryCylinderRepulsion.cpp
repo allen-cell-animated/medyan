@@ -18,6 +18,7 @@
 #include "BoundaryElementImpl.h"
 
 #include "Bead.h"
+#include "Bubble.h"
 #include "Cylinder.h"
 
 #include "MathFunctions.h"
@@ -330,6 +331,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 //    std::cout<<"BOUNDARY REPULSION LOAD FORCES DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
+    double r, z, dz;
     for (auto be: BoundaryElement::getBoundaryElements()) {
 
         for(auto &c : _neighborList->getNeighbors(be)) {
@@ -363,9 +365,22 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = -dotProduct(be->normal(newCoord), normal);
+                    
+                    //recheck the upper plane based on bubble position
+                    r = be->distance(newCoord);
+                    for (auto bb : Bubble::getBubbles()){
+                        z = bb->coordinate[2] - 25;
+                    }
+                    dz = z - newCoord[2];
+                    
+                    if(dz < r){
+                        r = dz;
+                        proj = -dotProduct(vector<double>{0.0,0.0,-1.0}, normal);
+                    }
+                    
                     if(proj < 0.0) proj = 0.0;
 
-                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
+                    double loadForce = _FFType.loadForces(r, kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     bd->loadForcesP[bd->lfip++] += proj * loadForce;
                     //bd->loadForcesP[bd->lfip++] += loadForce;
@@ -397,8 +412,22 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = -dotProduct(be->normal(newCoord), normal);
+                    
+                    //recheck the upper plane based on bubble position
+                    r = be->distance(newCoord);
+                    for (auto bb : Bubble::getBubbles()){
+                        z = bb->coordinate[2] - 25;
+                    }
+                    dz = z - newCoord[2];
+                    
+                    if(dz < r){
+                        r = dz;
+                        proj = -dotProduct(vector<double>{0.0,0.0,-1.0}, normal);
+                    }
+                    
                     if(proj < 0.0) proj = 0.0;
-                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
+                    
+                    double loadForce = _FFType.loadForces(r, kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     bd->loadForcesM[bd->lfim++] += proj * loadForce;
                     //bd->loadForcesM[bd->lfim++] += loadForce;

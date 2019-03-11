@@ -846,6 +846,11 @@ void BoundaryCylinderNL::updateNeighbors(BoundaryElement* be) {
     for (auto &c : Cylinder::getCylinders()) {
 
         double dist = be->distance(c->coordinate);
+        for(auto bb : Bubble::getBubbles()){
+            auto dz = bb->coordinate[2] - c->coordinate[2];
+            if(dz < dist) dist = dz;
+        }
+        
         //If within range, add it
         if(dist < _rMax) _list[be].push_back(c);
     }
@@ -881,6 +886,15 @@ void BoundaryCylinderNL::addDynamicNeighbor(DynamicNeighbor* n) {
         //if within range, add it
         if(it->first->distance(c->coordinate) < _rMax)
             it->second.push_back(c);
+        else{
+            for(auto bb : Bubble::getBubbles()){
+                auto dz = bb->coordinate[2] - c->coordinate[2];
+                if(dz < _rMax) {
+                    it->second.push_back(c);
+                }
+            }
+            
+        }
     }
 }
 
