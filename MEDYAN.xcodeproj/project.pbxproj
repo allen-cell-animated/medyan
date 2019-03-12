@@ -1559,6 +1559,7 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
+					/opt/local/include,
 					"./**",
 					/opt/local/include,
 				);
@@ -1630,6 +1631,7 @@
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
+					/opt/local/include,
 					"./**",
 					/opt/local/include,
 				);

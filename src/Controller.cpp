@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -45,6 +45,7 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "util/io/log.h"
 using namespace mathfunc;
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
@@ -70,9 +71,8 @@ void Controller::initialize(string inputFile,
 
     //general check of macros
 #if defined(DYNAMICRATES) && (!defined(CHEMISTRY) || !defined(MECHANICS))
-    cout << "If dynamic rates is turned on, chemistry and mechanics must be "
-         << "defined. Please set these compilation macros and try again. Exiting."
-         << endl;
+    LOG(FATAL) << "If dynamic rates is turned on, chemistry and mechanics must be "
+         << "defined. Please set these compilation macros and try again. Exiting.";
     exit(EXIT_FAILURE);
 #endif
 
@@ -94,6 +94,8 @@ void Controller::initialize(string inputFile,
     _outputs.push_back(new Tensions(_outputDirectory + "tensions.traj", _subSystem));
 
     _outputs.push_back(new PlusEnd(_outputDirectory + "plusend.traj", _subSystem));
+    //ReactionOut should be the last one in the output list
+    //Otherwise incorrect deltaMinusEnd or deltaPlusEnd values may be genetrated.
     _outputs.push_back(new ReactionOut(_outputDirectory + "monomers.traj", _subSystem));
     //add br force out and local diffussing species concentration
     //_outputs.push_back(new BRForces(_outputDirectory + "repulsion.traj", _subSystem));
@@ -106,21 +108,21 @@ void Controller::initialize(string inputFile,
     //CALLING ALL CONTROLLERS TO INITIALIZE
     //Initialize geometry controller
     cout << "---" << endl;
-    cout << "Initializing geometry...";
+    LOG(STEP) << "Initializing geometry...";
     _gController->initializeGrid();
-    cout << "Done." << endl;
-
+    LOG(INFO) << "Done.";
+    
     //Initialize boundary
     cout << "---" << endl;
-    cout << "Initializing boundary...";
-
+    LOG(STEP) << "Initializing boundary...";
+    
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
 
     //initialize
     _gController->initializeBoundary(BTypes);
-    cout << "Done." <<endl;
-
+    LOG(INFO) << "Done.";
+    
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -131,9 +133,9 @@ void Controller::initialize(string inputFile,
 
     //Initialize Mechanical controller
     cout << "---" << endl;
-    cout << "Initializing mechanics...";
+    LOG(STEP) << "Initializing mechanics...";
     _mController->initialize(MTypes, MAlgorithm);
-    cout << "Done." <<endl;
+    LOG(INFO) << "Done.";
 
 #endif
 
@@ -159,7 +161,7 @@ void Controller::initialize(string inputFile,
 
     //Initialize chemical controller
     cout << "---" << endl;
-    cout << "Initializing chemistry...";
+    LOG(STEP) << "Initializing chemistry...";
     //read algorithm
     auto CAlgorithm = p.readChemistryAlgorithm();
     auto CSetup = p.readChemistrySetup();
@@ -186,12 +188,12 @@ void Controller::initialize(string inputFile,
         _chemData=ChemData;
     }
     else {
-        cout << "Need to specify a chemical input file. Exiting." << endl;
+        LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
         exit(EXIT_FAILURE);
     }
     _cController->initialize(CAlgorithm.algorithm, ChemData);
-    cout << "Done." << endl;
-
+    LOG(INFO) << "Done.";
+    
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
@@ -204,7 +206,7 @@ void Controller::initialize(string inputFile,
 
 #ifdef DYNAMICRATES
     cout << "---" << endl;
-    cout << "Initializing dynamic rates...";
+    LOG(STEP) << "Initializing dynamic rates...";
     //read dynamic rate parameters
     p.readDyRateParams();
 
@@ -213,13 +215,13 @@ void Controller::initialize(string inputFile,
 
     //init controller
     _drController->initialize(DRTypes);
-    cout << "Done." << endl;
-
+    LOG(INFO) << "Done.";
+    
 #endif
 
     //Check consistency of all chemistry and mechanics parameters
     cout << "---" << endl;
-    cout << "Checking cross-parameter consistency...";
+    LOG(STEP) << "Checking cross-parameter consistency...";
 #ifdef CHEMISTRY
     if(!SysParams::checkChemParameters(ChemData))
         exit(EXIT_FAILURE);
@@ -232,9 +234,9 @@ void Controller::initialize(string inputFile,
     if(!SysParams::checkDyRateParameters(DRTypes))
         exit(EXIT_FAILURE);
 #endif
-
-    cout << "Done." << endl;
-
+    
+    LOG(INFO) << "Done.";
+    
     //setup initial network configuration
     setupInitialNetwork(p);
 #ifdef HYBRID_NLSTENCILLIST
@@ -392,10 +394,8 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             vector<double> tau = twoPointDirection(coord1, coord2);
 
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
-
+            
             // check how many segments can fit between end-to-end of the filament
-
-
             Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
 
@@ -407,7 +407,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
 
 void Controller::activatedeactivateComp(){
 
-    if(SysParams::Boundaries().transfershareaxis>=0){
+    if(SysParams::Boundaries().transfershareaxis!=3){
         fCompmap.clear();
         bCompmap.clear();
         activatecompartments.clear();
@@ -602,7 +602,7 @@ void Controller::moveBoundary(double deltaTau) {
     //calculate distance to move
     double dist = SysParams::Boundaries().moveSpeed * deltaTau;
 
-    if(SysParams::Boundaries().transfershareaxis>=0){
+    if(SysParams::Boundaries().transfershareaxis != 3){
         vector<double> distvec= {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
         if(SysParams::Boundaries().transfershareaxis == 0){
@@ -618,28 +618,6 @@ void Controller::moveBoundary(double deltaTau) {
             distvec[5] = bounds[1] - bounds_prev[1];
         }
         _subSystem->getBoundary()->move(distvec);
-    }
-        //deprecated not good to use.
-    else if(abs(dist)>0){
-        vector<double> distvec = {dist, -dist, dist, -dist, dist, -dist};
-        //move it
-        if(tau() >= SysParams::Boundaries().moveStartTime &&
-           tau() <= SysParams::Boundaries().moveEndTime)
-            _subSystem->getBoundary()->move(distvec);
-
-        //activate, deactivate necessary compartments
-        for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
-
-            if(_subSystem->getBoundary()->within(C)) {
-
-                if(C->isActivated()) continue;
-                else _cController->activate(C);
-            }
-            else {
-                if(!C->isActivated()) continue;
-                else _cController->deactivate(C);
-            }
-        }
     }
     //calculate system volume.
     _subSystem->getBoundary()->volume();
@@ -672,6 +650,7 @@ void Controller::executeSpecialProtocols() {
         pinBoundaryFilaments();
     }
 
+    //Qin
     if(SysParams::Mechanics().pinLowerBoundaryFilaments &&
        tau() >= SysParams::Mechanics().pinTime) {
 
@@ -757,6 +736,10 @@ void Controller::updateNeighborLists() {
 //    std::cout<<"time split "<<elapsed_runnl2.count()<<" "<<elapsed_runbvec.count()<<" "
 //            ""<<elapsed_runb.count()<<endl;
 #endif
+}
+
+void Controller::resetCounters() {
+    for(Filament* f : Filament::getFilaments()) f->resetCounters();
 }
 
 void Controller::pinBoundaryFilaments() {
@@ -1019,6 +1002,7 @@ void Controller::run() {
     oldTau = 0;
 #endif
     for(auto o: _outputs) o->print(0);
+    resetCounters();
 
     cout << "Starting simulation..." << endl;
 
@@ -1048,6 +1032,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             if(var) {
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 break;
             }
             mine= chrono::high_resolution_clock::now();
@@ -1096,14 +1081,17 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
             }
+
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
+            resetCounters();
             i++;
 #endif
             //update reaction rates
@@ -1136,7 +1124,7 @@ void Controller::run() {
             //Special protocols
             mins = chrono::high_resolution_clock::now();
             //special protocols
-            //executeSpecialProtocols();
+            executeSpecialProtocols();
             mine= chrono::high_resolution_clock::now();
             chrono::duration<double> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
@@ -1184,6 +1172,7 @@ void Controller::run() {
             //run ccontroller
             if(!_cController->runSteps(_minimizationSteps)) {
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 break;
             }
 
@@ -1206,11 +1195,13 @@ void Controller::run() {
             if(stepsLastSnapshot >= _snapshotSteps) {
                 cout << "Current simulation time = "<< tau() << endl;
                 for(auto o: _outputs) o->print(i);
+                resetCounters();
                 i++;
                 stepsLastSnapshot = 0;
             }
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
+            resetCounters();
             i++;
 #endif
 
@@ -1240,13 +1231,8 @@ void Controller::run() {
 
     //print last snapshots
     for(auto o: _outputs) o->print(i);
-//    cout<<"Printing Excluded volume counters"<<endl;
-//    cout<<"Parallel "<<SysParams::exvolcounter[0]<<endl;
-//    cout<<"In-plane "<<SysParams::exvolcounter[1]<<endl;
-//    cout<<"Rest "<<SysParams::exvolcounter[2]<<endl;
-//    cout<<"Z Parallel "<<SysParams::exvolcounterz[0]<<endl;
-//    cout<<"Z In-plane "<<SysParams::exvolcounterz[1]<<endl;
-//    cout<<"Z Rest "<<SysParams::exvolcounterz[2]<<endl;
+    resetCounters();
+
     chk2 = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_run(chk2-chk1);
     cout<< "Chemistry time for run=" << chemistrytime <<endl;

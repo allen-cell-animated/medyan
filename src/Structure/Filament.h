@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -89,8 +89,8 @@ public:
     /// @param nucleation - this filament was nucleated at runtime by a non-branching species
     /// @param branching - this filament was branched at runtime from an existing filament
 	Filament(SubSystem* s, short filamentType,
-                           vector<double>& position,
-                           vector<double>& direction,
+                           const vector<double>& position,
+                           const vector<double>& direction,
                            bool nucleation = false,
                            bool branch = false);
     
@@ -98,7 +98,7 @@ public:
     /// with a number of beads numBeads. Filaments starts and ends in the point
     /// determined by position vector.
     Filament(SubSystem* s, short filamentType,
-             vector<vector<double>>& position, int numBeads,
+             const vector<vector<double>>& position, int numBeads,
              string projectionType = "STRAIGHT");
     
     /// This constructor is called when a filament is severed. It creates a filament
@@ -159,35 +159,58 @@ public:
     deque<Cylinder*>& getCylinderVector() {return _cylinderVector;}
     
     //@{
-    /// Reset delta
+    /// Get / reset temporary counters
     void resetDeltaPlusEnd() {_deltaPlusEnd = 0;}
     void resetDeltaMinusEnd() {_deltaMinusEnd = 0;}
-    //@}
-    
-    //@{
-    /// Get delta
     short getDeltaPlusEnd() {return _deltaPlusEnd;}
     short getDeltaMinusEnd() {return _deltaMinusEnd;}
-    //@}
-    
-    //@{
-    /// Get reactions
+
     short getPolyPlusEnd() {return _polyPlusEnd;}
     void resetPolyPlusEnd() { _polyPlusEnd = 0;}
-    
+
     short getPolyMinusEnd() {return _polyMinusEnd;}
     void resetPolyMinusEnd() { _polyMinusEnd = 0;}
-    
+
     short getDepolyPlusEnd() {return _depolyPlusEnd;}
     void resetDepolyPlusEnd() { _depolyPlusEnd = 0;}
-    
+
     short getDepolyMinusEnd() {return _depolyMinusEnd;}
     void resetDepolyMinusEnd() { _depolyMinusEnd = 0;}
-    
+
     short getNucleation() {return _nucleationReaction;}
     void resetNucleation() { _nucleationReaction = 0;}
+
+    void resetCounters() {
+        resetDeltaPlusEnd();
+        resetDeltaMinusEnd();
+        resetPolyPlusEnd();
+        resetPolyMinusEnd();
+        resetDepolyPlusEnd();
+        resetDepolyMinusEnd();
+        resetNucleation();
+        resetSevering();
+        resetSeveringID();
+    }
     //@}
     
+//    //@{
+//    /// Get reactions
+//    short getPolyPlusEnd() {return _polyPlusEnd;}
+//    void resetPolyPlusEnd() { _polyPlusEnd = 0;}
+//
+//    short getPolyMinusEnd() {return _polyMinusEnd;}
+//    void resetPolyMinusEnd() { _polyMinusEnd = 0;}
+//
+//    short getDepolyPlusEnd() {return _depolyPlusEnd;}
+//    void resetDepolyPlusEnd() { _depolyPlusEnd = 0;}
+//
+//    short getDepolyMinusEnd() {return _depolyMinusEnd;}
+//    void resetDepolyMinusEnd() { _depolyMinusEnd = 0;}
+//
+//    short getNucleation() {return _nucleationReaction;}
+//    void resetNucleation() { _nucleationReaction = 0;}
+//    //@}
+//
     short getSevering() {return _severingReaction;}
     void resetSevering() { _severingReaction = 0;}
     vector<int> getNewID() {return _severingID;};
@@ -227,11 +250,11 @@ public:
     /// Projection function, returns a vector of coordinates for bead creation
     vector<double> nextBeadProjection(Bead* b, double d, vector<double> director);
     
-    vector<vector<double>> straightFilamentProjection(vector<vector<double>>& v, int numBeads);
-    vector<vector<double>> zigZagFilamentProjection(vector<vector<double>>& v, int numBeads);
-    vector<vector<double>> arcFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> straightFilamentProjection(const vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> zigZagFilamentProjection(const vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> arcFilamentProjection(const vector<vector<double>>& v, int numBeads);
     //Aravind 18 Feb 2016.
-    vector<vector<double>> predefinedFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<double>> predefinedFilamentProjection(const vector<vector<double>>& v, int numBeads);
     //@}
     
     virtual void printSelf();

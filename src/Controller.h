@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -74,8 +74,8 @@ private:
     vector<tuple<short, vector<double>, vector<double>>> fil;
     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
     vector<Compartment*> activatecompartments;
-     multimap<int,Compartment*> fCompmap;
-     multimap<int,Compartment*> bCompmap;
+    multimap<int,Compartment*> fCompmap;
+    multimap<int,Compartment*> bCompmap;
     //@}
     double bounds[2], bounds_prev[2];
     ///INITIALIZATION HELPER FUNCTIONS
@@ -108,12 +108,14 @@ private:
     
     /// Update neighbors lists, called in run
     void updateNeighborLists();
-    
+
     /// Execute any special protocols needed, for example,
     /// making Linker and Filament species static
     void executeSpecialProtocols();
 
-    
+    /// Reset counters on all elements in the system
+    void resetCounters();
+
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
     void pinLowerBoundaryFilaments();

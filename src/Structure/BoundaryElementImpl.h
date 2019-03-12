@@ -2,9 +2,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -297,9 +297,9 @@ public:
         if(dxy > dzz) {
             return twoPointDirection({0,  0, point[2]},
                                      {0,0, _coords[2]});
-      }
-      else {
-    return twoPointDirection({point[0],  point[1], 0},
+        }
+        else {
+            return twoPointDirection({point[0],  point[1], 0},
                  {_coords[0],_coords[1], 0});
       }
       //return twoPointDirection({point[0],  point[1], 0},
