@@ -365,7 +365,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         //create the bubble in top part of grid, centered in x,y
         double bcoordx = GController::getSize()[0] / 2;
         double bcoordy = GController::getSize()[1] / 2;
-        double bcoordz = 1000;
+        double bcoordz = 1250;
 
         vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
@@ -391,7 +391,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             double d = twoPointDistance(coord1, coord2);
             vector<double> tau = twoPointDirection(coord1, coord2);
 
-            int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
+            int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType]));
 
             // check how many segments can fit between end-to-end of the filament
 
