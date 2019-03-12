@@ -24,6 +24,11 @@
 template <class MTOCInteractionType>
 void MTOCAttachment<MTOCInteractionType>::vectorize() {
     
+    if(MTOC::getMTOCs().size() > 1) {
+        cout << "Should not have more than 1 MTOC" << endl;
+        exit(EXIT_FAILURE);
+    }
+    
     for(auto mtoc : MTOC::getMTOCs()) {
         beadSet = new int[n * mtoc->getFilaments().size() + 1];
         kstr = new double[n * Cylinder::getCylinders().size() + 1];

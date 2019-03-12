@@ -54,7 +54,7 @@ void Bubble::updatePositionManually() {
     if(tau() > (stepTotal* stepFreq + iter * 0.01)){
         double *bcoord, *coord;
         coord = CUDAcommon::serlvars.coord;
-        bcoord = &coord[_bead->_dbIndex];
+        bcoord = &coord[3 * _bead->_dbIndex];
         bcoord[2] = coordinate[2] + step;
         
         vector<double> newcoord = {coordinate[0], coordinate[1], coordinate[2] + step};
