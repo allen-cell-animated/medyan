@@ -275,7 +275,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 //    FilamentData filaments;
 
     cout << "---" << endl;
-    HybridBindingSearchManager::setdOut();
+//    HybridBindingSearchManager::setdOut();
     cout << "Initializing filaments...";
 
     if(FSetup.inputFile != "") {

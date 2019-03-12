@@ -636,7 +636,7 @@ struct MotorUnbindingCallback {
 //        mManager->addUnboundID(_motor->getID());
 
         //@{
-        /*std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "<<_motor->getFirstPosition()
+/*        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "<<_motor->getFirstPosition()
                   <<" "<<_motor->getSecondCylinder()->getID()<<" "<<_motor->getSecondPosition()<<endl;*/
         //@}
 
@@ -751,9 +751,9 @@ struct MotorWalkingCallback {
 
 
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
-        /*cout<<"filament Type "<<filType<<endl;
+/*        cout<<"filament Type "<<filType<<endl;
         cout<<"cylinder size "<<cylinderSize<<endl;
-        cout<<"oldpos "<<_oldPosition<<endl;
+        cout<<"Cylinder oldpos "<<_c->getID()<<" "<<_oldPosition<<endl;
         cout<<"newpos "<<_newPosition<<endl;
         cout<<"-----------"<<endl;*/
         double oldpos = double(_oldPosition) / cylinderSize;
@@ -791,7 +791,7 @@ struct MotorMovingCylinderCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        
+//        cout<<"Motor moving cylinder begins"<<endl;
         //get species
         CCylinder* oldCC = _oldC->getCCylinder();
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
@@ -802,6 +802,11 @@ struct MotorMovingCylinderCallback {
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
         
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
+/*        cout<<"filament Type "<<filType<<endl;
+        cout<<"cylinder size "<<cylinderSize<<endl;
+        cout<<"Cylinder oldpos "<<_oldC->getID()<<" "<<_oldPosition<<endl;
+        cout<<"Cylinder newpos "<<_newC->getID()<<" "<<_newPosition<<endl;
+        cout<<"-----------"<<endl;*/
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
         

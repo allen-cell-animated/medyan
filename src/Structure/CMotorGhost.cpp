@@ -59,8 +59,10 @@ CMotorGhost::CMotorGhost(short motorType, Compartment* c,
     std::cout<<"Chosen sites Cyl1 "<<cc1->getCylinder()->getID()<<" bs1 "<<_position1<<" "
             "Cyl2 "<<cc2->getCylinder()->getID()<<" bs2 "<<_position2<<endl;
 #endif
-    /*std::cout<<"Motor binding "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "
+/*    std::cout<<"Motor binding "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "
              <<cc2->getCylinder()->getID()<<" "<<_position2<<" MotorType "<<motorType<< endl;
+    cout<<"species statuses (bound) "<<se1->getN()<<" "<<se2->getN()<<" (motor) "<<sm1->getN()<<" "
+									""<<sm2->getN()<<endl;
 	auto c1coord = cc1->getCompartment()->coordinates();
 	auto c2coord = cc2->getCompartment()->coordinates();
     cout<<"coordinate Cmp "<<c1coord[0]<<" "<<c1coord[1]<<" "<<c1coord[2]<<" "

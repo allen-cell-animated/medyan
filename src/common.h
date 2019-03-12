@@ -53,6 +53,9 @@ using namespace std;
 ///Boost typedef
 typedef boost::signals2::shared_connection_block ConnectionBlock;
 
+///floatingpoint typedef
+typedef float floatingpoint;
+
 ///Num filament types maximum
 #define MAX_FILAMENT_TYPES 10
 

@@ -398,7 +398,7 @@ volumes namely self(1), halves(6), quarters(12) and 1/8ths(8). The position in t
             uint prev_size, Compartment* nCmp = NULL);
 
     template <uint D, bool SELF, bool LinkerorMotor>
-    void gatherCylinderIDfromcIndexV3(dist::dOut<D,SELF>& bspairsoutS, int first, int
+    void gatherCylindercIndexV3(dist::dOut<D,SELF>& bspairsoutS, int first, int
     last, short idvec[2], short maptag, Compartment* nCmp = NULL);
 
     //D = 2
