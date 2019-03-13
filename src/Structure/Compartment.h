@@ -103,7 +103,7 @@ protected:
 
     
     ///OTHER COMPARTMENT PROPERTIES
-    vector<double> _coords;  ///< Coordinates of this compartment
+    vector<floatingpoint> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
     
 public:
@@ -179,8 +179,8 @@ public:
     virtual bool isActivated() {return _activated;}
     
     ///Setter and getter for fs
-    virtual void setCoordinates(vector<double> coords) {_coords = coords;}
-    virtual const vector<double>& coordinates() {return _coords;}
+    virtual void setCoordinates(vector<floatingpoint> coords) {_coords = coords;}
+    virtual const vector<floatingpoint>& coordinates() {return _coords;}
     
     
     /// Transfer all species copy numbers from this compartment to neighboring
@@ -521,10 +521,10 @@ public:
     }
 #ifdef SIMDBINDINGSEARCH
 
-/*    vector<vector<double>> partitionedcoordx, partitionedcoordy,
+/*    vector<vector<floatingpoint>> partitionedcoordx, partitionedcoordy,
                             partitionedcoordz, cindex_bs_section,
                             cID_bs_section;*/
-    vector<double> partitionedcoordx[27], partitionedcoordy[27], partitionedcoordz[27];
+    vector<floatingpoint> partitionedcoordx[27], partitionedcoordy[27], partitionedcoordz[27];
     vector<uint32_t>  cindex_bs_section[27];
 
     void SIMDcoordinates();
@@ -534,24 +534,24 @@ public:
     void SIMDcoordinates_section();
     void SIMDcoordinates4linkersearch_section(bool isvectorizedgather);
     void SIMDcoordinates4motorsearch_section(bool isvectorizedgather);
-    void getpartition3Dindex(int (&indices)[3], vector<double> coord);
-    void getpartition3Dindex(int (&indices)[3], vector<double> coord,
-                                double (&cmpcornercoords)[6]);
+    void getpartition3Dindex(int (&indices)[3], vector<floatingpoint> coord);
+    void getpartition3Dindex(int (&indices)[3], vector<floatingpoint> coord,
+                                floatingpoint (&cmpcornercoords)[6]);
     template<bool rMaxvsCmpsize>
-    void getpartitionindex(int (&indices)[3], vector<double> coord,
-                                double (&cmpcornercoords)[6]);
+    void getpartitionindex(int (&indices)[3], vector<floatingpoint> coord,
+                                floatingpoint (&cmpcornercoords)[6]);
 
-    void addcoord(vector<double> coord, uint16_t index, short i){cout<<"DONOT CALL"<<endl;
+    void addcoord(vector<floatingpoint> coord, uint16_t index, short i){cout<<"DONOT CALL"<<endl;
     exit(EXIT_FAILURE);};
-	void addcoord(vector<double> coord, uint32_t index, short i);
+	void addcoord(vector<floatingpoint> coord, uint32_t index, short i);
     bool checkoccupancy(Cylinder* cyl, short it, short _filamentType, short bstatepos);
     bool checkoccupancy(vector<vector<bool>>& boundstate, short bstatepos, int pos);
-    void addcoordtopartitons(int (&pindices)[3], vector<double> coord, uint32_t
+    void addcoordtopartitons(int (&pindices)[3], vector<floatingpoint> coord, uint32_t
     index);
-    void addcoordtopartitons_smallrmax(int (&pindices)[3], vector<double> coord,
+    void addcoordtopartitons_smallrmax(int (&pindices)[3], vector<floatingpoint> coord,
                                   uint16_t index);
     template<bool rMaxvsCmpsize>
-    void addcoordtorMaxbasedpartitons(int (&pindices)[3], vector<double> coord,
+    void addcoordtorMaxbasedpartitons(int (&pindices)[3], vector<floatingpoint> coord,
                                        uint32_t index);
 #endif
     /// Get binding managers for this compartment
@@ -824,15 +824,15 @@ public:
     
 };
 template<>
-void Compartment::getpartitionindex<true>(int (&indices)[3], vector<double> coord,
-                             double (&cmpcornercoords)[6]);
+void Compartment::getpartitionindex<true>(int (&indices)[3], vector<floatingpoint> coord,
+                             floatingpoint (&cmpcornercoords)[6]);
 template<>
-void Compartment::getpartitionindex<false>(int (&indices)[3], vector<double> coord,
-                              double (&cmpcornercoords)[6]);
+void Compartment::getpartitionindex<false>(int (&indices)[3], vector<floatingpoint> coord,
+                              floatingpoint (&cmpcornercoords)[6]);
 template<>
-void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<double>
+void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<floatingpoint>
         coord, uint32_t index);
 template<>
-void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<double>
+void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
         coord, uint32_t index);
 #endif

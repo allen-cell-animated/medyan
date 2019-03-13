@@ -41,7 +41,7 @@ public:
     virtual string getName() {return "Bubble";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double d);
+    virtual floatingpoint computeEnergy(floatingpoint d);
     virtual void computeForces();
     virtual void computeForcesAux();
     

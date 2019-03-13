@@ -18,7 +18,7 @@
 
 #include "SysParams.h"
 
-Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
+Bubble::Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type)
 
     : Trackable(true, false, true, false), _ps(ps), _type(type),
       _ID(_bubbles.getID()), coordinate(coordinates) {

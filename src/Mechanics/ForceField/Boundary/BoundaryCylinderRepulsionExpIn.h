@@ -27,19 +27,19 @@ class BoundaryCylinderRepulsionExpIn {
     
 public:
     //TODO needs implementation @{
-    double energy(double *coord, double *f, int *beadSet,
-                  double *krep, double *slen, int *nneighbors);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *krep, floatingpoint *slen, int *nneighbors);
 
-    double energy(double *coord, double *f, int *beadSet,
-                  double *krep, double *slen, int *nnneighbors, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *krep, floatingpoint *slen, int *nnneighbors, floatingpoint d);
 
-    void forces(double *coord, double *f, int *beadSet,
-                double *krep, double *slen, int *nneighbors);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *krep, floatingpoint *slen, int *nneighbors);
     //@}
-    double energy(Bead*, double, double, double);
-    void forces(Bead*, double, vector<double>& norm, double, double);
-    void forcesAux(Bead*, double, vector<double>& norm, double, double);
-    double loadForces(double, double, double);
+    floatingpoint energy(Bead*, floatingpoint, floatingpoint, floatingpoint);
+    void forces(Bead*, floatingpoint, vector<floatingpoint>& norm, floatingpoint, floatingpoint);
+    void forcesAux(Bead*, floatingpoint, vector<floatingpoint>& norm, floatingpoint, floatingpoint);
+    floatingpoint loadForces(floatingpoint, floatingpoint, floatingpoint);
 };
 
 #endif

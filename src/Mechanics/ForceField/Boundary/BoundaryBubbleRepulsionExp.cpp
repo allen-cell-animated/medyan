@@ -15,18 +15,18 @@
 
 #include "Bead.h"
 
-double BoundaryBubbleRepulsionExp::energy(Bead* b, double r, double r0,
-                                          double kRep, double screenLength) {
-    double R = -(r - r0) / screenLength;
+floatingpoint BoundaryBubbleRepulsionExp::energy(Bead* b, floatingpoint r, floatingpoint r0,
+                                          floatingpoint kRep, floatingpoint screenLength) {
+    floatingpoint R = -(r - r0) / screenLength;
     return kRep * exp(R);
 }
 
-void BoundaryBubbleRepulsionExp::forces(Bead* b, double r, double r0,
-                                        vector<double>& norm, double kRep,
-                                        double screenLength) {
+void BoundaryBubbleRepulsionExp::forces(Bead* b, floatingpoint r, floatingpoint r0,
+                                        vector<floatingpoint>& norm, floatingpoint kRep,
+                                        floatingpoint screenLength) {
     
-    double R = -(r - r0) / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
+    floatingpoint R = -(r - r0) / screenLength;
+    floatingpoint f0 = kRep * exp(R) / screenLength;
     
     b->force[0] += f0 *norm[0];
     b->force[1] += f0 *norm[1];
@@ -34,12 +34,12 @@ void BoundaryBubbleRepulsionExp::forces(Bead* b, double r, double r0,
     
 }
 
-void BoundaryBubbleRepulsionExp::forcesAux(Bead* b, double r, double r0,
-                                           vector<double>& norm, double kRep,
-                                           double screenLength) {
+void BoundaryBubbleRepulsionExp::forcesAux(Bead* b, floatingpoint r, floatingpoint r0,
+                                           vector<floatingpoint>& norm, floatingpoint kRep,
+                                           floatingpoint screenLength) {
     
-    double R = -(r - r0) / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
+    floatingpoint R = -(r - r0) / screenLength;
+    floatingpoint f0 = kRep * exp(R) / screenLength;
     
     b->forceAux[0] += f0 *norm[0];
     b->forceAux[1] += f0 *norm[1];

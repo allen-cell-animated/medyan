@@ -30,15 +30,15 @@ template <class CGType> class ConjugateGradient : public Minimizer {
 private:
     CGType _CGType;  ///< Implementation of a CG method
     
-    double _GRADTOL;   ///< Gradient tolerance used
-    double _MAXDIST;   ///< Max distance used to move
-    double _LAMBDAMAX; ///< Maximum lambda that can be returned
+    floatingpoint _GRADTOL;   ///< Gradient tolerance used
+    floatingpoint _MAXDIST;   ///< Max distance used to move
+    floatingpoint _LAMBDAMAX; ///< Maximum lambda that can be returned
     
 public:
     /// Constructor sets gradient tolerance parameter
-    ConjugateGradient(double gradientTolerance,
-                      double maxDistance,
-                      double lambdaMax)
+    ConjugateGradient(floatingpoint gradientTolerance,
+                      floatingpoint maxDistance,
+                      floatingpoint lambdaMax)
     
         : _GRADTOL(gradientTolerance),
           _MAXDIST(maxDistance),

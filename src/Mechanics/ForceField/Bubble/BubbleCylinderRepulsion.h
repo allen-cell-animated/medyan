@@ -40,7 +40,7 @@ public:
         _neighborList = new BubbleCylinderNL(SysParams::Mechanics().BubbleCutoff);
     }
     
-    virtual double computeEnergy(double d);
+    virtual floatingpoint computeEnergy(floatingpoint d);
     
     virtual void computeForces();
     virtual void computeForcesAux();

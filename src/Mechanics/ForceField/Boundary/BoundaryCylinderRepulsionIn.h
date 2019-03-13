@@ -38,9 +38,9 @@ private:
     int *beadSet;
 
     ///Array describing the constants in calculation
-    double *krep;
-    double *slen;
-    double *U_i;
+    floatingpoint *krep;
+    floatingpoint *slen;
+    floatingpoint *U_i;
     int nint = 0;
     ///Array describing the number of neighbors for each boundary element (num boundary elements long)
     int *nneighbors;
@@ -56,7 +56,7 @@ public:
         _neighborList = new BoundaryCylinderNL(SysParams::Boundaries().BoundaryCutoff);
     }
     
-//    virtual double computeEnergy(double d);
+//    virtual floatingpoint computeEnergy(floatingpoint d);
 //    //@{
 //    /// This repulsive force calculation also updates load forces
 //    /// on beads within the interaction range.
@@ -70,11 +70,11 @@ public:
     virtual void vectorize();
     virtual void deallocate();
 
-    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces(double *coord, double *f);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     virtual void computeLoadForces();
     //@}
     

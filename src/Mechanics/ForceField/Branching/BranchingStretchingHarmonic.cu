@@ -66,13 +66,13 @@ void BranchingStretchingHarmonic::optimalblocksnthreads( int nint){
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
 
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
 
         char a[] = "BranchingFF";
         char b[] = "Branching Stretching Harmonic";
@@ -91,18 +91,18 @@ void BranchingStretchingHarmonic::optimalblocksnthreads( int nint){
     }
 
 }
-double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                            double *kstr, double *eql, double *pos, int *params) {
+floatingpoint* BranchingStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, int *params) {
 //    if(blocksnthreadse[1]>0) {
 //        BranchingStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i, CUDAcommon::getCUDAvars()
+//                (floatingpoint), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i, CUDAcommon::getCUDAvars()
 //                .gculpritID, CUDAcommon::getCUDAvars().gculpritFF, CUDAcommon::getCUDAvars().gculpritinteraction,
 //                gFF, ginteraction);
 //        auto cvars = CUDAcommon::getCUDAvars();
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
 //        return gU_sum;}
@@ -111,18 +111,18 @@ double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadS
 }
 
 
-double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                            double *kstr, double *eql, double *pos, double *z, int *params) {
+floatingpoint* BranchingStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint *z, int *params) {
     if(blocksnthreadse[1]>0) {
         BranchingStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i, z, CUDAcommon::getCUDAvars()
+                (floatingpoint), stream>>> (coord, f, beadSet, kstr, eql, pos, params, gU_i, z, CUDAcommon::getCUDAvars()
                 .gculpritID, CUDAcommon::getCUDAvars().gculpritFF, CUDAcommon::getCUDAvars().gculpritinteraction,
                 gFF, ginteraction);
 //        auto cvars = CUDAcommon::getCUDAvars();
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingStretchingHarmonicenergy", "BranchingStretchingHarmonic.cu");
 //        return gU_sum;
@@ -130,7 +130,7 @@ double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadS
 
     if(blocksnthreadsez[1]>0) {
         BranchingStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
-                                                                                          sizeof(double), stream>> >
+                                                                                          sizeof(floatingpoint), stream>> >
                 (coord, f, beadSet, kstr, eql, pos, params, gU_i, z, CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -139,7 +139,7 @@ double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadS
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingStretchingHarmonicenergyz", "BranchingStretchingHarmonic"
 //                ".cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingStretchingHarmonicenergyz", "BranchingStretchingHarmonic"
@@ -152,16 +152,16 @@ double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadS
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(floatingpoint),stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
 //        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
 //                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
@@ -170,11 +170,11 @@ double* BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadS
 
 }
 
-void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                         double *kstr, double *eql, double *pos, int *params){
+void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                         floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, int *params){
     if(blocksnthreadsf[1]>0) {
         BranchingStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (9 * blocksnthreadsf[1]) *
-                                                                                       sizeof(double), stream >> >
+                                                                                       sizeof(floatingpoint), stream >> >
                 (coord, f, beadSet, kstr, eql, pos, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
@@ -190,16 +190,16 @@ void BranchingStretchingHarmonic::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                           double *kstr, double *eql, double *pos){
+floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos){
 
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, dist, U_i;
-    double *v1 = new double[3];
+    floatingpoint *coord1, *coord2, *coord3, dist, U_i;
+    floatingpoint *v1 = new floatingpoint[3];
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -213,7 +213,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         U_i = 0.5 * kstr[i] * dist * dist;
 
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -228,17 +228,17 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
     return U;
 }
 
-double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                           double *kstr, double *eql, double *pos, double d){
+floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, *f1, *f2, *f3, dist, U_i;
-    double *v1 = new double[3];
-    double *vzero = new double[3]; vzero[0] = 0; vzero[1] = 0; vzero[2] = 0;
+    floatingpoint *coord1, *coord2, *coord3, *f1, *f2, *f3, dist, U_i;
+    floatingpoint *v1 = new floatingpoint[3];
+    floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0; vzero[1] = 0; vzero[2] = 0;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -256,7 +256,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         U_i = 0.5 * kstr[i] * dist * dist;
 
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -272,16 +272,16 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
     return U;
 }
 
-void BranchingStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                         double *kstr, double *eql, double *pos,
-                                         double *stretchforce){
+void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                         floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos,
+                                         floatingpoint *stretchforce){
 
 
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, *f1, *f2, *f3, dist, invL, f0;
-    double *v1 = new double[3];
+    floatingpoint *coord1, *coord2, *coord3, *f1, *f2, *f3, dist, invL, f0;
+    floatingpoint *v1 = new floatingpoint[3];
 
 
     for(int i = 0; i < nint; i += 1) {

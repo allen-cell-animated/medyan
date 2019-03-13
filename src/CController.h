@@ -65,7 +65,7 @@ public:
     void restart();
     
     ///Run chemistry for a given amount of time
-    bool run(double time);
+    bool run(floatingpoint time);
     
     ///Run chemistry for a given number of reaction steps
     bool runSteps(int steps);

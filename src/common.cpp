@@ -13,5 +13,5 @@
 
 #include "common.h"
 
-double global_time;
+floatingpoint global_time;
 

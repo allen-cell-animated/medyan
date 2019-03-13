@@ -39,11 +39,11 @@ protected:
 
 
     ///< Data vectors for calculation
-    double *coord;  ///<bead coordinates (length 3*N)
+    floatingpoint *coord;  ///<bead coordinates (length 3*N)
     
-    double *force; ///< bead forces (length 3*N)
-    double *forceAux; ///< auxiliary force calculations (length 3*N)
-    double *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
+    floatingpoint *force; ///< bead forces (length 3*N)
+    floatingpoint *forceAux; ///< auxiliary force calculations (length 3*N)
+    floatingpoint *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
 //    cylinder* cylindervec;
 
     /// Safe mode which chooses the safe backtracking search if the
@@ -56,12 +56,12 @@ protected:
     
     //@{
     /// Parameter used in backtracking line search
-    const double LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
-    const double LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
+    const floatingpoint LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
+    const floatingpoint LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
     
-    const double SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
+    const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
     
-    const double BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
+    const floatingpoint BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
     //@}
     
     //@{
@@ -72,20 +72,20 @@ protected:
     vector<int> bntaddvector;
     vector<int> bnt;
     int *gpu_nint;
-    double *gpu_g, *gpu_maxF;
-    double *gSum;
-    double *gSum2;
-    double *gpu_fmax;
-    double *g_currentenergy;
-    double *gpu_params = NULL;
-    double *gpu_FDotF;//curGrad
-    double *gpu_FADotFA;//newGrad
-    double *gpu_FADotFAP;//prevGrad
-    double *gpu_FDotFA;
-    double *gpu_initlambdalocal;
+    floatingpoint *gpu_g, *gpu_maxF;
+    floatingpoint *gSum;
+    floatingpoint *gSum2;
+    floatingpoint *gpu_fmax;
+    floatingpoint *g_currentenergy;
+    floatingpoint *gpu_params = NULL;
+    floatingpoint *gpu_FDotF;//curGrad
+    floatingpoint *gpu_FADotFA;//newGrad
+    floatingpoint *gpu_FADotFAP;//prevGrad
+    floatingpoint *gpu_FDotFA;
+    floatingpoint *gpu_initlambdalocal;
     bool *gpu_convergencecheck;
     bool *convergencecheck;
-    double gpuFDotF(double *f1, double *f2);
+    floatingpoint gpuFDotF(floatingpoint *f1, floatingpoint *f2);
     void CUDAresetlambda(cudaStream_t stream);
     void CUDAinitializeLambda(cudaStream_t stream1, bool *check_in, bool *check_out, bool
             *Polaksafestate, int *gpu_state);
@@ -99,20 +99,20 @@ protected:
     void CUDAallFDotFA(cudaStream_t stream);
     void CUDAshiftGradient(cudaStream_t stream, bool *Mcheckin);
     void CUDAshiftGradientifSafe(cudaStream_t stream, bool *Mcheckin, bool *Scheckin);
-//    void CUDAgetPolakvars(bool calc_safestate,cudaStream_t streamcalc, double* gpu_GRADTOL, bool *gminstatein,
+//    void CUDAgetPolakvars(bool calc_safestate,cudaStream_t streamcalc, floatingpoint* gpu_GRADTOL, bool *gminstatein,
 //                                    bool *gminstateout, bool *gsafestateout, volatile bool *cminstate);
-    void CUDAgetPolakvars(cudaStream_t streamcalc, double* gpu_GRADTOL, bool *gminstatein,
+    void CUDAgetPolakvars(cudaStream_t streamcalc, floatingpoint* gpu_GRADTOL, bool *gminstatein,
     bool *gminstateout, volatile bool *cminstate);
     void CUDAgetPolakvars2(cudaStream_t streamcalc, bool *gsafestateout);
     void CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *minstateout, bool *safestatein, bool
     *safestateout);
     void CUDAmoveBeads(cudaStream_t stream, bool *gpu_checkin );
-//    void getmaxFCUDA(double *gpu_forceAux, int *gpu_nint, double *gpu_fmax);
+//    void getmaxFCUDA(floatingpoint *gpu_forceAux, int *gpu_nint, floatingpoint *gpu_fmax);
     //PING PONG for backtracking (both normal and safe)
 //    struct backtrackingvars {
-//        double currentEnergy;
-//        double energyLambda;
-//        double lambda;
+//        floatingpoint currentEnergy;
+//        floatingpoint energyLambda;
+//        floatingpoint lambda;
 //    };
     bool *g_stop1, *g_stop2, *g_s1, *g_s2, *g_ss;
 //    backtrackingvars *bvar, *gpu_bvar1, *gpu_bvar2, *g_b1, *g_b2, *g_bs;
@@ -129,13 +129,13 @@ protected:
     /// For use in minimization
 
 
-    double allFDotF();
-    double allFADotFA();
-    double allFADotFAP();
-    double allFDotFA();
+    floatingpoint allFDotF();
+    floatingpoint allFADotFA();
+    floatingpoint allFADotFAP();
+    floatingpoint allFDotFA();
     
     /// Get the max force in the system
-    double maxF();
+    floatingpoint maxF();
     
     /// Get bead with the max force in the system
     Bead* maxBead();
@@ -146,16 +146,16 @@ protected:
     void endMinimization();
     
     /// Move beads in search direction by d
-    void moveBeads(double d);
+    void moveBeads(floatingpoint d);
     
     /// shift the gradient by d
-    void shiftGradient(double d);
+    void shiftGradient(floatingpoint d);
     //@}
 
 #ifdef CUDAACCL
     //@{
-    double backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDIST,
-                                  double LAMBDAMAX, bool *gpu_safestate);
+    floatingpoint backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
+                                  floatingpoint LAMBDAMAX, bool *gpu_safestate);
     //@}
 #endif // CUDAACCL
 
@@ -163,14 +163,14 @@ protected:
     /// Linear search methods
     /// A simple backtracking search method that computes an optimal
     /// energy change and compares the backtracked energy to it
-    double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
-                                                          double LAMBDAMAX, bool *gpu_safestate);
+    floatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+                                                          floatingpoint LAMBDAMAX, bool *gpu_safestate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
 
-    double safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
-                                                              double LAMBDAMAX, bool *gpu_safestate);
+    floatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+                                                              floatingpoint LAMBDAMAX, bool *gpu_safestate);
 
     //@}
     
@@ -180,10 +180,10 @@ protected:
     /// Initialize data arrays
     inline void allocate(long numBeadsx3, long Ncyl) {
 
-//        coord = new double[numBeadsx3];
-        force = new double[numBeadsx3];
-        forceAux = new double[numBeadsx3];
-        forceAuxPrev = new double[numBeadsx3];
+//        coord = new floatingpoint[numBeadsx3];
+        force = new floatingpoint[numBeadsx3];
+        forceAux = new floatingpoint[numBeadsx3];
+        forceAuxPrev = new floatingpoint[numBeadsx3];
     }
     
     ///Deallocation of CG arrays
@@ -201,8 +201,8 @@ public:
     virtual ~CGMethod() {};
     
     /// Minimize the system
-    virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
-                          double MAXDIST, double LAMBDAMAX, bool steplimit) = 0;
+    virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                          floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) = 0;
 };
 
 

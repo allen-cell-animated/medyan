@@ -22,10 +22,10 @@
 #include "Bead.h"
 
 template <class MTOCInteractionType>
-double MTOCAttachment<MTOCInteractionType>::computeEnergy(double d) {
+floatingpoint MTOCAttachment<MTOCInteractionType>::computeEnergy(floatingpoint d) {
     
-    double U = 0.0;
-    double U_i=0.0;
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
     
     for(auto mtoc : MTOC::getMTOCs()) {
         
@@ -38,15 +38,15 @@ double MTOCAttachment<MTOCInteractionType>::computeEnergy(double d) {
             Cylinder* c = f->getMinusEndCylinder();
             
             Bead* b2 = c->getFirstBead();
-            double kStretch = c->getMCylinder()->getStretchingConst();
-            double radius = mtoc->getBubble()->getRadius();
+            floatingpoint kStretch = c->getMCylinder()->getStretchingConst();
+            floatingpoint radius = mtoc->getBubble()->getRadius();
             
             if (d == 0.0)
                 U_i = _FFType.energy(b1, b2, kStretch, radius);
             else
                 U_i = _FFType.energy(b1, b2, kStretch, radius, d);
             
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
                 //set culprits and return
@@ -76,8 +76,8 @@ void MTOCAttachment<MTOCInteractionType>::computeForces() {
             Cylinder* c = f->getMinusEndCylinder();
             
             Bead* b2 = c->getFirstBead();
-            double kStretch = c->getMCylinder()->getStretchingConst();
-            double radius = mtoc->getBubble()->getRadius();
+            floatingpoint kStretch = c->getMCylinder()->getStretchingConst();
+            floatingpoint radius = mtoc->getBubble()->getRadius();
 
             _FFType.forces(b1, b2, kStretch, radius);
         }
@@ -99,8 +99,8 @@ void MTOCAttachment<MTOCInteractionType>::computeForcesAux() {
             Cylinder* c = f->getMinusEndCylinder();
             
             Bead* b2 = c->getFirstBead();
-            double kStretch = c->getMCylinder()->getStretchingConst();
-            double radius = mtoc->getBubble()->getRadius();
+            floatingpoint kStretch = c->getMCylinder()->getStretchingConst();
+            floatingpoint radius = mtoc->getBubble()->getRadius();
             
             _FFType.forcesAux(b1, b2, kStretch, radius);
         }
@@ -108,6 +108,6 @@ void MTOCAttachment<MTOCInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(double d);
+template floatingpoint MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(floatingpoint d);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces();
 template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux();

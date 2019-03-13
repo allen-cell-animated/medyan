@@ -41,7 +41,7 @@ public:
         _neighborList = new BoundaryBubbleNL(SysParams::Boundaries().BoundaryCutoff);
     }
     
-    virtual double computeEnergy(double d);
+    virtual floatingpoint computeEnergy(floatingpoint d);
    
     virtual void computeForces();
     virtual void computeForcesAux();
@@ -57,11 +57,11 @@ public:
     virtual void vectorize(){};
     virtual void deallocate(){};
 
-    virtual double computeEnergy(double *coord, double *f, double d)override { return 0.0; }
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d)override { return 0.0; }
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces(double *coord, double *f){};
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f){};
     //@}
 };
 #endif

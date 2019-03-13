@@ -218,8 +218,8 @@ public:
 #endif
     //@{
     ///Subsystem energy management
-    double getSubSystemEnergy() {return _energy;}
-    void setSubSystemEnergy(double energy) {_energy = energy;}
+    floatingpoint getSubSystemEnergy() {return _energy;}
+    void setSubSystemEnergy(floatingpoint energy) {_energy = energy;}
     //@}
     
     //@{
@@ -241,12 +241,12 @@ public:
         return _staticgrid;
     }
 
-    static double SIMDtime;
-    static double SIMDtimeV2;
-    static double HYBDtime;
+    static floatingpoint SIMDtime;
+    static floatingpoint SIMDtimeV2;
+    static floatingpoint HYBDtime;
 private:
     dist::Coords temptest;
-    double _energy = 0; ///< Energy of this subsystem
+    floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
     
     unordered_set<Movable*> _movables; ///< All movables in the subsystem
@@ -266,12 +266,12 @@ private:
     CCylinder** ccylindervec;
     Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
-    double* cylsqmagnitudevector;
+    floatingpoint* cylsqmagnitudevector;
     static bool initialize;
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
 #ifdef CUDAACCL_NL
-    double* gpu_coord;
-    double* gpu_coord_com;
+    floatingpoint* gpu_coord;
+    floatingpoint* gpu_coord_com;
     int * gpu_beadSet;
     int *gpu_cylID;
     int *gpu_filID;
@@ -283,8 +283,8 @@ private:
 //    int *gpu_cylvecpospercmp;
     int *gpu_fvecpos;
     int *gpu_filType;
-    double *coord;
-    double *coord_com;
+    floatingpoint *coord;
+    floatingpoint *coord_com;
     int *beadSet;
     int *cylID;
     int *filID;

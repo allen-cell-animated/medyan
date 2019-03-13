@@ -21,8 +21,8 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
-void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
-                            double MAXDIST, double LAMBDAMAX, bool steplimit){
+void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                            floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit){
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbeginTot, tendTot;
     chrono::high_resolution_clock::time_point tbeginII, tendII;
@@ -63,7 +63,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     // (as opposed to finding lambda)
     bool Ms_isminimizationstate, Ms_issafestate;
     int numIter = 0;
-    double lambda;
+    floatingpoint lambda;
 #ifdef CUDAACCL
     volatile bool *Mc_isminimizationstate;
     volatile bool *Mc_issafestate;
@@ -97,7 +97,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
 #endif
@@ -135,11 +135,11 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
-    double *gpu_GRADTOL;
-    double gradtol[1];
+    floatingpoint *gpu_GRADTOL;
+    floatingpoint gradtol[1];
     gradtol[0]= GRADTOL;
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_GRADTOL, sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_GRADTOL, gradtol, sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_GRADTOL, sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_GRADTOL, gradtol, sizeof(floatingpoint), cudaMemcpyHostToDevice));
     CGMethod::CUDAallFDotF(stream3);//curGrad //pass a stream
 
     //synchronize streams
@@ -230,7 +230,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #ifdef SERIAL //SERIAL
     //FIND MAXIMUM ERROR BETWEEN CUDA AND VECTORIZED FORCES{
     //VECTORIZED. Prep for Polak{
-    double curGrad = CGMethod::allFDotF();
+    floatingpoint curGrad = CGMethod::allFDotF();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
     Ms_isminimizationstate = maxF() > GRADTOL;
@@ -256,13 +256,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::cudatime.Ecount = 0;
     CUDAcommon::cudatime.TcomputeE = 0.0;
     CUDAcommon::cudatime.TcomputeF = 0.0;
-    double c1 = 0.0;
-    double c2,c3,c4,c5;
+    floatingpoint c1 = 0.0;
+    floatingpoint c2,c3,c4,c5;
     c2 = 0.0;c3 = 0.0;c4 = 0.0;c5=0.0;
 #endif
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runslice1(tendII - tbeginII);
+    chrono::duration<floatingpoint> elapsed_runslice1(tendII - tbeginII);
     std::cout<<"Slice time "<<elapsed_runslice1.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
@@ -290,7 +290,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         CUDAcommon::handleerror(cudaStreamSynchronize(stream_shiftsafe));
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_run1(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_run1(tend - tbegin);
         c5 += elapsed_run1.count();
 #endif
 
@@ -328,7 +328,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         lambda = backtrackingLineSearchCUDA(FFM, MAXDIST, LAMBDAMAX, Msg_s1);
 #ifdef CUDATIMETRACK_MACRO
         tLend= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runiter(tLend - tLbegin);
+        chrono::duration<floatingpoint> elapsed_runiter(tLend - tLbegin);
         std::cout<<" CUDA Iter "<<numIter<<" Lambda Time taken (s) "<<elapsed_runiter
                 .count() - CUDAcommon::serltime.TcomputeEiter <<endl;
 #endif
@@ -360,7 +360,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         //@}
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_run1b(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_run1b(tend - tbegin);
         c1 += elapsed_run1b.count();
 #endif
 
@@ -380,7 +380,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         CUDAcommon::handleerror(cudaStreamSynchronize(stream_dotcopy));
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_run2(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_run2(tend - tbegin);
         c2 += elapsed_run2.count();
 #endif
 
@@ -413,7 +413,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
 #ifdef CUDATIMETRACK
         tend= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_run(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
         CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
         CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
 #endif
@@ -437,7 +437,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 //Copying forces back to Host was here.
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_run1c(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_run1c(tend - tbegin);
         c1 += elapsed_run1c.count();
 #endif
 
@@ -459,7 +459,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         FFM.CUDAcopyForces(stream_dotcopy, CUDAcommon::getCUDAvars().gpu_forceAuxP,CUDAcommon::getCUDAvars().gpu_forceAux);
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_run2c(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_run2c(tend - tbegin);
         c2 += elapsed_run2c.count();
 #endif
 #ifdef ALLSYNC
@@ -491,7 +491,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_run3(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_run3(tend - tbegin);
         c3 += elapsed_run3.count();
 #endif
 #ifdef CUDATIMETRACK
@@ -515,7 +515,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         }
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_run4(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_run4(tend - tbegin);
         c4 += elapsed_run4.count();
 #endif
     }
@@ -526,7 +526,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
             "iters "<<CUDAcommon::cudatime.Ecount<<endl;
     std::cout<<"CUDA Force time taken (s) "<<CUDAcommon::cudatime.TcomputeF<<endl;
     std::cout<<"CUDA Energy time per iter (s/iter) "<<CUDAcommon::cudatime.TcomputeE/
-            (double(CUDAcommon::cudatime.Ecount))<<endl;
+            (floatingpoint(CUDAcommon::cudatime.Ecount))<<endl;
     std::cout<<"CUDA Split Times Iter "<<numIter<<" "<<c1<<" "<<c2<<" "<<c3<<" "<<c4<<" "
             ""<<c5<<endl;
     std::cout<<"CUDA Add "<<c5+c4+c3+c2+c1<<endl;
@@ -536,8 +536,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 
     numIter = 0;
 #ifdef CUDATIMETRACK_MACRO
-    double s1 = 0.0;
-    double s2,s3,s4;
+    floatingpoint s1 = 0.0;
+    floatingpoint s2,s3,s4;
     s2 = 0.0;s3 = 0.0;s4 = 0.0;
     CUDAcommon::serltime.Tlambda = 0.0;
     CUDAcommon::serltime.Ecount = 0;
@@ -554,7 +554,7 @@ std::cout<<"----------------------------------------"<<endl;
 //        tbeginiter = chrono::high_resolution_clock::now();
 //#endif
 
-        double beta, newGrad, prevGrad;
+        floatingpoint beta, newGrad, prevGrad;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
 
         numIter++;
@@ -572,7 +572,7 @@ std::cout<<"----------------------------------------"<<endl;
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
 #ifdef CUDATIMETRACK_MACRO
         tLend= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runiter(tLend - tLbegin);
+        chrono::duration<floatingpoint> elapsed_runiter(tLend - tLbegin);
         std::cout<<"SERL Iter "<<numIter<<" Lambda Time taken (s) "<<elapsed_runiter
                 .count() - CUDAcommon::cudatime.TcomputeEiter
                  <<endl;
@@ -580,8 +580,8 @@ std::cout<<"----------------------------------------"<<endl;
 
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize());
-        double cuda_lambda[1];
-        CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(double),
+        floatingpoint cuda_lambda[1];
+        CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
                                            cudaMemcpyDeviceToHost));
         std::cout<<"Lambda CUDA "<<cuda_lambda[0]<<" SERL "<<lambda<<endl;
 #endif
@@ -597,7 +597,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runs1(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_runs1(tend - tbegin);
         s1 += elapsed_runs1.count();
 #endif
         //compute new forces
@@ -626,20 +626,20 @@ std::cout<<"----------------------------------------"<<endl;
         prevGrad = CGMethod::allFADotFAP();
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runs2a(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_runs2a(tend - tbegin);
         s2 += elapsed_runs2a.count();
 #endif
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
         //Polak-Ribieri update
-        beta = max(0.0, (newGrad - prevGrad) / curGrad);
+        beta = max<floatingpoint>((floatingpoint)0.0, (newGrad - prevGrad) / curGrad);
         if(Ms_isminimizationstate)
             //shift gradient
             shiftGradient(beta);
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runs3a(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_runs3a(tend - tbegin);
         s3 += elapsed_runs3a.count();
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_BETA)
@@ -658,7 +658,7 @@ std::cout<<"----------------------------------------"<<endl;
         FFM.copyForces(forceAuxPrev, forceAux);
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runs2b(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_runs2b(tend - tbegin);
         s2 += elapsed_runs2b.count();
 #endif
 #ifdef CUDATIMETRACK
@@ -677,7 +677,7 @@ std::cout<<"----------------------------------------"<<endl;
         }
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runs3b(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_runs3b(tend - tbegin);
         s3 += elapsed_runs3b.count();
 #endif
 #ifdef CUDATIMETRACK
@@ -688,7 +688,7 @@ std::cout<<"----------------------------------------"<<endl;
         Ms_isminimizationstate = maxForce > GRADTOL;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runs1b(tend - tbegin);
+        chrono::duration<floatingpoint> elapsed_runs1b(tend - tbegin);
         s1 += elapsed_runs1b.count();
 #endif
     }
@@ -699,14 +699,14 @@ std::cout<<"----------------------------------------"<<endl;
             "iters "<<CUDAcommon::serltime.Ecount<<endl;
     std::cout<<"SERL Force time taken (s) "<<CUDAcommon::serltime.TcomputeF<<endl;
     std::cout<<"SERL Energy time per iter (s/iter) "<<CUDAcommon::serltime.TcomputeE/
-                                                      (double(CUDAcommon::serltime.Ecount))
+                                                      (floatingpoint(CUDAcommon::serltime.Ecount))
              <<endl;
     std::cout<<"SERL Split Times Iter "<<numIter<<" "<<s1<<" "<<s2<<" "<<s3<<" "<<s4<<endl;
     std::cout<<"SERL Add "<<s1+s2+s3+s4<<endl;
 #endif
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runslice2(tendII - tbeginII);
+    chrono::duration<floatingpoint> elapsed_runslice2(tendII - tbeginII);
     std::cout<<"Slice time "<<elapsed_runslice2.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
@@ -735,7 +735,7 @@ std::cout<<"----------------------------------------"<<endl;
 //        Msg_s2 = Msg_ss;
 //#endif
 //#ifdef SERIAL
-//        double beta, newGrad, prevGrad;
+//        floatingpoint beta, newGrad, prevGrad;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
 //#endif
 ////PING ENDS
@@ -765,8 +765,8 @@ std::cout<<"----------------------------------------"<<endl;
 //#ifdef SERIAL_CUDACROSSCHECK
 //
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
-//        double cuda_lambda[1];
-//        CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(double),
+//        floatingpoint cuda_lambda[1];
+//        CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
 //                                           cudaMemcpyDeviceToHost));
 //        std::cout<<"Lambda CUDA "<<cuda_lambda[0]<<" SERL "<<lambda<<endl;
 //#endif
@@ -826,7 +826,7 @@ std::cout<<"----------------------------------------"<<endl;
 //            CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
 //#ifdef CUDATIMETRACK
 //        tend= chrono::high_resolution_clock::now();
-//        chrono::duration<double> elapsed_run(tend - tbegin);
+//        chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
 //        CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
 //        CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
 //#endif
@@ -993,7 +993,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run2(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run2(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run2.count());
     CUDAcommon::cudatime.TcomputeF += elapsed_run2.count();
 #endif
@@ -1046,7 +1046,7 @@ std::cout<<"----------------------------------------"<<endl;
     endMinimization();
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runslice4(tendII - tbeginII);
+    chrono::duration<floatingpoint> elapsed_runslice4(tendII - tbeginII);
     std::cout<<"Slice time "<<elapsed_runslice4.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
@@ -1066,10 +1066,10 @@ std::cout<<"----------------------------------------"<<endl;
 
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runslice3(tendII - tbeginII);
+    chrono::duration<floatingpoint> elapsed_runslice3(tendII - tbeginII);
     std::cout<<"Slice time "<<elapsed_runslice3.count()<<endl;
     tendTot= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runtot(tendTot - tbeginTot);
+    chrono::duration<floatingpoint> elapsed_runtot(tendTot - tbeginTot);
     std::cout<<"Total Minimization time "<<elapsed_runtot.count()<<endl;
 #endif
 }

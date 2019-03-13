@@ -19,20 +19,20 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
+floatingpoint BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint d) {
     
-    double U = 0.0;
-    double U_i=0.0;
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
     
     for (auto bb: Bubble::getBubbles()) {
         
         for(auto &bbo : _neighborList->getNeighbors(bb)) {
             
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
+            floatingpoint kRep = bb->getRepulsionConst();
+            floatingpoint screenLength = bb->getScreeningLength();
             
-            double radius1 = bb->getRadius();
-            double radius2 = bbo->getRadius();
+            floatingpoint radius1 = bb->getRadius();
+            floatingpoint radius2 = bbo->getRadius();
             
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
@@ -44,7 +44,7 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d)
                 U_i = _FFType.energy(
                 bd1, bd2, radius1, radius2, kRep, screenLength, d);
             
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
                 //set culprits and return
@@ -68,11 +68,11 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
         
         for(auto &bbo : _neighborList->getNeighbors(bb)) {
             
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
+            floatingpoint kRep = bb->getRepulsionConst();
+            floatingpoint screenLength = bb->getScreeningLength();
             
-            double radius1 = bb->getRadius();
-            double radius2 = bbo->getRadius();
+            floatingpoint radius1 = bb->getRadius();
+            floatingpoint radius2 = bbo->getRadius();
             
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
@@ -91,11 +91,11 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
         
         for(auto &bbo : _neighborList->getNeighbors(bb)) {
             
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
+            floatingpoint kRep = bb->getRepulsionConst();
+            floatingpoint screenLength = bb->getScreeningLength();
             
-            double radius1 = bb->getRadius();
-            double radius2 = bbo->getRadius();
+            floatingpoint radius1 = bb->getRadius();
+            floatingpoint radius2 = bbo->getRadius();
             
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
@@ -107,6 +107,6 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
 }
 
 ///Template specializations
-template double BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(double d);
+template floatingpoint BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(floatingpoint d);
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces();
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux();

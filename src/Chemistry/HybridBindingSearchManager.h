@@ -138,8 +138,8 @@ private:
             minsfind, minefind, minsmap, minemap;
     Compartment* _compartment;
 
-    vector<vector<double>> bindingsites1;
-    vector<vector<double>> bindingsites2;
+    vector<vector<floatingpoint>> bindingsites1;
+    vector<vector<floatingpoint>> bindingsites2;
     vector<vector<float>> _rMaxsqvec; //squared maxdistance cutoff
     vector<vector<float>> _rMinsqvec;//squared mindistance cutoff
     vector<vector<short>> _filamentIDvec;//filament ID pairs considered
@@ -525,7 +525,7 @@ public:
                 _possibleBindingsstencilvec[idx][idx2].clear();
                 _reversepossibleBindingsstencilvec[idx][idx2].clear();
                 _possibleBindingsstencilvecuint[idx][idx2].clear();
-	            _mpossibleBindingsstencilvecuint[idx][idx2].clear();
+                _mpossibleBindingsstencilvecuint[idx][idx2].clear();
                 _reversepossibleBindingsstencilvecuint[idx][idx2].clear();
                 googlepossible[idx][idx2].clear();
                 googlereversepossible[idx][idx2].clear();
@@ -555,18 +555,18 @@ public:
         bspairsmotor2.init_dout(10000,{30625.0f, 50625.0f});
     }
 
-    static double SIMDtime;
-    static double HYBDtime;
-    static double findtime;
-    static double findtimeV2;
-    static double appendtime;
-    static double SIMDparse1;
-    static double SIMDparse2;
-    static double SIMDparse3;
-    static double SIMDcountbs;
-    static double HYBDappendtime;
-    static double SIMDV3appendtime;
-	static double findtimeV3;
+    static floatingpoint SIMDtime;
+    static floatingpoint HYBDtime;
+    static floatingpoint findtime;
+    static floatingpoint findtimeV2;
+    static floatingpoint appendtime;
+    static floatingpoint SIMDparse1;
+    static floatingpoint SIMDparse2;
+    static floatingpoint SIMDparse3;
+    static floatingpoint SIMDcountbs;
+    static floatingpoint HYBDappendtime;
+    static floatingpoint SIMDV3appendtime;
+	static floatingpoint findtimeV3;
     bool googlevar = false;
 };
 #endif

@@ -31,17 +31,18 @@
 
 #endif
 
+
 ///Species constants
 typedef unsigned int species_copy_t;
 const species_copy_t max_ulim = 1000000;
 
 ///Global time
-extern double global_time;
+extern floatingpoint global_time;
 
-inline double tau() {return global_time;}
+inline floatingpoint tau() {return global_time;}
 inline void resetglobaltime() {global_time=0.0;}
 ///Some constants
-const double kT = 4.1; //in pN * nm
+const floatingpoint kT = 4.1; //in pN * nm
 
 const int cylinder_cache = 500;
 const int bead_cache = 1000;//total number of beads that can be appended before
@@ -52,9 +53,6 @@ using namespace std;
 
 ///Boost typedef
 typedef boost::signals2::shared_connection_block ConnectionBlock;
-
-///floatingpoint typedef
-typedef float floatingpoint;
 
 ///Num filament types maximum
 #define MAX_FILAMENT_TYPES 10

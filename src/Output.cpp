@@ -281,13 +281,13 @@ void Forces::print(int snapshot) {
         //print force
         for (auto cylinder : filament->getCylinderVector()){
             
-            double forceMag= cylinder->getFirstBead()->FDotF();
+            floatingpoint forceMag= cylinder->getFirstBead()->FDotF();
             forceMag = sqrt(forceMag);
             _outputFile<<forceMag << " ";
             
         }
         //print last bead force
-        double forceMag = filament->getCylinderVector().back()->
+        floatingpoint forceMag = filament->getCylinderVector().back()->
                           getSecondBead()->FDotF();
         forceMag = sqrt(forceMag);
         _outputFile<<forceMag;
@@ -381,8 +381,8 @@ void Tensions::print(int snapshot) {
         //print
         for (auto cylinder : filament->getCylinderVector()){
             
-            double k = cylinder->getMCylinder()->getStretchingConst();
-            double deltaL = cylinder->getMCylinder()->getLength() -
+            floatingpoint k = cylinder->getMCylinder()->getStretchingConst();
+            floatingpoint deltaL = cylinder->getMCylinder()->getLength() -
                             cylinder->getMCylinder()->getEqLength();
             
             _outputFile<< abs(k * deltaL) << " ";
@@ -390,8 +390,8 @@ void Tensions::print(int snapshot) {
         }
         //print last
         Cylinder* cylinder = filament->getCylinderVector().back();
-        double k = cylinder->getMCylinder()->getStretchingConst();
-        double deltaL = cylinder->getMCylinder()->getLength() -
+        floatingpoint k = cylinder->getMCylinder()->getStretchingConst();
+        floatingpoint deltaL = cylinder->getMCylinder()->getLength() -
                         cylinder->getMCylinder()->getEqLength();
         _outputFile<< abs(k * deltaL);
         
@@ -484,14 +484,14 @@ void WallTensions::print(int snapshot) {
         //print
         for (auto cylinder : filament->getCylinderVector()){
             
-            double k = SysParams::Mechanics().pinK;
+            floatingpoint k = SysParams::Mechanics().pinK;
             Bead* b = cylinder->getFirstBead();
             
             if(b->isPinned()) {
                 auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
                 auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
                 
-                double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+                floatingpoint deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
                 
                 
                 _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
@@ -502,14 +502,14 @@ void WallTensions::print(int snapshot) {
         }
         //print last
         Cylinder* cylinder = filament->getCylinderVector().back();
-        double k = SysParams::Mechanics().pinK;
+        floatingpoint k = SysParams::Mechanics().pinK;
         Bead* b = cylinder->getSecondBead();
         
         if(b->isPinned()) {
             auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
             auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
             
-            double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+            floatingpoint deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
             
             _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
         }
@@ -901,13 +901,13 @@ void BRForces::print(int snapshot) {
         //print force
         for (auto cylinder : filament->getCylinderVector()){
             
-            double forceMag= cylinder->getFirstBead()->brFDotbrF();
+            floatingpoint forceMag= cylinder->getFirstBead()->brFDotbrF();
             forceMag = sqrt(forceMag);
             _outputFile<<forceMag << " ";
             
         }
         //print last bead force
-        double forceMag = filament->getCylinderVector().back()->
+        floatingpoint forceMag = filament->getCylinderVector().back()->
         getSecondBead()->brFDotbrF();
         forceMag = sqrt(forceMag);
         _outputFile<<forceMag;
@@ -993,13 +993,13 @@ void Concentrations::print(int snapshot) {
 //        //print force
 //        for (auto cylinder : filament->getCylinderVector()){
 //            
-//            double forceMag= cylinder->getFirstBead()->pinFDotpinF();
+//            floatingpoint forceMag= cylinder->getFirstBead()->pinFDotpinF();
 //            forceMag = sqrt(forceMag);
 //            _outputFile<<forceMag << " ";
 //            
 //        }
 //        //print last bead force
-//        double forceMag = filament->getCylinderVector().back()->
+//        floatingpoint forceMag = filament->getCylinderVector().back()->
 //        getSecondBead()->pinFDotpinF();
 //        forceMag = sqrt(forceMag);
 //        _outputFile<<forceMag;

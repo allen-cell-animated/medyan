@@ -25,54 +25,54 @@ struct MechParams {
     
     //@{
     /// Filament parameter
-    vector<double> FStretchingK  = {};
-    vector<double> FBendingK     = {};
-    vector<double> FBendingTheta = {};
-    vector<double> FTwistingK    = {};
-    vector<double> FTwistingPhi  = {};
+    vector<floatingpoint> FStretchingK  = {};
+    vector<floatingpoint> FBendingK     = {};
+    vector<floatingpoint> FBendingTheta = {};
+    vector<floatingpoint> FTwistingK    = {};
+    vector<floatingpoint> FTwistingPhi  = {};
     //@}
     
     //@{
     /// Linker parameter
-    vector<double> LStretchingK  = {};
-    vector<double> LBendingK     = {};
-    vector<double> LBendingTheta = {};
-    vector<double> LTwistingK    = {};
-    vector<double> LTwistingPhi  = {};
+    vector<floatingpoint> LStretchingK  = {};
+    vector<floatingpoint> LBendingK     = {};
+    vector<floatingpoint> LBendingTheta = {};
+    vector<floatingpoint> LTwistingK    = {};
+    vector<floatingpoint> LTwistingPhi  = {};
     //@}
     
     //@{
     /// MotorGhost parameter
-    vector<double> MStretchingK  = {};
-    vector<double> MBendingK     = {};
-    vector<double> MBendingTheta = {};
-    vector<double> MTwistingK    = {};
-    vector<double> MTwistingPhi  = {};
+    vector<floatingpoint> MStretchingK  = {};
+    vector<floatingpoint> MBendingK     = {};
+    vector<floatingpoint> MBendingTheta = {};
+    vector<floatingpoint> MTwistingK    = {};
+    vector<floatingpoint> MTwistingPhi  = {};
     //@}
     
     //@{
     /// BranchingPoint parameter
-    vector<double> BrStretchingK  = {};
-    vector<double> BrStretchingL  = {};
-    vector<double> BrBendingK     = {};
-    vector<double> BrBendingTheta = {};
-    vector<double> BrDihedralK    = {};
-    vector<double> BrPositionK    = {};
+    vector<floatingpoint> BrStretchingK  = {};
+    vector<floatingpoint> BrStretchingL  = {};
+    vector<floatingpoint> BrBendingK     = {};
+    vector<floatingpoint> BrBendingTheta = {};
+    vector<floatingpoint> BrDihedralK    = {};
+    vector<floatingpoint> BrPositionK    = {};
     //@}
     
     //@{
     /// Volume parameter
-    vector<double> VolumeK = {};
-    double VolumeCutoff = 0.0;
+    vector<floatingpoint> VolumeK = {};
+    floatingpoint VolumeCutoff = 0.0;
     //@}
     
     //@{
     /// Bubble parameter
-    vector<double> BubbleK = {};
-    vector<double> BubbleRadius = {};
-    vector<double> BubbleScreenLength = {};
+    vector<floatingpoint> BubbleK = {};
+    vector<floatingpoint> BubbleRadius = {};
+    vector<floatingpoint> BubbleScreenLength = {};
     
-    double BubbleCutoff = 0.0;
+    floatingpoint BubbleCutoff = 0.0;
     
     ///If using more than one bubble
     short numBubbleTypes = 1;
@@ -84,21 +84,21 @@ struct MechParams {
     
     //Qin
     bool pinLowerBoundaryFilaments = false;
-    double pinFraction = 1.0; //test 
+    floatingpoint pinFraction = 1.0; //test 
     
     ///To pin filaments on boundary via an attractive potential
     bool pinBoundaryFilaments = false;
-    double pinDistance = 250; ///< 250nm pinning distance for now
-    double pinK = 0.0;       ///< Tethered stiffness
-    double pinTime = 0.0;    ///< Time at which to pin the filaments
+    floatingpoint pinDistance = 250; ///< 250nm pinning distance for now
+    floatingpoint pinK = 0.0;       ///< Tethered stiffness
+    floatingpoint pinTime = 0.0;    ///< Time at which to pin the filaments
     //int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols
 /// should be executed.
     //@}
 
     //vectorization
-    double *coord;
+    floatingpoint *coord;
     vector<vector<bool>> speciesboundvec;
-    double* cylsqmagnitudevector;
+    floatingpoint* cylsqmagnitudevector;
     vector<int> ncylvec;
     vector<int>bsoffsetvec;
 
@@ -142,7 +142,7 @@ struct ChemParams {
     vector<short> motorNumHeadsMin = {};
     vector<short> motorNumHeadsMax = {};
     
-    vector<double> motorStepSize = {};
+    vector<floatingpoint> motorStepSize = {};
     //@}
     
     /// Binding sites on filaments
@@ -167,18 +167,18 @@ struct ChemParams {
     /// This passivates any polymerization or depolymerization
     /// reactions, resulting in constant length filaments for the rest of simulation.
     bool makeFilamentsStatic = false;
-    double makeFilamentsStaticTime = 0.0;
+    floatingpoint makeFilamentsStaticTime = 0.0;
     
     /// Option to make Linker objects static after a certain time.
     /// This passivates any unbinding reactions, resulting in permanently
     /// bound linkers for the rest of simulation.
     bool makeLinkersStatic = false;
-    double makeLinkersStaticTime = 0.0;
+    floatingpoint makeLinkersStaticTime = 0.0;
     
     //@}
 #ifdef CUDAACCL_NL
     string bindingmanagerlist = "";
-    vector<double> bmanagerdistances = {};
+    vector<floatingpoint> bmanagerdistances = {};
 #endif
 };
 
@@ -193,22 +193,22 @@ struct GeoParams {
     int NY = 0;
     int NZ = 0;
     
-    double compartmentSizeX = 0;
-    double compartmentSizeY = 0;
-    double compartmentSizeZ = 0;
+    floatingpoint compartmentSizeX = 0;
+    floatingpoint compartmentSizeY = 0;
+    floatingpoint compartmentSizeZ = 0;
     
-    double largestCompartmentSide = 0;
+    floatingpoint largestCompartmentSide = 0;
 
-    double largestCylinderSize = 0;
+    floatingpoint largestCylinderSize = 0;
     
-    vector<double> monomerSize = {};
+    vector<floatingpoint> monomerSize = {};
     
     ///Number of monomers in a cylinder
     vector<int> cylinderNumMon = {};
     
-    vector<double> cylinderSize = {};
+    vector<floatingpoint> cylinderSize = {};
     
-    vector<double> minCylinderSize = {};
+    vector<floatingpoint> minCylinderSize = {};
     
     /// Minimum monomer length of a cylinder is preset
     int minCylinderNumMon = 3;
@@ -222,26 +222,26 @@ struct BoundParams {
     
     //@{
     /// Mechanical parameter
-    double BoundaryK = 0;
-    double BScreenLength = 0;
+    floatingpoint BoundaryK = 0;
+    floatingpoint BScreenLength = 0;
     //@}
     
     /// Cutoff for force calculation
-    double BoundaryCutoff = 0;
-    double diameter = 0;
+    floatingpoint BoundaryCutoff = 0;
+    floatingpoint diameter = 0;
     
     /// Moving speed (if any)
-    double moveSpeed = 0;
+    floatingpoint moveSpeed = 0;
     
     //@{
     /// Moving times
-    double moveStartTime = 0;
-    double moveEndTime = 0;
+    floatingpoint moveStartTime = 0;
+    floatingpoint moveEndTime = 0;
     //@}
     int transfershareaxis=-1;       ///Axis along which activate/deactivate protocols should be executed.
     int planestomove = -1; //tracks if both (2), left/bottom/front (1), or
     // right/top/back(0) planes should be moved.
-    vector<vector<double>> fraccompartmentspan = { { 0, 0, 0 },
+    vector<vector<floatingpoint>> fraccompartmentspan = { { 0, 0, 0 },
                                                    { 0.999, 0.999, 0.999 } };
   
 };
@@ -250,21 +250,21 @@ struct BoundParams {
 struct DyRateParams {
     
     /// Option for dynamic polymerization rate of filaments
-    vector<double> dFilPolymerizationCharLength = {};
+    vector<floatingpoint> dFilPolymerizationCharLength = {};
     
     /// Option for dynamic unbinding rate of linkers
-    vector<double> dLinkerUnbindingCharLength = {};
-    vector<double> dLinkerUnbindingAmplitude = {};
+    vector<floatingpoint> dLinkerUnbindingCharLength = {};
+    vector<floatingpoint> dLinkerUnbindingAmplitude = {};
     
     /// Option for dynamic unbinding rate of motors
-    vector<double> dMotorUnbindingCharForce = {};
+    vector<floatingpoint> dMotorUnbindingCharForce = {};
     
     /// Option for dynamic walking rate of motors
-    vector<double> dMotorWalkingCharForce = {};
+    vector<floatingpoint> dMotorWalkingCharForce = {};
     
     //Qin
     /// Option for dynamic branching point unbinding rate
-    vector<double> dBranchUnbindingCharLength = {};
+    vector<floatingpoint> dBranchUnbindingCharLength = {};
 };
 
 /// Static class that holds all simulation parameters,

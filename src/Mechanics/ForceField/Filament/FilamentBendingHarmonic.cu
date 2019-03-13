@@ -67,9 +67,9 @@ void FilamentBendingHarmonic::optimalblocksnthreads( int nint, cudaStream_t stre
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
         char a[] = "FilamentFF";
         char b[] = "Filament Bending Harmonic";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
@@ -88,26 +88,26 @@ void FilamentBendingHarmonic::optimalblocksnthreads( int nint, cudaStream_t stre
     }
 
 }
-double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                      double *kbend, double *eqt, int *params) {
+floatingpoint* FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                      floatingpoint *kbend, floatingpoint *eqt, int *params) {
     if(blocksnthreadse[1]>0) {
         FilamentBendingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+                (floatingpoint), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingHarmonicenergy", "FilamentBendingHarmonic.cu");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(floatingpoint),stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
 //        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
 //                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
         CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingHarmonicenergy", "FilamentBendingHarmonic.cu");
         return gU_sum;}
@@ -116,12 +116,12 @@ double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
 }
 
 
-double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                      double *kbend, double *eqt, double *z, int *params) {
+floatingpoint* FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                      floatingpoint *kbend, floatingpoint *eqt, floatingpoint *z, int *params) {
     if(blocksnthreadsez[1]>0) {
 
         FilamentBendingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
-                                            sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i,
+                                            sizeof(floatingpoint), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i,
                                             z, CUDAcommon::getCUDAvars().gculpritID,
                                             CUDAcommon::getCUDAvars().gculpritFF,
                                             CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -129,14 +129,14 @@ double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingHarmonicenergyz", "FilamentBendingHarmonic.cu");
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(floatingpoint),stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
 //                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingHarmonicenergyz", "FilamentBendingHarmonic.cu");
@@ -145,11 +145,11 @@ double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
         return NULL;
 }
 
-void FilamentBendingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                   double *kbend, double *eqt, int *params){
+void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                   floatingpoint *kbend, floatingpoint *eqt, int *params){
     if(blocksnthreadsf[1]>0) {
         FilamentBendingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (9 * blocksnthreadsf[1]) *
-                                                                                 sizeof(double), stream >> > (coord, f, beadSet, kbend, eqt, params);
+                                                                                 sizeof(floatingpoint), stream >> > (coord, f, beadSet, kbend, eqt, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -176,15 +176,15 @@ void FilamentBendingHarmonic::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                       double *kbend, double *eqt){
+floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                       floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
-    double *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
+    floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -204,7 +204,7 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
 
         U_i = kbend[i] * ( 1 - l1l2 / L1L2 );
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return TODO
@@ -219,15 +219,15 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                       double *kbend, double *eqt, double d ){
+floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                       floatingpoint *kbend, floatingpoint *eqt, floatingpoint d ){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
-    double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist, U_i, L1, L2, L1L2, l1l2;
+    floatingpoint *coord1, *coord2, *coord3, *force1, *force2, *force3, dist, U_i, L1, L2, L1L2, l1l2;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -252,7 +252,7 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
 
         U_i = kbend[i] * ( 1 - l1l2 / L1L2);
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return TODO
@@ -267,13 +267,13 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-void FilamentBendingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                     double *kbend, double *eqt){
+void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                     floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
-    double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist,
+    floatingpoint *coord1, *coord2, *coord3, *force1, *force2, *force3, dist,
             L1, L2, l1l2, invL1, invL2, A,B,C, k;
 
     for(int i = 0; i < nint; i += 1) {

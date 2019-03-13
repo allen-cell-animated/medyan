@@ -35,7 +35,7 @@ protected:
     
 public:
     /// Compute energy of this interaction
-    virtual double computeEnergy(double d) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint d) = 0;
     /// Compute forces of this interaction
     virtual void computeForces() = 0;
     /// Compute auxiliary forces of this interaction

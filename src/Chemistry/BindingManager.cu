@@ -41,7 +41,7 @@ BranchingManager::BranchingManager(ReactionBase* reaction,
                                    Compartment* compartment,
                                    short boundInt, string boundName,
                                    short filamentType,
-                                   NucleationZoneType zone, double nucleationDistance)
+                                   NucleationZoneType zone, floatingpoint nucleationDistance)
 
         : FilamentBindingManager(reaction, compartment, boundInt, boundName, filamentType),
           _nucleationZone(zone), _nucleationDistance(nucleationDistance) {
@@ -96,7 +96,9 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
     //add valid site
     if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
+            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(),
+                    (floatingpoint)1.0) &&
+            inZone) {
 
         auto t = tuple<CCylinder*, short>(cc, bindingSite);
         _possibleBindings.insert(t);
@@ -199,7 +201,8 @@ void BranchingManager::updateAllPossibleBindings() {
                     inZone = false;
             }
             if (areEqual(cc->getCMonomer(*it)->speciesBound(
-                    SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
+                    SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1
+                    .0f) && inZone) {
 //                output test
 //                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 //                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
@@ -237,7 +240,7 @@ bool BranchingManager::isConsistent() {
 
         //check site empty
         if(!areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-                SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0))
+                SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), (floatingpoint)1.0))
             flag = false;
 
         if(!flag) {
@@ -294,7 +297,7 @@ void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSi
                     inZone = false;
             }
             else if(_nucleationZone == NucleationZoneType::RIGHTBOUNDARY){
-                double dis = _subSystem->getBoundary()->getboundaryelementcoord(1) -
+                floatingpoint dis = _subSystem->getBoundary()->getboundaryelementcoord(1) -
                         coord[0];
                 if(dis > 0 && dis < _nucleationDistance)
                     inZone = true;
@@ -310,7 +313,8 @@ void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSi
 
     //add valid site
     if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), 1.0) && inZone) {
+            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), (floatingpoint)1.0) &&
+        inZone) {
 
         auto t = tuple<CCylinder*, short>(cc, bindingSite);
         _possibleBindingsstencil.insert(t);
@@ -371,7 +375,7 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
                             inZone = false;
                     }
                     else if(_nucleationZone == NucleationZoneType::RIGHTBOUNDARY){
-                        double dis = _subSystem->getBoundary()->getboundaryelementcoord(1) -
+                        floatingpoint dis = _subSystem->getBoundary()->getboundaryelementcoord(1) -
                                      coord[0];
                         if(dis > 0 && dis < _nucleationDistance)
                             inZone = true;
@@ -386,7 +390,8 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
             }
             if (areEqual(boundstate[0][offset + SysParams::Chemistry()
                                                         .bindingSites[_filamentType]
-                                                        .size()*c->_dcIndex + j], 1.0) && inZone) {
+                                                        .size()*c->_dcIndex + j], (floatingpoint)1.0)
+                && inZone) {
 //                output test
 //                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 //                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
@@ -483,13 +488,13 @@ void BranchingManager::crosscheck(){
 #endif
 #ifdef CUDAACCL_NL
 void BranchingManager::assigncudavars() {
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_distance, 2 * sizeof(double)),"cuda data transfer", " "
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_distance, 2 * sizeof(floatingpoint)),"cuda data transfer", " "
             "BindingManager.cu");
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_numpairs, sizeof(int)),"cuda data transfer", " "
             "BindingManager.cu");
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_zone, sizeof(int)),"cuda data transfer", " "
             "BindingManager.cu");
-    double dist[2];
+    floatingpoint dist[2];
     dist[0] = _nucleationDistance;
     dist[1] = GController::getCenter()[2];
     int n[1];
@@ -502,7 +507,7 @@ void BranchingManager::assigncudavars() {
         zone[0] =1;
     else if(_nucleationZone == NucleationZoneType::TOPBOUNDARY)
         zone[0] =2;
-    CUDAcommon::handleerror(cudaMemcpy(gpu_distance, dist, 2 * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_distance, dist, 2 * sizeof(floatingpoint), cudaMemcpyHostToDevice));
     CUDAcommon::handleerror(cudaMemcpy(gpu_numpairs, n, sizeof(int), cudaMemcpyHostToDevice));
     CUDAcommon::handleerror(cudaMemcpy(gpu_zone, zone, sizeof(int), cudaMemcpyHostToDevice));
 //    delete dist;
@@ -569,7 +574,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 
     //add valid binding sites
     if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
+            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(),(floatingpoint)1.0)) {
 
         //loop through neighbors
         //now re add valid based on CCNL
@@ -590,7 +595,8 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-                        SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
+                        SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(),
+                                (floatingpoint)1.0)) {
 
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -604,7 +610,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                    double dist = twoPointDistance(m1, m2);
+                    floatingpoint dist = twoPointDistance(m1, m2);
 
                     if(dist > _rMax || dist < _rMin) continue;
 
@@ -793,7 +799,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
             //now re add valid binding sites
             if (areEqual(cc->getCMonomer(*it1)->speciesBound(
-                    SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0) ) {
+                    SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1
+                    .0f) ) {
 
                 //loop through neighbors
                 //now re add valid based on CCNL
@@ -814,7 +821,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                         it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
 
                         if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
-                                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
+                                SysParams::Chemistry().linkerBoundIndex[_filamentType])
+                                ->getN(), (floatingpoint)1.0)) {
 
                             //check distances..
                             auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -828,7 +836,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             auto m1 = midPointCoordinate(x1, x2, mp1);
                             auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                            double dist = twoPointDistance(m1,m2);
+                            floatingpoint dist = twoPointDistance(m1,m2);
 //                            std::cout<<c->_dcIndex<<" "<<cn->_dcIndex<<" "<<*it1<<" "<<*it2<<" "<<m1[0]<<" "
 //                                    ""<<m1[1]<<" "<<m1[2]<<" "<<m2[0]<<" "<<m2[1]<<" "<<m2[2]<<" "<<mp1<<" "<<mp2<<endl;
 
@@ -889,7 +897,7 @@ vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSites() {
 void LinkerBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
                                                   tuple<CCylinder*,
                                                           short> t2){
-    double oldN=numBindingSites();
+    floatingpoint oldN=numBindingSites();
 #ifdef DEBUGCONSTANTSEED
     vector<tuple<CCylinder*, short>> a = {t1,t2};
     bool status = true;
@@ -907,7 +915,7 @@ void LinkerBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
 #else
     _possibleBindings.emplace(t1,t2);
 #endif
-    double newN=numBindingSites();
+    floatingpoint newN=numBindingSites();
     updateBindingReaction(oldN,newN);
 }
 #endif
@@ -940,10 +948,10 @@ bool LinkerBindingManager::isConsistent() {
 
         //check site empty
         if(!areEqual(cc1->getCMonomer(bindingSite1)->speciesBound(
-                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0) ||
+                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), (floatingpoint)1.0) ||
 
            !areEqual(cc2->getCMonomer(bindingSite2)->speciesBound(
-                   SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0))
+                   SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), (floatingpoint)1.0))
 
             flag = false;
 
@@ -982,7 +990,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 
     //add valid binding sites
     if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
+            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), (floatingpoint)1.0)) {
 
         //loop through neighbors
         //now re add valid based on CCNL
@@ -1006,7 +1014,8 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-                        SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
+                        SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(),
+                                (floatingpoint)1.0)) {
 
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -1020,7 +1029,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                    double dist = twoPointDistance(m1, m2);
+                    floatingpoint dist = twoPointDistance(m1, m2);
 
                     if(dist > _rMax || dist < _rMin) continue;
 
@@ -1070,19 +1079,19 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
 void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     _possibleBindingsstencil.clear();
     int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
-    double min1,min2,max1,max2;
+    floatingpoint min1,min2,max1,max2;
     bool status1 = true;
     bool status2 = true;
-    double minveca[2];
-    double maxveca[2];
+    floatingpoint minveca[2];
+    floatingpoint maxveca[2];
     int accepts = 0;
     int total = 0;
     int Ncyl = Cylinder::getCylinders().size();
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-    double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
+    floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    double* coord = CUDAcommon::getSERLvars().coord;
+    floatingpoint* coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
     auto bindingsitevec =SysParams::Chemistry().bindingSites[_filamentType];
@@ -1119,10 +1128,10 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
         if(c.type != _filamentType) {
 //            counter2++;
             continue;}
-        double x1[3],x2[3];
-        memcpy(x1, &coord[3*c.bindices[0]], 3 * sizeof(double));
-        memcpy(x2, &coord[3*c.bindices[1]], 3 * sizeof(double));
-        double X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+        floatingpoint x1[3],x2[3];
+        memcpy(x1, &coord[3*c.bindices[0]], 3 * sizeof(floatingpoint));
+        memcpy(x2, &coord[3*c.bindices[1]], 3 * sizeof(floatingpoint));
+        floatingpoint X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 
         //Check 2
 /*        for(auto cndummy:ncindices[i]){
@@ -1149,28 +1158,28 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 //                counter4++;
                 continue;}
 
-            double x3[3], x4[3];
-            memcpy(x3, &coord[3*cn.bindices[0]], 3 * sizeof(double));
-            memcpy(x4, &coord[3*cn.bindices[1]], 3 * sizeof(double));
-            double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-            double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-            double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector[c.cindex];
-            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector[cn.cindex];
-            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
-            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+            floatingpoint x3[3], x4[3];
+            memcpy(x3, &coord[3*cn.bindices[0]], 3 * sizeof(floatingpoint));
+            memcpy(x4, &coord[3*cn.bindices[1]], 3 * sizeof(floatingpoint));
+            floatingpoint X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+            floatingpoint X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+            floatingpoint X1X3squared = sqmagnitude(X1X3);
+            floatingpoint X1X2squared = cylsqmagnitudevector[c.cindex];
+            floatingpoint X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+            floatingpoint X3X4squared = cylsqmagnitudevector[cn.cindex];
+            floatingpoint X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
+            floatingpoint X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             for(int pos1 =0; pos1<nbs;pos1++) {
                 //now re add valid binding sites
-                if (areEqual(boundstate[1][offset + maxnbs *c.cindex + pos1], 1.0)) {
+                if (areEqual(boundstate[1][offset + maxnbs *c.cindex + pos1], (floatingpoint)1.0)) {
                     auto mp1 = bindingsites.at(pos1);
-                    double A = X3X4squared;
-                    double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
-                    double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
-                    double C1 = C - _rMinsq;
-                    double C2 = C - _rMaxsq;
-                    double b2m4ac1 = B*B - 4*A*C1;
-                    double b2m4ac2 = B*B - 4*A*C2;
+                    floatingpoint A = X3X4squared;
+                    floatingpoint B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
+                    floatingpoint C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
+                    floatingpoint C1 = C - _rMinsq;
+                    floatingpoint C2 = C - _rMaxsq;
+                    floatingpoint b2m4ac1 = B*B - 4*A*C1;
+                    floatingpoint b2m4ac2 = B*B - 4*A*C2;
                     status1 = b2m4ac1 < 0;
                     status2 = b2m4ac2 < 0;
                     if(status1 && status2) {
@@ -1209,7 +1218,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                         }
                     }
                     for(int pos2 = 0; pos2<nbs;pos2++){
-                        if (areEqual(boundstate[1][offset + maxnbs *cn.cindex + pos2], 1.0)) {
+                        if (areEqual(boundstate[1][offset + maxnbs *cn.cindex + pos2], (floatingpoint)1.0)) {
                             total++;
                             //check distances..
                             auto mp2 = bindingsites.at(pos2);
@@ -1257,15 +1266,15 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 //    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
     /*_possibleBindingsstencil.clear();
     chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
-    double timetaken = 0.0;
-    double time16 = 0.0;
-    double sqdisttermswithjustalpha;
-    vector<double> maxvec;
-    vector<double> minvec;
+    floatingpoint timetaken = 0.0;
+    floatingpoint time16 = 0.0;
+    floatingpoint sqdisttermswithjustalpha;
+    vector<floatingpoint> maxvec;
+    vector<floatingpoint> minvec;
     int rejects16 = 0;
     int rejectsnavail =0;
     mints = chrono::high_resolution_clock::now();
-    vector<double> bindingsites;
+    vector<floatingpoint> bindingsites;
 
     for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
         it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
@@ -1274,7 +1283,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     }
 
     minte = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_vec(minte - mints);
+    chrono::duration<floatingpoint> elapsed_vec(minte - mints);
     std::cout<<"Vectorize time "<<elapsed_vec.count()<<endl;
 
     accepts =0;
@@ -1288,7 +1297,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
         auto x1 = c->getFirstBead()->coordinate;
         auto x2 = c->getSecondBead()->coordinate;
         auto cc = c->getCCylinder();
-        vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+        vector<floatingpoint> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 
         for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(cc->getCylinder())) {
 
@@ -1299,21 +1308,21 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
             auto x3 = cn->getFirstBead()->coordinate;
             auto x4 = cn->getSecondBead()->coordinate;
 
-            vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-            vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-            double maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
+            vector<floatingpoint> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+            vector<floatingpoint> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+            floatingpoint maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
 
-            double mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
+            floatingpoint mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
                                                                                     x3,x4)));
             mindistsq = mindistsq * mindistsq;
             if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
 
-            double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
-            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
-            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
-            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+            floatingpoint X1X3squared = sqmagnitude(X1X3);
+            floatingpoint X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
+            floatingpoint X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+            floatingpoint X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
+            floatingpoint X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
+            floatingpoint X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             mins2 = chrono::high_resolution_clock::now();
             int i = -1;
             for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -1324,14 +1333,14 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                                                             .bindingSites[_filamentType].size()
                                                     *c->_dcIndex + i], 1.0)) {
                     auto mp1 = bindingsites.at(i);
-                    double A = X3X4squared;
-                    double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
-                    double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 *
+                    floatingpoint A = X3X4squared;
+                    floatingpoint B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
+                    floatingpoint C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 *
                                                                        X1X3dotX1X2;
-                    double C1 = C - _rMinsq;
-                    double C2 = C - _rMaxsq;
-                    double b2m4ac1 = B*B - 4*A*C1;
-                    double b2m4ac2 = B*B - 4*A*C2;
+                    floatingpoint C1 = C - _rMinsq;
+                    floatingpoint C2 = C - _rMaxsq;
+                    floatingpoint b2m4ac1 = B*B - 4*A*C1;
+                    floatingpoint b2m4ac2 = B*B - 4*A*C2;
                     status1 = b2m4ac1 < 0;
                     status2 = b2m4ac2 < 0;
                     if(status1 && status2) continue;
@@ -1404,19 +1413,19 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                                 }
                             }
                             mine= chrono::high_resolution_clock::now();
-                            chrono::duration<double> elapsed_emplace(mine - mins);
+                            chrono::duration<floatingpoint> elapsed_emplace(mine - mins);
                             timetaken += elapsed_emplace.count();
                         }
                     }
                 }
             }
             mine2= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_run16(mine2 - mins2);
+            chrono::duration<floatingpoint> elapsed_run16(mine2 - mins2);
             time16 += elapsed_run16.count();
         }
     }
     minte = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_total3(minte - mints);*/
+    chrono::duration<floatingpoint> elapsed_total3(minte - mints);*/
 //    std::cout<<"Overall time "<<elapsed_total3.count()<<endl;
 //    std::cout<<"Total "<<total<<" accepts "<<accepts<<endl;
 //    std::cout<<"16 loop time taken "<<time16<<endl;
@@ -1590,12 +1599,12 @@ vector<tuple<CCylinder*, short>> LinkerBindingManager::chooseBindingSitesstencil
 #ifdef CUDAACCL_NL
 void LinkerBindingManager::assigncudavars() {
 //    if(gpu_rminmax == NULL) {
-        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_rminmax, 2 * sizeof(double)), "cuda data transfer", " "
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_rminmax, 2 * sizeof(floatingpoint)), "cuda data transfer", " "
                 "BindingManager.cu");
-        double dist[2];
+        floatingpoint dist[2];
         dist[0] = _rMin;
         dist[1] = _rMax;
-        CUDAcommon::handleerror(cudaMemcpy(gpu_rminmax, dist, 2 *sizeof(double), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_rminmax, dist, 2 *sizeof(floatingpoint), cudaMemcpyHostToDevice));
 //    }
 //    if(gpu_numpairs == NULL) {
         CUDAcommon::handleerror(cudaMalloc((void **) &gpu_numpairs, sizeof(int)), "cuda data transfer", " "
@@ -1693,7 +1702,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 
     //add valid binding sites
     if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
+            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0)) {
 
         //loop through neighbors
         //now re add valid based on CCNL
@@ -1719,7 +1728,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
                         SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(),
-                             1.0)) {
+                             (floatingpoint)1.0)) {
 
                     //check distances..
                     auto mp1 = (float) bindingSite /
@@ -1735,7 +1744,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                    double dist = twoPointDistance(m1, m2);
+                    floatingpoint dist = twoPointDistance(m1, m2);
 
                     if (dist > _rMax || dist < _rMin) continue;
 
@@ -1946,7 +1955,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
 
             //now re add valid binding sites
             if (areEqual(cc->getCMonomer(*it1)->speciesBound(
-                    SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
+                    SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0)) {
 
                 vector<Cylinder*> nList = _neighborLists[_nlIndex]->getNeighbors
                         (cc->getCylinder());
@@ -1967,7 +1976,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
                         it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
 
                         if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
-                                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
+                                SysParams::Chemistry().motorBoundIndex[_filamentType])
+                                ->getN(), (floatingpoint)1.0)) {
 
                             //check distances..
                             auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -1981,7 +1991,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                             auto m1 = midPointCoordinate(x1, x2, mp1);
                             auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                            double dist = twoPointDistance(m1, m2);
+                            floatingpoint dist = twoPointDistance(m1, m2);
 
                             if(dist > _rMax || dist < _rMin) continue;
 
@@ -2056,7 +2066,7 @@ vector<tuple<CCylinder*, short>> MotorBindingManager::chooseBindingSites() {
 
 void MotorBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
                                                  tuple<CCylinder*, short> t2){
-    double oldN=numBindingSites();
+    floatingpoint oldN=numBindingSites();
 #ifdef DEBUGCONSTANTSEED
     vector<tuple<CCylinder*, short>> a = {t1,t2};
         bool status = true;
@@ -2074,7 +2084,7 @@ void MotorBindingManager::appendpossibleBindings(tuple<CCylinder*, short> t1,
 #else
     _possibleBindings.emplace(t1,t2);
 #endif
-    double newN=numBindingSites();
+    floatingpoint newN=numBindingSites();
     updateBindingReaction(oldN,newN);
 }
 #endif
@@ -2108,10 +2118,10 @@ bool MotorBindingManager::isConsistent() {
 
         //check site empty
         if(!areEqual(cc1->getCMonomer(bindingSite1)->speciesBound(
-                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0) ||
+                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0) ||
 
            !areEqual(cc2->getCMonomer(bindingSite2)->speciesBound(
-                   SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0))
+                   SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0))
 
             flag = false;
 
@@ -2161,7 +2171,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
 
     //add valid binding sites
     if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
+            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), (floatingpoint)1.0)) {
 
         //loop through neighbors
         //now re add valid based on CCNL
@@ -2181,7 +2191,8 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-                        SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0)) {
+                        SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1
+                        .0f)) {
 
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
@@ -2195,7 +2206,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                    double dist = twoPointDistance(m1, m2);
+                    floatingpoint dist = twoPointDistance(m1, m2);
 
                     if(dist > _rMax || dist < _rMin) continue;
 
@@ -2251,19 +2262,19 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     _possibleBindingsstencil.clear();
     int offset = 0;
             //SysParams::Mechanics().bsoffsetvec.at(_filamentType);
-    double min1,min2,max1,max2;
+    floatingpoint min1,min2,max1,max2;
     bool status1 = true;
     bool status2 = true;
-    double minveca[2];
-    double maxveca[2];
+    floatingpoint minveca[2];
+    floatingpoint maxveca[2];
     int accepts = 0;
     int total = 0;
     int Ncyl = Cylinder::getCylinders().size();
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-    double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
+    floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    double* coord = CUDAcommon::getSERLvars().coord;
+    floatingpoint* coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
     int counter1 = 0;
@@ -2300,21 +2311,21 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                       ccylvec[idx]->getCylinder()->_dcIndex << endl;
     }*/
 //    chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
-//    double timetaken = 0.0;
-//    double time16 = 0.0;
-//    double sqdisttermswithjustalpha;
-//    vector<double> maxvec;
-//    vector<double> minvec;
+//    floatingpoint timetaken = 0.0;
+//    floatingpoint time16 = 0.0;
+//    floatingpoint sqdisttermswithjustalpha;
+//    vector<floatingpoint> maxvec;
+//    vector<floatingpoint> minvec;
 //    int rejects16 = 0;
 //    int rejectsnavail =0;
 //    mints = chrono::high_resolution_clock::now();
 //    start
-//    double bscoord[3* nbs * Ncyl];
-//    double bsvec[nbs * Ncyl];
+//    floatingpoint bscoord[3* nbs * Ncyl];
+//    floatingpoint bsvec[nbs * Ncyl];
 //        int totalneighbors = 0;
 //    int counter1 = 0;
 //    minte = chrono::high_resolution_clock::now();
-//    chrono::duration<double> elapsed_vec(minte - mints);
+//    chrono::duration<floatingpoint> elapsed_vec(minte - mints);
 //    std::cout<<"Vectorize time "<<elapsed_vec.count()<<endl;
     //V3 begins
 //    int maxdistrejects = 0;
@@ -2362,7 +2373,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //                            auto m1 = midPointCoordinate(x1, x2, mp1);
 //                            auto m2 = midPointCoordinate(x3, x4, mp2);
 //
-//                            double dist = twoPointDistance(m1, m2);
+//                            floatingpoint dist = twoPointDistance(m1, m2);
 //
 //                            if(dist > _rMax || dist < _rMin) continue;
 //
@@ -2379,7 +2390,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //        }
 //    }
 //    minte = chrono::high_resolution_clock::now();
-//    chrono::duration<double> elapsed_totalv3(minte - mints);
+//    chrono::duration<floatingpoint> elapsed_totalv3(minte - mints);
 //    std::cout<<"Overall time vec v3 "<<elapsed_totalv3.count()<<endl;
 //    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
 //    std::cout<<"maxdist rejects "<<maxdistrejects<<endl;
@@ -2387,9 +2398,9 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     //V3 ends
 
 //    chrono::high_resolution_clock::time_point minIs, minIe, minroots, minroote ;
-//    double ttup = 0.0;
-//    double tsten = 0.0;
-//    double tdense = 0.0;
+//    floatingpoint ttup = 0.0;
+//    floatingpoint tsten = 0.0;
+//    floatingpoint tdense = 0.0;
     int counter2 =0; int counter3 = 0; int counter4 = 0; int counter5 = 0;
     int counter6 =0;int counter7 = 0; int counter8 = 0; int counter9 = 0;int counter10=0;
 //    mints = chrono::high_resolution_clock::now();
@@ -2399,10 +2410,10 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
         if(c.type != _filamentType) {
             counter2++;
             continue;}
-        double x1[3],x2[3];
-        memcpy(x1, &coord[3*c.bindices[0]], 3 * sizeof(double));
-        memcpy(x2, &coord[3*c.bindices[1]], 3 * sizeof(double));
-        double X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+        floatingpoint x1[3],x2[3];
+        memcpy(x1, &coord[3*c.bindices[0]], 3 * sizeof(floatingpoint));
+        memcpy(x2, &coord[3*c.bindices[1]], 3 * sizeof(floatingpoint));
+        floatingpoint X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
         //Check 2
 /*
         for(auto cndummy:ncindices[i]){
@@ -2430,28 +2441,28 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                 counter4++;
                  continue;}
 
-            double x3[3], x4[3];
-            memcpy(x3, &coord[3*cn.bindices[0]], 3 * sizeof(double));
-            memcpy(x4, &coord[3*cn.bindices[1]], 3 * sizeof(double));
-            double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-            double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-            double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector[c.cindex];
-            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector[cn.cindex];
-            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
-            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+            floatingpoint x3[3], x4[3];
+            memcpy(x3, &coord[3*cn.bindices[0]], 3 * sizeof(floatingpoint));
+            memcpy(x4, &coord[3*cn.bindices[1]], 3 * sizeof(floatingpoint));
+            floatingpoint X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+            floatingpoint X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+            floatingpoint X1X3squared = sqmagnitude(X1X3);
+            floatingpoint X1X2squared = cylsqmagnitudevector[c.cindex];
+            floatingpoint X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+            floatingpoint X3X4squared = cylsqmagnitudevector[cn.cindex];
+            floatingpoint X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
+            floatingpoint X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             for(int pos1 =0; pos1<nbs;pos1++) {
             //now re add valid binding sites
-                if (areEqual(boundstate[2][offset + maxnbs *c.cindex + pos1], 1.0)) {
+                if (areEqual(boundstate[2][offset + maxnbs *c.cindex + pos1], (floatingpoint)1.0)) {
                 auto mp1 = bindingsites.at(pos1);
-                double A = X3X4squared;
-                double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
-                double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
-                double C1 = C - _rMinsq;
-                double C2 = C - _rMaxsq;
-                double b2m4ac1 = B*B - 4*A*C1;
-                double b2m4ac2 = B*B - 4*A*C2;
+                floatingpoint A = X3X4squared;
+                floatingpoint B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
+                floatingpoint C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
+                floatingpoint C1 = C - _rMinsq;
+                floatingpoint C2 = C - _rMaxsq;
+                floatingpoint b2m4ac1 = B*B - 4*A*C1;
+                floatingpoint b2m4ac2 = B*B - 4*A*C2;
                 status1 = b2m4ac1 < 0;
                 status2 = b2m4ac2 < 0;
                 if(status1 && status2) {
@@ -2490,7 +2501,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                     }
                 }
                     for(int pos2 = 0; pos2<nbs;pos2++){
-                    if (areEqual(boundstate[2][offset + maxnbs *cn.cindex + pos2], 1.0)) {
+                    if (areEqual(boundstate[2][offset + maxnbs *cn.cindex + pos2], (floatingpoint)1.0)) {
                         total++;
                         //check distances..
                         auto mp2 = bindingsites.at(pos2);
@@ -2537,7 +2548,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
         }
     }
 //    minte = chrono::high_resolution_clock::now();
-//    chrono::duration<double> elapsed_total4(minte - mints);
+//    chrono::duration<floatingpoint> elapsed_total4(minte - mints);
 //    std::cout<<"Overall time vec "<<elapsed_total4.count()<<endl;
 //    std::cout<<"Tuple time "<<ttup<<endl;
 //    std::cout<<"Stencil time "<<tsten<<endl;
@@ -2565,7 +2576,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //        auto x1 = c->getFirstBead()->coordinate;
 //        auto x2 = c->getSecondBead()->coordinate;
 //        auto cc = c->getCCylinder();
-//        vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+//        vector<floatingpoint> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 //
 //        for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
 //
@@ -2576,21 +2587,21 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //            auto x3 = cn->getFirstBead()->coordinate;
 //            auto x4 = cn->getSecondBead()->coordinate;
 //
-//            vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-//            vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-//            double maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
+//            vector<floatingpoint> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+//            vector<floatingpoint> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+//            floatingpoint maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
 //
-//            double mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
+//            floatingpoint mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
 //                                                                                    x3,x4)));
 //            mindistsq = mindistsq * mindistsq;
 //            if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
 //
-//            double X1X3squared = sqmagnitude(X1X3);
-//            double X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
-//            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-//            double X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
-//            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
-//            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+//            floatingpoint X1X3squared = sqmagnitude(X1X3);
+//            floatingpoint X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
+//            floatingpoint X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+//            floatingpoint X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
+//            floatingpoint X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
+//            floatingpoint X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
 ////            mins2 = chrono::high_resolution_clock::now();
 //            int i = -1;
 //            for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -2600,13 +2611,13 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //                if (areEqual(boundstate[2][offset + SysParams::Chemistry()
 //                             .bindingSites[_filamentType].size() *c->_dcIndex + i], 1.0)) {
 //                    auto mp1 = bindingsites.at(i);
-//                    double A = X3X4squared;
-//                    double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
-//                    double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
-//                    double C1 = C - _rMinsq;
-//                    double C2 = C - _rMaxsq;
-//                    double b2m4ac1 = B*B - 4*A*C1;
-//                    double b2m4ac2 = B*B - 4*A*C2;
+//                    floatingpoint A = X3X4squared;
+//                    floatingpoint B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
+//                    floatingpoint C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 * X1X3dotX1X2;
+//                    floatingpoint C1 = C - _rMinsq;
+//                    floatingpoint C2 = C - _rMaxsq;
+//                    floatingpoint b2m4ac1 = B*B - 4*A*C1;
+//                    floatingpoint b2m4ac2 = B*B - 4*A*C2;
 //                    status1 = b2m4ac1 < 0;
 //                    status2 = b2m4ac2 < 0;
 //                    if(status1 && status2) continue;
@@ -2686,7 +2697,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //    }
 //    //end
 //    minte = chrono::high_resolution_clock::now();
-//    chrono::duration<double> elapsed_total3(minte - mints);
+//    chrono::duration<floatingpoint> elapsed_total3(minte - mints);
 //    std::cout<<"Overall time "<<elapsed_total3.count()<<endl;
 //    std::cout<<"Total "<<total<<" accepts "<<accepts<<endl;
 //    std::cout<<"Tuple size "<<_possibleBindingsstencil.size()<<endl;
@@ -2867,12 +2878,12 @@ void MotorBindingManager::assigncudavars() {
 //    }
 
 //    if(gpu_rminmax == NULL) {
-        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_rminmax, 2 * sizeof(double)), "cuda data transfer", " "
+        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_rminmax, 2 * sizeof(floatingpoint)), "cuda data transfer", " "
                 "BindingManager.cu");
-        double dist[2];
+        floatingpoint dist[2];
         dist[0] = _rMin;
         dist[1] = _rMax;
-        CUDAcommon::handleerror(cudaMemcpy(gpu_rminmax, dist, 2 * sizeof(double), cudaMemcpyHostToDevice));
+        CUDAcommon::handleerror(cudaMemcpy(gpu_rminmax, dist, 2 * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 //    }
 
 //    delete dist;

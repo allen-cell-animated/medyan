@@ -27,16 +27,16 @@ private:
     
     int *beadSet;
     ///Array describing the constants in calculation
-    double *kstr;
-    double *eql;
+    floatingpoint *kstr;
+    floatingpoint *eql;
 
 #ifdef CUDAACCL
     int * gpu_beadSet;
-    double * gpu_kstr;
-    double *gpu_eql;
+    floatingpoint * gpu_kstr;
+    floatingpoint *gpu_eql;
     int * gpu_params;
     CUDAvars cvars;
-    double *F_i;
+    floatingpoint *F_i;
     cudaStream_t stream = NULL;
 #endif
 
@@ -50,8 +50,8 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
-    virtual void computeForces(double *coord, double *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual const string getName() {return "Filament Stretching";}
 

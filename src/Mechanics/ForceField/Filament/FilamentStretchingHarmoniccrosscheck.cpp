@@ -19,19 +19,19 @@
 
 using namespace mathfunc;
 #ifdef CROSSCHECK
-double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
-                                          double kStretch, double eqLength){
+floatingpoint FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
+                                          floatingpoint kStretch, floatingpoint eqLength){
     
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate) - eqLength;
+    floatingpoint dist = twoPointDistance( b1->coordinate, b2->coordinate) - eqLength;
     
     return 0.5 * kStretch* dist * dist;
 
 }
 
-double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
-                                          double kStretch, double eqLength, double d){
+floatingpoint FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
+                                          floatingpoint kStretch, floatingpoint eqLength, floatingpoint d){
     
-    double distStretched = twoPointDistanceStretched(b1->coordinate,
+    floatingpoint distStretched = twoPointDistanceStretched(b1->coordinate,
                                                      b1->force, b2->coordinate,
                                                      b2->force, d) - eqLength;
 
@@ -39,11 +39,11 @@ double FilamentStretchingHarmonic::energy(Bead* b1, Bead* b2,
 }
 
 void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
-                                        double kStretch, double eqLength ){
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate);
-    double invL = 1 / dist;
+                                        floatingpoint kStretch, floatingpoint eqLength ){
+    floatingpoint dist = twoPointDistance( b1->coordinate, b2->coordinate);
+    floatingpoint invL = 1 / dist;
     
-    double f0 = kStretch * ( dist - eqLength ) * invL;
+    floatingpoint f0 = kStretch * ( dist - eqLength ) * invL;
     
     //force on i
     b2->force[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );
@@ -57,11 +57,11 @@ void FilamentStretchingHarmonic::forces(Bead* b1, Bead* b2,
 }
 
 void FilamentStretchingHarmonic::forcesAux(Bead* b1, Bead* b2,
-                                           double kStretch, double eqLength ){
+                                           floatingpoint kStretch, floatingpoint eqLength ){
     
-    double dist = twoPointDistance( b1->coordinate, b2->coordinate);
-    double invL = 1 / dist;
-    double f0 = kStretch * ( dist - eqLength ) * invL;
+    floatingpoint dist = twoPointDistance( b1->coordinate, b2->coordinate);
+    floatingpoint invL = 1 / dist;
+    floatingpoint f0 = kStretch * ( dist - eqLength ) * invL;
     
     //force on i
     b2->forceAux[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );

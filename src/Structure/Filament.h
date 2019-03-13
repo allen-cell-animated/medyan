@@ -72,7 +72,7 @@ private:
     short _severingReaction = 0;
     
     int _plusEndPosition   = 0;  ///< Position of plus end bead at last turnover
-    double _turnoverTime   = 0;  ///< Time since last turnover
+    floatingpoint _turnoverTime   = 0;  ///< Time since last turnover
 
     
     static Database<Filament*> _filaments; ///< Collection in SubSystem
@@ -89,8 +89,8 @@ public:
     /// @param nucleation - this filament was nucleated at runtime by a non-branching species
     /// @param branching - this filament was branched at runtime from an existing filament
 	Filament(SubSystem* s, short filamentType,
-                           vector<double>& position,
-                           vector<double>& direction,
+                           vector<floatingpoint>& position,
+                           vector<floatingpoint>& direction,
                            bool nucleation = false,
                            bool branch = false);
     
@@ -98,7 +98,7 @@ public:
     /// with a number of beads numBeads. Filaments starts and ends in the point
     /// determined by position vector.
     Filament(SubSystem* s, short filamentType,
-             vector<vector<double>>& position, int numBeads,
+             vector<vector<floatingpoint>>& position, int numBeads,
              string projectionType = "STRAIGHT");
     
     /// This constructor is called when a filament is severed. It creates a filament
@@ -122,8 +122,8 @@ public:
     void extendMinusEnd(short minusEnd);
     
     ///Extend, used for initialization
-    void extendPlusEnd(vector<double>& coordinates);
-    void extendMinusEnd(vector<double>& coordinates);
+    void extendPlusEnd(vector<floatingpoint>& coordinates);
+    void extendMinusEnd(vector<floatingpoint>& coordinates);
     
     /// Retraction of front of a cylinder. Removes one cylinder and one bead from the
     /// front of filament.
@@ -225,13 +225,13 @@ public:
     
     //@{
     /// Projection function, returns a vector of coordinates for bead creation
-    vector<double> nextBeadProjection(Bead* b, double d, vector<double> director);
+    vector<floatingpoint> nextBeadProjection(Bead* b, floatingpoint d, vector<floatingpoint> director);
     
-    vector<vector<double>> straightFilamentProjection(vector<vector<double>>& v, int numBeads);
-    vector<vector<double>> zigZagFilamentProjection(vector<vector<double>>& v, int numBeads);
-    vector<vector<double>> arcFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<floatingpoint>> straightFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads);
+    vector<vector<floatingpoint>> zigZagFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads);
+    vector<vector<floatingpoint>> arcFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads);
     //Aravind 18 Feb 2016.
-    vector<vector<double>> predefinedFilamentProjection(vector<vector<double>>& v, int numBeads);
+    vector<vector<floatingpoint>> predefinedFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads);
     //@}
     
     virtual void printSelf();

@@ -69,10 +69,10 @@ void FilamentBendingCosine::optimalblocksnthreads( int nint, cudaStream_t stream
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
 
         char a[] = "FilamentFF";
         char b[] = "Filament Bending Cosine";
@@ -94,11 +94,11 @@ void FilamentBendingCosine::optimalblocksnthreads( int nint, cudaStream_t stream
     }
 
 }
-double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
-                                      double *kbend, double *eqt, int *params) {
+floatingpoint* FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                      floatingpoint *kbend, floatingpoint *eqt, int *params) {
 //    if(blocksnthreadse[1]>0) {
 //        FilamentBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars()
+//                (floatingpoint), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, CUDAcommon::getCUDAvars()
 //                .gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -106,7 +106,7 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentBendingCosineenergy", "FilamentBendingCosine.cu");
 //        return gU_sum;}
@@ -115,12 +115,12 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
 }
 
 
-double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
-                                      double *kbend, double *eqt, double *z, int *params) {
+floatingpoint* FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                      floatingpoint *kbend, floatingpoint *eqt, floatingpoint *z, int *params) {
 
 //    if(blocksnthreadse[1]>0) {
 //        FilamentBendingCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, z, CUDAcommon::getCUDAvars()
+//                (floatingpoint), stream>>> (coord, f, beadSet, kbend, eqt, params, gU_i, z, CUDAcommon::getCUDAvars()
 //                .gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -131,7 +131,7 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
         FilamentBendingCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
 //        FilamentBendingCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (0) *
-                sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i,
+                sizeof(floatingpoint), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i,
                                         CUDAcommon::cudavars.gpu_energyvec, z,
                                         CUDAcommon::getCUDAvars().gculpritID,
                                           CUDAcommon::getCUDAvars().gculpritFF,
@@ -146,9 +146,9 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
 #ifdef CUDA_INDIVIDUAL_ESUM
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 #endif
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
@@ -156,19 +156,19 @@ double* FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
     }
 }
 
-void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
-                                   double *kbend, double *eqt, int *params){
+void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                   floatingpoint *kbend, floatingpoint *eqt, int *params){
     if(blocksnthreadsf[1]>0) {
         FilamentBendingCosineforces << < blocksnthreadsf[0], blocksnthreadsf[1], (9 * blocksnthreadsf[1]) *
-                                    sizeof(double), stream >> > (coord, f, beadSet, kbend, eqt, params);
+                                    sizeof(floatingpoint), stream >> > (coord, f, beadSet, kbend, eqt, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineforces", "FilamentBendingCosine.cu");
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
-//        double U_i[Bead::getBeads().size() - 2 * Filament::getFilaments().size()];
+//        floatingpoint U_i[Bead::getBeads().size() - 2 * Filament::getFilaments().size()];
 //        CUDAcommon::handleerror(cudaMemcpy(U_i, eqt, (Bead::getBeads().size() - 2 * Filament::getFilaments().size()) *
-//                                                                               sizeof(double), cudaMemcpyDeviceToHost));
+//                                                                               sizeof(floatingpoint), cudaMemcpyDeviceToHost));
 //        for(auto i = 0; i< Bead::getBeads().size() - 2 * Filament::getFilaments().size();i ++){
 //            std::cout<<U_i[i]<<endl;
 //        }
@@ -196,15 +196,15 @@ void FilamentBendingCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
-                                     double *kbend, double *eqt){
+floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                     floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
-    double *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -226,7 +226,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
 
         U_i = kbend[i] * ( 1 - cos(dPhi) );
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
             for(auto cyl:Cylinder::getCylinders()){
             	auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
@@ -246,15 +246,15 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
-                                     double *kbend, double *eqt, double d ){
+floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                     floatingpoint *kbend, floatingpoint *eqt, floatingpoint d ){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
     int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
-    double *coord1, *coord2, *coord3, *force1, *force2, *force3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+    floatingpoint *coord1, *coord2, *coord3, *force1, *force2, *force3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -281,7 +281,7 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
 
         U_i = kbend[i] * ( 1 - cos(dPhi) );
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 	        for(auto cyl:Cylinder::getCylinders()){
 		        auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
@@ -301,13 +301,13 @@ double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
-                                   double *kbend, double *eqt){
+void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                   floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
     int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
-    double *coord1, *coord2, *coord3, *force1, *force2, *force3,
+    floatingpoint *coord1, *coord2, *coord3, *force1, *force2, *force3,
             L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
 
     for(int i = 0; i < nint; i += 1) {
@@ -374,7 +374,7 @@ void FilamentBendingCosine::forces(double *coord, double *f, int *beadSet,
 
         force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                            (coord3[2] - coord2[2])*C );
-//        double f1[3], f2[3], f3[3];
+//        floatingpoint f1[3], f2[3], f3[3];
 //        f1[0] =  k * ((-coord3[0] + coord2[0])*A +
 //                           (coord2[0] - coord1[0])*B );
 //        f1[1] =  k * ((-coord3[1] + coord2[1])*A +

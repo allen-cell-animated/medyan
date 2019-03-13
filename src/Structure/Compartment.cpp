@@ -31,7 +31,7 @@ void Compartment::SIMDcoordinates(){
     // cylinders in compartment.
     int N = _cylinders.size() * SysParams::Chemistry().maxbindingsitespercylinder;
     if(N) {
-        vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(
+        vector<floatingpoint> bindsitecoordinatesX(N), bindsitecoordinatesY(
                 N), bindsitecoordinatesZ(N);
         cindex_bs.resize(N);
         //cID_bs.resize(N);
@@ -90,7 +90,7 @@ void Compartment::SIMDcoordinates4linkersearch(bool isvectorizedgather){
 
     int N = _cylinders.size() * maxnbs;
     if(N) {
-        vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(N),
+        vector<floatingpoint> bindsitecoordinatesX(N), bindsitecoordinatesY(N),
                        bindsitecoordinatesZ(N);
         vector<uint16_t> cindex_bs(N);
         Cyldcindexvec.resize(_cylinders.size());
@@ -177,7 +177,7 @@ void Compartment::SIMDcoordinates4motorsearch(bool isvectorizedgather){
     short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     int N = _cylinders.size() * maxnbs;
     if(N) {
-        vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(N),
+        vector<floatingpoint> bindsitecoordinatesX(N), bindsitecoordinatesY(N),
                 bindsitecoordinatesZ(N);
         vector<uint16_t> cindex_bs(N);
         Cyldcindexvec.resize(_cylinders.size());
@@ -341,12 +341,12 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
     short bstatepos = 1;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-    double _rMax = 40;
-    double searchdist = SysParams::Geometry().largestCylinderSize/2 + _rMax;
+    floatingpoint _rMax = 40;
+    floatingpoint searchdist = SysParams::Geometry().largestCylinderSize/2 + _rMax;
     bool rMaxvsCmpSize = (SysParams::Geometry().largestCylinderSize/2 + _rMax) <
                             SysParams::Geometry().largestCompartmentSide/2;
 
-    double coord_bounds[6] = {
+    floatingpoint coord_bounds[6] = {
             _coords[0] - SysParams::Geometry().compartmentSizeX/2 + searchdist,
             _coords[1] - SysParams::Geometry().compartmentSizeY/2 + searchdist,
             _coords[2] - SysParams::Geometry().compartmentSizeZ/2 + searchdist,
@@ -463,13 +463,13 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
 
-    double _rMax = 225;
-    double searchdist = SysParams::Geometry().largestCylinderSize/2 + _rMax;
+    floatingpoint _rMax = 225;
+    floatingpoint searchdist = SysParams::Geometry().largestCylinderSize/2 + _rMax;
     bool rMaxvsCmpSize = (searchdist) <
                          SysParams::Geometry().largestCompartmentSide/2;
 
 //    cout<<"rMaxvsCmpSize "<<rMaxvsCmpSize<<endl;
-    double coord_bounds[6] = {
+    floatingpoint coord_bounds[6] = {
             _coords[0] - SysParams::Geometry().compartmentSizeX/2 + searchdist,
             _coords[1] - SysParams::Geometry().compartmentSizeY/2 + searchdist,
             _coords[2] - SysParams::Geometry().compartmentSizeZ/2 + searchdist,
@@ -584,7 +584,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
     }
 }
 
-void Compartment::getpartition3Dindex(int (&indices)[3], vector<double> coord){
+void Compartment::getpartition3Dindex(int (&indices)[3], vector<floatingpoint> coord){
     short i = 0;
 
     for(auto x:coord){
@@ -595,8 +595,8 @@ void Compartment::getpartition3Dindex(int (&indices)[3], vector<double> coord){
         <<coord[2]<<" "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;*/
 }
 
-void Compartment::getpartition3Dindex(int (&indices)[3], vector<double> coord,
-                                      double (&cmpcornercoords)[6]){
+void Compartment::getpartition3Dindex(int (&indices)[3], vector<floatingpoint> coord,
+                                      floatingpoint (&cmpcornercoords)[6]){
     short i = 0;
 
     for(auto x:coord){
@@ -613,8 +613,8 @@ void Compartment::getpartition3Dindex(int (&indices)[3], vector<double> coord,
 
 //if rMax+Cylsize/2+delta is less than CmpSize/2
 template<>
-void Compartment::getpartitionindex<true>(int (&indices)[3], vector<double> coord,
-                       double (&cmpcornercoords)[6]){
+void Compartment::getpartitionindex<true>(int (&indices)[3], vector<floatingpoint> coord,
+                       floatingpoint (&cmpcornercoords)[6]){
     short i = 0;
 
     for(auto x:coord){
@@ -631,8 +631,8 @@ void Compartment::getpartitionindex<true>(int (&indices)[3], vector<double> coor
 
 //if rMax+Cylsize/2+delta is greater than CmpSize/2
 template<>
-void Compartment::getpartitionindex<false>(int (&indices)[3], vector<double> coord,
-                                          double (&cmpcornercoords)[6]){
+void Compartment::getpartitionindex<false>(int (&indices)[3], vector<floatingpoint> coord,
+                                          floatingpoint (&cmpcornercoords)[6]){
     short i = 0;
 
     for(auto x:coord){
@@ -647,14 +647,14 @@ void Compartment::getpartitionindex<false>(int (&indices)[3], vector<double> coo
     }
 }
 
-void Compartment::addcoord(vector<double> coord, uint32_t index, short i){
+void Compartment::addcoord(vector<floatingpoint> coord, uint32_t index, short i){
     partitionedcoordx[i].push_back(coord[0]);
     partitionedcoordy[i].push_back(coord[1]);
     partitionedcoordz[i].push_back(coord[2]);
     cindex_bs_section[i].push_back(index);
 }
 
-/*void Compartment::addcoord(vector<double> coord, uint16_t index, short i){
+/*void Compartment::addcoord(vector<floatingpoint> coord, uint16_t index, short i){
     partitionedcoordx[i].push_back(coord[0]);
     partitionedcoordy[i].push_back(coord[1]);
     partitionedcoordz[i].push_back(coord[2]);
@@ -677,7 +677,7 @@ bool Compartment::checkoccupancy(Cylinder* cyl, short it, short _filamentType,
     return status;
 }
 
-void Compartment::addcoordtopartitons(int (&pindices)[3], vector<double> coord, uint32_t
+void Compartment::addcoordtopartitons(int (&pindices)[3], vector<floatingpoint> coord, uint32_t
                                     index){
     addcoord(coord, index, 0);
 
@@ -780,7 +780,7 @@ void Compartment::addcoordtopartitons(int (&pindices)[3], vector<double> coord, 
     }
 }
 
-void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<double> coord,
+void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<floatingpoint> coord,
                                 uint16_t index){
     addcoord(coord, index, 0);
     //111
@@ -1050,7 +1050,7 @@ void Compartment::addcoordtopartitons_smallrmax(int (&pindices)[3], vector<doubl
 
 //if rMax+Cylsize/2+delta is lesser than CmpSize/2
 template<>
-void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<double>
+void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<floatingpoint>
         coord, uint32_t index){
     addcoord(coord, index, 0);
     //111
@@ -1317,7 +1317,7 @@ void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<
 
 //if rMax+Cylsize/2+delta is greater than CmpSize/2
 template<>
-void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<double>
+void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
         coord, uint32_t index){
     addcoord(coord, index, 0);
     //111

@@ -19,36 +19,36 @@
 
 using namespace mathfunc;
 #ifdef CROSSCHECK
-double FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
-                                       double kBend, double eqTheta){
+floatingpoint FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
+                                       floatingpoint kBend, floatingpoint eqTheta){
     
-    double L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
+    floatingpoint L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
                                    b1->coordinate, b2->coordinate));
-    double L2 = sqrt(scalarProduct(b2->coordinate, b3->coordinate,
+    floatingpoint L2 = sqrt(scalarProduct(b2->coordinate, b3->coordinate,
                                    b2->coordinate, b3->coordinate));
     
-    double L1L2 = L1*L2;
-    double l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
+    floatingpoint L1L2 = L1*L2;
+    floatingpoint l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
                                 b2->coordinate, b3->coordinate);
 
     return kBend * ( 1 - l1l2 / L1L2 );
     
 }
 
-double FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
-                                       double kBend, double eqTheta, double d){
+floatingpoint FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
+                                       floatingpoint kBend, floatingpoint eqTheta, floatingpoint d){
     
-    double L1 = sqrt(scalarProductStretched(b1->coordinate, b1->force,
+    floatingpoint L1 = sqrt(scalarProductStretched(b1->coordinate, b1->force,
                                             b2->coordinate, b2->force,
                                             b1->coordinate, b1->force,
                                             b2->coordinate, b2->force, d));
-    double L2 = sqrt(scalarProductStretched(b2->coordinate, b2->force,
+    floatingpoint L2 = sqrt(scalarProductStretched(b2->coordinate, b2->force,
                                             b3->coordinate, b3->force,
                                             b2->coordinate, b2->force,
                                             b3->coordinate, b3->force, d));
     
-    double L1L2 = L1*L2;
-    double l1l2 = scalarProductStretched(b1->coordinate, b1->force,
+    floatingpoint L1L2 = L1*L2;
+    floatingpoint l1l2 = scalarProductStretched(b1->coordinate, b1->force,
                                          b2->coordinate, b2->force,
                                          b2->coordinate, b2->force,
                                          b3->coordinate, b3->force, d);
@@ -58,21 +58,21 @@ double FilamentBendingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3,
 }
 
 void FilamentBendingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
-                                     double kBend, double eqTheta){
+                                     floatingpoint kBend, floatingpoint eqTheta){
     
-    double L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
+    floatingpoint L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
                                    b1->coordinate, b2->coordinate));
-    double L2 = sqrt(scalarProduct(b2->coordinate, b3->coordinate,
+    floatingpoint L2 = sqrt(scalarProduct(b2->coordinate, b3->coordinate,
                                    b2->coordinate, b3->coordinate));
-    double l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
+    floatingpoint l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
                                 b2->coordinate, b3->coordinate);
     
     //invL = 1/L;
-    double invL1 = 1/L1;
-    double invL2 = 1/L2;
-    double A = invL1*invL2;
-    double B = l1l2*invL1*A*A*L2;
-    double C = l1l2*invL2*A*A*L1;
+    floatingpoint invL1 = 1/L1;
+    floatingpoint invL2 = 1/L2;
+    floatingpoint A = invL1*invL2;
+    floatingpoint B = l1l2*invL1*A*A*L2;
+    floatingpoint C = l1l2*invL2*A*A*L1;
     
     //force on i-1, f = k*(-A*l2 + B*l1):
     b1->force[0] +=  kBend * ( (-b3->coordinate[0] + b2->coordinate[0])*A +
@@ -111,21 +111,21 @@ void FilamentBendingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3,
 }
 
 void FilamentBendingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3,
-                                        double kBend, double eqTheta){
+                                        floatingpoint kBend, floatingpoint eqTheta){
     
-    double L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
+    floatingpoint L1 = sqrt(scalarProduct(b1->coordinate, b2->coordinate,
                                    b1->coordinate, b2->coordinate));
-    double L2 = sqrt(scalarProduct(b2->coordinate, b3->coordinate,
+    floatingpoint L2 = sqrt(scalarProduct(b2->coordinate, b3->coordinate,
                                    b2->coordinate, b3->coordinate));
-    double l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
+    floatingpoint l1l2 = scalarProduct(b1->coordinate, b2->coordinate,
                                 b2->coordinate, b3->coordinate);
     
     //invL = 1/L;
-    double invL1 = 1/L1;
-    double invL2 = 1/L2;
-    double A = invL1*invL2;
-    double B = l1l2*invL1*A*A*L2;
-    double C = l1l2*invL2*A*A*L1;
+    floatingpoint invL1 = 1/L1;
+    floatingpoint invL2 = 1/L2;
+    floatingpoint A = invL1*invL2;
+    floatingpoint B = l1l2*invL1*A*A*L2;
+    floatingpoint C = l1l2*invL2*A*A*L1;
     
     //force on i-1, f = k*(-A*l2 + B*l1):
     b1->forceAux[0] +=  kBend * ( (-b3->coordinate[0] + b2->coordinate[0])*A +

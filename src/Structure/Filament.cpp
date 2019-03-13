@@ -39,8 +39,8 @@ using namespace mathfunc;
 Database<Filament*> Filament::_filaments;
 Histogram* Filament::_turnoverTimes;
 
-Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
-                   vector<double>& direction, bool nucleation, bool branch)
+Filament::Filament(SubSystem* s, short filamentType, vector<floatingpoint>& position,
+                   vector<floatingpoint>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
  
@@ -48,7 +48,7 @@ Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
     Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
     
     //choose length
-    double length = 0.0;
+    floatingpoint length = 0.0;
     
     if(branch)          length = SysParams::Geometry().monomerSize[_filType];
     else if(nucleation) length = SysParams::Geometry().minCylinderSize[_filType];
@@ -69,14 +69,14 @@ Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
 }
 
 
-Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& position,
+Filament::Filament(SubSystem* s, short filamentType, vector<vector<floatingpoint> >& position,
                    int numBeads, string projectionType)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
 
     
     //create a projection of beads
-    vector<vector<double>> tmpBeadsCoord;
+    vector<vector<floatingpoint>> tmpBeadsCoord;
     
     //straight projection
     if(projectionType == "STRAIGHT")
@@ -126,7 +126,7 @@ Filament::~Filament() {
 
 
 //Extend front for initialization
-void Filament::extendPlusEnd(vector<double>& coordinates) {
+void Filament::extendPlusEnd(vector<floatingpoint>& coordinates) {
     
     Cylinder* cBack = _cylinderVector.back();
     cBack->setPlusEnd(false);
@@ -152,7 +152,7 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
 }
 
 //Extend back for initialization
-void Filament::extendMinusEnd(vector<double>& coordinates) {
+void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
 
     Cylinder* cFront = _cylinderVector.front();
     cFront->setMinusEnd(false);
@@ -362,7 +362,7 @@ void Filament::polymerizePlusEnd() {
     b2->lfip++;
     
     //increase eq length, update
-    double newEqLen = cBack->getMCylinder()->getEqLength() +
+    floatingpoint newEqLen = cBack->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
     
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
@@ -402,7 +402,7 @@ void Filament::polymerizeMinusEnd() {
     b1->lfim++;
     
     //increase eq length, update
-    double newEqLen = cFront->getMCylinder()->getEqLength() +
+    floatingpoint newEqLen = cFront->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
 
 
@@ -442,7 +442,7 @@ void Filament::depolymerizePlusEnd() {
     b2->lfip--;
     
     //decrease eq length, update
-    double newEqLen = cBack->getMCylinder()->getEqLength() -
+    floatingpoint newEqLen = cBack->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
@@ -479,7 +479,7 @@ void Filament::depolymerizeMinusEnd() {
     b1->lfim--;
     
     //decrease eq length, update
-    double newEqLen = cFront->getMCylinder()->getEqLength() -
+    floatingpoint newEqLen = cFront->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
 
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
@@ -573,10 +573,10 @@ Filament* Filament::sever(int cylinderPosition) {
     //offset these beads by a little for safety
     auto msize = SysParams::Geometry().monomerSize[_filType];
     
-    vector<double> offsetCoord =
-    {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize),
-     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randDouble(msize, 2 * msize)};
+    vector<floatingpoint> offsetCoord =
+    {(Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
+     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize),
+     (Rand::randInteger(0,1) ? -1 : +1) * Rand::randfloatingpoint(msize, 2 * msize)};
     
     oldB->coordinate[0] += offsetCoord[0];
     oldB->coordinate[1] += offsetCoord[1];
@@ -631,12 +631,12 @@ Filament* Filament::sever(int cylinderPosition) {
     return newFilament;
 }
 
-vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<floatingpoint>> Filament::straightFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads) {
     
-    vector<vector<double>> coordinate;
-    vector<double> tmpVec (3, 0);
-    vector<double> tau (3, 0);
-    double invD = 1/twoPointDistance(v[1], v[0]);
+    vector<vector<floatingpoint>> coordinate;
+    vector<floatingpoint> tmpVec (3, 0);
+    vector<floatingpoint> tau (3, 0);
+    floatingpoint invD = 1/twoPointDistance(v[1], v[0]);
     tau[0] = invD * ( v[1][0] - v[0][0] );
     tau[1] = invD * ( v[1][1] - v[0][1] );
     tau[2] = invD * ( v[1][2] - v[0][2] );
@@ -652,17 +652,17 @@ vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double
     return coordinate;
 }
 
-vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
+vector<vector<floatingpoint>> Filament::zigZagFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads){
     
-    vector<vector<double>> coordinate;
-    vector<double> tmpVec (3, 0);
-    vector<double> tau (3, 0);
-    double invD = 1/twoPointDistance(v[1], v[0]);
+    vector<vector<floatingpoint>> coordinate;
+    vector<floatingpoint> tmpVec (3, 0);
+    vector<floatingpoint> tau (3, 0);
+    floatingpoint invD = 1/twoPointDistance(v[1], v[0]);
     tau[0] = invD * ( v[1][0] - v[0][0] );
     tau[1] = invD * ( v[1][1] - v[0][1] );
     tau[2] = invD * ( v[1][2] - v[0][2] );
     
-    vector<double> perptau = {-tau[1], tau[0], tau[2]};
+    vector<floatingpoint> perptau = {-tau[1], tau[0], tau[2]};
     
     
     for (int i = 0; i<numBeads; i++) {
@@ -685,17 +685,17 @@ vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>
 
 /// Create a projection
 /// @note - created by Aravind 12/2014
-void marsagila(vector<double>&v) {
+void marsagila(vector<floatingpoint>&v) {
     
-    double d1,d2,d3;
-    double *x=new double[3];
-    d1=2*Rand::randDouble(0,1)-1;
-    d2=2*Rand::randDouble(0,1)-1;
+    floatingpoint d1,d2,d3;
+    floatingpoint *x=new floatingpoint[3];
+    d1=2*Rand::randfloatingpoint(0,1)-1;
+    d2=2*Rand::randfloatingpoint(0,1)-1;
     d3=pow(d1,2)+pow(d2,2);
     
     while(d3>=1) {
-        d1=2*Rand::randDouble(0,1)-1;
-        d2=2*Rand::randDouble(0,1)-1;
+        d1=2*Rand::randfloatingpoint(0,1)-1;
+        d2=2*Rand::randfloatingpoint(0,1)-1;
         d3=pow(d1,2)+pow(d2,2);
     }
     
@@ -709,19 +709,19 @@ void marsagila(vector<double>&v) {
 
 /// Matrix multiply
 /// @note - created by Aravind 12/2014
-void matrix_mul(boost::numeric::ublas::matrix<double>&X,
-                boost::numeric::ublas::matrix<double>&Y,
-                boost::numeric::ublas::matrix<double>&Z,
-                vector<double>&x,vector<double>&y,
-                vector<double>&z,int nbeads,
-                vector<vector<double>> &coordinate) {
+void matrix_mul(boost::numeric::ublas::matrix<floatingpoint>&X,
+                boost::numeric::ublas::matrix<floatingpoint>&Y,
+                boost::numeric::ublas::matrix<floatingpoint>&Z,
+                vector<floatingpoint>&x,vector<floatingpoint>&y,
+                vector<floatingpoint>&z,int nbeads,
+                vector<vector<floatingpoint>> &coordinate) {
     
     int t,i;
-    double dt,length,cyl_length,sum;
+    floatingpoint dt,length,cyl_length,sum;
     vector<int> id;
-    vector<double> dx,dy,dz,dx2,dy2,dz2,length2,dxdy2,dummyy(3);
+    vector<floatingpoint> dx,dy,dz,dx2,dy2,dz2,length2,dxdy2,dummyy(3);
     using namespace boost::numeric::ublas;
-    matrix<double> B(4,4),B2(1,4),temp1(4,1),dummy(1,1),temp2(4,1),temp3(4,1);
+    matrix<floatingpoint> B(4,4),B2(1,4),temp1(4,1),dummy(1,1),temp2(4,1),temp3(4,1);
     
     // B
     B(0,0)=1; B(0,1)=0; B(0,2)=0; B(0,3)=0;
@@ -752,20 +752,20 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     adjacent_difference(z.begin(),z.end(),back_inserter(dz));//dz
     
     transform(dx.begin(), dx.end(),dx.begin(),
-              back_inserter(dx2), multiplies<double>());
+              back_inserter(dx2), multiplies<floatingpoint>());
     transform(dy.begin(), dy.end(),dy.begin(),
-              back_inserter(dy2), multiplies<double>());
+              back_inserter(dy2), multiplies<floatingpoint>());
     transform(dz.begin(), dz.end(),dz.begin(),
-              back_inserter(dz2), multiplies<double>());
+              back_inserter(dz2), multiplies<floatingpoint>());
     
     //array of sum(dx^2+dy^2)
     transform(dx2.begin(),dx2.end(),dy2.begin(),
-              back_inserter(dxdy2),plus<double>());
+              back_inserter(dxdy2),plus<floatingpoint>());
     //array of sum(dx^2+dy^2+dz^2)
     transform(dxdy2.begin(),dxdy2.end(),dz2.begin(),
-              back_inserter(length2),plus<double>());
+              back_inserter(length2),plus<floatingpoint>());
     
-    std::vector<double> tempLength;
+    std::vector<floatingpoint> tempLength;
     for(auto x: length2) tempLength.push_back(sqrt(x));
     length2 = tempLength; length2[0]=0.0;
     
@@ -792,9 +792,9 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     }
 }
 
-void arcOutward(vector<double>&v1,vector<double>&v2,vector<vector<double>>&v) {
+void arcOutward(vector<floatingpoint>&v1,vector<floatingpoint>&v2,vector<vector<floatingpoint>>&v) {
     
-    vector<double> center,tempv1,tempv2,temp2,temp3(3),
+    vector<floatingpoint> center,tempv1,tempv2,temp2,temp3(3),
                    temp4(3),mid,mid2(3),mid3(3),temp5;
     
     center = GController::getCenter();
@@ -815,36 +815,36 @@ void arcOutward(vector<double>&v1,vector<double>&v2,vector<vector<double>>&v) {
     
     //vector between v[1] and center stored in tempv1
     std::transform(v[1].begin(), v[1].end(), center.begin(),
-                   std::back_inserter(tempv1), std::minus<double>());
+                   std::back_inserter(tempv1), std::minus<floatingpoint>());
     
-    double dist=twoPointDistance(center, temp4);
+    floatingpoint dist=twoPointDistance(center, temp4);
     dist=300/dist;
     
     std::transform(tempv1.begin(),tempv1.end(),tempv1.begin(),
-                   std::bind2nd(std::multiplies<double>(),dist));
+                   std::bind2nd(std::multiplies<floatingpoint>(),dist));
     std::transform(mid.begin(), mid.end(), tempv1.begin(),
-                   std::back_inserter(v1), std::plus<double>());
+                   std::back_inserter(v1), std::plus<floatingpoint>());
     
     //vector between v[0] and center stored in tempv2
     std::transform(v[0].begin(), v[0].end(), center.begin(),
-                   std::back_inserter(tempv2), std::minus<double>());
+                   std::back_inserter(tempv2), std::minus<floatingpoint>());
     
     dist=twoPointDistance(center, temp3);
     dist=100/dist;
     
     std::transform(tempv2.begin(),tempv2.end(),tempv2.begin(),
-                   std::bind2nd(std::multiplies<double>(),dist));
+                   std::bind2nd(std::multiplies<floatingpoint>(),dist));
     std::transform(mid3.begin(), mid3.end(), tempv2.begin(),
-                   std::back_inserter(v2), std::plus<double>());
+                   std::back_inserter(v2), std::plus<floatingpoint>());
 }
 
-vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<floatingpoint>> Filament::arcFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads) {
     
     using namespace boost::numeric::ublas;
 
-    std::vector<double> X3,x3(3),x4(3),X4,x,y,z;
-    matrix<double> C(3,3),B(4,4),X(4,1),Y(4,1),Z(4,1);
-    std::vector< std::vector<double> > coordinates;
+    std::vector<floatingpoint> X3,x3(3),x4(3),X4,x,y,z;
+    matrix<floatingpoint> C(3,3),B(4,4),X(4,1),Y(4,1),Z(4,1);
+    std::vector< std::vector<floatingpoint> > coordinates;
 
     arcOutward(X3,X4,v);
     X(0,0)=v[0][0]; X(1,0)=X3[0]; X(2,0)=X4[0]; X(3,0)=v[1][0];
@@ -855,7 +855,7 @@ vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v
     return coordinates;
 }
 // predefined projection
-vector<vector<double>> Filament::predefinedFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<floatingpoint>> Filament::predefinedFilamentProjection(vector<vector<floatingpoint>>& v, int numBeads) {
     return v;
 }
 //@

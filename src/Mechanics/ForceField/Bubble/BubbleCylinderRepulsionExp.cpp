@@ -19,38 +19,38 @@
 
 using namespace mathfunc;
 
-double BubbleCylinderRepulsionExp::energy(Bead* b1, Bead* b2, double radius,
-                                          double kRep, double screenLength) {
+floatingpoint BubbleCylinderRepulsionExp::energy(Bead* b1, Bead* b2, floatingpoint radius,
+                                          floatingpoint kRep, floatingpoint screenLength) {
     
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
-    double effd = dist - radius;
+    floatingpoint effd = dist - radius;
     
-    double R = -effd / screenLength;
+    floatingpoint R = -effd / screenLength;
     return kRep * exp(R);
 }
 
-double BubbleCylinderRepulsionExp::energy(Bead* b1, Bead* b2, double radius,
-                                          double kRep, double screenLength, double d) {
+floatingpoint BubbleCylinderRepulsionExp::energy(Bead* b1, Bead* b2, floatingpoint radius,
+                                          floatingpoint kRep, floatingpoint screenLength, floatingpoint d) {
     
-    double dist = twoPointDistanceStretched(b1->coordinate, b1->force,
+    floatingpoint dist = twoPointDistanceStretched(b1->coordinate, b1->force,
                                             b2->coordinate, b2->force, d);
-    double effd = dist - radius;
+    floatingpoint effd = dist - radius;
     
-    double R = -effd / screenLength;
+    floatingpoint R = -effd / screenLength;
     return kRep * exp(R);
 }
 
-void BubbleCylinderRepulsionExp::forces(Bead* b1, Bead* b2, double radius,
-                                        double kRep, double screenLength) {
+void BubbleCylinderRepulsionExp::forces(Bead* b1, Bead* b2, floatingpoint radius,
+                                        floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
-    double effd = dist - radius;
+    floatingpoint effd = dist - radius;
     
-    double R = -effd / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
+    floatingpoint R = -effd / screenLength;
+    floatingpoint f0 = kRep * exp(R) / screenLength;
     
     //get norm
     auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
@@ -64,16 +64,16 @@ void BubbleCylinderRepulsionExp::forces(Bead* b1, Bead* b2, double radius,
     b2->force[2] += f0 *norm[2];
 }
 
-void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
-                                           double kRep, double screenLength) {
+void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, floatingpoint radius,
+                                           floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
-    double effd = dist - radius;
+    floatingpoint effd = dist - radius;
     
-    double R = -effd / screenLength;
-    double f0 = kRep * exp(R) / screenLength;
+    floatingpoint R = -effd / screenLength;
+    floatingpoint f0 = kRep * exp(R) / screenLength;
     
     //get norm
     auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
@@ -88,14 +88,14 @@ void BubbleCylinderRepulsionExp::forcesAux(Bead* b1, Bead* b2, double radius,
     
 }
 
-double BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, double radius,
-                                              double kRep, double screenLength) {
+floatingpoint BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, floatingpoint radius,
+                                              floatingpoint kRep, floatingpoint screenLength) {
     
     //get dist
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
     
-    double effd = dist - radius;
+    floatingpoint effd = dist - radius;
     
-    double R = -effd / screenLength;
+    floatingpoint R = -effd / screenLength;
     return kRep * exp(R) / screenLength;
 }

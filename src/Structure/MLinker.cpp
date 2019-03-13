@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
 //               Dynamics of Active Networks, v3.1
@@ -18,9 +17,9 @@
 
 using namespace mathfunc;
 
-MLinker::MLinker(int linkerType, double position1, double position2,
-                 const vector<double>& coord11, const vector<double>& coord12,
-                 const vector<double>& coord21, const vector<double>& coord22) {
+MLinker::MLinker(int linkerType, floatingpoint position1, floatingpoint position2,
+                 const vector<floatingpoint>& coord11, const vector<floatingpoint>& coord12,
+                 const vector<floatingpoint>& coord21, const vector<floatingpoint>& coord22) {
     
     if(!SysParams::Mechanics().LStretchingK.empty())
         _kStretch = SysParams::Mechanics().LStretchingK[linkerType];

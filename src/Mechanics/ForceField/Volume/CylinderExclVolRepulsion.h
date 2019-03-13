@@ -27,23 +27,23 @@ class CylinderExclVolRepulsion {
 public:
 
 
-    double energy(double *coord, double *f, int *beadSet, double *krep);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
     
-    double energy(double *coord, double *f, int *beadSet, double *krep, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint d);
     
-    void forces(double *coord, double *f, int *beadSet, double *krep);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
 
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);
     void deallocate();
-    double* energy(double *coord, double *f, int *beadSet, double *krep, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, int *params);
 
-    double* energy(double *coord, double *f, int *beadSet, double *krep, double *z, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *z, int *params);
 
-    void forces(double *coord, double *f, int *beadSet, double *krep, int *params);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, int *params);
     static void checkforculprit();
-    double *gU_i;
-    double *gU_sum;
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
     char *gFF, *ginteraction;
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;
@@ -53,11 +53,11 @@ public:
 
 #endif
 #ifdef CROSSCHECK
-    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls);
-    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, double d);
+    floatingpoint energy(Bead*, Bead*, Bead*, Bead*, floatingpoint Krepuls);
+    floatingpoint energy(Bead*, Bead*, Bead*, Bead*, floatingpoint Krepuls, floatingpoint d);
     
-    void forces(Bead*, Bead*, Bead*, Bead*, double Krepuls);
-    void forcesAux(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+    void forces(Bead*, Bead*, Bead*, Bead*, floatingpoint Krepuls);
+    void forcesAux(Bead*, Bead*, Bead*, Bead*, floatingpoint Krepuls);
 #endif
 };
 #endif

@@ -85,10 +85,10 @@ stream_pass){
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
         CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof
-                                                                                    (double), stream));
-	    CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+                                                                                    (floatingpoint), stream));
+	    CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
         char a[] = "MotorGhostFF";
         char b[] = "MotorGhost Stretching Harmonic";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
@@ -107,13 +107,13 @@ stream_pass){
     }
 
 }
-double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                            double *kstr, double *eql, double *pos1, double *pos2,
+floatingpoint* MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2,
                                             int *params) {
 //    if(blocksnthreadse[1]>0) {
 //
 //    MotorGhostStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-//                                                                                                                  (double), stream>>>
+//                                                                                                                  (floatingpoint), stream>>>
 //            (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
 //            CUDAcommon::getCUDAvars().gculpritFF,
 //            CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -125,7 +125,7 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
 //                CUDAcommon::handleerror( cudaGetLastError(), "MotorGhostStretchingHarmonicenergy",
 //                                         "MotorGhostStretchingHarmonic.cu");
 
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 
 //        CUDAcommon::handleerror( cudaGetLastError() , "MotorGhostStretchingHarmonicenergy",
@@ -138,12 +138,12 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
 }
 
 
-double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                            double *kstr, double *eql, double *pos1, double *pos2, double *z,
+floatingpoint* MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint *z,
                                             int *params) {
 //    if(blocksnthreadse[1]>0) {
 //        MotorGhostStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (12 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>>
+//                (floatingpoint), stream>>>
 //                          (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, z,
 //                                  CUDAcommon::getCUDAvars().gculpritID,
 //                                  CUDAcommon::getCUDAvars().gculpritFF,
@@ -156,7 +156,7 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
         auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
 //        MotorGhostStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (24 * blocksnthreadsez[1]) *
         MotorGhostStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (0) *
-                sizeof(double), stream>> > (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, CUDAcommon::cudavars.gpu_energyvec, z,
+                sizeof(floatingpoint), stream>> > (coord, f, beadSet, kstr, eql, pos1, pos2, params, gU_i, CUDAcommon::cudavars.gpu_energyvec, z,
                  CUDAcommon::getCUDAvars().gculpritID,
                  CUDAcommon::getCUDAvars().gculpritFF,
                  CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction, boolvarvec.at(0),
@@ -169,9 +169,9 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
 #ifdef CUDA_INDIVIDUAL_ESUM
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 #endif
         CUDAcommon::handleerror( cudaGetLastError() , "MotorGhostStretchingHarmonicenergy",
@@ -180,22 +180,22 @@ double* MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *bead
     }
 }
 
-void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                          double *kstr, double *eql, double *pos1, double
-                                          *pos2, int *params, double *Mstretchforce){
+void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                          floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint
+                                          *pos2, int *params, floatingpoint *Mstretchforce){
     if(blocksnthreadsf[1]>0) {
 
         //TODO  since the number of threads needed is constant through out the minimization, consider storing the pointer.
 //        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, 36 * blocksnthreads[0] * blocksnthreads[1] * sizeof
-//                                                                                                                (double)));
+//                                                                                                                (floatingpoint)));
 
 
-//        double F_c[3*Bead::getBeads().size()];
-//        double C_c[3*Bead::getBeads().size()];
+//        floatingpoint F_c[3*Bead::getBeads().size()];
+//        floatingpoint C_c[3*Bead::getBeads().size()];
 //        //TODO remove this later need not copy forces back to CPU.
-//        CUDAcommon::handleerror(cudaMemcpy(F_c, f, 3 * Bead::getBeads().size() *sizeof(double),
+//        CUDAcommon::handleerror(cudaMemcpy(F_c, f, 3 * Bead::getBeads().size() *sizeof(floatingpoint),
 //                                           cudaMemcpyDeviceToHost));
-//        CUDAcommon::handleerror(cudaMemcpy(C_c, coord, 3 * Bead::getBeads().size() *sizeof(double),
+//        CUDAcommon::handleerror(cudaMemcpy(C_c, coord, 3 * Bead::getBeads().size() *sizeof(floatingpoint),
 //                                           cudaMemcpyDeviceToHost));
 //        for(int iter=0;iter<Bead::getBeads().size();iter++) {
 //            std::cout << C_c[3 * iter] << " " << C_c[3 * iter + 1] << " " << C_c[3 * iter + 2]<<" "<<F_c[3 * iter] <<
@@ -206,7 +206,7 @@ void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet
 
 //        MotorGhostStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (12 *
         MotorGhostStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (0 *
-        blocksnthreadsf[1]) * sizeof (double), stream >> > (coord, f, beadSet, kstr, eql,
+        blocksnthreadsf[1]) * sizeof (floatingpoint), stream >> > (coord, f, beadSet, kstr, eql,
                 pos1, pos2, params, Mstretchforce);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
@@ -228,17 +228,17 @@ void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet
 }
 
 #endif
-double MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                            double *kstr, double *eql, double *pos1, double *pos2) {
+floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
     int nint = MotorGhost::getMotorGhosts().size();
 
-    double *coord1, *coord2, *coord3, *coord4, dist, U_i;
-    double *v1 = new double[3];
-    double *v2 = new double[3];
+    floatingpoint *coord1, *coord2, *coord3, *coord4, dist, U_i;
+    floatingpoint *v1 = new floatingpoint[3];
+    floatingpoint *v2 = new floatingpoint[3];
 
-    double U = 0;
+    floatingpoint U = 0;
 
 
     for(int i = 0; i < nint; i += 1) {
@@ -254,7 +254,7 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadS
         dist = twoPointDistance(v1, v2) - eql[i];
         U_i = 0.5 * kstr[i] * dist * dist;
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -273,17 +273,17 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadS
     return U;
 }
 
-double MotorGhostStretchingHarmonic::energy(double *coord, double * f, int *beadSet,
-                                            double *kstr, double *eql, double *pos1, double *pos2, double d){
+floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint d){
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
     int nint = MotorGhost::getMotorGhosts().size();
 
-    double *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist, U_i;
-    double *v1 = new double[3];
-    double *v2 = new double[3];
+    floatingpoint *coord1, *coord2, *coord3, *coord4, *f1, *f2, *f3, *f4, dist, U_i;
+    floatingpoint *v1 = new floatingpoint[3];
+    floatingpoint *v2 = new floatingpoint[3];
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -308,7 +308,7 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double * f, int *bead
 //                ""<<f1[1]<<" "<<f1[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<coord2[0]<<" "<<coord2[1]<<" "
 //                ""<<coord2[2]<<" "<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "
 //                ""<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<" "<<pos1[i]<<" "<<pos2[i]<<" "<<d<<" "<<U_i<<endl;
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -328,18 +328,18 @@ double MotorGhostStretchingHarmonic::energy(double *coord, double * f, int *bead
 
 }
 
-void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                          double *kstr, double *eql, double *pos1, double *pos2
-                                            , double *stretchforce){
+void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                          floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2
+                                            , floatingpoint *stretchforce){
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
     int nint = MotorGhost::getMotorGhosts().size();
 
-    double *coord1, *coord2, *coord3, *coord4, dist, invL;
-    double *v1 = new double[3];
-    double *v2 = new double[3];
+    floatingpoint *coord1, *coord2, *coord3, *coord4, dist, invL;
+    floatingpoint *v1 = new floatingpoint[3];
+    floatingpoint *v2 = new floatingpoint[3];
 
-    double f0, *f1, *f2, *f3, *f4;
+    floatingpoint f0, *f1, *f2, *f3, *f4;
 
     for(int i = 0; i < nint; i += 1) {
 

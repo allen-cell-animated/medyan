@@ -32,7 +32,7 @@ bool Bead::triggercylindervectorization = false;
 vector<int> Bead::removedbindex;//vector of bead indices that were once alloted to other
 // beads but are free to be reallocated now.
 
-Bead::Bead (vector<double> v, Composite* parent, int position)
+Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 // Qin add brforce, pinforce
     : Trackable(true),
       coordinate(v), coordinateP(v),
@@ -41,8 +41,8 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
     
     parent->addChild(unique_ptr<Component>(this));
           
-    loadForcesP = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
-    loadForcesM = vector<double>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+    loadForcesP = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
+    loadForcesM = vector<floatingpoint>(SysParams::Geometry().cylinderNumMon[getType()], 0.0);
     
     //Find compartment
     try {_compartment = GController::getCompartment(v);}
@@ -135,7 +135,7 @@ void Bead::printSelf() {
     cout << endl;
 }
 
-double Bead::getLoadForcesP() {
+floatingpoint Bead::getLoadForcesP() {
     
     if (lfip < 0)
         return loadForcesP[0];
@@ -146,7 +146,7 @@ double Bead::getLoadForcesP() {
     else return loadForcesP[lfip];
 }
 
-double Bead::getLoadForcesM() {
+floatingpoint Bead::getLoadForcesM() {
     
     if (lfim < 0)
         return loadForcesM[0];

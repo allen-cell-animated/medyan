@@ -171,7 +171,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
         googlereversepossible[googlereversepossible.size()-1][0].set_deleted_key(4294967294);
 
         bstateposvec.push_back(localbstateposvec);
-        vector<double> bs1, bs2;
+        vector<floatingpoint> bs1, bs2;
         vector<float> minvec = {(float)*(SysParams::Chemistry().bindingSites[ftypepairs[0]]
                                 .begin())/ SysParams::Geometry().cylinderNumMon[ftypepairs[0]],
                                 (float)*(SysParams::Chemistry().bindingSites[ftypepairs[1]]
@@ -285,7 +285,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						auto m1 = midPointCoordinate(x1, x2, mp1);
 						auto m2 = midPointCoordinate(x3, x4, mp2);
 
-						double distsq = twoPointDistancesquared(m1, m2);
+						floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
 						if (distsq > _rMaxsq || distsq < _rMinsq) {k++;continue;}
 
@@ -314,7 +314,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 				}
 			}
 			minefind = chrono::high_resolution_clock::now();
-			chrono::duration<double> elapsed_countsites(minefind - minsfind);
+			chrono::duration<floatingpoint> elapsed_countsites(minefind - minsfind);
 			SIMDcountbs += elapsed_countsites.count();
 		}
 
@@ -335,7 +335,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			}
 			//Generate current coordinate
 			int N = 8;
-			vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(
+			vector<floatingpoint> bindsitecoordinatesX(N), bindsitecoordinatesY(
 					N), bindsitecoordinatesZ(N);
 			vector<uint32_t> cindex_bs(N);
 			short _filamentType = 0;
@@ -393,7 +393,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 				}
 			}
 			minefind = chrono::high_resolution_clock::now();
-			chrono::duration<double> elapsed_countsites(minefind - minsfind);
+			chrono::duration<floatingpoint> elapsed_countsites(minefind - minsfind);
 			SIMDcountbs += elapsed_countsites.count();
 		}
 	}
@@ -461,7 +461,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						auto m1 = midPointCoordinate(x1, x2, mp1);
 						auto m2 = midPointCoordinate(x3, x4, mp2);
 
-						double distsq = twoPointDistancesquared(m1, m2);
+						floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
 						if(distsq > _rMaxsq || distsq < _rMinsq) continue;
 
@@ -526,7 +526,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			}
 			//Generate current coordinate
 			int N = 8;
-			vector<double> bindsitecoordinatesX(N), bindsitecoordinatesY(
+			vector<floatingpoint> bindsitecoordinatesX(N), bindsitecoordinatesY(
 					N), bindsitecoordinatesZ(N);
 			vector<uint32_t> cindex_bs(N);
 			short _filamentType = 0;
@@ -584,7 +584,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 				}
 			}
 			minefind = chrono::high_resolution_clock::now();
-			chrono::duration<double> elapsed_countsites(minefind - minsfind);
+			chrono::duration<floatingpoint> elapsed_countsites(minefind - minsfind);
 			SIMDcountbs += elapsed_countsites.count();
 		}
 #else
@@ -653,7 +653,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						auto m1 = midPointCoordinate(x1, x2, mp1);
 						auto m2 = midPointCoordinate(x3, x4, mp2);
 
-						double distsq = twoPointDistancesquared(m1, m2);
+						floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
 						if(distsq > _rMaxsq || distsq < _rMinsq) continue;
 
@@ -1233,13 +1233,13 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
         }
     }
 
-    double min1,min2,max1,max2;
+    floatingpoint min1,min2,max1,max2;
     bool status1 = true;
     bool status2 = true;
-    double minveca[2];
-    double maxveca[2];
-    double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
-    double *coord = CUDAcommon::getSERLvars().coord;
+    floatingpoint minveca[2];
+    floatingpoint maxveca[2];
+    floatingpoint* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
+    floatingpoint *coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     int Ncylincmp = _compartment->getCylinders().size();
     int cindexvec[Ncylincmp]; //stores cindex of cylinders in this compartment
@@ -1287,8 +1287,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
 
             int cindex = cindexvec[i];
             short complimentaryfID;
-            double x1[3], x2[3];
-            double X1X2[3] = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+            floatingpoint x1[3], x2[3];
+            floatingpoint X1X2[3] = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
             int *cnindices = ncindices[i].data();
             cylinder c = cylindervec[cindex];
 
@@ -1296,8 +1296,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
             else if(c.type == fpairs[0]) complimentaryfID = fpairs[1];
             else complimentaryfID = fpairs[0];
 
-            memcpy(x1, &coord[3 * c.bindices[0]], 3 * sizeof(double));
-            memcpy(x2, &coord[3 * c.bindices[1]], 3 * sizeof(double));
+            memcpy(x1, &coord[3 * c.bindices[0]], 3 * sizeof(floatingpoint));
+            memcpy(x2, &coord[3 * c.bindices[1]], 3 * sizeof(floatingpoint));
 
             //Go through the neighbors of the cylinder
             for (int arraycount = 0; arraycount < ncindices[i].size(); arraycount++) {
@@ -1310,17 +1310,17 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                 if (c.filamentID == cn.filamentID) continue;
                 if(c.type != complimentaryfID) continue;
 
-                double x3[3], x4[3];
-                memcpy(x3, &coord[3 * cn.bindices[0]], 3 * sizeof(double));
-                memcpy(x4, &coord[3 * cn.bindices[1]], 3 * sizeof(double));
-                double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-                double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-                double X1X3squared = sqmagnitude(X1X3);
-                double X1X2squared = cylsqmagnitudevector[c.cindex];
-                double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-                double X3X4squared = cylsqmagnitudevector[cn.cindex];
-                double X1X3dotX3X4 = scalarprojection(X1X3, X3X4);
-                double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+                floatingpoint x3[3], x4[3];
+                memcpy(x3, &coord[3 * cn.bindices[0]], 3 * sizeof(floatingpoint));
+                memcpy(x4, &coord[3 * cn.bindices[1]], 3 * sizeof(floatingpoint));
+                floatingpoint X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+                floatingpoint X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+                floatingpoint X1X3squared = sqmagnitude(X1X3);
+                floatingpoint X1X2squared = cylsqmagnitudevector[c.cindex];
+                floatingpoint X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+                floatingpoint X3X4squared = cylsqmagnitudevector[cn.cindex];
+                floatingpoint X1X3dotX3X4 = scalarprojection(X1X3, X3X4);
+                floatingpoint X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
 
                 //Number of binding sites on the cylinder/filament of Type A.
                 for (int pos1 = 0; pos1 < nbs1; pos1++) {
@@ -1334,15 +1334,15 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                         if (areEqual(boundstate[bstatepos][offset1 + maxnbs * c.cindex + pos1], 1.0)) {
 
                             auto mp1 = bindingsites1[idx][pos1];
-                            double A = X3X4squared;
-                            double B = 2.0 * X1X3dotX3X4 - 2.0 * mp1 * X3X4dotX1X2;
-                            double C = X1X3squared + mp1 * mp1 * X1X2squared -
+                            floatingpoint A = X3X4squared;
+                            floatingpoint B = 2.0 * X1X3dotX3X4 - 2.0 * mp1 * X3X4dotX1X2;
+                            floatingpoint C = X1X3squared + mp1 * mp1 * X1X2squared -
                                        2.0 * mp1 * X1X3dotX1X2;
-                            double Bsq = B*B;
-                            double C1 = C - _rMinsqvec[idx][idx2];
-                            double C2 = C - _rMaxsqvec[idx][idx2];
-                            double b2m4ac1 = Bsq - 4 * A * C1;
-                            double b2m4ac2 = Bsq - 4 * A * C2;
+                            floatingpoint Bsq = B*B;
+                            floatingpoint C1 = C - _rMinsqvec[idx][idx2];
+                            floatingpoint C2 = C - _rMaxsqvec[idx][idx2];
+                            floatingpoint b2m4ac1 = Bsq - 4 * A * C1;
+                            floatingpoint b2m4ac2 = Bsq - 4 * A * C2;
 
 
                             status1 = b2m4ac1 < 0;
@@ -1410,7 +1410,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                                     _reversepossibleBindingsstencilvec[idx][idx2][t2]
                                             .push_back(t1);
 //                                    minemap = chrono::high_resolution_clock::now();
-//                                    chrono::duration<double> elapsedmap(minemap - minsmap);
+//                                    chrono::duration<floatingpoint> elapsedmap(minemap - minsmap);
 //                                    HYBDappendtime += elapsedmap.count();
 
                                 }
@@ -1537,7 +1537,7 @@ if(false) {
                             auto m1 = midPointCoordinate(x1, x2, mp1);
                             auto m2 = midPointCoordinate(x3, x4, mp2);
 
-                            double dist = twoPointDistancesquared(m1, m2);
+                            floatingpoint dist = twoPointDistancesquared(m1, m2);
 
                             if (dist > _rMaxsqvec[idx][idx2] || dist <
                                                                 _rMinsqvec[idx][idx2])
@@ -1568,13 +1568,13 @@ if(false) {
 
 }
 if(false) {
-    /*double min1, min2, max1, max2;
+    /*floatingpoint min1, min2, max1, max2;
     bool status1 = true;
     bool status2 = true;
-    double minveca[2];
-    double maxveca[2];
-    double *cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
-    double *coord = CUDAcommon::getSERLvars().coord;
+    floatingpoint minveca[2];
+    floatingpoint maxveca[2];
+    floatingpoint *cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
+    floatingpoint *coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     int Ncylincmp = _compartment->getCylinders().size();
     int cindexvec[Ncylincmp]; //stores cindex of cylinders in this compartment
@@ -1623,8 +1623,8 @@ if(false) {
 
             int cindex = cindexvec[i];
             short complimentaryfID;
-            double x1[3], x2[3];
-            double X1X2[3] = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
+            floatingpoint x1[3], x2[3];
+            floatingpoint X1X2[3] = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
             int *cnindices = ncindices[i].data();
             cylinder c = cylindervec[cindex];
 
@@ -1632,8 +1632,8 @@ if(false) {
             else if (c.type == fpairs[0]) complimentaryfID = fpairs[1];
             else complimentaryfID = fpairs[0];
 
-            memcpy(x1, &coord[3 * c.bindices[0]], 3 * sizeof(double));
-            memcpy(x2, &coord[3 * c.bindices[1]], 3 * sizeof(double));
+            memcpy(x1, &coord[3 * c.bindices[0]], 3 * sizeof(floatingpoint));
+            memcpy(x2, &coord[3 * c.bindices[1]], 3 * sizeof(floatingpoint));
 
             //Go through the neighbors of the cylinder
             for (int arraycount = 0; arraycount < ncindices[i].size(); arraycount++) {
@@ -1646,17 +1646,17 @@ if(false) {
                 if (c.filamentID == cn.filamentID) continue;
                 if (c.type != complimentaryfID) continue;
 
-                double x3[3], x4[3];
-                memcpy(x3, &coord[3 * cn.bindices[0]], 3 * sizeof(double));
-                memcpy(x4, &coord[3 * cn.bindices[1]], 3 * sizeof(double));
-                double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-                double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-                double X1X3squared = sqmagnitude(X1X3);
-                double X1X2squared = cylsqmagnitudevector[c.cindex];
-                double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-                double X3X4squared = cylsqmagnitudevector[cn.cindex];
-                double X1X3dotX3X4 = scalarprojection(X1X3, X3X4);
-                double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+                floatingpoint x3[3], x4[3];
+                memcpy(x3, &coord[3 * cn.bindices[0]], 3 * sizeof(floatingpoint));
+                memcpy(x4, &coord[3 * cn.bindices[1]], 3 * sizeof(floatingpoint));
+                floatingpoint X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+                floatingpoint X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+                floatingpoint X1X3squared = sqmagnitude(X1X3);
+                floatingpoint X1X2squared = cylsqmagnitudevector[c.cindex];
+                floatingpoint X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+                floatingpoint X3X4squared = cylsqmagnitudevector[cn.cindex];
+                floatingpoint X1X3dotX3X4 = scalarprojection(X1X3, X3X4);
+                floatingpoint X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
 
                 //Number of binding sites on the cylinder/filament of Type A.
                 for (int pos1 = 0; pos1 < nbs1; pos1++) {
@@ -1672,15 +1672,15 @@ if(false) {
                                 1.0)) {
 
                             auto mp1 = bindingsites1[idx][pos1];
-                            double A = X3X4squared;
-                            double B = 2.0 * X1X3dotX3X4 - 2.0 * mp1 * X3X4dotX1X2;
-                            double C = X1X3squared + mp1 * mp1 * X1X2squared -
+                            floatingpoint A = X3X4squared;
+                            floatingpoint B = 2.0 * X1X3dotX3X4 - 2.0 * mp1 * X3X4dotX1X2;
+                            floatingpoint C = X1X3squared + mp1 * mp1 * X1X2squared -
                                        2.0 * mp1 * X1X3dotX1X2;
-                            double Bsq = B * B;
-                            double C1 = C - _rMinsqvec[idx][idx2];
-                            double C2 = C - _rMaxsqvec[idx][idx2];
-                            double b2m4ac1 = Bsq - 4 * A * C1;
-                            double b2m4ac2 = Bsq - 4 * A * C2;
+                            floatingpoint Bsq = B * B;
+                            floatingpoint C1 = C - _rMinsqvec[idx][idx2];
+                            floatingpoint C2 = C - _rMaxsqvec[idx][idx2];
+                            floatingpoint b2m4ac1 = Bsq - 4 * A * C1;
+                            floatingpoint b2m4ac2 = Bsq - 4 * A * C2;
 
 
                             status1 = b2m4ac1 < 0;
@@ -1788,7 +1788,7 @@ void HybridBindingSearchManager::calculatebspairsself(dist::dOut<D, SELF>& bspai
     dist::find_distances(bspairsoutSself, _compartment->bscoords, t_avx_par);
 
     /*minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runfind(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
     findtime += elapsed_runfind.count();*/
     //Loop through output
     short idx = 0;
@@ -1871,7 +1871,7 @@ void HybridBindingSearchManager::calculatebspairsenclosed (dist::dOut<D,SELF>& b
         bspairsoutS.reset_counters();
         dist::find_distances(bspairsoutS, _compartment->bscoords, ncmp->bscoords, t_avx_par);
         /*minefind = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runfind(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
         findtime += elapsed_runfind.count();*/
         //Loop through output
         short idx = 0;
@@ -1988,7 +1988,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
         }
         thrust::stable_sort(thrust::omp::par, ncID_bs.begin(), ncID_bs.end());
         minefind = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_sortkys(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_sortkys(minefind - minsfind);
         std::cout << "Time sort unique keys " << elapsed_sortkys.count() << endl;
 
         //STEP 3 write linkerpairs and motorpairs in two vectors
@@ -2027,7 +2027,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
         thrust::stable_sort_by_key(thrust::omp::par, pairlinker2D[0].begin(), pairlinker2D[0]
          .end(), pairlinker2D[1].begin());
         minefind = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_stablethrust(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_stablethrust(minefind - minsfind);
         std::cout << "Lthrust stable sort parallel " << elapsed_stablethrust.count() << endl;
 
         //Lower Bound Linker
@@ -2052,7 +2052,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
         cout<<endl;
 
         cout<<Lcountveckey.size()<<endl;*//*
-        chrono::duration<double> elapsed_countkey(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_countkey(minefind - minsfind);
         std::cout << "Lthrust countKey " << elapsed_countkey.count() << endl;
 
         //SORT REVERSE LINKER
@@ -2060,7 +2060,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
         thrust::stable_sort_by_key(thrust::omp::par, Rpairlinker2D[0].begin(),
                                    Rpairlinker2D[0].end(), Rpairlinker2D[1].begin());
         minefind = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_stableRthrust(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_stableRthrust(minefind - minsfind);
         std::cout << "LRthrust stable sort parallel " <<elapsed_stableRthrust.count() <<endl;
 
         //Lower Bound Reverse Linker
@@ -2072,7 +2072,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
         .end(), ncID_bs.begin(), ncID_bs.end(), LcountvecRkey.begin());
         minefind = chrono::high_resolution_clock::now();
 
-        chrono::duration<double> elapsed_countRkey(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_countRkey(minefind - minsfind);
         std::cout << "LRthrust countKey " << elapsed_countRkey.count() << endl;
 
         //SORT MOTOR
@@ -2081,7 +2081,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
                 .end(), pairmotor2D[1].begin());
         minefind = chrono::high_resolution_clock::now();
 
-        chrono::duration<double> elapsed_stableMthrust(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_stableMthrust(minefind - minsfind);
         std::cout << "Mthrust stable sort parallel " << elapsed_stableMthrust.count()<<endl;
 
         //Lower Bound Motor
@@ -2093,7 +2093,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
                             cID_bs.begin(), cID_bs.end(), Mcountveckey.begin());
         minefind = chrono::high_resolution_clock::now();
 
-        chrono::duration<double> elapsed_countMkey(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_countMkey(minefind - minsfind);
         std::cout << "Mthrust countKey " << elapsed_countMkey.count() << endl;
 
         //SORT REVERSE MOTOR
@@ -2102,7 +2102,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
                 Rpairmotor2D[0].end(), Rpairmotor2D[1].begin());
         minefind = chrono::high_resolution_clock::now();
 
-        chrono::duration<double> elapsed_stableMRthrust(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_stableMRthrust(minefind - minsfind);
         std::cout << "MRthrust stable sort parallel " << elapsed_stableMRthrust.count()
         <<endl;
 
@@ -2115,7 +2115,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
         .end(), ncID_bs.begin(), ncID_bs.end(), McountvecRkey.begin());
         minefind = chrono::high_resolution_clock::now();
 
-        chrono::duration<double> elapsed_countMRkey(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_countMRkey(minefind - minsfind);
         std::cout << "MRthrust countKey " << elapsed_countMRkey.count() << endl;
 
         dense_hash_map<uint32_t , vector<uint>, hash<uint32_t>> Lmap, LRmap, Mmap, MRmap;
@@ -2163,7 +2163,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV2() {
         }
         minefind = chrono::high_resolution_clock::now();
 
-        chrono::duration<double> elapsed_map(minefind - minsfind);
+        chrono::duration<floatingpoint> elapsed_map(minefind - minsfind);
         std::cout << "maptime " << elapsed_map.count() << endl;
     }*/
 
@@ -2189,7 +2189,7 @@ if(true) {
     }
 }
     /*minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_countsites(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_countsites(minefind - minsfind);
     SIMDcountbs += elapsed_countsites.count();*/
 //    cout<<"Time to count dense hash map size "<<elapsed_countsites.count()<<endl;
 #endif
@@ -2241,7 +2241,7 @@ void HybridBindingSearchManager::findIDsincylinderIDvector(vector<vector<uint>>&
                             searchvector[ID].begin(), searchvector[ID].end(),
                             outputvector[ID].begin());
     minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_lowkys(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_lowkys(minefind - minsfind);
     std::cout << "Time trace lower bound keys " << elapsed_lowkys.count() << endl;*/
 
 }
@@ -2298,7 +2298,7 @@ void HybridBindingSearchManager::calculatebspairsLMself(dist::dOut<D, SELF>&
 			                     t_serial);
 
 	minefind = chrono::high_resolution_clock::now();
-	chrono::duration<double> elapsed_runfind(minefind - minsfind);
+	chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
 	findtimeV2 += elapsed_runfind.count();
 
 	//MERGE INTO single vector
@@ -2352,7 +2352,7 @@ void HybridBindingSearchManager::calculatebspairsLMself(dist::dOut<D, SELF>&
 		}//else
 
 		minefind = chrono::high_resolution_clock::now();
-		chrono::duration<double> elapsed_append(minefind - minsfind);
+		chrono::duration<floatingpoint> elapsed_append(minefind - minsfind);
 		appendtime += elapsed_append.count();
 	}
 	}
@@ -2498,7 +2498,7 @@ void HybridBindingSearchManager::calculatebspairsLMenclosed (dist::dOut<D,SELF>&
 		    }
 
 	    minefind = chrono::high_resolution_clock::now();
-	    chrono::duration<double> elapsed_runfind(minefind - minsfind);
+	    chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
 	    findtimeV2 += elapsed_runfind.count();
 
 	    //MERGE INTO single vector
@@ -2540,7 +2540,7 @@ void HybridBindingSearchManager::calculatebspairsLMenclosed (dist::dOut<D,SELF>&
 			    threads_avx.clear();
 		    }//else
 		    minefind = chrono::high_resolution_clock::now();
-		    chrono::duration<double> elapsed_append(minefind - minsfind);
+		    chrono::duration<floatingpoint> elapsed_append(minefind - minsfind);
 		    appendtime += elapsed_append.count();
 	    }
     }
@@ -2681,7 +2681,7 @@ bspairsoutSself, short idvec[2], short maptag) {
 			_compartment->getSIMDcoordsV3<LinkerorMotor>(0).size()<<endl;*/
 
 	minefind = chrono::high_resolution_clock::now();
-	chrono::duration<double> elapsed_runfind(minefind - minsfind);
+	chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
 	findtimeV3 += elapsed_runfind.count();
 
 
@@ -2722,7 +2722,7 @@ bspairsoutSself, short idvec[2], short maptag) {
 		}//else
 
 		minefind = chrono::high_resolution_clock::now();
-		chrono::duration<double> elapsed_append(minefind - minsfind);
+		chrono::duration<floatingpoint> elapsed_append(minefind - minsfind);
 		SIMDV3appendtime += elapsed_append.count();
 	}
 	}
@@ -2775,7 +2775,7 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2], short maptag){
 		    }
 
 		    minefind = chrono::high_resolution_clock::now();
-		    chrono::duration<double> elapsed_runfind(minefind - minsfind);
+		    chrono::duration<floatingpoint> elapsed_runfind(minefind - minsfind);
 		    findtimeV3 += elapsed_runfind.count();
 
 		    i++;
@@ -2816,7 +2816,7 @@ bspairsoutS, dist::dOut<D,SELF>& bspairsoutS2, short idvec[2], short maptag){
 			    threads_avx.clear();
 		    }//else
 		    minefind = chrono::high_resolution_clock::now();
-		    chrono::duration<double> elapsed_append(minefind - minsfind);
+		    chrono::duration<floatingpoint> elapsed_append(minefind - minsfind);
 		    SIMDV3appendtime += elapsed_append.count();
 	    }
 
@@ -2953,7 +2953,7 @@ bspairsoutS, int first, int last, short idvec[2], short maptag, Compartment* nCm
         cylinder cylinder1 = cylindervec[cIndex1];
         cylinder cylinder2 = cylindervec[cIndex2];
 
-        /*vector<double> cylcoord = {cylinder1.coord[0], cylinder1.coord[1], cylinder1.coord[2]};
+        /*vector<floatingpoint> cylcoord = {cylinder1.coord[0], cylinder1.coord[1], cylinder1.coord[2]};
 	    auto C = GController::getCompartment(cylcoord);
 
 	    if(C!= _compartment) {
@@ -3052,7 +3052,7 @@ void HybridBindingSearchManager::parseSIMDout
     }//else
     std::vector<std::thread> threads_SIMDV2;
     minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runSIMD(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_runSIMD(minefind - minsfind);
     SIMDparse1 += elapsed_runSIMD.count();
 
     //COMMENTED OUT
@@ -3104,7 +3104,7 @@ void HybridBindingSearchManager::parseSIMDout
     for (auto &t : threads_SIMDV2)
         t.join();
     minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runSIMDV2(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_runSIMDV2(minefind - minsfind);
     cout << "SIMDV2 time " << elapsed_runSIMDV2.count() << " SIMDV1 time "
          << elapsed_runSIMD
                  .count() << endl;
@@ -3208,7 +3208,7 @@ void HybridBindingSearchManager::parseSIMDout
             vecNmap[i].clear();
     }*/
     minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runSIMD2(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_runSIMD2(minefind - minsfind);
     SIMDparse2 += elapsed_runSIMD2.count();
 
     //Check if there are entries
@@ -3261,7 +3261,7 @@ void HybridBindingSearchManager::singlepassparseSIMDout(short idvec[2]){
 
 
     /*minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runSIMD(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_runSIMD(minefind - minsfind);
     SIMDV3parse1 += elapsed_runSIMD.count();*/
 
     //Merge maps
@@ -3282,7 +3282,7 @@ void HybridBindingSearchManager::singlepassparseSIMDout(short idvec[2]){
         }
 
 /*    minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runSIMD2(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_runSIMD2(minefind - minsfind);
     SIMDV3parse2 += elapsed_runSIMD2.count();*/
 
 //    minsfind = chrono::high_resolution_clock::now();
@@ -3291,7 +3291,7 @@ void HybridBindingSearchManager::singlepassparseSIMDout(short idvec[2]){
     googlereversepossible[idvec[0]][idvec[1]] = getvecmapLinkerorMotor<LinkerorMotor>()[1];
 
 /*    minefind = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runSIMD3(minefind - minsfind);
+    chrono::duration<floatingpoint> elapsed_runSIMD3(minefind - minsfind);
     SIMDV3parse3 += elapsed_runSIMD3.count();*/
 
     //Clear
@@ -3970,18 +3970,18 @@ dist::dOut<1U,false> HybridBindingSearchManager::bspairs2_D2;*/
 
 
 short HybridBindingSearchManager::Totallinkermotor = 0;
-double HybridBindingSearchManager::SIMDtime = 0.0;
-double HybridBindingSearchManager::HYBDtime = 0.0;
-double HybridBindingSearchManager::findtime = 0.0;
-double HybridBindingSearchManager::appendtime = 0.0;
-double HybridBindingSearchManager::findtimeV2 = 0.0;
-double HybridBindingSearchManager::SIMDparse1 = 0.0;
-double HybridBindingSearchManager::SIMDparse2 = 0.0;
-double HybridBindingSearchManager::SIMDparse3 = 0.0;
-double HybridBindingSearchManager::SIMDcountbs = 0.0;
-double HybridBindingSearchManager::HYBDappendtime = 0.0;
-double HybridBindingSearchManager::SIMDV3appendtime = 0.0;
-double HybridBindingSearchManager::findtimeV3 = 0.0;
+floatingpoint HybridBindingSearchManager::SIMDtime = 0.0;
+floatingpoint HybridBindingSearchManager::HYBDtime = 0.0;
+floatingpoint HybridBindingSearchManager::findtime = 0.0;
+floatingpoint HybridBindingSearchManager::appendtime = 0.0;
+floatingpoint HybridBindingSearchManager::findtimeV2 = 0.0;
+floatingpoint HybridBindingSearchManager::SIMDparse1 = 0.0;
+floatingpoint HybridBindingSearchManager::SIMDparse2 = 0.0;
+floatingpoint HybridBindingSearchManager::SIMDparse3 = 0.0;
+floatingpoint HybridBindingSearchManager::SIMDcountbs = 0.0;
+floatingpoint HybridBindingSearchManager::HYBDappendtime = 0.0;
+floatingpoint HybridBindingSearchManager::SIMDV3appendtime = 0.0;
+floatingpoint HybridBindingSearchManager::findtimeV3 = 0.0;
 
 /*///Template specializations
 template void HybridBindingSearchManager::calculatebspairsself<1,true>();

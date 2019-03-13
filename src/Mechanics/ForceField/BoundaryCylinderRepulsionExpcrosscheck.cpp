@@ -15,18 +15,18 @@
 
 #include "Bead.h"
 #ifdef CROSSCHECK
-double BoundaryCylinderRepulsionExp::energy(Bead* b, double r,
-                                            double kRep, double screenLength) {
-    double R = -r/screenLength;
+floatingpoint BoundaryCylinderRepulsionExp::energy(Bead* b, floatingpoint r,
+                                            floatingpoint kRep, floatingpoint screenLength) {
+    floatingpoint R = -r/screenLength;
 //    std::cout<<r<<" "<<kRep*exp(R)<<endl;
     return kRep * exp(R);
 }
 
-void BoundaryCylinderRepulsionExp::forces(Bead* b, double r, vector<double>& norm,
-                                          double kRep, double screenLength) {
+void BoundaryCylinderRepulsionExp::forces(Bead* b, floatingpoint r, vector<floatingpoint>& norm,
+                                          floatingpoint kRep, floatingpoint screenLength) {
     
-    double R = -r/screenLength;
-    double f0 = kRep * exp(R);
+    floatingpoint R = -r/screenLength;
+    floatingpoint f0 = kRep * exp(R);
     
 //    std::cout<<"old "<<b->_dbIndex<<" "<<b->force[0]<<" "<<b->force[1]<<" "<<b->force[2]<<" "<<screenLength<<" "<<kRep<<" "<<f0<<endl;
     
@@ -37,11 +37,11 @@ void BoundaryCylinderRepulsionExp::forces(Bead* b, double r, vector<double>& nor
 //    std::cout<<b->_dbIndex<<" "<<b->force[0]<<" "<<b->force[1]<<" "<<b->force[2]<<" "<<screenLength<<" "<<kRep<<" "<<f0<<endl;
 }
 
-void BoundaryCylinderRepulsionExp::forcesAux(Bead* b, double r, vector<double>& norm,
-                                             double kRep, double screenLength) {
+void BoundaryCylinderRepulsionExp::forcesAux(Bead* b, floatingpoint r, vector<floatingpoint>& norm,
+                                             floatingpoint kRep, floatingpoint screenLength) {
     
-    double R = -r/screenLength;
-    double f0 = kRep * exp(R);
+    floatingpoint R = -r/screenLength;
+    floatingpoint f0 = kRep * exp(R);
     
     b->forceAux[0] += f0 *norm[0];
     b->forceAux[1] += f0 *norm[1];

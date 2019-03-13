@@ -15,8 +15,8 @@
 #define MEDYAN_FilamentInitializer_h
 
 #include "common.h"
-typedef vector<tuple<short, vector<double>, vector<double>>> filamentData;
-typedef  tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  FilamentData;
+typedef vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filamentData;
+typedef  tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> >  FilamentData;
 
 ///FORWARD DECLARATIONS
 class Boundary;
@@ -69,12 +69,12 @@ public:
 class MTOCFilamentDist : public FilamentInitializer {
     
 private:
-    vector<double> _coordMTOC; ///< Coordinates of the MTOC to make filaments around
-    double _radius;            ///< Radius of MTOC
+    vector<floatingpoint> _coordMTOC; ///< Coordinates of the MTOC to make filaments around
+    floatingpoint _radius;            ///< Radius of MTOC
     
 public:
     ///Constructor sets parameters of MTOC
-    MTOCFilamentDist(vector<double> coord, double radius)
+    MTOCFilamentDist(vector<floatingpoint> coord, floatingpoint radius)
         : _coordMTOC(coord), _radius(radius) {}
     
     FilamentData createFilaments(Boundary* b, int numFilaments,

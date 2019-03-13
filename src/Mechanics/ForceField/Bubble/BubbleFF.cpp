@@ -69,10 +69,10 @@ void BubbleFF::whoIsCulprit() {
 }
 
 
-double BubbleFF::computeEnergy(double d) {
+floatingpoint BubbleFF::computeEnergy(floatingpoint d) {
     
-    double U= 0.0;
-    double U_i=0.0;
+    floatingpoint U= 0.0;
+    floatingpoint U_i=0.0;
     
     for (auto &interaction : _bubbleInteractionVector) {
         

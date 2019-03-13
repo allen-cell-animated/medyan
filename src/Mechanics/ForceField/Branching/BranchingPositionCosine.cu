@@ -62,13 +62,13 @@ void BranchingPositionCosine::optimalblocksnthreads( int nint){
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemset(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
 
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)));
-//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)));
+//        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
 
         char a[] = "BranchingFF";
         char b[] = "Branching Position Cosine";
@@ -87,18 +87,18 @@ void BranchingPositionCosine::optimalblocksnthreads( int nint){
     }
 
 }
-double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
-                                        double *kpos, double *pos, int *params) {
+floatingpoint* BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                        floatingpoint *kpos, floatingpoint *pos, int *params) {
 //    if(blocksnthreadse[1]>0) {
 //        BranchingPositionCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
+//                (floatingpoint), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i, CUDAcommon::getCUDAvars().gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
 //        auto cvars = CUDAcommon::getCUDAvars();
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
 //        return gU_sum;}
@@ -107,11 +107,11 @@ double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 }
 
 
-double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
-                                        double *kpos, double *pos, double *z, int *params) {
+floatingpoint* BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                        floatingpoint *kpos, floatingpoint *pos, floatingpoint *z, int *params) {
     if(blocksnthreadse[1]>0) {
         BranchingPositionCosineenergy<<<blocksnthreadse[0], blocksnthreadse[1], (9 * blocksnthreadse[1]) * sizeof
-                (double), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i, z, CUDAcommon::getCUDAvars()
+                (floatingpoint), stream>>> (coord, f, beadSet, kpos, pos, params, gU_i, z, CUDAcommon::getCUDAvars()
                 .gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -119,7 +119,7 @@ double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"BranchingPositionCosineenergy", "BranchingPositionCosine.cu");
 //        return gU_sum;
@@ -127,7 +127,7 @@ double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 
     if(blocksnthreadsez[1]>0) {
         BranchingPositionCosineenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
-                                          sizeof(double), stream>> > (coord, f, beadSet, kpos, pos, params, gU_i, z,
+                                          sizeof(floatingpoint), stream>> > (coord, f, beadSet, kpos, pos, params, gU_i, z,
                 CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
                 CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
@@ -135,7 +135,7 @@ double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingPositionCosineenergyz", "BranchingPositionCosine.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingPositionCosineenergyz", "BranchingPositionCosine.cu");
@@ -147,16 +147,16 @@ double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
-//        addvectorred<<<1,200,200*sizeof(double),stream>>>(gU_i,params, gU_sum, gpu_Utot);
+//        addvectorred<<<1,200,200*sizeof(floatingpoint),stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        cudaStreamSynchronize(stream);
 //        std::cout<<"bntaddvec "<<bntaddvec2.at(0)<<" "<<bntaddvec2.at(1)<<" "<<bntaddvec2.at(0)<<" "
 //                ""<<bntaddvec2.at(2)<<" "<<bntaddvec2.at(3)<<endl;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
         CUDAcommon::handleerror(cudaGetLastError(),"FilamentBendingCosineenergyz", "FilamentBendingCosine.cu");
@@ -165,11 +165,11 @@ double* BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 
 }
 
-void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
-                                     double *kpos, double *pos, int *params){
+void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                     floatingpoint *kpos, floatingpoint *pos, int *params){
     if(blocksnthreadsf[1]>0) {
         BranchingPositionCosineforces << < blocksnthreadsf[0], blocksnthreadsf[1], (9 * blocksnthreadsf[1]) *
-                                                                                   sizeof(double), stream >> > (coord, f, beadSet, kpos, pos, params);
+                                                                                   sizeof(floatingpoint), stream >> > (coord, f, beadSet, kpos, pos, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -186,17 +186,17 @@ void BranchingPositionCosine::checkforculprit() {
 }
 #endif
 
-double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
-                                       double *kpos, double *pos){
+floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                       floatingpoint *kpos, floatingpoint *pos){
 
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
-    double *mp = new double[3];
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
+    floatingpoint *mp = new floatingpoint[3];
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -219,7 +219,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
         U_i = kpos[i] * ( 1 - cos(dTheta) );
 
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -234,17 +234,17 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
-                                       double *kpos, double *pos, double d){
+floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                       floatingpoint *kpos, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, theta, posheta, dTheta, U_i;
-    double *mp = new double[3];
-    double *vzero = new double[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
+    floatingpoint *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, theta, posheta, dTheta, U_i;
+    floatingpoint *mp = new floatingpoint[3];
+    floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -271,7 +271,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
         U_i = kpos[i] * ( 1 - cos(dTheta) );
 //    std::cout<<i << U_i<<endl;
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -287,14 +287,14 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
-                                     double *kpos, double *pos){
+void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                     floatingpoint *kpos, floatingpoint *pos){
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    double *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta;
-    double *mp = new double[3];
+    floatingpoint *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta;
+    floatingpoint *mp = new floatingpoint[3];
 
 
     for(int i = 0; i < nint; i += 1) {

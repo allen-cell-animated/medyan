@@ -23,24 +23,24 @@ using namespace mathfunc;
 //#if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 //
 //#else
-//static __inline__ __device__ double atomicAdd(double *address, double val) {
+//static __inline__ __device__ floatingpoint atomicAdd(floatingpoint *address, floatingpoint val) {
 //    unsigned long long int* address_as_ull = (unsigned long long int*)address;
 //    unsigned long long int old = *address_as_ull, assumed;
 //    if (val==0.0)
-//      return __longlong_as_double(old);
+//      return __longlong_as_floatingpoint(old);
 //    do {
 //      assumed = old;
-//      old = atomicCAS(address_as_ull, assumed, __double_as_longlong(val +__longlong_as_double(assumed)));
+//      old = atomicCAS(address_as_ull, assumed, __floatingpoint_as_longlong(val +__longlong_as_floatingpoint(assumed)));
 //    } while (assumed != old);
-//    return __longlong_as_double(old);
+//    return __longlong_as_floatingpoint(old);
 //  }
 //
 //
 //#endif
 
-//__global__ void addvectorL(double *U, int *params, double *U_sum, double *U_tot){
+//__global__ void addvectorL(floatingpoint *U, int *params, floatingpoint *U_sum, floatingpoint *U_tot){
 //    U_sum[0] = 0.0;
-//    double sum = 0.0;
+//    floatingpoint sum = 0.0;
 //    for(auto i=0;i<params[1];i++){
 //        if(U[i] == -1.0 && sum != -1.0){
 //            U_sum[0] = -1.0;
@@ -56,19 +56,19 @@ using namespace mathfunc;
 //
 //}
 
-__global__ void LinkerStretchingHarmonicenergy(double *coord, double *force, int *beadSet, double *kstr,
-                                               double *eql, double *pos1, double *pos2, int *params,
-                                               double *U_i, double *z, int *culpritID,
+__global__ void LinkerStretchingHarmonicenergy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *kstr,
+                                               floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, int *params,
+                                               floatingpoint *U_i, floatingpoint *z, int *culpritID,
                                                char* culpritFF, char* culpritinteraction, char* FF, char*
                                                interaction) {
     if(z[0] == 0.0) {
-        extern __shared__ double s[];
-        double *c1 = s;
-        double *c2 = &c1[3 * blockDim.x];
-        double *c3 = &c2[3 * blockDim.x];
-        double *c4 = &c3[3 * blockDim.x];
-        double v1[3], v2[3];
-        double dist;
+        extern __shared__ floatingpoint s[];
+        floatingpoint *c1 = s;
+        floatingpoint *c2 = &c1[3 * blockDim.x];
+        floatingpoint *c3 = &c2[3 * blockDim.x];
+        floatingpoint *c4 = &c3[3 * blockDim.x];
+        floatingpoint v1[3], v2[3];
+        floatingpoint dist;
         int nint = params[1];
         int n = params[0];
         const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -90,8 +90,8 @@ __global__ void LinkerStretchingHarmonicenergy(double *coord, double *force, int
             dist = twoPointDistance(v1, v2) - eql[thread_idx];
             U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
 
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
+                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < (floatingpoint)-1.0) {
                 U_i[thread_idx] = -1.0;
                 culpritID[0] = thread_idx;
                 culpritID[1] = -1;
@@ -112,23 +112,23 @@ __global__ void LinkerStretchingHarmonicenergy(double *coord, double *force, int
     }
 }
 
-__global__ void LinkerStretchingHarmonicenergyz(double *coord, double *f, int *beadSet, double *kstr,
-                                                double *eql, double *pos1, double *pos2, int *params,
-                                                double *U_i, double *U_vec, double *z, int
+__global__ void LinkerStretchingHarmonicenergyz(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kstr,
+                                                floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, int *params,
+                                                floatingpoint *U_i, floatingpoint *U_vec, floatingpoint *z, int
                                                 *culpritID,
                                                 char* culpritFF, char* culpritinteraction, char* FF, char*
                                                 interaction, bool*
                                                 conv_state1, bool* conv_state2){
     if(conv_state1[0]||conv_state2[0]) return;
     if(z[0] == 0.0) {
-//        extern __shared__ double s[];
-//        double *c1 = s;
-//        double *c2 = &c1[3 * blockDim.x];
-//        double *c3 = &c2[3 * blockDim.x];
-//        double *c4 = &c3[3 * blockDim.x];
-        double *c1, *c2, *c3, *c4;
-        double v1[3], v2[3];
-        double dist;
+//        extern __shared__ floatingpoint s[];
+//        floatingpoint *c1 = s;
+//        floatingpoint *c2 = &c1[3 * blockDim.x];
+//        floatingpoint *c3 = &c2[3 * blockDim.x];
+//        floatingpoint *c4 = &c3[3 * blockDim.x];
+        floatingpoint *c1, *c2, *c3, *c4;
+        floatingpoint v1[3], v2[3];
+        floatingpoint dist;
         int nint = params[1];
         int n = params[0];
         int offset = max(params[2] - 1, 0);
@@ -159,8 +159,8 @@ __global__ void LinkerStretchingHarmonicenergyz(double *coord, double *f, int *b
             U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
             U_vec[offset + thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
 
-/*            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+/*            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
+                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < (floatingpoint)-1.0) {
                 U_i[thread_idx] = -1.0;
                 culpritID[0] = thread_idx;
                 culpritID[1] = -1;
@@ -181,18 +181,18 @@ __global__ void LinkerStretchingHarmonicenergyz(double *coord, double *f, int *b
     }
 
     else if(z[0] != 0.0) {
-//        extern __shared__ double s[];
-//        double *c1 = s;
-//        double *c2 = &c1[3 * blockDim.x];
-//        double *c3 = &c2[3 * blockDim.x];
-//        double *c4 = &c3[3 * blockDim.x];
-//        double *f1 = &c4[3 * blockDim.x];
-//        double *f2 = &f1[3 * blockDim.x];
-//        double *f3 = &f2[3 * blockDim.x];
-//        double *f4 = &f3[3 * blockDim.x];
-        double *c1, *c2, *c3, *c4, *f1, *f2, *f3, *f4;
-        double v1[3], v2[3];
-        double dist;
+//        extern __shared__ floatingpoint s[];
+//        floatingpoint *c1 = s;
+//        floatingpoint *c2 = &c1[3 * blockDim.x];
+//        floatingpoint *c3 = &c2[3 * blockDim.x];
+//        floatingpoint *c4 = &c3[3 * blockDim.x];
+//        floatingpoint *f1 = &c4[3 * blockDim.x];
+//        floatingpoint *f2 = &f1[3 * blockDim.x];
+//        floatingpoint *f3 = &f2[3 * blockDim.x];
+//        floatingpoint *f4 = &f3[3 * blockDim.x];
+        floatingpoint *c1, *c2, *c3, *c4, *f1, *f2, *f3, *f4;
+        floatingpoint v1[3], v2[3];
+        floatingpoint dist;
         int nint = params[1];
         int n = params[0];
         int offset = max(params[2] - 1, 0 );
@@ -230,8 +230,8 @@ __global__ void LinkerStretchingHarmonicenergyz(double *coord, double *f, int *b
             dist = twoPointDistance(v1, v2) - eql[thread_idx];
             U_i[thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
             U_vec[offset + thread_idx] = 0.5 * kstr[thread_idx] * dist * dist;
-            if (fabs(U_i[thread_idx]) == __longlong_as_double(0x7ff0000000000000) //infinity
-                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < -1.0) {
+            if (fabs(U_i[thread_idx]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
+                || U_i[thread_idx] != U_i[thread_idx] || U_i[thread_idx] < (floatingpoint)-1.0) {
                 U_i[thread_idx] = -1.0;
                 culpritID[0] = thread_idx;
                 culpritID[1] = -1;
@@ -255,19 +255,19 @@ __global__ void LinkerStretchingHarmonicenergyz(double *coord, double *f, int *b
 }
 
 
-__global__ void LinkerStretchingHarmonicforces(double *coord, double *f, int *beadSet,
-                                                   double *kstr, double *eql, double
-                                               *pos1, double *pos2, int *params, double
+__global__ void LinkerStretchingHarmonicforces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                                   floatingpoint *kstr, floatingpoint *eql, floatingpoint
+                                               *pos1, floatingpoint *pos2, int *params, floatingpoint
                                                *LStretchingforce){
 
-//    extern __shared__ double s[];
-//    double *c1 = s;
-//    double *c2 = &c1[3 * blockDim.x];
-//    double *c3 = &c2[3 * blockDim.x];
-//    double *c4 = &c3[3 * blockDim.x];
-    double *c1, *c2, *c3, *c4;
-    double v1[3], v2[3];
-    double dist, invL, f0, f1[3], f2[3], f3[3], f4[3];
+//    extern __shared__ floatingpoint s[];
+//    floatingpoint *c1 = s;
+//    floatingpoint *c2 = &c1[3 * blockDim.x];
+//    floatingpoint *c3 = &c2[3 * blockDim.x];
+//    floatingpoint *c4 = &c3[3 * blockDim.x];
+    floatingpoint *c1, *c2, *c3, *c4;
+    floatingpoint v1[3], v2[3];
+    floatingpoint dist, invL, f0, f1[3], f2[3], f3[3], f4[3];
     int nint = params[1];
     int n = params[0];
     const unsigned int thread_idx = (blockIdx.x * blockDim.x) + threadIdx.x;
@@ -320,22 +320,22 @@ __global__ void LinkerStretchingHarmonicforces(double *coord, double *f, int *be
         f4[2] = f0 * (v1[2] - v2[2]) * (pos2[thread_idx]);
 
         for (int i = 0; i < 3; i++) {
-            if (fabs(f1[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(f1[i]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || f1[i] != f1[i]) {
                 printf("Linker Force became infinite %f %f %f\n",f1[0], f1[1], f1[2]);
                 assert(0);
             }
-            if (fabs(f2[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(f2[i]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || f2[i] != f2[i]) {
                 printf("Linker Force became infinite %f %f %f\n",f2[0], f2[1], f2[2]);
                 assert(0);
             }
-            if (fabs(f3[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(f3[i]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || f3[i] != f3[i]) {
                 printf("Linker Force became infinite %f %f %f\n",f3[0], f3[1], f3[2]);
                 assert(0);
             }
-            if (fabs(f4[i]) == __longlong_as_double(0x7ff0000000000000) //infinity
+            if (fabs(f4[i]) == __longlong_as_floatingpoint(0x7ff0000000000000) //infinity
                 || f4[i] != f4[i]) {
                 printf("Linker Force became infinite %f %f %f\n",f4[0], f4[1], f4[2]);
                 assert(0);

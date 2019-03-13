@@ -152,18 +152,18 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 #ifdef MECHANICS
           //set eqLength according to cylinder size
           
-              double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
+              floatingpoint eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
           if(!SysParams::RUNSTATE) //RESTARTPHASE
           {
               int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
-              double tpd = eqLength;
+              floatingpoint tpd = eqLength;
               
               if(nummonomers ==0){
                   eqLength = SysParams::Geometry().monomerSize[type];
               }
               else{
                   eqLength = (nummonomers) * SysParams::Geometry().monomerSize[type];
-                  double mindis = abs(tpd - eqLength);
+                  floatingpoint mindis = abs(tpd - eqLength);
 
                   for(auto i=nummonomers-1;i<=min(nummonomers+1, SysParams::Geometry().cylinderNumMon[type]);i++){
                       if(mindis > abs(tpd - i * SysParams::Geometry().monomerSize[type]))
@@ -297,7 +297,7 @@ void Cylinder::updatePosition() {
 
 void Cylinder::updateReactionRates() {
     
-    double force;
+    floatingpoint force;
     
     //if no rate changer was defined, skip
     if(_polyChanger.empty()) return;
@@ -383,7 +383,7 @@ void Cylinder::printSelf() {
     cout << endl;
 }
 
-bool Cylinder::within(Cylinder* other, double dist) {
+bool Cylinder::within(Cylinder* other, floatingpoint dist) {
     
     //check midpoints
     if(twoPointDistance(coordinate, other->coordinate) <= dist)

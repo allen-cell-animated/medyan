@@ -87,7 +87,7 @@ void HybridCylinderCylinderNL::generateConnections() {
                 vector<size_t> indices{i,j,k};
                 Bin *target = getBin(indices);//defined in this file.
 
-                vector<double> coordinates =
+                vector<floatingpoint> coordinates =
                         {indices[0] * _binSize[0] + _binSize[0] / 2,
                          indices[1] * _binSize[1] + _binSize[1] / 2,
                          indices[2] * _binSize[2] + _binSize[2] / 2};
@@ -171,7 +171,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
 //    //Initial parameters of system
     //Creates bins based on the largest rMax in the system.
     auto _nDim = SysParams::Geometry().nDim;
-    double searchdist = 1.125 * (sqrt(_largestrMaxsq));
+    floatingpoint searchdist = 1.125 * (sqrt(_largestrMaxsq));
     std::cout<<"H searchdist "<<searchdist<<" rMax "<<sqrt(_largestrMaxsq)<<endl;
     _binSize = {searchdist, searchdist, searchdist};
 
@@ -226,7 +226,7 @@ void HybridCylinderCylinderNL::initializeBinGrid() {
 }
 
 //You need a vector of all grids so you can loop through and update respective coordinates.
-Bin* HybridCylinderCylinderNL::getBin(const vector<double> &coords) {
+Bin* HybridCylinderCylinderNL::getBin(const vector<floatingpoint> &coords) {
     //Check if out of bounds
     size_t index = 0;
     size_t i = 0;
@@ -337,7 +337,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
     vector<Bin*> _neighboringBins = binvec.at(_ID)//Get the bin that belongs to the
                     // current binGrid of interest for this NL.
                                                     ->getNeighbours();
-    double *coord = CUDAcommon::getSERLvars().coord;
+    floatingpoint *coord = CUDAcommon::getSERLvars().coord;
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     auto cylinderpointervec = CUDAcommon::getSERLvars().cylinderpointervec;
     int cindex = currcylinder->_dcIndex;
@@ -388,7 +388,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                             if (ftype1 != fpairs[0] || ftype2 != fpairs[1])continue;
                         }
                         else if (ftype1 != fpairs[1] || ftype2 != fpairs[0]) continue;
-                        double dist = twoPointDistancesquared(c.coord, ncylinder.coord);
+                        floatingpoint dist = twoPointDistancesquared(c.coord, ncylinder.coord);
                         if (dist < _smallestrMinsq || dist > _largestrMaxsq) continue;
                         for (int idx2 = 0; idx2 < countbounds; idx2++) {
                             //Dont add if ID is more than cylinder for half-list
@@ -485,7 +485,7 @@ void HybridCylinderCylinderNL::reset() {
 //    for(int idx = 0; idx < totalhybridNL; idx++)
 //        std::cout<<"reset HybridNLSTENCILLIST size "<<" "<<tot[idx]<<endl;
 /*    mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_sten(mine - mins);
+    chrono::duration<floatingpoint> elapsed_sten(mine - mins);
     std::cout<<"Hybrid NLSTEN reset time "<<elapsed_sten.count()<<endl;*/
 
     //Check if HNLID = 1 is symmetric

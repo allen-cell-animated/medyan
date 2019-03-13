@@ -120,13 +120,13 @@ public:
     //@{
     /// On rate management
     void setOnRate(float rate) {_onRate = rate;}
-    double getOnRate(){return _onRate;}
+    floatingpoint getOnRate(){return _onRate;}
     //@}
     
     //@{
     /// Off rate management
     void setOffRate(float rate) {_offRate = rate;}
-    double getOffRate(){return _offRate;}
+    floatingpoint getOffRate(){return _offRate;}
     //@}
     
     /// Set all rates at once

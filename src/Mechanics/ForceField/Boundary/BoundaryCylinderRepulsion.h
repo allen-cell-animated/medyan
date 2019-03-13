@@ -38,23 +38,23 @@ private:
     int *beadSet;
     
     ///Array describing the constants in calculation
-    double *krep;
-    double *slen;
-    double *U_i;
+    floatingpoint *krep;
+    floatingpoint *slen;
+    floatingpoint *U_i;
     int nint = 0;
     ///Array describing the number of neighbors for each boundary element (num boundary elements long)
     int *nneighbors;
 #ifdef CUDAACCL
-    double *gU;
+    floatingpoint *gU;
     int *gpu_beadSet;
-    double *gpu_krep;
-    double *gpu_slen;
-    double *gpu_U_i;
+    floatingpoint *gpu_krep;
+    floatingpoint *gpu_slen;
+    floatingpoint *gpu_U_i;
     int *gpu_params;
-    double *gpu_beListplane;
+    floatingpoint *gpu_beListplane;
     int *gpu_nintperbe;
 //    CUDAvars cvars;
-    double *F_i;
+    floatingpoint *F_i;
     cudaStream_t stream = NULL;
 #endif
     
@@ -72,11 +72,11 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces(double *coord, double *f);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual void computeLoadForces();
     //@}

@@ -306,12 +306,12 @@ void Controller::setupInitialNetwork(SystemParser& p) {
                  <<"invalid filament type. Exiting." << endl;
             exit(EXIT_FAILURE);
         }
-        vector<vector<double>> coords = {coord1, coord2};
+        vector<vector<floatingpoint>> coords = {coord1, coord2};
 
         if(coord2.size()==3){
 
-            double d = twoPointDistance(coord1, coord2);
-            vector<double> tau = twoPointDirection(coord1, coord2);
+            floatingpoint d = twoPointDistance(coord1, coord2);
+            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
             int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[type]));
 
             // check how many segments can fit between end-to-end of the filament
@@ -322,7 +322,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         }
         else if(coord2.size()>3){
             int numSegment = coord2.size()/3;
-            vector<vector<double>> coords;
+            vector<vector<floatingpoint>> coords;
             coords.push_back(coord1);
             for(int id=0;id<numSegment;id++)
                 coords.push_back({coord2[id*3],coord2[id*3+1],coord2[id*3+2]});
@@ -351,11 +351,11 @@ void Controller::setupSpecialStructures(SystemParser& p) {
         MTOC* mtoc = _subSystem->addTrackable<MTOC>();
 
         //create the bubble in top part of grid, centered in x,y
-        double bcoordx = GController::getSize()[0] / 2;
-        double bcoordy = GController::getSize()[1] / 2;
-        double bcoordz = GController::getSize()[2] * 5 / 6;
+        floatingpoint bcoordx = GController::getSize()[0] / 2;
+        floatingpoint bcoordy = GController::getSize()[1] / 2;
+        floatingpoint bcoordz = GController::getSize()[2] * 5 / 6;
 
-        vector<double> bcoords = {bcoordx, bcoordy, bcoordz};
+        vector<floatingpoint> bcoords = {bcoordx, bcoordy, bcoordz};
         Bubble* b = _subSystem->addTrackable<Bubble>(_subSystem, bcoords, SType.mtocBubbleType);
 
         mtoc->setBubble(b);
@@ -374,10 +374,10 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             auto coord1 = get<1>(it);
             auto coord2 = get<2>(it);
 
-            vector<vector<double>> coords = {coord1, coord2};
+            vector<vector<floatingpoint>> coords = {coord1, coord2};
 
-            double d = twoPointDistance(coord1, coord2);
-            vector<double> tau = twoPointDirection(coord1, coord2);
+            floatingpoint d = twoPointDistance(coord1, coord2);
+            vector<floatingpoint> tau = twoPointDirection(coord1, coord2);
 
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
 
@@ -441,8 +441,8 @@ void Controller::ControlfrontbackEndComp(){
     bool mincompstate = false;
     if(planestomove == 2 || planestomove == 0) maxcompstate = true;
     if(planestomove == 2 || planestomove == 1) mincompstate = true;
-    double systemspan = 0.0;
-    double cmpsize = 0.0;
+    floatingpoint systemspan = 0.0;
+    floatingpoint cmpsize = 0.0;
     if(tsaxis == 0)
     {systemspan = SysParams::Geometry().NX * SysParams::Geometry()
                                                               .compartmentSizeX;
@@ -586,12 +586,12 @@ void Controller::ControlfrontbackEndComp(){
     std::cout<<"Maxbound "<<bounds[1]<<" Minbound "<<bounds[0]<<endl;
 }
 
-void Controller::moveBoundary(double deltaTau) {
+void Controller::moveBoundary(floatingpoint deltaTau) {
     //calculate distance to move
-    double dist = SysParams::Boundaries().moveSpeed * deltaTau;
+    floatingpoint dist = SysParams::Boundaries().moveSpeed * deltaTau;
 
     if(SysParams::Boundaries().transfershareaxis>=0){
-        vector<double> distvec= {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        vector<floatingpoint> distvec= {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
         if(SysParams::Boundaries().transfershareaxis == 0){
             distvec[0] = bounds[0] - bounds_prev[0];
@@ -609,7 +609,7 @@ void Controller::moveBoundary(double deltaTau) {
     }
         //deprecated not good to use.
     else if(abs(dist)>0){
-        vector<double> distvec = {dist, -dist, dist, -dist, dist, -dist};
+        vector<floatingpoint> distvec = {dist, -dist, dist, -dist, dist, -dist};
         //move it
         if(tau() >= SysParams::Boundaries().moveStartTime &&
            tau() <= SysParams::Boundaries().moveEndTime)
@@ -686,7 +686,7 @@ void Controller::updatePositions() {
     cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
     Cylinder** Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
     CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
-    double* coord = CUDAcommon::serlvars.coord;
+    floatingpoint* coord = CUDAcommon::serlvars.coord;
     std::cout<<"1 Total Cylinders "<<Cylinder::getCylinders().size()<<" Beads "
             ""<<Bead::getBeads().size()<<endl;
     for(auto cyl:Cylinder::getCylinders()){
@@ -737,19 +737,19 @@ void Controller::updateNeighborLists() {
     //vectorize cylinder to have all cylinder information in a few arrays.
 //    _subSystem->vectorizeCylinder();
     mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runbvec(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runbvec(mine - mins);
     bmgrvectime += elapsed_runbvec.count();
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
     mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runnl2(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
 #ifdef CHEMISTRY
     mins = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
     mine = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runb(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
 //    std::cout<<"time split "<<elapsed_runnl2.count()<<" "<<elapsed_runbvec.count()<<" "
 //            ""<<elapsed_runb.count()<<endl;
@@ -805,7 +805,7 @@ void Controller::pinLowerBoundaryFilaments() {
             //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
             //cout << SysParams::Mechanics().pinDistance << endl;
 
-            auto index = Rand::randDouble(0,1);
+            auto index = Rand::randfloatingpoint(0,1);
             //cout << index <<endl;
             //if within dist to boundary and index > 0.5, add
             if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
@@ -821,10 +821,10 @@ void Controller::pinLowerBoundaryFilaments() {
 void Controller::run() {
 
 #ifdef CHEMISTRY
-    double tauLastSnapshot = 0;
-    double tauLastMinimization = 0;
-    double tauLastNeighborList = 0;
-    double oldTau = 0;
+    floatingpoint tauLastSnapshot = 0;
+    floatingpoint tauLastMinimization = 0;
+    floatingpoint tauLastNeighborList = 0;
+    floatingpoint oldTau = 0;
 
     long stepsLastSnapshot = 0;
     long stepsLastMinimization = 0;
@@ -892,7 +892,7 @@ void Controller::run() {
         _mController->run(false);
 
         mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runm(mine - mins);
+        chrono::duration<floatingpoint> elapsed_runm(mine - mins);
         minimizationtime += elapsed_runm.count();
         std::cout<<"Time taken for minimization "<<elapsed_runm.count()<<endl;
         SysParams::RUNSTATE=true;
@@ -955,7 +955,7 @@ void Controller::run() {
     mins = chrono::high_resolution_clock::now();
     _mController->run(false);
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runm2(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
     std::cout<<"Time taken for minimization "<<elapsed_runm2.count()<<endl;
 
@@ -963,7 +963,7 @@ void Controller::run() {
     mins = chrono::high_resolution_clock::now();
     //set initial values of variables.
     int tsaxis = SysParams::Boundaries().transfershareaxis;
-    double systemspan = 0.0;
+    floatingpoint systemspan = 0.0;
     if(tsaxis == 0)
         systemspan = SysParams::Geometry().NX * SysParams::Geometry().compartmentSizeX;
     else if(tsaxis == 1)
@@ -976,7 +976,7 @@ void Controller::run() {
     activatedeactivateComp();
     moveBoundary(0.0);
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runspl(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
     specialtime += elapsed_runspl.count();
 
     //reupdate positions and neighbor lists
@@ -984,7 +984,7 @@ void Controller::run() {
     updatePositions();
     updateNeighborLists();
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runnl(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runnl(mine - mins);
     nltime += elapsed_runnl.count();
     std::cout<<"NL time "<<elapsed_runnl.count()<<endl;
     mins = chrono::high_resolution_clock::now();
@@ -992,7 +992,7 @@ void Controller::run() {
     updateReactionRates();
 #endif
     mine= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runrxn(mine - mins);
+    chrono::duration<floatingpoint> elapsed_runrxn(mine - mins);
     rxnratetime += elapsed_runrxn.count();
 #endif
 
@@ -1014,7 +1014,7 @@ void Controller::run() {
         mins = chrono::high_resolution_clock::now();
         //activatedeactivateComp();
         mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runspl(mine - mins);
+        chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
 
         while(tau() <= _runTime) {
@@ -1022,7 +1022,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
             auto var = !_cController->run(_minimizationTime);
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runchem(mine - mins);
+            chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
 
             //print output if chemistry fails.
@@ -1032,7 +1032,7 @@ void Controller::run() {
                 break;
             }
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runout(mine - mins);
+            chrono::duration<floatingpoint> elapsed_runout(mine - mins);
             outputtime += elapsed_runout.count();
 
             //add the last step
@@ -1060,7 +1060,7 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_runm3(mine - mins);
+                chrono::duration<floatingpoint> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
                 std::cout<<"Time taken for minimization "<<elapsed_runm3.count()<<endl;
                 //update position
@@ -1068,7 +1068,7 @@ void Controller::run() {
                 updatePositions();
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_rxn2(mine - mins);
+                chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
                 rxnratetime += elapsed_rxn2.count();
 
             }
@@ -1080,7 +1080,7 @@ void Controller::run() {
                 i++;
                 tauLastSnapshot = 0.0;
                 mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_runout2(mine - mins);
+                chrono::duration<floatingpoint> elapsed_runout2(mine - mins);
                 outputtime += elapsed_runout2.count();
             }
 #elif defined(MECHANICS)
@@ -1093,7 +1093,7 @@ void Controller::run() {
             updateReactionRates();
 #endif
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_rxn3(mine - mins);
+            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
             rxnratetime += elapsed_rxn3.count();
 #ifdef CHEMISTRY
             //activate/deactivate compartments
@@ -1102,7 +1102,7 @@ void Controller::run() {
             //move the boundary
             moveBoundary(tau() - oldTau);
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runspl(mine - mins);
+            chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
             specialtime += elapsed_runspl.count();
 
             // update neighbor lists & Binding Managers
@@ -1111,7 +1111,7 @@ void Controller::run() {
                 updateNeighborLists();
                 tauLastNeighborList = 0.0;
                 mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_runnl2(mine - mins);
+                chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
                 nltime += elapsed_runnl2.count();
             }
             //Special protocols
@@ -1119,7 +1119,7 @@ void Controller::run() {
             //special protocols
             //executeSpecialProtocols();
             mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runspl2(mine - mins);
+            chrono::duration<floatingpoint> elapsed_runspl2(mine - mins);
             specialtime += elapsed_runspl2.count();
             oldTau = tau();
 #ifdef CUDAACCL
@@ -1228,7 +1228,7 @@ void Controller::run() {
 //    cout<<"Z In-plane "<<SysParams::exvolcounterz[1]<<endl;
 //    cout<<"Z Rest "<<SysParams::exvolcounterz[2]<<endl;
     chk2 = chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(chk2-chk1);
+    chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
     cout<< "Neighbor list + Bmgr time for run="<<nltime<<endl;

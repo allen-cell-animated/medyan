@@ -17,18 +17,18 @@
 #include "BoundaryElement.h"
 #include "Bead.h"
 
-double BoundaryCylinderRepulsionExpIn::energy(Bead* b, double r,
-                                            double kRep, double screenLength) {
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(Bead* b, floatingpoint r,
+                                            floatingpoint kRep, floatingpoint screenLength) {
     //Boundary repulsion occurs 100 nm below the actual boundary
-    double R = -r/screenLength + 100/screenLength;
+    floatingpoint R = -r/screenLength + 100/screenLength;
     return kRep * exp(R);
 }
 
-void BoundaryCylinderRepulsionExpIn::forces(Bead* b, double r, vector<double>& norm,
-                                          double kRep, double screenLength) {
+void BoundaryCylinderRepulsionExpIn::forces(Bead* b, floatingpoint r, vector<floatingpoint>& norm,
+                                          floatingpoint kRep, floatingpoint screenLength) {
     
-    double R = -r/screenLength + 100/screenLength;
-    double f0 = kRep * exp(R)/screenLength;
+    floatingpoint R = -r/screenLength + 100/screenLength;
+    floatingpoint f0 = kRep * exp(R)/screenLength;
     
     b->force[0] += f0 *norm[0];
     b->force[1] += f0 *norm[1];
@@ -40,11 +40,11 @@ void BoundaryCylinderRepulsionExpIn::forces(Bead* b, double r, vector<double>& n
     
 }
 
-void BoundaryCylinderRepulsionExpIn::forcesAux(Bead* b, double r, vector<double>& norm,
-                                             double kRep, double screenLength) {
+void BoundaryCylinderRepulsionExpIn::forcesAux(Bead* b, floatingpoint r, vector<floatingpoint>& norm,
+                                             floatingpoint kRep, floatingpoint screenLength) {
     
-    double R = -r/screenLength + 100/screenLength;
-    double f0 = kRep * exp(R)/screenLength;
+    floatingpoint R = -r/screenLength + 100/screenLength;
+    floatingpoint f0 = kRep * exp(R)/screenLength;
     
     b->forceAux[0] += f0 *norm[0];
     b->forceAux[1] += f0 *norm[1];
@@ -52,19 +52,19 @@ void BoundaryCylinderRepulsionExpIn::forcesAux(Bead* b, double r, vector<double>
     
 }
 
-double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double screenLength) {
+floatingpoint BoundaryCylinderRepulsionExpIn::loadForces(floatingpoint r, floatingpoint kRep, floatingpoint screenLength) {
     
-    double R = -r/screenLength + 100/screenLength;
+    floatingpoint R = -r/screenLength + 100/screenLength;
     return kRep * exp(R)/screenLength;
     
 }
 
-double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
-                                            double *krep, double *slen, int *nneighbors) {
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
-    double *coord1, R, r, U_i;
-    double U = 0.0;
+    floatingpoint *coord1, R, r, U_i;
+    floatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -82,7 +82,7 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
             R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
 
-            if (fabs(U_i) == numeric_limits<double>::infinity()
+            if (fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                 || U_i != U_i || U_i < -1.0) {
 
                 //set culprit and return
@@ -99,12 +99,12 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
     return U;
 }
 
-double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
-                                            double *krep, double *slen, int *nneighbors, double d) {
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                            floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
 
     int nb, nc;
-    double *coord1, *force1, R, r, U_i;
-    double U = 0.0;
+    floatingpoint *coord1, *force1, R, r, U_i;
+    floatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -125,7 +125,7 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
 
             U_i = krep[Cumnc + ic] * exp(R);
 
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
 
                 //set culprit and return
@@ -144,11 +144,11 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
 
 
 
-void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadSet,
-                                          double *krep, double *slen, int *nneighbors) {
+void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                          floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
-    double *coord1, *force1, R, r, f0;
-    double *F_i;
+    floatingpoint *coord1, *force1, R, r, f0;
+    floatingpoint *F_i;
 
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();

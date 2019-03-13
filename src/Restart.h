@@ -61,27 +61,28 @@ class FilamentBindingManager;
 class Restart {
 private:
     SubSystem *_subSystem; ///< A pointer to the subsystem that this controls
-    vector<double> temp_diffrate_vector; ///vector of diffusion rates
-    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>>,
-    vector<tuple<string, short, vector<double>>> , vector<vector<double>> > filaments;
+    vector<floatingpoint> temp_diffrate_vector; ///vector of diffusion rates
+    tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>>,
+    vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > filaments;
     ChemistryData _chemData;
-    vector<double> CopyNumbers;
+    vector<floatingpoint> CopyNumbers;
     unordered_multimap<int, tuple<CCylinder*, short>> _unsortedpairings;
     unordered_multimap<int, tuple<CCylinder*, short>> _bunsortedpairings;
     unordered_multimap<int, tuple<int, short>> _singlecylfilunsortedpairings;
     unordered_multimap<int, tuple<int, short>> _bsinglecylfilunsortedpairings;
     vector<LinkerBindingManager*> affectedManagers;
-    vector<tuple<string, short, vector<vector<double>>>> boundVector;
+    vector<tuple<string, short, vector<vector<floatingpoint>>>> boundVector;
     vector<short> branchcylIDs;
     int  _numChemSteps=0;
     
     //gives angle and delta
-    vector<double> getAngleDeltaPos(vector<double>leg, vector<double> site1, vector<double> site2){
-        vector<double> returnVector;
-        double len1, len2, len3;
-        vector<double> v1={site1[0]-leg[0],site1[1]-leg[1],site1[2]-leg[2]};
-        vector<double> v2={site2[0]-leg[0],site2[1]-leg[1],site2[2]-leg[2]};
-        returnVector.push_back(1-acos(std::max(dotProduct(normalizeVector(v1),normalizeVector(v2)),-1.0))*7/22);
+    vector<floatingpoint> getAngleDeltaPos(vector<floatingpoint>leg, vector<floatingpoint> site1, vector<floatingpoint> site2){
+        vector<floatingpoint> returnVector;
+        floatingpoint len1, len2, len3;
+        vector<floatingpoint> v1={site1[0]-leg[0],site1[1]-leg[1],site1[2]-leg[2]};
+        vector<floatingpoint> v2={site2[0]-leg[0],site2[1]-leg[1],site2[2]-leg[2]};
+        returnVector.push_back(1-acos(std::max<floatingpoint>(dotProduct(normalizeVector
+        (v1), normalizeVector(v2)),(floatingpoint)-1.0))*7/22);
         len1=twoPointDistance(leg,site1);
         len2=twoPointDistance(leg,site2);
         len3=twoPointDistance(site1,site2);
@@ -284,15 +285,15 @@ private:
             auto b=boundVector.at(iter);
             string boundName=get<0>(b);
             short filamentType=get<1>(b);
-            vector<vector<double>> coord=get<2>(b);
-            double _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
-            vector<double> leg1=coord.at(0);
-            vector<double> leg2=coord.at(1);
+            vector<vector<floatingpoint>> coord=get<2>(b);
+            floatingpoint _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
+            vector<floatingpoint> leg1=coord.at(0);
+            vector<floatingpoint> leg2=coord.at(1);
             auto distanceactual=twoPointDistance(leg1,leg2);
-            double distanceproj;
-            double one,two;
+            floatingpoint distanceproj;
+            floatingpoint one,two;
             int check2=0;
-            double threshold=0.01;
+            floatingpoint threshold=0.01;
             for(int I=0;I<map.size();I++){
                 for(int J=I+1;J<map.size();J++){
                     auto c1=get<0>(map[I])->getCylinder();
@@ -429,8 +430,8 @@ private:
             counter++;
     }}
 public:
-    Restart(SubSystem* s, tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short,
-            vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > f, ChemistryData _cd)
+    Restart(SubSystem* s, tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short,
+            vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > f, ChemistryData _cd)
             : _subSystem(s), filaments(f), _chemData(_cd) {}
     int getnumchemsteps(){return _numChemSteps;}
     void settorestartphase(){
@@ -465,14 +466,14 @@ public:
             (C->findSpeciesByName(get<0>(sd)))->getRSpecies().setN(0);}}
 //Step #3. Add filament coordinates to be held static during minimization **** NEEEDS TO BE EDITED***
         // coordinates to keep static
-        vector<vector<double>> staticbeads=get<3>(filaments);
+        vector<vector<floatingpoint>> staticbeads=get<3>(filaments);
         int nbeads=get<3>(filaments).size();
         for (int ix=0;ix<nbeads;ix++){
-            vector<double> staticbead=staticbeads[ix];
-            vector<double> staticbead2;
+            vector<floatingpoint> staticbead=staticbeads[ix];
+            vector<floatingpoint> staticbead2;
             staticbead2.insert ( staticbead2.begin(), staticbead.begin()+1, staticbead.begin()+3 );
             for(auto b: Bead::getBeads()) {
-                double dis=twoPointDistance(b->coordinate,staticbead2);
+                floatingpoint dis=twoPointDistance(b->coordinate,staticbead2);
                 if(dis<=0.00001){
                     b->setstaticstate(true);
                 }}}
@@ -488,34 +489,34 @@ public:
 //STEP #2. ADD bound Linkers And Motors in inputfile into possible bindings.
         boundVector=get<1>(filaments);
         short brows=boundVector.size();
-        vector<vector<double> > site1;
-        vector<vector<double> > site2;
-        vector<double> angdeltapos;
+        vector<vector<floatingpoint> > site1;
+        vector<vector<floatingpoint> > site2;
+        vector<floatingpoint> angdeltapos;
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
-                vector<double> b1=x->getFirstBead()->coordinate;
-                vector<double> b2=x->getSecondBead()->coordinate;
+                vector<floatingpoint> b1=x->getFirstBead()->coordinate;
+                vector<floatingpoint> b2=x->getSecondBead()->coordinate;
                 // Iterate through each bound coordinate
                 for(int iter=0;iter<brows;iter++){
                     auto b=boundVector.at(iter);
                     short filamentType=get<1>(b);
                     if(filamentType==x->getType()){
-                        double _numMonPerCyl=0.0;
+                        floatingpoint _numMonPerCyl=0.0;
                         if(x->isMinusEnd() || x->isPlusEnd())
                             _numMonPerCyl=(int) round(x->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
                         else
                             _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
                         vector<short> posBindingSites=SysParams::Chemistry().bindingSites[filamentType];
                         string boundName=get<0>(b);
-                        vector<vector<double>> coord=get<2>(b);
-                        vector<double> leg1=coord.at(0);
-                        vector<double> leg2=coord.at(1);
+                        vector<vector<floatingpoint>> coord=get<2>(b);
+                        vector<floatingpoint> leg1=coord.at(0);
+                        vector<floatingpoint> leg2=coord.at(1);
                         //Leg 1
                         angdeltapos=getAngleDeltaPos(leg1,b1,b2);
                         if( angdeltapos.at(0)<0.001 && angdeltapos.at(1)<0.001){
                             auto f = (Filament*)(x->getParent());
 
-                            double d=0.0;
+                            floatingpoint d=0.0;
                             if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
                                 if(x->isMinusEnd()){
                                     auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
@@ -574,7 +575,7 @@ public:
                         angdeltapos=getAngleDeltaPos(leg2,b1,b2);
                         if( angdeltapos.at(0)<0.001 && angdeltapos.at(1)<0.001){
                             auto f = (Filament*)(x->getParent());
-                            double d=0.0;
+                            floatingpoint d=0.0;
                             if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
                                 if(x->isMinusEnd()){
                                     auto vecpos = find(branchcylIDs.begin(), branchcylIDs.end(), x->getID());
@@ -642,33 +643,33 @@ public:
     
     void addtoHeapbranchers(){
  
-        vector<tuple<string, short, vector<double>>> branchVector=get<2>(filaments);
+        vector<tuple<string, short, vector<floatingpoint>>> branchVector=get<2>(filaments);
         int iter;
         auto brows=branchVector.size();
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
-                vector<double> b1=x->getFirstBead()->coordinate;
-                vector<double> b2=x->getSecondBead()->coordinate;
+                vector<floatingpoint> b1=x->getFirstBead()->coordinate;
+                vector<floatingpoint> b2=x->getSecondBead()->coordinate;
                 // Iterate through each bound coordinate
                 for(iter=0;iter<brows;iter++){
                     auto b=branchVector.at(iter);
                     short filamentType=get<1>(b);
                     if(filamentType==x->getType()){
-                        double cylsize=SysParams::Geometry().cylinderSize[filamentType];
+                        floatingpoint cylsize=SysParams::Geometry().cylinderSize[filamentType];
                         vector<short> posBindingSites=SysParams::Chemistry().bindingSites[filamentType];
-                        double _numMonPerCyl=0.0;
+                        floatingpoint _numMonPerCyl=0.0;
                         if(x->isMinusEnd() || x->isPlusEnd())
                             _numMonPerCyl=(int) (x->getMCylinder()->getEqLength()/SysParams::Geometry().monomerSize[x->getFirstBead()->getType()]);
                         else
                             _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
                         auto filamentType = x->getType();
                         string boundName=get<0>(b);
-                        vector<double> branch=get<2>(b);
+                        vector<floatingpoint> branch=get<2>(b);
                         //Find the cylinder the brancher is on
-                        vector<double> angdeltapos=getAngleDeltaPos(branch,b1,b2);
+                        vector<floatingpoint> angdeltapos=getAngleDeltaPos(branch,b1,b2);
                         if(angdeltapos.at(0)<0.001 && angdeltapos.at(1)<0.001){
                             auto f = (Filament*)(x->getParent());
-                            double d=0.0;
+                            floatingpoint d=0.0;
                             if(_numMonPerCyl< SysParams::Geometry().cylinderNumMon[filamentType]){
                                 if(x->isMinusEnd())
                                     //TODO MIGHT HAVE TO CHANGE THIS.
@@ -773,7 +774,7 @@ public:
     
     void crosscheckBranchers(){
         //Step 3A. Sort through, update possible bindings, fire reaction one by one, handle callback.
-        vector<tuple<string, short, vector<double>>> branchVector=get<2>(filaments);
+        vector<tuple<string, short, vector<floatingpoint>>> branchVector=get<2>(filaments);
         auto brows=branchVector.size();
         for(auto iter=0;iter<brows;iter++){
             vector<tuple<CCylinder*, short>> map;
@@ -783,10 +784,10 @@ public:
             auto b=branchVector.at(iter);
             string boundName=get<0>(b);
             short filamentType=get<1>(b);
-            vector<double> branch=get<2>(b);
-            double _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
-            double threshold=SysParams::Geometry().cylinderSize[filamentType];
-            double one,two;
+            vector<floatingpoint> branch=get<2>(b);
+            floatingpoint _numMonPerCyl=SysParams::Geometry().cylinderNumMon[filamentType];
+            floatingpoint threshold=SysParams::Geometry().cylinderSize[filamentType];
+            floatingpoint one,two;
             int check2=0;
             short pos;
             for(int I=0;I<map.size();I++){
@@ -796,7 +797,7 @@ public:
                     auto pos1=get<1>(map[I]);
                     auto pos2=get<1>(map[J]);
                     if(c1->getID()!=c2->getID() && c1->getType()==filamentType && c2->getType()==filamentType){
-                        vector<double> l1;
+                        vector<floatingpoint> l1;
                         short check=0;
                         if(pos1!=0)
                         {l1=midPointCoordinate(c1->getFirstBead()->coordinate, c1->getSecondBead()->coordinate,get<1>(map[I])/_numMonPerCyl);check=1;}
@@ -856,7 +857,7 @@ public:
     }
     void redistributediffusingspecies(){
         int numCmprts=(_subSystem->getCompartmentGrid()->getCompartments()).size();
-        vector<double> eventVec;
+        vector<floatingpoint> eventVec;
         int counter=0;
         for(int it=0;it<CopyNumbers.size();it++)
             eventVec.push_back(ceil(CopyNumbers[it]/numCmprts));

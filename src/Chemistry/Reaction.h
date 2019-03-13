@@ -154,9 +154,9 @@ template <unsigned short M, unsigned short N>
         }
         
         /// Implementation of getProductOfReactants()
-        inline virtual double getProductOfReactantsImpl() const override
+        inline virtual floatingpoint getProductOfReactantsImpl() const override
         {
-            double prod = 1;
+            floatingpoint prod = 1;
             for(auto i=0U; i<M; ++i)
                 prod*=_rspecies[i]->getN();
             return prod;
@@ -164,7 +164,7 @@ template <unsigned short M, unsigned short N>
         }
 
         /// Implementation of computePropensity()
-        inline virtual double computePropensityImpl() const override
+        inline virtual floatingpoint computePropensityImpl() const override
         {
             if(isPassivated()) return 0.0;
 #ifdef TRACK_UPPER_COPY_N
@@ -176,10 +176,10 @@ template <unsigned short M, unsigned short N>
         }
         
         /// Implementation of getProductOfProducts()
-        inline virtual double getProductOfProductsImpl() const override
+        inline virtual floatingpoint getProductOfProductsImpl() const override
         {
 #ifdef TRACK_UPPER_COPY_N
-            double prod = 1;
+            floatingpoint prod = 1;
             for(auto i=M; i<(M+N); ++i){
                 prod*=_rspecies[i]->getN()-_rspecies[i]->getUpperLimitForN();
             }

@@ -32,8 +32,8 @@ public:
     static long Dcounter;
     static long Ncounter;
 #endif
-    ///Get a random double between low and high
-    static inline double randDouble(double low, double high) {
+    ///Get a random floatingpoint between low and high
+    static inline floatingpoint randfloatingpoint(floatingpoint low, floatingpoint high) {
 #ifdef DEBUGCONSTANTSEED
         counter++;
         Dcounter++;

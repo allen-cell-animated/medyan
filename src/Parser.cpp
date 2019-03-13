@@ -1207,8 +1207,8 @@ void SystemParser::readBoundParams() {
                 exit(EXIT_FAILURE);
             }
             else{
-                vector<double> tempvec;
-                vector<vector<double>> tempbounds;
+                vector<floatingpoint> tempvec;
+                vector<vector<floatingpoint>> tempbounds;
                 for(int i = 1;i<4;i++)
                     tempvec.push_back(atof((lineVector[i].c_str())));
                 tempbounds.push_back(tempvec);
@@ -1529,10 +1529,10 @@ void SystemParser::readGeoParams() {
     
     GeoParams GParams;
     
-    vector<double> gridTemp;
-    vector<double> compartmentTemp;
-    vector<double> monomerSize = {};
-    vector<double> cylinderSize = {};
+    vector<floatingpoint> gridTemp;
+    vector<floatingpoint> compartmentTemp;
+    vector<floatingpoint> monomerSize = {};
+    vector<floatingpoint> cylinderSize = {};
     short nDim = 0;
     
     //find grid size lines
@@ -1788,15 +1788,15 @@ BubbleSetup SystemParser::readBubbleSetup() {
     }
     return BSetup;
 }
-    tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > FilamentParser::readFilaments() {
+    tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > FilamentParser::readFilaments() {
     _inputFile.clear();
     _inputFile.seekg(0);
-     vector<tuple<short, vector<double>, vector<double>>> filamentVector;
-     vector<vector<vector<double>>> linkerVector;
-     vector<vector<vector<double>>> motorVector;
-     vector<vector<double>> staticVector;
-     vector<tuple<string, short, vector<vector<double>>>> boundVector;
-     vector<tuple<string, short, vector<double>>> branchVector;
+     vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> filamentVector;
+     vector<vector<vector<floatingpoint>>> linkerVector;
+     vector<vector<vector<floatingpoint>>> motorVector;
+     vector<vector<floatingpoint>> staticVector;
+     vector<tuple<string, short, vector<vector<floatingpoint>>>> boundVector;
+     vector<tuple<string, short, vector<floatingpoint>>> branchVector;
      string line;
     
     while(getline(_inputFile, line)) {
@@ -1805,9 +1805,9 @@ BubbleSetup SystemParser::readBubbleSetup() {
         
         vector<string> lineVector = split<string>(line);
         if(lineVector.size() >= 8) {
-            vector<double> coord1;
-            vector<double> coord2;
-            vector<vector<double>> coord3;
+            vector<floatingpoint> coord1;
+            vector<floatingpoint> coord2;
+            vector<vector<floatingpoint>> coord3;
             short type;
             //aravind parse linkers, motors. June 30,2016.
             if(lineVector[0]=="FILAMENT"){
@@ -1837,8 +1837,8 @@ BubbleSetup SystemParser::readBubbleSetup() {
         }
         //aravind Feb 19, 2016. Parase Linkers, Motors.
         else if(lineVector.size()==5) {
-            vector<double> coord1;
-            vector<vector<double>> coord3;
+            vector<floatingpoint> coord1;
+            vector<vector<floatingpoint>> coord3;
             //USED ONLY TO RESTART PINNED TRAJECTORIES.
             if(lineVector[0]=="STATIC"){
                 for(auto it = lineVector.begin() + 1; it != lineVector.begin() + 5; it++) {
@@ -1855,16 +1855,16 @@ BubbleSetup SystemParser::readBubbleSetup() {
             }
         }
     }
-      tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, staticVector);
+      tuple< vector<tuple<short, vector<floatingpoint>, vector<floatingpoint>>> , vector<tuple<string, short, vector<vector<floatingpoint>>>> , vector<tuple<string, short, vector<floatingpoint>>> , vector<vector<floatingpoint>> > returnVector=make_tuple(filamentVector,boundVector,branchVector, staticVector);
     return returnVector;
 }
 
-vector<tuple<short, vector<double>>> BubbleParser::readBubbles() {
+vector<tuple<short, vector<floatingpoint>>> BubbleParser::readBubbles() {
     
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    vector<tuple<short, vector<double>>> returnVector;
+    vector<tuple<short, vector<floatingpoint>>> returnVector;
     string line;
     
     while(getline(_inputFile, line)) {
@@ -1873,7 +1873,7 @@ vector<tuple<short, vector<double>>> BubbleParser::readBubbles() {
         
         vector<string> lineVector = split<string>(line);
         if(lineVector.size() == 5) {
-            vector<double> coord;
+            vector<floatingpoint> coord;
             
             short type = atoi((*(lineVector.begin() + 1)).c_str());
             
@@ -1924,8 +1924,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
 
-                chem.speciesBulk.push_back(tuple<string, int, double, double,
-                        string, string, double>(lineVector[1], atoi(lineVector[2].c_str()),
+                chem.speciesBulk.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                        string, string, floatingpoint>(lineVector[1], atoi(lineVector[2].c_str()),
                                 atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                                 lineVector[5], "NONE", 0.0));
             }
@@ -1945,8 +1945,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
 
-                chem.speciesBulk.push_back(tuple<string, int, double, double,
-                        string, string, double>(lineVector[1], atoi(lineVector[2].c_str()),
+                chem.speciesBulk.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                        string, string, floatingpoint>(lineVector[1], atoi(lineVector[2].c_str()),
                                 atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                                 lineVector[5],lineVector[6], atof(lineVector[7].c_str())));
             }
@@ -1978,8 +1978,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
                 if(lineVector[6] == "AVG")
-                    chem.speciesDiffusing.push_back(tuple<string, int, double, double,
-                            double, string, int, string, double>
+                    chem.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                            floatingpoint, string, int, string, floatingpoint>
                     (lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                      atof(lineVector[5].c_str()), lineVector[6], atoi(lineVector[7].c_str
@@ -2001,8 +2001,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
                 
-                chem.speciesDiffusing.push_back(tuple<string, int, double, double,
-                        double, string, int, string, double>
+                chem.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                        floatingpoint, string, int, string, floatingpoint>
                      (lineVector[1], atoi(lineVector[2].c_str()),
                      atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                      atof(lineVector[5].c_str()), lineVector[6], 0, "NONE", 0.0));
@@ -2023,8 +2023,8 @@ ChemistryData ChemistryParser::readChemistryInput() {
                     allSpeciesNames.push_back(lineVector[1]);
                 }
 
-                chem.speciesDiffusing.push_back(tuple<string, int, double, double,
-                        double, string, int, string, double>
+                chem.speciesDiffusing.push_back(tuple<string, int, floatingpoint, floatingpoint,
+                        floatingpoint, string, int, string, floatingpoint>
                                                         (lineVector[1], atoi(lineVector[2].c_str()),
                                                          atof(lineVector[3].c_str()), atof(lineVector[4].c_str()),
                                                          atof(lineVector[5].c_str()),
@@ -2236,7 +2236,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.genReactions.push_back(
-                tuple<vector<string>, vector<string>, double>
+                tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
@@ -2265,7 +2265,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.bulkReactions.push_back(
-                tuple<vector<string>, vector<string>, double>
+                tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
@@ -2296,7 +2296,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.nucleationReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
+                tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
@@ -2327,7 +2327,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.depolymerizationReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
+                tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
@@ -2360,7 +2360,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.polymerizationReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
+                tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
@@ -2390,7 +2390,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.linkerReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, double, double>
+                tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                       atof(lineVector[lineVector.size() - 2].c_str()),
@@ -2423,7 +2423,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.motorReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, double, double>
+                tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, floatingpoint, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                       atof(lineVector[lineVector.size() - 2].c_str()),
@@ -2457,7 +2457,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.motorWalkingReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
+                tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
@@ -2488,7 +2488,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.agingReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
+                tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
                 
             }
@@ -2519,7 +2519,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.destructionReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double>
+                tuple<vector<string>, vector<string>, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
@@ -2549,7 +2549,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 }
                 
                 chem.branchingReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, string, double>
+                tuple<vector<string>, vector<string>, floatingpoint, floatingpoint, string, floatingpoint>
                 (reactants, products, atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                            lineVector[lineVector.size() - 2].c_str(),
@@ -2572,7 +2572,7 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 
                 auto it = arrowIt + 1;
                 
-                chem.severingReactions[filType].push_back(tuple<string, double>
+                chem.severingReactions[filType].push_back(tuple<string, floatingpoint>
                 ((*it), atof(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
@@ -2615,8 +2615,8 @@ void PinRestartParser::resetPins() {
                 }
                 else if (lineVector.size() == 8) {
                     
-                    b1->pinnedPosition = vector<double>{atof(lineVector[2].c_str()), atof(lineVector[3].c_str()), atof(lineVector[4].c_str())};
-                    b2->pinnedPosition = vector<double>{atof(lineVector[5].c_str()), atof(lineVector[6].c_str()), atof(lineVector[7].c_str())};
+                    b1->pinnedPosition = vector<floatingpoint>{atof(lineVector[2].c_str()), atof(lineVector[3].c_str()), atof(lineVector[4].c_str())};
+                    b2->pinnedPosition = vector<floatingpoint>{atof(lineVector[5].c_str()), atof(lineVector[6].c_str()), atof(lineVector[7].c_str())};
                     
                     if(!areEqual(b1->pinnedPosition[0],0.0) && !areEqual(b1->pinnedPosition[1],0.0) && !areEqual(b1->pinnedPosition[2],0.0)) {
                         b1->addAsPinned();

@@ -40,9 +40,9 @@ public:
     virtual void deallocate() = 0;
     
     /// Compute the energy of this interaction
-    virtual double computeEnergy(double *coord, double *f, double d) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) = 0;
     /// Compute the forces of this interaction
-    virtual void computeForces(double *coord, double *f) = 0;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
     
     /// Compute the load forces on beads from this interaction
     virtual void computeLoadForces() = 0;

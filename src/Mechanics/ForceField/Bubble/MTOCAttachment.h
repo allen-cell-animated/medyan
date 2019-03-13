@@ -33,7 +33,7 @@ class MTOCAttachment : public BubbleInteractions {
 private:
     MTOCInteractionType _FFType;
 public:
-    virtual double computeEnergy(double d);
+    virtual floatingpoint computeEnergy(floatingpoint d);
     
     virtual void computeForces();
     virtual void computeForcesAux();

@@ -42,8 +42,8 @@ void MotorGhost::updateCoordinate() {
 
 
 MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-                       double position1, double position2,
-                       double onRate, double offRate)
+                       floatingpoint position1, floatingpoint position2,
+                       floatingpoint onRate, floatingpoint offRate)
 
     : Trackable(true, true),
       _c1(c1), _c2(c2),
@@ -98,7 +98,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 ///@note - record lifetime data here
 MotorGhost::~MotorGhost() noexcept {
 
-//    double lifetime = tau() - _birthTime;
+//    floatingpoint lifetime = tau() - _birthTime;
 //    
 //    if(_lifetimes->getMax() > lifetime &&
 //       _lifetimes->getMin() < lifetime)
@@ -161,7 +161,7 @@ void MotorGhost::updatePosition() {
     
     //update the spring constant, based on numboundheads
     //current force
-    double force = max(0.0, _mMotorGhost->stretchForce);
+    floatingpoint force = max((floatingpoint)0.0, _mMotorGhost->stretchForce);
     
     //update number of bound heads
     if(!_unbindingChangers.empty())
@@ -185,7 +185,8 @@ void MotorGhost::updatePosition() {
 void MotorGhost::updateReactionRates() {
 
     //current force
-    double force = max(0.0, _mMotorGhost->stretchForce);
+    floatingpoint force = max<floatingpoint>((floatingpoint)0.0,
+            _mMotorGhost->stretchForce);
     
     //update number of bound heads
     if(!_unbindingChangers.empty())
@@ -203,19 +204,19 @@ void MotorGhost::updateReactionRates() {
         auto x4 = _c2->getSecondBead()->coordinate;
         
         //get component of force in direction of forward walk for C1, C2
-        vector<double> motorC1Direction =
+        vector<floatingpoint> motorC1Direction =
         twoPointDirection(midPointCoordinate(x1, x2, _position1),
                           midPointCoordinate(x3, x4, _position2));
         
-        vector<double> motorC2Direction =
+        vector<floatingpoint> motorC2Direction =
         twoPointDirection(midPointCoordinate(x3, x4, _position2),
                           midPointCoordinate(x1, x2, _position1));
         
-        vector<double> c1Direction = twoPointDirection(x2,x1);
-        vector<double> c2Direction = twoPointDirection(x4,x3);
+        vector<floatingpoint> c1Direction = twoPointDirection(x2,x1);
+        vector<floatingpoint> c2Direction = twoPointDirection(x4,x3);
         
-        double forceDotDirectionC1 = force * dotProduct(motorC1Direction, c1Direction);
-        double forceDotDirectionC2 = force * dotProduct(motorC2Direction, c2Direction);
+        floatingpoint forceDotDirectionC1 = force * dotProduct(motorC1Direction, c1Direction);
+        floatingpoint forceDotDirectionC2 = force * dotProduct(motorC2Direction, c2Direction);
         
         //WALKING REACTIONS
         Species* s1 = _cMotorGhost->getFirstSpecies();
@@ -229,7 +230,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, forceDotDirectionC1));
+                           _numHeads, max<floatingpoint>((floatingpoint)0.0, forceDotDirectionC1));
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
 #ifdef DETAILEDOUTPUT
@@ -246,7 +247,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, -forceDotDirectionC1));
+                           _numHeads, max<floatingpoint>((floatingpoint)0.0, -forceDotDirectionC1));
                 
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
@@ -267,7 +268,8 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, forceDotDirectionC2));
+                           _numHeads, max<floatingpoint>((floatingpoint)0.0,
+                           forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
 #ifdef DETAILEDOUTPUT
@@ -284,7 +286,7 @@ void MotorGhost::updateReactionRates() {
                 _walkingChangers[_motorType]->
                 changeRate(_cMotorGhost->getOnRate(),
                            _cMotorGhost->getOffRate(),
-                           _numHeads, max(0.0, -forceDotDirectionC2));
+                           _numHeads, max<floatingpoint>((floatingpoint)0.0, -forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
 #ifdef DETAILEDOUTPUT
@@ -319,11 +321,11 @@ void MotorGhost::updateReactionRates() {
 }
 
 void MotorGhost::moveMotorHead(Cylinder* c,
-                               double oldPosition, double newPosition,
+                               floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
     
     //shift the position of one side of the motor
-    double shift =  newPosition - oldPosition;
+    floatingpoint shift =  newPosition - oldPosition;
     
     //shift the head
     if(c == _c1) {
@@ -348,7 +350,7 @@ void MotorGhost::moveMotorHead(Cylinder* c,
 }
 
 void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
-                               double oldPosition, double newPosition,
+                               floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
     
     //shift the head
@@ -383,8 +385,8 @@ void MotorGhost::printSelf() {
     cout << "Motor type = " << _motorType << ", Motor ID = " << _motorID << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
-    cout << "Position on first cylinder (double) = " << _position1 << endl;
-    cout << "Position on second cylinder (double) = " << _position2 << endl;
+    cout << "Position on first cylinder (floatingpoint) = " << _position1 << endl;
+    cout << "Position on second cylinder (floatingpoint) = " << _position2 << endl;
     
     cout << "Number of heads = " << _numHeads << endl;
     cout << "Birth time = " << _birthTime << endl;

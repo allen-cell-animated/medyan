@@ -19,44 +19,44 @@
 
 using namespace mathfunc;
 #ifdef CROSSCHECK
-double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                        double position1, double position2,
-                                        double kStretch, double eqLength) {
+floatingpoint LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                        floatingpoint position1, floatingpoint position2,
+                                        floatingpoint kStretch, floatingpoint eqLength) {
     
     auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
     auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
     
-    double dist = twoPointDistance(v1, v2) - eqLength;
+    floatingpoint dist = twoPointDistance(v1, v2) - eqLength;
 //    std::cout<<dist<<endl;
     return 0.5 * kStretch * dist * dist;
 }
 
-double LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                        double position1, double position2,
-                                        double kStretch, double eqLength, double d ){
+floatingpoint LinkerStretchingHarmonic::energy(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                        floatingpoint position1, floatingpoint position2,
+                                        floatingpoint kStretch, floatingpoint eqLength, floatingpoint d ){
     
     auto v1 = midPointCoordinateStretched(b1->coordinate, b1->force,
                                           b2->coordinate, b2->force, position1, d);
     auto v2 = midPointCoordinateStretched(b3->coordinate, b3->force,
                                           b4->coordinate, b4->force, position2, d);
     
-    double distStretched = twoPointDistance(v1, v2) - eqLength;
+    floatingpoint distStretched = twoPointDistance(v1, v2) - eqLength;
 //    std::cout<<distStretched<<endl;
     return 0.5 * kStretch * distStretched * distStretched ;
     
 }
-double LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                        double position1, double position2,
-                                        double kStretch, double eqLength){
+floatingpoint LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                        floatingpoint position1, floatingpoint position2,
+                                        floatingpoint kStretch, floatingpoint eqLength){
     
     auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
     auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
     
-    double dist = twoPointDistance( v1, v2);
+    floatingpoint dist = twoPointDistance( v1, v2);
     
-    double invL = 1 / dist;
+    floatingpoint invL = 1 / dist;
     
-    double f0 = kStretch * ( dist - eqLength ) * invL;
+    floatingpoint f0 = kStretch * ( dist - eqLength ) * invL;
     
     //force on i
     b1->force[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - position1);
@@ -81,16 +81,16 @@ double LinkerStretchingHarmonic::forces(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
     return f0 / invL;
 }
 
-double LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
-                                           double position1, double position2,
-                                           double kStretch, double eqLength){
+floatingpoint LinkerStretchingHarmonic::forcesAux(Bead* b1, Bead* b2, Bead* b3, Bead* b4,
+                                           floatingpoint position1, floatingpoint position2,
+                                           floatingpoint kStretch, floatingpoint eqLength){
     
     auto v1 = midPointCoordinate(b1->coordinate, b2->coordinate, position1);
     auto v2 = midPointCoordinate(b3->coordinate, b4->coordinate, position2);
     
-    double dist = twoPointDistance( v1, v2);
-    double invL = 1 / dist;
-    double f0 = kStretch * ( dist - eqLength ) * invL;
+    floatingpoint dist = twoPointDistance( v1, v2);
+    floatingpoint invL = 1 / dist;
+    floatingpoint f0 = kStretch * ( dist - eqLength ) * invL;
     
     //force on i
     b1->forceAux[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - position1);

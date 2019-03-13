@@ -23,26 +23,26 @@ class Bead;
 class BranchingBendingCosine {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
-                  double *kbend, double *eqt);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kbend, floatingpoint *eqt);
     
-    double energy(double *coord, double *f, int *beadSet,
-                  double *kbend, double *eqt, double d);
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                  floatingpoint *kbend, floatingpoint *eqt, floatingpoint d);
 
-    void forces(double *coord, double *f, int *beadSet,
-                double *kbend, double *eqt);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                floatingpoint *kbend, floatingpoint *eqt);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kbend, double *eqt, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend, floatingpoint *eqt, int *params);
 
-    double* energy(double *coord, double *f, int *beadSet, double *kbend, double *eqt, double *z, int *params);
+    floatingpoint* energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend, floatingpoint *eqt, floatingpoint *z, int *params);
 
-    void forces(double *coord, double *f, int *beadSet, double *kbend, double *eqt, int *params);
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *kbend, floatingpoint *eqt, int *params);
     void deallocate();
     static void checkforculprit();
-    double *gU_i;
-    double *gU_sum;
+    floatingpoint *gU_i;
+    floatingpoint *gU_sum;
     char *gFF, *ginteraction;
     vector<int> blocksnthreadse;
     vector<int> blocksnthreadsez;

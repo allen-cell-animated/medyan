@@ -74,10 +74,10 @@ void FilamentFF::whoIsCulprit() {
 }
 
 
-double FilamentFF::computeEnergy(double *coord, double *f, double d) {
+floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
-    double U= 0.0;
-    double U_i=0.0;
+    floatingpoint U= 0.0;
+    floatingpoint U_i=0.0;
 
     for (auto &interaction : _filamentInteractionVector) {
         U_i = interaction->computeEnergy(coord, f, d);
@@ -95,8 +95,8 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
     return U;
 }
 
-void FilamentFF::computeForces(double *coord, double *f) {
-//    double *F_i = new double[CGMethod::N];
+void FilamentFF::computeForces(floatingpoint *coord, floatingpoint *f) {
+//    floatingpoint *F_i = new floatingpoint[CGMethod::N];
     for (auto &interaction : _filamentInteractionVector) {
         interaction->computeForces(coord, f);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -105,14 +105,14 @@ void FilamentFF::computeForces(double *coord, double *f) {
 //        if(cross_checkclass::Aux)
 //            CUDAcommon::handleerror(
 //                    cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_forceAux, CGMethod::N * sizeof
-//                                       (double),
+//                                       (floatingpoint),
 //                               cudaMemcpyDeviceToHost));
 //        else
 //            CUDAcommon::handleerror(
 //                    cudaMemcpy(F_i, CUDAcommon::getCUDAvars().gpu_force, CGMethod::N * sizeof
-//                                       (double),
+//                                       (floatingpoint),
 //                               cudaMemcpyDeviceToHost));
-//        double fmax = 0.0;
+//        floatingpoint fmax = 0.0;
 //        int id=0;
 //        for (auto iter = 0; iter < CGMethod::N/3; iter++) {
 //            if(abs(F_i[3 *iter])> fmax) {fmax = abs(F_i[3*iter]);id = iter;}

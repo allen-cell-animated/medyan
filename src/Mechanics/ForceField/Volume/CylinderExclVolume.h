@@ -38,14 +38,14 @@ private:
 #endif
     ///Array describing the constants in calculation
     int *beadSet;
-    double *krep;
+    floatingpoint *krep;
     int nint = 0;
 #ifdef CUDAACCL
     int * gpu_beadSet = NULL;
-    double * gpu_krep = NULL;
+    floatingpoint * gpu_krep = NULL;
     int * gpu_params = NULL;
     CUDAvars cvars;
-    double *F_i;
+    floatingpoint *F_i;
     cudaStream_t stream = NULL;
 #endif
 public:
@@ -67,11 +67,11 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces(double *coord, double *f);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
 
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}

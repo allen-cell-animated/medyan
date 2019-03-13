@@ -21,6 +21,7 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+
 #ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -33,18 +34,21 @@
 #endif
 using namespace std;
 
+///floatingpoint typedef
+typedef float floatingpoint;
+
 //to test for zero values
-const double ZERO_PREC = 1E-6;
+const floatingpoint ZERO_PREC = 1E-6;
 
 /// A random seed based on clock cycles
 extern unsigned long long rdtsc();
 
-///Check equaility of doubles
+///Check equaility of floatingpoints
 #ifdef CUDAACCL
 __host__ __device__
 #endif
-inline bool areEqual(double d1, double d2) {
-    const double ZERO_PREC = 1E-6;
+inline bool areEqual(floatingpoint d1, floatingpoint d2) {
+    const floatingpoint ZERO_PREC = 1E-6;
     return fabs(d1 - d2) < ZERO_PREC;
 }
 
@@ -52,7 +56,7 @@ inline bool areEqual(double d1, double d2) {
 #ifdef CUDAACCL
  __host__ __device__
 #endif
-inline double safeacos (double x) {
+inline floatingpoint safeacos (floatingpoint x) {
     if (x < -1.0) x = -1.0;
     else if (x > 1.0) x = 1.0;
     return acos(x);

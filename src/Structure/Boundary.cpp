@@ -11,4 +11,4 @@
 //------------------------------------------------------------------
 
 #include "Boundary.h"
-double Boundary::systemvolume = 0.0;
+floatingpoint Boundary::systemvolume = 0.0;

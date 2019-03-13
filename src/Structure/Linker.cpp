@@ -40,7 +40,7 @@ void Linker::updateCoordinate() {
 }
 
 Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
-               double position1, double position2)
+               floatingpoint position1, floatingpoint position2)
 
     : Trackable(true, true), _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
@@ -82,7 +82,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 ///@note - tracks lifetime data here
 Linker::~Linker() noexcept {
 
-//    double lifetime = tau() - _birthTime;
+//    floatingpoint lifetime = tau() - _birthTime;
 //    
 //    if(_lifetimes->getMax() > lifetime &&
 //       _lifetimes->getMin() < lifetime)
@@ -150,7 +150,7 @@ void Linker::updateReactionRates() {
     if(_unbindingChangers.empty()) return;
     
     //current force on linker
-    double force = max(0.0, _mLinker->stretchForce);
+    floatingpoint force = max<floatingpoint>((floatingpoint)0.0, _mLinker->stretchForce);
     
     //get the unbinding reaction
     ReactionBase* offRxn = _cLinker->getOffReaction();
@@ -178,8 +178,8 @@ void Linker::printSelf() {
     cout << "Linker type = " << _linkerType << ", Linker ID = " << _linkerID << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
-    cout << "Position on first cylinder (double) = " << _position1 << endl;
-    cout << "Position on second cylinder (double) = " << _position2 << endl;
+    cout << "Position on first cylinder (floatingpoint) = " << _position1 << endl;
+    cout << "Position on second cylinder (floatingpoint) = " << _position2 << endl;
     
     cout << "Birth time = " << _birthTime << endl;
     

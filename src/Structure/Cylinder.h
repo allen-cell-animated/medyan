@@ -88,7 +88,7 @@ private:
     void updateCoordinate();
     
 public:
-    vector<double> coordinate;
+    vector<floatingpoint> coordinate;
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
     vector<Bin*> _hbinvec;
@@ -194,7 +194,7 @@ public:
                                        
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders
-    virtual bool within(Cylinder* other, double dist);
+    virtual bool within(Cylinder* other, floatingpoint dist);
 
     //Vectorize beads so the coordinates are all available in a single array.
     //@{
@@ -234,7 +234,7 @@ public:
             cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
             Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
             CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
-            double *coord = CUDAcommon::serlvars.coord;
+            floatingpoint *coord = CUDAcommon::serlvars.coord;
             std::cout<<"revectorized cylinders"<<endl;
             std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " "
                     "Beads "

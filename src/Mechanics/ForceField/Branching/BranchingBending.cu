@@ -27,8 +27,8 @@ template <class BBendingInteractionType>
 void BranchingBending<BBendingInteractionType>::vectorize() {
 
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
-    kbend = new double[BranchingPoint::getBranchingPoints().size()];
-    eqt = new double[BranchingPoint::getBranchingPoints().size()];
+    kbend = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
+    eqt = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
 
     int i = 0;
 
@@ -45,7 +45,7 @@ void BranchingBending<BBendingInteractionType>::vectorize() {
     }
     //CUDA
 #ifdef CUDAACCL
-//    F_i = new double [3 * Bead::getBeads().size()];
+//    F_i = new floatingpoint [3 * Bead::getBeads().size()];
 
     int numInteractions = BranchingPoint::getBranchingPoints().size();
     _FFType.optimalblocksnthreads(numInteractions);
@@ -54,11 +54,11 @@ void BranchingBending<BBendingInteractionType>::vectorize() {
     CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * numInteractions * sizeof(int),
                                        cudaMemcpyHostToDevice));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kbend, numInteractions * sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_kbend, kbend, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kbend, numInteractions * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_kbend, kbend, numInteractions * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eqt, numInteractions * sizeof(double)));
-    CUDAcommon::handleerror(cudaMemcpy(gpu_eqt, eqt, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_eqt, numInteractions * sizeof(floatingpoint)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_eqt, eqt, numInteractions * sizeof(floatingpoint), cudaMemcpyHostToDevice));
 
     vector<int> params;
     params.push_back(int(n));
@@ -86,16 +86,16 @@ void BranchingBending<BBendingInteractionType>::deallocate() {
 
 
 template <class BBendingInteractionType>
-double BranchingBending<BBendingInteractionType>::computeEnergy(double *coord, double *f, double d) {
+floatingpoint BranchingBending<BBendingInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
-    double U_i[1], U_ii=0.0;
-    double* gU_i;
+    floatingpoint U_i[1], U_ii=0.0;
+    floatingpoint* gU_i;
     U_ii = 0.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
-    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
+    floatingpoint * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 
 
 //    if(d == 0.0){
@@ -122,11 +122,11 @@ double BranchingBending<BBendingInteractionType>::computeEnergy(double *coord, d
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
-    double cuda_energy[1];
+    floatingpoint cuda_energy[1];
     if(gU_i == NULL)
         cuda_energy[0] = 0.0;
     else {
-        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(floatingpoint),
                                            cudaMemcpyDeviceToHost));
     }
     std::cout<<getName()<<" Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
@@ -135,12 +135,12 @@ double BranchingBending<BBendingInteractionType>::computeEnergy(double *coord, d
 }
 
 template <class BBendingInteractionType>
-void BranchingBending<BBendingInteractionType>::computeForces(double *coord, double *f) {
+void BranchingBending<BBendingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
-    double * gpu_force;
+    floatingpoint * gpu_force;
 
     if(cross_checkclass::Aux){
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
@@ -161,7 +161,7 @@ void BranchingBending<BBendingInteractionType>::computeForces(double *coord, dou
 }
 
 ///Template specializations
-template double BranchingBending<BranchingBendingCosine>::computeEnergy(double *coord, double *f, double d);
-template void BranchingBending<BranchingBendingCosine>::computeForces(double *coord, double *f);
+template floatingpoint BranchingBending<BranchingBendingCosine>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void BranchingBending<BranchingBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BranchingBending<BranchingBendingCosine>::vectorize();
 template void BranchingBending<BranchingBendingCosine>::deallocate();

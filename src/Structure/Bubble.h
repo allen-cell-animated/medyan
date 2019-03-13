@@ -44,9 +44,9 @@ private:
     
     short _type;     ///< The type of bubble
     
-    double _radius;       ///< The radius of this bubble
-    double _kRepuls;      ///< Repulsion constant for bubble-bubble and bubble-cylinder interactions
-    double _screenLength; ///< Screening length for a repulsive potential
+    floatingpoint _radius;       ///< The radius of this bubble
+    floatingpoint _kRepuls;      ///< Repulsion constant for bubble-bubble and bubble-cylinder interactions
+    floatingpoint _screenLength; ///< Screening length for a repulsive potential
     
     int _ID;        ///< Identifier
     
@@ -55,17 +55,17 @@ private:
     bool _isMTOC = false;   ///< If representing a MTOC
     
 public:
-    vector<double> coordinate; ///< Current coordinates of bubble,
+    vector<floatingpoint> coordinate; ///< Current coordinates of bubble,
                                ///< Updated with updatePosition()
     
     /// Main constructor, sets up bead and other properties
-    Bubble(SubSystem* ps, vector<double> coordinates, short type);
+    Bubble(SubSystem* ps, vector<floatingpoint> coordinates, short type);
 
     //@{
     /// Getters
-    double getRadius() {return _radius;}
-    double getRepulsionConst() {return _kRepuls;}
-    double getScreeningLength() {return _screenLength;}
+    floatingpoint getRadius() {return _radius;}
+    floatingpoint getRepulsionConst() {return _kRepuls;}
+    floatingpoint getScreeningLength() {return _screenLength;}
     
     Bead* getBead() {return _bead;}
     

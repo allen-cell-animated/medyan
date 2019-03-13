@@ -69,9 +69,9 @@ void FilamentStretchingHarmonic::optimalblocksnthreads(int nint, cudaStream_t st
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof(double),stream));
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint),stream));
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)));
         char a[] = "FilamentFF";
         char b[] = "Filament Stretching Harmonic";
         CUDAcommon::handleerror(cudaMalloc((void **) &gFF, 100 * sizeof(char)));
@@ -91,11 +91,11 @@ void FilamentStretchingHarmonic::optimalblocksnthreads(int nint, cudaStream_t st
     }
 
 }
-double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                             double *kstr, double *eql, int *params) {
+floatingpoint* FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                             floatingpoint *kstr, floatingpoint *eql, int *params) {
 //    if(blocksnthreadse[1]>0) {
 //        FilamentStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (6 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>> (coord, f, beadSet, kstr, eql, params, gU_i, CUDAcommon::getCUDAvars()
+//                (floatingpoint), stream>>> (coord, f, beadSet, kstr, eql, params, gU_i, CUDAcommon::getCUDAvars()
 //                .gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -103,7 +103,7 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
 //        cvars.streamvec.push_back(&stream);
 //        CUDAcommon::cudavars = cvars;
 //        CUDAcommon::handleerror( cudaGetLastError(),"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i, params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror( cudaGetLastError() ,"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
 //
@@ -114,12 +114,12 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
 }
 
 
-double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                             double *kstr, double *eql, double *z, int *params) {
+floatingpoint* FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                             floatingpoint *kstr, floatingpoint *eql, floatingpoint *z, int *params) {
 
 //    if(blocksnthreadse[1]>0) {
 //        FilamentStretchingHarmonicenergy<<<blocksnthreadse[0], blocksnthreadse[1], (6 * blocksnthreadse[1]) * sizeof
-//                (double), stream>>> (coord, f, beadSet, kstr, eql, params, gU_i, z, CUDAcommon::getCUDAvars()
+//                (floatingpoint), stream>>> (coord, f, beadSet, kstr, eql, params, gU_i, z, CUDAcommon::getCUDAvars()
 //                .gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -130,7 +130,7 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
 //        FilamentStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (12 * blocksnthreadsez[1]) *
         FilamentStretchingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (0 )*
-                                                sizeof(double), stream>> > (coord, f, beadSet,
+                                                sizeof(floatingpoint), stream>> > (coord, f, beadSet,
                                                 kstr, eql, params, gU_i,
                                                 CUDAcommon::cudavars.gpu_energyvec,
                                                 z, CUDAcommon::getCUDAvars().gculpritID,
@@ -145,21 +145,21 @@ double* FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSe
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
 #ifdef CUDA_INDIVIDUAL_ESUM
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 #endif
         CUDAcommon::handleerror( cudaGetLastError() ,"FilamentStretchingHarmonicenergy", "FilamentStretchingHarmonic.cu");
         return gU_sum;}
 }
 
-void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                          double *kstr, double *eql, int *params){
+void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                          floatingpoint *kstr, floatingpoint *eql, int *params){
     if(blocksnthreadsf[1]>0) {
         FilamentStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (6 * blocksnthreadsf[1]) *
 //        FilamentStretchingHarmonicforces << < blocksnthreadsf[0], blocksnthreadsf[1], (0) *
-                                                sizeof(double), stream >> > (coord, f, beadSet, kstr, eql, params);
+                                                sizeof(floatingpoint), stream >> > (coord, f, beadSet, kstr, eql, params);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -177,16 +177,16 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         exit(EXIT_FAILURE);
 }
 #endif
-double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
-                                          double *kstr, double *eql){
+floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                          floatingpoint *kstr, floatingpoint *eql){
 
 
     int n = FilamentStretching<FilamentStretchingHarmonic>::n;
     int nint = Cylinder::getCylinders().size();
 
-    double *coord1, *coord2, dist, U_i;
+    floatingpoint *coord1, *coord2, dist, U_i;
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -196,7 +196,7 @@ double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet
 
         U_i = 0.5 * kstr[i] * dist * dist;
 //        std::cout<<"S "<<i<<" "<<dist<<" "<<U_i<<endl;
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return
@@ -211,17 +211,17 @@ double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet
     return U;
 }
 
-double FilamentStretchingHarmonic::energy(double *coord, double * f, int *beadSet,
-                                          double *kstr, double *eql, double d){
+floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+                                          floatingpoint *kstr, floatingpoint *eql, floatingpoint d){
 
     int n = FilamentStretching<FilamentStretchingHarmonic>::n;
     int nint = Cylinder::getCylinders().size();
 
-    double *coord1, *coord2, *f1, *f2, dist;
-    double *v1 = new double[3];
-    double *v2 = new double[3];
+    floatingpoint *coord1, *coord2, *f1, *f2, dist;
+    floatingpoint *v1 = new floatingpoint[3];
+    floatingpoint *v2 = new floatingpoint[3];
 
-    double U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -241,15 +241,15 @@ double FilamentStretchingHarmonic::energy(double *coord, double * f, int *beadSe
     return U;
 }
 
-void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
-                                        double *kstr, double *eql){
+void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                        floatingpoint *kstr, floatingpoint *eql){
 
 
     int n = FilamentStretching<FilamentStretchingHarmonic>::n;
     int nint = Cylinder::getCylinders().size();
 
-    double *coord1, *coord2, dist, invL;
-    double f0, *f1, *f2;
+    floatingpoint *coord1, *coord2, dist, invL;
+    floatingpoint f0, *f1, *f2;
 
     for(int i = 0; i < nint; i += 1) {
         coord1 = &coord[3 * beadSet[n * i]];

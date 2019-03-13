@@ -25,7 +25,7 @@
 using namespace mathfunc;
 struct bin{
     int binID;
-    double bincoord[3];
+    floatingpoint bincoord[3];
     int neighbors[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
                           -1,-1,-1,-1,-1,-1};
     int binstencilID[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -37,13 +37,13 @@ struct bin{
         int bindices[2];
         int cmpID = -1;
         long cindex = -1;
-        double coord[3];
+        floatingpoint coord[3];
         short type = -1;
         int ID = -1;
         int availbscount = -1;
     };
 struct SERLvars{
-    double *coord = NULL;
+    floatingpoint *coord = NULL;
     cylinder *cylindervec = NULL;
     CCylinder **ccylindervec = NULL;
     Cylinder **cylinderpointervec = NULL;
@@ -68,13 +68,13 @@ dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> p
 }
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
-    double * gpu_force = NULL;
-    double * gpu_forceAux = NULL;
-    double * gpu_forceAuxP = NULL;
-    double * gpu_coord =  NULL;
-    double * gpu_lambda = NULL;
+    floatingpoint * gpu_force = NULL;
+    floatingpoint * gpu_forceAux = NULL;
+    floatingpoint * gpu_forceAuxP = NULL;
+    floatingpoint * gpu_coord =  NULL;
+    floatingpoint * gpu_lambda = NULL;
     float vectorize = 0.0;
-    double * gpu_energy = NULL;
+    floatingpoint * gpu_energy = NULL;
     bool * gpu_btstate = NULL;
     cylinder* gpu_cylindervec = NULL;
 #ifdef CUDAACCL
@@ -90,7 +90,7 @@ struct CUDAvars {
     size_t memincuda = 0;
     bool conservestreams = true;
     int offset_E = 0;
-    double *gpu_energyvec = NULL;
+    floatingpoint *gpu_energyvec = NULL;
     vector<bool*> backtrackbools;
 //    cudaEvent_t *event;
 
@@ -102,8 +102,8 @@ struct CUDAvars {
 };
 
 struct CylCylNLvars {
-    double* gpu_coord;
-    double* gpu_coord_com;
+    floatingpoint* gpu_coord;
+    floatingpoint* gpu_coord_com;
     int * gpu_beadSet;
     int *gpu_cylID;
     int *gpu_filID;
@@ -121,40 +121,40 @@ struct CylCylNLvars {
 };
 
 struct SERLtime {
-    double TvectorizeFF = 0.0;
-    double TcomputeE = 0.0;
-    double TcomputeEiter = 0.0;
+    floatingpoint TvectorizeFF = 0.0;
+    floatingpoint TcomputeE = 0.0;
+    floatingpoint TcomputeEiter = 0.0;
     int Ecount = 0;
-    double TcomputeF= 0.0;
-    double Tlambda = 0.0;
-    double TshiftGrad= 0.0;
-    double TmaxF= 0.0;
-    double Tcalculatedot = 0.0;
-    vector<double>TvecvectorizeFF;
-    vector<double>TveccomputeE;
-    vector<double>TveccomputeF;
-    vector<double>Tlambdavec;
-    vector<double>Tlambdap;
-    vector<double>Tlambdapcount;
+    floatingpoint TcomputeF= 0.0;
+    floatingpoint Tlambda = 0.0;
+    floatingpoint TshiftGrad= 0.0;
+    floatingpoint TmaxF= 0.0;
+    floatingpoint Tcalculatedot = 0.0;
+    vector<floatingpoint>TvecvectorizeFF;
+    vector<floatingpoint>TveccomputeE;
+    vector<floatingpoint>TveccomputeF;
+    vector<floatingpoint>Tlambdavec;
+    vector<floatingpoint>Tlambdap;
+    vector<floatingpoint>Tlambdapcount;
 };
 
 struct CUDAtime {
-    double TvectorizeFF = 0.0;
-    double TcomputeE = 0.0;
-    double TcomputeEiter = 0.0;
+    floatingpoint TvectorizeFF = 0.0;
+    floatingpoint TcomputeE = 0.0;
+    floatingpoint TcomputeEiter = 0.0;
     int Ecount = 0;
-    double TcomputeF= 0.0;
-    double Tlambda = 0.0;
-    double TshiftGrad= 0.0;
-    double TmaxF= 0.0;
-    double Tcalculatedot = 0.0;
-    double Tstartmin = 0.0;
-    vector<double>TvecvectorizeFF;
-    vector<double>TveccomputeE;
-    vector<double>TveccomputeF;
-    vector<double>Tlambdavec;
-    vector<double>Tlambdap;
-    vector<double>Tlambdapcount;
+    floatingpoint TcomputeF= 0.0;
+    floatingpoint Tlambda = 0.0;
+    floatingpoint TshiftGrad= 0.0;
+    floatingpoint TmaxF= 0.0;
+    floatingpoint Tcalculatedot = 0.0;
+    floatingpoint Tstartmin = 0.0;
+    vector<floatingpoint>TvecvectorizeFF;
+    vector<floatingpoint>TveccomputeE;
+    vector<floatingpoint>TveccomputeF;
+    vector<floatingpoint>Tlambdavec;
+    vector<floatingpoint>Tlambdap;
+    vector<floatingpoint>Tlambdapcount;
 };
 #endif
 class CUDAcommon{

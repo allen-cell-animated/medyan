@@ -24,8 +24,8 @@
 /// The steepest descent method for conjugate gradient minimization
     class SteepestDescent : public CGMethod {
     public:
-        virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
-                              double MAXDIST, double LAMBDAMAX, bool steplimit);
+        virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
+                              floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit);
 
     };
 #endif

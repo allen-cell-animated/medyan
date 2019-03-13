@@ -55,7 +55,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     numInteractions = nint;
 //    std::cout<<"NINT1 "<<nint<<endl;
     beadSet = new int[n * nint];
-    krep = new double[nint];
+    krep = new floatingpoint[nint];
 
 
     int nc = Cylinder::getCylinders().size();
@@ -112,10 +112,10 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_beadSet, beadSet, n * numInteractions *
                                     sizeof(int), cudaMemcpyHostToDevice, stream),
                             "cuda data transfer", "CylinderExclVolume.cu");
-    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_krep, numInteractions * sizeof(double)),"cuda data transfer",
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_krep, numInteractions * sizeof(floatingpoint)),"cuda data transfer",
                             "CylinderExclVolume.cu");
     CUDAcommon::handleerror(cudaMemcpyAsync(gpu_krep, krep, numInteractions * sizeof
-                            (double), cudaMemcpyHostToDevice, stream),
+                            (floatingpoint), cudaMemcpyHostToDevice, stream),
                             "cuda data transfer", "CylinderExclVolume.cu");
     vector<int> params;
     params.push_back(int(n));
@@ -140,7 +140,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu",
 //                            "vectorizeFF");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TvecvectorizeFF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TvectorizeFF += elapsed_run.count();
 #endif
@@ -171,11 +171,11 @@ void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
 
 
 template <class CVolumeInteractionType>
-double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, double *f, double d) {
+floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
-    double U_i[1];
-    double U_ii=0.0;
-    double *gU_i;
+    floatingpoint U_i[1];
+    floatingpoint U_ii=0.0f;
+    floatingpoint *gU_i;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 #endif
@@ -186,9 +186,9 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
 #endif
 
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force = CUDAcommon::getCUDAvars().gpu_force;
-    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force = CUDAcommon::getCUDAvars().gpu_force;
+    floatingpoint * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
 
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_krep, gpu_params);
@@ -200,7 +200,7 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
 #ifdef CUDATIMETRACK
 //    CUDAcommon::handleerror(cudaDeviceSynchronize(),"CylinderExclVolume.cu", "computeEnergy");
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeE.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeE += elapsed_run.count();
     CUDAcommon::cudatime.TcomputeEiter += elapsed_run.count();
@@ -210,14 +210,14 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    if (d == 0.0)
+    if (d == 0.0f)
         U_ii = _FFType.energy(coord, f, beadSet, krep);
     else
         U_ii = _FFType.energy(coord, f, beadSet, krep, d);
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runs(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeE.push_back(elapsed_runs.count());
     CUDAcommon::serltime.TcomputeE += elapsed_runs.count();
     CUDAcommon::serltime.TcomputeEiter += elapsed_runs.count();
@@ -228,15 +228,15 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
 }
 
 template <class CVolumeInteractionType>
-void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, double *f) {
+void CylinderExclVolume<CVolumeInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
-    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
-    double * gpu_force;
+    floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    floatingpoint * gpu_force;
     if(cross_checkclass::Aux) {
 
         gpu_force = CUDAcommon::getCUDAvars().gpu_forceAux;
@@ -251,7 +251,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_run(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
     CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
     CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
     tbegin = chrono::high_resolution_clock::now();
@@ -261,15 +261,15 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
 #endif
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
-    chrono::duration<double> elapsed_runs(tend - tbegin);
+    chrono::duration<floatingpoint> elapsed_runs(tend - tbegin);
     CUDAcommon::serltime.TveccomputeF.push_back(elapsed_runs.count());
     CUDAcommon::serltime.TcomputeF += elapsed_runs.count();
 #endif
 #ifdef DETAILEDOUTPUT
-    double maxF = 0.0;
-    double mag = 0.0;
+    floatingpoint maxF = 0.0;
+    floatingpoint mag = 0.0;
     for(int i = 0; i < CGMethod::N/3; i++) {
-        mag = 0.0;
+        mag = 0.0f;
         for(int j = 0; j < 3; j++)
             mag += f[3 * i + j]*f[3 * i + j];
         mag = sqrt(mag);
@@ -282,8 +282,8 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
 }
 
 ///Template specializations
-template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(double *coord, double *f, double d);
-template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(double *coord, double *f);
+template floatingpoint CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize();
 template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();
 

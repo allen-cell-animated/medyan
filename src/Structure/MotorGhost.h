@@ -62,8 +62,8 @@ private:
     Cylinder* _c1; ///< First cylinder the motor is bound to
     Cylinder* _c2; ///< Second cylinder the motor is bound to
     
-    double _position1; ///< Position on first cylinder
-    double _position2; ///< Position on second cylinder
+    floatingpoint _position1; ///< Position on first cylinder
+    floatingpoint _position2; ///< Position on second cylinder
     
     short _motorType; ///< Integer specifying the type of linker
     int _motorID; ///< Integer ID of this motor, managed by Database
@@ -74,13 +74,13 @@ private:
     Compartment* _compartment; ///< Where this motorghost is
     
     int _numHeads = 1; ///< Number of heads that this motor contains
-    double _numBoundHeads = 1; ///< Number of bound heads in the ensemble,
+    floatingpoint _numBoundHeads = 1; ///< Number of bound heads in the ensemble,
                                ///< which is force-dependent
     
     //@{
     ///Kinetic rates of individual motor heads
-    double _onRate = 0.0;
-    double _offRate = 0.0;
+    floatingpoint _onRate = 0.0;
+    floatingpoint _offRate = 0.0;
     //@}
     
     static Database<MotorGhost*> _motorGhosts;///< Collection in SubSystem
@@ -97,14 +97,14 @@ private:
     static vector<MotorRateChanger*> _walkingChangers;
 
 public:
-    vector<double> coordinate;
+    vector<floatingpoint> coordinate;
         ///< coordinate of midpoint, updated with updatePosition()
         int _dbIndex; ///<Position in database vector
     
     ///Standard constructor
     MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
-               double position1 = 0.5, double position2 = 0.5,
-               double onRate = 0.0, double offRate = 0.0);
+               floatingpoint position1 = 0.5, floatingpoint position2 = 0.5,
+               floatingpoint onRate = 0.0, floatingpoint offRate = 0.0);
     
     virtual ~MotorGhost() noexcept;
     
@@ -135,11 +135,11 @@ public:
     
     //@{
     ///Position management function
-    double getFirstPosition() {return _position1;}
-    void setFirstPosition(double position1) {_position1 = position1;}
+    floatingpoint getFirstPosition() {return _position1;}
+    void setFirstPosition(floatingpoint position1) {_position1 = position1;}
     
-    double getSecondPosition() {return _position2;}
-    void setSecondPosition(double position2) {_position2 = position2;}
+    floatingpoint getSecondPosition() {return _position2;}
+    void setSecondPosition(floatingpoint position2) {_position2 = position2;}
     //@}
     
     //@{
@@ -183,13 +183,13 @@ public:
     
     ///Move a motor head forward
     ///@note - Updates chemical binding and mechanical parameters accordingly
-    void moveMotorHead(Cylinder* c, double oldPosition, double newPosition,
+    void moveMotorHead(Cylinder* c, floatingpoint oldPosition, floatingpoint newPosition,
                        short boundType, SubSystem* ps);
     
     ///Move a motor head to a new cylinder
     ///@note - Updates chemical binding and mechanical parameters accordingly
     void moveMotorHead(Cylinder* oldC, Cylinder* newC,
-                       double oldPosition, double newPosition,
+                       floatingpoint oldPosition, floatingpoint newPosition,
                        short boundType, SubSystem* ps);
     
     virtual void printSelf();

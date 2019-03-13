@@ -435,7 +435,7 @@ struct BranchingCallback {
         Cylinder* c1 = get<0>(site)->getCylinder();
         short filType = c1->getType();
         
-        double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
+        floatingpoint pos = floatingpoint(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
         if(SysParams::RUNSTATE==true){
         //Get a position and direction of a new filament
         auto x1 = c1->getFirstBead()->coordinate;
@@ -443,12 +443,12 @@ struct BranchingCallback {
         
         //get original direction of cylinder
         auto p= midPointCoordinate(x1, x2, pos);
-        vector<double> n = twoPointDirection(x1, x2);
+        vector<floatingpoint> n = twoPointDirection(x1, x2);
         
         //get branch projection
 #ifdef MECHANICS
         //use mechanical parameters
-        double l, t;
+        floatingpoint l, t;
         if(SysParams::Mechanics().BrStretchingL.size() != 0) {
             l = SysParams::Mechanics().BrStretchingL[branchType];
             t = SysParams::Mechanics().BrBendingTheta[branchType];
@@ -464,10 +464,10 @@ struct BranchingCallback {
         cout << "Branching initialization cannot occur unless mechanics is enabled. Using"
         << " default values for Arp2/3 complex - l=10.0nm, theta=70.7deg"
         << endl;
-        double l = 10.0;
-        double t = 1.22;
+        floatingpoint l = 10.0;
+        floatingpoint t = 1.22;
 #endif
-        double s = SysParams::Geometry().monomerSize[filType];
+        floatingpoint s = SysParams::Geometry().monomerSize[filType];
         
         auto branchPosDir = branchProjection(n, p, l, s, t);
         auto bd = get<0>(branchPosDir); auto bp = get<1>(branchPosDir);
@@ -491,7 +491,7 @@ struct BranchingCallback {
         vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
             for(auto T:BrT){
                 CCylinder* cx=get<0>(get<0>(T));
-                double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
+                floatingpoint p = floatingpoint(get<1>(get<0>(T)))/ floatingpoint(SysParams::Geometry().cylinderNumMon[filType]);
                 if(cx->getCylinder()->getID()==c1->getID() && p==pos){
                     c=get<0>(get<1>(T));
                     check = true;
@@ -584,8 +584,8 @@ struct LinkerBindingCallback {
         // Create a linker
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         
-        double pos1 = double(get<1>(site[0])) / cylinderSize;
-        double pos2 = double(get<1>(site[1])) / cylinderSize;
+        floatingpoint pos1 = floatingpoint(get<1>(site[0])) / cylinderSize;
+        floatingpoint pos2 = floatingpoint(get<1>(site[1])) / cylinderSize;
         
         Linker* l = _ps->addTrackable<Linker>(c1, c2, linkerType, pos1, pos2);
         
@@ -684,8 +684,8 @@ struct MotorBindingCallback {
         // Create a motor
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
         
-        double pos1 = double(get<1>(site[0])) / cylinderSize;
-        double pos2 = double(get<1>(site[1])) / cylinderSize;
+        floatingpoint pos1 = floatingpoint(get<1>(site[0])) / cylinderSize;
+        floatingpoint pos2 = floatingpoint(get<1>(site[1])) / cylinderSize;
         
         MotorGhost* m = _ps->addTrackable<MotorGhost>(c1, c2, motorType, pos1, pos2, _onRate, _offRate);
         
@@ -756,8 +756,8 @@ struct MotorWalkingCallback {
         cout<<"Cylinder oldpos "<<_c->getID()<<" "<<_oldPosition<<endl;
         cout<<"newpos "<<_newPosition<<endl;
         cout<<"-----------"<<endl;*/
-        double oldpos = double(_oldPosition) / cylinderSize;
-        double newpos = double(_newPosition) / cylinderSize;
+        floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
+        floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
         
         m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
         
@@ -807,8 +807,8 @@ struct MotorMovingCylinderCallback {
         cout<<"Cylinder oldpos "<<_oldC->getID()<<" "<<_oldPosition<<endl;
         cout<<"Cylinder newpos "<<_newC->getID()<<" "<<_newPosition<<endl;
         cout<<"-----------"<<endl;*/
-        double oldpos = double(_oldPosition) / cylinderSize;
-        double newpos = double(_newPosition) / cylinderSize;
+        floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
+        floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
         
         m->moveMotorHead(_oldC, _newC, oldpos, newpos, _boundType, _ps);
         
@@ -852,8 +852,8 @@ struct FilamentCreationCallback {
             c = _compartment;
         
         //set up a random initial position and direction
-        vector<double> position;
-        vector<double> direction;
+        vector<floatingpoint> position;
+        vector<floatingpoint> direction;
         //Qin
         if(_ps->getBoundary()->getShape() == BoundaryShape::Cylinder) {
             while(true) {
@@ -861,7 +861,7 @@ struct FilamentCreationCallback {
                 
                 //getting random numbers between -1 and 1
                 
-                direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), 0};
+                direction = {Rand::randfloatingpoint(-1,1), Rand::randfloatingpoint(-1,1), 0};
                 normalize(direction);
                 
                 auto npp = nextPointProjection(position,
@@ -885,7 +885,7 @@ struct FilamentCreationCallback {
                 
                 //getting random numbers between -1 and 1
                 
-                direction = {Rand::randDouble(-1,1), Rand::randDouble(-1,1), Rand::randDouble(-1,1)};
+                direction = {Rand::randfloatingpoint(-1,1), Rand::randfloatingpoint(-1,1), Rand::randfloatingpoint(-1,1)};
                 normalize(direction);
                 
                 auto npp = nextPointProjection(position,

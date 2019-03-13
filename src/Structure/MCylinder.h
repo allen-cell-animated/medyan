@@ -31,25 +31,25 @@ class MCylinder {
 private:
     Cylinder* _pCylinder;  ///< parent cylinder
 
-    double _eqLength; ///< Length of unstretched cylinder
-    double _eqTheta;  ///< Equilibrium value for angle in bending potential.
+    floatingpoint _eqLength; ///< Length of unstretched cylinder
+    floatingpoint _eqTheta;  ///< Equilibrium value for angle in bending potential.
                       ///< For interaction between this cylinder and PREVIOUS
-    double _eqPhi;    ///< Equilibrium value of twisiting potential
-    double _kStretch; ///< Local stretching constant, describes axial stretching
+    floatingpoint _eqPhi;    ///< Equilibrium value of twisiting potential
+    floatingpoint _kStretch; ///< Local stretching constant, describes axial stretching
                       ///< of a single cylinder
-    double _kBend;    ///< Local bending constant, which describes bending
+    floatingpoint _kBend;    ///< Local bending constant, which describes bending
                       ///< interaction between current and PREVIOUS cylinders
-    double _kTwist;   ///< Local twisting constant, which describes stretching
+    floatingpoint _kTwist;   ///< Local twisting constant, which describes stretching
                       ///< interaction between current and PREVIOUS cylinders
-    double _kExVol;   ///< Local excluded volume constant, which describes
+    floatingpoint _kExVol;   ///< Local excluded volume constant, which describes
                       ///< excluded volume interactions between cylinders
     
-    double _currentLength; ///< The current length of the cylinder
+    floatingpoint _currentLength; ///< The current length of the cylinder
     
 public:
     /// Constructor sets equlilibrium length, and also adjusts other
     /// parameters according to this length
-    MCylinder(short filamentType, double eqLength);
+    MCylinder(short filamentType, floatingpoint eqLength);
     ~MCylinder() {};
 
     /// Set parent 
@@ -57,32 +57,32 @@ public:
     Cylinder* getCylinder() {return _pCylinder;}
     
     /// Set the equlilibrium length, which changes mechanical constants accordingly
-    void setEqLength(short filamentType, double l);
+    void setEqLength(short filamentType, floatingpoint l);
     /// Get the current equlibrium length of this MCylinder
-    double getEqLength() {return _eqLength;}
+    floatingpoint getEqLength() {return _eqLength;}
     
     //@{
     /// Mechanical parameter management function
-    void setEqTheta(double theta) {_eqTheta = theta;}
-    double getEqTheta() {return _eqTheta;}
+    void setEqTheta(floatingpoint theta) {_eqTheta = theta;}
+    floatingpoint getEqTheta() {return _eqTheta;}
     
-    void setEqPhi(double phi) {_eqPhi = phi;}
-    double getEqPhi() {return _eqPhi;}
+    void setEqPhi(floatingpoint phi) {_eqPhi = phi;}
+    floatingpoint getEqPhi() {return _eqPhi;}
     
-    void setStretchingConst(double k) {_kStretch = k;}
-    double getStretchingConst() {return _kStretch;}
+    void setStretchingConst(floatingpoint k) {_kStretch = k;}
+    floatingpoint getStretchingConst() {return _kStretch;}
     
-    void setBendingConst(double k) {_kBend = k;}
-    double getBendingConst() {return _kBend;}
+    void setBendingConst(floatingpoint k) {_kBend = k;}
+    floatingpoint getBendingConst() {return _kBend;}
     
-    void setTwistingConst(double k) {_kTwist = k;}
-    double getTwistingConst() {return _kTwist;}
+    void setTwistingConst(floatingpoint k) {_kTwist = k;}
+    floatingpoint getTwistingConst() {return _kTwist;}
     
-    void setExVolConst(double k) {_kExVol = k;}
-    double getExVolConst() {return _kExVol;}
+    void setExVolConst(floatingpoint k) {_kExVol = k;}
+    floatingpoint getExVolConst() {return _kExVol;}
     
-    void setLength(double l){_currentLength = l;}
-    double getLength() {return _currentLength;}
+    void setLength(floatingpoint l){_currentLength = l;}
+    floatingpoint getLength() {return _currentLength;}
     //@}
     
 };

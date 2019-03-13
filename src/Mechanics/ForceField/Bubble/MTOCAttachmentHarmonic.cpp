@@ -19,26 +19,26 @@
 
 using namespace mathfunc;
 
-double MTOCAttachmentHarmonic::energy(Bead* b1, Bead* b2, double kStretch, double radius){
+floatingpoint MTOCAttachmentHarmonic::energy(Bead* b1, Bead* b2, floatingpoint kStretch, floatingpoint radius){
 
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate) - radius;
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate) - radius;
     return 0.5 * kStretch* dist * dist;
     
 }
 
-double MTOCAttachmentHarmonic::energy(Bead* b1, Bead* b2, double kStretch, double radius, double d){
+floatingpoint MTOCAttachmentHarmonic::energy(Bead* b1, Bead* b2, floatingpoint kStretch, floatingpoint radius, floatingpoint d){
     
-    double dist = twoPointDistanceStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, d) - radius;
+    floatingpoint dist = twoPointDistanceStretched(b1->coordinate, b1->force, b2->coordinate, b2->force, d) - radius;
     return 0.5 * kStretch* dist * dist;
 }
 
-void MTOCAttachmentHarmonic::forces(Bead* b1, Bead* b2, double kStretch, double radius){
+void MTOCAttachmentHarmonic::forces(Bead* b1, Bead* b2, floatingpoint kStretch, floatingpoint radius){
     
     
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
-    double invL = 1 / dist;
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint invL = 1 / dist;
     
-    double f0 = kStretch * ( dist - radius ) * invL;
+    floatingpoint f0 = kStretch * ( dist - radius ) * invL;
     
     //force on i
     b2->force[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );
@@ -52,12 +52,12 @@ void MTOCAttachmentHarmonic::forces(Bead* b1, Bead* b2, double kStretch, double 
     
 }
 
-void MTOCAttachmentHarmonic::forcesAux(Bead* b1, Bead* b2, double kStretch, double radius){
+void MTOCAttachmentHarmonic::forcesAux(Bead* b1, Bead* b2, floatingpoint kStretch, floatingpoint radius){
     
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
-    double invL = 1 / dist;
+    floatingpoint dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    floatingpoint invL = 1 / dist;
     
-    double f0 = kStretch * ( dist - radius ) * invL;
+    floatingpoint f0 = kStretch * ( dist - radius ) * invL;
     
     //force on i
     b2->forceAux[0] +=  f0 * ( b1->coordinate[0] - b2->coordinate[0] );

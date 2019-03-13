@@ -45,12 +45,12 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #endif
-typedef std::numeric_limits< double > dbl;
+typedef std::numeric_limits< floatingpoint > dbl;
 
 using namespace mathfunc;
 #ifdef CUDAACCL
 //struct unaryfn: std::unary_function<size_t, unsigned long> {
-//    int operator()(unsigned long i) const { return 12* i *sizeof(double); }
+//    int operator()(unsigned long i) const { return 12* i *sizeof(floatingpoint); }
 //
 //};
 void CylinderExclVolRepulsion::deallocate(){
@@ -104,13 +104,13 @@ void CylinderExclVolRepulsion::optimalblocksnthreads( int nint, cudaStream_t str
 //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(double)));
-        CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof(double), stream),
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, bntaddvec2.at(0)*sizeof(floatingpoint)));
+        CUDAcommon::handleerror(cudaMemsetAsync(gU_i, 0, bntaddvec2.at(0) * sizeof(floatingpoint), stream),
                                 "cuda data transfer",
                                 "CylinderExclVolume.cu");
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(double)),"cuda data transfer",
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_i, nint*sizeof(floatingpoint)),"cuda data transfer",
                                 "CylinderExclVolume.cu");
-        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(double)),"cuda data transfer",
+        CUDAcommon::handleerror(cudaMalloc((void **) &gU_sum, sizeof(floatingpoint)),"cuda data transfer",
                                 "CylinderExclVolume.cu");
         char a[] = "Excluded Volume";
         char b[] =  "Cylinder Excluded Volume";
@@ -133,13 +133,13 @@ void CylinderExclVolRepulsion::optimalblocksnthreads( int nint, cudaStream_t str
     }
 
 }
-double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
-                                        double *krep, int *params) {
+floatingpoint* CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                        floatingpoint *krep, int *params) {
 //    if(blocksnthreadse[1]>0) {
 //
 
 //        CUDAExclVolRepulsionenergy << < blocksnthreadse[0], blocksnthreadse[1],
-//                (12 * blocksnthreadse[1]) * sizeof(double), stream >> >(coord, f, beadSet, krep, params, gU_i,
+//                (12 * blocksnthreadse[1]) * sizeof(floatingpoint), stream >> >(coord, f, beadSet, krep, params, gU_i,
 //                CUDAcommon::getCUDAvars().gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -148,7 +148,7 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 
 //        CUDAcommon::handleerror(cudaGetLastError(),"CUDAExclVolRepulsionenergy", "CylinderExclVolumeRepulsion.cu");
 
-//        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+//        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0, stream>>>(gU_i,params, gU_sum, gpu_Utot);
 
 //        auto cvars = CUDAcommon::getCUDAvars();
@@ -163,11 +163,11 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 //    else return NULL;
 }
 
-double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet, double *krep, double *z, int *params) {
+floatingpoint* CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint *z, int *params) {
 
 //    if(blocksnthreadse[1]>0) {
 //        CUDAExclVolRepulsionenergy << < blocksnthreadse[0], blocksnthreadse[1],
-//                (12 * blocksnthreadse[1]) * sizeof(double), stream >> >(coord, f, beadSet, krep, params, gU_i, z,
+//                (12 * blocksnthreadse[1]) * sizeof(floatingpoint), stream >> >(coord, f, beadSet, krep, params, gU_i, z,
 //                CUDAcommon::getCUDAvars().gculpritID,
 //                CUDAcommon::getCUDAvars().gculpritFF,
 //                CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
@@ -176,7 +176,7 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
     if(blocksnthreadsez[1]>0) {
         auto boolvarvec = CUDAcommon::cudavars.backtrackbools;
         CUDAExclVolRepulsionenergyz << < blocksnthreadsez[0], blocksnthreadsez[1],
-                12 * blocksnthreadsez[1] * sizeof(double),stream >> > (coord, f, beadSet,
+                12 * blocksnthreadsez[1] * sizeof(floatingpoint),stream >> > (coord, f, beadSet,
                 krep, params, gU_i, CUDAcommon::cudavars.gpu_energyvec, z,
                 CUDAcommon::getCUDAvars().gculpritID,
                 CUDAcommon::getCUDAvars().gculpritFF,
@@ -190,9 +190,9 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
-        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-        resetdoublevariableCUDA<<<1,1,0,stream>>>(gU_sum);
-        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(double),stream>>>(gU_i,
+        floatingpoint* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
+        resetfloatingpointvariableCUDA<<<1,1,0,stream>>>(gU_sum);
+        addvectorred2<<<bntaddvec2.at(2),bntaddvec2.at(3), bntaddvec2.at(3) * sizeof(floatingpoint),stream>>>(gU_i,
                 params, gU_sum, gpu_Utot);
 #endif
                 CUDAcommon::handleerror( cudaGetLastError() ,"CUDAExclVolRepulsionenergy",
@@ -201,35 +201,35 @@ double* CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
     }
 }
 
-void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, double *krep, int *params) {
+void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, int *params) {
 //    cudaEvent_t start, stop;
 //    CUDAcommon::handleerror(cudaEventCreate( &start));
 //    CUDAcommon::handleerror(cudaEventCreate( &stop));
 //    CUDAcommon::handleerror(cudaEventRecord( start, 0));
 
     if(blocksnthreadsf[1]>0) {
-//        double *gU_ii;
-//        double *gf1, *gf2, *gf3, *gf4, *gf5;
-//        double *gc1, *gc2, *gcheckU;
-//        double U_ii[blocksnthreadsf[0] * blocksnthreadsf[1]];
-//        double c1[3 * blocksnthreadsf[0] * blocksnthreadsf[1]], c2[3 * blocksnthreadsf[0] * blocksnthreadsf[1]];
-//        double F_i[3 * blocksnthreadsf[0] * blocksnthreadsf[1]];
-//        double checkU[blocksnthreadsf[1]];
+//        floatingpoint *gU_ii;
+//        floatingpoint *gf1, *gf2, *gf3, *gf4, *gf5;
+//        floatingpoint *gc1, *gc2, *gcheckU;
+//        floatingpoint U_ii[blocksnthreadsf[0] * blocksnthreadsf[1]];
+//        floatingpoint c1[3 * blocksnthreadsf[0] * blocksnthreadsf[1]], c2[3 * blocksnthreadsf[0] * blocksnthreadsf[1]];
+//        floatingpoint F_i[3 * blocksnthreadsf[0] * blocksnthreadsf[1]];
+//        floatingpoint checkU[blocksnthreadsf[1]];
 
 //        std::cout << "CEVF Number of Blocks: " << blocksnthreadsf[0] << endl;
 //        std::cout << "Threads per block: " << blocksnthreadsf[1] << endl;
 
         //TODO  since the number of threads needed is constant through out the minimization, consider storing the pointer.
 //        CUDAcommon::handleerror(cudaMalloc((void **) &gf1, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof
-// (double)));
+// (floatingpoint)));
 //        CUDAcommon::handleerror(cudaMalloc((void **) &gf2, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof
-// (double)));
+// (floatingpoint)));
 //        CUDAcommon::handleerror(cudaMalloc((void **) &gf3, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof
-// (double)));
+// (floatingpoint)));
 //        CUDAcommon::handleerror(cudaMalloc((void **) &gf4, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof
-// (double)));
+// (floatingpoint)));
 //        CUDAcommon::handleerror(
-//                cudaMalloc((void **) &gf5, 45 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(double)));
+//                cudaMalloc((void **) &gf5, 45 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(floatingpoint)));
 
 //            size_t freeMem, totalMem;
 //
@@ -240,7 +240,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
 //        cudaGetDeviceProperties(&properties, 0);
 //        cout << "using " << properties.multiProcessorCount << " multiprocessors" << endl;
 //        cout << "max threads per processor: " << properties.maxThreadsPerMultiProcessor << endl;
-//        std::cout << 12 *blocksnthreadsf[1] * sizeof(double) << endl;
+//        std::cout << 12 *blocksnthreadsf[1] * sizeof(floatingpoint) << endl;
 //        int blockSize;   // The launch configurator returned block size
 //        int minGridSize; // The minimum grid size needed to achieve the
 //        // maximum occupancy for a full device launch
@@ -262,7 +262,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
 //        std::cout<<numblocks<<" "<<blockSize<<" "<<my_kernel_sm_size<<endl;
 
         CUDAExclVolRepulsionforce << < blocksnthreadsf[0],blocksnthreadsf[1],
-                12 *blocksnthreadsf[1] * sizeof(double),stream >> >
+                12 *blocksnthreadsf[1] * sizeof(floatingpoint),stream >> >
                 (coord, f, beadSet, krep, params);
 
         CUDAcommon::handleerror(cudaGetLastError(),"CUDAExclVolRepulsionforce", "CylinderExclVolumeRepulsion.cu");
@@ -272,16 +272,16 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
 //    CUDAcommon::handleerror( cudaPeekAtLastError() );
        //CUDAcommon::handleerror(cudaDeviceSynchronize());
 
-//    double f1 [3 * blocksnthreadsf[0]*blocksnthreadsf[1]];
-//    double f2 [3 * blocksnthreadsf[0]*blocksnthreadsf[1]];
-//    double f3 [3 * blocksnthreadsf[0]*blocksnthreadsf[1]];
-//    double f4 [3 * blocksnthreadsf[0]*blocksnthreadsf[1]];
-//    double f5 [45 * blocksnthreadsf[0]*blocksnthreadsf[1]];
-//    cudaMemcpy(f1, gf1, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(double), cudaMemcpyDeviceToHost);
-//    cudaMemcpy(f2, gf2, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(double), cudaMemcpyDeviceToHost);
-//    cudaMemcpy(f3, gf3, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(double), cudaMemcpyDeviceToHost);
-//    cudaMemcpy(f4, gf4, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(double), cudaMemcpyDeviceToHost);
-//    cudaMemcpy(f5, gf5, 45 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(double), cudaMemcpyDeviceToHost);
+//    floatingpoint f1 [3 * blocksnthreadsf[0]*blocksnthreadsf[1]];
+//    floatingpoint f2 [3 * blocksnthreadsf[0]*blocksnthreadsf[1]];
+//    floatingpoint f3 [3 * blocksnthreadsf[0]*blocksnthreadsf[1]];
+//    floatingpoint f4 [3 * blocksnthreadsf[0]*blocksnthreadsf[1]];
+//    floatingpoint f5 [45 * blocksnthreadsf[0]*blocksnthreadsf[1]];
+//    cudaMemcpy(f1, gf1, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(floatingpoint), cudaMemcpyDeviceToHost);
+//    cudaMemcpy(f2, gf2, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(floatingpoint), cudaMemcpyDeviceToHost);
+//    cudaMemcpy(f3, gf3, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(floatingpoint), cudaMemcpyDeviceToHost);
+//    cudaMemcpy(f4, gf4, 3 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(floatingpoint), cudaMemcpyDeviceToHost);
+//    cudaMemcpy(f5, gf5, 45 * blocksnthreadsf[0] * blocksnthreadsf[1] * sizeof(floatingpoint), cudaMemcpyDeviceToHost);
 //
 //    for(auto i=0;i < blocksnthreadsf[0] * blocksnthreadsf[1]; i++) {
 //        for(auto j=0;j<44;j++)
@@ -326,17 +326,17 @@ void CylinderExclVolRepulsion::checkforculprit() {
 }
 
 #endif
-double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadSet, double *krep) {
-    double *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, U_i;
-    double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-    double ATG1, ATG2, ATG3, ATG4;
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *krep) {
+    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, U_i;
+    floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+    floatingpoint ATG1, ATG2, ATG3, ATG4;
 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
     U_i = 0.0;
     U = 0.0;
-    newc2 = new double[3];
+    newc2 = new floatingpoint[3];
 //    std::cout<<"SERL ecvol nint "<<nint<<endl;
     for (int i = 0; i < nint; i++) {
 
@@ -356,7 +356,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
             invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
 //            std::cout<<i<<" "<<U_i<<endl;
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
 
                 //set culprit and return TODO
@@ -406,7 +406,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
         U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 //        std::cout<<i<<" "<<U_i<<endl;
 
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 
            || U_i != U_i || U_i < -1.0) {
 
@@ -423,23 +423,23 @@ double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadS
 }
 
 
-double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
-                                        double *krep, double z) {
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+                                        floatingpoint *krep, floatingpoint z) {
 
 
-    double d, invDSquare, U, U_i, *f1, *f2, *f3, *f4;
-    double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-    double ATG1, ATG2, ATG3, ATG4;
-    double *c1us, *c2us, *c3us, *c4us;
-    double *c1 = new double[3];//stretched
-    double *c2 = new double[3];
-    double *c3 = new double[3];
-    double *c4 = new double[3];
-//    double *c1us = new double[3];//unstretched
-//    double *c2us = new double[3];
-//    double *c3us = new double[3];
-//    double *c4us = new double[3];
-    double *newc2 = new double[3];
+    floatingpoint d, invDSquare, U, U_i, *f1, *f2, *f3, *f4;
+    floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+    floatingpoint ATG1, ATG2, ATG3, ATG4;
+    floatingpoint *c1us, *c2us, *c3us, *c4us;
+    floatingpoint *c1 = new floatingpoint[3];//stretched
+    floatingpoint *c2 = new floatingpoint[3];
+    floatingpoint *c3 = new floatingpoint[3];
+    floatingpoint *c4 = new floatingpoint[3];
+//    floatingpoint *c1us = new floatingpoint[3];//unstretched
+//    floatingpoint *c2us = new floatingpoint[3];
+//    floatingpoint *c3us = new floatingpoint[3];
+//    floatingpoint *c4us = new floatingpoint[3];
+    floatingpoint *newc2 = new floatingpoint[3];
 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
@@ -454,10 +454,10 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
         c3us = &coord[3 * beadSet[n * i +2]];
         c4us = &coord[3 * beadSet[n * i +3]];
 
-//        memcpy(c1us, &coord[3 * beadSet[n * i]], 3 * sizeof(double));
-//        memcpy(c2us, &coord[3 * beadSet[n * i + 1]], 3 * sizeof(double));
-//        memcpy(c3us, &coord[3 * beadSet[n * i + 2]], 3 * sizeof(double));
-//        memcpy(c4us, &coord[3 * beadSet[n * i + 3]], 3 * sizeof(double));
+//        memcpy(c1us, &coord[3 * beadSet[n * i]], 3 * sizeof(floatingpoint));
+//        memcpy(c2us, &coord[3 * beadSet[n * i + 1]], 3 * sizeof(floatingpoint));
+//        memcpy(c3us, &coord[3 * beadSet[n * i + 2]], 3 * sizeof(floatingpoint));
+//        memcpy(c4us, &coord[3 * beadSet[n * i + 3]], 3 * sizeof(floatingpoint));
 
         //stretch coords
         f1 = &f[3 * beadSet[n * i]];
@@ -495,7 +495,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
             invDSquare =  1 / (d * d);
             U_i = krep[i] * invDSquare * invDSquare;
 //            std::cout<<"P Energy"<<U_i<<endl;
-            if(fabs(U_i) == numeric_limits<double>::infinity()
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
 
                 //set culprit and return TODO
@@ -547,7 +547,7 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 
         U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
 //        std::cout<<"N energy "<<U_i<<endl;
-        if(fabs(U_i) == numeric_limits<double>::infinity()
+        if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return TODO
@@ -574,18 +574,18 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
     return U;
 }
 
-void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, double *krep) {
+void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep) {
 //cout.precision(10);
 //    clock_t start, stop;
 //    float elapsedtime;
 //    start = clock();
 
 //    cout.precision(dbl::max_digits10); //TODO remove precision.
-    double *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, *f1, *f2, *f3, *f4;
-    double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
-    double ATG1, ATG2, ATG3, ATG4;
-    double A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
-    double E11, E12, E13, E14, B11, B12, B13, B14, F11, F12, F13, F14;
+    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, *f1, *f2, *f3, *f4;
+    floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
+    floatingpoint ATG1, ATG2, ATG3, ATG4;
+    floatingpoint A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
+    floatingpoint E11, E12, E13, E14, B11, B12, B13, B14, F11, F12, F13, F14;
 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
@@ -594,7 +594,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
 //            std::cout<<f[i]<<" ";
 //        std::cout<<endl;
 //    std::cout<<"Excl vol nint "<<nint<<endl;
-    newc2 = new double[3];
+    newc2 = new floatingpoint[3];
     for (int i = 0; i < nint; i++) {
 //        std::cout<<beadSet[n * i]<<" "<<beadSet[n * i+1]<<" "<<beadSet[n * i+2]<<" "<<beadSet[n * i+3]<<endl;
         c1 = &coord[3 * beadSet[n * i]];
@@ -619,7 +619,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
             invDSquare =  1 / (d * d);
             U = krep[i] * invDSquare * invDSquare;
 
-            double f0 = 4 * krep[i] * invDSquare * invDSquare * invDSquare;
+            floatingpoint f0 = 4 * krep[i] * invDSquare * invDSquare * invDSquare;
 
             f1[0] += - f0 * (c3[0] - c1[0]);
             f1[1] += - f0 * (c3[1] - c1[1]);
@@ -765,7 +765,7 @@ void CylinderExclVolRepulsion::forces(double *coord, double *f, int *beadSet, do
         f4[2] +=  - invJJ*( 0.5*(c2[2] - c1[2] )*( -E13 + F13 + 2*E11*d + 2*F11*d - 4*U*c*d + A11*e - E11*e - (E12*(d - e))/EE - B11*F + F11*F +4*U*e*F - (F12*(d + F))/FF ) + (c4[2] - c3[2])*(B14 + F14 - E11*a - F11*a + 2*U*a*c + B11*e - F11*e - 2*U*e*e + (E12*a)/(2*EE) + (B12*c)/(2*BB) + (F12*(a + c + 2*e))/(2*FF))  + 0.5*(c1[2] - c3[2] )* (B13 + F13 - A11*a + E11*a - B11*d + F11*d + 2*U*d*e - (E12*a)/EE - 2*U*a*F + 2*U*(d*e - a*F) - (B12*F)/BB - (F12*(d + F))/FF) ) ;
 
 
-//        double fc1[3], fc2[3], fc3[3], fc4[3];
+//        floatingpoint fc1[3], fc2[3], fc3[3], fc4[3];
 //        fc1[0] =  - 0.5*invJJ*( (c2[0] - c1[0] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[0] - c3[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[0] - c3[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
 //
 //        fc1[1] =  - 0.5*invJJ*( (c2[1] - c1[1] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[1] - c3[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[1] - c3[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );

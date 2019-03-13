@@ -32,15 +32,15 @@ class Histogram {
 private:
     int _numBins; ///< Number of bins in histogram
     
-    double _histMin; ///< Minimum histogram value
-    double _histMax; ///< Maximum histogram value
+    floatingpoint _histMin; ///< Minimum histogram value
+    floatingpoint _histMax; ///< Maximum histogram value
     
-    double _range; ///< range of bin
+    floatingpoint _range; ///< range of bin
 
     vector<int> _frequencies; ///< The histogram data
     
 public:
-    Histogram(int numBins, double histMin = 0, double histMax = 0)
+    Histogram(int numBins, floatingpoint histMin = 0, floatingpoint histMax = 0)
         : _numBins(numBins), _histMin(histMin), _histMax(histMax),
           _frequencies(numBins, 0) {
 
@@ -49,7 +49,7 @@ public:
     }
     
     ///Adds a value to the histogram by updating the correct bin
-    void addValue(double value) {
+    void addValue(floatingpoint value) {
         
         int bin = max(0, (int) (value / _range));
         assert(bin >= 0 && bin < _numBins && "Histogram error - trying to add value outside of bin range.");
@@ -76,8 +76,8 @@ public:
             bin++;
         }
     }
-    double getMin() {return _histMin;}
-    double getMax() {return _histMax;}
+    floatingpoint getMin() {return _histMin;}
+    floatingpoint getMax() {return _histMax;}
     
 };
 

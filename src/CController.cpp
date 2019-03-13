@@ -75,7 +75,7 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem) {
     
 }
 
-bool CController::run(double time) {
+bool CController::run(floatingpoint time) {
     
     //update copy numbers
     _chemManager->updateCopyNumbers();

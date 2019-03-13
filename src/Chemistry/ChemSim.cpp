@@ -27,7 +27,7 @@ void ChemSim::removeReaction(ReactionBase *r){
     _pimpl->removeReaction(r); 
 }
 
-bool ChemSim::run(double time){
+bool ChemSim::run(floatingpoint time){
     return _pimpl->run(time);
 }
 
