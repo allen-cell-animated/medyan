@@ -1383,6 +1383,10 @@ void ChemManager::genFilBindingReactions() {
                 BranchingManager* bManager = new BranchingManager(rxn, C, brancherInt, brancherName, filType,
                                                                   nucleationZone, nucleationDist);
                 C->addFilamentBindingManager(bManager);
+
+                #ifdef SIMDBINDINGSEARCH3
+                C->addBranchingBindingManager(bManager);
+				#endif
                 
                 bManager->setMIndex(managerIndex++);
 

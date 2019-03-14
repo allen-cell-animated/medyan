@@ -654,6 +654,18 @@ void Compartment::addcoord(vector<floatingpoint> coord, uint32_t index, short i)
     cindex_bs_section[i].push_back(index);
 }
 
+void Compartment::deallocateSIMDcoordinates(){
+	for(short i =0; i < 27; i++) {
+		partitionedcoordx[i].clear();
+		partitionedcoordy[i].clear();
+		partitionedcoordz[i].clear();
+		cindex_bs_section[i].clear();
+		bscoords_section_linker[i].resize(0);
+		bscoords_section_motor[i].resize(0);
+	}
+
+}
+
 /*void Compartment::addcoord(vector<floatingpoint> coord, uint16_t index, short i){
     partitionedcoordx[i].push_back(coord[0]);
     partitionedcoordy[i].push_back(coord[1]);
@@ -665,6 +677,7 @@ bool Compartment::checkoccupancy(vector<vector<bool>>& boundstate, short bstatep
     return boundstate[bstatepos][pos];
 
 }
+
 bool Compartment::checkoccupancy(Cylinder* cyl, short it, short _filamentType,
                                  short bstatepos){
     bool status;

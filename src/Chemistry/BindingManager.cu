@@ -313,8 +313,8 @@ void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSi
 
     //add valid site
     if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(), (floatingpoint)1.0) &&
-        inZone) {
+            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN(),
+                    (floatingpoint)1.0) && inZone) {
 
         auto t = tuple<CCylinder*, short>(cc, bindingSite);
         _possibleBindingsstencil.insert(t);
@@ -329,7 +329,7 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
     //clear all
     _possibleBindingsstencil.clear();
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    int offset = SysParams::Mechanics().bsoffsetvec.at(_filamentType);
+    int offset = 0;
 
     for(auto &c : _compartment->getCylinders()) {
 
@@ -369,7 +369,6 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
                             inZone = true;
                             //cout << "x= " << coord[1] << "y= " << coord[2] << endl;
                         }
-
 
                         else
                             inZone = false;

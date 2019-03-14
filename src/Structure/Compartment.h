@@ -76,6 +76,8 @@ protected:
     
     /// All binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>> _bindingManagers;
+    vector<unique_ptr<FilamentBindingManager>> _branchingManagers;
+
 #ifdef HYBRID_NLSTENCILLIST
     HybridBindingSearchManager* _bindingsearchManagers = NULL;
 #endif
@@ -475,7 +477,12 @@ public:
         r->setParent(this);
         return r;
     }
-    
+
+    ///Add branching manager to this compartment. Used only in SIMD case
+    void addBranchingBindingManager(FilamentBindingManager* m){
+    	_branchingManagers.emplace_back(m);
+    }
+
     /// Add a binding manager to this compartment
     void addFilamentBindingManager(FilamentBindingManager* m) {
         _bindingManagers.emplace_back(m);
@@ -553,10 +560,17 @@ public:
     template<bool rMaxvsCmpsize>
     void addcoordtorMaxbasedpartitons(int (&pindices)[3], vector<floatingpoint> coord,
                                        uint32_t index);
+
+    void deallocateSIMDcoordinates();
 #endif
     /// Get binding managers for this compartment
     vector<unique_ptr<FilamentBindingManager>>& getFilamentBindingManagers() {
         return _bindingManagers;
+    }
+
+    //Get BranchingBindingManager
+    vector<unique_ptr<FilamentBindingManager>>& getBranchingManagers() {
+        return _branchingManagers;
     }
 
     /// Get a specific motor binding manager from this compartment

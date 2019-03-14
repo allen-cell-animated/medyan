@@ -34,6 +34,9 @@
 #include "SysParams.h"
 #include "Rand.h"
 
+#include <chrono>
+#include "CUDAcommon.h"
+
 using namespace mathfunc;
 
 #ifdef RSPECIES_SIGNALING
@@ -54,6 +57,8 @@ struct UpdateBrancherBindingCallback {
     Cylinder* _cylinder; ///< cylinder to update
     
     short _bindingSite;  ///< binding site to update
+
+    chrono::high_resolution_clock::time_point mins, mine;
     
     //Constructor, sets members
     UpdateBrancherBindingCallback(Cylinder* cylinder, short bindingSite)
@@ -62,6 +67,7 @@ struct UpdateBrancherBindingCallback {
     
     //callback
     void operator() (RSpecies *r, int delta) {
+	    mins = chrono::high_resolution_clock::now();
         
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
@@ -92,6 +98,9 @@ struct UpdateBrancherBindingCallback {
                 }
             }
         }
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+		CUDAcommon::ctime.tUpdateBrancherBindingCallback += elapsed_time.count();
     }
 };
 
@@ -100,6 +109,8 @@ struct UpdateLinkerBindingCallback {
     Cylinder* _cylinder; ///< cylinder to update
     
     short _bindingSite;  ///< binding site to update
+
+    chrono::high_resolution_clock::time_point mins, mine;
     
     //Constructor, sets members
     UpdateLinkerBindingCallback(Cylinder* cylinder, short bindingSite)
@@ -108,6 +119,7 @@ struct UpdateLinkerBindingCallback {
     
     //callback
     void operator() (RSpecies *r, int delta) {
+	    mins = chrono::high_resolution_clock::now();
 
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
@@ -138,6 +150,9 @@ struct UpdateLinkerBindingCallback {
                 }
             }
         }
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tUpdateLinkerBindingCallback += elapsed_time.count();
     }
 };
 
@@ -146,7 +161,9 @@ struct UpdateMotorBindingCallback {
     Cylinder* _cylinder; ///< cylinder to update
     
     short _bindingSite;  ///< binding site to update
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     //Constructor, sets members
     UpdateMotorBindingCallback(Cylinder* cylinder, short bindingSite)
     
@@ -154,7 +171,7 @@ struct UpdateMotorBindingCallback {
     
     //callback
     void operator() (RSpecies *r, int delta) {
-        
+	    mins = chrono::high_resolution_clock::now();
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
         
@@ -184,19 +201,24 @@ struct UpdateMotorBindingCallback {
                 }
             }
         }
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tUpdateMotorBindingCallback += elapsed_time.count();
     }
 };
 
 struct UpdateMotorIDCallback{
     
     int _motorType; ///< type of motor to find its binding manager
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     //Constructor, sets members
     UpdateMotorIDCallback(int motorType) : _motorType(motorType) {};
     
     //callback
     void operator() (RSpecies *r, int delta) {
-        
+	    mins = chrono::high_resolution_clock::now();
     //DEPRECATED AS OF 9/8/16
 //        //find compartment and binding manager
 //        Compartment *c = static_cast<Compartment*>(r->getSpecies().getParent());
@@ -230,6 +252,9 @@ struct UpdateMotorIDCallback{
 //            assert(r->getN() == mManager->getAllUnboundIDs().size() &&
 //                   "Major bug: number of unbound ID's and copy number does not match");
 //        }
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tUpdateMotorIDCallback += elapsed_time.count();
     }
 };
 
@@ -245,16 +270,22 @@ struct FilamentExtensionPlusEndCallback {
     Cylinder* _cylinder;
     
     short _plusEnd; ///< Plus end species to mark
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     //Constructor, sets members
     FilamentExtensionPlusEndCallback(Cylinder* cylinder, short plusEnd)
     : _cylinder(cylinder), _plusEnd(plusEnd){};
     
     //Callback
     void operator() (ReactionBase *r){
+	    mins = chrono::high_resolution_clock::now();
         //extend the front
         Filament* f = (Filament*)(_cylinder->getParent());
         f->extendPlusEnd(_plusEnd);
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentExtensionPlusEndCallback += elapsed_time.count();
     }
 };
 
@@ -265,15 +296,21 @@ struct FilamentExtensionMinusEndCallback {
     Cylinder* _cylinder;
     
     short _minusEnd; ///< Minus end species to mark
+
+    chrono::high_resolution_clock::time_point mins, mine;
     
     //Constructor, sets members
     FilamentExtensionMinusEndCallback(Cylinder* cylinder, short minusEnd)
     : _cylinder(cylinder), _minusEnd(minusEnd){};
     //Callback
     void operator() (ReactionBase *r){
+	    mins = chrono::high_resolution_clock::now();
         //extend the back
         Filament* f = (Filament*)(_cylinder->getParent());
         f->extendMinusEnd(_minusEnd);
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentExtensionMinusEndCallback += elapsed_time.count();
     }
 };
 
@@ -282,14 +319,20 @@ struct FilamentExtensionMinusEndCallback {
 struct FilamentRetractionPlusEndCallback {
     
     Cylinder* _cylinder;
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     //Constructor, sets members
     FilamentRetractionPlusEndCallback(Cylinder* cylinder)
     : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
+	    mins = chrono::high_resolution_clock::now();
         Filament* f =(Filament*)( _cylinder->getParent());
         f->retractPlusEnd();
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentRetractionPlusEndCallback += elapsed_time.count();
     }
 };
 
@@ -298,14 +341,20 @@ struct FilamentRetractionPlusEndCallback {
 struct FilamentRetractionMinusEndCallback {
     
     Cylinder* _cylinder;
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     //Constructor, sets members
     FilamentRetractionMinusEndCallback(Cylinder* cylinder)
     : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
+	    mins = chrono::high_resolution_clock::now();
         Filament* f = (Filament*)(_cylinder->getParent());
         f->retractMinusEnd();
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentRetractionMinusEndCallback += elapsed_time.count();
     }
 };
 
@@ -314,14 +363,20 @@ struct FilamentRetractionMinusEndCallback {
 struct FilamentPolymerizationPlusEndCallback {
     
     Cylinder* _cylinder;
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     //Constructor, sets members
     FilamentPolymerizationPlusEndCallback(Cylinder* cylinder)
     : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
+	    mins = chrono::high_resolution_clock::now();
         Filament* f = (Filament*)(_cylinder->getParent());
         f->polymerizePlusEnd();
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentPolymerizationPlusEndCallback += elapsed_time.count();
     }
 };
 
@@ -330,14 +385,20 @@ struct FilamentPolymerizationPlusEndCallback {
 struct FilamentPolymerizationMinusEndCallback {
     
     Cylinder* _cylinder;
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     //Constructor, sets members
     FilamentPolymerizationMinusEndCallback(Cylinder* cylinder)
     : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
+	    mins = chrono::high_resolution_clock::now();
         Filament* f = (Filament*)(_cylinder->getParent());
         f->polymerizeMinusEnd();
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentPolymerizationMinusEndCallback += elapsed_time.count();
     }
 };
 
@@ -346,15 +407,21 @@ struct FilamentPolymerizationMinusEndCallback {
 struct FilamentDepolymerizationPlusEndCallback {
     
     Cylinder* _cylinder;
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     //Constructor, sets members
     FilamentDepolymerizationPlusEndCallback(Cylinder* cylinder)
     : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
+	    mins = chrono::high_resolution_clock::now();
         Filament* f = (Filament*)(_cylinder->getParent());
         
         f->depolymerizePlusEnd();
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentDepolymerizationPlusEndCallback += elapsed_time.count();
     }
 };
 
@@ -363,14 +430,20 @@ struct FilamentDepolymerizationPlusEndCallback {
 struct FilamentDepolymerizationMinusEndCallback {
     
     Cylinder* _cylinder;
+
+    chrono::high_resolution_clock::time_point mins, mine;
     
     //Constructor, sets members
     FilamentDepolymerizationMinusEndCallback(Cylinder* cylinder)
     : _cylinder(cylinder) {};
     //Callback
     void operator() (ReactionBase *r){
+	    mins = chrono::high_resolution_clock::now();
         Filament* f = (Filament*)(_cylinder->getParent());
         f->depolymerizeMinusEnd();
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentDepolymerizationMinusEndCallback += elapsed_time.count();
     }
 };
 
@@ -379,11 +452,14 @@ struct BranchingPointUnbindingCallback {
     
     SubSystem* _ps;
     BranchingPoint* _branchingPoint;
+
+    chrono::high_resolution_clock::time_point mins, mine;
     
     BranchingPointUnbindingCallback(BranchingPoint* b, SubSystem* ps)
     : _ps(ps), _branchingPoint(b) {}
     
     void operator() (ReactionBase *r) {
+	    mins = chrono::high_resolution_clock::now();
 
 //        //@{
 //        std::cout<<"Brancher unbinding "<<_branchingPoint->getFirstCylinder()->getID()<<" "
@@ -393,6 +469,9 @@ struct BranchingPointUnbindingCallback {
         //remove the branching point
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
         delete _branchingPoint;
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tBranchingPointUnbindingCallback += elapsed_time.count();
     }
     
     
@@ -410,6 +489,8 @@ struct BranchingCallback {
     
     float _onRate;         ///< Rate of the binding reaction
     float _offRate;        ///< Rate of the unbinding reaction
+
+    chrono::high_resolution_clock::time_point mins, mine;
     
     BranchingCallback(BranchingManager* bManager, short plusEnd,
                       float onRate, float offRate, SubSystem* ps)
@@ -418,6 +499,7 @@ struct BranchingCallback {
     _plusEnd(plusEnd), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
+	    mins = chrono::high_resolution_clock::now();
         BranchingPoint* b;
         float frate;
         short branchType = _bManager->getBoundInt();
@@ -438,6 +520,7 @@ struct BranchingCallback {
         floatingpoint pos = floatingpoint(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
         if(SysParams::RUNSTATE==true){
         //Get a position and direction of a new filament
+        cout<<"Branch cylID "<<c1->getID()<<endl;
         auto x1 = c1->getFirstBead()->coordinate;
         auto x2 = c1->getSecondBead()->coordinate;
         
@@ -521,6 +604,9 @@ struct BranchingCallback {
         //Qin ----------------
         b -> updateReactionRates();
 #endif
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tBranchingCallback += elapsed_time.count();
     }
 };
 
@@ -531,10 +617,13 @@ struct LinkerUnbindingCallback {
     
     SubSystem* _ps;
     Linker* _linker;
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
+	    mins = chrono::high_resolution_clock::now();
 
 //        //@{
 //        std::cout<<"Linker unbinding "<<_linker->getFirstCylinder()->getID()<<" "<<_linker->getFirstPosition()
@@ -543,6 +632,9 @@ struct LinkerUnbindingCallback {
         //remove the linker
         _ps->removeTrackable<Linker>(_linker);
         delete _linker;
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tLinkerUnbindingCallback += elapsed_time.count();
     }
 };
 
@@ -555,13 +647,16 @@ struct LinkerBindingCallback {
     
     float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     LinkerBindingCallback(LinkerBindingManager* lManager,
                           float onRate, float offRate, SubSystem* ps)
     
     : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
+	    mins = chrono::high_resolution_clock::now();
         
         //get a random binding
         short linkerType = _lManager->getBoundInt();
@@ -607,6 +702,9 @@ struct LinkerBindingCallback {
         //@
         l->updateReactionRates();
 #endif
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tLinkerBindingCallback += elapsed_time.count();
     }
 };
 
@@ -615,12 +713,15 @@ struct MotorUnbindingCallback {
     
     SubSystem* _ps;
     MotorGhost* _motor;
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     MotorUnbindingCallback(MotorGhost* m, SubSystem* ps) :
     
     _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
+	    mins = chrono::high_resolution_clock::now();
         
         //find the motor binding manager associated with this species
 //        Species* sd = &(r->rspecies()[SPECIESM_UNBINDING_INDEX]->getSpecies());
@@ -643,6 +744,9 @@ struct MotorUnbindingCallback {
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
         delete _motor;
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tMotorUnbindingCallback += elapsed_time.count();
     }
 };
 
@@ -656,13 +760,16 @@ struct MotorBindingCallback {
     
     float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     MotorBindingCallback(MotorBindingManager* mManager,
                          float onRate, float offRate, SubSystem* ps)
     
     : _ps(ps), _mManager(mManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
+	    mins = chrono::high_resolution_clock::now();
         
         //get a random binding
         short motorType = _mManager->getBoundInt();
@@ -713,6 +820,9 @@ struct MotorBindingCallback {
         //@
 
 #endif
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tMotorBindingCallback += elapsed_time.count();
         
     }
 };
@@ -729,6 +839,8 @@ struct MotorWalkingCallback {
     short _boundType;    ///< Type of bound this motor took place of
     
     SubSystem* _ps;      ///< Ptr to subsystem
+
+    chrono::high_resolution_clock::time_point mins, mine;
     
     MotorWalkingCallback(Cylinder* c,
                          short oldPosition, short newPosition,
@@ -738,6 +850,7 @@ struct MotorWalkingCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
+	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor walking begins"<<endl;
         //get species
         CCylinder* cc = _c->getCCylinder();
@@ -766,6 +879,9 @@ struct MotorWalkingCallback {
         m->updateReactionRates();
 
 #endif
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tMotorWalkingCallback += elapsed_time.count();
     }
 };
 
@@ -782,7 +898,9 @@ struct MotorMovingCylinderCallback {
     short _boundType;       ///< Type of bound this motor is taking place of
     
     SubSystem* _ps;         ///< Ptr to subsystem
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     MotorMovingCylinderCallback(Cylinder* oldC, Cylinder* newC,
                                 short oldPosition, short newPosition,
                                 short motorType, short boundType, SubSystem* ps)
@@ -791,6 +909,7 @@ struct MotorMovingCylinderCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
+	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor moving cylinder begins"<<endl;
         //get species
         CCylinder* oldCC = _oldC->getCCylinder();
@@ -816,6 +935,9 @@ struct MotorMovingCylinderCallback {
         //reset the associated reactions
         m->updateReactionRates();
 #endif
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tMotorMovingCylinderCallback += elapsed_time.count();
     }
 };
 
@@ -834,7 +956,9 @@ struct FilamentCreationCallback {
     
     Compartment* _compartment; ///< compartment to put this filament in
     SubSystem* _ps; ///< Ptr to the subsystem
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     FilamentCreationCallback(short plusEnd, short minusEnd, short filament,
                              short filType, SubSystem* ps, Compartment* c = nullptr)
     
@@ -842,6 +966,7 @@ struct FilamentCreationCallback {
     _filType(filType), _compartment(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
+	    mins = chrono::high_resolution_clock::now();
         
         Compartment* c;
         
@@ -903,6 +1028,9 @@ struct FilamentCreationCallback {
             //initialize the nucleation
             f->nucleate(_plusEnd, _filament, _minusEnd);
         }
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentCreationCallback += elapsed_time.count();
         }
 
     
@@ -912,10 +1040,13 @@ struct FilamentCreationCallback {
 struct FilamentSeveringCallback {
     
     Cylinder* _c1;  ///< Filament severing point
+
+    chrono::high_resolution_clock::time_point mins, mine;
     
     FilamentSeveringCallback(Cylinder* c1) : _c1(c1) {}
     
     void operator() (ReactionBase* r) {
+	    mins = chrono::high_resolution_clock::now();
         
         //reactants should be re-marked
         for(int i = 0; i < SEVERINGREACTANTS + 1; i++)
@@ -929,6 +1060,9 @@ struct FilamentSeveringCallback {
         
         //if severing did not occur, return
         if(newF == nullptr) return;
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentSeveringCallback += elapsed_time.count();
     }
 };
 
@@ -938,15 +1072,21 @@ struct FilamentDestructionCallback {
     Cylinder* _c; ///< Cylinder to destroy
     
     SubSystem* _ps; ///< SubSystem ptr
-    
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     FilamentDestructionCallback(Cylinder* c, SubSystem* ps) : _c(c), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
+	    mins = chrono::high_resolution_clock::now();
         
         Filament* f = (Filament*)(_c->getParent());
         
         _ps->removeTrackable<Filament>(f);
         delete f;
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
+	    CUDAcommon::ctime.tFilamentDestructionCallback += elapsed_time.count();
     }
 };
 

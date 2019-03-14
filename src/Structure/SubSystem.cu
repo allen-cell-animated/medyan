@@ -576,6 +576,9 @@ void SubSystem::updateBindingManagers() {
     HybridBindingSearchManager::SIMDV3appendtime = 0.0;
     for (auto C : _compartmentGrid->getCompartments()) {
         C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3(0);
+	    for(auto &manager : C->getBranchingManagers()) {
+	    		manager->updateAllPossibleBindingsstencil();
+	    }
     }
     mineSIMD = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
@@ -621,6 +624,12 @@ if(false) {
         C->getHybridBindingSearchManager()->printbindingsizes();
     }*/
 //    exit(EXIT_FAILURE);
+
+//free memory
+	SysParams::MParams.speciesboundvec.clear();
+	for(auto C : _compartmentGrid->getCompartments()) {
+		C->deallocateSIMDcoordinates();
+	}
 }
 
 //OBSOLETE

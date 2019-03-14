@@ -66,6 +66,32 @@ dist::dOut<D> SIMDoutvar(const uint dim, uint N1, std::initializer_list<float> p
         return out_serialdim;
     }
 }
+
+struct Callbacktime {
+	floatingpoint tUpdateBrancherBindingCallback=0.0;
+	floatingpoint tUpdateLinkerBindingCallback=0.0;
+	floatingpoint tUpdateMotorBindingCallback=0.0;
+	floatingpoint tUpdateMotorIDCallback=0.0;
+	floatingpoint tFilamentExtensionPlusEndCallback=0.0;
+	floatingpoint tFilamentExtensionMinusEndCallback=0.0;
+	floatingpoint tFilamentRetractionPlusEndCallback=0.0;
+	floatingpoint tFilamentRetractionMinusEndCallback=0.0;
+	floatingpoint tFilamentPolymerizationPlusEndCallback=0.0;
+	floatingpoint tFilamentPolymerizationMinusEndCallback=0.0;
+	floatingpoint tFilamentDepolymerizationPlusEndCallback=0.0;
+	floatingpoint tFilamentDepolymerizationMinusEndCallback=0.0;
+	floatingpoint tBranchingPointUnbindingCallback=0.0;
+	floatingpoint tBranchingCallback=0.0;
+	floatingpoint tLinkerUnbindingCallback=0.0;
+	floatingpoint tLinkerBindingCallback=0.0;
+	floatingpoint tMotorUnbindingCallback=0.0;
+	floatingpoint tMotorBindingCallback=0.0;
+	floatingpoint tMotorWalkingCallback=0.0;
+	floatingpoint tMotorMovingCylinderCallback=0.0;
+	floatingpoint tFilamentCreationCallback=0.0;
+	floatingpoint tFilamentSeveringCallback=0.0;
+	floatingpoint tFilamentDestructionCallback=0.0;
+};
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     floatingpoint * gpu_force = NULL;
@@ -161,6 +187,7 @@ class CUDAcommon{
 public:
     static SERLvars serlvars;
     static const SERLvars& getSERLvars(){return serlvars;}
+    static Callbacktime ctime;
 #ifdef CUDAACCL
     static CUDAvars cudavars;
     static CylCylNLvars cylcylnlvars;
