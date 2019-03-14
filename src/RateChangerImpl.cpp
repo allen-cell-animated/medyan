@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -50,12 +50,12 @@ float BranchSlip::changeRate(float bareRate, double force) {
 
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 double force, int numHeads) {
-
 #ifdef PLOSFEEDBACK
-    return min(numHeads, numHeads * _dutyRatio + _gamma * force;
+    return min<double>(numHeads, numHeads * _dutyRatio + _gamma * force);
 #else
-    return numHeads * _dutyRatio + _beta * force / numHeads;
+    return min<double>(numHeads, numHeads * _dutyRatio + _beta * force / numHeads);
 #endif
+    
 }
 
 float MotorCatch::changeRate(float onRate, float offRate,
@@ -69,14 +69,13 @@ float MotorCatch::changeRate(float onRate, float offRate,
 #else
     double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads)
                                         - 1.0);
-
-    double factor = min(1.0, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
+    
+    double factor = max(0.1, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
 #endif
-
+    
     double newRate = k_0 * factor;
     return newRate;
 }
-
 
 float MotorStall::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
@@ -90,6 +89,6 @@ float MotorStall::changeRate(float onRate, float offRate,
     double newRate =  max(0.0, k_0 * (_F0 - force)
                                / (_F0 + (force / (_alpha))));
 #endif
-
     return newRate;
 }
+

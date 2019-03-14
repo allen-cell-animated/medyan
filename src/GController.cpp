@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -250,7 +250,7 @@ CompartmentGrid* GController::initializeGrid() {
              _compartmentSize[2] * _grid[2]};
 
     _centerGrid = {_compartmentSize[0] * _grid[0] / 2,
-                   _compartmentSize[1] * _grid[2] / 2,
+                   _compartmentSize[1] * _grid[1] / 2,
                    _compartmentSize[2] * _grid[2] / 2};
 
     _compartmentVolume = _compartmentSize[0] * _compartmentSize[1] * _compartmentSize[2];

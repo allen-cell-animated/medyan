@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -105,7 +105,7 @@ public:
     /// Get the center of the grid space
     static const vector<double>& getCenter() {return _centerGrid;}
     static const vector<double>& getSize() {return _size;}
-     static const vector<double>& getCompartmentSize() {return _compartmentSize;}
+    static const vector<double>& getCompartmentSize() {return _compartmentSize;}
     
     static double getCompartmentVolume() { return _compartmentVolume; }
     static const vector<double>& getCompartmentArea() { return _compartmentArea; }

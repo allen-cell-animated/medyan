@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -39,8 +39,8 @@ using namespace mathfunc;
 Database<Filament*> Filament::_filaments;
 Histogram* Filament::_turnoverTimes;
 
-Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
-                   vector<double>& direction, bool nucleation, bool branch)
+Filament::Filament(SubSystem* s, short filamentType, const vector<double>& position,
+                   const vector<double>& direction, bool nucleation, bool branch)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
  
@@ -69,7 +69,7 @@ Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
 }
 
 
-Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& position,
+Filament::Filament(SubSystem* s, short filamentType, const vector<vector<double> >& position,
                    int numBeads, string projectionType)
 
     : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
@@ -142,10 +142,8 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
     auto newBeadCoords=coordinates;
     //create
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() + 1);
-
     Cylinder* c0 = _subSystem->addTrackable<Cylinder> (this, b2, bNew, _filType,
                                                        lpf + 1, false, false, true);
-    
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
@@ -170,7 +168,6 @@ void Filament::extendMinusEnd(vector<double>& coordinates) {
     Bead* bNew = _subSystem->addTrackable<Bead>(newBeadCoords, this, b2->getPosition() - 1);
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, bNew, b2, _filType,
                                                   lpf - 1, false, false, true);
-    
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
 
@@ -204,8 +201,6 @@ void Filament::extendPlusEnd(short plusEnd) {
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
                                                       lpf + 1, true);
-    
-    
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
@@ -364,7 +359,6 @@ void Filament::polymerizePlusEnd() {
     //increase eq length, update
     double newEqLen = cBack->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
-    
     cBack->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
     
@@ -372,9 +366,9 @@ void Filament::polymerizePlusEnd() {
     //update rates of new back
     _cylinderVector.back()->updateReactionRates();
 #endif
-   
+
     _polyPlusEnd++;
-    
+
 }
 
 void Filament::polymerizeMinusEnd() {
@@ -404,17 +398,16 @@ void Filament::polymerizeMinusEnd() {
     //increase eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() +
                       SysParams::Geometry().monomerSize[_filType];
-
-
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
-    #ifdef DYNAMICRATES
+    
+#ifdef DYNAMICRATES
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+
     _polyMinusEnd++;
-    
+
 }
 
 void Filament::depolymerizePlusEnd() {
@@ -452,7 +445,7 @@ void Filament::depolymerizePlusEnd() {
 #endif
     
     _depolyPlusEnd++;;
-    
+
 }
 
 void Filament::depolymerizeMinusEnd() {
@@ -481,7 +474,6 @@ void Filament::depolymerizeMinusEnd() {
     //decrease eq length, update
     double newEqLen = cFront->getMCylinder()->getEqLength() -
                       SysParams::Geometry().monomerSize[_filType];
-
     cFront->getMCylinder()->setEqLength(_filType, newEqLen);
 #endif
 
@@ -489,9 +481,8 @@ void Filament::depolymerizeMinusEnd() {
     //update rates of new back
     _cylinderVector.front()->updateReactionRates();
 #endif
-    
+
     _depolyMinusEnd++;
-    
 }
 
 
@@ -518,9 +509,9 @@ void Filament::nucleate(short plusEnd, short filament, short minusEnd) {
     //plus end
     m3->speciesPlusEnd(plusEnd)->up();
 #endif
-    
+
     _nucleationReaction++;
-    
+
 }
 
 
@@ -554,13 +545,20 @@ Filament* Filament::sever(int cylinderPosition) {
         
         Cylinder* c = _cylinderVector.front();
         _cylinderVector.pop_front();
-        
-        newFilament->addChild(unique_ptr<Component>(c));
+
         newFilament->_cylinderVector.push_back(c);
         
-        //Add beads to new parent
-        if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
-        newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
+        //TRANSFER CHILD
+        unique_ptr<Component> &&tmp = this->getChild(c);
+        this->transferChild(std::move(tmp), (Composite*)newFilament);
+
+        //Add beads and cylinder to new parent
+        if(i == vectorPosition) {
+            unique_ptr<Component> &&tmp2 = this->getChild(c->getFirstBead());
+            this->transferChild(std::move(tmp2), (Composite*)newFilament);
+        }
+        unique_ptr<Component> &&tmp1 = this->getChild(c->getSecondBead());
+        this->transferChild(std::move(tmp1), (Composite*)newFilament);
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();
@@ -625,13 +623,13 @@ Filament* Filament::sever(int cylinderPosition) {
 #endif
     
     //Qin
-    
+
     _severingReaction++;
     _severingID.push_back(newFilament->getID());
     return newFilament;
 }
 
-vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::straightFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -652,7 +650,7 @@ vector<vector<double>> Filament::straightFilamentProjection(vector<vector<double
     return coordinate;
 }
 
-vector<vector<double>> Filament::zigZagFilamentProjection(vector<vector<double>>& v, int numBeads){
+vector<vector<double>> Filament::zigZagFilamentProjection(const vector<vector<double>>& v, int numBeads){
     
     vector<vector<double>> coordinate;
     vector<double> tmpVec (3, 0);
@@ -792,7 +790,7 @@ void matrix_mul(boost::numeric::ublas::matrix<double>&X,
     }
 }
 
-void arcOutward(vector<double>&v1,vector<double>&v2,vector<vector<double>>&v) {
+void arcOutward(vector<double>&v1,vector<double>&v2, const vector<vector<double>>&v) {
     
     vector<double> center,tempv1,tempv2,temp2,temp3(3),
                    temp4(3),mid,mid2(3),mid3(3),temp5;
@@ -838,7 +836,7 @@ void arcOutward(vector<double>&v1,vector<double>&v2,vector<vector<double>>&v) {
                    std::back_inserter(v2), std::plus<double>());
 }
 
-vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::arcFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     
     using namespace boost::numeric::ublas;
 
@@ -855,7 +853,7 @@ vector<vector<double>> Filament::arcFilamentProjection(vector<vector<double>>& v
     return coordinates;
 }
 // predefined projection
-vector<vector<double>> Filament::predefinedFilamentProjection(vector<vector<double>>& v, int numBeads) {
+vector<vector<double>> Filament::predefinedFilamentProjection(const vector<vector<double>>& v, int numBeads) {
     return v;
 }
 //@

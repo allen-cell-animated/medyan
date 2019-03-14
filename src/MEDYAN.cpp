@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -71,6 +71,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "Controller.h"
 #include "SubSystem.h"
+#include "util/io/log.h"
 
 void printUsage() {
     cout << "Usage: MEDYAN -s systemFile -i inputDirectory -o outputDirectory" << endl;
@@ -125,7 +126,10 @@ int main(int argc, char **argv) {
         printUsage();
         exit(EXIT_FAILURE);
     }
-    
+
+    // Initialize the logger
+    ::medyan::logger::Logger::defaultLoggerInitialization();
+
     //initialize and run system
     c.initialize(inputFile, inputDirectory, outputDirectory);
     c.run();

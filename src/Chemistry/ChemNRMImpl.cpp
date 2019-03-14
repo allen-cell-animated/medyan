@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <chrono>
-
+#include "Rand.h"
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
@@ -138,15 +138,11 @@ double ChemNRMImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
 
     _exp_distr.param(pm);
-#ifdef DEBUGCONSTANTSEED
     Rand::counter++;
     Rand::Ncounter++;
 //    std::cout<<"Counters N "<<Rand::Ncounter<<" D "<<Rand::Dcounter<<" T "<<Rand::counter<<
-//             endl;
-    return _exp_distr(Rand::_eng);
-#else
-    return _exp_distr(_eng);
-#endif
+//            endl;
+    return _exp_distr(Rand::eng);
 }
 
 bool ChemNRMImpl::makeStep() {
@@ -172,12 +168,7 @@ bool ChemNRMImpl::makeStep() {
         rn->printSelf();
         return false;
     }
-
-//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
-//
-//        cout << "Stopping to check linker rxn." << endl;
-//    }
-
+    
     double t_prev = _t;
 
     _t=tau_top;

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -190,25 +190,25 @@ void BranchingPoint::updatePosition() {
 //Qin ----
 void BranchingPoint::updateReactionRates() {
                 
-        //if no rate changers were defined, skip
-        if(_unbindingChangers.empty()) return;
-                
-        //current force on branching point, use the total force
-        double fs = _mBranchingPoint->stretchForce;
-        double fb = _mBranchingPoint->bendingForce;
-        double fd = _mBranchingPoint->dihedralForce;
-        double ft = fs + fb + fd;
-        double force = max(0.0, ft);
-                
-        //get the unbinding reaction
-        ReactionBase* offRxn = _cBranchingPoint->getOffReaction();
-                
-        //change the rate
-        float newRate = _unbindingChangers[_branchType]->changeRate(offRxn->getBareRate(), force);
-        if(SysParams::RUNSTATE==false)
-        {newRate=0.0;}
-        offRxn->setRate(newRate);
-        offRxn->updatePropensity();    
+    //if no rate changers were defined, skip
+    if(_unbindingChangers.empty()) return;
+            
+    //current force on branching point, use the total force
+    double fs = _mBranchingPoint->stretchForce;
+    double fb = _mBranchingPoint->bendingForce;
+    double fd = _mBranchingPoint->dihedralForce;
+    double ft = fs + fb + fd;
+    double force = max(0.0, ft);
+            
+    //get the unbinding reaction
+    ReactionBase* offRxn = _cBranchingPoint->getOffReaction();
+            
+    //change the rate
+    float newRate = _unbindingChangers[_branchType]->changeRate(offRxn->getBareRate(), force);
+    if(SysParams::RUNSTATE==false)
+    {newRate=0.0;}
+    offRxn->setRate(newRate);
+    offRxn->updatePropensity();    
 }
             
 void BranchingPoint::printSelf() {

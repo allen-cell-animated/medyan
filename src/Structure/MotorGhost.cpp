@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -87,10 +87,15 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     auto x2 = _c1->getSecondBead()->coordinate;
     auto x3 = _c2->getFirstBead()->coordinate;
     auto x4 = _c2->getSecondBead()->coordinate;
-          
+#ifdef PLOSFEEDBACK
     _mMotorGhost = unique_ptr<MMotorGhost>(
     new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
     _mMotorGhost->setMotorGhost(this);
+#else
+    _mMotorGhost = unique_ptr<MMotorGhost>(
+            new MMotorGhost(motorType, _numHeads, position1, position2, x1, x2, x3, x4));
+    _mMotorGhost->setMotorGhost(this);
+#endif
 #endif
     
 }
@@ -169,8 +174,11 @@ void MotorGhost::updatePosition() {
     else
         _numBoundHeads = _numHeads;
     
-    
+#ifdef PLOSFEEDBACK
+    _mMotorGhost->setStretchingConstant(_motorType, _numHeads);
+#else
     _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
+#endif
 
 #endif
     
@@ -277,7 +285,7 @@ void MotorGhost::updateReactionRates() {
                 r->setRate(newRate);
                 r->updatePropensity();
             }
-            else if(r->getReactionType() == ReactionType::MOTORWALKINGFORWARD) {
+            else if(r->getReactionType() == ReactionType::MOTORWALKINGBACKWARD) {
                 
                 float newRate =
                 _walkingChangers[_motorType]->

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -544,7 +544,6 @@ public:
     void addCylinder(Cylinder* c) {_cylinders.insert(c);}
 
     ///Remove a cylinder from this compartment
-    ///@note does nothing if cylinder is not in compartment already
     void removeCylinder(Cylinder* c) {
         auto it = _cylinders.find(c);
         if(it != _cylinders.end()) _cylinders.erase(it);

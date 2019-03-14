@@ -972,7 +972,7 @@ def radiusOfGyration(SnapshotList, snapshot=1):
 		RgSquare += (cam - com).dot(cam - com)
 
 	RgSquare /= numCylinders
-	Rg = sqrt(RgSquare * 0.00001)
+	Rg = sqrt(RgSquare * 1e-6)
 
 	return (Snapshot.time, Rg)
 

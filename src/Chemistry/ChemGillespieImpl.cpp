@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -71,20 +71,13 @@ ChemGillespieImpl::~ChemGillespieImpl() noexcept{
 double ChemGillespieImpl::generateTau(double a) {
     exponential_distribution<double>::param_type pm(a);
     _exp_distr.param(pm);
-#ifdef DEBUGCONSTANTSEED
-    Rand::Ncounter++;
-    return _exp_distr(Rand::_eng);
-#else
-    return _exp_distr(_eng);
-#endif
+    Rand::counter++;
+    return _exp_distr(Rand::eng);
 }
 
 double ChemGillespieImpl::generateUniform() {
-#ifdef DEBUGCONSTANTSEED
-    return _uniform_distr(Rand::_eng);
-#else
-    return _uniform_distr(_eng);
-#endif
+    Rand::counter++;
+    return _uniform_distr(Rand::eng);
 }
 
 double ChemGillespieImpl::computeTotalA() {

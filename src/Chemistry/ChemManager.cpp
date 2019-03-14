@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -1372,7 +1372,7 @@ void ChemManager::genFilBindingReactions() {
                 else if(nzstr == "TOPBOUNDARY")
                     nucleationZone = NucleationZoneType::TOPBOUNDARY;
                 else if(nzstr == "SIDEBOUNDARY")
-                nucleationZone = NucleationZoneType::SIDEBOUNDARY;
+                    nucleationZone = NucleationZoneType::SIDEBOUNDARY;
                 else if (nzstr == "RIGHTBOUNDARY")
                     nucleationZone = NucleationZoneType::RIGHTBOUNDARY;
                 else {
@@ -2859,7 +2859,6 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             else{
                 CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
                 m2->speciesPlusEnd(0)->up();
-
                 //fill new cylinder with default filament value
                 for(int i = 0; i < cc->getSize() - 1; i++) {
                     cc->getCMonomer(i)->speciesFilament(0)->up();

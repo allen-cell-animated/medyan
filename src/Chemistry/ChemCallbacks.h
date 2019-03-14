@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -109,16 +109,14 @@ struct UpdateLinkerBindingCallback {
     
     //callback
     void operator() (RSpecies *r, int delta) {
-
         //update this cylinder
         Compartment* c = _cylinder->getCompartment();
-        
         for(auto &manager : c->getFilamentBindingManagers()) {
             
             if(dynamic_cast<LinkerBindingManager*>(manager.get())) {
                 
                 CCylinder* cc = _cylinder->getCCylinder();
-                
+                auto x = c->coordinates();
                 //update binding sites
                 if(delta == +1) {
 #ifdef NLORIGINAL
@@ -489,7 +487,7 @@ struct BranchingCallback {
         else
         {
             CCylinder* c; auto check = false;
-        vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
+            vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
             for(auto T:BrT){
                 CCylinder* cx=get<0>(get<0>(T));
                 double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
@@ -497,18 +495,17 @@ struct BranchingCallback {
                     c=get<0>(get<1>(T));
                     check = true;
                     break;
-                }}
+                }
+            }
             if(check){
-
-                
-            b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
-                
-            frate=0.0;
+                b= _ps->addTrackable<BranchingPoint>(c1, c->getCylinder(), branchType, pos);
+                frate=0.0;
             }
             else {
                 b = nullptr;
-                cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
-                //exit(EXIT_FAILURE);
+                cout << "Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting."
+                        << endl;
+                exit(EXIT_FAILURE);
             }
         }
         
@@ -758,7 +755,6 @@ struct MotorWalkingCallback {
         cout<<"-----------"<<endl;*/
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
-        
         m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
         
 #ifdef DYNAMICRATES
@@ -934,7 +930,7 @@ struct FilamentCreationCallback {
             //initialize the nucleation
             f->nucleate(_plusEnd, _filament, _minusEnd);
         }
-        }
+    }
 
     
 };
