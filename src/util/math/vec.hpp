@@ -3,7 +3,7 @@
 
 #include <array>
 #include <cstddef> // ptrdiff_t
-#include <itorator> // tag
+#include <iterator> // tag
 #include <ostream>
 #include <type_traits> // conditional, enable_if, is_same
 #include <utility> // declval
@@ -107,8 +107,8 @@ template<
         using iterator_category = std::random_access_iterator_tag;
         using value_type = SolidVec; // Not used in class
         using difference_type = std::ptrdiff_t;
-        using pointer = RefVec< is_const >; // The pointer type is itself
-        using reference = RefVec< is_const >;
+        using pointer = std::conditional_t< is_const, const_reference, reference >; // The pointer type is the reference itself
+        using reference = std::conditional_t< is_const, const_reference, reference >;
 
     private:
         container_type* _ptr;
