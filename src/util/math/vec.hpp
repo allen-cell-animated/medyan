@@ -122,10 +122,10 @@ template<
         VecIterator() = default;
         VecIterator(container_type* ptr, size_type index) : _ptr(ptr), _index(index) {}
         VecIterator(const VecIterator& rhs) = default;
-        template< bool rhs_const, std::enable_if_t<!is_const || rhs_const>* = nullptr >
+        template< bool rhs_const >
         VecIterator(const VecIterator<rhs_const>& rhs) : _ptr(rhs._ptr), _index(rhs._index) {}
         VecIterator& operator=(const VecIterator& rhs) = default;
-        template< bool rhs_const, std::enable_if_t<!is_const || rhs_const>* = nullptr >
+        template< bool rhs_const >
         VecIterator& operator=(const VecIterator<rhs_const>& rhs) { _ptr = rhs._ptr; _index = rhs._index; return *this; }
 
         reference operator*() const { return reference(_ptr, _index * dim); }
