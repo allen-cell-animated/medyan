@@ -111,7 +111,6 @@ CPPFLAGS += -DNLSTENCILLIST
 
 # Non-CUDA specific
 CPPFLAGS_CXX      = $(CPPFLAGS)
-CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) -DTESTING
 
 ################MAKEFILE OPTIONS###################
 #
@@ -133,10 +132,6 @@ medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
 	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS)
 
 # Compile to object and generate dependency
-test_%.o: test_%.cpp
-test_%.o: test_%.cpp test_%.d
-	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX_TEST) $(CXXFLAGS_CXX) -c -o $@ $<
-
 %.o: %.cpp
 %.o: %.cpp %.d 
 	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
