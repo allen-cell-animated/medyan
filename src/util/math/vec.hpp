@@ -99,6 +99,8 @@ template<
     };
 
     template< bool is_const > class VecIterator {
+        template< bool friend_const > friend class VecIterator;
+
     public:
         using size_type = size_type;
         using SolidVec = Vec< dim, Float >;
@@ -115,8 +117,14 @@ template<
         size_type _index;
 
     public:
-        VecIterator(container_type* _ptr, size_type index) : _ptr(ptr), _index(index) {}
-        VecIterator(const VecIterator& rhs) : _ptr(rhs._ptr), _index(rhs._index) {}
+        VecIterator() = default;
+        VecIterator(container_type* ptr, size_type index) : _ptr(ptr), _index(index) {}
+        VecIterator(const VecIterator& rhs) = default;
+        template< bool rhs_const >
+        VecIterator(const VecIterator<rhs_const>& rhs) : _ptr(rhs._ptr), _index(rhs._index) {}
+        VecIterator& operator=(const VecIterator& rhs) = default;
+        template< bool rhs_const >
+        VecIterator& operator=(const VecIterator<rhs_const>& rhs) { _ptr = rhs._ptr; _index = rhs._index; return *this; }
 
         reference operator*() const { return reference(_ptr, _index * dim); }
         pointer operator->() const { return pointer(_ptr, _index * dim); }
@@ -135,9 +143,8 @@ template<
         }
         VecIterator operator+(difference_type rhs) const { return VecIterator(_ptr, _index + rhs); }
         VecIterator operator-(difference_type rhs) const { return VecIterator(_ptr, _index - rhs); }
-        template< bool rhs_const >
-        friend auto operator+(difference_type lhs, const VecIterator<rhs_const>& rhs) {
-            return VecIterator<rhs_const>(rhs._ptr, lhs + rhs._index);
+        friend auto operator+(difference_type lhs, const VecIterator& rhs) {
+            return VecIterator(rhs._ptr, lhs + rhs._index);
         }
 
         template< bool rhs_const >

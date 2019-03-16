@@ -79,6 +79,60 @@ TEST_CASE("VecArray tests", "[VecArray]") {
     }
 
     SECTION("Iterator usage") {
-        // TODO
+        // Iterator pointer, dereference, op[]
+        auto v3f_i = v3f.begin() + 1;
+        CHECK(v3f_i->size() == 3);
+        CHECK((*v3f_i)[0] == Approx(1.0f));
+        CHECK(v3f_i[2][0] == Approx(3.0f));
+
+        // Ctor and assignment
+        const auto& v3f_cref = v3f;
+        auto v3f_i_ccopy = v3f_cref.begin();
+        CHECK((*v3f_i_ccopy)[0] == Approx(0.0f));
+        v3f_i_ccopy = v3f_i; // Copy assign
+        CHECK((*v3f_i_ccopy)[0] == Approx(1.0f));
+        decltype(v3f)::const_iterator v3f_ic(v3f_i); // Copy ctor
+        CHECK((*v3f_ic)[0] == Approx(1.0f));
+
+        // Check comparison
+        auto v3f_ie = v3f.end();
+        auto v3f_ice = v3f_cref.end();
+        CHECK(v3f_ie == v3f_ice);
+        CHECK(v3f_i != v3f_ie);
+        CHECK(v3f_i != v3f_ice);
+        CHECK(!(v3f_i > v3f_ie));
+        CHECK(  v3f_i < v3f_ie );
+        CHECK(!(v3f_i >= v3f_ie));
+        CHECK(  v3f_i <= v3f_ie );
+        CHECK(v3f_ie >= v3f_ice);
+        CHECK(v3f_ie <= v3f_ice);
+
+        // Check arithmetics
+        CHECK(v3f_i - v3f_ice == -4);
+        CHECK(v3f_i + 4 == v3f_ice);
+        CHECK(4 + v3f_i == v3f_ice);
+        CHECK(v3f_ice - 4 == v3f_i);
+
+        // Check inc/dec
+        ++v3f_i;
+        CHECK((*v3f_i)[0] == Approx(2.0f));
+        --v3f_i;
+        CHECK((*v3f_i)[0] == Approx(1.0f));
+        v3f_i += 2;
+        CHECK((*v3f_i)[0] == Approx(3.0f));
+        v3f_i -= 2;
+        CHECK((*v3f_i)[0] == Approx(1.0f));
+        auto v3f_i_copy = v3f_i++;
+        CHECK((*v3f_i_copy)[0] == Approx(1.0f));
+        CHECK((*v3f_i     )[0] == Approx(2.0f));
+        v3f_i_copy = v3f_i--;
+        CHECK((*v3f_i_copy)[0] == Approx(2.0f));
+        CHECK((*v3f_i     )[0] == Approx(1.0f));
+    }
+
+    SECTION("Element popping") {
+        v3f.pop_back();
+        CHECK(v3f.size() == 4);
+        CHECK(v3f.size_raw() == 12);
     }
 }
