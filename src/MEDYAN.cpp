@@ -97,17 +97,15 @@ int main(int argc, char **argv) {
     SubSystem* s = nullptr;
     Controller c(s);
 
-    string inputFile, inputDirectory, outputDirectory;
-
     // Parsing command line args
     {
         using namespace cmdparse;
 
         Command cmdMain("MEDYAN", "");
 
-        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, inputFile);
-        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, inputDirectory);
-        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, outputDirectory);
+        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, Global::global().systemInputFile);
+        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, Global::global().inputDirectory);
+        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, Global::global().outputDirectory);
         cmdMain.addOption(0, "seed-fixed", "seed", "Fixed random generator seed", false,
             [](const std::string& arg) {
                 Global::global().randomGenSeedFixed = true;
