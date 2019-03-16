@@ -16,7 +16,7 @@ SOURCES_TEST             := $(shell find ./TESTS -name 'test_*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
 SOURCES                  =  $(SOURCES_CPP)
-HEADERS                  := $(shell find . -name '*.h')
+HEADERS                  := $(shell find . -name '*.h' -o -name '*.hpp')
 
 OBJECTS_TEST             := $(SOURCES_TEST:.cpp=.o)
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
@@ -33,8 +33,8 @@ FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -
 # Compiling flags
 DEPFLAGS = -MMD -MP
 
-INCLUDES_TEST = -I../build/gtest/include
 INCLUDES = \
+-I../external \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
@@ -57,7 +57,6 @@ CXXFLAGS_CXX = $(FAST_CXX) \
 -Wno-unknown-warning-option
 
 # Linking flags
-LDLIBS_TEST = -L../build/gtest/lib -lgtest -lgtest_main -lpthread
 LDLIBS      = -L/usr/local/lib/ -lboost_system
 
 LDFLAGS_CXX = $(FAST_CXX)
@@ -112,7 +111,7 @@ CPPFLAGS += -DNLSTENCILLIST
 
 # Non-CUDA specific
 CPPFLAGS_CXX      = $(CPPFLAGS)
-CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST) -DTESTING
+CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) -DTESTING
 
 ################MAKEFILE OPTIONS###################
 #
@@ -131,7 +130,7 @@ MEDYAN: $(OBJECTS)
 
 # Build test
 medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
-	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS) $(LDLIBS_TEST)
+	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS)
 
 # Compile to object and generate dependency
 test_%.o: test_%.cpp

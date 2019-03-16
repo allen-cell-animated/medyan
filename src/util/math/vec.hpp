@@ -163,6 +163,7 @@ template<
     const Float* data() const noexcept(noexcept(std::declval<const container_type>().data())) { return value.data(); }
 
     size_type size_raw() const noexcept(noexcept(std::declval<container_type>().data())) { return value.size(); }
+    bool empty() const noexcept(noexcept(std::declval<container_type>().empty())) { return value.empty(); }
 
     // The following considers size as *number of vectors*, which is value.size() / dim
     size_type size() const noexcept(noexcept(std::declval<container_type>().data())) { return value.size() / dim; }
@@ -178,6 +179,9 @@ template<
     template< typename VecType, std::enable_if_t<dim == std::declval<VecType>().size()>* = nullptr >
     void push_back(const VecType& v) {
         value.insert(value.end(), v.begin(), v.end());
+    }
+    void pop_back() {
+        value.resize(value.size() - dim);
     }
 };
 
