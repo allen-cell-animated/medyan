@@ -65,12 +65,13 @@ template<
 
     template< bool is_const, typename Concrete > struct RefVecBase {
         static constexpr size_t vec_size = dim;
-        using container_type = std::conditional_t< is_const, const container_type, container_type >;
-        using size_type = size_type;
+        using vec_array_type = VecArray;
+        using size_type = vec_array_type::size_type;
         using iterator = std::conditional_t< is_const, typename container_type::const_iterator, typename container_type::iterator >;
         using reference = std::conditional_t< is_const, typename container_type::const_reference, typename container_type::reference >;
 
-        container_type* ptr;
+        std::conditional_t< is_const, const vec_array_type::container_type, vec_array_type::container_type >
+            * ptr;
         size_type pos; // index of first Float
 
         constexpr size_type size() const noexcept { return dim; }
@@ -95,16 +96,17 @@ template<
         }
     };
     struct ConstRefVec : RefVecBase< true, ConstRefVec > {
-        ConstRefVec(container_type* ptr, size_type pos) : RefVecBase< true, ConstRefVec >{ptr, pos} {}
+        ConstRefVec(const container_type* ptr, size_type pos) : RefVecBase< true, ConstRefVec >{ptr, pos} {}
     };
 
     template< bool is_const > class VecIterator {
         template< bool friend_const > friend class VecIterator;
 
     public:
-        using size_type = size_type;
+        using vec_array_type = VecArray;
+        using size_type = vec_array_type::size_type;
         using SolidVec = Vec< dim, Float >;
-        using container_type = std::conditional_t< is_const, const container_type, container_type >;
+        using container_type = std::conditional_t< is_const, const vec_array_type::container_type, vec_array_type::container_type >;
 
         using iterator_category = std::random_access_iterator_tag;
         using value_type = SolidVec; // Not used in class
@@ -120,10 +122,10 @@ template<
         VecIterator() = default;
         VecIterator(container_type* ptr, size_type index) : _ptr(ptr), _index(index) {}
         VecIterator(const VecIterator& rhs) = default;
-        template< bool rhs_const >
+        template< bool rhs_const, std::enable_if_t<!is_const || rhs_const>* = nullptr >
         VecIterator(const VecIterator<rhs_const>& rhs) : _ptr(rhs._ptr), _index(rhs._index) {}
         VecIterator& operator=(const VecIterator& rhs) = default;
-        template< bool rhs_const >
+        template< bool rhs_const, std::enable_if_t<!is_const || rhs_const>* = nullptr >
         VecIterator& operator=(const VecIterator<rhs_const>& rhs) { _ptr = rhs._ptr; _index = rhs._index; return *this; }
 
         reference operator*() const { return reference(_ptr, _index * dim); }
