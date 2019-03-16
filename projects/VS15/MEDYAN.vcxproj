@@ -87,6 +87,7 @@
         BOOST_MEM_POOL; BOOL_POOL_NSIZE=65536;
         TRACK_DEPENDENTS; TRACK_ZERO_COPY_N; TRACK_UPPER_COPY_N;
         REACTION_SIGNALING; RSPECIES_SIGNALING;
+        SERIAL;
         HYBRID_NLSTENCILLIST; NLSTENCILLIST;
 
         _USE_MATH_DEFINES;
@@ -107,9 +108,9 @@
         $(SolutionDir)..\..\src\TESTS;
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>
+      <!-- PreprocessorDefinitions>
         TESTING;%(PreprocessorDefinitions)
-      </PreprocessorDefinitions>
+      </PreprocessorDefinitions -->
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <!-- Link>

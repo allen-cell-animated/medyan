@@ -7,6 +7,7 @@
 TEST_CASE("VecArray tests", "[VecArray]") {
 
     using std::size_t;
+    using namespace mathfunc;
 
     VecArray< 3, float > v3f;
     VecArray< 4, double > v4d;
@@ -26,8 +27,8 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         -1.0, -1.0, -1.0, -1.0
     };
 
-    for(auto& x : push_v3f) v3f.push_back(push_v3f);
-    for(auto& x : push_v4d) v4d.push_back(push_v4d);
+    for(auto& x : push_v3f) v3f.push_back(x);
+    for(auto& x : push_v4d) v4d.push_back(x);
 
     REQUIRE(v3f.size() == 5);
     REQUIRE(v3f.size_raw() == 15);
@@ -42,13 +43,13 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         CHECK(v3f_2[2] == Approx(2.0f));
 
         Vec< 3, float > v3f_2_new { 2.1f, 2.1f, 2.1f };
-        v3f_2 = v3f_2_new;
+        v3f[2] = v3f_2_new;
         CHECK(v3f_2[0] == Approx(2.1f));
         CHECK(v3f_2[1] == Approx(2.1f));
         CHECK(v3f_2[2] == Approx(2.1f));
 
         const auto& v4d_cref = v4d;
-        auto v4d_1c = v4d[1];
+        auto v4d_1c = v4d_cref[1];
         CHECK(v4d_1c[0] == Approx(-3.0));
         CHECK(v4d_1c[1] == Approx(-3.0));
         CHECK(v4d_1c[2] == Approx(-3.0));

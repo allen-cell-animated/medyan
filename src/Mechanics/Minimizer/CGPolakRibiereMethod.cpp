@@ -569,7 +569,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         chrono::high_resolution_clock::time_point tLbegin, tLend;
         tLbegin = chrono::high_resolution_clock::now();
 #endif
-        bool *dummy;
+        bool *dummy = nullptr;
         lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
                            : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
 #ifdef CUDATIMETRACK_MACRO

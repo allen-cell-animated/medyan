@@ -6,7 +6,6 @@
 #include <iterator> // tag
 #include <ostream>
 #include <type_traits> // conditional, enable_if, is_same
-#include <utility> // declval
 
 namespace mathfunc {
 
@@ -14,6 +13,7 @@ namespace mathfunc {
 // Can be replaced by linalg/tensor libraries in the future
 template< size_t dim, typename Float = double > struct Vec {
 
+    static constexpr size_t vec_size = dim;
     using storage_type = std::array< Float, dim >;
     using size_type = typename storage_type::size_type;
     using iterator = typename storage_type::iterator;
@@ -22,7 +22,7 @@ template< size_t dim, typename Float = double > struct Vec {
     storage_type value;
 
     Vec& operator=(const Vec& v) = default;
-    template< typename VecType, std::enable_if_t<dim == std::declval<VecType>().size()>* = nullptr >
+    template< typename VecType, std::enable_if_t< dim == VecType::vec_size > * = nullptr >
     Vec& operator=(const VecType& v) {
         for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
         return *this;
@@ -64,10 +64,11 @@ template<
         "The iterator of the VecArray container must be random access iterator.");
 
     template< bool is_const, typename Concrete > struct RefVecBase {
+        static constexpr size_t vec_size = dim;
         using container_type = std::conditional_t< is_const, const container_type, container_type >;
         using size_type = size_type;
-        using iterator = std::conditional_t< is_const, typename container_type::iterator, container_type::iterator >;
-        using reference = std::conditional_t< is_const, typename container_type::reference, container_type::reference >;
+        using iterator = std::conditional_t< is_const, typename container_type::const_iterator, typename container_type::iterator >;
+        using reference = std::conditional_t< is_const, typename container_type::const_reference, typename container_type::reference >;
 
         container_type* ptr;
         size_type pos; // index of first Float
@@ -75,7 +76,7 @@ template<
         constexpr size_type size() const noexcept { return dim; }
 
         constexpr iterator begin() const noexcept { return ptr->begin() + pos; }
-        constexpr iterator end() const noexcept { return ptr->end() + pos + dim; }
+        constexpr iterator end() const noexcept { return ptr->begin() + pos + dim; }
 
         // sub_pos must be within [0, dim)
         reference operator[](size_type sub_pos) const { return (*ptr)[pos + sub_pos]; }
@@ -87,7 +88,7 @@ template<
     struct RefVec : RefVecBase< false, RefVec > {
         RefVec(container_type* ptr, size_type pos) : RefVecBase< false, RefVec >{ptr, pos} {}
 
-        template< typename VecType, std::enable_if_t<dim == std::declval<VecType>().size()>* = nullptr >
+        template< typename VecType, std::enable_if_t< dim == VecType::vec_size > * = nullptr >
         RefVec& operator=(const VecType& v) {
             for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
             return *this;
@@ -173,10 +174,10 @@ template<
     iterator       end()       noexcept { return       iterator(&value, size()); }
     const_iterator end() const noexcept { return const_iterator(&value, size()); }
 
-    RefVec      operator[](size_type index)       { return      RefVec(this, index * dim); }
-    ConstRefVec operator[](size_type index) const { return ConstRefVec(this, index * dim); }
+    RefVec      operator[](size_type index)       { return      RefVec(&value, index * dim); }
+    ConstRefVec operator[](size_type index) const { return ConstRefVec(&value, index * dim); }
 
-    template< typename VecType, std::enable_if_t<dim == std::declval<VecType>().size()>* = nullptr >
+    template< typename VecType, std::enable_if_t<dim == VecType::vec_size>* = nullptr >
     void push_back(const VecType& v) {
         value.insert(value.end(), v.begin(), v.end());
     }
