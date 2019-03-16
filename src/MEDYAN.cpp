@@ -69,11 +69,11 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "analysis/io/read_snapshot.h"
 #include "core/controller/Controller.h"
-#include "core/io/command_line.h"
 #include "core/globals.h"
 #include "Rand.h"
 #include "Structure/SubSystem.h"
 #include "utility.h"
+#include "util/io/cmdparse.h"
 #include "util/io/log.h"
 
 using namespace medyan;
@@ -89,9 +89,6 @@ int main(int argc, char **argv) {
     
     cout.precision(8);
     
-    // Parse command line (Will abort the program if parsing fails)
-    commandline::readFromCommandLine(argc, argv);
-
     /**************************************************************************
     Initializations
     **************************************************************************/
@@ -99,6 +96,46 @@ int main(int argc, char **argv) {
     //create subsystem and controller to run it
     SubSystem* s = nullptr;
     Controller c(s);
+
+    string inputFile, inputDirectory, outputDirectory;
+
+    // Parsing command line args
+    {
+        using namespace cmdparse;
+
+        Command cmdMain("MEDYAN", "");
+
+        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, inputFile);
+        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, inputDirectory);
+        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, outputDirectory);
+        cmdMain.addOption(0, "seed-fixed", "seed", "Fixed random generator seed", false,
+            [](const std::string& arg) {
+                Global::global().randomGenSeedFixed = true;
+                VariableWrite<unsigned long long>{std::string("seed")}(Global::global().randomGenSeed, arg);
+            }
+        );
+        cmdMain.addHelp();
+
+        Command* cmdAnalyze = cmdMain.addCommand("analyze", "Analyze simulation output",
+            [] { Global::global().mode = GlobalVar::RunMode::Analysis; });
+        cmdAnalyze->addHelp();
+
+        try {
+            cmdMain.parse(argc, argv);
+        } catch (const CommandLogicError& e) {
+            std::cerr << e.what() << std::endl;
+            // Internal error, no help message generated.
+            throw;
+        } catch (const ParsingError& e) {
+            std::cerr << e.what() << std::endl;
+            cmdMain.printUsage();
+            throw;
+        } catch (const ValidationError& e) {
+            std::cerr << e.what() << std::endl;
+            cmdMain.printUsage();
+            throw;
+        }
+    }
 
     // Initialize the logger
     ::medyan::logger::Logger::defaultLoggerInitialization();
