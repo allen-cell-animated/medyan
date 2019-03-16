@@ -12,7 +12,7 @@
 # for your given system.
 ##################################################
 
-SOURCES_TEST             := $(shell find ./TESTS -name 'test_*.cpp')
+SOURCES_TEST             := $(shell find ./TESTS -name '*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
 SOURCES                  =  $(SOURCES_CPP)
