@@ -22,9 +22,10 @@ template< size_t dim, typename Float = double > struct Vec {
     storage_type value;
 
     Vec& operator=(const Vec& v) = default;
-    template< typename VecType, std::enable_if_t<std::declval<Vec>().size() == std::declval<VecType>().size()>* = nullptr >
+    template< typename VecType, std::enable_if_t<dim == std::declval<VecType>().size()>* = nullptr >
     Vec& operator=(const VecType& v) {
         for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
+        return *this;
     }
 
     constexpr size_type size() const noexcept { return dim; }
@@ -86,17 +87,15 @@ template<
     struct RefVec : RefVecBase< false, RefVec > {
         RefVec(container_type* ptr, size_type pos) : RefVecBase< false, RefVec >{ptr, pos} {}
 
-        template< typename VecType, std::enable_if_t<std::declval<RefVec>().size() == std::declval<VecType>().size()>* = nullptr >
+        template< typename VecType, std::enable_if_t<dim == std::declval<VecType>().size()>* = nullptr >
         RefVec& operator=(const VecType& v) {
             for(size_t i = 0; i < dim; ++i) (*this)[i] = v[i];
+            return *this;
         }
     };
     struct ConstRefVec : RefVecBase< true, ConstRefVec > {
         ConstRefVec(container_type* ptr, size_type pos) : RefVecBase< true, ConstRefVec >{ptr, pos} {}
     };
-
-    using reference = RefVec;
-    using const_reference = ConstRefVec;
 
     template< bool is_const > class VecIterator {
     public:
@@ -107,8 +106,8 @@ template<
         using iterator_category = std::random_access_iterator_tag;
         using value_type = SolidVec; // Not used in class
         using difference_type = std::ptrdiff_t;
-        using pointer = std::conditional_t< is_const, const_reference, reference >; // The pointer type is the reference itself
-        using reference = std::conditional_t< is_const, const_reference, reference >;
+        using pointer = std::conditional_t< is_const, ConstRefVec, RefVec >; // The pointer type is the reference itself
+        using reference = std::conditional_t< is_const, ConstRefVec, RefVec >;
 
     private:
         container_type* _ptr;
@@ -173,8 +172,13 @@ template<
     iterator       end()       noexcept { return       iterator(&value, size()); }
     const_iterator end() const noexcept { return const_iterator(&value, size()); }
 
-    reference       operator[](size_type index)       { return       reference(this, index * dim); }
-    const_reference operator[](size_type index) const { return const_reference(this, index * dim); }
+    RefVec      operator[](size_type index)       { return      RefVec(this, index * dim); }
+    ConstRefVec operator[](size_type index) const { return ConstRefVec(this, index * dim); }
+
+    template< typename VecType, std::enable_if_t<dim == std::declval<VecType>().size()>* = nullptr >
+    void push_back(const VecType& v) {
+        value.insert(value.end(), v.begin(), v.end());
+    }
 };
 
 } // namespace mathfunc
