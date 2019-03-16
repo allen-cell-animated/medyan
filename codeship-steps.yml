@@ -1,0 +1,8 @@
+- name: build
+  tag: dbvec
+  service: medyan
+  command: make
+- name: test
+  tag: dbvec
+  service: medyan
+  command: sh -c "make medyan_test && ./medyan_test"
