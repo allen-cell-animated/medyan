@@ -69,7 +69,7 @@ public:
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
     virtual double sidedistance(const vector<double>& coordinates);
-    virtual double getboundaryelementcoord(int i){};
+    virtual double getboundaryelementcoord(int i) { return 0.0; };
     ///@note - not yet implemented.
     virtual void move(vector<double> dist) {}
 
@@ -95,7 +95,7 @@ public:
     virtual bool within(const vector<double>& coordinates);
 
     virtual double distance(const vector<double>& coordinates);
-    virtual double getboundaryelementcoord(int i){};
+    virtual double getboundaryelementcoord(int i) { return 0.0; };
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
     virtual double sidedistance(const vector<double>& coordinates);
@@ -126,7 +126,7 @@ public:
     virtual bool within(const vector<double>& coordinates);
 
     virtual double distance(const vector<double>& coordinates);
-    virtual double getboundaryelementcoord(int i){};
+    virtual double getboundaryelementcoord(int i) { return 0.0; };
     //Qin
     virtual double lowerdistance(const vector<double>& coordinates);
     virtual double sidedistance(const vector<double>& coordinates);

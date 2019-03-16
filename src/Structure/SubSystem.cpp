@@ -352,7 +352,7 @@ void SubSystem::updateBindingManagers() {
     cylsqmagnitudevector = new double[Cylinder::vectormaxsize];
     unsigned long maxbindingsitespercyl = 0;
     for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
-        maxbindingsitespercyl = max(maxbindingsitespercyl,SysParams::Chemistry()
+        maxbindingsitespercyl = max<size_t>(maxbindingsitespercyl,SysParams::Chemistry()
                 .bindingSites[ftype].size());
     }
     long vectorsize = maxbindingsitespercyl * Cylinder::vectormaxsize;
