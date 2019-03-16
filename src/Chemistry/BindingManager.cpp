@@ -1169,7 +1169,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
     auto bindingsitevec =SysParams::Chemistry().bindingSites[_filamentType];
     int Ncylincmp =  _compartment->getCylinders().size();
-    int cindexvec[Ncylincmp]; //stores cindex of cylinders in this compartment
+    int* cindexvec = new int[Ncylincmp]; //stores cindex of cylinders in this compartment
     vector<vector<int>> ncindices; //cindices of cylinders in neighbor list.
     vector<int>ncindex; //helper vector
     long id = 0;
@@ -1507,6 +1507,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     int oldN = _bindingSpecies->getN();
     int newN = numBindingSitesstencil();
     updateBindingReaction(oldN, newN);
+    delete[] cindexvec;
 }
 void LinkerBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 
@@ -2428,7 +2429,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 
     auto bindingsitevec =SysParams::Chemistry().bindingSites[_filamentType];
     int Ncylincmp =  _compartment->getCylinders().size();
-    int cindexvec[Ncylincmp];
+    int* cindexvec = new int[Ncylincmp];
     vector<vector<int>> ncindices;
     vector<int>ncindex;
     long id = 0;
@@ -2848,6 +2849,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     int newN = numBindingSitesstencil();
     updateBindingReaction(oldN, newN);
     /*std::cout<<"Motor consistency "<<isConsistent()<<endl;*/
+    delete[] cindexvec;
 }
 void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 

@@ -46,7 +46,7 @@ struct SERLvars{
     cylinder *cylindervec = NULL;
     CCylinder **ccylindervec = NULL;
     Cylinder **cylinderpointervec = NULL;
-    uint N = 6000;
+    unsigned int N = 6000;
 
 };
 

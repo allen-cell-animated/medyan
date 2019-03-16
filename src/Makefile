@@ -26,7 +26,7 @@ OBJECTS                  =  $(OBJECTS_CPP)
 DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
-CXX = g++ -std=c++11
+CXX = g++ -std=c++14
 DEBUG = -g
 FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native
 

@@ -11,6 +11,10 @@ project.xcworkspace/
 xcuserdata/
 *.xcscheme
 
+# Project for VS15
+.vs/
+/projects/VS15/**/MEDYAN
+
 # Generated files
 ## LaTeX
 docsdev/**/*.aux
