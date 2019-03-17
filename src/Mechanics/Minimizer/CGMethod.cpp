@@ -529,8 +529,8 @@ void CGMethod::printForces()
     for(auto b: Bead::getBeads()) {
 
         for (int i = 0; i<3; i++)
-            cout << b->vcoordinate()[i] << "  "<<
-                 b->force[i] <<"  "<<b->forceAux[i]<<endl;
+            cout << b->coordinate()[i] << "  "<<
+                 b->force()[i] <<"  "<<b->forceAux()[i]<<endl;
     }
     cout << "End of Print Forces" << endl;
 }

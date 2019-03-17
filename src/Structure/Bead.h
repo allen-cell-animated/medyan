@@ -233,9 +233,7 @@ public:
     //@{
     /// Auxiliary method for CG minimization
     inline double FDotF() {
-        return force[0]*force[0] +
-               force[1]*force[1] +
-               force[2]*force[2];
+        return magnitude2(force());
     }
 //    inline double FDotF() {
 //        return force1[0]*force1[0] +
@@ -243,20 +241,14 @@ public:
 //        force1[2]*force1[2];
 //    }
     inline double FDotFA() {
-        return force[0]*forceAux[0] +
-        force[1]*forceAux[1] +
-        force[2]*forceAux[2];
+        return dot(force(), forceAux());
     }
     inline double FADotFA() {
-        return forceAux[0]*forceAux[0] +
-               forceAux[1]*forceAux[1] +
-               forceAux[2]*forceAux[2];
+        return dot(forceAux(), forceAux());
     }
     
     inline double FADotFAP() {
-        return forceAux[0]*forceAuxP[0] +
-               forceAux[1]*forceAuxP[1] +
-               forceAux[2]*forceAuxP[2];
+        return dot(forceAux(), forceAuxP());
     }
     //Qin add brFDotbrF
     inline double brFDotbrF() {

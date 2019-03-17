@@ -44,7 +44,7 @@ inline bool crosscheckforces(double* force){
         else{
             state=false;
             std::cout<<"vectorized "<<force[idx]<<" "<<force[idx+1]<<" "<<force[idx+2]<<endl;
-            std::cout<<"old way "<<b->force[0]<<" "<<b->force[1]<<" "<<b->force[2]<<endl;
+            std::cout<<"old way "<< b->force() <<endl;
             exit(EXIT_FAILURE);
         }
     }
@@ -69,7 +69,7 @@ inline bool crosscheckforces(double* force){
             else{
                 state=false;
                 std::cout<<"vectorized "<<force[idx]<<" "<<force[idx+1]<<" "<<force[idx+2]<<endl;
-                std::cout<<"old way "<<b->forceAux[0]<<" "<<b->forceAux[1]<<" "<<b->forceAux[2]<<endl;
+                std::cout<<"old way "<< b->forceAux() <<endl;
                 exit(EXIT_FAILURE);
             }
         }

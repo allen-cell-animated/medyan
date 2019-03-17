@@ -33,8 +33,8 @@ double BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, double r1, double r2
 double BubbleBubbleRepulsionExp::energy(Bead* b1, Bead* b2, double r1, double r2,
                                         double kRep, double screenLength, double d) {
     
-    double dist = twoPointDistanceStretched(b1->vcoordinate(), b1->force,
-                                            b2->vcoordinate(), b2->force, d);
+    double dist = twoPointDistanceStretched(b1->vcoordinate(), b1->vforce(),
+                                            b2->vcoordinate(), b2->vforce(), d);
     double effd = dist - r1 - r2;
     
     double R = -effd / screenLength;
@@ -55,13 +55,13 @@ void BubbleBubbleRepulsionExp::forces(Bead* b1, Bead* b2, double r1, double r2,
     //get norm
     auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));
 
-    b1->force[0] += - f0 *norm[0];
-    b1->force[1] += - f0 *norm[1];
-    b1->force[2] += - f0 *norm[2];
+    b1->force()[0] += - f0 *norm[0];
+    b1->force()[1] += - f0 *norm[1];
+    b1->force()[2] += - f0 *norm[2];
     
-    b2->force[0] += f0 *norm[0];
-    b2->force[1] += f0 *norm[1];
-    b2->force[2] += f0 *norm[2];
+    b2->force()[0] += f0 *norm[0];
+    b2->force()[1] += f0 *norm[1];
+    b2->force()[2] += f0 *norm[2];
 }
 
 void BubbleBubbleRepulsionExp::forcesAux(Bead* b1, Bead* b2, double r1, double r2,
@@ -78,12 +78,12 @@ void BubbleBubbleRepulsionExp::forcesAux(Bead* b1, Bead* b2, double r1, double r
     //get norm
     auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));
     
-    b1->force[0] += - f0 *norm[0];
-    b1->force[1] += - f0 *norm[1];
-    b1->force[2] += - f0 *norm[2];
+    b1->force()[0] += - f0 *norm[0];
+    b1->force()[1] += - f0 *norm[1];
+    b1->force()[2] += - f0 *norm[2];
     
-    b2->force[0] += f0 *norm[0];
-    b2->force[1] += f0 *norm[1];
-    b2->force[2] += f0 *norm[2];
+    b2->force()[0] += f0 *norm[0];
+    b2->force()[1] += f0 *norm[1];
+    b2->force()[2] += f0 *norm[2];
     
 }
