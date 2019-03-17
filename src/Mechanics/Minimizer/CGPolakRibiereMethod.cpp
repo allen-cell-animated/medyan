@@ -57,8 +57,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
     FFM.computeForces(coord, force); //split and synchronize in the end
 #ifdef SERIAL // SERIAL
-    FFM.copyForces(forceAux, force);
-    FFM.copyForces(forceAuxPrev, force);
+    Bead::getDbData().forcesAux = Bead::getDbData().forces;
+    Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
+
 #endif
     //M as the first letter in variables signifies that it is used by minimizer
     // (as opposed to finding lambda)
@@ -656,8 +657,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
 #endif
-        //vectorized copy
-        FFM.copyForces(forceAuxPrev, forceAux);
+        Bead::getDbData().forcesAuxP = Bead::getDbData().forcesAux;
+
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<double> elapsed_runs2b(tend - tbegin);
@@ -1008,7 +1009,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     cudaDeviceSynchronize();
 #endif
 #ifdef SERIAL
-    FFM.copyForces(forceAux, force);
+    Bead::getDbData().forcesAux = Bead::getDbData().forces;
+
 #endif
 #ifdef CUDAACCL
     CUDAcommon::handleerror(cudaFreeHost(Mmh_stop));

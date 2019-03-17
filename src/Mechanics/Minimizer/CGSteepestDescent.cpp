@@ -32,7 +32,7 @@
         FFM.vectorizeAllForceFields();
 
         FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
         int numIter = 0;
         while (/* Iteration criterion */  numIter < N &&
@@ -71,7 +71,7 @@
 
         //final force calculation
         FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
         FFM.computeLoadForces();
         endMinimization();
 

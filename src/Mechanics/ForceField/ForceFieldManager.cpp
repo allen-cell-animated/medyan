@@ -375,13 +375,6 @@ void ForceFieldManager::computeLoadForces() {
     }
 }
 
-void ForceFieldManager::copyForces(double *fprev, double *f) {
-
-    for (int i = 0; i < CGMethod::N; i++)
-        fprev[i] = f[i];
-
-}
-
 #ifdef CUDAACCL
 
 void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, double *f) {

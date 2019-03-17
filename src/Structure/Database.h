@@ -54,7 +54,7 @@ protected:
 public:
 
     static const auto& getElements() { return _elems; }
-    static const auto& getDbData() { return _dbData; }
+    static auto& getDbData() { return _dbData; }
 
     // Get the next unique id
     static std::size_t nextId() { static std::size_t nextId = 0; return nextId++; }

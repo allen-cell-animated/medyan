@@ -49,9 +49,6 @@ public:
     /// Compute the forces of all force fields 
     void computeForces(double *coord, double *f);
     
-    /// Copy forces from f to fprev
-    void copyForces(double *f, double *fprev);
-
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;
     /// CUDA Copy forces from f to fprev

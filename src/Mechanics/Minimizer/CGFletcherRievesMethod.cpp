@@ -16,6 +16,7 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
+#include "Structure/Bead.h"
     void FletcherRieves::minimize(ForceFieldManager &FFM, double GRADTOL,
                                   double MAXDIST, double LAMBDAMAX, bool steplimit) {
         //number of steps
@@ -31,7 +32,7 @@
         FFM.vectorizeAllForceFields();
 
         FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
         //compute first gradient
         double curGrad = CGMethod::allFDotF();
@@ -88,7 +89,7 @@
 
         //final force calculation
         FFM.computeForces(coord, force);
-        FFM.copyForces(forceAux, force);
+        Bead::getDbData().forcesAux = Bead::getDbData().forces;
         FFM.computeLoadForces();
         endMinimization();
 
