@@ -21,11 +21,29 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #endif
+#include "util/math/vec.hpp"
 
 /// @namespace mathfunc is used for the mathematics module for the entire codebase
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
+
+/// Vector and array converter. Need to ensure the vector has size of _Size
+// No need for move semantics because normally we use this for copying integers or doubles
+template< size_t dim, typename Float >
+inline auto vector2Vec(const vector<Float>& v) {
+    // Assert v.size() == Size
+    Vec<dim, Float> res;
+    for(size_t idx = 0; idx < dim; ++idx){
+        res[idx] = v[idx];
+    }
+    return res;
+}
+template< size_t dim, typename Float >
+inline auto vec2Vector(const Vec<dim, Float>& a) {
+    return vector<Float>(a.value.begin(), a.value.end());
+}
+
     struct temp{
         int a;
         int b;
