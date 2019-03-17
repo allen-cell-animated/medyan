@@ -186,6 +186,9 @@ template<
     RefVec      operator[](size_type index)       { return      RefVec(&value, index * dim); }
     ConstRefVec operator[](size_type index) const { return ConstRefVec(&value, index * dim); }
 
+    RefVec      back()       { return      RefVec(&value, size_raw() - dim); }
+    ConstRefVec back() const { return ConstRefVec(&value, size_raw() - dim); }
+
     template< typename VecType, std::enable_if_t<dim == VecType::vec_size>* = nullptr >
     void push_back(const VecType& v) {
         value.insert(value.end(), v.begin(), v.end());

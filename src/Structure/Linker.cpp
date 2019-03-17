@@ -44,7 +44,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 
     : Trackable(true, true), _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _linkerType(linkerType), _linkerID(_linkers.getID()), _birthTime(tau()) {
+      _linkerType(linkerType), _birthTime(tau()) {
         
     updateCoordinate();
 
@@ -175,7 +175,7 @@ void Linker::printSelf() {
     cout << endl;
     
     cout << "Linker: ptr = " << this << endl;
-    cout << "Linker type = " << _linkerType << ", Linker ID = " << _linkerID << endl;
+    cout << "Linker type = " << _linkerType << ", Linker ID = " << getId() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
     cout << "Position on first cylinder (double) = " << _position1 << endl;
@@ -221,5 +221,4 @@ species_copy_t Linker::countSpecies(const string& name) {
 
 vector<LinkerRateChanger*> Linker::_unbindingChangers;
 
-Database<Linker*> Linker::_linkers;
 Histogram* Linker::_lifetimes;

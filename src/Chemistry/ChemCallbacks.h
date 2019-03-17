@@ -216,7 +216,7 @@ struct UpdateMotorIDCallback{
 //            }
 //            //else - create an ID. This is an addition at runtime
 //            else{
-//                mManager->addUnboundID(MotorGhost::_motorGhosts.getID());
+//                mManager->addUnboundID(MotorGhost::_motorGhosts.getId());
 //            }
 //        }
 //        
@@ -385,9 +385,9 @@ struct BranchingPointUnbindingCallback {
     void operator() (ReactionBase *r) {
 
 //        //@{
-//        std::cout<<"Brancher unbinding "<<_branchingPoint->getFirstCylinder()->getID()<<" "
+//        std::cout<<"Brancher unbinding "<<_branchingPoint->getFirstCylinder()->getId()<<" "
 //                ""<<_branchingPoint->getPosition()
-//                 <<" "<<_branchingPoint->getSecondCylinder()->getID()<<endl;
+//                 <<" "<<_branchingPoint->getSecondCylinder()->getId()<<endl;
 //        //@}
         //remove the branching point
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
@@ -491,7 +491,7 @@ struct BranchingCallback {
             for(auto T:BrT){
                 CCylinder* cx=get<0>(get<0>(T));
                 double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
-                if(cx->getCylinder()->getID()==c1->getID() && p==pos){
+                if(cx->getCylinder()->getId()==c1->getId() && p==pos){
                     c=get<0>(get<1>(T));
                     check = true;
                     break;
@@ -535,8 +535,8 @@ struct LinkerUnbindingCallback {
     void operator() (ReactionBase *r) {
 
 //        //@{
-//        std::cout<<"Linker unbinding "<<_linker->getFirstCylinder()->getID()<<" "<<_linker->getFirstPosition()
-//                 <<" "<<_linker->getSecondCylinder()->getID()<<" "<<_linker->getSecondPosition()<<endl;
+//        std::cout<<"Linker unbinding "<<_linker->getFirstCylinder()->getId()<<" "<<_linker->getFirstPosition()
+//                 <<" "<<_linker->getSecondCylinder()->getId()<<" "<<_linker->getSecondPosition()<<endl;
 //        //@}
         //remove the linker
         _ps->removeTrackable<Linker>(_linker);
@@ -631,11 +631,11 @@ struct MotorUnbindingCallback {
 //        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
 //        
 //        //re-add unbound ID to motor binding manager
-//        mManager->addUnboundID(_motor->getID());
+//        mManager->addUnboundID(_motor->getId());
 
 //        //@{
-//        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "<<_motor->getFirstPosition()
-//                  <<" "<<_motor->getSecondCylinder()->getID()<<" "<<_motor->getSecondPosition()<<endl;
+//        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getId()<<" "<<_motor->getFirstPosition()
+//                  <<" "<<_motor->getSecondCylinder()->getId()<<" "<<_motor->getSecondPosition()<<endl;
 //        //@}
 
         //remove the motor

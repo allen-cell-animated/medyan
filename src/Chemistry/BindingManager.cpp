@@ -453,9 +453,9 @@ void BranchingManager::crosscheck(){
             //            auto cyl2_s = get<0>(*it2[1])->getCylinder();
             //            auto bs2_s =  get<1>(*it2[1]);
             sum = 0;
-            if(cyl1_o->getID() == cyl1_s->getID() )
+            if(cyl1_o->getId() == cyl1_s->getId() )
             sum++;
-            //            if(cyl2_o->getID() == cyl2_s->getID() )
+            //            if(cyl2_o->getId() == cyl2_s->getId() )
             //                sum++;
             if(bs1_o == bs1_s )
             sum++;
@@ -565,7 +565,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
     struct Orderset
     {
         bool operator()(Cylinder* lhs, Cylinder* rhs) const  {
-            return lhs->getID() < rhs->getID();
+            return lhs->getId() < rhs->getId();
         }
     };
 #endif
@@ -618,7 +618,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
 
                     //add in correct order
-                    if(c->getID() > cn->getID()) {
+                    if(c->getId() > cn->getId()) {
 #ifdef DEBUGCONSTANTSEED
                         appendpossibleBindings(t1,t2);
                         //                        _possibleBindings.emplace(t1, t2);
@@ -676,7 +676,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {
 
     //    auto cylcoord = cc->getCylinder()->coordinate;
-    //    std::cout<<"L Adding possible to Cyl "<<cc->getCylinder()->getID()<<" w coords "
+    //    std::cout<<"L Adding possible to Cyl "<<cc->getCylinder()->getId()<<" w coords "
     //            ""<<cylcoord[0]<<" "<<cylcoord[1]<<" "<<cylcoord[2]<<endl;
 
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -820,7 +820,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
             if(cn->getParent() == c->getParent()) continue;
             if(cn->getType() != _filamentType) continue;
-            if(c->getID() < cn->getID()) continue;
+            if(c->getId() < cn->getId()) continue;
             auto ccn = cn->getCCylinder();
             auto x3 = cn->getFirstBead()->coordinate;
             auto x4 = cn->getSecondBead()->coordinate;
@@ -925,7 +925,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                                 auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 
                                 //add in correct order
-                                if (c->getID() > cn->getID()) {
+                                if (c->getId() > cn->getId()) {
                                     _possibleBindings.emplace(t1, t2);
                                 }
                             }
@@ -1046,7 +1046,7 @@ bool LinkerBindingManager::isConsistent() {
 #ifdef NLSTENCILLIST
 void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 /*    std::cout<<"Adding possible bindings of cylinder with ID "<<cc->getCylinder()
-            ->getID()<<" with cindex "<<cc->getCylinder()->_dcIndex<<endl;*/
+            ->getId()<<" with cindex "<<cc->getCylinder()->_dcIndex<<endl;*/
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++) {
         addPossibleBindingsstencil(cc, *bit);
@@ -1110,7 +1110,7 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
 
                     //add in correct order
-                    if(c->getID() > cn->getID())
+                    if(c->getId() > cn->getId())
                     _possibleBindingsstencil.emplace(t1,t2);
                     else {
                         //add in this compartment
@@ -1178,7 +1178,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 //        totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
         id++;
         for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
-            if(c->getID() > cn->getID())
+            if(c->getId() > cn->getId())
                 ncindex.push_back(cn->_dcIndex);
 //            else
 //                counter1++;
@@ -1209,10 +1209,10 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
         //Check 2
 /*        for(auto cndummy:ncindices[i]){
             auto A =cylindervec[cndummy];
-            if(ccylvec[A.cindex]->getCylinder()->getID() != A.ID)
+            if(ccylvec[A.cindex]->getCylinder()->getId() != A.ID)
             {
                 std::cout<<"Mismatch in neighbors L of Cyl index "<<i<<" "
-                        ""<<ccylvec[cndummy]->getCylinder()->getID()<<" "
+                        ""<<ccylvec[cndummy]->getCylinder()->getId()<<" "
                         ""<<cylindervec[cndummy].ID<<endl;
             }
         }*/
@@ -1314,7 +1314,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                             auto it2 = SysParams::Chemistry().bindingSites[_filamentType][pos2];
                             auto xx1 = ccylvec[cindex]->getCylinder();
                             auto xx2 = ccylvec[cnindex]->getCylinder();
-//                            std::cout<<xx1->getID()<<" "<<c.ID<<" "<<xx2->getID()<<" "
+//                            std::cout<<xx1->getId()<<" "<<c.ID<<" "<<xx2->getId()<<" "
 //                                    ""<<cn.ID<<endl;
                             /*if(xx1->getFirstBead()->_dbIndex != c.bindices[0] ||
                                xx1->getSecondBead()->_dbIndex != c.bindices[1])
@@ -1376,7 +1376,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 
             if(cn->getParent() == c->getParent()) continue;
             if(cn->getType() != _filamentType) continue;
-            if(c->getID() < cn->getID()) continue;
+            if(c->getId() < cn->getId()) continue;
             auto ccn = cn->getCCylinder();
             auto x3 = cn->getFirstBead()->coordinate;
             auto x4 = cn->getSecondBead()->coordinate;
@@ -1481,7 +1481,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                                 auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 
                                 //add in correct order
-                                if (c->getID() > cn->getID()) {
+                                if (c->getId() > cn->getId()) {
                                     _possibleBindingsstencil.emplace(t1, t2);
                                 }
                             }
@@ -1622,9 +1622,9 @@ void LinkerBindingManager::crosscheck(){
             auto cyl2_s = get<0>(it2->second)->getCylinder();
             auto bs2_s =  get<1>(it2->second);
             sum = 0;
-            if(cyl1_o->getID() == cyl1_s->getID() )
+            if(cyl1_o->getId() == cyl1_s->getId() )
             sum++;
-            if(cyl2_o->getID() == cyl2_s->getID() )
+            if(cyl2_o->getId() == cyl2_s->getId() )
             sum++;
             if(bs1_o == bs1_s )
             sum++;
@@ -1698,15 +1698,15 @@ void LinkerBindingManager::freecudavars() {
 #ifdef DEBUGCONSTANTSEED
 void LinkerBindingManager::erasepossibleBindings(CCylinder* cc, short bindingSite) {
     tuple<CCylinder*, short> bindingtoremove = make_tuple(cc, bindingSite);
-    //    std::cout<<"erasing cyl "<<cc->getCylinder()->getID()<<" bs "<<bindingSite<<endl;
+    //    std::cout<<"erasing cyl "<<cc->getCylinder()->getId()<<" bs "<<bindingSite<<endl;
     int counter = 0;
     for (auto p = _possibleBindings.begin(); p != _possibleBindings.end(); p++) {
         auto binding1 = (*p)[0];
         auto binding2 = (*p)[1];
         if (bindingtoremove == binding1 || bindingtoremove == binding2)
         {
-            //            auto cyl1 = get<0>(binding1)->getCylinder()->getID();
-            //            auto cyl2 = get<0>(binding2)->getCylinder()->getID();
+            //            auto cyl1 = get<0>(binding1)->getCylinder()->getId();
+            //            auto cyl2 = get<0>(binding2)->getCylinder()->getId();
             //            auto bs1 = get<1>(binding1);
             //            auto bs2 = get<1>(binding2);
             //            std::cout<<"Removing pair Cyl "<<cyl1<<" bs "<<bs1<<" Cyl "<<cyl2<<" bs "
@@ -1741,7 +1741,7 @@ _rMin(rMin), _rMax(rMax) {
 
     //DEPRECATED AS OF 9/22/16
     //    for(int i = 0; i < numSpecies; i++)
-    //        _unboundIDs.push_back(MotorGhost::_motorGhosts.getID());
+    //        _unboundIDs.push_back(MotorGhost::_motorGhosts.getId());
 
 
     //attach an rspecies callback to this species
@@ -1770,7 +1770,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
     struct Orderset
     {
         bool operator()(Cylinder* lhs, Cylinder* rhs) const  {
-            return lhs->getID() < rhs->getID();
+            return lhs->getId() < rhs->getId();
         }
     };
 #endif
@@ -1829,7 +1829,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     auto t2 = tuple<CCylinder *, short>(ccn, *it);
 
                     //add in correct order
-                    if (c->getID() > cn->getID()) {
+                    if (c->getId() > cn->getId()) {
 #ifdef DEBUGCONSTANTSEED
                         appendpossibleBindings(t1, t2);
                         //                        _possibleBindings.emplace(t1, t2);
@@ -1886,7 +1886,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 
 void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
     //    auto cylcoord = cc->getCylinder()->coordinate;
-    //    std::cout<<"M Adding possible to Cyl "<<cc->getCylinder()->getID()<<" w coords "
+    //    std::cout<<"M Adding possible to Cyl "<<cc->getCylinder()->getId()<<" w coords "
     //            ""<<cylcoord[0]<<" "<<cylcoord[1]<<" "<<cylcoord[2]<<endl;
 
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -2052,7 +2052,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
 
             if(cn->getParent() == c->getParent()) continue;
             if(cn->getType() != _filamentType) continue;
-            if(c->getID() < cn->getID()) continue;
+            if(c->getId() < cn->getId()) continue;
             auto ccn = cn->getCCylinder();
             auto x3 = cn->getFirstBead()->coordinate;
             auto x4 = cn->getSecondBead()->coordinate;
@@ -2157,7 +2157,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                                 auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 
                                 //add in correct order
-                                if (c->getID() > cn->getID()) {
+                                if (c->getId() > cn->getId()) {
                                     _possibleBindings.emplace(t1, t2);
                                 }
                             }
@@ -2296,7 +2296,7 @@ bool MotorBindingManager::isConsistent() {
 #ifdef NLSTENCILLIST
 void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 /*    std::cout<<"Adding possible bindings of cylinder with ID "<<cc->getCylinder()
-            ->getID()<<" with cindex "<<cc->getCylinder()->_dcIndex<<endl;*/
+            ->getId()<<" with cindex "<<cc->getCylinder()->_dcIndex<<endl;*/
     for(auto bit = SysParams::Chemistry().bindingSites[_filamentType].begin();
         bit != SysParams::Chemistry().bindingSites[_filamentType].end(); bit++) {
         addPossibleBindingsstencil(cc, *bit);
@@ -2304,7 +2304,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc) {
 }
 void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #ifdef HYBRID_NLSTENCILLIST
-//    cout<<"Adding "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
+//    cout<<"Adding "<<cc->getCylinder()->getId()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
     HManager->addPossibleBindingsstencil(_idvec,cc,bindingSite);
 //    HManager->checkoccupancySIMD(_idvec);
@@ -2358,7 +2358,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
 
                     //add in correct order
-                    if(c->getID() > cn->getID())
+                    if(c->getId() > cn->getId())
                     {
                         _possibleBindingsstencil.emplace(t1,t2);
                     }
@@ -2438,7 +2438,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
         totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
         id++;
         for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
-            if(c->getID() > cn->getID())
+            if(c->getId() > cn->getId())
                 ncindex.push_back(cn->_dcIndex);
             else
                 counter1++;
@@ -2525,7 +2525,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //                            auto t2 = tuple<CCylinder*, short>(ccn, *it2);
 //
 //                            //add in correct order
-//                            if(c->getID() > cn->getID())
+//                            if(c->getId() > cn->getId())
 //                                _possibleBindingsstencil.emplace(t1,t2);
 //                        }
 //                    }
@@ -2562,10 +2562,10 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 /*
         for(auto cndummy:ncindices[i]){
             auto A =cylindervec[cndummy];
-            if(ccylvec[A.cindex]->getCylinder()->getID() != A.ID)
+            if(ccylvec[A.cindex]->getCylinder()->getId() != A.ID)
             {
                 std::cout<<"Mismatch in neighbors L of Cyl index "<<i<<" "
-                        ""<<ccylvec[cndummy]->getCylinder()->getID()<<" "
+                        ""<<ccylvec[cndummy]->getCylinder()->getId()<<" "
                                  ""<<cylindervec[cndummy].ID<<endl;
             }
         }
@@ -2669,7 +2669,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                         auto it2 = SysParams::Chemistry().bindingSites[_filamentType][pos2];
                         /*auto xx1 = ccylvec[cindex]->getCylinder();
                         auto xx2 = ccylvec[cnindex]->getCylinder();
-//                        std::cout<<xx1->getID()<<" "<<c.ID<<" "<<xx2->getID()<<" "
+//                        std::cout<<xx1->getId()<<" "<<c.ID<<" "<<xx2->getId()<<" "
 //                                ""<<cn.ID<<endl;
                         if(xx1->getFirstBead()->_dbIndex != c.bindices[0] ||
                                 xx1->getSecondBead()->_dbIndex != c.bindices[1])
@@ -2726,7 +2726,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //
 //            if(cn->getParent() == c->getParent()) continue;
 //            if(cn->getType() != _filamentType) continue;
-//            if(c->getID() < cn->getID()) continue;
+//            if(c->getId() < cn->getId()) continue;
 //            auto ccn = cn->getCCylinder();
 //            auto x3 = cn->getFirstBead()->coordinate;
 //            auto x4 = cn->getSecondBead()->coordinate;
@@ -2828,7 +2828,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //                                auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 //
 //                                //add in correct order
-//                                if (c->getID() > cn->getID()) {
+//                                if (c->getId() > cn->getId()) {
 //                                    _possibleBindingsstencil.emplace(t1, t2);
 //                                }
 //                            }
@@ -2859,7 +2859,7 @@ void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc) {
 }
 void MotorBindingManager::removePossibleBindingsstencil(CCylinder* cc, short bindingSite) {
 #ifdef HYBRID_NLSTENCILLIST
-//    cout<<"Removing "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
+//    cout<<"Removing "<<cc->getCylinder()->getId()<<" "<<bindingSite<<endl;
     auto HManager = _compartment->getHybridBindingSearchManager();
         HManager->removePossibleBindingsstencil(_idvec, cc, bindingSite);
 /*    for(auto C:SubSystem::getstaticgrid()->getCompartments()){
@@ -2966,9 +2966,9 @@ void MotorBindingManager::crosscheck(){
             auto cyl2_s = get<0>(it2->second)->getCylinder();
             auto bs2_s =  get<1>(it2->second);
             sum = 0;
-            if(cyl1_o->getID() == cyl1_s->getID() )
+            if(cyl1_o->getId() == cyl1_s->getId() )
             sum++;
-            if(cyl2_o->getID() == cyl2_s->getID() )
+            if(cyl2_o->getId() == cyl2_s->getId() )
             sum++;
             if(bs1_o == bs1_s )
             sum++;
@@ -3042,15 +3042,15 @@ void MotorBindingManager::freecudavars() {
 #ifdef DEBUGCONSTANTSEED
 void MotorBindingManager::erasepossibleBindings(CCylinder* cc, short bindingSite) {
     tuple<CCylinder*, short> bindingtoremove = make_tuple(cc, bindingSite);
-    //        std::cout<<"erasing cyl "<<cc->getCylinder()->getID()<<" bs "<<bindingSite<<endl;
+    //        std::cout<<"erasing cyl "<<cc->getCylinder()->getId()<<" bs "<<bindingSite<<endl;
     int counter = 0;
     for (auto p = _possibleBindings.begin(); p != _possibleBindings.end(); p++) {
         auto binding1 = (*p)[0];
         auto binding2 = (*p)[1];
         if (bindingtoremove == binding1 || bindingtoremove == binding2)
         {
-            //                auto cyl1 = get<0>(binding1)->getCylinder()->getID();
-            //                auto cyl2 = get<0>(binding2)->getCylinder()->getID();
+            //                auto cyl1 = get<0>(binding1)->getCylinder()->getId();
+            //                auto cyl2 = get<0>(binding2)->getCylinder()->getId();
             //                auto bs1 = get<1>(binding1);
             //                auto bs2 = get<1>(binding2);
             //                auto x = _compartment->coordinates();

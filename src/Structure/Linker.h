@@ -43,7 +43,8 @@ class DRController;
  *  Extending the Reactable class, the reactions associated with all
  *  instances can be updated by the SubSystem.
  */
-class Linker : public Component, public Trackable, public Movable, public Reactable {
+class Linker : public Component, public Trackable, public Movable, public Reactable,
+    public Database< Linker > {
 
 friend class Controller;
 friend class DRController;
@@ -59,14 +60,10 @@ private:
     double _position2; ///< Position on second cylinder
     
     short _linkerType; ///< Integer specifying the type
-    int _linkerID; ///< Integer ID of this specific linker, managed by Database
     
     float _birthTime; ///Birth time
     
     Compartment* _compartment; ///< Where this linker is
-    
-    static Database<Linker*> _linkers;
-    ///< Collection in SubSystem
     
     //@{
     ///Histogram data
@@ -115,7 +112,6 @@ public:
     //@{
     /// Get linker parameter
     virtual int getType() {return _linkerType;}
-    int getID() {return _linkerID;}
     //@}
     
     /// Get the birth time
@@ -123,17 +119,17 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _linkers.addElement(this);}
-    virtual void removeFromSubSystem() {_linkers.removeElement(this);}
+    virtual void addToSubSystem() { }
+    virtual void removeFromSubSystem() {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<Linker*>& getLinkers() {
-        return _linkers.getElements();
+        return getElements();
     }
     /// Get the number of linkers in this system
     static int numLinkers() {
-        return _linkers.countElements();
+        return getElements().size();
     }
     
     /// Get the lifetimes

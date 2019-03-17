@@ -51,7 +51,8 @@ class Bin;
  *  kept in [NeighborLists](@ref NeighborList).
  */
 class Cylinder : public Component, public Trackable, public Movable,
-                                   public Reactable, public DynamicNeighbor {
+                                   public Reactable, public DynamicNeighbor,
+                                   public Database< Cylinder > {
     
 friend class CController;
 friend class DRController;
@@ -70,13 +71,9 @@ private:
     
     short _type; ///< Type of cylinder, either corresponding to Filament or other
                                        
-    int _ID = -1; ///< Unique ID of cylinder, managed by Database
-    
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
     Cylinder* _branchingCylinder = nullptr; ///< ptr to a branching cylinder
-    
-    static Database<Cylinder*> _cylinders; ///< Collection in SubSystem
     
     ///For dynamic polymerization rate
     static vector<FilamentRateChanger*> _polyChanger;
@@ -136,9 +133,6 @@ public:
     void setBranchingCylinder(Cylinder* c) {_branchingCylinder = c;}
     //@}
     
-    /// Get ID
-    int getID() {return _ID;}
-    
     ///@{
     /// Set plus and minus end boolean markers
     bool isPlusEnd() {return _plusEnd;}
@@ -152,11 +146,9 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() {
-        _cylinders.addElement(this);}
+    virtual void addToSubSystem() {}
     virtual void removeFromSubSystem() {
-/*        std::cout<<"removing cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<" with "
-                "bindices "<<_b1->_dbIndex<<" "<<_b2->_dbIndex<<endl;*/
+        /* Haoran 03/17/2019
         //Remove from cylinder structure by resetting to default value
         //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
         removedcindex.push_back(_dcIndex);
@@ -164,16 +156,17 @@ public:
         _dcIndex = -1;
         _cylinders.removeElement(this);
         Ncyl = _cylinders.getElements().size();
+        */
     }
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<Cylinder*>& getCylinders() {
-        return _cylinders.getElements();
+        return getElements();
     }
     /// Get the number of cylinders in this system
     static int numCylinders() {
-        return _cylinders.countElements();
+        return getElements().size();
     }
     
     /// Update the position, inherited from Movable

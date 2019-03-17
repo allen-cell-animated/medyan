@@ -20,17 +20,59 @@
 
 #include "common.h"
 
-#include "Database.h"
+#include "Structure/Database.h"
 #include "Component.h"
 #include "Composite.h"
 #include "Trackable.h"
 #include "Movable.h"
 #include "DynamicNeighbor.h"
 #include "SysParams.h"
+#include "util/math/vec.hpp"
 
 //FORWARD DECLARATIONS
 class Compartment;
 class Filament;
+
+struct BeadData {
+    using vec_type = mathfunc::Vec3;
+    using vec_array_type = mathfunc::VecArray< 3, double >;
+
+    vec_array_type coords;
+    vec_array_type coordsStr; // stretched coordinate
+    vec_array_type forces; // currently the search dir in cg method
+    vec_array_type forcesAux; // real force
+    vec_array_type forcesAuxP; // prev real force
+
+    void push_back(
+        const vec_type& coord,
+        const vec_type& coordStr,
+        const vec_type& force,
+        const vec_type& forceAux,
+        const vec_type& forceAuxP
+    ) {
+        coords.push_back(coord);
+        coordsStr.push_back(coordStr);
+        forces.push_back(force);
+        forcesAux.push_back(forceAux);
+        forcesAuxP.push_back(forceAuxP);
+    }
+
+    void pop_back() {
+        coords.pop_back();
+        coordsStr.pop_back();
+        forces.pop_back();
+        forcesAux.pop_back();
+        forcesAuxP.pop_back();
+    }
+
+    void copy_from_back(std::size_t dbIndex) {
+        coords[dbIndex] = coords.back();
+        coordsStr[dbIndex] = coordsStr.back();
+        forces[dbIndex] = forces.back();
+        forcesAux[dbIndex] = forcesAux.back();
+        forcesAuxP[dbIndex] = forcesAuxP.back();
+    }
+};
 
 /// Represents a single coordinate between [Cylinders](@ref Cylinder), and holds forces
 /// needed for mechanical equilibration.
@@ -47,21 +89,23 @@ class Filament;
  *  [NeighborLists](@ref NeighborList).
  */
 
-class Bead : public Component, public Trackable, public Movable{
+class Bead : public Component, public Trackable, public Movable,
+    public Database< Bead, BeadData > {
     
 public:
+    using db_type = Database< Bead, BeadData >;
+
     ///@note - all vectors are in x,y,z coordinates.
     static bool triggercylindervectorization;
-    vector<double> coordinate;  ///< Coordinates of the bead
+    [[deprecated]] vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
-    int _ID; ///<Bead IDs
     int _dbIndex =  -1; ///<Position in database vector
 
-	vector<double> force; ///< Forces based on curent coordinates.
+	[[deprecated]] vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
     vector<double> force1;
-    vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
-    vector<double> forceAuxP; ///< An auxiliary field needed during CG minimization.
+    [[deprecated]] vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
+    [[deprecated]] vector<double> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
     vector<double> brforce; //Qin boundary repulsion force
     vector<double> pinforce;
@@ -95,6 +139,12 @@ public:
     
     ///Default constructor
     Bead(Composite* parent, int position);
+
+    auto coordinate()    { return _dbData.coords    [_dbIndex]; }
+    auto coordinateStr() { return _dbData.coordsStr [_dbIndex]; }
+    auto force()         { return _dbData.forces    [_dbIndex]; }
+    auto forceAux()      { return _dbData.forcesAux [_dbIndex]; }
+    auto forceAuxP()     { return _dbData.forcesAuxP[_dbIndex]; }
     
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
@@ -107,7 +157,7 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _beads.addElement(this);}
+    virtual void addToSubSystem() override {}
     virtual void removeFromSubSystem() {
 //        std::cout<<"removing bead with bindex "<<_dbIndex<<endl;
         //Reset in bead coordinate vector and add _dbIndex to the list of removedbindex.
@@ -169,8 +219,6 @@ public:
     
     //GetType implementation just returns type of parent
     virtual int getType() {return getParent()->getType();}
-    //Aravind get ID
-    int getID() {return _ID;}
     //Aravind return static
     bool getstaticstate() {return isStatic;}
     //Aravind set static
@@ -258,8 +306,7 @@ private:
     
     bool _isPinned = false;
     
-    static Database<Bead*> _beads; ///< Collection of beads in SubSystem
-    static Database<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
+    static OldDatabase<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
     //Vectorize beads so the coordinates are all available in a single array.
     //@{

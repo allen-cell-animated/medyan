@@ -154,7 +154,7 @@ public:
     }
 
     /// get ID
-    virtual int getID(){return _ID;}
+    virtual int getId(){return _ID;}
     /// Applies SpeciesVisitor v to every Species* object directly owned by this node.
     /// This method needs to be overriden by descendent classes that contain Species.
     virtual bool apply_impl(SpeciesVisitor &v) override;

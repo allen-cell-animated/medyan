@@ -22,8 +22,7 @@
 
 using namespace mathfunc;
 
-Database<Bead*> Bead::_beads;
-Database<Bead*> Bead::_pinnedBeads;
+OldDatabase<Bead*> Bead::_pinnedBeads;
 //static vars needed to vectorize on-the-fly
 int Bead::maxbindex = 0;
 int Bead::vectormaxsize = 0;
@@ -35,9 +34,10 @@ vector<int> Bead::removedbindex;//vector of bead indices that were once alloted 
 Bead::Bead (vector<double> v, Composite* parent, int position)
 // Qin add brforce, pinforce
     : Trackable(true),
-      coordinate(v), coordinateP(v),
-      force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0),
-      _position(position), _birthTime(tau()),_ID(_beads.getID()) {
+      db_type(vector2Vec<3>(v), Vec3{}, Vec3{}, Vec3{}, Vec3{}),
+      coordinateP(v),
+      brforce(3, 0), pinforce(3,0),
+      _position(position), _birthTime(tau()) {
     
     parent->addChild(unique_ptr<Component>(this));
           
@@ -58,6 +58,7 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
         exit(EXIT_FAILURE);
     }
 
+    /* Haoran 03/17/2019
     //revectorize if needed
     revectorizeifneeded();
     //set bindex
@@ -74,15 +75,19 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
 
     //copy bead coordiantes to the appropriate spot in the coord vector.
     copycoordinatestovector();
+    */
 }
 
 Bead::Bead(Composite* parent, int position)
 // Qin add brforce, pinforce
     : Trackable(true),
-    coordinate(3, 0), coordinateP(3, 0),
-    force(3, 0), forceAux(3, 0), forceAuxP(3, 0), brforce(3, 0), pinforce(3,0), _position(position) {
+    db_type(Vec3{}, Vec3{}, Vec3{}, Vec3{}, Vec3{}),
+    coordinateP(3, 0),
+    brforce(3, 0), pinforce(3,0), _position(position) {
     
     parent->addChild(unique_ptr<Component>(this));
+
+    /* Haoran 03/17/2019
     //check if you need to revectorize.
     revectorizeifneeded();
     //set bindex based on maxbindex if there were no beads removed.
@@ -99,6 +104,7 @@ Bead::Bead(Composite* parent, int position)
     Nbeads = _beads.getElements().size();
     //copy bead coordiantes to the appropriate spot in the coord vector.
     copycoordinatestovector();
+    */
 }
 
 void Bead::updatePosition() {
@@ -124,10 +130,10 @@ void Bead::printSelf() {
     cout << endl;
     
     cout << "Bead: ptr = " << this << endl;
-    cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
+    cout << "Coordinates = " << coordinate()[0] << ", " << coordinate()[1] << ", " << coordinate()[2] << endl;
     cout << "Previous coordinates before minimization = " << coordinateP[0] << ", " << coordinateP[1] << ", " << coordinateP[2] << endl;
-    cout << "Forces = " << force[0] << ", " << force[1] << ", " << force[2] << endl;
-    cout << "Auxiliary forces = " << forceAux[0] << ", " << forceAux[1] << ", " << forceAux[2] << endl;
+    cout << "Forces = " << force()[0] << ", " << force()[1] << ", " << force()[2] << endl;
+    cout << "Auxiliary forces = " << forceAux()[0] << ", " << forceAux()[1] << ", " << forceAux()[2] << endl;
 
     cout << "Position on structure = " << _position << endl;
     cout << "Birth time = " << _birthTime << endl;

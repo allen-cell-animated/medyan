@@ -36,13 +36,12 @@
 
 using namespace mathfunc;
 
-Database<Filament*> Filament::_filaments;
 Histogram* Filament::_turnoverTimes;
 
 Filament::Filament(SubSystem* s, short filamentType, const vector<double>& position,
                    const vector<double>& direction, bool nucleation, bool branch)
 
-    : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
+    : Trackable(), _subSystem(s), _filType(filamentType) {
  
     //create beads
     Bead* b1 = _subSystem->addTrackable<Bead>(position, this, 0);
@@ -72,7 +71,7 @@ Filament::Filament(SubSystem* s, short filamentType, const vector<double>& posit
 Filament::Filament(SubSystem* s, short filamentType, const vector<vector<double> >& position,
                    int numBeads, string projectionType)
 
-    : Trackable(), _subSystem(s), _filType(filamentType), _ID(_filaments.getID()) {
+    : Trackable(), _subSystem(s), _filType(filamentType) {
 
     
     //create a projection of beads
@@ -625,7 +624,7 @@ Filament* Filament::sever(int cylinderPosition) {
     //Qin
 
     _severingReaction++;
-    _severingID.push_back(newFilament->getID());
+    _severingID.push_back(newFilament->getId());
     return newFilament;
 }
 
@@ -862,7 +861,7 @@ void Filament::printSelf() {
     cout << endl;
     
     cout << "Filament: ptr = " << this << endl;
-    cout << "Filament ID = " << _ID << endl;
+    cout << "Filament ID = " << getId() << endl;
     cout << "Filament type = " << _filType << endl;
     
     cout << endl;

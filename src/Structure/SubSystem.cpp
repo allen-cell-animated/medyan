@@ -86,11 +86,11 @@ void SubSystem::resetNeighborLists() {
 
                         beadSet[2 * i] = c->getFirstBead()->_dbIndex;
                         beadSet[2 * i + 1] = c->getSecondBead()->_dbIndex;
-                        cylID[i] = c->getID();
+                        cylID[i] = c->getId();
                         c->_dcIndex = i;
                         fvecpos[i] = c->getPosition();
                         auto fil = dynamic_cast<Filament*>(c->getParent());
-                        filID[i] =  fil->getID();
+                        filID[i] =  fil->getId();
                         cmpID[i] = GController::getCompartmentID(c->getCompartment()->coordinates());
                         filType[i] = fil->getType();
         //                cylstate[i] = c->isFullLength();
@@ -224,8 +224,8 @@ void SubSystem::resetNeighborLists() {
     for(auto cyl:Cylinder::getCylinders()){
         int i = cyl->_dcIndex;
         int id1 = cylindervec[i].ID;
-        int id2 = Cylinderpointervec[i]->getID();
-        int id3 = ccylindervec[i]->getCylinder()->getID();
+        int id2 = Cylinderpointervec[i]->getId();
+        int id3 = ccylindervec[i]->getCylinder()->getId();
         if(id1 != id2 || id2 != id3 || id3 != id1)
             std::cout<<id1<<" "<<id2<<" "<<id3<<endl;
         auto b1 = cyl->getFirstBead();
@@ -233,7 +233,7 @@ void SubSystem::resetNeighborLists() {
         long idx1 = b1->_dbIndex;
         long idx2 = b2->_dbIndex;
         cylinder c = cylindervec[i];
-        std::cout << "4 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
+        std::cout << "4 bindices for cyl with ID "<<cyl->getId()<<" cindex " << i <<
                   " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
         if(c.bindices[0] != idx1 || c.bindices[1] != idx2) {
 
@@ -368,7 +368,7 @@ void SubSystem::updateBindingManagers() {
 
     //fill with appropriate values.
     for (auto cyl: cylvec) {
-//        cout<<cyl->_dcIndex<<" "<<cyl->getID()<<endl;
+//        cout<<cyl->_dcIndex<<" "<<cyl->getId()<<endl;
 /*        if(cyl->_dcIndex > Cylinder::vectormaxsize)
             std::cout<<"Cindex "<<cyl->_dcIndex<<" greater than vectorsize "
                     ""<<Cylinder::vectormaxsize<<endl;*/
@@ -491,18 +491,18 @@ void SubSystem::vectorizeCylinder() {
         //set _dcIndex
         cyl->_dcIndex = i;
         //copy attributes to a structure
-        cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getID();
+        cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getId();
         cylindervec[i].filamentposition = cyl->getPosition();
         cylindervec[i].bindices[0] = cyl->getFirstBead()->_dbIndex;
         cylindervec[i].bindices[1] = cyl->getSecondBead()->_dbIndex;
-        cylindervec[i].cmpID = cyl->getCompartment()->getID();
+        cylindervec[i].cmpID = cyl->getCompartment()->getId();
         cylindervec[i].cindex = i;
         auto coord = cyl->coordinate;
         cylindervec[i].coord[0] = coord[0];
         cylindervec[i].coord[1] = coord[1];
         cylindervec[i].coord[2] = coord[2];
         cylindervec[i].type = cyl->getType();
-        cylindervec[i].ID = cyl->getID();
+        cylindervec[i].ID = cyl->getId();
         ccylindervec[i] = cyl->getCCylinder();
         cylinderpointervec[i] = cyl;
         i++;

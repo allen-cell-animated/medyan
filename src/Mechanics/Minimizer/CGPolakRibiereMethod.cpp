@@ -244,7 +244,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     long index = 0;
     for(auto b:Bead::getBeads()){
         index = 3 * b->_dbIndex;
-        std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+        std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                 ""<<coord[index + 2]<<" "
                 ""<<force[index]<<" "
                 ""<<force[index + 1]<<" "<<force[index + 2]<<endl;
@@ -395,7 +395,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         for(auto b:Bead::getBeads()){
             index = 3 * b->_dbIndex;
 
-            std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+            std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
@@ -611,7 +611,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         for(auto b:Bead::getBeads()){
             index = 3 * b->_dbIndex;
 
-            std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+            std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
@@ -807,7 +807,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 //        for(auto b:Bead::getBeads()){
 //            index = 3 * b->_dbIndex;
 //
-//            std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
+//            std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
 //                    ""<<coord[index + 2]<<" "
 //                    ""<<forceAux[index]<<" "
 //                    ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
@@ -1058,7 +1058,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
-        std::cout<<b->getID()<<" "<<b->coordinate[0]<<" "<<b->coordinate[1]<<" "
+        std::cout<<b->getId()<<" "<<b->coordinate[0]<<" "<<b->coordinate[1]<<" "
                 ""<<b->coordinate[2]<<" "
                 ""<<b->force[index]<<" "
                 ""<<b->force[index+1]<<" "<<b->force[index+2]<<endl;

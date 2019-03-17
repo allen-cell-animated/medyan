@@ -120,7 +120,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2], CCyl
                                     short bindingSite) {
 
 
-//    std::cout<<"Adding "<<cc->getCylinder()->getID()<<" "<<bindingSite<<endl;
+//    std::cout<<"Adding "<<cc->getCylinder()->getId()<<" "<<bindingSite<<endl;
     short idx = idvec[0];
     short idx2 = idvec[1];
     auto fIDpair = _filamentIDvec[idx].data();
@@ -192,7 +192,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2], CCyl
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
 
                     //add in correct order
-                    if(c->getID() > cn->getID())
+                    if(c->getId() > cn->getId())
                     {
                         _possibleBindingsstencilvec[idx][idx2].emplace(t1,t2);
                         _reversepossibleBindingsstencilvec[idx][idx2][t2].push_back(t1);
@@ -336,8 +336,8 @@ void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
             SpeciesBound* BM2 = ccyl2->getCMonomer(bs2)->speciesBound(
                     SysParams::Chemistry().motorBoundIndex[0]);
             std::cout<<"Cmp "<<_compartment->coordinates()[0]<<" "<<_compartment->coordinates()
-            [1]<<" "<<_compartment->coordinates()[2]<<" Motor "<<ccyl1->getCylinder()->getID()<<" "<<bs1<<" "
-                    ""<<ccyl2->getCylinder()->getID()<<" "<<
+            [1]<<" "<<_compartment->coordinates()[2]<<" Motor "<<ccyl1->getCylinder()->getId()<<" "<<bs1<<" "
+                    ""<<ccyl2->getCylinder()->getId()<<" "<<
                      ""<<bs2<< endl;
             std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
         }
@@ -395,7 +395,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
             auto Neighbors = _HneighborList->getNeighborsstencil(HNLIDvec[idx], c);
             ncindex.reserve(Neighbors.size());
             for (auto cn : Neighbors) {
-                if (c->getID() > cn->getID())
+                if (c->getId() > cn->getId())
                     ncindex.push_back(cn->_dcIndex);
             }
             ncindices.push_back(ncindex);

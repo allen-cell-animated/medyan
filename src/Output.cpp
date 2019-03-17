@@ -51,7 +51,7 @@ void BasicSnapshot::print(int snapshot) {
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -74,7 +74,7 @@ void BasicSnapshot::print(int snapshot) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getId()<< " " <<
                                linker->getType() << endl;
         
         //print coordinates
@@ -96,7 +96,7 @@ void BasicSnapshot::print(int snapshot) {
         
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+        _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
         
         //print coordinates
         auto x =
@@ -135,7 +135,7 @@ void BasicSnapshot::print(int snapshot) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "BRANCHER " << branch->getID() << " " <<
+        _outputFile << "BRANCHER " << branch->getId() << " " <<
                                       branch->getType() << endl;
         
         //print coordinates
@@ -146,7 +146,7 @@ void BasicSnapshot::print(int snapshot) {
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+        _outputFile << "BUBBLE " << bubble->getId() << " " <<
                                     bubble->getType() << endl;
         
         //print coordinates
@@ -173,7 +173,7 @@ void BirthTimes::print(int snapshot) {
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -193,7 +193,7 @@ void BirthTimes::print(int snapshot) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getId()<< " " <<
                                linker->getType() << endl;
         
         //print birth times
@@ -205,7 +205,7 @@ void BirthTimes::print(int snapshot) {
         
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+        _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
         
         //print birth times
         _outputFile << motor->getBirthTime() << " " <<
@@ -233,7 +233,7 @@ void BirthTimes::print(int snapshot) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "BRANCHER " << branch->getID() << " " <<
+        _outputFile << "BRANCHER " << branch->getId() << " " <<
                                       branch->getType() << endl;
         
         //print birth times
@@ -242,7 +242,7 @@ void BirthTimes::print(int snapshot) {
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+        _outputFile << "BUBBLE " << bubble->getId() << " " <<
                                     bubble->getType() << endl;
         
         //print birth times
@@ -268,7 +268,7 @@ void Forces::print(int snapshot) {
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -293,7 +293,7 @@ void Forces::print(int snapshot) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getId()<< " " <<
                                linker->getType() << endl;
         
         //print stretch force
@@ -305,7 +305,7 @@ void Forces::print(int snapshot) {
         
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+        _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
         
         //print stretch force
         _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
@@ -332,7 +332,7 @@ void Forces::print(int snapshot) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "BRANCHER " << branch->getID() << " " <<
+        _outputFile << "BRANCHER " << branch->getId() << " " <<
                                       branch->getType() << endl;
         
         //Nothing for branchers
@@ -341,7 +341,7 @@ void Forces::print(int snapshot) {
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+        _outputFile << "BUBBLE " << bubble->getId() << " " <<
                                     bubble->getType() << endl;
         
         //Nothing for bubbles
@@ -368,7 +368,7 @@ void Tensions::print(int snapshot) {
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -396,7 +396,7 @@ void Tensions::print(int snapshot) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getId()<< " " <<
                                linker->getType() << endl;
         
         //print
@@ -408,7 +408,7 @@ void Tensions::print(int snapshot) {
         
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+        _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
         
         //print
         _outputFile << motor->getMMotorGhost()->stretchForce << " " <<
@@ -435,7 +435,7 @@ void Tensions::print(int snapshot) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "BRANCHER " << branch->getID() << " " <<
+        _outputFile << "BRANCHER " << branch->getId() << " " <<
                                       branch->getType() << endl;
         
         //Nothing for branchers
@@ -444,7 +444,7 @@ void Tensions::print(int snapshot) {
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+        _outputFile << "BUBBLE " << bubble->getId() << " " <<
                                     bubble->getType() << endl;
         
         //Nothing for bubbles
@@ -471,7 +471,7 @@ void WallTensions::print(int snapshot) {
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -517,7 +517,7 @@ void WallTensions::print(int snapshot) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getId()<< " " <<
         linker->getType() << endl;
         
         _outputFile << 0.0 << " " << 0.0 << endl;
@@ -526,7 +526,7 @@ void WallTensions::print(int snapshot) {
     for(auto &motor : MotorGhost::getMotorGhosts()) {
         
         //print first line
-        _outputFile << "MOTOR " << motor->getID() << " " <<
+        _outputFile << "MOTOR " << motor->getId() << " " <<
         motor->getType() << endl;
         
         _outputFile << 0.0 << " " << 0.0 << endl;
@@ -535,7 +535,7 @@ void WallTensions::print(int snapshot) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "BRANCHER " << branch->getID() << " " <<
+        _outputFile << "BRANCHER " << branch->getId() << " " <<
         branch->getType() << endl;
         
         //Nothing for branchers
@@ -544,7 +544,7 @@ void WallTensions::print(int snapshot) {
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+        _outputFile << "BUBBLE " << bubble->getId() << " " <<
         bubble->getType() << endl;
         
         //Nothing for bubbles
@@ -571,7 +571,7 @@ void Types::print(int snapshot) {
     for(auto &filament : Filament::getFilaments()) {
         
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile << "FILAMENT " << filament->getID() << " " <<
+        _outputFile << "FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -592,7 +592,7 @@ void Types::print(int snapshot) {
     for(auto &linker : Linker::getLinkers()) {
         
         //print first line
-        _outputFile << "LINKER " << linker->getID()<< " " <<
+        _outputFile << "LINKER " << linker->getId()<< " " <<
         linker->getType() << endl;
         
         _outputFile << linker->getType() << " " <<
@@ -603,7 +603,7 @@ void Types::print(int snapshot) {
         
         //print first line
         //also contains a Bound(1) or unbound(0) qualifier
-        _outputFile << "MOTOR " << motor->getID() << " " << motor->getType() << " " << 1 << endl;
+        _outputFile << "MOTOR " << motor->getId() << " " << motor->getType() << " " << 1 << endl;
         
         _outputFile << motor->getType() << " " <<
         motor->getType() << endl;
@@ -629,7 +629,7 @@ void Types::print(int snapshot) {
     for(auto &branch : BranchingPoint::getBranchingPoints()) {
         
         //print first line
-        _outputFile << "BRANCHER " << branch->getID() << " " <<
+        _outputFile << "BRANCHER " << branch->getId() << " " <<
         branch->getType() << endl;
         
         //Nothing for branchers
@@ -638,7 +638,7 @@ void Types::print(int snapshot) {
     for(auto &bubble : Bubble::getBubbles()) {
         
         //print first line
-        _outputFile << "BUBBLE " << bubble->getID() << " " <<
+        _outputFile << "BUBBLE " << bubble->getId() << " " <<
         bubble->getType() << endl;
         
         //Nothing for bubbles
@@ -784,7 +784,7 @@ void PlusEnd::print(int snapshot) {
     for(auto &filament : Filament::getFilaments()) {
 
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile <<"FILAMENT " << filament->getID() << " " <<
+        _outputFile <<"FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
@@ -834,7 +834,7 @@ void ReactionOut::print(int snapshot) {
         }
 
         //print first line (Filament ID, type, length, left_delta, right_delta)
-        _outputFile <<"FILAMENT " << filament->getID() << " " <<
+        _outputFile <<"FILAMENT " << filament->getId() << " " <<
         filament->getType() << " " <<
         filament->getCylinderVector().size() + 1 << " " <<
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << "\n"<<
