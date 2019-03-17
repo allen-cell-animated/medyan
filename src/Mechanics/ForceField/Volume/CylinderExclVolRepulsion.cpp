@@ -315,8 +315,8 @@ void CylinderExclVolRepulsion::checkforculprit() {
     int i = 0;
     cout<<"Printing culprit cylinders.."<<endl;
     for (auto cyl: Cylinder::getCylinders()) {
-            auto id1 = cyl->getFirstBead()->_dbIndex;
-            auto id2 = cyl->getSecondBead()->_dbIndex;
+            auto id1 = cyl->getFirstBead()->getDbIndex();
+            auto id2 = cyl->getSecondBead()->getDbIndex();
             if(id1 == CUDAcommon::getCUDAvars().culpritID[0] && id2 == CUDAcommon::getCUDAvars().culpritID[1])
                 cyl->printSelf();
             else if(id1 == CUDAcommon::getCUDAvars().culpritID[2] && id2 == CUDAcommon::getCUDAvars().culpritID[3])

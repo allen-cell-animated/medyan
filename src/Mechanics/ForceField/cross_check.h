@@ -30,7 +30,7 @@ inline bool crosscheckforces(double* force){
     for(auto b: Bead::getBeads()) {
         
         //set bead index
-        auto idx=3*b->_dbIndex;
+        auto idx=3*b->getDbIndex();
         cout.precision(dbl::max_digits10);
 //        if(force[idx]!=b->force[0])
 //            std::cout<<"0"<<endl;
@@ -55,7 +55,7 @@ inline bool crosscheckforces(double* force){
         for(auto b: Bead::getBeads()) {
             
             //set bead index
-            auto idx=3*b->_dbIndex;
+            auto idx=3*b->getDbIndex();
             cout.precision(dbl::max_digits10);
             //        if(force[idx]!=b->force[0])
             //            std::cout<<"0"<<endl;

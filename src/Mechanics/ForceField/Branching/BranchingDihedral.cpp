@@ -34,10 +34,10 @@ void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->_dbIndex;
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->_dbIndex;
-        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->_dbIndex;
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getDbIndex();
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getDbIndex();
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getDbIndex();
+        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getDbIndex();
 
         kdih[i] = b->getMBranchingPoint()->getDihedralConstant();
         pos[i] = b->getPosition();

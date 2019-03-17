@@ -542,11 +542,8 @@ void CGMethod::startMinimization() {
     tbegin = chrono::high_resolution_clock::now();
 #endif
     coord = CUDAcommon::serlvars.coord;
-//    N = 3 * Bead::getBeads().size();
         N = 3 * Bead::getmaxbindex();
     Ncyl = Cylinder::getCylinders().size();
-    deallocate();
-    allocate(N, Ncyl);
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
@@ -817,7 +814,7 @@ void CGMethod::endMinimization() {
     for(auto b: Bead::getBeads()) {
 
         //flatten indices
-        index = 3 * b->_dbIndex;
+        index = 3 * b->getDbIndex();
         b->force[0] = force[index];
         b->force[1] = force[index + 1];
         b->force[2] = force[index + 2];

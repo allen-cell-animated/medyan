@@ -33,10 +33,6 @@ struct DatabaseDataDefault {
  *  mechanical minimization uses all beads for its Minimizer methods,
  *  ForceField uses the collections to calculate forces and energy, etc.
  *  
- *  The Database also contains a holder for a transfer ID of any species.
- *  This is used when diffusing species ID's must be tracked, and these
- *  ID's are accessed by the respective binding managers.
- *
  *  @param T - class to hold
  *
  */

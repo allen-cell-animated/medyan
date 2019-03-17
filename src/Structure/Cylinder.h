@@ -237,8 +237,8 @@ public:
                     std::cout << id1 << " " << id2 << " " << id3 << endl;
                 auto b1 = cyl->getFirstBead();
                 auto b2 = cyl->getSecondBead();
-                long idx1 = b1->_dbIndex;
-                long idx2 = b2->_dbIndex;
+                long idx1 = b1->getDbIndex();
+                long idx2 = b2->getDbIndex();
                 cylinder c = cylindervec[i];
                 std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
                 " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
@@ -247,7 +247,7 @@ public:
                     std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
                               << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
                               << " " << b2->coordinate[1] << " " << b2->coordinate[2]
-                              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << endl;
+                              << " idx " << b1->getDbIndex() << " " << b2->getDbIndex() << endl;
 
                     std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
                               << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "

@@ -84,8 +84,8 @@ void SubSystem::resetNeighborLists() {
                             coord_com[index + 1] = c->coordinate[1];
                             coord_com[index + 2] = c->coordinate[2];
 
-                        beadSet[2 * i] = c->getFirstBead()->_dbIndex;
-                        beadSet[2 * i + 1] = c->getSecondBead()->_dbIndex;
+                        beadSet[2 * i] = c->getFirstBead()->getDbIndex();
+                        beadSet[2 * i + 1] = c->getSecondBead()->getDbIndex();
                         cylID[i] = c->getId();
                         c->_dcIndex = i;
                         fvecpos[i] = c->getPosition();
@@ -230,8 +230,8 @@ void SubSystem::resetNeighborLists() {
             std::cout<<id1<<" "<<id2<<" "<<id3<<endl;
         auto b1 = cyl->getFirstBead();
         auto b2 = cyl->getSecondBead();
-        long idx1 = b1->_dbIndex;
-        long idx2 = b2->_dbIndex;
+        long idx1 = b1->getDbIndex();
+        long idx2 = b2->getDbIndex();
         cylinder c = cylindervec[i];
         std::cout << "4 bindices for cyl with ID "<<cyl->getId()<<" cindex " << i <<
                   " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
@@ -240,8 +240,8 @@ void SubSystem::resetNeighborLists() {
             std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1] << " "
                     "" << b1->coordinate[2] << " " << " " << b2->coordinate[0] << " "
                               "" << b2->coordinate[1] << " " << b2->coordinate[2] << " idx "
-                      << b1->_dbIndex << " "
-                              "" << b2->_dbIndex << endl;
+                      << b1->getDbIndex() << " "
+                              "" << b2->getDbIndex() << endl;
 
             std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
                       << coord[3 * idx1 + 2] << " "
@@ -493,8 +493,8 @@ void SubSystem::vectorizeCylinder() {
         //copy attributes to a structure
         cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getId();
         cylindervec[i].filamentposition = cyl->getPosition();
-        cylindervec[i].bindices[0] = cyl->getFirstBead()->_dbIndex;
-        cylindervec[i].bindices[1] = cyl->getSecondBead()->_dbIndex;
+        cylindervec[i].bindices[0] = cyl->getFirstBead()->getDbIndex();
+        cylindervec[i].bindices[1] = cyl->getSecondBead()->getDbIndex();
         cylindervec[i].cmpID = cyl->getCompartment()->getId();
         cylindervec[i].cindex = i;
         auto coord = cyl->coordinate;

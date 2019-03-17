@@ -345,7 +345,7 @@ void Filament::polymerizePlusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     //update vector structure
     int cidx = cBack->_dcIndex;
-    int bidx = b2->_dbIndex;
+    int bidx = b2->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->vcoordinate()[i];
         CUDAcommon::serlvars.coord[3 * bidx + i] = b2->vcoordinate()[i];
@@ -383,7 +383,7 @@ void Filament::polymerizeMinusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     //update vector structure
     int cidx = cFront->_dcIndex;
-    int bidx = b1->_dbIndex;
+    int bidx = b1->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->vcoordinate()[i];
         CUDAcommon::serlvars.coord[3 * bidx + i] = b1->vcoordinate()[i];
@@ -422,7 +422,7 @@ void Filament::depolymerizePlusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     //update vector structure
     int cidx = cBack->_dcIndex;
-    int bidx = b2->_dbIndex;
+    int bidx = b2->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->vcoordinate()[i];
         CUDAcommon::serlvars.coord[3 * bidx + i] = b2->vcoordinate()[i];
@@ -460,7 +460,7 @@ void Filament::depolymerizeMinusEnd() {
     SysParams::Geometry().monomerSize[_filType], direction);
     //update vector structure
     int cidx = cFront->_dcIndex;
-    int bidx = b1->_dbIndex;
+    int bidx = b1->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->vcoordinate()[i];
         CUDAcommon::serlvars.coord[3 * bidx + i] = b1->vcoordinate()[i];

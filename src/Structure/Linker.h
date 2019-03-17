@@ -79,7 +79,6 @@ private:
 public:
     vector<double> coordinate;
     ///< coordinate of midpoint, updated with updatePosition()
-    int _dbIndex; ///<Position in database vector
     
     Linker(Cylinder* c1, Cylinder* c2, short linkerType,
            double position1 = 0.5, double position2 = 0.5);

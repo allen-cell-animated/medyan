@@ -86,14 +86,14 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             //if this neighbor cylinder contains a minusend, add the frist bead
             if(_neighborList->getNeighbors(bb)[ni]->isMinusEnd())
             {
-                bindex = _neighborList->getNeighbors(bb)[ni]->getFirstBead()->_dbIndex;
+                bindex = _neighborList->getNeighbors(bb)[ni]->getFirstBead()->getDbIndex();
                 beadSet[cumnn+idx] = bindex;
                 krep[cumnn+idx] = bb->getRepulsionConst();
                 slen[cumnn+idx] = bb->getScreeningLength();
                 idx++;
             }
             //add all second beads
-            bindex = _neighborList->getNeighbors(bb)[ni]->getSecondBead()->_dbIndex;
+            bindex = _neighborList->getNeighbors(bb)[ni]->getSecondBead()->getDbIndex();
             beadSet[cumnn + idx] = bindex;
             krep[cumnn+idx] = bb->getRepulsionConst();
             slen[cumnn+idx] = bb->getScreeningLength();
@@ -101,7 +101,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 
         }
         nneighbors[idb] = idx;
-        bubbleSet[idb] = bb->getBead()->_dbIndex;
+        bubbleSet[idb] = bb->getBead()->getDbIndex();
         radius[idb] = bb->getRadius();
         cumnn+=idx;
 //        nintvec[idb] = cumnn;

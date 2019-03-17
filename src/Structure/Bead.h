@@ -99,7 +99,6 @@ public:
     static bool triggercylindervectorization;
     [[deprecated]] vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
-    int _dbIndex =  -1; ///<Position in database vector
 
 	[[deprecated]] vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
@@ -170,8 +169,6 @@ public:
         //Reset in bead coordinate vector and add _dbIndex to the list of removedbindex.
         removedbindex.push_back(_dbIndex);
         resetcoordinates();
-        //remove from database
-        _beads.removeElement(this);
         //remove if pinned
         if(_isPinned) removeAsPinned();
         Nbeads = _beads.getElements().size();
@@ -294,9 +291,6 @@ public:
         cout << endl;
     }
 
-    static double getmaxbindex(){
-        return maxbindex;
-    }
 private:
     Compartment* _compartment = nullptr; ///< Pointer to the compartment that this bead is in
     
@@ -309,7 +303,6 @@ private:
                                          ///< (attached to some element in SubSystem)
     //Vectorize beads so the coordinates are all available in a single array.
     //@{
-    static int maxbindex;//Maximum bead index alloted.
     static int vectormaxsize;//maximum number of beads that can be appended without
     // revectorization
     static int Nbeads;//Total number of beads in the system
@@ -347,7 +340,7 @@ private:
             coord[index] = b->coordinate[0];
             coord[index + 1] = b->coordinate[1];
             coord[index + 2] = b->coordinate[2];
-            b->_dbIndex = idx;
+            b->getDbIndex() = idx;
             idx++;
         }
         Nbeads =_beads.getElements().size();

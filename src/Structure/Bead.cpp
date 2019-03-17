@@ -24,7 +24,6 @@ using namespace mathfunc;
 
 OldDatabase<Bead*> Bead::_pinnedBeads;
 //static vars needed to vectorize on-the-fly
-int Bead::maxbindex = 0;
 int Bead::vectormaxsize = 0;
 int Bead::Nbeads = 0;
 bool Bead::triggercylindervectorization = false;

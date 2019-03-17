@@ -41,7 +41,7 @@ protected:
 
 
     ///< Data vectors for calculation
-    double *coord;  ///<bead coordinates (length 3*N)
+    [[deprecated]] double *coord;  ///<bead coordinates (length 3*N)
     
     double *force = nullptr; ///< bead forces (length 3*N)
     double *forceAux = nullptr; ///< auxiliary force calculations (length 3*N)
@@ -179,23 +179,6 @@ protected:
     /// Print forces on all beads
     void printForces();
     
-    /// Initialize data arrays
-    inline void allocate(long numBeadsx3, long Ncyl) {
-
-//        coord = new double[numBeadsx3];
-        force = new double[numBeadsx3];
-        forceAux = new double[numBeadsx3];
-        forceAuxPrev = new double[numBeadsx3];
-    }
-    
-    ///Deallocation of CG arrays
-    inline void deallocate() {
-//        coord = CUDAcommon::serlvars.coord;
-//        delete [] coord;
-        delete [] force;
-        delete [] forceAux;
-        delete [] forceAuxPrev;
-    }
 public:
     static long N; ///< Number of beads in the system, set before each minimization
     static long Ncyl;

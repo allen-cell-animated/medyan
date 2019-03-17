@@ -29,7 +29,7 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::vectorize() {
     int i = 0;
     for(auto b : Bead::getPinnedBeads()) {
 
-        beadSet[n * i] = b->_dbIndex;
+        beadSet[n * i] = b->getDbIndex();
         kattr[n * i] = SysParams::Mechanics().pinK;
 
         pins[3 * (n * i)] = b->getPinPosition()[0];

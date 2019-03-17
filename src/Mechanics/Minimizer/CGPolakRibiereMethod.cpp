@@ -243,7 +243,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     long i = 0;
     long index = 0;
     for(auto b:Bead::getBeads()){
-        index = 3 * b->_dbIndex;
+        index = 3 * b->getDbIndex();
         std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                 ""<<coord[index + 2]<<" "
                 ""<<force[index]<<" "
@@ -393,13 +393,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->_dbIndex;
+            index = 3 * b->getDbIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->_dbIndex<<endl;
+                    b->getDbIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -609,13 +609,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         long i = 0;
         long index = 0;
         for(auto b:Bead::getBeads()){
-            index = 3 * b->_dbIndex;
+            index = 3 * b->getDbIndex();
 
             std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
                     ""<<coord[index + 2]<<" "
                     ""<<forceAux[index]<<" "
                     ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-                    b->_dbIndex<<endl;
+                    b->getDbIndex()<<endl;
         }
         std::cout<<"MB printed beads & forces"<<endl;
 #endif
@@ -805,13 +805,13 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 //        long i = 0;
 //        long index = 0;
 //        for(auto b:Bead::getBeads()){
-//            index = 3 * b->_dbIndex;
+//            index = 3 * b->getDbIndex();
 //
 //            std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
 //                    ""<<coord[index + 2]<<" "
 //                    ""<<forceAux[index]<<" "
 //                    ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-//                    b->_dbIndex<<endl;
+//                    b->getDbIndex()<<endl;
 //        }
 //        std::cout<<"MB printed beads & forces"<<endl;
 //#endif

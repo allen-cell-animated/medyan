@@ -1316,15 +1316,15 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                             auto xx2 = ccylvec[cnindex]->getCylinder();
 //                            std::cout<<xx1->getId()<<" "<<c.ID<<" "<<xx2->getId()<<" "
 //                                    ""<<cn.ID<<endl;
-                            /*if(xx1->getFirstBead()->_dbIndex != c.bindices[0] ||
-                               xx1->getSecondBead()->_dbIndex != c.bindices[1])
-                                std::cout<<"DB1 "<<xx1->getFirstBead()->_dbIndex<<" "
-                                        ""<<xx1->getSecondBead()->_dbIndex<<" "<<c
+                            /*if(xx1->getFirstBead()->getDbIndex() != c.bindices[0] ||
+                               xx1->getSecondBead()->getDbIndex() != c.bindices[1])
+                                std::cout<<"DB1 "<<xx1->getFirstBead()->getDbIndex()<<" "
+                                        ""<<xx1->getSecondBead()->getDbIndex()<<" "<<c
                                                  .bindices[0]<<" "<<c.bindices[1]<<endl;
-                            if(xx2->getFirstBead()->_dbIndex != cn.bindices[0] ||
-                               xx2->getSecondBead()->_dbIndex != cn.bindices[1])
-                                std::cout<<"DB2 "<<xx2->getFirstBead()->_dbIndex<<" "
-                                        ""<<xx2->getSecondBead()->_dbIndex<<" "<<cn
+                            if(xx2->getFirstBead()->getDbIndex() != cn.bindices[0] ||
+                               xx2->getSecondBead()->getDbIndex() != cn.bindices[1])
+                                std::cout<<"DB2 "<<xx2->getFirstBead()->getDbIndex()<<" "
+                                        ""<<xx2->getSecondBead()->getDbIndex()<<" "<<cn
                                                  .bindices[0]<<" "<<cn.bindices[1]<<endl;*/
                             auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
                             auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
@@ -2671,15 +2671,15 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                         auto xx2 = ccylvec[cnindex]->getCylinder();
 //                        std::cout<<xx1->getId()<<" "<<c.ID<<" "<<xx2->getId()<<" "
 //                                ""<<cn.ID<<endl;
-                        if(xx1->getFirstBead()->_dbIndex != c.bindices[0] ||
-                                xx1->getSecondBead()->_dbIndex != c.bindices[1])
-                            std::cout<<"DB1 "<<xx1->getFirstBead()->_dbIndex<<" "
-                                ""<<xx1->getSecondBead()->_dbIndex<<" "<<c
+                        if(xx1->getFirstBead()->getDbIndex() != c.bindices[0] ||
+                                xx1->getSecondBead()->getDbIndex() != c.bindices[1])
+                            std::cout<<"DB1 "<<xx1->getFirstBead()->getDbIndex()<<" "
+                                ""<<xx1->getSecondBead()->getDbIndex()<<" "<<c
                                          .bindices[0]<<" "<<c.bindices[1]<<endl;
-                        if(xx2->getFirstBead()->_dbIndex != cn.bindices[0] ||
-                           xx2->getSecondBead()->_dbIndex != cn.bindices[1])
-                        std::cout<<"DB2 "<<xx2->getFirstBead()->_dbIndex<<" "
-                                ""<<xx2->getSecondBead()->_dbIndex<<" "<<cn
+                        if(xx2->getFirstBead()->getDbIndex() != cn.bindices[0] ||
+                           xx2->getSecondBead()->getDbIndex() != cn.bindices[1])
+                        std::cout<<"DB2 "<<xx2->getFirstBead()->getDbIndex()<<" "
+                                ""<<xx2->getSecondBead()->getDbIndex()<<" "<<cn
                                          .bindices[0]<<" "<<cn.bindices[1]<<endl;*/
                         auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
                         auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
