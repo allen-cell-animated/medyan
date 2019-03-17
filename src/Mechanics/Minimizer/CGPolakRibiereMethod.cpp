@@ -21,6 +21,8 @@
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
+#include "Structure/Bead.h"
+
 void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
                             double MAXDIST, double LAMBDAMAX, bool steplimit){
 #ifdef CUDATIMETRACK
@@ -55,7 +57,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif
-    FFM.computeForces(coord, force); //split and synchronize in the end
+    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data()); //split and synchronize in the end
+
 #ifdef SERIAL // SERIAL
     Bead::getDbData().forcesAux = Bead::getDbData().forces;
     Bead::getDbData().forcesAuxP = Bead::getDbData().forces;
@@ -105,18 +108,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
 #endif
 #ifdef CUDATIMETRACK
-/*    std::cout<<"Time total computeForces (s) CUDA "<<CUDAcommon::cudatime
-            .TcomputeF<<" SERL "<<CUDAcommon::serltime.TcomputeF<<" factor "
-                     ""<<CUDAcommon::serltime.TcomputeF/CUDAcommon::cudatime
-            .TcomputeF<<endl;
-    std::cout<<"Time split computeForces (s) CUDA ";
-    for(auto x:CUDAcommon::cudatime.TveccomputeF)
-        std::cout<<x<<" ";
-    std::cout<<endl;
-    std::cout<<"Time split computeForces (s) SERL ";
-    for(auto x:CUDAcommon::serltime.TveccomputeF)
-        std::cout<<x<<" ";
-    std::cout<<endl;*/
 
     //Reset lambda time tracker.
     CUDAcommon::cudatime.Tlambda = 0.0;
@@ -388,7 +379,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
 
         //compute new forces
-        FFM.computeForces(coord, forceAux);//split and synchronize
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
 #ifdef DETAILEDOUTPUT
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
@@ -419,20 +410,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         chrono::duration<double> elapsed_run(tend - tbegin);
         CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
         CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
-#endif
-#ifdef CUDATIMETRACK
-/*        std::cout<<"Time total computeForces (s) CUDA "<<CUDAcommon::cudatime
-                .TcomputeF<<" SERL "<<CUDAcommon::serltime.TcomputeF<<" factor "
-                         ""<<CUDAcommon::serltime.TcomputeF/CUDAcommon::cudatime
-                .TcomputeF<<endl;
-        std::cout<<"Time split computeForces (s) CUDA ";
-        for(auto x:CUDAcommon::cudatime.TveccomputeF)
-            std::cout<<x<<" ";
-        std::cout<<endl;
-        std::cout<<"Time split computeForces (s) SERL ";
-        for(auto x:CUDAcommon::serltime.TveccomputeF)
-            std::cout<<x<<" ";
-        std::cout<<endl;*/
 #endif
 #ifdef CUDATIMETRACK
         tbegin = chrono::high_resolution_clock::now();
@@ -604,7 +581,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         s1 += elapsed_runs1.count();
 #endif
         //compute new forces
-        FFM.computeForces(coord, forceAux);//split and synchronize
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());//split and synchronize
 #ifdef DETAILEDOUTPUT
         std::cout<<"MB printing beads & forces L "<<lambda<<endl;
         long i = 0;
@@ -983,7 +960,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #endif
 
     //final force calculation
-    FFM.computeForces(coord, force);
+    FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
 #ifdef ALLSYNC
     cudaDeviceSynchronize();
 #endif

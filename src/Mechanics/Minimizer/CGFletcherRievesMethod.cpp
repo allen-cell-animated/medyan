@@ -31,7 +31,7 @@
         startMinimization();
         FFM.vectorizeAllForceFields();
 
-        FFM.computeForces(coord, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
         //compute first gradient
@@ -51,7 +51,7 @@
             moveBeads(lambda);
 
             //compute new forces
-            FFM.computeForces(coord, forceAux);
+            FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
 
             //compute direction
             newGrad = CGMethod::allFADotFA();
@@ -88,7 +88,7 @@
         }
 
         //final force calculation
-        FFM.computeForces(coord, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
         FFM.computeLoadForces();
         endMinimization();

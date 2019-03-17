@@ -16,6 +16,7 @@
 #include "ForceFieldManager.h"
 #include "Composite.h"
 #include "Output.h"
+#include "Structure/Bead.h"
 
     void SteepestDescent::minimize(ForceFieldManager &FFM, double GRADTOL,
                                    double MAXDIST, double LAMBDAMAX, bool steplimit) {
@@ -31,7 +32,7 @@
         startMinimization();
         FFM.vectorizeAllForceFields();
 
-        FFM.computeForces(coord, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
 
         int numIter = 0;
@@ -47,7 +48,7 @@
             moveBeads(lambda);
 
             //compute new forces
-            FFM.computeForces(coord, forceAux);
+            FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forcesAux.data());
 
             //shift gradient
             shiftGradient(0.0);
@@ -70,7 +71,7 @@
         }
 
         //final force calculation
-        FFM.computeForces(coord, force);
+        FFM.computeForces(Bead::getDbData().coords.data(), Bead::getDbData().forces.data());
         Bead::getDbData().forcesAux = Bead::getDbData().forces;
         FFM.computeLoadForces();
         endMinimization();
