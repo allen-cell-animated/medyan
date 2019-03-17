@@ -1058,8 +1058,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
 #ifdef DETAILEDOUTPUT
     std::cout<<"printing beads & forces"<<endl;
     for(auto b:Bead::getBeads()){
-        std::cout<<b->getId()<<" "<<b->coordinate[0]<<" "<<b->coordinate[1]<<" "
-                ""<<b->coordinate[2]<<" "
+        std::cout<<b->getId()<<" "<<b->vcoordinate()[0]<<" "<<b->vcoordinate()[1]<<" "
+                ""<<b->vcoordinate()[2]<<" "
                 ""<<b->force[index]<<" "
                 ""<<b->force[index+1]<<" "<<b->force[index+2]<<endl;
     }

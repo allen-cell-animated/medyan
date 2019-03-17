@@ -97,7 +97,7 @@ void Cylinder::resetarrays() {
 }
 
 void Cylinder::updateCoordinate() {
-    coordinate = midPointCoordinate(_b1->coordinate, _b2->coordinate, 0.5);
+    coordinate = midPointCoordinate(_b1->vcoordinate(), _b2->vcoordinate(), 0.5);
     //update the coordiante in cylinder structure.
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
     cylindervec[_dcIndex].coord[0] = coordinate[0];
@@ -152,7 +152,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 #ifdef MECHANICS
           //set eqLength according to cylinder size
           
-    double eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
+    double eqLength  = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     if(!SysParams::RUNSTATE) //RESTARTPHASE
     {
         int nummonomers = (int) round(eqLength/ SysParams::Geometry().monomerSize[type]);
@@ -283,8 +283,8 @@ void Cylinder::updatePosition() {
     
 #ifdef MECHANICS
     //update length
-    _mCylinder->setLength(twoPointDistance(_b1->coordinate,
-                                           _b2->coordinate));
+    _mCylinder->setLength(twoPointDistance(_b1->vcoordinate(),
+                                           _b2->vcoordinate()));
 #endif
 
 }
@@ -430,8 +430,8 @@ bool Cylinder::within(Cylinder* other, double dist) {
         return true;
     
     //briefly check endpoints of other
-    if(twoPointDistancesquared(coordinate, other->_b1->coordinate) <= (dist * dist) ||
-       twoPointDistancesquared(coordinate, other->_b2->coordinate) <= (dist * dist))
+    if(twoPointDistancesquared(coordinate, other->_b1->vcoordinate()) <= (dist * dist) ||
+       twoPointDistancesquared(coordinate, other->_b2->vcoordinate()) <= (dist * dist))
         return true;
     
     return false;

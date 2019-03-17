@@ -41,7 +41,7 @@ Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
 
 void Bubble::updatePosition() {
     
-    coordinate = _bead->coordinate;
+    coordinate = _bead->vcoordinate();
 }
 
 void Bubble::printSelf() {

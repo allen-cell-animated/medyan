@@ -176,10 +176,10 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2], CCyl
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
                     auto mp2 = (float)*it / SysParams::Geometry().cylinderNumMon[_nfilamentType];
 
-                    auto x1 = c->getFirstBead()->coordinate;
-                    auto x2 = c->getSecondBead()->coordinate;
-                    auto x3 = cn->getFirstBead()->coordinate;
-                    auto x4 = cn->getSecondBead()->coordinate;
+                    auto x1 = c->getFirstBead()->vcoordinate();
+                    auto x2 = c->getSecondBead()->vcoordinate();
+                    auto x3 = cn->getFirstBead()->vcoordinate();
+                    auto x4 = cn->getSecondBead()->vcoordinate();
 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);

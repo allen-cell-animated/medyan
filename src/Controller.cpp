@@ -690,9 +690,9 @@ void Controller::updatePositions() {
                   " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
         if(c.bindices[0] != idx1 || c.bindices[1] != idx2) {
 
-            std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1] << " "
-                    "" << b1->coordinate[2] << " " << " " << b2->coordinate[0] << " "
-                              "" << b2->coordinate[1] << " " << b2->coordinate[2] << " idx "
+            std::cout << "Bead " << b1->vcoordinate()[0] << " " << b1->vcoordinate()[1] << " "
+                    "" << b1->vcoordinate()[2] << " " << " " << b2->vcoordinate()[0] << " "
+                              "" << b2->vcoordinate()[1] << " " << b2->vcoordinate()[2] << " idx "
                       << b1->_dbIndex << " "
                               "" << b2->_dbIndex << endl;
 
@@ -759,14 +759,14 @@ void Controller::pinBoundaryFilaments() {
         if((plusEndC->getSecondBead() == b) ||
            (minusEndC->getFirstBead() == b)) {
 
-            cout << _subSystem->getBoundary()->distance(b->coordinate) << endl;
+            cout << _subSystem->getBoundary()->distance(b->vcoordinate()) << endl;
             cout << SysParams::Mechanics().pinDistance << endl;
 
 
             //if within dist to boundary, add
-            if(_subSystem->getBoundary()->distance(b->coordinate) < SysParams::Mechanics().pinDistance) {
+            if(_subSystem->getBoundary()->distance(b->vcoordinate()) < SysParams::Mechanics().pinDistance) {
 
-                b->pinnedPosition = b->coordinate;
+                b->pinnedPosition = b->vcoordinate();
                 b->addAsPinned();
             }
         }
@@ -788,16 +788,16 @@ void Controller::pinLowerBoundaryFilaments() {
         if((plusEndC->getSecondBead() != b) ||
            (minusEndC->getFirstBead() != b)) {
 
-            //cout << _subSystem->getBoundary()->lowerdistance(b->coordinate) << endl;
+            //cout << _subSystem->getBoundary()->lowerdistance(b->vcoordinate()) << endl;
             //cout << SysParams::Mechanics().pinDistance << endl;
 
             auto index = Rand::randDouble(0,1);
             //cout << index <<endl;
             //if within dist to boundary and index > 0.5, add
-            if(_subSystem->getBoundary()->lowerdistance(b->coordinate) < SysParams::Mechanics().pinDistance
+            if(_subSystem->getBoundary()->lowerdistance(b->vcoordinate()) < SysParams::Mechanics().pinDistance
                && index < SysParams::Mechanics().pinFraction && b->isPinned() == false) {
                 //cout << index << endl;
-                b->pinnedPosition = b->coordinate;
+                b->pinnedPosition = b->vcoordinate();
                 b->addAsPinned();
             }
         }

@@ -182,7 +182,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bo = _neighborList->getNeighbors(bb)[ni]->getFirstBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd2->coordinate));
+                auto normal = normalizeVector(twoPointDirection(bo->vcoordinate(), bd2->vcoordinate()));
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd2->getType()];
@@ -191,13 +191,13 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bd2->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
-                    auto newCoord = vector<double>{bd2->coordinate[0] + i * normal[0] * monSize,
-                        bd2->coordinate[1] + i * normal[1] * monSize,
-                        bd2->coordinate[2] + i * normal[2] * monSize};
+                    auto newCoord = vector<double>{bd2->vcoordinate()[0] + i * normal[0] * monSize,
+                        bd2->vcoordinate()[1] + i * normal[1] * monSize,
+                        bd2->vcoordinate()[2] + i * normal[2] * monSize};
                     
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
-                    double proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
+                    double proj = dotProduct(twoPointDirection(newCoord, bd1->vcoordinate()), normal);
                     
                     double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
                     bd2->loadForcesP[bd2->lfip++] += proj * loadForce;
@@ -211,7 +211,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bo = _neighborList->getNeighbors(bb)[ni]->getSecondBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizeVector(twoPointDirection(bo->coordinate, bd2->coordinate));
+                auto normal = normalizeVector(twoPointDirection(bo->vcoordinate(), bd2->vcoordinate()));
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd2->getType()];
@@ -220,13 +220,13 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 bd2->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
-                    auto newCoord = vector<double>{bd2->coordinate[0] + i * normal[0] * monSize,
-                        bd2->coordinate[1] + i * normal[1] * monSize,
-                        bd2->coordinate[2] + i * normal[2] * monSize};
+                    auto newCoord = vector<double>{bd2->vcoordinate()[0] + i * normal[0] * monSize,
+                        bd2->vcoordinate()[1] + i * normal[1] * monSize,
+                        bd2->vcoordinate()[2] + i * normal[2] * monSize};
                     
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
-                    double proj = dotProduct(twoPointDirection(newCoord, bd1->coordinate), normal);
+                    double proj = dotProduct(twoPointDirection(newCoord, bd1->vcoordinate()), normal);
                     
                     double loadForce = _FFType.loadForces(bd1, bd2, radius, kRep, screenLength);
                     bd2->loadForcesM[bd2->lfim++] += proj * loadForce;

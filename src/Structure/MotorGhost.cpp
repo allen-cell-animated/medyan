@@ -29,10 +29,10 @@ using namespace mathfunc;
 
 void MotorGhost::updateCoordinate() {
     
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
     
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
@@ -83,10 +83,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 #endif
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
 #ifdef PLOSFEEDBACK
     _mMotorGhost = unique_ptr<MMotorGhost>(
     new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
@@ -154,10 +154,10 @@ void MotorGhost::updatePosition() {
     }
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
     
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
@@ -204,10 +204,10 @@ void MotorGhost::updateReactionRates() {
     //walking rate changer
     if(!_walkingChangers.empty()) {
         
-        auto x1 = _c1->getFirstBead()->coordinate;
-        auto x2 = _c1->getSecondBead()->coordinate;
-        auto x3 = _c2->getFirstBead()->coordinate;
-        auto x4 = _c2->getSecondBead()->coordinate;
+        auto x1 = _c1->getFirstBead()->vcoordinate();
+        auto x2 = _c1->getSecondBead()->vcoordinate();
+        auto x3 = _c2->getFirstBead()->vcoordinate();
+        auto x4 = _c2->getSecondBead()->vcoordinate();
         
         //get component of force in direction of forward walk for C1, C2
         vector<double> motorC1Direction =

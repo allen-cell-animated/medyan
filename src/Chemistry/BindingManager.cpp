@@ -64,8 +64,8 @@ void BranchingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
         auto mp = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
 
-        auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
-        auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+        auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
+        auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
 
         auto coord = midPointCoordinate(x1, x2, mp);
 
@@ -169,8 +169,8 @@ void BranchingManager::updateAllPossibleBindings() {
 
                 auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 
-                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
-                auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+                auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
+                auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
 
                 auto coord = midPointCoordinate(x1, x2, mp);
 
@@ -206,8 +206,8 @@ void BranchingManager::updateAllPossibleBindings() {
                                        .size()*c->_dcIndex + j], 1.0) && inZone) {
                 //                output test
                 //                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
-                //                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
-                //                auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+                //                auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
+                //                auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
                 //
                 //                auto coord = midPointCoordinate(x1, x2, mp);
                 //                std::cout<<c->_dcIndex<<" "<<*it<<" "<<_subSystem->getBoundary()->distance(coord)<<endl;
@@ -275,8 +275,8 @@ void BranchingManager::addPossibleBindingsstencil(CCylinder* cc, short bindingSi
 
         auto mp = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
 
-        auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
-        auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+        auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
+        auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
 
         auto coord = midPointCoordinate(x1, x2, mp);
 
@@ -348,8 +348,8 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
 
                 auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 
-                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
-                auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+                auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
+                auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
 
                 auto coord = midPointCoordinate(x1, x2, mp);
 
@@ -392,8 +392,8 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
             if (areEqual(boundstate[0][maxnbs * c->_dcIndex + j], 1.0) && inZone) {
 //                output test
 //                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
-//                auto x1 = cc->getCylinder()->getFirstBead()->coordinate;
-//                auto x2 = cc->getCylinder()->getSecondBead()->coordinate;
+//                auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
+//                auto x2 = cc->getCylinder()->getSecondBead()->vcoordinate();
 //
 //                auto coord = midPointCoordinate(x1, x2, mp);
 //                std::cout<<c->_dcIndex<<" "<<*it<<" "<<_subSystem->getBoundary()->distance(coord)<<endl;
@@ -602,10 +602,10 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
                     auto mp2 = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 
-                    auto x1 = c->getFirstBead()->coordinate;
-                    auto x2 = c->getSecondBead()->coordinate;
-                    auto x3 = cn->getFirstBead()->coordinate;
-                    auto x4 = cn->getSecondBead()->coordinate;
+                    auto x1 = c->getFirstBead()->vcoordinate();
+                    auto x2 = c->getSecondBead()->vcoordinate();
+                    auto x3 = cn->getFirstBead()->vcoordinate();
+                    auto x4 = cn->getSecondBead()->vcoordinate();
 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
@@ -675,7 +675,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc) {
 
-    //    auto cylcoord = cc->getCylinder()->coordinate;
+    //    auto cylcoord = cc->getCylinder()->vcoordinate();
     //    std::cout<<"L Adding possible to Cyl "<<cc->getCylinder()->getId()<<" w coords "
     //            ""<<cylcoord[0]<<" "<<cylcoord[1]<<" "<<cylcoord[2]<<endl;
 
@@ -811,8 +811,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     for(auto c : _compartment->getCylinders()) {
         if (c->getType() != _filamentType) continue;
 
-        auto x1 = c->getFirstBead()->coordinate;
-        auto x2 = c->getSecondBead()->coordinate;
+        auto x1 = c->getFirstBead()->vcoordinate();
+        auto x2 = c->getSecondBead()->vcoordinate();
         auto cc = c->getCCylinder();
         vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 
@@ -822,8 +822,8 @@ void LinkerBindingManager::updateAllPossibleBindings() {
             if(cn->getType() != _filamentType) continue;
             if(c->getId() < cn->getId()) continue;
             auto ccn = cn->getCCylinder();
-            auto x3 = cn->getFirstBead()->coordinate;
-            auto x4 = cn->getSecondBead()->coordinate;
+            auto x3 = cn->getFirstBead()->vcoordinate();
+            auto x4 = cn->getSecondBead()->vcoordinate();
 
             vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
@@ -1094,10 +1094,10 @@ void LinkerBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindi
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
                     auto mp2 = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 
-                    auto x1 = c->getFirstBead()->coordinate;
-                    auto x2 = c->getSecondBead()->coordinate;
-                    auto x3 = cn->getFirstBead()->coordinate;
-                    auto x4 = cn->getSecondBead()->coordinate;
+                    auto x1 = c->getFirstBead()->vcoordinate();
+                    auto x2 = c->getSecondBead()->vcoordinate();
+                    auto x3 = cn->getFirstBead()->vcoordinate();
+                    auto x4 = cn->getSecondBead()->vcoordinate();
 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
@@ -1367,8 +1367,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     mints = chrono::high_resolution_clock::now();
     for(auto c : _compartment->getCylinders()) {
         if (c->getType() != _filamentType) continue;
-        auto x1 = c->getFirstBead()->coordinate;
-        auto x2 = c->getSecondBead()->coordinate;
+        auto x1 = c->getFirstBead()->vcoordinate();
+        auto x2 = c->getSecondBead()->vcoordinate();
         auto cc = c->getCCylinder();
         vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 
@@ -1378,8 +1378,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
             if(cn->getType() != _filamentType) continue;
             if(c->getId() < cn->getId()) continue;
             auto ccn = cn->getCCylinder();
-            auto x3 = cn->getFirstBead()->coordinate;
-            auto x4 = cn->getSecondBead()->coordinate;
+            auto x3 = cn->getFirstBead()->vcoordinate();
+            auto x4 = cn->getSecondBead()->vcoordinate();
 
             vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
@@ -1813,10 +1813,10 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     auto mp2 = (float) *it /
                     SysParams::Geometry().cylinderNumMon[_filamentType];
 
-                    auto x1 = c->getFirstBead()->coordinate;
-                    auto x2 = c->getSecondBead()->coordinate;
-                    auto x3 = cn->getFirstBead()->coordinate;
-                    auto x4 = cn->getSecondBead()->coordinate;
+                    auto x1 = c->getFirstBead()->vcoordinate();
+                    auto x2 = c->getSecondBead()->vcoordinate();
+                    auto x3 = cn->getFirstBead()->vcoordinate();
+                    auto x4 = cn->getSecondBead()->vcoordinate();
 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
@@ -1885,7 +1885,7 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
 }
 
 void MotorBindingManager::addPossibleBindings(CCylinder* cc) {
-    //    auto cylcoord = cc->getCylinder()->coordinate;
+    //    auto cylcoord = cc->getCylinder()->vcoordinate();
     //    std::cout<<"M Adding possible to Cyl "<<cc->getCylinder()->getId()<<" w coords "
     //            ""<<cylcoord[0]<<" "<<cylcoord[1]<<" "<<cylcoord[2]<<endl;
 
@@ -2043,8 +2043,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
     for(auto c : _compartment->getCylinders()) {
         if (c->getType() != _filamentType) continue;
 
-        auto x1 = c->getFirstBead()->coordinate;
-        auto x2 = c->getSecondBead()->coordinate;
+        auto x1 = c->getFirstBead()->vcoordinate();
+        auto x2 = c->getSecondBead()->vcoordinate();
         auto cc = c->getCCylinder();
         vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 
@@ -2054,8 +2054,8 @@ void MotorBindingManager::updateAllPossibleBindings() {
             if(cn->getType() != _filamentType) continue;
             if(c->getId() < cn->getId()) continue;
             auto ccn = cn->getCCylinder();
-            auto x3 = cn->getFirstBead()->coordinate;
-            auto x4 = cn->getSecondBead()->coordinate;
+            auto x3 = cn->getFirstBead()->vcoordinate();
+            auto x4 = cn->getSecondBead()->vcoordinate();
 
             vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
@@ -2342,10 +2342,10 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];
                     auto mp2 = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 
-                    auto x1 = c->getFirstBead()->coordinate;
-                    auto x2 = c->getSecondBead()->coordinate;
-                    auto x3 = cn->getFirstBead()->coordinate;
-                    auto x4 = cn->getSecondBead()->coordinate;
+                    auto x1 = c->getFirstBead()->vcoordinate();
+                    auto x2 = c->getSecondBead()->vcoordinate();
+                    auto x3 = cn->getFirstBead()->vcoordinate();
+                    auto x4 = cn->getSecondBead()->vcoordinate();
 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
@@ -2509,10 +2509,10 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
 //                            auto mp2 = (float)*it2 / SysParams::Geometry().cylinderNumMon[_filamentType];
 //
-//                            auto x1 = c->getFirstBead()->coordinate;
-//                            auto x2 = c->getSecondBead()->coordinate;
-//                            auto x3 = cn->getFirstBead()->coordinate;
-//                            auto x4 = cn->getSecondBead()->coordinate;
+//                            auto x1 = c->getFirstBead()->vcoordinate();
+//                            auto x2 = c->getSecondBead()->vcoordinate();
+//                            auto x3 = cn->getFirstBead()->vcoordinate();
+//                            auto x4 = cn->getSecondBead()->vcoordinate();
 //
 //                            auto m1 = midPointCoordinate(x1, x2, mp1);
 //                            auto m2 = midPointCoordinate(x3, x4, mp2);
@@ -2717,8 +2717,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //    for(auto c : _compartment->getCylinders()) {
 //        if (c->getType() != _filamentType) continue;
 //
-//        auto x1 = c->getFirstBead()->coordinate;
-//        auto x2 = c->getSecondBead()->coordinate;
+//        auto x1 = c->getFirstBead()->vcoordinate();
+//        auto x2 = c->getSecondBead()->vcoordinate();
 //        auto cc = c->getCCylinder();
 //        vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 //
@@ -2728,8 +2728,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //            if(cn->getType() != _filamentType) continue;
 //            if(c->getId() < cn->getId()) continue;
 //            auto ccn = cn->getCCylinder();
-//            auto x3 = cn->getFirstBead()->coordinate;
-//            auto x4 = cn->getSecondBead()->coordinate;
+//            auto x3 = cn->getFirstBead()->vcoordinate();
+//            auto x4 = cn->getSecondBead()->vcoordinate();
 //
 //            vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
 //            vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};

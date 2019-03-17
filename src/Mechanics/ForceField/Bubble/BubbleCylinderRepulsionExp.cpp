@@ -86,8 +86,8 @@ double BubbleCylinderRepulsionExp::energy(double *coord, double *f, int *beadSet
             
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             f1 = &f[3 * beadSet[Cumnc + ic]];
-//            double dist = twoPointDistanceStretched(b1->coordinate, b1->force,
-//                                                    b2->coordinate, b2->force, d);
+//            double dist = twoPointDistanceStretched(b1->vcoordinate(), b1->force,
+//                                                    b2->vcoordinate(), b2->force, d);
             double dist = twoPointDistanceStretched(coordb, fb, coord1, f1, d);
             double effd = dist - bradius;
             
@@ -115,7 +115,7 @@ void BubbleCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet, 
 
     
     //get norm
-//    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
+//    auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));
     
     int nb, nc;
     double *coord1, *coordb, *fb, *f1, R, f0, invL;
@@ -162,7 +162,7 @@ void BubbleCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet, 
 //                                           double kRep, double screenLength) {
 //    
 //    //get dist
-//    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+//    double dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
 //    
 //    double effd = dist - radius;
 //    
@@ -170,7 +170,7 @@ void BubbleCylinderRepulsionExp::forces(double *coord, double *f, int *beadSet, 
 //    double f0 = kRep * exp(R) / screenLength;
 //    
 //    //get norm
-//    auto norm = normalizeVector(twoPointDirection(b1->coordinate, b2->coordinate));
+//    auto norm = normalizeVector(twoPointDirection(b1->vcoordinate(), b2->vcoordinate()));
 //    
 //    b1->force[0] += - f0 *norm[0];
 //    b1->force[1] += - f0 *norm[1];
@@ -186,7 +186,7 @@ double BubbleCylinderRepulsionExp::loadForces(Bead* b1, Bead* b2, double radius,
                                               double kRep, double screenLength) {
     
     //get dist
-    double dist = twoPointDistance(b1->coordinate, b2->coordinate);
+    double dist = twoPointDistance(b1->vcoordinate(), b2->vcoordinate());
     
     double effd = dist - radius;
     

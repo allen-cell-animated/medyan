@@ -109,7 +109,7 @@ Bead::Bead(Composite* parent, int position)
 
 void Bead::updatePosition() {
     
-    try {GController::getCompartment(coordinate);}
+    try {GController::getCompartment(vec2Vector(coordinate()));}
     catch (exception& e) {
         
         //print exception

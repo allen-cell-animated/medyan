@@ -54,9 +54,9 @@ void SubSystem::resetNeighborLists() {
                 for(auto b: Bead::getBeads()) {
                     //flatten indices
                     int index = 3 * i;
-                    coord[index] = b->coordinate[0];
-                    coord[index + 1] = b->coordinate[1];
-                    coord[index + 2] = b->coordinate[2];
+                    coord[index] = b->vcoordinate()[0];
+                    coord[index + 1] = b->vcoordinate()[1];
+                    coord[index + 2] = b->vcoordinate()[2];
                     i++;
                 }
                 i = 0; //int countcyl = 0;
@@ -374,8 +374,8 @@ void SubSystem::updateBindingManagers() {
                     ""<<Cylinder::vectormaxsize<<endl;*/
         //cyl->_dcIndex = cidx;
         auto _filamentType = cyl->getType();
-        auto x1 = cyl->getFirstBead()->coordinate;
-        auto x2 = cyl->getSecondBead()->coordinate;
+        auto x1 = cyl->getFirstBead()->vcoordinate();
+        auto x2 = cyl->getSecondBead()->vcoordinate();
         vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
         cylsqmagnitudevector[cyl->_dcIndex] = sqmagnitude(X1X2);
         auto cc = cyl->getCCylinder();

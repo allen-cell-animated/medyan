@@ -208,7 +208,7 @@ std::ostream& operator<<(std::ostream& os, const VecType& v) {
 // Magnitude, distance and normalization
 template< typename VecType > inline
 auto magnitude2(const VecType& v) {
-    VecType::float_type mag2 {};
+    typename VecType::float_type mag2 {};
     for(size_t i = 0; i < VecType::vec_size; ++i) mag2 += v[i] * v[i];
     return mag2;
 }
@@ -218,18 +218,18 @@ auto magnitude(const VecType& v) {
 }
 template< typename VecType > inline
 void normalize(VecType& v) {
-    VecType::float_type norm = magnitude(v);
+    typename VecType::float_type norm = magnitude(v);
     for(size_t i = 0; i < VecType::vec_size; ++i) v[i] /= norm;
 }
 template< typename VecType > inline
 auto normalizedVector(const VecType& v) {
-    Vec< VecType::vec_size, VecType::float_type > res = v;
+    Vec< VecType::vec_size, typename VecType::float_type > res = v;
     normalize(res);
     return res;
 }
 template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
 inline auto distance2(const VT1& v1, const VT2& v2) {
-    std::common_type_t<VT1::float_type, VT2::float_type> res {};
+    std::common_type_t<typename VT1::float_type, typename VT2::float_type> res {};
     for(size_t idx = 0; idx < VT1::vec_size; ++idx) {
         res += (v2[idx] - v1[idx]) * (v2[idx] - v1[idx]);
     }
@@ -243,7 +243,7 @@ inline auto distance(const VT1& v1, const VT2& v2) {
 // plus, minus, multiply, divide
 template< typename VecType >
 inline auto operator-(const VecType& v){
-    Vec< VecType::vec_size, VecType::float_type > res;
+    Vec< VecType::vec_size, typename VecType::float_type > res;
     for(size_t idx = 0; idx < VecType::vec_size; ++idx){
         res[idx] = -v[idx];
     }
@@ -251,7 +251,7 @@ inline auto operator-(const VecType& v){
 }
 template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
 inline auto operator+(const VT1& v1, const VT2& v2) {
-    Vec< VT1::vec_size, std::common_type_t<VT1::float_type, VT2::float_type> > res;
+    Vec< VT1::vec_size, std::common_type_t<typename VT1::float_type, typename VT2::float_type> > res;
     for(size_t idx1 = 0; idx1 < VT1::vec_size; ++idx1) {
         res[idx1] = v1[idx1] + v2[idx1];
     }
@@ -266,7 +266,7 @@ inline auto& operator+=(VT1& v1, const VT2& v2) {
 }
 template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
 inline auto operator-(const VT1& v1, const VT2& v2) {
-    Vec< VT1::vec_size, std::common_type_t<VT1::float_type, VT2::float_type> > res;
+    Vec< VT1::vec_size, std::common_type_t<typename VT1::float_type, typename VT2::float_type> > res;
     for(size_t idx1 = 0; idx1 < VT1::vec_size; ++idx1) {
         res[idx1] = v1[idx1] - v2[idx1];
     }
@@ -281,7 +281,7 @@ inline auto& operator-=(VT1& v1, const VT2& v2) {
 }
 template< typename VecType, typename Float >
 inline auto operator*(const VecType& v, Float k) {
-    Vec< VecType::vec_size, std::common_type_t<VecType::float_type, Float> > res;
+    Vec< VecType::vec_size, std::common_type_t<typename VecType::float_type, Float> > res;
     for(size_t idx = 0; idx < VecType::vec_size; ++idx){
         res[idx] = v[idx] * k;
     }
@@ -308,7 +308,7 @@ inline auto& operator/=(VecType& v, Float k) {
 // dot product, cross product
 template< typename VT1, typename VT2, std::enable_if_t<VT1::vec_size == VT2::vec_size>* = nullptr >
 inline auto dot(const VT1& v1, const VT2& v2) {
-    std::common_type_t<VT1::float_type, VT2::float_type> res {};
+    std::common_type_t<typename VT1::float_type, typename VT2::float_type> res {};
     for(size_t idx = 0; idx < VT1::vec_size; ++idx)
         res += v1[idx] * v2[idx];
     return res;
@@ -318,7 +318,7 @@ template<
     std::enable_if_t<VT1::vec_size == 3 && VT2::vec_size == 3>* = nullptr
 > inline
 auto cross(const VT1& v1, const VT2& v2) {
-    return Vec< 3, std::common_type_t<VT1::float_type, VT2::float_type> > {
+    return Vec< 3, std::common_type_t<typename VT1::float_type, typename VT2::float_type> > {
         v1[1]*v2[2] - v1[2]*v2[1],
         v1[2]*v2[0] - v1[0]*v2[2],
         v1[0]*v2[1] - v1[1]*v2[0]

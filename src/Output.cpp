@@ -59,12 +59,12 @@ void BasicSnapshot::print(int snapshot) {
         //print coordinates
         for (auto cylinder : filament->getCylinderVector()){
             
-            auto x = cylinder->getFirstBead()->coordinate;
+            auto x = cylinder->getFirstBead()->vcoordinate();
             _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" ";
             
         }
         //print last bead coord
-        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+        auto x = filament->getCylinderVector().back()->getSecondBead()->vcoordinate();
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
         
         _outputFile << endl;
@@ -79,13 +79,13 @@ void BasicSnapshot::print(int snapshot) {
         
         //print coordinates
         auto x =
-            midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->coordinate,
-                               linker->getFirstCylinder()->getSecondBead()->coordinate,
+            midPointCoordinate(linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
+                               linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
                                linker->getFirstPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
         
-        x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->coordinate,
-                               linker->getSecondCylinder()->getSecondBead()->coordinate,
+        x = midPointCoordinate(linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
+                               linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
                                linker->getSecondPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
         
@@ -100,13 +100,13 @@ void BasicSnapshot::print(int snapshot) {
         
         //print coordinates
         auto x =
-            midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->coordinate,
-                               motor->getFirstCylinder()->getSecondBead()->coordinate,
+            midPointCoordinate(motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
+                               motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
                                motor->getFirstPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << " ";
         
-        x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->coordinate,
-                               motor->getSecondCylinder()->getSecondBead()->coordinate,
+        x = midPointCoordinate(motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
+                               motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
                                motor->getSecondPosition());
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2];
         
@@ -139,7 +139,7 @@ void BasicSnapshot::print(int snapshot) {
                                       branch->getType() << endl;
         
         //print coordinates
-        auto x = branch->coordinate;
+        auto x = branch->vcoordinate();
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
     
@@ -150,7 +150,7 @@ void BasicSnapshot::print(int snapshot) {
                                     bubble->getType() << endl;
         
         //print coordinates
-        auto x = bubble->coordinate;
+        auto x = bubble->vcoordinate();
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
     
@@ -484,9 +484,9 @@ void WallTensions::print(int snapshot) {
             
             if(b->isPinned()) {
                 auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
-                auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+                auto dirL = twoPointDirection(b->pinnedPosition, b->vcoordinate());
                 
-                double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+                double deltaL = twoPointDistance(b->vcoordinate(), b->pinnedPosition);
                 
                 
                 _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
@@ -502,9 +502,9 @@ void WallTensions::print(int snapshot) {
         
         if(b->isPinned()) {
             auto norm = _subSystem->getBoundary()->normal(b->pinnedPosition);
-            auto dirL = twoPointDirection(b->pinnedPosition, b->coordinate);
+            auto dirL = twoPointDirection(b->pinnedPosition, b->vcoordinate());
             
-            double deltaL = twoPointDistance(b->coordinate, b->pinnedPosition);
+            double deltaL = twoPointDistance(b->vcoordinate(), b->pinnedPosition);
             
             _outputFile<< k * deltaL * dotProduct(norm, dirL) << " ";
         }
@@ -790,7 +790,7 @@ void PlusEnd::print(int snapshot) {
         filament->getDeltaMinusEnd() << " " << filament->getDeltaPlusEnd() << endl;
 
         //print plus end
-        auto x = filament->getCylinderVector().back()->getSecondBead()->coordinate;
+        auto x = filament->getCylinderVector().back()->getSecondBead()->vcoordinate();
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2]<<" \n";
 
 

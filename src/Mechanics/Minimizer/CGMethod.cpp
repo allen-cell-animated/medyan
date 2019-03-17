@@ -529,7 +529,7 @@ void CGMethod::printForces()
     for(auto b: Bead::getBeads()) {
 
         for (int i = 0; i<3; i++)
-            cout << b->coordinate[i] << "  "<<
+            cout << b->vcoordinate()[i] << "  "<<
                  b->force[i] <<"  "<<b->forceAux[i]<<endl;
     }
     cout << "End of Print Forces" << endl;
@@ -548,24 +548,6 @@ void CGMethod::startMinimization() {
     deallocate();
     allocate(N, Ncyl);
 
-
- /*   //coord management
-    long i = 0;
-    long index = 0;
-    for(auto b: Bead::getBeads()) {
-
-        //set bead index
-        b->_dbIndex = i;
-
-        //flatten indices
-        index = 3 * i;
-        coord[index] = b->coordinate[0];
-        coord[index + 1] = b->coordinate[1];
-        coord[index + 2] = b->coordinate[2];
-        b->coordinateP = b->coordinate;
-        i++;
-    }
-    CUDAcommon::serlvars.coord = coord;*/
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runst(tend - tbegin);
@@ -836,10 +818,6 @@ void CGMethod::endMinimization() {
 
         //flatten indices
         index = 3 * b->_dbIndex;
-        b->coordinate[0] = coord[index];
-        b->coordinate[1] = coord[index + 1];
-        b->coordinate[2] = coord[index + 2];
-//        std::cout<<"Bead "<<b->coordinate[0]<<" "<<b->coordinate[1]<<" "<<b->coordinate[2]<<endl;
         b->force[0] = force[index];
         b->force[1] = force[index + 1];
         b->force[2] = force[index + 2];

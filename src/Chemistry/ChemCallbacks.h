@@ -437,8 +437,8 @@ struct BranchingCallback {
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
         if(SysParams::RUNSTATE==true){
         //Get a position and direction of a new filament
-        auto x1 = c1->getFirstBead()->coordinate;
-        auto x2 = c1->getSecondBead()->coordinate;
+        auto x1 = c1->getFirstBead()->vcoordinate();
+        auto x2 = c1->getSecondBead()->vcoordinate();
         
         //get original direction of cylinder
         auto p= midPointCoordinate(x1, x2, pos);
@@ -863,8 +863,8 @@ struct FilamentCreationCallback {
                 for(auto bb : Bubble::getBubbles()) {
                     auto radius = bb->getRadius();
                     
-                    if((twoPointDistancesquared(bb->getBead()->coordinate, position) < (radius * radius)) ||
-                       (twoPointDistancesquared(bb->getBead()->coordinate, npp) < (radius * radius))){
+                    if((twoPointDistancesquared(bb->getBead()->vcoordinate(), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(bb->getBead()->vcoordinate(), npp) < (radius * radius))){
                         inbubble = true;
                         break;
                     }
@@ -909,8 +909,8 @@ struct FilamentCreationCallback {
                 for(auto bb : Bubble::getBubbles()) {
                     auto radius = bb->getRadius();
                     
-                    if((twoPointDistancesquared(bb->getBead()->coordinate, position) < (radius * radius)) ||
-                       (twoPointDistancesquared(bb->getBead()->coordinate, npp) < (radius * radius))){
+                    if((twoPointDistancesquared(bb->getBead()->vcoordinate(), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(bb->getBead()->vcoordinate(), npp) < (radius * radius))){
                         inbubble = true;
                         break;
                     }
