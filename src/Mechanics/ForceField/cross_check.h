@@ -64,7 +64,7 @@ inline bool crosscheckforces(double* force){
             //        if(force[idx+2]!=b->force[2])
             //            std::cout<<"2"<<endl;
             
-            if(force[idx]==b->forceAux[0] && force[idx+1]==b->forceAux[1] && force[idx+2]==b->forceAux[2])
+            if(force[idx]==b->forceAux()[0] && force[idx+1]==b->forceAux()[1] && force[idx+2]==b->forceAux()[2])
                 state=true;
             else{
                 state=false;
