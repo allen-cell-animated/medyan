@@ -139,7 +139,7 @@ void BasicSnapshot::print(int snapshot) {
                                       branch->getType() << endl;
         
         //print coordinates
-        auto x = branch->vcoordinate();
+        auto x = branch->coordinate;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
     
@@ -150,7 +150,7 @@ void BasicSnapshot::print(int snapshot) {
                                     bubble->getType() << endl;
         
         //print coordinates
-        auto x = bubble->vcoordinate();
+        auto x = bubble->coordinate;
         _outputFile<<x[0]<<" "<<x[1]<<" "<<x[2] << endl;
     }
     
