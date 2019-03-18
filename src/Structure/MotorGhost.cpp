@@ -421,7 +421,7 @@ species_copy_t MotorGhost::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto m : _motorGhosts.getElements()) {
+    for(auto m : getElements()) {
         
         auto s = m->getCMotorGhost()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
