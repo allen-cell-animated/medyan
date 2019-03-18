@@ -922,7 +922,7 @@ void BoundaryBubbleNL::updateNeighbors(BoundaryElement* be) {
     //loop through beads, add as neighbor
     for (auto &b : Bubble::getBubbles()) {
 
-        double dist = be->distance(b->vcoordinate());
+        double dist = be->distance(b->coordinate);
         //If within range, add it
         if(dist < _rMax) _list[be].push_back(b);
     }
@@ -956,7 +956,7 @@ void BoundaryBubbleNL::addDynamicNeighbor(DynamicNeighbor* n) {
     for(auto it = _list.begin(); it != _list.end(); it++) {
 
         //if within range, add it
-        if(it->first->distance(b->vcoordinate()) < _rMax)
+        if(it->first->distance(b->coordinate) < _rMax)
             it->second.push_back(b);
     }
 }

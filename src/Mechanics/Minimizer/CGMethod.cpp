@@ -515,8 +515,6 @@ void CGMethod::startMinimization() {
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    coord = CUDAcommon::serlvars.coord; // deprecated
-    N = 3 * Bead::numBeads(); // deprecated
     Ncyl = Cylinder::getCylinders().size();
 
 #ifdef CUDATIMETRACK

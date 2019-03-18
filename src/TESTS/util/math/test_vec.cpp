@@ -9,11 +9,11 @@ using namespace mathfunc;
 
 TEST_CASE("Vec tests", "[Vec]") {
     Vec< 3, float > v3f_1 = {0.0f, 1.0f, 2.0f};
-    VecArray< 3, float > va3f = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+    VecArray< 3, float > va3f = { {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f} };
     auto v3f_2 = va3f[1];
 
     Vec< 4, double > v4d_1 = {-4.0, -3.0, -2.0, -1.0};
-    VecArray< 4, double > va4d = {-1.0, -2.0, -3.0, -4.0};
+    VecArray< 4, double > va4d = { {-1.0, -2.0, -3.0, -4.0} };
     auto v4d_2 = va4d[0];
 
     SECTION("Compound operators") {

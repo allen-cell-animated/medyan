@@ -18,6 +18,8 @@
 #include "cross_check.h"
 #include <algorithm>
 
+#include "Structure/Bead.h"
+
 void ForceFieldManager::vectorizeAllForceFields() {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -294,7 +296,7 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
     tbegin = chrono::high_resolution_clock::now();
 #endif
     //@{
-    for (int i = 0; i < CGMethod::N; i++)
+    for (int i = 0; i < Bead::getDbData().forces.size_raw(); i++)
         f[i] = 0.0;
     //@}
 #ifdef CUDATIMETRACK

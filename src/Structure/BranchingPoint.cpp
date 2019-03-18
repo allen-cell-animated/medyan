@@ -246,7 +246,7 @@ species_copy_t BranchingPoint::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto b : _branchingPoints.getElements()) {
+    for(auto b : getElements()) {
         
         auto s = b->getCBranchingPoint()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());

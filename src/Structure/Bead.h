@@ -169,7 +169,6 @@ public:
         */
         //remove if pinned
         if(_isPinned) removeAsPinned();
-        Nbeads = getElements().size();
     }
     //@}
     

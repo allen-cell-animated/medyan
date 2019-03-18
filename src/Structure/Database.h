@@ -99,6 +99,12 @@ public:
     //@}
 };
 
+// Static variable definition (can be inlined starting C++17)
+template< typename T, typename DatabaseData >
+std::vector<T*> Database< T, DatabaseData >::_elems;
+template< typename T, typename DatabaseData >
+DatabaseData Database< T, DatabaseData>::_dbData;
+
 template< typename T >
 class OldDatabase {
 protected:

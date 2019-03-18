@@ -918,7 +918,7 @@ species_copy_t Filament::countSpecies(short filamentType, const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto f : _filaments.getElements()) {
+    for(auto f : getElements()) {
         
         if(f->getType() != filamentType) continue;
         

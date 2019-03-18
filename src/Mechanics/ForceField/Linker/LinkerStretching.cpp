@@ -50,7 +50,7 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
     int i = 0;
 
     for (auto l: Linker::getLinkers()) {
-        l->getDbIndex() = i;
+        /* Haoran 03/18/2019 l->getDbIndex() = i; */
         beadSet[n * i] = l->getFirstCylinder()->getFirstBead()->getDbIndex();
         beadSet[n * i + 1] = l->getFirstCylinder()->getSecondBead()->getDbIndex();
         beadSet[n * i + 2] = l->getSecondCylinder()->getFirstBead()->getDbIndex();

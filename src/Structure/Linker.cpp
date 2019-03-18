@@ -208,7 +208,7 @@ species_copy_t Linker::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto l : _linkers.getElements()) {
+    for(auto l : getElements()) {
         
         auto s = l->getCLinker()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
