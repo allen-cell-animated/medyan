@@ -143,7 +143,6 @@ public:
     ///Parameter management
     virtual int getType() {return _motorType;}
     
-    [[deprecated]] void setID(int ID) {_motorID = ID;}
     //@}
     
     /// Get the birth time

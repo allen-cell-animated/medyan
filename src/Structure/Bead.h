@@ -97,14 +97,10 @@ public:
 
     ///@note - all vectors are in x,y,z coordinates.
     static bool triggercylindervectorization;
-    [[deprecated]] vector<double> coordinate;  ///< Coordinates of the bead
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
 
-	[[deprecated]] vector<double> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
     vector<double> force1;
-    [[deprecated]] vector<double> forceAux;  ///< An auxiliary field needed during CG minimization.
-    [[deprecated]] vector<double> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
     vector<double> brforce; //Qin boundary repulsion force
     vector<double> pinforce;
@@ -179,7 +175,7 @@ public:
     
     /// Get all instances of this class from the SubSystem
     static const vector<Bead*>& getBeads() {
-        return _beads.getElements();
+        return getElements();
     }
     
     /// Add this bead as a pinned bead
@@ -349,13 +345,6 @@ private:
         maxbindex = _beads.getElements().size();
         removedbindex.clear();
     }*/
-    //deprecated
-    static void copyvector(double* newcoord, double* coord){
-        int idx = 0;
-        for(auto b:_beads.getElements()){
-            idx++;
-        }
-    }
     /* Haoran 03/17/2019
     //copy coodinates of this bead to the appropriate spot in coord vector.
     void  copycoordinatestovector() {

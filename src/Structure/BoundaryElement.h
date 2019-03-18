@@ -121,7 +121,7 @@ public:
     }
     /// Get the number of boundary elements in this system
     static int numBoundaryElements() {
-        return gettElements().size();
+        return getElements().size();
     }
     
     virtual void printSelf();

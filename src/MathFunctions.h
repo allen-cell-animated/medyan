@@ -39,9 +39,9 @@ inline auto vector2Vec(const vector<Float>& v) {
     }
     return res;
 }
-template< typename VecType >
+template< typename VecType, size_t = VecType::vec_size >
 inline auto vec2Vector(const VecType& a) {
-    return vector<typename VecType::float_type>(a.value.begin(), a.value.end());
+    return vector<typename VecType::float_type>(a.begin(), a.end());
 }
 
     struct temp{
