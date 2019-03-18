@@ -213,7 +213,7 @@ public:
     
     /// Get the number of beads in this system
     static int numBeads() {
-        return _beads.countElements();
+        return getElements().size();
     }
     
     /// Update the position, inherited from Movable

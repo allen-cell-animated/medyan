@@ -51,7 +51,10 @@ template<
     typename Container = std::vector< Float >
 > struct VecArray {
 
+    static constexpr size_t element_vec_size = dim;
+    using float_type = Float;
     using container_type = Container;
+
     using size_type = typename container_type::size_type;
     static_assert(std::is_same<typename container_type::iterator::iterator_category, std::random_access_iterator_tag>::value,
         "The iterator of the VecArray container must be random access iterator.");
@@ -323,6 +326,23 @@ auto cross(const VT1& v1, const VT2& v2) {
         v1[2]*v2[0] - v1[0]*v2[2],
         v1[0]*v2[1] - v1[1]*v2[0]
     };
+}
+
+// VecArray arithmetics
+
+// Dot product
+// Always using the size of the 1st operand.
+// Doing dot product on arrays with different sizes leads to undefined behavior.
+template< typename VA1, typename VA2, std::enable_if_t<VA1::element_vec_size == VA2::element_vec_size>* = nullptr >
+inline auto dot(const VA1& v1, const VA2& v2) {
+    using res_type = std::common_type_t< typename VA1::float_type, typename VA2::float_type >;
+    res_type res {};
+
+    const size_t num = v1.value.size();
+    for(size_t i = 0; i < num; ++i) {
+        res += v1.value[i] * v2.value[i];
+    }
+    return res;
 }
 
 } // namespace mathfunc

@@ -13,10 +13,13 @@
 
 #include "CGMethod.h"
 
+#include <algorithm> // max
+
 #include "ForceFieldManager.h"
 
 #include "CGMethodCUDA.h"
-#include "Bead.h"
+#include "MathFunctions.h"
+#include "Structure/Bead.h"
 #ifdef CUDAACCL
 #ifdef __CUDACC__
 #define CUDA_HOSTDEV __host__ __device__
@@ -376,20 +379,11 @@ void CGMethod::CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *
 #endif
 double CGMethod::allFDotF()
 {
-
-    double g = 0;
-    for(int i = 0; i < N; i++)
-        g += force[i] * force[i];
-
-    return g;
+    return mathfunc::dot(Bead::getDbData().forces, Bead::getDbData().forces);
 }
 
 double CGMethod::allFADotFA()
 {
-
-    double g = 0;
-    for(int i = 0; i < N; i++)
-        g += forceAux[i] * forceAux[i];
 //#ifdef CUDAACCL
 
 //    auto g_cuda = gpuFDotF(CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_forceAux);
@@ -406,24 +400,16 @@ double CGMethod::allFADotFA()
 //        std::cout << g << " " << g_cuda << endl;
 //        std::cout << "Precison mismatch FADotFA " << abs(g - g_cuda) << endl;
 //    }
-    return g;
+    return mathfunc::dot(Bead::getDbData().forcesAux, Bead::getDbData().forcesAux);
 }
 
 double CGMethod::allFADotFAP()
 {
-    double g = 0;
-    for(int i = 0; i < N; i++)
-        g += forceAux[i] * forceAuxPrev[i];
-
-    return g;
+    return mathfunc::dot(Bead::getDbData().forcesAux, Bead::getDbData().forcesAuxP);
 }
 
 double CGMethod::allFDotFA()
 {
-    double g = 0;
-    for(int i = 0; i < N; i++) {
-        g += force[i] * forceAux[i];
-    }
 //#ifdef CUDAACCL
 //    auto g_cuda = gpuFDotF(CUDAcommon::getCUDAvars().gpu_force,CUDAcommon::getCUDAvars().gpu_forceAux);
 //#endif
@@ -439,44 +425,30 @@ double CGMethod::allFDotFA()
 //        std::cout << g << " " << g_cuda << endl;
 //
 //    }
-    return g;
+    return mathfunc::dot(Bead::getDbData().forces, Bead::getDbData().forcesAux);
 }
 
 double CGMethod::maxF() {
-
-    double maxF = 0.0;
-    double mag = 0.0;
-    for(int i = 0; i < N/3; i++) {
-        mag = 0.0;
-        for(int j = 0; j < 3; j++)
-            mag += forceAux[3 * i + j]*forceAux[3 * i + j];
-        mag = sqrt(mag);
-//        std::cout<<"SL "<<i<<" "<<mag*mag<<" "<<forceAux[3 * i]<<" "<<forceAux[3 * i + 1]<<" "<<forceAux[3 * i +
-//                2]<<endl;
-        if(mag > maxF) maxF = mag;
+    double mag2Max = 0.0;
+    for(auto x : Bead::getDbData().forcesAux) {
+        mag2Max = std::max(mag2Max, mathfunc::magnitude2(x));
     }
 
-//    for(int i = 0; i < N; i++) {
-//        mag = sqrt(forceAux[i]*forceAux[i]);
-//        if(mag > maxF) maxF = mag;
-//    }
-
-    return maxF;
+    return std::sqrt(mag2Max);
 }
 
 Bead* CGMethod::maxBead() {
 
-    double maxF = 0.0;
-    double currentF;
+    double maxF2 = 0.0;
+    double currentF2;
     long index = 0;
 #ifdef SERIAL
-    for (int i = 0; i < N/3; i++) {
-        for (int j = 0 ; j < 3; j++) {
-            currentF = forceAux[3*i+j] * forceAux[3*i+j];
-        }
-        if(currentF > maxF) {
+    const std::size_t numBeads = Bead::numBeads();
+    for (size_t i = 0; i < numBeads; ++i) {
+        currentF2 = mathfunc::magnitude2(Bead::getDbData().forcesAux[i]);
+        if(currentF2 > maxF2) {
             index = i;
-            maxF = currentF;
+            maxF2 = currentF2;
         }
     }
 #endif
@@ -512,15 +484,17 @@ void CGMethod::moveBeads(double d)
     //if(!b->getstaticstate())
 
 //    std::cout<<"3N "<<N<<endl;
-    for (int i = 0; i < N; i++)
-        coord[i] = coord[i] + d * force[i];
-
+    const std::size_t num = Bead::getDbData().coords.size_raw();
+    for(size_t i = 0; i < num; ++i)
+        Bead::getDbData().coords.value[i] += d * Bead::getDbData().forces.value[i];
 }
 
 void CGMethod::shiftGradient(double d)
 {
-    for (int i = 0; i < N; i ++)
-        force[i] = forceAux[i] + d * force[i];
+    const std::size_t num = Bead::getDbData().coords.size_raw();
+    for (size_t i = 0; i < num; i ++)
+        Bead::getDbData().forces.value[i]
+            = Bead::getDbData().forcesAux.value[i] + d * Bead::getDbData().forces.value[i];
 }
 
 void CGMethod::printForces()
