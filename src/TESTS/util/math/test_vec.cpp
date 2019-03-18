@@ -4,10 +4,78 @@
 
 #include "util/math/vec.hpp"
 
-TEST_CASE("VecArray tests", "[VecArray]") {
+using std::size_t;
+using namespace mathfunc;
 
-    using std::size_t;
-    using namespace mathfunc;
+TEST_CASE("Vec tests", "[Vec]") {
+    Vec< 3, float > v3f_1 = {0.0f, 1.0f, 2.0f};
+    VecArray< 3, float > va3f = {0.0f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f};
+    auto v3f_2 = va3f[1];
+
+    Vec< 4, double > v4d_1 = {-4.0, -3.0, -2.0, -1.0};
+    VecArray< 4, double > va4d = {-1.0, -2.0, -3.0, -4.0};
+    auto v4d_2 = va4d[0];
+
+    SECTION("Compound operators") {
+        v3f_1 += v3f_2;
+        CHECK(v3f_1[0] == Approx(3.0f));
+        CHECK(v3f_1[1] == Approx(5.0f));
+        CHECK(v3f_1[2] == Approx(7.0f));
+
+        v3f_2 -= v3f_1;
+        CHECK(v3f_2[0] == Approx(-0.0f));
+        CHECK(v3f_2[1] == Approx(-1.0f));
+        CHECK(v3f_2[2] == Approx(-2.0f));
+
+        v4d_1 *= 2.0;
+        CHECK(v4d_1[0] == Approx(-8.0));
+        CHECK(v4d_1[1] == Approx(-6.0));
+        CHECK(v4d_1[2] == Approx(-4.0));
+        CHECK(v4d_1[3] == Approx(-2.0));
+
+        v4d_2 /= 2.0;
+        CHECK(v4d_2[0] == Approx(-0.5));
+        CHECK(v4d_2[1] == Approx(-1.0));
+        CHECK(v4d_2[2] == Approx(-1.5));
+        CHECK(v4d_2[3] == Approx(-2.0));
+    }
+
+    SECTION("Arithmetic operators") {
+        auto res1 = v3f_1 + v3f_2;
+        CHECK(res1[0] == Approx(3.0f));
+        CHECK(res1[1] == Approx(5.0f));
+        CHECK(res1[2] == Approx(7.0f));
+
+        auto res2 = v3f_1 - v3f_2;
+        CHECK(res2[0] == Approx(-3.0f));
+        CHECK(res2[1] == Approx(-3.0f));
+        CHECK(res2[2] == Approx(-3.0f));
+
+        auto res3 = v4d_1 * 2.0;
+        CHECK(res3[0] == Approx(-8.0));
+        CHECK(res3[1] == Approx(-6.0));
+        CHECK(res3[2] == Approx(-4.0));
+        CHECK(res3[3] == Approx(-2.0));
+
+        auto res4 = v4d_2 / 2.0;
+        CHECK(res4[0] == Approx(-0.5));
+        CHECK(res4[1] == Approx(-1.0));
+        CHECK(res4[2] == Approx(-1.5));
+        CHECK(res4[3] == Approx(-2.0));
+    }
+
+    SECTION("Vector products") {
+        auto res1 = cross(v3f_1, v3f_2);
+        CHECK(res1[0] == Approx(-3.0f));
+        CHECK(res1[1] == Approx( 6.0f));
+        CHECK(res1[2] == Approx(-3.0f));
+
+        auto res2 = dot(v4d_1, v4d_2);
+        CHECK(res2 == Approx(20.0));
+    }
+}
+
+TEST_CASE("VecArray tests", "[VecArray]") {
 
     VecArray< 3, float > v3f;
     VecArray< 4, double > v4d;
@@ -134,5 +202,9 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         v3f.pop_back();
         CHECK(v3f.size() == 4);
         CHECK(v3f.size_raw() == 12);
+    }
+
+    SECTION("Arithmetics") {
+        CHECK(dot(v3f, v3f) == Approx(90.0f));
     }
 }
