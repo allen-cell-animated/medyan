@@ -198,7 +198,7 @@ template<
 
 // Formatting
 // undefined behavior if size is 0
-template< typename VecType > inline
+template< typename VecType, size_t = VecType::vec_size > inline
 std::ostream& operator<<(std::ostream& os, const VecType& v) {
     os << '(';
     for(size_t i = 0; i < VecType::vec_size - 1; ++i) os << v[i] << ", ";
@@ -209,23 +209,23 @@ std::ostream& operator<<(std::ostream& os, const VecType& v) {
 // Fixed size vector arithmetics
 
 // Magnitude, distance and normalization
-template< typename VecType > inline
-auto magnitude2(const VecType& v) {
+template< typename VecType, size_t = VecType::vec_size >
+inline auto magnitude2(const VecType& v) {
     typename VecType::float_type mag2 {};
     for(size_t i = 0; i < VecType::vec_size; ++i) mag2 += v[i] * v[i];
     return mag2;
 }
-template< typename VecType > inline
-auto magnitude(const VecType& v) {
+template< typename VecType, size_t = VecType::vec_size >
+inline auto magnitude(const VecType& v) {
     return std::sqrt(magnitude2(v));
 }
-template< typename VecType > inline
-void normalize(VecType& v) {
+template< typename VecType, size_t = VecType::vec_size >
+inline void normalize(VecType& v) {
     typename VecType::float_type norm = magnitude(v);
     for(size_t i = 0; i < VecType::vec_size; ++i) v[i] /= norm;
 }
-template< typename VecType > inline
-auto normalizedVector(const VecType& v) {
+template< typename VecType, size_t = VecType::vec_size >
+inline auto normalizedVector(const VecType& v) {
     Vec< VecType::vec_size, typename VecType::float_type > res = v;
     normalize(res);
     return res;
@@ -244,7 +244,7 @@ inline auto distance(const VT1& v1, const VT2& v2) {
 }
 
 // plus, minus, multiply, divide
-template< typename VecType >
+template< typename VecType, size_t = VecType::vec_size >
 inline auto operator-(const VecType& v){
     Vec< VecType::vec_size, typename VecType::float_type > res;
     for(size_t idx = 0; idx < VecType::vec_size; ++idx){
@@ -282,7 +282,7 @@ inline auto& operator-=(VT1& v1, const VT2& v2) {
     }
     return v1;
 }
-template< typename VecType, typename Float >
+template< typename VecType, typename Float, size_t = VecType::vec_size >
 inline auto operator*(const VecType& v, Float k) {
     Vec< VecType::vec_size, std::common_type_t<typename VecType::float_type, Float> > res;
     for(size_t idx = 0; idx < VecType::vec_size; ++idx){
@@ -290,20 +290,20 @@ inline auto operator*(const VecType& v, Float k) {
     }
     return res;
 }
-template< typename VecType, typename Float >
+template< typename VecType, typename Float, size_t = VecType::vec_size >
 inline auto operator*(Float k, const VecType& v) {
     return v * k;
 }
-template< typename VecType, typename Float >
+template< typename VecType, typename Float, size_t = VecType::vec_size >
 inline auto& operator*=(VecType& v, Float k) {
     for(size_t i = 0; i < VecType::vec_size; ++i) v[i] *= k;
     return v;
 }
-template< typename VecType, typename Float >
+template< typename VecType, typename Float, size_t = VecType::vec_size >
 inline auto operator/(const VecType& v, Float k) {
     return v * (static_cast<Float>(1.0) / k);
 }
-template< typename VecType, typename Float >
+template< typename VecType, typename Float, size_t = VecType::vec_size >
 inline auto& operator/=(VecType& v, Float k) {
     return v *= (static_cast<Float>(1.0) / k);
 }
