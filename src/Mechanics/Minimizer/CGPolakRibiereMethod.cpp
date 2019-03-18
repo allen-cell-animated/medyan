@@ -236,10 +236,8 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     long index = 0;
     for(auto b:Bead::getBeads()){
         index = 3 * b->getDbIndex();
-        std::cout<<b->getId()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
-                ""<<coord[index + 2]<<" "
-                ""<<force[index]<<" "
-                ""<<force[index + 1]<<" "<<force[index + 2]<<endl;
+        std::cout<<b->getId()<<" "<< b->coordinate() <<" "
+                "" << b->force() <<endl;
     }
     std::cout<<"printed beads & forces"<<endl;
 #endif
@@ -943,7 +941,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
         CUDAcommon::cudavars = cvars;
 #endif
         cout << "System energy..." << endl;
-        FFM.computeEnergy(coord, force, 0.0, true);
+        FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0, true);
 #ifdef CUDAACCL
         for(auto strm:CUDAcommon::getCUDAvars().streamvec)
             CUDAcommon::handleerror(cudaStreamSynchronize(*strm));

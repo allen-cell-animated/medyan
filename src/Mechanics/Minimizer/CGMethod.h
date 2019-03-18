@@ -180,7 +180,7 @@ protected:
     void printForces();
     
 public:
-    static long N; ///< Number of beads in the system, set before each minimization
+    [[deprecated]] static long N; ///< Number of beads in the system, set before each minimization
     static long Ncyl;
     
     virtual ~CGMethod() {};

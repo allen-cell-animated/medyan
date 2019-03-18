@@ -165,13 +165,15 @@ public:
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() override {}
     virtual void removeFromSubSystem() {
+        /* Haoran 03/17/2019
 //        std::cout<<"removing bead with bindex "<<_dbIndex<<endl;
         //Reset in bead coordinate vector and add _dbIndex to the list of removedbindex.
         removedbindex.push_back(_dbIndex);
         resetcoordinates();
+        */
         //remove if pinned
         if(_isPinned) removeAsPinned();
-        Nbeads = _beads.getElements().size();
+        Nbeads = getElements().size();
     }
     //@}
     
@@ -305,7 +307,7 @@ private:
     //@{
     static int vectormaxsize;//maximum number of beads that can be appended without
     // revectorization
-    static int Nbeads;//Total number of beads in the system
+    [[deprecated]] static int Nbeads;//Total number of beads in the system
     static vector<int> removedbindex;//stores the bead indices that have been freed
     // through depolymerization/ destruction reactions.
     /* Haoran 03/17/2019

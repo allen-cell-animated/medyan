@@ -515,8 +515,8 @@ void CGMethod::startMinimization() {
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    coord = CUDAcommon::serlvars.coord;
-        N = 3 * Bead::getmaxbindex();
+    coord = CUDAcommon::serlvars.coord; // deprecated
+    N = 3 * Bead::numBeads(); // deprecated
     Ncyl = Cylinder::getCylinders().size();
 
 #ifdef CUDATIMETRACK
@@ -781,20 +781,6 @@ void CGMethod::endMinimization() {
 //                            sizeof(double), cudaMemcpyDeviceToHost));
 
     #endif
-    ///RECOPY BEAD DATA
-    //coord management
-    long i = 0;
-    long index = 0;
-    for(auto b: Bead::getBeads()) {
-
-        //flatten indices
-        index = 3 * b->getDbIndex();
-        b->force[0] = force[index];
-        b->force[1] = force[index + 1];
-        b->force[2] = force[index + 2];
-
-        i++;
-    }
 
 //    deallocate();
 #ifdef CUDAACCL
@@ -1132,7 +1118,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
     std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<f<<" state "<<sconvergencecheck<<endl;
 #endif
 #endif
-    double currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    double currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0);
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
     double cuda_energy[1];
@@ -1148,7 +1134,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         //TODO let each forcefield calculate energy IFF conv state = false. That will help
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
-        double energyLambda = FFM.computeEnergy(coord, force, lambda);
+        double energyLambda = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), lambda);
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         double cuda_energy[1];
@@ -1218,7 +1204,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     cconvergencecheck[0] = true;
 #endif
 //prepare for ping pong optimization
-    double currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    double currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0);
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
     double cuda_energy[1];
@@ -1233,7 +1219,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
         //new energy when moved by lambda
 //        std::cout<<"safe z"<<endl;
         iter++;
-        double energyLambda = FFM.computeEnergy(coord, force, lambda);
+        double energyLambda = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), lambda);
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         double cuda_energy[1];
@@ -1265,6 +1251,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
 #endif
     }
 //    std::cout<<"lambda determined in "<<iter<< " iterations "<<endl;
+    // FIXME: Make sure every branch returns
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
         delete [] cconvergencecheck;

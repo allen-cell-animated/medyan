@@ -341,14 +341,14 @@ void Filament::polymerizePlusEnd() {
     
     auto direction = twoPointDirection(b1->vcoordinate(), b2->vcoordinate());
     
-    b2->vcoordinate() = nextPointProjection(b2->vcoordinate(),
-    SysParams::Geometry().monomerSize[_filType], direction);
+    b2->coordinate() = vector2Vec<3, double>(nextPointProjection(b2->vcoordinate(),
+    SysParams::Geometry().monomerSize[_filType], direction));
     //update vector structure
     int cidx = cBack->_dcIndex;
     int bidx = b2->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->vcoordinate()[i];
-        CUDAcommon::serlvars.coord[3 * bidx + i] = b2->vcoordinate()[i];
+        CUDAcommon::serlvars.coord[3 * bidx + i] = b2->vcoordinate()[i]; // deprecated
     }
     
 #ifdef MECHANICS
@@ -379,14 +379,14 @@ void Filament::polymerizeMinusEnd() {
 
     auto direction = twoPointDirection(b2->vcoordinate(), b1->vcoordinate());
     
-    b1->vcoordinate() = nextPointProjection(b1->vcoordinate(),
-    SysParams::Geometry().monomerSize[_filType], direction);
+    b1->coordinate() = vector2Vec<3, double>(nextPointProjection(b1->vcoordinate(),
+    SysParams::Geometry().monomerSize[_filType], direction));
     //update vector structure
     int cidx = cFront->_dcIndex;
     int bidx = b1->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->vcoordinate()[i];
-        CUDAcommon::serlvars.coord[3 * bidx + i] = b1->vcoordinate()[i];
+        CUDAcommon::serlvars.coord[3 * bidx + i] = b1->vcoordinate()[i]; // deprecated
     }
 
 #ifdef MECHANICS
@@ -418,14 +418,14 @@ void Filament::depolymerizePlusEnd() {
 
     auto direction = twoPointDirection(b2->vcoordinate(), b1->vcoordinate());
     
-    b2->vcoordinate() = nextPointProjection(b2->vcoordinate(),
-    SysParams::Geometry().monomerSize[_filType], direction);
+    b2->coordinate() = vector2Vec<3, double>(nextPointProjection(b2->vcoordinate(),
+    SysParams::Geometry().monomerSize[_filType], direction));
     //update vector structure
     int cidx = cBack->_dcIndex;
     int bidx = b2->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->vcoordinate()[i];
-        CUDAcommon::serlvars.coord[3 * bidx + i] = b2->vcoordinate()[i];
+        CUDAcommon::serlvars.coord[3 * bidx + i] = b2->vcoordinate()[i]; // deprecated
     }
     
 #ifdef MECHANICS
@@ -456,14 +456,14 @@ void Filament::depolymerizeMinusEnd() {
     
     auto direction = twoPointDirection(b1->vcoordinate(), b2->vcoordinate());
     
-    b1->vcoordinate() = nextPointProjection(b1->vcoordinate(),
-    SysParams::Geometry().monomerSize[_filType], direction);
+    b1->coordinate() = vector2Vec<3, double>(nextPointProjection(b1->vcoordinate(),
+    SysParams::Geometry().monomerSize[_filType], direction));
     //update vector structure
     int cidx = cFront->_dcIndex;
     int bidx = b1->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->vcoordinate()[i];
-        CUDAcommon::serlvars.coord[3 * bidx + i] = b1->vcoordinate()[i];
+        CUDAcommon::serlvars.coord[3 * bidx + i] = b1->vcoordinate()[i]; // deprecated
     }
     
 #ifdef MECHANICS
