@@ -348,7 +348,6 @@ void Filament::polymerizePlusEnd() {
     int bidx = b2->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->vcoordinate()[i];
-        CUDAcommon::serlvars.coord[3 * bidx + i] = b2->vcoordinate()[i]; // deprecated
     }
     
 #ifdef MECHANICS
@@ -386,7 +385,6 @@ void Filament::polymerizeMinusEnd() {
     int bidx = b1->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->vcoordinate()[i];
-        CUDAcommon::serlvars.coord[3 * bidx + i] = b1->vcoordinate()[i]; // deprecated
     }
 
 #ifdef MECHANICS
@@ -425,7 +423,6 @@ void Filament::depolymerizePlusEnd() {
     int bidx = b2->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->vcoordinate()[i];
-        CUDAcommon::serlvars.coord[3 * bidx + i] = b2->vcoordinate()[i]; // deprecated
     }
     
 #ifdef MECHANICS
@@ -463,7 +460,6 @@ void Filament::depolymerizeMinusEnd() {
     int bidx = b1->getDbIndex();
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->vcoordinate()[i];
-        CUDAcommon::serlvars.coord[3 * bidx + i] = b1->vcoordinate()[i]; // deprecated
     }
     
 #ifdef MECHANICS

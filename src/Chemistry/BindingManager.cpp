@@ -2418,7 +2418,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
-    double* Bead::getDbData().coords.data();
+    double* coord = Bead::getDbData().coords.data();
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
     int counter1 = 0;

@@ -49,7 +49,6 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
     int i = 0;
 
-    auto coord = CUDAcommon::serlvars.coord;
     for (auto m: MotorGhost::getMotorGhosts()) {
         /* Haoran 03/18/2019 m->getDbIndex() = i; */
         beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getDbIndex();
