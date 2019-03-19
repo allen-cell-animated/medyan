@@ -129,7 +129,7 @@ public:
     void clearElements() { _elems.clear(); }
     
     /// Get all items in database
-    vector<T>& getElements() { return _elems; }
+    std::vector<T>& getElements() { return _elems; }
     
     /// Count the number of objects in the collection
     int countElements() { return _elems.size(); }
