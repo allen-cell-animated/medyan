@@ -264,8 +264,8 @@ public:
     void resetcylinderstruct(cylinder* cylindervec, long idx){
         cylindervec[idx].filamentID = -1;
         cylindervec[idx].filamentposition = -1;
-        cylindervec[idx].bindices[0]= -1;
-        cylindervec[idx].bindices[1]= -1;
+        cylindervec[idx].beads[0]= nullptr;
+        cylindervec[idx].beads[1]= nullptr;
         cylindervec[idx].cmpID = -1;
         cylindervec[idx].cindex = -1;
         cylindervec[idx].coord[0] = -1.0;

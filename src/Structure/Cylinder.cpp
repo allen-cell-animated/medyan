@@ -38,12 +38,12 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
     int i = 0;
     for(auto cyl: getElements()){
         //set _dcIndex
-        cyl->_dcIndex = i;
+        cyl->_dcIndex = i; // Here _dcIndex == getDbIndex()
         //copy attributes to a structure array
         cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getId();
         cylindervec[i].filamentposition = cyl->getPosition();
-        cylindervec[i].bindices[0] = cyl->getFirstBead()->getDbIndex();
-        cylindervec[i].bindices[1] = cyl->getSecondBead()->getDbIndex();
+        cylindervec[i].beads[0] = cyl->getFirstBead();
+        cylindervec[i].beads[1] = cyl->getSecondBead();
         cylindervec[i].cmpID = cyl->getCompartment()->getId();
         cylindervec[i].cindex = i;
         auto coord = cyl->coordinate;
@@ -70,8 +70,8 @@ void  Cylinder::copytoarrays() {
     //copy attributes to a structure array
     cylindervec[i].filamentID = dynamic_cast<Filament*>(this->getParent())->getId();
     cylindervec[i].filamentposition = _position;
-    cylindervec[i].bindices[0] = _b1->getDbIndex();
-    cylindervec[i].bindices[1] = _b2->getDbIndex();
+    cylindervec[i].beads[0] = _b1;
+    cylindervec[i].beads[1] = _b2;
     cylindervec[i].cmpID = _compartment->getId();
     cylindervec[i].cindex = i;
     cylindervec[i].type = _type;
@@ -134,8 +134,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     //copy attributes to a structure array
     cylindervec[_dcIndex].filamentID = dynamic_cast<Filament*>(this->getParent())->getId();
     cylindervec[_dcIndex].filamentposition = _position;
-    cylindervec[_dcIndex].bindices[0] = _b1->getDbIndex();
-    cylindervec[_dcIndex].bindices[1] = _b2->getDbIndex();
+    cylindervec[_dcIndex].beads[0] = _b1;
+    cylindervec[_dcIndex].beads[1] = _b2;
 
     //Set coordinate
     updateCoordinate();

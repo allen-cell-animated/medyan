@@ -21,6 +21,8 @@
 #include "common.h"
 #include "string.h"
 #include "MathFunctions.h"
+#include "Structure/Bead.h"
+
 using namespace mathfunc;
 struct bin{
     int binID;
@@ -33,7 +35,8 @@ struct bin{
     struct cylinder{
         int filamentID = -1;
         int filamentposition = -1;
-        int bindices[2];
+        Bead* beads[2];
+        [[deprecated]] int bindices[2];
         int cmpID = -1;
         long cindex = -1;
         double coord[3];
@@ -42,7 +45,7 @@ struct bin{
         int availbscount = -1;
     };
 struct SERLvars{
-    double *coord = NULL;
+    [[deprecated]] double *coord = NULL;
     cylinder *cylindervec = NULL;
     CCylinder **ccylindervec = NULL;
     Cylinder **cylinderpointervec = NULL;

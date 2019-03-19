@@ -493,8 +493,8 @@ void SubSystem::vectorizeCylinder() {
         //copy attributes to a structure
         cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getId();
         cylindervec[i].filamentposition = cyl->getPosition();
-        cylindervec[i].bindices[0] = cyl->getFirstBead()->getDbIndex();
-        cylindervec[i].bindices[1] = cyl->getSecondBead()->getDbIndex();
+        cylindervec[i].beads[0] = cyl->getFirstBead();
+        cylindervec[i].beads[1] = cyl->getSecondBead();
         cylindervec[i].cmpID = cyl->getCompartment()->getId();
         cylindervec[i].cindex = i;
         auto coord = cyl->coordinate;
