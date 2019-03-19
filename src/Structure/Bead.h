@@ -344,7 +344,7 @@ private:
         maxbindex = _beads.getElements().size();
         removedbindex.clear();
     }*/
-    /* Haoran 03/17/2019
+    /* Haoran 03/18/2019
     //copy coodinates of this bead to the appropriate spot in coord vector.
     void  copycoordinatestovector() {
 //        if(!triggercylindervectorization) {
@@ -352,12 +352,12 @@ private:
             CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = coordinate[1];
             CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = coordinate[2];
 //        }
-    }*/
+    }
     void resetcoordinates() {
         CUDAcommon::serlvars.coord[3 * _dbIndex] = -1.0;
         CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = -1.0;
         CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = -1.0;
-    }
+    }*/
     //@}
 };
 
