@@ -135,11 +135,11 @@ public:
     ///Default constructor
     Bead(Composite* parent, int position);
 
-    auto coordinate()    { return _dbData.coords    [_dbIndex]; }
-    auto coordinateStr() { return _dbData.coordsStr [_dbIndex]; }
-    auto force()         { return _dbData.forces    [_dbIndex]; }
-    auto forceAux()      { return _dbData.forcesAux [_dbIndex]; }
-    auto forceAuxP()     { return _dbData.forcesAuxP[_dbIndex]; }
+    auto coordinate()    { return getDbData().coords    [getDbIndex()]; }
+    auto coordinateStr() { return getDbData().coordsStr [getDbIndex()]; }
+    auto force()         { return getDbData().forces    [getDbIndex()]; }
+    auto forceAux()      { return getDbData().forcesAux [getDbIndex()]; }
+    auto forceAuxP()     { return getDbData().forcesAuxP[getDbIndex()]; }
 
     // Temporary compromise
     auto vcoordinate()    { return mathfunc::vec2Vector(coordinate()   ); }

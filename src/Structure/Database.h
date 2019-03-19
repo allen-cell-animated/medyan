@@ -39,7 +39,7 @@ struct DatabaseDataDefault {
 template< typename T, typename DatabaseData = DatabaseDataDefault >
 class Database {
     
-protected:
+private:
     static std::vector<T*> _elems;  ///< Pointer to the elements in the collection
     static DatabaseData _dbData;
     
