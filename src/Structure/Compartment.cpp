@@ -255,7 +255,7 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
 
     vector<ReactionBase*> rxns;
 
-    cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
+    // cout << "This compartment: x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
 
     for(auto &sp_this : _species.species()) {
         int molecule = sp_this->getMolecule();
@@ -267,12 +267,12 @@ vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C) {
             size_t idxFwd = _neighborIndex.at(C), idxBwd = C->_neighborIndex.at(this);
             double scaleFactor = 0.5 * (_partialArea[idxFwd] + C->_partialArea[idxBwd]) / GController::getCompartmentArea()[idxFwd / 2];
             //double scaleFactor = 1.0;
-            cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
-            cout << "scaleFactor = " << scaleFactor << endl;
+            // cout << "To neighbor: x = " << C->_coords[0] << ", y = " << C->_coords[1] << ", z = " << C->_coords[2] <<endl;
+            // cout << "scaleFactor = " << scaleFactor << endl;
 
             float actualDiffRate = diff_rate * scaleFactor;
             float volumeFrac = getVolumeFrac();
-            cout << "VolumeFraction = " << volumeFrac << endl;
+            // cout << "VolumeFraction = " << volumeFrac << endl;
 
             Species *sp_neighbour = C->_species.findSpeciesByMolecule(molecule);
             //Diffusion reaction from "this" compartment to C.
