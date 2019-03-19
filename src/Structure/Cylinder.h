@@ -189,7 +189,7 @@ public:
     //@{
     static int maxcindex;
     static int vectormaxsize;
-    static int Ncyl;
+    static int Ncyl; // Currently the value is always numCylinders() - 1
     static vector<int> removedcindex;
     static void revectorizeifneeded(){
         int newsize = vectormaxsize;

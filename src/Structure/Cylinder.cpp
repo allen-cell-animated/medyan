@@ -36,7 +36,9 @@ vector<int> Cylinder::removedcindex;//vector of bead indices that were once allo
 void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                         CCylinder** ccylindervec){
     int i = 0;
-    for(auto cyl: getElements()){
+    Ncyl = numCylinders() - 1; // New cylinder is stored BEFORE this function, so temporarily exclude last
+    for(size_t idx = 0; idx < Ncyl; ++idx){
+        auto cyl = getElements()[idx];
         //set _dcIndex
         cyl->_dcIndex = i; // Here _dcIndex == getDbIndex()
         //copy attributes to a structure array
@@ -58,7 +60,6 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
         i++;
     }
     removedcindex.clear();
-    Ncyl = getElements().size();
     maxcindex = Ncyl;
 }
 
@@ -126,7 +127,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
         _dcIndex = *removedcindex.begin();
         removedcindex.erase(removedcindex.begin());
     }
-    Ncyl = getElements().size();
+    Ncyl = getElements().size() - 1;
     //check if you need to revectorize.
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
     Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
