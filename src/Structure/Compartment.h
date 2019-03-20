@@ -503,28 +503,19 @@ public:
     }
 #endif
     dist::Coords bscoords;
-    dist::Coords bscoords_section[27];
-    dist::Coords bscoords_section_linker[27];
-    dist::Coords bscoords_section_motor[27];
-    dist::Coords bscoordslinker;
-    dist::Coords bscoordsmotor;
+    vector<dist::Coords> bscoords_section;
+	vector<dist::Coords> bscoords_section_linker;
+	vector<dist::Coords> bscoords_section_motor;
+
     vector<int> Cyldcindexvec;
     vector<int> CylcIDvec;
 
     template<bool LinkerorMotor>
-    dist::Coords& getSIMDcoords(){
+    dist::Coords& getSIMDcoordsV3(short i, short filamentType){
         if(LinkerorMotor)
-            return bscoordslinker;
+            return bscoords_section_linker[filamentType*27 + i];
         else
-            return bscoordsmotor;
-    }
-
-    template<bool LinkerorMotor>
-    dist::Coords& getSIMDcoordsV3(short i){
-        if(LinkerorMotor)
-            return bscoords_section_linker[i];
-        else
-            return bscoords_section_motor[i];
+            return bscoords_section_motor[filamentType*27 + i];
     }
 #ifdef SIMDBINDINGSEARCH
 
@@ -534,16 +525,10 @@ public:
     vector<floatingpoint> partitionedcoordx[27], partitionedcoordy[27], partitionedcoordz[27];
     vector<uint32_t>  cindex_bs_section[27];
 
-    void SIMDcoordinates();
-    void SIMDcoordinates4linkersearch(bool isvectorizedgather);
-    void SIMDcoordinates4motorsearch(bool isvectorizedgather);
-
     void SIMDcoordinates_section();
     void SIMDcoordinates4linkersearch_section(bool isvectorizedgather);
     void SIMDcoordinates4motorsearch_section(bool isvectorizedgather);
     void getpartition3Dindex(int (&indices)[3], vector<floatingpoint> coord);
-    void getpartition3Dindex(int (&indices)[3], vector<floatingpoint> coord,
-                                floatingpoint (&cmpcornercoords)[6]);
     template<bool rMaxvsCmpsize>
     void getpartitionindex(int (&indices)[3], vector<floatingpoint> coord,
                                 floatingpoint (&cmpcornercoords)[6]);

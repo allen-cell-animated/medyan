@@ -179,6 +179,9 @@ void Filament::extendMinusEnd(vector<floatingpoint>& coordinates) {
 //extend front at runtime
 void Filament::extendPlusEnd(short plusEnd) {
 
+    chrono::high_resolution_clock::time_point mins, mine;
+
+    mins = chrono::high_resolution_clock::now();
     Cylinder* cBack = _cylinderVector.back();
     
     int lpf = cBack->getPosition();
@@ -191,7 +194,11 @@ void Filament::extendPlusEnd(short plusEnd) {
     
     auto npp = nextPointProjection(b2->coordinate,
     SysParams::Geometry().monomerSize[_filType], direction1);
-    
+
+    mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_time1(mine - mins);
+	FilextendPlusendtimer1 += elapsed_time1.count();
+
     //create a new bead in same place as b2
     Bead* bNew = _subSystem->addTrackable<Bead>(npp, this, b2->getPosition() + 1);
     
@@ -204,8 +211,8 @@ void Filament::extendPlusEnd(short plusEnd) {
     
     Cylinder* c0 = _subSystem->addTrackable<Cylinder>(this, b2, bNew, _filType,
                                                       lpf + 1, true);
-    
-    
+
+    mins = chrono::high_resolution_clock::now();
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
@@ -222,6 +229,9 @@ void Filament::extendPlusEnd(short plusEnd) {
 #endif
     
     _deltaPlusEnd++;
+    mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+	FilextendPlusendtimer2 += elapsed_time2.count();
 }
 
 //extend back at runtime
@@ -979,5 +989,11 @@ species_copy_t Filament::countSpecies(short filamentType, const string& name) {
     return copyNum;
 }
 
+floatingpoint Filament::FilextendPlusendtimer1 = 0.0;
+floatingpoint Filament::FilextendPlusendtimer2 = 0.0;
+floatingpoint Filament::FilextendPlusendtimer3 = 0.0;
+floatingpoint Filament::FilextendMinusendtimer1 = 0.0;
+floatingpoint Filament::FilextendMinusendtimer2 = 0.0;
+floatingpoint Filament::FilextendMinusendtimer3 = 0.0;
 
 

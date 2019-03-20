@@ -181,10 +181,16 @@ bool ChemNRMImpl::makeStep() {
     floatingpoint t_prev = _t;
 
     _t=tau_top;
+
     syncGlobalTime();
-/*    std::cout<<"------------"<<endl;
+
+   /* std::cout<<"------------"<<endl;
     rn->printSelf();
-    std::cout<<"------------"<<endl;*/
+    std::cout<<"------------"<<endl;
+    auto rctnts = rn->getReaction()->getParent();
+    cout<<(rctnts == NULL)<<endl;
+    cout<<rctnts<<endl;*/
+
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){

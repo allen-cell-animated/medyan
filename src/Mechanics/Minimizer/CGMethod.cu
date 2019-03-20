@@ -511,9 +511,11 @@ void CGMethod::moveBeads(floatingpoint d)
     //if(!b->getstaticstate())
 
 //    std::cout<<"3N "<<N<<endl;
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < N; i++) {
         coord[i] = coord[i] + d * force[i];
-
+//        cout<<"C&F "<<coord[i]<<" "<<force[i]<<" lambda "<<d<<endl;
+    }
+//    cout<<"---"<<endl;
 }
 
 void CGMethod::shiftGradient(floatingpoint d)
@@ -1241,9 +1243,9 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 #endif
         }
         //@{ Lambda phase 2
+
 #endif
     }
-//    std::cout<<"lambda determined in "<<iter<< " iterations "<<endl;
 //synchronize streams
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
@@ -1261,7 +1263,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
     sconvergencecheck = true;
     //calculate first lambda
     floatingpoint lambda = LAMBDAMAX;
-//    std::cout<<"safe 0"<<endl;
+    std::cout<<"safe 0"<<endl;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
     cconvergencecheck = new bool[1];
@@ -1310,7 +1312,10 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
                 lambda = MAXDIST / maxF();
                 sconvergencecheck = true;
             }
-//            std::cout<<"safe energyChange "<<energyChange<<" lambda "<<lambda<<endl;
+            std::cout<<"safe energyChange "<<energyChange<<"energyLambda "
+														   ""<<energyLambda<<" "
+								   "currentEnergy "<<currentEnergy<<" lambda "
+									  ""<<lambda<<endl;
         }
 #endif
     }

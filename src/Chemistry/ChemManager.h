@@ -39,6 +39,7 @@ class CMonomer;
 class ChemManager {
     
 private:
+    chrono::high_resolution_clock::time_point mins, mine;
     //@{
     /// Helper functions. Names are pretty self-explanatory.
     void setupBindingSites();
@@ -58,6 +59,11 @@ private:
     //@}
     
 public:
+	static floatingpoint tchemmanager1;
+	static floatingpoint tchemmanager2;
+	static floatingpoint tchemmanager3;
+	static floatingpoint tchemmanager4;
+
     ///Constructor sets subsystem pointer, and loads chem data
     ChemManager(SubSystem* subSystem, ChemistryData chem)
         : _subSystem(subSystem), _chemData(chem) {}

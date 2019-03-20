@@ -92,6 +92,41 @@ struct Callbacktime {
 	floatingpoint tFilamentSeveringCallback=0.0;
 	floatingpoint tFilamentDestructionCallback=0.0;
 };
+
+struct Callbackcount {
+	uint cUpdateBrancherBindingCallback=0;
+	uint cUpdateLinkerBindingCallback=0;
+	uint cUpdateMotorBindingCallback=0;
+	uint cUpdateMotorIDCallback=0;
+	uint cFilamentExtensionPlusEndCallback=0;
+	uint cFilamentExtensionMinusEndCallback=0;
+	uint cFilamentRetractionPlusEndCallback=0;
+	uint cFilamentRetractionMinusEndCallback=0;
+	uint cFilamentPolymerizationPlusEndCallback=0;
+	uint cFilamentPolymerizationMinusEndCallback=0;
+	uint cFilamentDepolymerizationPlusEndCallback=0;
+	uint cFilamentDepolymerizationMinusEndCallback=0;
+	uint cBranchingPointUnbindingCallback=0;
+	uint cBranchingCallback=0;
+	uint cLinkerUnbindingCallback=0;
+	uint cLinkerBindingCallback=0;
+	uint cMotorUnbindingCallback=0;
+	uint cMotorBindingCallback=0;
+	uint cMotorWalkingCallback=0;
+	uint cMotorMovingCylinderCallback=0;
+	uint cFilamentCreationCallback=0;
+	uint cFilamentSeveringCallback=0;
+	uint cFilamentDestructionCallback=0;
+};
+
+
+struct PolyPlusEndTemplatetime{
+	floatingpoint rxntempate1 = 0.0;
+	floatingpoint rxntempate2 = 0.0;
+	floatingpoint rxntempate3 = 0.0;
+	floatingpoint rxntempate4 = 0.0;
+
+};
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     floatingpoint * gpu_force = NULL;
@@ -188,6 +223,8 @@ public:
     static SERLvars serlvars;
     static const SERLvars& getSERLvars(){return serlvars;}
     static Callbacktime ctime;
+	static Callbackcount ccount;
+	static PolyPlusEndTemplatetime ppendtime;
 #ifdef CUDAACCL
     static CUDAvars cudavars;
     static CylCylNLvars cylcylnlvars;

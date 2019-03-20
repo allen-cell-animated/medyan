@@ -39,8 +39,8 @@ BoundaryFF::BoundaryFF (string type) {
     else if(type == "REPULSIONEXPIN") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+/*        _boundaryInteractionVector.emplace_back(
+        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());*/
     }
     else {
         cout << "Boundary FF not recognized. Exiting." << endl;

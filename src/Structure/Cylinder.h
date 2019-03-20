@@ -57,6 +57,9 @@ friend class CController;
 friend class DRController;
     
 private:
+
+    chrono::high_resolution_clock::time_point mins, mine;
+
     Bead* _b1;  ///< Pointer to the first bead.
     Bead* _b2; ///< Pointer to the end bead.
     
@@ -286,6 +289,11 @@ public:
         cylindervec[idx].ID = -1;
         cylindervec[idx].availbscount = -1;
     }
+
+    static floatingpoint timecylinder1;
+	static floatingpoint timecylinder2;
+	static floatingpoint timecylinderchem;
+	static floatingpoint timecylindermech;
     //@}
 };
 

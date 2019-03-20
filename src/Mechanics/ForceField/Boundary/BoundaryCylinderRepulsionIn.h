@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -17,7 +17,9 @@
 #include <vector>
 
 #include "common.h"
-
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
 #include "BoundaryInteractions.h"
 #include "NeighborListImpl.h"
 
@@ -30,7 +32,7 @@ class Bead;
 /// Represents a repulsive interaction between a BoundaryElement and Cylinder.
 template <class BRepulsionInteractionType>
 class BoundaryCylinderRepulsionIn : public BoundaryInteractions {
-    
+
 private:
     BRepulsionInteractionType _FFType;
     BoundaryCylinderNL* _neighborList; ///<Neighbor list of BoundaryElement - Cylinder
@@ -44,29 +46,31 @@ private:
     int nint = 0;
     ///Array describing the number of neighbors for each boundary element (num boundary elements long)
     int *nneighbors;
+#ifdef CUDAACCL
+    floatingpoint *gU;
+    cudaStream_t  stream;
+    int *gpu_beadSet;
+    floatingpoint *gpu_krep;
+    floatingpoint *gpu_slen;
+    floatingpoint *gpu_U_i;
+    int *gpu_params;
+    floatingpoint *gpu_beListplane;
+    int *gpu_nintperbe;
+    //    CUDAvars cvars;
+    floatingpoint *F_i;
+#endif
+
 public:
 
     ///Array describing indexed set of interactions
     ///For filaments, this is a 1-bead potential
     const static int n = 1;
 
-
     /// Constructor
     BoundaryCylinderRepulsionIn() {
         _neighborList = new BoundaryCylinderNL(SysParams::Boundaries().BoundaryCutoff);
     }
-    
-//    virtual floatingpoint computeEnergy(floatingpoint d);
-//    //@{
-//    /// This repulsive force calculation also updates load forces
-//    /// on beads within the interaction range.
-//    virtual void computeForces();
-//    virtual void computeForcesAux();
-//
-//    virtual void computeLoadForces();
-    //@}
 
-    //TODO needs implmenetation @{
     virtual void vectorize();
     virtual void deallocate();
 
@@ -77,10 +81,10 @@ public:
     virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     virtual void computeLoadForces();
     //@}
-    
+
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}
-    
-    virtual const string getName() {return "Boundary-Cylinder Repulsion Inside";}
+
+    virtual const string getName() {return "Boundary-Cylinder RepulsionIn";}
 };
 #endif

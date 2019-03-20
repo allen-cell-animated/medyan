@@ -41,6 +41,7 @@
 #include 	<tuple>
 #include <vector>
 #include <algorithm>
+#include <src/Chemistry/ChemManager.h>
 #include "Restart.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -726,7 +727,6 @@ void Controller::updatePositions() {
 void Controller::updateReactionRates() {
     /// update all reactables
     for(auto r : _subSystem->getReactables()) r->updateReactionRates();
-	cout<<"Rxn rates updated"<<endl;
 }
 
 #endif
@@ -1242,7 +1242,80 @@ void Controller::run() {
     cout<<"Special time for run="<<specialtime<<endl;
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
     cout << "Total simulation time: dt=" << tau() << endl;
+    cout<<"-----------"<<endl;
+    cout<<"Printing callback times"<<endl;
+    auto ctime = CUDAcommon::ctime;
+    auto ccount = CUDAcommon::ccount;
+	cout<<"UpdateBrancherBindingCallback "<<ctime.tUpdateBrancherBindingCallback<<" count "
+					  <<ccount.cUpdateBrancherBindingCallback<<endl;
+	cout<<"UpdateLinkerBindingCallback "<<ctime.tUpdateLinkerBindingCallback<<" count "
+	<<ccount.cUpdateLinkerBindingCallback<<endl;
+	cout<<"UpdateMotorBindingCallback "<<ctime.tUpdateMotorBindingCallback<<" count "
+	<<ccount.cUpdateMotorBindingCallback<<endl;
+	cout<<"UpdateMotorIDCallback "<<ctime.tUpdateMotorIDCallback<<" count "
+	<<ccount.cUpdateMotorIDCallback<<endl;
+	cout<<"FilamentExtensionPlusEndCallback "<<ctime.tFilamentExtensionPlusEndCallback<<" count "
+	<<ccount.cFilamentExtensionPlusEndCallback<<endl;
+	cout<<"FilamentExtensionMinusEndCallback "<<ctime.tFilamentExtensionMinusEndCallback<<" count "
+	<<ccount.cFilamentExtensionMinusEndCallback<<endl;
+	cout<<"FilamentRetractionPlusEndCallback "<<ctime.tFilamentRetractionPlusEndCallback<<" count "
+	<<ccount.cFilamentRetractionPlusEndCallback<<endl;
+	cout<<"FilamentRetractionMinusEndCallback "<<ctime.tFilamentRetractionMinusEndCallback<<" count "
+	<<ccount.cFilamentRetractionMinusEndCallback<<endl;
+	cout<<"FilamentPolymerizationPlusEndCallback "<<ctime.tFilamentPolymerizationPlusEndCallback<<" count "
+	<<ccount.cFilamentPolymerizationPlusEndCallback<<endl;
+	cout<<"FilamentPolymerizationMinusEndCallback "<<ctime.tFilamentPolymerizationMinusEndCallback<<" count "
+	<<ccount.cFilamentPolymerizationMinusEndCallback<<endl;
+	cout<<"FilamentDepolymerizationPlusEndCallback "<<ctime.tFilamentDepolymerizationPlusEndCallback<<" count "
+	<<ccount.cFilamentDepolymerizationPlusEndCallback<<endl;
+	cout<<"FilamentDepolymerizationMinusEndCallback "<<ctime.tFilamentDepolymerizationMinusEndCallback<<" count "
+	<<ccount.cFilamentDepolymerizationMinusEndCallback<<endl;
+	cout<<"BranchingPointUnbindingCallback "<<ctime.tBranchingPointUnbindingCallback<<" count "
+	<<ccount.cBranchingPointUnbindingCallback<<endl;
+	cout<<"BranchingCallback "<<ctime.tBranchingCallback<<" count "
+	<<ccount.cBranchingCallback<<endl;
+	cout<<"LinkerUnbindingCallback "<<ctime.tLinkerUnbindingCallback<<" count "
+	<<ccount.cLinkerUnbindingCallback<<endl;
+	cout<<"LinkerBindingCallback "<<ctime.tLinkerBindingCallback<<" count "
+	<<ccount.cLinkerBindingCallback<<endl;
+	cout<<"MotorUnbindingCallback "<<ctime.tMotorUnbindingCallback<<" count "
+	<<ccount.cMotorUnbindingCallback<<endl;
+	cout<<"MotorBindingCallback "<<ctime.tMotorBindingCallback<<" count "
+	<<ccount.cMotorBindingCallback<<endl;
+	cout<<"MotorWalkingCallback "<<ctime.tMotorWalkingCallback<<" count "
+	<<ccount.cMotorWalkingCallback<<endl;
+	cout<<"MotorMovingCylinderCallback "<<ctime.tMotorMovingCylinderCallback<<" count "
+	<<ccount.cMotorMovingCylinderCallback<<endl;
+	cout<<"FilamentCreationCallback "<<ctime.tFilamentCreationCallback<<" count "
+	<<ccount.cFilamentCreationCallback<<endl;
+	cout<<"FilamentSeveringCallback "<<ctime.tFilamentSeveringCallback<<" count "
+	<<ccount.cFilamentSeveringCallback<<endl;
+	cout<<"FilamentDestructionCallback "<<ctime.tFilamentDestructionCallback<<" count "
+	<<ccount.cFilamentDestructionCallback<<endl;
+	cout<<"------------"<<endl;
+	cout<<"Printing neighbor times"<<endl;
+	cout<<"Dynamic neighbor "<<SubSystem::timedneighbor<<endl;
+	cout<<"Neighbor "<<SubSystem::timeneighbor<<endl;
+    cout<<"Trackable "<<SubSystem::timetrackable<<endl;
     cout << "Done with simulation!" << endl;
+    cout<<"-------------"<<endl;
+    cout<<"Filament extendPlusEnd 1 "<<Filament::FilextendPlusendtimer1<<endl;
+	cout<<"Filament extendPlusEnd 2 "<<Filament::FilextendPlusendtimer2<<endl;
+	cout<<"-------------"<<endl;
+	cout<<"Cylinder constructor"<<endl;
+	cout<<"part1 "<<Cylinder::timecylinder1<<" part2 "<<Cylinder::timecylinder2<<" "
+																			  "Ccylinder "
+	<<Cylinder::timecylinderchem<<" mCylinder "<<Cylinder::timecylindermech<<endl;
+	cout<<"initializeCCylinder for loop "<<ChemManager::tchemmanager1<<endl;
+	cout<<"extension Front/Back "<<ChemManager::tchemmanager2<<endl;
+	cout<<"initialize "<<ChemManager::tchemmanager3<<endl;
+	cout<<"last part "<<ChemManager::tchemmanager4<<endl;
+	cout<<"------------"<<endl;
+	cout<<"PolyPlusEndTemplate time"<<endl;
+	cout<<"For loop "<<CUDAcommon::ppendtime.rxntempate1<<" part2 (findspecies) "
+	<<CUDAcommon::ppendtime.rxntempate2<<" part3 (create rxn) "<<CUDAcommon::ppendtime
+	.rxntempate3<<" part4 (Callback) "<<CUDAcommon::ppendtime.rxntempate4<<endl;
+
 #ifdef CUDAACCL
     cudaDeviceReset();
 #endif

@@ -9,7 +9,7 @@
 //
 //  See the MEDYAN web page for more information:
 //  http://www.medyan.org
-//------------------------------------------------------------------
+//-----------------------------------------------------------------
 
 #include "Compartment.h"
 #include "MathFunctions.h"
@@ -23,247 +23,6 @@
 #include "GController.h"
 
 #ifdef SIMDBINDINGSEARCH
-
-void Compartment::SIMDcoordinates(){
-    //bscoords = new dist::Coords;
-//    std::cout<<"Address of Coords "<<&bscoords<<endl;
-    //setting size to the number of maximum binding sites per cylinder * number of
-    // cylinders in compartment.
-    int N = _cylinders.size() * SysParams::Chemistry().maxbindingsitespercylinder;
-    if(N) {
-        vector<floatingpoint> bindsitecoordinatesX(N), bindsitecoordinatesY(
-                N), bindsitecoordinatesZ(N);
-        cindex_bs.resize(N);
-        //cID_bs.resize(N);
-        Cyldcindexvec.resize(_cylinders.size());
-        CylcIDvec.resize(_cylinders.size());
-
-        short _filamentType = 0;
-        bool checkftype = false;
-        if (SysParams::Chemistry().numFilaments > 1)
-            checkftype = true;
-        unsigned int i = 0;
-        uint16_t k = 0;
-        for (auto cyl:_cylinders) {
-            int cindex = cyl->_dcIndex;
-            auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
-            if (checkftype)
-                short _filamentType = cylinderstruct.type;
-            auto x1 = cyl->getFirstBead()->coordinate;
-            auto x2 = cyl->getSecondBead()->coordinate;
-            uint16_t shiftedindex = (i << 4);
-            //uint32_t shiftedCID = cyl->getID()<<4;
-            Cyldcindexvec[i] = cyl->_dcIndex;
-            CylcIDvec[i] = cyl->getID();
-            i++;
-            uint16_t j = 0;
-            for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-
-                auto mp = (float) *it / SysParams::Geometry().cylinderNumMon[_filamentType];
-                auto coord = midPointCoordinate(x1, x2, mp);
-                bindsitecoordinatesX[k] = coord[0];
-                bindsitecoordinatesY[k] = coord[1];
-                bindsitecoordinatesZ[k] = coord[2];
-                //last 4 bits are binding site while first 12 bits are cylinder index.
-                cindex_bs[k] = shiftedindex | j;
-                //cID_bs[k] = shiftedCID |j;
-                k++;
-                j++;
-
-            }
-        }
-//    assert(k<65536);
-        //Create input vector for SIMD calculations
-//        cout<<"#bsites "<<bindsitecoordinatesX.size()<<endl;
-        bscoords.init_coords(bindsitecoordinatesX, bindsitecoordinatesY,
-                             bindsitecoordinatesZ, cindex_bs);
-    }
-}
-
-void Compartment::SIMDcoordinates4linkersearch(bool isvectorizedgather){
-    //setting size to the number of maximum binding sites per cylinder * number of
-    // cylinders in compartment.
-    short bstatepos = 1;
-    auto boundstate = SysParams::Mechanics().speciesboundvec;
-    short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-
-    int N = _cylinders.size() * maxnbs;
-    if(N) {
-        vector<floatingpoint> bindsitecoordinatesX(N), bindsitecoordinatesY(N),
-                       bindsitecoordinatesZ(N);
-        vector<uint16_t> cindex_bs(N);
-        Cyldcindexvec.resize(_cylinders.size());
-
-        short _filamentType = 0;
-        bool checkftype = false;
-        if (SysParams::Chemistry().numFilaments > 1)
-            checkftype = true;
-        unsigned int i = 0;
-        uint16_t k = 0;
-        if(isvectorizedgather) {
-            for (auto cyl:_cylinders) {
-                int cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
-                if (checkftype)
-                    short _filamentType = cylinderstruct.type;
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
-                uint16_t shiftedindex = (i << 4);
-                Cyldcindexvec[i] = cindex;
-                i++;
-                uint16_t j = 0;
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                    if (boundstate[bstatepos][maxnbs * cindex + j]) {
-                        auto mp = (float) *it /
-                                  SysParams::Geometry().cylinderNumMon[_filamentType];
-                        auto coord = midPointCoordinate(x1, x2, mp);
-                        bindsitecoordinatesX[k] = coord[0];
-                        bindsitecoordinatesY[k] = coord[1];
-                        bindsitecoordinatesZ[k] = coord[2];
-                        //last 4 bits are binding site while first 12 bits are cylinder index.
-                        cindex_bs[k] = shiftedindex | j;
-                        k++;
-                    }
-                    j++;
-                }
-            }
-        }
-        else{
-            for (auto cyl:_cylinders) {
-                int cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
-                if (checkftype)
-                    short _filamentType = cylinderstruct.type;
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
-                uint16_t shiftedindex = (i << 4);
-                Cyldcindexvec[i] = cindex;
-                i++;
-                uint16_t j = 0;
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                    if(cyl->getCCylinder()->getCMonomer(*it)->speciesBound(
-                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN
-                            () == 1.0) {
-                        auto mp = (float) *it /
-                                  SysParams::Geometry().cylinderNumMon[_filamentType];
-                        auto coord = midPointCoordinate(x1, x2, mp);
-                        bindsitecoordinatesX[k] = coord[0];
-                        bindsitecoordinatesY[k] = coord[1];
-                        bindsitecoordinatesZ[k] = coord[2];
-                        //last 4 bits are binding site while first 12 bits are cylinder index.
-                        cindex_bs[k] = shiftedindex | j;
-                        k++;
-                    }
-                    j++;
-                }
-            }
-        }
-//    assert(k<65536);
-        //Create input vector for SIMD calculations
-        bscoordslinker.init_coords(bindsitecoordinatesX, bindsitecoordinatesY,
-                             bindsitecoordinatesZ,
-                             cindex_bs);
-    }
-}
-
-void Compartment::SIMDcoordinates4motorsearch(bool isvectorizedgather){
-    //setting size to the number of maximum binding sites per cylinder * number of
-    // cylinders in compartment.
-    short bstatepos = 2;
-    auto boundstate = SysParams::Mechanics().speciesboundvec;
-    short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-    int N = _cylinders.size() * maxnbs;
-    if(N) {
-        vector<floatingpoint> bindsitecoordinatesX(N), bindsitecoordinatesY(N),
-                bindsitecoordinatesZ(N);
-        vector<uint16_t> cindex_bs(N);
-        Cyldcindexvec.resize(_cylinders.size());
-
-        short _filamentType = 0;
-        bool checkftype = false;
-        if (SysParams::Chemistry().numFilaments > 1)
-            checkftype = true;
-        unsigned int i = 0;
-        uint16_t k = 0;
-        if(isvectorizedgather) {
-            for (auto cyl:_cylinders) {
-                int cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
-                if (checkftype)
-                    short _filamentType = cylinderstruct.type;
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
-                uint16_t shiftedindex = (i << 4);
-                Cyldcindexvec[i] = cindex;
-                i++;
-                uint16_t j = 0;
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                    if (boundstate[bstatepos][maxnbs * cindex + j]) {
-                        int A = boundstate[bstatepos][maxnbs * cindex + j] -
-                                cyl->getCCylinder()->getCMonomer(*it)->speciesBound(
-                                SysParams::Chemistry().motorBoundIndex[_filamentType])->getN
-                                ();
-                        if(abs(A) != 0){
-                            cout<<"OOPS Problematic! Occupies sites are passed to "
-                                  "SIMD"<<endl;
-                            cout<<"Cylinder "<<cyl->getID()<<" "<<*it<<endl;
-                        }
-                        auto mp = (float) *it /
-                                  SysParams::Geometry().cylinderNumMon[_filamentType];
-                        auto coord = midPointCoordinate(x1, x2, mp);
-                        bindsitecoordinatesX[k] = coord[0];
-                        bindsitecoordinatesY[k] = coord[1];
-                        bindsitecoordinatesZ[k] = coord[2];
-                        //last 4 bits are binding site while first 12 bits are cylinder index.
-                        cindex_bs[k] = shiftedindex | j;
-                        k++;
-                    }
-                    j++;
-                }
-            }
-        }
-        else{
-            for (auto cyl:_cylinders) {
-                int cindex = cyl->_dcIndex;
-                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
-                if (checkftype)
-                    short _filamentType = cylinderstruct.type;
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
-                uint16_t shiftedindex = (i << 4);
-                Cyldcindexvec[i] = cindex;
-                i++;
-                uint16_t j = 0;
-                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                    if (cyl->getCCylinder()->getCMonomer(*it)->speciesBound(
-                            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN
-                            () == 1.0) {
-                        auto mp = (float) *it /
-                                  SysParams::Geometry().cylinderNumMon[_filamentType];
-                        auto coord = midPointCoordinate(x1, x2, mp);
-                        bindsitecoordinatesX[k] = coord[0];
-                        bindsitecoordinatesY[k] = coord[1];
-                        bindsitecoordinatesZ[k] = coord[2];
-                        //last 4 bits are binding site while first 12 bits are cylinder index.
-                        cindex_bs[k] = shiftedindex | j;
-                        k++;
-                    }
-                    j++;
-                }
-            }
-        }
-//    assert(k<65536);
-        //Create input vector for SIMD calculations
-        bscoordsmotor.init_coords(bindsitecoordinatesX, bindsitecoordinatesY,
-                             bindsitecoordinatesZ,
-                             cindex_bs);
-    }
-}
 
 void Compartment::SIMDcoordinates_section(){
 
@@ -287,43 +46,50 @@ void Compartment::SIMDcoordinates_section(){
         unsigned int i = 0;
         uint32_t k = 0;
 
-        for (auto cyl:_cylinders) {
-            int cindex = cyl->_dcIndex;
-            auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
-            if (checkftype)
-                short _filamentType = cylinderstruct.type;
-            auto x1 = cyl->getFirstBead()->coordinate;
-            auto x2 = cyl->getSecondBead()->coordinate;
+        bscoords_section.resize(SysParams::Chemistry().numFilaments * 27);
+
+        for(short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+            for (auto cyl:_cylinders) {
+                int cindex = cyl->_dcIndex;
+                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                if (checkftype)
+                    short _filamentType = cylinderstruct.type;
+                auto x1 = cyl->getFirstBead()->coordinate;
+                auto x2 = cyl->getSecondBead()->coordinate;
 //            uint32_t shiftedindex = (i << 4);
-            uint32_t shiftedindex = (cyl->_dcIndex << 4);
+                uint32_t shiftedindex = (cyl->_dcIndex << 4);
 
-            Cyldcindexvec[i] = cyl->_dcIndex;
-            CylcIDvec[i] = cyl->getID();
-            uint32_t j = 0;
-            for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                Cyldcindexvec[i] = cyl->_dcIndex;
+                CylcIDvec[i] = cyl->getID();
+                uint32_t j = 0;
+                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
 
-                auto mp = (float) *it / SysParams::Geometry().cylinderNumMon[_filamentType];
-                auto coord = midPointCoordinate(x1, x2, mp);
-                //last 4 bits are binding site while first 12 bits are cylinder index.
-                uint32_t index = shiftedindex | j;
-                j++;
-                int pindices[3];
-                getpartition3Dindex(pindices, coord);
-                addcoordtopartitons(pindices, coord, index);
-                j++;
+                    auto mp = (float) *it /
+                              SysParams::Geometry().cylinderNumMon[_filamentType];
+                    auto coord = midPointCoordinate(x1, x2, mp);
+                    //last 4 bits are binding site while first 12 bits are cylinder index.
+                    uint32_t index = shiftedindex | j;
+                    j++;
+                    int pindices[3];
+                    getpartition3Dindex(pindices, coord);
+                    addcoordtopartitons(pindices, coord, index);
+                    j++;
+                }
             }
-        }
+
 
 //    assert(k<65536);
-        //Create input vector for SIMD calculations
+            //Create input vector for SIMD calculations
 //        cout<<bscoords.size()<<" "<<partitionedcoordx[0].size()<<endl;
-        for(short i =0; i < 27; i++) {
+
+            for (short i = 0; i < 27; i++) {
 //            cout<<partitionedcoordx[i].size()<<" ";
-            bscoords_section[i].init_coords(partitionedcoordx[i], partitionedcoordy[i],
-                                 partitionedcoordz[i], cindex_bs_section[i]);
-        }
+                bscoords_section[filType*27 + i].init_coords(partitionedcoordx[i],
+                        partitionedcoordy[i], partitionedcoordz[i], cindex_bs_section[i]);
+            }
 //        cout<<endl;
+        }
     }
 }
 
@@ -355,26 +121,29 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
     int N = _cylinders.size() * maxnbs;
-    if(N) {
-        Cyldcindexvec.resize(_cylinders.size());
-
-        short _filamentType = 0;
-        bool checkftype = false;
-        if (SysParams::Chemistry().numFilaments > 1)
+    for (short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+        if(N) {
+            Cyldcindexvec.resize(_cylinders.size());
+            short _filamentType = 0;
+            bool checkftype = false;
+            if (SysParams::Chemistry().numFilaments > 1)
             checkftype = true;
         unsigned int i = 0;
+
+        bscoords_section_linker.resize(SysParams::Chemistry().numFilaments * 27);
+
 //        cout<<"Cmp coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
-        for (auto cyl:_cylinders) {
-            uint32_t cindex = cyl->_dcIndex;
-            auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
-            if (checkftype)
-                short _filamentType = cylinderstruct.type;
-            auto x1 = cyl->getFirstBead()->coordinate;
-            auto x2 = cyl->getSecondBead()->coordinate;
+            for (auto cyl:_cylinders) {
+                uint32_t cindex = cyl->_dcIndex;
+                auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
+                if (checkftype)
+                    short _filamentType = cylinderstruct.type;
+                auto x1 = cyl->getFirstBead()->coordinate;
+                auto x2 = cyl->getSecondBead()->coordinate;
 //            uint16_t shiftedindex = (i << 4);
-            uint32_t shiftedindex = (cindex << 4);
-            Cyldcindexvec[i] = cindex;
-            i++;
+                uint32_t shiftedindex = (cindex << 4);
+                Cyldcindexvec[i] = cindex;
+                i++;
 /*			cout<<cyl->getID()<<" ";
 	        auto guessCmp = GController::getCompartment(cyl->coordinate);
 	        if(guessCmp != this){
@@ -387,46 +156,47 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 		        exit(EXIT_FAILURE);
 	        }*/
 
-            uint32_t j = 0;
-            for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
-            it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                bool state = false;
-                if(isvectorizedgather)
-                    state = checkoccupancy(boundstate, bstatepos, maxnbs * cindex + j);
-                else
-                    state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
-                if (state) {
-                    auto mp = (float) *it /
-                            SysParams::Geometry().cylinderNumMon[_filamentType];
-                    auto coord = midPointCoordinate(x1, x2, mp);
-                    //last 4 bits are binding site while first 12 bits are cylinder index.
-                    uint32_t index = shiftedindex | j;
-                    int pindices[3];
-                    if(rMaxvsCmpSize){
-                        getpartitionindex<true>(pindices, coord, coord_bounds);
-                        addcoordtorMaxbasedpartitons<true>(pindices, coord, index);
-                    }
-                    else{
-                        getpartitionindex<false>(pindices, coord, coord_bounds);
-                        addcoordtorMaxbasedpartitons<false>(pindices, coord, index);
-                    }
+                uint32_t j = 0;
+                for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
+                     it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
+                    bool state = false;
+                    if (isvectorizedgather)
+                        state = checkoccupancy(boundstate, bstatepos, maxnbs * cindex + j);
+                    else
+                        state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
+                    if (state) {
+                        auto mp = (float) *it /
+                                  SysParams::Geometry().cylinderNumMon[_filamentType];
+                        auto coord = midPointCoordinate(x1, x2, mp);
+                        //last 4 bits are binding site while first 12 bits are cylinder index.
+                        uint32_t index = shiftedindex | j;
+                        int pindices[3];
+                        if (rMaxvsCmpSize) {
+                            getpartitionindex<true>(pindices, coord, coord_bounds);
+                            addcoordtorMaxbasedpartitons<true>(pindices, coord, index);
+                        } else {
+                            getpartitionindex<false>(pindices, coord, coord_bounds);
+                            addcoordtorMaxbasedpartitons<false>(pindices, coord, index);
+                        }
 /*                    getpartition3Dindex(pindices, coord, coord_bounds);
                     addcoordtopartitons_smallrmax(pindices, coord, index);
                     getpartition3Dindex(pindices, coord);
                     addcoordtopartitons(pindices, coord, index);*/
+                    }
+                    j++;
                 }
-                j++;
             }
-        }
 //        cout<<endl;
 //    assert(k<65536);
-        //Create input vector for SIMD calculations
+            //Create input vector for SIMD calculations
 //        cout<<"Linker coord size ";
-        for(short i =0; i < 27; i++) {
+            for (short i = 0; i < 27; i++) {
 //            cout<<partitionedcoordx[i].size()<<" ";
-            bscoords_section_linker[i].init_coords(partitionedcoordx[i],
-                    partitionedcoordy[i], partitionedcoordz[i], cindex_bs_section[i]);
-        }
+                bscoords_section_linker[filType * 27 + i].init_coords(partitionedcoordx[i],
+                                                                      partitionedcoordy[i],
+                                                                      partitionedcoordz[i],
+                                                                      cindex_bs_section[i]);
+            }
 //        cout<<endl;
 /*        cout<<"Cmp Linker coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
         for(short partition = 0; partition < 27; partition ++) {
@@ -440,12 +210,12 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             cout<<endl;
             cout << "---------------------" << endl;
         }*/
+        }
+        else{
+            for (short i = 0; i < 27; i++)
+                bscoords_section_linker[filType * 27 + i].resize(0);
+        }
     }
-    else{
-	    for(short i =0; i < 27; i++)
-		    bscoords_section_linker[i].resize(0);
-    }
-
 }
 
 void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
@@ -483,15 +253,19 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
     cout<<endl;*/
 
     int N = _cylinders.size() * maxnbs;
-    if(N) {
-        Cyldcindexvec.resize(_cylinders.size());
+    for (short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
+        if (N) {
+            Cyldcindexvec.resize(_cylinders.size());
 
-        short _filamentType = 0;
-        bool checkftype = false;
-        if (SysParams::Chemistry().numFilaments > 1)
-            checkftype = true;
-        unsigned int i = 0;
-        uint32_t k = 0;
+            short _filamentType = 0;
+            bool checkftype = false;
+            if (SysParams::Chemistry().numFilaments > 1)
+                checkftype = true;
+            unsigned int i = 0;
+            uint32_t k = 0;
+
+            bscoords_section_motor.resize(SysParams::Chemistry().numFilaments * 27);
+
             for (auto cyl:_cylinders) {
                 uint32_t cindex = cyl->_dcIndex;
                 auto cylinderstruct = CUDAcommon::serlvars.cylindervec[cindex];
@@ -520,8 +294,8 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                 for (auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                      it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
                     bool state = false;
-                    if(isvectorizedgather)
-                        state = checkoccupancy(boundstate, bstatepos,maxnbs * cindex + j);
+                    if (isvectorizedgather)
+                        state = checkoccupancy(boundstate, bstatepos, maxnbs * cindex + j);
                     else
                         state = checkoccupancy(cyl, *it, _filamentType, bstatepos);
                     if (state) {
@@ -533,11 +307,10 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
                         //split and crosscheck
 //						cout<<index<<" ";
                         int pindices[3];
-                        if(rMaxvsCmpSize){
+                        if (rMaxvsCmpSize) {
                             getpartitionindex<true>(pindices, coord, coord_bounds);
                             addcoordtorMaxbasedpartitons<true>(pindices, coord, index);
-                        }
-                        else{
+                        } else {
                             getpartitionindex<false>(pindices, coord, coord_bounds);
                             addcoordtorMaxbasedpartitons<false>(pindices, coord, index);
                         }
@@ -551,13 +324,15 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             }
 //            cout<<endl;
 //    assert(k<65536);
-        //Create input vector for SIMD calculations
+            //Create input vector for SIMD calculations
 //        cout<<"Motor coords size ";
-        for(short i =0; i < 27; i++) {
+            for (short i = 0; i < 27; i++) {
 //            cout<<partitionedcoordx[i].size()<<" ";
-            bscoords_section_motor[i].init_coords(partitionedcoordx[i], partitionedcoordy[i],
-                    partitionedcoordz[i], cindex_bs_section[i]);
-        }
+                bscoords_section_motor[filType * 27 + i].init_coords(partitionedcoordx[i],
+                                                                     partitionedcoordy[i],
+                                                                     partitionedcoordz[i],
+                                                                     cindex_bs_section[i]);
+            }
 
 /*        cout<<"indices ";
         for(auto x:cindex_bs_section[0])
@@ -565,22 +340,22 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
         cout<<endl;*/
 
 //        cout<<endl;
-        /*cout<<"Cmp Motor coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
-        for(short partition = 0; partition < 27; partition ++) {
-            cout<<"Partition "<<partition<<endl;
-            for (int i = 0; i < partitionedcoordx[partition].size(); i++) {
-                cout << cindex_bs_section[partition][i]<<" "
-                                                         ""<<partitionedcoordx[partition][i] << " " <<
-                     partitionedcoordy[partition][i] <<
-                     " " << partitionedcoordz[partition][i] <<" ";
-            }
-            cout<<endl;
-            cout << "---------------------" << endl;
-        }*/
-    }
-    else{
-	    for(short i =0; i < 27; i++)
-		    bscoords_section_motor[i].resize(0);
+            /*cout<<"Cmp Motor coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
+			for(short partition = 0; partition < 27; partition ++) {
+				cout<<"Partition "<<partition<<endl;
+				for (int i = 0; i < partitionedcoordx[partition].size(); i++) {
+					cout << cindex_bs_section[partition][i]<<" "
+															 ""<<partitionedcoordx[partition][i] << " " <<
+						 partitionedcoordy[partition][i] <<
+						 " " << partitionedcoordz[partition][i] <<" ";
+				}
+				cout<<endl;
+				cout << "---------------------" << endl;
+			}*/
+        } else {
+            for (short i = 0; i < 27; i++)
+                bscoords_section_motor[filType * 27 + i].resize(0);
+        }
     }
 }
 
@@ -593,22 +368,6 @@ void Compartment::getpartition3Dindex(int (&indices)[3], vector<floatingpoint> c
     }
 /*    cout<<indices[0]<<" "<<indices[1]<<" "<<indices[2]<<" "<<coord[0]<<" "<<coord[1]<<" "
         <<coord[2]<<" "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;*/
-}
-
-void Compartment::getpartition3Dindex(int (&indices)[3], vector<floatingpoint> coord,
-                                      floatingpoint (&cmpcornercoords)[6]){
-    short i = 0;
-
-    for(auto x:coord){
-        if(x <= cmpcornercoords[i])
-            indices[i] = 0;
-        else if(x>=cmpcornercoords[i+3])
-            indices[i] = 2;
-        else
-            indices[i] = 1;
-
-        i++;
-    }
 }
 
 //if rMax+Cylsize/2+delta is less than CmpSize/2

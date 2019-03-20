@@ -101,6 +101,7 @@ struct UpdateBrancherBindingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 		CUDAcommon::ctime.tUpdateBrancherBindingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cUpdateBrancherBindingCallback++;
     }
 };
 
@@ -153,6 +154,7 @@ struct UpdateLinkerBindingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tUpdateLinkerBindingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cUpdateLinkerBindingCallback++;
     }
 };
 
@@ -204,6 +206,7 @@ struct UpdateMotorBindingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tUpdateMotorBindingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cUpdateMotorBindingCallback++;
     }
 };
 
@@ -255,6 +258,7 @@ struct UpdateMotorIDCallback{
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tUpdateMotorIDCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cUpdateMotorIDCallback++;
     }
 };
 
@@ -286,6 +290,7 @@ struct FilamentExtensionPlusEndCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentExtensionPlusEndCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentExtensionPlusEndCallback++;
     }
 };
 
@@ -311,6 +316,7 @@ struct FilamentExtensionMinusEndCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentExtensionMinusEndCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentExtensionMinusEndCallback++;
     }
 };
 
@@ -333,6 +339,7 @@ struct FilamentRetractionPlusEndCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentRetractionPlusEndCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentRetractionPlusEndCallback++;
     }
 };
 
@@ -355,6 +362,7 @@ struct FilamentRetractionMinusEndCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentRetractionMinusEndCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentRetractionMinusEndCallback++;
     }
 };
 
@@ -377,6 +385,7 @@ struct FilamentPolymerizationPlusEndCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentPolymerizationPlusEndCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentPolymerizationPlusEndCallback++;
     }
 };
 
@@ -399,6 +408,7 @@ struct FilamentPolymerizationMinusEndCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentPolymerizationMinusEndCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentPolymerizationMinusEndCallback++;
     }
 };
 
@@ -422,6 +432,7 @@ struct FilamentDepolymerizationPlusEndCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentDepolymerizationPlusEndCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentDepolymerizationPlusEndCallback++;
     }
 };
 
@@ -444,6 +455,7 @@ struct FilamentDepolymerizationMinusEndCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentDepolymerizationMinusEndCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentDepolymerizationMinusEndCallback++;
     }
 };
 
@@ -472,6 +484,7 @@ struct BranchingPointUnbindingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tBranchingPointUnbindingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cBranchingPointUnbindingCallback++;
     }
     
     
@@ -520,7 +533,6 @@ struct BranchingCallback {
         floatingpoint pos = floatingpoint(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
         if(SysParams::RUNSTATE==true){
         //Get a position and direction of a new filament
-        cout<<"Branch cylID "<<c1->getID()<<endl;
         auto x1 = c1->getFirstBead()->coordinate;
         auto x2 = c1->getSecondBead()->coordinate;
         
@@ -607,6 +619,7 @@ struct BranchingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tBranchingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cBranchingCallback++;
     }
 };
 
@@ -635,6 +648,7 @@ struct LinkerUnbindingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tLinkerUnbindingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cLinkerUnbindingCallback++;
     }
 };
 
@@ -705,6 +719,7 @@ struct LinkerBindingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tLinkerBindingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cLinkerBindingCallback++;
     }
 };
 
@@ -737,8 +752,10 @@ struct MotorUnbindingCallback {
 //        mManager->addUnboundID(_motor->getID());
 
         //@{
-/*        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "<<_motor->getFirstPosition()
-                  <<" "<<_motor->getSecondCylinder()->getID()<<" "<<_motor->getSecondPosition()<<endl;*/
+/*        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getID()<<" "
+																			""<<_motor->getFirstPosition()*40
+                  <<" "<<_motor->getSecondCylinder()->getID()<<" "
+															   ""<<_motor->getSecondPosition()*40<<endl;*/
         //@}
 
         //remove the motor
@@ -747,6 +764,7 @@ struct MotorUnbindingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tMotorUnbindingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cMotorUnbindingCallback++;
     }
 };
 
@@ -823,6 +841,7 @@ struct MotorBindingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tMotorBindingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cMotorBindingCallback++;
         
     }
 };
@@ -882,6 +901,7 @@ struct MotorWalkingCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tMotorWalkingCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cMotorWalkingCallback++;
     }
 };
 
@@ -938,6 +958,7 @@ struct MotorMovingCylinderCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tMotorMovingCylinderCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cMotorMovingCylinderCallback++;
     }
 };
 
@@ -1031,6 +1052,7 @@ struct FilamentCreationCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentCreationCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentCreationCallback++;
         }
 
     
@@ -1063,6 +1085,7 @@ struct FilamentSeveringCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentSeveringCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentSeveringCallback++;
     }
 };
 
@@ -1087,6 +1110,7 @@ struct FilamentDestructionCallback {
 	    mine = chrono::high_resolution_clock::now();
 	    chrono::duration<floatingpoint> elapsed_time(mine - mins);
 	    CUDAcommon::ctime.tFilamentDestructionCallback += elapsed_time.count();
+	    CUDAcommon::ccount.cFilamentDestructionCallback++;
     }
 };
 

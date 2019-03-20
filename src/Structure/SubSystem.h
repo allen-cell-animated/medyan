@@ -88,6 +88,7 @@ public:
     /// Add a Trackable to the SubSystem
     template<class T, typename ...Args>
     T *addTrackable(Args &&...args) {
+	    minsT = chrono::high_resolution_clock::now();
 
         //create instance
         T *t = new T(forward<Args>(args)...);
@@ -101,6 +102,7 @@ public:
 
         //if neighbor, add
         if (t->_dneighbor) {
+	        minsN = chrono::high_resolution_clock::now();
 #ifdef HYBRID_NLSTENCILLIST
             _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
             //Remove boundary neighbors
@@ -110,12 +112,21 @@ public:
             for (auto nlist : _neighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
 #endif
+	        mineN = chrono::high_resolution_clock::now();
+	        chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
+	        timedneighbor += elapsed_time.count();
 
         } else if (t->_neighbor) {
+	        minsN = chrono::high_resolution_clock::now();
             for (auto nlist : _neighborLists.getElements())
                 nlist->addNeighbor((Neighbor *) t);
+	        mineN = chrono::high_resolution_clock::now();
+	        chrono::duration<floatingpoint> elapsed_time(mineN - minsN);
+	        timeneighbor += elapsed_time.count();
         }
-
+	    mineT = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_timeT(mineT - minsT);
+	    timetrackable += elapsed_timeT.count();
         return t;
     }
 
@@ -244,7 +255,11 @@ public:
     static floatingpoint SIMDtime;
     static floatingpoint SIMDtimeV2;
     static floatingpoint HYBDtime;
+	static floatingpoint timeneighbor;
+	static floatingpoint timedneighbor;
+	static floatingpoint timetrackable;
 private:
+	chrono::high_resolution_clock::time_point minsN, mineN, minsT,mineT;
     dist::Coords temptest;
     floatingpoint _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
@@ -268,6 +283,7 @@ private:
     static CompartmentGrid* _staticgrid;
     floatingpoint* cylsqmagnitudevector;
     static bool initialize;
+
     chrono::high_resolution_clock::time_point minsSIMD, mineSIMD, minsHYBD, mineHYBD;
 #ifdef CUDAACCL_NL
     floatingpoint* gpu_coord;

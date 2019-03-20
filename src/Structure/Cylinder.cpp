@@ -111,8 +111,11 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 
     : Trackable(true, true, true, false),
       _b1(b1), _b2(b2), _type(type), _position(position), _ID(_cylinders.getID()) {
-    
+
+	//@{
+	mins = chrono::high_resolution_clock::now();
     parent->addChild(unique_ptr<Component>(this));
+
     //revectorize if needed
     revectorizeifneeded();
     //set cindex based on maxbindex if there were no cylinders removed.
@@ -126,13 +129,19 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
         _dcIndex = *removedcindex.begin();
         removedcindex.erase(removedcindex.begin());
     }
+	mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_time1(mine - mins);
+	timecylinder1 += elapsed_time1.count();
+    //@}
+    //@{
+	mins = chrono::high_resolution_clock::now();
     Ncyl = _cylinders.getElements().size();
     //check if you need to revectorize.
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
     Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
     CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
     //copy attributes to a structure array
-    cylindervec[_dcIndex].filamentID = dynamic_cast<Filament*>(this->getParent())->getID();
+    cylindervec[_dcIndex].filamentID = static_cast<Filament*>(this->getParent())->getID();
     cylindervec[_dcIndex].filamentposition = _position;
     cylindervec[_dcIndex].bindices[0] = _b1->_dbIndex;
     cylindervec[_dcIndex].bindices[1] = _b2->_dbIndex;
@@ -148,10 +157,14 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 
    //add to compartment
    _compartment->addCylinder(this);
-          
+
+	mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+	timecylinder2 += elapsed_time2.count();
+    //@}
 #ifdef MECHANICS
+	mins = chrono::high_resolution_clock::now();
           //set eqLength according to cylinder size
-          
               floatingpoint eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
           if(!SysParams::RUNSTATE) //RESTARTPHASE
           {
@@ -178,9 +191,13 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
           }
           _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
           _mCylinder->setCylinder(this);
+	mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_timemech(mine - mins);
+	timecylindermech += elapsed_timemech.count();
 #endif
     
 #ifdef CHEMISTRY
+	mins = chrono::high_resolution_clock::now();
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
     _cCylinder->setCylinder(this);
 
@@ -205,6 +222,9 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     //other arrays needed
     ccylindervec[_dcIndex] = _cCylinder.get();
     cylinderpointervec[_dcIndex] = this;*/
+	mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_timechem(mine - mins);
+	timecylinderchem += elapsed_timechem.count();
 }
 
 Cylinder::~Cylinder() noexcept {
@@ -402,3 +422,7 @@ ChemManager* Cylinder::_chemManager = 0;
 
 Database<Cylinder*> Cylinder::_cylinders;
 bool Cylinder::setpositionupdatedstate = false;
+floatingpoint Cylinder::timecylinder1 = 0.0;
+floatingpoint Cylinder::timecylinder2= 0.0;
+floatingpoint Cylinder::timecylinderchem= 0.0;
+floatingpoint Cylinder::timecylindermech= 0.0;

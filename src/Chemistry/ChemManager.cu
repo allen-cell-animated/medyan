@@ -2752,13 +2752,15 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                                       bool extensionFront,
                                       bool extensionBack,
                                       bool initialization) {
-    
+
+	mins = chrono::high_resolution_clock::now();
     //get some related objects
     Compartment* C = cc->getCompartment();
     Cylinder* c = cc->getCylinder();
     
     Filament* f = (Filament*)(c->getParent());
     short filType = f->getType();
+
     //add monomers to cylinder
     for(int i = 0; i < cc->getSize(); i++) {
         CMonomer* m = new CMonomer(filType);
@@ -2789,23 +2791,37 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
-    
+
+	mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_time1(mine - mins);
+	tchemmanager1 += elapsed_time1.count();
+
+
     //get last ccylinder
     CCylinder* lastcc = nullptr;
     
     //extension of front
     if(extensionFront) {
+	    mins = chrono::high_resolution_clock::now();
         lastcc = f->getCylinderVector().back()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+	    tchemmanager2 += elapsed_time2.count();
     }
     //extension of back
     else if(extensionBack) {
+	    mins = chrono::high_resolution_clock::now();
         lastcc = f->getCylinderVector().front()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(cc, lastcc);
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time2(mine - mins);
+	    tchemmanager2 += elapsed_time2.count();
     }
-    
+
     //Base case, initialization
     else if (initialization) {
+		mins = chrono::high_resolution_clock::now();
         //Check if this is the first cylinder
         if(!f->getCylinderVector().empty()) {
             
@@ -2899,8 +2915,23 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 #endif
             }
         }
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_time3(mine - mins);
+	    tchemmanager3 += elapsed_time3.count();
+
     }
+
+
+	mins = chrono::high_resolution_clock::now();
     //Add all reaction templates to this cylinder
     for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
+
+	mine = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_time4(mine - mins);
+	tchemmanager4 += elapsed_time4.count();
 }
 
+floatingpoint ChemManager::tchemmanager1 = 0.0;
+floatingpoint ChemManager::tchemmanager2 = 0.0;
+floatingpoint ChemManager::tchemmanager3 = 0.0;
+floatingpoint ChemManager::tchemmanager4 = 0.0;

@@ -81,7 +81,7 @@ private:
     ///Histogram data
     static Histogram* _turnoverTimes;
     //@}
-    
+
 public:
     /// This constructor creates a short filament, containing only two beads, at runtime.
     /// Coordinates of the first bead is an input, second is set up by using an input
@@ -242,6 +242,13 @@ public:
     
     /// Count the number of filament species with a given name in the system
     static species_copy_t countSpecies(short filamentType, const string& name);
+
+    static floatingpoint FilextendPlusendtimer1;
+    static floatingpoint FilextendPlusendtimer2;
+    static floatingpoint FilextendPlusendtimer3;
+	static floatingpoint FilextendMinusendtimer1;
+	static floatingpoint FilextendMinusendtimer2;
+	static floatingpoint FilextendMinusendtimer3;
 };
 
 #endif

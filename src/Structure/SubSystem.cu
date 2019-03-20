@@ -452,28 +452,29 @@ void SubSystem::updateBindingManagers() {
         C->SIMDcoordinates4motorsearch(1);
         C->getHybridBindingSearchManager()->resetpossibleBindings();
     }
-#endif
-
-    if(!initialize) {
-        HybridBindingSearchManager::setdOut();
-        initialize = true;
-    }
-
-#ifdef SIMDBINDINGSEARCH3
     mineSIMD = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runSIMD2(mineSIMD - minsSIMD);
     SIMDtime += elapsed_runSIMD2.count();
     cout<<"SIMD create time "<<elapsed_runSIMD2.count()<<endl;
+#endif
 
-    minsSIMD = chrono::high_resolution_clock::now();
+    if(!initialize) {
+//        HybridBindingSearchManager::setdOut();
+		    _compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
+		    ->initializeSIMDvars();
+        initialize = true;
+    }
+
+#ifdef SIMDBINDINGSEARCH3
+
+//    minsSIMD = chrono::high_resolution_clock::now();
     for(auto C : _compartmentGrid->getCompartments()) {
-        C->SIMDcoordinates_section();
         C->SIMDcoordinates4linkersearch_section(1);
         C->SIMDcoordinates4motorsearch_section(1);
     }
-    mineSIMD = chrono::high_resolution_clock::now();
+    /*mineSIMD = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_SIMDpart(mineSIMD - minsSIMD);
-    cout<<"SIMD create time "<<elapsed_SIMDpart.count()<<endl;
+    cout<<"SIMD create time "<<elapsed_SIMDpart.count()<<endl;*/
 #endif
 
     //PROTOCOL 1 This call calculates Binding pairs according to SIMD protocol V1
@@ -481,7 +482,6 @@ void SubSystem::updateBindingManagers() {
         minsSIMD = chrono::high_resolution_clock::now();
         for (auto C : _compartmentGrid->getCompartments()) {
 #ifdef SIMBDINDINGSEARCH
-
             C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencil();
 //        C->getHybridBindingSearchManager()->checkoccupancy(_idvec);
             for (auto &manager : C->getFilamentBindingManagers()) {
@@ -575,17 +575,21 @@ void SubSystem::updateBindingManagers() {
     HybridBindingSearchManager::findtimeV3 = 0.0;
     HybridBindingSearchManager::SIMDV3appendtime = 0.0;
     for (auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3(0);
+        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
 	    for(auto &manager : C->getBranchingManagers()) {
 	    		manager->updateAllPossibleBindingsstencil();
 	    }
     }
+    //UpdateAllBindingReactions
+    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->updateAllBindingReactions();
+    }
+
     mineSIMD = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
     cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
     cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
     cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
-    cout<<"-------"<<endl;
 #endif
     //PROTOCOL #3 This call calculates Binding pairs according to HYBRID protocol
     // (non-SIMD).
@@ -1081,5 +1085,8 @@ bool SubSystem::initialize = false;
 floatingpoint SubSystem::SIMDtime  = 0.0;
 floatingpoint SubSystem::SIMDtimeV2  = 0.0;
 floatingpoint SubSystem::HYBDtime  = 0.0;
+floatingpoint SubSystem::timeneighbor  = 0.0;
+floatingpoint SubSystem::timedneighbor  = 0.0;
+floatingpoint SubSystem::timetrackable  = 0.0;
 
 

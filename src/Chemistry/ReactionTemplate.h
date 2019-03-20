@@ -49,6 +49,7 @@ class FilamentReactionTemplate {
 friend class CController;
     
 protected:
+    chrono::high_resolution_clock::time_point mins, mine;
     static SubSystem* _ps; ///< A subsystem pointer to initialize and
                            ///< call chemical callbacks
     short _filamentType;   ///< Filament type that this template acts on
