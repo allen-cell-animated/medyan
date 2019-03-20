@@ -164,6 +164,13 @@ void HybridBindingSearchManager::initializeSIMDvars(){
 	for (short idx = 0; idx < totaluniquefIDpairs; idx++) {
 		int countbounds = _rMaxsqvec[idx].size();
 		for (short idx2 = 0; idx2 < countbounds; idx2++) {
+			if(bstateposvec[idx][idx2] == 1) //Linker
+				largestlinkerdistance = max<floatingpoint>(largestlinkerdistance,
+						sqrt(_rMaxsqvec[idx][idx2]));
+			else//Motor
+				largestmotordistance = max<floatingpoint>(largestmotordistance,
+				                                           sqrt(_rMaxsqvec[idx][idx2]));
+
 			auto coord = _compartment->coordinates();
 			cout<<_rMinsqvec[idx][idx2]<<" "<<_rMaxsqvec[idx][idx2]<<endl;
 			getdOut<1U, true>(count).init_dout(10000, {_rMinsqvec[idx][idx2],
@@ -1288,6 +1295,8 @@ dist::dOut<1U,false> HybridBindingSearchManager::bspairslinker2;
 
 dist::dOut<1U,true> HybridBindingSearchManager::bspairsself[NPROCS][8];
 dist::dOut<1U,false> HybridBindingSearchManager::bspairs[NPROCS][8];
+floatingpoint HybridBindingSearchManager::largestlinkerdistance = 0.0;
+floatingpoint HybridBindingSearchManager::largestmotordistance = 0.0;
 //D = 2
 /*dist::dOut<2U,true> HybridBindingSearchManager::bspairs2self;
 dist::dOut<2U,false> HybridBindingSearchManager::bspairs2;

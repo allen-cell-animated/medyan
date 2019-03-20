@@ -104,6 +104,7 @@ private:
     static dist::dOut<1U,true> bspairsself[NPROCS][8];
     static dist::dOut<1U,false> bspairs[NPROCS][8];
 
+
 	template<uint D, bool SELF>
 	dist::dOut<D,SELF>& getdOut(short dOutID);
 
@@ -276,6 +277,9 @@ public:
     }
 
 	void initializeSIMDvars();
+
+	static floatingpoint largestlinkerdistance;
+	static floatingpoint largestmotordistance;
 
     static floatingpoint SIMDtime;
     static floatingpoint HYBDtime;

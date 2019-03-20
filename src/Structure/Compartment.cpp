@@ -95,6 +95,8 @@ void Compartment::SIMDcoordinates_section(){
 
 void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 
+	if(areEqual(HybridBindingSearchManager::largestmotordistance, 0.0)) return;
+
     for(short i =0; i < 27; i++) {
         partitionedcoordx[i].clear();
         partitionedcoordy[i].clear();
@@ -107,7 +109,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
     short bstatepos = 1;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-    floatingpoint _rMax = 40;
+    floatingpoint _rMax = HybridBindingSearchManager::largestlinkerdistance;
     floatingpoint searchdist = SysParams::Geometry().largestCylinderSize/2 + _rMax;
     bool rMaxvsCmpSize = (SysParams::Geometry().largestCylinderSize/2 + _rMax) <
                             SysParams::Geometry().largestCompartmentSide/2;
@@ -121,6 +123,8 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             _coords[2] + SysParams::Geometry().compartmentSizeZ/2 - searchdist};
 
     int N = _cylinders.size() * maxnbs;
+	bscoords_section_linker.resize(SysParams::Chemistry().numFilaments * 27);
+
     for (short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
         if(N) {
             Cyldcindexvec.resize(_cylinders.size());
@@ -129,9 +133,6 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
             if (SysParams::Chemistry().numFilaments > 1)
             checkftype = true;
         unsigned int i = 0;
-
-        bscoords_section_linker.resize(SysParams::Chemistry().numFilaments * 27);
-
 //        cout<<"Cmp coord "<<_coords[0]<<" "<<_coords[1]<<" "<<_coords[2]<<endl;
             for (auto cyl:_cylinders) {
                 uint32_t cindex = cyl->_dcIndex;
@@ -190,6 +191,7 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
 //    assert(k<65536);
             //Create input vector for SIMD calculations
 //        cout<<"Linker coord size ";
+
             for (short i = 0; i < 27; i++) {
 //            cout<<partitionedcoordx[i].size()<<" ";
                 bscoords_section_linker[filType * 27 + i].init_coords(partitionedcoordx[i],
@@ -212,13 +214,16 @@ void Compartment::SIMDcoordinates4linkersearch_section(bool isvectorizedgather){
         }*/
         }
         else{
-            for (short i = 0; i < 27; i++)
-                bscoords_section_linker[filType * 27 + i].resize(0);
+            for (short i = 0; i < 27; i++) {
+                    bscoords_section_linker[filType * 27 + i].resize(0);
+            }
         }
     }
 }
 
 void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
+
+	if(areEqual(HybridBindingSearchManager::largestmotordistance,0.0)) return;
 
     for(short i =0; i < 27; i++) {
         partitionedcoordx[i].clear();
@@ -233,7 +238,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     short maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
 
-    floatingpoint _rMax = 225;
+    floatingpoint _rMax = HybridBindingSearchManager::largestmotordistance;
     floatingpoint searchdist = SysParams::Geometry().largestCylinderSize/2 + _rMax;
     bool rMaxvsCmpSize = (searchdist) <
                          SysParams::Geometry().largestCompartmentSide/2;
@@ -253,6 +258,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
     cout<<endl;*/
 
     int N = _cylinders.size() * maxnbs;
+	bscoords_section_motor.resize(SysParams::Chemistry().numFilaments * 27);
     for (short filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
         if (N) {
             Cyldcindexvec.resize(_cylinders.size());
@@ -264,7 +270,7 @@ void Compartment::SIMDcoordinates4motorsearch_section(bool isvectorizedgather){
             unsigned int i = 0;
             uint32_t k = 0;
 
-            bscoords_section_motor.resize(SysParams::Chemistry().numFilaments * 27);
+
 
             for (auto cyl:_cylinders) {
                 uint32_t cindex = cyl->_dcIndex;
@@ -434,7 +440,6 @@ void Compartment::deallocateSIMDcoordinates(){
 
 bool Compartment::checkoccupancy(vector<vector<bool>>& boundstate, short bstatepos, int pos){
     return boundstate[bstatepos][pos];
-
 }
 
 bool Compartment::checkoccupancy(Cylinder* cyl, short it, short _filamentType,

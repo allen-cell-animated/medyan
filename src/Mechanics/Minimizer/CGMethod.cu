@@ -1312,10 +1312,6 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
                 lambda = MAXDIST / maxF();
                 sconvergencecheck = true;
             }
-            std::cout<<"safe energyChange "<<energyChange<<"energyLambda "
-														   ""<<energyLambda<<" "
-								   "currentEnergy "<<currentEnergy<<" lambda "
-									  ""<<lambda<<endl;
         }
 #endif
     }
