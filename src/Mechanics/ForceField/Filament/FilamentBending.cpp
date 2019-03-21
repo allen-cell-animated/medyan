@@ -43,12 +43,12 @@ void FilamentBending<FBendingInteractionType>::vectorize() {
                  it != f->getCylinderVector().end(); it++){
 
                 auto it2 = it - 1;
-                beadSet[n * i] = (*it2)->getFirstBead()->getDbIndex();
-                beadSet[n * i + 1] = (*it)->getFirstBead()->getDbIndex();
-                beadSet[n * i + 2] = (*it)->getSecondBead()->getDbIndex();
+                beadSet[n * i] = (*it2)->getFirstBead()->getIndex();
+                beadSet[n * i + 1] = (*it)->getFirstBead()->getIndex();
+                beadSet[n * i + 2] = (*it)->getSecondBead()->getIndex();
 //                std::cout<<f->getCylinderVector().size()<<" "<<(*it2)->getFirstBead()
-//                        ->getDbIndex()<<" "<<(*it)->getFirstBead()
-//                        ->getDbIndex()<<" "<<(*it)->getSecondBead()->getDbIndex()<<endl;
+//                        ->getIndex()<<" "<<(*it)->getFirstBead()
+//                        ->getIndex()<<" "<<(*it)->getSecondBead()->getIndex()<<endl;
                 kbend[i] = (*it)->getMCylinder()->getBendingConst();
                 eqt[i]  = (*it)->getMCylinder()->getEqTheta();
 

@@ -28,7 +28,7 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
         beadSet = new int[n * mtoc->getFilaments().size() + 1];
         kstr = new double[n * Cylinder::getCylinders().size() + 1];
         
-        beadSet[0] = mtoc->getBubble()->getBead()->getDbIndex();
+        beadSet[0] = mtoc->getBubble()->getBead()->getIndex();
         kstr[0] = 0;
         
         int i = 1;
@@ -36,7 +36,7 @@ void MTOCAttachment<MTOCInteractionType>::vectorize() {
         for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
             Filament *f = mtoc->getFilaments()[fIndex];
             
-            beadSet[n * i] = f->getMinusEndCylinder()->getFirstBead()->getDbIndex();
+            beadSet[n * i] = f->getMinusEndCylinder()->getFirstBead()->getIndex();
             
             kstr[n * i] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
             

@@ -44,7 +44,7 @@ private:
     static DatabaseData _dbData;
     
     std::size_t _id;
-    std::size_t _dbIndex;
+    std::size_t _index;
     
     //DEPRECATED AS OF 9/22/16
 //    int _transferID = -1; ///< index of a species ID to transfer
@@ -61,18 +61,18 @@ public:
 
     // Add element on construction
     template< typename... Args >
-    Database(Args&&... args) : _id(nextId()), _dbIndex(_elems.size()) {
+    Database(Args&&... args) : _id(nextId()), _index(_elems.size()) {
         _elems.push_back(static_cast<T*>(this));
         _dbData.push_back(std::forward<Args>(args)...);
     }
     // Remove element on destruction
     ~Database() {
-        if(_dbIndex + 1 != _elems.size()) {
+        if(_index + 1 != _elems.size()) {
             // Move the data from the last element to the current position
-            _elems[_dbIndex] = _elems.back();
-            _dbData.copy_from_back(_dbIndex);
-            // Updata _dbIndex of the original last element
-            _elems[_dbIndex] -> _dbIndex = _dbIndex;
+            _elems[_index] = _elems.back();
+            _dbData.copy_from_back(_index);
+            // Updata _index of the original last element
+            _elems[_index] -> _index = _index;
         }
 
         // Pop the last element
@@ -81,7 +81,7 @@ public:
     }
 
     std::size_t getId() const { return _id; }
-    std::size_t getDbIndex() const { return _dbIndex; }
+    std::size_t getIndex() const { return _index; }
     
     //DEPRECATED AS OF 9/22/16
 //

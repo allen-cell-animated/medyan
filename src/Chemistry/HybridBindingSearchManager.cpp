@@ -416,8 +416,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
             else if(c.type == fpairs[0]) complimentaryfID = fpairs[1];
             else complimentaryfID = fpairs[0];
 
-            memcpy(x1, &coord[3 * c.beads[0]->getDbIndex()], 3 * sizeof(double));
-            memcpy(x2, &coord[3 * c.beads[1]->getDbIndex()], 3 * sizeof(double));
+            memcpy(x1, &coord[3 * c.beads[0]->getIndex()], 3 * sizeof(double));
+            memcpy(x2, &coord[3 * c.beads[1]->getIndex()], 3 * sizeof(double));
 
             //Go through the neighbors of the cylinder
             for (int arraycount = 0; arraycount < ncindices[i].size(); arraycount++) {
@@ -431,8 +431,8 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                 if(c.type != complimentaryfID) continue;
 
                 double x3[3], x4[3];
-                memcpy(x3, &coord[3 * cn.beads[0]->getDbIndex()], 3 * sizeof(double));
-                memcpy(x4, &coord[3 * cn.beads[1]->getDbIndex()], 3 * sizeof(double));
+                memcpy(x3, &coord[3 * cn.beads[0]->getIndex()], 3 * sizeof(double));
+                memcpy(x4, &coord[3 * cn.beads[1]->getIndex()], 3 * sizeof(double));
                 double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
                 double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
                 double X1X3squared = sqmagnitude(X1X3);

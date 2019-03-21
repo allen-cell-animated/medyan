@@ -21,28 +21,28 @@ TEST_CASE("Database tests", "[Database]") {
     // d: [0]
     REQUIRE(Dummy::getElements().size() == 1);
     REQUIRE(Dummy::getDbData().d.size() == 1);
-    REQUIRE(dummy0->getDbIndex() == 0);
+    REQUIRE(dummy0->getIndex() == 0);
 
     auto dummy1 = std::make_unique<Dummy>(1);
     auto dummy2 = std::make_unique<Dummy>(2);
     // d: [0, 1, 2]
     REQUIRE(Dummy::getElements().size() == 3);
     REQUIRE(Dummy::getDbData().d.size() == 3);
-    REQUIRE(dummy2->getDbIndex() == 2);
+    REQUIRE(dummy2->getIndex() == 2);
     REQUIRE(Dummy::getDbData().d[2] == 2);
 
     dummy1.reset(nullptr);
     // d: [0, 2]
     REQUIRE(Dummy::getElements().size() == 2);
     REQUIRE(Dummy::getDbData().d.size() == 2);
-    REQUIRE(dummy2->getDbIndex() == 1);
+    REQUIRE(dummy2->getIndex() == 1);
     REQUIRE(Dummy::getDbData().d[1] == 2);
 
     auto dummy3 = std::make_unique<Dummy>(3);
     // d: [0, 2, 3]
     REQUIRE(Dummy::getElements().size() == 3);
     REQUIRE(Dummy::getDbData().d.size() == 3);
-    REQUIRE(dummy3->getDbIndex() == 2);
+    REQUIRE(dummy3->getIndex() == 2);
     REQUIRE(Dummy::getDbData().d[2] == 3);
 
     dummy3.reset(nullptr);

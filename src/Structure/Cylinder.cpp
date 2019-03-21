@@ -40,7 +40,7 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
     for(size_t idx = 0; idx < Ncyl; ++idx){
         auto cyl = getElements()[idx];
         //set _dcIndex
-        cyl->_dcIndex = i; // Here _dcIndex == getDbIndex()
+        cyl->_dcIndex = i; // Here _dcIndex == getIndex()
         //copy attributes to a structure array
         cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getId();
         cylindervec[i].filamentposition = cyl->getPosition();

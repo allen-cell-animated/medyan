@@ -79,16 +79,16 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
 //            auto neighbor = _neighborList->getNeighbors(be)[ni];
             /*std::cout<<"Boundary with cindex "<<neighbor->_dcIndex<<" and ID "
                     ""<<neighbor->getID()<<" with bindices "<<neighbor->getFirstBead()
-                    ->getDbIndex()<<" "<<neighbor->getSecondBead()->getDbIndex()<<endl;*/
+                    ->getIndex()<<" "<<neighbor->getSecondBead()->getIndex()<<endl;*/
             if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
             {
-                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getDbIndex();
+                bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getIndex();
                 beadSet[cumnn+idx] = bindex;
                 krep[cumnn+idx] = be->getRepulsionConst();
                 slen[cumnn+idx] = be->getScreeningLength();
                 idx++;
             }
-            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getDbIndex();
+            bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getIndex();
             beadSet[cumnn+idx] = bindex;
             krep[cumnn+idx] = be->getRepulsionConst();
             slen[cumnn+idx] = be->getScreeningLength();
@@ -96,9 +96,9 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::vectorize() {
 
 
 //            if (_neighborList->getNeighbors(be)[ni]->isPlusEnd())
-//            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getDbIndex();check=true;}
+//            {bindex = _neighborList->getNeighbors(be)[ni]->getSecondBead()->getIndex();check=true;}
 //            else if(_neighborList->getNeighbors(be)[ni]->isMinusEnd())
-//            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getDbIndex();check=true;}
+//            {bindex = _neighborList->getNeighbors(be)[ni]->getFirstBead()->getIndex();check=true;}
 //                if(check){
 //                    beadSet[cumnn+idx] = bindex;
 //                    krep[cumnn+idx] = be->getRepulsionConst();

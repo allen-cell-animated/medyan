@@ -50,11 +50,11 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
     int i = 0;
 
     for (auto m: MotorGhost::getMotorGhosts()) {
-        /* Haoran 03/18/2019 m->getDbIndex() = i; */
-        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getDbIndex();
-        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->getDbIndex();
-        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->getDbIndex();
-        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->getDbIndex();
+        /* Haoran 03/18/2019 m->getIndex() = i; */
+        beadSet[n * i] = m->getFirstCylinder()->getFirstBead()->getIndex();
+        beadSet[n * i + 1] = m->getFirstCylinder()->getSecondBead()->getIndex();
+        beadSet[n * i + 2] = m->getSecondCylinder()->getFirstBead()->getIndex();
+        beadSet[n * i + 3] = m->getSecondCylinder()->getSecondBead()->getIndex();
 /*        std::cout<<coord[beadSet[n * i]]<<" "<<coord[beadSet[n * i +1]]<<" "
                 ""<<coord[beadSet[n * i +2]]<<" "<<coord[beadSet[n * i +3]]<<" "
                 ""<<Bead::getBeads().size()<<" "<<endl;*/
@@ -148,7 +148,7 @@ template<class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
     for(auto m: MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
-        m->getMMotorGhost()->stretchForce += stretchforce[m->getDbIndex()];
+        m->getMMotorGhost()->stretchForce += stretchforce[m->getIndex()];
 //        std::cout<<m->getMMotorGhost()->stretchForce<<endl;
     }
     delete [] stretchforce;

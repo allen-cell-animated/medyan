@@ -35,9 +35,9 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
 
     for (auto b: BranchingPoint::getBranchingPoints()) {
 
-        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getDbIndex();
-        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getDbIndex();
-        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getDbIndex();
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex();
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex();
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex();
 
         kpos[i] = b->getMBranchingPoint()->getPositionConstant();
         pos[i] = b->getPosition();

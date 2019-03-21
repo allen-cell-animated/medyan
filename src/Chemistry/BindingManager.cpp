@@ -1202,8 +1202,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 //            counter2++;
             continue;}
         double x1[3],x2[3];
-        memcpy(x1, &coord[3*c.beads[0]->getDbIndex()], 3 * sizeof(double));
-        memcpy(x2, &coord[3*c.beads[1]->getDbIndex()], 3 * sizeof(double));
+        memcpy(x1, &coord[3*c.beads[0]->getIndex()], 3 * sizeof(double));
+        memcpy(x2, &coord[3*c.beads[1]->getIndex()], 3 * sizeof(double));
         double X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
 
         //Check 2
@@ -1232,8 +1232,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                 continue;}
 
             double x3[3], x4[3];
-            memcpy(x3, &coord[3*cn.beads[0]->getDbIndex()], 3 * sizeof(double));
-            memcpy(x4, &coord[3*cn.beads[1]->getDbIndex()], 3 * sizeof(double));
+            memcpy(x3, &coord[3*cn.beads[0]->getIndex()], 3 * sizeof(double));
+            memcpy(x4, &coord[3*cn.beads[1]->getIndex()], 3 * sizeof(double));
             double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             double X1X3squared = sqmagnitude(X1X3);
@@ -1316,15 +1316,15 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                             auto xx2 = ccylvec[cnindex]->getCylinder();
 //                            std::cout<<xx1->getId()<<" "<<c.ID<<" "<<xx2->getId()<<" "
 //                                    ""<<cn.ID<<endl;
-                            /*if(xx1->getFirstBead()->getDbIndex() != c.bindices[0] ||
-                               xx1->getSecondBead()->getDbIndex() != c.bindices[1])
-                                std::cout<<"DB1 "<<xx1->getFirstBead()->getDbIndex()<<" "
-                                        ""<<xx1->getSecondBead()->getDbIndex()<<" "<<c
+                            /*if(xx1->getFirstBead()->getIndex() != c.bindices[0] ||
+                               xx1->getSecondBead()->getIndex() != c.bindices[1])
+                                std::cout<<"DB1 "<<xx1->getFirstBead()->getIndex()<<" "
+                                        ""<<xx1->getSecondBead()->getIndex()<<" "<<c
                                                  .bindices[0]<<" "<<c.bindices[1]<<endl;
-                            if(xx2->getFirstBead()->getDbIndex() != cn.bindices[0] ||
-                               xx2->getSecondBead()->getDbIndex() != cn.bindices[1])
-                                std::cout<<"DB2 "<<xx2->getFirstBead()->getDbIndex()<<" "
-                                        ""<<xx2->getSecondBead()->getDbIndex()<<" "<<cn
+                            if(xx2->getFirstBead()->getIndex() != cn.bindices[0] ||
+                               xx2->getSecondBead()->getIndex() != cn.bindices[1])
+                                std::cout<<"DB2 "<<xx2->getFirstBead()->getIndex()<<" "
+                                        ""<<xx2->getSecondBead()->getIndex()<<" "<<cn
                                                  .bindices[0]<<" "<<cn.bindices[1]<<endl;*/
                             auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
                             auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
@@ -2555,8 +2555,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
             counter2++;
             continue;}
         double x1[3],x2[3];
-        memcpy(x1, &coord[3*c.beads[0]->getDbIndex()], 3 * sizeof(double));
-        memcpy(x2, &coord[3*c.beads[1]->getDbIndex()], 3 * sizeof(double));
+        memcpy(x1, &coord[3*c.beads[0]->getIndex()], 3 * sizeof(double));
+        memcpy(x2, &coord[3*c.beads[1]->getIndex()], 3 * sizeof(double));
         double X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
         //Check 2
 /*
@@ -2586,8 +2586,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                  continue;}
 
             double x3[3], x4[3];
-            memcpy(x3, &coord[3*cn.beads[0]->getDbIndex()], 3 * sizeof(double));
-            memcpy(x4, &coord[3*cn.beads[1]->getDbIndex()], 3 * sizeof(double));
+            memcpy(x3, &coord[3*cn.beads[0]->getIndex()], 3 * sizeof(double));
+            memcpy(x4, &coord[3*cn.beads[1]->getIndex()], 3 * sizeof(double));
             double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             double X1X3squared = sqmagnitude(X1X3);
@@ -2671,15 +2671,15 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                         auto xx2 = ccylvec[cnindex]->getCylinder();
 //                        std::cout<<xx1->getId()<<" "<<c.ID<<" "<<xx2->getId()<<" "
 //                                ""<<cn.ID<<endl;
-                        if(xx1->getFirstBead()->getDbIndex() != c.bindices[0] ||
-                                xx1->getSecondBead()->getDbIndex() != c.bindices[1])
-                            std::cout<<"DB1 "<<xx1->getFirstBead()->getDbIndex()<<" "
-                                ""<<xx1->getSecondBead()->getDbIndex()<<" "<<c
+                        if(xx1->getFirstBead()->getIndex() != c.bindices[0] ||
+                                xx1->getSecondBead()->getIndex() != c.bindices[1])
+                            std::cout<<"DB1 "<<xx1->getFirstBead()->getIndex()<<" "
+                                ""<<xx1->getSecondBead()->getIndex()<<" "<<c
                                          .bindices[0]<<" "<<c.bindices[1]<<endl;
-                        if(xx2->getFirstBead()->getDbIndex() != cn.bindices[0] ||
-                           xx2->getSecondBead()->getDbIndex() != cn.bindices[1])
-                        std::cout<<"DB2 "<<xx2->getFirstBead()->getDbIndex()<<" "
-                                ""<<xx2->getSecondBead()->getDbIndex()<<" "<<cn
+                        if(xx2->getFirstBead()->getIndex() != cn.bindices[0] ||
+                           xx2->getSecondBead()->getIndex() != cn.bindices[1])
+                        std::cout<<"DB2 "<<xx2->getFirstBead()->getIndex()<<" "
+                                ""<<xx2->getSecondBead()->getIndex()<<" "<<cn
                                          .bindices[0]<<" "<<cn.bindices[1]<<endl;*/
                         auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
                         auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
