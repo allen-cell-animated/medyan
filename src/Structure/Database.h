@@ -24,6 +24,46 @@ struct DatabaseDataDefault {
     void copy_from_back(std::size_t dbIndex) {}
 };
 
+template< typename T >
+class DatabaseBase {
+    
+private:
+    static std::vector<T*> _elems;  ///< Pointer to the elements in the collection
+
+    std::size_t _id;
+    std::size_t _index;
+
+public:
+    static const auto& getElements() { return _elems; }
+
+    // Get the next unique id
+    static std::size_t nextId() { static std::size_t nextId = 0; return nextId++; }
+
+    // Add element on construction
+    DatabaseBase() : _id(nextId()), _index(_elems.size()) {
+        _elems.push_back(static_cast<T*>(this));
+    }
+    // Remove element on destruction
+    ~DatabaseBase() {
+        if(_index + 1 != _elems.size()) {
+            // Move the data from the last element to the current position
+            _elems[_index] = _elems.back();
+            // Updata _index of the original last element
+            _elems[_index] -> _index = _index;
+        }
+
+        // Pop the last element
+        _elems.pop_back();
+    }
+
+    std::size_t getId() const { return _id; }
+    std::size_t getIndex() const { return _index; }
+
+};
+// Static variable definition (can be inlined starting C++17)
+template< typename T >
+std::vector<T*> DatabaseBase< T >::_elems;
+
 /// A collection class to hold instances of a given class
 
 /*!
@@ -37,14 +77,10 @@ struct DatabaseDataDefault {
  *
  */
 template< typename T, typename DatabaseData = DatabaseDataDefault >
-class Database {
+class Database : public DatabaseBase<T> {
     
 private:
-    static std::vector<T*> _elems;  ///< Pointer to the elements in the collection
     static DatabaseData _dbData;
-    
-    std::size_t _id;
-    std::size_t _index;
     
     //DEPRECATED AS OF 9/22/16
 //    int _transferID = -1; ///< index of a species ID to transfer
@@ -53,35 +89,24 @@ private:
 
 public:
 
-    static const auto& getElements() { return _elems; }
     static auto& getDbData() { return _dbData; }
-
-    // Get the next unique id
-    static std::size_t nextId() { static std::size_t nextId = 0; return nextId++; }
 
     // Add element on construction
     template< typename... Args >
-    Database(Args&&... args) : _id(nextId()), _index(_elems.size()) {
-        _elems.push_back(static_cast<T*>(this));
+    Database(Args&&... args) : DatabaseBase() {
         _dbData.push_back(std::forward<Args>(args)...);
     }
     // Remove element on destruction
     ~Database() {
-        if(_index + 1 != _elems.size()) {
+        // _elem size has already decreased by 1
+        if(getIndex() != getElements().size()) {
             // Move the data from the last element to the current position
-            _elems[_index] = _elems.back();
-            _dbData.copy_from_back(_index);
-            // Updata _index of the original last element
-            _elems[_index] -> _index = _index;
+            _dbData.copy_from_back(getIndex());
         }
 
         // Pop the last element
-        _elems.pop_back();
         _dbData.pop_back();
     }
-
-    std::size_t getId() const { return _id; }
-    std::size_t getIndex() const { return _index; }
     
     //DEPRECATED AS OF 9/22/16
 //
@@ -100,8 +125,6 @@ public:
 };
 
 // Static variable definition (can be inlined starting C++17)
-template< typename T, typename DatabaseData >
-std::vector<T*> Database< T, DatabaseData >::_elems;
 template< typename T, typename DatabaseData >
 DatabaseData Database< T, DatabaseData>::_dbData;
 
