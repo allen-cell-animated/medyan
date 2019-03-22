@@ -52,7 +52,7 @@ class Bin;
  */
 class Cylinder : public Component, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor,
-                                   public Database< Cylinder > {
+                                   public Database< Cylinder, false > {
     
 friend class CController;
 friend class DRController;

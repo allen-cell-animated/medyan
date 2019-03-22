@@ -37,7 +37,7 @@ class Bead;
  */
 
 class Bubble : public Composite, public Trackable, public Movable, public DynamicNeighbor,
-    public Database< Bubble > {
+    public Database< Bubble, false > {
 
 private:
     Bead* _bead;    ///< The bead representing the center of the bubble

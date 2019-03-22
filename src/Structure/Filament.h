@@ -44,7 +44,7 @@ class Bead;
  * A Filament can also be initialized as a number of different shapes.
  */
 class Filament : public Composite, public Trackable,
-    public Database< Filament > {
+    public Database< Filament, false > {
 
 friend class Controller;
     

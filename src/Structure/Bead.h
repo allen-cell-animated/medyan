@@ -90,10 +90,10 @@ struct BeadData {
  */
 
 class Bead : public Component, public Trackable, public Movable,
-    public Database< Bead, BeadData > {
+    public Database< Bead, false, BeadData > {
     
 public:
-    using db_type = Database< Bead, BeadData >;
+    using db_type = Database< Bead, false, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.
     static bool triggercylindervectorization;

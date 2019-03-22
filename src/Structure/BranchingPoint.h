@@ -39,7 +39,7 @@ class Cylinder;
  *  can be updated by the SubSystem.
  */
 class BranchingPoint : public Component, public Trackable, public Movable, public Reactable,
-    public Database< BranchingPoint > {
+    public Database< BranchingPoint, false > {
     
     friend class Controller;
     friend class DRController;

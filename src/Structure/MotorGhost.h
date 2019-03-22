@@ -45,7 +45,7 @@ class SubSystem;
  *  all instances can be updated by the SubSystem.
  */
 class MotorGhost : public Component, public Trackable, public Movable, public Reactable,
-    public Database< MotorGhost > {
+    public Database< MotorGhost, false > {
    
 friend class Controller;
 friend class DRController;

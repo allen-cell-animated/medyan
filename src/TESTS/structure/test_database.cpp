@@ -11,8 +11,8 @@ TEST_CASE("Database tests", "[Database]") {
         void pop_back() { d.pop_back(); }
         void copy_from_back(std::size_t dbIndex) { d[dbIndex] = d.back(); }
     };
-    struct Dummy : Database< Dummy, DummyData > {
-        Dummy(int x) : Database< Dummy, DummyData >(x) {}
+    struct Dummy : Database< Dummy, false, DummyData > {
+        Dummy(int x) : Database< Dummy, false, DummyData >(x) {}
     };
 
     // Test adding and removing elements from the vectorized data

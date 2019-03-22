@@ -39,7 +39,7 @@ class Bead;
  * [NeighborLists](@ref NeighborList).
  */
 class BoundaryElement : public Component, public Trackable, public Neighbor,
-    public Database< BoundaryElement > {
+    public Database< BoundaryElement, false > {
 
 friend class BoundaryCubic;
 friend class BoundarySpherical;

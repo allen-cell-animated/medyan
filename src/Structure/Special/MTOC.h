@@ -35,7 +35,7 @@ class Filament;
  *  properties in the future.
  */
 class MTOC : public Composite, public Trackable,
-    public Database< MTOC > {
+    public Database< MTOC, false > {
     
 private:
     Bubble* _bubble; ///< A bubble that physically represents the MTOC

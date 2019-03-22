@@ -44,7 +44,7 @@ class DRController;
  *  instances can be updated by the SubSystem.
  */
 class Linker : public Component, public Trackable, public Movable, public Reactable,
-    public Database< Linker > {
+    public Database< Linker, false > {
 
 friend class Controller;
 friend class DRController;

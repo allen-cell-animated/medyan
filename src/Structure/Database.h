@@ -21,7 +21,9 @@
 struct DatabaseDataDefault {
     void push_back() {}
     void pop_back() {}
-    void copy_from_back(std::size_t dbIndex) {}
+    void copy_from_back(std::size_t index) {}
+    void move_content(std::size_t from, std::size_t to) {}
+    void resize(std::size_t) {}
 };
 
 template< typename T >
@@ -35,6 +37,7 @@ private:
 
 public:
     static const auto& getElements() { return _elems; }
+    static auto numElements() { return _elems.size(); }
 
     // Get the next unique id
     static std::size_t nextId() { static std::size_t nextId = 0; return nextId++; }
@@ -64,6 +67,18 @@ public:
 template< typename T >
 std::vector<T*> DatabaseBase< T >::_elems;
 
+template< typename DatabaseData > class DatabaseDataManager {
+
+private:
+    static DatabaseData _dbData;
+
+public:
+    static auto& getDbData() { return _dbData; }
+};
+// Static variable definition
+template< typename DatabaseData > DatabaseData DatabaseDataManager< DatabaseData >::_dbData;
+
+
 /// A collection class to hold instances of a given class
 
 /*!
@@ -76,57 +91,84 @@ std::vector<T*> DatabaseBase< T >::_elems;
  *  @param T - class to hold
  *
  */
-template< typename T, typename DatabaseData = DatabaseDataDefault >
-class Database : public DatabaseBase<T> {
-    
-private:
-    static DatabaseData _dbData;
-    
-    //DEPRECATED AS OF 9/22/16
-//    int _transferID = -1; ///< index of a species ID to transfer
-//                          ///< for now, this is used only in the case of motors.
-//                          ///< If there is no transfer, the tag is marked as -1.
+template< typename T, bool stableIndexing, typename DatabaseData = DatabaseDataDefault > class Database;
+template< typename T, typename DatabaseData >
+class Database< T, false, DatabaseData > : public DatabaseBase<T>, public DatabaseDataManager<DatabaseData> {
 
 public:
 
-    static auto& getDbData() { return _dbData; }
-
     // Add element on construction
     template< typename... Args >
-    Database(Args&&... args) : DatabaseBase() {
-        _dbData.push_back(std::forward<Args>(args)...);
+    Database(Args&&... args) {
+        getDbData().push_back(std::forward<Args>(args)...);
     }
-    // Remove element on destruction
+    // Remove element on destruction (by swapping)
     ~Database() {
-        // _elem size has already decreased by 1
-        if(getIndex() != getElements().size()) {
+        if(getIndex() + 1 != getElements().size()) {
             // Move the data from the last element to the current position
-            _dbData.copy_from_back(getIndex());
+            getDbData().copy_from_back(getIndex());
         }
 
         // Pop the last element
-        _dbData.pop_back();
+        getDbData().pop_back();
     }
-    
-    //DEPRECATED AS OF 9/22/16
-//
-//    //@{
-//    ///Setters and getters for transfer ID
-//    void setTransferID(int ID) {_transferID = ID;}
-//    
-//    int getTransferID() {
-//        
-//        int retID = _transferID;
-//        _transferID = -1;
-//        return retID;
-//    }
-    
-    //@}
 };
-
-// Static variable definition (can be inlined starting C++17)
 template< typename T, typename DatabaseData >
-DatabaseData Database< T, DatabaseData>::_dbData;
+class Database< T, true, DatabaseData > : public DatabaseBase<T>, public DatabaseDataManager<DatabaseData> {
+    static std::vector<T*> _stableElems;
+    static std::vector<std::size_t> _deletedIndices;
+
+    std::size_t _stableIndex;
+
+public:
+    static const auto& getStableElement(std::size_t pos) { return _stableElems[pos]; }
+
+    static void rearrange() {
+        using std::size_t;
+
+        const size_t numDeleted = _deletedIndices.size();
+        const size_t currentSize = _stableElems.size();
+        const size_t finalSize = currentSize - numDeleted;
+
+        std::vector<char> isDeleted(numDeleted);
+        // Mark to-be-deleted items with indices bigger than finalSize as deleted
+        for(size_t i = 0; i < numDeleted; ++i)
+            if(_deletedIndices[i] >= finalSize)
+                isDeleted[_deletedIndices[i] - finalSize] = true;
+
+        // Move the not-to-be-deleted items with bigger indices to the to-be-deleted items with small indices
+        for(size_t indAfterFinal = 0, i = 0; indAfterFinal < numDeleted; ++indAfterFinal) {
+            if(!isDeleted[indAfterFinal]) {
+                while(i < numDeleted && _deletedIndices[i] >= finalSize) ++i; // Find (including current i) the next i with small index
+                if(i < numDeleted) {
+                    // Found. This should always be satisfied.
+                    _stableElems[_deletedIndices[i]] = _stableElems[finalSize + indAfterFinal];
+                    getDbData().move_content(finalSize + indAfterFinal, _deletedIndices[i]);
+                    _stableElems[_deletedIndices[i]]->_stableIndex = _deletedIndices[i];
+                }
+            }
+        }
+
+        // Remove garbage
+        _stableElems.resize(finalSize);
+        getDbData().resize(finalSize);
+        _deletedIndices.clear();
+    }
+
+    template< typename... Args >
+    Database(Args&&... args) : _stableIndex(_stableElems.size()) {
+        getDbData().push_back(std::forward<Args>(args)...);
+    }
+    ~Database() {
+        // Only mark as deleted
+        _deletedIndices.push_back(_stableIndex);
+    }
+
+    std::size_t getStableIndex() const { return _stableIndex; }
+};
+template< typename T, typename DatabaseData > std::vector<T*> Database< T, true, DatabaseData >::_stableElems;
+template< typename T, typename DatabaseData > std::vector<std::size_t> Database< T, true, DatabaseData >::_deletedIndices;
+
 
 template< typename T >
 class OldDatabase {
