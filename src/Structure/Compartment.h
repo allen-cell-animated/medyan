@@ -822,6 +822,7 @@ public:
     virtual int getType() override {return 0;}
     
 };
+#ifdef SIMDBINDINGSEARCH
 template<>
 void Compartment::getpartitionindex<true>(int (&indices)[3], vector<floatingpoint> coord,
                              floatingpoint (&cmpcornercoords)[6]);
@@ -834,4 +835,5 @@ void Compartment::addcoordtorMaxbasedpartitons<true>(int (&pindices)[3], vector<
 template<>
 void Compartment::addcoordtorMaxbasedpartitons<false>(int (&pindices)[3], vector<floatingpoint>
         coord, uint32_t index);
+#endif
 #endif

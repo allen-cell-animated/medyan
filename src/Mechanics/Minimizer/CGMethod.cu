@@ -1263,7 +1263,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
     sconvergencecheck = true;
     //calculate first lambda
     floatingpoint lambda = LAMBDAMAX;
-    std::cout<<"safe 0"<<endl;
+//    std::cout<<"safe 0"<<endl;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
     cconvergencecheck = new bool[1];

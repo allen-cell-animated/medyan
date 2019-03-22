@@ -631,9 +631,11 @@ if(false) {
 
 //free memory
 	SysParams::MParams.speciesboundvec.clear();
+	#ifdef SIMDBINDINGSEARCH
 	for(auto C : _compartmentGrid->getCompartments()) {
 		C->deallocateSIMDcoordinates();
 	}
+	#endif
 }
 
 //OBSOLETE
