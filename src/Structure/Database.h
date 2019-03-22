@@ -165,7 +165,7 @@ public:
 
     template< typename... Args >
     Database(Args&&... args) {
-        if(_stableElems.empty()) {
+        if(_deletedIndices.empty()) {
             // Append at the back
             _stableIndex = _stableElems.size();
             _stableElems.push_back(static_cast<T*>(this));
