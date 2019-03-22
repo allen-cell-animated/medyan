@@ -21,7 +21,7 @@
 struct DatabaseDataDefault {
     void push_back() {}
     void pop_back() {}
-    void copy_from_back(std::size_t index) {}
+    void move_from_back(std::size_t index) {}
     void move_content(std::size_t from, std::size_t to) {}
     void resize(std::size_t) {}
 };
@@ -106,7 +106,7 @@ public:
     ~Database() {
         if(getIndex() + 1 != getElements().size()) {
             // Move the data from the last element to the current position
-            getDbData().copy_from_back(getIndex());
+            getDbData().move_from_back(getIndex());
         }
 
         // Pop the last element
@@ -146,6 +146,7 @@ public:
                     getDbData().move_content(finalSize + indAfterFinal, _deletedIndices[i]);
                     _stableElems[_deletedIndices[i]]->_stableIndex = _deletedIndices[i];
                 }
+                ++i;
             }
         }
 
@@ -157,6 +158,7 @@ public:
 
     template< typename... Args >
     Database(Args&&... args) : _stableIndex(_stableElems.size()) {
+        _stableElems.push_back(static_cast<T*>(this));
         getDbData().push_back(std::forward<Args>(args)...);
     }
     ~Database() {

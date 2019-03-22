@@ -65,7 +65,7 @@ struct BeadData {
         forcesAuxP.pop_back();
     }
 
-    void copy_from_back(std::size_t dbIndex) {
+    void move_from_back(std::size_t dbIndex) {
         coords[dbIndex] = coords.back();
         coordsStr[dbIndex] = coordsStr.back();
         forces[dbIndex] = forces.back();
