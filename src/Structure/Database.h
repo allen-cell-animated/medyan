@@ -21,6 +21,7 @@
 struct DatabaseDataDefault {
     void push_back() {}
     void pop_back() {}
+    void set_content(std::size_t) {}
     void move_from_back(std::size_t index) {}
     void move_content(std::size_t from, std::size_t to) {}
     void resize(std::size_t) {}
@@ -35,15 +36,15 @@ private:
     std::size_t _id;
     std::size_t _index;
 
+    // Get the next unique id
+    static std::size_t _nextId() { static std::size_t nextId = 0; return nextId++; }
+
 public:
     static const auto& getElements() { return _elems; }
     static auto numElements() { return _elems.size(); }
 
-    // Get the next unique id
-    static std::size_t nextId() { static std::size_t nextId = 0; return nextId++; }
-
     // Add element on construction
-    DatabaseBase() : _id(nextId()), _index(_elems.size()) {
+    DatabaseBase() : _id(_nextId()), _index(_elems.size()) {
         _elems.push_back(static_cast<T*>(this));
     }
     // Remove element on destruction
@@ -97,20 +98,23 @@ class Database< T, false, DatabaseData > : public DatabaseBase<T>, public Databa
 
 public:
 
+    using db_base_type = DatabaseBase<T>;
+    using db_data_type = DatabaseDataManager<DatabaseData>;
+
     // Add element on construction
     template< typename... Args >
     Database(Args&&... args) {
-        getDbData().push_back(std::forward<Args>(args)...);
+        db_data_type::getDbData().push_back(std::forward<Args>(args)...);
     }
     // Remove element on destruction (by swapping)
     ~Database() {
-        if(getIndex() + 1 != getElements().size()) {
+        if(this->getIndex() + 1 != db_base_type::getElements().size()) {
             // Move the data from the last element to the current position
-            getDbData().move_from_back(getIndex());
+            db_data_type::getDbData().move_from_back(this->getIndex());
         }
 
         // Pop the last element
-        getDbData().pop_back();
+        db_data_type::getDbData().pop_back();
     }
 };
 template< typename T, typename DatabaseData >
@@ -121,6 +125,9 @@ class Database< T, true, DatabaseData > : public DatabaseBase<T>, public Databas
     std::size_t _stableIndex;
 
 public:
+    using db_base_type = DatabaseBase<T>;
+    using db_data_type = DatabaseDataManager<DatabaseData>;
+
     static const auto& getStableElement(std::size_t pos) { return _stableElems[pos]; }
 
     static void rearrange() {
@@ -143,7 +150,7 @@ public:
                 if(i < numDeleted) {
                     // Found. This should always be satisfied.
                     _stableElems[_deletedIndices[i]] = _stableElems[finalSize + indAfterFinal];
-                    getDbData().move_content(finalSize + indAfterFinal, _deletedIndices[i]);
+                    db_data_type::getDbData().move_content(finalSize + indAfterFinal, _deletedIndices[i]);
                     _stableElems[_deletedIndices[i]]->_stableIndex = _deletedIndices[i];
                 }
                 ++i;
@@ -152,14 +159,24 @@ public:
 
         // Remove garbage
         _stableElems.resize(finalSize);
-        getDbData().resize(finalSize);
+        db_data_type::getDbData().resize(finalSize);
         _deletedIndices.clear();
     }
 
     template< typename... Args >
-    Database(Args&&... args) : _stableIndex(_stableElems.size()) {
-        _stableElems.push_back(static_cast<T*>(this));
-        getDbData().push_back(std::forward<Args>(args)...);
+    Database(Args&&... args) {
+        if(_stableElems.empty()) {
+            // Append at the back
+            _stableIndex = _stableElems.size();
+            _stableElems.push_back(static_cast<T*>(this));
+            db_data_type::getDbData().push_back(std::forward<Args>(args)...);
+        } else {
+            // Fill in the last hole
+            _stableIndex = _deletedIndices.back();
+            _stableElems[_stableIndex] = static_cast<T*>(this);
+            db_data_type::getDbData().set_content(_stableIndex, std::forward<Args>(args)...);
+            _deletedIndices.pop_back();
+        }
     }
     ~Database() {
         // Only mark as deleted

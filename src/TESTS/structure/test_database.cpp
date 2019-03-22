@@ -56,6 +56,7 @@ TEST_CASE("Database tests", "[Database]") {
         struct DummyData {
             std::vector< int > d;
             void push_back(int x) { d.push_back(x); }
+            void set_content(size_t pos, int x) { d[pos] = x; }
             void move_content(size_t from, size_t to) { d[to] = d[from]; }
             void resize(size_t size) { d.resize(size); }
         };
@@ -80,18 +81,31 @@ TEST_CASE("Database tests", "[Database]") {
         auto dummy4 = std::make_unique<Dummy>(4);
         dummy3.reset(nullptr);
         auto dummy5 = std::make_unique<Dummy>(5);
+        // dummies: 0, 1, 2, 4, 5
+        // d: [0, 1, 2, 5, 4]
+        // deleted: []
+        REQUIRE(Dummy::getDbData().d.size() == 5);
+        REQUIRE(dummy5->getIndex() == 4);
+        REQUIRE(dummy5->getStableIndex() == 3);
+        REQUIRE(Dummy::getStableElement(3) == dummy5.get());
+
         auto dummy6 = std::make_unique<Dummy>(6);
         dummy5.reset(nullptr);
         dummy1.reset(nullptr);
         dummy2.reset(nullptr);
         // dummies: 0, 6, 4
-        // d: [0, 1, 2, 3, 4, 5, 6]
-        // deleted: [3, 5, 1, 2]
+        // d: [0, 1, 2, 5, 4, 6]
+        // deleted: [5, 1, 2]
         REQUIRE(Dummy::getElements().size() == 3);
-        REQUIRE(Dummy::getDbData().d.size() == 7);
+        REQUIRE(Dummy::getDbData().d.size() == 6);
+
         REQUIRE(dummy4->getIndex() == 2);
-        REQUIRE(Dummy::getStableElement(4) == dummy4.get());
         REQUIRE(dummy4->getStableIndex() == 4);
+        REQUIRE(Dummy::getStableElement(4) == dummy4.get());
+
+        REQUIRE(dummy6->getIndex() == 1);
+        REQUIRE(dummy6->getStableIndex() == 5);
+        REQUIRE(Dummy::getStableElement(5) == dummy6.get());
 
         Dummy::rearrange();
         // dummies: 0, 6, 4
@@ -99,9 +113,11 @@ TEST_CASE("Database tests", "[Database]") {
         // deleted: []
         REQUIRE(Dummy::getElements().size() == 3);
         REQUIRE(Dummy::getDbData().d.size() == 3);
+
         REQUIRE(dummy4->getIndex() == 2);
         REQUIRE(Dummy::getStableElement(1) == dummy4.get());
         REQUIRE(dummy4->getStableIndex() == 1);
+
         REQUIRE(dummy6->getIndex() == 1);
         REQUIRE(Dummy::getStableElement(2) == dummy6.get());
         REQUIRE(dummy6->getStableIndex() == 2);
