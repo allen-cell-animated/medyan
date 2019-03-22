@@ -22,14 +22,14 @@
 // DatabaseData stores the data that has the same indexing with the internal
 // Database structure.
 // With stable indexing the following functions must be implemented:
-//   push_back(data...)
-//   set_content(size_t pos, data...)
-//   move_content(size_t from, size_t to)
-//   resize(size_t size)
+//   void push_back(data...)
+//   void set_content(size_t pos, data...)
+//   void move_content(size_t from, size_t to)
+//   void resize(size_t size)
 // With dynamic indexing the following functions must be implemented:
-//   push_back(data...)
-//   pop_back()
-//   move_from_back(size_t pos)
+//   void push_back(data...)
+//   void pop_back()
+//   void move_from_back(size_t pos)
 //-----------------------------------------------------------------------------
 struct DatabaseDataDefault {
     void push_back() {}
