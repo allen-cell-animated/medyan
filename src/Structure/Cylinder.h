@@ -148,12 +148,12 @@ public:
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() {}
     virtual void removeFromSubSystem() {
-        /* Haoran 03/17/2019
         //Remove from cylinder structure by resetting to default value
         //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
         removedcindex.push_back(_dcIndex);
         resetarrays();
         _dcIndex = -1;
+        /* Haoran 03/17/2019
         _cylinders.removeElement(this);
         Ncyl = _cylinders.getElements().size();
         */
