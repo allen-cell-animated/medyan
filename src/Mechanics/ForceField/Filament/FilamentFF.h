@@ -44,8 +44,8 @@ public:
     virtual string getName() {return "Filament";}
     virtual void whoIsCulprit();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
     
     virtual void computeLoadForces() {return;}
     

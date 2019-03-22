@@ -44,13 +44,13 @@ public:
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
     /// @param print - prints detailed info about energies
-    floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose = false);
+    floatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d, bool verbose = false);
     
     /// Compute the forces of all force fields 
-    void computeForces(floatingpoint *coord, floatingpoint *f);
+    void computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
     
     /// Copy forces from f to fprev
-    void copyForces(floatingpoint *f, floatingpoint *fprev);
+    void copyForces(totalforcefloatingpoint *f, totalforcefloatingpoint *fprev);
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;

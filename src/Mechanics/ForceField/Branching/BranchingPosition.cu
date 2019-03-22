@@ -85,7 +85,7 @@ void BranchingPosition<BPositionInteractionType>::deallocate() {
 }
 
 template <class BPositionInteractionType>
-floatingpoint BranchingPosition<BPositionInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BranchingPosition<BPositionInteractionType>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
     floatingpoint U_i[1], U_ii=0.0;
     floatingpoint* gU_i;
@@ -127,7 +127,7 @@ floatingpoint BranchingPosition<BPositionInteractionType>::computeEnergy(floatin
 }
 
 template <class BPositionInteractionType>
-void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -157,7 +157,7 @@ void BranchingPosition<BPositionInteractionType>::computeForces(floatingpoint *c
 
 
 ///Template specializations
-template floatingpoint BranchingPosition<BranchingPositionCosine>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BranchingPosition<BranchingPositionCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
+template floatingpoint BranchingPosition<BranchingPositionCosine>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+template void BranchingPosition<BranchingPositionCosine>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
 template void BranchingPosition<BranchingPositionCosine>::vectorize();
 template void BranchingPosition<BranchingPositionCosine>::deallocate();

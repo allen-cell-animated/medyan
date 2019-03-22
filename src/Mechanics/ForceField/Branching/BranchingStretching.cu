@@ -100,7 +100,7 @@ void BranchingStretching<BStretchingInteractionType>::deallocate() {
 
 
 template <class BStretchingInteractionType>
-floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
 
     floatingpoint U_i[1], U_ii=0.0;
@@ -143,7 +143,7 @@ floatingpoint BranchingStretching<BStretchingInteractionType>::computeEnergy(flo
 }
 
 template <class BStretchingInteractionType>
-void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -168,7 +168,7 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(floatingpoin
 }
 ///Template specializations
 template floatingpoint
-BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
+BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
 template void BranchingStretching<BranchingStretchingHarmonic>::vectorize();
 template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();

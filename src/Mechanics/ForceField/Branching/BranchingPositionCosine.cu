@@ -186,7 +186,7 @@ void BranchingPositionCosine::checkforculprit() {
 }
 #endif
 
-floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                        floatingpoint *kpos, floatingpoint *pos){
 
 
@@ -234,13 +234,14 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
     return U;
 }
 
-floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                        floatingpoint *kpos, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, theta, posheta, dTheta, U_i;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
+    totalforcefloatingpoint *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
 
@@ -254,7 +255,6 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
         f1 = &f[3 * beadSet[n * i]];
         f2 = &f[3 * beadSet[n * i + 1]];
         f3 = &f[3 * beadSet[n * i + 2]];
-
 
         midPointCoordinateStretched(mp, coord1, f1, coord2, f2, pos[i], d);
         X = sqrt(scalarProductStretched(mp, vzero, coord2, f2, mp, vzero, coord2, f2, d));
@@ -287,13 +287,14 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
     return U;
 }
 
-void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                      floatingpoint *kpos, floatingpoint *pos){
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, *f1, *f2, *f3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta;
+    floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta;
+	totalforcefloatingpoint  *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
 
 

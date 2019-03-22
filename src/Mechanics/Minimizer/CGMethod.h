@@ -40,10 +40,10 @@ protected:
 
     ///< Data vectors for calculation
     floatingpoint *coord;  ///<bead coordinates (length 3*N)
-    
-    floatingpoint *force; ///< bead forces (length 3*N)
-    floatingpoint *forceAux; ///< auxiliary force calculations (length 3*N)
-    floatingpoint *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
+
+    totalforcefloatingpoint *force; ///< bead forces (length 3*N)
+    totalforcefloatingpoint *forceAux; ///< auxiliary force calculations (length 3*N)
+    totalforcefloatingpoint *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
 //    cylinder* cylindervec;
 
     /// Safe mode which chooses the safe backtracking search if the
@@ -181,9 +181,9 @@ protected:
     inline void allocate(long numBeadsx3, long Ncyl) {
 
 //        coord = new floatingpoint[numBeadsx3];
-        force = new floatingpoint[numBeadsx3];
-        forceAux = new floatingpoint[numBeadsx3];
-        forceAuxPrev = new floatingpoint[numBeadsx3];
+        force = new totalforcefloatingpoint[numBeadsx3];
+        forceAux = new totalforcefloatingpoint[numBeadsx3];
+        forceAuxPrev = new totalforcefloatingpoint[numBeadsx3];
     }
     
     ///Deallocation of CG arrays

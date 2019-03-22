@@ -23,13 +23,13 @@ class Bead;
 class BranchingDihedralCosine {
     
 public:
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *kdih, floatingpoint *pos);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *kdih, floatingpoint *pos, floatingpoint d);
 
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                 floatingpoint *kdih, floatingpoint *pos);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);

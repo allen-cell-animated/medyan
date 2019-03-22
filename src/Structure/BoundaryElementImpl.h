@@ -73,24 +73,24 @@ public:
     }
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force,
+                                     const vector<totalforcefloatingpoint>& force,
                                      floatingpoint d) {
         
         
-        vector<floatingpoint> movedPoint = {point[0] + d*force[0],
-                                     point[1] + d*force[1],
-                                     point[2] + d*force[2]};
+        vector<floatingpoint> movedPoint = {point[0] + d*float(force[0]),
+                                     point[1] + d*float(force[1]),
+                                     point[2] + d*float(force[2])};
         return distance(movedPoint);
         
     }
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                     floatingpoint const *force,
+                                     totalforcefloatingpoint const *force,
                                      floatingpoint d) {
 
 
-        vector<floatingpoint> movedPoint = {point[0] + d*force[0],
-                                     point[1] + d*force[1],
-                                     point[2] + d*force[2]};
+        vector<floatingpoint> movedPoint = {point[0] + d*float(force[0]),
+                                     point[1] + d*float(force[1]),
+                                     point[2] + d*float(force[2])};
         return distance(movedPoint);
 
     }
@@ -158,23 +158,23 @@ public:
     }
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force,
+                                     const vector<totalforcefloatingpoint>& force,
                                      floatingpoint d) {
         
-        vector<floatingpoint> movedPoint{point[0] + d * force[0],
-                                  point[1] + d * force[1],
-                                  point[2] + d * force[2]};
+        vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
+                                  point[1] + d * float(force[1]),
+                                  point[2] + d * float(force[2])};
         
         return distance(movedPoint);
         
     }
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                     floatingpoint const *force,
+                                            totalforcefloatingpoint const *force,
                                      floatingpoint d) {
 
-        vector<floatingpoint> movedPoint{point[0] + d * force[0],
-                                  point[1] + d * force[1],
-                                  point[2] + d * force[2]};
+        vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
+                                  point[1] + d * float(force[1]),
+                                  point[2] + d * float(force[2])};
 
         return distance(movedPoint);
 
@@ -274,7 +274,7 @@ public:
 
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force,
+                                     const vector<totalforcefloatingpoint>& force,
                                      floatingpoint d) {
         
         // check z coordinate. If outside, return infinity
@@ -283,16 +283,16 @@ public:
             
             return numeric_limits<floatingpoint>::infinity();
         
-        vector<floatingpoint> movedPoint{point[0] + d * force[0],
-                                  point[1] + d * force[1],
-                                  point[2] + d * force[2]};
+        vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
+                                  point[1] + d * float(force[1]),
+                                  point[2] + d * float(force[2])};
         
         return distance(movedPoint);
         
     }
     ///TODO
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                     floatingpoint const *force,
+                                            totalforcefloatingpoint const *force,
                                      floatingpoint d) {return 0.0;}
 
     virtual const vector<floatingpoint> normal(const vector<floatingpoint>& point) {
@@ -387,12 +387,12 @@ public:
     }
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force,
+                                     const vector<totalforcefloatingpoint>& force,
                                      floatingpoint d) {
         
-        vector<floatingpoint> movedPoint{point[0] + d * force[0],
-                                  point[1] + d * force[1],
-                                  point[2] + d * force[2]};
+        vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
+                                  point[1] + d * float(force[1]),
+                                  point[2] + d * float(force[2])};
         
         // check z coordinate. If outside, return infinity
         if((_up && (movedPoint[2] > _coords[2])) ||
@@ -409,7 +409,7 @@ public:
 
     ///TODO
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                     floatingpoint const *force,
+                                            totalforcefloatingpoint const *force,
                                      floatingpoint d) {return 0.0;}
 
     virtual const vector<floatingpoint> normal(const vector<floatingpoint>& point) {
@@ -514,7 +514,7 @@ public:
 
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force,
+                                     const vector<totalforcefloatingpoint>& force,
                                      floatingpoint d) {
 
         // check z coordinate. If outside, return infinity
@@ -523,9 +523,9 @@ public:
 
             return numeric_limits<floatingpoint>::infinity();
 
-        vector<floatingpoint> movedPoint{point[0] + d * force[0],
-                                  point[1] + d * force[1],
-                                  point[2] + d * force[2]};
+        vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
+                                  point[1] + d * float(force[1]),
+                                  point[2] + d * float(force[2])};
 
         return distance(movedPoint);
 
@@ -569,7 +569,7 @@ public:
         return 0.0;
     }
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                     floatingpoint const *force, floatingpoint d) {return 0.0;};
+                                            totalforcefloatingpoint const *force, floatingpoint d) {return 0.0;};
     virtual const vector<floatingpoint> normal(const floatingpoint *point) {vector<floatingpoint> a; return a;};
     virtual const void elementeqn(floatingpoint* var){cout<<" element eqn not implemented for "
                 "CylindricalXYZ. Exiting."<<endl;

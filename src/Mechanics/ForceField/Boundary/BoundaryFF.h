@@ -47,8 +47,8 @@ public:
     virtual string getName() {return "Boundary";}
     virtual void whoIsCulprit();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
     
     /// BoundaryFF can compute load forces from all boundaries.
     virtual void computeLoadForces();

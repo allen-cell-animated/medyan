@@ -23,13 +23,13 @@ class Bead;
 class BranchingBendingCosine {
     
 public:
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt, floatingpoint d);
 
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                 floatingpoint *kbend, floatingpoint *eqt);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);

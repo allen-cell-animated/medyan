@@ -190,7 +190,7 @@ void BranchingStretchingHarmonic::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos){
 
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
@@ -228,13 +228,14 @@ floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floating
     return U;
 }
 
-floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, *f1, *f2, *f3, dist, U_i;
+    floatingpoint *coord1, *coord2, *coord3, dist, U_i;
+	totalforcefloatingpoint *f1, *f2, *f3;
     floatingpoint *v1 = new floatingpoint[3];
     floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0; vzero[1] = 0; vzero[2] = 0;
 
@@ -272,7 +273,7 @@ floatingpoint BranchingStretchingHarmonic::energy(floatingpoint *coord, floating
     return U;
 }
 
-void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void BranchingStretchingHarmonic::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                          floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos,
                                          floatingpoint *stretchforce){
 
@@ -280,7 +281,8 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, *f1, *f2, *f3, dist, invL, f0;
+    floatingpoint *coord1, *coord2, *coord3, dist, invL, f0;
+    totalforcefloatingpoint *f1, *f2, *f3;
     floatingpoint *v1 = new floatingpoint[3];
 
 

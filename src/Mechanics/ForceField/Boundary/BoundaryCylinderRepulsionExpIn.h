@@ -26,13 +26,13 @@ class Bead;
 class BoundaryCylinderRepulsionExpIn {
 
 public:
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *krep, floatingpoint *slen, int *nneighbors);
 
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *krep, floatingpoint *slen, int *nnneighbors, floatingpoint d);
 
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                 floatingpoint *krep, floatingpoint *slen, int *nneighbors);
 
     floatingpoint loadForces(floatingpoint r, floatingpoint krep , floatingpoint slen);

@@ -93,9 +93,11 @@ public:
 
     /// Returns stretched distance, similar to distance above
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<floatingpoint>& force, floatingpoint d) = 0;
+                                     const vector<totalforcefloatingpoint>& force,
+                                     floatingpoint d) = 0;
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                     floatingpoint const *force, floatingpoint d) = 0;
+                                     totalforcefloatingpoint const *force, floatingpoint d)
+    = 0;
     //@}
 
 

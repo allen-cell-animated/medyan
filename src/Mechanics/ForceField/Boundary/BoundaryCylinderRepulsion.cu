@@ -208,7 +208,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
     floatingpoint U_i[1], U_ii=0.0;
     floatingpoint* gU_i;
     U_ii = 0.0;
@@ -265,7 +265,7 @@ floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnerg
 }
 
 template <class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -407,8 +407,8 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 }
 
 ///Template specializations
-template floatingpoint BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeForces(floatingpoint *coord, floatingpoint *f);
+template floatingpoint BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
 template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeLoadForces();
 template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::vectorize();
 template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::deallocate();

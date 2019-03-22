@@ -64,7 +64,7 @@ void LinkerFF::whoIsCulprit() {
     cout << endl;
 }
 
-floatingpoint LinkerFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint LinkerFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
@@ -84,7 +84,7 @@ floatingpoint LinkerFF::computeEnergy(floatingpoint *coord, floatingpoint *f, fl
     return U;
 }
 
-void LinkerFF::computeForces(floatingpoint *coord, floatingpoint *f) {
+void LinkerFF::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
 
     for (auto &interaction : _linkerInteractionVector)
         interaction->computeForces(coord, f);

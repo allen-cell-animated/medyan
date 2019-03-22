@@ -100,7 +100,7 @@ void BranchingFF::whoIsCulprit() {
 }
 
 
-floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
     floatingpoint U = 0.0;
     floatingpoint U_i=0.0;
@@ -124,7 +124,7 @@ floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, floatingpoint *f,
     return U;
 }
 
-void BranchingFF::computeForces(floatingpoint *coord, floatingpoint *f) {
+void BranchingFF::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
 
     for (auto &interaction : _branchingInteractionVector)
         interaction->computeForces(coord, f);

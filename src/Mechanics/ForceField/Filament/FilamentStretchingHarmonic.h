@@ -23,13 +23,13 @@ class Bead;
 class FilamentStretchingHarmonic {
     
 public:
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint d);
     
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                 floatingpoint *kstr, floatingpoint *eql);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);

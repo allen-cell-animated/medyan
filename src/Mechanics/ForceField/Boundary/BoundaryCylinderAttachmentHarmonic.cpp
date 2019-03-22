@@ -20,7 +20,7 @@
 
 using namespace mathfunc;
 
-floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                                   floatingpoint *kattr, floatingpoint *pins) {
     
 
@@ -52,14 +52,15 @@ floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, f
     return U;
 }
 
-floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                                   floatingpoint *kattr, floatingpoint *pins, floatingpoint d) {
 
 
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
     int nint = Bead::getPinnedBeads().size();
 
-    floatingpoint *coord1, *pin1, *force1, *zero, dist, U_i;
+    floatingpoint *coord1, *pin1, *zero, dist, U_i;
+    totalforcefloatingpoint *force1;
     floatingpoint U = 0;
     zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
@@ -88,13 +89,14 @@ floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, f
     return U;
 }
 
-void BoundaryCylinderAttachmentHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void BoundaryCylinderAttachmentHarmonic::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                                 floatingpoint *kattr, floatingpoint *pins) {
     
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
     int nint = Bead::getPinnedBeads().size();
 
-    floatingpoint *coord1, *pin1, *force1, *dir, dist, f0;
+    floatingpoint *coord1, *pin1, *dir, dist, f0;
+    totalforcefloatingpoint *force1;
     dir = new floatingpoint[3];
 
     for(int i = 0; i < nint; i += 1) {

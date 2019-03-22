@@ -34,9 +34,9 @@ public:
     virtual void deallocate() = 0;
     
     /// Compute the energy of this interaction
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) = 0;
+    virtual floatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) = 0;
     /// Compute the forces of this interaction
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
+    virtual void computeForces(floatingpoint *coord, totalforcefloatingpoint *f) = 0;
     
     /// Get the name of this interaction
     virtual const string getName() = 0;

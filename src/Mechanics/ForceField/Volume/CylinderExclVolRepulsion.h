@@ -27,11 +27,11 @@ class CylinderExclVolRepulsion {
 public:
 
 
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet, floatingpoint *krep);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint d);
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet, floatingpoint *krep, floatingpoint d);
     
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
+    void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet, floatingpoint *krep);
 
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);

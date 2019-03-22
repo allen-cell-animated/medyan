@@ -57,10 +57,10 @@ public:
     int _ID; ///<Bead IDs
     int _dbIndex =  -1; ///<Position in database vector
 
-	vector<floatingpoint> force; ///< Forces based on curent coordinates.
+	vector<totalforcefloatingpoint> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
-    vector<floatingpoint> forceAux;  ///< An auxiliary field needed during CG minimization.
-    vector<floatingpoint> forceAuxP; ///< An auxiliary field needed during CG minimization.
+    vector<totalforcefloatingpoint> forceAux;  ///< An auxiliary field needed during CG minimization.
+    vector<totalforcefloatingpoint> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
     vector<floatingpoint> brforce; //Qin boundary repulsion force
     vector<floatingpoint> pinforce;

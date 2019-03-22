@@ -191,7 +191,7 @@ void BranchingBendingCosine::checkforculprit() {
 }
 #endif
 
-floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                       floatingpoint *kbend, floatingpoint *eqt){
 
     int n = BranchingBending<BranchingBendingCosine>::n;
@@ -237,14 +237,14 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
     return U;
 }
 
-floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                       floatingpoint *kbend, floatingpoint *eqt, floatingpoint d){
 
     int n = BranchingBending<BranchingBendingCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, *coord4, *force1, *force2, *force3, *force4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
-
+    floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
+	totalforcefloatingpoint *force1, *force2, *force3, *force4;
     floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
@@ -289,14 +289,15 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
     return U;
 }
 
-void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                     floatingpoint *kbend, floatingpoint *eqt){
 
 
     int n = BranchingBending<BranchingBendingCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
-    floatingpoint *coord1, *coord2, *coord3, *coord4, *force1, *force2, *force3, *force4;
+    floatingpoint *coord1, *coord2, *coord3, *coord4;
+	totalforcefloatingpoint  *force1, *force2, *force3, *force4;
     floatingpoint L1, L2, L1L2, l1l2, phi, dPhi, A, B, C, invL1, invL2, k;
 
 //    floatingpoint U = 0;

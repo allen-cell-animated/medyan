@@ -326,7 +326,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 }
 
 #endif
-floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *krep) {
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcefloatingpoint *force, int *beadSet, floatingpoint *krep) {
     floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, U_i;
     floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     floatingpoint ATG1, ATG2, ATG3, ATG4;
@@ -423,11 +423,12 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 }
 
 
-floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                         floatingpoint *krep, floatingpoint z) {
 
 
-    floatingpoint d, invDSquare, U, U_i, *f1, *f2, *f3, *f4;
+    floatingpoint d, invDSquare, U, U_i;
+    totalforcefloatingpoint *f1, *f2, *f3, *f4;
     floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     floatingpoint ATG1, ATG2, ATG3, ATG4;
     floatingpoint *c1us, *c2us, *c3us, *c4us;
@@ -574,14 +575,15 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
     return U;
 }
 
-void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep) {
+void CylinderExclVolRepulsion::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet, floatingpoint *krep) {
 //cout.precision(10);
 //    clock_t start, stop;
 //    float elapsedtime;
 //    start = clock();
 
 //    cout.precision(dbl::max_digits10); //TODO remove precision.
-    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, *f1, *f2, *f3, *f4;
+    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U;
+    totalforcefloatingpoint *f1, *f2, *f3, *f4;
     floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
     floatingpoint ATG1, ATG2, ATG3, ATG4;
     floatingpoint A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;

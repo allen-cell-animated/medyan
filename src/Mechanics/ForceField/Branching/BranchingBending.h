@@ -50,8 +50,8 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
     
     virtual const string getName() {return "Branching Bending";}
 };

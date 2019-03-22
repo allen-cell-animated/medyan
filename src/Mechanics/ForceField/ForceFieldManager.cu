@@ -121,7 +121,7 @@ void ForceFieldManager::cleanupAllForceFields() {
 #endif
 }
 
-floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose) {
+floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d, bool verbose) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 //    CUDAcommon::cudatime.TcomputeE = 0.0;
@@ -283,7 +283,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
     return energy;
 }
 
-void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
+void ForceFieldManager::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
     //reset to zero
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -375,7 +375,7 @@ void ForceFieldManager::computeLoadForces() {
     }
 }
 
-void ForceFieldManager::copyForces(floatingpoint *fprev, floatingpoint *f) {
+void ForceFieldManager::copyForces(totalforcefloatingpoint *fprev, totalforcefloatingpoint *f) {
 
     for (int i = 0; i < CGMethod::N; i++)
         fprev[i] = f[i];

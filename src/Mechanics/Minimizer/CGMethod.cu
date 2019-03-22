@@ -377,7 +377,7 @@ void CGMethod::CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *
 floatingpoint CGMethod::allFDotF()
 {
 
-    floatingpoint g = 0;
+	totalforcefloatingpoint g = 0;
     for(int i = 0; i < N; i++)
         g += force[i] * force[i];
 
@@ -387,7 +387,7 @@ floatingpoint CGMethod::allFDotF()
 floatingpoint CGMethod::allFADotFA()
 {
 
-    floatingpoint g = 0;
+	totalforcefloatingpoint g = 0;
     for(int i = 0; i < N; i++)
         g += forceAux[i] * forceAux[i];
 //#ifdef CUDAACCL
@@ -411,7 +411,7 @@ floatingpoint CGMethod::allFADotFA()
 
 floatingpoint CGMethod::allFADotFAP()
 {
-    floatingpoint g = 0;
+	totalforcefloatingpoint g = 0;
     for(int i = 0; i < N; i++)
         g += forceAux[i] * forceAuxPrev[i];
 
@@ -420,7 +420,7 @@ floatingpoint CGMethod::allFADotFAP()
 
 floatingpoint CGMethod::allFDotFA()
 {
-    floatingpoint g = 0;
+	totalforcefloatingpoint g = 0;
     for(int i = 0; i < N; i++) {
         g += force[i] * forceAux[i];
     }

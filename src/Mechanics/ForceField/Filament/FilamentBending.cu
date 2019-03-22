@@ -125,7 +125,7 @@ void FilamentBending<FBendingInteractionType>::deallocate() {
 
 
 template <class FBendingInteractionType>
-floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d){
+floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d){
 
     floatingpoint U_i[1], U_ii=0.0;
     floatingpoint* gU_i;
@@ -186,7 +186,7 @@ floatingpoint FilamentBending<FBendingInteractionType>::computeEnergy(floatingpo
 }
 
 template <class FBendingInteractionType>
-void FilamentBending<FBendingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
+void FilamentBending<FBendingInteractionType>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -238,13 +238,13 @@ void FilamentBending<FBendingInteractionType>::computeForces(floatingpoint *coor
 }
 
 ///Template specializations
-template floatingpoint FilamentBending<FilamentBendingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void FilamentBending<FilamentBendingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
+template floatingpoint FilamentBending<FilamentBendingHarmonic>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+template void FilamentBending<FilamentBendingHarmonic>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
 template void FilamentBending<FilamentBendingHarmonic>::vectorize();
 template void FilamentBending<FilamentBendingHarmonic>::deallocate();
 
 
-template floatingpoint FilamentBending<FilamentBendingCosine>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void FilamentBending<FilamentBendingCosine>::computeForces(floatingpoint *coord, floatingpoint *f);
+template floatingpoint FilamentBending<FilamentBendingCosine>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+template void FilamentBending<FilamentBendingCosine>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
 template void FilamentBending<FilamentBendingCosine>::vectorize();
 template void FilamentBending<FilamentBendingCosine>::deallocate();

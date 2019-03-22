@@ -74,7 +74,7 @@ void FilamentFF::whoIsCulprit() {
 }
 
 
-floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
@@ -95,7 +95,7 @@ floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, floatingpoint *f, 
     return U;
 }
 
-void FilamentFF::computeForces(floatingpoint *coord, floatingpoint *f) {
+void FilamentFF::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
     for (auto &interaction : _filamentInteractionVector) {
         interaction->computeForces(coord, f);

@@ -210,7 +210,7 @@ floatingpoint BoundaryCylinderRepulsionExpIn::loadForces(floatingpoint r, floati
 
 }
 
-floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                               floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
@@ -250,11 +250,12 @@ floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, float
     return U;
 }
 
-floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                               floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
 
     int nb, nc;
-    floatingpoint *coord1, *force1, R, r, U_i;
+    floatingpoint *coord1, R, r, U_i;
+    totalforcefloatingpoint *force1;
     floatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
@@ -295,10 +296,11 @@ floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, float
 
 
 
-void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                             floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
-    floatingpoint *coord1, *force1, R, r, f0;
+    floatingpoint *coord1, R, r, f0;
+    totalforcefloatingpoint *force1;
     floatingpoint *F_i;
 
     auto beList = BoundaryElement::getBoundaryElements();

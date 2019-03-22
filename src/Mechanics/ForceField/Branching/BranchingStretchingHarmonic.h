@@ -24,13 +24,13 @@ class Bead;
 class BranchingStretchingHarmonic {
     
 public:
-    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos);
     
-    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint d);
 
-    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
+    void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                 floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos, floatingpoint
                 *stretchforce);
 #ifdef CUDAACCL

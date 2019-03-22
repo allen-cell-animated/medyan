@@ -212,8 +212,8 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy(floatingpoint
-                                                                             *coord, floatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEnergy
+(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
     floatingpoint U_i[1], U_ii=0.0;
     floatingpoint* gU_i;
     U_ii = 0.0;
@@ -271,7 +271,7 @@ floatingpoint BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeEne
 
 template <class BRepulsionInteractionType>
 void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeForces(floatingpoint *coord,
-                                                                           floatingpoint *f) {
+                                                                           totalforcefloatingpoint *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -419,8 +419,8 @@ void BoundaryCylinderRepulsionIn<BRepulsionInteractionType>::computeLoadForces()
 }
 
 ///Template specializations
-template floatingpoint BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
-template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForces(floatingpoint *coord, floatingpoint *f);
+template floatingpoint BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
 template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::computeLoadForces();
 template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::vectorize();
 template void BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>::deallocate();
