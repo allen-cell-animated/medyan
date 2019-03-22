@@ -18,11 +18,24 @@
 #include <utility> // forward
 #include <vector>
 
+//-----------------------------------------------------------------------------
+// DatabaseData stores the data that has the same indexing with the internal
+// Database structure.
+// With stable indexing the following functions must be implemented:
+//   push_back(data...)
+//   set_content(size_t pos, data...)
+//   move_content(size_t from, size_t to)
+//   resize(size_t size)
+// With dynamic indexing the following functions must be implemented:
+//   push_back(data...)
+//   pop_back()
+//   move_from_back(size_t pos)
+//-----------------------------------------------------------------------------
 struct DatabaseDataDefault {
     void push_back() {}
     void pop_back() {}
     void set_content(std::size_t) {}
-    void move_from_back(std::size_t index) {}
+    void move_from_back(std::size_t) {}
     void move_content(std::size_t from, std::size_t to) {}
     void resize(std::size_t) {}
 };
@@ -89,8 +102,15 @@ template< typename DatabaseData > DatabaseData DatabaseDataManager< DatabaseData
  *  mechanical minimization uses all beads for its Minimizer methods,
  *  ForceField uses the collections to calculate forces and energy, etc.
  *  
- *  @param T - class to hold
- *
+ *  @param T - class to point to
+ *  @param stableIndexing - when this is set to true, the database will be able
+ *    to track an additional indexing which will never be invalidated until
+ *    rearrange() is called.
+ *  @param DatabaseData - the managed vectorized data. When stableIndexing is
+ *    true, one uses getStableIndex() to access the data, but the size of the
+ *    data might be bigger than the number of elements. When stableIndexing is
+ *    false, one uses getIndex() to access the data, where the index might be
+ *    invalidated after any other element is created/destroyed.
  */
 template< typename T, bool stableIndexing, typename DatabaseData = DatabaseDataDefault > class Database;
 template< typename T, typename DatabaseData >
