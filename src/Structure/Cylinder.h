@@ -86,6 +86,9 @@ private:
     
     ///Helper to get coordinate
     void updateCoordinate();
+                                       
+   /// ID of filament
+   int _filID;
     
 public:
     vector<double> coordinate;
@@ -187,6 +190,14 @@ public:
     bool isFullLength();
                                        
     virtual void printSelf();
+                                       
+    void setFilID(int filID){
+       _filID = filID;
+    };
+
+    int getFilID(){
+       return _filID;
+    };
                                        
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders

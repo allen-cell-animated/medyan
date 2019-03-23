@@ -64,6 +64,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<double>& position,
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
         
+    // set cylinder's filID
+    c0->setFilID(_ID);
+        
     //set plus end marker
     _plusEndPosition = 1;
 }
@@ -102,6 +105,9 @@ Filament::Filament(SubSystem* s, short filamentType, vector<vector<double> >& po
     c0->setPlusEnd(true);
     c0->setMinusEnd(true);
     _cylinderVector.push_back(c0);
+        
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
     for (int i = 2; i<numBeads; i++)
         extendPlusEnd(tmpBeadsCoord[i]);
@@ -149,6 +155,9 @@ void Filament::extendPlusEnd(vector<double>& coordinates) {
     c0->setPlusEnd(true);
     _cylinderVector.push_back(c0);
     
+    // set cylinder's filID
+    c0->setFilID(_ID);
+    
 }
 
 //Extend back for initialization
@@ -173,6 +182,9 @@ void Filament::extendMinusEnd(vector<double>& coordinates) {
     
     c0->setMinusEnd(true);
     _cylinderVector.push_front(c0);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
 
 }
 
@@ -209,6 +221,9 @@ void Filament::extendPlusEnd(short plusEnd) {
     _cylinderVector.back()->setPlusEnd(false);
     _cylinderVector.push_back(c0);
     _cylinderVector.back()->setPlusEnd(true);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
 #ifdef CHEMISTRY
     //get last cylinder, mark species
@@ -254,6 +269,9 @@ void Filament::extendMinusEnd(short minusEnd) {
     _cylinderVector.front()->setMinusEnd(false);
     _cylinderVector.push_front(c0);
     _cylinderVector.front()->setMinusEnd(true);
+    
+    // set cylinder's filID
+    c0->setFilID(_ID);
     
 #ifdef CHEMISTRY
     //get first cylinder, mark species

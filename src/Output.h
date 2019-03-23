@@ -240,6 +240,19 @@ public:
     virtual void print(int snapshot);
 };
 
+/// Print chem energy changes by HRCDID
+class CMGraph : public Output {
+    
+public:
+    CMGraph(string outputFileName, SubSystem* s)
+    
+    : Output(outputFileName, s) {}
+    
+    ~CMGraph() {}
+    
+    virtual void print(int snapshot);
+};
+
 //// Print pin  force
 //class PinForces : public Output {
 //    
