@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "Cylinder.h"
+#include "Structure/Cylinder.h"
 
 #include "SubSystem.h"
 #include "CController.h"
@@ -32,9 +32,31 @@ int Cylinder::vectormaxsize = 0;
 int Cylinder::Ncyl = 0;
 //bool Cylinder::triggercylindervectorization = false;
 vector<int> Cylinder::removedcindex;//vector of bead indices that were once alloted to other
+
+// Renew structured data for all cylinders
+// This function will not invalidate stable indices
+void Cylinder::updateData() {
+    for(auto c : getCylinders()) {
+        const auto si = c->getStableIndex();
+        auto& data = getDbData().value[si];
+
+        data.filamentId = static_cast<Filament*>(c->getParent())->getId();
+        data.positionOnFilament = c->getPosition();
+        data.compartmentId = c->getCompartment()->getId();
+        data.beadCoord[0] = c->getFirstBead()->coordinate();
+        data.beadCoord[1] = c->getSecondBead()->coordinate();
+        data.coord = vector2Vec<3, double>(c->coordinate);
+        data.type = c->getType();
+        data.id = c->getId();
+
+#ifdef CHEMISTRY
+        data.chemCylinder = c->getCCylinder();
+#endif
+    }
+}
+
 // beads but are free to be reallocated now.
-void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
-                        CCylinder** ccylindervec){
+void Cylinder::revectorize(cylinder* cylindervec){
     int i = 0;
     Ncyl = numCylinders() - 1; // New cylinder is stored BEFORE this function, so temporarily exclude last
     for(size_t idx = 0; idx < Ncyl; ++idx){
@@ -54,9 +76,6 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
         cylindervec[i].coord[2] = coord[2];
         cylindervec[i].type = cyl->getType();
         cylindervec[i].ID = cyl->getId();
-        //other arrays needed
-        ccylindervec[i] = cyl->getCCylinder();
-        cylinderpointervec[i] = cyl;
         i++;
     }
     removedcindex.clear();
@@ -66,8 +85,6 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
 void  Cylinder::copytoarrays() {
     long i =_dcIndex;
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-    Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
     //copy attributes to a structure array
     cylindervec[i].filamentID = dynamic_cast<Filament*>(this->getParent())->getId();
     cylindervec[i].filamentposition = _position;
@@ -90,11 +107,7 @@ void  Cylinder::copytoarrays() {
 
 void Cylinder::resetarrays() {
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-    Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
     resetcylinderstruct(cylindervec, _dcIndex);
-    cylinderpointervec[_dcIndex] = NULL;
-    ccylindervec[_dcIndex] = NULL;
 }
 
 void Cylinder::updateCoordinate() {
@@ -111,7 +124,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
                    bool extensionFront, bool extensionBack, bool initialization)
 
     : Trackable(true, true, true, false),
-      _b1(b1), _b2(b2), _type(type), _position(position) {
+      _b1(b1), _b2(b2), _type(type), _position(position),
+      db_type(CylinderInfoData::CylinderInfo {}) {
     
     parent->addChild(unique_ptr<Component>(this));
     //revectorize if needed
@@ -130,8 +144,6 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     Ncyl = getElements().size() - 1;
     //check if you need to revectorize.
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-    Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
     //copy attributes to a structure array
     cylindervec[_dcIndex].filamentID = dynamic_cast<Filament*>(this->getParent())->getId();
     cylindervec[_dcIndex].filamentposition = _position;
@@ -190,22 +202,28 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     cylindervec[_dcIndex].cindex = _dcIndex;
     cylindervec[_dcIndex].type = _type;
     cylindervec[_dcIndex].ID = getId();
-    //other arrays needed
-    ccylindervec[_dcIndex] = _cCylinder.get();
-    cylinderpointervec[_dcIndex] = this;
 
     //init using chem manager
     _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
                                       extensionBack, initialization);
 #endif
-    /*//copy further components to the array
-    cylindervec[_dcIndex].cmpID = _compartment->getID();
-    cylindervec[_dcIndex].cindex = _dcIndex;
-    cylindervec[_dcIndex].type = _type;
-    cylindervec[_dcIndex].ID = _ID;
-    //other arrays needed
-    ccylindervec[_dcIndex] = _cCylinder.get();
-    cylinderpointervec[_dcIndex] = this;*/
+
+    // Update the stored data
+    auto& data = getDbData().value[getStableIndex()];
+
+    data.filamentId = static_cast<Filament*>(getParent())->getId();
+    data.positionOnFilament = _position;
+    data.compartmentId = _compartment->getId();
+    data.beadCoord[0] = _b1->coordinate();
+    data.beadCoord[1] = _b2->coordinate();
+    data.coord = vector2Vec<3, double>(coordinate);
+    data.type = getType();
+    data.id = getId();
+
+#ifdef CHEMISTRY
+    data.chemCylinder = getCCylinder();
+#endif
+
 }
 
 Cylinder::~Cylinder() noexcept {
@@ -266,8 +284,6 @@ void Cylinder::updatePosition() {
 //        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
         //change both CCylinder and Compartment ID in the vector
         CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getId();
-        CUDAcommon::serlvars.cylinderpointervec[_dcIndex] =  this;
-        CUDAcommon::serlvars.ccylindervec[_dcIndex] =  _cCylinder.get();
         
         //Add new ccylinder to binding managers
         for(auto &manager : newCompartment->getFilamentBindingManagers()){

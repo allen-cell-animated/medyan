@@ -262,8 +262,8 @@ private:
 
     //Cylinder vector
     cylinder *cylindervec;
-    CCylinder** ccylindervec;
-    Cylinder** cylinderpointervec;
+    [[deprecated]] CCylinder** ccylindervec;
+    [[deprecated]] Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
     double* cylsqmagnitudevector = NULL;
     static bool initialize;

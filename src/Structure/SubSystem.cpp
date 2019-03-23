@@ -479,12 +479,8 @@ if(true) {
 //OBSOLETE
 void SubSystem::vectorizeCylinder() {
     delete [] cylindervec;
-    delete [] ccylindervec;
-    delete [] cylinderpointervec;
     int Ncyl = Cylinder::getCylinders().size();
     cylindervec = new cylinder[Ncyl];
-    ccylindervec = new CCylinder*[Ncyl];
-    cylinderpointervec = new Cylinder*[Ncyl];
     //Create cylinder structure
     int i = 0;
     for(auto cyl:Cylinder::getCylinders()){
@@ -503,8 +499,6 @@ void SubSystem::vectorizeCylinder() {
         cylindervec[i].coord[2] = coord[2];
         cylindervec[i].type = cyl->getType();
         cylindervec[i].ID = cyl->getId();
-        ccylindervec[i] = cyl->getCCylinder();
-        cylinderpointervec[i] = cyl;
         i++;
 //        for(int bsc = 0; bsc < nbs; bsc++){
 //            double c[3], bead1[3],bead2[3];
@@ -524,9 +518,7 @@ void SubSystem::vectorizeCylinder() {
             std::cout << "Fatal mismatch " << cylindervec[idx].cindex << " "
                     ""<<ccylindervec[cylindervec[idx].cindex]->getCylinder()->_dcIndex << endl;
     }*/
-    CUDAcommon::serlvars.ccylindervec = ccylindervec;
     CUDAcommon::serlvars.cylindervec = cylindervec;
-    CUDAcommon::serlvars.cylinderpointervec = cylinderpointervec;
 
 }
 

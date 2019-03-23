@@ -348,7 +348,6 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     // current binGrid of interest for this NL.
                                                     ->getNeighbours();
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
-    auto cylinderpointervec = CUDAcommon::getSERLvars().cylinderpointervec;
     int cindex = currcylinder->_dcIndex;
     cylinder c = cylindervec[cindex];
 
@@ -408,7 +407,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                                 continue;
                             short HNLID = HNLIDvec[idx][idx2];
                             //If we got through all of this, add it!
-                            Cylinder *Ncylinder = cylinderpointervec[ncindex];
+                            Cylinder *Ncylinder = Cylinder::getStableElement(ncindex);
                             _list4mbinvec[HNLID][currcylinder].push_back(Ncylinder);
 
                             //if runtime, add to other list as well if full

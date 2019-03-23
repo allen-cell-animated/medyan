@@ -35,7 +35,7 @@ struct bin{
     struct cylinder{
         int filamentID = -1;
         int filamentposition = -1;
-        Bead* beads[2];
+        [[deprecated]] Bead* beads[2];
         [[deprecated]] int bindices[2];
         int cmpID = -1;
         long cindex = -1;
@@ -45,10 +45,9 @@ struct bin{
         int availbscount = -1;
     };
 struct SERLvars{
-    [[deprecated]] double *coord = NULL;
     cylinder *cylindervec = NULL;
-    CCylinder **ccylindervec = NULL;
-    Cylinder **cylinderpointervec = NULL;
+    [[deprecated]] CCylinder **ccylindervec = NULL;
+    [[deprecated]] Cylinder **cylinderpointervec = NULL;
     unsigned int N = 6000;
 
 };

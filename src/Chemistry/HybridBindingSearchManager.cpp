@@ -370,7 +370,9 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     int Ncyl = Cylinder::getCylinders().size();
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
-    CCylinder **ccylvec = CUDAcommon::getSERLvars().ccylindervec;
+
+    const auto& cylinderInfoData = Cylinder::getDbData().value;
+
     int idx; int idx2;
 //Go through all filament types in our simulation
     for(idx = 0; idx<totaluniquefIDpairs;idx++) {
@@ -518,9 +520,9 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                                     auto it2 = SysParams::Chemistry().bindingSites[fpairs[1]][pos2];
 
 
-                                    auto t1 = tuple<CCylinder *, short>(ccylvec[cindex],
+                                    auto t1 = tuple<CCylinder *, short>(cylinderInfoData[cindex].chemCylinder,
                                                                         it1);
-                                    auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex],
+                                    auto t2 = tuple<CCylinder *, short>(cylinderInfoData[cnindex].chemCylinder,
                                                                         it2);
 
 

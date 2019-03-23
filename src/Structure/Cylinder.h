@@ -30,11 +30,34 @@
 #include "Component.h"
 #include "CUDAcommon.h"
 #include "Bead.h"
+#include "util/math/vec.hpp"
+#include "util/profiler.h"
 
 //FORWARD DECLARATIONS
 class Filament;
 class Compartment;
 class Bin;
+
+struct CylinderInfoData {
+    struct CylinderInfo {
+        int filamentId = -1;
+        int positionOnFilament = -1;
+        int compartmentId = -1;
+        Vec3 beadCoord[2];
+        Vec3 coord;
+        short type = -1;
+        int id = -1;
+        [[deprecated]] int availbscount = -1;
+        CCylinder* chemCylinder;
+    };
+
+    std::vector< CylinderInfo > value;
+
+    void push_back(CylinderInfo c) { value.push_back(c); }
+    void set_content(std::size_t pos, CylinderInfo c) { value[pos] = c; }
+    void move_content(std::size_t from, std::size_t to) { value[to] = value[from]; }
+    void resize(std::size_t size) { value.resize(size); }
+};
 
 /// A container to store a MCylinder and CCylinder.
 /*!
@@ -52,7 +75,7 @@ class Bin;
  */
 class Cylinder : public Component, public Trackable, public Movable,
                                    public Reactable, public DynamicNeighbor,
-                                   public Database< Cylinder, false > {
+                                   public Database< Cylinder, true, CylinderInfoData > {
     
 friend class CController;
 friend class DRController;
@@ -85,6 +108,8 @@ private:
     void updateCoordinate();
     
 public:
+    using db_type = Database< Cylinder, true, CylinderInfoData >;
+
     vector<double> coordinate;
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
@@ -92,6 +117,9 @@ public:
     long _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector.
 ///< Continuous ID assigned for
 ///< CUDANL calculation
+
+    static void updateData();
+
     /// Constructor, initializes a cylinder
     Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
              bool extensionFront = false,
@@ -192,6 +220,8 @@ public:
     static int Ncyl; // Currently the value is always numCylinders() - 1
     static vector<int> removedcindex;
     static void revectorizeifneeded(){
+        static profiler::TimerManager tm("Revectorizing");
+
         int newsize = vectormaxsize;
         bool check = false;
         if(Bead::triggercylindervectorization || vectormaxsize - maxcindex <= bead_cache/20){
@@ -200,22 +230,17 @@ public:
             if(removedcindex.size() >= bead_cache)
                 newsize = (int(Ncyl/cylinder_cache)+1)*cylinder_cache;
             if(newsize != vectormaxsize || Bead::triggercylindervectorization){
+                profiler::ScopeTimerWorker stw(tm);
+
                 check = true;
                 cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-                Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-                CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
                 delete[] cylindervec;
-                delete[] cylinderpointervec;
-                delete[] ccylindervec;
                 cylinder *newcylindervec = new cylinder[newsize];
-                Cylinder **newcylinderpointervec = new Cylinder*[newsize];
-                CCylinder **newccylindervec = new CCylinder*[newsize];
                 CUDAcommon::serlvars.cylindervec = newcylindervec;
-                CUDAcommon::serlvars.cylinderpointervec = newcylinderpointervec;
-                CUDAcommon::serlvars.ccylindervec = newccylindervec;
-                revectorize(newcylindervec, newcylinderpointervec, newccylindervec);
+                revectorize(newcylindervec);
                 vectormaxsize = newsize;
             }
+            tm.report();
         }
         Bead::triggercylindervectorization = false;
         //@{ check begins
@@ -257,8 +282,7 @@ public:
         }*/
         //@} check ends.
     }
-    static void revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
-                            CCylinder** ccylindervec);
+    static void revectorize(cylinder* cylindervec);
     void  copytoarrays();
     void resetarrays();
     void resetcylinderstruct(cylinder* cylindervec, long idx){

@@ -1166,7 +1166,9 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     double* coord = Bead::getDbData().coords.data();
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
-    CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
+
+    const auto& cylinderInfoData = Cylinder::getDbData().value;
+
     auto bindingsitevec =SysParams::Chemistry().bindingSites[_filamentType];
     int Ncylincmp =  _compartment->getCylinders().size();
     int* cindexvec = new int[Ncylincmp]; //stores cindex of cylinders in this compartment
@@ -1312,8 +1314,6 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                             accepts++;
                             auto it1 = SysParams::Chemistry().bindingSites[_filamentType][pos1];
                             auto it2 = SysParams::Chemistry().bindingSites[_filamentType][pos2];
-                            auto xx1 = ccylvec[cindex]->getCylinder();
-                            auto xx2 = ccylvec[cnindex]->getCylinder();
 //                            std::cout<<xx1->getId()<<" "<<c.ID<<" "<<xx2->getId()<<" "
 //                                    ""<<cn.ID<<endl;
                             /*if(xx1->getFirstBead()->getIndex() != c.bindices[0] ||
@@ -1326,8 +1326,8 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                                 std::cout<<"DB2 "<<xx2->getFirstBead()->getIndex()<<" "
                                         ""<<xx2->getSecondBead()->getIndex()<<" "<<cn
                                                  .bindices[0]<<" "<<cn.bindices[1]<<endl;*/
-                            auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
-                            auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
+                            auto t1 = tuple<CCylinder *, short>(cylinderInfoData[cindex].chemCylinder, it1);
+                            auto t2 = tuple<CCylinder *, short>(cylinderInfoData[cnindex].chemCylinder, it2);
                             //add in correct order
                             _possibleBindingsstencil.emplace(t1, t2);
                         }
@@ -2420,7 +2420,9 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     double* coord = Bead::getDbData().coords.data();
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
-    CCylinder** ccylvec = CUDAcommon::getSERLvars().ccylindervec;
+
+    const auto& cylinderInfoData = Cylinder::getDbData().value;
+
     int counter1 = 0;
     int totalneighbors = 0;
 /*    vector<CCylinder*> ccylindervector;
@@ -2681,8 +2683,8 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                         std::cout<<"DB2 "<<xx2->getFirstBead()->getIndex()<<" "
                                 ""<<xx2->getSecondBead()->getIndex()<<" "<<cn
                                          .bindices[0]<<" "<<cn.bindices[1]<<endl;*/
-                        auto t1 = tuple<CCylinder *, short>(ccylvec[cindex], it1);
-                        auto t2 = tuple<CCylinder *, short>(ccylvec[cnindex], it2);
+                        auto t1 = tuple<CCylinder *, short>(cylinderInfoData[cindex].chemCylinder, it1);
+                        auto t2 = tuple<CCylinder *, short>(cylinderInfoData[cnindex].chemCylinder, it2);
                         //add in correct order
                             _possibleBindingsstencil.emplace(t1, t2);
                     }
