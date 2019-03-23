@@ -161,12 +161,6 @@ public:
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() override {}
     virtual void removeFromSubSystem() {
-        /* Haoran 03/17/2019
-//        std::cout<<"removing bead with bindex "<<_dbIndex<<endl;
-        //Reset in bead coordinate vector and add _dbIndex to the list of removedbindex.
-        removedbindex.push_back(_dbIndex);
-        resetcoordinates();
-        */
         //remove if pinned
         if(_isPinned) removeAsPinned();
     }
@@ -300,64 +294,9 @@ private:
                                          ///< (attached to some element in SubSystem)
     //Vectorize beads so the coordinates are all available in a single array.
     //@{
-    static int vectormaxsize;//maximum number of beads that can be appended without
-    // revectorization
-    [[deprecated]] static int Nbeads;//Total number of beads in the system
-    static vector<int> removedbindex;//stores the bead indices that have been freed
+    [[deprecated]] static int vectormaxsize;//maximum number of beads that can be appended without
+    [[deprecated]] static vector<int> removedbindex;//stores the bead indices that have been freed
     // through depolymerization/ destruction reactions.
-    /* Haoran 03/17/2019
-    static void revectorizeifneeded(){
-        int newsize = vectormaxsize;
-        //if the maximum bead index is very close to the vector size
-        if(vectormaxsize - maxbindex <= bead_cache/10 )
-            //new size will be increased by bead_cache
-            newsize = (int(Nbeads/bead_cache)+2)*bead_cache;
-        //if we have removed bead_cache number of beads from the system
-        if(removedbindex.size() >= bead_cache)
-            //we can revectorize with a smaller size.
-            newsize = (int(Nbeads/bead_cache)+1)*bead_cache;
-        //set parameters and revectorize
-        if(newsize != vectormaxsize){
-            double *coord = CUDAcommon::serlvars.coord;
-            delete[] coord;
-            double *newcoord = new double[3 * newsize];
-            CUDAcommon::serlvars.coord = newcoord;
-            revectorize(newcoord);
-            //copyvector(newcoord, coord);
-            vectormaxsize = newsize;
-            //cylinder structure needs to be revecotrized as well.
-            triggercylindervectorization = true;
-        }
-    }
-    static void revectorize(double* coord){
-        //set contiguous bindices and set coordinates.
-        int idx = 0;
-        for(auto b:_beads.getElements()){
-            int index = 3 * idx;
-            coord[index] = b->coordinate[0];
-            coord[index + 1] = b->coordinate[1];
-            coord[index + 2] = b->coordinate[2];
-            b->getIndex() = idx;
-            idx++;
-        }
-        Nbeads =_beads.getElements().size();
-        maxbindex = _beads.getElements().size();
-        removedbindex.clear();
-    }*/
-    /* Haoran 03/18/2019
-    //copy coodinates of this bead to the appropriate spot in coord vector.
-    void  copycoordinatestovector() {
-//        if(!triggercylindervectorization) {
-            CUDAcommon::serlvars.coord[3 * _dbIndex] = coordinate[0];
-            CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = coordinate[1];
-            CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = coordinate[2];
-//        }
-    }
-    void resetcoordinates() {
-        CUDAcommon::serlvars.coord[3 * _dbIndex] = -1.0;
-        CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = -1.0;
-        CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = -1.0;
-    }*/
     //@}
 };
 

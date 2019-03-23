@@ -216,7 +216,7 @@ public:
     //Vectorize beads so the coordinates are all available in a single array.
     //@{
     static int maxcindex;
-    static int vectormaxsize;
+    [[deprecated]] static int vectormaxsize;
     static int Ncyl; // Currently the value is always numCylinders() - 1
     static vector<int> removedcindex;
     static void revectorizeifneeded(){

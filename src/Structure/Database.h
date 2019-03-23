@@ -149,6 +149,8 @@ public:
     using db_data_type = DatabaseDataManager<DatabaseData>;
 
     static const auto& getStableElement(std::size_t pos) { return _stableElems[pos]; }
+    // Get raw number of stable elements (including deleted)
+    static auto rawNumStableElements() { return _stableElems.size(); }
 
     static void rearrange() {
         using std::size_t;

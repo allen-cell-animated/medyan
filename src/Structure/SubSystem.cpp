@@ -349,13 +349,13 @@ void SubSystem::updateBindingManagers() {
     if(cylsqmagnitudevector != NULL)
         delete [] cylsqmagnitudevector;
     
-    cylsqmagnitudevector = new double[Cylinder::vectormaxsize];
+    cylsqmagnitudevector = new double[Cylinder::rawNumStableElements()];
     unsigned long maxbindingsitespercyl = 0;
     for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
         maxbindingsitespercyl = max<size_t>(maxbindingsitespercyl,SysParams::Chemistry()
                 .bindingSites[ftype].size());
     }
-    long vectorsize = maxbindingsitespercyl * Cylinder::vectormaxsize;
+    long vectorsize = maxbindingsitespercyl * Cylinder::rawNumStableElements();
     vector<bool> branchspeciesbound(vectorsize);
     vector<bool> linkerspeciesbound(vectorsize);
     vector<bool> motorspeciesbound(vectorsize);//stores species bound corresponding to each
@@ -369,9 +369,6 @@ void SubSystem::updateBindingManagers() {
     //fill with appropriate values.
     for (auto cyl: cylvec) {
 //        cout<<cyl->_dcIndex<<" "<<cyl->getId()<<endl;
-/*        if(cyl->_dcIndex > Cylinder::vectormaxsize)
-            std::cout<<"Cindex "<<cyl->_dcIndex<<" greater than vectorsize "
-                    ""<<Cylinder::vectormaxsize<<endl;*/
         //cyl->_dcIndex = cidx;
         auto _filamentType = cyl->getType();
         auto x1 = cyl->getFirstBead()->vcoordinate();
