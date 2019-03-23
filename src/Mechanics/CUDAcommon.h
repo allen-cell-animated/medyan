@@ -45,7 +45,7 @@ struct bin{
         int availbscount = -1;
     };
 struct SERLvars{
-    cylinder *cylindervec = NULL;
+    [[deprecated]] cylinder *cylindervec = NULL;
     [[deprecated]] CCylinder **ccylindervec = NULL;
     [[deprecated]] Cylinder **cylinderpointervec = NULL;
     unsigned int N = 6000;

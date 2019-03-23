@@ -259,7 +259,7 @@ private:
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
 
     //Cylinder vector
-    cylinder *cylindervec;
+    [[deprecated]] cylinder *cylindervec;
     [[deprecated]] CCylinder** ccylindervec;
     [[deprecated]] Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;

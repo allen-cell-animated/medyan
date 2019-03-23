@@ -1165,7 +1165,6 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     double* coord = Bead::getDbData().coords.data();
-    auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
 
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
@@ -1191,54 +1190,42 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
 
     for(int i=0;i<Ncylincmp;i++){
         int cindex = cindexvec[i];
-        cylinder c = cylindervec[cindex];
+        const auto& c = cylinderInfoData[cindex];
+
         if(c.type != _filamentType) {
 //            counter2++;
             continue;}
-        double x1[3],x2[3];
-        memcpy(x1, &coord[3*c.beads[0]->getIndex()], 3 * sizeof(double));
-        memcpy(x2, &coord[3*c.beads[1]->getIndex()], 3 * sizeof(double));
+        const auto& x1 = c.beadCoord[0];
+        const auto& x2 = c.beadCoord[1];
         double X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
-
-        //Check 2
-/*        for(auto cndummy:ncindices[i]){
-            auto A =cylindervec[cndummy];
-            if(ccylvec[A.cindex]->getCylinder()->getId() != A.ID)
-            {
-                std::cout<<"Mismatch in neighbors L of Cyl index "<<i<<" "
-                        ""<<ccylvec[cndummy]->getCylinder()->getId()<<" "
-                        ""<<cylindervec[cndummy].ID<<endl;
-            }
-        }*/
 
         int* cnindices = ncindices[i].data();
         for(int arraycount = 0; arraycount < ncindices[i].size();arraycount++){
             int cnindex = cnindices[arraycount];
 //            std::cout<<*cnindex<<endl;
-            cylinder cn = cylindervec[cnindex];
+            const auto& cn = cylinderInfoData[cnindex];
 //            if(c.ID < cn.ID) {counter++; continue;} commented as the above vector does
 // not contain ncs that will fail this cndn.
-            if(c.filamentID == cn.filamentID){
+            if(c.filamentId == cn.filamentId){
 //                counter3++;
                 continue;}
             if(c.type != cn.type){
 //                counter4++;
                 continue;}
 
-            double x3[3], x4[3];
-            memcpy(x3, &coord[3*cn.beads[0]->getIndex()], 3 * sizeof(double));
-            memcpy(x4, &coord[3*cn.beads[1]->getIndex()], 3 * sizeof(double));
+            const auto& x3 = cn.beadCoord[0];
+            const auto& x4 = cn.beadCoord[1];
             double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector[c.cindex];
+            double X1X2squared = cylsqmagnitudevector[cindex];
             double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector[cn.cindex];
+            double X3X4squared = cylsqmagnitudevector[cnindex];
             double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
             double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             for(int pos1 =0; pos1<nbs;pos1++) {
                 //now re add valid binding sites
-                if (areEqual(boundstate[1][maxnbs *c.cindex + pos1], 1.0)) {
+                if (areEqual(boundstate[1][maxnbs * cindex + pos1], 1.0)) {
                     auto mp1 = bindingsites.at(pos1);
                     double A = X3X4squared;
                     double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
@@ -1285,7 +1272,7 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
                         }
                     }
                     for(int pos2 = 0; pos2<nbs;pos2++){
-                        if (areEqual(boundstate[1][maxnbs *cn.cindex + pos2], 1.0)) {
+                        if (areEqual(boundstate[1][maxnbs * cnindex + pos2], 1.0)) {
                             total++;
                             //check distances..
                             auto mp2 = bindingsites.at(pos2);
@@ -2411,7 +2398,6 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     double* coord = Bead::getDbData().coords.data();
-    auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
 
     const auto& cylinderInfoData = Cylinder::getDbData().value;
 
@@ -2440,14 +2426,6 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
         ncindices.push_back(ncindex);
         ncindex.clear();
     }
-    //Check 1
-/*    for(int idx = 0; idx < Ncyl; idx++) {
-        auto a1 = cylindervec[idx].cindex;
-        auto a2 = ccylvec[a1]->getCylinder()->_dcIndex;
-        if(a1 != a2)
-            std::cout <<"Cyl ID mismatch M "<<cylindervec[idx].cindex << " " <<
-                      ccylvec[idx]->getCylinder()->_dcIndex << endl;
-    }*/
 //    chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
 //    double timetaken = 0.0;
 //    double time16 = 0.0;
@@ -2544,55 +2522,42 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
 //    mints = chrono::high_resolution_clock::now();
     for(int i=0;i<Ncylincmp;i++){
         int cindex = cindexvec[i];
-        cylinder c = cylindervec[cindex];
+        const auto& c = cylinderInfoData[cindex];
         if(c.type != _filamentType) {
             counter2++;
             continue;}
-        double x1[3],x2[3];
-        memcpy(x1, &coord[3*c.beads[0]->getIndex()], 3 * sizeof(double));
-        memcpy(x2, &coord[3*c.beads[1]->getIndex()], 3 * sizeof(double));
+
+        const auto& x1 = c.beadCoord[0];
+        const auto& x2 = c.beadCoord[1];
         double X1X2[3] ={x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
-        //Check 2
-/*
-        for(auto cndummy:ncindices[i]){
-            auto A =cylindervec[cndummy];
-            if(ccylvec[A.cindex]->getCylinder()->getId() != A.ID)
-            {
-                std::cout<<"Mismatch in neighbors L of Cyl index "<<i<<" "
-                        ""<<ccylvec[cndummy]->getCylinder()->getId()<<" "
-                                 ""<<cylindervec[cndummy].ID<<endl;
-            }
-        }
-*/
 
         int* cnindices = ncindices[i].data();
         for(int arraycount = 0; arraycount < ncindices[i].size();arraycount++){
             int cnindex = cnindices[arraycount];
 //            std::cout<<*cnindex<<endl;
-            cylinder cn = cylindervec[cnindex];
+            const auto& cn = cylinderInfoData[cnindex];
 //            if(c.ID < cn.ID) {counter++; continue;} commented as the above vector does
 // not contain ncs that will fail this cndn.
-            if(c.filamentID == cn.filamentID){
+            if(c.filamentId == cn.filamentId){
                 counter3++;
                 continue;}
             if(c.type != cn.type){
                 counter4++;
                  continue;}
 
-            double x3[3], x4[3];
-            memcpy(x3, &coord[3*cn.beads[0]->getIndex()], 3 * sizeof(double));
-            memcpy(x4, &coord[3*cn.beads[1]->getIndex()], 3 * sizeof(double));
+            const auto& x3 = cn.beadCoord[0];
+            const auto& x4 = cn.beadCoord[1];
             double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
             double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
             double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector[c.cindex];
+            double X1X2squared = cylsqmagnitudevector[cindex];
             double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector[cn.cindex];
+            double X3X4squared = cylsqmagnitudevector[cnindex];
             double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
             double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             for(int pos1 =0; pos1<nbs;pos1++) {
             //now re add valid binding sites
-                if (areEqual(boundstate[2][offset + maxnbs *c.cindex + pos1], 1.0)) {
+                if (areEqual(boundstate[2][offset + maxnbs * cindex + pos1], 1.0)) {
                 auto mp1 = bindingsites.at(pos1);
                 double A = X3X4squared;
                 double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
@@ -2639,7 +2604,7 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
                     }
                 }
                     for(int pos2 = 0; pos2<nbs;pos2++){
-                    if (areEqual(boundstate[2][offset + maxnbs *cn.cindex + pos2], 1.0)) {
+                    if (areEqual(boundstate[2][offset + maxnbs * cnindex + pos2], 1.0)) {
                         total++;
                         //check distances..
                         auto mp2 = bindingsites.at(pos2);

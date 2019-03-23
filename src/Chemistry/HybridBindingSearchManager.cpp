@@ -360,7 +360,6 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     double maxveca[2];
     double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
     double *coord = Bead::getDbData().coords.data();
-    auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
     int Ncylincmp = _compartment->getCylinders().size();
     int* cindexvec = new int[Ncylincmp]; //stores cindex of cylinders in this compartment
     vector<vector<int>> ncindices; //cindices of cylinders in neighbor list.
@@ -409,38 +408,35 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
 
             int cindex = cindexvec[i];
             short complimentaryfID;
-            double x1[3], x2[3];
+            const auto& c = cylinderInfoData[cindex];
+            const auto& x1 = c.beadCoord[0];
+            const auto& x2 = c.beadCoord[1];
             double X1X2[3] = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
             int *cnindices = ncindices[i].data();
-            cylinder c = cylindervec[cindex];
 
             if (c.type != fpairs[0] && c.type != fpairs[1]) continue;
             else if(c.type == fpairs[0]) complimentaryfID = fpairs[1];
             else complimentaryfID = fpairs[0];
 
-            memcpy(x1, &coord[3 * c.beads[0]->getIndex()], 3 * sizeof(double));
-            memcpy(x2, &coord[3 * c.beads[1]->getIndex()], 3 * sizeof(double));
-
             //Go through the neighbors of the cylinder
             for (int arraycount = 0; arraycount < ncindices[i].size(); arraycount++) {
 
                 int cnindex = cnindices[arraycount];
-                cylinder cn = cylindervec[cnindex];
+                const auto& cn = cylinderInfoData[cnindex];
 
 //            if(c.ID < cn.ID) {counter++; continue;} commented as the above vector does
 //              not contain ncs that will fail this cndn.
-                if (c.filamentID == cn.filamentID) continue;
+                if (c.filamentId == cn.filamentId) continue;
                 if(c.type != complimentaryfID) continue;
 
-                double x3[3], x4[3];
-                memcpy(x3, &coord[3 * cn.beads[0]->getIndex()], 3 * sizeof(double));
-                memcpy(x4, &coord[3 * cn.beads[1]->getIndex()], 3 * sizeof(double));
+                const auto& x3 = cn.beadCoord[0];
+                const auto& x4 = cn.beadCoord[1];
                 double X1X3[3] = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
                 double X3X4[3] = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
                 double X1X3squared = sqmagnitude(X1X3);
-                double X1X2squared = cylsqmagnitudevector[c.cindex];
+                double X1X2squared = cylsqmagnitudevector[cindex];
                 double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-                double X3X4squared = cylsqmagnitudevector[cn.cindex];
+                double X3X4squared = cylsqmagnitudevector[cnindex];
                 double X1X3dotX3X4 = scalarprojection(X1X3, X3X4);
                 double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
 
@@ -453,7 +449,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
                         short bstatepos = bstateposvec[idx][idx2];
 
                         //now re add valid binding sites
-                        if (areEqual(boundstate[bstatepos][offset1 + maxnbs * c.cindex + pos1], 1.0)) {
+                        if (areEqual(boundstate[bstatepos][offset1 + maxnbs * cindex + pos1], 1.0)) {
 
                             auto mp1 = bindingsites1[idx][pos1];
                             double A = X3X4squared;
@@ -506,7 +502,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
 
                             for (int pos2 = 0; pos2 < nbs2; pos2++) {
 
-                                if (areEqual(boundstate[bstatepos][offset2 + maxnbs * cn.cindex + pos2], 1.0)) {
+                                if (areEqual(boundstate[bstatepos][offset2 + maxnbs * cnindex + pos2], 1.0)) {
 
                                     //check distances..
                                     auto mp2 = bindingsites2[idx][pos2];

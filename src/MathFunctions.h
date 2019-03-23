@@ -208,7 +208,7 @@ inline auto vec2Vector(const VecType& a) {
     #ifdef CUDAACCL
     __host__ __device__
     #endif
-    inline double getdistancefromplane(double *coord, double * plane,int id){
+    inline double getdistancefromplane(const double *coord, double * plane,int id){
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
     }
@@ -216,7 +216,7 @@ inline auto vec2Vector(const VecType& a) {
 #ifdef CUDAACCL
     __host__ __device__
 #endif
-    inline double getdistancefromplane(double *coord, double * plane){
+    inline double getdistancefromplane(const double *coord, double * plane){
         int id = 0;
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));

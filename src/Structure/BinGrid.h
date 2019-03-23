@@ -13,6 +13,9 @@
 
 #ifndef MEDYAN_BinGrid_h
 #define MEDYAN_BinGrid_h
+
+#include <type_traits> // enable_if
+
 #include "common.h"
 #include "Composite.h"
 #include "Bin.h"
@@ -191,8 +194,9 @@ public:
         }
         return false;
     }
-    
-    bool iswithincutoff(double cylcoord[3], vector<double> bincoord, int
+
+    template< typename VecType, std::enable_if_t<VecType::vec_size == 3>* = nullptr >
+    bool iswithincutoff(const VecType& cylcoord, vector<double> bincoord, int
     NbinstencilID, double cutoff){
         int type = shrtdistType[NbinstencilID];
         if(type ==0) return true;
@@ -225,10 +229,10 @@ public:
             vector<double> vertexoffset = { binvertexoffset.at(vertexID)[0],
                                             binvertexoffset.at(vertexID)[1],
                                             binvertexoffset.at(vertexID)[2]};
-            vector<double> vcoord = {bincoord[0] + vertexoffset[0],
-                                     bincoord[1] + vertexoffset[1],
-                                     bincoord[2] + vertexoffset[2]};
-            double dist = mathfunc::twoPointDistance(vcoord, cylcoord);
+            mathfunc::Vec3 vcoord {bincoord[0] + vertexoffset[0],
+                                   bincoord[1] + vertexoffset[1],
+                                   bincoord[2] + vertexoffset[2]};
+            double dist = mathfunc::distance(vcoord, cylcoord);
             if(dist <= cutoff) return true;
             else return false;
         }
@@ -247,7 +251,7 @@ public:
                                        binplanenormal.at(planeID)[2]};
             double d = -mathfunc::scalarprojection(planeeqn,vcoord);
             planeeqn.push_back(d);
-            double dist = abs(mathfunc::getdistancefromplane(cylcoord,planeeqn.data
+            double dist = abs(mathfunc::getdistancefromplane(cylcoord.value.data(), planeeqn.data
                     ()));
 //            std::cout<<planeeqn[0]<<" "<<planeeqn[1]<<" "<<planeeqn[2]<<" "
 //                    ""<<planeeqn[3]<<" "<<dist<<endl;

@@ -216,41 +216,6 @@ void SubSystem::resetNeighborLists() {
         //                                           cudaMemcpyHostToDevice));
                 //@}
 #endif
-    //@{ check begins
-    /*cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
-    Cylinder** Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
-    double* coord = CUDAcommon::serlvars.coord;
-    for(auto cyl:Cylinder::getCylinders()){
-        int i = cyl->_dcIndex;
-        int id1 = cylindervec[i].ID;
-        int id2 = Cylinderpointervec[i]->getId();
-        int id3 = ccylindervec[i]->getCylinder()->getId();
-        if(id1 != id2 || id2 != id3 || id3 != id1)
-            std::cout<<id1<<" "<<id2<<" "<<id3<<endl;
-        auto b1 = cyl->getFirstBead();
-        auto b2 = cyl->getSecondBead();
-        long idx1 = b1->getIndex();
-        long idx2 = b2->getIndex();
-        cylinder c = cylindervec[i];
-        std::cout << "4 bindices for cyl with ID "<<cyl->getId()<<" cindex " << i <<
-                  " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
-        if(c.bindices[0] != idx1 || c.bindices[1] != idx2) {
-
-            std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1] << " "
-                    "" << b1->coordinate[2] << " " << " " << b2->coordinate[0] << " "
-                              "" << b2->coordinate[1] << " " << b2->coordinate[2] << " idx "
-                      << b1->getIndex() << " "
-                              "" << b2->getIndex() << endl;
-
-            std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-                      << coord[3 * idx1 + 2] << " "
-                              "" << coord[3 * idx2] << " " << coord[3 * idx2 + 1] << " "
-                      << coord[3 * idx2 + 2] << endl;
-        }
-
-    }*/
-    //check ends
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
 #ifdef HYBRID_NLSTENCILLIST

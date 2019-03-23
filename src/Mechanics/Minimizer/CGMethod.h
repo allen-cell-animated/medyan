@@ -46,7 +46,6 @@ protected:
     [[deprecated]] double *force = nullptr; ///< bead forces (length 3*N)
     [[deprecated]] double *forceAux = nullptr; ///< auxiliary force calculations (length 3*N)
     [[deprecated]] double *forceAuxPrev = nullptr; ///<auxiliary force calculation previously (length 3*N)
-//    cylinder* cylindervec;
 
     /// Safe mode which chooses the safe backtracking search if the
     /// minimizer got itself into trouble.
