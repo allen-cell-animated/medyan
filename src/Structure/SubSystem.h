@@ -191,8 +191,6 @@ public:
 
     /// Reset all neighbor lists in subsystem
     void resetNeighborLists();
-    //create vectors of cylinder information.
-    [[deprecated]] void vectorizeCylinder();
 
 #ifdef CUDAACCL_NL
     void endresetCUDA(){

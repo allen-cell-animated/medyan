@@ -203,7 +203,7 @@ void BranchingManager::updateAllPossibleBindings() {
             }
             if (areEqual(boundstate[0][offset + SysParams::Chemistry()
                                        .bindingSites[_filamentType]
-                                       .size()*c->_dcIndex + j], 1.0) && inZone) {
+                                       .size()*c->getStableIndex() + j], 1.0) && inZone) {
                 //                output test
                 //                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
                 //                auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
@@ -389,7 +389,7 @@ void BranchingManager::updateAllPossibleBindingsstencil() {
                 else
                 inZone = false;
             }
-            if (areEqual(boundstate[0][maxnbs * c->_dcIndex + j], 1.0) && inZone) {
+            if (areEqual(boundstate[0][maxnbs * c->getStableIndex() + j], 1.0) && inZone) {
 //                output test
 //                auto mp = (float)*it / SysParams::Geometry().cylinderNumMon[_filamentType];
 //                auto x1 = cc->getCylinder()->getFirstBead()->vcoordinate();
@@ -835,9 +835,9 @@ void LinkerBindingManager::updateAllPossibleBindings() {
             if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
 
             double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
+            double X1X2squared = cylsqmagnitudevector.at(c->getStableIndex());
             double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
+            double X3X4squared = cylsqmagnitudevector.at(cn->getStableIndex());
             double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
             double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             mins2 = chrono::high_resolution_clock::now();
@@ -848,7 +848,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                 //now re add valid binding sites
                 if (areEqual(boundstate[1][offset + SysParams::Chemistry()
                                            .bindingSites[_filamentType].size()
-                                           *c->_dcIndex + i], 1.0)) {
+                                           *c->getStableIndex() + i], 1.0)) {
                     auto mp1 = bindingsites.at(i);
                     double A = X3X4squared;
                     double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
@@ -900,7 +900,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                         bool check2 = true;
                         if (areEqual(boundstate[1][offset + SysParams::Chemistry()
                                                    .bindingSites[_filamentType]
-                                                   .size()*cn->_dcIndex + j], 1.0)) {
+                                                   .size()*cn->getStableIndex() + j], 1.0)) {
                             total++;
                             //check distances..
                             auto mp2 = bindingsites.at(j);
@@ -1176,26 +1176,18 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     vector<int>ncindex; //helper vector
     long id = 0;
     for(auto c : _compartment->getCylinders()){
-        cindexvec[id] = c->_dcIndex;
+        cindexvec[id] = c->getStableIndex();
 //        totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
         id++;
         for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
             if(c->getId() > cn->getId())
-                ncindex.push_back(cn->_dcIndex);
+                ncindex.push_back(cn->getStableIndex());
 //            else
 //                counter1++;
         }
         ncindices.push_back(ncindex);
         ncindex.clear();
     }
-    //Check 1
-/*    for(int idx = 0; idx < Ncyl; idx++) {
-        auto a1 = cylindervec[idx].cindex;
-        auto a2 = ccylvec[a1]->getCylinder()->_dcIndex;
-        if(a1 != a2)
-            std::cout <<"Cyl ID mismatch M "<<cylindervec[idx].cindex << " " <<
-                      ccylvec[a1]->getCylinder()->_dcIndex << endl;
-    }*/
 
     for(int i=0;i<Ncylincmp;i++){
         int cindex = cindexvec[i];
@@ -2067,9 +2059,9 @@ void MotorBindingManager::updateAllPossibleBindings() {
             if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
 
             double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
+            double X1X2squared = cylsqmagnitudevector.at(c->getStableIndex());
             double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
+            double X3X4squared = cylsqmagnitudevector.at(cn->getStableIndex());
             double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
             double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
             mins2 = chrono::high_resolution_clock::now();
@@ -2080,7 +2072,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                 //now re add valid binding sites
                 if (areEqual(boundstate[2][offset + SysParams::Chemistry()
                                            .bindingSites[_filamentType].size()
-                                           *c->_dcIndex + i], 1.0)) {
+                                           *c->getStableIndex() + i], 1.0)) {
                     auto mp1 = bindingsites.at(i);
                     double A = X3X4squared;
                     double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
@@ -2132,7 +2124,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
                         bool check2 = true;
                         if (areEqual(boundstate[2][offset + SysParams::Chemistry()
                                                    .bindingSites[_filamentType]
-                                                   .size()*cn->_dcIndex + j], 1.0)) {
+                                                   .size()*cn->getStableIndex() + j], 1.0)) {
                             total++;
                             //check distances..
                             auto mp2 = bindingsites.at(j);
@@ -2436,12 +2428,12 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     vector<int>ncindex;
     long id = 0;
     for(auto c : _compartment->getCylinders()){
-        cindexvec[id] = c->_dcIndex;
+        cindexvec[id] = c->getStableIndex();
         totalneighbors += _neighborLists[_nlIndex]->getNeighborsstencil(c).size();
         id++;
         for (auto cn : _neighborLists[_nlIndex]->getNeighborsstencil(c)) {
             if(c->getId() > cn->getId())
-                ncindex.push_back(cn->_dcIndex);
+                ncindex.push_back(cn->getStableIndex());
             else
                 counter1++;
         }

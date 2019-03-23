@@ -717,7 +717,6 @@ void Controller::updateNeighborLists() {
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
     //vectorize cylinder to have all cylinder information in a few arrays.
-//    _subSystem->vectorizeCylinder();
     mine = chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runbvec(mine - mins);
     bmgrvectime += elapsed_runbvec.count();

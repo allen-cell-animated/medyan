@@ -16,6 +16,6 @@ void Bin::updatecindices(){
     cindicesvector.clear();
     cindicesvector.reserve(_cylinders.size());
     for(auto &c:_cylinders)
-        cindicesvector.push_back(c->_dcIndex);
+        cindicesvector.push_back(c->getStableIndex());
 }
 

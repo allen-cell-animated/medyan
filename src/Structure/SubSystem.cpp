@@ -369,64 +369,29 @@ void SubSystem::updateBindingManagers() {
     //fill with appropriate values.
     for (auto cyl: cylvec) {
 //        cout<<cyl->_dcIndex<<" "<<cyl->getId()<<endl;
-        //cyl->_dcIndex = cidx;
         auto _filamentType = cyl->getType();
         auto x1 = cyl->getFirstBead()->vcoordinate();
         auto x2 = cyl->getSecondBead()->vcoordinate();
         vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
-        cylsqmagnitudevector[cyl->_dcIndex] = sqmagnitude(X1X2);
+        cylsqmagnitudevector[cyl->getStableIndex()] = sqmagnitude(X1X2);
         auto cc = cyl->getCCylinder();
         int idx = 0;
         for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
              it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
 
-            branchspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
+            branchspeciesbound[maxbindingsitespercyl * cyl->getStableIndex() + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN());
-            linkerspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
+            linkerspeciesbound[maxbindingsitespercyl * cyl->getStableIndex() + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN());
-            motorspeciesbound[maxbindingsitespercyl * cyl->_dcIndex + idx] =
+            motorspeciesbound[maxbindingsitespercyl * cyl->getStableIndex() + idx] =
                     (cc->getCMonomer(*it1)->speciesBound(
                             SysParams::Chemistry().motorBoundIndex[_filamentType])->getN());
             idx++;
         }
     }
     //@}
-
-    /*for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
-        ncylvec.at(ftype) = cidx;//number of cylinders in each filament.
-        bspeciesoffsetvec.at(ftype) = branchspeciesbound.size();
-        cidx = 0;
-        for (auto cyl: cylvec) {
-            //cyl->_dcIndex = cidx;
-            auto _filamentType = cyl->getParent()->getType();
-            if (_filamentType == ftype) {
-
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
-                vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
-                cylsqmagnitudevector[cyl->_dcIndex] = sqmagnitude(X1X2);
-                auto cc = cyl->getCCylinder();
-                int idx = 0;
-                for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-                    branchspeciesbound.push_back (cc->getCMonomer(*it1)->speciesBound(
-                            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN());
-                    linkerspeciesbound.push_back (cc->getCMonomer(*it1)->speciesBound(
-                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN());
-                    motorspeciesbound.push_back (cc->getCMonomer(*it1)->speciesBound(
-                            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN());
-                    idx++;
-                }
-                cidx++;
-            }
-        }
-    }
-    std::cout<<"max cindex "<<Cylinder::maxcindex<<" removed cylinders "
-            ""<<Cylinder::removedcindex.size()<<endl;
-    std::cout<<"speciesbound size "<<branchspeciesbound.size()<<endl;*/
-
 
     SysParams::MParams.speciesboundvec.push_back(branchspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(linkerspeciesbound);
@@ -471,52 +436,6 @@ if(true) {
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_orig(mine - mins);
 //    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
-}
-
-//OBSOLETE
-void SubSystem::vectorizeCylinder() {
-    delete [] cylindervec;
-    int Ncyl = Cylinder::getCylinders().size();
-    cylindervec = new cylinder[Ncyl];
-    //Create cylinder structure
-    int i = 0;
-    for(auto cyl:Cylinder::getCylinders()){
-        //set _dcIndex
-        cyl->_dcIndex = i;
-        //copy attributes to a structure
-        cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getId();
-        cylindervec[i].filamentposition = cyl->getPosition();
-        cylindervec[i].beads[0] = cyl->getFirstBead();
-        cylindervec[i].beads[1] = cyl->getSecondBead();
-        cylindervec[i].cmpID = cyl->getCompartment()->getId();
-        cylindervec[i].cindex = i;
-        auto coord = cyl->coordinate;
-        cylindervec[i].coord[0] = coord[0];
-        cylindervec[i].coord[1] = coord[1];
-        cylindervec[i].coord[2] = coord[2];
-        cylindervec[i].type = cyl->getType();
-        cylindervec[i].ID = cyl->getId();
-        i++;
-//        for(int bsc = 0; bsc < nbs; bsc++){
-//            double c[3], bead1[3],bead2[3];
-//
-//            memcpy(bead1, &coord[3*cylindervec[i].bindices[0]], 3 * sizeof(double));
-//            memcpy(bead2, &coord[3*cylindervec[i].bindices[1]], 3 * sizeof(double));
-//            midPointCoordinate(c,bead1,bead2,bindingsitevec[bsc]);
-//            bscoord[12*i+bsc*3] = c[0];
-//            bscoord[12*i+bsc*3+1] = c[1];
-//            bscoord[12*i+bsc*3+2] = c[2];te<<endl;
-//        }
-    }
-/*    std::cout<<"print for consistency "<<endl;
-    for(int idx = 0; idx < Ncyl; idx++) {
-        if (cylindervec[idx].cindex != ccylindervec[cylindervec[idx].cindex]->getCylinder()
-                ->_dcIndex)
-            std::cout << "Fatal mismatch " << cylindervec[idx].cindex << " "
-                    ""<<ccylindervec[cylindervec[idx].cindex]->getCylinder()->_dcIndex << endl;
-    }*/
-    CUDAcommon::serlvars.cylindervec = cylindervec;
-
 }
 
 #ifdef CUDAACCL_NL

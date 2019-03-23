@@ -343,12 +343,8 @@ void Filament::polymerizePlusEnd() {
     
     b2->coordinate() = vector2Vec<3, double>(nextPointProjection(b2->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
-    //update vector structure
-    int cidx = cBack->_dcIndex;
-    int bidx = b2->getIndex();
-    for(int i=0; i < 3; i++) {
-        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->vcoordinate()[i];
-    }
+
+    cBack->getCoordinate() = b2->coordinate();
     
 #ifdef MECHANICS
     //increment load
@@ -380,12 +376,8 @@ void Filament::polymerizeMinusEnd() {
     
     b1->coordinate() = vector2Vec<3, double>(nextPointProjection(b1->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
-    //update vector structure
-    int cidx = cFront->_dcIndex;
-    int bidx = b1->getIndex();
-    for(int i=0; i < 3; i++) {
-        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->vcoordinate()[i];
-    }
+
+    cFront->getCoordinate() = b1->coordinate();
 
 #ifdef MECHANICS
     
@@ -418,13 +410,9 @@ void Filament::depolymerizePlusEnd() {
     
     b2->coordinate() = vector2Vec<3, double>(nextPointProjection(b2->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
-    //update vector structure
-    int cidx = cBack->_dcIndex;
-    int bidx = b2->getIndex();
-    for(int i=0; i < 3; i++) {
-        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->vcoordinate()[i];
-    }
-    
+
+    cBack->getCoordinate() = b2->coordinate();
+
 #ifdef MECHANICS
     
     //increment load
@@ -455,13 +443,9 @@ void Filament::depolymerizeMinusEnd() {
     
     b1->coordinate() = vector2Vec<3, double>(nextPointProjection(b1->vcoordinate(),
     SysParams::Geometry().monomerSize[_filType], direction));
-    //update vector structure
-    int cidx = cFront->_dcIndex;
-    int bidx = b1->getIndex();
-    for(int i=0; i < 3; i++) {
-        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->vcoordinate()[i];
-    }
-    
+
+    cFront->getCoordinate() = b1->coordinate();
+
 #ifdef MECHANICS
     
     b1->lfim--;

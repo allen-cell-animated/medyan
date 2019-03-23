@@ -392,13 +392,13 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
 
         //Go through cylinders in the compartment, get the half of neighbors.
         for (auto c : _compartment->getCylinders()) {
-            cindexvec[id] = c->_dcIndex;
+            cindexvec[id] = c->getStableIndex();
             id++;
             auto Neighbors = _HneighborList->getNeighborsstencil(HNLIDvec[idx], c);
             ncindex.reserve(Neighbors.size());
             for (auto cn : Neighbors) {
                 if (c->getId() > cn->getId())
-                    ncindex.push_back(cn->_dcIndex);
+                    ncindex.push_back(cn->getStableIndex());
             }
             ncindices.push_back(ncindex);
             ncindex.clear();

@@ -83,7 +83,7 @@ void Cylinder::revectorize(cylinder* cylindervec){
 }
 
 void  Cylinder::copytoarrays() {
-    long i =_dcIndex;
+    long i =getStableIndex();
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
     //copy attributes to a structure array
     cylindervec[i].filamentID = dynamic_cast<Filament*>(this->getParent())->getId();
@@ -113,10 +113,8 @@ void Cylinder::resetarrays() {
 void Cylinder::updateCoordinate() {
     coordinate = midPointCoordinate(_b1->vcoordinate(), _b2->vcoordinate(), 0.5);
     //update the coordiante in cylinder structure.
-    cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-    cylindervec[_dcIndex].coord[0] = coordinate[0];
-    cylindervec[_dcIndex].coord[1] = coordinate[1];
-    cylindervec[_dcIndex].coord[2] = coordinate[2];
+
+    Cylinder::getDbData().value[getStableIndex()].coord = 0.5 * (_b1->coordinate() + _b2->coordinate());
 }
 
 
@@ -130,17 +128,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     parent->addChild(unique_ptr<Component>(this));
     //revectorize if needed
     revectorizeifneeded();
-    //set cindex based on maxbindex if there were no cylinders removed.
-    if(removedcindex.size() == 0)
-    {_dcIndex = maxcindex;
-        maxcindex++;
-    }
-        // if cylinders were removed earlier, allot one of the available bead indices.
-    else{
-//        std::cout<<"reusing cindex "<<*removedcindex.begin()<<" with ID "<<_ID<<endl;
-        _dcIndex = *removedcindex.begin();
-        removedcindex.erase(removedcindex.begin());
-    }
+
     Ncyl = getElements().size() - 1;
     //check if you need to revectorize.
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
@@ -281,9 +269,10 @@ void Cylinder::updatePosition() {
         
         auto newCCylinder = _cCylinder.get();
 
-//        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
         //change both CCylinder and Compartment ID in the vector
-        CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getId();
+        auto& data = getDbData().value[getStableIndex()];
+        data.compartmentId = _compartment->getId();
+        data.chemCylinder = newCCylinder;
         
         //Add new ccylinder to binding managers
         for(auto &manager : newCompartment->getFilamentBindingManagers()){

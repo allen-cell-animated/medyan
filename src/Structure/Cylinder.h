@@ -114,7 +114,7 @@ public:
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
     vector<Bin*> _hbinvec;
-    long _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector.
+    [[deprecated]] long _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector.
 ///< Continuous ID assigned for
 ///< CUDANL calculation
 
@@ -127,7 +127,10 @@ public:
              bool initialization = false);
                                        
     virtual ~Cylinder() noexcept;
-    
+
+    const auto& getCoordinate() const { return getDbData().value[getStableIndex()].coord; }
+    auto      & getCoordinate()       { return getDbData().value[getStableIndex()].coord; }
+
     /// Get mech cylinder
     MCylinder* getMCylinder() {return _mCylinder.get();}
     
@@ -175,17 +178,7 @@ public:
     //@{
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() {}
-    virtual void removeFromSubSystem() {
-        //Remove from cylinder structure by resetting to default value
-        //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
-        removedcindex.push_back(_dcIndex);
-        resetarrays();
-        _dcIndex = -1;
-        /* Haoran 03/17/2019
-        _cylinders.removeElement(this);
-        Ncyl = _cylinders.getElements().size();
-        */
-    }
+    virtual void removeFromSubSystem() {}
     //@}
     
     /// Get all instances of this class from the SubSystem

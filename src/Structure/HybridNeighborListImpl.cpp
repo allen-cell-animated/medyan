@@ -348,7 +348,7 @@ void HybridCylinderCylinderNL::updateNeighborsbin(Cylinder* currcylinder, bool r
                     // current binGrid of interest for this NL.
                                                     ->getNeighbours();
     auto cylindervec = CUDAcommon::getSERLvars().cylindervec;
-    int cindex = currcylinder->_dcIndex;
+    int cindex = currcylinder->getStableIndex();
     cylinder c = cylindervec[cindex];
 
     //

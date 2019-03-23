@@ -642,8 +642,8 @@ void CylinderCylinderNL::reset() {
                                       searchDist + _rMax, compartments);
         for (auto c:compartments) {
             for(auto ncyl:c->getCylinders()){
-                pair_cIndex_cnIndex.push_back(cylinder->_dcIndex);
-                pair_cIndex_cnIndex.push_back(ncyl->_dcIndex);
+                pair_cIndex_cnIndex.push_back(cylinder->getStableIndex());
+                pair_cIndex_cnIndex.push_back(ncyl->getStableIndex());
             }
 //            pair_cIndex_cmp.push_back(cylinder->_dcIndex);
 //            pair_cIndex_cmp.push_back(GController::getCompartmentID(c->coordinates()));
@@ -762,7 +762,7 @@ void CylinderCylinderNL::reset() {
 //                    _list[cylinder].push_back(ncylinder);
 //            }
 
-            if(cylinder == NULL || ncylinder == NULL || cylinder->_dcIndex != NL[2 * id] || ncylinder->_dcIndex !=
+            if(cylinder == NULL || ncylinder == NULL || cylinder->getStableIndex() != NL[2 * id] || ncylinder->getStableIndex() !=
                NL[2 * id + 1]) {
                 cout << "Error. Could not find neighborlist from CUDA in Cylinder Database. Check Cylinder IDs Exiting."
                         "." << endl;
