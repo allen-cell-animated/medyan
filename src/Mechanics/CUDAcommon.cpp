@@ -3,7 +3,6 @@
 //
 
 #include "CUDAcommon.h"
-SERLvars CUDAcommon::serlvars;
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 CUDAvars  CUDAcommon::cudavars;
 CylCylNLvars CUDAcommon::cylcylnlvars;

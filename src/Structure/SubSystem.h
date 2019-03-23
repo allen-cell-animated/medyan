@@ -259,9 +259,6 @@ private:
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
 
     //Cylinder vector
-    [[deprecated]] cylinder *cylindervec;
-    [[deprecated]] CCylinder** ccylindervec;
-    [[deprecated]] Cylinder** cylinderpointervec;
     static CompartmentGrid* _staticgrid;
     double* cylsqmagnitudevector = NULL;
     static bool initialize;

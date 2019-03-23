@@ -212,20 +212,6 @@ public:
     [[deprecated]] static int vectormaxsize;
     [[deprecated]] static int Ncyl; // Currently the value is always numCylinders() - 1
     static vector<int> removedcindex;
-    void resetcylinderstruct(cylinder* cylindervec, long idx){
-        cylindervec[idx].filamentID = -1;
-        cylindervec[idx].filamentposition = -1;
-        cylindervec[idx].beads[0]= nullptr;
-        cylindervec[idx].beads[1]= nullptr;
-        cylindervec[idx].cmpID = -1;
-        cylindervec[idx].cindex = -1;
-        cylindervec[idx].coord[0] = -1.0;
-        cylindervec[idx].coord[1] = -1.0;
-        cylindervec[idx].coord[2] = -1.0;
-        cylindervec[idx].type = -1;
-        cylindervec[idx].ID = -1;
-        cylindervec[idx].availbscount = -1;
-    }
     //@}
 };
 

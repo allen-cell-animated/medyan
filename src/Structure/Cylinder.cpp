@@ -72,13 +72,6 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     
     parent->addChild(unique_ptr<Component>(this));
 
-    cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-    //copy attributes to a structure array
-    cylindervec[_dcIndex].filamentID = dynamic_cast<Filament*>(this->getParent())->getId();
-    cylindervec[_dcIndex].filamentposition = _position;
-    cylindervec[_dcIndex].beads[0] = _b1;
-    cylindervec[_dcIndex].beads[1] = _b2;
-
     //Set coordinate
     updateCoordinate();
 
@@ -125,12 +118,6 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
 #ifdef CHEMISTRY
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
     _cCylinder->setCylinder(this);
-
-    //copy further components to the array
-    cylindervec[_dcIndex].cmpID = _compartment->getId();
-    cylindervec[_dcIndex].cindex = _dcIndex;
-    cylindervec[_dcIndex].type = _type;
-    cylindervec[_dcIndex].ID = getId();
 
     //init using chem manager
     _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,

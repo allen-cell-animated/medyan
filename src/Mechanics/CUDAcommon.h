@@ -44,13 +44,6 @@ struct bin{
         int ID = -1;
         int availbscount = -1;
     };
-struct SERLvars{
-    [[deprecated]] cylinder *cylindervec = NULL;
-    [[deprecated]] CCylinder **ccylindervec = NULL;
-    [[deprecated]] Cylinder **cylinderpointervec = NULL;
-    unsigned int N = 6000;
-
-};
 
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
@@ -145,8 +138,6 @@ struct CUDAtime {
 #endif
 class CUDAcommon{
 public:
-    static SERLvars serlvars;
-    static const SERLvars& getSERLvars(){return serlvars;}
 #ifdef CUDAACCL
     static CUDAvars cudavars;
     static CylCylNLvars cylcylnlvars;

@@ -48,6 +48,14 @@
 #include "util/io/log.h"
 using namespace mathfunc;
 
+namespace {
+
+void rearrangeAllDatabases() {
+    Cylinder::rearrange(); Cylinder::updateData();
+}
+
+} // namespace
+
 Controller::Controller(SubSystem* s) : _subSystem(s) {
 
     //init subsystem
@@ -943,6 +951,7 @@ void Controller::run() {
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
     updatePositions();
+    rearrangeAllDatabases();
     updateNeighborLists();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runnl(mine - mins);
@@ -1075,6 +1084,7 @@ void Controller::run() {
             // update neighbor lists & Binding Managers
             if(tauLastNeighborList >= _neighborListTime) {
                 mins = chrono::high_resolution_clock::now();
+                rearrangeAllDatabases();
                 updateNeighborLists();
                 tauLastNeighborList = 0.0;
                 mine= chrono::high_resolution_clock::now();
@@ -1177,6 +1187,7 @@ void Controller::run() {
 
             // update neighbor lists
             if(stepsLastNeighborList >= _neighborListSteps) {
+                rearrangeAllDatabases();
                 updateNeighborLists();
                 stepsLastNeighborList = 0;
             }
