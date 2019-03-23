@@ -42,7 +42,6 @@
 #include "cross_check.h"
 //
 long CGMethod::N = 0;
-long CGMethod::Ncyl = 0;
 #ifdef CUDAACCL
 void CGMethod::CUDAresetlambda(cudaStream_t stream) {
     resetlambdaCUDA<<<1,1,0, stream>>>(CUDAcommon::getCUDAvars().gpu_lambda);
@@ -515,7 +514,7 @@ void CGMethod::startMinimization() {
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    Ncyl = Cylinder::getCylinders().size();
+    long Ncyl = Cylinder::getCylinders().size();
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();

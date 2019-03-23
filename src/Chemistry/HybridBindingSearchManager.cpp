@@ -366,7 +366,6 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilHYBD() {
     vector<int> ncindex; //helper vector
 
 
-    int Ncyl = Cylinder::getCylinders().size();
     auto boundstate = SysParams::Mechanics().speciesboundvec;
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
 

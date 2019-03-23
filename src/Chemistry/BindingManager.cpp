@@ -1159,7 +1159,6 @@ void LinkerBindingManager::updateAllPossibleBindingsstencil() {
     double maxveca[2];
     int accepts = 0;
     int total = 0;
-    int Ncyl = Cylinder::getCylinders().size();
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
@@ -2392,7 +2391,6 @@ void MotorBindingManager::updateAllPossibleBindingsstencil() {
     double maxveca[2];
     int accepts = 0;
     int total = 0;
-    int Ncyl = Cylinder::getCylinders().size();
     int nbs = SysParams::Chemistry().bindingSites[_filamentType].size();
     int maxnbs = SysParams::Chemistry().maxbindingsitespercylinder;
     double* cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;

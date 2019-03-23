@@ -180,7 +180,6 @@ protected:
     
 public:
     [[deprecated]] static long N; ///< Number of beads in the system, set before each minimization
-    static long Ncyl;
     
     virtual ~CGMethod() {};
     

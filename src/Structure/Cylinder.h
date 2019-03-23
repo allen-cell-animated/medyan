@@ -210,36 +210,8 @@ public:
     //@{
     static int maxcindex;
     [[deprecated]] static int vectormaxsize;
-    static int Ncyl; // Currently the value is always numCylinders() - 1
+    [[deprecated]] static int Ncyl; // Currently the value is always numCylinders() - 1
     static vector<int> removedcindex;
-    static void revectorizeifneeded(){
-        static profiler::TimerManager tm("Revectorizing");
-
-        int newsize = vectormaxsize;
-        bool check = false;
-        if(Bead::triggercylindervectorization || vectormaxsize - maxcindex <= bead_cache/20){
-
-            newsize = (int(Ncyl/cylinder_cache)+2)*cylinder_cache;
-            if(removedcindex.size() >= bead_cache)
-                newsize = (int(Ncyl/cylinder_cache)+1)*cylinder_cache;
-            if(newsize != vectormaxsize || Bead::triggercylindervectorization){
-                profiler::ScopeTimerWorker stw(tm);
-
-                check = true;
-                cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-                delete[] cylindervec;
-                cylinder *newcylindervec = new cylinder[newsize];
-                CUDAcommon::serlvars.cylindervec = newcylindervec;
-                revectorize(newcylindervec);
-                vectormaxsize = newsize;
-            }
-            tm.report();
-        }
-        Bead::triggercylindervectorization = false;
-    }
-    static void revectorize(cylinder* cylindervec);
-    void  copytoarrays();
-    void resetarrays();
     void resetcylinderstruct(cylinder* cylindervec, long idx){
         cylindervec[idx].filamentID = -1;
         cylindervec[idx].filamentposition = -1;
