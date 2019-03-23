@@ -46,6 +46,7 @@
 #include "nvToolsExt.h"
 #endif
 #include "util/io/log.h"
+#include "util/profiler.h"
 using namespace mathfunc;
 
 namespace {

@@ -28,10 +28,8 @@
 #include "Reactable.h"
 #include "DynamicNeighbor.h"
 #include "Component.h"
-#include "CUDAcommon.h"
 #include "Bead.h"
 #include "util/math/vec.hpp"
-#include "util/profiler.h"
 
 //FORWARD DECLARATIONS
 class Filament;
@@ -47,7 +45,6 @@ struct CylinderInfoData {
         Vec3 coord;
         short type = -1;
         int id = -1;
-        [[deprecated]] int availbscount = -1;
         CCylinder* chemCylinder;
     };
 
@@ -114,7 +111,6 @@ public:
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
     vector<Bin*> _hbinvec;
-    [[deprecated]] long _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector.
 ///< Continuous ID assigned for
 ///< CUDANL calculation
 
@@ -206,13 +202,6 @@ public:
     /// Uses the closest point between the two cylinders
     virtual bool within(Cylinder* other, double dist);
 
-    //Vectorize beads so the coordinates are all available in a single array.
-    //@{
-    static int maxcindex;
-    [[deprecated]] static int vectormaxsize;
-    [[deprecated]] static int Ncyl; // Currently the value is always numCylinders() - 1
-    static vector<int> removedcindex;
-    //@}
 };
 
 #endif

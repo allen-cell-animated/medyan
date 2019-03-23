@@ -96,7 +96,6 @@ public:
     using db_type = Database< Bead, false, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.
-    static bool triggercylindervectorization;
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization
 
                           ///< Forces should always correspond to current coordinates.
@@ -292,12 +291,6 @@ private:
     
     static OldDatabase<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
-    //Vectorize beads so the coordinates are all available in a single array.
-    //@{
-    [[deprecated]] static int vectormaxsize;//maximum number of beads that can be appended without
-    [[deprecated]] static vector<int> removedbindex;//stores the bead indices that have been freed
-    // through depolymerization/ destruction reactions.
-    //@}
 };
 
 

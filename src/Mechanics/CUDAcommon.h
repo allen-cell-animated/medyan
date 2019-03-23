@@ -32,11 +32,10 @@ struct bin{
     int binstencilID[27] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
                           -1,-1,-1,-1,-1,-1};
 };
-    struct cylinder{
+    struct [[deprecated]] cylinder{
         int filamentID = -1;
         int filamentposition = -1;
-        [[deprecated]] Bead* beads[2];
-        [[deprecated]] int bindices[2];
+        int bindices[2];
         int cmpID = -1;
         long cindex = -1;
         double coord[3];

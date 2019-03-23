@@ -26,13 +26,6 @@
 
 using namespace mathfunc;
 
-//static vars needed to vectorize on-the-fly
-int Cylinder::maxcindex = 0;
-int Cylinder::vectormaxsize = 0;
-int Cylinder::Ncyl = 0;
-//bool Cylinder::triggercylindervectorization = false;
-vector<int> Cylinder::removedcindex;//vector of bead indices that were once alloted to other
-
 // Renew structured data for all cylinders
 // This function will not invalidate stable indices
 void Cylinder::updateData() {

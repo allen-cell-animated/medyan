@@ -23,11 +23,6 @@
 using namespace mathfunc;
 
 OldDatabase<Bead*> Bead::_pinnedBeads;
-//static vars needed to vectorize on-the-fly
-int Bead::vectormaxsize = 0;
-bool Bead::triggercylindervectorization = false;
-vector<int> Bead::removedbindex;//vector of bead indices that were once alloted to other
-// beads but are free to be reallocated now.
 
 Bead::Bead (vector<double> v, Composite* parent, int position)
 // Qin add brforce, pinforce
