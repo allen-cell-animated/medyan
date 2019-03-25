@@ -41,8 +41,8 @@ struct CylinderInfoData {
         int filamentId = -1;
         int positionOnFilament = -1;
         int compartmentId = -1;
-        Vec3 beadCoord[2];
-        Vec3 coord;
+        mathfunc::Vec3 beadCoord[2];
+        mathfunc::Vec3 coord;
         short type = -1;
         int id = -1;
         CCylinder* chemCylinder;

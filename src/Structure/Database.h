@@ -87,7 +87,8 @@ private:
     static DatabaseData _dbData;
 
 public:
-    static auto& getDbData() { return _dbData; }
+    static auto&       getDbData()      { return _dbData; }
+    static const auto& getDbDataConst() { return _dbData; }
 };
 // Static variable definition
 template< typename DatabaseData > DatabaseData DatabaseDataManager< DatabaseData >::_dbData;
