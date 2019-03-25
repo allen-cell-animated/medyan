@@ -44,7 +44,7 @@ public:
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
     /// @param print - prints detailed info about energies
-    floatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d, bool verbose = false);
+    totalenergyfloatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d, bool verbose = false);
     
     /// Compute the forces of all force fields 
     void computeForces(floatingpoint *coord, totalforcefloatingpoint *f);

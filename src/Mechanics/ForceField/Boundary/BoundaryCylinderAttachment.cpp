@@ -52,7 +52,7 @@ template <class BAttachmentInteractionType>
 floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
 
-    floatingpoint U;
+    totalenergyfloatingpoint U;
 
     if (d == 0.0)
         U =  _FFType.energy(coord, f, beadSet, kattr, pins);

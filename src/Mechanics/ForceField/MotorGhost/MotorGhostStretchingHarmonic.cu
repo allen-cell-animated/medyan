@@ -285,7 +285,7 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, totalfo
     floatingpoint *v1 = new floatingpoint[3];
     floatingpoint *v2 = new floatingpoint[3];
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

@@ -20,9 +20,9 @@
 
 template <class BRepulsionInteractionType>
 floatingpoint BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint d) {
-    
-    floatingpoint U = 0.0;
-    floatingpoint U_i=0.0;
+
+    totalenergyfloatingpoint U = 0.0;
+    totalenergyfloatingpoint U_i=0.0;
     
     for (auto bb: Bubble::getBubbles()) {
         

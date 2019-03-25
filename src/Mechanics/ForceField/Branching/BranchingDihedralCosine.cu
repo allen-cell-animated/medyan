@@ -213,7 +213,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, totalforcefl
     floatingpoint *n1 = new floatingpoint[3];
     floatingpoint *n2 = new floatingpoint[3];
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -266,7 +266,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, totalforcefl
     floatingpoint *n2 = new floatingpoint[3];
     floatingpoint *zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

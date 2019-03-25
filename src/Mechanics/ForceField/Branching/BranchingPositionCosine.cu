@@ -196,7 +196,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefl
     floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
     floatingpoint *mp = new floatingpoint[3];
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -245,7 +245,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefl
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

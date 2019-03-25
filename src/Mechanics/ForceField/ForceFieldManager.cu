@@ -121,7 +121,7 @@ void ForceFieldManager::cleanupAllForceFields() {
 #endif
 }
 
-floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d, bool verbose) {
+totalenergyfloatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d, bool verbose) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 //    CUDAcommon::cudatime.TcomputeE = 0.0;
@@ -131,7 +131,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, totalforcef
     CUDAcommon::serltime.TveccomputeE.clear();
     CUDAcommon::serltime.Ecount++;
 #endif
-    floatingpoint energy = 0.0;
+    totalenergyfloatingpoint energy = 0.0;
 #ifdef CUDAACCL
 #ifdef CUDA_INDIVIDUAL_ESUM
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_Uvec, sizeof (floatingpoint)));
@@ -171,7 +171,8 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, totalforcef
 #endif
     for (auto &ff : _forceFields) {
 
-        auto tempEnergy = ff->computeEnergy(coord, f, d);
+        totalenergyfloatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
+        cout<<ff->getName()<<" "<<tempEnergy<<endl;
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif

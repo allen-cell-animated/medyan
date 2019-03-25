@@ -35,9 +35,9 @@
 using namespace std;
 
 ///floatingpoint typedef
-typedef float floatingpoint;
-typedef double totalforcefloatingpoint;
-
+typedef double floatingpoint;
+typedef float totalforcefloatingpoint;
+typedef float totalenergyfloatingpoint;
 //to test for zero values
 const floatingpoint ZERO_PREC = 1E-6;
 

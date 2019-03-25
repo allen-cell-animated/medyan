@@ -23,10 +23,10 @@ class Bead;
 class FilamentBendingCosine {
     
 public:
-    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+	totalenergyfloatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt);
-    
-    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
+
+	totalenergyfloatingpoint energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt, floatingpoint d);
     
     void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,

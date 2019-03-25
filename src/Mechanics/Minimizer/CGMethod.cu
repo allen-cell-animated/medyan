@@ -374,7 +374,7 @@ void CGMethod::CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *
 //    return g[0];
 //}
 #endif
-floatingpoint CGMethod::allFDotF()
+totalforcefloatingpoint CGMethod::allFDotF()
 {
 
 	totalforcefloatingpoint g = 0;
@@ -384,7 +384,7 @@ floatingpoint CGMethod::allFDotF()
     return g;
 }
 
-floatingpoint CGMethod::allFADotFA()
+totalforcefloatingpoint CGMethod::allFADotFA()
 {
 
 	totalforcefloatingpoint g = 0;
@@ -409,7 +409,7 @@ floatingpoint CGMethod::allFADotFA()
     return g;
 }
 
-floatingpoint CGMethod::allFADotFAP()
+totalforcefloatingpoint CGMethod::allFADotFAP()
 {
 	totalforcefloatingpoint g = 0;
     for(int i = 0; i < N; i++)
@@ -418,7 +418,7 @@ floatingpoint CGMethod::allFADotFAP()
     return g;
 }
 
-floatingpoint CGMethod::allFDotFA()
+totalforcefloatingpoint CGMethod::allFDotFA()
 {
 	totalforcefloatingpoint g = 0;
     for(int i = 0; i < N; i++) {
@@ -505,20 +505,22 @@ Bead* CGMethod::maxBead() {
     return Bead::getBeads()[index];
 }
 
-void CGMethod::moveBeads(floatingpoint d)
+void CGMethod::moveBeads(totalenergyfloatingpoint d)
 {
     ///<NOTE: Ignores static beads for now.
     //if(!b->getstaticstate())
 
 //    std::cout<<"3N "<<N<<endl;
+	totalenergyfloatingpoint temp;
     for (int i = 0; i < N; i++) {
-        coord[i] = coord[i] + d * force[i];
-//        cout<<"C&F "<<coord[i]<<" "<<force[i]<<" lambda "<<d<<endl;
+    	temp = coord[i] + d * force[i];
+        coord[i] = temp;
+        cout<<"C&F "<<coord[i]<<" "<<force[i]<<" lambda "<<d<<endl;
     }
-//    cout<<"---"<<endl;
+    cout<<"---"<<endl;
 }
 
-void CGMethod::shiftGradient(floatingpoint d)
+void CGMethod::shiftGradient(totalforcefloatingpoint d)
 {
     for (int i = 0; i < N; i ++)
         force[i] = forceAux[i] + d * force[i];
@@ -992,7 +994,7 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
     CUDAcommon::cudatime.Tlambdap.at(0) += elapsed_run.count();
 #endif
     //Calculate current energy.
-    floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    totalenergyfloatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
     //wait for energies to be calculated
     for(auto strm:CUDAcommon::getCUDAvars().streamvec)
         CUDAcommon::handleerror(cudaStreamSynchronize(*strm),"backConvSync","CGMethod.cu");
@@ -1078,7 +1080,7 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
         //TODO let each forcefield calculate energy IFF conv state = false. That will help
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
-        floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+        totalenergyfloatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
 
         //wait for energies to be calculated
          for(auto strm:CUDAcommon::getCUDAvars().streamvec) {
@@ -1156,11 +1158,11 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 }
 #endif // CUDAACCL
 
-floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                         floatingpoint LAMBDAMAX, bool *gpu_safestate) {
 
     //@{ Lambda phase 1
-    floatingpoint lambda;
+    totalenergyfloatingpoint lambda;
     sconvergencecheck = true;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
@@ -1184,7 +1186,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
     std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<f<<" state "<<sconvergencecheck<<endl;
 #endif
 #endif
-    floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    totalenergyfloatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
     floatingpoint cuda_energy[1];
@@ -1200,7 +1202,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         //TODO let each forcefield calculate energy IFF conv state = false. That will help
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
-        floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+        totalenergyfloatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         floatingpoint cuda_energy[1];
@@ -1214,8 +1216,9 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 #ifdef SERIAL
         //@{ Lambda phase 2
         if(!(sconvergencecheck)){
-            floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
-            floatingpoint energyChange = energyLambda - currentEnergy;
+            totalenergyfloatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda *
+                    allFDotFA();
+            totalenergyfloatingpoint energyChange = energyLambda - currentEnergy;
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
                     " "<<allFDotFA()<<endl;
@@ -1241,11 +1244,18 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
                     ""<<idealEnergyChange
                      <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
 #endif
+            cout<<" lambda "<<lambda<<endl;
+            std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" allFDotFA "
+                     <<allFDotFA()<<endl;
+            std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
+                                                          ""<<idealEnergyChange
+                     <<" energylambda "<<energyLambda<<" state "<<sconvergencecheck<<endl;
         }
         //@{ Lambda phase 2
 
 #endif
     }
+    std::cout<<"lambda determined in "<<iter<< " iterations. FL "<<lambda<<endl;
 //synchronize streams
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
@@ -1256,13 +1266,13 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
 }
 
-floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+totalenergyfloatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                             floatingpoint LAMBDAMAX, bool *gpu_safestate) {
     //reset safe mode
     _safeMode = false;
     sconvergencecheck = true;
     //calculate first lambda
-    floatingpoint lambda = LAMBDAMAX;
+    totalenergyfloatingpoint lambda = LAMBDAMAX;
 //    std::cout<<"safe 0"<<endl;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
@@ -1270,7 +1280,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
     cconvergencecheck[0] = true;
 #endif
 //prepare for ping pong optimization
-    floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    totalenergyfloatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
     floatingpoint cuda_energy[1];
@@ -1281,11 +1291,11 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 #endif
     int iter =0;
     //safe backtracking loop
+    std::cout<<"safe z"<<endl;
     while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
         //new energy when moved by lambda
-//        std::cout<<"safe z"<<endl;
         iter++;
-        floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+        totalenergyfloatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         floatingpoint cuda_energy[1];
@@ -1298,7 +1308,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 
 #ifdef SERIAL
         if(!(sconvergencecheck)){
-            floatingpoint energyChange = energyLambda - currentEnergy;
+            totalenergyfloatingpoint energyChange = energyLambda - currentEnergy;
 
             //return if ok
             if(energyChange <= 0.0) sconvergencecheck = true;
@@ -1312,10 +1322,13 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
                 lambda = MAXDIST / maxF();
                 sconvergencecheck = true;
             }
+            cout<<"Safe energyChange "<<energyChange<<" maxF"<<maxF()<<" MAXDIST "
+                                                                       ""<<MAXDIST<<endl;
         }
+
 #endif
     }
-//    std::cout<<"lambda determined in "<<iter<< " iterations "<<endl;
+    std::cout<<"lambda determined in "<<iter<< " iterations. FL "<<lambda<<endl;
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
         delete [] cconvergencecheck;

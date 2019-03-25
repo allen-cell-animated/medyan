@@ -208,7 +208,8 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy
+        (floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
     floatingpoint U_i[1], U_ii=0.0;
     floatingpoint* gU_i;
     U_ii = 0.0;

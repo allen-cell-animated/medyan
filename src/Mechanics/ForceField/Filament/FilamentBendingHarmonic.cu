@@ -184,7 +184,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, totalforcefl
 
     floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -228,7 +228,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, totalforcefl
     floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
     totalforcefloatingpoint *force1, *force2, *force3;
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

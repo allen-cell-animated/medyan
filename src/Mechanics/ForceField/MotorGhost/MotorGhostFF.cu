@@ -65,9 +65,9 @@ void MotorGhostFF::cleanup() {
 }
 
 
-floatingpoint MotorGhostFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
+totalenergyfloatingpoint MotorGhostFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
-    floatingpoint U= 0.0;
+    totalenergyfloatingpoint U= 0.0;
     floatingpoint U_i=0.0;
 
     for (auto &interaction : _motorGhostInteractionVector) {

@@ -209,12 +209,12 @@ void BoundaryCylinderRepulsionExp::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+totalenergyfloatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                             floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
     floatingpoint *coord1, R, r, U_i;
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -260,13 +260,13 @@ floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, totalfo
     return U;
 }
 
-floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+totalenergyfloatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                             floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
 
     int nb, nc;
     floatingpoint *coord1, R, r, U_i;
 	totalforcefloatingpoint *force1;
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();

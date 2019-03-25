@@ -210,12 +210,12 @@ floatingpoint BoundaryCylinderRepulsionExpIn::loadForces(floatingpoint r, floati
 
 }
 
-floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+totalenergyfloatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                               floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
-    floatingpoint *coord1, R, r, U_i;
-    floatingpoint U = 0.0;
+    floatingpoint *coord1, R, r;
+    totalenergyfloatingpoint U_i, U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -250,13 +250,13 @@ floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, total
     return U;
 }
 
-floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+totalenergyfloatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                               floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
 
     int nb, nc;
     floatingpoint *coord1, R, r, U_i;
     totalforcefloatingpoint *force1;
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -299,8 +299,8 @@ floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, total
 void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                             floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
-    floatingpoint *coord1, R, r, f0;
-    totalforcefloatingpoint *force1;
+    floatingpoint *coord1, R, r;
+    totalforcefloatingpoint *force1, f0;
     floatingpoint *F_i;
 
     auto beList = BoundaryElement::getBoundaryElements();

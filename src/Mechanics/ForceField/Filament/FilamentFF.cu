@@ -74,10 +74,10 @@ void FilamentFF::whoIsCulprit() {
 }
 
 
-floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
+totalenergyfloatingpoint FilamentFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
     floatingpoint U= 0.0;
-    floatingpoint U_i=0.0;
+    totalenergyfloatingpoint U_i=0.0;
 
     for (auto &interaction : _filamentInteractionVector) {
         U_i = interaction->computeEnergy(coord, f, d);

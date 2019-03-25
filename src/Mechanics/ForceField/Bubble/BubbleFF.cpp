@@ -69,7 +69,7 @@ void BubbleFF::whoIsCulprit() {
 }
 
 
-floatingpoint BubbleFF::computeEnergy(floatingpoint d) {
+totalenergyfloatingpoint BubbleFF::computeEnergy(floatingpoint d) {
     
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;

@@ -23,8 +23,8 @@
 
 template <class MTOCInteractionType>
 floatingpoint MTOCAttachment<MTOCInteractionType>::computeEnergy(floatingpoint d) {
-    
-    floatingpoint U = 0.0;
+
+    totalenergyfloatingpoint U = 0.0;
     floatingpoint U_i=0.0;
     
     for(auto mtoc : MTOC::getMTOCs()) {

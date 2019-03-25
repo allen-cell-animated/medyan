@@ -173,8 +173,8 @@ void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
 template <class CVolumeInteractionType>
 floatingpoint CylinderExclVolume<CVolumeInteractionType>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
 
-    floatingpoint U_i[1];
-    floatingpoint U_ii=0.0f;
+    totalenergyfloatingpoint U_i[1];
+    totalenergyfloatingpoint U_ii=0.0f;
     floatingpoint *gU_i;
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;

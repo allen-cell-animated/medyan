@@ -326,16 +326,17 @@ void CylinderExclVolRepulsion::checkforculprit() {
 }
 
 #endif
-floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcefloatingpoint *force, int *beadSet, floatingpoint *krep) {
-    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U, U_i;
+totalenergyfloatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcefloatingpoint *force, int *beadSet, floatingpoint *krep) {
+    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare;
+
     floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     floatingpoint ATG1, ATG2, ATG3, ATG4;
 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-    U_i = 0.0;
-    U = 0.0;
+	totalenergyfloatingpoint U_i = 0.0;
+    totalenergyfloatingpoint U = 0.0;
     newc2 = new floatingpoint[3];
 //    std::cout<<"SERL ecvol nint "<<nint<<endl;
     for (int i = 0; i < nint; i++) {
@@ -423,11 +424,11 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcef
 }
 
 
-floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+totalenergyfloatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                         floatingpoint *krep, floatingpoint z) {
 
 
-    floatingpoint d, invDSquare, U, U_i;
+    floatingpoint d, invDSquare;
     totalforcefloatingpoint *f1, *f2, *f3, *f4;
     floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     floatingpoint ATG1, ATG2, ATG3, ATG4;
@@ -445,8 +446,8 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcef
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-    U_i = 0.0;
-    U = 0.0;
+    totalenergyfloatingpoint U_i = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 //std::cout<<"-----------"<<endl;
     for (int i = 0; i < nint; i++) {
 

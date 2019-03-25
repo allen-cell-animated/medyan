@@ -28,7 +28,7 @@ floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, t
     int nint = Bead::getPinnedBeads().size();
 
     floatingpoint *coord1, *pin1, dist, U_i;
-    floatingpoint U = 0;
+    totalenergyfloatingpoint U = 0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -61,7 +61,7 @@ floatingpoint BoundaryCylinderAttachmentHarmonic::energy(floatingpoint *coord, t
 
     floatingpoint *coord1, *pin1, *zero, dist, U_i;
     totalforcefloatingpoint *force1;
-    floatingpoint U = 0;
+    totalenergyfloatingpoint U = 0;
     zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
     for(int i = 0; i < nint; i += 1) {

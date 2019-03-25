@@ -199,7 +199,7 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforceflo
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -245,7 +245,7 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforceflo
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 	totalforcefloatingpoint *force1, *force2, *force3, *force4;
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

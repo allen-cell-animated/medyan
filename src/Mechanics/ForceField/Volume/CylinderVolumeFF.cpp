@@ -57,9 +57,9 @@ void CylinderVolumeFF::cleanup() {
 
 
 
-floatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
-    
-    floatingpoint U= 0.0;
+totalenergyfloatingpoint CylinderVolumeFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
+
+    totalenergyfloatingpoint U= 0.0;
     floatingpoint U_i=0.0;
     
     for (auto &interaction : _cylinderVolInteractionVector) {

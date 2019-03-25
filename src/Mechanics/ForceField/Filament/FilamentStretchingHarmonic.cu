@@ -177,16 +177,16 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+totalenergyfloatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql){
 
 
     int n = FilamentStretching<FilamentStretchingHarmonic>::n;
     int nint = Cylinder::getCylinders().size();
 
-    floatingpoint *coord1, *coord2, dist, U_i;
+    floatingpoint *coord1, *coord2, dist;
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U_i, U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -211,7 +211,7 @@ floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, totalforc
     return U;
 }
 
-floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
+totalenergyfloatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint d){
 
     int n = FilamentStretching<FilamentStretchingHarmonic>::n;
@@ -222,7 +222,7 @@ floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, totalforc
     floatingpoint *v1 = new floatingpoint[3];
     floatingpoint *v2 = new floatingpoint[3];
 
-    floatingpoint U = 0.0;
+    totalenergyfloatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

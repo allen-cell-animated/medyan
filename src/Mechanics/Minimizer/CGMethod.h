@@ -129,10 +129,10 @@ protected:
     /// For use in minimization
 
 
-    floatingpoint allFDotF();
-    floatingpoint allFADotFA();
-    floatingpoint allFADotFAP();
-    floatingpoint allFDotFA();
+    totalforcefloatingpoint allFDotF();
+    totalforcefloatingpoint allFADotFA();
+    totalforcefloatingpoint allFADotFAP();
+    totalforcefloatingpoint allFDotFA();
     
     /// Get the max force in the system
     floatingpoint maxF();
@@ -146,15 +146,15 @@ protected:
     void endMinimization();
     
     /// Move beads in search direction by d
-    void moveBeads(floatingpoint d);
-    
+    void moveBeads(totalenergyfloatingpoint d);
+
     /// shift the gradient by d
-    void shiftGradient(floatingpoint d);
+    void shiftGradient(totalforcefloatingpoint d);
     //@}
 
 #ifdef CUDAACCL
     //@{
-    floatingpoint backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
+    totalenergyfloatingpoint backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                   floatingpoint LAMBDAMAX, bool *gpu_safestate);
     //@}
 #endif // CUDAACCL
@@ -163,13 +163,14 @@ protected:
     /// Linear search methods
     /// A simple backtracking search method that computes an optimal
     /// energy change and compares the backtracked energy to it
-    floatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+    totalenergyfloatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                                           floatingpoint LAMBDAMAX, bool *gpu_safestate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
 
-    floatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+    totalenergyfloatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM,
+    		floatingpoint MAXDIST,
                                                               floatingpoint LAMBDAMAX, bool *gpu_safestate);
 
     //@}

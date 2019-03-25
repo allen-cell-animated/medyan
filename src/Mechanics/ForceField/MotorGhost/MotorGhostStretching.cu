@@ -175,7 +175,7 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
 
 template <class MStretchingInteractionType>
 floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(floatingpoint* coord, totalforcefloatingpoint *f, floatingpoint d){
-    floatingpoint U_i[1], U_ii=0.0;
+    totalenergyfloatingpoint U_i[1], U_ii=0.0;
     floatingpoint* gU_i;
     U_ii = 0.0;
 #ifdef CUDATIMETRACK
