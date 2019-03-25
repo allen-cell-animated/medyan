@@ -43,6 +43,17 @@
 #include "util/profiler.h"
 //
 long CGMethod::N = 0;
+
+namespace {
+
+void stretchBeads(double d) {
+    const std::size_t num = Bead::getDbData().coords.size_raw();
+    for(size_t i = 0; i < num; ++i)
+        Bead::getDbData().coordsStr.value[i] = Bead::getDbData().coords.value[i] + d * Bead::getDbData().forces.value[i];
+}
+
+} // namespace
+
 #ifdef CUDAACCL
 void CGMethod::CUDAresetlambda(cudaStream_t stream) {
     resetlambdaCUDA<<<1,1,0, stream>>>(CUDAcommon::getCUDAvars().gpu_lambda);
@@ -1137,7 +1148,8 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
         tw.start();
-        double energyLambda = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), lambda);
+        stretchBeads(lambda);
+        double energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), 0.0);
         tw.elapse();
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -1230,7 +1242,8 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
 //        std::cout<<"safe z"<<endl;
         iter++;
         tw.start();
-        double energyLambda = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), lambda);
+        stretchBeads(lambda);
+        double energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), 0.0);
         tw.elapse();
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
