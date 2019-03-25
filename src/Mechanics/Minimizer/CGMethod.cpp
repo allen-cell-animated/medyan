@@ -40,6 +40,7 @@
 #include <ctime>
 #include <cstdlib>
 #include "cross_check.h"
+#include "util/profiler.h"
 //
 long CGMethod::N = 0;
 #ifdef CUDAACCL
@@ -1087,8 +1088,12 @@ double CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, double MAXDI
 }
 #endif // CUDAACCL
 
+static profiler::TimerManager tm_str("Energy stretched");
+
 double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                         double LAMBDAMAX, bool *gpu_safestate) {
+
+    profiler::TimerWorker tw(tm_str);
 
     //@{ Lambda phase 1
     double lambda;
@@ -1131,7 +1136,9 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         //TODO let each forcefield calculate energy IFF conv state = false. That will help
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
+        tw.start();
         double energyLambda = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), lambda);
+        tw.elapse();
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         double cuda_energy[1];
@@ -1176,6 +1183,9 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         //@{ Lambda phase 2
 #endif
     }
+
+    if(tm_str.getCount() % 500 == 0) tm_str.report();
+
 //    std::cout<<"lambda determined in "<<iter<< " iterations "<<endl;
 //synchronize streams
     if(cconvergencecheck[0]||sconvergencecheck) {
@@ -1189,6 +1199,9 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
 
 double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                             double LAMBDAMAX, bool *gpu_safestate) {
+
+    profiler::TimerWorker tw(tm_str);
+
     //reset safe mode
     _safeMode = false;
     sconvergencecheck = true;
@@ -1216,7 +1229,9 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
         //new energy when moved by lambda
 //        std::cout<<"safe z"<<endl;
         iter++;
+        tw.start();
         double energyLambda = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), lambda);
+        tw.elapse();
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         double cuda_energy[1];
