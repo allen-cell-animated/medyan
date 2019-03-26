@@ -12,7 +12,7 @@
 # for your given system.
 ##################################################
 
-SOURCES_TEST             := $(shell find ./TESTS -name 'test_*.cpp')
+SOURCES_TEST             := $(shell find ./TESTS -name '*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
 SOURCES                  =  $(SOURCES_CPP)
@@ -26,29 +26,26 @@ OBJECTS                  =  $(OBJECTS_CPP)
 DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
-CXX = /usr/bin/g++ -std=c++14
+CXX = g++ -std=c++14
 DEBUG = -g
 FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native
 
 # Compiling flags
 DEPFLAGS = -MMD -MP
 
-INCLUDES_TEST = -I../build/gtest/include
 INCLUDES = \
+-I../external \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
--IStructure/SurfaceMesh                   \
 -IChemistry                               \
 -IMechanics/                              \
 -IMechanics/Minimizer                     \
 -IMechanics/ForceField                    \
 -IMechanics/ForceField/Volume             \
--IMechanics/ForceField/VolumeConservation \
 -IMechanics/ForceField/Boundary           \
 -IMechanics/ForceField/Branching          \
 -IMechanics/ForceField/Filament           \
 -IMechanics/ForceField/Linker             \
--IMechanics/ForceField/Membrane           \
 -IMechanics/ForceField/MotorGhost         \
 -IMechanics/ForceField/Bubble             
 
@@ -60,7 +57,6 @@ CXXFLAGS_CXX = $(FAST_CXX) \
 -Wno-unknown-warning-option
 
 # Linking flags
-LDLIBS_TEST = -L../build/gtest/lib -lgtest -lgtest_main -lpthread
 LDLIBS      = -L/usr/local/lib/ -lboost_system
 
 LDFLAGS_CXX = $(FAST_CXX)
@@ -85,7 +81,10 @@ CPPFLAGS += -DDYNAMICRATES
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
 
-#Detailed chemistry macros.
+#serialized energy minimization                                                          
+CPPFLAGS += -DSERIAL
+
+#Detailed chemistry macros. 
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!
 
 #Track dependents. Needed for Gillespie and NRM algorithm
@@ -107,9 +106,11 @@ CPPFLAGS += -DRSPECIES_SIGNALING
 # Implementation fix (should be turned on by default)
 CPPFLAGS += -DPLOSFEEDBACK
 
+CPPFLAGS += -DHYBRID_NLSTENCILLIST
+CPPFLAGS += -DNLSTENCILLIST
+
 # Non-CUDA specific
 CPPFLAGS_CXX      = $(CPPFLAGS)
-CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST) -DTESTING
 
 ################MAKEFILE OPTIONS###################
 #
@@ -128,13 +129,9 @@ MEDYAN: $(OBJECTS)
 
 # Build test
 medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
-	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS) $(LDLIBS_TEST)
+	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS)
 
 # Compile to object and generate dependency
-test_%.o: test_%.cpp
-test_%.o: test_%.cpp test_%.d
-	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX_TEST) $(CXXFLAGS_CXX) -c -o $@ $<
-
 %.o: %.cpp
 %.o: %.cpp %.d 
 	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
