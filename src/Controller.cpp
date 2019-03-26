@@ -1032,16 +1032,7 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
 
                 mins = chrono::high_resolution_clock::now();
-
-                static profiler::TimerManager tm("Minimization");
-                profiler::TimerWorker tw(tm);
-                tw.start();
-
                 _mController->run();
-
-                tw.elapse();
-                tm.report();
-
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_runm3(mine - mins);
                 minimizationtime += elapsed_runm3.count();
