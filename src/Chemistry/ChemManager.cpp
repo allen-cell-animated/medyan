@@ -3021,14 +3021,24 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                                       bool initialization) {
     
     //get some related objects
-    Compartment* C = cc->getCompartment();
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+	Compartment* C = cc->getCompartment();
     Cylinder* c = cc->getCylinder();
     
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     Filament* f = (Filament*)(c->getParent());
-    short filType = f->getType();
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<" "<< f << endl;
+	short filType ;
+    if (f == nullptr){
+      filType = 5000; // filType assignment for CaMKII
+    } else {
+	  filType = f->getType();
+    }
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<"" << cc -> getSize() << endl;
     //add monomers to cylinder
     for(int i = 0; i < cc->getSize(); i++) {
-        CMonomer* m = new CMonomer(filType);
+    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+    	CMonomer* m = new CMonomer(filType);
         initCMonomer(m, filType, C);
         cc->addCMonomer(m);
         
@@ -3043,12 +3053,14 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                           SysParams::CParams.brancherBoundIndex[filType]);
             ConnectionBlock rcbb(bs->connect(bcallback,false));
             
+        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             UpdateCaMKIIerBindingCallback camkiibindingcallback(c, i);
             
             Species* cs = cc->getCMonomer(i)->speciesBound(
                           SysParams::CParams.camkiierBoundIndex[filType]);
             ConnectionBlock rcbcamkii(cs->connect(camkiibindingcallback,false));
 
+        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             UpdateCaMKIIerBundlingCallback camkiibundlingcallback(c, i);
 
             Species* cs2 = cc->getCMonomer(i)->speciesBound(
@@ -3068,7 +3080,8 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             ConnectionBlock rcbm(ms->connect(mcallback,false));
         }
     }
-    
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
     //get last ccylinder
     CCylinder* lastcc = nullptr;
     
@@ -3185,6 +3198,10 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         }
     }
     //Add all reaction templates to this cylinder
-    for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+    if (filType != 5000) {
+    	for(auto &r : _filRxnTemplates[filType]) { r->addReaction(cc); }
+    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+    }
 }
 

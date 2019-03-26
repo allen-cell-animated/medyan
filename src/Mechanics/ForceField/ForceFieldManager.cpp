@@ -48,13 +48,13 @@ double ForceFieldManager::computeEnergy(double d, bool verbose) {
 }
 
 void ForceFieldManager::computeForces() {
-    
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //reset
     resetForces();
-    
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //recompute
     for(auto &f : _forceFields) f->computeForces();
-    
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //copy to auxs
     for(auto b: Bead::getBeads())
         b->forceAux = b->forceAuxP = b->force;

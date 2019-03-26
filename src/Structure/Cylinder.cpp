@@ -111,7 +111,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
     cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     _cCylinder->setCylinder(this);
-    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << _cCylinder.get() <<" " << extensionFront <<" " << extensionBack << "  "<< initialization <<endl;
     //init using chem manager
     _chemManager->initializeCCylinder(_cCylinder.get(), extensionFront,
                                       extensionBack, initialization);
@@ -218,7 +218,7 @@ void Cylinder::updateReactionRates() {
     //load force from back (affects minus end polymerization)
     cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     if(_minusEnd) {
-        
+    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         //get force of front bead
         force = _b1->getLoadForcesM();
         
@@ -234,6 +234,7 @@ void Cylinder::updateReactionRates() {
             }
         }
     }
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 }
 
 bool Cylinder::isFullLength() {

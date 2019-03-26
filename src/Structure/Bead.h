@@ -143,9 +143,9 @@ public:
     
     //GetType implementation just returns type of parent
     virtual int getType() {
-    	cout << "parent getType before" << "\n" << endl;
+        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     	auto parent = getParent();
-    	cout << "parent getType" << parent << "\n" << endl;
+        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<" "<< parent <<endl;
     	if (parent)
     		return parent->getType();
     	else
