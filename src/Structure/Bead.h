@@ -134,23 +134,17 @@ public:
     Bead(Composite* parent, int position);
 
     auto coordinate()    { return getDbData().coords    [getIndex()]; }
-    auto coordinateStr() { return getDbData().coordsStr [getIndex()]; }
     auto force()         { return getDbData().forces    [getIndex()]; }
     auto forceAux()      { return getDbData().forcesAux [getIndex()]; }
     auto forceAuxP()     { return getDbData().forcesAuxP[getIndex()]; }
 
     auto coordinate()    const { return getDbDataConst().coords    [getIndex()]; }
-    auto coordinateStr() const { return getDbDataConst().coordsStr [getIndex()]; }
     auto force()         const { return getDbDataConst().forces    [getIndex()]; }
     auto forceAux()      const { return getDbDataConst().forcesAux [getIndex()]; }
     auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getIndex()]; }
 
-    template< bool stretched = false > auto getCoordinate() const { return stretched ? coordinateStr() : coordinate(); }
-    template< bool stretched = false > auto getCoordinate()       { return stretched ? coordinateStr() : coordinate(); }
-
     // Temporary compromise
     auto vcoordinate()    const { return mathfunc::vec2Vector(coordinate()   ); }
-    auto vcoordinateStr() const { return mathfunc::vec2Vector(coordinateStr()); }
     auto vforce()         const { return mathfunc::vec2Vector(force()        ); }
     auto vforceAux()      const { return mathfunc::vec2Vector(forceAux()     ); }
     auto vforceAuxP()     const { return mathfunc::vec2Vector(forceAuxP()    ); }
