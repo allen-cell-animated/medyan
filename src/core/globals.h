@@ -4,31 +4,28 @@
 #include <string>
 
 namespace medyan {
-    struct GlobalVar {
-        enum class RunMode {
-            Simulation,
-            Analysis
-        } mode; ///< The core mode at which the program runs
 
-        std::string systemInputFile; // Path + name
-        std::string inputDirectory;
-        std::string outputDirectory;
+struct GlobalVar {
+    enum class RunMode {
+        Simulation,
+        Analysis
+    } mode; ///< The core mode at which the program runs
 
-        std::string logFileName {"medyan.log"};
+    std::string systemInputFile; // Path + name
+    std::string inputDirectory;
+    std::string outputDirectory;
 
-        bool randomGenSeedFixed = false;
-        unsigned long long randomGenSeed; // The global random seed
-    
-    };
+    std::string logFileName {"medyan.log"};
 
-    /// GlobalVar manager
-    class Global {
-        static GlobalVar _global;
-    public:
-        static const GlobalVar& readGlobal() { return _global; }
-        static GlobalVar& global() { return _global; }
-    };
-}
+    bool randomGenSeedFixed = false;
+    unsigned long long randomGenSeed; // The global random seed
+
+};
+
+inline auto& globalMutable() { static GlobalVar g; return g; }
+inline const auto& global() { return globalMutable(); }
+
+} // namespace medyan
 
 
 #endif
