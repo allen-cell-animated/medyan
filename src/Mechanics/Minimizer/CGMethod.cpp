@@ -1126,7 +1126,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
     std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<f<<" state "<<sconvergencecheck<<endl;
 #endif
 #endif
-    double currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0);
+    double currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
     double cuda_energy[1];
@@ -1143,7 +1143,7 @@ double CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
         stretchBeads(lambda);
-        double energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), 0.0);
+        double energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         double cuda_energy[1];
@@ -1213,7 +1213,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     cconvergencecheck[0] = true;
 #endif
 //prepare for ping pong optimization
-    double currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data(), Bead::getDbData().forces.data(), 0.0);
+    double currentEnergy = FFM.computeEnergy(Bead::getDbData().coords.data());
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
     double cuda_energy[1];
@@ -1229,7 +1229,7 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
 //        std::cout<<"safe z"<<endl;
         iter++;
         stretchBeads(lambda);
-        double energyLambda = FFM.computeEnergy(Bead::getDbData().coordsStr.data(), Bead::getDbData().forces.data(), 0.0);
+        double energyLambda = FFM.computeEnergy<true>(Bead::getDbData().coordsStr.data());
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         double cuda_energy[1];

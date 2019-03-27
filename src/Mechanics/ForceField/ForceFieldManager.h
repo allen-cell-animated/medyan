@@ -43,8 +43,9 @@ public:
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
-    /// @param print - prints detailed info about energies
-    double computeEnergy(double *coord, double *f, double d, bool verbose = false);
+    /// @param stretched - whether intermediate variables are treated as temporary or not
+    template< bool stretched = false >
+    double computeEnergy(double *coord, bool verbose = false) const;
     
     /// Compute the forces of all force fields 
     void computeForces(double *coord, double *f);

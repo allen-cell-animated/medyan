@@ -123,7 +123,8 @@ void ForceFieldManager::cleanupAllForceFields() {
 #endif
 }
 
-double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool verbose) {
+template< bool stretched >
+double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 //    CUDAcommon::cudatime.TcomputeE = 0.0;
@@ -173,7 +174,7 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 #endif
     for (auto &ff : _forceFields) {
 
-        auto tempEnergy = ff->computeEnergy(coord, f, d);
+        auto tempEnergy = ff->computeEnergy(coord, nullptr, 0.0); // TODO: remove the 2 latter arguments
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
@@ -183,7 +184,7 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
         if (tempEnergy <= -1) {
 
             //if this is the current energy, exit ungracefully
-            if (d == 0.0) {
+            if (!stretched) {
 
                 cout << "Energy = " << tempEnergy << endl;
 
@@ -284,6 +285,8 @@ double ForceFieldManager::computeEnergy(double *coord, double *f, double d, bool
 #endif
     return energy;
 }
+template double ForceFieldManager::computeEnergy< false >(double *, bool) const;
+template double ForceFieldManager::computeEnergy< true >(double *, bool) const;
 
 void ForceFieldManager::computeForces(double *coord, double *f) {
     //reset to zero
