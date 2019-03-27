@@ -19,7 +19,7 @@ Triangle::Triangle(Membrane* parent, size_t topoIndex):
 
     // Set coordinate and add to compartment
     updateCoordinate();
-    if(medyan::Global::readGlobal().mode == medyan::GlobalVar::RunMode::Simulation) {
+    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
         try { _compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
         catch (exception& e) {
             cout << e.what() << endl;

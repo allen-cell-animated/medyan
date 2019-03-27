@@ -103,19 +103,19 @@ int main(int argc, char **argv) {
 
         Command cmdMain("MEDYAN", "");
 
-        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, Global::global().systemInputFile);
-        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, Global::global().inputDirectory);
-        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, Global::global().outputDirectory);
+        cmdMain.addOptionWithVar('s', "", "file", "System input file", true, globalMutable().systemInputFile);
+        cmdMain.addOptionWithVar('i', "", "path", "Input directory", true, globalMutable().inputDirectory);
+        cmdMain.addOptionWithVar('o', "", "path", "Output directory", true, globalMutable().outputDirectory);
         cmdMain.addOption(0, "seed-fixed", "seed", "Fixed random generator seed", false,
             [](const std::string& arg) {
-                Global::global().randomGenSeedFixed = true;
-                VariableWrite<unsigned long long>{std::string("seed")}(Global::global().randomGenSeed, arg);
+                globalMutable().randomGenSeedFixed = true;
+                VariableWrite<unsigned long long>{std::string("seed")}(globalMutable().randomGenSeed, arg);
             }
         );
         cmdMain.addHelp();
 
         Command* cmdAnalyze = cmdMain.addCommand("analyze", "Analyze simulation output",
-            [] { Global::global().mode = GlobalVar::RunMode::Analysis; });
+            [] { globalMutable().mode = GlobalVar::RunMode::Analysis; });
         cmdAnalyze->addHelp();
 
         try {
@@ -139,28 +139,28 @@ int main(int argc, char **argv) {
     ::medyan::logger::Logger::defaultLoggerInitialization();
 
     // Seed global random generator
-    if(!Global::readGlobal().randomGenSeedFixed) {
-        Global::global().randomGenSeed = rdtsc();
-        LOG(DEBUG) << "Global RNG seed: " << Global::readGlobal().randomGenSeed;
+    if(!global().randomGenSeedFixed) {
+        globalMutable().randomGenSeed = rdtsc();
+        LOG(DEBUG) << "Global RNG seed: " << global().randomGenSeed;
     }
-    Rand::eng.seed(Global::readGlobal().randomGenSeed);
+    Rand::eng.seed(global().randomGenSeed);
 
     /**************************************************************************
     Start program 
     **************************************************************************/
-    switch(Global::readGlobal().mode) {
+    switch(global().mode) {
     case GlobalVar::RunMode::Simulation:
         //initialize and run system
-        c.initialize(Global::readGlobal().systemInputFile,
-                     Global::readGlobal().inputDirectory,
-                     Global::readGlobal().outputDirectory);
+        c.initialize(global().systemInputFile,
+                     global().inputDirectory,
+                     global().outputDirectory);
         c.run();
         break;
     case GlobalVar::RunMode::Analysis:
         {
-            string inputFilePath = Global::readGlobal().inputDirectory + "/snapshot.traj";
-            string pdbFilePath = Global::readGlobal().outputDirectory + "/snapshot.pdb";
-            string psfFilePath = Global::readGlobal().outputDirectory + "/snapshot.psf";
+            string inputFilePath = global().inputDirectory + "/snapshot.traj";
+            string pdbFilePath = global().outputDirectory + "/snapshot.pdb";
+            string psfFilePath = global().outputDirectory + "/snapshot.psf";
             analysis::SnapshotReader sr(inputFilePath, pdbFilePath, psfFilePath);
             sr.readAndConvertToVmd();
         }
