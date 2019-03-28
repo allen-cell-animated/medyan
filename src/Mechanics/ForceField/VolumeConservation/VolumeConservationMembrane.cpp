@@ -24,7 +24,7 @@ double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEn
 
         double volume = 0.0;
         for(const auto& t : mesh.getTriangles())
-            volume += stretched ? t.attr.gTriangle.sConeVolume : t.attr.gTriangle.coneVolume;
+            volume += stretched ? t.attr.gTriangleS.coneVolume : t.attr.gTriangle.coneVolume;
 
         U_i += _FFType.energy(volume, kBulk, eqVolume);
 

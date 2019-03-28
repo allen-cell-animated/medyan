@@ -35,9 +35,13 @@ struct MembraneMeshAttribute {
         Vertex* vertex;
 
         GVertex gVertex;
+        GVertex gVertexS; // stretched version (temporary)
         AdaptiveMeshAttribute::VertexAttribute aVertex;
 
         coordinate_type& getCoordinate() const { return vertex->coordinate; }
+
+        template< bool stretched > const GVertex& getGVertex() const { return stretched ? gVertexS : gVertex; }
+        template< bool stretched >       GVertex& getGVertex()       { return stretched ? gVertexS : gVertex; }
 
         void setIndex(size_t index) {
             vertex->setTopoIndex(index);
@@ -48,7 +52,11 @@ struct MembraneMeshAttribute {
         std::unique_ptr<Edge> edge;
 
         GEdge gEdge;
+        GEdge gEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::EdgeAttribute aEdge;
+
+        template< bool stretched > const GEdge& getGEdge() const { return stretched ? gEdgeS : gEdge; }
+        template< bool stretched >       GEdge& getGEdge()       { return stretched ? gEdgeS : gEdge; }
 
         void setIndex(size_t index) {
             edge->setTopoIndex(index);
@@ -56,7 +64,11 @@ struct MembraneMeshAttribute {
     };
     struct HalfEdgeAttribute {
         GHalfEdge gHalfEdge;
+        GHalfEdge gHalfEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::HalfEdgeAttribute aHalfEdge;
+
+        template< bool stretched > const GHalfEdge& getGHalfEdge() const { return stretched ? gHalfEdgeS : gHalfEdge; }
+        template< bool stretched >       GHalfEdge& getGHalfEdge()       { return stretched ? gHalfEdgeS : gHalfEdge; }
 
         void setIndex(size_t index) {}
     };
@@ -64,7 +76,11 @@ struct MembraneMeshAttribute {
         std::unique_ptr<Triangle> triangle;
 
         GTriangle gTriangle;
+        GTriangle gTriangleS; // stretched version (temporary);
         AdaptiveMeshAttribute::TriangleAttribute aTriangle;
+
+        template< bool stretched > const GTriangle& getGTriangle() const { return stretched ? gTriangleS : gTriangle; }
+        template< bool stretched >       GTriangle& getGTriangle()       { return stretched ? gTriangleS : gTriangle; }
 
         void setIndex(size_t index) {
             triangle->setTopoIndex(index);
@@ -170,12 +186,12 @@ struct MembraneMeshAttribute {
             const auto& c0 = vertices[vi0].attr.vertex->template getCoordinate<stretched>();
             const auto& c1 = vertices[vi1].attr.vertex->template getCoordinate<stretched>();
             const auto& c2 = vertices[vi2].attr.vertex->template getCoordinate<stretched>();
-            auto& heag = mesh.getHalfEdgeAttribute(hei).gHalfEdge;
+            auto& heag = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>();
 
             const auto vp = vectorProduct(c1, c0, c1, c2);
             const auto sp = scalarProduct(c1, c0, c1, c2);
-            const auto ct = heag.template getCotTheta<stretched>() = sp / magnitude(vp);
-            heag.template getTheta<stretched>() = M_PI_2 - atan(ct);
+            const auto ct = heag.cotTheta = sp / magnitude(vp);
+            heag.theta = M_PI_2 - atan(ct);
         }
 
         // Calculate triangle area, unit normal and cone volume
@@ -187,18 +203,18 @@ struct MembraneMeshAttribute {
             const auto& c0 = vertices[vi0].attr.vertex->template getCoordinate<stretched>();
             const auto& c1 = vertices[vi1].attr.vertex->template getCoordinate<stretched>();
             const auto& c2 = vertices[vi2].attr.vertex->template getCoordinate<stretched>();
-            auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
+            auto& tag = mesh.getTriangleAttribute(ti).template getGTriangle<stretched>();
 
             const auto vp = vectorProduct(c0, c1, c0, c2);
 
             // area
-            tag.template getArea<stretched>() = magnitude(vp) * 0.5;
+            tag.area = magnitude(vp) * 0.5;
 
             // unit normal
-            tag.template getUnitNormal<stretched>() = vector2Vec<3, double>(normalizedVector(vp));
+            tag.unitNormal = vector2Vec<3, double>(normalizedVector(vp));
 
             // cone volume
-            tag.template getConeVolume<stretched>() = dotProduct(c0, vp) / 6;
+            tag.coneVolume = dotProduct(c0, vp) / 6;
         }
 
         // Calculate edge length and pesudo unit normal
@@ -208,7 +224,7 @@ struct MembraneMeshAttribute {
             const size_t vi1 = mesh.target(mesh.prev(hei));
 
             // length
-            mesh.getEdgeAttribute(ei).gEdge.template getLength<stretched>() = twoPointDistance(
+            mesh.getEdgeAttribute(ei).template getGEdge<stretched>().length = twoPointDistance(
                 vertices[vi0].attr.vertex->template getCoordinate<stretched>(),
                 vertices[vi1].attr.vertex->template getCoordinate<stretched>()
             );
@@ -217,20 +233,20 @@ struct MembraneMeshAttribute {
             if(halfEdges[hei].hasOpposite) {
                 const size_t ti0 = mesh.triangle(hei);
                 const size_t ti1 = mesh.triangle(mesh.opposite(hei));
-                mesh.getEdgeAttribute(ei).gEdge.template getPseudoUnitNormal<stretched>() = normalizedVector(
-                    mesh.getTriangleAttribute(ti0).gTriangle.template getUnitNormal<stretched>()
-                    + mesh.getTriangleAttribute(ti1).gTriangle.template getUnitNormal<stretched>()
+                mesh.getEdgeAttribute(ei).template getGEdge<stretched>().pseudoUnitNormal = normalizedVector(
+                    mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal
+                    + mesh.getTriangleAttribute(ti1).template getGTriangle<stretched>().unitNormal
                 );
             }
         }
 
         // Calculate vcell area, curvature and vertex pseudo unit normal
         for(size_t vi = 0; vi < numVertices; ++vi) {
-            auto& vag = mesh.getVertexAttribute(vi).gVertex;
+            auto& vag = mesh.getVertexAttribute(vi).template getGVertex<stretched>();
 
             // clearing
-            vag.template getArea<stretched>() = 0.0;
-            vag.template getPseudoUnitNormal<stretched>() = {0.0, 0.0, 0.0};
+            vag.area = 0.0;
+            vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
 
             // k1 = 2A * k, where k is the result of LB operator
             Vec3 k1 {};
@@ -245,28 +261,28 @@ struct MembraneMeshAttribute {
                 const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->template getCoordinate<stretched>());
 
                 const auto sumCotTheta =
-                    mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.template getCotTheta<stretched>()
-                    + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.template getCotTheta<stretched>();
+                    mesh.getHalfEdgeAttribute(hei_n).template getGHalfEdge<stretched>().cotTheta
+                    + mesh.getHalfEdgeAttribute(hei_on).template getGHalfEdge<stretched>().cotTheta;
 
-                const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.template getTheta<stretched>();
+                const auto theta = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>().theta;
 
                 const auto diff = ci - cn;
                 const auto dist2 = magnitude2(diff);
 
-                vag.template getArea<stretched>() += sumCotTheta * dist2 * 0.125;
+                vag.area += sumCotTheta * dist2 * 0.125;
 
                 k1 += sumCotTheta * diff;
-                vag.template getPseudoUnitNormal<stretched>() += theta * mesh.getTriangleAttribute(ti0).gTriangle.template getUnitNormal<stretched>();
+                vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal;
             });
 
-            const double invA = 1 / vag.template getArea<stretched>();
+            const double invA = 1 / vag.area;
             const double magK1 = magnitude(k1);
 
-            normalize(vag.template getPseudoUnitNormal<stretched>());
+            normalize(vag.pseudoUnitNormal);
 
-            const int flippingCurv = (dot(k1, vag.template getPseudoUnitNormal<stretched>()) > 0 ? 1 : -1);
+            const int flippingCurv = (dot(k1, vag.pseudoUnitNormal) > 0 ? 1 : -1);
 
-            vag.template getCurv<stretched>() = flippingCurv * magK1 * 0.25 * invA;
+            vag.curv = flippingCurv * magK1 * 0.25 * invA;
         }
     }
     static void updateGeometryValueWithDerivative(MeshType& mesh) {
