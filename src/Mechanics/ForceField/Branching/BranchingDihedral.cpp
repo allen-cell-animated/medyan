@@ -88,7 +88,7 @@ void BranchingDihedral<BDihedralInteractionType>::deallocate() {
 
 
 template <class BDihedralInteractionType>
-double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord, double *f, double d) {
+double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord) {
 
     double U_i[1], U_ii;
     double* gU_i;
@@ -111,10 +111,9 @@ double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord,
 
 #endif
 #ifdef SERIAL
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kdih, pos);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kdih, pos, d);
+
+    U_ii = _FFType.energy(coord, beadSet, kdih, pos);
+
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
@@ -162,7 +161,7 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(double *coord, d
 }
 
 ///Template specializations
-template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(double *coord, double *f, double d);
+template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(double *coord);
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces(double *coord, double *f);
 template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();

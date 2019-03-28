@@ -191,7 +191,7 @@ void BranchingBendingCosine::checkforculprit() {
 }
 #endif
 
-double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
+double BranchingBendingCosine::energy(double *coord, int *beadSet,
                                       double *kbend, double *eqt){
 
     int n = BranchingBending<BranchingBendingCosine>::n;

@@ -21,7 +21,7 @@
 
 using namespace mathfunc;
 
-double BubbleCylinderRepulsionExp::energy(double *coord, double *f, int *beadSet, int *bubbleSet,
+double BubbleCylinderRepulsionExp::energy(double *coord, int *beadSet, int *bubbleSet,
                                           double *krep, double *slen, double *radius, int *nneighbors) {
     
     int nb, nc;

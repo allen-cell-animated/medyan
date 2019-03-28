@@ -47,7 +47,7 @@ public:
     virtual string getName() {return "Boundary";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual double computeEnergy(double *coord, bool stretched = false) override;
     virtual void computeForces(double *coord, double *f);
     
     /// BoundaryFF can compute load forces from all boundaries.

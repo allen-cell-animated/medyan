@@ -100,7 +100,7 @@ void BranchingStretching<BStretchingInteractionType>::deallocate() {
 
 
 template <class BStretchingInteractionType>
-double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *coord, double *f, double d) {
+double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *coord) {
 
 
     double U_i[1], U_ii;
@@ -122,10 +122,9 @@ double BranchingStretching<BStretchingInteractionType>::computeEnergy(double *co
 //    }
 #endif
 #ifdef SERIAL
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos, d);
+
+    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos);
+
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
@@ -168,7 +167,7 @@ void BranchingStretching<BStretchingInteractionType>::computeForces(double *coor
 }
 ///Template specializations
 template double
-BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
+BranchingStretching<BranchingStretchingHarmonic>::computeEnergy(double *coord);
 template void BranchingStretching<BranchingStretchingHarmonic>::computeForces(double *coord, double *f);
 template void BranchingStretching<BranchingStretchingHarmonic>::vectorize();
 template void BranchingStretching<BranchingStretchingHarmonic>::deallocate();

@@ -173,7 +173,7 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
 
 
 template <class MStretchingInteractionType>
-double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* coord, double *f, double d){
+double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* coord){
     double U_i[1], U_ii;
     double* gU_i;
     U_ii = 0.0;
@@ -217,10 +217,7 @@ double MotorGhostStretching<MStretchingInteractionType>::computeEnergy(double* c
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
+    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos1, pos2);
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
@@ -290,7 +287,7 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(double *coo
 
 
 ///Temlate specializations
-template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
+template double MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(double *coord);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(double *coord, double *f);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize();
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::deallocate();

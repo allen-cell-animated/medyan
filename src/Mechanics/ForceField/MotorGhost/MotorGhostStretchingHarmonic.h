@@ -23,7 +23,7 @@ class Bead;
 class MotorGhostStretchingHarmonic {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
+    double energy(double *coord, int *beadSet,
                   double *kstr, double *eql, double *pos1, double *pos2);
     
     double energy(double *coord, double * f, int *beadSet,

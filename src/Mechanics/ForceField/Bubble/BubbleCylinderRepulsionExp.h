@@ -26,7 +26,7 @@ class Bead;
 class BubbleCylinderRepulsionExp {
     
 public:
-    double energy(double *coord, double *f, int *beadSet, int *bubbleSet,
+    double energy(double *coord, int *beadSet, int *bubbleSet,
                   double *krep, double *slen, double *radius, int *nneighbors);
     
     double energy(double *coord, double *f, int *beadSet, int *bubbleSet,

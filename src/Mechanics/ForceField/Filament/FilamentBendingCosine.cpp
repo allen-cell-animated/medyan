@@ -196,7 +196,7 @@ void FilamentBendingCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double FilamentBendingCosine::energy(double *coord, double *f, int *beadSet,
+double FilamentBendingCosine::energy(double *coord, int *beadSet,
                                      double *kbend, double *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;

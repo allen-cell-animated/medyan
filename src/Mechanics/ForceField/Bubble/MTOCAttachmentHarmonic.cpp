@@ -21,7 +21,7 @@
 
 using namespace mathfunc;
 
-double MTOCAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
+double MTOCAttachmentHarmonic::energy(double *coord, int *beadSet,
                                       double *kstr, double radius){
     
     double *coord1, *coord2, dist;

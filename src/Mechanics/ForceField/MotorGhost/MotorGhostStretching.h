@@ -65,7 +65,7 @@ public:
     virtual void deallocate();
     
     
-    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual double computeEnergy(double *coord) override;
     virtual void computeForces(double *coord, double *f);
 
 

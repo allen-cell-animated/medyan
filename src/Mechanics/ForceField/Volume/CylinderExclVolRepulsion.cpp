@@ -326,7 +326,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 }
 
 #endif
-double CylinderExclVolRepulsion::energy(double *coord, double *force, int *beadSet, double *krep) {
+double CylinderExclVolRepulsion::energy(double *coord, int *beadSet, double *krep) {
     double *c1, *c2, *c3, *c4, *newc2, dsq, d, invDSquare, U, U_i;
     double a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     double ATG1, ATG2, ATG3, ATG4;

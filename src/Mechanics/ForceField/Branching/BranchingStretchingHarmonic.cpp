@@ -190,7 +190,7 @@ void BranchingStretchingHarmonic::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
+double BranchingStretchingHarmonic::energy(double *coord, int *beadSet,
                                            double *kstr, double *eql, double *pos){
 
     int n = BranchingStretching<BranchingStretchingHarmonic>::n;

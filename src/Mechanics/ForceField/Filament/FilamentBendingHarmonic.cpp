@@ -176,7 +176,7 @@ void FilamentBendingHarmonic::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
+double FilamentBendingHarmonic::energy(double *coord, int *beadSet,
                                        double *kbend, double *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;

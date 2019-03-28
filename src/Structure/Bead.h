@@ -134,11 +134,13 @@ public:
     Bead(Composite* parent, int position);
 
     auto coordinate()    { return getDbData().coords    [getIndex()]; }
+    auto coordinateStr() { return getDbData().coordsStr [getIndex()]; }
     auto force()         { return getDbData().forces    [getIndex()]; }
     auto forceAux()      { return getDbData().forcesAux [getIndex()]; }
     auto forceAuxP()     { return getDbData().forcesAuxP[getIndex()]; }
 
     auto coordinate()    const { return getDbDataConst().coords    [getIndex()]; }
+    auto coordinateStr() const { return getDbDataConst().coordsStr [getIndex()]; }
     auto force()         const { return getDbDataConst().forces    [getIndex()]; }
     auto forceAux()      const { return getDbDataConst().forcesAux [getIndex()]; }
     auto forceAuxP()     const { return getDbDataConst().forcesAuxP[getIndex()]; }

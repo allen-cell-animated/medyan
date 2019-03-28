@@ -228,7 +228,7 @@ void MotorGhostStretchingHarmonic::forces(double *coord, double *f, int *beadSet
 }
 
 #endif
-double MotorGhostStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
+double MotorGhostStretchingHarmonic::energy(double *coord, int *beadSet,
                                             double *kstr, double *eql, double *pos1, double *pos2) {
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;

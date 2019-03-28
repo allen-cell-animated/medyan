@@ -34,7 +34,7 @@ public:
     virtual void deallocate() = 0;
     
     /// Compute the energy of this interaction
-    virtual double computeEnergy(double *coord, double *f, double d) = 0;
+    virtual double computeEnergy(double *coord) = 0;
     /// Compute the forces of this interaction
     virtual void computeForces(double *coord, double *f) = 0;
     

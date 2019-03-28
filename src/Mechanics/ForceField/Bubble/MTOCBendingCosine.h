@@ -23,7 +23,7 @@ class Bead;
 class MTOCBendingCosine {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
+    double energy(double *coord, int *beadSet,
                   double *kbend, double);
     double energy(double *coord, double *f, int *beadSet,
                   double *kbend, double, double);

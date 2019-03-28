@@ -21,7 +21,7 @@
 
 using namespace mathfunc;
 
-double MTOCBendingCosine::energy(double *coord, double *f, int *beadSet,
+double MTOCBendingCosine::energy(double *coord, int *beadSet,
                                       double *kbend, double radius){
     
     double *coord1, *coord2, *coord3, U_i, L1, L2, L1L2, l1l2, phi, dPhi;

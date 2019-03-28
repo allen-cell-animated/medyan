@@ -49,7 +49,7 @@ public:
     virtual void vectorize();
     virtual void deallocate();
     
-    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual double computeEnergy(double *coord, bool stretched) override;
     virtual void computeForces(double *coord, double *f);
     //virtual void computeForcesAux(double *coord, double *f);
     

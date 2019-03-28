@@ -186,7 +186,7 @@ void LinkerStretchingHarmonic::checkforculprit() {
 }
 
 #endif
-    double LinkerStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
+    double LinkerStretchingHarmonic::energy(double *coord, int *beadSet,
                                             double *kstr, double *eql, double *pos1, double *pos2) {
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;

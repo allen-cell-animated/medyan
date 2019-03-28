@@ -85,7 +85,7 @@ void BranchingPosition<BPositionInteractionType>::deallocate() {
 }
 
 template <class BPositionInteractionType>
-double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord, double *f, double d) {
+double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord) {
 
     double U_i[1], U_ii;
     double* gU_i;
@@ -107,10 +107,9 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord,
 
 #endif
 #ifdef SERIAL
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kpos, pos);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kpos, pos, d);
+
+    U_ii = _FFType.energy(coord, beadSet, kpos, pos);
+
 #endif
 #if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
@@ -157,7 +156,7 @@ void BranchingPosition<BPositionInteractionType>::computeForces(double *coord, d
 
 
 ///Template specializations
-template double BranchingPosition<BranchingPositionCosine>::computeEnergy(double *coord, double *f, double d);
+template double BranchingPosition<BranchingPositionCosine>::computeEnergy(double *coord);
 template void BranchingPosition<BranchingPositionCosine>::computeForces(double *coord, double *f);
 template void BranchingPosition<BranchingPositionCosine>::vectorize();
 template void BranchingPosition<BranchingPositionCosine>::deallocate();

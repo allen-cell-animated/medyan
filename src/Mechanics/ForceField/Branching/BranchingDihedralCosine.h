@@ -23,7 +23,7 @@ class Bead;
 class BranchingDihedralCosine {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
+    double energy(double *coord, int *beadSet,
                   double *kdih, double *pos);
     
     double energy(double *coord, double *f, int *beadSet,

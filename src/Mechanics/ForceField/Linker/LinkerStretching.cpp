@@ -162,7 +162,7 @@ void LinkerStretching<LStretchingInteractionType>::deallocate() {
 
 
 template <class LStretchingInteractionType>
-double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord, double *f, double d){
+double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord){
 
     double U_i[1], U_ii;
     double* gU_i;
@@ -204,10 +204,7 @@ double LinkerStretching<LStretchingInteractionType>::computeEnergy(double* coord
     tbegin = chrono::high_resolution_clock::now();
 #endif
 
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, kstr, eql, pos1, pos2, d);
+    U_ii = _FFType.energy(coord, beadSet, kstr, eql, pos1, pos2);
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
@@ -276,7 +273,7 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(double *coord, 
 
 
 ///Temlate specializations
-template double LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(double *coord, double *f, double d);
+template double LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(double *coord);
 template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(double *coord, double *f);
 template void LinkerStretching<LinkerStretchingHarmonic>::vectorize();
 template void LinkerStretching<LinkerStretchingHarmonic>::deallocate();

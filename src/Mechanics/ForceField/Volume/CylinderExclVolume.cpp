@@ -181,7 +181,7 @@ void CylinderExclVolume<CVolumeInteractionType>::deallocate() {
 
 
 template <class CVolumeInteractionType>
-double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, double *f, double d) {
+double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord) {
 
     double U_i[1];
     double U_ii=0.0;
@@ -220,10 +220,8 @@ double CylinderExclVolume<CVolumeInteractionType>::computeEnergy(double *coord, 
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
-    if (d == 0.0)
-        U_ii = _FFType.energy(coord, f, beadSet, krep);
-    else
-        U_ii = _FFType.energy(coord, f, beadSet, krep, d);
+
+    U_ii = _FFType.energy(coord, beadSet, krep);
 
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
@@ -292,7 +290,7 @@ void CylinderExclVolume<CVolumeInteractionType>::computeForces(double *coord, do
 }
 
 ///Template specializations
-template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(double *coord, double *f, double d);
+template double CylinderExclVolume<CylinderExclVolRepulsion>::computeEnergy(double *coord);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::computeForces(double *coord, double *f);
 template void CylinderExclVolume<CylinderExclVolRepulsion>::vectorize();
 template void CylinderExclVolume<CylinderExclVolRepulsion>::deallocate();

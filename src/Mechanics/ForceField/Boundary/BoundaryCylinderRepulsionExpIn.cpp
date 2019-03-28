@@ -210,7 +210,7 @@ double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double 
 
 }
 
-double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
+double BoundaryCylinderRepulsionExpIn::energy(double *coord, int *beadSet,
                                             double *krep, double *slen, int *nneighbors) {
 
     int nb, nc;

@@ -54,7 +54,7 @@ void MTOCAttachment<MTOCInteractionType>::deallocate() {
 
 
 template <class MTOCInteractionType>
-double MTOCAttachment<MTOCInteractionType>::computeEnergy(double* coord, double *f, double d) {
+double MTOCAttachment<MTOCInteractionType>::computeEnergy(double* coord, bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -75,10 +75,7 @@ double MTOCAttachment<MTOCInteractionType>::computeEnergy(double* coord, double 
         //            double kStretch = c->getMCylinder()->getStretchingConst();
         double radius = mtoc->getBubble()->getRadius();
         
-        if (d == 0.0)
-        U_i = _FFType.energy(coord, f, beadSet, kstr, radius);
-        else
-        U_i = _FFType.energy(coord, f, beadSet, kstr, radius, d);
+        U_i = _FFType.energy(coord, beadSet, kstr, radius);
     }
     
     return U_i;
@@ -147,7 +144,7 @@ void MTOCAttachment<MTOCInteractionType>::computeForces(double *coord, double *f
 //}
 
 ///Template specializations
-template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(double *coord, double *f, double d);
+template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(double *coord, bool stretched);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces(double *coord, double *f);
 //template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
 template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize();

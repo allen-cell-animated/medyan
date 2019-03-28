@@ -27,7 +27,7 @@ class CylinderExclVolRepulsion {
 public:
 
 
-    double energy(double *coord, double *f, int *beadSet, double *krep);
+    double energy(double *coord, int *beadSet, double *krep);
     
     double energy(double *coord, double *f, int *beadSet, double *krep, double d);
     

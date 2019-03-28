@@ -100,7 +100,7 @@ void BranchingFF::whoIsCulprit() {
 }
 
 
-double BranchingFF::computeEnergy(double *coord, double *f, double d) {
+double BranchingFF::computeEnergy(double *coord, bool stretched) {
 
     double U = 0.0;
     double U_i=0.0;
@@ -109,7 +109,7 @@ double BranchingFF::computeEnergy(double *coord, double *f, double d) {
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
 //        std::cout<<interaction->getName()<<endl;
 #endif
-        U_i = interaction->computeEnergy(coord, f, d);
+        U_i = interaction->computeEnergy(coord);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize(),"BranchingFF","BranchingFF");
 //        std::cout<<interaction->getName()<<" "<<U_i<<endl;
 

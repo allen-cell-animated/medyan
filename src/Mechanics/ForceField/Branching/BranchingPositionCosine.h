@@ -23,7 +23,7 @@ class Bead;
 class BranchingPositionCosine {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
+    double energy(double *coord, int *beadSet,
                   double *kpos, double *pos);
     
     double energy(double *coord, double *f, int *beadSet,

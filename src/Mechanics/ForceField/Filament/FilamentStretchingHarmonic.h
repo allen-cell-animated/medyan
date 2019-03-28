@@ -23,7 +23,7 @@ class Bead;
 class FilamentStretchingHarmonic {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
+    double energy(double *coord, int *beadSet,
                   double *kstr, double *eql);
     
     double energy(double *coord, double * f, int *beadSet,

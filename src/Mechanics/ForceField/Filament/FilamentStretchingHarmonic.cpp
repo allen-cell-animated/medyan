@@ -177,7 +177,7 @@ void FilamentStretchingHarmonic::forces(double *coord, double *f, int *beadSet,
         exit(EXIT_FAILURE);
 }
 #endif
-double FilamentStretchingHarmonic::energy(double *coord, double *f, int *beadSet,
+double FilamentStretchingHarmonic::energy(double *coord, int *beadSet,
                                           double *kstr, double *eql){
 
 

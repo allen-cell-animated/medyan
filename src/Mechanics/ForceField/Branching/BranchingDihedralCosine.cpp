@@ -200,7 +200,7 @@ void BranchingDihedralCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double BranchingDihedralCosine::energy(double *coord, double *f, int *beadSet,
+double BranchingDihedralCosine::energy(double *coord, int *beadSet,
                                        double *kdih, double *pos){
 
 

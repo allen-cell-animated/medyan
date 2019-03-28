@@ -174,7 +174,7 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
 #endif
     for (auto &ff : _forceFields) {
 
-        auto tempEnergy = ff->computeEnergy(coord, nullptr, 0.0); // TODO: remove the 2 latter arguments
+        auto tempEnergy = ff->computeEnergy(coord, stretched);
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif

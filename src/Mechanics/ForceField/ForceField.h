@@ -42,7 +42,7 @@ public:
     /// Compute total energy of this forcefield in the system
     /// @return  the energy value if valid. If an inf or NaN value has been
     /// calculated, return -1.
-    virtual double computeEnergy(double *coord, double *f, double d) = 0;
+    virtual double computeEnergy(double *coord, bool stretched = false) = 0;
 
     /// Compute forces of this forcefield in the system. Update Bead
     /// forces accordingly.

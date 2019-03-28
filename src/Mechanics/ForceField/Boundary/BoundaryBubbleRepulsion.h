@@ -53,7 +53,7 @@ public:
         _neighborList = new BoundaryBubbleNL(SysParams::Boundaries().BoundaryCutoff);
     }
     
-    virtual double computeEnergy(double *coord, double *f, double d);
+    virtual double computeEnergy(double *coord) override;
    
     virtual void computeForces(double *coord, double *f);
     //virtual void computeForcesAux();

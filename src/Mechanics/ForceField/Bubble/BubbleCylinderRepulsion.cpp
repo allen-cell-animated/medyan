@@ -123,20 +123,10 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, double *f, double d) {
+double BubbleCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, bool stretched) {
     
-    double U = 0.0;
-    double U_i=0.0;
-    if (d == 0.0) {
-        U_i = _FFType.energy(coord, f, beadSet, bubbleSet, krep, slen, radius, nneighbors);
-    }
-    else {
-        U_i = _FFType.energy(coord, f, beadSet, bubbleSet,krep, slen, radius, nneighbors, d);
-    }
+    return _FFType.energy(coord, beadSet, bubbleSet, krep, slen, radius, nneighbors);
 
-
-    
-    return U;
 }
 
 template <class BRepulsionInteractionType>
@@ -240,7 +230,7 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 
 
 ///Template specializations
-template double BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(double *coord, double *f, double d);
+template double BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeEnergy(double *coord, bool stretched);
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForces(double *coord, double *f);
 //template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeForcesAux(double *coord, double *f);
 template void BubbleCylinderRepulsion<BubbleCylinderRepulsionExp>::computeLoadForces();

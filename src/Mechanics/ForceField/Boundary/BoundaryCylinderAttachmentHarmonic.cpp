@@ -20,7 +20,7 @@
 
 using namespace mathfunc;
 
-double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int *beadSet,
+double BoundaryCylinderAttachmentHarmonic::energy(double *coord, int *beadSet,
                                                   double *kattr, double *pins) {
     
 

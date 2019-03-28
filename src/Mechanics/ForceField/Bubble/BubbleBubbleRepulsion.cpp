@@ -30,7 +30,7 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
 
 
 template <class BRepulsionInteractionType>
-double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, double *f, double d) {
+double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -48,12 +48,7 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* c
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
             
-            if (d == 0.0)
-            U_i =  _FFType.energy(
-                                  bd1, bd2, radius1, radius2, kRep, screenLength);
-            else
-            U_i = _FFType.energy(
-                                 bd1, bd2, radius1, radius2, kRep, screenLength, d);
+            U_i = _FFType.energy(bd1, bd2, radius1, radius2, kRep, screenLength, stretched);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
@@ -118,7 +113,7 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(double *coo
 //}
 
 ///Template specializations
-template double BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(double *coord, double *f, double d);
+template double BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(double *coord, bool stretched);
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces(double *coord, double *f);
 //template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux(double *coord, double *f);
 template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::vectorize();

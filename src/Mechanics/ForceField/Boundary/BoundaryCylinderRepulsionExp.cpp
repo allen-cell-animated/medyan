@@ -209,7 +209,7 @@ void BoundaryCylinderRepulsionExp::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-double BoundaryCylinderRepulsionExp::energy(double *coord, double *f, int *beadSet,
+double BoundaryCylinderRepulsionExp::energy(double *coord, int *beadSet,
                                             double *krep, double *slen, int *nneighbors) {
 
     int nb, nc;

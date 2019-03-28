@@ -17,7 +17,7 @@
 
 #include "Bead.h"
 
-double BoundaryBubbleRepulsionExp::energy(double *coord, double *f, int *beadSet, double *krep, double *slen, int *nneighbors) {
+double BoundaryBubbleRepulsionExp::energy(double *coord, int *beadSet, double *krep, double *slen, int *nneighbors) {
     int nb, nc;
     double *coord1, R, r, U_i;
     double U = 0.0;

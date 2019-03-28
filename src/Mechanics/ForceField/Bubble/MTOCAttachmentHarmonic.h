@@ -23,7 +23,7 @@ class Bead;
 class MTOCAttachmentHarmonic {
     
 public:
-    double energy(double *coord, double *f, int *beadSet,
+    double energy(double *coord, int *beadSet,
                   double *kstr, double);
     double energy(double *coord, double *f, int *beadSet,
                   double *kstr, double, double);
