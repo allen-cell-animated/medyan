@@ -20,7 +20,7 @@ Membrane::Membrane(
     const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
 ) : Trackable(false, false, false, false),
     _mesh(typename MembraneMeshAttributeType::MetaAttribute{s, this}),
-    _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
+    _subSystem(s), _memType(membraneType) {
     
     // Build the meshwork topology using vertex and triangle information
     _mesh.init<typename MeshType::VertexTriangleInitializer>(

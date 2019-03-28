@@ -10,7 +10,7 @@ Database<Edge*> Edge::_edges;
 
 Edge::Edge(Membrane* parent, size_t topoIndex):
     Trackable(),
-    _parent(parent), _topoIndex{topoIndex}, _id(_edges.getID()) {
+    _parent(parent), _topoIndex{topoIndex} {
     
     // Set coordinate and add to compartment
     updateCoordinate();

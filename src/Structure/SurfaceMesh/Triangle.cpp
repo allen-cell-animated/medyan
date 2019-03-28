@@ -10,7 +10,7 @@ Database<Triangle*> Triangle::_triangles;
 
 Triangle::Triangle(Membrane* parent, size_t topoIndex):
     Trackable(true, false, true, false),
-    _parent(parent), _topoIndex{topoIndex}, _id(_triangles.getID()) {
+    _parent(parent), _topoIndex{topoIndex} {
 
 #ifdef MECHANICS
     // eqArea cannot be obtained at this moment

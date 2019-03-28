@@ -28,16 +28,14 @@ class Triangle:
     public Trackable,
     public Movable,
     // public Reactable,
-    public DynamicNeighbor {
+    public DynamicNeighbor,
+    public Database< Triangle, false > {
 
 private:
     Membrane* _parent; // Pointer to the meshwork it belongs to.
     size_t _topoIndex; // Index in the meshwork topology.
 
     unique_ptr<MTriangle> _mTriangle; // pointer to mech triangle
-
-    static Database<Triangle*> _triangles; // Collection of triangles in SubSystem
-    int _id; // Unique integer id of this triangle
 
     void updateCoordinate(); // helper function to update coordiante of this triangle
 
@@ -58,15 +56,13 @@ public:
 
     /// Get all instances of this class from the SubSystem
     static const vector<Triangle*>& getTriangles() {
-        return _triangles.getElements();
+        return getElements();
     }
-    /// Get ID
-    int getId()const { return _id; }
 
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem()override { _triangles.addElement(this); }
-    virtual void removeFromSubSystem()override { _triangles.removeElement(this); }
+    virtual void addToSubSystem()override { }
+    virtual void removeFromSubSystem()override { }
     //@}
 
     int getType()const;

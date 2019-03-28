@@ -28,7 +28,7 @@ removing vertices, edges (halfedges) and triangles to/from the SubSystem.
 However, the ownership of all elements is in this Membrane class through
 inheriting Composite.
 ******************************************************************************/
-class Membrane: public Composite, public Trackable {
+class Membrane: public Composite, public Trackable, public Database< Membrane, false > {
 public:
     using MembraneMeshAttributeType = MembraneMeshAttribute< SurfaceTriangularMesh >;
     using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
@@ -43,9 +43,6 @@ private:
     short _memType; // Membrane type
 
     SubSystem* _subSystem; // SubSystem pointer
-
-    static Database<Membrane*> _membranes; // Collection in SubSystem
-    int _id; // Unique integer id of this membrane
 
 public:
 
@@ -62,20 +59,17 @@ public:
     const auto& getMesh() const { return _mesh; }
     auto&       getMesh()       { return _mesh; }
 
-    // Get Id
-    int getId()const { return _id; }
-    
     // SubSystem management, inherited from Trackable
-    virtual void addToSubSystem()override { _membranes.addElement(this); }
-    virtual void removeFromSubSystem()override { _membranes.removeElement(this); }
+    virtual void addToSubSystem()override { }
+    virtual void removeFromSubSystem()override { }
     
     /// Get all instances of this class from the SubSystem
     static const vector<Membrane*>& getMembranes() {
-        return _membranes.getElements();
+        return getElements();
     }
     /// Get the number of membranes in this system
-    static int numMembranes() {
-        return _membranes.countElements();
+    static std::size_t numMembranes() {
+        return getElements().size();
     }
 
     //@{
