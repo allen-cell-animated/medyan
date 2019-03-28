@@ -22,7 +22,7 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(bool
 
         double area = 0.0;
         for(const auto& v : m->getMesh().getVertices())
-            area += stretched ? v.attr.gVertex.sArea : v.attr.gVertex.area;
+            area += stretched ? v.attr.gVertexS.area : v.attr.gVertex.area;
 
         U_i = _FFType.energy(area, kElastic, eqArea); 
 
@@ -111,7 +111,7 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(bool stretc
 
         double area = 0.0;
         for(const auto& t : m->getMesh().getTriangles())
-            area += stretched ? t.attr.gTriangle.sArea : t.attr.gTriangle.area;
+            area += stretched ? t.attr.gTriangleS.area : t.attr.gTriangle.area;
 
         U_i = _FFType.energy(area, kElastic, eqArea); 
 

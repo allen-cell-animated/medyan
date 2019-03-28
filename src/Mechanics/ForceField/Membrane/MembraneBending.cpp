@@ -21,8 +21,8 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(bool stret
             const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
             const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
 
-            const auto area = stretched ? v.attr.gVertex.sArea : v.attr.gVertex.area;
-            const auto curv = stretched ? v.attr.gVertex.sCurv : v.attr.gVertex.curv;
+            const auto area = stretched ? v.attr.gVertexS.area : v.attr.gVertex.area;
+            const auto curv = stretched ? v.attr.gVertexS.curv : v.attr.gVertex.curv;
 
             U_i += _FFType.energy(area, curv, kBending, eqCurv);
         }

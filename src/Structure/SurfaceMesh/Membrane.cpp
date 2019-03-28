@@ -62,21 +62,3 @@ void Membrane::printSelf()const {
     cout << endl;
     
 }
-
-double Membrane::meshworkQuality()const {
-    /*
-    This function calculates the quality of the meshwork of this membrane, and
-    the result is represented as a value between 0 and 1, 0 being worst and 1
-    being the best case (all equilateral).
-
-    The criterion used is the minimum angle in each triangle, parametrized and
-    averaged over all triangles. And the calculation requires the result of
-        - The angle calculation of all triangles
-    */
-
-    double res = 0;
-
-    // TODO implementation
-
-    return res;
-}
