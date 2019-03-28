@@ -681,14 +681,13 @@ void Controller::executeSpecialProtocols() {
 
         pinLowerBoundaryFilaments();
     }
+    
 }
 
 void Controller::updatePositions() {
 
     //update bubble
-    for(auto b : Bubble::getBubbles()) {
-        b->updatePositionManually();
-    }
+    updateBubblePositions();
     
     //NEED TO UPDATE CYLINDERS FIRST
     for(auto c : Cylinder::getCylinders()) c->updatePosition();
@@ -742,6 +741,43 @@ void Controller::updateBubblePositions() {
     
     //update bubble again based on time
     for(auto b : Bubble::getBubbles()) b->updatePositionManually();
+    
+    if(SysParams::Chemistry().makeRateDepend && tau() - tp > 1) {
+        tp+=1;
+        
+        for(auto &filament : Filament::getFilaments()) {
+            double deltaL;
+            double numCyl = 0;
+            for (auto cylinder : filament->getCylinderVector()){
+                
+                deltaL += cylinder->getMCylinder()->getLength() -
+                cylinder->getMCylinder()->getEqLength();
+                numCyl += 1;
+            }
+            
+            //print last
+            Cylinder* cylinder = filament->getCylinderVector().back();
+            deltaL += cylinder->getMCylinder()->getLength() -
+            cylinder->getMCylinder()->getEqLength();
+            numCyl += 1;
+            
+            double k = cylinder->getMCylinder()->getStretchingConst();
+            
+            //if the filament tension is higher than threshold, regardless of sign
+            if(k*deltaL/numCyl > SysParams::Chemistry().makeRateDependForce ||
+               -k*deltaL/numCyl > SysParams::Chemistry().makeRateDependForce ){
+                
+                Cylinder* pCyl = filament->getCylinderVector().back();
+                for(auto &r : pCyl->getCCylinder()->getInternalReactions()) {
+                    if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
+                        float newrate = 5 * r->getBareRate();
+                        r->setRateScaled(newrate);
+                        r->updatePropensity();
+                    }
+                }
+            }
+        }
+    }
 }
 
 

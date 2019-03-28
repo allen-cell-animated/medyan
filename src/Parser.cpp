@@ -196,6 +196,13 @@ void SystemParser::readChemParams() {
                     CParams.makeFilamentsStaticTime = atof(lineVector[2].c_str());
                 }
             }
+            else if (lineVector.size() == 4) {
+                if(lineVector[1]  == "RATEDEPEND") {
+                    CParams.makeRateDepend = true;
+                    CParams.makeRateDependTime = atof(lineVector[2].c_str());
+                    CParams.makeRateDependForce = atof(lineVector[3].c_str());
+                }
+            }
         }
     }
     

@@ -174,7 +174,12 @@ struct ChemParams {
     /// bound linkers for the rest of simulation.
     bool makeLinkersStatic = false;
     double makeLinkersStaticTime = 0.0;
-
+    
+    /// Make (de)polymerization depends on stress
+    bool makeRateDepend = false;
+    double makeRateDependTime = 0.0;
+    double makeRateDependForce = 0.0;
+    
     //@}
 #ifdef CUDAACCL_NL
     string bindingmanagerlist = "";

@@ -122,6 +122,9 @@ private:
     void pinBoundaryFilaments();
     void pinLowerBoundaryFilaments();
     
+    double tp = SysParams::Chemistry().makeRateDependTime;
+    double threforce = SysParams::Chemistry().makeRateDependForce;
+    
 public:
     double chemistrytime = 0.0;
     double minimizationtime = 0.0;
