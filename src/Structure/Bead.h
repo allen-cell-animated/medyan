@@ -95,7 +95,9 @@ public:
     Bead(Composite* parent, int position);
     
     /// Auxilliary coordinate getter
-    template< bool stretched = false > const vector<double>& getCoordinate() const;
+    template< bool stretched = false > const vector<double>& getCoordinate() const {
+        return stretched ? coordinateStretched : coordinate;
+    }
 
     /// Get Compartment
     Compartment* getCompartment() {return _compartment;}
@@ -248,8 +250,5 @@ private:
     static Database<Bead*> _pinnedBeads; ///< Collection of pinned beads in SubSystem
                                          ///< (attached to some element in SubSystem)
 };
-
-template<> inline const vector<double>& Bead::getCoordinate<true>() const { return coordinateStretched; }
-template<> inline const vector<double>& Bead::getCoordinate<false>() const { return coordinate; }
 
 #endif
