@@ -8,7 +8,7 @@ double VolumeConservationMembraneHarmonic::energy(double volume, double kBulk, d
 }
 
 void VolumeConservationMembraneHarmonic::forces(
-    Vertex* v,
+    double* force,
     double volume, const mathfunc::Vec3& dVolume,
     double kBulk, double eqVolume
 ) {
@@ -17,7 +17,7 @@ void VolumeConservationMembraneHarmonic::forces(
 
     double coeff = -kBulk / eqVolume * (volume - eqVolume);
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        v->force[coordIdx] += coeff * dVolume[coordIdx];
+        force[coordIdx] += coeff * dVolume[coordIdx];
     }
 }
 

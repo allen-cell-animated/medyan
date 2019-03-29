@@ -9,7 +9,7 @@
 #include "VolumeConservationMembraneHarmonic.h"
 
 template<>
-double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEnergy(bool stretched) {
+double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEnergy(const double* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -41,7 +41,7 @@ double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEn
 }
 
 template<>
-void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForces() {
+void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForces(const double* coord, double* force) {
     
     for (auto m: Membrane::getMembranes()) {
 
@@ -59,7 +59,7 @@ void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForc
             Vertex* const v = mesh.getVertexAttribute(vi).vertex;
             const auto& dVolume = mesh.getVertexAttribute(vi).gVertex.dVolume;
 
-            _FFType.forces(v, volume, dVolume, kBulk, eqVolume);
+            _FFType.forces(force + 3 * v->Bead::getIndex(), volume, dVolume, kBulk, eqVolume);
         }
     }
 }

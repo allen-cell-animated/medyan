@@ -36,12 +36,15 @@ private:
 public:
     /// Initialize the volume forcefields
     VolumeConservationFF(string& interaction);
-    
+
+    virtual void vectorize() override {}
+    virtual void cleanup() override {}
+
     virtual string getName() { return "Volume conservation"; }
     virtual void whoIsCulprit();
 
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
+    virtual double computeEnergy(double* coord, bool stretched) override;
+    virtual void computeForces(double* coord, double* f) override;
     virtual void computeForcesAux();
     
     virtual void computeLoadForces() {}

@@ -9,8 +9,8 @@ private:
     VolumeConservationMembraneInteractionType _FFType;
 
 public:
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
+    virtual double computeEnergy(const double* coord, bool stretched) override;
+    virtual void computeForces(const double* coord, double* force) override;
     virtual void computeForcesAux();
 
     virtual std::string getName()const { return "Membrane Volume Conservation"; }
