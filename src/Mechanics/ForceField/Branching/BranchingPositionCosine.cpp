@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -196,7 +196,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
     double *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
     double *mp = new double[3];
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -230,7 +230,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 
         U += U_i;
     }
-    delete mp;
+    delete[] mp;
     return U;
 }
 
@@ -244,7 +244,7 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
     double *mp = new double[3];
     double *vzero = new double[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -282,8 +282,8 @@ double BranchingPositionCosine::energy(double *coord, double *f, int *beadSet,
 
         U += U_i;
     }
-    delete mp;
-    delete vzero;
+    delete[] mp;
+    delete[] vzero;
     return U;
 }
 
@@ -357,5 +357,5 @@ void BranchingPositionCosine::forces(double *coord, double *f, int *beadSet,
         f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
         f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
     }
-    delete mp;
+    delete[] mp;
 }

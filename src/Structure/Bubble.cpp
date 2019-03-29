@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -27,6 +27,13 @@ Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
     _kRepuls = SysParams::Mechanics().BubbleK[_type];
     _radius  = SysParams::Mechanics().BubbleRadius[_type];
     _screenLength = SysParams::Mechanics().BubbleScreenLength[_type];
+    
+    if(SysParams::Mechanics().MTOCBendingK.size() == 0){
+        _MTOCBendingK = 0.0;
+    }
+    else{
+      _MTOCBendingK = SysParams::Mechanics().MTOCBendingK[_type];
+    }
           
     //set up bead
     _bead = _ps->addTrackable<Bead>(coordinates, this, 0);

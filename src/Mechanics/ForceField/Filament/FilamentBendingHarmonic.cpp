@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -18,7 +18,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
-
+#include "Bubble.h"
 #include "MathFunctions.h"
 #ifdef CUDAACCL
 #include <cuda.h>
@@ -29,17 +29,18 @@
 using namespace mathfunc;
 #ifdef CUDAACCL
 void FilamentBendingHarmonic::deallocate(){
-    if(!(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamDestroy(stream));
+//    if(!(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamDestroy(stream));
     CUDAcommon::handleerror(cudaFree(gU_i));
     CUDAcommon::handleerror(cudaFree(gU_sum));
     CUDAcommon::handleerror(cudaFree(gFF));
     CUDAcommon::handleerror(cudaFree(ginteraction));
 }
-void FilamentBendingHarmonic::optimalblocksnthreads( int nint){
-    //CUDA stream create
-    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
-        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+void FilamentBendingHarmonic::optimalblocksnthreads( int nint, cudaStream_t stream_pass){
+//    //CUDA stream create
+//    if(stream == NULL || !(CUDAcommon::getCUDAvars().conservestreams))
+//        CUDAcommon::handleerror(cudaStreamCreate(&stream));
+    stream = stream_pass;
     blocksnthreadse.clear();
     blocksnthreadsez.clear();
     blocksnthreadsf.clear();
@@ -118,11 +119,12 @@ double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
 double* FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
                                       double *kbend, double *eqt, double *z, int *params) {
     if(blocksnthreadsez[1]>0) {
+
         FilamentBendingHarmonicenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (18 * blocksnthreadsez[1]) *
                                             sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i,
                                             z, CUDAcommon::getCUDAvars().gculpritID,
                                             CUDAcommon::getCUDAvars().gculpritFF,
-                                            CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction );
+                                            CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
         auto cvars = CUDAcommon::getCUDAvars();
         cvars.streamvec.push_back(&stream);
         CUDAcommon::cudavars = cvars;
@@ -178,11 +180,11 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
                                        double *kbend, double *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     double *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -221,11 +223,11 @@ double FilamentBendingHarmonic::energy(double *coord, double *f, int *beadSet,
                                        double *kbend, double *eqt, double d ){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist, U_i, L1, L2, L1L2, l1l2;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -269,7 +271,7 @@ void FilamentBendingHarmonic::forces(double *coord, double *f, int *beadSet,
                                      double *kbend, double *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
-    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
+    int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size() - Bubble::numBubbles());
 
     double *coord1, *coord2, *coord3, *force1, *force2, *force3, dist,
             L1, L2, l1l2, invL1, invL2, A,B,C, k;

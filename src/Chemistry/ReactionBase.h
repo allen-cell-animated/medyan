@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -83,6 +83,11 @@ protected:
     
     float _rate;      ///< the rate for this ReactionBase
     float _rate_bare; ///< the bare rate for this ReactionBase (original rate)
+    
+    double _volumeFrac; ///< Used in compartments to store volume fraction of the compartment
+    int _rateVolumeDepExp; ///< Exponent of rate dependency on volume
+    ///< Dependence on bulk properties are NOT considered currently
+    
 #ifdef REACTION_SIGNALING
     unique_ptr<ReactionEventSignal> _signal;///< Can be used to broadcast a signal
                                             ///< associated with this ReactionBase
@@ -110,7 +115,7 @@ public:
     
     /// The main constructor:
     /// @param rate - the rate constant for this ReactionBase
-    ReactionBase (float rate, bool isProtoCompartment);
+    ReactionBase (float rate, bool isProtoCompartment, double volumeFrac=1.0, int rateVolumeDepExp=0);
     
     /// No copying (including all derived classes)
     ReactionBase (const ReactionBase &rb) = delete;
@@ -210,6 +215,30 @@ public:
     
     /// Sets the ReactionBase rate to the parameter "rate"
     void setRate(float rate) {_rate=rate;}
+    
+    // Sets the scaled rate based on volume dependence.
+    void setRateScaled(float rate) {
+        // This can automatically set the "_rate" as scaled value of "rate"
+
+//        if(tau() < 2.0) {
+//            cout << "Reaction: " << getReactionType() << ". VolFrac = " << _volumeFrac << ", bare rate = " << rate << endl;
+//        }
+        // Some possibilities of the exponent are implemented specifically to decrease the use of "pow"
+        switch(_rateVolumeDepExp) {
+            case 0:
+                _rate = rate; break;
+            case -1:
+                _rate = rate / _volumeFrac; break;
+            default:
+                if(_volumeFrac == 1.0f) _rate = rate;
+                else _rate = rate * std::pow(_volumeFrac, _rateVolumeDepExp);
+                break;
+        }
+    }
+    
+    /// Getter and setter for compartment volume fraction
+    double getVolumeFrac()const { return _volumeFrac; }
+    void setVolumeFrac(float volumeFrac) { _volumeFrac = volumeFrac; }
     
     /// Sets the RNode pointer associated with this ReactionBase to rhs. Usually is
     /// called only by the Gillespie-like algorithms.

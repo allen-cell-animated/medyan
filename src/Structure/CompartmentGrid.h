@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -47,10 +47,12 @@ private:
 public:
     /// Constructor, creates a number of Compartment instances
     CompartmentGrid(int numCompartments) {
-        
         //add children
-        for(size_t i=0; i<numCompartments; ++i)
-            addChild(unique_ptr<Component>(new Compartment()));
+        for(size_t i=0; i<numCompartments; ++i) {
+            auto c = new Compartment();
+            c->_ID = i;
+            addChild(unique_ptr<Component>(c));
+        }
     }
     
     /// Get compartments that this grid holds

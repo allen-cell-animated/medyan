@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -52,7 +52,7 @@ private:
 
 public:
     /// Constructor which sets a subsystem pointer
-    MController(SubSystem* s) {_subSystem = s;}
+    MController(SubSystem* s) {_subSystem = s; }
     
     /// Initialze the force fields and minimizers used
     void initialize(MechanicsFFType forceFields, MechanicsAlgorithm Minimizers) {

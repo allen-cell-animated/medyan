@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -199,7 +199,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
     double *coord1, *coord2, *coord3, dist, U_i;
     double *v1 = new double[3];
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -238,7 +238,7 @@ double BranchingStretchingHarmonic::energy(double *coord, double *f, int *beadSe
     double *v1 = new double[3];
     double *vzero = new double[3]; vzero[0] = 0; vzero[1] = 0; vzero[2] = 0;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

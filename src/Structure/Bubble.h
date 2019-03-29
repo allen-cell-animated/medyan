@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -47,6 +47,7 @@ private:
     double _radius;       ///< The radius of this bubble
     double _kRepuls;      ///< Repulsion constant for bubble-bubble and bubble-cylinder interactions
     double _screenLength; ///< Screening length for a repulsive potential
+    double _MTOCBendingK; ///< use for MTOC-MT bending force field
     
     int _ID;        ///< Identifier
     
@@ -66,6 +67,7 @@ public:
     double getRadius() {return _radius;}
     double getRepulsionConst() {return _kRepuls;}
     double getScreeningLength() {return _screenLength;}
+    double getMTOCBendingK() {return _MTOCBendingK;}
     
     Bead* getBead() {return _bead;}
     

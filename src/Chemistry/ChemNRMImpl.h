@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -246,14 +246,10 @@ class ChemNRMImpl : public ChemSimImpl {
 public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0 and the number
     /// of reactions to 0
-#ifdef DEBUGCONSTANTSEED
-    ChemNRMImpl() :ChemSimImpl(),
-    _exp_distr(0.0), _n_reacts(0) { resetTime(); }
-#else
-    ChemNRMImpl() :ChemSimImpl(), _eng(rdtsc()),
-    _exp_distr(0.0), _n_reacts(0) { resetTime(); }
-#endif
-    
+    ChemNRMImpl() :
+        ChemSimImpl(),
+        _exp_distr(0.0), _n_reacts(0) { resetTime(); }
+
     /// Copying is not allowed
     ChemNRMImpl(const ChemNRMImpl &rhs) = delete;
     
@@ -351,9 +347,6 @@ private:
                                                                     ///< representing the reaction network
     boost_heap _heap; ///< A priority queue for the NRM algorithm,
                       ///< containing PQNode elements
-#ifndef DEBUGCONSTANTSEED
-    mt19937 _eng; ///< Random number generator
-#endif
     exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     double _t; ///< global time
     size_t _n_reacts; ///< number of reactions in the network

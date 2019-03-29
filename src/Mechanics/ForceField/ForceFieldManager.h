@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -69,6 +69,15 @@ public:
 #ifdef CUDAACCL
     vector<int> blocksnthreads;
     int *gpu_nint;
+<<<<<<< HEAD
+=======
+    //@{
+    vector<int> bntaddvec2;
+    int *gpu_params;
+    vector<int> params;
+    //@}
+    void assignallforcemags();
+>>>>>>> RestartDebug_FlatCylinder
 #endif
     void assignallforcemags();
 

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -19,13 +19,13 @@
 #include "CGFletcherRievesMethod.h"
 #include "CGPolakRibiereMethod.h"
 #include "CGSteepestDescent.h"
+#include "Minimizer.h"
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
 
 /// An implementation of [Minimzer](@ref Minimizer).
-template <class CGType>
-class ConjugateGradient : public Minimizer {
+template <class CGType> class ConjugateGradient : public Minimizer {
     
 private:
     CGType _CGType;  ///< Implementation of a CG method

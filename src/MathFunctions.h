@@ -1,8 +1,8 @@
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -26,6 +26,10 @@
 /// mathfunc includes functions to calculate distances, products, and midpoints
 
 namespace mathfunc {
+    struct temp{
+        int a;
+        int b;
+    };
 #if !defined(__CUDA_ARCH__) || __CUDA_ARCH__ >= 600
 
 #else
@@ -52,7 +56,7 @@ namespace mathfunc {
     return __longlong_as_double(old);
   }
 #endif
-#ifdef CUDAACCL
+#ifdef CUDAACCLareParallel
      __host__ inline int nextPowerOf2( int n)
     {
         n--;
@@ -76,7 +80,12 @@ namespace mathfunc {
         if(M > THREADSPERBLOCK){
             if(M > maxthreads) {
                 blocks = 8;
+                blocks = M /(4 * THREADSPERBLOCK) +1;
                 threads = THREADSPERBLOCK;
+                std::cout<<"MaxF Number of elements is greater than number of "
+                        "threads"<<endl;
+                cout<<"Choosing "<<blocks<<" blocks and "<<THREADSPERBLOCK<<" threads per"
+                        " block"<<endl;
             }
             else if(M > THREADSPERBLOCK){
                 blocks = M /(4 * THREADSPERBLOCK) +1;
@@ -98,11 +107,12 @@ namespace mathfunc {
     }
     __global__ void resetintvariableCUDA(int *variable);
     __global__ void resetdoublevariableCUDA(double *variable);
-     __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot);
+//     __global__ void addvector(double *U, int *params, double *U_sum);
 //    __global__ void addvector(double *U, int *params, double *U_sum, double *U_tot, int* culpritID, char* culpritFF,
 //                              char* culpritinteraction, char *FF, char *interaction);
-//    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot);
+    __global__ void addvectorred(double *U, int *params, double *U_sum, double *U_tot);
     __global__ void addvectorred2(double *U, int *params, double *U_sum, double *U_tot);
+    __global__ void addvectorred3(double *U, int *params, double *U_sum);
     #endif
     /// Normalize a vector
     inline void normalize(vector<double> &v) {
@@ -117,7 +127,11 @@ namespace mathfunc {
     /// Return normalized vector not in place
     inline vector<double> normalizeVector(const vector<double> &v) {
 
-        double norm = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        double x2 = v[0] * v[0];
+        double y2 = v[1] * v[1];
+        double z2 = v[2] * v[2];
+
+        double norm = sqrt( x2+y2+z2);
 
         vector<double> v1;
 
@@ -135,7 +149,11 @@ namespace mathfunc {
     #endif
     inline void normalizeVector(double *v) {
 
-        double norm = sqrt((*(v)) * (*(v)) + (*(v + 1)) * (*(v + 1)) + (*(v + 2)) * (*(v + 2)));
+        double x2 = v[0] * v[0];
+        double y2 = v[1] * v[1];
+        double z2 = v[2] * v[2];
+
+        double norm = sqrt( x2+y2+z2);
         *(v) = *(v) / norm;
         *(v + 1) = *(v + 1) / norm;
         *(v + 2) = *(v + 2) / norm;
@@ -145,6 +163,20 @@ namespace mathfunc {
     inline double magnitude(const vector<double> &v) {
 
         return sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }
+
+    inline double sqmagnitude(const vector<double> &v) {
+
+        return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }
+
+    inline double sqmagnitude(const double* v) {
+
+        double x2 = v[0] * v[0];
+        double y2 = v[1] * v[1];
+        double z2 = v[2] * v[2];
+
+        return (x2+y2+z2);
     }
     ///ARRAY VERSION
     #ifdef CUDAACCL
@@ -159,6 +191,15 @@ namespace mathfunc {
     __host__ __device__
     #endif
     inline double getdistancefromplane(double *coord, double * plane,int id){
+        return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
+               sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
+    }
+
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
+    inline double getdistancefromplane(double *coord, double * plane){
+        int id = 0;
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
     }
@@ -198,6 +239,7 @@ namespace mathfunc {
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
+
     inline double twoPointDistance(const vector<double> &v1, double const *v2) {
 
         return sqrt((*(v2) - v1[0]) * (*(v2) - v1[0]) +
@@ -205,6 +247,14 @@ namespace mathfunc {
                     (*(v2 + 2) - v1[2]) * (*(v2 + 2) - v1[2]));
     }
     //@}
+
+    inline double twoPointDistancesquared(const vector<double> &v1, const vector<double>
+                                          &v2) {
+
+        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) +
+                (v2[1] - v1[1]) * (v2[1] - v1[1]) +
+                (v2[2] - v1[2]) * (v2[2] - v1[2]));
+    }
 
     /// Compute distance between two points with coordinates: (x1,y1,z1) and (x2,y2,z3)
     /// ARRAY VERSION
@@ -217,6 +267,26 @@ namespace mathfunc {
                     (v2[2] - v1[2]) * (v2[2] - v1[2]));
     }
 
+    inline double twoPointDistancesquared(double const *v1, double const *v2) {
+        double dx = (v2[0] - v1[0]);
+        double dy = (v2[1] - v1[1]);
+        double dz = (v2[2] - v1[2]);
+        return(dx*dx+dy*dy+dz*dz);
+
+//        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
+//                    (v2[2] - v1[2]) * (v2[2] - v1[2]));
+    }
+
+    inline double twoPointDistancesquared(double const *v1, double const *v2, int id1,
+                                          int id2) {
+        double dx = (v2[id1] - v1[id2]);
+        double dy = (v2[id1 + 1] - v1[id2 + 1]);
+        double dz = (v2[id1 + 2] - v1[id2 + 2]);
+        return(dx*dx+dy*dy+dz*dz);
+
+//        return ((v2[0] - v1[0]) * (v2[0] - v1[0]) + (v2[1] - v1[1]) * (v2[1] - v1[1]) +
+//                    (v2[2] - v1[2]) * (v2[2] - v1[2]));
+    }
     ///CUDA VERSION
     #ifdef CUDAACCL
     __host__ __device__
@@ -254,7 +324,10 @@ namespace mathfunc {
 
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
-    /// ARRAY VERSION
+    /// CUDA & ARRAY VERSION
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline double twoPointDistanceStretched(double const *v1,
                                             double const *p1,
                                             double const *v2,
@@ -361,7 +434,10 @@ namespace mathfunc {
 
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3)
-    /// ARRAY VERSION
+    /// ARRAY VERSION & CUDA version
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline double scalarProduct(double const *v1, double const *v2,
                                 double const *v3, double const *v4) {
 //        return((*(v2)-*(v1))*(*(v4)-*(v3))
@@ -397,6 +473,8 @@ namespace mathfunc {
                 (v2[id2 + 1] - v1[id1 + 1]) * (v4[id4 + 1] - v3[id3 + 1]) +
                 (v2[id2 + 2] - v1[id1 + 2]) * (v4[id4 + 2] - v3[id3 + 2]));
     }
+
+
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
     inline double scalarProductStretched(const vector<double> &v1,
@@ -422,6 +500,10 @@ namespace mathfunc {
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
     ///
+    //CUDA version & ARRAY VERSION
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline double scalarProductStretched(double const *v1,
                                          double const *p1,
                                          double const *v2,
@@ -468,6 +550,7 @@ namespace mathfunc {
                     ((v4[id + 2] + d * p4[id + 2]) - (v3[id + 2] + d * p3[id + 2]));
         return xx + yy + zz;
     }
+
 
     #ifdef CUDAACCL
     __host__ __device__
@@ -516,6 +599,48 @@ namespace mathfunc {
                     ((v4[id4 + 2] + d * p4[id4 + 2]) - (v3[id3 + 2] + d * p3[id3 + 2]));
         return xx + yy + zz;
     }
+
+    inline double scalarprojection(vector<double> a, vector<double> b){
+        return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+    }
+
+    inline double scalarprojection(double* a, double* b){
+        return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+    }
+    inline double maxdistbetweencylinders(const vector<double> &v1,
+                                   const vector<double> &v2,
+                                   const vector<double> &v3,
+                                   const vector<double> &v4) {
+        double maxdist = 0.0;
+        double d1 = twoPointDistancesquared(v1, v3);maxdist = max(maxdist,d1);
+        double d2 = twoPointDistancesquared(v1, v4);maxdist = max(maxdist,d2);
+        double d3 = twoPointDistancesquared(v2, v3);maxdist = max(maxdist,d3);
+        double d4 = twoPointDistancesquared(v2, v4);maxdist = max(maxdist,d4);
+        return maxdist;
+    }
+
+    inline double maxdistbetweencylinders(const double* v1,
+                                          const double* v2,
+                                          const double* v3,
+                                          const double* v4) {
+        double maxdist = 0.0;
+        double d1 = twoPointDistancesquared(v1, v3);maxdist = max(maxdist,d1);
+        double d2 = twoPointDistancesquared(v1, v4);maxdist = max(maxdist,d2);
+        double d3 = twoPointDistancesquared(v2, v3);maxdist = max(maxdist,d3);
+        double d4 = twoPointDistancesquared(v2, v4);maxdist = max(maxdist,d4);
+        return maxdist;
+    }
+
+    inline double maxdistsqbetweenbindingsites(const double* v1,
+                                          const double* v2) {
+        double maxdist = 0.0;
+        double d1 = twoPointDistancesquared(v1, v2,0,0);maxdist = max(maxdist,d1);
+        double d2 = twoPointDistancesquared(v1, v2,3,3);maxdist = max(maxdist,d2);
+        double d3 = twoPointDistancesquared(v2, v2,6,6);maxdist = max(maxdist,d3);
+        double d4 = twoPointDistancesquared(v2, v2,9,9);maxdist = max(maxdist,d4);
+        return maxdist;
+    }
+
     /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
     /// v2[x,y,z] + d*p2[x,y,z]
     inline double dotProductStretched(const vector<double> &v1,
@@ -559,10 +684,15 @@ namespace mathfunc {
                               double const *v2,
                               double const *v3,
                               double const *v4) {
-        double vx =
-                (*(v2 + 1) - *(v1 + 1)) * (*(v4 + 2) - *(v3 + 2)) - (*(v2 + 2) - *(v1 + 2)) * (*(v4 + 1) - *(v3 + 1));
-        double vy = (*(v2 + 2) - *(v1 + 2)) * (*(v4) - *(v3)) - (*(v2) - *(v1)) * (*(v4 + 2) - *(v3 + 2));
-        double vz = (*(v2) - *(v1)) * (*(v4 + 1) - *(v3 + 1)) - (*(v2 + 1) - *(v1 + 1)) * (*(v4) - *(v3));
+        double v211 = (v2[1] - v1[1]);
+        double v430 = (v4[0] - v3[0]);
+        double v212 = (v2[2] - v1[2]);
+        double v432 = (v4[2] - v3[2]);
+        double v431 = (v4[1] - v3[1]);
+        double v210 = (v2[0] - v1[0]);
+        double vx =  v211 * v432 - v212 * v431;
+        double vy = v212 * v430 - v210 * v432;
+        double vz = v210 * v431 - v211 * v430;
 
         v[0] = vx;
         v[1] = vy;
@@ -807,12 +937,16 @@ namespace mathfunc {
     }
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v1| = alpha. ARRAY VERSION
-
+    //CUDA & ARRAY version
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline void midPointCoordinate(double *v, double const *v1, double const *v2, double alpha) {
 
-        *(v) = ((*v1) * (1.0 - alpha) + alpha * (*(v2)));
-        *(v + 1) = (*(v1 + 1) * (1.0 - alpha) + alpha * (*(v2 + 1)));
-        *(v + 2) = (*(v1 + 2) * (1.0 - alpha) + alpha * (*(v2 + 2)));
+        double beta = 1 - alpha;
+        v[0] = (v1[0] * beta + alpha * v2[0]);
+        v[1] = (v1[1] * beta + alpha * v2[1]);
+        v[2] = (v1[2] * beta + alpha * v2[2]);
     }
 
     //CUDA version
@@ -842,7 +976,10 @@ namespace mathfunc {
 
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
-    /// ARRAY VERSION
+    /// ARRAY & CUDA VERSION
+#ifdef CUDAACCL
+    __host__ __device__
+#endif
     inline void midPointCoordinateStretched(double *v,
                                             double const *v1,
                                             double const *p1,
@@ -1197,10 +1334,10 @@ namespace mathfunc {
         auto v3 = {p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2]};
 
         auto cp = crossProduct(v1, v2);
-
         return areEqual(dotProduct(v3, cp), 0.0);
     }
 
+    inline size_t blockToSmemZero(int blockSize){return 0.0 * sizeof(double);}
     inline size_t blockToSmem(int blockSize){return 12 * blockSize * sizeof(double);}
     inline size_t blockToSmemez(int blockSize){return 24 * blockSize * sizeof(double);}
     inline size_t blockToSmemF(int blockSize){return 6 * blockSize * sizeof(double);}

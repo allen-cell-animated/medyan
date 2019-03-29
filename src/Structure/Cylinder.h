@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -28,10 +28,13 @@
 #include "Reactable.h"
 #include "DynamicNeighbor.h"
 #include "Component.h"
+#include "CUDAcommon.h"
+#include "Bead.h"
 
 //FORWARD DECLARATIONS
 class Filament;
 class Compartment;
+class Bin;
 
 /// A container to store a MCylinder and CCylinder.
 /*!
@@ -67,7 +70,7 @@ private:
     
     short _type; ///< Type of cylinder, either corresponding to Filament or other
                                        
-    int _ID; ///< Unique ID of cylinder, managed by Database
+    int _ID = -1; ///< Unique ID of cylinder, managed by Database
     
     Compartment* _compartment = nullptr; ///< Where this cylinder is
     
@@ -92,7 +95,9 @@ public:
     vector<double> coordinate;
     vector<Bin*> _binvec; //vector of bins. binID corresponding to each binGrid.
     ///< Coordinates of midpoint, updated with updatePosition()
-    int _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector. Continuous ID assigned for
+    vector<Bin*> _hbinvec;
+    long _dcIndex; ///<Position based on how they occur in Compartment _cylinder vector.
+///< Continuous ID assigned for
 ///< CUDANL calculation
     /// Constructor, initializes a cylinder
     Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int position,
@@ -152,11 +157,17 @@ public:
     //@{
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() {
-//        std::cout<<"Adding cylinder "<<this<<endl;
         _cylinders.addElement(this);}
     virtual void removeFromSubSystem() {
-//        std::cout<<"Removing cylinder "<<this<<endl;
+/*        std::cout<<"removing cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<" with "
+                "bindices "<<_b1->_dbIndex<<" "<<_b2->_dbIndex<<endl;*/
+        //Remove from cylinder structure by resetting to default value
+        //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
+        removedcindex.push_back(_dcIndex);
+        resetarrays();
+        _dcIndex = -1;
         _cylinders.removeElement(this);
+        Ncyl = _cylinders.getElements().size();
     }
     //@}
     
@@ -184,6 +195,7 @@ public:
     /// Returns whether a cylinder is within a certain distance from another
     /// Uses the closest point between the two cylinders
     virtual bool within(Cylinder* other, double dist);
+<<<<<<< HEAD
                                        
                                     
     void setFilID(int filID){
@@ -193,6 +205,100 @@ public:
     int getFilID(){
         return _filID;
     };
+=======
+
+    //Vectorize beads so the coordinates are all available in a single array.
+    //@{
+    static int maxcindex;
+    static int vectormaxsize;
+    static int Ncyl;
+    static vector<int> removedcindex;
+    static void revectorizeifneeded(){
+        int newsize = vectormaxsize;
+        bool check = false;
+        if(Bead::triggercylindervectorization || vectormaxsize - maxcindex <= bead_cache/20){
+
+            newsize = (int(Ncyl/cylinder_cache)+2)*cylinder_cache;
+            if(removedcindex.size() >= bead_cache)
+                newsize = (int(Ncyl/cylinder_cache)+1)*cylinder_cache;
+            if(newsize != vectormaxsize || Bead::triggercylindervectorization){
+                check = true;
+                cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
+                Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+                CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
+                delete[] cylindervec;
+                delete[] cylinderpointervec;
+                delete[] ccylindervec;
+                cylinder *newcylindervec = new cylinder[newsize];
+                Cylinder **newcylinderpointervec = new Cylinder*[newsize];
+                CCylinder **newccylindervec = new CCylinder*[newsize];
+                CUDAcommon::serlvars.cylindervec = newcylindervec;
+                CUDAcommon::serlvars.cylinderpointervec = newcylinderpointervec;
+                CUDAcommon::serlvars.ccylindervec = newccylindervec;
+                revectorize(newcylindervec, newcylinderpointervec, newccylindervec);
+                vectormaxsize = newsize;
+            }
+        }
+        Bead::triggercylindervectorization = false;
+        //@{ check begins
+        /*if(check) {
+            cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+            Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+            CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+            double *coord = CUDAcommon::serlvars.coord;
+            std::cout<<"revectorized cylinders"<<endl;
+            std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " "
+                    "Beads "
+                    "" << Bead::getBeads().size() << endl;
+            for (auto cyl:Cylinder::getCylinders()) {
+                int i = cyl->_dcIndex;
+                int id1 = cylindervec[i].ID;
+                int id2 = Cylinderpointervec[i]->getID();
+                int id3 = ccylindervec[i]->getCylinder()->getID();
+                if (id1 != id2 || id2 != id3 || id3 != id1)
+                    std::cout << id1 << " " << id2 << " " << id3 << endl;
+                auto b1 = cyl->getFirstBead();
+                auto b2 = cyl->getSecondBead();
+                long idx1 = b1->_dbIndex;
+                long idx2 = b2->_dbIndex;
+                cylinder c = cylindervec[i];
+                std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
+                " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
+                if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+
+                    std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
+                              << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
+                              << " " << b2->coordinate[1] << " " << b2->coordinate[2]
+                              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << endl;
+
+                    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+                              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+                              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+                }
+            }
+        }*/
+        //@} check ends.
+    }
+    static void revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
+                            CCylinder** ccylindervec);
+    void  copytoarrays();
+    void resetarrays();
+    void resetcylinderstruct(cylinder* cylindervec, long idx){
+        cylindervec[idx].filamentID = -1;
+        cylindervec[idx].filamentposition = -1;
+        cylindervec[idx].bindices[0]= -1;
+        cylindervec[idx].bindices[1]= -1;
+        cylindervec[idx].cmpID = -1;
+        cylindervec[idx].cindex = -1;
+        cylindervec[idx].coord[0] = -1.0;
+        cylindervec[idx].coord[1] = -1.0;
+        cylindervec[idx].coord[2] = -1.0;
+        cylindervec[idx].type = -1;
+        cylindervec[idx].ID = -1;
+        cylindervec[idx].availbscount = -1;
+    }
+    //@}
+>>>>>>> RestartDebug_FlatCylinder
 };
 
 #endif

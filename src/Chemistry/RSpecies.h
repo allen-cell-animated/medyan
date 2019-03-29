@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -336,6 +336,10 @@ public:
         species_copy_t prev_n = _n;
 #endif
         _n-=1;
+//        if(_n > 100000){
+//            std::cout << "At time = " << tau() << endl;
+//            std::cout << "Wrong CopyNum = " << _n << " for species: " << getFullName() << endl;
+//        }
 #ifdef TRACK_ZERO_COPY_N
         if(_n == 0)
             passivateAssocReactantReactions();

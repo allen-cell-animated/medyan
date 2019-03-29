@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -26,11 +26,15 @@ class Bead;
 class BubbleCylinderRepulsionExp {
     
 public:
-    double energy(Bead*, Bead*, double, double, double);
-    double energy(Bead*, Bead*, double, double, double, double);
+    double energy(double *coord, double *f, int *beadSet, int *bubbleSet,
+                  double *krep, double *slen, double *radius, int *nneighbors);
     
-    void forces(Bead*, Bead*, double, double, double);
-    void forcesAux(Bead*, Bead*, double, double, double);
+    double energy(double *coord, double *f, int *beadSet, int *bubbleSet,
+                  double *krep, double *slen, double *radius, int *nnneighbors, double d);
+    
+    void forces(double *coord, double *f, int *beadSet, int *bubbleSet,
+                double *krep, double *slen, double *radius, int *nneighbors);
+//    void forcesAux(Bead*, Bead*, double, double, double);
     
     double loadForces(Bead*, Bead*, double, double, double);
 };

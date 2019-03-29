@@ -5,7 +5,6 @@
 #
 #	GCC 4.7 and above
 #	Boost 1.49 and above
-#	GSL
 #
 #   If running unit tests, googletest is needed.
 #
@@ -13,58 +12,60 @@
 # for your given system.
 ##################################################
 
-TESTS	:= $(shell find ./TESTS -name 'test_*')
-SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*')
-SOURCES_CU  := $(shell find . -name '*.cu'  ! -path './TESTS/*')
-SOURCES = $(SOURCES_CPP) $(SOURCES_CU)
-HEADERS := $(shell find . -name '*.h')
+SOURCES_TEST             := $(shell find ./TESTS -name 'test_*.cpp')
+SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
+SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
+SOURCES                  =  $(SOURCES_CPP)
+HEADERS                  := $(shell find . -name '*.h')
 
-OBJECTS_CPP := $(SOURCES_CPP:.cpp=.o)
-OBJECTS_CU  := $(SOURCES_CU:.cu=.o)
-OBJECTS = $(OBJECTS_CPP) $(OBJECTS_CU)
+OBJECTS_TEST             := $(SOURCES_TEST:.cpp=.o)
+OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
+OBJECTS_CPP_WITHOUT_MAIN := $(SOURCES_CPP_WITHOUT_MAIN:.cpp=.o)
+OBJECTS                  =  $(OBJECTS_CPP)
 
-# Compiler and linker choice
-CXX = /usr/bin/g++ -std=c++11
-NVCC = nvcc -std=c++11
+DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
 
-# Flags used by compiler and linker
+#CPP COMPILER CHOICE AND FLAGS
+CXX = g++ -std=c++11
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native -g
+FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native
 
-# Compiler flags
-INCLUDES = -I/usr/local/include -I/usr/include/boost \
+# Compiling flags
+DEPFLAGS = -MMD -MP
+
+INCLUDES_TEST = -I../build/gtest/include
+INCLUDES = \
+-I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
--IStructure/SurfaceMesh                   \
 -IChemistry                               \
 -IMechanics/                              \
 -IMechanics/Minimizer                     \
 -IMechanics/ForceField                    \
 -IMechanics/ForceField/Volume             \
--IMechanics/ForceField/VolumeConservation \
 -IMechanics/ForceField/Boundary           \
 -IMechanics/ForceField/Branching          \
 -IMechanics/ForceField/Filament           \
 -IMechanics/ForceField/Linker             \
--IMechanics/ForceField/Membrane           \
 -IMechanics/ForceField/MotorGhost         \
--IMechanics/ForceField/Bubble             \
-#-IMechanics/ForceField/Membrane           \
+-IMechanics/ForceField/Bubble             
 
-INCLUDES_NVCC = $(INCLUDES) -I/usr/local/include -I/usr/local/cuda/include
+CPPFLAGS = $(INCLUDES)
 
-CXXFLAGS_CXX = $(FAST_CXX) -Wall -Wno-sign-compare -Wno-maybe-uninitialized \
--Wno-uninitialized -Wno-unknown-warning-option $(INCLUDES)
-CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
--lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
+CXXFLAGS_CXX = $(FAST_CXX) \
+-Wall -Wno-sign-compare \
+-Wno-maybe-uninitialized -Wno-uninitialized \
+-Wno-unknown-warning-option
 
-# Linker flags
-LDLIBS = -L/usr/local/lib/ -lboost_system
-LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
+# Linking flags
+LDLIBS_TEST = -L../build/gtest/lib -lgtest -lgtest_main -lpthread
+LDLIBS      = -L/usr/local/lib/ -lboost_system
+
 LDFLAGS_CXX = $(FAST_CXX)
+
 
 #################MAIN USER MACROS#################
 #
-# Please set these macros according to the
+# Please set these macros according to the 	
 # desired simulation type. See the install
 # and usage guides for more details.
 #
@@ -76,21 +77,24 @@ CPPFLAGS += -DCHEMISTRY
 CPPFLAGS += -DMECHANICS
 #Use dynamic rate changing
 CPPFLAGS += -DDYNAMICRATES
+<<<<<<< HEAD
 #neighbors list calculations
 CPPFLAGS += -DNLORIGINAL
 #serialized energy minimization
 CPPFLAGS += -DSERIAL
 #CPPFLAGS += -DDETAILEDOUTPUT
 #CPPFLAGS += -DDEBUGCONSTANTSEED
+=======
+>>>>>>> RestartDebug_FlatCylinder
 
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
 
-#if compiling the testing suite
-#CPPFLAGS += -DTESTING
+#serialized energy minimization                                                          
+CPPFLAGS += -DSERIAL
 
-#Detailed chemistry macros.
+#Detailed chemistry macros. 
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!
 
 #Track dependents. Needed for Gillespie and NRM algorithm
@@ -100,6 +104,8 @@ CPPFLAGS += -DTRACK_DEPENDENTS
 #For passivating and activating reactions accordingly
 CPPFLAGS += -DTRACK_ZERO_COPY_N
 CPPFLAGS += -DTRACK_UPPER_COPY_N
+#CPPFLAGS += -DDEBUGCONSTANTSEED
+
 #Reaction signaling. Needed for all Filament, Linker,
 #Motor, and BranchingPoint reactions in system
 CPPFLAGS += -DREACTION_SIGNALING
@@ -107,57 +113,54 @@ CPPFLAGS += -DREACTION_SIGNALING
 #Species signaling
 CPPFLAGS += -DRSPECIES_SIGNALING
 
-#CUDA specific
-CPPFLAGS_NVCC = $(CPPFLAGS) -DCUDAACCL
+# Implementation fix (should be turned on by default)
+CPPFLAGS += -DPLOSFEEDBACK
 
-#Non-CUDA specific
-CPPFLAGS_CXX = $(CPPFLAGS)
+CPPFLAGS += -DHYBRID_NLSTENCILLIST
+CPPFLAGS += -DNLSTENCILLIST
+
+# Non-CUDA specific
+CPPFLAGS_CXX      = $(CPPFLAGS)
+CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST) -DTESTING
 
 ################MAKEFILE OPTIONS###################
 #
-#
+#	
 #   make [all]        - makes everything
-#   make Makefile.dep - makes dependencies
-#   make clean	      - remove all files
+#   make clean	      - remove all files 
 #						generated by make
-#
-#	Use USING_CUDA=true to make cuda version
 #
 ##################################################
 
-all: medyan
+all: MEDYAN
 
-medyan: $(OBJECTS)
-ifeq ($(USING_CUDA), true)
-	$(NVCC) -o MEDYAN $(OBJECTS) $(LDLIBS_NVCC)
-else
+# Build main program
+MEDYAN: $(OBJECTS)
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
-endif
 
-%.o: %.cpp 
-	$(CXX) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c $< -o $@
+# Build test
+medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
+	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS) $(LDLIBS_TEST)
 
-%.o: %.cu
-ifeq ($(USING_CUDA), true)
-	$(NVCC) $(CPPFLAGS_NVCC) $(CXXFLAGS_NVCC) -c $< -o $@
-else
-	$(CXX) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -xc++ -c $< -o $@
-endif
+# Compile to object and generate dependency
+test_%.o: test_%.cpp
+test_%.o: test_%.cpp test_%.d
+	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX_TEST) $(CXXFLAGS_CXX) -c -o $@ $<
+
+%.o: %.cpp
+%.o: %.cpp %.d 
+	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
+
+# Add empty dependency for dependencies
+%.d: ;
 
 clean:
-	\find . -name '*.o' -delete
-	\rm -f MEDYAN
+	\find . -name "*.d" -delete
+	\find . -name "*.o" -delete
+	\rm -f MEDYAN medyan_test
 
-Makefile.dep: $(SOURCES) $(HEADERS)
-	@echo "Updating the dependency file: Makefile.dep"
-ifeq ($(USING_CUDA), true)
-	$(SHELL) -ec '$(NVCC) -MM $(CPPFLAGS_NVCC) $(INCLUDES_NVCC)  $(filter %.cpp %.cu,$^) \
-	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
-	[ -s $@ ] || rm -f $@'
-else
-	$(SHELL) -ec '$(CXX) -MM -xc++ $(CPPFLAGS_CXX) $(INCLUDES)  $(filter %.cpp %.cu,$^) \
-	| sed '\''s/^\(.*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
-	[ -s $@ ] || rm -f $@'
-endif
+.PRECIOUS: %.d
 
-include Makefile.dep
+.PHONY: all clean
+
+include $(wildcard $(DEPENDS))

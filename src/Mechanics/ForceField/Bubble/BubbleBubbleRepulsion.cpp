@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -19,7 +19,18 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d) {
+void BubbleBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
+    //cout << "Add later!" <<endl;
+}
+
+template <class BRepulsionInteractionType>
+void BubbleBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
+    //cout << "Add later!" <<endl;
+}
+
+
+template <class BRepulsionInteractionType>
+double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, double *f, double d) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -38,23 +49,23 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d)
             Bead* bd2 = bbo->getBead();
             
             if (d == 0.0)
-                U_i =  _FFType.energy(
-                bd1, bd2, radius1, radius2, kRep, screenLength);
+            U_i =  _FFType.energy(
+                                  bd1, bd2, radius1, radius2, kRep, screenLength);
             else
-                U_i = _FFType.energy(
-                bd1, bd2, radius1, radius2, kRep, screenLength, d);
+            U_i = _FFType.energy(
+                                 bd1, bd2, radius1, radius2, kRep, screenLength, d);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
                 //set culprits and return
-                _otherCulprit = bbo;
-                _bubbleCulprit = bb;
+//                _otherCulprit = bbo;
+//                BubbleInteractions::_bubbleCulprit = bb;
                 
                 return -1;
             }
             else
-                U += U_i;
+            U += U_i;
         }
     }
     
@@ -62,7 +73,7 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double d)
 }
 
 template <class BRepulsionInteractionType>
-void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
+void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
     
     for (auto bb : Bubble::getBubbles()) {
         
@@ -84,29 +95,32 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
 }
 
 
-template <class BRepulsionInteractionType>
-void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
-    
-    for (auto bb : Bubble::getBubbles()) {
-        
-        for(auto &bbo : _neighborList->getNeighbors(bb)) {
-            
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
-            
-            double radius1 = bb->getRadius();
-            double radius2 = bbo->getRadius();
-            
-            Bead* bd1 = bb->getBead();
-            Bead* bd2 = bbo->getBead();
-            
-            _FFType.forcesAux(bd1, bd2, radius1, radius2, kRep, screenLength);
-            
-        }
-    }
-}
+//template <class BRepulsionInteractionType>
+//void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux(double *coord, double *f) {
+//
+//    for (auto bb : Bubble::getBubbles()) {
+//
+//        for(auto &bbo : _neighborList->getNeighbors(bb)) {
+//
+//            double kRep = bb->getRepulsionConst();
+//            double screenLength = bb->getScreeningLength();
+//
+//            double radius1 = bb->getRadius();
+//            double radius2 = bbo->getRadius();
+//
+//            Bead* bd1 = bb->getBead();
+//            Bead* bd2 = bbo->getBead();
+//
+//            _FFType.forcesAux(bd1, bd2, radius1, radius2, kRep, screenLength);
+//
+//        }
+//    }
+//}
 
 ///Template specializations
-template double BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(double d);
-template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces();
-template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux();
+template double BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(double *coord, double *f, double d);
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces(double *coord, double *f);
+//template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux(double *coord, double *f);
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::vectorize();
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::deallocate();
+

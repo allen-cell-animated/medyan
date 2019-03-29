@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -47,8 +47,6 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
     //CUDA
 #ifdef CUDAACCL
 //    F_i = new double [3 * Bead::getBeads().size()];
-    nvtxRangePushA("CVFF");
-
     int numInteractions = BranchingPoint::getBranchingPoints().size();
     _FFType.optimalblocksnthreads(numInteractions);
 
@@ -67,7 +65,6 @@ void BranchingPosition<BPositionInteractionType>::vectorize() {
     params.push_back(numInteractions);
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)));
     CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice));
-    nvtxRangePop();
 #endif
 
     //
@@ -90,15 +87,15 @@ void BranchingPosition<BPositionInteractionType>::deallocate() {
 template <class BPositionInteractionType>
 double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord, double *f, double d) {
 
-    double U_i[1], U_ii=0.0;
+    double U_i[1], U_ii;
     double* gU_i;
-    U_ii = -1.0;
+    U_ii = 0.0;
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
     double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
     double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
-    nvtxRangePushA("CCEBP");
+
 //    if(d == 0.0){
 //        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kpos, gpu_pos, gpu_params);
 //
@@ -107,17 +104,15 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord,
         gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kpos, gpu_pos, gpu_d,
                             gpu_params);
 //    }
-    nvtxRangePop();
+
 #endif
 #ifdef SERIAL
-//    nvtxRangePushA("SCEBP");
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kpos, pos);
     else
         U_ii = _FFType.energy(coord, f, beadSet, kpos, pos, d);
-//    nvtxRangePop();
 #endif
-#ifdef SERIAL_CUDACROSSCHECK
+#if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
     CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
     double cuda_energy[1];
     if(gU_i == NULL)
@@ -126,7 +121,7 @@ double BranchingPosition<BPositionInteractionType>::computeEnergy(double *coord,
         CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
                                            cudaMemcpyDeviceToHost));
     }
-//    std::cout<<"Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
+    std::cout<<getName()<<" Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
 #endif
     return U_ii;
 }
@@ -141,25 +136,22 @@ void BranchingPosition<BPositionInteractionType>::computeForces(double *coord, d
 
 
     if(cross_checkclass::Aux){
-        nvtxRangePushA("CCFBP");
+
 
         gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kpos, gpu_pos, gpu_params);
-        nvtxRangePop();
+
     }
     else {
-        nvtxRangePushA("CCFBP");
 
         gpu_force = CUDAcommon::getCUDAvars().gpu_force;
         _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kpos, gpu_pos, gpu_params);
-        nvtxRangePop();
     }
 #endif
 #ifdef SERIAL
-//    nvtxRangePushA("SCFBP");
 
     _FFType.forces(coord, f, beadSet, kpos, pos);
-//    nvtxRangePop();
+
 #endif
 }
 

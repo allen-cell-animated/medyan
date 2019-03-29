@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -39,7 +39,7 @@ private:
     ///< The neighbors list, as a hash map
     
     bool _full; ///<Specifying whether this is a full or half list
-
+    unordered_map<Cylinder*, vector<Cylinder*>> _list4mbin;
 #ifdef CUDAACCL_NL
     vector<int> blocksnthreads;
     int nint;
@@ -58,7 +58,6 @@ private:
     ///@param runtime - specifying whether the cylinder is being
     ///created/destroyed at runtime vs at a full neighbor list update.
     void updateNeighbors(Cylinder* cylinder, bool runtime = false);
-
     
 public:
 #ifdef CUDAACCL_NL
@@ -76,7 +75,6 @@ public:
 #endif
     short _ID; //ID helps link binGridType to NeighborList.
 #ifdef NLSTENCILLIST
-    unordered_map<Cylinder*, vector<Cylinder*>> _list4mbin;
     ///< The neighbors list, as a hash map
     void generateConnections();
     void initializeBinGrid();
@@ -111,6 +109,11 @@ public:
 //                         SysParams::Geometry().cylinderSize[NLcyltypes[1]]);
 //    }
 #endif
+#ifdef CUDAACCL_NLS
+    struct bin *binGridv;
+    struct bin *gpu_binGrid;
+    cudaStream_t  stream_NL;
+#endif
     CylinderCylinderNL(float rMax, float rMin = 0.0, bool full = false, short ID = 0)
             : NeighborList(rMax, rMin), _full(full) {
 #ifdef NLSTENCILLIST
@@ -119,13 +122,13 @@ public:
         NLcyltypes[1] = 0;
         maxcylsize = max(SysParams::Geometry().cylinderSize[NLcyltypes[0]],
                          SysParams::Geometry().cylinderSize[NLcyltypes[1]]);
-        std::cout<<"Cylinder size "<<SysParams::Geometry()
-                .cylinderSize[NLcyltypes[0]]<<endl;
+//        std::cout<<"Cylinder size "<<SysParams::Geometry()
+//                .cylinderSize[NLcyltypes[0]]<<endl;
         initializeBinGrid();
         assignallcylinderstobin();
 
         _ID = SysParams::numcylcylNL;
-        std::cout<<"NL ID "<<SysParams::numcylcylNL<<endl;
+//        std::cout<<"NL ID "<<SysParams::numcylcylNL<<endl;
         SysParams::numcylcylNL++;
         //Determine binSize based on the longer of the two cylinders involved in the NL.
 
@@ -147,6 +150,7 @@ public:
     vector<Cylinder*> getNeighbors(Cylinder* cylinder);
     
 };
+
 
 /// An implementation of NeighborList for BoundaryElement-Cylinder interactions
 class BoundaryCylinderNL : public NeighborList {

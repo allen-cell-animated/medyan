@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -73,15 +73,26 @@ double CylinderVolumeFF::computeEnergy(double *coord, double *f, double d) {
         }
         else U += U_i;
         
+        
     }
+    
     return U;
 }
+
+#ifdef HYBRID_NLSTENCILLIST
+void CylinderVolumeFF::setHNeighborLists(HybridCylinderCylinderNL* Hnl) {
+    for (auto &interaction : _cylinderVolInteractionVector){
+        interaction->setHNeighborList(Hnl);
+    }
+};
+#endif
 
 void CylinderVolumeFF::computeForces(double *coord, double *f) {
     
     for (auto &interaction : _cylinderVolInteractionVector)
         interaction->computeForces(coord, f);
 }
+
 
 vector<NeighborList*> CylinderVolumeFF::getNeighborLists() {
     

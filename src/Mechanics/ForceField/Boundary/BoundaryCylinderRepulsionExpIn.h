@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -24,28 +24,28 @@ class Bead;
 
 /// A exponential repulsive potential used by the BoundaryCylinderRepulsion template.
 class BoundaryCylinderRepulsionExpIn {
-    
+
     public:
     double energy(double *coord, double *f, int *beadSet,
                   double *krep, double *slen, int *nneighbors);
-    
+
     double energy(double *coord, double *f, int *beadSet,
                   double *krep, double *slen, int *nnneighbors, double d);
-    
+
     void forces(double *coord, double *f, int *beadSet,
                 double *krep, double *slen, int *nneighbors);
-    
+
     double loadForces(double r, double krep , double slen);
-    
+
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint);
-    
+
     double* energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
                    int* nintvec, double* beListplane, int *params);
-    
+
     double* energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
                    int* nintvec, double* beListplane, double *z, int *params);
-    
+
     void forces(double *coord, double *f, int *beadSet, double *krep, double *slen,
                 int* nintvec, double* beListplane, int *params);
     void deallocate();
@@ -67,4 +67,3 @@ class BoundaryCylinderRepulsionExpIn {
 };
 
 #endif
-

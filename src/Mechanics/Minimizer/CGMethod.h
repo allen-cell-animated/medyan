@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -42,11 +42,20 @@ protected:
 
     ///< Data vectors for calculation
     double *coord;  ///<bead coordinates (length 3*N)
+<<<<<<< HEAD
     double *coordDiss;
     double *force; ///< bead forces (length 3*N)
     double *forceAux; ///< auxiliary force calculations (length 3*N)
     double *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
     
+=======
+    
+    double *force = nullptr; ///< bead forces (length 3*N)
+    double *forceAux = nullptr; ///< auxiliary force calculations (length 3*N)
+    double *forceAuxPrev = nullptr; ///<auxiliary force calculation previously (length 3*N)
+//    cylinder* cylindervec;
+
+>>>>>>> RestartDebug_FlatCylinder
     /// Safe mode which chooses the safe backtracking search if the
     /// minimizer got itself into trouble.
     bool _safeMode = false;
@@ -68,6 +77,7 @@ protected:
     //@{
 
 #ifdef CUDAACCL
+    int *gpu_mutexlock;
     vector<int> blocksnthreads;
     vector<int> bntaddvector;
     vector<int> bnt;
@@ -117,6 +127,7 @@ protected:
     bool *g_stop1, *g_stop2, *g_s1, *g_s2, *g_ss;
 //    backtrackingvars *bvar, *gpu_bvar1, *gpu_bvar2, *g_b1, *g_b2, *g_bs;
     cudaStream_t s1 = NULL, s2 = NULL, s3 = NULL, *sp1, *sp2, *sps, stream_bt = NULL;
+    cudaStream_t stream_startmin = NULL;
     cudaEvent_t e1 = NULL, e2 = NULL, *ep1, *ep2, *eps;
     cudaEvent_t  e = NULL;
     int *gpu_state;
@@ -167,17 +178,19 @@ protected:
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
+
     double safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                               double LAMBDAMAX, bool *gpu_safestate);
+
     //@}
     
     /// Print forces on all beads
     void printForces();
     
     /// Initialize data arrays
-    inline void allocate(long numBeadsx3) {
+    inline void allocate(long numBeadsx3, long Ncyl) {
 
-        coord = new double[numBeadsx3];
+//        coord = new double[numBeadsx3];
         force = new double[numBeadsx3];
         forceAux = new double[numBeadsx3];
         forceAuxPrev = new double[numBeadsx3];
@@ -186,8 +199,8 @@ protected:
     ///Deallocation of CG arrays
     
     inline void deallocate() {
-        
-        delete [] coord;
+//        coord = CUDAcommon::serlvars.coord;
+//        delete [] coord;
         delete [] force;
         delete [] forceAux;
         delete [] forceAuxPrev;
@@ -202,6 +215,7 @@ public:
     
     
     static long N; ///< Number of beads in the system, set before each minimization
+    static long Ncyl;
     
     virtual ~CGMethod() {};
     

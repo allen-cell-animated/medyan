@@ -1,9 +1,9 @@
  
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -38,6 +38,11 @@
 #include "CompartmentGrid.h"
 #include "Bead.h"
 #include "GController.h"
+#include "HybridNeighborList.h"
+#include "HybridNeighborListImpl.h"
+
+#include <initializer_list>
+
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
 #endif
@@ -72,7 +77,13 @@ class SubSystem {
 
 public:
     ///Default constructor does nothing
-    SubSystem() {}
+    ///constructor creates and stores an instance of HybridCylinderCylinderNL
+
+    SubSystem() {
+#ifdef HYBRID_NLSTENCILLIST
+        _HneighborList = new HybridCylinderCylinderNL();
+#endif
+}
 
     ~SubSystem() {}
 
@@ -84,6 +95,7 @@ public:
         T *t = new T(forward<Args>(args)...);
         t->addToSubSystem();
 
+
         //if movable or reactable, add
         if (t->_movable) addMovable((Movable *) t);
 
@@ -91,8 +103,16 @@ public:
 
         //if neighbor, add
         if (t->_dneighbor) {
+#ifdef HYBRID_NLSTENCILLIST
+            _HneighborList->addDynamicNeighbor((DynamicNeighbor *) t);
+            //Remove boundary and bubble neighbors
+            for (auto nlist : __bneighborLists.getElements())
+                nlist->addDynamicNeighbor((DynamicNeighbor *) t);
+#else
             for (auto nlist : _neighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
+#endif
+
         } else if (t->_neighbor) {
             for (auto nlist : _neighborLists.getElements())
                 nlist->addNeighbor((Neighbor *) t);
@@ -106,7 +126,6 @@ public:
     /// callback and/or controlling function.
     template<class T>
     void removeTrackable(T *t) {
-
         //remove from subsystem
         t->removeFromSubSystem();
 
@@ -117,8 +136,16 @@ public:
 
         //if neighbor, remove
         if (t->_dneighbor) {
+#ifdef HYBRID_NLSTENCILLIST
+            _HneighborList->removeDynamicNeighbor((DynamicNeighbor *) t);
+            //Remove boundary neighbors
+            for (auto nlist : __bneighborLists.getElements())
+                nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
+#else
             for (auto nlist : _neighborLists.getElements())
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
+#endif
+
         } else if (t->_neighbor) {
             for (auto nlist : _neighborLists.getElements())
                 nlist->removeNeighbor((Neighbor *) t);
@@ -160,204 +187,12 @@ public:
     /// Add a neighbor list to the subsystem
     void addNeighborList(NeighborList *nl) { _neighborLists.addElement(nl); }
 
+    void addBNeighborList(NeighborList *nl) { __bneighborLists.addElement(nl); }
+
     /// Reset all neighbor lists in subsystem
-    void resetNeighborLists() {
-#ifdef CUDAACCL_NL
-        //        nvtxRangePushA("NL_Prep_SubSystem");
-                coord = new double[CGMethod::N];
-                coord_com = new double[3 * Cylinder::getCylinders().size()];
-                beadSet = new int[2 * Cylinder::getCylinders().size()];
-                cylID = new int[Cylinder::getCylinders().size()];
-                filID = new int[Cylinder::getCylinders().size()];
-                filType = new int[Cylinder::getCylinders().size()];
-                cmpID = new unsigned int[Cylinder::getCylinders().size()];
-                fvecpos = new int[Cylinder::getCylinders().size()];
-        //        cylstate= new bool[Cylinder::getCylinders().size()];
-        //        cylvecpospercmp = new int[2 * _compartmentGrid->getCompartments().size()];
-
-                if(SysParams::Chemistry().numFilaments > 1) {
-                    cout << "CUDA NL cannot handle more than one type of filaments." << endl;
-                    exit(EXIT_FAILURE);
-                }
-                int numBindingSites = SysParams::Chemistry().bindingSites[0].size();
-                if(SysParams::Chemistry().numBrancherSpecies[0] > 0)
-                    cmon_state_brancher = new int[ numBindingSites * Cylinder::getCylinders().size()];
-                if(SysParams::Chemistry().numLinkerSpecies[0] > 0)
-                    cmon_state_linker = new int[numBindingSites * Cylinder::getCylinders().size()];
-                if(SysParams::Chemistry().numMotorSpecies[0] > 0)
-                    cmon_state_motor = new int[numBindingSites * Cylinder::getCylinders().size()];
-
-                int i = 0; //int cID = 0;
-                for(auto b: Bead::getBeads()) {
-                    //flatten indices
-                    int index = 3 * i;
-                    coord[index] = b->coordinate[0];
-                    coord[index + 1] = b->coordinate[1];
-                    coord[index + 2] = b->coordinate[2];
-                    i++;
-                }
-                i = 0; //int countcyl = 0;
-        //        for(auto C : _compartmentGrid->getCompartments()) {
-        //            int iter = 0;
-        //            for(auto nC : C->getNeighbours()) {
-        //                cmp_neighbors[nneighbors * cID + iter] = GController::getCompartmentID(nC->coordinates());
-        //                        iter++;
-        //            }
-        //            for(auto k = iter; k < nneighbors; k++ )
-        //                cmp_neighbors[nneighbors * cID + k] = -1;
-
-        //            cylvecpospercmp[2 * cID] = countcyl;
-        //            countcyl += C->getCylinders().size();
-        //            cylvecpospercmp[2 * cID + 1] = countcyl;
-
-        //            if(C->getCylinders().size()>maxnumCyl)
-        //                maxnumCyl = C->getCylinders().size();
-        //            cID++;
-        //            for(auto c:C->getCylinders()){
-                 for(auto c:Cylinder::getCylinders()){
-                            //flatten indices
-                            int index = 3 * i;
-                            coord_com[index] = c->coordinate[0];
-                            coord_com[index + 1] = c->coordinate[1];
-                            coord_com[index + 2] = c->coordinate[2];
-
-                        beadSet[2 * i] = c->getFirstBead()->_dbIndex;
-                        beadSet[2 * i + 1] = c->getSecondBead()->_dbIndex;
-                        cylID[i] = c->getID();
-                        c->_dcIndex = i;
-                        fvecpos[i] = c->getPosition();
-                        auto fil = dynamic_cast<Filament*>(c->getParent());
-                        filID[i] =  fil->getID();
-                        cmpID[i] = GController::getCompartmentID(c->getCompartment()->coordinates());
-                        filType[i] = fil->getType();
-        //                cylstate[i] = c->isFullLength();
-                        int j = 0;
-                        for(auto it2 = SysParams::Chemistry().bindingSites[fil->getType()].begin();
-                            it2 != SysParams::Chemistry().bindingSites[fil->getType()].end(); it2++) {
-                            if(SysParams::Chemistry().numBrancherSpecies[0] > 0)
-                                cmon_state_brancher[numBindingSites * i + j ] = c->getCCylinder()->getCMonomer(*it2)
-                                        ->speciesBound(SysParams::Chemistry().brancherBoundIndex[fil->getType()])->getN();
-                            if(SysParams::Chemistry().numLinkerSpecies[0] > 0)
-                                cmon_state_linker[numBindingSites * i + j ] = c->getCCylinder()->getCMonomer(*it2)
-                                        ->speciesBound(SysParams::Chemistry().linkerBoundIndex[fil->getType()])->getN();
-                            if(SysParams::Chemistry().numMotorSpecies[0] > 0)
-                                cmon_state_motor[numBindingSites * i + j ] = c->getCCylinder()->getCMonomer(*it2)
-                                        ->speciesBound(SysParams::Chemistry().motorBoundIndex[fil->getType()])->getN();
-                            j++;
-        //                    for(auto k = 0; k< SysParams::Chemistry().numBoundSpecies[0]; k ++) {
-        //                        cmon_state[SysParams::Chemistry().bindingSites[fil->getType()].size() * SysParams::Chemistry
-        //                                ().numBoundSpecies[0] * i + j] =
-        //                                c->getCCylinder()->getCMonomer(*it2)->speciesBound(k)->getN();
-        //                        j++;
-        //                    }
-                        }
-                        i++;
-                    }
-        //        }//Compartment
-                //CUDAMALLOC
-                //@{
-        //        size_t free, total;
-        //        CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-        //        fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
-        //                free/1e6, total/1e6);
-        //
-        //        cudaFree(0);
-        //
-        //        CUDAcommon::handleerror(cudaMemGetInfo(&free, &total));
-        //        fprintf(stdout,"\t### Available VRAM : %g Mo/ %g Mo(total)\n\n",
-        //                free/1e6, total/1e6);
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_coord, CGMethod::N * sizeof(double)),"cuda data "
-                                        "transfer", " SubSystem.h");
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_coord_com, 3 * Cylinder::getCylinders().size() * sizeof
-                                        (double)),"cuda data transfer", " SubSystem.h");
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, 2 * Cylinder::getCylinders().size() * sizeof
-                                        (int)), "cuda data transfer", " SubSystem.h");
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylID, Cylinder::getCylinders().size() * sizeof(int)),
-                                        "cuda data transfer", " SubSystem.h");
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_fvecpos, Cylinder::getCylinders().size() * sizeof(int)),
-                                        "cuda data transfer", " SubSystem.h");
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_filID, Cylinder::getCylinders().size() * sizeof(int)),
-                                        "cuda data transfer", " SubSystem.h");
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_filType, Cylinder::getCylinders().size() * sizeof(int)),
-                                        "cuda data transfer", " SubSystem.h");
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmpID, Cylinder::getCylinders().size() * sizeof(unsigned
-                                        int)), "cuda data transfer", " SubSystem.h");
-        //        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylstate, Cylinder::getCylinders().size() * sizeof(int)),
-        //                                "cuda data transfer", " SubSystem.h");
-
-                if(SysParams::Chemistry().numBrancherSpecies[0] > 0)
-                CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmon_state_brancher, numBindingSites *
-                        Cylinder::getCylinders().size() * sizeof(int)), "cuda data transfer", " SubSystem.h");
-                if(SysParams::Chemistry().numLinkerSpecies[0] > 0)
-                    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmon_state_linker, numBindingSites *
-                                            Cylinder::getCylinders().size() * sizeof(int)), "cuda data transfer", " SubSystem.h");
-                if(SysParams::Chemistry().numMotorSpecies[0] > 0)
-                    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmon_state_motor, numBindingSites *
-                                            Cylinder::getCylinders().size() * sizeof(int)), "cuda data transfer", " SubSystem.h");
-
-        //        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cylvecpospercmp,
-        //                                2 * _compartmentGrid->getCompartments().size()), "cuda data transfer", " SubSystem.h");
-        //        CUDAcommon::handleerror(cudaMalloc((void **) &gpu_cmp_neighbors, nneighbors *
-        //                                 _compartmentGrid->getCompartments().size() * sizeof(int)), "cuda data transfer",
-        //                                " SubSystem.h");
-                //@}
-                //CUDAMEMCPY
-                //@{
-                CUDAcommon::handleerror(cudaMemcpy(gpu_coord, coord, CGMethod::N *sizeof(double), cudaMemcpyHostToDevice));
-                CUDAcommon::handleerror(cudaMemcpy(gpu_coord_com, coord_com, 3 * Cylinder::getCylinders().size() *sizeof
-                                                   (double), cudaMemcpyHostToDevice));
-                CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, 2 * Cylinder::getCylinders().size() *sizeof(int),
-                                                   cudaMemcpyHostToDevice));
-                CUDAcommon::handleerror(cudaMemcpy(gpu_cylID, cylID, Cylinder::getCylinders().size() *sizeof(int),
-                                                   cudaMemcpyHostToDevice));
-                CUDAcommon::handleerror(cudaMemcpy(gpu_fvecpos, fvecpos, Cylinder::getCylinders().size() *sizeof(int),
-                                                   cudaMemcpyHostToDevice));
-                CUDAcommon::handleerror(cudaMemcpy(gpu_filID, filID, Cylinder::getCylinders().size() *sizeof(int),
-                                                   cudaMemcpyHostToDevice));
-                CUDAcommon::handleerror(cudaMemcpy(gpu_filType, filType, Cylinder::getCylinders().size() *sizeof(int),
-                                                   cudaMemcpyHostToDevice));
-                CUDAcommon::handleerror(cudaMemcpy(gpu_cmpID, cmpID, Cylinder::getCylinders().size() *sizeof(unsigned int),
-                                                   cudaMemcpyHostToDevice));
-        //        CUDAcommon::handleerror(cudaMemcpy(gpu_cylstate, cylstate, Cylinder::getCylinders().size() *sizeof(int),
-        //                                           cudaMemcpyHostToDevice));
-                if(SysParams::Chemistry().numBrancherSpecies[0] > 0)
-                CUDAcommon::handleerror(cudaMemcpy(gpu_cmon_state_brancher, cmon_state_brancher, numBindingSites *
-                                        Cylinder::getCylinders().size() * sizeof(int), cudaMemcpyHostToDevice));
-                if(SysParams::Chemistry().numLinkerSpecies[0] > 0)
-                    CUDAcommon::handleerror(cudaMemcpy(gpu_cmon_state_linker, cmon_state_linker, numBindingSites *
-                                        Cylinder::getCylinders().size() *sizeof(int), cudaMemcpyHostToDevice));
-                if(SysParams::Chemistry().numMotorSpecies[0] > 0)
-                    CUDAcommon::handleerror(cudaMemcpy(gpu_cmon_state_motor, cmon_state_motor, numBindingSites *
-                                        Cylinder::getCylinders().size() *sizeof(int), cudaMemcpyHostToDevice));
-
-        //        CUDAcommon::handleerror(cudaMemcpy(gpu_cylvecpospercmp, cylvecpospercmp,
-        //                                           2 * _compartmentGrid->getCompartments().size(), cudaMemcpyHostToDevice));
-                CylCylNLvars cylcylnlvars;
-                cylcylnlvars.gpu_coord = gpu_coord;
-                cylcylnlvars.gpu_coord_com = gpu_coord_com;
-                cylcylnlvars.gpu_beadSet = gpu_beadSet;
-                cylcylnlvars.gpu_cylID = gpu_cylID;
-                cylcylnlvars.gpu_fvecpos = gpu_fvecpos;
-                cylcylnlvars.gpu_filID = gpu_filID;
-                cylcylnlvars.gpu_filType = gpu_filType;
-                cylcylnlvars.gpu_cmpID = gpu_cmpID;
-        //        cylcylnlvars.gpu_cylstate = gpu_cylstate;
-                cylcylnlvars.gpu_cmon_state_brancher = gpu_cmon_state_brancher;
-                cylcylnlvars.gpu_cmon_state_linker = gpu_cmon_state_linker;
-                cylcylnlvars.gpu_cmon_state_motor = gpu_cmon_state_motor;
-        //        cylcylnlvars.gpu_cylvecpospercmp = gpu_cylvecpospercmp;
-
-                CUDAcommon::cylcylnlvars = cylcylnlvars;
-        //        CUDAcommon::handleerror(cudaMemcpy(gpu_cmp_neighbors, cmp_neighbors, nneighbors * _compartmentGrid
-        //                                           ->getCompartments().size() *sizeof(int),
-        //                                           cudaMemcpyHostToDevice));
-                //@}
-        //        nvtxRangePop();
-#endif
-//        std::cout<<_neighborLists.getElements().size()<<endl;
-        for (auto nl: _neighborLists.getElements())
-            nl->reset();
-    }
+    void resetNeighborLists();
+    //create vectors of cylinder information.
+    void vectorizeCylinder();
 
 #ifdef CUDAACCL_NL
     void endresetCUDA(){
@@ -391,15 +226,25 @@ public:
     
     //@{
     /// CompartmentGrid management
-    void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid;}
+    void setCompartmentGrid(CompartmentGrid* grid) {_compartmentGrid = grid; _staticgrid = _compartmentGrid;}
     CompartmentGrid* getCompartmentGrid() {return _compartmentGrid;}
     //@]
     
     /// Update the binding managers of the system
     void updateBindingManagers();
-    
-private:
 
+#ifdef HYBRID_NLSTENCILLIST
+    //getter for HneighborList
+    HybridCylinderCylinderNL* getHNeighborList(){return _HneighborList;}
+
+    void initializeHNeighborList(){_HneighborList->initializeHybridNeighborList();}
+#endif
+    static CompartmentGrid* getstaticgrid(){
+        return _staticgrid;
+    }
+
+    static double HYBDtime;
+private:
     double _energy = 0; ///< Energy of this subsystem
     Boundary* _boundary; ///< Boundary pointer
     
@@ -407,8 +252,21 @@ private:
     unordered_set<Reactable*> _reactables; ///< All reactables in the subsystem
         
     Database<NeighborList*> _neighborLists; ///< All neighborlists in the system
+    Database<NeighborList*> __bneighborLists; ///< Boundary neighborlists in the system.
+    // Used only in Hybrid binding Manager cases
+#ifdef HYBRID_NLSTENCILLIST
+    HybridCylinderCylinderNL* _HneighborList;
+#endif
         
     CompartmentGrid* _compartmentGrid; ///< The compartment grid
+
+    //Cylinder vector
+    cylinder *cylindervec;
+    CCylinder** ccylindervec;
+    Cylinder** cylinderpointervec;
+    static CompartmentGrid* _staticgrid;
+    double* cylsqmagnitudevector = NULL;
+    static bool initialize;
 #ifdef CUDAACCL_NL
     double* gpu_coord;
     double* gpu_coord_com;

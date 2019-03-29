@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -48,7 +48,6 @@ private:
     int *nneighbors;
 #ifdef CUDAACCL
     double *gU;
-    cudaStream_t  stream;
     int *gpu_beadSet;
     double *gpu_krep;
     double *gpu_slen;
@@ -58,6 +57,7 @@ private:
     int *gpu_nintperbe;
 //    CUDAvars cvars;
     double *F_i;
+    cudaStream_t stream = NULL;
 #endif
     
 public:

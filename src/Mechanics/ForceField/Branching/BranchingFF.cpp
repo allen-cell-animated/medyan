@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -102,13 +102,9 @@ void BranchingFF::whoIsCulprit() {
 
 double BranchingFF::computeEnergy(double *coord, double *f, double d) {
 
-    double U= 0.0;
+    double U = 0.0;
     double U_i=0.0;
-#ifdef SERIAL_CUDACROSSCHECK
-//    std::cout<<"-----------"<<endl;
-#endif
     for (auto &interaction : _branchingInteractionVector) {
-//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_branchingInteractionVector.size()<<endl;
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
 //        std::cout<<interaction->getName()<<endl;
@@ -123,8 +119,11 @@ double BranchingFF::computeEnergy(double *coord, double *f, double d) {
             return -1;
         }
         else U += U_i;
+        
 
     }
+    
+    
     return U;
 }
 

@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -42,6 +42,10 @@ inline double tau() {return global_time;}
 inline void resetglobaltime() {global_time=0.0;}
 ///Some constants
 const double kT = 4.1; //in pN * nm
+
+const int cylinder_cache = 500;
+const int bead_cache = 1000;//total number of beads that can be appended before
+// revectorization
 
 ///To use STL containers, libraries, etc
 using namespace std;
@@ -91,7 +95,7 @@ typedef boost::signals2::shared_connection_block ConnectionBlock;
 #define MWALKINGPRODUCTS      2
 
 /// Nucleation
-#define NUCLEATIONREACTANTS   3
+#define NUCLEATIONREACTANTS   2
 #define NUCLEATIONPRODUCTS    3
 
 /// Destruction

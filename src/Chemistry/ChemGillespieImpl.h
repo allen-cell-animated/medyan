@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -142,11 +142,8 @@ public:
     /// Ctor: Seeds the random number generator, sets global time to 0.0
     ///and the number of reactions to 0
     ChemGillespieImpl() :
-    ChemSimImpl(), _exp_distr(0.0),
-#ifndef DEBUGCONSTANTSEED
-    _eng(rdtsc()),
-#endif
-    _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
+        ChemSimImpl(), _exp_distr(0.0),
+        _uniform_distr(), _a_total(0),_n_reacts(0) { resetTime(); }
     
     /// Copying is not allowed
     ChemGillespieImpl(const ChemGillespieImpl &rhs) = delete;
@@ -252,9 +249,6 @@ private:
 private:
     unordered_map<ReactionBase*, unique_ptr<RNodeGillespie>> _map_rnodes; ///< The database of RNodeGillespie
                                                                           ///< objects, representing the reaction network
-#ifndef DEBUGCONSTANTSEED
-    mt19937 _eng; ///< Random number generator
-#endif
     exponential_distribution<double> _exp_distr; ///< Adaptor for the exponential distribution
     uniform_real_distribution<double> _uniform_distr;
     double _t; ///< global time

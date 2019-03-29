@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -67,18 +67,18 @@ void BoundaryCylinderRepulsionExpIn::optimalblocksnthreads( int nint){
         blocksnthreadse.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadse.push_back(blockSize);
         blockSize = 0;
-        
+
         cudaOccupancyMaxPotentialBlockSizeVariableSMem(&minGridSize, &blockSize,
                                                        BoundaryCylinderRepulsionExpenergyz, blockToSmemFB3, 0);
         blocksnthreadsez.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsez.push_back(blockSize);
         blockSize = 0;
-        
+
         cudaOccupancyMaxPotentialBlockSizeVariableSMem(&minGridSize, &blockSize,
                                                        BoundaryCylinderRepulsionExpforces, blockToSmemF, 0);
         blocksnthreadsf.push_back((nint + blockSize - 1) / blockSize);
         blocksnthreadsf.push_back(blockSize);
-        
+
         //get addition vars
         bntaddvec2.clear();
         bntaddvec2 = getaddred2bnt(nint);
@@ -111,36 +111,18 @@ void BoundaryCylinderRepulsionExpIn::optimalblocksnthreads( int nint){
         blocksnthreadsf.push_back(0);
         blocksnthreadsf.push_back(0);
     }
-    
+
 }
-double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
-                                             int* nintvec, double* beListplane, int *params) {
-    //    if(blocksnthreadse[1]>0) {
-    //
-    //        BoundaryCylinderRepulsionExpenergy<<<blocksnthreadse[0], blocksnthreadse[1], (3 * blocksnthreadse[1]) * sizeof
-    //                (double), stream>>>
-    //                          (coord, f, beadSet, krep, slen, nintvec, beListplane, params, gU_i, CUDAcommon::getCUDAvars()
-    //                          .gculpritID, CUDAcommon::getCUDAvars().gculpritFF,
-    //                          CUDAcommon::getCUDAvars().gculpritinteraction, gFF, ginteraction);
-    //        auto cvars = CUDAcommon::getCUDAvars();
-    //        cvars.streamvec.push_back(&stream);
-    //        CUDAcommon::cudavars = cvars;
-    //        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
-    //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
-    //        CUDAcommon::handleerror( cudaGetLastError() ,"BoundaryCylinderRepulsionExpenergy", "BoundaryCylinderRepulsionExp.cu");
-    //        return gU_sum;}
-    //    else
-    //        return NULL;
-}
+
 
 double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet, double *krep, double *slen,
                                              int* nintvec, double* beListplane, double *z,int *params) {
     //    nvtxRangePushA("E_wait");
     //    CUDAcommon::handleerror(cudaStreamWaitEvent(stream, *(CUDAcommon::getCUDAvars().event), 0));
     //    nvtxRangePop();
-    
+
     if(blocksnthreadse[1]>0) {
-        
+
         BoundaryCylinderRepulsionExpenergy<<<blocksnthreadse[0], blocksnthreadse[1], (3 * blocksnthreadse[1]) * sizeof
         (double), stream>>>
         (coord, f, beadSet, krep, slen, nintvec, beListplane, params, gU_i, z,
@@ -155,7 +137,7 @@ double* BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *be
         //        CUDAcommon::handleerror( cudaGetLastError() ,"BoundaryCylinderRepulsionExpenergy", "BoundaryCylinderRepulsionExp.cu");
         //        return gU_sum;
     }
-    
+
     if(blocksnthreadsez[1]>0) {
         BoundaryCylinderRepulsionExpenergyz << < blocksnthreadsez[0], blocksnthreadsez[1], (6 * blocksnthreadsez[1]) *
         sizeof(double), stream>> >(coord, f, beadSet, krep, slen, nintvec,
@@ -217,48 +199,48 @@ void BoundaryCylinderRepulsionExpIn::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
+
+
+
+double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double screenLength) {
+
+    double R = -r/screenLength + 100.0 / screenLength;
+
+    return kRep * exp(R)/screenLength;
+
+}
+
 double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
                                             double *krep, double *slen, int *nneighbors) {
-    
+
     int nb, nc;
     double *coord1, R, r, U_i;
     double U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
-    
-    //    for (int ib = 0; ib < nb; ib++) {
-    //        auto be = beList[ib];
-    //        be->printSelf();
-    //    }
-    
+
     for (int ib = 0; ib < nb; ib++) {
-        
+
         auto be = beList[ib];
         nc = nneighbors[ib];
-        
+
         for (int ic = 0; ic < nc; ic++) {
-            
+
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             r = be->distance(coord1);
-            
-            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
+
+            R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
             U_i = krep[Cumnc + ic] * exp(R);
-            //            double *var;
-            //            var = new double[4];
-            //            be->elementeqn(var);
-            //            std::cout<<"SL "<<Cumnc + ic<<" "<<krep[Cumnc + ic]<<" "<<R<<" Coord "<<coord1[0]<<" "<<coord1[1]<<" "
-            //            <<coord1[2]<<" Plane "<<var[0] <<" "<<var[1]<<" "<<var[2]<<" "<<var[3]<<endl;
-            //            delete var;
-            //            std::cout<<r<<" "<<U_i<<endl;
+
             if (fabs(U_i) == numeric_limits<double>::infinity()
                 || U_i != U_i || U_i < -1.0) {
-                
+
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
                 ///TODO
                 //BoundaryInteractions::_otherCulprit;
-                
+
                 return -1;
             }
             U += U_i;
@@ -270,44 +252,38 @@ double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *bea
 
 double BoundaryCylinderRepulsionExpIn::energy(double *coord, double *f, int *beadSet,
                                             double *krep, double *slen, int *nneighbors, double d) {
-    
+
     int nb, nc;
     double *coord1, *force1, R, r, U_i;
     double U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
-    
+
     for (int ib = 0; ib < nb; ib++) {
-        
+
         auto be = beList[ib];
         nc = nneighbors[ib];
-        
+
         for(int ic = 0; ic < nc; ic++) {
-            
+
             coord1 = &coord[3 * beadSet[Cumnc + ic]];
             force1 = &f[3 * beadSet[Cumnc + ic]];
-            
+
             r = be->stretchedDistance(coord1, force1, d);
-            
-            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
-            
-            //            std::cout<<r<<" "<<krep[Cumnc+ic]<<endl;
+
+            R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
+
             U_i = krep[Cumnc + ic] * exp(R);
-            //            double *var;
-            //            var = new double[4];
-            //            be->elementeqn(var);
-            //            std::cout<<"SLZ "<<Cumnc + ic<<" "<<krep[Cumnc + ic]<<" "<<R<<" Coord "<<coord1[0]<<" "
-            //                    <<coord1[1]<<" "<<coord1[2]<<" Plane "<<var[0] <<" "<<var[1]<<" "<<var[2]<<" "<<var[3]<<endl;
-            //            delete var;
+
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
-                
+
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
                 ///TODO
                 //BoundaryInteractions::_otherCulprit;
-                
+
                 return -1;
             }
             U += U_i;
@@ -324,17 +300,13 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
     int nb, nc;
     double *coord1, *force1, R, r, f0;
     double *F_i;
-    //    double *forcecopy;
-    //    forcecopy = new double[CGMethod::N];
-    //    for(auto iter=0;iter<CGMethod::N;iter++)
-    //        forcecopy[iter]=0.0;
-    
+
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
     int Cumnc=0;
-    
+
     for (int ib = 0; ib < nb; ib++) {
-        
+
         auto be = beList[ib];
         nc = nneighbors[ib];
         for(int ic = 0; ic < nc; ic++) {
@@ -342,20 +314,13 @@ void BoundaryCylinderRepulsionExpIn::forces(double *coord, double *f, int *beadS
             force1 = &f[3 * beadSet[ Cumnc + ic]];
             r = be->distance(coord1);
             auto norm = be->normal(coord1);
-            
-            R = -r / slen[Cumnc + ic] + 100.0 / slen[Cumnc + ic];
+
+            R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
-            
+
         }
         Cumnc+=nc;
     }}
-
-double BoundaryCylinderRepulsionExpIn::loadForces(double r, double kRep, double screenLength) {
-    
-    double R = -r/screenLength + 100.0 / screenLength;
-    return kRep * exp(R)/screenLength;
-    
-}

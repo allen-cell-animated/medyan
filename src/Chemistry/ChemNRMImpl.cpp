@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <chrono>
-
+#include "Rand.h"
 #ifdef BOOST_MEM_POOL
     #include <boost/pool/pool.hpp>
     #include <boost/pool/pool_alloc.hpp>
@@ -28,7 +28,7 @@
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
 #endif
-    
+
 #ifdef BOOST_POOL_MEM_PQNODE
 boost::pool<> allocator_pqnode(sizeof(PQNode),BOOL_POOL_NSIZE);
 #endif
@@ -44,7 +44,7 @@ void PQNode::operator delete(void* ptr) noexcept {
     boost::fast_pool_allocator<PQNode>::deallocate((PQNode*)ptr);
 }
 #endif
- 
+
 #ifdef BOOST_POOL_MEM_RNODENRM
 void* RNodeNRM::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<RNodeNRM>::allocate();
@@ -96,7 +96,7 @@ void RNodeNRM::updateHeap() {
 void RNodeNRM::generateNewRandTau() {
     double newTau;
     reComputePropensity();//calculated new _a
-    
+
 #ifdef TRACK_ZERO_COPY_N
     newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
@@ -137,17 +137,13 @@ ChemNRMImpl::~ChemNRMImpl() {
 
 double ChemNRMImpl::generateTau(double a){
     exponential_distribution<double>::param_type pm(a);
-    
+
     _exp_distr.param(pm);
-#ifdef DEBUGCONSTANTSEED
     Rand::counter++;
     Rand::Ncounter++;
 //    std::cout<<"Counters N "<<Rand::Ncounter<<" D "<<Rand::Dcounter<<" T "<<Rand::counter<<
-//             endl;
-    return _exp_distr(Rand::_eng);
-#else
-    return _exp_distr(_eng);
-#endif
+//            endl;
+    return _exp_distr(Rand::eng);
 }
 
 bool ChemNRMImpl::makeStep() {
@@ -173,16 +169,12 @@ bool ChemNRMImpl::makeStep() {
         rn->printSelf();
         return false;
     }
-
-//    if(rn->getReaction()->getReactionType() == ReactionType::LINKERBINDING) {
-//
-//        cout << "Stopping to check linker rxn." << endl;
-//    }
-
+    
     double t_prev = _t;
 
     _t=tau_top;
     syncGlobalTime();
+<<<<<<< HEAD
     //std::cout<<"------------"<<endl;
     //rn->printSelf();
     //std::cout<<"------------"<<endl;
@@ -192,6 +184,11 @@ bool ChemNRMImpl::makeStep() {
     ReactionBase* react = rn->getReaction();
     _dt->updateDelGChem(react);
     }
+=======
+/*    std::cout<<"------------"<<endl;
+    rn->printSelf();
+    std::cout<<"------------"<<endl;*/
+>>>>>>> RestartDebug_FlatCylinder
     rn->makeStep();
     
 

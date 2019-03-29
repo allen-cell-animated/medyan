@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -15,6 +15,7 @@
 #define MEDYAN_CylinderVolumeFF_h
 
 #include <vector>
+#include "HybridNeighborListImpl.h"
 
 #include "common.h"
 
@@ -51,6 +52,9 @@ public:
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists();
+#ifdef HYBRID_NLSTENCILLIST
+    virtual void setHNeighborLists(HybridCylinderCylinderNL* Hnl);
+#endif
 };
 
 #endif

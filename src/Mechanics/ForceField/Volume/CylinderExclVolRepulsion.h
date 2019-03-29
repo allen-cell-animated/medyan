@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -34,7 +34,7 @@ public:
     void forces(double *coord, double *f, int *beadSet, double *krep);
 
 #ifdef CUDAACCL
-    void optimalblocksnthreads(int nint);
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
     void deallocate();
     double* energy(double *coord, double *f, int *beadSet, double *krep, int *params);
 

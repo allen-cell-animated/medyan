@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -59,12 +59,13 @@ inline double safeacos (double x) {
 }
 
 /// Make a unique ptr
+#if __cplusplus <= 201103L
 template<typename T, typename ...Args>
 unique_ptr<T> make_unique( Args&& ...args )
 {
     return unique_ptr<T>( new T( forward<Args>(args)... ) );
 }
-
+#endif
 /// Compare types
 template<typename T, typename U>
 bool isSame(const U& x) {

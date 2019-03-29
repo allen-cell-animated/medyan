@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -80,15 +80,14 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
     double U_i=0.0;
 
     for (auto &interaction : _filamentInteractionVector) {
-//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_filamentInteractionVector.size()<<endl;
         U_i = interaction->computeEnergy(coord, f, d);
-//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"FilamentFF","FilamentFF");
         if(U_i <= -1) {
             //set culprit and return
             _culpritInteraction = interaction.get();
             return -1;
         }
         else U += U_i;
+        
 #ifdef DETAILEDOUTPUT
         std::cout<<getName()<<" "<<U_i<<endl;
 #endif
@@ -100,7 +99,6 @@ double FilamentFF::computeEnergy(double *coord, double *f, double d) {
 void FilamentFF::computeForces(double *coord, double *f) {
 //    double *F_i = new double[CGMethod::N];
     for (auto &interaction : _filamentInteractionVector) {
-//        std::cout<<"ForceField "<<interaction->getName()<<" "<<_filamentInteractionVector.size()<<endl;
         interaction->computeForces(coord, f);
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 

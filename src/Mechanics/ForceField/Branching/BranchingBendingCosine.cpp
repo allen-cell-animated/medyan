@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -141,11 +141,10 @@ double* BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
 //        double* gpu_Utot = CUDAcommon::getCUDAvars().gpu_energy;
 //        addvector<<<1,1,0,stream>>>(gU_i,params, gU_sum, gpu_Utot);
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingBendingCosineenergyz", "BranchingBendingCosine.cu");
-//        nvtxRangePushA("CCEBBzv2");
+
 //        BranchingBendingCosineenergyz2 << < blocksnthreadsf[0], blocksnthreadsf[1], (12 * blocksnthreadsf[1]) *
 //                                                                                     sizeof(double), stream>> > (coord, f, beadSet, kbend, eqt, params, gU_i, z );
 //        CUDAcommon::handleerror(cudaGetLastError(),"BranchingBendingCosineenergyz2", "BranchingBendingCosine.cu");
-//        nvtxRangePop();
 //        return gU_sum;
     }
     if(blocksnthreadse[1]<=0 && blocksnthreadsez[1]<=0)
@@ -200,7 +199,7 @@ double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
 
     double *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -246,7 +245,7 @@ double BranchingBendingCosine::energy(double *coord, double *f, int *beadSet,
 
     double *coord1, *coord2, *coord3, *coord4, *force1, *force2, *force3, *force4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    double U = 0;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 

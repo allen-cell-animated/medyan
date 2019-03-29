@@ -1,9 +1,9 @@
 
 //------------------------------------------------------------------
 //  **MEDYAN** - Simulation Package for the Mechanochemical
-//               Dynamics of Active Networks, v3.1
+//               Dynamics of Active Networks, v3.2.1
 //
-//  Copyright (2015-2016)  Papoian Lab, University of Maryland
+//  Copyright (2015-2018)  Papoian Lab, University of Maryland
 //
 //                 ALL RIGHTS RESERVED
 //
@@ -27,16 +27,16 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
     int n = BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::n;
     int nint = Bead::getPinnedBeads().size();
 
-    double *coord1, *pin1, dist, U_i;
-    double U = 0;
+    double *coord1, *pin1, distsq, U_i;
+    double U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
         coord1 = &coord[3 * beadSet[n * i]];
         pin1 = &pins[3 * beadSet[n * i]];
 
-        dist = twoPointDistance(coord1, pin1);
-        U_i = 0.5 * kattr[i] * dist * dist;
+        distsq = twoPointDistancesquared(coord1, pin1);
+        U_i = 0.5 * kattr[i] * distsq;
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) {
@@ -60,7 +60,7 @@ double BoundaryCylinderAttachmentHarmonic::energy(double *coord, double *f, int 
     int nint = Bead::getPinnedBeads().size();
 
     double *coord1, *pin1, *force1, *zero, dist, U_i;
-    double U = 0;
+    double U = 0.0;
     zero = new double[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
     for(int i = 0; i < nint; i += 1) {

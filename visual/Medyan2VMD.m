@@ -10,6 +10,7 @@ Length10={};
 time_vector10={};
 polarity_profile={};
 orientation_profile={};
+N = 1;
 r=runs(N);
 
 for i=1:N
