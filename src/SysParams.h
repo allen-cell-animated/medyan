@@ -187,7 +187,7 @@ struct ChemParams {
     double IterChange = 0.0;
     double StepTotal = 0.0;
     double StepTime = 0.0;
-    
+    float originalPolyPlusRate;
     
     //@}
 #ifdef CUDAACCL_NL

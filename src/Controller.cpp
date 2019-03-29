@@ -32,6 +32,7 @@
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
+#include "ChemManager.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -771,7 +772,20 @@ void Controller::updateBubblePositions() {
                 Cylinder* pCyl = filament->getCylinderVector().back();
                 for(auto &r : pCyl->getCCylinder()->getInternalReactions()) {
                     if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
-                        float newrate = 5 * r->getBareRate();
+                        float newrate = 5 * SysParams::Chemistry().originalPolyPlusRate;
+                        r->setBareRate(newrate);
+                        r->setRateScaled(newrate);
+                        r->updatePropensity();
+                    }
+                }
+            }
+            //else, set it back to orginal rate
+            else{
+                Cylinder* pCyl = filament->getCylinderVector().back();
+                for(auto &r : pCyl->getCCylinder()->getInternalReactions()) {
+                    if(r->getReactionType() == ReactionType::POLYMERIZATIONPLUSEND) {
+                        float newrate = SysParams::Chemistry().originalPolyPlusRate;
+                        r->setBareRate(newrate);
                         r->setRateScaled(newrate);
                         r->updatePropensity();
                     }
