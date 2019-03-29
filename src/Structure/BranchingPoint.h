@@ -38,7 +38,8 @@ class Cylinder;
  *  Extending the Movable class, the positions of all instances 
  *  can be updated by the SubSystem.
  */
-class BranchingPoint : public Component, public Trackable, public Movable, public Reactable {
+class BranchingPoint : public Component, public Trackable, public Movable, public Reactable,
+    public Database< BranchingPoint, false > {
     
     friend class Controller;
     friend class DRController;
@@ -54,14 +55,9 @@ private:
     
     short _branchType; ///< Integer specifying the type
     
-    int _branchID;     ///< Integer ID of this specific
-                       ///< branch point, managed by the Database
-    
     float _birthTime;  ///<Birth time
     
     Compartment* _compartment; ///< Where this branch point is
-    
-    static Database<BranchingPoint*> _branchingPoints; ///< Collection in SubSystem
     
     ///Helper to get coordinate
     void updateCoordinate();
@@ -103,7 +99,6 @@ public:
     //@{
     /// Get branch parameter
     virtual int getType() {return _branchType;}
-    int getID() {return _branchID;}
     //@}
     
     /// Get compartment
@@ -114,17 +109,17 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _branchingPoints.addElement(this);}
-    virtual void removeFromSubSystem() {_branchingPoints.removeElement(this);}
+    virtual void addToSubSystem() { }
+    virtual void removeFromSubSystem() {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<BranchingPoint*>& getBranchingPoints() {
-        return _branchingPoints.getElements();
+        return getElements();
     }
     /// Get the number of branching points in this system
     static int numBranchingPoints() {
-        return _branchingPoints.countElements();
+        return getElements().size();
     }
     
     virtual void printSelf()const;

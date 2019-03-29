@@ -82,7 +82,7 @@ private:
     multimap<int,Compartment*> fCompmap;
     multimap<int,Compartment*> bCompmap;
     //@}
-    
+    double bounds[2], bounds_prev[2];
     ///INITIALIZATION HELPER FUNCTIONS
     
     /// Set up an initial configuration of a network
@@ -129,13 +129,22 @@ private:
 
     ///Helper function to pin filaments near the boundary
     void pinBoundaryFilaments();
-    //Qin
     void pinLowerBoundaryFilaments();
 
     /// Helper function to remesh the membranes
     void membraneAdaptiveRemesh() const;
     
 public:
+    double chemistrytime = 0.0;
+    double minimizationtime = 0.0;
+    double nltime = 0.0;
+    double nl2time = 0.0;
+    double bmgrvectime = 0.0;
+    double bmgrtime = 0.0;
+    double rxnratetime = 0.0;
+    double outputtime =0.0;
+    double specialtime = 0.0;
+
     Controller(SubSystem* s);
     ~Controller() {};
     

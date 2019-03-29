@@ -46,33 +46,34 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion& mr,
 
             //Create a random filament vector one cylinder long
             vector<double> firstPoint = GController::getRandomCenterCoordinates();
-            
+
             double directionX = Rand::randDouble(-1,1);
             double directionY = Rand::randDouble(-1,1);
 
             double directionZ = 0;
-            vector<double> direction = normalizedVector({directionX, directionY, directionZ});
-            
+            vector<double> direction = normalizeVector({directionX, directionY, directionZ});
+
             vector<double> secondPoint =
                 nextPointProjection(firstPoint,(double)lenFilaments *
                 SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
-            
+
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
-                
-                if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-                   (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                auto radius = bb->getRadius();
+
+                if((twoPointDistancesquared(bb->getBead()->vcoordinate(), firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(bb->getBead()->vcoordinate(), secondPoint) < (radius * radius)))
                     inBubble = true;
             }
-            
+
             //check if within cutoff of boundary
             bool outsideCutoff = false;
             if(b->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
                b->distance(secondPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0) {
                 outsideCutoff = true;
             }
-            
+
             if(b->within(firstPoint) && b->within(secondPoint) && !inBubble && !outsideCutoff) {
                 filaments.emplace_back(filamentType, firstPoint, secondPoint);
                 filamentCounter++;
@@ -80,32 +81,34 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion& mr,
         }
         return make_tuple(filaments, dummy, dummy2, dummy3);
     }
-    
+
     //Qin
     else{
         while (filamentCounter < numFilaments) {
-            
+
             //Create a random filament vector one cylinder long
             vector<double> firstPoint = GController::getRandomCoordinates();
-            
+
             double directionX = Rand::randDouble(-1,1);
             double directionY = Rand::randDouble(-1,1);
             double directionZ = Rand::randDouble(-1,1);
-            vector<double> direction = normalizedVector({directionX, directionY, directionZ});
-            
+            vector<double> direction = normalizeVector({directionX, directionY, directionZ});
+
             vector<double> secondPoint =
             nextPointProjection(firstPoint,(double)lenFilaments *
-                                SysParams::Geometry().cylinderSize[filamentType] - 0.01, direction);
-            
+                                SysParams::Geometry().cylinderSize[filamentType] - 0.01,
+                                direction);
+
             //check if these points are outside bubbles
             bool inBubble = false;
             for(auto bb : Bubble::getBubbles()) {
+                auto radius = bb->getRadius();
                 
-                if((twoPointDistance(bb->getBead()->coordinate, firstPoint) < bb->getRadius()) ||
-                   (twoPointDistance(bb->getBead()->coordinate, secondPoint) < bb->getRadius()))
+                if((twoPointDistancesquared(bb->getBead()->vcoordinate(), firstPoint) < (radius * radius)) ||
+                   (twoPointDistancesquared(bb->getBead()->vcoordinate(), secondPoint) < (radius * radius)))
                     inBubble = true;
             }
-            
+
             //check if within cutoff of boundary
             bool outsideCutoff = mr.getBoundary() && (
                 mr.getBoundary()->distance(firstPoint) < SysParams::Boundaries().BoundaryCutoff / 4.0 ||
@@ -118,11 +121,11 @@ FilamentData RandomFilamentDist::createFilaments(const MembraneRegion& mr,
             }
         }
         return make_tuple(filaments, dummy, dummy2, dummy3);
-        
+
     }
-    
-    
-    
+
+
+
 }
 
 FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion& mr,
@@ -142,7 +145,7 @@ FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion& mr,
     //Create a random filament vector one cylinder long
     vector<double> firstPoint = {500,1000,1000};
     
-    vector<double> direction = normalizedVector({1, 0, 0});
+    vector<double> direction = normalizeVector({1, 0, 0});
     
     vector<double> secondPoint =
     nextPointProjection(firstPoint,(double)lenFilaments *
@@ -171,7 +174,7 @@ FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion& mr,
         double directionX = Rand::randDouble(-1,1);
         double directionY = Rand::randDouble(-1,1);
         double directionZ = Rand::randDouble(-1,1);
-        vector<double> randDirection = normalizedVector({directionX, directionY, directionZ});
+        vector<double> randDirection = normalizeVector({directionX, directionY, directionZ});
         
         double randomDist = Rand::randDouble(0, maxSpacing);
         vector<double> nextRandomPoint = nextPointProjection(randomPoint, randomDist, randDirection);
@@ -180,7 +183,7 @@ FilamentData ConnectedFilamentDist::createFilaments(const MembraneRegion& mr,
         directionX = Rand::randDouble(-1,1);
         directionY = Rand::randDouble(-1,1);
         directionZ = Rand::randDouble(-1,1);
-        randDirection = normalizedVector({directionX, directionY, directionZ});
+        randDirection = normalizeVector({directionX, directionY, directionZ});
     
         //random length spacing for new filament
         double randomLengthSpacing = Rand::randDouble(0, (double)lenFilaments *
@@ -243,7 +246,7 @@ FilamentData MTOCFilamentDist::createFilaments(const MembraneRegion& mr,
         point1.push_back(_coordMTOC[2] + _radius * sin(l) * cos(h));
         
         // get projection outward from the MTOC
-        auto dir = normalizedVector(twoPointDirection(_coordMTOC, point1));
+        auto dir = normalizeVector(twoPointDirection(_coordMTOC, point1));
         auto point2 = nextPointProjection(point1,
             SysParams::Geometry().cylinderSize[filamentType]*lenFilaments - 0.01, dir);
         

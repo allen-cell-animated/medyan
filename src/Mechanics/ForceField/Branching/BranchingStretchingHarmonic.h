@@ -24,13 +24,35 @@ class Bead;
 class BranchingStretchingHarmonic {
     
 public:
-    double energy(Bead*, Bead*, Bead*,
-                  double position, double kStretch, double eqLength, bool stretched);
+    double energy(double *coord, int *beadSet,
+                  double *kstr, double *eql, double *pos);
     
-    double forces(Bead*, Bead*, Bead*,
-                double position, double kStretch, double eqLength);
-    void forcesAux(Bead*, Bead*, Bead*,
-                   double position, double kStretch, double eqLength);
+    double energy(double *coord, double * f, int *beadSet,
+                  double *kstr, double *eql, double *pos, double d);
+
+    void forces(double *coord, double *f, int *beadSet,
+                double *kstr, double *eql, double *pos, double
+                *stretchforce);
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos, int *params);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos, double *z, int
+            *params);
+
+    void forces(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos, int *params);
+    void deallocate();
+    static void checkforculprit();
+    double *gU_i;
+    double *gU_sum;
+    char *gFF, *ginteraction;
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
+    cudaStream_t stream = NULL;
+#endif
     
 };
 

@@ -19,6 +19,7 @@
 #include "Cylinder.h"
 
 CylinderVolumeFF::CylinderVolumeFF (string& type) {
+    std::cout<<type<<endl;
     if (type == "REPULSION")
         _cylinderVolInteractionVector.emplace_back(
         new CylinderExclVolume <CylinderExclVolRepulsion>());
@@ -42,14 +43,28 @@ void CylinderVolumeFF::whoIsCulprit() {
     cout << endl;
 }
 
-double CylinderVolumeFF::computeEnergy(bool stretched) {
+void CylinderVolumeFF::vectorize() {
+    
+    for (auto &interaction : _cylinderVolInteractionVector)
+        interaction->vectorize();
+}
+
+void CylinderVolumeFF::cleanup() {
+    
+    for (auto &interaction : _cylinderVolInteractionVector)
+        interaction->deallocate();
+}
+
+
+
+double CylinderVolumeFF::computeEnergy(double *coord, bool stretched) {
     
     double U= 0.0;
     double U_i=0.0;
     
     for (auto &interaction : _cylinderVolInteractionVector) {
         
-        U_i = interaction->computeEnergy(stretched);
+        U_i = interaction->computeEnergy(coord);
                 
         if(U_i <= -1) {
             //set culprit and return
@@ -58,21 +73,26 @@ double CylinderVolumeFF::computeEnergy(bool stretched) {
         }
         else U += U_i;
         
+        
     }
+    
     return U;
 }
 
-void CylinderVolumeFF::computeForces() {
+#ifdef HYBRID_NLSTENCILLIST
+void CylinderVolumeFF::setHNeighborLists(HybridCylinderCylinderNL* Hnl) {
+    for (auto &interaction : _cylinderVolInteractionVector){
+        interaction->setHNeighborList(Hnl);
+    }
+};
+#endif
+
+void CylinderVolumeFF::computeForces(double *coord, double *f) {
     
     for (auto &interaction : _cylinderVolInteractionVector)
-        interaction->computeForces();
+        interaction->computeForces(coord, f);
 }
 
-void CylinderVolumeFF::computeForcesAux() {
-    
-    for (auto &interaction : _cylinderVolInteractionVector)
-        interaction->computeForcesAux();
-}
 
 vector<NeighborList*> CylinderVolumeFF::getNeighborLists() {
     

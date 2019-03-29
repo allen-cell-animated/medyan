@@ -19,32 +19,32 @@
 #include "SysParams.h"
 
 float BrownianRatchet::changeRate(float bareRate, double force) {
-    
+
     force = min(force, 100.0); //ceiling
-    
+
     double newRate = bareRate * exp( - force * _x / kT);
-    
+
     return newRate;
 }
 
 float LinkerCatchSlip::changeRate(float bareRate, double force) {
-    
+
     return bareRate * (_a1 * exp(- force * _x1 / kT) +
                        _a2 * exp(  force * _x2 / kT));
 }
 
 float LinkerSlip::changeRate(float bareRate, double force) {
-    
+
     double newRate = bareRate * exp( force * _x / kT);
-    
+
     return newRate;
 }
 
 //Qin ----------------
 float BranchSlip::changeRate(float bareRate, double force) {
-    
+
     double newRate = bareRate * exp( force * _x / kT);
-    
+
     return newRate;
 }
 
@@ -53,14 +53,14 @@ float MotorCatch::numBoundHeads(float onRate, float offRate,
 #ifdef PLOSFEEDBACK
     return min<double>(numHeads, numHeads * _dutyRatio + _gamma * force);
 #else
-    return min<double>(numHeads,numHeads * _dutyRatio + _beta * force / numHeads);
+    return min<double>(numHeads, numHeads * _dutyRatio + _beta * force / numHeads);
 #endif
     
 }
 
 float MotorCatch::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
-    
+
     //calculate new rate
 #ifdef PLOSFEEDBACK
     double k_0 = _beta * onRate /numBoundHeads(onRate, offRate, force, numHeads);
@@ -79,19 +79,16 @@ float MotorCatch::changeRate(float onRate, float offRate,
 
 float MotorStall::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
-    
     //determine k_0
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
 
-    //calculate new rate
-#ifdef PLOSFEEDBACK
+#if defined(PLOSFEEDBACK) || defined(PLOSSTALLFEEDBACK)
     double newRate =  max(0.0, k_0 * (_F0 - force/numHeads)
                           / (_F0 + (force / (numHeads * _alpha))));
 #else
     double newRate =  max(0.0, k_0 * (_F0 - force)
                                / (_F0 + (force / (_alpha))));
 #endif
-    
     return newRate;
 }
 

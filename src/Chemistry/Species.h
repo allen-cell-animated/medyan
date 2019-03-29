@@ -14,6 +14,7 @@
 #ifndef MEDYAN_Species_h
 #define MEDYAN_Species_h
 
+#include <ciso646> // Define alternative operators for non-conforming compilers like MSVC. No use otherwise.
 #include <vector>
 #include <string>
 #include <unordered_map>

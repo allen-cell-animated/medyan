@@ -29,8 +29,8 @@ using namespace mathfunc;
 
 void BranchingPoint::updateCoordinate() {
     
-    coordinate = midPointCoordinate(_c1->getFirstBead()->coordinate,
-                                    _c1->getSecondBead()->coordinate,
+    coordinate = midPointCoordinate(_c1->getFirstBead()->vcoordinate(),
+                                    _c1->getSecondBead()->vcoordinate(),
                                     _position);
 }
 
@@ -38,7 +38,7 @@ BranchingPoint::BranchingPoint(Cylinder* c1, Cylinder* c2,
                                short branchType, double position)
 
     : Trackable(true,true), _c1(c1), _c2(c2), _position(position),
-      _branchType(branchType), _branchID(_branchingPoints.getID()), _birthTime(tau()) {
+      _branchType(branchType), _birthTime(tau()) {
     
     //Find compartment
     updateCoordinate();
@@ -81,9 +81,9 @@ BranchingPoint::~BranchingPoint() noexcept {
     
     auto b = _c2->getFirstBead();
     
-    b->coordinate[0] += offsetCoord[0];
-    b->coordinate[1] += offsetCoord[1];
-    b->coordinate[2] += offsetCoord[2];
+    b->coordinate()[0] += offsetCoord[0];
+    b->coordinate()[1] += offsetCoord[1];
+    b->coordinate()[2] += offsetCoord[2];
 #endif
     
     
@@ -216,7 +216,7 @@ void BranchingPoint::printSelf()const {
     cout << endl;
     
     cout << "BranchingPoint: ptr = " << this << endl;
-    cout << "Branching type = " << _branchType << ", Branch ID = " << _branchID << endl;
+    cout << "Branching type = " << _branchType << ", Branch ID = " << getId() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
     cout << "Position on mother cylinder (double) = " << _position << endl;
@@ -246,7 +246,7 @@ species_copy_t BranchingPoint::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto b : _branchingPoints.getElements()) {
+    for(auto b : getElements()) {
         
         auto s = b->getCBranchingPoint()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
@@ -258,6 +258,3 @@ species_copy_t BranchingPoint::countSpecies(const string& name) {
 }
             
 vector<BranchRateChanger*> BranchingPoint::_unbindingChangers;
-
-Database<BranchingPoint*> BranchingPoint::_branchingPoints;
-            

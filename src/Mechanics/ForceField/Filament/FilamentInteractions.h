@@ -26,20 +26,25 @@ class FilamentInteractions {
     
 friend class FilamentFF;
     
-protected:
-    /// The filament in the case of an error
-    Filament* _filamentCulprit = nullptr;
-
 public:
+    /// The filament in the case of an error
+    static Filament* _filamentCulprit;
+    
+    ///Vectorize the bead interactions for minimization
+    virtual void vectorize() = 0;
+    ///Deallocate the vectorized data
+    virtual void deallocate() = 0;
+    
     /// Compute the energy of this interaction
-    virtual double computeEnergy(bool stretched) = 0;
-    /// Compute forces of this interaction
-    virtual void computeForces() = 0;
-    /// Compute auxiliary forces of this interaction
-    virtual void computeForcesAux() = 0;
+    virtual double computeEnergy(double *coord) = 0;
+    /// Compute the forces of this interaction
+    virtual void computeForces(double *coord, double *f) = 0;
     
     /// Get the name of this interaction
     virtual const string getName() = 0;
+
+    /// Get culprit information. Used in CUDA.
+//    virtual void whoisculprit();
 };
 
 #endif

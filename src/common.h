@@ -21,6 +21,17 @@
 
 #include "utility.h"
 
+#ifdef CUDAACCL
+#include <cuda.h>
+#include <cuda_runtime.h>
+#ifdef __CUDACC__
+#define CUDA_HOSTDEV __host__ __device__
+#else
+#define CUDA_HOSTDEV
+#endif
+
+#endif
+
 ///Species constants
 typedef unsigned int species_copy_t;
 const species_copy_t max_ulim = 1000000;
@@ -32,6 +43,10 @@ inline double tau() {return global_time;}
 inline void resetglobaltime() {global_time=0.0;}
 ///Some constants
 const double kT = 4.1; //in pN * nm
+
+const int cylinder_cache = 500;
+const int bead_cache = 1000;//total number of beads that can be appended before
+// revectorization
 
 ///To use STL containers, libraries, etc
 using namespace std;

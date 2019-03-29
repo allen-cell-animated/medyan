@@ -33,17 +33,34 @@ class BubbleCylinderRepulsion : public BubbleInteractions {
 private:
     BRepulsionInteractionType _FFType;
     BubbleCylinderNL* _neighborList; ///<Neighbor list of Bubble-Cylinder
+    
+    int *beadSet;
+    int *nneighbors;
+    int *bubbleSet;
+//    int *nintvec;
+    
+    ///Array describing the constants in calculation
+    double *krep;
+    double *slen;
+    double *radius;
+    int nint = 0;
 public:
+    
+    ///Array describing indexed set of interactions
+    ///For bubble, this is a 1-bead potential + 1 fixed bubble bead
+    const static int n = 1;
     
     /// Constructor
     BubbleCylinderRepulsion() {
         _neighborList = new BubbleCylinderNL(SysParams::Mechanics().BubbleCutoff);
     }
     
-    virtual double computeEnergy(bool stretched) override;
+    virtual void vectorize();
+    virtual void deallocate();
     
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double *coord, bool stretched) override;
+    virtual void computeForces(double *coord, double *f);
+    //virtual void computeForcesAux(double *coord, double *f);
     
     virtual void computeLoadForces();
     
@@ -54,3 +71,4 @@ public:
 };
 
 #endif
+

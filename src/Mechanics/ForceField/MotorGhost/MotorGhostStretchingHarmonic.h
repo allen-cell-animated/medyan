@@ -23,6 +23,39 @@ class Bead;
 class MotorGhostStretchingHarmonic {
     
 public:
+    double energy(double *coord, int *beadSet,
+                  double *kstr, double *eql, double *pos1, double *pos2);
+    
+    double energy(double *coord, double * f, int *beadSet,
+                  double *kstr, double *eql, double *pos1, double *pos2, double d);
+    
+    void forces(double *coord, double *f, int *beadSet,
+                double *kstr, double *eql, double *pos1, double *pos2, double
+                *stretchforce);
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql,
+                  double *pos1, double *pos2, int *params);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2,
+           double *z, int *params);
+
+    void forces(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *pos1, double *pos2, int
+    *params, double *Mstretchforce);
+    void deallocate();
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
+    static void checkforculprit();
+    double *gU_i;
+    double *gU_sum;
+    char *gFF, *ginteraction;
+    cudaStream_t stream = NULL;
+
+#endif
+#ifdef CROSSCHECK
     double energy(Bead*, Bead*, Bead*, Bead*,
                   double position1, double position2,
                   double kStretch, double eqLength, bool stretched);
@@ -33,6 +66,7 @@ public:
     double forcesAux(Bead*, Bead*, Bead*, Bead*,
                      double position1, double position2,
                      double kStretch, double eqLength);
+#endif
 };
 
 #endif

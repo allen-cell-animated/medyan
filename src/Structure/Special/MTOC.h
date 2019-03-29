@@ -34,18 +34,16 @@ class Filament;
  *  and is only mechanically relevant for now, but may be extended to have chemical
  *  properties in the future.
  */
-class MTOC : public Composite, public Trackable {
+class MTOC : public Composite, public Trackable,
+    public Database< MTOC, false > {
     
 private:
     Bubble* _bubble; ///< A bubble that physically represents the MTOC
     vector<Filament*> _filaments; ///< An ordered vector of filaments in the MTOC
     
-    int _ID; ///< Unique identifier
-    
-    static Database<MTOC*> _mtocs; ///< Collection of beads in SubSystem
 public:
     ///Constructor
-    MTOC() : Trackable(), _ID(_mtocs.getID()) {}
+    MTOC() : Trackable() {}
     
     //@{
     ///Setters
@@ -62,17 +60,17 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _mtocs.addElement(this);}
-    virtual void removeFromSubSystem() {_mtocs.removeElement(this);}
+    virtual void addToSubSystem() { }
+    virtual void removeFromSubSystem() {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<MTOC*>& getMTOCs() {
-        return _mtocs.getElements();
+        return getElements();
     }
     /// Get the number of MTOCs in this system
     static int numMTOCs() {
-        return _mtocs.countElements();
+        return getElements().size();
     }
     
     virtual void printSelf()const;

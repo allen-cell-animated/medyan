@@ -98,6 +98,8 @@ public:
     /// Get a compartment based on coordinates or indices
     static Compartment* getCompartment(const vector<size_t> &indices);
     static Compartment* getCompartment(const vector<double> &coords);
+    static unsigned int getCompartmentID(const vector<double> &coords);
+    static Compartment* getCompartment(const int index);
     //@}
     
     // Properties (getters and setters)
@@ -108,6 +110,9 @@ public:
     static double getCompartmentVolume() { return _compartmentVolume; }
     static const vector<double>& getCompartmentArea() { return _compartmentArea; }
     static const vector<double>& getCompartmentSize() {return _compartmentSize;}
+    
+    static double getCompartmentVolume() { return _compartmentVolume; }
+    static const vector<double>& getCompartmentArea() { return _compartmentArea; }
     
     /// Get all compartments within a given range from the specified coordinate
     /// @param ccheck - Compartment to check when initially calling this function

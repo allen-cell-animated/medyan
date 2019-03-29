@@ -22,6 +22,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "Bubble.h"
 #include "Linker.h"
 #include "MotorGhost.h"
 #include "BranchingPoint.h"
@@ -74,9 +75,23 @@ struct UpdateBrancherBindingCallback {
                 CCylinder* cc = _cylinder->getCCylinder();
                 
                 //update binding sites
-                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
+                if(delta == +1) {
+#ifdef NLORIGINAL
+                    manager->addPossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->addPossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
                 
-                else /* -1 */manager->removePossibleBindings(cc, _bindingSite);
+                else /* -1 */{
+#ifdef NLORIGINAL
+                    manager->removePossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->removePossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
             }
         }
     }
@@ -104,9 +119,23 @@ struct UpdateLinkerBindingCallback {
                 CCylinder* cc = _cylinder->getCCylinder();
                 auto x = c->coordinates();
                 //update binding sites
-                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
-                
-                else /* -1 */ manager->removePossibleBindings(cc, _bindingSite);
+                if(delta == +1) {
+#ifdef NLORIGINAL
+                    manager->addPossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->addPossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
+
+                else /* -1 */{
+#ifdef NLORIGINAL
+                    manager->removePossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->removePossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
             }
         }
     }
@@ -136,9 +165,23 @@ struct UpdateMotorBindingCallback {
                 CCylinder* cc = _cylinder->getCCylinder();
                 
                 //update binding sites
-                if(delta == +1) manager->addPossibleBindings(cc, _bindingSite);
-                
-                else /* -1 */ manager->removePossibleBindings(cc, _bindingSite);
+                if(delta == +1) {
+#ifdef NLORIGINAL
+                    manager->addPossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->addPossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
+
+                else /* -1 */{
+#ifdef NLORIGINAL
+                    manager->removePossibleBindings(cc, _bindingSite);
+#endif
+#ifdef NLSTENCILLIST
+                    manager->removePossibleBindingsstencil(cc, _bindingSite);
+#endif
+                }
             }
         }
     }
@@ -174,7 +217,7 @@ struct UpdateMotorIDCallback{
 //            }
 //            //else - create an ID. This is an addition at runtime
 //            else{
-//                mManager->addUnboundID(MotorGhost::_motorGhosts.getID());
+//                mManager->addUnboundID(MotorGhost::_motorGhosts.getId());
 //            }
 //        }
 //        
@@ -341,7 +384,12 @@ struct BranchingPointUnbindingCallback {
     : _ps(ps), _branchingPoint(b) {}
     
     void operator() (ReactionBase *r) {
-        
+
+//        //@{
+//        std::cout<<"Brancher unbinding "<<_branchingPoint->getFirstCylinder()->getId()<<" "
+//                ""<<_branchingPoint->getPosition()
+//                 <<" "<<_branchingPoint->getSecondCylinder()->getId()<<endl;
+//        //@}
         //remove the branching point
         _ps->removeTrackable<BranchingPoint>(_branchingPoint);
         delete _branchingPoint;
@@ -375,7 +423,13 @@ struct BranchingCallback {
         short branchType = _bManager->getBoundInt();
         
         //choose a random binding site from manager
-        auto site = _bManager->chooseBindingSite();
+        tuple<CCylinder*, short> site;
+#ifdef NLORIGINAL
+        site = _bManager->chooseBindingSite();
+#endif
+#ifdef NLSTENCILLIST
+        site = _bManager->chooseBindingSitestencil();
+#endif
         
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
@@ -384,8 +438,8 @@ struct BranchingCallback {
         double pos = double(get<1>(site)) / SysParams::Geometry().cylinderNumMon[filType];
         if(SysParams::RUNSTATE == true) {
             //Get a position and direction of a new filament
-            auto x1 = c1->getFirstBead()->coordinate;
-            auto x2 = c1->getSecondBead()->coordinate;
+            auto x1 = c1->getFirstBead()->vcoordinate();
+            auto x2 = c1->getSecondBead()->vcoordinate();
             
             //get original direction of cylinder
             auto p= midPointCoordinate(x1, x2, pos);
@@ -435,8 +489,8 @@ struct BranchingCallback {
             vector<tuple<tuple<CCylinder*, short>, tuple<CCylinder*, short>>> BrT=_bManager->getbtuple();
             for(auto T:BrT) {
                 CCylinder* cx=get<0>(get<0>(T));
-                double p = double(get<1>(get<0>(T))) / double(SysParams::Geometry().cylinderNumMon[filType]);
-                if(cx->getCylinder()->getID()==c1->getID() && p==pos) {
+                double p = double(get<1>(get<0>(T)))/ double(SysParams::Geometry().cylinderNumMon[filType]);
+                if(cx->getCylinder()->getId()==c1->getId() && p==pos){
                     c=get<0>(get<1>(T));
                     check = true;
                     break;
@@ -447,6 +501,7 @@ struct BranchingCallback {
                 frate=0.0;
             }
             else {
+                b = nullptr;
                 cout << "Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting."
                         << endl;
                 exit(EXIT_FAILURE);
@@ -477,7 +532,11 @@ struct LinkerUnbindingCallback {
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
-        
+
+//        //@{
+//        std::cout<<"Linker unbinding "<<_linker->getFirstCylinder()->getId()<<" "<<_linker->getFirstPosition()
+//                 <<" "<<_linker->getSecondCylinder()->getId()<<" "<<_linker->getSecondPosition()<<endl;
+//        //@}
         //remove the linker
         _ps->removeTrackable<Linker>(_linker);
         delete _linker;
@@ -506,7 +565,13 @@ struct LinkerBindingCallback {
         float f;
         
         //choose a random binding site from manager
-        auto site = _lManager->chooseBindingSites();
+        vector<tuple<CCylinder*, short>> site;
+#ifdef NLORIGINAL
+        site = _lManager->chooseBindingSites();
+#endif
+#ifdef NLSTENCILLIST
+        site = _lManager->chooseBindingSitesstencil();
+#endif
         
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
@@ -565,8 +630,13 @@ struct MotorUnbindingCallback {
 //        mManager->removeUnboundID(MotorGhost::_motorGhosts.deleteID());
 //        
 //        //re-add unbound ID to motor binding manager
-//        mManager->addUnboundID(_motor->getID());
-        
+//        mManager->addUnboundID(_motor->getId());
+
+//        //@{
+//        std::cout<<"Motor unbinding "<<_motor->getFirstCylinder()->getId()<<" "<<_motor->getFirstPosition()
+//                  <<" "<<_motor->getSecondCylinder()->getId()<<" "<<_motor->getSecondPosition()<<endl;
+//        //@}
+
         //remove the motor
         _ps->removeTrackable<MotorGhost>(_motor);
         delete _motor;
@@ -595,7 +665,13 @@ struct MotorBindingCallback {
         short motorType = _mManager->getBoundInt();
         float f;
         //choose a random binding site from manager
-        auto site = _mManager->chooseBindingSites();
+        vector<tuple<CCylinder*, short>> site;
+#ifdef NLORIGINAL
+        site = _mManager->chooseBindingSites();
+#endif
+#ifdef NLSTENCILLIST
+        site = _mManager->chooseBindingSitesstencil();
+#endif
         
         Cylinder* c1 = get<0>(site[0])->getCylinder();
         Cylinder* c2 = get<0>(site[1])->getCylinder();
@@ -659,7 +735,7 @@ struct MotorWalkingCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
-        
+//        cout<<"Motor walking begins"<<endl;
         //get species
         CCylinder* cc = _c->getCCylinder();
         CMonomer* monomer = cc->getCMonomer(_oldPosition);
@@ -669,8 +745,13 @@ struct MotorWalkingCallback {
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
-        
+
+
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
+/*        cout<<"cylinder size "<<cylinderSize<<endl;
+        cout<<"oldpos "<<_oldPosition<<endl;
+        cout<<"newpos "<<_newPosition<<endl;
+        cout<<"-----------"<<endl;*/
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
         m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
@@ -776,10 +857,29 @@ struct FilamentCreationCallback {
                 auto npp = nextPointProjection(position,
                                                SysParams::Geometry().cylinderSize[_filType], direction);
                 
-                //check if within boundary
+                bool inbubble = false;
+                //check if within bubble
+                for(auto bb : Bubble::getBubbles()) {
+                    auto radius = bb->getRadius();
+                    
+                    if((twoPointDistancesquared(bb->getBead()->vcoordinate(), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(bb->getBead()->vcoordinate(), npp) < (radius * radius))){
+                        inbubble = true;
+                        break;
+                    }
+                }
+                
+                if(inbubble) break;
+                
+                //check if within boundary && if within REPULSIONEXPIN region (set as 125nm)
                 if(_ps->getBoundary()->within(position) &&
-                   _ps->getBoundary()->within(npp))
-                    break;
+                   _ps->getBoundary()->within(npp)){
+                    
+                    if(_ps->getBoundary()->distance(position) > 125 &&
+                       _ps->getBoundary()->distance(npp) > 125)
+                        break;
+                }
+                
             }
             
             //create filament, set up ends and filament species
@@ -787,6 +887,9 @@ struct FilamentCreationCallback {
             
             //initialize the nucleation
             f->nucleate(_plusEnd, _filament, _minusEnd);
+            
+//            cout << "Nucleation at t = " << tau() << ", x = " << position[0] << ", y = " << position[1] << ", z = " << position[2] << endl;
+            
         }
         else {
             while(true) {
@@ -800,6 +903,20 @@ struct FilamentCreationCallback {
                 auto npp = nextPointProjection(position,
                                                SysParams::Geometry().cylinderSize[_filType], direction);
                 
+                bool inbubble = false;
+                //check if within bubble
+                for(auto bb : Bubble::getBubbles()) {
+                    auto radius = bb->getRadius();
+                    
+                    if((twoPointDistancesquared(bb->getBead()->vcoordinate(), position) < (radius * radius)) ||
+                       (twoPointDistancesquared(bb->getBead()->vcoordinate(), npp) < (radius * radius))){
+                        inbubble = true;
+                        break;
+                    }
+                }
+                
+                if(inbubble) break;
+
                 //check if within boundary and membrane[0]
                 if(
                     _ps->getBoundary()->within(position) &&

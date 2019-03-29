@@ -141,13 +141,17 @@ struct ChemistryData {
     vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions;
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
-    /// initial copy number, release time, removal time, and CONST/REG qualifier
-    vector<tuple<string, int, double, double, string>> speciesBulk = {};
+    /// initial copy number, release time, removal time, CONST/REG qualifier, TARGET TYPE
+    /// (TOTCONC/FREECONC) and Target CONCENTRATION (needed in move boundary)
+    vector<tuple<string, int, double, double, string, string, double>> speciesBulk =
+            {};
+
     
     /// SpeicesDiffusing parsed, in the form of a tuple which contains name,
-    /// initial copy number per compartment, the rate of diffusion, release time,
-    /// AVG/REG qualifier, and number of events to average if applicable.
-    vector<tuple<string, int, double, double, double, string, int>> speciesDiffusing = {};
+    /// initial copy number in reaction volume, the rate of diffusion, release time,
+    /// removal time, AVG/REG qualifier, and number of events to average if applicable.
+    vector<tuple<string, int, double, double, double, string, int, string, double>>
+            speciesDiffusing = {};
     
     //@{
     /// Filament species parsed
@@ -201,7 +205,7 @@ struct ChemistryData {
 struct BoundaryType {
     
     string boundaryShape = "";
-    string boundaryMove = "";
+    vector<string> boundaryMove = {};
     //Qin
     //string scaleDiffusion = "";
 };

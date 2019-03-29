@@ -15,7 +15,9 @@
 #define MEDYAN_BranchingPosition_h
 
 #include "common.h"
-
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
 #include "BranchingInteractions.h"
 
 //FORWARD DECLARATIONS
@@ -28,10 +30,31 @@ class BranchingPosition : public BranchingInteractions {
 private:
     BStretchingInteractionType _FFType;
     
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *kpos;
+    double *pos;
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_kpos;
+    double *gpu_pos;
+    int * gpu_params;
+    CUDAvars cvars;
+    double *F_i;
+#endif
+    
 public:
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    
+    ///Array describing indexed set of interactions
+    ///For filaments, this is a 3-bead potential
+    const static int n = 3;
+    
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    virtual double computeEnergy(double *coord) override;
+    virtual void computeForces(double *coord, double *f);
     
     virtual const string getName() {return "Branching Position";}
 };

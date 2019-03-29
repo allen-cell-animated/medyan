@@ -15,6 +15,7 @@
 #define MEDYAN_CylinderVolumeFF_h
 
 #include <vector>
+#include "HybridNeighborListImpl.h"
 
 #include "common.h"
 
@@ -32,21 +33,28 @@ private:
     vector <unique_ptr<CylinderVolumeInteractions>>
     _cylinderVolInteractionVector;  ///< Vector of initialized volume interactions
     
+protected:
     CylinderVolumeInteractions* _culpritInteraction; ///< Culprit in case of error
+    
 public:
     /// Initialize the volume forcefields
     CylinderVolumeFF(string& interaction);
     
-    virtual string getName() {return "Cylinder Volume";}
-    virtual void whoIsCulprit();
+    virtual void vectorize();
+    virtual void cleanup();
 
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual string getName() {return "Excluded Volume";}
+    virtual void whoIsCulprit();
+    
+    virtual double computeEnergy(double *coord, bool stretched = false) override;
+    virtual void computeForces(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists();
+#ifdef HYBRID_NLSTENCILLIST
+    virtual void setHNeighborLists(HybridCylinderCylinderNL* Hnl);
+#endif
 };
 
 #endif

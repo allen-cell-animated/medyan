@@ -15,6 +15,9 @@
 #define MEDYAN_MotorGhostStretching_h
 
 #include "common.h"
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
 
 #include "MotorGhostInteractions.h"
 
@@ -28,12 +31,48 @@ class MotorGhostStretching : public MotorGhostInteractions {
 private:
     MStretchingInteractionType _FFType;
 
-public:
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    int *beadSet;
     
-    virtual const string getName() {return "Motor Stretching";}
+    ///Array describing the constants in calculation
+    double *kstr;
+    double *eql;
+    double *pos1;
+    double *pos2;
+    double *stretchforce;
+
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_kstr;
+    double *gpu_eql;
+    int * gpu_params;
+    double *gpu_pos1;
+    double *gpu_pos2;
+    double *F_i;
+    double *gpu_Mstretchforce;
+    cudaStream_t stream = NULL;
+#endif
+    
+public:
+    ///Array describing indexed set of interactions
+    ///For linkers, this is a 4-bead potential
+    const static int n = 4;
+    
+    ///< Constructor
+    MotorGhostStretching () {}
+    ~MotorGhostStretching () {}
+    
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    
+    virtual double computeEnergy(double *coord) override;
+    virtual void computeForces(double *coord, double *f);
+
+
+    virtual const string getName() {return "MotorGhost Stretching";}
+
+    virtual void assignforcemags();
+
 };
 
 #endif
