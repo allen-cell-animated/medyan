@@ -175,6 +175,7 @@ void Controller::initialize(string inputFile,
         exit(EXIT_FAILURE);
     }
     
+    // Dissipation
     _dt = new DissipationTracker(_mController);
     _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
     cout << "Done." << endl;
@@ -191,8 +192,8 @@ void Controller::initialize(string inputFile,
 
     
     
-    
-    
+    //Dissipation
+    if(SysParams::CParams.dissTracking){
     //Set up reactions output if any
     string disssnapname = _outputDirectory + "dissipation.traj";
     _outputs.push_back(new Dissipation(disssnapname, _subSystem, _cs));
@@ -200,6 +201,8 @@ void Controller::initialize(string inputFile,
     //Set up HRCD output if any
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
     _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
+    }
+    
     
     //Set up CMGraph output if any
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
@@ -859,7 +862,11 @@ void Controller::run() {
 #ifdef CHEMISTRY
         //activate/deactivate compartments
         activatedeactivateComp();
+        
+        // Dissipation
+        if(SysParams::CParams.dissTracking){
         _dt->setG1();
+        }
         while(tau() <= _runTime) {
             //run ccontroller
 //            nvtxRangePushA("chemistry");
@@ -871,8 +878,10 @@ void Controller::run() {
 //                nvtxRangePop();
                 break;
             }
+            // Dissipation
+            if(SysParams::CParams.dissTracking){
             _dt->setGMid();
-            
+            }
             
             
             //add the last step
@@ -913,14 +922,10 @@ void Controller::run() {
                 
                 //cout<<"Min happened"<<endl;
                 
-                _dt->setG2();
-                _dt->updateCumDissChemEnergy();
-                _dt->updateCumDissMechEnergy();
-                _dt->updateCumDissEn();
-                _dt->updateCumGChemEn();
-                _dt->updateCumGMechEn();
-                _dt->resetAfterStep();
-                
+                // Dissipation
+                if(SysParams::CParams.dissTracking){
+                    _dt->updateAfterMinimization();
+                }
                 
                 
             }

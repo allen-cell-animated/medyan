@@ -165,6 +165,9 @@ struct ChemParams {
     /// bound linkers for the rest of simulation.
     bool makeLinkersStatic = false;
     double makeLinkersStaticTime = 0.0;
+
+    bool dissTracking = false;
+    int difBindInt = 1;
     
     //@}
 #ifdef CUDAACCL

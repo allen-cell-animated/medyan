@@ -82,14 +82,17 @@ struct ChemistryAlgorithm {
     
     int minimizationSteps = 0;
     int neighborListSteps = 0;
+    
     //@}
+    
+    
 };
 
 /// Struct to hold Species and Reaction information
 /// @note - all filament-related reactions and species are 2D vectors corresponding
 ///         to the filament type specified in the input file.
 struct ChemistryData {
-    
+ 
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
     vector<tuple<vector<string>, vector<string>, double, double, string>> genReactions = {};
     

@@ -373,8 +373,11 @@ private:
     float _rMax; ///< Maximum reaction range
     float _rMinSq = _rMin * _rMin;
     float _rMaxSq = _rMax * _rMax;
+    const std::vector<short> startInt = SysParams::Chemistry().bindingSites[0];
+    int dBInt = 1;
+    int dBI = SysParams::Chemistry().difBindInt;
     std::set<int> difBindInts{2,12,22,32}; /// allow diffent binding sites for linkers and motors
-
+    
 
     
     //possible bindings at current state. updated according to neighbor list

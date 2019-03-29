@@ -551,12 +551,27 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
             if(c->getID() < cn->getID()) continue;
 
             auto ccn = cn->getCCylinder();
-
+            dBInt = 2;
             for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
                 
                 //DifBind
-                if (difBindInts.find(*it) == difBindInts.end()) continue;
+//                for(auto ll = startInt.begin(); ll != startInt.end(); ll++){
+//                    cout<<startInt[*ll]<<endl;
+//                }
+                //cout<<*it<<endl;
+                //cout<<SysParams::Chemistry().numBindingSites[0]<<endl;
+                //if (difBindInts.find(*it) == difBindInts.end()) continue;
+                //cout<<"pre "<<*it<<endl;
+                if(dBInt % dBI != 0) {
+                    dBInt += 1 ;
+                    continue;
+                } else {
+                    dBInt = 1;}
+                //cout<<"it "<<*it<<endl;
+                
+                
+                
                 
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
@@ -802,12 +817,21 @@ void LinkerBindingManager::updateAllPossibleBindings() {
         if(c->getType() != _filamentType) continue;
 
         auto cc = c->getCCylinder();
-
+        
+        dBInt = 2;
         for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
             it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
             
             // DifBind
-            if (difBindInts.find(*it1) == difBindInts.end()) continue;
+            //if (difBindInts.find(*it1) == difBindInts.end()) continue;
+            //cout<<"pre it1 "<<*it1<<endl;
+            if(dBInt % dBI != 0) {
+                dBInt += 1 ;
+                continue;
+            } else {
+                dBInt = 1;}
+            //cout<<"it1 "<<*it1<<endl;
+            
 
             //now re add valid binding sites
             if (areEqual(cc->getCMonomer(*it1)->speciesBound(
@@ -828,12 +852,20 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
                     auto ccn = cn->getCCylinder();
 //                                                std::cout<<c->_dcIndex<<" "<<cn->_dcIndex<<endl;
-
+                    dBInt = 2;
                     for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
                         it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
                         
                         // DifBind
-                        if (difBindInts.find(*it2) == difBindInts.end()) continue;
+                        
+                        //if (difBindInts.find(*it2) == difBindInts.end()) continue;
+                        //cout<<"pre it2 "<<*it2<<endl;
+                        if(dBInt % dBI != 0) {
+                            dBInt += 1 ;
+                            continue;
+                        } else {
+                            dBInt = 1;}
+                        //cout<<"it2 "<<*it2<<endl;
 
                         if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
                                 SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {

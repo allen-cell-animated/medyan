@@ -1586,8 +1586,11 @@ void ChemManager::genFilBindingReactions() {
                 
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
+                // Dissipation
+                if(SysParams::Chemistry().dissTracking){
                 rxn->setGNumber(gnum);
                 rxn->setHRCDID(hrcdid);
+                }
                 
                 C->addInternalReaction(rxn);
                 
@@ -1827,8 +1830,11 @@ void ChemManager::genFilBindingReactions() {
                 
                 rxn->setReactionType(ReactionType::MOTORBINDING);
                 
-                rxn->setGNumber(gnum);
-                rxn->setHRCDID(hrcdid);
+                // Dissipation
+                if(SysParams::Chemistry().dissTracking){
+                    rxn->setGNumber(gnum);
+                    rxn->setHRCDID(hrcdid);
+                }
                 
                 // cal edit
                 SysParams::CParams.dutyRatio = (onRate)/(onRate + offRate);
@@ -2283,8 +2289,13 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
         protoCompartment.addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::REGULAR);
         
-        rxn->setGNumber(get<3>(r));
-        rxn->setHRCDID(get<4>(r));
+        // Dissipation
+        if(SysParams::Chemistry().dissTracking){
+            rxn->setGNumber(get<3>(r));
+            rxn->setHRCDID(get<4>(r));
+        }
+        
+        
     }
 }
 

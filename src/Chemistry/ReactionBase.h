@@ -98,7 +98,7 @@ protected:
     CBound* _cBound = nullptr; ///< CBound that is attached to this reaction
     
     
-    float _gnum = 1.0;
+    float _gnum = 0.0;
     
     string _hrcdid = "NA";
     

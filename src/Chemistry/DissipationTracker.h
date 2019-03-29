@@ -200,7 +200,7 @@ public:
             delGZero=re->getGNumber();
             species_copy_t nMon = reacN[1];
             delG = delGPolyChem(delGZero,nMon,"P");
-            
+        
             
         } else if(reType==7){
             // Motor Binding
@@ -238,6 +238,7 @@ public:
             // Motor Walking Forward
             delG = re->getGNumber();
             delG = delG*(1/_stepFrac);
+            
             
             
         } else if(reType==11){
@@ -299,6 +300,11 @@ public:
             cout<<reType<<endl;
         }
         
+//        cout<<reType<<endl;
+//        cout<<reacN[0]<<endl;
+//        cout<<prodN[0]<<endl;
+       // cout<<"delG "<<delG<<endl;
+
         return delG;
         
         
@@ -356,13 +362,21 @@ public:
     // set the value of G2
     void setG2(){
         G2=getMechEnergy();
-        //        cout<<"G1 is "<<G1<<endl;
-        //        cout<<"G2 is "<<G2<<endl;
         
     }
     
     void setGMid(){
         GMid=getMechEnergy();
+    }
+    
+    void updateAfterMinimization(){
+        setG2();
+        updateCumDissChemEnergy();
+        updateCumDissMechEnergy();
+        updateCumDissEn();
+        updateCumGChemEn();
+        updateCumGMechEn();
+        resetAfterStep();
     }
     
     // increment cumDissEn after an iteration step has occured

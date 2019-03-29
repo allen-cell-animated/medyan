@@ -73,9 +73,10 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     CCylinder::_chemSim = _chemSim;
     Cylinder::_chemManager = _chemManager;
     
-    // initialize the dissipation tracker
-    
+
     csi->_dt = dt;
+    
+    
     
 }
 

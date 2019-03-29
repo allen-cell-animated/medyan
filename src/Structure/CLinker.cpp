@@ -114,12 +114,16 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     offRxn->setReactionType(ReactionType::LINKERUNBINDING);
     
     //set gnum of offreaction
+    // Dissipation
+    if(SysParams::Chemistry().dissTracking){
+        
     double gnum = onRxn->getGNumber();
     offRxn->setGNumber(-gnum);
     
     //set hrcdid of offreaction
     string hrcdid = onRxn->getHRCDID();
     offRxn->setHRCDID(hrcdid + "off");
+    }
     
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);

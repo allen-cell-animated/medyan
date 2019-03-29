@@ -186,8 +186,12 @@ bool ChemNRMImpl::makeStep() {
     //std::cout<<"------------"<<endl;
     //rn->printSelf();
     //std::cout<<"------------"<<endl;
+    
+    //Dissipation
+    if(SysParams::Chemistry().dissTracking){
     ReactionBase* react = rn->getReaction();
     _dt->updateDelGChem(react);
+    }
     rn->makeStep();
     
 
