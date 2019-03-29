@@ -66,9 +66,3 @@ void VolumeConservationFF::computeForces(double* coord, double* f) {
     for (auto &interaction : _volumeConservationInteractionVector)
         interaction->computeForces(coord, f);
 }
-
-void VolumeConservationFF::computeForcesAux() {
-    
-    for (auto &interaction : _volumeConservationInteractionVector)
-        interaction->computeForcesAux();
-}

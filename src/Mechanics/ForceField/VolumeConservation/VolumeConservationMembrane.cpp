@@ -63,27 +63,3 @@ void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForc
         }
     }
 }
-
-template<>
-void VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeForcesAux() {
-    
-    for (auto m: Membrane::getMembranes()) {
-
-        const auto& mesh = m->getMesh();
-
-        double kBulk = SysParams::Mechanics().BulkModulus;
-
-        double eqVolume = m->getMMembrane()->getEqVolume();
-
-        double volume = 0.0;
-        for(const auto& t : mesh.getTriangles()) volume += t.attr.gTriangle.coneVolume;
-
-        const size_t numVertices = mesh.getVertices().size();
-        for(size_t vi = 0; vi < numVertices; ++vi) {
-            Vertex* const v = mesh.getVertexAttribute(vi).vertex;
-            const auto& dVolume = mesh.getVertexAttribute(vi).gVertex.dVolume;
-
-            _FFType.forcesAux(v, volume, dVolume, kBulk, eqVolume);
-        }
-    }
-}

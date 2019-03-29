@@ -33,11 +33,6 @@ public:
         double area, const mathfunc::Vec3&, const mathfunc::Vec3&, const mathfunc::Vec3&,
         double kExVol
     );
-    void forcesAux(
-        Vertex*, Vertex*, Vertex*, Bead*,
-        double area, const mathfunc::Vec3&, const mathfunc::Vec3&, const mathfunc::Vec3&,
-        double kExVol
-    );
 
     mathfunc::Vec3 loadForces(
         Vertex* v0, Vertex* v1, Vertex* v2, const mathfunc::Vec3& coord,

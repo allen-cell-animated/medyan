@@ -20,10 +20,6 @@ public:
         double area, const mathfunc::Vec3& dArea,
         double curv, const mathfunc::Vec3& dCurv,
         double, double);
-    void forcesAux(Vertex*,
-        double area, const mathfunc::Vec3& dArea,
-        double curv, const mathfunc::Vec3& dCurv,
-        double, double);
 };
 
 #endif

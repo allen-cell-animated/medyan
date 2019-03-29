@@ -122,41 +122,6 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
     }
 }
 
-
-template <class TriangleCylinderExclVolumeInteractionType>
-void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeForcesAux() {
-
-    for(auto t: Triangle::getTriangles()) {
-
-        const auto& mesh = t->getParent()->getMesh();
-        const size_t ti = t->getTopoIndex();
-        const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
-        const size_t hei1 = mesh.next(hei0);
-        const size_t hei2 = mesh.next(hei1);
-        Vertex* const v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
-        Vertex* const v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
-        Vertex* const v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
-
-        const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
-        const auto& dArea0 = mesh.getHalfEdgeAttribute(hei0).gHalfEdge.dTriangleArea;
-        const auto& dArea1 = mesh.getHalfEdgeAttribute(hei1).gHalfEdge.dTriangleArea;
-        const auto& dArea2 = mesh.getHalfEdgeAttribute(hei2).gHalfEdge.dTriangleArea;
-        double kExVol = t->getMTriangle()->getExVolConst();
-        
-        for(auto &c: _neighborList->getNeighbors(t)) {
-
-            // Use only 1st bead unless the cylinder is at plus end
-            size_t numBeads = (c->isPlusEnd()? 2: 1);
-
-            for(size_t idx = 0; idx < numBeads; ++idx) {
-                Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
-            
-                _FFType.forcesAux(v0, v1, v2, b, area, dArea0, dArea1, dArea2, kExVol);
-            }
-        }
-    }
-}
-
 template <class TriangleCylinderExclVolumeInteractionType>
 void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeLoadForces() {
 

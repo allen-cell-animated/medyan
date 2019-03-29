@@ -69,12 +69,6 @@ void TriangleCylinderVolumeFF::computeForces(double coord*, double f*) {
         interaction->computeForces(coord, f);
 }
 
-void TriangleCylinderVolumeFF::computeForcesAux() {
-    
-    for (auto &interaction : _triangleCylinderVolInteractionVector)
-        interaction->computeForcesAux();
-}
-
 void TriangleCylinderVolumeFF::computeLoadForces() {
     for(auto& interaction: _triangleCylinderVolInteractionVector)
         interaction->computeLoadForces();

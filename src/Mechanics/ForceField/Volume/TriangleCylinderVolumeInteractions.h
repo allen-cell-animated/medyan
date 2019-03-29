@@ -39,8 +39,6 @@ public:
     virtual double computeEnergy(const double* coord, bool stretched) = 0;
     /// Compute the forces of this interaction
     virtual void computeForces(const double* coord, double* force) = 0;
-    /// Compute the auxiliary forces of this interaction
-    virtual void computeForcesAux() = 0;
 
     /// Compute the load forces on beads from this interaction
     virtual void computeLoadForces() = 0;

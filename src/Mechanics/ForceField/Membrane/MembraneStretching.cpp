@@ -164,26 +164,3 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForces(const double*
         }
     }
 }
-
-template<>
-void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
-    
-    for (auto m: Membrane::getMembranes()) {
-    
-        const auto& mesh = m->getMesh();
-
-        const auto kElastic = m->getMMembrane()->getKElastic();
-        const auto eqArea = m->getMMembrane()->getEqArea();
-
-        double area = 0.0;
-        for(const auto& t : mesh.getTriangles()) area += t.attr.gTriangle.area;
-
-        const size_t numTriangles = mesh.getTriangles().size();
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
-            mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
-                _FFType.forcesAux(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
-            });
-        }
-    }
-}

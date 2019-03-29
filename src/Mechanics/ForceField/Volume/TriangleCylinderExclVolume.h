@@ -42,7 +42,6 @@ public:
 
     virtual double computeEnergy(const double coord*, bool stretched) override;
     virtual void computeForces(const double coord*, double* force) override;
-    virtual void computeForcesAux();
 
     virtual void computeLoadForces();
 

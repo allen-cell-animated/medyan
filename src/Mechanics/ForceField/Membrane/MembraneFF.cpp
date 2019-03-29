@@ -87,9 +87,3 @@ void MembraneFF::computeForces(double* coord, double* f) {
     for (auto &interaction : _membraneInteractionVector)
         interaction->computeForces(coord, f);
 }
-
-void MembraneFF::computeForcesAux() {
-    
-    for (auto &interaction : _membraneInteractionVector)
-        interaction->computeForcesAux();
-}

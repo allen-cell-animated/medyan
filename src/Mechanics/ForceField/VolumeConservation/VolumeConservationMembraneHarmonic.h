@@ -12,7 +12,6 @@ public:
     double energy(double, double, double);
     
     void forces(double* force, double, const mathfunc::Vec3&, double, double);
-    void forcesAux(Vertex*, double, const mathfunc::Vec3&, double, double);
 };
 
 

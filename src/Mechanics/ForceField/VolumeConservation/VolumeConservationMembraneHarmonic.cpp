@@ -20,16 +20,3 @@ void VolumeConservationMembraneHarmonic::forces(
         force[coordIdx] += coeff * dVolume[coordIdx];
     }
 }
-
-void VolumeConservationMembraneHarmonic::forcesAux(
-    Vertex* v,
-    double volume, const mathfunc::Vec3& dVolume,
-    double kBulk, double eqVolume
-) {
-    // Same as force calculation
-
-    double coeff = -kBulk / eqVolume * (volume - eqVolume);
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        v->forceAux[coordIdx] += coeff * dVolume[coordIdx];
-    }
-}

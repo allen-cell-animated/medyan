@@ -29,13 +29,3 @@ void MembraneStretchingVoronoiHarmonic::forces(
 
     for(size_t i = 0; i < 3; ++i) force[i] += deltaF[i]; // v->force += deltaF;
 }
-
-void MembraneStretchingVoronoiHarmonic::forcesAux(
-    Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
-) {
-    // Same as force calculation
-
-    const auto deltaF = (- kElastic * (area - eqArea) / eqArea) * dArea;
-
-    for(size_t i = 0; i < 3; ++i) v->forceAux[i] += deltaF[i]; // v->force += deltaF;
-}
