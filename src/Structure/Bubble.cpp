@@ -47,12 +47,19 @@ void Bubble::updatePosition() {
 
 void Bubble::updatePositionManually() {
     //if reaching the desire position
-    if(iter > 100.1) {
-        iter = 0;
-        stepTotal++;
+    if(iter > SysParams::Chemistry().StepTotal) {
+        iter = 1;
+        currentStep++;
     }
-    if(tau() > (stepTotal* stepFreq + iter * 0.01)){
-        double *bcoord, *coord;
+    if(tau() > (currentStep * SysParams::Chemistry().StepTime + iter * 0.01)){
+        double *bcoord, *coord, step;
+        
+        if(currentStep > SysParams::Chemistry().IterChange){
+            step = SysParams::Chemistry().AFMStep2;
+        }
+        else{
+            step = SysParams::Chemistry().AFMStep1;
+        }
         coord = CUDAcommon::serlvars.coord;
         bcoord = &coord[3 * _bead->_dbIndex];
         bcoord[2] = coordinate[2] + step;

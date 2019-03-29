@@ -687,7 +687,8 @@ void Controller::executeSpecialProtocols() {
 void Controller::updatePositions() {
 
     //update bubble
-    updateBubblePositions();
+    if(SysParams::Chemistry().makeAFM) updateBubblePositions();
+    
     
     //NEED TO UPDATE CYLINDERS FIRST
     for(auto c : Cylinder::getCylinders()) c->updatePosition();

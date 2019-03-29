@@ -180,6 +180,15 @@ struct ChemParams {
     double makeRateDependTime = 0.0;
     double makeRateDependForce = 0.0;
     
+    /// Make (de)polymerization depends on stress
+    bool makeAFM = false;
+    double AFMStep1 = 0.0;
+    double AFMStep2 = 0.0;
+    double IterChange = 0.0;
+    double StepTotal = 0.0;
+    double StepTime = 0.0;
+    
+    
     //@}
 #ifdef CUDAACCL_NL
     string bindingmanagerlist = "";
