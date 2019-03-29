@@ -28,7 +28,8 @@ public:
     double energy(mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb, double area, double kExVol);
     
     void forces(
-        Vertex*, Vertex*, Vertex*, Bead*,
+        double* f0, double* f1, double* f2, double* fb,
+        mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb,
         double area, const mathfunc::Vec3&, const mathfunc::Vec3&, const mathfunc::Vec3&,
         double kExVol
     );

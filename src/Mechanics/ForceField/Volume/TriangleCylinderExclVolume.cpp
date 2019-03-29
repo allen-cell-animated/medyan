@@ -80,7 +80,7 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
 }
 
 template <class TriangleCylinderExclVolumeInteractionType>
-void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeForces() {
+void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeForces(const double* coord, double* force) {
 
     for(auto t: Triangle::getTriangles()) {
 
@@ -107,7 +107,16 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
             for(size_t idx = 0; idx < numBeads; ++idx) {
                 Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
             
-                _FFType.forces(v0, v1, v2, b, area, dArea0, dArea1, dArea2, kExVol);
+                _FFType.forces(
+                    force + 3 * v0->Bead::getIndex(),
+                    force + 3 * v1->Bead::getIndex(),
+                    force + 3 * v2->Bead::getIndex(),
+                    force + 3 * b->getIndex(),
+                    makeVec<3>(coord + 3 * v0->Bead::getIndex()),
+                    makeVec<3>(coord + 3 * v1->Bead::getIndex()),
+                    makeVec<3>(coord + 3 * v2->Bead::getIndex()),
+                    makeVec<3>(coord + 3 * b->getIndex()),
+                    area, dArea0, dArea1, dArea2, kExVol);
             }
         }
     }
@@ -241,6 +250,6 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 
 ///Template specializations
 template double TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(const double* coord, bool stretched);
-template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces();
+template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces(const double* coord, double* force);
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForcesAux();
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeLoadForces();

@@ -92,29 +92,26 @@ double TriangleCylinderBeadExclVolRepulsion::energy(
 }
 
 void TriangleCylinderBeadExclVolRepulsion::forces(
-    Vertex* v0, Vertex* v1, Vertex* v2, Bead* b,
+    double* f0, double* f1, double* f2, double* fb,
+    Vec3 c0, Vec3 c1, Vec3 c2, Vec3 cb,
     double area, const Vec3& dArea0, const Vec3& dArea1, const Vec3& dArea2,
     double kExVol
 ) {
     
-    auto c0 = v0->coordinate;
-    auto c1 = v1->coordinate;
-    auto c2 = v2->coordinate;
-    auto cb = b->coordinate;
-        
     //check if in same plane
-    if(areInPlane(c0, c1, c2, cb)) {
+    auto cp = cross(c1 - c0, c2 - c0);
+    if(areEqual(dot(cp, cb - c0), 0.0)) {
         
         // slightly move point. Using negative number here to move "into the cell".
-        cb = movePointOutOfPlane(c0, c1, c2, cb, 4, -0.01);
+        cb -= cp * (0.01 / magnitude(cp));
     }
     
-    double A = scalarProduct(c0, c1, c0, c1);
-    double B = scalarProduct(c1, c2, c1, c2);
-    double C = scalarProduct(cb, c0, cb, c0);
-    double D = 2 * scalarProduct(c0, c1, cb, c0);
-    double E = 2 * scalarProduct(c1, c2, cb, c0);
-    double F = 2 * scalarProduct(c0, c1, c1, c2);
+    double A = dot(c1 - c0, c1 - c0);
+    double B = dot(c2 - c1, c2 - c1);
+    double C = dot(c0 - cb, c0 - cb);
+    double D = 2 * dot(c1 - c0, c0 - cb);
+    double E = 2 * dot(c2 - c1, c0 - cb);
+    double F = 2 * dot(c1 - c0, c2 - c1);
 
     // Derivative index is 0, 1, 2, b
     array<Vec3, 4> dA = {
@@ -231,10 +228,10 @@ void TriangleCylinderBeadExclVolRepulsion::forces(
     }
 
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        b->force[coordIdx] -= kExVol * dH[3][coordIdx] * 2 * area;
-        v0->force[coordIdx] -= kExVol * 2 * (dArea0[coordIdx] * H + dH[0][coordIdx] * area);
-        v1->force[coordIdx] -= kExVol * 2 * (dArea1[coordIdx] * H + dH[1][coordIdx] * area);
-        v2->force[coordIdx] -= kExVol * 2 * (dArea2[coordIdx] * H + dH[2][coordIdx] * area);
+        fb[coordIdx] -= kExVol * dH[3][coordIdx] * 2 * area;
+        f0[coordIdx] -= kExVol * 2 * (dArea0[coordIdx] * H + dH[0][coordIdx] * area);
+        f1[coordIdx] -= kExVol * 2 * (dArea1[coordIdx] * H + dH[1][coordIdx] * area);
+        f2[coordIdx] -= kExVol * 2 * (dArea2[coordIdx] * H + dH[2][coordIdx] * area);
     }
 }
 
