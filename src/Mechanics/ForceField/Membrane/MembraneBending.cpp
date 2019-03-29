@@ -8,7 +8,7 @@
 
 // Using the Helfrich Hamiltonian of mean curvature in Voronoi cells
 template<>
-double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(bool stretched) {
+double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(const double* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -40,7 +40,7 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(bool stret
 }
 
 template<>
-void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
+void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces(const double* coord, double* force) {
     
     for (auto m: Membrane::getMembranes()) {
     
@@ -55,9 +55,9 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
 
             const auto area = v.attr.gVertex.area;
             const auto curv = v.attr.gVertex.curv;
-           
+
             _FFType.forces(
-                v.attr.vertex,
+                force + 3 * v.attr.vertex->Bead::getIndex(),
                 area, v.attr.gVertex.dArea,
                 curv, v.attr.gVertex.dCurv,
                 kBending, eqCurv
@@ -68,7 +68,10 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
                 auto vt = mesh.getVertexAttribute(mesh.target(hei_o)).vertex;
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
                 const auto& dCurv = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
-                _FFType.forces(vt, area, dArea, curv, dCurv, kBending, eqCurv);
+                _FFType.forces(
+                    force + 3 * vt->Bead::getIndex(),
+                    area, dArea, curv, dCurv, kBending, eqCurv
+                );
             });
         }
 

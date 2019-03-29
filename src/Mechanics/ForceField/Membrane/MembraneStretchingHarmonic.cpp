@@ -18,14 +18,14 @@ double MembraneStretchingHarmonic::energy(double area,
 }
 
 void MembraneStretchingHarmonic::forces(
-    Vertex* v, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
+    double* force, double area, const mathfunc::Vec3& dArea, double kElastic, double eqArea
 ) {
     // F_i = -grad_i U = -k / A_0 * (A - A_0) * grad_i A
     // A(rea) and grad_i A(rea) are obtained as function parameters
 
     const auto deltaF = (- kElastic * (area - eqArea) / eqArea) * dArea;
 
-    for(size_t i = 0; i < 3; ++i) v->force[i] += deltaF[i]; // v->force += deltaF;
+    for(size_t i = 0; i < 3; ++i) force[i] += deltaF[i]; // v->force += deltaF;
 }
 
 void MembraneStretchingHarmonic::forcesAux(

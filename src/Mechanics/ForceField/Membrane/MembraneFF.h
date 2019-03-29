@@ -37,8 +37,8 @@ public:
     virtual string getName() {return "Membrane";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
+    virtual double computeEnergy(double* coord, bool stretched) override;
+    virtual void computeForces(double* coord, double* f) override;
     virtual void computeForcesAux();
     
     virtual void computeLoadForces() { return; }

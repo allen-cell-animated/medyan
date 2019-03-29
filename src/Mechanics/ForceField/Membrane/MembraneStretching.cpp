@@ -11,7 +11,7 @@
 
 // Using the area of the Voronoi cells
 template<>
-double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(bool stretched) {
+double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(const double* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -41,7 +41,7 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(bool
 // Force on each vertex is calculated one-time using derivative of vcell area and
 // the derivative of neighbor vcell areas on the center vertex.
 template<>
-void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
+void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces(const double* coord, double* force) {
     
     for (auto m: Membrane::getMembranes()) {
 
@@ -57,12 +57,18 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
         for(size_t vi = 0; vi < numVertices; ++vi) {
             const auto& v = mesh.getVertices()[vi];
            
-            _FFType.forces(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
+            _FFType.forces(
+                force + 3 * v.attr.vertex->Bead::getIndex(),
+                area, v.attr.gVertex.dArea, kElastic, eqArea
+            );
 
             // Position of this vertex also affects neighbor vcell areas
             mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea;
-                _FFType.forces(v.attr.vertex, area, dArea, kElastic, eqArea);
+                _FFType.forces(
+                    force + 3 * v.attr.vertex->Bead::getIndex(),
+                    area, dArea, kElastic, eqArea
+                );
             });
         }
     }
@@ -100,7 +106,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
 
 // Using the areas of the triangles
 template<>
-double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(bool stretched) {
+double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(const double* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -134,7 +140,7 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(bool stretc
 // Currently force calculation using triangles are different with the one using vcells.
 // Using triangles, looping through triangles and forces are accumulated on the vertices.
 template<>
-void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
+void MembraneStretching<MembraneStretchingHarmonic>::computeForces(const double* coord, double* force) {
     
     for (auto m: Membrane::getMembranes()) {
     
@@ -150,7 +156,10 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
-                _FFType.forces(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
+                _FFType.forces(
+                    force + 3 * mesh.getVertexAttribute(mesh.target(hei)).vertex->Bead::getIndex(),
+                    area, dArea, kElastic, eqArea
+                );
             });
         }
     }

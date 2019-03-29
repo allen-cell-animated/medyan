@@ -20,7 +20,7 @@ double MembraneBendingVoronoiHelfrich::energy(double area, double curv,
 }
 
 void MembraneBendingVoronoiHelfrich::forces(
-    Vertex* v,
+    double* force,
     double area, const mathfunc::Vec3& dArea,
     double curv, const mathfunc::Vec3& dCurv,
     double kBending, double eqCurv
@@ -32,7 +32,7 @@ void MembraneBendingVoronoiHelfrich::forces(
     double coeff1 = -4 * kBending * dist * area;
     double coeff2 = -2 * kBending * dist * dist;
 
-    for(size_t i = 0; i < 3; ++i) v->force[i] += coeff1 * dCurv[i] + coeff2 * dArea[i];
+    for(size_t i = 0; i < 3; ++i) force[i] += coeff1 * dCurv[i] + coeff2 * dArea[i];
 }
 
 void MembraneBendingVoronoiHelfrich::forcesAux(
