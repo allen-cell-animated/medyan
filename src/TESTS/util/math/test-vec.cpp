@@ -1,4 +1,5 @@
 #include <cstddef> // size_t
+#include <vector>
 
 #include "catch2/catch.hpp"
 
@@ -72,6 +73,14 @@ TEST_CASE("Vec tests", "[Vec]") {
 
         auto res2 = dot(v4d_1, v4d_2);
         CHECK(res2 == Approx(20.0));
+    }
+
+    SECTION("Factory functions") {
+        vector< double > source {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
+        auto res = makeVec<3>(&source[1]);
+        CHECK(res[0] == Approx(1.0));
+        CHECK(res[1] == Approx(2.0));
+        CHECK(res[2] == Approx(3.0));
     }
 }
 

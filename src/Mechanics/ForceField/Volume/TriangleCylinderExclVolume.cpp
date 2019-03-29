@@ -25,7 +25,7 @@ using namespace mathfunc;
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
 template <class TriangleCylinderExclVolumeInteractionType>
-double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(bool stretched) {
+double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(const double* coord, bool stretched) {
     
     double U = 0;
     double U_i;
@@ -41,7 +41,9 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
         Vertex* const v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
         Vertex* const v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
 
-        const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+        const auto area = stretched ?
+            mesh.getTriangleAttribute(ti).gTriangleS.area :
+            mesh.getTriangleAttribute(ti).gTriangle.area;
         double kExVol = t->getMTriangle()->getExVolConst();
         
         for(auto &c : _neighborList->getNeighbors(t)) {
@@ -52,7 +54,12 @@ double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::co
             for(size_t idx = 0; idx < numBeads; ++idx) {
                 Bead* b = (idx? c->getSecondBead(): c->getFirstBead());
                 
-                U_i = _FFType.energy(v0, v1, v2, b, area, kExVol, stretched);
+                U_i = _FFType.energy(
+                    makeVec<3>(coord + 3 * v0->Bead::getIndex()),
+                    makeVec<3>(coord + 3 * v1->Bead::getIndex()),
+                    makeVec<3>(coord + 3 * v2->Bead::getIndex()),
+                    makeVec<3>(coord + 3 * b->getIndex()),
+                    area, kExVol);
                 
                 if(fabs(U_i) == numeric_limits<double>::infinity()
                 || U_i != U_i || U_i < -1.0) {
@@ -233,7 +240,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 }
 
 ///Template specializations
-template double TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(bool stretched);
+template double TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(const double* coord, bool stretched);
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces();
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForcesAux();
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeLoadForces();

@@ -25,7 +25,7 @@ class Bead;
 class TriangleCylinderBeadExclVolRepulsion {
     
 public:
-    double energy(Vertex*, Vertex*, Vertex*, Bead*, double area, double kExVol, bool stretched);
+    double energy(mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3, mathfunc::Vec3 cb, double area, double kExVol);
     
     void forces(
         Vertex*, Vertex*, Vertex*, Bead*,

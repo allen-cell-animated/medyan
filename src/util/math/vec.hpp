@@ -1,6 +1,7 @@
 #ifndef MEDYAN_UTIL_MATH_VEC_HPP
 #define MEDYAN_UTIL_MATH_VEC_HPP
 
+#include <algorithm> // copy
 #include <array>
 #include <cmath>
 #include <cstddef> // ptrdiff_t
@@ -195,6 +196,14 @@ template<
         value.resize(value.size() - dim);
     }
 };
+
+// Factory
+template< size_t dim, typename Float = double >
+inline auto makeVec(const Float* source) {
+    Vec< dim, Float > res;
+    std::copy(source, source + dim, res.begin());
+    return res;
+}
 
 // Formatting
 // undefined behavior if size is 0

@@ -36,7 +36,7 @@ protected:
     
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(bool stretched) = 0;
+    virtual double computeEnergy(const double* coord, bool stretched) = 0;
     /// Compute the forces of this interaction
     virtual void computeForces() = 0;
     /// Compute the auxiliary forces of this interaction

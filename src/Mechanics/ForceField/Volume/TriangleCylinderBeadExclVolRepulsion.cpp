@@ -33,28 +33,24 @@ using namespace mathfunc;
 // Note: These functions require that the area of the triangle has already been calculated
 
 double TriangleCylinderBeadExclVolRepulsion::energy(
-    Vertex* v0, Vertex* v1, Vertex* v2, Bead* b, double area,
-    double kExVol, bool stretched
+    Vec3 c0, Vec3 c1, Vec3 c2, Vec3 cb, double area,
+    double kExVol
 ) {
-    
-    auto c0 = stretched ? v0->getCoordinate<true>() : v0->getCoordinate<false>();
-    auto c1 = stretched ? v1->getCoordinate<true>() : v1->getCoordinate<false>();
-    auto c2 = stretched ? v2->getCoordinate<true>() : v2->getCoordinate<false>();
-    auto cb = stretched ? b->getCoordinate<true>() : b->getCoordinate<false>();
-        
+
     //check if in same plane
-    if(areInPlane(c0, c1, c2, cb)) {
+    auto cp = cross(c1 - c0, c2 - c0);
+    if(areEqual(dot(cp, cb - c0), 0.0)) {
         
         // slightly move point. Using negative number here to move "into the cell".
-        cb = movePointOutOfPlane(c0, c1, c2, cb, 4, -0.01);
+        cb -= cp * (0.01 / magnitude(cp));
     }
     
-    double A = scalarProduct(c0, c1, c0, c1);
-    double B = scalarProduct(c1, c2, c1, c2);
-    double C = scalarProduct(cb, c0, cb, c0);
-    double D = 2 * scalarProduct(c0, c1, cb, c0);
-    double E = 2 * scalarProduct(c1, c2, cb, c0);
-    double F = 2 * scalarProduct(c0, c1, c1, c2);
+    double A = dot(c1 - c0, c1 - c0);
+    double B = dot(c2 - c1, c2 - c1);
+    double C = dot(c0 - cb, c0 - cb);
+    double D = 2 * dot(c1 - c0, c0 - cb);
+    double E = 2 * dot(c2 - c1, c0 - cb);
+    double F = 2 * dot(c1 - c0, c2 - c1);
 
     double A1 = 2 * A*E - D*F;
     double A2 = 2 * B*D - 2 * A*E + (D - E)*F;

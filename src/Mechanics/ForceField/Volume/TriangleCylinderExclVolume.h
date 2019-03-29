@@ -14,7 +14,7 @@
 #ifndef MEDYAN_TriangleCylinderExclVolume_h
 #define MEDYAN_TriangleCylinderExclVolume_h
 
-#include "common.h"
+#include <memory> // unique_ptr
 
 #include "TriangleCylinderVolumeInteractions.h"
 #include "NeighborListImpl.h"
@@ -32,22 +32,22 @@ class TriangleCylinderExclVolume : public TriangleCylinderVolumeInteractions {
     
 private:
     TriangleCylinderExclVolumeInteractionType _FFType;
-    TriangleCylinderNL* _neighborList;  ///< Neighbor list of cylinders
-    
+    std::unique_ptr<TriangleCylinderNL> _neighborList;  ///< Neighbor list of cylinders
+
 public:
     ///Constructor
     TriangleCylinderExclVolume() {
-        _neighborList = new TriangleCylinderNL(SysParams::Mechanics().MemCylinderVolumeCutoff);
+        _neighborList = std::make_unique<TriangleCylinderNL>(SysParams::Mechanics().MemCylinderVolumeCutoff);
     }
-    
-    virtual double computeEnergy(bool stretched) override;
+
+    virtual double computeEnergy(const double coord*, bool stretched) override;
     virtual void computeForces();
     virtual void computeForcesAux();
 
     virtual void computeLoadForces();
 
     /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() { return _neighborList; }
+    virtual NeighborList* getNeighborList() { return _neighborList.get(); }
     
     virtual const string getName() {return "Triangle Cylinder Excluded Volume";}
 };
