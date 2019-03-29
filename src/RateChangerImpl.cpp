@@ -50,27 +50,18 @@ float BranchSlip::changeRate(float bareRate, double force) {
 
 float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 double force, int numHeads) {
-<<<<<<< HEAD
-    
-    return min(double(numHeads),numHeads * _dutyRatio + _beta * force / numHeads);
-=======
 #ifdef PLOSFEEDBACK
     return min<double>(numHeads, numHeads * _dutyRatio + _gamma * force);
 #else
     return min<double>(numHeads, numHeads * _dutyRatio + _beta * force / numHeads);
 #endif
->>>>>>> RestartDebug_FlatCylinder
-    
+
 }
 
 float MotorCatch::changeRate(float onRate, float offRate,
                              double numHeads, double force) {
 
     //calculate new rate
-<<<<<<< HEAD
-    double k_0 = onRate * (numHeads) / ( (exp(log((onRate + offRate) / offRate) * numHeads) - 1));
-    //double k_0 = 0.2* onRate /(numBoundHeads(onRate, offRate, force, numHeads));
-=======
 #ifdef PLOSFEEDBACK
     double k_0 = _beta * onRate /numBoundHeads(onRate, offRate, force, numHeads);
 
@@ -78,16 +69,15 @@ float MotorCatch::changeRate(float onRate, float offRate,
 #else
     double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads)
                                         - 1.0);
->>>>>>> RestartDebug_FlatCylinder
-    
+
     double factor = max(0.1, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
 #endif
-    
+
     double newRate = k_0 * factor;
     // cout<<"new rate is "<<newRate<<endl;
     return newRate;
-    
-    
+
+
 }
 
 float MotorStall::changeRate(float onRate, float offRate,
@@ -95,18 +85,12 @@ float MotorStall::changeRate(float onRate, float offRate,
     //determine k_0
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
 
-<<<<<<< HEAD
-    
-    //calculate new rate
-=======
 #if defined(PLOSFEEDBACK) || defined(PLOSSTALLFEEDBACK)
     double newRate =  max(0.0, k_0 * (_F0 - force/numHeads)
                           / (_F0 + (force / (numHeads * _alpha))));
 #else
->>>>>>> RestartDebug_FlatCylinder
     double newRate =  max(0.0, k_0 * (_F0 - force)
                                / (_F0 + (force / (_alpha))));
 #endif
     return newRate;
 }
-

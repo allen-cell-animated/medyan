@@ -595,7 +595,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
             dBInt = 2;
             for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-                
+
                 //DifBind
 //                for(auto ll = startInt.begin(); ll != startInt.end(); ll++){
 //                    cout<<startInt[*ll]<<endl;
@@ -610,10 +610,10 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                 } else {
                     dBInt = 1;}
                 //cout<<"it "<<*it<<endl;
-                
-                
-                
-                
+
+
+
+
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
                                                                  SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
@@ -630,15 +630,9 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
 
-<<<<<<< HEAD
                     double distSq = twoPointDistanceSquared(m1, m2);
 
                     if(distSq > _rMaxSq || distSq < _rMinSq) continue;
-=======
-                    double distsq = twoPointDistancesquared(m1, m2);
-
-                    if(distsq > _rMaxsq || distsq < _rMinsq) continue;
->>>>>>> RestartDebug_FlatCylinder
 
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
@@ -735,8 +729,7 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
     _possibleBindings.erase(t);
 
     //remove all tuples which have this as value
-<<<<<<< HEAD
-    
+
     //Iterate through the reverse map
        auto keys = _reversePossibleBindings[t];//keys that contain t as
        // value in possiblebindings
@@ -751,19 +744,10 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
                        else ++it;
                }
        }
-    
+
     //remove from the reverse map.
     _reversePossibleBindings[t].clear();
-    
-=======
-    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
 
-        if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-        _possibleBindings.erase(it++);
-
-        else ++it;
-    }
->>>>>>> RestartDebug_FlatCylinder
 #endif
 
     int oldN = _bindingSpecies->getN();
@@ -784,18 +768,17 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
             if(find(affectedManagers.begin(), affectedManagers.end(), m) == affectedManagers.end())
             affectedManagers.push_back(m);
         }
-        
-        
+
+
     }
-    
+
     // cout<<affectedManagers.size()<<endl;;
 
     //remove, update affected
     for(auto m : affectedManagers) {
-<<<<<<< HEAD
-    
 
-        
+
+
         //Iterate through the reverse map
         auto keys = m->_reversePossibleBindings[t];//keys that contain t as
         // value in possiblebindings
@@ -809,23 +792,12 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc, short bindingSi
                 }
                 else ++it;
             }
-=======
-
-#ifdef DEBUGCONSTANTSEED
-        m->erasepossibleBindings(cc,bindingSite);
-#else
-        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-
-            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-            m->_possibleBindings.erase(it++);
-            else ++it;
->>>>>>> RestartDebug_FlatCylinder
         }
-        
+
         //remove from the reverse map.
         m->_reversePossibleBindings[t].clear();
-        
-        
+
+
         int oldNOther = m->_bindingSpecies->getN();
         int newNOther = m->numBindingSites();
 
@@ -846,7 +818,6 @@ void LinkerBindingManager::removePossibleBindings(CCylinder* cc) {
 void LinkerBindingManager::updateAllPossibleBindings() {
 
     _possibleBindings.clear();
-<<<<<<< HEAD
     _reversePossibleBindings.clear();
 #ifdef DEBUGCONSTANTSEED
     struct Orderset
@@ -872,11 +843,11 @@ void LinkerBindingManager::updateAllPossibleBindings() {
         if(c->getType() != _filamentType) continue;
 
         auto cc = c->getCCylinder();
-        
+
         dBInt = 2;
         for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
             it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-            
+
             // DifBind
             //if (difBindInts.find(*it1) == difBindInts.end()) continue;
             //cout<<"pre it1 "<<*it1<<endl;
@@ -886,36 +857,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
             } else {
                 dBInt = 1;}
             //cout<<"it1 "<<*it1<<endl;
-            
-=======
-    double min1,min2,max1,max2;
-    chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
-    double timetaken = 0.0;
-    double time16 = 0.0;
-    double minparamcyl2 = (float)*(SysParams::Chemistry().bindingSites[_filamentType].begin())/
-    SysParams::Geometry().cylinderNumMon[_filamentType];
-    double maxparamcyl2 = (float)(SysParams::Chemistry().bindingSites[_filamentType].back())/
-    SysParams::Geometry().cylinderNumMon[_filamentType];
-    double sqdisttermswithjustalpha;
-    bool status1 = true;
-    bool status2 = true;
-    vector<double> maxvec;
-    vector<double> minvec;
-    int accepts = 0;
-    int total = 0;
-    int rejects16 = 0;
-    int rejectsnavail =0;
-    mints = chrono::high_resolution_clock::now();
-    vector<double> bindingsites;
-    vector<double> cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
-    auto boundstate = SysParams::Mechanics().speciesboundvec;
 
-    for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-        it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-        bindingsites.push_back((float)*it1 / SysParams::Geometry()
-                               .cylinderNumMon[_filamentType]);
-    }
->>>>>>> RestartDebug_FlatCylinder
 
     //    minte = chrono::high_resolution_clock::now();
     //    chrono::duration<double> elapsed_vec(minte - mints);
@@ -931,7 +873,6 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     for(auto c : _compartment->getCylinders()) {
         if (c->getType() != _filamentType) continue;
 
-<<<<<<< HEAD
                     if(cn->getParent() == c->getParent()) continue;
                     if(cn->getType() != _filamentType) continue;
                     if(c->getID() < cn->getID()) continue;
@@ -941,9 +882,9 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                     dBInt = 2;
                     for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
                         it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
-                        
+
                         // DifBind
-                        
+
                         //if (difBindInts.find(*it2) == difBindInts.end()) continue;
                         //cout<<"pre it2 "<<*it2<<endl;
                         if(dBInt % dBI != 0) {
@@ -956,99 +897,6 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                         if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
                                 SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
 
-=======
-        auto x1 = c->getFirstBead()->coordinate;
-        auto x2 = c->getSecondBead()->coordinate;
-        auto cc = c->getCCylinder();
-        vector<double> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
-
-        for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
-
-            if(cn->getParent() == c->getParent()) continue;
-            if(cn->getType() != _filamentType) continue;
-            if(c->getID() < cn->getID()) continue;
-            auto ccn = cn->getCCylinder();
-            auto x3 = cn->getFirstBead()->coordinate;
-            auto x4 = cn->getSecondBead()->coordinate;
-
-            vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-            vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-            double maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
-
-            double mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
-                                                                                    x3,x4)));
-            mindistsq = mindistsq * mindistsq;
-            if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
-
-            double X1X3squared = sqmagnitude(X1X3);
-            double X1X2squared = cylsqmagnitudevector.at(c->_dcIndex);
-            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-            double X3X4squared = cylsqmagnitudevector.at(cn->_dcIndex);
-            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
-            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
-            mins2 = chrono::high_resolution_clock::now();
-            int i = -1;
-            for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-                i++;
-                //now re add valid binding sites
-                if (areEqual(boundstate[1][offset + SysParams::Chemistry()
-                                           .bindingSites[_filamentType].size()
-                                           *c->_dcIndex + i], 1.0)) {
-                    auto mp1 = bindingsites.at(i);
-                    double A = X3X4squared;
-                    double B = 2 * X1X3dotX3X4 - 2 * mp1 * X3X4dotX1X2;
-                    double C = X1X3squared + mp1 * mp1 * X1X2squared - 2 * mp1 *
-                    X1X3dotX1X2;
-                    double C1 = C - _rMinsq;
-                    double C2 = C - _rMaxsq;
-                    double b2m4ac1 = B*B - 4*A*C1;
-                    double b2m4ac2 = B*B - 4*A*C2;
-                    status1 = b2m4ac1 < 0;
-                    status2 = b2m4ac2 < 0;
-                    if(status1 && status2) continue;
-                    maxvec.clear();
-                    minvec.clear();
-                    if(!status1){
-                        min1 = (-B + sqrt(b2m4ac1))/(2*A);
-                        min2 = (-B - sqrt(b2m4ac1))/(2*A);
-                        if(min1<min2) {
-                            minvec.push_back(min1);
-                            minvec.push_back(min2);
-                        }
-                        else{
-                            minvec.push_back(min2);
-                            minvec.push_back(min1);
-                        }
-                        if(minvec.at(0)< minparamcyl2 && minvec.at(1) > maxparamcyl2) {
-                            continue;
-                        }
-                    }
-                    if(!status2){
-                        max1 = (-B + sqrt(b2m4ac2))/(2*A);
-                        max2 = (-B - sqrt(b2m4ac2))/(2*A);
-                        if(max1<max2) {
-                            maxvec.push_back(max1);
-                            maxvec.push_back(max2);
-                        }
-                        else{
-                            maxvec.push_back(max2);
-                            maxvec.push_back(max1);
-                        }
-                        if(maxvec.at(0) > maxparamcyl2 || maxvec.at(1) <minparamcyl2){
-                            continue;
-                        }
-                    }
-                    int j =-1;
-                    for(auto it2 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                        it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
-                        j++;
-                        bool check2 = true;
-                        if (areEqual(boundstate[1][offset + SysParams::Chemistry()
-                                                   .bindingSites[_filamentType]
-                                                   .size()*cn->_dcIndex + j], 1.0)) {
-                            total++;
->>>>>>> RestartDebug_FlatCylinder
                             //check distances..
                             auto mp2 = bindingsites.at(j);
 
@@ -1071,7 +919,6 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                                 auto t1 = tuple<CCylinder *, short>(cc, *it1);
                                 auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 
-<<<<<<< HEAD
                             //add in correct order
                             if(c->getID() > cn->getID()) {
 #ifdef DEBUGCONSTANTSEED
@@ -1083,12 +930,6 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                                 _possibleBindings.emplace(t1, t2);
                                 _reversePossibleBindings[t2].push_back(t1);
 #endif
-=======
-                                //add in correct order
-                                if (c->getID() > cn->getID()) {
-                                    _possibleBindings.emplace(t1, t2);
-                                }
->>>>>>> RestartDebug_FlatCylinder
                             }
                             mine= chrono::high_resolution_clock::now();
                             chrono::duration<double> elapsed_emplace(mine - mins);
@@ -1981,15 +1822,9 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                     auto m1 = midPointCoordinate(x1, x2, mp1);
                     auto m2 = midPointCoordinate(x3, x4, mp2);
 
-<<<<<<< HEAD
                     double distSq = twoPointDistanceSquared(m1, m2);
 
                     if (distSq > _rMaxSq || distSq < _rMinSq) continue;
-=======
-                    double distsq = twoPointDistancesquared(m1, m2);
-
-                    if(distsq > _rMaxsq || distsq < _rMinsq) continue;
->>>>>>> RestartDebug_FlatCylinder
 
                     auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder *, short>(ccn, *it);
@@ -2012,13 +1847,9 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                             appendpossibleBindings(t1, t2);
                             //                            _possibleBindings.emplace(t1, t2);
 #else
-<<<<<<< HEAD
                                 _possibleBindings.emplace(t1, t2);
                                 _reversePossibleBindings[t2].push_back(t1);
 
-=======
-                            _possibleBindings.emplace(t1, t2);
->>>>>>> RestartDebug_FlatCylinder
 #endif
                         }
                         //add in other
@@ -2033,13 +1864,9 @@ void MotorBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) 
                             m->appendpossibleBindings(t2, t1);
                             //                            m->_possibleBindings.emplace(t2,t1);
 #else
-<<<<<<< HEAD
                                 m->_possibleBindings.emplace(t2,t1);
                                 m->_reversePossibleBindings[t1].push_back(t2);
 
-=======
-                            m->_possibleBindings.emplace(t2,t1);
->>>>>>> RestartDebug_FlatCylinder
 #endif
                         }
                     }
@@ -2109,7 +1936,6 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
     _possibleBindings.erase(t);
 
     //remove all tuples which have this as value
-<<<<<<< HEAD
     //Iterate through the reverse map
     auto keys = _reversePossibleBindings[t];//keys that contain t as
     // value in possiblebindings
@@ -2123,19 +1949,11 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
             }
             else ++it;
         }
-=======
-    for (auto it = _possibleBindings.begin(); it != _possibleBindings.end(); ) {
-
-        if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-        _possibleBindings.erase(it++);
-
-        else ++it;
->>>>>>> RestartDebug_FlatCylinder
     }
-    
+
     //remove from the reverse map.
     _reversePossibleBindings[t].clear();
-    
+
 
 #endif
 
@@ -2176,25 +1994,10 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc, short bindingSit
                 else ++it;
             }
 
-<<<<<<< HEAD
         }
 
         //remove from the reverse map.
         m->_reversePossibleBindings[t].clear();
-=======
-        //        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-        //
-        //            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-        //                m->_possibleBindings.erase(it++);
-        //
-        //            else ++it;
-        //        }
-#else
-        for (auto it = m->_possibleBindings.begin(); it != m->_possibleBindings.end(); ) {
-
-            if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
-            m->_possibleBindings.erase(it++);
->>>>>>> RestartDebug_FlatCylinder
 
 
         int oldNOther = m->_bindingSpecies->getN();
@@ -2217,7 +2020,6 @@ void MotorBindingManager::removePossibleBindings(CCylinder* cc) {
 void MotorBindingManager::updateAllPossibleBindings() {
 
     _possibleBindings.clear();
-<<<<<<< HEAD
     _reversePossibleBindings.clear();
 #ifdef DEBUGCONSTANTSEED
     struct Orderset
@@ -2229,34 +2031,6 @@ void MotorBindingManager::updateAllPossibleBindings() {
     set<Cylinder*, Orderset> _cylinderssorted; ///< Set of cylinders that are in this
     for(auto c : _compartment->getCylinders()) {
         _cylinderssorted.insert(c);
-=======
-    double min1,min2,max1,max2;
-    chrono::high_resolution_clock::time_point mins, mine, mins2, mine2,mints,minte;
-    double timetaken = 0.0;
-    double time16 = 0.0;
-    double minparamcyl2 = (float)*(SysParams::Chemistry().bindingSites[_filamentType].begin())/
-    SysParams::Geometry().cylinderNumMon[_filamentType];
-    double maxparamcyl2 = (float)(SysParams::Chemistry().bindingSites[_filamentType].back())/
-    SysParams::Geometry().cylinderNumMon[_filamentType];
-    double sqdisttermswithjustalpha;
-    bool status1 = true;
-    bool status2 = true;
-    vector<double> maxvec;
-    vector<double> minvec;
-    int accepts = 0;
-    int total = 0;
-    int rejects16 = 0;
-    int rejectsnavail =0;
-    mints = chrono::high_resolution_clock::now();
-    vector<double> bindingsites;
-    vector<double> cylsqmagnitudevector = SysParams::Mechanics().cylsqmagnitudevector;
-    auto boundstate = SysParams::Mechanics().speciesboundvec;
-
-    for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-        it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-        bindingsites.push_back((float)*it1 / SysParams::Geometry()
-                               .cylinderNumMon[_filamentType]);
->>>>>>> RestartDebug_FlatCylinder
     }
 
     //    minte = chrono::high_resolution_clock::now();
@@ -2386,7 +2160,6 @@ void MotorBindingManager::updateAllPossibleBindings() {
                                 auto t1 = tuple<CCylinder *, short>(cc, *it1);
                                 auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 
-<<<<<<< HEAD
                             //add in correct order
                             if(c->getID() > cn->getID()) {
                                 //                                        ""<<x[1]<<" "<<x[2]<<endl;
@@ -2402,12 +2175,6 @@ void MotorBindingManager::updateAllPossibleBindings() {
 //                                        ""<<*it1<<" Cyl "<<ccn->getCylinder()->getID()<<""
 //                                        " bs "<<*it2<<" in comp "<<x[0]<<" "
 //                                        ""<<x[1]<<" "<<x[2]<<endl;
-=======
-                                //add in correct order
-                                if (c->getID() > cn->getID()) {
-                                    _possibleBindings.emplace(t1, t2);
-                                }
->>>>>>> RestartDebug_FlatCylinder
                             }
                             mine= chrono::high_resolution_clock::now();
                             chrono::duration<double> elapsed_emplace(mine - mins);

@@ -140,13 +140,9 @@ struct ChemParams {
     /// Vector corresponds to each filament type
     vector<short> motorNumHeadsMin = {};
     vector<short> motorNumHeadsMax = {};
-<<<<<<< HEAD
-    
-    double dutyRatio = 0.1;
-    
-=======
 
->>>>>>> RestartDebug_FlatCylinder
+    double dutyRatio = 0.1;
+
     vector<double> motorStepSize = {};
     //@}
 
@@ -180,12 +176,9 @@ struct ChemParams {
     bool makeLinkersStatic = false;
     double makeLinkersStaticTime = 0.0;
 
-<<<<<<< HEAD
     bool dissTracking = false;
     int difBindInt = 1;
-    
-=======
->>>>>>> RestartDebug_FlatCylinder
+
     //@}
 #ifdef CUDAACCL_NL
     string bindingmanagerlist = "";

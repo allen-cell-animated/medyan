@@ -111,18 +111,18 @@ void Controller::initialize(string inputFile,
     LOG(STEP) << "Initializing geometry...";
     _gController->initializeGrid();
     LOG(INFO) << "Done.";
-    
+
     //Initialize boundary
     cout << "---" << endl;
     LOG(STEP) << "Initializing boundary...";
-    
+
     auto BTypes = p.readBoundaryType();
     p.readBoundParams();
 
     //initialize
     _gController->initializeBoundary(BTypes);
     LOG(INFO) << "Done.";
-    
+
 #ifdef MECHANICS
     //read algorithm and types
     auto MTypes = p.readMechanicsFFType();
@@ -191,49 +191,44 @@ void Controller::initialize(string inputFile,
         LOG(FATAL) << "Need to specify a chemical input file. Exiting.";
         exit(EXIT_FAILURE);
     }
-<<<<<<< HEAD
-    
+
     // Dissipation
     _dt = new DissipationTracker(_mController);
     _cController->initialize(CAlgorithm.algorithm, ChemData, _dt);
-    cout << "Done." << endl;
-=======
-    _cController->initialize(CAlgorithm.algorithm, ChemData);
     LOG(INFO) << "Done.";
->>>>>>> RestartDebug_FlatCylinder
-    
+
     //Set up chemistry output if any
     string chemsnapname = _outputDirectory + "chemistry.traj";
     _outputs.push_back(new Chemistry(chemsnapname, _subSystem, ChemData,
                                      _subSystem->getCompartmentGrid()));
-    
+
     ChemSim* _cs = _cController->getCS();
 
     string concenname = _outputDirectory + "concentration.traj";
     _outputs.push_back(new Concentrations(concenname, _subSystem, ChemData));
 
-    
-    
+
+
     //Dissipation
     if(SysParams::CParams.dissTracking){
     //Set up reactions output if any
     string disssnapname = _outputDirectory + "dissipation.traj";
     _outputs.push_back(new Dissipation(disssnapname, _subSystem, _cs));
-    
+
     //Set up HRCD output if any
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
     _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
     }
-    
-    
+
+
     //Set up CMGraph output if any
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
-    
+
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";
 //    _outputs.push_back(new FilamentTurnoverTimes(turnover, _subSystem));
-    
+
 #endif
 
 #ifdef DYNAMICRATES
@@ -248,7 +243,7 @@ void Controller::initialize(string inputFile,
     //init controller
     _drController->initialize(DRTypes);
     LOG(INFO) << "Done.";
-    
+
 #endif
 
     //Check consistency of all chemistry and mechanics parameters
@@ -266,9 +261,9 @@ void Controller::initialize(string inputFile,
     if(!SysParams::checkDyRateParameters(DRTypes))
         exit(EXIT_FAILURE);
 #endif
-    
+
     LOG(INFO) << "Done.";
-    
+
     //setup initial network configuration
     setupInitialNetwork(p);
 #ifdef HYBRID_NLSTENCILLIST
@@ -358,12 +353,8 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 
             double d = twoPointDistance(coord1, coord2);
             vector<double> tau = twoPointDirection(coord1, coord2);
-<<<<<<< HEAD
-            int numSegment = static_cast<int>(round(d / SysParams::Geometry().cylinderSize[type]));
-=======
             int numSegment = static_cast<int>(std::round(d / SysParams::Geometry().cylinderSize[type]));
 
->>>>>>> RestartDebug_FlatCylinder
             // check how many segments can fit between end-to-end of the filament
             if (numSegment == 0)
                 _subSystem->addTrackable<Filament>(_subSystem, type, coords, 2, FSetup.projectionType);
@@ -430,7 +421,7 @@ void Controller::setupSpecialStructures(SystemParser& p) {
             vector<double> tau = twoPointDirection(coord1, coord2);
 
             int numSegment = d / SysParams::Geometry().cylinderSize[SType.mtocFilamentType];
-            
+
             // check how many segments can fit between end-to-end of the filament
             Filament *f = _subSystem->addTrackable<Filament>(_subSystem, SType.mtocFilamentType,
                                                              coords, numSegment + 1, "ARC");
@@ -945,7 +936,7 @@ void Controller::run() {
             BB->getCBranchingPoint()->setOffRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
             BB->getCBranchingPoint()->getOffReaction()->setRate(BB->getCBranchingPoint()->getOffReaction()->getBareRate());
             BB->getCBranchingPoint()->getOffReaction()->updatePropensity();
-        }	
+        }
 //STEP 7: Get cylinders, activate filament reactions.
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()) {
             for(auto x : C->getCylinders()) {
@@ -1050,21 +1041,12 @@ void Controller::run() {
 
 #ifdef CHEMISTRY
         //activate/deactivate compartments
-<<<<<<< HEAD
         activatedeactivateComp();
-        
+
         // Dissipation
         if(SysParams::CParams.dissTracking){
         _dt->setG1();
         }
-=======
-        mins = chrono::high_resolution_clock::now();
-        //activatedeactivateComp();
-        mine= chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_runspl(mine - mins);
-        specialtime += elapsed_runspl.count();
-
->>>>>>> RestartDebug_FlatCylinder
         while(tau() <= _runTime) {
             //run ccontroller
             mins = chrono::high_resolution_clock::now();
@@ -1080,19 +1062,12 @@ void Controller::run() {
                 resetCounters();
                 break;
             }
-<<<<<<< HEAD
             // Dissipation
             if(SysParams::CParams.dissTracking){
             _dt->setGMid();
             }
-            
-            
-=======
-            mine= chrono::high_resolution_clock::now();
-            chrono::duration<double> elapsed_runout(mine - mins);
-            outputtime += elapsed_runout.count();
 
->>>>>>> RestartDebug_FlatCylinder
+
             //add the last step
             tauLastSnapshot += tau() - oldTau;
             tauLastMinimization += tau() - oldTau;
@@ -1125,22 +1100,16 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
                 tauLastMinimization = 0.0;
-<<<<<<< HEAD
-                
+
                 //cout<<"Min happened"<<endl;
-                
+
                 // Dissipation
                 if(SysParams::CParams.dissTracking){
                     _dt->updateAfterMinimization();
                 }
-                
-                
+
+
             }
-=======
-                mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_rxn2(mine - mins);
-                rxnratetime += elapsed_rxn2.count();
->>>>>>> RestartDebug_FlatCylinder
 
             }
             //output snapshot
@@ -1151,17 +1120,9 @@ void Controller::run() {
                 resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
-<<<<<<< HEAD
 
             }
-            
-=======
-                mine= chrono::high_resolution_clock::now();
-                chrono::duration<double> elapsed_runout2(mine - mins);
-                outputtime += elapsed_runout2.count();
-            }
 
->>>>>>> RestartDebug_FlatCylinder
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);
             resetCounters();

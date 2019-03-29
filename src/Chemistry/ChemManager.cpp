@@ -390,17 +390,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add polymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-<<<<<<< HEAD
                 new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
             else
                 _filRxnTemplates[filType].emplace_back(
                 new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
-=======
-                                                       new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
-            else
-                _filRxnTemplates[filType].emplace_back(
-                                                       new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
->>>>>>> RestartDebug_FlatCylinder
         }
 
         //set up reaction templates
@@ -602,17 +595,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add depolymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-<<<<<<< HEAD
                 new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
             else
                 _filRxnTemplates[filType].emplace_back(
                 new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
-=======
-                                                       new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
-            else
-                _filRxnTemplates[filType].emplace_back(
-                                                       new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
->>>>>>> RestartDebug_FlatCylinder
         }
 
         for(auto &r: _chemData.motorWalkingReactions[filType]) {
@@ -622,7 +608,7 @@ void ChemManager::genFilReactionTemplates() {
 
             vector<string> reactants = get<0>(r);
             vector<string> products = get<1>(r);
-            
+
             //read strings, and look up type
             ReactionType type;
             string species1;
@@ -794,17 +780,10 @@ void ChemManager::genFilReactionTemplates() {
             //add reaction
             if(type == ReactionType::MOTORWALKINGFORWARD)
                 _filRxnTemplates[filType].emplace_back(
-<<<<<<< HEAD
                 new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
             else {
                 _filRxnTemplates[filType].emplace_back(
                 new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r),-get<3>(r), get<4>(r)+"m"));
-=======
-                                                       new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
-            else {
-                _filRxnTemplates[filType].emplace_back(
-                                                       new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r)));
->>>>>>> RestartDebug_FlatCylinder
             }
         }
 
@@ -1156,7 +1135,7 @@ void ChemManager::genFilBindingReactions() {
         C->addHybridBindingSearchManager(Hbsn);
     }
 #endif
-    
+
     for(int filType = 0; filType < SysParams::Chemistry().numFilaments; filType++) {
 
         //loop through all compartments
@@ -1428,13 +1407,9 @@ void ChemManager::genFilBindingReactions() {
 
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
-<<<<<<< HEAD
                 double gnum = get<6>(r);
                 string hrcdid = get<7>(r);
-                
-=======
 
->>>>>>> RestartDebug_FlatCylinder
                 //Checks on number of reactants, products
                 if(reactants.size() != LMBINDINGREACTANTS ||
                    products.size() != LMBINDINGPRODUCTS) {
@@ -1645,16 +1620,12 @@ void ChemManager::genFilBindingReactions() {
 
                 ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
                 rxn->setReactionType(ReactionType::LINKERBINDING);
-<<<<<<< HEAD
                 // Dissipation
                 if(SysParams::Chemistry().dissTracking){
                 rxn->setGNumber(gnum);
                 rxn->setHRCDID(hrcdid);
                 }
-                
-=======
 
->>>>>>> RestartDebug_FlatCylinder
                 C->addInternalReaction(rxn);
 
                 //create manager
@@ -1683,14 +1654,10 @@ void ChemManager::genFilBindingReactions() {
 
                 vector<string> reactants = get<0>(r);
                 vector<string> products = get<1>(r);
-<<<<<<< HEAD
-                
+
                 double gnum = get<6>(r);
                 string hrcdid = get<7>(r);
-                
-=======
 
->>>>>>> RestartDebug_FlatCylinder
                 //Checks on number of reactants, products
                 if(reactants.size() != LMBINDINGREACTANTS ||
                    products.size() != LMBINDINGPRODUCTS) {
@@ -1898,30 +1865,24 @@ void ChemManager::genFilBindingReactions() {
 
                 //multiply by num heads to get rate
                 ///CHANGED
-<<<<<<< HEAD
                 double nh1 = SysParams::Chemistry().motorNumHeadsMin[motorInt];
                 double nh2 = SysParams::Chemistry().motorNumHeadsMax[motorInt];
                 // vector<short> motorNumHeadsMax = {};
-                
-                
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (nh1 + nh2) / 2.0);
-                
+
+
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (nh1 + nh2) / 2.0false, C->getVolumeFrac(), -numDiffusingReactant););
+
                 rxn->setReactionType(ReactionType::MOTORBINDING);
-                
+
                 // Dissipation
                 if(SysParams::Chemistry().dissTracking){
                     rxn->setGNumber(gnum);
                     rxn->setHRCDID(hrcdid);
                 }
-                
+
                 // cal edit
                 SysParams::CParams.dutyRatio = (onRate)/(onRate + offRate);
-                
-=======
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate, false, C->getVolumeFrac(), -numDiffusingReactant);
-                rxn->setReactionType(ReactionType::MOTORBINDING);
 
->>>>>>> RestartDebug_FlatCylinder
                 C->addInternalReaction(rxn);
 
                 //create manager
@@ -1948,7 +1909,7 @@ void ChemManager::genFilBindingReactions() {
 
         Compartment* C0 = grid->getCompartments()[0];
 #ifndef HYBRID_NLSTENCILLIST
-        
+
         for(auto &manager : C0->getFilamentBindingManagers()) {
 
             LinkerBindingManager* lManager;
@@ -2483,23 +2444,19 @@ void ChemManager::genGeneralReactions(Compartment& protoCompartment) {
             <<endl;
             exit(EXIT_FAILURE);
         }
-<<<<<<< HEAD
-        
-        
-=======
 
->>>>>>> RestartDebug_FlatCylinder
+
         //add to compartment
         protoCompartment.addInternalReaction(rxn);
         rxn->setReactionType(ReactionType::REGULAR);
-        
+
         // Dissipation
         if(SysParams::Chemistry().dissTracking){
             rxn->setGNumber(get<3>(r));
             rxn->setHRCDID(get<4>(r));
         }
-        
-        
+
+
     }
 }
 

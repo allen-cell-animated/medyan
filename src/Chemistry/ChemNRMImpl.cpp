@@ -169,30 +169,24 @@ bool ChemNRMImpl::makeStep() {
         rn->printSelf();
         return false;
     }
-    
+
     double t_prev = _t;
 
     _t=tau_top;
     syncGlobalTime();
-<<<<<<< HEAD
     //std::cout<<"------------"<<endl;
     //rn->printSelf();
     //std::cout<<"------------"<<endl;
-    
+
     //Dissipation
     if(SysParams::Chemistry().dissTracking){
     ReactionBase* react = rn->getReaction();
     _dt->updateDelGChem(react);
     }
-=======
-/*    std::cout<<"------------"<<endl;
-    rn->printSelf();
-    std::cout<<"------------"<<endl;*/
->>>>>>> RestartDebug_FlatCylinder
     rn->makeStep();
-    
 
-    
+
+
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
 #endif
