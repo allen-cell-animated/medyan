@@ -1047,6 +1047,10 @@ void Controller::run() {
         if(SysParams::CParams.dissTracking){
         _dt->setG1();
         }
+        mins = chrono::high_resolution_clock::now();
+        mine= chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_runspl(mine - mins);
+        specialtime += elapsed_runspl.count();
         while(tau() <= _runTime) {
             //run ccontroller
             mins = chrono::high_resolution_clock::now();
@@ -1067,7 +1071,9 @@ void Controller::run() {
             _dt->setGMid();
             }
 
-
+            mine= chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed_runout(mine - mins);
+            outputtime += elapsed_runout.count();
             //add the last step
             tauLastSnapshot += tau() - oldTau;
             tauLastMinimization += tau() - oldTau;
@@ -1100,16 +1106,17 @@ void Controller::run() {
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
                 tauLastMinimization = 0.0;
-
+                mine= chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed_rxn2(mine - mins);
+                rxnratetime += elapsed_rxn2.count();
                 //cout<<"Min happened"<<endl;
 
                 // Dissipation
                 if(SysParams::CParams.dissTracking){
                     _dt->updateAfterMinimization();
-                }
-
-
             }
+            
+            
 
             }
             //output snapshot
@@ -1120,8 +1127,13 @@ void Controller::run() {
                 resetCounters();
                 i++;
                 tauLastSnapshot = 0.0;
+                
+                mine= chrono::high_resolution_clock::now();
+                chrono::duration<double> elapsed_runout2(mine - mins);
+                outputtime += elapsed_runout2.count();
 
             }
+    
 
 #elif defined(MECHANICS)
             for(auto o: _outputs) o->print(i);

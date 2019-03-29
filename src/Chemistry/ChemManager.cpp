@@ -1870,7 +1870,7 @@ void ChemManager::genFilBindingReactions() {
                 // vector<short> motorNumHeadsMax = {};
 
 
-                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (nh1 + nh2) / 2.0false, C->getVolumeFrac(), -numDiffusingReactant););
+                ReactionBase* rxn = new Reaction<2,0>(reactantSpecies, onRate * (nh1 + nh2) / 2.0, false, C->getVolumeFrac(), -numDiffusingReactant);
 
                 rxn->setReactionType(ReactionType::MOTORBINDING);
 

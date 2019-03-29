@@ -392,7 +392,7 @@ void ForceFieldManager::resetForces() {
     }
 }
 #endif
-
+}
 #ifdef CUDAACCL
 
 void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, double *f) {
@@ -413,8 +413,10 @@ void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, doubl
 }
 
 #endif
+    
 void ForceFieldManager::assignallforcemags() {
 
     for(auto &ff : _forceFields)
         ff->assignforcemags();
+    
 }

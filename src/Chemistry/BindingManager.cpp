@@ -597,13 +597,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
 
                 //DifBind
-//                for(auto ll = startInt.begin(); ll != startInt.end(); ll++){
-//                    cout<<startInt[*ll]<<endl;
-//                }
-                //cout<<*it<<endl;
-                //cout<<SysParams::Chemistry().numBindingSites[0]<<endl;
-                //if (difBindInts.find(*it) == difBindInts.end()) continue;
-                //cout<<"pre "<<*it<<endl;
+
                 if(dBInt % dBI != 0) {
                     dBInt += 1 ;
                     continue;
@@ -632,7 +626,7 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
 
                     double distSq = twoPointDistanceSquared(m1, m2);
 
-                    if(distSq > _rMaxSq || distSq < _rMinSq) continue;
+                    if(distSq > _rMaxsq || distSq < _rMinsq) continue;
 
                     auto t1 = tuple<CCylinder*, short>(cc, bindingSite);
                     auto t2 = tuple<CCylinder*, short>(ccn, *it);
@@ -819,6 +813,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
 
     _possibleBindings.clear();
     _reversePossibleBindings.clear();
+    
 #ifdef DEBUGCONSTANTSEED
     struct Orderset
     {
@@ -2028,6 +2023,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
             return lhs->getID() < rhs->getID();
         }
     };
+#endif
     set<Cylinder*, Orderset> _cylinderssorted; ///< Set of cylinders that are in this
     for(auto c : _compartment->getCylinders()) {
         _cylinderssorted.insert(c);

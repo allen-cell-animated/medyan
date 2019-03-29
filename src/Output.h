@@ -225,6 +225,9 @@ class ReactionOut : public Output {
 public:
     ReactionOut(string outputFileName, SubSystem* s): Output(outputFileName, s) {}
     ~ReactionOut() {}
+    
+    virtual void print(int snapshot);
+};
 
 
 /// Print chem energy changes by HRCDID
