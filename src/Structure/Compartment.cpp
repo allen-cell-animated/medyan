@@ -78,7 +78,7 @@ void Compartment::getSlicedVolumeArea() {
             }}
         );
 
-        _partialVolume = res.volumeIn;
+        _volumeFrac = res.volumeIn / GController::getCompartmentVolume();
         _partialArea = res.areaIn;
     }
 }
@@ -104,7 +104,7 @@ void Compartment::getNonSlicedVolumeArea() {
 
     _partialArea = {{sizey * sizez, sizey * sizez, sizex * sizez, sizex * sizez, sizex * sizey, sizex * sizey}};
 
-    _partialVolume = 1.0;
+    _volumeFrac = 1.0;
 }
 
 //Calculates volume fraction
@@ -235,44 +235,44 @@ void Compartment::getSlicedVolumeArea() {
     if(edge.size() == 2 && edge_index.size() == 2){
         //case 1, trapezoid
         if(abs(edge_index[0] - edge_index[1]) == 1)
-            _partialVolume = 0.5 * (edge[0] + edge[1]) * sizex * sizez / totalVol;
+            _volumeFrac = 0.5 * (edge[0] + edge[1]) * sizex * sizez / totalVol;
         else if(edge_index[0] - edge_index[1] == 0)
             cout <<"Intersection points are at the same edge!" << endl;
         //case 2, trangle
         else{
             if(x < r && y < r){
                 if(edge_index[0] == 2 || edge_index[1] == 2)
-                    _partialVolume = 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
                 else
-                    _partialVolume = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
             }
             else if(x > r && y < r){
                 if(edge_index[0] == 1 || edge_index[1] == 1)
-                    _partialVolume = 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
                 else
-                    _partialVolume = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
             }
             else if(x < r && y > r){
                 if(edge_index[0] == 2 || edge_index[1] == 2)
-                    _partialVolume = 0.5 * edge[0] * edge[1] * sizez /totalVol;
+                    _volumeFrac = 0.5 * edge[0] * edge[1] * sizez /totalVol;
                 else
-                    _partialVolume = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
             }
             else if(x > r && y > r){
                 if(edge_index[0] == 1 || edge_index[1] == 1)
-                    _partialVolume = 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
                 else
-                    _partialVolume = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
             }
         }
     }
     //case 3, no intersections.
     else if(edge.size() == 0 && edge_index.size() == 0){
-        _partialVolume = sizex * sizey * sizez / totalVol;
+        _volumeFrac = sizex * sizey * sizez / totalVol;
     }
     //case 4, two intersections points are the two vertices
     else if(edge.size() == 4 && edge_index.size() == 4){
-        _partialVolume = 0.5;
+        _volumeFrac = 0.5;
     }
     //case 5, only one intersection point is a vertex
     else if(edge.size() == 3 && edge_index.size() == 3){
@@ -281,7 +281,7 @@ void Compartment::getSlicedVolumeArea() {
             if(!areEqual(edge[i], 0.0) && !areEqual(edge[i], sizex))
                 a1 = edge[i];
         }
-        _partialVolume = 0.5 * a1 * sizex * sizez / totalVol;
+        _volumeFrac = 0.5 * a1 * sizex * sizez / totalVol;
     }
     else{
         cout <<"There are "<< edge.size() <<" intersection points for this compartment:"<< endl;
@@ -292,7 +292,7 @@ void Compartment::getSlicedVolumeArea() {
 
 
 
-//        _partialVolume = res.volumeIn;
+//        _volumeFrac = res.volumeIn;
 //        _partialArea = res.areaIn;
 //    }
 }
@@ -649,9 +649,4 @@ bool operator==(const Compartment& a, const Compartment& b) {
         reac_bool=true;
 
     return spec_bool && reac_bool;
-}
-
-// Helper function to get the volume fraction
-double Compartment::getVolumeFrac()const {
-    return _partialVolume / GController::getCompartmentVolume();
 }

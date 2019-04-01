@@ -110,7 +110,7 @@ protected:
     vector<double> _coords;  ///< Coordinates of this compartment
     bool _activated = false; ///< The compartment is activated for diffusion
 
-    double _partialVolume = 1.0; ///< The volume fraction inside the membrane/boundary
+    double _volumeFrac = 1.0; ///< The volume fraction inside the membrane/boundary
     ///< Might be changed to a list or a map when more membranes are involved
     array<double, 6> _partialArea {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0}}; ///< The area inside the cell membrane
     ///<In the order of x, y and z, from smaller coordinate value neighbor to larger coordinate value
@@ -796,10 +796,8 @@ public:
     // Properties (public variables and getters and setters for private variables)
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary
 
-    //_partialVolume is the volume fraction
-    double getPartialVolume()const { return _partialVolume; }
-    void setPartialVolume(double partialVolume) { _partialVolume = partialVolume; }
-    double getVolumeFrac()const { return _partialVolume; };
+    void resetVolumeFrac() { _volumeFrac = 1.0; }
+    double getVolumeFrac() const { return _volumeFrac; };
     const array<double, 6>& getPartialArea()const { return _partialArea; }
     void setPartialArea(const array<double, 6>& partialArea) { _partialArea = partialArea; }
     
