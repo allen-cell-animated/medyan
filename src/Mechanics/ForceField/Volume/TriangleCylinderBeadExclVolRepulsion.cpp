@@ -239,24 +239,25 @@ Vec3 TriangleCylinderBeadExclVolRepulsion::loadForces(
     Vertex* v0, Vertex* v1, Vertex* v2, const Vec3& coord,
     double area, double kExVol
 ) {
-    auto c0 = v0->coordinate;
-    auto c1 = v1->coordinate;
-    auto c2 = v2->coordinate;
-    auto cb = vec2Vector(coord);
-        
+    Vec3 c0 = v0->coordinate();
+    Vec3 c1 = v1->coordinate();
+    Vec3 c2 = v2->coordinate();
+    Vec3 cb = coord;
+
     //check if in same plane
-    if(areInPlane(c0, c1, c2, cb)) {
+    auto cp = cross(c1 - c0, c2 - c0);
+    if(areEqual(dot(cp, cb - c0), 0.0)) {
         
         // slightly move point. Using negative number here to move "into the cell".
-        cb = movePointOutOfPlane(c0, c1, c2, cb, 4, -0.01);
+        cb -= cp * (0.01 / magnitude(cp));
     }
     
-    double A = scalarProduct(c0, c1, c0, c1);
-    double B = scalarProduct(c1, c2, c1, c2);
-    double C = scalarProduct(cb, c0, cb, c0);
-    double D = 2 * scalarProduct(c0, c1, cb, c0);
-    double E = 2 * scalarProduct(c1, c2, cb, c0);
-    double F = 2 * scalarProduct(c0, c1, c1, c2);
+    double A = dot(c1 - c0, c1 - c0);
+    double B = dot(c2 - c1, c2 - c1);
+    double C = dot(c0 - cb, c0 - cb);
+    double D = 2 * dot(c1 - c0, c0 - cb);
+    double E = 2 * dot(c2 - c1, c0 - cb);
+    double F = 2 * dot(c1 - c0, c2 - c1);
 
     // Only consider derivative on the coordinate of the bead (cb)
     // Vec3 dA = {{}};

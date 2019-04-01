@@ -151,7 +151,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bo = c->getFirstBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = vector2Vec<3, double>(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -161,9 +161,9 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 for (int i = 0; i < cylSize; i++) {
                     
                     Vec3 newCoord {
-                        bd->coordinate[0] + i * normal[0] * monSize,
-                        bd->coordinate[1] + i * normal[1] * monSize,
-                        bd->coordinate[2] + i * normal[2] * monSize
+                        bd->coordinate()[0] + i * normal[0] * monSize,
+                        bd->coordinate()[1] + i * normal[1] * monSize,
+                        bd->coordinate()[2] + i * normal[2] * monSize
                     };
                     
                     auto loadForce = _FFType.loadForces(v0, v1, v2, newCoord, area, kExVol);
@@ -182,7 +182,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bo = c->getSecondBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = vector2Vec<3, double>(twoPointDirection(bo->coordinate, bd->coordinate));
+                auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
                 
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
@@ -193,9 +193,9 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 for (int i = 0; i < cylSize; i++) {
                     
                     Vec3 newCoord {
-                        bd->coordinate[0] + i * normal[0] * monSize,
-                        bd->coordinate[1] + i * normal[1] * monSize,
-                        bd->coordinate[2] + i * normal[2] * monSize
+                        bd->coordinate()[0] + i * normal[0] * monSize,
+                        bd->coordinate()[1] + i * normal[1] * monSize,
+                        bd->coordinate()[2] + i * normal[2] * monSize
                     };
                     
                     auto loadForce = _FFType.loadForces(v0, v1, v2, newCoord, area, kExVol);
