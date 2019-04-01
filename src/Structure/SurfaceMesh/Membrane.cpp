@@ -1,7 +1,7 @@
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
 #include "Compartment.h"
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "SubSystem.h"
 #include "SysParams.h"
 

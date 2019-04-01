@@ -17,14 +17,14 @@
 #include "common.h"
 #include<stdio.h>
 #include "Output.h"
-#include "core/controller/MController.h"
-#include "core/controller/GController.h"
-#include "core/controller/CController.h"
-#include "core/controller/DRController.h"
+#include "MController.h"
+#include "GController.h"
+#include "CController.h"
+#include "DRController.h"
 #include <random>
 #include <chrono>
 
-#include "core/controller/Controller.h"
+#include "Controller.h"
 
 #include "Parser.h"
 #include "Output.h"
@@ -45,7 +45,7 @@
 
 #include "SysParams.h"
 #include "MathFunctions.h"
-#include "core/controller/MController.h"
+#include "MController.h"
 #include "Cylinder.h"
 #include <unordered_set>
 #include <unordered_map>

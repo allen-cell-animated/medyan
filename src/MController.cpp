@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "core/controller/MController.h"
+#include "MController.h"
 
 #include "SubSystem.h"
 

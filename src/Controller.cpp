@@ -15,7 +15,7 @@
 #include <chrono>
 #include <unordered_set>
 
-#include "core/controller/Controller.h"
+#include "Controller.h"
 
 #include "Parser.h"
 #include "Output.h"
@@ -39,7 +39,7 @@
 
 #include "SysParams.h"
 #include "MathFunctions.h"
-#include "core/controller/MController.h"
+#include "MController.h"
 #include "Cylinder.h"
 #include <unordered_map>
 #include <tuple>

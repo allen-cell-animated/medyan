@@ -3,7 +3,7 @@
 #include "core/globals.h"
 #include "Compartment.h"
 #include "MathFunctions.h"
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
 Database<Triangle*> Triangle::_triangles;

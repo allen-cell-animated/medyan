@@ -31,7 +31,7 @@
 
 #include "BindingManager.h"
 
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "MathFunctions.h"
 #include "SysParams.h"
 #include "Rand.h"

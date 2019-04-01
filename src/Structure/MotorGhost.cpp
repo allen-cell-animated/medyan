@@ -20,7 +20,7 @@
 #include "Bead.h"
 #include "ChemRNode.h"
 
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "Rand.h"

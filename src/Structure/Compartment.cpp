@@ -14,7 +14,7 @@
 #include "Compartment.h"
 
 #include "CuboidSlicing.h"
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "MathFunctions.h"
 using namespace mathfunc;
 #include "Visitor.h"

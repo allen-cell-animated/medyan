@@ -20,7 +20,7 @@
 #include "ChemRNode.h"
 #include "CompartmentGrid.h"
 
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "Rand.h"

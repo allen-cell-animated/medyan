@@ -16,7 +16,7 @@
 
 #include "MathFunctions.h"
 #include "SysParams.h"
-#include "core/controller/GController.h"
+#include "GController.h"
 
 using namespace mathfunc;
 

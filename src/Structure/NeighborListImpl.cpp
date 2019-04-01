@@ -20,7 +20,7 @@
 #include "BoundaryElement.h"
 #include "Triangle.h"
 
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "MathFunctions.h"
 #ifdef CUDAACCL
 #include "CUDAcommon.h"

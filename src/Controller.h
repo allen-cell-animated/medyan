@@ -19,10 +19,10 @@
 #include "common.h"
 
 #include "Output.h"
-#include "core/controller/MController.h"
-#include "core/controller/GController.h"
-#include "core/controller/CController.h"
-#include "core/controller/DRController.h"
+#include "MController.h"
+#include "GController.h"
+#include "CController.h"
+#include "DRController.h"
 #include "Structure/SurfaceMesh/AdaptiveMesh.hpp"
 
 //FORWARD DECLARATIONS
