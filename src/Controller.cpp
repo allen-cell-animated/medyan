@@ -159,12 +159,12 @@ void Controller::initialize(string inputFile,
 
     if(_subSystem->getBoundary()->getShape() == BoundaryShape::Cylinder){
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-            C->getSlicedVolumeArea();
+            C->computeSlicedVolumeArea(Compartment::SliceMethod::CylinderBoundary);
         }
     }
     else{
         for(auto C : _subSystem->getCompartmentGrid()->getCompartments()){
-            C->getNonSlicedVolumeArea();
+            C->computeNonSlicedVolumeArea();
         }
     }
     //Calculate surface area and volume for reaction rate scaling
@@ -382,7 +382,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
             c->boundaryInteresting = true;
 
             // Update partial activate status
-            c->getSlicedVolumeArea();
+            c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
             _cController->updateActivation(c);
 
         } else if( ! regionInMembrane->contains(vector2Vec<3, double>(c->coordinates()))) {
@@ -776,7 +776,7 @@ void Controller::updateActiveCompartments() {
             auto& ts = c->getTriangles();
             if(!ts.empty()) {
                 // Update partial activate status
-                c->getSlicedVolumeArea();
+                c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
                 _cController->updateActivation(c);
 
                 // No matter whether the compartment is interesting before, mark it as interesting

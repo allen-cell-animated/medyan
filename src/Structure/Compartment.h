@@ -61,6 +61,11 @@ class Edge;
 
 class Compartment : public Composite {
 
+public:
+    enum class SliceMethod {
+        Membrane, CylinderBoundary
+    };
+
 protected:
     ///CHEMICAL CONTAINERS
     SpeciesPtrContainerVector _species;  ///< Container with all species
@@ -789,9 +794,9 @@ public:
     virtual int getType() override {return 0;}
 
     // Helper function for getting the result of geometry from a approximately planar slice
-    void getSlicedVolumeArea();
+    void computeSlicedVolumeArea(SliceMethod);
     // Helper function that does not scale rates
-    void getNonSlicedVolumeArea();
+    void computeNonSlicedVolumeArea();
 
     // Properties (public variables and getters and setters for private variables)
     bool boundaryInteresting = false; // A marker indicating this compartment is near a certain boundary

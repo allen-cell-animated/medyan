@@ -41,48 +41,6 @@ Compartment& Compartment::operator=(const Compartment &other) {
     return *this;
 }
 
-void Compartment::getSlicedVolumeArea() {
-    // The calculation requires the
-    //  - The position calculation of triangles
-    //  - The area calculation of triangles
-    //  - The unit normal vector of triangles
-    size_t numTriangle = _triangles.size();
-    if(numTriangle) {
-        double sumArea = 0.0;
-        Vec3 sumNormal {};
-        Vec3 sumPos {};
-        for(Triangle* t: _triangles) {
-            const auto& mesh = t->getParent()->getMesh();
-            const size_t ti = t->getTopoIndex();
-            const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
-            const auto& unitNormal = mesh.getTriangleAttribute(ti).gTriangle.unitNormal;
-            sumNormal += unitNormal * area;
-            sumPos += t->coordinate * area;
-            sumArea += area;
-        }
-        double oneOverSumArea = 1.0 / sumArea;
-        normalize(sumNormal);
-        sumPos *= oneOverSumArea;
-
-        PlaneCuboidSlicingResult res = PlaneCuboidSlicer() (
-            sumPos, sumNormal,
-            {
-                _coords[0] - SysParams::Geometry().compartmentSizeX * 0.5,
-                _coords[1] - SysParams::Geometry().compartmentSizeY * 0.5,
-                _coords[2] - SysParams::Geometry().compartmentSizeZ * 0.5
-            },
-            {{
-                SysParams::Geometry().compartmentSizeX,
-                SysParams::Geometry().compartmentSizeY,
-                SysParams::Geometry().compartmentSizeZ
-            }}
-        );
-
-        _volumeFrac = res.volumeIn / GController::getCompartmentVolume();
-        _partialArea = res.areaIn;
-    }
-}
-
 bool Compartment::apply_impl(SpeciesVisitor &v) {
     for(auto &s : _species.species()) {
         v.visit(s.get());
@@ -97,7 +55,7 @@ bool Compartment::apply_impl(ReactionVisitor &v) {
     return true;
 }
 
-void Compartment::getNonSlicedVolumeArea() {
+void Compartment::computeNonSlicedVolumeArea() {
     auto sizex = SysParams::Geometry().compartmentSizeX;
     auto sizey = SysParams::Geometry().compartmentSizeY;
     auto sizez = SysParams::Geometry().compartmentSizeZ;
@@ -107,194 +65,238 @@ void Compartment::getNonSlicedVolumeArea() {
     _volumeFrac = 1.0;
 }
 
-//Calculates volume fraction
-void Compartment::getSlicedVolumeArea() {
-    // The calculation requires the
-    //  - The position calculation of triangles
-    //  - The area calculation of triangles
-    //  - The unit normal vector of triangles
-    // ASSUMPTIONS:
-    //  - This compartment is a CUBE
-    //get compartment sizes in X,Y and the radius of cylinder
-    auto sizex = SysParams::Geometry().compartmentSizeX;
-    auto sizey = SysParams::Geometry().compartmentSizeY;
-    auto sizez = SysParams::Geometry().compartmentSizeZ;
-    auto r = SysParams::Boundaries().diameter / 2; //radius
+void Compartment::computeSlicedVolumeArea(SliceMethod sliceMethod) {
 
-    //get geometry center of the compartment
-    auto x = _coords[0];
-    auto y = _coords[1];
+    switch(sliceMethod) {
+    case SliceMethod::Membrane:
+        {
+            // The calculation requires the
+            //  - The position calculation of triangles
+            //  - The area calculation of triangles
+            //  - The unit normal vector of triangles
+            const size_t numTriangle = _triangles.size();
+            if(numTriangle) {
+                double sumArea = 0.0;
+                Vec3 sumNormal {};
+                Vec3 sumPos {};
+                for(Triangle* t: _triangles) {
+                    const auto& mesh = t->getParent()->getMesh();
+                    const size_t ti = t->getTopoIndex();
+                    const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
+                    const auto& unitNormal = mesh.getTriangleAttribute(ti).gTriangle.unitNormal;
+                    sumNormal += unitNormal * area;
+                    sumPos += t->coordinate * area;
+                    sumArea += area;
+                }
+                normalize(sumNormal);
+                sumPos /= sumArea;
 
-    auto leftx = x - sizex / 2;
-    auto rightx = x + sizex / 2;
-    auto lowy = y - sizey / 2;
-    auto upy = y + sizey / 2;
+                PlaneCuboidSlicingResult res = PlaneCuboidSlicer() (
+                    sumPos, sumNormal,
+                    {
+                        _coords[0] - SysParams::Geometry().compartmentSizeX * 0.5,
+                        _coords[1] - SysParams::Geometry().compartmentSizeY * 0.5,
+                        _coords[2] - SysParams::Geometry().compartmentSizeZ * 0.5
+                    },
+                    {{
+                        SysParams::Geometry().compartmentSizeX,
+                        SysParams::Geometry().compartmentSizeY,
+                        SysParams::Geometry().compartmentSizeZ
+                    }}
+                );
 
-    float pleft, pright, plow, pup, lleft, lright, llow, lup, VolumeIn;
-    vector<float> edge;
-    // edge_index = intersection points at left = 1, at right = 2, at low = 4 and at up = 5 in 2D;
-    vector<int> edge_index;
-
-    //1. find intersection points at left or right edges
-    //if at lower or upper phase
-    if(y < r){
-        pleft = r - sqrt(r * r - (leftx - r) * (leftx - r));
-        pright = r - sqrt(r * r - (rightx - r) * (rightx - r));
-
-        //if the intersection is not inside the compartment, use the full compartlent size
-        if(pleft > upy || pleft < lowy) lleft = sizey;
-        else{
-            lleft = upy - pleft;
-            edge.push_back(lleft);
-            edge_index.push_back(1);
-        }
-
-        if(pright > upy || pright < lowy) lright = sizey;
-        else{
-            lright = upy - pright;
-            edge.push_back(lright);
-            edge_index.push_back(2);
-
-        }
-    }
-    else if(y > r){
-        pleft = r + sqrt(r * r - (leftx - r) * (leftx - r));
-        pright = r + sqrt(r * r - (rightx - r) * (rightx - r));
-
-        //if the intersection is not inside the compartment, use the full compartlent size
-        if(pleft > upy || pleft < lowy) lleft = sizey;
-        else{
-            lleft = pleft - lowy;
-            edge.push_back(lleft);
-            edge_index.push_back(1);
-        }
-
-        if(pright > upy || pright < lowy) lright = sizey;
-        else{
-            lright = pright - lowy;
-            edge.push_back(lright);
-            edge_index.push_back(2);
-        }
-    }
-    else {
-        cout<<"Even number of compartments in X or Y direction is not yet supportted."<<endl;
-    }
-
-    //1. find intersection points at lower or upper edges
-    //if at left or right phase
-    if(x < r){
-        plow = r - sqrt(r * r - (lowy - r) * (lowy - r));
-        pup = r - sqrt(r * r - (upy - r) * (upy - r));
-
-        //if the intersection is not inside the compartment, use the full compartlent size
-        if(plow > rightx || plow < leftx) llow = sizex;
-        else{
-            llow = rightx - plow;
-            edge.push_back(llow);
-            edge_index.push_back(4);
-        }
-
-        if(pup > rightx || pup < leftx) lup = sizex;
-        else{
-            lup = rightx - pup;
-            edge.push_back(lup);
-            edge_index.push_back(5);
-        }
-    }
-    else if (x > r){
-        plow = r + sqrt(r * r - (lowy - r) * (lowy - r));
-        pup = r + sqrt(r * r - (upy - r) * (upy - r));
-
-        //if the intersection is not inside the compartment, use the full compartlent size
-        if(plow > rightx || plow < leftx) llow = sizex;
-        else{
-            llow = plow - leftx;
-            edge.push_back(llow);
-            edge_index.push_back(4);
-        }
-
-        if(pup > rightx || pup < leftx) lup = sizex;
-        else{
-            lup = pup - leftx;
-            edge.push_back(lup);
-            edge_index.push_back(5);
-        }
-    }
-    else{
-        cout<<"Even number of compartments in X or Y direction is not yet supportted."<<endl;
-    }
-
-    _partialArea = {{lleft * sizez, lright * sizez, llow * sizez, lup * sizez, sizex * sizey, sizex * sizey}};
-
-    if(!areEqual(sizex,sizey))
-        cout << "Volume calculation requires X dimension and Y dimension to be the same." << endl;
-
-    float totalVol = sizex * sizey * sizez;
-
-    //there are either 2 intersection points or 0 intersection points
-    if(edge.size() == 2 && edge_index.size() == 2){
-        //case 1, trapezoid
-        if(abs(edge_index[0] - edge_index[1]) == 1)
-            _volumeFrac = 0.5 * (edge[0] + edge[1]) * sizex * sizez / totalVol;
-        else if(edge_index[0] - edge_index[1] == 0)
-            cout <<"Intersection points are at the same edge!" << endl;
-        //case 2, trangle
-        else{
-            if(x < r && y < r){
-                if(edge_index[0] == 2 || edge_index[1] == 2)
-                    _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                else
-                    _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
-            }
-            else if(x > r && y < r){
-                if(edge_index[0] == 1 || edge_index[1] == 1)
-                    _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                else
-                    _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
-            }
-            else if(x < r && y > r){
-                if(edge_index[0] == 2 || edge_index[1] == 2)
-                    _volumeFrac = 0.5 * edge[0] * edge[1] * sizez /totalVol;
-                else
-                    _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
-            }
-            else if(x > r && y > r){
-                if(edge_index[0] == 1 || edge_index[1] == 1)
-                    _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
-                else
-                    _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                _volumeFrac = res.volumeIn / GController::getCompartmentVolume();
+                _partialArea = res.areaIn;
             }
         }
-    }
-    //case 3, no intersections.
-    else if(edge.size() == 0 && edge_index.size() == 0){
-        _volumeFrac = sizex * sizey * sizez / totalVol;
-    }
-    //case 4, two intersections points are the two vertices
-    else if(edge.size() == 4 && edge_index.size() == 4){
-        _volumeFrac = 0.5;
-    }
-    //case 5, only one intersection point is a vertex
-    else if(edge.size() == 3 && edge_index.size() == 3){
-        float a1;
-        for(int i=0; i < 3; i++){
-            if(!areEqual(edge[i], 0.0) && !areEqual(edge[i], sizex))
-                a1 = edge[i];
+        break;
+
+    case SliceMethod::CylinderBoundary:
+        {
+
+            // The calculation requires the
+            //  - The position calculation of triangles
+            //  - The area calculation of triangles
+            //  - The unit normal vector of triangles
+            // ASSUMPTIONS:
+            //  - This compartment is a CUBE
+            //get compartment sizes in X,Y and the radius of cylinder
+            auto sizex = SysParams::Geometry().compartmentSizeX;
+            auto sizey = SysParams::Geometry().compartmentSizeY;
+            auto sizez = SysParams::Geometry().compartmentSizeZ;
+            auto r = SysParams::Boundaries().diameter / 2; //radius
+
+            //get geometry center of the compartment
+            auto x = _coords[0];
+            auto y = _coords[1];
+
+            auto leftx = x - sizex / 2;
+            auto rightx = x + sizex / 2;
+            auto lowy = y - sizey / 2;
+            auto upy = y + sizey / 2;
+
+            float pleft, pright, plow, pup, lleft, lright, llow, lup, VolumeIn;
+            vector<float> edge;
+            // edge_index = intersection points at left = 1, at right = 2, at low = 4 and at up = 5 in 2D;
+            vector<int> edge_index;
+
+            //1. find intersection points at left or right edges
+            //if at lower or upper phase
+            if(y < r){
+                pleft = r - sqrt(r * r - (leftx - r) * (leftx - r));
+                pright = r - sqrt(r * r - (rightx - r) * (rightx - r));
+
+                //if the intersection is not inside the compartment, use the full compartlent size
+                if(pleft > upy || pleft < lowy) lleft = sizey;
+                else{
+                    lleft = upy - pleft;
+                    edge.push_back(lleft);
+                    edge_index.push_back(1);
+                }
+
+                if(pright > upy || pright < lowy) lright = sizey;
+                else{
+                    lright = upy - pright;
+                    edge.push_back(lright);
+                    edge_index.push_back(2);
+
+                }
+            }
+            else if(y > r){
+                pleft = r + sqrt(r * r - (leftx - r) * (leftx - r));
+                pright = r + sqrt(r * r - (rightx - r) * (rightx - r));
+
+                //if the intersection is not inside the compartment, use the full compartlent size
+                if(pleft > upy || pleft < lowy) lleft = sizey;
+                else{
+                    lleft = pleft - lowy;
+                    edge.push_back(lleft);
+                    edge_index.push_back(1);
+                }
+
+                if(pright > upy || pright < lowy) lright = sizey;
+                else{
+                    lright = pright - lowy;
+                    edge.push_back(lright);
+                    edge_index.push_back(2);
+                }
+            }
+            else {
+                cout<<"Even number of compartments in X or Y direction is not yet supportted."<<endl;
+            }
+
+            //1. find intersection points at lower or upper edges
+            //if at left or right phase
+            if(x < r){
+                plow = r - sqrt(r * r - (lowy - r) * (lowy - r));
+                pup = r - sqrt(r * r - (upy - r) * (upy - r));
+
+                //if the intersection is not inside the compartment, use the full compartlent size
+                if(plow > rightx || plow < leftx) llow = sizex;
+                else{
+                    llow = rightx - plow;
+                    edge.push_back(llow);
+                    edge_index.push_back(4);
+                }
+
+                if(pup > rightx || pup < leftx) lup = sizex;
+                else{
+                    lup = rightx - pup;
+                    edge.push_back(lup);
+                    edge_index.push_back(5);
+                }
+            }
+            else if (x > r){
+                plow = r + sqrt(r * r - (lowy - r) * (lowy - r));
+                pup = r + sqrt(r * r - (upy - r) * (upy - r));
+
+                //if the intersection is not inside the compartment, use the full compartlent size
+                if(plow > rightx || plow < leftx) llow = sizex;
+                else{
+                    llow = plow - leftx;
+                    edge.push_back(llow);
+                    edge_index.push_back(4);
+                }
+
+                if(pup > rightx || pup < leftx) lup = sizex;
+                else{
+                    lup = pup - leftx;
+                    edge.push_back(lup);
+                    edge_index.push_back(5);
+                }
+            }
+            else{
+                cout<<"Even number of compartments in X or Y direction is not yet supportted."<<endl;
+            }
+
+            _partialArea = {{lleft * sizez, lright * sizez, llow * sizez, lup * sizez, sizex * sizey, sizex * sizey}};
+
+            if(!areEqual(sizex,sizey))
+                cout << "Volume calculation requires X dimension and Y dimension to be the same." << endl;
+
+            float totalVol = sizex * sizey * sizez;
+
+            //there are either 2 intersection points or 0 intersection points
+            if(edge.size() == 2 && edge_index.size() == 2){
+                //case 1, trapezoid
+                if(abs(edge_index[0] - edge_index[1]) == 1)
+                    _volumeFrac = 0.5 * (edge[0] + edge[1]) * sizex * sizez / totalVol;
+                else if(edge_index[0] - edge_index[1] == 0)
+                    cout <<"Intersection points are at the same edge!" << endl;
+                //case 2, trangle
+                else{
+                    if(x < r && y < r){
+                        if(edge_index[0] == 2 || edge_index[1] == 2)
+                            _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                        else
+                            _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    }
+                    else if(x > r && y < r){
+                        if(edge_index[0] == 1 || edge_index[1] == 1)
+                            _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                        else
+                            _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    }
+                    else if(x < r && y > r){
+                        if(edge_index[0] == 2 || edge_index[1] == 2)
+                            _volumeFrac = 0.5 * edge[0] * edge[1] * sizez /totalVol;
+                        else
+                            _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    }
+                    else if(x > r && y > r){
+                        if(edge_index[0] == 1 || edge_index[1] == 1)
+                            _volumeFrac = 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                        else
+                            _volumeFrac = 1 - 0.5 * edge[0] * edge[1] * sizez / totalVol;
+                    }
+                }
+            }
+            //case 3, no intersections.
+            else if(edge.size() == 0 && edge_index.size() == 0){
+                _volumeFrac = sizex * sizey * sizez / totalVol;
+            }
+            //case 4, two intersections points are the two vertices
+            else if(edge.size() == 4 && edge_index.size() == 4){
+                _volumeFrac = 0.5;
+            }
+            //case 5, only one intersection point is a vertex
+            else if(edge.size() == 3 && edge_index.size() == 3){
+                float a1;
+                for(int i=0; i < 3; i++){
+                    if(!areEqual(edge[i], 0.0) && !areEqual(edge[i], sizex))
+                        a1 = edge[i];
+                }
+                _volumeFrac = 0.5 * a1 * sizex * sizez / totalVol;
+            }
+            else{
+                cout <<"There are "<< edge.size() <<" intersection points for this compartment:"<< endl;
+                cout << "x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
+                cout << "Something goes wrong!" << endl;
+            }
         }
-        _volumeFrac = 0.5 * a1 * sizex * sizez / totalVol;
-    }
-    else{
-        cout <<"There are "<< edge.size() <<" intersection points for this compartment:"<< endl;
-        cout << "x = " << _coords[0] << ", y = " << _coords[1] << ", z = " << _coords[2] <<endl;
-        cout << "Something goes wrong!" << endl;
+        break;
     }
 
-
-
-
-//        _volumeFrac = res.volumeIn;
-//        _partialArea = res.areaIn;
-//    }
 }
 
 vector<ReactionBase*> Compartment::generateDiffusionReactions(Compartment* C, bool outwardOnly) {
