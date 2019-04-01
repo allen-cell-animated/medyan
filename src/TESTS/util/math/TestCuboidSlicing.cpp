@@ -1,30 +1,29 @@
 #ifdef TESTING
 
-#  define DO_THIS_CUBE_SLICING_TEST
-#  ifdef DO_THIS_CUBE_SLICING_TEST
+#include "gtest/gtest.h"
 
-#    include "gtest/gtest.h"
+#include "MathFunctions.h"
+#include "util/math/CuboidSlicing.hpp"
 
-#    include "CuboidSlicing.h"
-
-#    include "MathFunctions.h"
 using namespace mathfunc;
 
 namespace {
-    bool planeCubeSlicingResultEqual(const PlaneCuboidSlicingResult& r1, const PlaneCuboidSlicingResult& r2, double eps) {
-        if(abs(r1.volumeIn - r2.volumeIn) > eps) return false;
-        size_t s = r1.areaIn.size();
-        for(size_t i = 0; i < r1.areaIn.size(); ++i) {
-            if(abs(r1.areaIn[i] - r2.areaIn[i]) > eps) return false;
-        }
-        return true;
-    }
 
-    PlaneCuboidSlicingResult planeUnitCubeSliceByIntersection(double x, double y, double z) {
-        auto normal = normalizedVector(std::array<double, 3>{{1.0/x, 1.0/y, 1.0/z}});
-        auto point = std::array<double, 3>{{x, 0, 0}};
-        return planeUnitCubeSlice(point, normal);
+bool planeCubeSlicingResultEqual(const PlaneCuboidSlicingResult& r1, const PlaneCuboidSlicingResult& r2, double eps) {
+    if(abs(r1.volumeIn - r2.volumeIn) > eps) return false;
+    size_t s = r1.areaIn.size();
+    for(size_t i = 0; i < r1.areaIn.size(); ++i) {
+        if(abs(r1.areaIn[i] - r2.areaIn[i]) > eps) return false;
     }
+    return true;
+}
+
+PlaneCuboidSlicingResult planeUnitCubeSliceByIntersection(double x, double y, double z) {
+    auto normal = normalizedVector(Vec3{1.0/x, 1.0/y, 1.0/z});
+    auto point = Vec3{x, 0, 0};
+    return planeUnitCubeSlice(point, normal);
+}
+
 }
 
 TEST(CubeSlicingTest, UnitCubeTransitionContinuity) {
@@ -45,66 +44,66 @@ TEST(CubeSlicingTest, UnitCubeTransitionContinuity) {
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 0.5, 0.5);
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 0.5, 0.5);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(0.5, 1 - inEps, 0.5);
         auto r2 = planeUnitCubeSliceByIntersection(0.5, 1 + inEps, 0.5);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(0.5, 0.5, 1 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(0.5, 0.5, 1 + inEps);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
 
     // From 3 points inside, to 1 point inside
     {
         auto r1 = planeUnitCubeSliceByIntersection(0.5, 1 - inEps, 1 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(0.5, 1 + inEps, 1 + inEps);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 0.5, 1 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 0.5, 1 + inEps);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 1 - inEps, 0.5);
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 1 + inEps, 0.5);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
 
     // Transitions between the scenario with 1 point inside
     {
         auto r1 = planeUnitCubeSliceByIntersection(0.5, 2 - inEps, 2 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(0.5, 2 + inEps, 2 + inEps);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(2 - inEps, 0.5, 2 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(2 + inEps, 0.5, 2 + inEps);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(2 - inEps, 2 - inEps, 0.5);
         auto r2 = planeUnitCubeSliceByIntersection(2 + inEps, 2 + inEps, 0.5);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
 
     // From 3 points inside, to no point inside
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 1 - inEps, 1 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 1 + inEps, 1 + inEps);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
     }
 
     // Check reverse condition
     {
         auto r1 = planeUnitCubeSliceByIntersection(1.5 - inEps, 1.5 - inEps, 1.5 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(1.5 + inEps, 1.5 + inEps, 1.5 + inEps);
-        EXPECT_TRUE(planeCubeSlicingResultEqual(r1, r2, outEps));
-        EXPECT_FALSE(planeCubeSlicingResultEqual(r1, r2, inEps * 1e-5)); // Check actually changed
+        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK_FALSE(planeCubeSlicingResultEqual(r1, r2, inEps * 1e-5)); // Check actually changed
     }
     
 }
@@ -123,9 +122,9 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
     {
         std::array<size_t, 6> comp {{1, 0, 2, 3, 4, 5}};
         auto r2 = planeUnitCubeSlice({{1-pVal, pVal, pVal}}, {{-nVal, nVal, nVal}});
-        EXPECT_DOUBLE_EQ(r1.volumeIn, r2.volumeIn);
+        CHECK(r1.volumeIn == Approx(r2.volumeIn));
         for(size_t i = 0; i < 6; ++i) {
-            EXPECT_DOUBLE_EQ(r1.areaIn[i], r2.areaIn[comp[i]]);
+            CHECK(r1.areaIn[i] == Approx(r2.areaIn[comp[i]]));
         }
     }
 
@@ -133,9 +132,9 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
     {
         std::array<size_t, 6> comp {{0, 1, 3, 2, 4, 5}};
         auto r2 = planeUnitCubeSlice({{pVal, 1-pVal, pVal}}, {{nVal, -nVal, nVal}});
-        EXPECT_DOUBLE_EQ(r1.volumeIn, r2.volumeIn);
+        CHECK(r1.volumeIn == Approx(r2.volumeIn));
         for(size_t i = 0; i < 6; ++i) {
-            EXPECT_DOUBLE_EQ(r1.areaIn[i], r2.areaIn[comp[i]]);
+            CHECK(r1.areaIn[i] == Approx(r2.areaIn[comp[i]]));
         }
     }
 
@@ -143,9 +142,9 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
     {
         std::array<size_t, 6> comp {{0, 1, 2, 3, 5, 4}};
         auto r2 = planeUnitCubeSlice({{pVal, pVal, 1-pVal}}, {{nVal, nVal, -nVal}});
-        EXPECT_DOUBLE_EQ(r1.volumeIn, r2.volumeIn);
+        CHECK(r1.volumeIn == Approx(r2.volumeIn));
         for(size_t i = 0; i < 6; ++i) {
-            EXPECT_DOUBLE_EQ(r1.areaIn[i], r2.areaIn[comp[i]]);
+            CHECK(r1.areaIn[i] == Approx(r2.areaIn[comp[i]]));
         }
     }
 
@@ -153,9 +152,9 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
     {
         std::array<size_t, 6> comp {{0, 1, 3, 2, 5, 4}};
         auto r2 = planeUnitCubeSlice({{pVal, 1-pVal, 1-pVal}}, {{nVal, -nVal, -nVal}});
-        EXPECT_DOUBLE_EQ(r1.volumeIn, r2.volumeIn);
+        CHECK(r1.volumeIn == Approx(r2.volumeIn));
         for(size_t i = 0; i < 6; ++i) {
-            EXPECT_DOUBLE_EQ(r1.areaIn[i], r2.areaIn[comp[i]]);
+            CHECK(r1.areaIn[i] == Approx(r2.areaIn[comp[i]]));
         }
     }
 
@@ -163,9 +162,9 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
     {
         std::array<size_t, 6> comp {{1, 0, 2, 3, 5, 4}};
         auto r2 = planeUnitCubeSlice({{1-pVal, pVal, 1-pVal}}, {{-nVal, nVal, -nVal}});
-        EXPECT_DOUBLE_EQ(r1.volumeIn, r2.volumeIn);
+        CHECK(r1.volumeIn == Approx(r2.volumeIn));
         for(size_t i = 0; i < 6; ++i) {
-            EXPECT_DOUBLE_EQ(r1.areaIn[i], r2.areaIn[comp[i]]);
+            CHECK(r1.areaIn[i] == Approx(r2.areaIn[comp[i]]));
         }
     }
 
@@ -173,9 +172,9 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
     {
         std::array<size_t, 6> comp {{1, 0, 3, 2, 4, 5}};
         auto r2 = planeUnitCubeSlice({{1-pVal, 1-pVal, pVal}}, {{-nVal, -nVal, nVal}});
-        EXPECT_DOUBLE_EQ(r1.volumeIn, r2.volumeIn);
+        CHECK(r1.volumeIn == Approx(r2.volumeIn));
         for(size_t i = 0; i < 6; ++i) {
-            EXPECT_DOUBLE_EQ(r1.areaIn[i], r2.areaIn[comp[i]]);
+            CHECK(r1.areaIn[i] == Approx(r2.areaIn[comp[i]]));
         }
     }
 
@@ -183,9 +182,9 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
     {
         std::array<size_t, 6> comp {{1, 0, 3, 2, 5, 4}};
         auto r2 = planeUnitCubeSlice({{1-pVal, 1-pVal, 1-pVal}}, {{-nVal, -nVal, -nVal}});
-        EXPECT_DOUBLE_EQ(r1.volumeIn, r2.volumeIn);
+        CHECK(r1.volumeIn == Approx(r2.volumeIn));
         for(size_t i = 0; i < 6; ++i) {
-            EXPECT_DOUBLE_EQ(r1.areaIn[i], r2.areaIn[comp[i]]);
+            CHECK(r1.areaIn[i] == Approx(r2.areaIn[comp[i]]));
         }
     }
 
@@ -211,12 +210,11 @@ TEST(CubeSlicingTest, TranslationAndScaling) {
     const double exVolumeIn = 47.0 / 6.0;
     const std::array<double, 6> exAreaIn {{3.5, 4.0, 3.5, 4.0, 3.5, 4.0}};
 
-    EXPECT_NEAR(r.volumeIn, exVolumeIn, abs(exVolumeIn) * 1e-5);
+    CHECK(r.volumeIn == Approx(exVolumeIn).epsilon(1e-5));
     for(size_t i = 0; i < 6; ++i) {
-        EXPECT_NEAR(r.areaIn[i], exAreaIn[i], abs(exAreaIn[i]) * 1e-5);
+        CHECK(r.areaIn[i] == Approx(exAreaIn[i]).epsilon(1e-5));
     }
 
 }
 
-#  endif
 #endif //TESTING
