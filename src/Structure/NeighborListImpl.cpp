@@ -589,12 +589,13 @@ void CylinderCylinderNL::reset() {
         updateNeighbors(cylinder);
         tot += _list[cylinder].size();
     }
-     std::cout<<"ORIGINAL ";
-    for(auto cylinder: Cylinder::getCylinders()) {
-        std::cout<<_list4mbin[cylinder].size()<<" ";
-    }
-    std::cout<<endl;
-    std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
+    
+//     std::cout<<"ORIGINAL ";
+//    for(auto cylinder: Cylinder::getCylinders()) {
+//        std::cout<<_list4mbin[cylinder].size()<<" ";
+//    }
+//    std::cout<<endl;
+//    std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
 #ifdef CUDA_TIMETRACK
 
 

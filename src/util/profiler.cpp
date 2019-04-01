@@ -1,6 +1,6 @@
-#include "util/profiler.h"
+#include "profiler.h"
 
-#include "util/io/log.h"
+#include "log.h"
 
 namespace profiler {
 

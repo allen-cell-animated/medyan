@@ -266,6 +266,7 @@ void SubSystem::resetNeighborLists() {
 //    std::cout<<"H NLSTEN B reset time "<<elapsed_B.count()<<endl;
 #elif defined(NLORIGINAL) || defined(NLSTENCILLIST)
 #ifndef HYBRID_NLSTENCILLIST
+
     for (auto nl: _neighborLists.getElements())
             nl->reset();
 #endif

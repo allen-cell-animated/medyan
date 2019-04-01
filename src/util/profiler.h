@@ -7,7 +7,7 @@
 #include <string>
 #include <type_traits>
 
-#include "util/io/log.h"
+#include "log.h"
 
 namespace profiler {
 

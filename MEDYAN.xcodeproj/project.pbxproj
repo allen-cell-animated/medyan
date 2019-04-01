@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F4010EE2252A07D00D2E945 /* cmdparse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010E82252A07D00D2E945 /* cmdparse.cpp */; };
+		1F4010EF2252A07D00D2E945 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010EA2252A07D00D2E945 /* log.cpp */; };
+		1F4010F02252A07D00D2E945 /* profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010EC2252A07D00D2E945 /* profiler.cpp */; };
+		1F4010F12252A0EA00D2E945 /* environment.h in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010E62252A07D00D2E945 /* environment.h */; };
+		1F4010F22252A0EA00D2E945 /* cmdparse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010E82252A07D00D2E945 /* cmdparse.cpp */; };
+		1F4010F32252A0EA00D2E945 /* cmdparse.h in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010E92252A07D00D2E945 /* cmdparse.h */; };
+		1F4010F42252A0EA00D2E945 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010EA2252A07D00D2E945 /* log.cpp */; };
+		1F4010F52252A0EA00D2E945 /* log.h in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010EB2252A07D00D2E945 /* log.h */; };
+		1F4010F62252A0EA00D2E945 /* profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010EC2252A07D00D2E945 /* profiler.cpp */; };
+		1F4010F72252A0EA00D2E945 /* profiler.h in Sources */ = {isa = PBXBuildFile; fileRef = 1F4010ED2252A07D00D2E945 /* profiler.h */; };
 		2337CCC021B496C100EA25B2 /* MTOCAttachmentHarmonic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCB621B496BF00EA25B2 /* MTOCAttachmentHarmonic.cpp */; };
 		2337CCC721B5C74100EA25B2 /* BubbleFF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCBB21B496C000EA25B2 /* BubbleFF.cpp */; };
 		2337CCC921B5C74800EA25B2 /* BubbleBubbleRepulsion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2337CCB421B496BF00EA25B2 /* BubbleBubbleRepulsion.cpp */; };
@@ -308,6 +318,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1F4010E62252A07D00D2E945 /* environment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = environment.h; sourceTree = "<group>"; };
+		1F4010E82252A07D00D2E945 /* cmdparse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cmdparse.cpp; sourceTree = "<group>"; };
+		1F4010E92252A07D00D2E945 /* cmdparse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cmdparse.h; sourceTree = "<group>"; };
+		1F4010EA2252A07D00D2E945 /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
+		1F4010EB2252A07D00D2E945 /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
+		1F4010EC2252A07D00D2E945 /* profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = profiler.cpp; sourceTree = "<group>"; };
+		1F4010ED2252A07D00D2E945 /* profiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = profiler.h; sourceTree = "<group>"; };
 		2337CCAE21B496BD00EA25B2 /* BubbleCylinderRepulsionExp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BubbleCylinderRepulsionExp.cpp; path = Bubble/BubbleCylinderRepulsionExp.cpp; sourceTree = "<group>"; };
 		2337CCAF21B496BD00EA25B2 /* BubbleInteractions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleInteractions.h; path = Bubble/BubbleInteractions.h; sourceTree = "<group>"; };
 		2337CCB021B496BE00EA25B2 /* BubbleBubbleRepulsionExp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BubbleBubbleRepulsionExp.h; path = Bubble/BubbleBubbleRepulsionExp.h; sourceTree = "<group>"; };
@@ -619,6 +636,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F4010E52252A07D00D2E945 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				1F4010E62252A07D00D2E945 /* environment.h */,
+				1F4010E72252A07D00D2E945 /* io */,
+				1F4010EC2252A07D00D2E945 /* profiler.cpp */,
+				1F4010ED2252A07D00D2E945 /* profiler.h */,
+			);
+			path = util;
+			sourceTree = "<group>";
+		};
+		1F4010E72252A07D00D2E945 /* io */ = {
+			isa = PBXGroup;
+			children = (
+				1F4010E82252A07D00D2E945 /* cmdparse.cpp */,
+				1F4010E92252A07D00D2E945 /* cmdparse.h */,
+				1F4010EA2252A07D00D2E945 /* log.cpp */,
+				1F4010EB2252A07D00D2E945 /* log.h */,
+			);
+			path = io;
+			sourceTree = "<group>";
+		};
 		2337CCAD21B4969600EA25B2 /* Bubble */ = {
 			isa = PBXGroup;
 			children = (
@@ -981,6 +1020,7 @@
 		F7954C4A197D98BE00074A12 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				1F4010E52252A07D00D2E945 /* util */,
 				23591630222455FB0025098C /* ControllerCUDA.h */,
 				F77745911BCEE9FA00F3AB4C /* common.cpp */,
 				F735B7561A2D16F200AE21D1 /* common.h */,
@@ -1276,6 +1316,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F4010F12252A0EA00D2E945 /* environment.h in Sources */,
+				1F4010F22252A0EA00D2E945 /* cmdparse.cpp in Sources */,
+				1F4010F32252A0EA00D2E945 /* cmdparse.h in Sources */,
+				1F4010F42252A0EA00D2E945 /* log.cpp in Sources */,
+				1F4010F52252A0EA00D2E945 /* log.h in Sources */,
+				1F4010F62252A0EA00D2E945 /* profiler.cpp in Sources */,
+				1F4010F72252A0EA00D2E945 /* profiler.h in Sources */,
 				F2C1F8991F60CB990067E937 /* cross_check.cpp in Sources */,
 				F2A4A1661F50D2E000326562 /* FilamentStretching.cpp in Sources */,
 				F2A4A1651F50D2DB00326562 /* FilamentInteractions.cpp in Sources */,
@@ -1406,8 +1453,11 @@
 				235916382224561E0025098C /* CUDAcommon.cpp in Sources */,
 				23EC737920F948AE0037DD00 /* BoundaryCylinderRepulsionExpIn.cpp in Sources */,
 				23591B072231BB8C0025098C /* BubbleInteractions.cpp in Sources */,
+				1F4010EE2252A07D00D2E945 /* cmdparse.cpp in Sources */,
+				1F4010EF2252A07D00D2E945 /* log.cpp in Sources */,
 				23EC737520F947990037DD00 /* BoundaryCylinderRepulsionIn.cpp in Sources */,
 				2337CCC021B496C100EA25B2 /* MTOCAttachmentHarmonic.cpp in Sources */,
+				1F4010F02252A07D00D2E945 /* profiler.cpp in Sources */,
 				23EC735F20F9397C0037DD00 /* BranchingInteractions.cpp in Sources */,
 				F735B7AB1A2D172D00AE21D1 /* MEDYAN.cpp in Sources */,
 				23EC735C20F9396C0037DD00 /* BoundaryInteractions.cpp in Sources */,
@@ -1535,8 +1585,7 @@
 					"RSPECIES_SIGNALING=1",
 					"DYNAMICRATES=1",
 					"SERIAL=1",
-					"HYBRID_NLSTENCILLIST=1",
-					"NLSTENCILLIST=1",
+					"NLORIGINAL=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -1607,8 +1656,7 @@
 					"RSPECIES_SIGNALING=1",
 					"DYNAMICRATES=1",
 					"SERIAL=1",
-					"HYBRID_NLSTENCILLIST=1",
-					"NLSTENCILLIST=1",
+					"NLORIGINAL=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = NO;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
