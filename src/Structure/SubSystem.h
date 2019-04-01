@@ -108,10 +108,9 @@ public:
             //Remove boundary and bubble neighbors
             for (auto nlist : __bneighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
-#else
+#endif
             for (auto nlist : _neighborLists.getElements())
                 nlist->addDynamicNeighbor((DynamicNeighbor *) t);
-#endif
 
         } else if (t->_neighbor) {
             for (auto nlist : _neighborLists.getElements())
@@ -141,10 +140,9 @@ public:
             //Remove boundary neighbors
             for (auto nlist : __bneighborLists.getElements())
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
-#else
+#endif
             for (auto nlist : _neighborLists.getElements())
                 nlist->removeDynamicNeighbor((DynamicNeighbor *) t);
-#endif
 
         } else if (t->_neighbor) {
             for (auto nlist : _neighborLists.getElements())

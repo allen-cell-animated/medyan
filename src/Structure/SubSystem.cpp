@@ -230,10 +230,8 @@ void SubSystem::resetNeighborLists() {
     chrono::duration<double> elapsed_B(mine - mins);
 //    std::cout<<"H NLSTEN B reset time "<<elapsed_B.count()<<endl;
 #elif defined(NLORIGINAL) || defined(NLSTENCILLIST)
-#ifndef HYBRID_NLSTENCILLIST
     for (auto nl: _neighborLists.getElements())
             nl->reset();
-#endif
 #endif
     /*mins = chrono::high_resolution_clock::now();
     for (auto nl: _neighborLists.getElements())
