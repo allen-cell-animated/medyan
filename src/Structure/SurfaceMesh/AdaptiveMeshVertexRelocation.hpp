@@ -115,12 +115,12 @@ private:
         for(size_t i = 0; i < numVertices; ++i) {
             targets[i] = Vec3 {};
             double weightTot = 0.0;
-            const auto ci = vector2Vec<3, double>(mesh.getVertexAttribute(i).getCoordinate());
+            const Vec3 ci = mesh.getVertexAttribute(i).getCoordinate();
             mesh.forEachHalfEdgeTargetingVertex(i, [&](size_t hei) {
                 const size_t vn = mesh.target(mesh.next(hei));
                 const size_t vp = mesh.target(mesh.prev(hei));
-                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
-                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
+                const Vec3 cn = mesh.getVertexAttribute(vn).getCoordinate();
+                const Vec3 cp = mesh.getVertexAttribute(vp).getCoordinate();
                 const auto centroid = (ci + cn + cp) / 3.0;
                 const auto len = distance(ci, centroid);
                 targets[i] += len * centroid;
@@ -134,7 +134,7 @@ private:
         }
 
         for(size_t i = 0; i < numVertices; ++i) {
-            mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(targets[i]);
+            mesh.getVertexAttribute(i).getCoordinate() = targets[i];
         }
     } // End function _laplacianSmoothing(Mesh&)
 
@@ -177,7 +177,7 @@ public:
         const size_t numVertices = mesh.getVertices().size();
         std::vector< Vec3 > coords(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
-            coords[i] = vector2Vec<3, double>(mesh.getVertexAttribute(i).vertex->getCoordinate());
+            coords[i] = mesh.getVertexAttribute(i).vertex->getCoordinate();
         }
 
         // Aux variables
@@ -210,7 +210,7 @@ public:
 
             // Reassign coordinates
             for (size_t i = 0; i < numVertices; ++i) {
-                mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(coords[i]);
+                mesh.getVertexAttribute(i).getCoordinate() = coords[i];
             }
 
             // Smooth out the folded geometry, without updating normals
@@ -256,15 +256,15 @@ template<> struct OptimalVertexLocation< OptimalVertexLocationMethod::Barycenter
 
         Vec3 target {};
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.next(hei))).getCoordinate());
-            const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.prev(hei))).getCoordinate());
+            const Vec3 cn = mesh.getVertexAttribute(mesh.target(mesh.next(hei))).getCoordinate();
+            const Vec3 cp = mesh.getVertexAttribute(mesh.target(mesh.prev(hei))).getCoordinate();
             const auto& un = mesh.getTriangleAttribute(mesh.triangle(hei)).gTriangle.unitNormal;
             target += findEquilateralTriangle(cp, cn, un);
         });
         target *= (1.0 / mesh.degree(vi));
 
         // project onto tangent plane
-        const auto ci = vector2Vec<3, double>(mesh.getVertexAttribute(vi).getCoordinate());
+        const Vec3 ci = mesh.getVertexAttribute(vi).getCoordinate();
         const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
         target -= un * dot(un, target - ci);
 
@@ -317,11 +317,11 @@ public:
             // Move vertices
             for(size_t iterRelo = 0; iterRelo < _maxIterRelocation; ++iterRelo) {
                 for(size_t i = 0; i < numVertices; ++i) {
-                    const auto coordOriginal = vector2Vec<3>(mesh.getVertexAttribute(i).getCoordinate());
+                    // const auto coordOriginal = mesh.getVertexAttribute(i).getCoordinate();
                     const auto target = OptimalVertexLocationType{}(mesh, i);
                     /*const auto diff = target - coordOriginal;
                     const auto magDiff = magnitude(diff);*/
-                    mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(target);
+                    mesh.getVertexAttribute(i).getCoordinate() = target;
                 }
             }
 

@@ -487,14 +487,6 @@ Bead* CGMethod::maxBead() {
 
     return Bead::getBeads()[index];
 }
-void CGMethod::calcStretchedCoordinate(double d)
-{
-	for(auto b: Bead::getBeads()) {
-        b->coordinateStretched[0] = b->coordinate[0] + d * b->force[0];
-        b->coordinateStretched[1] = b->coordinate[1] + d * b->force[1];
-        b->coordinateStretched[2] = b->coordinate[2] + d * b->force[2];
-    }
-}
 
 void CGMethod::moveBeads(double d)
 {

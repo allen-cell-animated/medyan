@@ -41,7 +41,7 @@ struct MembraneMeshInfoDump {
         std::unordered_map<size_t, size_t> vri;
         size_t index = 0; // 1 based index
         for (auto i : vs) {
-            std::cout << mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(i).getCoordinate()) << std::endl;
+            std::cout << mesh.getVertexAttribute(i).getCoordinate() << std::endl;
             vri[i] = (++index);
         }
         for (auto i : es) {
@@ -251,9 +251,9 @@ struct MembraneMeshQualityCheck {
             const size_t v0 = mesh.target(hei);
             const size_t v1 = mesh.target(mesh.next(hei));
             const size_t v2 = mesh.target(mesh.prev(hei));
-            const auto c0 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-            const auto c1 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
-            const auto c2 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
+            const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
+            const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
+            const Vec3 c2 = mesh.getVertexAttribute(v2).getCoordinate();
 
             const auto q = TriangleQualityType{}(c0, c1, c2);
 
@@ -315,9 +315,9 @@ struct MembraneMeshQualityReport {
             const size_t v0 = mesh.target(hei);
             const size_t v1 = mesh.target(mesh.next(hei));
             const size_t v2 = mesh.target(mesh.prev(hei));
-            const auto c0 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-            const auto c1 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
-            const auto c2 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
+            const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
+            const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
+            const Vec3 c2 = mesh.getVertexAttribute(v2).getCoordinate();
 
             const auto q = TriangleQualityType{}(c0, c1, c2);
 

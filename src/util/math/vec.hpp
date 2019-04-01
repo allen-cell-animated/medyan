@@ -73,6 +73,13 @@ template<
             * ptr;
         size_type pos; // index of first Float
 
+        // Conversion operator to normal Vec
+        operator auto() const {
+            Vec< vec_size, float_type > res;
+            res = *this;
+            return res;
+        }
+
         constexpr size_type size() const noexcept { return dim; }
 
         constexpr iterator begin() const noexcept { return ptr->begin() + pos; }

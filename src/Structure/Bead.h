@@ -92,7 +92,10 @@ class Bead : public Component, public Trackable, public Movable,
     public Database< Bead, false, BeadData > {
     
 public:
-    using db_type = Database< Bead, false, BeadData >;
+    using coordinate_type      = BeadData::vec_type;
+    using coordinate_ref_type  = BeadData::vec_array_type::RefVec;
+    using coordinate_cref_type = BeadData::vec_array_type::ConstRefVec;
+    using db_type              = Database< Bead, false, BeadData >;
 
     ///@note - all vectors are in x,y,z coordinates.
     vector<double> coordinateP; ///< Prev coordinates of bead in CG minimization

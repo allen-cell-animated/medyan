@@ -48,8 +48,8 @@ void OutputStructFilament::getFromSystemWithoutChildren() {
     // Store coordinates
     _coords.reserve(_numBeads);
     for (auto cylinder : _filament->getCylinderVector())
-        _coords.push_back(vector2Vec<3, double>(cylinder->getFirstBead()->coordinate));
-    _coords.push_back(vector2Vec<3, double>(_filament->getCylinderVector().back()->getSecondBead()->coordinate));
+        _coords.push_back(cylinder->getFirstBead()->coordinate());
+    _coords.push_back(_filament->getCylinderVector().back()->getSecondBead()->coordinate());
         
 }
 
@@ -106,13 +106,13 @@ void OutputStructLinker::getFromSystemWithoutChildren() {
     // Store coordinates
     _coords = {{
         vector2Vec<3, double>(midPointCoordinate(
-            _linker->getFirstCylinder()->getFirstBead()->coordinate,
-            _linker->getFirstCylinder()->getSecondBead()->coordinate,
+            _linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
+            _linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
             _linker->getFirstPosition()
         )),
         vector2Vec<3, double>(midPointCoordinate(
-            _linker->getSecondCylinder()->getFirstBead()->coordinate,
-            _linker->getSecondCylinder()->getSecondBead()->coordinate,
+            _linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
+            _linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
             _linker->getSecondPosition()
         ))
     }};
@@ -161,13 +161,13 @@ void OutputStructMotor::getFromSystemWithoutChildren() {
     // Store coordinates
     _coords = {{
         vector2Vec<3, double>(midPointCoordinate(
-            _motor->getFirstCylinder()->getFirstBead()->coordinate,
-            _motor->getFirstCylinder()->getSecondBead()->coordinate,
+            _motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
+            _motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
             _motor->getFirstPosition()
         )),
         vector2Vec<3, double>(midPointCoordinate(
-            _motor->getSecondCylinder()->getFirstBead()->coordinate,
-            _motor->getSecondCylinder()->getSecondBead()->coordinate,
+            _motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
+            _motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
             _motor->getSecondPosition()
         ))
     }};
@@ -343,7 +343,7 @@ void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& i
         std::getline(is, nextLine);
         std::istringstream newIss(nextLine);
 
-        _memInfo.attributeInitializerInfo.vertexCoordinateList.emplace_back(3);
+        _memInfo.attributeInitializerInfo.vertexCoordinateList.emplace_back();
         auto& coord = _memInfo.attributeInitializerInfo.vertexCoordinateList.back();
 
         // Record coordinates

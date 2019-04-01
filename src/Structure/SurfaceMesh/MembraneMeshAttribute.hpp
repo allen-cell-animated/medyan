@@ -31,14 +31,17 @@ struct MembraneMeshAttribute {
     using MeshType = MeshTopology< MembraneMeshAttribute >;
 
     struct VertexAttribute {
-        using coordinate_type = decltype(Vertex::coordinate);
+        using coordinate_type      = Vertex::coordinate_type;
+        using coordinate_ref_type  = Vertex::coordinate_ref_type;
+        using coordinate_cref_type = Vertex::coordinate_cref_type;
+
         Vertex* vertex;
 
         GVertex gVertex;
         GVertex gVertexS; // stretched version (temporary)
         AdaptiveMeshAttribute::VertexAttribute aVertex;
 
-        coordinate_type& getCoordinate() const { return vertex->coordinate; }
+        coordinate_ref_type getCoordinate() const { return vertex->coordinate(); }
 
         template< bool stretched > const GVertex& getGVertex() const { return stretched ? gVertexS : gVertex; }
         template< bool stretched >       GVertex& getGVertex()       { return stretched ? gVertexS : gVertex; }
@@ -157,7 +160,7 @@ struct MembraneMeshAttribute {
 
         info.vertexCoordinateList.reserve(numVertices);
         for(size_t i = 0; i < numVertices; ++i) {
-            info.vertexCoordinateList.push_back(mesh.getVertexAttribute(i).vertex->coordinate);
+            info.vertexCoordinateList.push_back(mesh.getVertexAttribute(i).vertex->coordinate());
         }
 
         return info;
@@ -305,8 +308,8 @@ struct MembraneMeshAttribute {
             const size_t hei_o = mesh.opposite(hei);
             const size_t vi0 = mesh.target(hei);
             const size_t vi1 = mesh.target(hei_o);
-            const auto c0 = vector2Vec<3, double>(vertices[vi0].attr.vertex->coordinate);
-            const auto c1 = vector2Vec<3, double>(vertices[vi1].attr.vertex->coordinate);
+            const Vec3 c0 = vertices[vi0].attr.vertex->coordinate();
+            const Vec3 c1 = vertices[vi1].attr.vertex->coordinate();
 
             const auto length = mesh.getEdgeAttribute(ei).gEdge.length = distance(c0, c1);
             const auto invL = 1.0 / length;
@@ -325,9 +328,9 @@ struct MembraneMeshAttribute {
 
             const size_t vi[] {mesh.target(hei[0]), mesh.target(hei[1]), mesh.target(hei[2])};
             const Vec3 c[] {
-                vector2Vec<3, double>(vertices[vi[0]].attr.vertex->coordinate),
-                vector2Vec<3, double>(vertices[vi[1]].attr.vertex->coordinate),
-                vector2Vec<3, double>(vertices[vi[2]].attr.vertex->coordinate)
+                vertices[vi[0]].attr.vertex->coordinate(),
+                vertices[vi[1]].attr.vertex->coordinate(),
+                vertices[vi[2]].attr.vertex->coordinate()
             };
 
             const double l[] {
@@ -420,9 +423,9 @@ struct MembraneMeshAttribute {
                 const size_t hei_on = mesh.next(hei_o);
                 const size_t hei_right = mesh.opposite(mesh.next(hei_on)); // hei_left is hei_n
                 const size_t vi_right = mesh.target(hei_right);
-                const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
-                const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
-                const auto c_right = vector2Vec<3, double>(vertices[vi_right].attr.vertex->coordinate);
+                const Vec3 ci = vertices[vi].attr.vertex->coordinate();
+                const Vec3 cn = vertices[vn].attr.vertex->coordinate();
+                const Vec3 c_right = vertices[vi_right].attr.vertex->coordinate();
 
                 const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
                 const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
@@ -484,10 +487,10 @@ struct MembraneMeshAttribute {
                 const size_t hei_right = mesh.opposite(mesh.next(hei_on)); // hei_left is hei_n
                 const size_t vi_left = mesh.target(hei_n);
                 const size_t vi_right = mesh.target(hei_right);
-                const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->coordinate);
-                const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->coordinate);
-                const auto c_left = vector2Vec<3, double>(vertices[vi_left].attr.vertex->coordinate);
-                const auto c_right = vector2Vec<3, double>(vertices[vi_right].attr.vertex->coordinate);
+                const Vec3 ci = vertices[vi].attr.vertex->coordinate();
+                const Vec3 cn = vertices[vn].attr.vertex->coordinate();
+                const Vec3 c_left = vertices[vi_left].attr.vertex->coordinate();
+                const Vec3 c_right = vertices[vi_right].attr.vertex->coordinate();
 
                 const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
                 const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
@@ -587,9 +590,9 @@ struct MembraneMeshAttribute {
                 mesh.target(hei0), mesh.target(hei1), mesh.target(hei2)
             };
             const Vec3 c[] {
-                vector2Vec<3, double>(mesh.getVertexAttribute(vi[0]).vertex->coordinate),
-                vector2Vec<3, double>(mesh.getVertexAttribute(vi[1]).vertex->coordinate),
-                vector2Vec<3, double>(mesh.getVertexAttribute(vi[2]).vertex->coordinate)
+                mesh.getVertexAttribute(vi[0]).vertex->coordinate(),
+                mesh.getVertexAttribute(vi[1]).vertex->coordinate(),
+                mesh.getVertexAttribute(vi[2]).vertex->coordinate()
             };
 
             const auto r01 = c[1] - c[0];
@@ -671,15 +674,15 @@ struct MembraneMeshAttribute {
         const size_t vi0 = mesh.target(hei);
         const size_t vi1 = mesh.target(mesh.next(hei));
         const size_t vi2 = mesh.target(mesh.prev(hei));
-        const auto& c0 = mesh.getVertexAttribute(vi0).vertex->coordinate;
-        const auto& c1 = mesh.getVertexAttribute(vi1).vertex->coordinate;
-        const auto& c2 = mesh.getVertexAttribute(vi2).vertex->coordinate;
+        const auto c0 = mesh.getVertexAttribute(vi0).vertex->coordinate();
+        const auto c1 = mesh.getVertexAttribute(vi1).vertex->coordinate();
+        const auto c2 = mesh.getVertexAttribute(vi2).vertex->coordinate();
         auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
 
-        const auto vp = mathfunc::vectorProduct(c0, c1, c0, c2);
+        const auto cp = mathfunc::cross(c1 - c0, c2 - c0);
 
         // unit normal
-        tag.unitNormal = mathfunc::vector2Vec<3, double>(mathfunc::normalizedVector(vp));
+        tag.unitNormal = mathfunc::normalizedVector(cp);
     }
 
     // Triangle angles (Geometric attribute, halfedge) used in adaptive remeshing
@@ -688,14 +691,14 @@ struct MembraneMeshAttribute {
         const size_t vi0 = mesh.target(mesh.prev(hei));
         const size_t vi1 = mesh.target(hei);
         const size_t vi2 = mesh.target(mesh.next(hei));
-        const auto& c0 = mesh.getVertexAttribute(vi0).vertex->coordinate;
-        const auto& c1 = mesh.getVertexAttribute(vi1).vertex->coordinate;
-        const auto& c2 = mesh.getVertexAttribute(vi2).vertex->coordinate;
+        const auto c0 = mesh.getVertexAttribute(vi0).vertex->coordinate();
+        const auto c1 = mesh.getVertexAttribute(vi1).vertex->coordinate();
+        const auto c2 = mesh.getVertexAttribute(vi2).vertex->coordinate();
         auto& heag = mesh.getHalfEdgeAttribute(hei).gHalfEdge;
 
-        const auto vp = mathfunc::vectorProduct(c1, c0, c1, c2);
-        const auto sp = mathfunc::scalarProduct(c1, c0, c1, c2);
-        const auto ct = heag.cotTheta = sp / mathfunc::magnitude(vp);
+        const auto cp = mathfunc::cross(c0 - c1, c2 - c1);
+        const auto dp = mathfunc::  dot(c0 - c1, c2 - c1);
+        const auto ct = heag.cotTheta = dp / mathfunc::magnitude(cp);
         heag.theta = M_PI_2 - std::atan(ct);
     }
 

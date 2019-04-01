@@ -44,13 +44,11 @@ void Triangle::updateCoordinate() {
     const size_t v1 = mesh.target(hei1);
     const size_t v2 = mesh.target(hei2);
 
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        coordinate[coordIdx] = (
-            mesh.getVertexAttribute(v0).vertex->coordinate[coordIdx]
-            + mesh.getVertexAttribute(v1).vertex->coordinate[coordIdx]
-            + mesh.getVertexAttribute(v2).vertex->coordinate[coordIdx]
-        ) / 3;
-    }
+    coordinate = (
+        mesh.getVertexAttribute(v0).getCoordinate()
+        + mesh.getVertexAttribute(v1).getCoordinate()
+        + mesh.getVertexAttribute(v2).getCoordinate()
+    ) / 3;
 }
 
 void Triangle::updatePosition() {

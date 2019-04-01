@@ -36,12 +36,7 @@ void Edge::updateCoordinate() {
     const size_t v0 = mesh.target(hei0);
     const size_t v1 = mesh.target(hei1);
 
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        coordinate[coordIdx] = (
-            mesh.getVertexAttribute(v0).vertex->coordinate[coordIdx]
-            + mesh.getVertexAttribute(v1).vertex->coordinate[coordIdx]
-        ) / 2;
-    }
+    coordinate = 0.5 * (mesh.getVertexAttribute(v0).getCoordinate() + mesh.getVertexAttribute(v1).getCoordinate());
 }
 
 void Edge::updatePosition() {

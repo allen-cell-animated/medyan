@@ -128,10 +128,10 @@ public:
         ) < _minDotNormal) return State::NonCoplanar;
 
         // Check if the target triangles are coplanar.
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
-        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
-        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
-        const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(vi3).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
+        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
+        const Vec3 c2 = mesh.getVertexAttribute(vi2).getCoordinate();
+        const Vec3 c3 = mesh.getVertexAttribute(vi3).getCoordinate();
         const auto n013 = cross(c1 - c0, c3 - c0);
         const auto mag_n013 = magnitude(n013);
         const auto n231 = cross(c3 - c2, c1 - c2);
@@ -176,9 +176,9 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidP
     size_t v0, v1;
     template< typename Mesh >
     auto coordinate(const Mesh& mesh, size_t v) const {
-        const auto& c0 = mesh.getVertexAttribute(v0).getCoordinate();
-        const auto& c1 = mesh.getVertexAttribute(v1).getCoordinate();
-        return mathfunc::midPointCoordinate(c0, c1, 0.5);
+        const auto c0 = mesh.getVertexAttribute(v0).getCoordinate();
+        const auto c1 = mesh.getVertexAttribute(v1).getCoordinate();
+        return (c0 + c1) * 0.5;
     }
 };
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgCurv > {
@@ -188,8 +188,8 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
     template< typename Mesh >
     auto coordinate(const Mesh& mesh, size_t v) const {
         using namespace mathfunc;
-        const auto& c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-        const auto& c1 = vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
+        const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
         const auto& un0 = mesh.getVertexAttribute(v0).aVertex.unitNormal;
         const auto& un1 = mesh.getVertexAttribute(v1).aVertex.unitNormal;
 
@@ -288,10 +288,10 @@ public:
         ) return State::InvalidTopo;
 
         // Check whether the current edge is the longest in the triangle
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
-        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
-        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
-        const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(vi3).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
+        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
+        const Vec3 c2 = mesh.getVertexAttribute(vi2).getCoordinate();
+        const Vec3 c3 = mesh.getVertexAttribute(vi3).getCoordinate();
         const auto l2_e = distance2(c0, c2);
         const auto l2_01 = distance2(c0, c1);
         const auto l2_12 = distance2(c1, c2);
@@ -365,8 +365,8 @@ private:
 
         const auto vi0 = mesh.target(hei); // preserved
         const auto vi1 = mesh.target(hei_o); // to be removed
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
-        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
+        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
 
         const auto ti0 = mesh.triangle(hei);
         const auto ti1 = mesh.triangle(hei_o);
@@ -383,8 +383,8 @@ private:
                 const auto chei_po = mesh.opposite(mesh.prev(chei));
                 const auto vn = mesh.target(mesh.next(chei));
                 const auto vp = mesh.target(mesh.prev(chei));
-                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
-                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
+                const Vec3 cn = mesh.getVertexAttribute(vn).getCoordinate();
+                const Vec3 cp = mesh.getVertexAttribute(vp).getCoordinate();
 
                 // Triangle quality before
                 qBefore = TriangleQualityType::worseOne(
@@ -477,8 +477,8 @@ public:
         // Future: maybe also geometric constraints (gap, smoothness, etc)
 
         // Check triangle quality constraints
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
-        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
+        const Vec3 c2 = mesh.getVertexAttribute(vi2).getCoordinate();
 
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
@@ -547,9 +547,9 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
     template< typename Mesh > auto vertexSize(Mesh& mesh, size_t vi) const {
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
         const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
-        const auto ci = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(vi).vertex->getCoordinate());
+        const Vec3 ci = mesh.getVertexAttribute(vi).vertex->getCoordinate();
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const auto r = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->getCoordinate()) - ci;
+            const auto r = mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->getCoordinate() - ci;
             minRadiusCurvature = std::min(
                 std::abs(0.5 * mathfunc::magnitude2(r) / mathfunc::dot(un, r)),
                 minRadiusCurvature
@@ -753,8 +753,8 @@ public:
                     const size_t v0 = mesh.target(hei0);
                     const size_t v1 = mesh.target(mesh.opposite(hei0));
 
-                    const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-                    const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+                    const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
+                    const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
                     const double length2 = distance2(c0, c1);
 
                     const double eqLength = mesh.getEdgeAttribute(ei).aEdge.eqLength;

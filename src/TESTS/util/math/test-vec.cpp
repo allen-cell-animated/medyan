@@ -155,6 +155,24 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         CHECK(v4d_3[3] == Approx(-0.6));
     }
 
+    SECTION("Conversion of RefVec to normal Vec") {
+        // Using conversion operator
+        Vec< 3, float > v3f_2_copy = v3f[2];
+        CHECK(v3f_2_copy[0] == 2.0f); // Check copy is successful
+
+        v3f_2_copy[0] = 2.1f;
+        CHECK(v3f[2][0] == Approx(2.0f)); // Should not change original value
+
+        // Using copy assignment operator
+        Vec< 3, float > v3f_2_another_copy;
+        v3f_2_another_copy = v3f[2];
+        CHECK(v3f_2_another_copy[0] == Approx(2.0f)); // Check copy is successful
+
+        v3f_2_another_copy[0] = 2.1f;
+        CHECK(v3f[2][0] == Approx(2.0f)); // Should not change original value
+
+    }
+
     SECTION("Iterator usage") {
         // Iterator pointer, dereference, op[]
         auto v3f_i = v3f.begin() + 1;

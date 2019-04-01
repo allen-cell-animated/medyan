@@ -56,7 +56,7 @@ void MembraneHierarchy::addMembrane(Membrane* m, MembraneHierarchy& root) {
     auto& rootChildren = root.children();
 
     // Pick a point on the membrane and check the containing relationship with other membranes
-    const auto p = vector2Vec<3, double>(m->getMesh().getVertexAttribute(0).vertex->coordinate);
+    const mathfunc::Vec3 p = m->getMesh().getVertexAttribute(0).getCoordinate();
 
     // Recursively search
     for(auto& childPtr: rootChildren) {
@@ -87,7 +87,7 @@ void MembraneHierarchy::addMembrane(Membrane* m, MembraneHierarchy& root) {
 
             MembraneHierarchy* hiePtr = static_cast<MembraneHierarchy*>(childPtr.get());
 
-            const auto hieP = vector2Vec<3, double>(hiePtr->_membrane->getMesh().getVertexAttribute(0).vertex->coordinate);
+            const mathfunc::Vec3 hieP = hiePtr->_membrane->getMesh().getVertexAttribute(0).getCoordinate();
 
             if(m->contains(hieP)) { // The child membrane is inside new membrane
 

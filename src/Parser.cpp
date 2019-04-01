@@ -2045,7 +2045,7 @@ vector<MembraneParser::MembraneInfo> MembraneParser::readMembranes() {
                     cout << "Each vertex should have 3 coordinates" << endl;
                 }
 
-                activeMem.vertexCoordinateList.emplace_back(3); // coordinate_type is vector<double>
+                activeMem.vertexCoordinateList.emplace_back();
                 auto& activeCoord = activeMem.vertexCoordinateList.back();
 
                 // Parse coordinate information

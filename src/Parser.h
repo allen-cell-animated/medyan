@@ -430,7 +430,7 @@ public:
     MembraneParser(string inputFileName) : Parser(inputFileName) {}
 
     struct MembraneInfo {
-        using coordinate_type = std::vector< double >; // Future: Change this to a universal type
+        using coordinate_type = mathfunc::Vec3;
         std::vector< coordinate_type > vertexCoordinateList;
         std::vector< std::array< size_t, 3 > > triangleVertexIndexList;
     };
