@@ -236,12 +236,9 @@ void TriangleCylinderBeadExclVolRepulsion::forces(
 }
 
 Vec3 TriangleCylinderBeadExclVolRepulsion::loadForces(
-    Vertex* v0, Vertex* v1, Vertex* v2, const Vec3& coord,
+    const Vec3& c0, const Vec3& c1, const Vec3& c2, const Vec3& coord,
     double area, double kExVol
 ) {
-    Vec3 c0 = v0->coordinate();
-    Vec3 c1 = v1->coordinate();
-    Vec3 c2 = v2->coordinate();
     Vec3 cb = coord;
 
     //check if in same plane

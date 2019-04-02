@@ -1,7 +1,7 @@
 #ifndef MEDYAN_util_math_RayTriangleIntersect_hpp
 #define MEDYAN_util_math_RayTriangleIntersect_hpp
 
-#include <type_traits> // enable_if_t
+#include <type_traits> // common_type, enable_if_t
 
 #include "MathFunctions.h"
 #include "utility.h" // areEqual
@@ -66,8 +66,12 @@ struct MollerTrumboreIntersect
         const VTO& o, const VTD& d,
         const VTA& a, const VTB& b, const VTC& c
     ) const {
+
         using namespace mathfunc;
-        using Float = typename vec_type::float_type;
+        using Float = std::common_type_t<
+            VTO::float_type, VTD::float_type,
+            VTA::float_type, VTB::float_type, VTC::float_type
+        >;
 
         IntersectResult< Float > res;
 
@@ -81,7 +85,7 @@ struct MollerTrumboreIntersect
             if(stopWhenNotIntersect) return res;
         }
 
-        const auto invDet = 1.0 / det;
+        const auto invDet = static_cast<Float>(1.0) / det;
 
         const auto rao = o - a;
         res.u = dot(d_x_rac, rao) * invDet;

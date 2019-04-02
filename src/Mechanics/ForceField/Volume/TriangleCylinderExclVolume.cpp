@@ -152,7 +152,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bo = c->getFirstBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
+                const auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
 
                 // Test intersection of the ray with the triangle
                 const auto intersectRes = ray_tracing::MollerTrumboreIntersect<>()(
@@ -161,9 +161,18 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 );
 
                 //array of coordinate values to update
-                auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
+                const auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-                
+
+                // Set load force to inf right before intersection.
+                if(intersectRes.intersect && intersectRes.t > 0) {
+                    const int maxCylSize = static_cast<int>(intersectRes.t / monSize);
+                    if(maxCylSize < cylSize) {
+                        bd->loadForcesP[maxCylSize] = std::numeric_limits<double>::infinity();
+                        cylSize = maxCylSize;
+                    }
+                }
+
                 bd->lfip = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
@@ -189,13 +198,27 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 bo = c->getSecondBead();
                 
                 ///this normal is in the direction of polymerization
-                auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
-                
+                const auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
+
+                // Test intersection of the ray with the triangle
+                const auto intersectRes = ray_tracing::MollerTrumboreIntersect<>()(
+                    bd->coordinate(), normal,
+                    v0, v1, v2
+                );
+
                 //array of coordinate values to update
-                auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
+                const auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
-                
-                
+
+                // Set load force to inf right before intersection.
+                if(intersectRes.intersect && intersectRes.t > 0) {
+                    const int maxCylSize = static_cast<int>(intersectRes.t / monSize);
+                    if(maxCylSize < cylSize) {
+                        bd->loadForcesP[maxCylSize] = std::numeric_limits<double>::infinity();
+                        cylSize = maxCylSize;
+                    }
+                }
+
                 bd->lfim = 0;
                 for (int i = 0; i < cylSize; i++) {
                     
