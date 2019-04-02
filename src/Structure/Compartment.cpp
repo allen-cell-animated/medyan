@@ -537,7 +537,7 @@ void Compartment::shareSpecies(int i) {
     }
 }
 
-void Compartment::activate(ChemSim* chem) {
+void Compartment::activate(ChemSim* chem, ActivateReason reason) {
     /**************************************************************************
     The diffusion-reactions with the already activated neighbors would be added
     for both directions.
@@ -555,11 +555,12 @@ void Compartment::activate(ChemSim* chem) {
         r->activateReaction(); // Conditionally activate the new diffusion reactions
     }
 
-    shareSpecies(SysParams::Boundaries().transfershareaxis); // FIXME: disable with membrane
+    if(reason == ActivateReason::Whole)
+        shareSpecies(SysParams::Boundaries().transfershareaxis);
 
 }
 
-void Compartment::updateActivation(ChemSim* chem) {
+void Compartment::updateActivation(ChemSim* chem, ActivateReason reason) {
     double volumeFrac = getVolumeFrac();
 
     if(_activated) {
@@ -598,7 +599,7 @@ void Compartment::updateActivation(ChemSim* chem) {
 
         }
     } else {
-        activate(chem);
+        activate(chem, reason);
     }
 
     // Update the internal reaction rates

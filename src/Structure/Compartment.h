@@ -65,6 +65,9 @@ public:
     enum class SliceMethod {
         Membrane, CylinderBoundary
     };
+    enum class ActivateReason {
+        Whole, Membrane
+    };
 
 protected:
     ///CHEMICAL CONTAINERS
@@ -178,7 +181,7 @@ public:
     /// 1) Adds diffusion reactions between this compartment's diffusing
     ///    species and its neighboring active compartments
     /// Note: should not be called during initialization.
-    virtual void activate(ChemSim* chem);
+    virtual void activate(ChemSim* chem, ActivateReason = ActivateReason::Whole);
     /// Update the activation status of a compartment, having following effects:
     /// 1) Updates diffusion reaction rates between this and neighbors if not
     ///    activated. Otherwise activate the compartment additively.
@@ -186,7 +189,7 @@ public:
     ///   - BEFORE this function call, all volume and area information must be
     ///     updated.
     ///   - Rate changers should happen AFTER calling this function.
-    virtual void updateActivation(ChemSim* chem);
+    virtual void updateActivation(ChemSim* chem, ActivateReason = ActivateReason::Whole);
     
     /// Deactivate a compartment. Has the following sid effects:
     /// 0) Initially checks that all cylinders are removed

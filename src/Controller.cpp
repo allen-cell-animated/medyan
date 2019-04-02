@@ -383,7 +383,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
 
             // Update partial activate status
             c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
-            _cController->updateActivation(c);
+            _cController->updateActivation(c, Compartment::ActivateReason::Membrane);
 
         } else if( ! regionInMembrane->contains(vector2Vec<3, double>(c->coordinates()))) {
             // Compartment is outside the membrane
@@ -777,7 +777,7 @@ void Controller::updateActiveCompartments() {
             if(!ts.empty()) {
                 // Update partial activate status
                 c->computeSlicedVolumeArea(Compartment::SliceMethod::Membrane);
-                _cController->updateActivation(c);
+                _cController->updateActivation(c, Compartment::ActivateReason::Membrane);
 
                 // No matter whether the compartment is interesting before, mark it as interesting
                 c->boundaryInteresting = true;
@@ -795,7 +795,7 @@ void Controller::updateActiveCompartments() {
 						fullArea[1], fullArea[1],
 						fullArea[2], fullArea[2]
                     }});
-                    _cController->updateActivation(c);
+                    _cController->updateActivation(c, Compartment::ActivateReason::Membrane);
                 } else {
                     // Deactivate the compartment
                     _cController->deactivate(c);
