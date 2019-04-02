@@ -22,9 +22,9 @@
 #include "BranchingFF.h"
 #include "BubbleFF.h"
 #include "CylinderVolumeFF.h"
-#include "MembraneFF.h"
-#include "TriangleCylinderVolumeFF.h"
+#include "Mechanics/ForceField/Membrane/MembraneFF.h"
 #include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
+#include "TriangleCylinderVolumeFF.h"
 
 #include "ConjugateGradient.h"
 #include "util/io/log.h"

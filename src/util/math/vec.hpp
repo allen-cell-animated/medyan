@@ -76,7 +76,7 @@ template<
         // Conversion operator to normal Vec
         operator auto() const {
             Vec< vec_size, float_type > res;
-            res = *this;
+            for(size_t i = 0; i < vec_size; ++i) res[i] = (*this)[i];
             return res;
         }
 

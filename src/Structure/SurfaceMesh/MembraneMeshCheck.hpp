@@ -243,6 +243,8 @@ struct MembraneMeshQualityCheck {
     double qualityWarning;
 
     bool operator()(const MeshType& mesh, bool report = false) const {
+        using namespace mathfunc;
+
         bool res = true;
 
         const size_t numTriangles = mesh.getTriangles().size();
@@ -304,6 +306,8 @@ struct MembraneMeshQualityReport {
     using TriangleQualityType = TriangleQuality< c >;
 
     void operator()(const MeshType& mesh) const {
+        using namespace mathfunc;
+
         const size_t numEdges = mesh.getEdges().size();
         const size_t numTriangles = mesh.getTriangles().size();
 
@@ -339,7 +343,7 @@ struct MembraneMeshQualityReport {
                 const size_t t1 = mesh.triangle(mesh.opposite(hei));
                 const auto& un0 = mesh.getTriangleAttribute(t0).gTriangle.unitNormal;
                 const auto& un1 = mesh.getTriangleAttribute(t1).gTriangle.unitNormal;
-                const auto cosDihedral = mathfunc::dot(un0, un1);
+                const auto cosDihedral = dot(un0, un1);
 
                 if(cosDihedral < minDotNormal) {
                     minDotNormal = cosDihedral;

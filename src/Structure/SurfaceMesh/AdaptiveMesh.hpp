@@ -547,7 +547,7 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
     template< typename Mesh > auto vertexSize(Mesh& mesh, size_t vi) const {
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
         const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
-        const Vec3 ci = mesh.getVertexAttribute(vi).vertex->getCoordinate();
+        const mathfunc::Vec3 ci = mesh.getVertexAttribute(vi).vertex->getCoordinate();
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
             const auto r = mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->getCoordinate() - ci;
             minRadiusCurvature = std::min(

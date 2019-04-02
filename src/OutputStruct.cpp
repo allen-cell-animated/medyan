@@ -26,7 +26,7 @@
 #include "Cylinder.h"
 #include "Filament.h"
 #include "Linker.h"
-#include "Membrane.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 #include "MotorGhost.h"
 #include "Vertex.h"
 

@@ -111,9 +111,6 @@ public:
     static const vector<double>& getCompartmentArea() { return _compartmentArea; }
     static const vector<double>& getCompartmentSize() {return _compartmentSize;}
     
-    static double getCompartmentVolume() { return _compartmentVolume; }
-    static const vector<double>& getCompartmentArea() { return _compartmentArea; }
-    
     /// Get all compartments within a given range from the specified coordinate
     /// @param ccheck - Compartment to check when initially calling this function
     /// @param compartments - List of compartments that are within range. This will be

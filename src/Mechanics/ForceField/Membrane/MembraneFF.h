@@ -33,7 +33,10 @@ private:
 public:
     /// Constructor, intializes stretching and bending forces
     MembraneFF(string& stretching, string& bending);
-    
+
+    virtual void vectorize() override {}
+    virtual void cleanup() override {}
+
     virtual string getName() {return "Membrane";}
     virtual void whoIsCulprit();
     

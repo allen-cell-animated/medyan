@@ -98,6 +98,8 @@ protected:
     set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
     #else
     unordered_set<Cylinder*> _cylinders; ///< Set of cylinders that are in this compartment
+    unordered_set<Triangle*> _triangles;
+    unordered_set<Edge*>     _edges;
     #endif
 
     vector<Compartment*> _neighbours; ///< Neighbors of the compartment (neighbors that

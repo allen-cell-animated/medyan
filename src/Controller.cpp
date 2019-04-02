@@ -789,7 +789,7 @@ void Controller::updateActiveCompartments() {
                 if(inMembrane) {
                     // Fully activate the compartment
                     c->resetVolumeFrac();
-					auto& fullArea = GController::getCompartmentArea();
+					const auto& fullArea = GController::getCompartmentArea();
                     c->setPartialArea({{
                         fullArea[0], fullArea[0],
 						fullArea[1], fullArea[1],

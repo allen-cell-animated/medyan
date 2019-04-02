@@ -155,8 +155,8 @@ public:
     auto vforceAuxP()     const { return mathfunc::vec2Vector(forceAuxP()    ); }
     
     /// Auxilliary coordinate getter
-    template< bool stretched = false > const vector<double>& getCoordinate() const {
-        return stretched ? coordinateStretched : coordinate;
+    template< bool stretched > auto getCoordinate() const {
+        return stretched ? coordinateStr() : coordinate();
     }
 
     /// Get Compartment
