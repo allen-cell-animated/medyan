@@ -18,8 +18,8 @@ using namespace mathfunc;
 
 #include "TriangleCylinderBeadExclVolRepulsion.h"
 
-#include "Triangle.h"
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 #include "Cylinder.h"
 #include "Bead.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"

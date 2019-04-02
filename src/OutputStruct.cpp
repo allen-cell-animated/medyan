@@ -26,9 +26,9 @@
 #include "Cylinder.h"
 #include "Filament.h"
 #include "Linker.h"
-#include "Structure/SurfaceMesh/Membrane.hpp"
 #include "MotorGhost.h"
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/Vertex.h"
 
 using namespace mathfunc;
 
@@ -39,7 +39,7 @@ OutputStruct for Filaments
 constexpr char OutputStructFilament::name[];
 
 void OutputStructFilament::getFromSystemWithoutChildren() {
-    _id = _filament->getID();
+    _id = _filament->getId();
     _type = _filament->getType();
     _numBeads = _filament->getCylinderVector().size() + 1;
     _deltaMinusEnd = _filament->getDeltaMinusEnd();
@@ -100,7 +100,7 @@ OutputStruct for Linkers
 constexpr char OutputStructLinker::name[];
 
 void OutputStructLinker::getFromSystemWithoutChildren() {
-    _id = _linker->getID();
+    _id = _linker->getId();
     _type = _linker->getType();
 
     // Store coordinates
@@ -155,7 +155,7 @@ OutputStruct for Motors
 constexpr char OutputStructMotor::name[];
 
 void OutputStructMotor::getFromSystemWithoutChildren() {
-    _id = _motor->getID();
+    _id = _motor->getId();
     _type = _motor->getType();
 
     // Store coordinates
@@ -212,7 +212,7 @@ OutputStruct for Branchers
 constexpr char OutputStructBrancher::name[];
 
 void OutputStructBrancher::getFromSystemWithoutChildren() {
-    _id = _brancher->getID();
+    _id = _brancher->getId();
     _type = _brancher->getType();
 
     // Store coordinates
@@ -254,7 +254,7 @@ OutputStruct for Bubbles
 constexpr char OutputStructBubble::name[];
 
 void OutputStructBubble::getFromSystemWithoutChildren() {
-    _id = _bubble->getID();
+    _id = _bubble->getId();
     _type = _bubble->getType();
 
     // Store coordinates

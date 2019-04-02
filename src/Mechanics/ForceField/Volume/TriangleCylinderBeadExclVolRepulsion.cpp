@@ -14,7 +14,7 @@
 #include "TriangleCylinderBeadExclVolRepulsion.h"
 
 #include "Triangle.h"
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 #include "Bead.h"
 
 #include "MathFunctions.h"

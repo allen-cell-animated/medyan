@@ -1,7 +1,7 @@
-#include "MembraneRegion.h"
+#include "Structure/SurfaceMesh/MembraneRegion.h"
 
-#include "MembraneHierarchy.h"
-#include "Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneHierarchy.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Boundary.h"
 
 #include "MathFunctions.h"

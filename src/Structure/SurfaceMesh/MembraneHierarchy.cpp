@@ -8,7 +8,7 @@
 using namespace mathfunc;
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 
 // Forward declarations
 class Membrane;

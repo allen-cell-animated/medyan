@@ -11,8 +11,6 @@
 
 using namespace mathfunc;
 
-Database<Membrane*> Membrane::_membranes;
-
 Membrane::Membrane(
     SubSystem* s,
     short membraneType,
@@ -56,7 +54,7 @@ void Membrane::printSelf()const {
     cout << endl;
     
     cout << "Membrane: ptr = " << this << endl;
-    cout << "Membrane Id = " << _id << endl;
+    cout << "Membrane Id = " << getId() << endl;
     cout << "Membrane type = " << _memType << endl;
     
     cout << endl;

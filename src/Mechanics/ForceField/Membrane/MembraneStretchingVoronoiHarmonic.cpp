@@ -3,7 +3,7 @@
 
 #include "MembraneStretchingVoronoiHarmonic.h"
 
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 
 #include "MathFunctions.h"
 

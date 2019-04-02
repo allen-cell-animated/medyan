@@ -16,7 +16,7 @@
 #include "VolumeConservationMembrane.h"
 #include "VolumeConservationMembraneHarmonic.h"
 
-#include "Membrane.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 VolumeConservationFF::VolumeConservationFF(string& type) {
     if (type == "MEMBRANE")

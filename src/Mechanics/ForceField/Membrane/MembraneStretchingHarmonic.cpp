@@ -1,7 +1,7 @@
 #include "MembraneStretchingHarmonic.h"
 
-#include "Vertex.h"
-#include "Triangle.h"
+#include "Structure/SurfaceMesh/Vertex.h"
+#include "Structure/SurfaceMesh/Triangle.h"
 
 #include "MathFunctions.h"
 

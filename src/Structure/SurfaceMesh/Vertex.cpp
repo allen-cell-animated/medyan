@@ -2,10 +2,8 @@
 
 #include "Structure/SurfaceMesh/Membrane.hpp" // Membrane::getMesh()
 
-Database<Vertex*> Vertex::_vertices;
-
-Vertex::Vertex(vector<double> v, Composite* parent, size_t topoIndex):
-    Bead(v, parent, 0), _topoIndex(topoIndex) {
+Vertex::Vertex(const Bead::coordinate_type& v, Composite* parent, size_t topoIndex):
+    Bead(mathfunc::vector2Vec(v), parent, 0), _topoIndex(topoIndex) {
     
 #ifdef MECHANICS
     // eqArea cannot be obtained at this moment

@@ -6,8 +6,6 @@
 #include "GController.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
-Database<Triangle*> Triangle::_triangles;
-
 Triangle::Triangle(Membrane* parent, size_t topoIndex):
     Trackable(true, false, true, false),
     _parent(parent), _topoIndex{topoIndex} {
@@ -110,7 +108,7 @@ void Triangle::printSelf()const {
     cout << endl;
     
     cout << "Triangle: ptr = " << this << endl;
-    cout << "Triangle ID = " << _id << endl;
+    cout << "Triangle ID = " << getId() << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     

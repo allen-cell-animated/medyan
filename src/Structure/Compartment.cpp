@@ -23,7 +23,7 @@ using namespace mathfunc;
 #include "ChemNRMImpl.h"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.h"
 #include "Filament.h"
 #include "Cylinder.h"
 #include "GController.h"
@@ -620,7 +620,7 @@ void Compartment::deactivate(ChemSim* chem, bool init) {
     //set marker
     _activated = false;
     
-    if(!init) transferSpecies(SysParams::Mechanics().transfershareaxis);
+    if(!init) transferSpecies(SysParams::Boundaries().transfershareaxis);
     removeAllDiffusionReactions(chem);
 }
 

@@ -231,7 +231,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
             res1 = c1 + r1 * un1 + ro1 * (std::abs(r1) / mag_ro1);
         }
 
-        return vec2Vector(0.5 * (res0 + res1));
+        return 0.5 * (res0 + res1);
     }
 };
 
@@ -547,9 +547,9 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
     template< typename Mesh > auto vertexSize(Mesh& mesh, size_t vi) const {
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
         const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
-        const mathfunc::Vec3 ci = mesh.getVertexAttribute(vi).vertex->getCoordinate();
+        const mathfunc::Vec3 ci = mesh.getVertexAttribute(vi).getCoordinate();
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const auto r = mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->getCoordinate() - ci;
+            const auto r = mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).getCoordinate() - ci;
             minRadiusCurvature = std::min(
                 std::abs(0.5 * mathfunc::magnitude2(r) / mathfunc::dot(un, r)),
                 minRadiusCurvature

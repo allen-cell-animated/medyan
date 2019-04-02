@@ -6,8 +6,6 @@
 #include "MathFunctions.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
-Database<Edge*> Edge::_edges;
-
 Edge::Edge(Membrane* parent, size_t topoIndex):
     Trackable(),
     _parent(parent), _topoIndex{topoIndex} {
@@ -69,7 +67,7 @@ void Edge::printSelf()const {
     cout << endl;
     
     cout << "Edge: ptr = " << this << endl;
-    cout << "Edge ID = " << _id << endl;
+    cout << "Edge ID = " << getId() << endl;
     cout << "Parent ptr = " << getParent() << endl;
         
     cout << endl;

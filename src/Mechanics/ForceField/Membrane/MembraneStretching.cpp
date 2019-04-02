@@ -2,9 +2,9 @@
 
 #include "MembraneStretching.h"
 
-#include "Membrane.hpp"
-#include "Triangle.h"
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 
 #include "MembraneStretchingHarmonic.h"
 #include "MembraneStretchingVoronoiHarmonic.h"

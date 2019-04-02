@@ -191,9 +191,9 @@ struct MembraneMeshAttribute {
             const auto& c2 = vertices[vi2].attr.vertex->template getCoordinate<stretched>();
             auto& heag = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>();
 
-            const auto vp = vectorProduct(c1, c0, c1, c2);
-            const auto sp = scalarProduct(c1, c0, c1, c2);
-            const auto ct = heag.cotTheta = sp / magnitude(vp);
+            const auto cp = cross(c0 - c1, c2 - c1);
+            const auto dp =   dot(c0 - c1, c2 - c1);
+            const auto ct = heag.cotTheta = dp / magnitude(cp);
             heag.theta = M_PI_2 - atan(ct);
         }
 
@@ -208,16 +208,16 @@ struct MembraneMeshAttribute {
             const auto& c2 = vertices[vi2].attr.vertex->template getCoordinate<stretched>();
             auto& tag = mesh.getTriangleAttribute(ti).template getGTriangle<stretched>();
 
-            const auto vp = vectorProduct(c0, c1, c0, c2);
+            const auto cp = cross(c1 - c0, c2 - c0);
 
             // area
-            tag.area = magnitude(vp) * 0.5;
+            tag.area = magnitude(cp) * 0.5;
 
             // unit normal
-            tag.unitNormal = vector2Vec<3, double>(normalizedVector(vp));
+            tag.unitNormal = normalizedVector(cp);
 
             // cone volume
-            tag.coneVolume = dotProduct(c0, vp) / 6;
+            tag.coneVolume = dot(c0, cp) / 6;
         }
 
         // Calculate edge length and pesudo unit normal
@@ -227,7 +227,7 @@ struct MembraneMeshAttribute {
             const size_t vi1 = mesh.target(mesh.prev(hei));
 
             // length
-            mesh.getEdgeAttribute(ei).template getGEdge<stretched>().length = twoPointDistance(
+            mesh.getEdgeAttribute(ei).template getGEdge<stretched>().length = distance(
                 vertices[vi0].attr.vertex->template getCoordinate<stretched>(),
                 vertices[vi1].attr.vertex->template getCoordinate<stretched>()
             );
@@ -260,8 +260,8 @@ struct MembraneMeshAttribute {
                 const size_t vn = mesh.target(hei_o);
                 const size_t hei_n = mesh.next(hei);
                 const size_t hei_on = mesh.next(hei_o);
-                const auto ci = vector2Vec<3, double>(vertices[vi].attr.vertex->template getCoordinate<stretched>());
-                const auto cn = vector2Vec<3, double>(vertices[vn].attr.vertex->template getCoordinate<stretched>());
+                const Vec3 ci = vertices[vi].attr.vertex->template getCoordinate<stretched>();
+                const Vec3 cn = vertices[vn].attr.vertex->template getCoordinate<stretched>();
 
                 const auto sumCotTheta =
                     mesh.getHalfEdgeAttribute(hei_n).template getGHalfEdge<stretched>().cotTheta

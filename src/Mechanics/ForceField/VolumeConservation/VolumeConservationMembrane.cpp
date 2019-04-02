@@ -2,9 +2,9 @@
 
 #include "SysParams.h"
 
-#include "Membrane.hpp"
-#include "MMembrane.h"
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MMembrane.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 
 #include "VolumeConservationMembraneHarmonic.h"
 

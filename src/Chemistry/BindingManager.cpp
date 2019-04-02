@@ -17,7 +17,7 @@
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
-#include "Membrane.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 #include "MotorGhost.h"
 

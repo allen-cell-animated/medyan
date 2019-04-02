@@ -20,7 +20,7 @@
 #include "MembraneBending.h"
 #include "MembraneBendingVoronoiHelfrich.h"
 
-#include "Membrane.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 MembraneFF::MembraneFF (string& stretching, string& bending) {
     

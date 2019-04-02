@@ -222,8 +222,6 @@ void PolyMinusEndTemplate::addReaction(CCylinder* cc) {
 
     int numDiffusingReactant = 0; // Used in determining volume dependence
     
-    int numDiffusingReactant = 0; // Used in determining volume dependence
-    
     //FIRST REACTANT MUST BE BULK OR DIFFUSING
     if (getType(r) == SpeciesType::BULK)
         reactantSpecies.push_back(_ps->getCompartmentGrid()->findSpeciesBulkByMolecule(getInt(r)));

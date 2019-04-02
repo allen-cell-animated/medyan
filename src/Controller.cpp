@@ -33,9 +33,9 @@
 #include "BranchingPoint.h"
 #include "Bubble.h"
 #include "MTOC.h"
-#include "Membrane.hpp"
-#include "MembraneHierarchy.h"
-#include "MembraneRegion.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/MembraneHierarchy.h"
+#include "Structure/SurfaceMesh/MembraneRegion.h"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -1325,7 +1325,6 @@ void Controller::run() {
     //@}
 #endif
 #endif
-        }
 #endif
         }
     }
