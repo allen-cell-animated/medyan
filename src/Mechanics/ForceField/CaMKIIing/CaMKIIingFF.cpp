@@ -103,8 +103,10 @@ double CaMKIIingFF::computeEnergy(double d) {
 
 void CaMKIIingFF::computeForces() {
     
-    for (auto &interaction : _camkiiingInteractionVector)
+    for (auto &interaction : _camkiiingInteractionVector) {
+    	cout << "CAMKII"  << interaction->getName() << endl;
         interaction->computeForces();
+    }
 }
 
 void CaMKIIingFF::computeForcesAux() {

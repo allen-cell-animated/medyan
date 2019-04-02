@@ -62,16 +62,25 @@ double CaMKIIingStretching<BStretchingInteractionType>::computeEnergy(double d) 
 template <class BStretchingInteractionType>
 void CaMKIIingStretching<BStretchingInteractionType>::computeForces() {
     auto i=0;
+
+    cout << "CAMKII" << __LINE__ << endl;
     for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
         i++;
+        cout << "CAMKII" << i << " " << __LINE__ << endl;
         Bead* b1 = b->getFirstCylinder()->getFirstBead();
+        cout << "CAMKII" << i << " " << __LINE__ << endl;
         Bead* b2 = b->getFirstCylinder()->getSecondBead();
+        cout << "CAMKII" << i << " " << __LINE__ << endl;
         Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        cout << "CAMKII" << i << " " << __LINE__ << endl;
         Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        //std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
+
+        std::cout<<i<<" "<<b->getFirstCylinder()->getID()<<" "<<twoPointDistance(b1->coordinate, b2->coordinate)<<" "<<b->getSecondCylinder()->getID()<<" "<<twoPointDistance(b3->coordinate, b4->coordinate)<<endl;
 
         double kStretch = b->getMCaMKIIingPoint()->getStretchingConstant();
+        cout << "CAMKII" << b << " " << __LINE__ << endl;
         double eqLength = b->getMCaMKIIingPoint()->getEqLength();
+        cout << "CAMKII" << b << " " << __LINE__ << endl;
         double position = b->getPosition();
         // TODO fix to iterate over each of the _bonds according to coordination number
         //_FFType.forces(b1, b2, b3, position, kStretch, eqLength);
@@ -83,13 +92,18 @@ template <class BStretchingInteractionType>
 void CaMKIIingStretching<BStretchingInteractionType>::computeForcesAux() {
     
     for (auto b: CaMKIIingPoint::getCaMKIIingPoints()) {
-        
+    	cout << "CAMKII" << b << " " << __LINE__ << endl;
         Bead* b1 = b->getFirstCylinder()->getFirstBead();
+        cout << "CAMKII" << b << " " << __LINE__ << endl;
         Bead* b2 = b->getFirstCylinder()->getSecondBead();
+        cout << "CAMKII" << b << " " << __LINE__ << endl;
         Bead* b3 = b->getSecondCylinder()->getFirstBead();
+        cout << "CAMKII" << b << " " << __LINE__ << endl;
         
         double kStretch = b->getMCaMKIIingPoint()->getStretchingConstant();
+        cout << "CAMKII" << b << " " << __LINE__ << endl;
         double eqLength = b->getMCaMKIIingPoint()->getEqLength();
+        cout << "CAMKII" << b << " " << __LINE__ << endl;
         double position = b->getPosition();
         // TODO fix to iterate over each of the _bonds according to coordination number
         //_FFType.forcesAux(b1, b2, b3, position, kStretch, eqLength);

@@ -79,8 +79,8 @@ public:
     tuple<Cylinder*, double> getBond(int n) { return _bonds.at(n);}
     Cylinder* getCylinder(int n) { return get<0>(getBond(n));}
     void addBond(Cylinder* c, short pos) { _bonds.push_back(tuple<Cylinder*, short>(c, pos));}
-    Cylinder* getFirstCylinder() { return get<0>(_bonds.at(0)); }
-    Cylinder* getSecondCylinder() { return get<0>(_bonds.at(1)); } //TODO fix
+    Cylinder* getFirstCylinder() { cout<< "CAMKII" << "before" <<  __func__ << endl; return get<0>(_bonds.at(0));}
+    Cylinder* getSecondCylinder() { cout<< "CAMKII" << "before" <<  __func__ << endl; return get<0>(_bonds.at(1));} //TODO fix
     int getCoordinationNumber() { return _bonds.size(); }
     //@}
     

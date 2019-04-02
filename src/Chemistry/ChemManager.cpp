@@ -3084,20 +3084,28 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 
     //get last ccylinder
     CCylinder* lastcc = nullptr;
-    
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     //extension of front
     if(extensionFront) {
+    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
         lastcc = f->getCylinderVector().back()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(lastcc, cc);
+    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
     }
     //extension of back
     else if(extensionBack) {
+    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
         lastcc = f->getCylinderVector().front()->getCCylinder();
         for(auto &r : _filRxnTemplates[filType]) r->addReaction(cc, lastcc);
     }
-    
+
     //Base case, initialization
     else if (initialization) {
+    	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
         //Check if this is the first cylinder
         if(!f->getCylinderVector().empty()) {
             
