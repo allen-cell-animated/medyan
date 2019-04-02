@@ -24,10 +24,16 @@ struct RayTriangleIntersectResult {
 template <typename Derived>
 struct RayTriangleIntersectBase {
 
-    template< typename vec_type, std::enable_if_t<vec_type::vec_size == 3>* = nullptr >
-    auto operator()(
-        const vec_type& o, const vec_type& d,
-        const vec_type& a, const vec_type& b, const vec_type& c
+    template<
+        typename VTO, typename VTD,
+        typename VTA, typename VTB, typename VTC,
+        std::enable_if_t<
+            VTO::vec_size == 3 && VTD::vec_size == 3 &&
+            VTA::vec_size == 3 && VTB::vec_size == 3 && VTC::vec_size == 3
+        >* = nullptr
+    > auto operator()(
+        const VTO& o, const VTD& d,
+        const VTA& a, const VTB& b, const VTC& c
     ) const {
         return static_cast<Derived*>(this)->intersect(o, d, a, b, c);
     }
@@ -49,10 +55,16 @@ struct MollerTrumboreIntersect
 
     // If stopWhenNotIntersect is true and result.intersect is false,
     // the rest of the result is undefined.
-    template< typename vec_type, std::enable_if_t<vec_type::vec_size == 3>* = nullptr >
-    auto intersect(
-        const vec_type& o, const vec_type& d,
-        const vec_type& a, const vec_type& b, const vec_type& c
+    template<
+        typename VTO, typename VTD,
+        typename VTA, typename VTB, typename VTC,
+        std::enable_if_t<
+            VTO::vec_size == 3 && VTD::vec_size == 3 &&
+            VTA::vec_size == 3 && VTB::vec_size == 3 && VTC::vec_size == 3
+        >* = nullptr
+    > auto intersect(
+        const VTO& o, const VTD& d,
+        const VTA& a, const VTB& b, const VTC& c
     ) const {
         using namespace mathfunc;
         using Float = typename vec_type::float_type;

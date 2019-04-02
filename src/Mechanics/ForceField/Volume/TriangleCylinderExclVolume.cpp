@@ -23,6 +23,7 @@ using namespace mathfunc;
 #include "Cylinder.h"
 #include "Bead.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "util/math/RayTriangleIntersect.hpp"
 
 template <class TriangleCylinderExclVolumeInteractionType>
 double TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::computeEnergy(const double* coord, bool stretched) {
@@ -132,9 +133,9 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
         const size_t hei0 = mesh.getTriangles()[ti].halfEdgeIndex;
         const size_t hei1 = mesh.next(hei0);
         const size_t hei2 = mesh.next(hei1);
-        Vertex* const v0 = mesh.getVertexAttribute(mesh.target(hei0)).vertex;
-        Vertex* const v1 = mesh.getVertexAttribute(mesh.target(hei1)).vertex;
-        Vertex* const v2 = mesh.getVertexAttribute(mesh.target(hei2)).vertex;
+        const Vec3 v0 = mesh.getVertexAttribute(mesh.target(hei0)).getCoordinate();
+        const Vec3 v1 = mesh.getVertexAttribute(mesh.target(hei1)).getCoordinate();
+        const Vec3 v2 = mesh.getVertexAttribute(mesh.target(hei2)).getCoordinate();
 
         const auto area = mesh.getTriangleAttribute(ti).gTriangle.area;
         double kExVol = t->getMTriangle()->getExVolConst();
@@ -152,7 +153,13 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                 
                 ///this normal is in the direction of polymerization
                 auto normal = normalizedVector(bd->coordinate() - bo->coordinate());
-                
+
+                // Test intersection of the ray with the triangle
+                const auto intersectRes = ray_tracing::MollerTrumboreIntersect<>()(
+                    bd->coordinate(), normal,
+                    v0, v1, v2
+                );
+
                 //array of coordinate values to update
                 auto monSize = SysParams::Geometry().monomerSize[bd->getType()];
                 auto cylSize = SysParams::Geometry().cylinderNumMon[bd->getType()];
@@ -166,7 +173,7 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
                         bd->coordinate()[2] + i * normal[2] * monSize
                     };
                     
-                    auto loadForce = _FFType.loadForces(v0, v1, v2, newCoord, area, kExVol);
+                    auto loadForce = _FFType.loadForces(v0, v1, v2, newCoord, area, kExVol); // FIXME change it
                     double effLoadForce = -dot(normal, loadForce);
                     if(effLoadForce < 0.0) effLoadForce = 0.0;
 
