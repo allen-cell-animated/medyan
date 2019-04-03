@@ -76,7 +76,7 @@ TEST_CASE("Vec tests", "[Vec]") {
     }
 
     SECTION("Factory functions") {
-        vector< double > source {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
+        std::vector< double > source {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
         auto res = makeVec<3>(&source[1]);
         CHECK(res[0] == Approx(1.0));
         CHECK(res[1] == Approx(2.0));
