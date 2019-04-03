@@ -63,7 +63,7 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces(const double
                 kBending, eqCurv
             );
 
-            mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, area, curv, kBending, eqCurv](size_t hei) {
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
                 const size_t hei_o = mesh.opposite(hei);
                 auto vt = mesh.getVertexAttribute(mesh.target(hei_o)).vertex;
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;

@@ -43,7 +43,7 @@ void TriangleCylinderVolumeFF::whoIsCulprit() {
     cout << endl;
 }
 
-double TriangleCylinderVolumeFF::computeEnergy(double coord*, bool stretched) {
+double TriangleCylinderVolumeFF::computeEnergy(double* coord, bool stretched) {
     
     double U= 0;
     double U_i;
