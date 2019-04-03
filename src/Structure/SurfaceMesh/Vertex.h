@@ -45,7 +45,7 @@ public:
     using vertex_db_type = Database< Vertex, false >;
 
     ///Main constructor
-    Vertex(const Bead::coordinate_type v, Composite* parent, size_t topoIndex);
+    Vertex(const Bead::coordinate_type& v, Composite* parent, size_t topoIndex);
 
     void setTopoIndex(size_t index) { _topoIndex = index; }
     

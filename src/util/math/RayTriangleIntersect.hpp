@@ -35,7 +35,7 @@ struct RayTriangleIntersectBase {
         const VTO& o, const VTD& d,
         const VTA& a, const VTB& b, const VTC& c
     ) const {
-        return static_cast<Derived*>(this)->intersect(o, d, a, b, c);
+        return static_cast<const Derived*>(this)->intersect(o, d, a, b, c);
     }
 };
 
@@ -50,7 +50,7 @@ struct RayTriangleIntersectBase {
 // }
 template< bool stopWhenNotIntersect = true >
 struct MollerTrumboreIntersect
-    : RayTriangleIntersectBase< MollerTrumboreIntersect< stopWhenNotInterset > >
+    : RayTriangleIntersectBase< MollerTrumboreIntersect< stopWhenNotIntersect > >
 {
 
     // If stopWhenNotIntersect is true and result.intersect is false,
@@ -69,11 +69,11 @@ struct MollerTrumboreIntersect
 
         using namespace mathfunc;
         using Float = std::common_type_t<
-            VTO::float_type, VTD::float_type,
-            VTA::float_type, VTB::float_type, VTC::float_type
+            typename VTO::float_type, typename VTD::float_type,
+            typename VTA::float_type, typename VTB::float_type, typename VTC::float_type
         >;
 
-        IntersectResult< Float > res;
+        RayTriangleIntersectResult< Float > res;
 
         const auto rab = b - a;
         const auto rac = c - a;

@@ -16,7 +16,7 @@
 
 #include <memory> // unique_ptr
 
-#include "TriangleCylinderVolumeInteractions.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderVolumeInteractions.h"
 #include "NeighborListImpl.h"
 
 #include "SysParams.h"
@@ -40,13 +40,13 @@ public:
         _neighborList = std::make_unique<TriangleCylinderNL>(SysParams::Mechanics().MemCylinderVolumeCutoff);
     }
 
-    virtual double computeEnergy(const double coord*, bool stretched) override;
-    virtual void computeForces(const double coord*, double* force) override;
+    virtual double computeEnergy(const double* coord, bool stretched) override;
+    virtual void computeForces(const double* coord, double* force) override;
 
-    virtual void computeLoadForces();
+    virtual void computeLoadForces() override;
 
     /// Get the neighbor list for this interaction
-    virtual NeighborList* getNeighborList() { return _neighborList.get(); }
+    virtual NeighborList* getNeighborList() override { return _neighborList.get(); }
     
     virtual const string getName() {return "Triangle Cylinder Excluded Volume";}
 };

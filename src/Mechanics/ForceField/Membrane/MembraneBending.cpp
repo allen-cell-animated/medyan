@@ -2,7 +2,7 @@
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Vertex.h"
-#include "MVoronoiCell.h"
+#include "Structure/SurfaceMesh/MVoronoiCell.h"
 
 #include "MembraneBendingVoronoiHelfrich.h"
 

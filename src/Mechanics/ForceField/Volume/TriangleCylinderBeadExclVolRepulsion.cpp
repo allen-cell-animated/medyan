@@ -13,7 +13,7 @@
 
 #include "TriangleCylinderBeadExclVolRepulsion.h"
 
-#include "Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
 #include "Bead.h"
 

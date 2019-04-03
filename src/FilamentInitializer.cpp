@@ -16,7 +16,7 @@
 #include "Boundary.h"
 #include "Bubble.h"
 #include "Bead.h"
-#include "MembraneRegion.h"
+#include "Structure/SurfaceMesh/MembraneRegion.h"
 
 #include "MathFunctions.h"
 #include "GController.h"

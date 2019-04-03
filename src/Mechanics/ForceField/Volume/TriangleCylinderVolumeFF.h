@@ -39,8 +39,8 @@ public:
     /// Initialize the volume forcefields
     TriangleCylinderVolumeFF(string& interaction);
 
-    virtual void vectorize() { }
-    virtual void cleanup() { }
+    virtual void vectorize() override { }
+    virtual void cleanup() override { }
     
     virtual string getName() {return "Triangle Cylinder Volume";}
     virtual void whoIsCulprit();

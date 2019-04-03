@@ -246,5 +246,4 @@ void TriangleCylinderExclVolume<TriangleCylinderExclVolumeInteractionType>::comp
 ///Template specializations
 template double TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeEnergy(const double* coord, bool stretched);
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForces(const double* coord, double* force);
-template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeForcesAux();
 template void TriangleCylinderExclVolume<TriangleCylinderBeadExclVolRepulsion>::computeLoadForces();

@@ -1,7 +1,7 @@
 #ifndef MEDYAN_MembraneStretching_h
 #define MEDYAN_MembraneStretching_h
 
-#include "MembraneInteractions.h"
+#include "Mechanics/ForceField/Membrane/MembraneInteractions.h"
 
 template <class MembraneStretchingInteractionType>
 class MembraneStretching: public MembraneInteractions {

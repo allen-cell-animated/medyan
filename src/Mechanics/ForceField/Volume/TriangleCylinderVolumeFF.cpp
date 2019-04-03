@@ -16,7 +16,7 @@
 #include "TriangleCylinderExclVolume.h"
 #include "TriangleCylinderBeadExclVolRepulsion.h"
 
-#include "Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.h"
 #include "Cylinder.h"
 
 TriangleCylinderVolumeFF::TriangleCylinderVolumeFF (string& type) {
@@ -63,7 +63,7 @@ double TriangleCylinderVolumeFF::computeEnergy(double coord*, bool stretched) {
     return U;
 }
 
-void TriangleCylinderVolumeFF::computeForces(double coord*, double f*) {
+void TriangleCylinderVolumeFF::computeForces(double* coord, double* f) {
     
     for (auto &interaction : _triangleCylinderVolInteractionVector)
         interaction->computeForces(coord, f);

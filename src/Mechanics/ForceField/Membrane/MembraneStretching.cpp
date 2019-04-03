@@ -6,8 +6,8 @@
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
 
-#include "MembraneStretchingHarmonic.h"
-#include "MembraneStretchingVoronoiHarmonic.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingHarmonic.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingVoronoiHarmonic.h"
 
 // Using the area of the Voronoi cells
 template<>
@@ -63,7 +63,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces(const 
             );
 
             // Position of this vertex also affects neighbor vcell areas
-            mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
+            mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea;
                 _FFType.forces(
                     force + 3 * v.attr.vertex->Bead::getIndex(),
@@ -73,35 +73,6 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces(const 
         }
     }
 }
-
-template<>
-void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
-    
-    for (auto m: Membrane::getMembranes()) {
-    
-        const auto& mesh = m->getMesh();
-
-        const auto kElastic = m->getMMembrane()->getKElastic();
-        const auto eqArea = m->getMMembrane()->getEqArea();
-
-        double area = 0.0;
-        for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.area;
-
-        const size_t numVertices = mesh.getVertices().size();
-        for(size_t vi = 0; vi < numVertices; ++vi) {
-            const auto& v = mesh.getVertices()[vi];
-           
-            _FFType.forcesAux(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
-
-            // Position of this vertex also affects neighbor vcell areas
-            mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea;
-                _FFType.forcesAux(v.attr.vertex, area, dArea, kElastic, eqArea);
-            });
-        }
-    }
-}
-
 
 
 // Using the areas of the triangles
@@ -154,7 +125,7 @@ void MembraneStretching<MembraneStretchingHarmonic>::computeForces(const double*
 
         const size_t numTriangles = mesh.getTriangles().size();
         for(size_t ti = 0; ti < numTriangles; ++ti) {
-            mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
+            mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
                 _FFType.forces(
                     force + 3 * mesh.getVertexAttribute(mesh.target(hei)).vertex->Bead::getIndex(),
