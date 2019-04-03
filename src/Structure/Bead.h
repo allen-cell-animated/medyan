@@ -162,6 +162,7 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
+    // only takes care of pinned bead removal
     virtual void addToSubSystem() override {}
     virtual void removeFromSubSystem() {
         //remove if pinned
