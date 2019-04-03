@@ -436,7 +436,7 @@ private:
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
-    #endif
+#endif
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
 

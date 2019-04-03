@@ -560,8 +560,7 @@ _rMin(rMin), _rMax(rMax) {
 
 #ifdef NLORIGINAL
 void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
-
-    if(cc->getType() != _filamentType) return;
+     if(cc->getType() != _filamentType) return;
 #ifdef DEBUGCONSTANTSEED
     struct Orderset
     {
@@ -575,14 +574,11 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
     vector<LinkerBindingManager*> affectedManagers;
 
     //add valid binding sites
-    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(
-                                                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
+    if (areEqual(cc->getCMonomer(bindingSite)->speciesBound(SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
 
         //loop through neighbors
         //now re add valid based on CCNL
-        cout<<_neighborLists.size()<<endl;
         vector<Cylinder*> nList = _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder());
-        
 #ifdef DEBUGCONSTANTSEED
         sort(nList.begin(),nList.end(),Orderset());
 #endif
@@ -597,14 +593,13 @@ void LinkerBindingManager::addPossibleBindings(CCylinder* cc, short bindingSite)
             dBInt = 2;
             for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
-
-                //DifBind
+                // DifBind
                 if(dBInt % dBI != 0) {
                     dBInt += 1 ;
                     continue;
                 } else {
                     dBInt = 1;}
-
+                
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
                                                                  SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
 

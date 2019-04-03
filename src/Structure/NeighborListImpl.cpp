@@ -590,16 +590,13 @@ void CylinderCylinderNL::reset() {
         tot += _list[cylinder].size();
     }
     
-//     std::cout<<"ORIGINAL ";
-//    for(auto cylinder: Cylinder::getCylinders()) {
-//        std::cout<<_list4mbin[cylinder].size()<<" ";
-//    }
-//    std::cout<<endl;
-//    std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
-#ifdef CUDA_TIMETRACK
+    //std::cout<<"ORIGINAL ";
+    //for(auto cylinder: Cylinder::getCylinders()) {
+    //    std::cout<<_list[cylinder].size()<<" ";
+    //}
+    //std::cout<<endl;
+    //std::cout<<"reset NLORIGINAL size "<<" "<<tot<<endl;
 
-
-#endif
 
 #endif
 
@@ -832,7 +829,6 @@ void CylinderCylinderNL::reset() {
 }
 
 vector<Cylinder*> CylinderCylinderNL::getNeighbors(Cylinder* cylinder) {
-
     return _list[cylinder];
 }
 
