@@ -173,6 +173,7 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
+    // Does nothing
     virtual void addToSubSystem() {}
     virtual void removeFromSubSystem() {}
     //@}
