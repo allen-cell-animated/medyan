@@ -5,9 +5,9 @@
 #include "SubSystem.h"
 #include "SysParams.h"
 
-#include "MTriangle.h"
-#include "MVoronoiCell.h"
-#include "MMembrane.h"
+#include "Structure/SurfaceMesh/MTriangle.h"
+#include "Structure/SurfaceMesh/MVoronoiCell.h"
+#include "Structure/SurfaceMesh/MMembrane.h"
 
 using namespace mathfunc;
 

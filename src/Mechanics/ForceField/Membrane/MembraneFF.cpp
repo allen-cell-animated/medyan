@@ -11,14 +11,14 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "MembraneFF.h"
+#include "Mechanics/ForceField/Membrane/MembraneFF.h"
 
-#include "MembraneStretching.h"
-#include "MembraneStretchingHarmonic.h"
-#include "MembraneStretchingVoronoiHarmonic.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretching.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingHarmonic.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingVoronoiHarmonic.h"
 
-#include "MembraneBending.h"
-#include "MembraneBendingVoronoiHelfrich.h"
+#include "Mechanics/ForceField/Membrane/MembraneBending.h"
+#include "Mechanics/ForceField/Membrane/MembraneBendingVoronoiHelfrich.h"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 

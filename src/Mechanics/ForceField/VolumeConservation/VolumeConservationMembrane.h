@@ -1,7 +1,7 @@
 #ifndef MEDYAN_VolumeConservationMembrane_h
 #define MEDYAN_VolumeConservationMembrane_h
 
-#include "VolumeConservationInteractions.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationInteractions.h"
 
 template<class VolumeConservationMembraneInteractionType>
 class VolumeConservationMembrane: public VolumeConservationInteractions {

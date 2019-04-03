@@ -11,7 +11,7 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "TriangleCylinderBeadExclVolRepulsion.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.h"
 
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"

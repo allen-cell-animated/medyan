@@ -1,4 +1,4 @@
-#include "VolumeConservationMembraneHarmonic.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
 
 #include "Structure/SurfaceMesh/Vertex.h"
 

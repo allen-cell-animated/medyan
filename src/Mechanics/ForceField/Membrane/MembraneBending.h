@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#include "MembraneInteractions.h"
+#include "Mechanics/ForceField/Membrane/MembraneInteractions.h"
 
 //FORWARD DECLARATIONS
 class Membrane;

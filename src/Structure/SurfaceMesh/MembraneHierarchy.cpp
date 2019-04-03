@@ -1,4 +1,4 @@
-#include "MembraneHierarchy.h"
+#include "Structure/SurfaceMesh/MembraneHierarchy.h"
 
 #include <algorithm>
 #include <stdexcept>

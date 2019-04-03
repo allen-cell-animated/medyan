@@ -1,4 +1,4 @@
-#include "VolumeConservationMembrane.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembrane.h"
 
 #include "SysParams.h"
 
@@ -6,7 +6,7 @@
 #include "Structure/SurfaceMesh/MMembrane.h"
 #include "Structure/SurfaceMesh/Vertex.h"
 
-#include "VolumeConservationMembraneHarmonic.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
 
 template<>
 double VolumeConservationMembrane<VolumeConservationMembraneHarmonic>::computeEnergy(const double* coord, bool stretched) {

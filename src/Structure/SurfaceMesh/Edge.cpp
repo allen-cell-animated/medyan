@@ -1,4 +1,4 @@
-#include "Edge.h"
+#include "Structure/SurfaceMesh/Edge.h"
 
 #include "core/globals.h"
 #include "Compartment.h"

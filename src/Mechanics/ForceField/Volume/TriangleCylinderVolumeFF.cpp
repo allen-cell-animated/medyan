@@ -11,10 +11,10 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "TriangleCylinderVolumeFF.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderVolumeFF.h"
 
-#include "TriangleCylinderExclVolume.h"
-#include "TriangleCylinderBeadExclVolRepulsion.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.h"
 
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Cylinder.h"

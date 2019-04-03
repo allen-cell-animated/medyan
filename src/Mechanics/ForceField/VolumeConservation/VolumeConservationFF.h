@@ -18,7 +18,7 @@
 
 #include "common.h"
 
-#include "ForceField.h"
+#include "Mechanics/ForceField/ForceField.h"
 
 //FORWARD DECLARATIONS
 class VolumeConservationInteractions;

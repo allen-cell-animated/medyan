@@ -12,9 +12,9 @@
 #include "Composite.h"
 
 #include "MathFunctions.h"
-#include "MMembrane.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
+#include "Structure/SurfaceMesh/MMembrane.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 
 /******************************************************************************

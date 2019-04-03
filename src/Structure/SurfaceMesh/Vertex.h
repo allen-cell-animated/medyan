@@ -7,9 +7,9 @@
 
 #include "Bead.h"
 
-#include "Edge.h"
-#include "Triangle.h"
-#include "MVoronoiCell.h"
+#include "Structure/SurfaceMesh/Edge.h"
+#include "Structure/SurfaceMesh/MVoronoiCell.h"
+#include "Structure/SurfaceMesh/Triangle.h"
 
 // Forward declarations
 class Edge;

@@ -1,4 +1,4 @@
-#include "MembraneStretchingHarmonic.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingHarmonic.h"
 
 #include "Structure/SurfaceMesh/Vertex.h"
 #include "Structure/SurfaceMesh/Triangle.h"

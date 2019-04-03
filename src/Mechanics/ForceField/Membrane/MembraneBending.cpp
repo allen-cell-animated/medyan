@@ -1,10 +1,10 @@
-#include "MembraneBending.h"
+#include "Mechanics/ForceField/Membrane/MembraneBending.h"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Vertex.h"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 
-#include "MembraneBendingVoronoiHelfrich.h"
+#include "Mechanics/ForceField/Membrane/MembraneBendingVoronoiHelfrich.h"
 
 // Using the Helfrich Hamiltonian of mean curvature in Voronoi cells
 template<>

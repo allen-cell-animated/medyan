@@ -1,6 +1,6 @@
 #include <array>
 
-#include "MembraneStretching.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretching.h"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"

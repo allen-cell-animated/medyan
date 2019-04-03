@@ -11,10 +11,10 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "VolumeConservationFF.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
 
-#include "VolumeConservationMembrane.h"
-#include "VolumeConservationMembraneHarmonic.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembrane.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 

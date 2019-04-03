@@ -1,7 +1,7 @@
 #include <array>
 #include <vector>
 
-#include "MembraneBendingVoronoiHelfrich.h"
+#include "Mechanics/ForceField/Membrane/MembraneBendingVoronoiHelfrich.h"
 
 #include "Structure/SurfaceMesh/Vertex.h"
 
