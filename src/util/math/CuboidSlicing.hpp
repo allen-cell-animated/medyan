@@ -282,9 +282,9 @@ struct PlaneCuboidSlicer {
             (point[2] - r0[2]) / a[2]
         };
         const auto normalInUnitCube = mathfunc::normalizedVector(mathfunc::Vec3 {
-            normal[0] / a[0],
-            normal[1] / a[1],
-            normal[2] / a[2]
+            normal[0] * a[0],
+            normal[1] * a[1],
+            normal[2] * a[2]
         });
         res = planeUnitCubeSlice(pointInUnitCube, normalInUnitCube);
         res *= a;

@@ -1,6 +1,4 @@
-#ifdef TESTING
-
-#include "gtest/gtest.h"
+#include "catch2/catch.hpp"
 
 #include "MathFunctions.h"
 #include "util/math/CuboidSlicing.hpp"
@@ -9,7 +7,7 @@ using namespace mathfunc;
 
 namespace {
 
-bool planeCubeSlicingResultEqual(const PlaneCuboidSlicingResult& r1, const PlaneCuboidSlicingResult& r2, double eps) {
+bool planeCuboidSlicingResultEqual(const PlaneCuboidSlicingResult& r1, const PlaneCuboidSlicingResult& r2, double eps) {
     if(abs(r1.volumeIn - r2.volumeIn) > eps) return false;
     size_t s = r1.areaIn.size();
     for(size_t i = 0; i < r1.areaIn.size(); ++i) {
@@ -24,9 +22,9 @@ PlaneCuboidSlicingResult planeUnitCubeSliceByIntersection(double x, double y, do
     return planeUnitCubeSlice(point, normal);
 }
 
-}
+} // namespace
 
-TEST(CubeSlicingTest, UnitCubeTransitionContinuity) {
+TEST_CASE("Unit cube slicing transition continuity", "[Cuboid Slicing]") {
     /**************************************************************************
     Test continuity under different transitions under the simplified
     conditions, i.e. normal has all non-neg components (no normal flip is
@@ -44,71 +42,71 @@ TEST(CubeSlicingTest, UnitCubeTransitionContinuity) {
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 0.5, 0.5);
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 0.5, 0.5);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(0.5, 1 - inEps, 0.5);
         auto r2 = planeUnitCubeSliceByIntersection(0.5, 1 + inEps, 0.5);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(0.5, 0.5, 1 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(0.5, 0.5, 1 + inEps);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
 
     // From 3 points inside, to 1 point inside
     {
         auto r1 = planeUnitCubeSliceByIntersection(0.5, 1 - inEps, 1 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(0.5, 1 + inEps, 1 + inEps);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 0.5, 1 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 0.5, 1 + inEps);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 1 - inEps, 0.5);
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 1 + inEps, 0.5);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
 
     // Transitions between the scenario with 1 point inside
     {
         auto r1 = planeUnitCubeSliceByIntersection(0.5, 2 - inEps, 2 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(0.5, 2 + inEps, 2 + inEps);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(2 - inEps, 0.5, 2 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(2 + inEps, 0.5, 2 + inEps);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
     {
         auto r1 = planeUnitCubeSliceByIntersection(2 - inEps, 2 - inEps, 0.5);
         auto r2 = planeUnitCubeSliceByIntersection(2 + inEps, 2 + inEps, 0.5);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
 
     // From 3 points inside, to no point inside
     {
         auto r1 = planeUnitCubeSliceByIntersection(1 - inEps, 1 - inEps, 1 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(1 + inEps, 1 + inEps, 1 + inEps);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
     }
 
     // Check reverse condition
     {
         auto r1 = planeUnitCubeSliceByIntersection(1.5 - inEps, 1.5 - inEps, 1.5 - inEps);
         auto r2 = planeUnitCubeSliceByIntersection(1.5 + inEps, 1.5 + inEps, 1.5 + inEps);
-        CHECK(planeCubeSlicingResultEqual(r1, r2, outEps));
-        CHECK_FALSE(planeCubeSlicingResultEqual(r1, r2, inEps * 1e-5)); // Check actually changed
+        CHECK(planeCuboidSlicingResultEqual(r1, r2, outEps));
+        CHECK_FALSE(planeCuboidSlicingResultEqual(r1, r2, inEps * 1e-5)); // Check actually changed
     }
     
 }
 
-TEST(CubeSlicingTest, UnitCubeFlipping) {
+TEST_CASE("Unit cube flipping", "[Cuboid Slicing]") {
     /**************************************************************************
     Test the flipping of normal vector
     **************************************************************************/
@@ -116,7 +114,7 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
     const double nVal = 1.0 / sqrt(3);
     const double pVal = 1.0 / 6.0;
 
-    auto r1 = planeUnitCubeSlice({{pVal, pVal, pVal}}, {{nVal, nVal, nVal}});
+    auto r1 = planeUnitCubeSlice({pVal, pVal, pVal}, {nVal, nVal, nVal});
 
     // Flip x
     {
@@ -190,7 +188,7 @@ TEST(CubeSlicingTest, UnitCubeFlipping) {
 
 }
 
-TEST(CubeSlicingTest, TranslationAndScaling) {
+TEST_CASE("Cube slicing translation and scaling", "[Cuboid Slicing]") {
     /**************************************************************************
     Test the slicing some cube with certain position and size
     **************************************************************************/
@@ -201,9 +199,9 @@ TEST(CubeSlicingTest, TranslationAndScaling) {
     const double s = 2.0;
 
     auto r = PlaneCubeSlicer() (
-        {{r0Val + s * pVal, r0Val + s * pVal, r0Val + s * pVal}},
-        {{-nVal, -nVal, -nVal}},
-        {{r0Val, r0Val, r0Val}},
+        Vec3{r0Val + s * pVal, r0Val + s * pVal, r0Val + s * pVal},
+        Vec3{-nVal, -nVal, -nVal},
+        Vec3{r0Val, r0Val, r0Val},
         s
     );
 
@@ -217,4 +215,23 @@ TEST(CubeSlicingTest, TranslationAndScaling) {
 
 }
 
-#endif //TESTING
+TEST_CASE("Cuboid slicing transition and scaling", "[Cuboid Slicing]") {
+    /**************************************************************************
+    Test slicing non-cube cuboid
+    **************************************************************************/
+
+    const std::array<double, 3> boxSize { 2.0, 4.0, 1.0 };
+    const Vec3 normal { 0.0, sqrt(0.5), sqrt(0.5) };
+    const Vec3 r0 { 100.0, 100.0, 100.0 };
+    const Vec3 point { 100.0, 102.0, 100.0 };
+
+    auto r = PlaneCuboidSlicer() (point, normal, r0, boxSize);
+
+    const double exVolumeIn = 3.0;
+    const std::array<double, 6> exAreaIn {{ 1.5, 1.5, 2.0, 0.0, 4.0, 2.0}};
+
+    CHECK(r.volumeIn == Approx(exVolumeIn).epsilon(1e-5));
+    for(size_t i = 0; i < 6; ++i) {
+        CHECK(r.areaIn[i] == Approx(exAreaIn[i]).epsilon(1e-5));
+    }
+}
