@@ -94,6 +94,7 @@
         _SCL_SECURE_NO_WARNINGS;
         _MBCS;%(PreprocessorDefinitions)
       </PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="$(Configuration.Contains('Debug'))">
