@@ -74,7 +74,7 @@ template<
         size_type pos; // index of first Float
 
         // Conversion operator to normal Vec
-        operator auto() const {
+        operator Vec< vec_size, float_type >() const {
             Vec< vec_size, float_type > res;
             for(size_t i = 0; i < vec_size; ++i) res[i] = (*this)[i];
             return res;
