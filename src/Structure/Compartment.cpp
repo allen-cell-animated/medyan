@@ -1783,6 +1783,7 @@ vector<ReactionBase*> Compartment::generateAllpairsDiffusionReactions() {
 
 void Compartment::removeDiffusionReactions(ChemSim* chem, Compartment* C)
 {
+//    std::cout<<"passivate Remove Difffusion Rxn"<<endl;
     //look for neighbor's diffusion reactions
     vector<ReactionBase*> to_remove;
 
@@ -1809,6 +1810,7 @@ void Compartment::removeDiffusionReactions(ChemSim* chem, Compartment* C)
 void Compartment::removeAllDiffusionReactions(ChemSim* chem) {
     
     //remove all diffusion reactions that this has ownership of
+//    std::cout<<"passivate Remove All Difffusion Rxn"<<endl;
     for(auto &r : _diffusion_reactions.reactions()) {
         r->passivateReaction();
         chem->removeReaction(r.get());

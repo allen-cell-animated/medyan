@@ -57,7 +57,7 @@ protected:
     //@{
     /// Parameter used in backtracking line search
     const floatingpoint LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
-    const floatingpoint LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
+    const floatingpoint LAMBDATOL = 1e-4;       ///< Lambda tolerance parameter
     
     const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
     
@@ -185,6 +185,12 @@ protected:
         force = new totalforcefloatingpoint[numBeadsx3];
         forceAux = new totalforcefloatingpoint[numBeadsx3];
         forceAuxPrev = new totalforcefloatingpoint[numBeadsx3];
+
+        for(int i =0; i < numBeadsx3; i++){
+        	force[i] = 0.0;
+        	forceAux[i]=0.0;
+        	forceAuxPrev[i]=0.0;
+        }
     }
     
     ///Deallocation of CG arrays

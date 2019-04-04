@@ -319,6 +319,12 @@ void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, totalforcefloa
 
             R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
+            if(isnan(f0)||isinf(f0)||isnan(norm[0])||isinf(norm[0])||isnan(norm[1])
+            ||isinf(norm[1])||isnan(norm[2])||isinf(norm[2])){
+                cout<<"Culprit is BoundaryCylinderRepulsionExpIn"<<endl;
+                cout<<"Forces "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" f0 "
+                <<f0<<" norm "<<norm[0]<<" "<<norm[1]<<" "<<norm[2]<<endl;
+            }
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];

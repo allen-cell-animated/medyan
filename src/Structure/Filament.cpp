@@ -362,8 +362,9 @@ void Filament::polymerizePlusEnd() {
     //update vector structure
     int cidx = cBack->_dcIndex;
     int bidx = b2->_dbIndex;
+    auto C = midPointCoordinate(b1->coordinate,b2->coordinate,0.5);
     for(int i=0; i < 3; i++) {
-        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->coordinate[i];
+        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = C[i];
         CUDAcommon::serlvars.coord[3 * bidx + i] = b2->coordinate[i];
     }
     
@@ -401,8 +402,9 @@ void Filament::polymerizeMinusEnd() {
     //update vector structure
     int cidx = cFront->_dcIndex;
     int bidx = b1->_dbIndex;
+    auto C = midPointCoordinate(b1->coordinate,b2->coordinate,0.5);
     for(int i=0; i < 3; i++) {
-        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->coordinate[i];
+        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = C[i];
         CUDAcommon::serlvars.coord[3 * bidx + i] = b1->coordinate[i];
     }
 
@@ -441,8 +443,9 @@ void Filament::depolymerizePlusEnd() {
     //update vector structure
     int cidx = cBack->_dcIndex;
     int bidx = b2->_dbIndex;
+    auto C = midPointCoordinate(b1->coordinate,b2->coordinate,0.5);
     for(int i=0; i < 3; i++) {
-        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b2->coordinate[i];
+        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = C[i];
         CUDAcommon::serlvars.coord[3 * bidx + i] = b2->coordinate[i];
     }
     
@@ -479,8 +482,9 @@ void Filament::depolymerizeMinusEnd() {
     //update vector structure
     int cidx = cFront->_dcIndex;
     int bidx = b1->_dbIndex;
+    auto C = midPointCoordinate(b1->coordinate,b2->coordinate,0.5);
     for(int i=0; i < 3; i++) {
-        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = b1->coordinate[i];
+        CUDAcommon::serlvars.cylindervec[cidx].coord[i] = C[i];
         CUDAcommon::serlvars.coord[3 * bidx + i] = b1->coordinate[i];
     }
     
@@ -567,10 +571,15 @@ Filament* Filament::sever(int cylinderPosition) {
         
         newFilament->addChild(unique_ptr<Component>(c));
         newFilament->_cylinderVector.push_back(c);
+
         
         //Add beads to new parent
         if(i > 1) newFilament->addChild(unique_ptr<Component>(c->getSecondBead()));
         newFilament->addChild(unique_ptr<Component>(c->getFirstBead()));
+
+        //change cylinder structure
+        int cidx = c->_dcIndex;
+	    CUDAcommon::serlvars.cylindervec[cidx].filamentID = newFilament->getID();
     }
     //new front of new filament, back of old
     auto c1 = newFilament->_cylinderVector.back();

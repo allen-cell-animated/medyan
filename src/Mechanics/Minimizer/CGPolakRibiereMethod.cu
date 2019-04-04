@@ -635,6 +635,7 @@ std::cout<<"----------------------------------------"<<endl;
         //Polak-Ribieri update
         beta = max<totalforcefloatingpoint>((totalforcefloatingpoint)0.0, (newGrad - prevGrad) /
         curGrad);
+        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
         if(Ms_isminimizationstate)
             //shift gradient
             shiftGradient(beta);
@@ -676,9 +677,9 @@ std::cout<<"----------------------------------------"<<endl;
             std::cout<<"Shift Gradient 0.0"<<endl;
 #endif
         }
-        std::cout<<"prevGrad "<<prevGrad<<" newGrad "<<newGrad<<" curGrad "<<curGrad<<" FDotFA "<<CGMethod::allFDotFA()<<
+/*        std::cout<<"prevGrad "<<prevGrad<<" newGrad "<<newGrad<<" curGrad "<<curGrad<<" FDotFA "<<CGMethod::allFDotFA()<<
         endl;
-        cout<<"beta "<<beta<<endl;
+        cout<<"beta "<<beta<<endl;*/
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runs3b(tend - tbegin);
@@ -689,7 +690,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         curGrad = newGrad;
         auto maxForce = maxF();
-        cout<<"maxForce "<<maxForce<<endl;
+//        cout<<"maxForce "<<maxForce<<endl;
         Ms_isminimizationstate = maxForce > GRADTOL;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();

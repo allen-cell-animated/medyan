@@ -35,9 +35,11 @@
 using namespace std;
 
 ///floatingpoint typedef
-typedef double floatingpoint;
-typedef float totalforcefloatingpoint;
-typedef float totalenergyfloatingpoint;
+typedef double totalforcefloatingpoint;
+typedef double totalenergyfloatingpoint;
+typedef float floatingpoint;
+
+
 //to test for zero values
 const floatingpoint ZERO_PREC = 1E-6;
 
@@ -49,7 +51,7 @@ extern unsigned long long rdtsc();
 __host__ __device__
 #endif
 inline bool areEqual(floatingpoint d1, floatingpoint d2) {
-    const floatingpoint ZERO_PREC = 1E-6;
+    const floatingpoint ZERO_PREC = 1E-4;
     return fabs(d1 - d2) < ZERO_PREC;
 }
 

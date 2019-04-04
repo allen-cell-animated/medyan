@@ -444,29 +444,14 @@ void SubSystem::updateBindingManagers() {
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
     //SIMD cylinder update
-#ifdef SIMDBINDINGSEARCH2
-    minsSIMD = chrono::high_resolution_clock::now();
-    for(auto C : _compartmentGrid->getCompartments()) {
-        C->SIMDcoordinates();
-        C->SIMDcoordinates4linkersearch(1);
-        C->SIMDcoordinates4motorsearch(1);
-        C->getHybridBindingSearchManager()->resetpossibleBindings();
-    }
-    mineSIMD = chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runSIMD2(mineSIMD - minsSIMD);
-    SIMDtime += elapsed_runSIMD2.count();
-    cout<<"SIMD create time "<<elapsed_runSIMD2.count()<<endl;
-#endif
 
-    if(!initialize) {
+#ifdef SIMDBINDINGSEARCH3
+	if(!initialize) {
 //        HybridBindingSearchManager::setdOut();
 		    _compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
 		    ->initializeSIMDvars();
         initialize = true;
     }
-
-#ifdef SIMDBINDINGSEARCH3
-
 //    minsSIMD = chrono::high_resolution_clock::now();
     for(auto C : _compartmentGrid->getCompartments()) {
         C->SIMDcoordinates4linkersearch_section(1);
@@ -525,7 +510,7 @@ void SubSystem::updateBindingManagers() {
     }*/
 
     //This call calculates Binding pairs according to SIMD protocol V2
-    if(true) {
+    if(false) {
 /*        int totalupn = 0;
         for (auto C : _compartmentGrid->getCompartments()) {
             totalupn += C->getuniquepermuteNeighbours().size();
@@ -594,7 +579,8 @@ void SubSystem::updateBindingManagers() {
     //PROTOCOL #3 This call calculates Binding pairs according to HYBRID protocol
     // (non-SIMD).
 #ifdef HYBRID_NLSTENCILLIST
-if(false) {
+#ifndef SIMDBINDINGSEARCH3
+if(true) {
 /*    for (auto C : _compartmentGrid->getCompartments()) {
         C->getHybridBindingSearchManager()->resetpossibleBindings();
     }*/
@@ -635,6 +621,7 @@ if(false) {
 	for(auto C : _compartmentGrid->getCompartments()) {
 		C->deallocateSIMDcoordinates();
 	}
+	#endif
 	#endif
 }
 

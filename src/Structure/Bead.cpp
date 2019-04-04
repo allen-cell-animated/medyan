@@ -60,16 +60,24 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
 
     //revectorize if needed
     revectorizeifneeded();
-    //set bindex
-    if(removedbindex.size() == 0)
-    {_dbIndex = maxbindex;
-    maxbindex++;
-    }
+	//set bIndex
+/*	_dbIndex = maxbindex;
+	maxbindex++;*/
+
+	// if beads were removed earlier, allot one of the available bead indices.
+	//Commented out as it might deem dbIndex race conditions i.e. if any super structures
+	// are created. More relevant for cylinders but am extending the protocol to beads
+	// too just to be consistent.
+	//set bindex based on maxbindex if there were no beads removed.
+	if(removedbindex.size() == 0)
+	{_dbIndex = maxbindex;
+		maxbindex++;
+	}
     else{
-//        std::cout<<"reusing bIndex "<<removedbindex.at(0)<<endl;
         _dbIndex = removedbindex.at(0);
         removedbindex.erase(removedbindex.begin());
     }
+    cout<<"Using dbIndex "<<_dbIndex<<endl;
     Nbeads = _beads.getElements().size();
 
     //copy bead coordiantes to the appropriate spot in the coord vector.
@@ -85,17 +93,24 @@ Bead::Bead(Composite* parent, int position)
     parent->addChild(unique_ptr<Component>(this));
     //check if you need to revectorize.
     revectorizeifneeded();
-    //set bindex based on maxbindex if there were no beads removed.
-    if(removedbindex.size() == 0)
-    {_dbIndex = maxbindex;
-        maxbindex++;
-    }
+    //set bIndex
+/*	_dbIndex = maxbindex;
+	maxbindex++;*/
+
     // if beads were removed earlier, allot one of the available bead indices.
+    //Commented out as it might deem dbIndex race conditions i.e. if any super structures
+    // are created. More relevant for cylinders but am extending the protocol to beads
+    // too just to be consistent.
+	//set bindex based on maxbindex if there were no beads removed.
+	if(removedbindex.size() == 0)
+	{_dbIndex = maxbindex;
+		maxbindex++;
+	}
     else{
-//        std::cout<<"reusing bIndex v2"<<removedbindex.at(0)<<endl;
         _dbIndex = removedbindex.at(0);
         removedbindex.erase(removedbindex.begin());
     }
+	cout<<"Using dbIndex "<<_dbIndex<<endl;
     Nbeads = _beads.getElements().size();
     //copy bead coordiantes to the appropriate spot in the coord vector.
     copycoordinatestovector();

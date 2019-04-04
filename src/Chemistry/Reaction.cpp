@@ -53,6 +53,7 @@ template <unsigned short M, unsigned short N>
 
 template <unsigned short M, unsigned short N>
 void Reaction<M,N>::passivateReactionImpl() {
+//    std::cout<<"passivate Rxn "<<M<<" "<<N<<endl;
     if(isPassivated()) return;
 #ifdef TRACK_DEPENDENTS
     for(auto i=0U; i<M; ++i)

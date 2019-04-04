@@ -742,12 +742,14 @@ void Controller::updateNeighborLists() {
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
+	cout<<"updated NeighborLists"<<endl;
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
 #ifdef CHEMISTRY
     mins = chrono::high_resolution_clock::now();
     _subSystem->updateBindingManagers();
+	cout<<"updated BindingManagers"<<endl;
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runb(mine - mins);
     bmgrtime += elapsed_runb.count();
@@ -982,6 +984,7 @@ void Controller::run() {
     //reupdate positions and neighbor lists
     mins = chrono::high_resolution_clock::now();
     updatePositions();
+    cout<<"Positions updated"<<endl;
     updateNeighborLists();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runnl(mine - mins);
@@ -1019,12 +1022,18 @@ void Controller::run() {
 
         while(tau() <= _runTime) {
             //run ccontroller
+            cout<<"Starting chemistry"<<endl;
+            SysParams::DURINGCHEMISTRY = true;
             mins = chrono::high_resolution_clock::now();
             auto var = !_cController->run(_minimizationTime);
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
-
+            SysParams::DURINGCHEMISTRY = false;
+            cout<<"----------------------------------------CEND"<<endl;
+//	        Bead::printBeaddata();
+            Bead::revectorizeifneeded();
+            Cylinder::revectorizeifneeded();
             //print output if chemistry fails.
             mins = chrono::high_resolution_clock::now();
             if(var) {
@@ -1066,6 +1075,7 @@ void Controller::run() {
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
+                cout<<"Position updated"<<endl;
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
@@ -1091,6 +1101,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
             updateReactionRates();
+            cout<<"updated Reaction Rates"<<endl;
 #endif
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);

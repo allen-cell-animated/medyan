@@ -162,8 +162,8 @@ public:
     virtual void addToSubSystem() {
         _cylinders.addElement(this);}
     virtual void removeFromSubSystem() {
-/*        std::cout<<"removing cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<" with "
-                "bindices "<<_b1->_dbIndex<<" "<<_b2->_dbIndex<<endl;*/
+        std::cout<<"removing cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<" with "
+                "bindices "<<_b1->_dbIndex<<" "<<_b2->_dbIndex<<endl;
         //Remove from cylinder structure by resetting to default value
         //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
         removedcindex.push_back(_dcIndex);
@@ -206,42 +206,49 @@ public:
     static int Ncyl;
     static vector<int> removedcindex;
     static void revectorizeifneeded(){
-        int newsize = vectormaxsize;
-        bool check = false;
-        if(Bead::triggercylindervectorization || vectormaxsize - maxcindex <= bead_cache/20){
+        //Run the special protocol during chemistry, the regular otherwise.
+        if(SysParams::DURINGCHEMISTRY)
+            appendrevectorizeifneeded();
+        else {
+            int newsize = vectormaxsize;
+            bool check = false;
+            if (Bead::triggercylindervectorization ||
+                vectormaxsize - maxcindex <= bead_cache / 20) {
 
-            newsize = (int(Ncyl/cylinder_cache)+2)*cylinder_cache;
-            if(removedcindex.size() >= bead_cache)
-                newsize = (int(Ncyl/cylinder_cache)+1)*cylinder_cache;
-            if(newsize != vectormaxsize || Bead::triggercylindervectorization){
-                check = true;
-                cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
-                Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-                CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
-                delete[] cylindervec;
-                delete[] cylinderpointervec;
-                delete[] ccylindervec;
-                cylinder *newcylindervec = new cylinder[newsize];
-                Cylinder **newcylinderpointervec = new Cylinder*[newsize];
-                CCylinder **newccylindervec = new CCylinder*[newsize];
-                CUDAcommon::serlvars.cylindervec = newcylindervec;
-                CUDAcommon::serlvars.cylinderpointervec = newcylinderpointervec;
-                CUDAcommon::serlvars.ccylindervec = newccylindervec;
-                revectorize(newcylindervec, newcylinderpointervec, newccylindervec);
-                vectormaxsize = newsize;
+                newsize = (int(Ncyl / cylinder_cache) + 2) * cylinder_cache;
+                if (removedcindex.size() >= bead_cache)
+                    newsize = (int(Ncyl / cylinder_cache) + 1) * cylinder_cache;
+                if (newsize != vectormaxsize || Bead::triggercylindervectorization) {
+	                cout<<"revectorize cyl"<<endl;
+                    check = true;
+                    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+                    Cylinder **cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+                    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+                    delete[] cylindervec;
+                    delete[] cylinderpointervec;
+                    delete[] ccylindervec;
+                    cylinder *newcylindervec = new cylinder[newsize];
+                    Cylinder **newcylinderpointervec = new Cylinder *[newsize];
+                    CCylinder **newccylindervec = new CCylinder *[newsize];
+                    CUDAcommon::serlvars.cylindervec = newcylindervec;
+                    CUDAcommon::serlvars.cylinderpointervec = newcylinderpointervec;
+                    CUDAcommon::serlvars.ccylindervec = newccylindervec;
+                    revectorize(newcylindervec, newcylinderpointervec, newccylindervec);
+                    vectormaxsize = newsize;
+                }
             }
+            Bead::triggercylindervectorization = false;
         }
-        Bead::triggercylindervectorization = false;
         //@{ check begins
-        /*if(check) {
+        if(false) {
             cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
             Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
             CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
             floatingpoint *coord = CUDAcommon::serlvars.coord;
-            std::cout<<"revectorized cylinders"<<endl;
+            std::cout<<"check revectorized cylinders"<<endl;
             std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " "
                     "Beads "
-                    "" << Bead::getBeads().size() << endl;
+                    "" << Bead::getBeads().size() <<"maxcindex "<<maxcindex<< endl;
             for (auto cyl:Cylinder::getCylinders()) {
                 int i = cyl->_dcIndex;
                 int id1 = cylindervec[i].ID;
@@ -261,17 +268,61 @@ public:
                     std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
                               << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
                               << " " << b2->coordinate[1] << " " << b2->coordinate[2]
-                              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << endl;
+                              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
+																				   ""<<b1->getID()<<" "<<b2->getID()<<endl;
 
                     std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
                               << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
                               << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+                    exit(EXIT_FAILURE);
                 }
             }
-        }*/
+            cout<<"----------------------------------------CylcheckEND"<<endl;
+        }
         //@} check ends.
     }
+    //called during chemistry. Does not shrink the array. Just appends values to the end
+    // of the array.
+    static void appendrevectorizeifneeded(){
+
+        int newsize = vectormaxsize;
+        bool check = false;
+        if(Bead::triggercylindervectorization || vectormaxsize - maxcindex <= bead_cache/20){
+
+            cout<<"size "<<newsize<<" "<<vectormaxsize<<" "
+                                                        ""<<Bead::triggercylindervectorization<<endl;
+
+            newsize = vectormaxsize + cylinder_cache;
+            if(newsize != vectormaxsize || Bead::triggercylindervectorization){
+	            cout<<"append vectorize cyl"<<endl;
+                check = true;
+                cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
+                Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+                CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
+                delete[] cylindervec;
+                delete[] cylinderpointervec;
+                delete[] ccylindervec;
+                cylinder *newcylindervec = new cylinder[newsize];
+                Cylinder **newcylinderpointervec = new Cylinder*[newsize];
+                CCylinder **newccylindervec = new CCylinder*[newsize];
+                CUDAcommon::serlvars.cylindervec = newcylindervec;
+                CUDAcommon::serlvars.cylinderpointervec = newcylinderpointervec;
+                CUDAcommon::serlvars.ccylindervec = newccylindervec;
+                appendrevectorize(newcylindervec, newcylinderpointervec, newccylindervec);
+                vectormaxsize = newsize;
+            }
+        }
+        Bead::triggercylindervectorization = false;
+    }
+
+	static int getmaxcindex(){
+		return maxcindex;
+	}
+
     static void revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
+                            CCylinder** ccylindervec);
+
+    static void appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                             CCylinder** ccylindervec);
     void  copytoarrays();
     void resetarrays();

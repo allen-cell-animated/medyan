@@ -329,11 +329,27 @@ void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoin
         B = l1l2*invL1*A*A*L2;
         C = l1l2*invL2*A*A*L1;
 
+	    if(abs(l1l2*A - 1.0)<0.01){
+		    cout<<"isequal "<<l1l2*A<<endl;
+		    l1l2 = 0.99*l1l2;
+	    }
+
 //        phi = safeacos(l1l2 / L1L2);
         phi = safeacos(l1l2 * A);
         dPhi = phi-eqt[i];
 
         k =  kbend[i] * sin(dPhi)/sin(phi);
+
+        if(isnan(k)||isinf(k)||isnan(A)||isinf(A)||isnan(B)
+           ||isinf(B)||isnan(C) ||isinf(C)){
+            cout<<"Culprit is BranchingBending"<<endl;
+            cout<<"Forces "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<
+                                force2[0]<<" "<<force2[1]<<" "<<force2[2]<<" "<<
+                                force3[0]<<" "<<force3[1]<<" "<<force3[2]<<" "<<
+                                force4[0]<<" "<<force4[1]<<" "<<force4[2]<<" A,B,C "
+                                <<A<<" "<<B<<" "<<C<<" l1l2 "<<l1l2<<" phi "<<phi<<" k "
+                                <<k<<endl;
+        }
 
         //force on i, f = k*(-A*l2 + 2*B*l1):
         force1[0] += k * ((coord3[0] - coord4[0])*A +
@@ -367,5 +383,21 @@ void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoin
                          (coord4[1] - coord3[1])*C );
         force4[2] += k *((-coord1[2] + coord2[2])*A -
                          (coord4[2] - coord3[2])*C );
+
+	    if(isnan(k)||isinf(k)||isnan(A)||isinf(A)||isnan(B)
+	       ||isinf(B)||isnan(C) ||isinf(C)){
+		    cout<<"Culprit is BranchingBending 2"<<endl;
+            cout<<"Forces "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<
+                force2[0]<<" "<<force2[1]<<" "<<force2[2]<<" "<<
+                force3[0]<<" "<<force3[1]<<" "<<force3[2]<<" "<<
+                force4[0]<<" "<<force4[1]<<" "<<force4[2]<<" A,B,C "
+                <<A<<" "<<B<<" "<<C<<" l1l2 "<<l1l2<<" phi "<<phi<<" k "
+                <<k<<endl;
+		    cout<<"coord "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "
+		        <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
+		        <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<" "
+		        <<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+	    }
+
     }
 }

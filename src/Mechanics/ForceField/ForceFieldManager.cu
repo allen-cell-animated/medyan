@@ -18,6 +18,8 @@
 #include "cross_check.h"
 #include <algorithm>
 
+ForceField* ForceFieldManager::_culpritForceField = nullptr;
+
 void ForceFieldManager::vectorizeAllForceFields() {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -172,7 +174,7 @@ totalenergyfloatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, 
     for (auto &ff : _forceFields) {
 
         totalenergyfloatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
-        cout<<ff->getName()<<" "<<tempEnergy<<endl;
+//        cout<<ff->getName()<<" "<<tempEnergy<<endl;
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
@@ -191,14 +193,14 @@ totalenergyfloatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, 
                         << endl;
                 cout << "The culprit was ... " << ff->getName() << endl;
 
-                //get the culprit in output
-                ff->whoIsCulprit();
-
-                exit(EXIT_FAILURE);
+                _culpritForceField = ff;
+                return numeric_limits<floatingpoint>::infinity();
             }
                 //if this is a minimization try, just return infinity
-            else return numeric_limits<floatingpoint>::infinity();
-        } else energy += tempEnergy;
+            else {cout<<"Returning infintie energy "<<ff->getName()<<endl;
+                return numeric_limits<floatingpoint>::infinity();}
+        }
+        else energy += tempEnergy;
 #ifdef SERIAL_CUDACROSSCHECK
         cudaDeviceSynchronize();
         resetfloatingpointvariableCUDA<<<1,1,0, streamF>>>(gpu_Uvec);
@@ -328,6 +330,11 @@ void ForceFieldManager::computeForces(floatingpoint *coord, totalforcefloatingpo
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
     for (auto &ff : _forceFields) {
         ff->computeForces(coord, f);
+        for(int i=0;i<CGMethod::N;i++){
+            if(isnan(f[i])||isinf(f[i])){
+                cout<<"Culprit ForceField "<<ff->getName()<<endl;
+            }
+        }
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
@@ -380,6 +387,68 @@ void ForceFieldManager::copyForces(totalforcefloatingpoint *fprev, totalforceflo
 
     for (int i = 0; i < CGMethod::N; i++)
         fprev[i] = f[i];
+}
+
+void ForceFieldManager::printculprit(totalforcefloatingpoint* force){
+
+    cout<<"Printing cylinder data overall"<<endl;
+    if(true) {
+
+        cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+        Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+        CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+        floatingpoint *coord = CUDAcommon::serlvars.coord;
+        std::cout << "check revectorized cylinders" << endl;
+        std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
+                  << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex() <<
+                  endl;
+        for (auto cyl:Cylinder::getCylinders()) {
+            int i = cyl->_dcIndex;
+            int id1 = cylindervec[i].ID;
+            int id2 = Cylinderpointervec[i]->getID();
+            int id3 = ccylindervec[i]->getCylinder()->getID();
+            if (id1 != id2 || id2 != id3 || id3 != id1)
+                std::cout << id1 << " " << id2 << " " << id3 << endl;
+            auto b1 = cyl->getFirstBead();
+            auto b2 = cyl->getSecondBead();
+            long idx1 = b1->_dbIndex;
+            long idx2 = b2->_dbIndex;
+            cylinder c = cylindervec[i];
+            std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i <<
+                      " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
+                      << c.bindices[1] <<" coords ";
+            std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+                      << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+                      << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] <<" forces ";
+            std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+                      << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+                      << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+            if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+
+                std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
+                          << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
+                          << " " << b2->coordinate[1] << " " << b2->coordinate[2]
+                          << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
+                                                                               ""
+                          << b1->getID() << " " << b2->getID() << endl;
+
+                std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+                          << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+                          << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+                std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+                          << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+                          << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+    cout<<"-------DONE------"<<endl;
+    }
+
+	//get the culprit in output
+	_culpritForceField->whoIsCulprit();
+
+	exit(EXIT_FAILURE);
 }
 
 #ifdef CUDAACCL

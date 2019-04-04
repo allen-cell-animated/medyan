@@ -513,17 +513,137 @@ void CGMethod::moveBeads(totalenergyfloatingpoint d)
 //    std::cout<<"3N "<<N<<endl;
 	totalenergyfloatingpoint temp;
     for (int i = 0; i < N; i++) {
+    	if(isnan(coord[i]) || isnan(d)||isnan(force[i])||isinf(coord[i]||isinf(d)||isinf
+    	(force[i]))){
+    		cout<<"nan error "<<endl;
+    		floatingpoint *coord = CUDAcommon::serlvars.coord;
+    		std::cout << "check revectorized cylinders" << endl;
+    		std::cout << "Total Cylinders " << Cylinder::getCylinders().size()
+    		<< " Beads " << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex()
+    		<< " maxbindex " << Bead::getmaxbindex() << endl;
+    		if (true) {
+			    for (auto b:Bead::getBeads()) {
+				    long idx1 = b->_dbIndex;
+				    cout << "Bead ID " << b->getID() << " index " << idx1 << " Coords "
+				         << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " " <<
+				         coord[3 * idx1 + 2] << " Force " << force[3 * idx1] << " " <<
+				         force[3 * idx1 + 1] << " " << force[3 * idx1 + 2] << endl;
+			    }
+			    cout<<"Printing cylinder information"<<endl;
+				    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+				    Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+				    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+				    floatingpoint *coord = CUDAcommon::serlvars.coord;
+				    std::cout<<"check revectorized cylinders"<<endl;
+				    std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size()
+				    << " Beads " << Bead::getBeads().size() <<"maxcindex "
+				    <<Cylinder::maxcindex<< endl;
+				    for (auto cyl:Cylinder::getCylinders()) {
+					    int i = cyl->_dcIndex;
+					    int id1 = cylindervec[i].ID;
+					    int id2 = Cylinderpointervec[i]->getID();
+					    int id3 = ccylindervec[i]->getCylinder()->getID();
+					    if (id1 != id2 || id2 != id3 || id3 != id1)
+						    std::cout << id1 << " " << id2 << " " << id3 << endl;
+					    auto b1 = cyl->getFirstBead();
+					    auto b2 = cyl->getSecondBead();
+					    long idx1 = b1->_dbIndex;
+					    long idx2 = b2->_dbIndex;
+					    cylinder c = cylindervec[i];
+					    std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
+					              " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
+					    if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+
+						    std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
+						              << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
+						              << " " << b2->coordinate[1] << " " << b2->coordinate[2]
+						              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
+						                                                                   ""<<b1->getID()<<" "<<b2->getID()<<endl;
+
+						    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+						              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+						              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+						    exit(EXIT_FAILURE);
+					    }
+				    }
+				    cout<<"----------------------------------------CylcheckEND"<<endl;
+
+		    }
+		    exit(EXIT_FAILURE);
+    	}
     	temp = coord[i] + d * force[i];
+    	//	    cout<<"C&F "<<coord[i]<<" "<<force[i]<<" lambda "<<d<<" moved "<<temp<<endl;
         coord[i] = temp;
-        cout<<"C&F "<<coord[i]<<" "<<force[i]<<" lambda "<<d<<endl;
+
     }
-    cout<<"---"<<endl;
+//    cout<<"---"<<endl;
 }
 
 void CGMethod::shiftGradient(totalforcefloatingpoint d)
 {
-    for (int i = 0; i < N; i ++)
-        force[i] = forceAux[i] + d * force[i];
+	bool failstatus = false;
+    for (int i = 0; i < N; i ++) {
+	    if(isnan(force[i])||isnan(forceAux[i])||isnan(d)||isinf(d)||isinf(force[i])
+	    ||isinf(forceAux[i])){
+	    	failstatus = true;
+		    cout<<"nan error shiftgradient "<<endl;
+			cout<<" force "<<force[i]<<" forceAux "<<forceAux[i]<<" d "<<d<<endl;
+	    }
+	    force[i] = forceAux[i] + d * force[i];
+    }
+
+	if (failstatus) {
+		std::cout << "Total Cylinders " << Cylinder::getCylinders().size()
+		          << " Beads " << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex()
+		          << " maxbindex " << Bead::getmaxbindex() << endl;
+		for (auto b:Bead::getBeads()) {
+			long idx1 = b->_dbIndex;
+			cout << "Bead ID " << b->getID() << " index " << idx1 << " Coords "
+			     << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " " <<
+			     coord[3 * idx1 + 2] << " Force " << force[3 * idx1] << " " <<
+			     force[3 * idx1 + 1] << " " << force[3 * idx1 + 2] << endl;
+		}
+
+		cout<<"Printing cylinder information"<<endl;
+		cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+		Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+		CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+		floatingpoint *coord = CUDAcommon::serlvars.coord;
+		std::cout<<"check revectorized cylinders"<<endl;
+		std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
+		<< Bead::getBeads().size() <<"maxcindex "<<Cylinder::maxcindex<< endl;
+		for (auto cyl:Cylinder::getCylinders()) {
+			int i = cyl->_dcIndex;
+			int id1 = cylindervec[i].ID;
+			int id2 = Cylinderpointervec[i]->getID();
+			int id3 = ccylindervec[i]->getCylinder()->getID();
+			if (id1 != id2 || id2 != id3 || id3 != id1)
+				std::cout << id1 << " " << id2 << " " << id3 << endl;
+			auto b1 = cyl->getFirstBead();
+			auto b2 = cyl->getSecondBead();
+			long idx1 = b1->_dbIndex;
+			long idx2 = b2->_dbIndex;
+			cylinder c = cylindervec[i];
+			std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
+			          " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
+			if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+
+				std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
+				          << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
+				          << " " << b2->coordinate[1] << " " << b2->coordinate[2]
+				          << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
+				                                                               ""<<b1->getID()<<" "<<b2->getID()<<endl;
+
+				std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+				          << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+				          << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+				exit(EXIT_FAILURE);
+			}
+		}
+		cout<<"----------------------------------------CylcheckEND"<<endl;
+		exit(EXIT_FAILURE);
+	}
+
 }
 
 void CGMethod::printForces()
@@ -547,13 +667,73 @@ void CGMethod::startMinimization() {
     coord = CUDAcommon::serlvars.coord;
 //    N = 3 * Bead::getBeads().size();
         N = 3 * Bead::getmaxbindex();
-    Ncyl = Cylinder::getCylinders().size();
+    Ncyl = Cylinder::getmaxcindex();
     deallocate();
     allocate(N, Ncyl);
+    if(true) {
+	    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+	    Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+	    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+	    floatingpoint *coord = CUDAcommon::serlvars.coord;
+	    std::cout << "check revectorized cylinders" << endl;
+	    std::cout << "Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
+	              << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex()
+	              <<" maxbindex "<<Bead::getmaxbindex()<<endl;
+	    if(true){
+	    	for(auto b:Bead::getBeads()){
+	    		long idx1 = b->_dbIndex;
+	    		cout<<"Bead ID "<<b->getID()<<" index "<<idx1<<" Coords "<<coord[3 * idx1]
+	    		<< " " << coord[3 * idx1 + 1] << " " << coord[3 * idx1 + 2]<<" Force "
+	    		<<force[3 * idx1] << " " << force[3 * idx1 + 1] << " " << force[3 * idx1 + 2]<<endl;
+	    	}
+	    }
+	    if(false) {
+		    for (auto cyl:Cylinder::getCylinders()) {
+			    int i = cyl->_dcIndex;
+			    int id1 = cylindervec[i].ID;
+			    int id2 = Cylinderpointervec[i]->getID();
+			    int id3 = ccylindervec[i]->getCylinder()->getID();
+			    if (id1 != id2 || id2 != id3 || id3 != id1)
+				    std::cout << id1 << " " << id2 << " " << id3 << endl;
+			    auto b1 = cyl->getFirstBead();
+			    auto b2 = cyl->getSecondBead();
+			    long idx1 = b1->_dbIndex;
+			    long idx2 = b2->_dbIndex;
+			    cylinder c = cylindervec[i];
+			    std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i
+			              <<
+			              " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
+			              << c.bindices[1] << " coords ";
+			    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+			              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+			              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2]
+			              << " forces ";
+			    std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+			              << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+			              << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+			    if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
 
+				    std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
+				              << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
+				              << " " << b2->coordinate[1] << " " << b2->coordinate[2]
+				              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
+				                                                                   ""
+				              << b1->getID() << " " << b2->getID() << endl;
 
+				    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+				              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+				              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
+				    std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+				              << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+				              << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+				    exit(EXIT_FAILURE);
+			    }
+		    }
+	    }
+
+    }
     //coord management
-    long i = 0;
+/*    long i = 0;
     long index = 0;
     for(auto b: Bead::getBeads()) {
 
@@ -568,7 +748,7 @@ void CGMethod::startMinimization() {
         b->coordinateP = b->coordinate;
         i++;
     }
-    CUDAcommon::serlvars.coord = coord;
+    CUDAcommon::serlvars.coord = coord;*/
 #ifdef CUDATIMETRACK
     tend= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runst(tend - tbegin);
@@ -1187,6 +1367,11 @@ totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM
 #endif
 #endif
     totalenergyfloatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+
+    if(ForceFieldManager::_culpritForceField != nullptr){
+        endMinimization();
+        FFM.printculprit(force);
+    }
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
     floatingpoint cuda_energy[1];
@@ -1203,6 +1388,7 @@ totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
         totalenergyfloatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         floatingpoint cuda_energy[1];
@@ -1244,18 +1430,18 @@ totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM
                     ""<<idealEnergyChange
                      <<" lambda "<<lambda<<" state "<<sconvergencecheck<<endl;
 #endif
-            cout<<" lambda "<<lambda<<endl;
+/*            cout<<" lambda "<<lambda<<endl;
             std::cout<<"SL2 BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" allFDotFA "
                      <<allFDotFA()<<endl;
             std::cout<<"SL2 energyChange "<<energyChange<<" idealEnergyChange "
                                                           ""<<idealEnergyChange
-                     <<" energylambda "<<energyLambda<<" state "<<sconvergencecheck<<endl;
+                     <<" energylambda "<<energyLambda<<" state "<<sconvergencecheck<<endl;*/
         }
         //@{ Lambda phase 2
 
 #endif
     }
-    std::cout<<"lambda determined in "<<iter<< " iterations. FL "<<lambda<<endl;
+//    std::cout<<"lambda determined in "<<iter<< " iterations. FL "<<lambda<<endl;
 //synchronize streams
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
@@ -1281,6 +1467,10 @@ totalenergyfloatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager&
 #endif
 //prepare for ping pong optimization
     totalenergyfloatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    if(ForceFieldManager::_culpritForceField != nullptr){
+        endMinimization();
+        FFM.printculprit(force);
+    }
 #ifdef DETAILEDOUTPUT_ENERGY
     CUDAcommon::handleerror(cudaDeviceSynchronize());
     floatingpoint cuda_energy[1];
@@ -1322,13 +1512,13 @@ totalenergyfloatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager&
                 lambda = MAXDIST / maxF();
                 sconvergencecheck = true;
             }
-            cout<<"Safe energyChange "<<energyChange<<" maxF"<<maxF()<<" MAXDIST "
-                                                                       ""<<MAXDIST<<endl;
+/*            cout<<"Safe energyChange "<<energyChange<<" maxF"<<maxF()<<" MAXDIST "
+                                                                       ""<<MAXDIST<<endl;*/
         }
 
 #endif
     }
-    std::cout<<"lambda determined in "<<iter<< " iterations. FL "<<lambda<<endl;
+//    std::cout<<"lambda determined in "<<iter<< " iterations. FL "<<lambda<<endl;
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
         delete [] cconvergencecheck;

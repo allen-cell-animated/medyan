@@ -116,6 +116,7 @@ void RNodeNRM::activateReaction() {
 }
 
 void RNodeNRM::passivateReaction() {
+//    std::cout<<"passivate RNodeNRM "<<endl;
     _a=0;
     floatingpoint tau = numeric_limits<floatingpoint>::infinity();
     setTau(tau);

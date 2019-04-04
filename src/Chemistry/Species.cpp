@@ -53,6 +53,7 @@ void Species::activateReactantReactions() {
 
 
 void Species::passivateReactantReactions() {
+//    std::cout<<"passivate Species::passivateReactantReactions"<<endl;
     
     for(auto r : _rspecies->reactantReactions())
         r->passivateReaction();

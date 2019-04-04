@@ -297,6 +297,7 @@ public:
     ///Const getter
     static bool RUNSTATE; //0 refers to restart phase and 1 refers to run phase.
     static bool INITIALIZEDSTATUS; // true refers to sucessful initialization. false
+    static bool DURINGCHEMISTRY; //true if MEDYAN is running chemistry, false otherwise.
     // corresponds to an on-going initialization state.
     static int numthreads;
     //aravind July11,2016

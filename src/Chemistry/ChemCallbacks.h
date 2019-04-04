@@ -523,7 +523,7 @@ struct BranchingCallback {
         site = _bManager->chooseBindingSite();
 #endif
 #ifdef NLSTENCILLIST
-        site = _bManager->chooseBindingSitestencil();
+        site = _bManager->chooseBindingSitesstencil();
 #endif
         
         //get info from site

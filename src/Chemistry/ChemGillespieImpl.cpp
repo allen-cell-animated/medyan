@@ -48,6 +48,7 @@ void RNodeGillespie::activateReaction() {
 }
 
 void RNodeGillespie::passivateReaction() {
+//    std::cout<<"passivate RNodeGillespie::passivateReaction"<<endl;
     _chem_Gillespie.passivateReaction(getReaction());
 }
 
@@ -188,6 +189,7 @@ void ChemGillespieImpl::activateReaction(ReactionBase *r) {
 }
 
 void ChemGillespieImpl::passivateReaction(ReactionBase *r) {
+//    std::cout<<"passivate ChemGillespieImpl::passivateReaction"<<endl;
     auto mit = _map_rnodes.find(r);
     if(mit==_map_rnodes.end())
         throw out_of_range(

@@ -364,7 +364,7 @@ public:
     virtual unordered_set<tuple<CCylinder*, short>> getpossibleBindingsstencil(){
         return _possibleBindingsstencil;
     }
-    tuple<CCylinder*, short> chooseBindingSitestencil() {
+    tuple<CCylinder*, short> chooseBindingSitesstencil() {
 
         assert((_possibleBindingsstencil.size() != 0)
                && "Major bug: Branching manager should not have zero binding \

@@ -324,6 +324,11 @@ void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoi
         B = invX*invX;
         C = invD*invD;
 
+	    if(abs(xd/XD - 1.0)<0.01){
+	        cout<<"isequal "<<xd/XD<<endl;
+		    xd = 0.99*XD;
+	    }
+
         theta = safeacos(xd / XD);
         posheta = 0.5*M_PI;
         dTheta = theta-posheta;
@@ -331,6 +336,13 @@ void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoi
         position = pos[i];
 
         k =  kpos[i] * A * sin(dTheta)/sin(theta);
+
+
+        if(isnan(theta)||isinf(theta)||isnan(position)||isinf(theta)||isnan(k)||isinf(k)){
+            cout<<"Culprit Branching Position Cosine "<<endl;
+            cout<<"theta "<<theta<<" position "<<position<<" theta "<<theta<<" k "<<k<<endl;
+        }
+
         //bead 1
         f1[0] +=  k * (1-position)* (- (1-position)*(coord2[0] - coord1[0]) - (coord3[0] - (1-position)*coord1[0] - position*coord2[0])
                                      + xd *(B*(1-position)*(coord2[0] - coord1[0]) + C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0])) );
@@ -357,6 +369,19 @@ void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoi
         f3[0] +=  k * ( (1-position)*(coord2[0] - coord1[0]) - xd * C*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) );
         f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
         f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
+
+        if(isnan(f1[0])||isinf(f1[0])||isnan(f1[1])||isinf(f1[1])||isnan(f1[2])||isinf(f1[2])
+           ||isnan(f2[0])||isinf(f2[0])||isnan(f2[1])||isinf(f2[1])||isnan(f2[2])||isinf(f2[2])
+           ||isnan(f3[0])||isinf(f3[0])||isnan(f3[1])||isinf(f3[1])||isnan(f3[2])||isinf(f3[2])) {
+            cout << "Culprit is BranchingPositionCosine" << endl;
+            cout<<"theta "<<theta<<" position "<<position<<" theta "<<theta<<" k "
+            <<k<<"xd " <<xd<<" XD "<<XD<<endl;
+            cout<<"forces "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "
+                <<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
+            cout<<"coord "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "
+                    <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
+                    <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+        }
     }
     delete mp;
 }

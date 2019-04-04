@@ -62,6 +62,37 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
     maxcindex = Ncyl;
 }
 
+void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
+                           CCylinder** ccylindervec){
+	int i = 0;
+	maxcindex = 0;
+	for(auto cyl:_cylinders.getElements()){
+
+		i = cyl->_dcIndex;
+		maxcindex = max(maxcindex,i);
+		//copy attributes to a structure array
+		cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getID();
+		cylindervec[i].filamentposition = cyl->getPosition();
+		cylindervec[i].bindices[0] = cyl->getFirstBead()->_dbIndex;
+		cylindervec[i].bindices[1] = cyl->getSecondBead()->_dbIndex;
+		cylindervec[i].cmpID = cyl->getCompartment()->getID();
+		cylindervec[i].cindex = i;
+		auto coord = cyl->coordinate;
+		cylindervec[i].coord[0] = coord[0];
+		cylindervec[i].coord[1] = coord[1];
+		cylindervec[i].coord[2] = coord[2];
+		cylindervec[i].type = cyl->getType();
+		cylindervec[i].ID = cyl->getID();
+		//other arrays needed
+		ccylindervec[i] = cyl->getCCylinder();
+		cylinderpointervec[i] = cyl;
+
+	}
+	maxcindex++;
+	cout<<"Setting maxcindex to "<<maxcindex<<endl;
+	Ncyl = _cylinders.getElements().size();
+}
+
 void  Cylinder::copytoarrays() {
     long i =_dcIndex;
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
@@ -113,11 +144,18 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
       _b1(b1), _b2(b2), _type(type), _position(position), _ID(_cylinders.getID()) {
 
 	//@{
-	mins = chrono::high_resolution_clock::now();
+
     parent->addChild(unique_ptr<Component>(this));
 
     //revectorize if needed
     revectorizeifneeded();
+    //set cindex
+/*	_dcIndex = maxcindex;
+	maxcindex++;*/
+	//The following protocol is commented as it leads to seg faults.
+	//Binding sites are stored based on cIndices and if a cIndex were to be reassigned
+	// during chemistry, all the entries in the bindingmanager map go out of use. Hence,
+	// it is necessary to not use this during chemistry.
     //set cindex based on maxbindex if there were no cylinders removed.
     if(removedcindex.size() == 0)
     {_dcIndex = maxcindex;
@@ -125,22 +163,22 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     }
         // if cylinders were removed earlier, allot one of the available bead indices.
     else{
-//        std::cout<<"reusing cindex "<<*removedcindex.begin()<<" with ID "<<_ID<<endl;
         _dcIndex = *removedcindex.begin();
         removedcindex.erase(removedcindex.begin());
+	    cout<<"using removing cindex "<<_dcIndex<<" maxcindex "<<maxcindex<<endl;
     }
-	mine = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_time1(mine - mins);
-	timecylinder1 += elapsed_time1.count();
+    cout<<"using cindex "<<_dcIndex<<" maxcindex "<<maxcindex<<endl;
     //@}
+
     //@{
-	mins = chrono::high_resolution_clock::now();
     Ncyl = _cylinders.getElements().size();
     //check if you need to revectorize.
     cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
     Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
     CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
     //copy attributes to a structure array
+    cout<<"Setting Cylinder _dcIndex "<<_dcIndex<<" with bindices "<<_b1->_dbIndex<<" "
+        <<_b2->_dbIndex<<" Bead ID "<<_b1->getID()<<" "<<_b2->getID()<<endl;
     cylindervec[_dcIndex].filamentID = static_cast<Filament*>(this->getParent())->getID();
     cylindervec[_dcIndex].filamentposition = _position;
     cylindervec[_dcIndex].bindices[0] = _b1->_dbIndex;
@@ -158,12 +196,8 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
    //add to compartment
    _compartment->addCylinder(this);
 
-	mine = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_time2(mine - mins);
-	timecylinder2 += elapsed_time2.count();
     //@}
 #ifdef MECHANICS
-	mins = chrono::high_resolution_clock::now();
           //set eqLength according to cylinder size
               floatingpoint eqLength  = twoPointDistance(b1->coordinate, b2->coordinate);
           if(!SysParams::RUNSTATE) //RESTARTPHASE
@@ -191,13 +225,9 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
           }
           _mCylinder = unique_ptr<MCylinder>(new MCylinder(_type, eqLength));
           _mCylinder->setCylinder(this);
-	mine = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_timemech(mine - mins);
-	timecylindermech += elapsed_timemech.count();
 #endif
     
 #ifdef CHEMISTRY
-	mins = chrono::high_resolution_clock::now();
     _cCylinder = unique_ptr<CCylinder>(new CCylinder(_compartment, this));
     _cCylinder->setCylinder(this);
 
@@ -222,9 +252,6 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     //other arrays needed
     ccylindervec[_dcIndex] = _cCylinder.get();
     cylinderpointervec[_dcIndex] = this;*/
-	mine = chrono::high_resolution_clock::now();
-	chrono::duration<floatingpoint> elapsed_timechem(mine - mins);
-	timecylinderchem += elapsed_timechem.count();
 }
 
 Cylinder::~Cylinder() noexcept {

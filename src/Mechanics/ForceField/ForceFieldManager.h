@@ -33,6 +33,8 @@ friend class CGMethod;
     
 public:
      vector<ForceField*> _forceFields; ///< All forcefields in the system
+
+     static ForceField* _culpritForceField;
     
     /// Vectorize all interactions involved in calculation
     void vectorizeAllForceFields();
@@ -51,6 +53,8 @@ public:
     
     /// Copy forces from f to fprev
     void copyForces(totalforcefloatingpoint *f, totalforcefloatingpoint *fprev);
+
+    void printculprit(totalforcefloatingpoint* force);
 
 #ifdef CUDAACCL
         cudaStream_t  streamF = NULL;

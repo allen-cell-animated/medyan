@@ -339,6 +339,10 @@ void FilamentBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoint
         if (areEqual(eqt[i], 0.0)) k = kbend[i];
 
         else{
+            if(abs(l1l2*A - 1.0)<0.01){
+                cout<<"isequal "<<l1l2*A<<endl;
+                l1l2 = 0.99*l1l2;
+                }
             phi = safeacos(l1l2 *A);
             dPhi = phi-eqt[i];
 
@@ -375,6 +379,7 @@ void FilamentBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoint
 
         force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                            (coord3[2] - coord2[2])*C );
+        
 //        floatingpoint f1[3], f2[3], f3[3];
 //        f1[0] =  k * ((-coord3[0] + coord2[0])*A +
 //                           (coord2[0] - coord1[0])*B );

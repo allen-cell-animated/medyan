@@ -245,8 +245,11 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			                    SysParams::Chemistry().bindingSites[_filamentType].end(),
 			                    bindingSite)
 			               - SysParams::Chemistry().bindingSites[_filamentType].begin();
-
+#ifdef SIMDBINDINGSEARCH3
 			uint32_t t1 = shiftedIndex1|pos;
+#else
+			auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
+#endif
 			//loop through neighbors
 			//now re add valid based on CCNL
 			vector<Cylinder *> Neighbors;
@@ -296,7 +299,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
 						if (distsq > _rMaxsq || distsq < _rMinsq) {k++;continue;}
-
+#ifdef SIMDBINDINGSEARCH3
 						uint32_t shiftedIndex2 = cn->_dcIndex << 4;
 
 						uint32_t t2 = shiftedIndex2|k;
@@ -305,6 +308,12 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 //						_mpossibleBindingsstencilvecuint[idx][idx2].emplace(t1,t2);
 						_possibleBindingsstencilvecuint[idx][idx2][t1].push_back(t2);
 						_reversepossibleBindingsstencilvecuint[idx][idx2][t2].push_back(t1);
+#else
+						auto t2 = tuple<CCylinder *, short>(ccn, *it);
+						_possibleBindingsstencilvec[idx][idx2].emplace(t1, t2);
+						_reversepossibleBindingsstencilvec[idx][idx2][t2]
+								.push_back(t1);
+#endif
 					}
 
 					k = k + 1;
@@ -332,7 +341,6 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
-#ifdef SIMDBINDINGSEARCH
 
 /*	cout<<"Removing Cylinder "<<cc->getCylinder()->getID()<<" "<<bindingSite<<" "
         <<idvec[0]<<" "<<idvec[1]<<endl;*/
@@ -426,9 +434,9 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
 
         }
     }
-#else
 
-    short idx = idvec[0];
+
+    /*short idx = idvec[0];
     short idx2 = idvec[1];
     auto fIDpair = _filamentIDvec[idx].data();
     short bstatepos = bstateposvec[idx][idx2];
@@ -491,19 +499,18 @@ void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], C
 
 //        int oldN = m->_possibleBindingsstencilvec[idx][idx2].size();
 
-/*            for (auto it = m->_possibleBindingsstencilvec[idx][idx2].begin(); it !=
+*//*            for (auto it = m->_possibleBindingsstencilvec[idx][idx2].begin(); it !=
                  m->_possibleBindingsstencilvec[idx][idx2].end();) {
 
                 if (get<0>(it->second) == cc && get<1>(it->second) == bindingSite)
                     m->_possibleBindingsstencilvec[idx][idx2].erase(it++);
 
                 else ++it;
-            }*/
+            }*//*
             int newNOther = m->_possibleBindingsstencilvec[idx][idx2].size();
             m->fManagervec[idx][idx2]->updateBindingReaction(newNOther);
         }
-    }
-#endif
+    }*/
 }
 
 void HybridBindingSearchManager::checkoccupancy(short idvec[2]){
@@ -1185,7 +1192,7 @@ void HybridBindingSearchManager::addtoHNeighborList(){
 vector<tuple<CCylinder*, short>>
 HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 
-#ifdef SIMDBINDINGSEARCH
+
     short idx = idvec[0];
     short idx2 = idvec[1];
     auto fpairs = _filamentIDvec[idx].data();
@@ -1266,8 +1273,8 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
 
 	    return vector<tuple<CCylinder *, short>>{t1, t2};
     }
-#else
-    short idx = idvec[0];
+
+ /*   short idx = idvec[0];
     short idx2 = idvec[1];
     int pbsSize = _possibleBindingsstencilvec[idx][idx2].size();
     assert((pbsSize!= 0)
@@ -1279,8 +1286,7 @@ HybridBindingSearchManager::chooseBindingSitesstencil(short idvec[2]){
     advance(it, randomIndex);
 
     return vector<tuple<CCylinder*, short>>{it->first, it->second};
-
-#endif
+*/
 }
 
 HybridCylinderCylinderNL* HybridBindingSearchManager::_HneighborList;
