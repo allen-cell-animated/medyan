@@ -209,12 +209,12 @@ void BoundaryCylinderRepulsionExp::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-totalenergyfloatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                             floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
     floatingpoint *coord1, R, r, U_i;
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -260,13 +260,13 @@ totalenergyfloatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coo
     return U;
 }
 
-totalenergyfloatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                             floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
 
     int nb, nc;
     floatingpoint *coord1, R, r, U_i;
-	totalforcefloatingpoint *force1;
-    totalenergyfloatingpoint U = 0.0;
+	floatingpoint *force1;
+    floatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -312,11 +312,11 @@ totalenergyfloatingpoint BoundaryCylinderRepulsionExp::energy(floatingpoint *coo
 
 
 
-void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void BoundaryCylinderRepulsionExp::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
     floatingpoint *coord1, R, r, f0;
-	totalforcefloatingpoint *force1;
+	floatingpoint *force1;
     floatingpoint *F_i;
 //    floatingpoint *forcecopy;
 //    forcecopy = new floatingpoint[CGMethod::N];

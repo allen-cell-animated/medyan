@@ -1030,8 +1030,7 @@ void Controller::run() {
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
             SysParams::DURINGCHEMISTRY = false;
-            cout<<"----------------------------------------CEND"<<endl;
-//	        Bead::printBeaddata();
+
             Bead::revectorizeifneeded();
             Cylinder::revectorizeifneeded();
             //print output if chemistry fails.

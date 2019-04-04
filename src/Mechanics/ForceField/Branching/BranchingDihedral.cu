@@ -89,7 +89,7 @@ void BranchingDihedral<BDihedralInteractionType>::deallocate() {
 
 template <class BDihedralInteractionType>
 floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatingpoint
-*coord, totalforcefloatingpoint *f, floatingpoint d) {
+*coord, floatingpoint *f, floatingpoint d) {
 
     floatingpoint U_i[1], U_ii=0.0;
     floatingpoint* gU_i;
@@ -134,7 +134,7 @@ floatingpoint BranchingDihedral<BDihedralInteractionType>::computeEnergy(floatin
 
 template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *coord,
-        totalforcefloatingpoint *f) {
+        floatingpoint *f) {
 #ifdef CUDAACCL
     //has to be changed to accomodate aux force
     floatingpoint * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
@@ -165,8 +165,8 @@ void BranchingDihedral<BDihedralInteractionType>::computeForces(floatingpoint *c
 
 ///Template specializations
 template floatingpoint BranchingDihedral<BranchingDihedralCosine>::computeEnergy
-        (floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
+        (floatingpoint *coord, floatingpoint *f, floatingpoint d);
 template void BranchingDihedral<BranchingDihedralCosine>::computeForces(floatingpoint
-        *coord, totalforcefloatingpoint *f);
+        *coord, floatingpoint *f);
 template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
 template void BranchingDihedral<BranchingDihedralCosine>::deallocate();

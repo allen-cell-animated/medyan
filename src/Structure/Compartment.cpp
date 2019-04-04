@@ -431,13 +431,6 @@ void Compartment::deallocateSIMDcoordinates(){
 
 }
 
-/*void Compartment::addcoord(vector<floatingpoint> coord, uint16_t index, short i){
-    partitionedcoordx[i].push_back(coord[0]);
-    partitionedcoordy[i].push_back(coord[1]);
-    partitionedcoordz[i].push_back(coord[2]);
-    cindex_bs_section[i].push_back(index);
-}*/
-
 bool Compartment::checkoccupancy(vector<vector<bool>>& boundstate, short bstatepos, int pos){
     return boundstate[bstatepos][pos];
 }

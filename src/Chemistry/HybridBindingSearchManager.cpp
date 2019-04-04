@@ -245,7 +245,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 			                    SysParams::Chemistry().bindingSites[_filamentType].end(),
 			                    bindingSite)
 			               - SysParams::Chemistry().bindingSites[_filamentType].begin();
-#ifdef SIMDBINDINGSEARCH3
+#ifdef SIMDBINDINGSEARCH
 			uint32_t t1 = shiftedIndex1|pos;
 #else
 			auto t1 = tuple<CCylinder *, short>(cc, bindingSite);
@@ -299,7 +299,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 						floatingpoint distsq = twoPointDistancesquared(m1, m2);
 
 						if (distsq > _rMaxsq || distsq < _rMinsq) {k++;continue;}
-#ifdef SIMDBINDINGSEARCH3
+#ifdef SIMDBINDINGSEARCH
 						uint32_t shiftedIndex2 = cn->_dcIndex << 4;
 
 						uint32_t t2 = shiftedIndex2|k;
@@ -1177,7 +1177,7 @@ void HybridBindingSearchManager::addtoHNeighborList(){
         float minrMinsq = *min_element(temprMinsq.begin(), temprMinsq.end());
         for(short idx2 = 0; idx2<temprMaxsq.size();idx2++) {
         	short temp = 0;
-			#ifdef SIMDBINDINGSEARCH3
+			#ifdef SIMDBINDINGSEARCH
             temp = _HneighborList->setneighborsearchparameters(ftypepair[0], ftypepair[1],
                           false, true, localmaxcylsize + sqrt(_rMaxsqvec[idx][idx2]),
                           max( sqrt(_rMinsqvec[idx][idx2]) - localmaxcylsize,float(0.0)));

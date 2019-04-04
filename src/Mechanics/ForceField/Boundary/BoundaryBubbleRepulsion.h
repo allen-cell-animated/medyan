@@ -57,11 +57,11 @@ public:
     virtual void vectorize(){};
     virtual void deallocate(){};
 
-    virtual floatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d)override { return 0.0; }
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d)override { return 0.0; }
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces(floatingpoint *coord, totalforcefloatingpoint *f){};
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f){};
     //@}
 };
 #endif

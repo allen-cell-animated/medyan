@@ -49,10 +49,10 @@ void BoundaryCylinderAttachment<BAttachmentInteractionType>::deallocate() {
 }
 
 template <class BAttachmentInteractionType>
-floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
 
-    totalenergyfloatingpoint U;
+    floatingpoint U;
 
     if (d == 0.0)
         U =  _FFType.energy(coord, f, beadSet, kattr, pins);
@@ -63,13 +63,13 @@ floatingpoint BoundaryCylinderAttachment<BAttachmentInteractionType>::computeEne
 }
 
 template <class BAttachmentInteractionType>
-void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
+void BoundaryCylinderAttachment<BAttachmentInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 
     _FFType.forces(coord, f, beadSet, kattr, pins);
 }
 
 ///Template specializations
-template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
-template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
+template floatingpoint BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::vectorize();
 template void BoundaryCylinderAttachment<BoundaryCylinderAttachmentHarmonic>::deallocate();

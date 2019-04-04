@@ -52,7 +52,8 @@ float MotorCatch::numBoundHeads(float onRate, float offRate,
                                 floatingpoint force, int numHeads) {
 
 #ifdef PLOSFEEDBACK
-    return min(numHeads, numHeads * _dutyRatio + _gamma * force;
+    return min<floatingpoint >((floatingpoint)numHeads, numHeads * _dutyRatio + _gamma *
+    force);
 #else
     return min<floatingpoint>((floatingpoint)numHeads, numHeads * _dutyRatio + _beta * force / numHeads);
 #endif

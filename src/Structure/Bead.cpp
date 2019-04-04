@@ -77,7 +77,7 @@ Bead::Bead (vector<floatingpoint> v, Composite* parent, int position)
         _dbIndex = removedbindex.at(0);
         removedbindex.erase(removedbindex.begin());
     }
-    cout<<"Using dbIndex "<<_dbIndex<<endl;
+
     Nbeads = _beads.getElements().size();
 
     //copy bead coordiantes to the appropriate spot in the coord vector.
@@ -110,7 +110,7 @@ Bead::Bead(Composite* parent, int position)
         _dbIndex = removedbindex.at(0);
         removedbindex.erase(removedbindex.begin());
     }
-	cout<<"Using dbIndex "<<_dbIndex<<endl;
+
     Nbeads = _beads.getElements().size();
     //copy bead coordiantes to the appropriate spot in the coord vector.
     copycoordinatestovector();

@@ -1384,7 +1384,7 @@ void ChemManager::genFilBindingReactions() {
                                                                   nucleationZone, nucleationDist);
                 C->addFilamentBindingManager(bManager);
 
-                #ifdef SIMDBINDINGSEARCH3
+                #ifdef SIMDBINDINGSEARCH
                 C->addBranchingBindingManager(bManager);
 				#endif
                 

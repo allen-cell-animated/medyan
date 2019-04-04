@@ -162,8 +162,6 @@ public:
     virtual void addToSubSystem() {
         _cylinders.addElement(this);}
     virtual void removeFromSubSystem() {
-        std::cout<<"removing cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<" with "
-                "bindices "<<_b1->_dbIndex<<" "<<_b2->_dbIndex<<endl;
         //Remove from cylinder structure by resetting to default value
         //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
         removedcindex.push_back(_dcIndex);
@@ -219,7 +217,6 @@ public:
                 if (removedcindex.size() >= bead_cache)
                     newsize = (int(Ncyl / cylinder_cache) + 1) * cylinder_cache;
                 if (newsize != vectormaxsize || Bead::triggercylindervectorization) {
-	                cout<<"revectorize cyl"<<endl;
                     check = true;
                     cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
                     Cylinder **cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
@@ -294,7 +291,6 @@ public:
 
             newsize = vectormaxsize + cylinder_cache;
             if(newsize != vectormaxsize || Bead::triggercylindervectorization){
-	            cout<<"append vectorize cyl"<<endl;
                 check = true;
                 cylinder* cylindervec = CUDAcommon::serlvars.cylindervec;
                 Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;

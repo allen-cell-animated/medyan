@@ -208,7 +208,7 @@ namespace mathfunc {
     __host__ __device__
     #endif
     inline floatingpoint getstretcheddistancefromplane(floatingpoint *coord,
-    		totalforcefloatingpoint *force, floatingpoint * plane, floatingpoint z, int id){
+    		floatingpoint *force, floatingpoint * plane, floatingpoint z, int id){
         floatingpoint movedPoint[3] = {coord[id] + z*force[id],
                                      coord[id + 1] + z*force[id + 1],
                                      coord[id + 2] + z*force[id + 2]};
@@ -299,13 +299,10 @@ namespace mathfunc {
     /// Compute distance between two points with coordinates
     /// (x1 -d*p1x,y1-d*p1y,z1-d*p1z) and (x2-d*p2x,y2-d*p2y,z2-d*p2z)
     inline floatingpoint twoPointDistanceStretched(const vector<floatingpoint> &v1,
-                                            const vector<totalforcefloatingpoint> &p1,
+                                            const vector<floatingpoint> &p1,
                                             const vector<floatingpoint> &v2,
-                                            const vector<totalforcefloatingpoint> &p2, floatingpoint d) {
+                                            const vector<floatingpoint> &p2, floatingpoint d) {
 
-//        std::cout<<p1[0]<<" "<<p1[1]<<" "<<p1[2]<<" "<<p2[0]<<" "<<p2[1]<<" "<<p2[2]<<endl;
-//        std::cout<<((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))<<" "<<((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))<<" "<<((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))<<
-//        " "<<((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))<<" "<<((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))<<" "<<((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))<<endl;
         return sqrt(((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) *
                     ((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) +
                     ((v2[1] + d * p2[1]) - (v1[1] + d * p1[1])) *
@@ -321,45 +318,10 @@ namespace mathfunc {
     __host__ __device__
 #endif
     inline floatingpoint twoPointDistanceStretched(floatingpoint const *v1,
-                                                   totalforcefloatingpoint const *p1,
-                                                    floatingpoint const *v2,
-                                                   totalforcefloatingpoint const *p2,
-                                                   floatingpoint d) {
-//                std::cout<<p1[0]<<" "<<p1[1]<<" "<<p1[2]<<" "<<p2[0]<<" "<<p2[1]<<" "<<p2[2]<<endl;
-//        std::cout<<((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))<<" "<<((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))<<" "<<((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))<<
-//        " "<<((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))<<" "<<((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))<<" "<<((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))<<endl;
-        return sqrt(((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) *
-                    ((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) +
-                    ((v2[1] + d * p2[1]) - (v1[1] + d * p1[1])) *
-                    ((v2[1] + d * p2[1]) - (v1[1] + d * p1[1])) +
-                    ((v2[2] + d * p2[2]) - (v1[2] + d * p1[2])) *
-                    ((v2[2] + d * p2[2]) - (v1[2] + d * p1[2])));
-    }
-	//BoundaryCylinderAttachmentHarmonic.cpp
-	inline floatingpoint twoPointDistanceStretched(floatingpoint const *v1,
-	                                               totalforcefloatingpoint const *p1,
-	                                               floatingpoint const *v2,
-	                                               floatingpoint const *p2,
-	                                               floatingpoint d) {
-//                std::cout<<p1[0]<<" "<<p1[1]<<" "<<p1[2]<<" "<<p2[0]<<" "<<p2[1]<<" "<<p2[2]<<endl;
-//        std::cout<<((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))<<" "<<((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))<<" "<<((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))<<
-//        " "<<((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))<<" "<<((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))<<" "<<((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))<<endl;
-		return sqrt(((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) *
-		            ((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) +
-		            ((v2[1] + d * p2[1]) - (v1[1] + d * p1[1])) *
-		            ((v2[1] + d * p2[1]) - (v1[1] + d * p1[1])) +
-		            ((v2[2] + d * p2[2]) - (v1[2] + d * p1[2])) *
-		            ((v2[2] + d * p2[2]) - (v1[2] + d * p1[2])));
-	}
-
-    //BranchingStretchingHarmonic.cu
-    inline floatingpoint twoPointDistanceStretched(floatingpoint const *v1,
                                                    floatingpoint const *p1,
-                                                   floatingpoint const *v2,
-                                                   totalforcefloatingpoint const *p2, floatingpoint d) {
-//                std::cout<<p1[0]<<" "<<p1[1]<<" "<<p1[2]<<" "<<p2[0]<<" "<<p2[1]<<" "<<p2[2]<<endl;
-//        std::cout<<((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))<<" "<<((v2[0] + d*p2[0])-(v1[0] + d*p1[0]))<<" "<<((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))<<
-//        " "<<((v2[1] + d*p2[1])-(v1[1] + d*p1[1]))<<" "<<((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))<<" "<<((v2[2] + d*p2[2])-(v1[2] + d*p1[2]))<<endl;
+                                                    floatingpoint const *v2,
+                                                   floatingpoint const *p2,
+                                                   floatingpoint d) {
         return sqrt(((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) *
                     ((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) +
                     ((v2[1] + d * p2[1]) - (v1[1] + d * p1[1])) *
@@ -373,21 +335,9 @@ namespace mathfunc {
     __host__ __device__
     #endif
     inline floatingpoint twoPointDistanceStretched(floatingpoint const *v1,
-                                                   totalforcefloatingpoint const *p1,
-                                                    floatingpoint const *v2,
-                                                   totalforcefloatingpoint const *p2, floatingpoint d, int const id) {
-        return sqrt(((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) *
-                    ((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) +
-                    ((v2[id + 1] + d * p2[id + 1]) - (v1[id + 1] + d * p1[id + 1])) *
-                    ((v2[id + 1] + d * p2[id + 1]) - (v1[id + 1] + d * p1[id + 1])) +
-                    ((v2[id + 2] + d * p2[id + 2]) - (v1[id + 2] + d * p1[id + 2])) *
-                    ((v2[id + 2] + d * p2[id + 2]) - (v1[id + 2] + d * p1[id + 2])));
-    }
-    //BranchingStretchingHarmonic.cu
-    inline floatingpoint twoPointDistanceStretched(floatingpoint const *v1,
                                                    floatingpoint const *p1,
-                                                   floatingpoint const *v2,
-                                                   totalforcefloatingpoint const *p2, floatingpoint d, int const id) {
+                                                    floatingpoint const *v2,
+                                                   floatingpoint const *p2, floatingpoint d, int const id) {
         return sqrt(((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) *
                     ((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) +
                     ((v2[id + 1] + d * p2[id + 1]) - (v1[id + 1] + d * p1[id + 1])) *
@@ -400,9 +350,9 @@ namespace mathfunc {
     __host__ __device__
     #endif
     inline floatingpoint twoPointDistanceStretchedmixedID(floatingpoint const *v1,
-                                                          totalforcefloatingpoint const *p1,
+                                                          floatingpoint const *p1,
                                             floatingpoint const *v2,
-                                                          totalforcefloatingpoint const *p2, floatingpoint d, int const id1, const int id2) {
+                                                          floatingpoint const *p2, floatingpoint d, int const id1, const int id2) {
         return sqrt(((v2[id2] + d * p2[id2]) - (v1[id1] + d * p1[id1])) *
                     ((v2[id2] + d * p2[id2]) - (v1[id1] + d * p1[id1])) +
                     ((v2[id2 + 1] + d * p2[id2 + 1]) - (v1[id1 + 1] + d * p1[id1 + 1])) *
@@ -491,14 +441,12 @@ namespace mathfunc {
     #endif
     inline floatingpoint scalarProduct(floatingpoint const *v1, floatingpoint const *v2,
                                 floatingpoint const *v3, floatingpoint const *v4, int const id) {
-//        return((*(v2)-*(v1))*(*(v4)-*(v3))
-//               +(*(v2+1)-*(v1+1))*(*(v4+1)-*(v3+1))
-//               +(*(v2+2)-*(v1+2))*(*(v4+2)-*(v3+2)));
 
         return ((v2[id] - v1[id]) * (v4[id] - v3[id]) +
                 (v2[id + 1] - v1[id + 1]) * (v4[id + 1] - v3[id + 1]) +
                 (v2[id + 2] - v1[id + 2]) * (v4[id + 2] - v3[id + 2]));
     }
+
     ///CUDA VERSION
     #ifdef CUDAACCL
     __host__ __device__
@@ -514,42 +462,19 @@ namespace mathfunc {
 
     /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
-    //BranchingPositionCosine
-    inline floatingpoint scalarProductStretched(const vector<floatingpoint> &v1,
-                                         const vector<floatingpoint> &p1,
-                                         const vector<floatingpoint> &v2,
-                                         const vector<totalforcefloatingpoint> &p2,
-                                         const vector<floatingpoint> &v3,
-                                         const vector<floatingpoint> &p3,
-                                         const vector<floatingpoint> &v4,
-                                         const vector<totalforcefloatingpoint> &p4,
-                                         floatingpoint d) {
-
-        floatingpoint xx = ((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) *
-                    ((v4[0] + d * p4[0]) - (v3[0] + d * p3[0]));
-        floatingpoint yy = ((v2[1] + d * p2[1]) - (v1[1] + d * p1[1])) *
-                    ((v4[1] + d * p4[1]) - (v3[1] + d * p3[1]));
-        floatingpoint zz = ((v2[2] + d * p2[2]) - (v1[2] + d * p1[2])) *
-                    ((v4[2] + d * p4[2]) - (v3[2] + d * p3[2]));
-        return xx + yy + zz;
-
-    }
-
-    /// Scalar product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
-    /// (x4-x3,y4-y3,z4-z3) but with x+d*p coordinates
     ///
     //CUDA version & ARRAY VERSION
 #ifdef CUDAACCL
     __host__ __device__
 #endif
     inline floatingpoint scalarProductStretched(floatingpoint const *v1,
-                                                totalforcefloatingpoint const *p1,
+                                                floatingpoint const *p1,
                                          floatingpoint const *v2,
-                                                totalforcefloatingpoint const *p2,
+                                                floatingpoint const *p2,
                                          floatingpoint const *v3,
-                                                totalforcefloatingpoint const *p3,
+                                                floatingpoint const *p3,
                                          floatingpoint const *v4,
-                                                totalforcefloatingpoint const *p4,
+                                                floatingpoint const *p4,
                                          floatingpoint d) {
         floatingpoint xx = ((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) *
                     ((v4[0] + d * p4[0]) - (v3[0] + d * p3[0]));
@@ -567,35 +492,18 @@ namespace mathfunc {
 //        return xx + yy + zz;
 
     }
-    //BranchingPositionCosine.cu
-    inline floatingpoint scalarProductStretched(floatingpoint const *v1,
-                                                floatingpoint const *p1,
-                                                floatingpoint const *v2,
-                                                totalforcefloatingpoint const *p2,
-                                                floatingpoint const *v3,
-                                                floatingpoint const *p3,
-                                                floatingpoint const *v4,
-                                                totalforcefloatingpoint const *p4,
-                                                floatingpoint d) {
-	    floatingpoint xx = ((v2[0] + d * p2[0]) - (v1[0] + d * p1[0])) *
-	                       ((v4[0] + d * p4[0]) - (v3[0] + d * p3[0]));
-	    floatingpoint yy = ((v2[1] + d * p2[1]) - (v1[1] + d * p1[1])) *
-	                       ((v4[1] + d * p4[1]) - (v3[1] + d * p3[1]));
-	    floatingpoint zz = ((v2[2] + d * p2[2]) - (v1[2] + d * p1[2])) *
-	                       ((v4[2] + d * p4[2]) - (v3[2] + d * p3[2]));
-	    return xx + yy + zz;
-    }
+
     //CUDA version
     #ifdef CUDAACCL
      __host__ __device__
      #endif
     inline floatingpoint scalarProductStretched(floatingpoint const *v1,
                                          floatingpoint const *p1,
-                                                totalforcefloatingpoint const *v2,
+                                                floatingpoint const *v2,
                                          floatingpoint const *p2,
-                                                totalforcefloatingpoint const *v3,
+                                                floatingpoint const *v3,
                                          floatingpoint const *p3,
-                                                totalforcefloatingpoint const *v4,
+                                                floatingpoint const *v4,
                                          floatingpoint const *p4,
                                          floatingpoint d,int const id ) {
         floatingpoint xx = ((v2[id] + d * p2[id]) - (v1[id] + d * p1[id])) *
@@ -634,13 +542,13 @@ namespace mathfunc {
     __host__ __device__
      #endif
     inline floatingpoint scalarProductStretchedmixedID(floatingpoint const *v1,
-                                                       totalforcefloatingpoint const *p1,
+                                                       floatingpoint const *p1,
                                          floatingpoint const *v2,
-                                                       totalforcefloatingpoint const *p2,
+                                                       floatingpoint const *p2,
                                          floatingpoint const *v3,
-                                                       totalforcefloatingpoint const *p3,
+                                                       floatingpoint const *p3,
                                          floatingpoint const *v4,
-                                                       totalforcefloatingpoint const *p4,
+                                                       floatingpoint const *p4,
                                          floatingpoint d,
                                          int const id1,
                                          int const id2,
@@ -699,9 +607,9 @@ namespace mathfunc {
     /// Scalar product of two vectors with coordinates: v1[z,y,z] + d*p1[x,y,z] and
     /// v2[x,y,z] + d*p2[x,y,z]
     inline floatingpoint dotProductStretched(const vector<floatingpoint> &v1,
-                                      const vector<totalforcefloatingpoint> &p1,
+                                      const vector<floatingpoint> &p1,
                                       const vector<floatingpoint> &v2,
-                                      const vector<totalforcefloatingpoint> &p2,
+                                      const vector<floatingpoint> &p2,
                                       floatingpoint d) {
 
         floatingpoint xx = (v1[0] + d * p1[0]) * (v2[0] + d * p2[0]);
@@ -790,18 +698,18 @@ namespace mathfunc {
         v[1] = vy;
         v[2] = vz;
     };
+
     /// Vector product of two vectors with coordinates: (x2-x1,y2-y1,z2-z1) and
     /// (x4-x3,y4-y3,z4-z3), but with v -> v+d*p. Returns a 3d vector.
     /// ARRAY VERSION
-    //BranchingDihedeamCosine.cu
     inline vector<floatingpoint> vectorProductStretched (const vector<floatingpoint>& v1,
-                                                  const vector<totalforcefloatingpoint>& p1,
+                                                  const vector<floatingpoint>& p1,
                                                   const vector<floatingpoint>& v2,
-                                                  const vector<totalforcefloatingpoint>& p2,
+                                                  const vector<floatingpoint>& p2,
                                                   const vector<floatingpoint>& v3,
-                                                  const vector<totalforcefloatingpoint>& p3,
+                                                  const vector<floatingpoint>& p3,
                                                   const vector<floatingpoint>& v4,
-                                                  const vector<totalforcefloatingpoint>& p4,
+                                                  const vector<floatingpoint>& p4,
                                                   floatingpoint d){
         vector<floatingpoint> v;
 
@@ -831,37 +739,11 @@ namespace mathfunc {
                                        floatingpoint const *v1,
                                        floatingpoint const *p1,
                                        floatingpoint const *v2,
-                                       totalforcefloatingpoint const *p2,
+                                       floatingpoint const *p2,
                                        floatingpoint const *v3,
                                        floatingpoint const *p3,
                                        floatingpoint const *v4,
-                                       totalforcefloatingpoint const *p4,
-                                       floatingpoint d) {
-        floatingpoint vx =
-                ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]))
-                - ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]));
-
-        floatingpoint vy =
-                ((v2[2]+d*p2[2])-(v1[2]+d*p1[2]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]))
-                - ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]));
-
-        floatingpoint vz =
-                ((v2[0]+d*p2[0])-(v1[0]+d*p1[0]))*((v4[1]+d*p4[1])-(v3[1]+d*p3[1]))
-                - ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[0]+d*p4[0])-(v3[0]+d*p3[0]));
-        v[0] = vx;
-        v[1] = vy;
-        v[2] = vz;
-    }
-    //BranchingDihedralCosineV2
-    inline void vectorProductStretched(floatingpoint *v,
-                                       floatingpoint const *v1,
-                                       totalforcefloatingpoint const *p1,
-                                       floatingpoint const *v2,
-                                       totalforcefloatingpoint const *p2,
-                                       floatingpoint const *v3,
-                                       floatingpoint const *p3,
-                                       floatingpoint const *v4,
-                                       totalforcefloatingpoint const *p4,
+                                       floatingpoint const *p4,
                                        floatingpoint d) {
         floatingpoint vx =
                 ((v2[1]+d*p2[1])-(v1[1]+d*p1[1]))*((v4[2]+d*p4[2])-(v3[2]+d*p3[2]))
@@ -888,11 +770,11 @@ namespace mathfunc {
                                        floatingpoint const *v1,
                                        floatingpoint const *p1,
                                        floatingpoint const *v2,
-                                       totalforcefloatingpoint const *p2,
+                                       floatingpoint const *p2,
                                        floatingpoint const *v3,
                                        floatingpoint const *p3,
                                        floatingpoint const *v4,
-                                       totalforcefloatingpoint const *p4,
+                                       floatingpoint const *p4,
                                        floatingpoint d, int const id) {
         floatingpoint vx =
                 ((v2[id+1] + d * p2[id+1]) - (v1[id+1] + d * p1[id+1])) *
@@ -922,13 +804,13 @@ namespace mathfunc {
     #endif
     inline void vectorProductStretchedmixedID(floatingpoint *v,
                                        floatingpoint const *v1,
-                                              totalforcefloatingpoint const *p1,
+                                              floatingpoint const *p1,
                                        floatingpoint const *v2,
-                                              totalforcefloatingpoint const *p2,
+                                              floatingpoint const *p2,
                                        floatingpoint const *v3,
-                                              totalforcefloatingpoint const *p3,
+                                              floatingpoint const *p3,
                                        floatingpoint const *v4,
-                                              totalforcefloatingpoint const *p4,
+                                              floatingpoint const *p4,
                                        floatingpoint d, int const id1, int const id2, int const id3, int const id4) {
         floatingpoint vx =
                 ((v2[id2+1] + d * p2[id2+1]) - (v1[id1+1] + d * p1[id1+1])) *
@@ -983,9 +865,9 @@ namespace mathfunc {
 
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
     inline vector<floatingpoint> crossProductStretched(const vector<floatingpoint> &v1,
-                                                const vector<totalforcefloatingpoint> &p1,
+                                                const vector<floatingpoint> &p1,
                                                 const vector<floatingpoint> &v2,
-                                                const vector<totalforcefloatingpoint> &p2,
+                                                const vector<floatingpoint> &p2,
                                                 floatingpoint d) {
         vector<floatingpoint> v;
 
@@ -1047,9 +929,9 @@ namespace mathfunc {
     /// Returns coordinates of a point v located on a line between v1 and v2.
     /// |v-v1|/|v2-v| = alpha, but with x-d*p coordinates
     inline vector<floatingpoint> midPointCoordinateStretched(const vector<floatingpoint> &v1,
-                                                      const vector<totalforcefloatingpoint> &p1,
+                                                      const vector<floatingpoint> &p1,
                                                       const vector<floatingpoint> &v2,
-                                                      const vector<totalforcefloatingpoint> &p2,
+                                                      const vector<floatingpoint> &p2,
                                                       floatingpoint alpha, floatingpoint d) {
 
         vector<floatingpoint> v;
@@ -1067,9 +949,9 @@ namespace mathfunc {
 #endif
     inline void midPointCoordinateStretched(floatingpoint *v,
                                             floatingpoint const *v1,
-                                            totalforcefloatingpoint const *p1,
+                                            floatingpoint const *p1,
                                             floatingpoint const *v2,
-                                            totalforcefloatingpoint const *p2,
+                                            floatingpoint const *p2,
                                             floatingpoint alpha, floatingpoint d) {
 
         v[0] = (v1[0] + d * p1[0]) * (1.0 - alpha) + alpha * (v2[0] + d * p2[0]);
@@ -1083,9 +965,9 @@ namespace mathfunc {
     #endif
     inline void midPointCoordinateStretched(floatingpoint *v,
                                             floatingpoint *v1,
-                                            totalforcefloatingpoint *p1,
+                                            floatingpoint *p1,
                                             floatingpoint *v2,
-                                            totalforcefloatingpoint *p2,
+                                            floatingpoint *p2,
                                             floatingpoint alpha, floatingpoint d, int id) {
 
         v[0] = (v1[id] + d * p1[id]) * (1.0 - alpha) + alpha * (v2[id] + d * p2[id]);

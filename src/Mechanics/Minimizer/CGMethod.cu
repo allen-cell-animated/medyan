@@ -374,20 +374,20 @@ void CGMethod::CUDAinitializePolak(cudaStream_t stream, bool *minstatein, bool *
 //    return g[0];
 //}
 #endif
-totalforcefloatingpoint CGMethod::allFDotF()
+floatingpoint CGMethod::allFDotF()
 {
 
-	totalforcefloatingpoint g = 0;
+	floatingpoint g = 0;
     for(int i = 0; i < N; i++)
         g += force[i] * force[i];
 
     return g;
 }
 
-totalforcefloatingpoint CGMethod::allFADotFA()
+floatingpoint CGMethod::allFADotFA()
 {
 
-	totalforcefloatingpoint g = 0;
+	floatingpoint g = 0;
     for(int i = 0; i < N; i++)
         g += forceAux[i] * forceAux[i];
 //#ifdef CUDAACCL
@@ -409,18 +409,18 @@ totalforcefloatingpoint CGMethod::allFADotFA()
     return g;
 }
 
-totalforcefloatingpoint CGMethod::allFADotFAP()
+floatingpoint CGMethod::allFADotFAP()
 {
-	totalforcefloatingpoint g = 0;
+	floatingpoint g = 0;
     for(int i = 0; i < N; i++)
         g += forceAux[i] * forceAuxPrev[i];
 
     return g;
 }
 
-totalforcefloatingpoint CGMethod::allFDotFA()
+floatingpoint CGMethod::allFDotFA()
 {
-	totalforcefloatingpoint g = 0;
+	floatingpoint g = 0;
     for(int i = 0; i < N; i++) {
         g += force[i] * forceAux[i];
     }
@@ -505,145 +505,25 @@ Bead* CGMethod::maxBead() {
     return Bead::getBeads()[index];
 }
 
-void CGMethod::moveBeads(totalenergyfloatingpoint d)
+void CGMethod::moveBeads(floatingpoint d)
 {
     ///<NOTE: Ignores static beads for now.
     //if(!b->getstaticstate())
 
 //    std::cout<<"3N "<<N<<endl;
-	totalenergyfloatingpoint temp;
+	floatingpoint temp;
     for (int i = 0; i < N; i++) {
-    	if(isnan(coord[i]) || isnan(d)||isnan(force[i])||isinf(coord[i]||isinf(d)||isinf
-    	(force[i]))){
-    		cout<<"nan error "<<endl;
-    		floatingpoint *coord = CUDAcommon::serlvars.coord;
-    		std::cout << "check revectorized cylinders" << endl;
-    		std::cout << "Total Cylinders " << Cylinder::getCylinders().size()
-    		<< " Beads " << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex()
-    		<< " maxbindex " << Bead::getmaxbindex() << endl;
-    		if (true) {
-			    for (auto b:Bead::getBeads()) {
-				    long idx1 = b->_dbIndex;
-				    cout << "Bead ID " << b->getID() << " index " << idx1 << " Coords "
-				         << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " " <<
-				         coord[3 * idx1 + 2] << " Force " << force[3 * idx1] << " " <<
-				         force[3 * idx1 + 1] << " " << force[3 * idx1 + 2] << endl;
-			    }
-			    cout<<"Printing cylinder information"<<endl;
-				    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
-				    Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-				    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
-				    floatingpoint *coord = CUDAcommon::serlvars.coord;
-				    std::cout<<"check revectorized cylinders"<<endl;
-				    std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size()
-				    << " Beads " << Bead::getBeads().size() <<"maxcindex "
-				    <<Cylinder::maxcindex<< endl;
-				    for (auto cyl:Cylinder::getCylinders()) {
-					    int i = cyl->_dcIndex;
-					    int id1 = cylindervec[i].ID;
-					    int id2 = Cylinderpointervec[i]->getID();
-					    int id3 = ccylindervec[i]->getCylinder()->getID();
-					    if (id1 != id2 || id2 != id3 || id3 != id1)
-						    std::cout << id1 << " " << id2 << " " << id3 << endl;
-					    auto b1 = cyl->getFirstBead();
-					    auto b2 = cyl->getSecondBead();
-					    long idx1 = b1->_dbIndex;
-					    long idx2 = b2->_dbIndex;
-					    cylinder c = cylindervec[i];
-					    std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
-					              " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
-					    if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
-
-						    std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
-						              << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
-						              << " " << b2->coordinate[1] << " " << b2->coordinate[2]
-						              << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
-						                                                                   ""<<b1->getID()<<" "<<b2->getID()<<endl;
-
-						    std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-						              << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-						              << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
-						    exit(EXIT_FAILURE);
-					    }
-				    }
-				    cout<<"----------------------------------------CylcheckEND"<<endl;
-
-		    }
-		    exit(EXIT_FAILURE);
-    	}
     	temp = coord[i] + d * force[i];
-    	//	    cout<<"C&F "<<coord[i]<<" "<<force[i]<<" lambda "<<d<<" moved "<<temp<<endl;
         coord[i] = temp;
 
     }
-//    cout<<"---"<<endl;
 }
 
-void CGMethod::shiftGradient(totalforcefloatingpoint d)
+void CGMethod::shiftGradient(floatingpoint d)
 {
-	bool failstatus = false;
     for (int i = 0; i < N; i ++) {
-	    if(isnan(force[i])||isnan(forceAux[i])||isnan(d)||isinf(d)||isinf(force[i])
-	    ||isinf(forceAux[i])){
-	    	failstatus = true;
-		    cout<<"nan error shiftgradient "<<endl;
-			cout<<" force "<<force[i]<<" forceAux "<<forceAux[i]<<" d "<<d<<endl;
-	    }
 	    force[i] = forceAux[i] + d * force[i];
     }
-
-	if (failstatus) {
-		std::cout << "Total Cylinders " << Cylinder::getCylinders().size()
-		          << " Beads " << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex()
-		          << " maxbindex " << Bead::getmaxbindex() << endl;
-		for (auto b:Bead::getBeads()) {
-			long idx1 = b->_dbIndex;
-			cout << "Bead ID " << b->getID() << " index " << idx1 << " Coords "
-			     << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " " <<
-			     coord[3 * idx1 + 2] << " Force " << force[3 * idx1] << " " <<
-			     force[3 * idx1 + 1] << " " << force[3 * idx1 + 2] << endl;
-		}
-
-		cout<<"Printing cylinder information"<<endl;
-		cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
-		Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-		CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
-		floatingpoint *coord = CUDAcommon::serlvars.coord;
-		std::cout<<"check revectorized cylinders"<<endl;
-		std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
-		<< Bead::getBeads().size() <<"maxcindex "<<Cylinder::maxcindex<< endl;
-		for (auto cyl:Cylinder::getCylinders()) {
-			int i = cyl->_dcIndex;
-			int id1 = cylindervec[i].ID;
-			int id2 = Cylinderpointervec[i]->getID();
-			int id3 = ccylindervec[i]->getCylinder()->getID();
-			if (id1 != id2 || id2 != id3 || id3 != id1)
-				std::cout << id1 << " " << id2 << " " << id3 << endl;
-			auto b1 = cyl->getFirstBead();
-			auto b2 = cyl->getSecondBead();
-			long idx1 = b1->_dbIndex;
-			long idx2 = b2->_dbIndex;
-			cylinder c = cylindervec[i];
-			std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
-			          " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
-			if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
-
-				std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
-				          << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
-				          << " " << b2->coordinate[1] << " " << b2->coordinate[2]
-				          << " idx " << b1->_dbIndex << " " << b2->_dbIndex << "ID "
-				                                                               ""<<b1->getID()<<" "<<b2->getID()<<endl;
-
-				std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-				          << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
-				          << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] << endl;
-				exit(EXIT_FAILURE);
-			}
-		}
-		cout<<"----------------------------------------CylcheckEND"<<endl;
-		exit(EXIT_FAILURE);
-	}
-
 }
 
 void CGMethod::printForces()
@@ -670,7 +550,7 @@ void CGMethod::startMinimization() {
     Ncyl = Cylinder::getmaxcindex();
     deallocate();
     allocate(N, Ncyl);
-    if(true) {
+    if(false) {
 	    cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
 	    Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
 	    CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
@@ -679,7 +559,7 @@ void CGMethod::startMinimization() {
 	    std::cout << "Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
 	              << Bead::getBeads().size() << "maxcindex " << Cylinder::getmaxcindex()
 	              <<" maxbindex "<<Bead::getmaxbindex()<<endl;
-	    if(true){
+	    if(false){
 	    	for(auto b:Bead::getBeads()){
 	    		long idx1 = b->_dbIndex;
 	    		cout<<"Bead ID "<<b->getID()<<" index "<<idx1<<" Coords "<<coord[3 * idx1]
@@ -1174,7 +1054,7 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
     CUDAcommon::cudatime.Tlambdap.at(0) += elapsed_run.count();
 #endif
     //Calculate current energy.
-    totalenergyfloatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
     //wait for energies to be calculated
     for(auto strm:CUDAcommon::getCUDAvars().streamvec)
         CUDAcommon::handleerror(cudaStreamSynchronize(*strm),"backConvSync","CGMethod.cu");
@@ -1260,7 +1140,7 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
         //TODO let each forcefield calculate energy IFF conv state = false. That will help
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
-        totalenergyfloatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+        floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
 
         //wait for energies to be calculated
          for(auto strm:CUDAcommon::getCUDAvars().streamvec) {
@@ -1338,11 +1218,11 @@ floatingpoint CGMethod::backtrackingLineSearchCUDA(ForceFieldManager& FFM, float
 }
 #endif // CUDAACCL
 
-totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                         floatingpoint LAMBDAMAX, bool *gpu_safestate) {
 
     //@{ Lambda phase 1
-    totalenergyfloatingpoint lambda;
+    floatingpoint lambda;
     sconvergencecheck = true;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
@@ -1366,7 +1246,7 @@ totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM
     std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<f<<" state "<<sconvergencecheck<<endl;
 #endif
 #endif
-    totalenergyfloatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
 
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
@@ -1387,7 +1267,7 @@ totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM
         //TODO let each forcefield calculate energy IFF conv state = false. That will help
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
-        totalenergyfloatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+        floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
 
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -1402,9 +1282,9 @@ totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM
 #ifdef SERIAL
         //@{ Lambda phase 2
         if(!(sconvergencecheck)){
-            totalenergyfloatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda *
+            floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda *
                     allFDotFA();
-            totalenergyfloatingpoint energyChange = energyLambda - currentEnergy;
+            floatingpoint energyChange = energyLambda - currentEnergy;
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
                     " "<<allFDotFA()<<endl;
@@ -1452,13 +1332,13 @@ totalenergyfloatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM
 
 }
 
-totalenergyfloatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                             floatingpoint LAMBDAMAX, bool *gpu_safestate) {
     //reset safe mode
     _safeMode = false;
     sconvergencecheck = true;
     //calculate first lambda
-    totalenergyfloatingpoint lambda = LAMBDAMAX;
+    floatingpoint lambda = LAMBDAMAX;
 //    std::cout<<"safe 0"<<endl;
 #ifdef SERIAL //SERIAL
     sconvergencecheck = false;
@@ -1466,7 +1346,7 @@ totalenergyfloatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager&
     cconvergencecheck[0] = true;
 #endif
 //prepare for ping pong optimization
-    totalenergyfloatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+    floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
         FFM.printculprit(force);
@@ -1485,7 +1365,7 @@ totalenergyfloatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager&
     while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
         //new energy when moved by lambda
         iter++;
-        totalenergyfloatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+        floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         floatingpoint cuda_energy[1];
@@ -1498,7 +1378,7 @@ totalenergyfloatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager&
 
 #ifdef SERIAL
         if(!(sconvergencecheck)){
-            totalenergyfloatingpoint energyChange = energyLambda - currentEnergy;
+            floatingpoint energyChange = energyLambda - currentEnergy;
 
             //return if ok
             if(energyChange <= 0.0) sconvergencecheck = true;

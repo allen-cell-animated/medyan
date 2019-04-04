@@ -326,7 +326,7 @@ void CylinderExclVolRepulsion::checkforculprit() {
 }
 
 #endif
-totalenergyfloatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcefloatingpoint *force, int *beadSet, floatingpoint *krep) {
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *krep) {
     floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare;
 
     floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
@@ -335,8 +335,8 @@ totalenergyfloatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-	totalenergyfloatingpoint U_i = 0.0;
-    totalenergyfloatingpoint U = 0.0;
+	floatingpoint U_i = 0.0;
+    floatingpoint U = 0.0;
     newc2 = new floatingpoint[3];
 //    std::cout<<"SERL ecvol nint "<<nint<<endl;
     for (int i = 0; i < nint; i++) {
@@ -424,12 +424,12 @@ totalenergyfloatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, 
 }
 
 
-totalenergyfloatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                         floatingpoint *krep, floatingpoint z) {
 
 
     floatingpoint d, invDSquare;
-    totalforcefloatingpoint *f1, *f2, *f3, *f4;
+    floatingpoint *f1, *f2, *f3, *f4;
     floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
     floatingpoint ATG1, ATG2, ATG3, ATG4;
     floatingpoint *c1us, *c2us, *c3us, *c4us;
@@ -446,8 +446,8 @@ totalenergyfloatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
 
-    totalenergyfloatingpoint U_i = 0.0;
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U_i = 0.0;
+    floatingpoint U = 0.0;
 //std::cout<<"-----------"<<endl;
     for (int i = 0; i < nint; i++) {
 
@@ -576,7 +576,7 @@ totalenergyfloatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, 
     return U;
 }
 
-void CylinderExclVolRepulsion::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet, floatingpoint *krep) {
+void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep) {
 //cout.precision(10);
 //    clock_t start, stop;
 //    float elapsedtime;
@@ -584,7 +584,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, totalforcefloatingpo
 
 //    cout.precision(dbl::max_digits10); //TODO remove precision.
     floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U;
-    totalforcefloatingpoint *f1, *f2, *f3, *f4;
+    floatingpoint *f1, *f2, *f3, *f4;
     floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
     floatingpoint ATG1, ATG2, ATG3, ATG4;
     floatingpoint A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;

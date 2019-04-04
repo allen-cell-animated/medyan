@@ -174,8 +174,8 @@ void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
 
 
 template <class MStretchingInteractionType>
-floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(floatingpoint* coord, totalforcefloatingpoint *f, floatingpoint d){
-    totalenergyfloatingpoint U_i[1], U_ii=0.0;
+floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(floatingpoint* coord, floatingpoint *f, floatingpoint d){
+    floatingpoint U_i[1], U_ii=0.0;
     floatingpoint* gU_i;
     U_ii = 0.0;
 #ifdef CUDATIMETRACK
@@ -236,7 +236,7 @@ floatingpoint MotorGhostStretching<MStretchingInteractionType>::computeEnergy(fl
 }
 
 template <class MStretchingInteractionType>
-void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
+void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -291,8 +291,8 @@ void MotorGhostStretching<MStretchingInteractionType>::computeForces(floatingpoi
 
 
 ///Temlate specializations
-template floatingpoint MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
-template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
+template floatingpoint MotorGhostStretching<MotorGhostStretchingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void MotorGhostStretching<MotorGhostStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::vectorize();
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::deallocate();
 template void MotorGhostStretching<MotorGhostStretchingHarmonic>::assignforcemags();

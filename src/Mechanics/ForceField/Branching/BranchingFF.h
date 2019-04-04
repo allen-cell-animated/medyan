@@ -46,8 +46,8 @@ public:
     virtual string getName() {return "Branching";}
     virtual void whoIsCulprit();
     
-    virtual totalenergyfloatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
-    virtual void computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f);
     
     virtual void computeLoadForces() {return;}
     

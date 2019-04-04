@@ -228,7 +228,7 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 }
 
 #endif
-floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                             floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
@@ -273,19 +273,19 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, totalfo
     return U;
 }
 
-floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
+floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
                                             floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint d){
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
     int nint = MotorGhost::getMotorGhosts().size();
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, dist, U_i;
-    totalforcefloatingpoint *f1, *f2, *f3, *f4;
+    floatingpoint *f1, *f2, *f3, *f4;
 
     floatingpoint *v1 = new floatingpoint[3];
     floatingpoint *v2 = new floatingpoint[3];
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -330,7 +330,7 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, totalfo
 
 }
 
-void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2
                                             , floatingpoint *stretchforce){
 
@@ -341,7 +341,7 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, totalforcefloati
     floatingpoint *v1 = new floatingpoint[3];
     floatingpoint *v2 = new floatingpoint[3];
 
-    totalforcefloatingpoint f0, *f1, *f2, *f3, *f4;
+    floatingpoint f0, *f1, *f2, *f3, *f4;
 
     for(int i = 0; i < nint; i += 1) {
 

@@ -57,10 +57,10 @@ public:
     int _ID; ///<Bead IDs
     int _dbIndex =  -1; ///<Position in database vector
 
-	vector<totalforcefloatingpoint> force; ///< Forces based on curent coordinates.
+	vector<floatingpoint> force; ///< Forces based on curent coordinates.
                           ///< Forces should always correspond to current coordinates.
-    vector<totalforcefloatingpoint> forceAux;  ///< An auxiliary field needed during CG minimization.
-    vector<totalforcefloatingpoint> forceAuxP; ///< An auxiliary field needed during CG minimization.
+    vector<floatingpoint> forceAux;  ///< An auxiliary field needed during CG minimization.
+    vector<floatingpoint> forceAuxP; ///< An auxiliary field needed during CG minimization.
     
     vector<floatingpoint> brforce; //Qin boundary repulsion force
     vector<floatingpoint> pinforce;
@@ -108,7 +108,6 @@ public:
     /// SubSystem management, inherited from Trackable
     virtual void addToSubSystem() { _beads.addElement(this);}
     virtual void removeFromSubSystem() {
-        std::cout<<"removing bead with bindex "<<_dbIndex<<endl;
         //Reset in bead coordinate vector and add _dbIndex to the list of removedbindex.
         removedbindex.push_back(_dbIndex);
         resetcoordinates();
@@ -250,7 +249,6 @@ public:
 	// through depolymerization/ destruction reactions.
 	static void revectorizeifneeded(){
 		//Run the special protocol during chemistry, the regular otherwise.
-		cout<<"DURINGCHEMISTRY "<<SysParams::DURINGCHEMISTRY<<endl;
 		if(SysParams::DURINGCHEMISTRY)
 			appendrevectorizeifneeded();
 		else {
@@ -314,14 +312,6 @@ private:
 
 
     static void revectorize(floatingpoint* coord){
-        cout<<"revectorize to reallocate bIndices"<<endl;
-        /*for(auto b : _beads.getElements()){
-            std::cout<<b->_dbIndex<<" ";
-        }
-        std::cout<<endl;
-        std::cout<<"Total number of beads "<<maxbindex<<" "<<_beads.getElements().size()
-                 <<" "<<vectormaxsize<<endl;
-        std::cout<<"revectorized beads"<<endl;*/
         //set contiguous bindices and set coordinates.
         int idx = 0;
         for(auto b:_beads.getElements()){
@@ -346,7 +336,6 @@ private:
             newsize = vectormaxsize + bead_cache;
         //set parameters and revectorize
         if(newsize != vectormaxsize){
-	        cout<<"append revectorize bead "<<newsize<<" "<<vectormaxsize<<endl;
             floatingpoint *coord = CUDAcommon::serlvars.coord;
             delete[] coord;
             floatingpoint *newcoord = new floatingpoint[3 * newsize];
@@ -360,7 +349,6 @@ private:
     }
 
 	static void appendrevectorize(floatingpoint* coord){
-		cout<<"Append revectorize bead"<<endl;
 		//set coords based on bindices.
 		maxbindex = 0;
 		for(auto b:_beads.getElements()){
@@ -383,15 +371,9 @@ private:
     }
     //copy coodinates of this bead to the appropriate spot in coord vector.
     void  copycoordinatestovector() {
-//        if(!triggercylindervectorization) {
             CUDAcommon::serlvars.coord[3 * _dbIndex] = coordinate[0];
             CUDAcommon::serlvars.coord[3 * _dbIndex + 1] = coordinate[1];
             CUDAcommon::serlvars.coord[3 * _dbIndex + 2] = coordinate[2];
-            std::cout<<"Bead "<<_dbIndex<<" "<<coordinate[0]<<" "<<coordinate[1]<<" "
-                    ""<<coordinate[2]<<" "<<CUDAcommon::serlvars.coord[3 * _dbIndex]<<" "
-                    ""<<CUDAcommon::serlvars.coord[3 * _dbIndex + 1]<<" "
-                    ""<<CUDAcommon::serlvars.coord[3 * _dbIndex + 2]<<endl;
-//        }
     }
     void resetcoordinates() {
         CUDAcommon::serlvars.coord[3 * _dbIndex] = -1.0;

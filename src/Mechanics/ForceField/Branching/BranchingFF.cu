@@ -100,10 +100,10 @@ void BranchingFF::whoIsCulprit() {
 }
 
 
-totalenergyfloatingpoint BranchingFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
+floatingpoint BranchingFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
 
-    totalenergyfloatingpoint U = 0.0;
-    totalenergyfloatingpoint U_i=0.0;
+    floatingpoint U = 0.0;
+    floatingpoint U_i=0.0;
     for (auto &interaction : _branchingInteractionVector) {
 #ifdef SERIAL_CUDACROSSCHECK
         CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
@@ -124,7 +124,7 @@ totalenergyfloatingpoint BranchingFF::computeEnergy(floatingpoint *coord, totalf
     return U;
 }
 
-void BranchingFF::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
+void BranchingFF::computeForces(floatingpoint *coord, floatingpoint *f) {
 
     for (auto &interaction : _branchingInteractionVector)
         interaction->computeForces(coord, f);

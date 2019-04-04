@@ -186,7 +186,7 @@ void BranchingPositionCosine::checkforculprit() {
 }
 #endif
 
-floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                        floatingpoint *kpos, floatingpoint *pos){
 
 
@@ -196,7 +196,7 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefl
     floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
     floatingpoint *mp = new floatingpoint[3];
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -234,18 +234,18 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefl
     return U;
 }
 
-floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                        floatingpoint *kpos, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
     floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, theta, posheta, dTheta, U_i;
-    totalforcefloatingpoint *f1, *f2, *f3;
+    floatingpoint *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *vzero = new floatingpoint[3]; vzero[0] = 0.0; vzero[1] = 0.0; vzero[2] = 0.0;
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -287,14 +287,14 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, totalforcefl
     return U;
 }
 
-void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                      floatingpoint *kpos, floatingpoint *pos){
 
     int n = BranchingPosition<BranchingPositionCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
     floatingpoint *coord1, *coord2, *coord3, X, D, XD, xd, invX, invD, position, A, B, C, k, theta, posheta, dTheta;
-	totalforcefloatingpoint  *f1, *f2, *f3;
+	floatingpoint  *f1, *f2, *f3;
     floatingpoint *mp = new floatingpoint[3];
 
 
@@ -324,9 +324,9 @@ void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoi
         B = invX*invX;
         C = invD*invD;
 
-	    if(abs(xd/XD - 1.0)<0.01){
-	        cout<<"isequal "<<xd/XD<<endl;
-		    xd = 0.99*XD;
+	    if(abs(xd/XD - 1.0)<0.001){
+//	        cout<<"isequal "<<xd/XD<<endl;
+		    xd = 0.999*XD;
 	    }
 
         theta = safeacos(xd / XD);
@@ -338,10 +338,10 @@ void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoi
         k =  kpos[i] * A * sin(dTheta)/sin(theta);
 
 
-        if(isnan(theta)||isinf(theta)||isnan(position)||isinf(theta)||isnan(k)||isinf(k)){
+/*        if(isnan(theta)||isinf(theta)||isnan(position)||isinf(theta)||isnan(k)||isinf(k)){
             cout<<"Culprit Branching Position Cosine "<<endl;
             cout<<"theta "<<theta<<" position "<<position<<" theta "<<theta<<" k "<<k<<endl;
-        }
+        }*/
 
         //bead 1
         f1[0] +=  k * (1-position)* (- (1-position)*(coord2[0] - coord1[0]) - (coord3[0] - (1-position)*coord1[0] - position*coord2[0])
@@ -370,7 +370,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoi
         f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
         f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
 
-        if(isnan(f1[0])||isinf(f1[0])||isnan(f1[1])||isinf(f1[1])||isnan(f1[2])||isinf(f1[2])
+/*        if(isnan(f1[0])||isinf(f1[0])||isnan(f1[1])||isinf(f1[1])||isnan(f1[2])||isinf(f1[2])
            ||isnan(f2[0])||isinf(f2[0])||isnan(f2[1])||isinf(f2[1])||isnan(f2[2])||isinf(f2[2])
            ||isnan(f3[0])||isinf(f3[0])||isnan(f3[1])||isinf(f3[1])||isnan(f3[2])||isinf(f3[2])) {
             cout << "Culprit is BranchingPositionCosine" << endl;
@@ -381,7 +381,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, totalforcefloatingpoi
             cout<<"coord "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "
                     <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
                     <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
-        }
+        }*/
     }
     delete mp;
 }

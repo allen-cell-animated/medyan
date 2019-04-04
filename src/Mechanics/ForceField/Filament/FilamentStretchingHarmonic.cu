@@ -177,7 +177,7 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         exit(EXIT_FAILURE);
 }
 #endif
-totalenergyfloatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql){
 
 
@@ -186,7 +186,7 @@ totalenergyfloatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord
 
     floatingpoint *coord1, *coord2, dist;
 
-    totalenergyfloatingpoint U_i, U = 0.0;
+    floatingpoint U_i, U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -211,18 +211,18 @@ totalenergyfloatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord
     return U;
 }
 
-totalenergyfloatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
+floatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint d){
 
     int n = FilamentStretching<FilamentStretchingHarmonic>::n;
     int nint = Cylinder::getCylinders().size();
 
     floatingpoint *coord1, *coord2, dist;
-    totalforcefloatingpoint *f1, *f2;
+    floatingpoint *f1, *f2;
     floatingpoint *v1 = new floatingpoint[3];
     floatingpoint *v2 = new floatingpoint[3];
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -242,7 +242,7 @@ totalenergyfloatingpoint FilamentStretchingHarmonic::energy(floatingpoint *coord
     return U;
 }
 
-void FilamentStretchingHarmonic::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                         floatingpoint *kstr, floatingpoint *eql){
 
 
@@ -250,7 +250,7 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, totalforcefloating
     int nint = Cylinder::getCylinders().size();
 
     floatingpoint *coord1, *coord2, dist, invL;
-    totalforcefloatingpoint f0, *f1, *f2;
+    floatingpoint f0, *f1, *f2;
 
     for(int i = 0; i < nint; i += 1) {
         coord1 = &coord[3 * beadSet[n * i]];

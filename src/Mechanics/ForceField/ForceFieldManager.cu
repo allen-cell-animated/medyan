@@ -123,7 +123,7 @@ void ForceFieldManager::cleanupAllForceFields() {
 #endif
 }
 
-totalenergyfloatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d, bool verbose) {
+floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 //    CUDAcommon::cudatime.TcomputeE = 0.0;
@@ -133,7 +133,7 @@ totalenergyfloatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, 
     CUDAcommon::serltime.TveccomputeE.clear();
     CUDAcommon::serltime.Ecount++;
 #endif
-    totalenergyfloatingpoint energy = 0.0;
+    floatingpoint energy = 0.0;
 #ifdef CUDAACCL
 #ifdef CUDA_INDIVIDUAL_ESUM
     CUDAcommon::handleerror(cudaMalloc((void **) &gpu_Uvec, sizeof (floatingpoint)));
@@ -173,7 +173,7 @@ totalenergyfloatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, 
 #endif
     for (auto &ff : _forceFields) {
 
-        totalenergyfloatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
+        floatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
 //        cout<<ff->getName()<<" "<<tempEnergy<<endl;
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
@@ -286,7 +286,7 @@ totalenergyfloatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, 
     return energy;
 }
 
-void ForceFieldManager::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
+void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
     //reset to zero
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
@@ -383,13 +383,13 @@ void ForceFieldManager::computeLoadForces() {
     }
 }
 
-void ForceFieldManager::copyForces(totalforcefloatingpoint *fprev, totalforcefloatingpoint *f) {
+void ForceFieldManager::copyForces(floatingpoint *fprev, floatingpoint *f) {
 
     for (int i = 0; i < CGMethod::N; i++)
         fprev[i] = f[i];
 }
 
-void ForceFieldManager::printculprit(totalforcefloatingpoint* force){
+void ForceFieldManager::printculprit(floatingpoint* force){
 
     cout<<"Printing cylinder data overall"<<endl;
     if(true) {

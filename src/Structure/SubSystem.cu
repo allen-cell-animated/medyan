@@ -215,40 +215,6 @@ void SubSystem::resetNeighborLists() {
         //                                           cudaMemcpyHostToDevice));
                 //@}
 #endif
-    //@{ check begins
-    /*cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
-    Cylinder** Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
-    CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
-    floatingpoint* coord = CUDAcommon::serlvars.coord;
-    for(auto cyl:Cylinder::getCylinders()){
-        int i = cyl->_dcIndex;
-        int id1 = cylindervec[i].ID;
-        int id2 = Cylinderpointervec[i]->getID();
-        int id3 = ccylindervec[i]->getCylinder()->getID();
-        if(id1 != id2 || id2 != id3 || id3 != id1)
-            std::cout<<id1<<" "<<id2<<" "<<id3<<endl;
-        auto b1 = cyl->getFirstBead();
-        auto b2 = cyl->getSecondBead();
-        long idx1 = b1->_dbIndex;
-        long idx2 = b2->_dbIndex;
-        cylinder c = cylindervec[i];
-        std::cout << "4 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
-                  " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
-        if(c.bindices[0] != idx1 || c.bindices[1] != idx2) {
-
-            std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1] << " "
-                    "" << b1->coordinate[2] << " " << " " << b2->coordinate[0] << " "
-                              "" << b2->coordinate[1] << " " << b2->coordinate[2] << " idx "
-                      << b1->_dbIndex << " "
-                              "" << b2->_dbIndex << endl;
-
-            std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
-                      << coord[3 * idx1 + 2] << " "
-                              "" << coord[3 * idx2] << " " << coord[3 * idx2 + 1] << " "
-                      << coord[3 * idx2 + 2] << endl;
-        }
-
-    }*/
     //check ends
     chrono::high_resolution_clock::time_point mins, mine;
     mins = chrono::high_resolution_clock::now();
@@ -271,12 +237,6 @@ void SubSystem::resetNeighborLists() {
             nl->reset();
 #endif
 #endif
-    /*mins = chrono::high_resolution_clock::now();
-    for (auto nl: _neighborLists.getElements())
-        nl->reset();
-    mine= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_NL(mine - mins);
-    std::cout<<"NLSTEN reset time "<<elapsed_NL.count()<<endl;*/
 
 }
 void SubSystem::updateBindingManagers() {
@@ -338,7 +298,69 @@ void SubSystem::updateBindingManagers() {
     //cudaFree
     endresetCUDA();
 #endif
-#if defined(NLSTENCILLIST) || defined(HYBRID_NLSTENCILLIST)
+    vectorizeCylinder();
+
+    #ifdef NLORIGINAL
+    for (auto C : _compartmentGrid->getCompartments()){
+        for(auto &manager : C->getFilamentBindingManagers()){
+            manager->updateAllPossibleBindings();
+        }
+    }
+	#endif
+
+    chrono::high_resolution_clock::time_point mins, mine;
+    mins = chrono::high_resolution_clock::now();
+    //SIMD cylinder update
+#ifdef SIMDBINDINGSEARCH
+	if(!initialize) {
+		    _compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
+		    ->initializeSIMDvars();
+        initialize = true;
+    }
+
+    for(auto C : _compartmentGrid->getCompartments()) {
+        C->SIMDcoordinates4linkersearch_section(1);
+        C->SIMDcoordinates4motorsearch_section(1);
+    }
+
+    for (auto C : _compartmentGrid->getCompartments())
+        C->getHybridBindingSearchManager()->resetpossibleBindings();
+    minsSIMD = chrono::high_resolution_clock::now();
+    HybridBindingSearchManager::findtimeV3 = 0.0;
+    HybridBindingSearchManager::SIMDV3appendtime = 0.0;
+    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
+	    for(auto &manager : C->getBranchingManagers()) {
+	    		manager->updateAllPossibleBindingsstencil();
+	    }
+    }
+    //UpdateAllBindingReactions
+    for (auto C : _compartmentGrid->getCompartments()) {
+        C->getHybridBindingSearchManager()->updateAllBindingReactions();
+    }
+
+    mineSIMD = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
+    cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
+    cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
+    cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
+#endif
+
+    mine= chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> elapsed_orig(mine - mins);
+    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
+
+//free memory
+	SysParams::MParams.speciesboundvec.clear();
+	#ifdef SIMDBINDINGSEARCH
+	for(auto C : _compartmentGrid->getCompartments()) {
+		C->deallocateSIMDcoordinates();
+	}
+	#endif
+}
+
+//OBSOLETE
+void SubSystem::vectorizeCylinder() {
     //vectorize
     SysParams::MParams.speciesboundvec.clear();
     int cidx = 0;
@@ -367,11 +389,6 @@ void SubSystem::updateBindingManagers() {
 
     //fill with appropriate values.
     for (auto cyl: cylvec) {
-//        cout<<cyl->_dcIndex<<" "<<cyl->getID()<<endl;
-/*        if(cyl->_dcIndex > Cylinder::vectormaxsize)
-            std::cout<<"Cindex "<<cyl->_dcIndex<<" greater than vectorsize "
-                    ""<<Cylinder::vectormaxsize<<endl;*/
-        //cyl->_dcIndex = cidx;
         auto _filamentType = cyl->getType();
         auto x1 = cyl->getFirstBead()->coordinate;
         auto x2 = cyl->getSecondBead()->coordinate;
@@ -396,287 +413,13 @@ void SubSystem::updateBindingManagers() {
     }
     //@}
 
-    /*for(auto ftype = 0; ftype < SysParams::CParams.numFilaments; ftype++) {
-        ncylvec.at(ftype) = cidx;//number of cylinders in each filament.
-        bspeciesoffsetvec.at(ftype) = branchspeciesbound.size();
-        cidx = 0;
-        for (auto cyl: cylvec) {
-            //cyl->_dcIndex = cidx;
-            auto _filamentType = cyl->getParent()->getType();
-            if (_filamentType == ftype) {
-
-                auto x1 = cyl->getFirstBead()->coordinate;
-                auto x2 = cyl->getSecondBead()->coordinate;
-                vector<floatingpoint> X1X2 = {x2[0] - x1[0], x2[1] - x1[1], x2[2] - x1[2]};
-                cylsqmagnitudevector[cyl->_dcIndex] = sqmagnitude(X1X2);
-                auto cc = cyl->getCCylinder();
-                int idx = 0;
-                for (auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                     it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-                    branchspeciesbound.push_back (cc->getCMonomer(*it1)->speciesBound(
-                            SysParams::Chemistry().brancherBoundIndex[_filamentType])->getN());
-                    linkerspeciesbound.push_back (cc->getCMonomer(*it1)->speciesBound(
-                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN());
-                    motorspeciesbound.push_back (cc->getCMonomer(*it1)->speciesBound(
-                            SysParams::Chemistry().motorBoundIndex[_filamentType])->getN());
-                    idx++;
-                }
-                cidx++;
-            }
-        }
-    }
-    std::cout<<"max cindex "<<Cylinder::maxcindex<<" removed cylinders "
-            ""<<Cylinder::removedcindex.size()<<endl;
-    std::cout<<"speciesbound size "<<branchspeciesbound.size()<<endl;*/
-
 
     SysParams::MParams.speciesboundvec.push_back(branchspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(linkerspeciesbound);
     SysParams::MParams.speciesboundvec.push_back(motorspeciesbound);
     SysParams::CParams.maxbindingsitespercylinder = maxbindingsitespercyl;
     SysParams::MParams.cylsqmagnitudevector = cylsqmagnitudevector;
-//    SysParams::MParams.bsoffsetvec = bspeciesoffsetvec;
     SysParams::MParams.ncylvec = ncylvec;
-//    std::cout<<SysParams::Mechanics().speciesboundvec.size()<<endl;
-//    std::cout<<motorspeciesbound.size()<<endl;
-#endif
-
-    chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
-    //SIMD cylinder update
-
-#ifdef SIMDBINDINGSEARCH3
-	if(!initialize) {
-//        HybridBindingSearchManager::setdOut();
-		    _compartmentGrid->getCompartments()[0]->getHybridBindingSearchManager()
-		    ->initializeSIMDvars();
-        initialize = true;
-    }
-//    minsSIMD = chrono::high_resolution_clock::now();
-    for(auto C : _compartmentGrid->getCompartments()) {
-        C->SIMDcoordinates4linkersearch_section(1);
-        C->SIMDcoordinates4motorsearch_section(1);
-    }
-    /*mineSIMD = chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_SIMDpart(mineSIMD - minsSIMD);
-    cout<<"SIMD create time "<<elapsed_SIMDpart.count()<<endl;*/
-#endif
-
-    //PROTOCOL 1 This call calculates Binding pairs according to SIMD protocol V1
-    if(false) {
-        minsSIMD = chrono::high_resolution_clock::now();
-        for (auto C : _compartmentGrid->getCompartments()) {
-#ifdef SIMBDINDINGSEARCH
-            C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencil();
-//        C->getHybridBindingSearchManager()->checkoccupancy(_idvec);
-            for (auto &manager : C->getFilamentBindingManagers()) {
-#ifdef NLSTENCILLIST
-                BranchingManager *bManager;
-                if (bManager = dynamic_cast<BranchingManager *>(manager.get()))
-                    manager->updateAllPossibleBindingsstencil();
-#endif
-            }
-#else
-            for(auto &manager : C->getFilamentBindingManagers()) {
-#ifdef NLORIGINAL
-                manager->updateAllPossibleBindings();
-#endif
-#ifdef NLSTENCILLIST
-                manager->updateAllPossibleBindingsstencil();
-#endif
-#if defined(NLORIGINAL) && defined(NLSTENCILLIST)
-                manager->crosscheck();
-#endif
-            }
-#endif
-        }
-        mineSIMD = chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> elapsed_runSIMD(mineSIMD - minsSIMD);
-        SIMDtime += elapsed_runSIMD.count();
-        cout << "SIMD time " << elapsed_runSIMD.count() << endl;
-        cout << "find time " << HybridBindingSearchManager::findtime << endl;
-    }
-
-    //PRINT
-/*    for(auto C : _compartmentGrid->getCompartments()) {
-       C->getHybridBindingSearchManager()->printbindingsizes();
-    }*/
-
-
-
-    //PROTOCOL #2 SIMD V2
-/*    for(auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->resetpossibleBindings();
-    }*/
-
-    //This call calculates Binding pairs according to SIMD protocol V2
-    if(false) {
-/*        int totalupn = 0;
-        for (auto C : _compartmentGrid->getCompartments()) {
-            totalupn += C->getuniquepermuteNeighbours().size();
-            cout<<C->getuniquepermuteNeighbours().size()<<" ";
-        }
-        cout<<endl;
-        cout<<"Unique permutation neighbors "<<totalupn<<endl;*/
-		#ifdef SIMDBINDINGSEARCH2
-        minsSIMD = chrono::high_resolution_clock::now();
-        for (auto C : _compartmentGrid->getCompartments()) {
-
-            C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV2();
-
-            /*for(auto &manager : C->getFilamentBindingManagers()) {ad
-    #ifdef NLSTENCILLIST
-                BranchingManager* bManager;
-                if(bManager = dynamic_cast<BranchingManager *>(manager.get()))
-                    manager->updateAllPossibleBindingsstencil();
-    #endif
-            }*/
-
-        }
-        //PRINT
-/*            for(auto C : _compartmentGrid->getCompartments()) {
-                C->getHybridBindingSearchManager()->printbindingsizes();
-            }*/
-        mineSIMD = chrono::high_resolution_clock::now();
-        chrono::duration<floatingpoint> elapsed_runSIMDV2(mineSIMD - minsSIMD);
-        SIMDtimeV2 += elapsed_runSIMDV2.count();
-        cout << "SIMDV2 time " << elapsed_runSIMDV2.count() << endl;
-        cout << "findV2 time " << HybridBindingSearchManager::findtimeV2 << endl;
-        cout << "Append time " << HybridBindingSearchManager::appendtime << endl;
-/*        cout << "Time taken to parse SIMD " << HybridBindingSearchManager::SIMDparse1SIMDparse1 << endl;
-        cout << "Time taken to merge SIMD " << HybridBindingSearchManager::SIMDparse2 << endl;
-        cout << "Time taken to copy to main google map "
-                "" << HybridBindingSearchManager::SIMDparse3 << endl;
-        cout << "Time taken to update bs "
-                "" << HybridBindingSearchManager::SIMDcountbs << endl;*/
-        #endif
-
-    }
-
-#ifdef SIMDBINDINGSEARCH3
-    for (auto C : _compartmentGrid->getCompartments())
-        C->getHybridBindingSearchManager()->resetpossibleBindings();
-    minsSIMD = chrono::high_resolution_clock::now();
-    HybridBindingSearchManager::findtimeV3 = 0.0;
-    HybridBindingSearchManager::SIMDV3appendtime = 0.0;
-    for (auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilSIMDV3();
-	    for(auto &manager : C->getBranchingManagers()) {
-	    		manager->updateAllPossibleBindingsstencil();
-	    }
-    }
-    //UpdateAllBindingReactions
-    for (auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->updateAllBindingReactions();
-    }
-
-    mineSIMD = chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runSIMDV3(mineSIMD - minsSIMD);
-    cout << "SIMDV3 time " << elapsed_runSIMDV3.count() << endl;
-    cout << "findV3 time " << HybridBindingSearchManager::findtimeV3 << endl;
-    cout << "Append time " << HybridBindingSearchManager::SIMDV3appendtime << endl;
-#endif
-    //PROTOCOL #3 This call calculates Binding pairs according to HYBRID protocol
-    // (non-SIMD).
-#ifdef HYBRID_NLSTENCILLIST
-#ifndef SIMDBINDINGSEARCH3
-if(true) {
-/*    for (auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->resetpossibleBindings();
-    }*/
-
-    minsHYBD = chrono::high_resolution_clock::now();
-    for (auto C : _compartmentGrid->getCompartments()) {
-#ifdef HYBRID_NLSTENCILLIST
-        C->getHybridBindingSearchManager()->updateAllPossibleBindingsstencilHYBD();
-/*        for (auto &manager : C->getFilamentBindingManagers()) {
-#ifdef NLSTENCILLIST
-            BranchingManager *bManager;
-            if (bManager = dynamic_cast<BranchingManager *>(manager.get()))
-                manager->updateAllPossibleBindingsstencil();
-#endif
-        }*/
-    }
-#endif
-    mineHYBD = chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runHYBD(mineHYBD - minsHYBD);
-    HYBDtime += elapsed_runHYBD.count();
-    cout << "HYBD time " << elapsed_runHYBD.count() << endl;
-    cout<<"HYBD map time "<<HybridBindingSearchManager::HYBDappendtime<<endl;
-}
-#endif
-
-    mine= chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_orig(mine - mins);
-    std::cout<<"BMgr update time "<<elapsed_orig.count()<<endl;
-    //PRINT
-/*    for(auto C : _compartmentGrid->getCompartments()) {
-        C->getHybridBindingSearchManager()->printbindingsizes();
-    }*/
-//    exit(EXIT_FAILURE);
-
-//free memory
-	SysParams::MParams.speciesboundvec.clear();
-	#ifdef SIMDBINDINGSEARCH
-	for(auto C : _compartmentGrid->getCompartments()) {
-		C->deallocateSIMDcoordinates();
-	}
-	#endif
-	#endif
-}
-
-//OBSOLETE
-void SubSystem::vectorizeCylinder() {
-    delete [] cylindervec;
-    delete [] ccylindervec;
-    delete [] cylinderpointervec;
-    int Ncyl = Cylinder::getCylinders().size();
-    cylindervec = new cylinder[Ncyl];
-    ccylindervec = new CCylinder*[Ncyl];
-    cylinderpointervec = new Cylinder*[Ncyl];
-    //Create cylinder structure
-    int i = 0;
-    for(auto cyl:Cylinder::getCylinders()){
-        //set _dcIndex
-        cyl->_dcIndex = i;
-        //copy attributes to a structure
-        cylindervec[i].filamentID = dynamic_cast<Filament*>(cyl->getParent())->getID();
-        cylindervec[i].filamentposition = cyl->getPosition();
-        cylindervec[i].bindices[0] = cyl->getFirstBead()->_dbIndex;
-        cylindervec[i].bindices[1] = cyl->getSecondBead()->_dbIndex;
-        cylindervec[i].cmpID = cyl->getCompartment()->getID();
-        cylindervec[i].cindex = i;
-        auto coord = cyl->coordinate;
-        cylindervec[i].coord[0] = coord[0];
-        cylindervec[i].coord[1] = coord[1];
-        cylindervec[i].coord[2] = coord[2];
-        cylindervec[i].type = cyl->getType();
-        cylindervec[i].ID = cyl->getID();
-        ccylindervec[i] = cyl->getCCylinder();
-        cylinderpointervec[i] = cyl;
-        i++;
-//        for(int bsc = 0; bsc < nbs; bsc++){
-//            floatingpoint c[3], bead1[3],bead2[3];
-//
-//            memcpy(bead1, &coord[3*cylindervec[i].bindices[0]], 3 * sizeof(floatingpoint));
-//            memcpy(bead2, &coord[3*cylindervec[i].bindices[1]], 3 * sizeof(floatingpoint));
-//            midPointCoordinate(c,bead1,bead2,bindingsitevec[bsc]);
-//            bscoord[12*i+bsc*3] = c[0];
-//            bscoord[12*i+bsc*3+1] = c[1];
-//            bscoord[12*i+bsc*3+2] = c[2];te<<endl;
-//        }
-    }
-/*    std::cout<<"print for consistency "<<endl;
-    for(int idx = 0; idx < Ncyl; idx++) {
-        if (cylindervec[idx].cindex != ccylindervec[cylindervec[idx].cindex]->getCylinder()
-                ->_dcIndex)
-            std::cout << "Fatal mismatch " << cylindervec[idx].cindex << " "
-                    ""<<ccylindervec[cylindervec[idx].cindex]->getCylinder()->_dcIndex << endl;
-    }*/
-    CUDAcommon::serlvars.ccylindervec = ccylindervec;
-    CUDAcommon::serlvars.cylindervec = cylindervec;
-    CUDAcommon::serlvars.cylinderpointervec = cylinderpointervec;
-
 }
 
 #ifdef CUDAACCL_NL

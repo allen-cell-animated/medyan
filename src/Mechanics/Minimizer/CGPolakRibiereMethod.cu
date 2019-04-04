@@ -63,7 +63,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     // (as opposed to finding lambda)
     bool Ms_isminimizationstate, Ms_issafestate;
     int numIter = 0;
-    totalforcefloatingpoint lambda;
+    floatingpoint lambda;
 #ifdef CUDAACCL
     volatile bool *Mc_isminimizationstate;
     volatile bool *Mc_issafestate;
@@ -230,7 +230,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
 #ifdef SERIAL //SERIAL
     //FIND MAXIMUM ERROR BETWEEN CUDA AND VECTORIZED FORCES{
     //VECTORIZED. Prep for Polak{
-    totalforcefloatingpoint curGrad = CGMethod::allFDotF();
+    floatingpoint curGrad = CGMethod::allFDotF();
     Ms_isminimizationstate = true;
     Ms_issafestate = false;
     Ms_isminimizationstate = maxF() > GRADTOL;
@@ -554,7 +554,7 @@ std::cout<<"----------------------------------------"<<endl;
 //        tbeginiter = chrono::high_resolution_clock::now();
 //#endif
 
-        totalforcefloatingpoint beta, newGrad, prevGrad;
+        floatingpoint beta, newGrad, prevGrad;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
 
         numIter++;
@@ -633,9 +633,9 @@ std::cout<<"----------------------------------------"<<endl;
         tbegin = chrono::high_resolution_clock::now();
 #endif
         //Polak-Ribieri update
-        beta = max<totalforcefloatingpoint>((totalforcefloatingpoint)0.0, (newGrad - prevGrad) /
+        beta = max<floatingpoint>((floatingpoint)0.0, (newGrad - prevGrad) /
         curGrad);
-        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
+//        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
         if(Ms_isminimizationstate)
             //shift gradient
             shiftGradient(beta);

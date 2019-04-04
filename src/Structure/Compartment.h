@@ -519,9 +519,6 @@ public:
     }
 #ifdef SIMDBINDINGSEARCH
 
-/*    vector<vector<floatingpoint>> partitionedcoordx, partitionedcoordy,
-                            partitionedcoordz, cindex_bs_section,
-                            cID_bs_section;*/
     vector<floatingpoint> partitionedcoordx[27], partitionedcoordy[27], partitionedcoordz[27];
     vector<uint32_t>  cindex_bs_section[27];
 

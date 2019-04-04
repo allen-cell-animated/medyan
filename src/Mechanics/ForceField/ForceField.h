@@ -42,12 +42,12 @@ public:
     /// Compute total energy of this forcefield in the system
     /// @return  the energy value if valid. If an inf or NaN value has been
     /// calculated, return -1.
-    virtual totalenergyfloatingpoint computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f,
+    virtual floatingpoint computeEnergy(floatingpoint *coord, floatingpoint *f,
             floatingpoint d) = 0;
 
     /// Compute forces of this forcefield in the system. Update Bead
     /// forces accordingly.
-    virtual void computeForces(floatingpoint *coord, totalforcefloatingpoint *f) = 0;
+    virtual void computeForces(floatingpoint *coord, floatingpoint *f) = 0;
     
     ///Compute all load forces on beads in this system.
     ///Updates all Bead's load force components for Reaction updating.

@@ -200,7 +200,7 @@ void BranchingDihedralCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                        floatingpoint *kdih, floatingpoint *pos){
 
 
@@ -213,7 +213,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, totalforcefl
     floatingpoint *n1 = new floatingpoint[3];
     floatingpoint *n2 = new floatingpoint[3];
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -252,7 +252,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, totalforcefl
 }
 
 
-floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                        floatingpoint *kdih, floatingpoint *pos, floatingpoint d){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
@@ -260,13 +260,13 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, totalforcefl
 
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, n1n2, U_i;
-    totalforcefloatingpoint *f1, *f2, *f3, *f4;
+    floatingpoint *f1, *f2, *f3, *f4;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *n1 = new floatingpoint[3];
     floatingpoint *n2 = new floatingpoint[3];
     floatingpoint *zero = new floatingpoint[3]; zero[0] = 0; zero[1] = 0; zero[2] = 0;
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -309,7 +309,7 @@ floatingpoint BranchingDihedralCosine::energy(floatingpoint *coord, totalforcefl
     return U;
 }
 
-void BranchingDihedralCosine::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                      floatingpoint *kdih, floatingpoint *pos){
 
     int n = BranchingDihedral<BranchingDihedralCosine>::n;
@@ -317,7 +317,7 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, totalforcefloatingpoi
 
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, N1, N2, n1n2, f0, NN1, NN2, X, D, Y, position;
-    totalforcefloatingpoint *f1, *f2, *f3, *f4;
+    floatingpoint *f1, *f2, *f3, *f4;
 	floatingpoint n2x, n1y, xd, yd, xx, xy, yy, XD, X1, X2, Y1, Y2, D1, D2, YD;
     floatingpoint *mp = new floatingpoint[3];
     floatingpoint *n1 = new floatingpoint[3];

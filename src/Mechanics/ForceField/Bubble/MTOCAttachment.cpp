@@ -24,7 +24,7 @@
 template <class MTOCInteractionType>
 floatingpoint MTOCAttachment<MTOCInteractionType>::computeEnergy(floatingpoint d) {
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
     floatingpoint U_i=0.0;
     
     for(auto mtoc : MTOC::getMTOCs()) {

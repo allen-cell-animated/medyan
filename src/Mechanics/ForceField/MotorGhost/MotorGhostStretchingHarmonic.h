@@ -23,13 +23,13 @@ class Bead;
 class MotorGhostStretchingHarmonic {
     
 public:
-    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2);
     
-    floatingpoint energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
+    floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
                   floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint d);
     
-    void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint
                 *stretchforce);
 #ifdef CUDAACCL

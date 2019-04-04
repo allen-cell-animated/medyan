@@ -23,13 +23,13 @@ class Bead;
 class FilamentBendingCosine {
     
 public:
-	totalenergyfloatingpoint energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+	floatingpoint energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt);
 
-	totalenergyfloatingpoint energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
+	floatingpoint energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
                   floatingpoint *kbend, floatingpoint *eqt, floatingpoint d);
     
-    void forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+    void forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                 floatingpoint *kbend, floatingpoint *eqt);
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);

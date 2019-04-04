@@ -162,7 +162,7 @@ void LinkerStretching<LStretchingInteractionType>::deallocate() {
 
 
 template <class LStretchingInteractionType>
-floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floatingpoint* coord, totalforcefloatingpoint *f, floatingpoint d){
+floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floatingpoint* coord, floatingpoint *f, floatingpoint d){
 
     floatingpoint U_i[1], U_ii;
     floatingpoint* gU_i;
@@ -222,7 +222,7 @@ floatingpoint LinkerStretching<LStretchingInteractionType>::computeEnergy(floati
 }
 
 template <class LStretchingInteractionType>
-void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
+void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *coord, floatingpoint *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -276,8 +276,8 @@ void LinkerStretching<LStretchingInteractionType>::computeForces(floatingpoint *
 
 
 ///Temlate specializations
-template floatingpoint LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d);
-template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(floatingpoint *coord, totalforcefloatingpoint *f);
+template floatingpoint LinkerStretching<LinkerStretchingHarmonic>::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d);
+template void LinkerStretching<LinkerStretchingHarmonic>::computeForces(floatingpoint *coord, floatingpoint *f);
 template void LinkerStretching<LinkerStretchingHarmonic>::vectorize();
 template void LinkerStretching<LinkerStretchingHarmonic>::deallocate();
 template void LinkerStretching<LinkerStretchingHarmonic>::assignforcemags();

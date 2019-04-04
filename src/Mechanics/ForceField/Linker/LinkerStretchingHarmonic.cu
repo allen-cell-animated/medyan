@@ -187,7 +187,7 @@ void LinkerStretchingHarmonic::checkforculprit() {
 
 #endif
 floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord,
-        totalforcefloatingpoint *f, int *beadSet,
+        floatingpoint *f, int *beadSet,
                                             floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
@@ -197,7 +197,7 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord,
         floatingpoint *v1 = new floatingpoint[3];
         floatingpoint *v2 = new floatingpoint[3];
 
-        totalenergyfloatingpoint U = 0.0;
+        floatingpoint U = 0.0;
 
         for(int i = 0; i < nint; i += 1) {
 
@@ -229,18 +229,18 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord,
         return U;
     }
 
-floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint * f, int *beadSet,
+floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
                                             floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint d){
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
         int nint = Linker::getLinkers().size();
 
         floatingpoint *coord1, *coord2, *coord3, *coord4, dist;
-        totalforcefloatingpoint  *f1, *f2, *f3, *f4;
+        floatingpoint  *f1, *f2, *f3, *f4;
         floatingpoint *v1 = new floatingpoint[3];
         floatingpoint *v2 = new floatingpoint[3];
 
-        totalenergyfloatingpoint U = 0.0;
+        floatingpoint U = 0.0;
 
         for(int i = 0; i < nint; i += 1) {
 
@@ -267,7 +267,7 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, totalforcef
         return U;
 
     }
-    void LinkerStretchingHarmonic::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+    void LinkerStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint
                                           *pos2, floatingpoint *stretchforce){
 
@@ -279,7 +279,7 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, totalforcef
         floatingpoint *v1 = new floatingpoint[3];
         floatingpoint *v2 = new floatingpoint[3];
 
-        totalforcefloatingpoint f0, *f1, *f2, *f3, *f4;
+        floatingpoint f0, *f1, *f2, *f3, *f4;
 
         for(int i = 0; i < nint; i += 1) {
 

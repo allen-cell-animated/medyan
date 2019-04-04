@@ -91,10 +91,10 @@ void BoundaryFF::whoIsCulprit() {
 }
 
 
-totalenergyfloatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, totalforcefloatingpoint *f, floatingpoint d) {
+floatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d) {
     
     floatingpoint U= 0.0;
-    totalenergyfloatingpoint U_i=0.0;
+    floatingpoint U_i=0.0;
     
     for (auto &interaction : _boundaryInteractionVector) {
         
@@ -111,7 +111,7 @@ totalenergyfloatingpoint BoundaryFF::computeEnergy(floatingpoint *coord, totalfo
     return U;
 }
 
-void BoundaryFF::computeForces(floatingpoint *coord, totalforcefloatingpoint *f) {
+void BoundaryFF::computeForces(floatingpoint *coord, floatingpoint *f) {
 
     for (auto &interaction : _boundaryInteractionVector)
         interaction->computeForces(coord, f);

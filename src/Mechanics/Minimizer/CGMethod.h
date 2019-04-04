@@ -41,9 +41,9 @@ protected:
     ///< Data vectors for calculation
     floatingpoint *coord;  ///<bead coordinates (length 3*N)
 
-    totalforcefloatingpoint *force; ///< bead forces (length 3*N)
-    totalforcefloatingpoint *forceAux; ///< auxiliary force calculations (length 3*N)
-    totalforcefloatingpoint *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
+    floatingpoint *force; ///< bead forces (length 3*N)
+    floatingpoint *forceAux; ///< auxiliary force calculations (length 3*N)
+    floatingpoint *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
 //    cylinder* cylindervec;
 
     /// Safe mode which chooses the safe backtracking search if the
@@ -129,10 +129,10 @@ protected:
     /// For use in minimization
 
 
-    totalforcefloatingpoint allFDotF();
-    totalforcefloatingpoint allFADotFA();
-    totalforcefloatingpoint allFADotFAP();
-    totalforcefloatingpoint allFDotFA();
+    floatingpoint allFDotF();
+    floatingpoint allFADotFA();
+    floatingpoint allFADotFAP();
+    floatingpoint allFDotFA();
     
     /// Get the max force in the system
     floatingpoint maxF();
@@ -146,15 +146,15 @@ protected:
     void endMinimization();
     
     /// Move beads in search direction by d
-    void moveBeads(totalenergyfloatingpoint d);
+    void moveBeads(floatingpoint d);
 
     /// shift the gradient by d
-    void shiftGradient(totalforcefloatingpoint d);
+    void shiftGradient(floatingpoint d);
     //@}
 
 #ifdef CUDAACCL
     //@{
-    totalenergyfloatingpoint backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
+    floatingpoint backtrackingLineSearchCUDA(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                   floatingpoint LAMBDAMAX, bool *gpu_safestate);
     //@}
 #endif // CUDAACCL
@@ -163,13 +163,13 @@ protected:
     /// Linear search methods
     /// A simple backtracking search method that computes an optimal
     /// energy change and compares the backtracked energy to it
-    totalenergyfloatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
+    floatingpoint backtrackingLineSearch(ForceFieldManager& FFM, floatingpoint MAXDIST,
                                                           floatingpoint LAMBDAMAX, bool *gpu_safestate);
     
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
 
-    totalenergyfloatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM,
+    floatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM,
     		floatingpoint MAXDIST,
                                                               floatingpoint LAMBDAMAX, bool *gpu_safestate);
 
@@ -182,9 +182,9 @@ protected:
     inline void allocate(long numBeadsx3, long Ncyl) {
 
 //        coord = new floatingpoint[numBeadsx3];
-        force = new totalforcefloatingpoint[numBeadsx3];
-        forceAux = new totalforcefloatingpoint[numBeadsx3];
-        forceAuxPrev = new totalforcefloatingpoint[numBeadsx3];
+        force = new floatingpoint[numBeadsx3];
+        forceAux = new floatingpoint[numBeadsx3];
+        forceAuxPrev = new floatingpoint[numBeadsx3];
 
         for(int i =0; i < numBeadsx3; i++){
         	force[i] = 0.0;

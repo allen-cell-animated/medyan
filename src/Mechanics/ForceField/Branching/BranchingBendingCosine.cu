@@ -191,7 +191,7 @@ void BranchingBendingCosine::checkforculprit() {
 }
 #endif
 
-floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                       floatingpoint *kbend, floatingpoint *eqt){
 
     int n = BranchingBending<BranchingBendingCosine>::n;
@@ -199,7 +199,7 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforceflo
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -237,15 +237,15 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforceflo
     return U;
 }
 
-floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                       floatingpoint *kbend, floatingpoint *eqt, floatingpoint d){
 
     int n = BranchingBending<BranchingBendingCosine>::n;
     int nint = BranchingPoint::getBranchingPoints().size();
 
     floatingpoint *coord1, *coord2, *coord3, *coord4, U_i, L1, L2, L1L2, l1l2, phi, dPhi;
-	totalforcefloatingpoint *force1, *force2, *force3, *force4;
-    totalenergyfloatingpoint U = 0.0;
+	floatingpoint *force1, *force2, *force3, *force4;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -289,7 +289,7 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, totalforceflo
     return U;
 }
 
-void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                     floatingpoint *kbend, floatingpoint *eqt){
 
 
@@ -297,7 +297,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoin
     int nint = BranchingPoint::getBranchingPoints().size();
 
     floatingpoint *coord1, *coord2, *coord3, *coord4;
-	totalforcefloatingpoint  *force1, *force2, *force3, *force4;
+	floatingpoint  *force1, *force2, *force3, *force4;
     floatingpoint L1, L2, L1L2, l1l2, phi, dPhi, A, B, C, invL1, invL2, k;
 
 //    floatingpoint U = 0;
@@ -329,9 +329,9 @@ void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoin
         B = l1l2*invL1*A*A*L2;
         C = l1l2*invL2*A*A*L1;
 
-	    if(abs(l1l2*A - 1.0)<0.01){
-		    cout<<"isequal "<<l1l2*A<<endl;
-		    l1l2 = 0.99*l1l2;
+	    if(abs(l1l2*A - 1.0)<0.001){
+//		    cout<<"isequal "<<l1l2*A<<endl;
+		    l1l2 = 0.999*l1l2;
 	    }
 
 //        phi = safeacos(l1l2 / L1L2);
@@ -340,7 +340,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoin
 
         k =  kbend[i] * sin(dPhi)/sin(phi);
 
-        if(isnan(k)||isinf(k)||isnan(A)||isinf(A)||isnan(B)
+/*        if(isnan(k)||isinf(k)||isnan(A)||isinf(A)||isnan(B)
            ||isinf(B)||isnan(C) ||isinf(C)){
             cout<<"Culprit is BranchingBending"<<endl;
             cout<<"Forces "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<
@@ -349,7 +349,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoin
                                 force4[0]<<" "<<force4[1]<<" "<<force4[2]<<" A,B,C "
                                 <<A<<" "<<B<<" "<<C<<" l1l2 "<<l1l2<<" phi "<<phi<<" k "
                                 <<k<<endl;
-        }
+        }*/
 
         //force on i, f = k*(-A*l2 + 2*B*l1):
         force1[0] += k * ((coord3[0] - coord4[0])*A +
@@ -384,7 +384,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoin
         force4[2] += k *((-coord1[2] + coord2[2])*A -
                          (coord4[2] - coord3[2])*C );
 
-	    if(isnan(k)||isinf(k)||isnan(A)||isinf(A)||isnan(B)
+/*	    if(isnan(k)||isinf(k)||isnan(A)||isinf(A)||isnan(B)
 	       ||isinf(B)||isnan(C) ||isinf(C)){
 		    cout<<"Culprit is BranchingBending 2"<<endl;
             cout<<"Forces "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<
@@ -397,7 +397,7 @@ void BranchingBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoin
 		        <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
 		        <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<" "
 		        <<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
-	    }
+	    }*/
 
     }
 }

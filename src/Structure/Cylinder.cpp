@@ -89,7 +89,7 @@ void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpoint
 
 	}
 	maxcindex++;
-	cout<<"Setting maxcindex to "<<maxcindex<<endl;
+
 	Ncyl = _cylinders.getElements().size();
 }
 
@@ -165,9 +165,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     else{
         _dcIndex = *removedcindex.begin();
         removedcindex.erase(removedcindex.begin());
-	    cout<<"using removing cindex "<<_dcIndex<<" maxcindex "<<maxcindex<<endl;
     }
-    cout<<"using cindex "<<_dcIndex<<" maxcindex "<<maxcindex<<endl;
     //@}
 
     //@{
@@ -177,8 +175,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
     Cylinder** cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
     CCylinder** ccylindervec = CUDAcommon::serlvars.ccylindervec;
     //copy attributes to a structure array
-    cout<<"Setting Cylinder _dcIndex "<<_dcIndex<<" with bindices "<<_b1->_dbIndex<<" "
-        <<_b2->_dbIndex<<" Bead ID "<<_b1->getID()<<" "<<_b2->getID()<<endl;
+
     cylindervec[_dcIndex].filamentID = static_cast<Filament*>(this->getParent())->getID();
     cylindervec[_dcIndex].filamentposition = _position;
     cylindervec[_dcIndex].bindices[0] = _b1->_dbIndex;

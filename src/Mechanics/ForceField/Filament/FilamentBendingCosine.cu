@@ -196,7 +196,7 @@ void FilamentBendingCosine::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-totalenergyfloatingpoint FilamentBendingCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                      floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
@@ -204,7 +204,7 @@ totalenergyfloatingpoint FilamentBendingCosine::energy(floatingpoint *coord, tot
 
     floatingpoint *coord1, *coord2, *coord3, L1, L2, L1L2, l1l2, phi, dPhi;
 
-    totalenergyfloatingpoint U = 0.0, U_i;
+    floatingpoint U = 0.0, U_i;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -246,16 +246,16 @@ totalenergyfloatingpoint FilamentBendingCosine::energy(floatingpoint *coord, tot
     return U;
 }
 
-totalenergyfloatingpoint FilamentBendingCosine::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                      floatingpoint *kbend, floatingpoint *eqt, floatingpoint d ){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
     int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
     floatingpoint *coord1, *coord2, *coord3, L1, L2, L1L2, l1l2, phi, dPhi;
-    totalforcefloatingpoint  *force1, *force2, *force3;
+    floatingpoint  *force1, *force2, *force3;
 
-    totalenergyfloatingpoint U = 0.0, U_i;
+    floatingpoint U = 0.0, U_i;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -302,14 +302,14 @@ totalenergyfloatingpoint FilamentBendingCosine::energy(floatingpoint *coord, tot
     return U;
 }
 
-void FilamentBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                    floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingCosine>::n;
     int nint =  (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
     floatingpoint *coord1, *coord2, *coord3, L1, L2, l1l2, invL1, invL2, A,B,C, phi, dPhi, k;
-    totalforcefloatingpoint *force1, *force2, *force3;
+    floatingpoint *force1, *force2, *force3;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -339,9 +339,9 @@ void FilamentBendingCosine::forces(floatingpoint *coord, totalforcefloatingpoint
         if (areEqual(eqt[i], 0.0)) k = kbend[i];
 
         else{
-            if(abs(l1l2*A - 1.0)<0.01){
-                cout<<"isequal "<<l1l2*A<<endl;
-                l1l2 = 0.99*l1l2;
+            if(abs(l1l2*A - 1.0)<0.001){
+//                cout<<"isequal "<<l1l2*A<<endl;
+                l1l2 = 0.999*l1l2;
                 }
             phi = safeacos(l1l2 *A);
             dPhi = phi-eqt[i];

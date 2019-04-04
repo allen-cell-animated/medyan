@@ -176,7 +176,7 @@ void FilamentBendingHarmonic::checkforculprit() {
     exit(EXIT_FAILURE);
 }
 #endif
-floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                        floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
@@ -184,7 +184,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, totalforcefl
 
     floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -219,16 +219,16 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, totalforcefl
     return U;
 }
 
-floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                        floatingpoint *kbend, floatingpoint *eqt, floatingpoint d ){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
     int nint = (Bead::getBeads().size() - 2 * Filament::getFilaments().size());
 
     floatingpoint *coord1, *coord2, *coord3, dist, U_i, L1, L2, L1L2, l1l2;
-    totalforcefloatingpoint *force1, *force2, *force3;
+    floatingpoint *force1, *force2, *force3;
 
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint U = 0.0;
 
     for(int i = 0; i < nint; i += 1) {
 
@@ -268,7 +268,7 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, totalforcefl
     return U;
 }
 
-void FilamentBendingHarmonic::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void FilamentBendingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                      floatingpoint *kbend, floatingpoint *eqt){
 
     int n = FilamentBending<FilamentBendingHarmonic>::n;
@@ -276,7 +276,7 @@ void FilamentBendingHarmonic::forces(floatingpoint *coord, totalforcefloatingpoi
 
     floatingpoint *coord1, *coord2, *coord3, dist,
             L1, L2, l1l2, invL1, invL2, A,B,C, k;
-    totalforcefloatingpoint *force1, *force2, *force3;
+    floatingpoint *force1, *force2, *force3;
 
     for(int i = 0; i < nint; i += 1) {
 

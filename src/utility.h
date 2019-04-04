@@ -35,13 +35,10 @@
 using namespace std;
 
 ///floatingpoint typedef
-typedef double totalforcefloatingpoint;
-typedef double totalenergyfloatingpoint;
 typedef float floatingpoint;
 
-
 //to test for zero values
-const floatingpoint ZERO_PREC = 1E-6;
+const floatingpoint ZERO_PREC = 1E-4;
 
 /// A random seed based on clock cycles
 extern unsigned long long rdtsc();

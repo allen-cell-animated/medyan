@@ -210,12 +210,12 @@ floatingpoint BoundaryCylinderRepulsionExpIn::loadForces(floatingpoint r, floati
 
 }
 
-totalenergyfloatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                               floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
 
     int nb, nc;
     floatingpoint *coord1, R, r;
-    totalenergyfloatingpoint U_i, U = 0.0;
+    floatingpoint U_i, U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -250,13 +250,13 @@ totalenergyfloatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *c
     return U;
 }
 
-totalenergyfloatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                               floatingpoint *krep, floatingpoint *slen, int *nneighbors, floatingpoint d) {
 
     int nb, nc;
     floatingpoint *coord1, R, r, U_i;
-    totalforcefloatingpoint *force1;
-    totalenergyfloatingpoint U = 0.0;
+    floatingpoint *force1;
+    floatingpoint U = 0.0;
     int Cumnc=0;
     auto beList = BoundaryElement::getBoundaryElements();
     nb = beList.size();
@@ -296,11 +296,11 @@ totalenergyfloatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *c
 
 
 
-void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, totalforcefloatingpoint *f, int *beadSet,
+void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                             floatingpoint *krep, floatingpoint *slen, int *nneighbors) {
     int nb, nc;
     floatingpoint *coord1, R, r;
-    totalforcefloatingpoint *force1, f0;
+    floatingpoint *force1, f0;
     floatingpoint *F_i;
 
     auto beList = BoundaryElement::getBoundaryElements();

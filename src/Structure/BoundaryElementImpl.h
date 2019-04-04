@@ -73,7 +73,7 @@ public:
     }
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<totalforcefloatingpoint>& force,
+                                     const vector<floatingpoint>& force,
                                      floatingpoint d) {
         
         
@@ -84,7 +84,7 @@ public:
         
     }
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                     totalforcefloatingpoint const *force,
+                                     floatingpoint const *force,
                                      floatingpoint d) {
 
 
@@ -158,7 +158,7 @@ public:
     }
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<totalforcefloatingpoint>& force,
+                                     const vector<floatingpoint>& force,
                                      floatingpoint d) {
         
         vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
@@ -169,7 +169,7 @@ public:
         
     }
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                            totalforcefloatingpoint const *force,
+                                            floatingpoint const *force,
                                      floatingpoint d) {
 
         vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
@@ -274,7 +274,7 @@ public:
 
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<totalforcefloatingpoint>& force,
+                                     const vector<floatingpoint>& force,
                                      floatingpoint d) {
         
         // check z coordinate. If outside, return infinity
@@ -292,7 +292,7 @@ public:
     }
     ///TODO
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                            totalforcefloatingpoint const *force,
+                                            floatingpoint const *force,
                                      floatingpoint d) {return 0.0;}
 
     virtual const vector<floatingpoint> normal(const vector<floatingpoint>& point) {
@@ -387,7 +387,7 @@ public:
     }
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<totalforcefloatingpoint>& force,
+                                     const vector<floatingpoint>& force,
                                      floatingpoint d) {
         
         vector<floatingpoint> movedPoint{point[0] + d * float(force[0]),
@@ -409,7 +409,7 @@ public:
 
     ///TODO
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                            totalforcefloatingpoint const *force,
+                                            floatingpoint const *force,
                                      floatingpoint d) {return 0.0;}
 
     virtual const vector<floatingpoint> normal(const vector<floatingpoint>& point) {
@@ -514,7 +514,7 @@ public:
 
 
     virtual floatingpoint stretchedDistance(const vector<floatingpoint>& point,
-                                     const vector<totalforcefloatingpoint>& force,
+                                     const vector<floatingpoint>& force,
                                      floatingpoint d) {
 
         // check z coordinate. If outside, return infinity
@@ -569,7 +569,7 @@ public:
         return 0.0;
     }
     virtual floatingpoint stretchedDistance(floatingpoint const *point,
-                                            totalforcefloatingpoint const *force, floatingpoint d) {return 0.0;};
+                                            floatingpoint const *force, floatingpoint d) {return 0.0;};
     virtual const vector<floatingpoint> normal(const floatingpoint *point) {vector<floatingpoint> a; return a;};
     virtual const void elementeqn(floatingpoint* var){cout<<" element eqn not implemented for "
                 "CylindricalXYZ. Exiting."<<endl;
