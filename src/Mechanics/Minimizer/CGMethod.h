@@ -57,7 +57,7 @@ protected:
     //@{
     /// Parameter used in backtracking line search
     const floatingpoint LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
-    const floatingpoint LAMBDATOL = 1e-4;       ///< Lambda tolerance parameter
+    floatingpoint LAMBDATOL = 1e-4;       ///< Lambda tolerance parameter
     
     const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
     
@@ -170,8 +170,27 @@ protected:
     ///@note - The most robust linesearch method, but very slow
 
     floatingpoint safeBacktrackingLineSearch(ForceFieldManager& FFM,
-    		floatingpoint MAXDIST,
-                                                              floatingpoint LAMBDAMAX, bool *gpu_safestate);
+    		floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool *gpu_safestate);
+
+    floatingpoint setLAMBDATOL(int maxF_order){
+
+        int orderdimension = 3; ///1000s of nm
+        int LAMBDATOLorder = -(6-orderdimension) - maxF_order;
+        LAMBDATOL = 1;
+        if(LAMBDATOLorder > 0){
+            for(int i =0; i < LAMBDATOLorder; i ++)
+                LAMBDATOL *= 10;
+        }
+        else{
+            for(int i =0; i > LAMBDATOLorder; i --)
+                LAMBDATOL *= 0.1;
+        }
+
+        LAMBDATOL = max<floatingpoint>(1e-8, LAMBDATOL);
+        LAMBDATOL = min<floatingpoint>(1e-1, LAMBDATOL);
+
+        cout<<"maxF order "<<maxF_order<<" lambdatol "<<LAMBDATOL<<endl;
+    }
 
     //@}
     

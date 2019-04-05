@@ -236,6 +236,9 @@ floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, float
             if (fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                 || U_i != U_i || U_i < -1.0) {
 
+                cout<<"infinite boundary"<<endl;
+                cout<<"U_i "<<U_i<<" krep "<<krep[Cumnc + ic]<<" R "<<R<<endl;
+
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
                 ///TODO
@@ -279,6 +282,8 @@ floatingpoint BoundaryCylinderRepulsionExpIn::energy(floatingpoint *coord, float
 
             if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
+                cout<<"infinite boundary z"<<endl;
+                cout<<"U_i "<<U_i<<" krep "<<krep[Cumnc + ic]<<" R "<<R<<endl;
 
                 //set culprit and return
                 BoundaryInteractions::_boundaryElementCulprit = be;
@@ -319,12 +324,12 @@ void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint 
 
             R = -r / slen[Cumnc + ic] + 100/slen[Cumnc + ic];
             f0 = krep[Cumnc + ic] * exp(R)/ slen[Cumnc + ic];
-            if(isnan(f0)||isinf(f0)||isnan(norm[0])||isinf(norm[0])||isnan(norm[1])
+/*            if(isnan(f0)||isinf(f0)||isnan(norm[0])||isinf(norm[0])||isnan(norm[1])
             ||isinf(norm[1])||isnan(norm[2])||isinf(norm[2])){
                 cout<<"Culprit is BoundaryCylinderRepulsionExpIn"<<endl;
                 cout<<"Forces "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" f0 "
                 <<f0<<" norm "<<norm[0]<<" "<<norm[1]<<" "<<norm[2]<<endl;
-            }
+            }*/
             force1[0] += f0 *norm[0];
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];

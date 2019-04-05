@@ -197,7 +197,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
                 return numeric_limits<floatingpoint>::infinity();
             }
                 //if this is a minimization try, just return infinity
-            else {cout<<"Returning infintie energy "<<ff->getName()<<endl;
+            else {cout<<"Returning infintie energy "<<ff->getName()<<" d "<<d<<endl;
                 return numeric_limits<floatingpoint>::infinity();}
         }
         else energy += tempEnergy;
@@ -330,11 +330,11 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
     for (auto &ff : _forceFields) {
         ff->computeForces(coord, f);
-        for(int i=0;i<CGMethod::N;i++){
+/*        for(int i=0;i<CGMethod::N;i++){
             if(isnan(f[i])||isinf(f[i])){
                 cout<<"Culprit ForceField "<<ff->getName()<<endl;
             }
-        }
+        }*/
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif

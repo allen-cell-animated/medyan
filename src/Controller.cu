@@ -742,7 +742,7 @@ void Controller::updateNeighborLists() {
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
-	cout<<"updated NeighborLists"<<endl;
+//	cout<<"updated NeighborLists"<<endl;
     mine = chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
     nl2time += elapsed_runnl2.count();
@@ -1074,7 +1074,7 @@ void Controller::run() {
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
-                cout<<"Position updated"<<endl;
+//                cout<<"Position updated"<<endl;
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
@@ -1100,7 +1100,7 @@ void Controller::run() {
             mins = chrono::high_resolution_clock::now();
 #ifdef DYNAMICRATES
             updateReactionRates();
-            cout<<"updated Reaction Rates"<<endl;
+//            cout<<"updated Reaction Rates"<<endl;
 #endif
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);

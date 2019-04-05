@@ -327,10 +327,11 @@ void CylinderExclVolRepulsion::checkforculprit() {
 
 #endif
 floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoint *force, int *beadSet, floatingpoint *krep) {
-    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare;
+    floatingpoint *c1, *c2, *c3, *c4, *newc2, d;
 
-    floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-    floatingpoint ATG1, ATG2, ATG3, ATG4;
+    doubleprecision invDSquare;
+	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+	doubleprecision ATG1, ATG2, ATG3, ATG4;
 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
@@ -359,6 +360,10 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 //            std::cout<<i<<" "<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
+
+	            cout<<"infinite energy d = 0"<<endl;
+
+	            cout<<"U_i "<<U_i<<" d "<<d<<endl;
 
                 //set culprit and return TODO
                 return -1.0;
@@ -405,13 +410,25 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
 
         U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
-//        std::cout<<i<<" "<<U_i<<endl;
+//        cout<<"Energy "<< i <<" "<<U_i<<endl;
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
 
            || U_i != U_i || U_i < -1.0) {
+        	/*cout<<"infinite energy d=0"<<endl;
 
-            //set culprit and return TODO
+        	cout<<"U_i "<<U_i<<" a-f "<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<" krep "
+			<<krep[i]<<endl;
+        	cout<<AA<<" "<<BB<<" "<<CC<<" "<<DD<<" "<<EE<<" "<<FF<<" "<<GG<<" "<<HH<<" "
+        	<<JJ<<" "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
+
+        	cout<<"parts energy "<<0.5 * krep[i]/ JJ<<" "<<CC/AA*ATG1<<" "<<GG/EE*ATG2<<" "<<
+        	DD/BB*ATG3<<" "<<HH/FF*ATG4<<endl;
+        	cout<<"Coord "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<
+	        " "<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;*/
+
+
+	        //set culprit and return TODO
 
             return -1;
         }
@@ -428,10 +445,11 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
                                         floatingpoint *krep, floatingpoint z) {
 
 
-    floatingpoint d, invDSquare;
+    floatingpoint d;
+	doubleprecision invDSquare;
     floatingpoint *f1, *f2, *f3, *f4;
-    floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
-    floatingpoint ATG1, ATG2, ATG3, ATG4;
+	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ;
+	doubleprecision ATG1, ATG2, ATG3, ATG4;
     floatingpoint *c1us, *c2us, *c3us, *c4us;
     floatingpoint *c1 = new floatingpoint[3];//stretched
     floatingpoint *c2 = new floatingpoint[3];
@@ -499,8 +517,14 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
 //            std::cout<<"P Energy"<<U_i<<endl;
             if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
                || U_i != U_i || U_i < -1.0) {
+	           /* cout<<"infinite energy z"<<endl;
 
-                //set culprit and return TODO
+	            cout<<"U_i "<<U_i<<" d "<<d<<endl;
+
+	            cout<<"Coord "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<
+	                " "<<c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
+*/
+	            //set culprit and return TODO
                 return -1;
             }
             U += U_i;
@@ -513,7 +537,7 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
             c2 = newc2;
-            std::cout<<"move"<<endl;
+//            std::cout<<"move"<<endl;
 //            std::cout<<i<<" 2.0 "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<c3[0]<<" "
 //                    ""<<c3[1]<<" "
 //                             ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<" "<<U_i<<endl;
@@ -548,19 +572,24 @@ floatingpoint CylinderExclVolRepulsion::energy(floatingpoint *coord, floatingpoi
         ATG4 = atan((d + F)/FF) - atan((d + F - b)/FF);
 
         U_i = 0.5 * krep[i]/ JJ * ( CC/AA*ATG1 + GG/EE*ATG2 + DD/BB*ATG3 + HH/FF*ATG4);
+
 //        std::cout<<"N energy "<<U_i<<endl;
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
             //set culprit and return TODO
+	        /*cout<<"infinite energy 0"<<endl;
 
-            return -1.0;
+	        cout<<"U_i "<<U_i<<" a-f "<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<" krep "
+	            <<krep[i]<<endl;*/
+
+	        return -1.0;
         }
-//        std::cout<<i<<" "<<U_i<<" "<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<" "<<AA<<" "<<BB<<" "<<CC<<" "<<DD<<" "
-//                ""<<EE<<" "
-//                ""<<FF<<""
-//                " "<<GG<<" "<<HH<<" "<<JJ<<" "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
-//        std::cout<<U_i<<endl;
+/*        std::cout<<i<<" "<<U_i<<" "<<a<<" "<<b<<" "<<c<<" "<<d<<" "<<e<<" "<<F<<" "<<AA<<" "<<BB<<" "<<CC<<" "<<DD<<" "
+                ""<<EE<<" "
+                ""<<FF<<""
+                " "<<GG<<" "<<HH<<" "<<JJ<<" "<<ATG1<<" "<<ATG2<<" "<<ATG3<<" "<<ATG4<<endl;
+        std::cout<<"Energy "<<U_i<<endl;*/
         U += U_i;
     }
 //    std::cout<<"Total energy serial "<<U<<endl;
@@ -583,12 +612,13 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 //    start = clock();
 
 //    cout.precision(dbl::max_digits10); //TODO remove precision.
-    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, invDSquare, U;
+    floatingpoint *c1, *c2, *c3, *c4, *newc2, d, U;
     floatingpoint *f1, *f2, *f3, *f4;
-    floatingpoint a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
-    floatingpoint ATG1, ATG2, ATG3, ATG4;
-    floatingpoint A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
-    floatingpoint E11, E12, E13, E14, B11, B12, B13, B14, F11, F12, F13, F14;
+	doubleprecision invDSquare;
+	doubleprecision a, b, c, e, F, AA, BB, CC, DD, EE, FF, GG, HH, JJ, invJJ;
+	doubleprecision ATG1, ATG2, ATG3, ATG4;
+	doubleprecision A1, A2, E1, E2, B1, B2, F1, F2, A11, A12, A13, A14;
+	doubleprecision E11, E12, E13, E14, B11, B12, B13, B14, F11, F12, F13, F14;
 
     int nint = CylinderExclVolume<CylinderExclVolRepulsion>::numInteractions;
     int n = CylinderExclVolume<CylinderExclVolRepulsion>::n;
@@ -611,10 +641,10 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
         f3 = &f[3 * beadSet[n * i + 2]];
         f4 = &f[3 * beadSet[n * i + 3]];
 
-//    std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
-//         c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
-//         c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
-//         c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;
+/*    std::cout<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<
+         c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<
+         c3[0]<<" "<<c3[1]<<" "<<c3[2]<<" "<<
+         c4[0]<<" "<<c4[1]<<" "<<c4[2]<<endl;*/
         //check if parallel
         if(areParallel(c1, c2, c3, c4)) {
 
@@ -639,6 +669,11 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
             f4[0] += f0 * (c4[0] - c2[0]);
             f4[1] += f0 * (c4[1] - c2[1]);
             f4[2] += f0 * (c4[2] - c2[2]);
+
+/*            std::cout<<"P "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<
+                     f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<
+                     f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<
+                     f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;*/
 #ifdef DETAILEDOUTPUT
             std::cout<<"P "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<
                             f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<
@@ -737,10 +772,10 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
               (ATG4*HH)/(FF*FF);
         F13 = -((F1*HH)/(FF*FF)) + (F2*HH)/(FF*FF);
         F14 = (F1*HH)/(FF*FF);
-//        std::cout<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<" "
-//                ""<<A11<<" "<<A12<<" "<<A13<<" "<<A14<<" "<<E11<<" "<<E12<<" "<<E13<<" "
-//                         ""<<E14<<" "<<B11<<" "<<B12<<" "<<B13<<" "<<B14<<" "<<F11<<" "<<F12<<" "
-//                         ""<<F13<<" "<<F14<<endl;
+        /*std::cout<<A1<<" "<<A2<<" "<<E1<<" "<<E2<<" "<<B1<<" "<<B2<<" "<<F1<<" "<<F2<<" "
+                ""<<A11<<" "<<A12<<" "<<A13<<" "<<A14<<" "<<E11<<" "<<E12<<" "<<E13<<" "
+                         ""<<E14<<" "<<B11<<" "<<B12<<" "<<B13<<" "<<B14<<" "<<F11<<" "<<F12<<" "
+                         ""<<F13<<" "<<F14<<endl;*/
         f1[0] +=  - 0.5*invJJ*( (c2[0] - c1[0] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[0] - c3[0] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[0] - c3[0] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
 
         f1[1] +=  - 0.5*invJJ*( (c2[1] - c1[1] ) *( A13 + E13 + B11*b - F11*b + A11*d - E11*d - 2*U*b*e - (A12*e)/AA + (E12*(d - e))/EE + 2*U*d*F - 2*U*(b*e - d*F) + (F12*b)/FF - 2*(A14 + E14 - E11*b - F11*b + 2*U*b*c + (A12*c)/(2*AA) + (E12*(b + c - 2*F))/(2*EE) - A11*F + E11*F - 2*U*F*F + (F12*b)/(2*FF)) ) + (c4[1] - c3[1] ) *(B13 + E13 - A11*a + E11*a - B11*d - 2*E11*d - F11*d + 4*U*c*d - A11*e + E11*e + 2*U*d*e - (E12*a)/EE + (E12*(d - e))/EE + B11*F - F11*F - 2*U*a*F - 4*U*e*F + 2*U*(d*e - a*F) - (B12*F)/BB) +  (c1[1] - c3[1] )* (-A13 - E13 - B11*b + F11*b - A11*d + E11*d + 2*U*b*e + (A12*e)/AA - (E12*(d - e))/EE - 2*U*d*F + 2*U*(b*e - d*F) - (F12*b)/FF + 2*(-2*U*((-a)*b + d*d) + (A12*a)/(2*AA) + (E12*a)/(2*EE) +(B12*b)/(2*BB) + (F12*b)/(2*FF))) );
@@ -807,6 +842,11 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 //                ""<<fc3[1]<<" "<<fc3[2]<<" "<<fc4[0]<<" "<<fc4[1]<<" "<<fc4[2]<<endl;
         //        " "<<ATG2<<" "
 //                <<ATG3<<" "<<ATG4<<" "<<U<<endl;
+
+/*        std::cout<<"Forces "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<
+                 f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<
+                 f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<
+                 f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;*/
 #ifdef DETAILEDOUTPUT
         std::cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<
                  f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<

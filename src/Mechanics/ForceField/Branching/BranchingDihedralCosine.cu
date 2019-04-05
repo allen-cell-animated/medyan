@@ -376,11 +376,11 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         position = pos[i];
 
-        if(isnan(position)||isinf(position)||isnan(XD)||isinf(XD)||isnan(f0)||isinf(f0)
+/*        if(isnan(position)||isinf(position)||isnan(XD)||isinf(XD)||isnan(f0)||isinf(f0)
         ||isnan(YD)||isinf(YD)){
         	cout<<"Culprit is BranchingDihedralCosine"<<endl;
         	cout<<"position "<<position<<" XD "<<XD<<" YD "<<YD<<" f0 "<<f0<<endl;
-        }
+        }*/
 
         //force on b1:
         f1[0] += f0*(- (1 - position)*XD*(1-position)*( (coord2[1] - coord1[1])*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) - (coord2[2] - coord1[2])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) ) + (1 - position)*(X1 - X2)*(1-position)*(coord2[0] - coord1[0]) - (1 - position)*Y1*(coord4[0] - coord3[0]) + (1 - position)*(D1 + D2)*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]));
@@ -414,7 +414,7 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
         f4[2] +=f0*( YD*( (coord4[0] - coord3[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord4[1] - coord3[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + Y2*(coord4[2] - coord3[2]) - D2*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
 
 
-        if(isnan(f1[0])||isinf(f1[0])||isnan(f1[1])||isinf(f1[1])||isnan(f1[2])||isinf(f1[2])
+/*        if(isnan(f1[0])||isinf(f1[0])||isnan(f1[1])||isinf(f1[1])||isnan(f1[2])||isinf(f1[2])
         ||isnan(f2[0])||isinf(f2[0])||isnan(f2[1])||isinf(f2[1])||isnan(f2[2])||isinf(f2[2])
         ||isnan(f3[0])||isinf(f3[0])||isnan(f3[1])||isinf(f3[1])||isnan(f3[2])||isinf(f3[2])
 	    ||isnan(f4[0])||isinf(f4[0])||isnan(f4[1])||isinf(f4[1])||isnan(f4[2])||isinf(f4[2])) {
@@ -426,7 +426,7 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
 	            <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
 	            <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<" "
 			        <<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
-        }
+        }*/
     }
     delete [] mp;
     delete [] n1;

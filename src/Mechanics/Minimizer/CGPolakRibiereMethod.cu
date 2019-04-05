@@ -545,6 +545,7 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     CUDAcommon::serltime.TcomputeF = 0.0;
 #endif
 std::cout<<"----------------------------------------"<<endl;
+
     std::cout<<"maxF "<<maxF()<<endl;
 #ifdef SERIAL
     while (/* Iteration criterion */  numIter < N &&
@@ -553,6 +554,11 @@ std::cout<<"----------------------------------------"<<endl;
 //        chrono::high_resolution_clock::time_point tbeginiter, tenditer;
 //        tbeginiter = chrono::high_resolution_clock::now();
 //#endif
+
+        //set the floor of lambda (lowest lambda allowed based on maxf
+        int maxForder = static_cast<int>(floor(log10(maxF())));
+        if(maxForder < 0 ) maxForder--;
+        CGMethod::setLAMBDATOL(maxForder);
 
         floatingpoint beta, newGrad, prevGrad;
 //        std::cout<<"SERL maxF "<<maxF()<<endl;
@@ -635,7 +641,7 @@ std::cout<<"----------------------------------------"<<endl;
         //Polak-Ribieri update
         beta = max<floatingpoint>((floatingpoint)0.0, (newGrad - prevGrad) /
         curGrad);
-//        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
+        cout<<"lambda "<<lambda<<" beta "<<beta<<endl;
         if(Ms_isminimizationstate)
             //shift gradient
             shiftGradient(beta);
@@ -690,7 +696,7 @@ std::cout<<"----------------------------------------"<<endl;
 #endif
         curGrad = newGrad;
         auto maxForce = maxF();
-//        cout<<"maxForce "<<maxForce<<endl;
+        cout<<"maxForce "<<maxForce<<endl;
         Ms_isminimizationstate = maxForce > GRADTOL;
 #ifdef CUDATIMETRACK
         tend = chrono::high_resolution_clock::now();
@@ -716,237 +722,6 @@ std::cout<<"----------------------------------------"<<endl;
     std::cout<<"Slice time "<<elapsed_runslice2.count()<<endl;
     tbeginII = chrono::high_resolution_clock::now();
 #endif
-//    while (/* Iteration criterion */  numIter < N &&
-//           /* Gradient tolerance  */  (Ms_isminimizationstate ||
-//           Mc_isminimizationstate[0])) {
-//#ifdef CUDAACCL
-//#ifdef ALLSYNC
-//    cudaDeviceSynchronize();
-//#endif
-////PING PONG SWAP
-////        CUDAcommon::handleerror(cudaStreamWaitEvent(*Msp2, *Mep1, 0));
-//        CUDAcommon::handleerror(cudaStreamSynchronize(*Msp1));
-//        CUDAcommon::handleerror(cudaStreamSynchronize(stream_shiftsafe));
-//        Msps = Msp1;
-//        Msp1 = Msp2;
-//        Msp2 = Msps;
-//        Meps = Mep1;
-//        Mep1 = Mep2;
-//        Mep2 = Meps;
-//        Mmg_ss = Mmg_s1;
-//        Mmg_s1 = Mmg_s2;
-//        Mmg_s2 = Mmg_ss;
-//        Msg_ss = Msg_s1;
-//        Msg_s1 = Msg_s2;
-//        Msg_s2 = Msg_ss;
-//#endif
-//#ifdef SERIAL
-//        floatingpoint beta, newGrad, prevGrad;
-//        std::cout<<"SERL maxF "<<maxF()<<endl;
-//#endif
-////PING ENDS
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//        numIter++;
-//#if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_LAMBDA)
-//        std::cout<<"SL safestate "<<_safeMode<<endl;
-//#endif
-//#ifdef CUDAACCL
-//        if(Mc_issafestate[0]) {
-//            _safeMode = false;
-//        }
-////        CUDAcommon::handleerror(cudaStreamSynchronize(*Msp2));//make sure previous iteration is done.
-//        //find lambda by line search, move beads
-//        lambda = backtrackingLineSearchCUDA(FFM, MAXDIST, LAMBDAMAX, Msg_s1);
-//#endif
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//#ifdef SERIAL
-//        bool *dummy;
-//        lambda = _safeMode ? safeBacktrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy)
-//                           : backtrackingLineSearch(FFM, MAXDIST, LAMBDAMAX, dummy);
-//#endif
-//#ifdef SERIAL_CUDACROSSCHECK
-//
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
-//        floatingpoint cuda_lambda[1];
-//        CUDAcommon::handleerror(cudaMemcpy(cuda_lambda, CUDAcommon::cudavars.gpu_lambda,  sizeof(floatingpoint),
-//                                           cudaMemcpyDeviceToHost));
-//        std::cout<<"Lambda CUDA "<<cuda_lambda[0]<<" SERL "<<lambda<<endl;
-//#endif
-//#ifdef CUDAACCL
-//        CUDAmoveBeads(*Msp1, Mmg_s1);
-////        CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));//This seems unnecessary.
-//        //wait for movebeads to finish before calculating forces1
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//        CUDAcommon::handleerror(cudaStreamSynchronize(*Msp1));
-//#endif
-//#ifdef SERIAL
-//        if(Ms_isminimizationstate)
-//            //SERIAL VERSION
-//            moveBeads(lambda);
-//#endif
-//#if defined(CROSSCHECK) || defined(CUDAACCL)
-//        cross_checkclass::Aux=true;
-//#endif
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//#ifdef CUDAACCL
-//        cvars = CUDAcommon::getCUDAvars();
-//        cvars.streamvec.clear();
-//        CUDAcommon::cudavars = cvars;
-//        CUDAcommon::handleerror(cudaStreamSynchronize(stream_dotcopy));
-//#endif
-//        //compute new forces
-//        FFM.computeForces(coord, forceAux);//split and synchronize
-//#ifdef DETAILEDOUTPUT
-//        std::cout<<"MB printing beads & forces L "<<lambda<<endl;
-//        long i = 0;
-//        long index = 0;
-//        for(auto b:Bead::getBeads()){
-//            index = 3 * b->_dbIndex;
-//
-//            std::cout<<b->getID()<<" "<<coord[index]<<" "<<coord[index + 1]<<" "
-//                    ""<<coord[index + 2]<<" "
-//                    ""<<forceAux[index]<<" "
-//                    ""<<forceAux[index + 1]<<" "<<forceAux[index + 2]<<" "<<3 *
-//                    b->_dbIndex<<endl;
-//        }
-//        std::cout<<"MB printed beads & forces"<<endl;
-//#endif
-//#ifdef  CUDAACCL
-//#ifdef CUDATIMETRACK
-//        chrono::high_resolution_clock::time_point tbegin, tend;
-//        tbegin = chrono::high_resolution_clock::now();
-//#endif
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//        //wait for forces to be calculated
-//        for(auto strm:CUDAcommon::getCUDAvars().streamvec)
-//            CUDAcommon::handleerror(cudaStreamSynchronize(*strm));
-//#ifdef CUDATIMETRACK
-//        tend= chrono::high_resolution_clock::now();
-//        chrono::duration<floatingpoint> elapsed_run(tend - tbegin);
-//        CUDAcommon::cudatime.TveccomputeF.push_back(elapsed_run.count());
-//        CUDAcommon::cudatime.TcomputeF += elapsed_run.count();
-//#endif
-//#ifdef CUDATIMETRACK
-//        std::cout<<"Time total computeForces (s) CUDA "<<CUDAcommon::cudatime
-//                .TcomputeF<<" SERL "<<CUDAcommon::serltime.TcomputeF<<" factor "
-//                         ""<<CUDAcommon::serltime.TcomputeF/CUDAcommon::cudatime
-//                .TcomputeF<<endl;
-//        std::cout<<"Time split computeForces (s) CUDA ";
-//        for(auto x:CUDAcommon::cudatime.TveccomputeF)
-//            std::cout<<x<<" ";
-//        std::cout<<endl;
-//        std::cout<<"Time split computeForces (s) SERL ";
-//        for(auto x:CUDAcommon::serltime.TveccomputeF)
-//            std::cout<<x<<" ";
-//        std::cout<<endl;
-//#endif
-//        //compute direction CUDA
-//        CGMethod::CUDAallFADotFA(stream_dotcopy); //newGrad
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//        CGMethod::CUDAallFADotFAP(stream_dotcopy); //prevGrad
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//
-//        CUDAcommon::handleerror(cudaEventRecord(event_dot,stream_dotcopy));
-//        CUDAcommon::handleerror(cudaStreamWaitEvent(stream_shiftsafe, event_dot,0));
-////Copy forces
-//        FFM.CUDAcopyForces(stream_dotcopy, CUDAcommon::getCUDAvars().gpu_forceAuxP,CUDAcommon::getCUDAvars().gpu_forceAux);
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//        //Polak-Ribieri update beta & shift gradient
-//        CUDAshiftGradient(stream_shiftsafe, Mmg_s1);
-//#ifdef SERIAL_CUDACROSSCHECK
-//        CUDAcommon::handleerror(cudaStreamSynchronize(stream_shiftsafe));
-//#endif
-//        //@CUDA Get minimizaton state{
-////        CGMethod::CUDAgetPolakvars(true, *Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Msg_s2, Mc_isminimizationstate);
-//        CGMethod::CUDAgetPolakvars(*Msp1, gpu_GRADTOL, Mmg_s1, Mmg_s2, Mc_isminimizationstate);
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//        CUDAcommon::handleerror(cudaEventRecord(*Mep1, *Msp1));
-//        CGMethod::CUDAgetPolakvars2(stream_shiftsafe, Msg_s2);
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//#ifdef SERIAL_CUDACROSSCHECK
-//        CUDAcommon::handleerror(cudaDeviceSynchronize());
-//        std::cout<<"FMAX SERL "<<maxF()<<endl;
-//#endif
-//        CUDAshiftGradientifSafe(stream_shiftsafe, Mmg_s1, Msg_s1);
-//#ifdef ALLSYNC
-//        cudaDeviceSynchronize();
-//#endif
-//
-//        if(Mc_isminimizationstate[0]  == true){
-//            //Copy to host
-//            CUDAcommon::handleerror(cudaStreamWaitEvent(Ms3, *Mep1, 0));
-////            CUDAcommon::handleerror(cudaStreamWaitEvent(Ms4, event_safe, 0));//event_safe is not attached to any event
-//#ifdef ALLSYNC
-//            cudaDeviceSynchronize();
-//#endif
-//            cudaMemcpyAsync(Mmh_stop, Mmg_s2, sizeof(bool), cudaMemcpyDeviceToHost, Ms3);
-//#ifdef ALLSYNC
-//            cudaDeviceSynchronize();
-//#endif
-//            //TODO remove later... June 7, 2018. Removed.
-////            std::cout<<"safe state copy"<<endl;
-////            cudaMemcpyAsync(Msh_stop, Msg_s2, sizeof(bool), cudaMemcpyDeviceToHost, Ms4);
-//        }
-//#endif
-//#ifdef SERIAL
-//        //compute direction
-////        std::cout<<"serial"<<endl;
-//        newGrad = CGMethod::allFADotFA();
-//        prevGrad = CGMethod::allFADotFAP();
-//
-//        //Polak-Ribieri update
-////        std::cout<<newGrad<<" "<<prevGrad<<" "<<curGrad<<endl;
-//        beta = max(0.0, (newGrad - prevGrad) / curGrad);
-//        if(Ms_isminimizationstate)
-//            //shift gradient
-//            shiftGradient(beta);
-//#if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_BETA)
-//        std::cout<<"Shift Gradient "<<beta<<endl;
-//        CUDAcommon::handleerror(cudaDeviceSynchronize(),"CGPolakRibiereMethod.cu","CGPolakRibiereMethod.cu");
-//        std::cout<<"Beta serial "<<beta<<endl;
-//        std::cout<<"newGrad "<<newGrad<<" prevGrad "<<prevGrad<<" curGrad "<<curGrad<<endl;
-//#endif
-//        //vectorized copy
-
-////        std::cout<<"copy forces serial"<<endl;
-//        FFM.copyForces(forceAuxPrev, forceAux);
-
-//        //direction reset if not downhill, or no progress made
-
-//        Ms_issafestate = CGMethod::allFDotFA() <= 0 || areEqual(curGrad, newGrad);
-
-//        if(Ms_issafestate && Ms_isminimizationstate ) {
-//            shiftGradient(0.0);
-//            _safeMode = true;
-//            std::cout<<"Shift Gradient 0.0"<<endl;
-//        }
-//        curGrad = newGrad;
-
-//        auto maxForce = maxF();
-//        Ms_isminimizationstate = maxForce > GRADTOL;
-
-//#endif
-//    }
     if (numIter >= N) {
 #ifdef CUDAACCL
 //        FFM.CUDAcopyForces(*Msp1, CUDAcommon::getCUDAvars().gpu_forceAux,CUDAcommon::getCUDAvars().gpu_force);
