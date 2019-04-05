@@ -1,4 +1,5 @@
 #include <cstddef> // size_t
+#include <vector>
 
 #include "catch2/catch.hpp"
 
@@ -73,6 +74,14 @@ TEST_CASE("Vec tests", "[Vec]") {
         auto res2 = dot(v4d_1, v4d_2);
         CHECK(res2 == Approx(20.0));
     }
+
+    SECTION("Factory functions") {
+        std::vector< double > source {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
+        auto res = makeVec<3>(&source[1]);
+        CHECK(res[0] == Approx(1.0));
+        CHECK(res[1] == Approx(2.0));
+        CHECK(res[2] == Approx(3.0));
+    }
 }
 
 TEST_CASE("VecArray tests", "[VecArray]") {
@@ -144,6 +153,28 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         CHECK(v4d_3[1] == Approx(-0.8));
         CHECK(v4d_3[2] == Approx(-0.7));
         CHECK(v4d_3[3] == Approx(-0.6));
+    }
+
+    SECTION("Conversion and assignment of RefVec") {
+        // Using conversion from RefVec to Vec
+        Vec< 3, float > v3f_2_copy = v3f[2];
+        CHECK(v3f_2_copy[0] == 2.0f); // Check copy is successful
+
+        v3f_2_copy[0] = 2.1f;
+        CHECK(v3f[2][0] == Approx(2.0f)); // Should not change original value
+
+        // Using copy assignment operator from Vec to RefVec
+        Vec< 3, float > v3f_2_another_copy;
+        v3f_2_another_copy = v3f[2];
+        CHECK(v3f_2_another_copy[0] == Approx(2.0f)); // Check copy is successful
+
+        v3f_2_another_copy[0] = 2.1f;
+        CHECK(v3f[2][0] == Approx(2.0f)); // Should not change original value
+
+        // Copy assignment operator between RefVecs
+        v3f[3] = v3f[2];
+        CHECK(v3f[3][0] == 2.0f); // Check copy is successful
+
     }
 
     SECTION("Iterator usage") {
