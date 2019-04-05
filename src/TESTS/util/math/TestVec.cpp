@@ -155,21 +155,25 @@ TEST_CASE("VecArray tests", "[VecArray]") {
         CHECK(v4d_3[3] == Approx(-0.6));
     }
 
-    SECTION("Conversion of RefVec to normal Vec") {
-        // Using conversion operator
+    SECTION("Conversion and assignment of RefVec") {
+        // Using conversion from RefVec to Vec
         Vec< 3, float > v3f_2_copy = v3f[2];
         CHECK(v3f_2_copy[0] == 2.0f); // Check copy is successful
 
         v3f_2_copy[0] = 2.1f;
         CHECK(v3f[2][0] == Approx(2.0f)); // Should not change original value
 
-        // Using copy assignment operator
+        // Using copy assignment operator from Vec to RefVec
         Vec< 3, float > v3f_2_another_copy;
         v3f_2_another_copy = v3f[2];
         CHECK(v3f_2_another_copy[0] == Approx(2.0f)); // Check copy is successful
 
         v3f_2_another_copy[0] = 2.1f;
         CHECK(v3f[2][0] == Approx(2.0f)); // Should not change original value
+
+        // Copy assignment operator between RefVecs
+        v3f[3] = v3f[2];
+        CHECK(v3f[3][0] == 2.0f); // Check copy is successful
 
     }
 
