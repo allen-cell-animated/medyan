@@ -173,7 +173,7 @@ TEST_CASE("VecArray tests", "[VecArray]") {
 
         // Copy assignment operator between RefVecs
         v3f[3] = v3f[2];
-        CHECK(v3f[3][0] == 2.0f); // Check copy is successful
+        CHECK(v3f[3][0] == Approx(2.0f)); // Check copy is successful
 
     }
 
