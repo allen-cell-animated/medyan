@@ -1324,7 +1324,8 @@ double CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, double MAXDI
     }
 }
 
-double* CGMethod::getCoords(){
+/*
+ double* CGMethod::getCoords(){
     //COPY BEAD DATA
     N = 3 * Bead::getBeads().size();
     //    std::cout<<3 * Bead::getBeads().size()<<endl;
@@ -1356,3 +1357,4 @@ double* CGMethod::getCoords(){
     
 
 }
+ */

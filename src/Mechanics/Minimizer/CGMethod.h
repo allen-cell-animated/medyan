@@ -200,7 +200,7 @@ protected:
 
 public:
 
-    double* getCoords();
+    //double* getCoords();
 
 
 
