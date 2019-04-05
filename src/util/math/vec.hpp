@@ -112,11 +112,11 @@ template<
     struct RefVec : RefVecBase< false, RefVec > {
         using base_type = RefVecBase< false, RefVec >;
 
-        RefVec(container_type* ptr, size_type pos) : RefVecBase< false, RefVec >{ptr, pos} {}
+        RefVec(container_type* ptr, size_type pos) : base_type{ptr, pos} {}
 
         // Copy/move constructors
-        RefVec(const RefVec &) = default;
-        RefVec(RefVec &&) = default;
+        RefVec(const RefVec& rv) : RefVec(rv.ptr, rv.pos) {}
+        RefVec(RefVec&& rv)      : RefVec(rv.ptr, rv.pos) {}
 
         template< typename VecType, std::enable_if_t< dim == VecType::vec_size > * = nullptr >
         RefVec& operator=(const VecType& v) {
@@ -132,14 +132,14 @@ template<
     struct ConstRefVec : RefVecBase< true, ConstRefVec > {
         using base_type = RefVecBase< true, ConstRefVec >;
 
-        ConstRefVec(const container_type* ptr, size_type pos) : RefVecBase< true, ConstRefVec >{ptr, pos} {}
+        ConstRefVec(const container_type* ptr, size_type pos) : base_type{ptr, pos} {}
 
         ConstRefVec(const RefVec& rv) : ConstRefVec(rv.ptr, rv.pos) {}
         ConstRefVec(RefVec&& rv)      : ConstRefVec(rv.ptr, rv.pos) {}
 
         // Copy/move constructors
-        ConstRefVec(const ConstRefVec &) = default;
-        ConstRefVec(ConstRefVec &&) = default;
+        ConstRefVec(const ConstRefVec& crv) : ConstRefVec(crv.ptr, crv.pos) {}
+        ConstRefVec(ConstRefVec&& crv)      : ConstRefVec(crv.ptr, crv.pos) {}
     };
 
     template< bool is_const > class VecIterator {
