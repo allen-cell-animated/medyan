@@ -735,6 +735,29 @@ public:
 
     };
 
+    // Insert a new vertex, without any connection
+    struct NewVertexInsertion {
+
+        // Returns the index of the inserted vertex
+        template< typename InsertionMethod, typename AttributeSetter >
+        auto operator()(SurfaceTriangularMesh& mesh, InsertionMethod&& im, AttributeSetter&& as) const {
+            const size_t vi = mesh._newVertex(std::forward<InsertionMethod>(im));
+            mesh._vertices[vi].degree = 0;
+
+            as(mesh, vi);
+
+            return vi;
+        }
+
+        template< typename InsertionMethod >
+        auto operator()(SurfaceTriangularMesh& mesh, InsertionMethod&& im) const {
+            return this->operator()(mesh, std::forward<InsertionMethod>(im), [](
+                SurfaceTriangularMesh& mesh,
+                size_t vi
+            ) {});
+        }
+    }; // End of struct NewVertexInsertion
+
     // Patch a new triangle
     struct NewTrianglePatch {
         static constexpr int deltaNumVertex = 0;
@@ -789,6 +812,8 @@ public:
 
             // Update attributes of affected elements
             as(mesh, ti, vi, newHalfEdges);
+
+            return newHalfEdges;
 
         }
 
