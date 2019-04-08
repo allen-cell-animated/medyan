@@ -774,8 +774,8 @@ public:
         auto operator()(
             SurfaceTriangularMesh& mesh,
             const std::array< size_t, 3 >& vi,
-            const std::array< bool,   3 >& existOppositeHalfEdge; // indexed by (20, 01, 12)
-            const std::array< size_t, 3 >& oppositeHalfEdge; // opposite half edge index if exists
+            const std::array< bool,   3 >& existOppositeHalfEdge, // indexed by (20, 01, 12)
+            const std::array< size_t, 3 >& oppositeHalfEdge, // opposite half edge index if exists
             AttributeSetter&& as
         ) const {
             auto& edges = mesh._edges;
@@ -787,7 +787,7 @@ public:
 
             // Add new half edges and edges, and retarget vertices
             for(size_t i = 0; i < 3; ++i) {
-                newHalfEdges[i] = _newHalfEdge();
+                newHalfEdges[i] = mesh._newHalfEdge();
 
                 halfEdges[newHalfEdges[i]].targetVertexIndex = vi[i];
                 vertices[vi[i]].halfEdgeIndex = newHalfEdges[i];
@@ -797,7 +797,7 @@ public:
                     const size_t ei = halfEdges[hei_o].edgeIndex;
                     mesh._registerEdge(ei, hei_o, newHalfEdges[i]);
                 } else {
-                    const size_t ei = _newEdge();
+                    const size_t ei = mesh._newEdge();
                     mesh._registerEdgeSingle(ei, newHalfEdges[i]);
 
                     // update vertex degrees
@@ -807,7 +807,7 @@ public:
             }
 
             // Add new triangle
-            const size_t ti = _newTriangle();
+            const size_t ti = mesh._newTriangle();
             mesh._registerTriangle(ti, newHalfEdges[0], newHalfEdges[1], newHalfEdges[2]);
 
             // Update attributes of affected elements
@@ -820,8 +820,8 @@ public:
         auto operator()(
             SurfaceTriangularMesh& mesh,
             const std::array< size_t, 3 >& vi,
-            const std::array< bool,   3 >& existOppositeHalfEdge; // indexed by (20, 01, 12)
-            const std::array< size_t, 3 >& oppositeHalfEdge; // opposite half edge index if exists
+            const std::array< bool,   3 >& existOppositeHalfEdge, // indexed by (20, 01, 12)
+            const std::array< size_t, 3 >& oppositeHalfEdge // opposite half edge index if exists
         ) const {
             return this->operator()(mesh, vi, existOppositeHalfEdge, oppositeHalfEdge, [](
                 SurfaceTriangularMesh& mesh,
