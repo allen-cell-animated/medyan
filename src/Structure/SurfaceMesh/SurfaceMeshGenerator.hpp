@@ -19,6 +19,10 @@ public:
         std::size_t vertexIdxInMesh;
         bool hasIntersection = false;
     };
+    struct TetraEdgeIndex {
+        std::size_t edgeIndex;
+        bool flipped;
+    };
 
     struct TetraFaceData {
         std::size_t firstHalfEdgeIdxInMesh;
@@ -54,17 +58,34 @@ public:
         for(size_t nx = 0; nx < _numCuboids[0]; ++nx)
             for(size_t ny = 0; ny < _numCuboids[1]; ++ny)
                 for(size_t nz = 0; nz < _numCuboids[2]; ++nz)
-                    ;
+                    for(small_size_t tetIdx = 0; tetIdx < _numTetrahedraPerCuboid; ++tetIdx)
+                        calcTetra(nx, ny, nz, tetIdx);
     }
 
     // Helper function: computing intersection for a tetrahedron
-    void calcTetra(std::size_t nx ny nz, small_size_t tetIdx) const {
+    void calcTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx) const {
+        using namespace std;
+
         // switch sign of 4 switches and decide which procedure to follow (0.0 count as positive)
         // all pos / neg: nothing
         // one pos: gen triangle pointing pos
         // one neg: gen triangle pointing neg
         // 2 pos 2 neg: gen 2 triangles
-        get_vtx_idx from (nx ny nz and tetIdx);
+
+        const array< size_t, 4 > vertexIndices {
+            _getVertexIdxInTetra(nx, ny, nz, tetIdx, 0),
+            _getVertexIdxInTetra(nx, ny, nz, tetIdx, 1),
+            _getVertexIdxInTetra(nx, ny, nz, tetIdx, 2),
+            _getVertexIdxInTetra(nx, ny, nz, tetIdx, 3)
+        };
+        const array< TetraEdgeIndex, 6 > edgeIndices {
+            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 0),
+            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 1),
+            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 2),
+            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 3),
+            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 4),
+            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 5),
+        };
         get face index from (nx ny nz and tetIdx);
 
         small_size_t cond = 0; // 0b x x x x <-- each bit is 1 if sign is pos, 0 if sign is neg
@@ -131,8 +152,11 @@ private:
     // Real index in cuboid = 0bxyz(direction) - 1
     static constexpr small_size_t _tetraEdgeLocalIndex[6][6] {
         0b0000100, 0b0000110, 0b0000111, 0b1000010, 0b1000011, 0b1100001,
-        0b0000110, 0b0000010, 0b0000111, 0b1101001, 0b1100001, 0b0100101,
-        // TODO
+        0b0000110, 0b0000010, 0b0000111, 0b1101100, 0b1100001, 0b0100101,
+        0b0000010, 0b0000011, 0b0000111, 0b0100001, 0b0100101, 0b0110100,
+        0b0000011, 0b0000001, 0b0000111, 0b0111010, 0b0110100, 0b0010110,
+        0b0000001, 0b0000101, 0b0000111, 0b0010100, 0b0010110, 0b1010010,
+        0b0000101, 0b0000100, 0b0000111, 0b1011001, 0b1010010, 0b1000011
     };
     // Local face index [local tetra idx (6)][face idx (4)]
     // Value:    0b    xyz
@@ -159,6 +183,14 @@ private:
         res *= _numCuboids[1] + 1; res += nz;
         return res;
     }
+    auto _getVertexIdxInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t vtxIdx) const {
+        const small_size_t i = _tetraVertexLocalIndex[tetIdx][vtxIdx];
+        return _getVertexIdx(
+            nx + (i >> 2) & 1,
+            ny + (i >> 1) & 1,
+            nz +  i       & 1
+        );
+    }
     auto _getCubeListSize() const {
         return _numCuboids[0] * _numCuboids[1] * _numCuboids[2];
     }
@@ -173,6 +205,20 @@ private:
     }
     auto _getEdgeIdx(std::size_t nx, std::size_t ny, std::size_t nz, std::size_t edgeIdx) const {
         return _numTetraEdgesPerCuboid * _getCubeIdx(nx, ny, nz) + edgeIdx;
+    }
+    auto _getEdgeIdxInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t edgeIdx) const {
+        const small_size_t i = _tetraEdgeLocalIndex[tetIdx][edgeIdx];
+        const small_size_t idxInCuboid = i & 0b111 - 1;
+        const bool flipped = (i >> 3) & 1;
+        return TetraEdgeIndex {
+            _getEdgeIdx(
+                nx + (i >> 6) & 1,
+                ny + (i >> 5) & 1,
+                nz +  i       & 1,
+                idxInCuboid
+            ),
+            flipped
+        };
     }
 
     // Coordinates
