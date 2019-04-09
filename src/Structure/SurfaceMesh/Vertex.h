@@ -61,6 +61,10 @@ public:
     static const vector<Vertex*>& getVertices() {
         return _vertices.getElements();
     }
+    static size_t numVertices() {
+        return _vertices.countElements();
+    }
+
     /// Get ID
     int getId()const { return _id; }
     size_t getMembraneVertexIdx()const { return _membraneVertexIdx; }
