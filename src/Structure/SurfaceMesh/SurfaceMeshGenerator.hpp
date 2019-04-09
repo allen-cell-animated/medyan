@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Structure_SurfaceMesh_SurfaceMeshGenerator_hpp
 #define MEDYAN_Structure_SurfaceMesh_SurfaceMeshGenerator_hpp
 
+#include <algorithm> // max, min
 #include <array>
 #include <cstdint> // uint_fast8_t
 #include <vector>
@@ -20,7 +21,7 @@ public:
         bool hasIntersection = false;
     };
     struct TetraEdgeIndex {
-        std::size_t edgeIndex;
+        std::size_t edgeIndex; // index in the cuboid system
         bool flipped;
     };
 
@@ -59,12 +60,14 @@ public:
             for(size_t ny = 0; ny < _numCuboids[1]; ++ny)
                 for(size_t nz = 0; nz < _numCuboids[2]; ++nz)
                     for(small_size_t tetIdx = 0; tetIdx < _numTetrahedraPerCuboid; ++tetIdx)
-                        calcTetra(nx, ny, nz, tetIdx);
+                        calcTetra(mesh, nx, ny, nz, tetIdx);
     }
 
     // Helper function: computing intersection for a tetrahedron
-    void calcTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx) const {
+    template< typename Mesh >
+    void calcTetra(Mesh& mesh, std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx) {
         using namespace std;
+        using namespace mathfunc;
 
         // switch sign of 4 switches and decide which procedure to follow (0.0 count as positive)
         // all pos / neg: nothing
@@ -78,18 +81,38 @@ public:
             _getVertexIdxInTetra(nx, ny, nz, tetIdx, 2),
             _getVertexIdxInTetra(nx, ny, nz, tetIdx, 3)
         };
+        const array< Float, 4 > vertexValues {
+            _distValue[vertexIndices[0]],
+            _distValue[vertexIndices[1]],
+            _distValue[vertexIndices[2]],
+            _distValue[vertexIndices[3]]
+        };
+        const array< Vec< 3, Float >, 4 > vertexCoords {
+            _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 0),
+            _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 1),
+            _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 2),
+            _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 3)
+        };
         const array< TetraEdgeIndex, 6 > edgeIndices {
             _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 0),
             _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 1),
             _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 2),
             _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 3),
             _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 4),
-            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 5),
+            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 5)
         };
-        get face index from (nx ny nz and tetIdx);
+        const array< size_t, 4 > faceIndices {
+            _getFaceIdxInTetra(nx, ny, nz, tetIdx, 0),
+            _getFaceIdxInTetra(nx, ny, nz, tetIdx, 1),
+            _getFaceIdxInTetra(nx, ny, nz, tetIdx, 2),
+            _getFaceIdxInTetra(nx, ny, nz, tetIdx, 3)
+        };
 
         small_size_t cond = 0; // 0b x x x x <-- each bit is 1 if sign is pos, 0 if sign is neg
-        update cond();
+        for(small_size_t i = 0; i < 4; ++i) {
+            if(i > 0) cond << 1;
+            cond |= (vertexValues[i] >= 0.0 ? 1 : 0);
+        }
 
         switch(cond) {
         case 0b0000:
@@ -97,29 +120,72 @@ public:
             break;
 
         case 0b0001:
-            // compute position on edges
-            // compute coordinate and create new vertex (w/o edges, halfedges or triangles)
+            // intersects 03, 13, 23, triangle (03, 13, 23)
+            {
+                newIntersect(mesh, edgeIndices[2], vertexValues[0], vertexValues[3], vertexCoords[0], vertexCoords[3]);
+                newIntersect(mesh, edgeIndices[4], vertexValues[1], vertexValues[3], vertexCoords[1], vertexCoords[3]);
+                newIntersect(mesh, edgeIndices[5], vertexValues[2], vertexValues[3], vertexCoords[2], vertexCoords[3]);
+
+                sewTriangle(mesh, edgeIndices[2], edgeIndices[4], edgeIndices[5], faceIndices[1], faceIndices[2], faceIndices[0]);
+            }
+
+        // TODO
         }
     }
 
+    // Helper function: add a new intersection on edge
+    // value0 and value1 should be the sequence in tetrahedra. This function will manage the flipping.
+    // The caller must ensure that value0 and value1 are in opposite signs
+    template< typename Mesh >
+    void newIntersect(
+        Mesh& mesh,
+        const TetraEdgeIndex& idx,
+        Float value0, Float value1, const mathfunc::Vec<3, Float>& v0, const mathfunc::Vec<3, Float>& v1
+    ) {
+        struct InsertionCoordinate {
+            mathfunc::Vec< 3, Float > coord;
+            auto coordinate(Mesh& mesh, size_t vi) const { return coord; }
+        };
+
+        if(!_edgeData[idx.edgeIndex].hasIntersection) {
+            // Compute position
+            Float pos = value0 / (value0 - value1);
+            pos = std::min(1 - _minPositionShift, std::max(_minPositionShift, pos));
+            auto newCoord = v0 * pos + v1 * (1 - pos);
+
+            // Add new vertex
+            const auto vi = typename Mesh::NewVertexInsertion{} (mesh, InsertionCoordinate{ newCoord });
+
+            // Update edge data
+            _edgeData[idx.edgeIndex].position = (_edgeData[idx.edgeIndex].flipped ? pos : 1 - pos);
+            _edgeData[idx.edgeIndex].hasIntersection = true;
+            _edgeData[idx.edgeIndex].vertexIdxInMesh = vi;
+        } // else do nothing
+    }
+
     // Helper function: sewing a new triangle to the surface
+    // The tetra edges specified should be arranged so that the direction points outward.
     template< typename Mesh >
     void sewTriangle(
         Mesh& mesh,
-        std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx,
-        small_size_t e0Idx, small_size_t e1Idx, small_size_t e2Idx
+        small_size_t e0Idx, small_size_t e1Idx, small_size_t e2Idx,
+        small_size_t f0Idx, small_size_t f1Idx, small_size_t f2Idx
     ) const {
         using std::size_t;
 
-        get face idx from nx ny nz and tetIdx, e Indices
-
-        typename Mesh::NewTrianglePatch{} (
+        const auto newHalfEdgeIndices = typename Mesh::NewTrianglePatch{} (
             mesh,
-            {v??, v??, v??},
-            {_faceData[??].hasHalfEdge, _faceData[??].hasHalfEdge, _faceData[??].hasHalfEdge},
-            {_faceData[??].firstHalfEdgeIdxInMesh, _faceData[??].firstHalfEdgeIdxInMesh, _faceData[??].firstHalfEdgeIdxInMesh}
+            {_edgeData[e0Idx].vertexInMesh, _edgeData[e1Idx].vertexInMesh, _edgeData[e2Idx].vertexInMesh},
+            {_faceData[f0Idx].hasHalfEdge, _faceData[f1Idx].hasHalfEdge, _faceData[f2Idx].hasHalfEdge},
+            {_faceData[f0Idx].firstHalfEdgeIdxInMesh, _faceData[f1Idx].firstHalfEdgeIdxInMesh, _faceData[f2Idx].firstHalfEdgeIdxInMesh}
         );
-        tell "mesh" to add a new triangle: (v0, v1, v2, he0op, he0opIdx, he1op, he1opIdx, he2op, he2opIdx)
+
+        _faceData[f0Idx].hasHalfEdge = true;
+        _faceData[f1Idx].hasHalfEdge = true;
+        _faceData[f2Idx].hasHalfEdge = true;
+        _faceData[f0Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices[0];
+        _faceData[f1Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices[1];
+        _faceData[f2Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices[2];
     }
 
 private:
@@ -262,6 +328,14 @@ private:
             _boundingBoxOrigin[1] + _cuboidSize[1] * ny,
             _boundingBoxOrigin[2] + _cuboidSize[2] * nz
         };
+    }
+    auto _vertexCoordinateIdxInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t vtxIdx) const {
+        const small_size_t i = _tetraVertexLocalIndex[tetIdx][vtxIdx];
+        return _vertexCoordinate(
+            nx + (i >> 2) & 1,
+            ny + (i >> 1) & 1,
+            nz +  i       & 1
+        );
     }
 };
 
