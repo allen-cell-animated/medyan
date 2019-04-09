@@ -328,7 +328,7 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					/opt/local/include,
-					"./**",
+					"./src/**",
 					/opt/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -399,7 +399,7 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					/opt/local/include,
-					"./**",
+					"./src/**",
 					/opt/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -438,6 +438,7 @@
 					/usr/local/include,
 					"$(inherited)",
 					/opt/local/include,
+					./src,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
@@ -477,6 +478,7 @@
 					/usr/local/include,
 					"$(inherited)",
 					/opt/local/include,
+					./src,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
