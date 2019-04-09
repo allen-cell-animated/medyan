@@ -125,14 +125,27 @@ public:
 private:
     // Constants
     //-------------------------------------------------------------------------
+    // Indexing in tetrahedra:
+    //
     // The vertices of the tetrahedra are v0, v1, v2, v3, which must satisfy
     //     r01 x r12 . r23 > 0 (specifically, the cuboid volume)
     //
     // The edges in a tetrahedra are in the following order:
     //     01, 02, 03, 12, 13, 23
+    // The faces in a tetrahedra are ordered the same as the opposing vertex
+    //-------------------------------------------------------------------------
+    // Indexing in cuboid:
     //
     // Tetrahedra in a cuboid is ordered in the following order (labeled using r's):
     //     ijk, (i+j)(-i)(k+i), jki, (j+k)(-j)(i+j), kij, (k+i)(-k)(j+k)
+    //
+    // Edges in a cuboid is simply indexed by 0bxyz(edge direction) - 1
+    //
+    // Faces in a cuboid is ordered the same with tetrahedra, with faces opposing vertices
+    //     v1 (inside cuboid), v3 (on the surface)
+    // The opposing face for v0 never belongs the this cuboid, while the opposing
+    // face for v2 is the same as the opposing face of v1 in the previous tetra.
+    //-------------------------------------------------------------------------
     static constexpr small_size_t _numTetrahedraPerCuboid = 6;
     static constexpr small_size_t _numTetraFacesPerCuboid = 12; // 6 on 3 faces and 6 inside the cuboid
     static constexpr small_size_t _numTetraEdgesPerCuboid = 7; // = 0bxyz - 1
@@ -159,8 +172,16 @@ private:
         0b0000101, 0b0000100, 0b0000111, 0b1011001, 0b1010010, 0b1000011
     };
     // Local face index [local tetra idx (6)][face idx (4)]
-    // Value:    0b    xyz
-    //                 ^ cuboid position    ^ face ????
+    // Value:    0b  xyz                aaaa
+    //               ^ cuboid position  ^ face id (0000(0) - 1011(11))
+    static constexpr small_size_t _tetraFaceLocalIndex[6][4] {
+        0b1000101, 0b0000000, 0b0001010, 0b0000001,
+        0b0101011, 0b0000010, 0b0000000, 0b0000011,
+        0b0101001, 0b0000100, 0b0000010, 0b0000101,
+        0b0010011, 0b0000110, 0b0000100, 0b0000111,
+        0b0010001, 0b0001000, 0b0000110, 0b0001001,
+        0b1000111, 0b0001010, 0b0001000, 0b0001011
+    };
 
     // Parameters
     Float                           _minPositionShift = 1e-2; // The position will have a minimal shift from either end
@@ -214,11 +235,24 @@ private:
             _getEdgeIdx(
                 nx + (i >> 6) & 1,
                 ny + (i >> 5) & 1,
-                nz +  i       & 1,
+                nz + (i >> 4) & 1,
                 idxInCuboid
             ),
             flipped
         };
+    }
+    auto _getFaceIdx(std::size_t nx, std::size_t ny, std::size_t nz, std::size_t faceIdx) const {
+        return _numTetraFacesPerCuboid * _getCubeIdx(nx, ny, nz) + faceIdx;
+    }
+    auto _getFaceIdxInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t faceIdx) const {
+        const small_size_t i = _tetraFaceLocalIndex[tetIdx][faceIdx];
+        const small_size_t idxInCuboid = i & 0b1111;
+        return _getFaceIdx(
+            nx + (i >> 6) & 1,
+            ny + (i >> 5) & 1,
+            nz + (i >> 4) & 1,
+            idxInCuboid
+        );
     }
 
     // Coordinates
@@ -227,7 +261,7 @@ private:
             _boundingBoxOrigin[0] + _cuboidSize[0] * nx,
             _boundingBoxOrigin[1] + _cuboidSize[1] * ny,
             _boundingBoxOrigin[2] + _cuboidSize[2] * nz
-        }
+        };
     }
 };
 
@@ -238,6 +272,9 @@ MarchingTetrahedraGenerator<Float>::_tetraVertexLocalIndex[6][4];
 template< typename Float >
 constexpr typename MarchingTetrahedraGenerator<Float>::small_size_t
 MarchingTetrahedraGenerator<Float>::_tetraEdgeLocalIndex[6][6];
+template< typename Float >
+constexpr typename MarchingTetrahedraGenerator<Float>::small_size_t
+MarchingTetrahedraGenerator<Float>::_tetraFaceLocalIndex[6][4];
 
 } // namespace mesh_gen
 
