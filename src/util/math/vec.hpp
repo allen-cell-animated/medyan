@@ -354,11 +354,11 @@ inline auto& operator*=(VecType& v, Float k) {
 }
 template< typename VecType, typename Float, size_t = VecType::vec_size >
 inline auto operator/(const VecType& v, Float k) {
-    return v * (static_cast<Float>(1.0) / k);
+    return v * (static_cast< std::common_type_t<typename VecType::float_type, Float> >(1.0) / k);
 }
 template< typename VecType, typename Float, size_t = VecType::vec_size >
 inline auto& operator/=(VecType& v, Float k) {
-    return v *= (static_cast<Float>(1.0) / k);
+    return v *= (static_cast< std::common_type_t<typename VecType::float_type, Float> >(1.0) / k);
 }
 
 // dot product, cross product
