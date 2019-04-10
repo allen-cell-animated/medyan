@@ -56,6 +56,9 @@ public:
     static const vector<Vertex*>& getVertices() {
         return vertex_db_type::getElements();
     }
+    static size_t numVertices() {
+        return vertex_db_type::getElements().size();
+    }
 
     size_t getMembraneVertexIdx()const { return _membraneVertexIdx; }
 

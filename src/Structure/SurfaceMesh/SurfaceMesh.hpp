@@ -242,19 +242,19 @@ private:
         Attribute::newEdge(*this, index, op);
         return index;
     }
-    size_t _newEdge() { _newEdge([]{}); }
+    size_t _newEdge() { return _newEdge([]{}); }
     template< typename Operation > size_t _newHalfEdge(const Operation& op) {
         size_t index = _halfEdges.insert();
         Attribute::newHalfEdge(*this, index, op);
         return index;
     }
-    size_t _newHalfEdge() { _newHalfEdge([]{}); }
+    size_t _newHalfEdge() { return _newHalfEdge([]{}); }
     template< typename Operation > size_t _newTriangle(const Operation& op) {
         size_t index = _triangles.insert();
         Attribute::newTriangle(*this, index, op);
         return index;
     }
-    size_t _newTriangle() { _newTriangle([]{}); }
+    size_t _newTriangle() { return _newTriangle([]{}); }
 
     template< typename Element, std::enable_if_t<std::is_same<Element, Vertex>::value, void>* = nullptr >
     void _retargetElement(size_t from, size_t to) {
