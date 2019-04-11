@@ -423,8 +423,9 @@ CaMKIIBundlingManager::CaMKIIBundlingManager(ReactionBase* reaction,
 
 void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite) {
 
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     if(cc->getType() != _filamentType) return;
-
+    cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     bool inZone = true;
     //if we change other managers copy number
     vector<CaMKIIBundlingManager*> affectedManagers;
@@ -438,14 +439,19 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 		//_nlIndex may have to change since it is a new neighbor list
 		//now re add valid based on CCNL
 
+		//TODO need to initialize _neighborLists
+		cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << &_neighborLists <<endl;
 		for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
-
+				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 Cylinder* c = cc->getCylinder();
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << c << endl;
 
                 if(cn->getParent() == c->getParent()) continue;
                 if(cn->getType() != _filamentType) continue;
 
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 auto ccn = cn->getCCylinder();
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
                 //TODO it seems to be each binding site, from the CAMKII, by definition there is only one
                 for(auto it = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -493,11 +499,22 @@ void CaMKIIBundlingManager::addPossibleBindings(CCylinder* cc, short bindingSite
 
                                 m->_possibleBindings.emplace(t2,t1);
                             }
+            				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
                         }
+        				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
                     }
+    				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
                 }
+				cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
             }
+		cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
         }
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 
         //update affected
         for(auto m : affectedManagers) {
@@ -1351,5 +1368,5 @@ SubSystem* FilamentBindingManager::_subSystem = 0;
 
 vector<CylinderCylinderNL*> LinkerBindingManager::_neighborLists;
 vector<CylinderCylinderNL*> MotorBindingManager::_neighborLists;
-vector<CylinderCylinderNL*> CaMKIIBundlingManager::_neighborLists; //TODO fix the cype on NL
+vector<CylinderCylinderNL*> CaMKIIBundlingManager::_neighborLists; //TODO fix the type on NL
 

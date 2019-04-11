@@ -1152,6 +1152,7 @@ void ChemManager::genFilBindingReactions() {
             int managerIndex = 0;
             int linkerIndex = 0;
             int motorIndex = 0;
+            int camkiiIndex = 0;
             
             for(auto &r: _chemData.branchingReactions[filType]) {
                 
@@ -1714,7 +1715,9 @@ void ChemManager::genFilBindingReactions() {
                 //create manager
                 CaMKIIBundlingManager* bManager = new CaMKIIBundlingManager(rxn, C, camkiierInt, camkiierName, filType,rMax,rMin);
                 C->addFilamentBindingManager(bManager);
+                bManager->setNLIndex(camkiiIndex++);
                 cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+
                 bManager->setMIndex(managerIndex++);
                 cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //attach callback
@@ -2189,6 +2192,7 @@ void ChemManager::genFilBindingReactions() {
             
             LinkerBindingManager* lManager;
             MotorBindingManager* mManager;
+            CaMKIIBundlingManager* bManager; //added for CaMKII
             
             if((lManager = dynamic_cast<LinkerBindingManager*>(manager.get()))) {
                 
@@ -2209,6 +2213,17 @@ void ChemManager::genFilBindingReactions() {
                 
                 //add to subsystem and manager
                 MotorBindingManager::_neighborLists.push_back(nl);
+                _subSystem->addNeighborList(nl);
+            }
+
+            else if((bManager = dynamic_cast<CaMKIIBundlingManager*>(manager.get()))) {
+
+                auto nl =
+                new CylinderCylinderNL(bManager->getRMax() + SysParams::Geometry().cylinderSize[filType],
+                                   max(bManager->getRMin() - SysParams::Geometry().cylinderSize[filType], 0.0), true);
+
+                //add to subsystem and manager
+                CaMKIIBundlingManager::_neighborLists.push_back(nl);
                 _subSystem->addNeighborList(nl);
             }
         }
@@ -3108,7 +3123,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 
         //Check if this is the first cylinder
         if(!f->getCylinderVector().empty()) {
-            
+        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             //remove plus end from last, add to this.
             lastcc = f->getCylinderVector().back()->getCCylinder();
             CMonomer* m1 = lastcc->getCMonomer(lastcc->getSize() - 1);
@@ -3142,6 +3157,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
 #endif
             }
             else{
+            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             CMonomer* m2 = cc->getCMonomer(cc->getSize() - 1);
             m2->speciesPlusEnd(0)->up();
                 
@@ -3158,11 +3174,12 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
         }
         //this is first one
         else {
-            
+        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             //set back and front
             CMonomer* m1 = cc->getCMonomer(cc->getSize() - 1);
+            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             m1->speciesPlusEnd(0)->up();
-            
+            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             
             if(SysParams::RUNSTATE){
                 CMonomer* m2 = cc->getCMonomer(0);
@@ -3179,6 +3196,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
             }
             else {
 #ifdef MECHANICS
+            	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 //                std::cout<<c->getMCylinder()->getEqLength()<<" "<<SysParams::Geometry().cylinderNumMon[filType]<<endl;
                 int nummonomers = min((int) round(c->getMCylinder()->getEqLength()/ SysParams::Geometry().monomerSize[filType]),SysParams::Geometry().cylinderNumMon[filType]);
                 CMonomer* m1 = cc->getCMonomer(SysParams::Geometry().cylinderNumMon[filType] - nummonomers);
@@ -3191,6 +3209,7 @@ void ChemManager::initializeCCylinder(CCylinder* cc,
                         cc->getCMonomer(i)->speciesBound(j)->up();
                 }
 #else
+                cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 CMonomer* m2 = cc->getCMonomer(0);
                 m2->speciesMinusEnd(0)->up();
                 //fill with default filament value
