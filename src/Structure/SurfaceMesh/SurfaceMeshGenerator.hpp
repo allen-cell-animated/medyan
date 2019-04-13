@@ -83,12 +83,12 @@ struct TetraQuadIntersectionIndex {
     uif8 faceIndex[4]; // (e3-e0, e0-e1, e1-e2, e2-e3)
 };
 template< uif8 v00, uif8 v01, uif8 v10, uif8 v11, uif8 v20, uif8 v21, uif8 v30, uif8 v31 >
-constexpr auto getTetraTriangleIntersectionIndex() {
+constexpr auto getTetraQuadIntersectionIndex() {
     constexpr uif8 e0 = tetraEdgeIndexFromVertexIndex< v00, v01 >;
     constexpr uif8 e1 = tetraEdgeIndexFromVertexIndex< v10, v11 >;
     constexpr uif8 e2 = tetraEdgeIndexFromVertexIndex< v20, v21 >;
     constexpr uif8 e3 = tetraEdgeIndexFromVertexIndex< v30, v31 >;
-    return TetraTriangleIntersectionIndex {
+    return TetraQuadIntersectionIndex {
         { {v00, v01}, {v10, v11}, {v20, v21}, {v30, v31} },
         { e0, e1, e2, e3 },
         {
@@ -240,7 +240,7 @@ public:
 
         small_size_t cond = 0; // 0b x x x x <-- each bit is 1 if sign is pos, 0 if sign is neg
         for(small_size_t i = 0; i < 4; ++i) {
-            if(i > 0) cond << 1;
+            cond << 1;
             cond |= (vertexValues[i] >= 0.0 ? 1 : 0);
         }
 
@@ -302,12 +302,46 @@ public:
             break;
 
         case 0b0011:
-            // intersects 03, 13, 12, 02, 2 triangles
-            ????
+            // intersects 02, 03, 13, 12, 2 triangles
+            easyQuad(indexer::getTetraQuadIntersectionIndex<
+                0, 2, 0, 3, 1, 3, 1, 2
+            >());
+            break;
+        case 0b1100:
+            // intersects 12, 13, 03, 02, 2 triangles
+            easyQuad(indexer::getTetraQuadIntersectionIndex<
+                1, 2, 1, 3, 0, 3, 0, 2
+            >());
+            break;
 
-        // TODO
-        }
-    }
+        case 0b0101:
+            // intersects 01, 12, 23, 03, 2 triangles
+            easyQuad(indexer::getTetraQuadIntersectionIndex<
+                0, 1, 1, 2, 2, 3, 0, 3
+            >());
+            break;
+        case 0b1010:
+            // intersects 03, 23, 12, 01, 2 triangles
+            easyQuad(indexer::getTetraQuadIntersectionIndex<
+                0, 3, 2, 3, 1, 2, 0, 1
+            >());
+            break;
+
+        case 0b0110:
+            // intersects 01, 02, 23, 13, 2 triangles
+            easyQuad(indexer::getTetraQuadIntersectionIndex<
+                0, 1, 0, 2, 2, 3, 1, 3
+            >());
+            break;
+        case 0b1001:
+            // intersects 13, 23, 02, 01, 2 triangles
+            easyQuad(indexer::getTetraQuadIntersectionIndex<
+                1, 3, 2, 3, 0, 2, 0, 1
+            >());
+            break;
+
+        } // switch
+    } // void calcTetra(...)
 
     // Helper function: add a new intersection on edge
     // value0 and value1 should be the sequence in tetrahedra. This function will manage the flipping.
