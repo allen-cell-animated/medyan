@@ -26,35 +26,36 @@ using uif8 = std::uint_fast8_t;
 //
 // The faces in a tetrahedra are ordered the same as the opposing vertex
 //-------------------------------------------------------------------------
-constexpr uif8 tetraVertexIndexFromEdgeIndex[6][2] {
-    {0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}
-};
 
-template< uif8 v0, uif8 v1 > struct TetraEdgeIndexFromVertexIndex;
-template<> struct TetraEdgeIndexFromVertexIndex< 0, 1 > : std::integral_constant< uif8, 0 > {};
-template<> struct TetraEdgeIndexFromVertexIndex< 0, 2 > : std::integral_constant< uif8, 1 > {};
-template<> struct TetraEdgeIndexFromVertexIndex< 0, 3 > : std::integral_constant< uif8, 2 > {};
-template<> struct TetraEdgeIndexFromVertexIndex< 1, 2 > : std::integral_constant< uif8, 3 > {};
-template<> struct TetraEdgeIndexFromVertexIndex< 1, 3 > : std::integral_constant< uif8, 4 > {};
-template<> struct TetraEdgeIndexFromVertexIndex< 2, 3 > : std::integral_constant< uif8, 5 > {};
-template< uif8 v0, uif8 v1 >
-constexpr uif8 tetraEdgeIndexFromVertexIndex = TetraEdgeIndexFromVertexIndex< v0, v1 >::value;
+namespace internal {
 
-// 4 is invalid value
-constexpr uif8 tetraFaceIndexFromEdgeIndexTable[6][6] {
-    4, 3, 2, 3, 2, 4,
-    3, 4, 1, 3, 4, 1,
-    2, 1, 4, 4, 2, 1,
-    3, 3, 4, 4, 0, 0,
-    2, 4, 2, 0, 4, 0,
-    4, 1, 1, 0, 0, 4
-};
-template< uif8 e0, uif8 e1, std::enable_if_t< e0 != e1 && e0 + e1 != 5 >* = nullptr >
-constexpr uif8 getTetraFaceIndexFromEdgeIndex() {
-    return tetraFaceIndexFromEdgeIndexTable[e0][e1];
-}
-template< uif8 e0, uif8 e1 >
-constexpr uif8 tetraFaceIndexFromEdgeIndex = getTetraFaceIndexFromEdgeIndex< e0, e1 >();
+    template< uif8 v0, uif8 v1 > struct TetraEdgeIndexFromVertexIndex;
+    template<> struct TetraEdgeIndexFromVertexIndex< 0, 1 > : std::integral_constant< uif8, 0 > {};
+    template<> struct TetraEdgeIndexFromVertexIndex< 0, 2 > : std::integral_constant< uif8, 1 > {};
+    template<> struct TetraEdgeIndexFromVertexIndex< 0, 3 > : std::integral_constant< uif8, 2 > {};
+    template<> struct TetraEdgeIndexFromVertexIndex< 1, 2 > : std::integral_constant< uif8, 3 > {};
+    template<> struct TetraEdgeIndexFromVertexIndex< 1, 3 > : std::integral_constant< uif8, 4 > {};
+    template<> struct TetraEdgeIndexFromVertexIndex< 2, 3 > : std::integral_constant< uif8, 5 > {};
+    template< uif8 v0, uif8 v1 >
+    constexpr uif8 tetraEdgeIndexFromVertexIndex = TetraEdgeIndexFromVertexIndex< v0, v1 >::value;
+
+    // 4 is invalid value
+    constexpr uif8 tetraFaceIndexFromEdgeIndexTable[6][6] {
+        4, 3, 2, 3, 2, 4,
+        3, 4, 1, 3, 4, 1,
+        2, 1, 4, 4, 2, 1,
+        3, 3, 4, 4, 0, 0,
+        2, 4, 2, 0, 4, 0,
+        4, 1, 1, 0, 0, 4
+    };
+    template< uif8 e0, uif8 e1, std::enable_if_t< e0 != e1 && e0 + e1 != 5 >* = nullptr >
+    constexpr uif8 getTetraFaceIndexFromEdgeIndex() {
+        return tetraFaceIndexFromEdgeIndexTable[e0][e1];
+    }
+    template< uif8 e0, uif8 e1 >
+    constexpr uif8 tetraFaceIndexFromEdgeIndex = getTetraFaceIndexFromEdgeIndex< e0, e1 >();
+
+} // namespace internal
 
 struct TetraTriangleIntersectionIndex {
     uif8 vertexIndex[3][2];
@@ -63,16 +64,16 @@ struct TetraTriangleIntersectionIndex {
 };
 template< uif8 v00, uif8 v01, uif8 v10, uif8 v11, uif8 v20, uif8 v21 >
 constexpr auto getTetraTriangleIntersectionIndex() {
-    constexpr uif8 e0 = tetraEdgeIndexFromVertexIndex< v00, v01 >;
-    constexpr uif8 e1 = tetraEdgeIndexFromVertexIndex< v10, v11 >;
-    constexpr uif8 e2 = tetraEdgeIndexFromVertexIndex< v20, v21 >;
+    constexpr uif8 e0 = internal::tetraEdgeIndexFromVertexIndex< v00, v01 >;
+    constexpr uif8 e1 = internal::tetraEdgeIndexFromVertexIndex< v10, v11 >;
+    constexpr uif8 e2 = internal::tetraEdgeIndexFromVertexIndex< v20, v21 >;
     return TetraTriangleIntersectionIndex {
         { {v00, v01}, {v10, v11}, {v20, v21} },
         { e0, e1, e2 },
         {
-            tetraFaceIndexFromEdgeIndex< e2, e0 >,
-            tetraFaceIndexFromEdgeIndex< e0, e1 >,
-            tetraFaceIndexFromEdgeIndex< e1, e2 >
+            internal::tetraFaceIndexFromEdgeIndex< e2, e0 >,
+            internal::tetraFaceIndexFromEdgeIndex< e0, e1 >,
+            internal::tetraFaceIndexFromEdgeIndex< e1, e2 >
         }
     };
 }
@@ -84,18 +85,18 @@ struct TetraQuadIntersectionIndex {
 };
 template< uif8 v00, uif8 v01, uif8 v10, uif8 v11, uif8 v20, uif8 v21, uif8 v30, uif8 v31 >
 constexpr auto getTetraQuadIntersectionIndex() {
-    constexpr uif8 e0 = tetraEdgeIndexFromVertexIndex< v00, v01 >;
-    constexpr uif8 e1 = tetraEdgeIndexFromVertexIndex< v10, v11 >;
-    constexpr uif8 e2 = tetraEdgeIndexFromVertexIndex< v20, v21 >;
-    constexpr uif8 e3 = tetraEdgeIndexFromVertexIndex< v30, v31 >;
+    constexpr uif8 e0 = internal::tetraEdgeIndexFromVertexIndex< v00, v01 >;
+    constexpr uif8 e1 = internal::tetraEdgeIndexFromVertexIndex< v10, v11 >;
+    constexpr uif8 e2 = internal::tetraEdgeIndexFromVertexIndex< v20, v21 >;
+    constexpr uif8 e3 = internal::tetraEdgeIndexFromVertexIndex< v30, v31 >;
     return TetraQuadIntersectionIndex {
         { {v00, v01}, {v10, v11}, {v20, v21}, {v30, v31} },
         { e0, e1, e2, e3 },
         {
-            tetraFaceIndexFromEdgeIndex< e3, e0 >,
-            tetraFaceIndexFromEdgeIndex< e0, e1 >,
-            tetraFaceIndexFromEdgeIndex< e1, e2 >,
-            tetraFaceIndexFromEdgeIndex< e2, e3 >
+            internal::tetraFaceIndexFromEdgeIndex< e3, e0 >,
+            internal::tetraFaceIndexFromEdgeIndex< e0, e1 >,
+            internal::tetraFaceIndexFromEdgeIndex< e1, e2 >,
+            internal::tetraFaceIndexFromEdgeIndex< e2, e3 >
         }
     };
 }
@@ -138,14 +139,14 @@ public:
     //   - Mesh: the type of the surface meshwork (with attributes)
     //   - FieldFunc: a functor that takes a point and returns given how far it is outside the surface
     template< typename Mesh, typename FieldFunc >
-    void operator()(Mesh& mesh, FieldFunc&&) {
+    void operator()(Mesh& mesh, FieldFunc&& func) {
         using std::size_t;
 
         // Precompute phase
         for(size_t nx = 0; nx <= _numCuboids[0]; ++nx)
             for(size_t ny = 0; ny <= _numCuboids[1]; ++ny)
                 for(size_t nz = 0; nz <= _numCuboids[2]; ++nz)
-                    _distValue[_getVertexIdx(nx, ny, nz)] = FieldFunc(_vertexCoordinate(nx, ny, nz));
+                    _distValue[_getVertexIdx(nx, ny, nz)] = func(_vertexCoordinate(nx, ny, nz));
 
         // Generating triangles
         for(size_t nx = 0; nx < _numCuboids[0]; ++nx)
@@ -153,7 +154,8 @@ public:
                 for(size_t nz = 0; nz < _numCuboids[2]; ++nz)
                     for(small_size_t tetIdx = 0; tetIdx < _numTetrahedraPerCuboid; ++tetIdx)
                         calcTetra(mesh, nx, ny, nz, tetIdx);
-    }
+
+    } // void operator()(...)
 
     // Helper function: computing intersection for a tetrahedron
     template< typename Mesh >
@@ -340,7 +342,7 @@ public:
             >());
             break;
 
-        } // switch
+        } // switch(cond)
     } // void calcTetra(...)
 
     // Helper function: add a new intersection on edge
@@ -350,7 +352,8 @@ public:
     void newIntersect(
         Mesh& mesh,
         const TetraEdgeIndex& idx,
-        Float value0, Float value1, const mathfunc::Vec<3, Float>& v0, const mathfunc::Vec<3, Float>& v1
+        Float value0, Float value1,
+        const mathfunc::Vec<3, Float>& coord0, const mathfunc::Vec<3, Float>& coord1
     ) {
         struct InsertionCoordinate {
             mathfunc::Vec< 3, Float > coord;
@@ -361,7 +364,7 @@ public:
             // Compute position
             Float pos = value0 / (value0 - value1);
             pos = std::min(1 - _minPositionShift, std::max(_minPositionShift, pos));
-            auto newCoord = v0 * pos + v1 * (1 - pos);
+            auto newCoord = coord0 * pos + coord1 * (1 - pos);
 
             // Add new vertex
             const auto vi = typename Mesh::NewVertexInsertion{} (mesh, InsertionCoordinate{ newCoord });
@@ -447,19 +450,22 @@ private:
     //-------------------------------------------------------------------------
     // Indexing in cuboid:
     //
+    // Number of vertices: (nx + 1)(ny + 1)(nz + 1)
+    //
     // Tetrahedra in a cuboid is ordered in the following order (labeled using r's):
     //     ijk, (i+j)(-i)(k+i), jki, (j+k)(-j)(i+j), kij, (k+i)(-k)(j+k)
     //
     // Edges in a cuboid is simply indexed by 0bxyz(edge direction) - 1
     //
-    // Faces in a cuboid is ordered the same with tetrahedra, with faces opposing vertices
+    // Faces in a cuboid is ordered for each tetrahedron, with faces opposing
+    // vertices
     //     v1 (inside cuboid), v3 (on the surface)
-    // The opposing face for v0 never belongs the this cuboid, while the opposing
+    // The opposing face for v0 never belongs to this cuboid, while the opposing
     // face for v2 is the same as the opposing face of v1 in the previous tetra.
     //-------------------------------------------------------------------------
     static constexpr small_size_t _numTetrahedraPerCuboid = 6;
     static constexpr small_size_t _numTetraFacesPerCuboid = 12; // 6 on 3 faces and 6 inside the cuboid
-    static constexpr small_size_t _numTetraEdgesPerCuboid = 7; // = 0bxyz - 1
+    static constexpr small_size_t _numTetraEdgesPerCuboid = 7; // index = 0bxyz - 1
 
     // Local vertex index [local tetra idx (6)][vertex idx (4)]
     static constexpr small_size_t _tetraVertexLocalIndex[6][4] {
