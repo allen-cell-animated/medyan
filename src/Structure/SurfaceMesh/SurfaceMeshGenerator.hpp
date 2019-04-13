@@ -109,7 +109,6 @@ public:
     using small_size_t = std::uint_fast8_t;
 
     struct TetraEdgeData {
-        Float position; // range [0.0, 1.0), might be adjusted by minimum shift from either end
         std::size_t vertexIdxInMesh;
         bool hasIntersection = false;
     };
@@ -370,7 +369,6 @@ public:
             const auto vi = typename Mesh::NewVertexInsertion{} (mesh, InsertionCoordinate{ newCoord });
 
             // Update edge data
-            _edgeData[idx.edgeIndex].position = (idx.flipped ? pos : 1 - pos);
             _edgeData[idx.edgeIndex].hasIntersection = true;
             _edgeData[idx.edgeIndex].vertexIdxInMesh = vi;
         } // else do nothing
