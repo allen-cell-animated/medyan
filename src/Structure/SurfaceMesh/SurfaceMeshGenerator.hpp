@@ -91,7 +91,7 @@ public:
     };
     struct TetraEdgeIndex {
         std::size_t edgeIndex; // index in the cuboid system
-        bool flipped;
+        bool flipped;          // whether edge has opposite direction specified in tetra
     };
 
     struct TetraFaceData {
@@ -264,7 +264,7 @@ public:
             const auto vi = typename Mesh::NewVertexInsertion{} (mesh, InsertionCoordinate{ newCoord });
 
             // Update edge data
-            _edgeData[idx.edgeIndex].position = (_edgeData[idx.edgeIndex].flipped ? pos : 1 - pos);
+            _edgeData[idx.edgeIndex].position = (idx.flipped ? pos : 1 - pos);
             _edgeData[idx.edgeIndex].hasIntersection = true;
             _edgeData[idx.edgeIndex].vertexIdxInMesh = vi;
         } // else do nothing
