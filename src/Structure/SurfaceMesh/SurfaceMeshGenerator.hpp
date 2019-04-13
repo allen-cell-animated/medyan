@@ -77,6 +77,29 @@ constexpr auto getTetraTriangleIntersectionIndex() {
     };
 }
 
+struct TetraQuadIntersectionIndex {
+    uif8 vertexIndex[4][2];
+    uif8 edgeIndex[4];
+    uif8 faceIndex[4]; // (e3-e0, e0-e1, e1-e2, e2-e3)
+};
+template< uif8 v00, uif8 v01, uif8 v10, uif8 v11, uif8 v20, uif8 v21, uif8 v30, uif8 v31 >
+constexpr auto getTetraTriangleIntersectionIndex() {
+    constexpr uif8 e0 = tetraEdgeIndexFromVertexIndex< v00, v01 >;
+    constexpr uif8 e1 = tetraEdgeIndexFromVertexIndex< v10, v11 >;
+    constexpr uif8 e2 = tetraEdgeIndexFromVertexIndex< v20, v21 >;
+    constexpr uif8 e3 = tetraEdgeIndexFromVertexIndex< v30, v31 >;
+    return TetraTriangleIntersectionIndex {
+        { {v00, v01}, {v10, v11}, {v20, v21}, {v30, v31} },
+        { e0, e1, e2, e3 },
+        {
+            tetraFaceIndexFromEdgeIndex< e3, e0 >,
+            tetraFaceIndexFromEdgeIndex< e0, e1 >,
+            tetraFaceIndexFromEdgeIndex< e1, e2 >,
+            tetraFaceIndexFromEdgeIndex< e2, e3 >
+        }
+    };
+}
+
 } // namespace indexer
 
 template< typename Float = double >
@@ -198,6 +221,22 @@ public:
                 faceIndices[idx.faceIndex[0]], faceIndices[idx.faceIndex[1]], faceIndices[idx.faceIndex[2]]
             );
         };
+        const auto easyQuad = [&](indexer::TetraQuadIntersectionIndex idx) {
+            // Create intersections
+            easyIntersect(idx.edgeIndex[0], idx.vertexIndex[0][0], idx.vertexIndex[0][1]);
+            easyIntersect(idx.edgeIndex[1], idx.vertexIndex[1][0], idx.vertexIndex[1][1]);
+            easyIntersect(idx.edgeIndex[2], idx.vertexIndex[2][0], idx.vertexIndex[2][1]);
+            easyIntersect(idx.edgeIndex[3], idx.vertexIndex[3][0], idx.vertexIndex[3][1]);
+
+            // Create a new quad
+            sewQuad(
+                mesh,
+                edgeIndices[idx.edgeIndex[0]], edgeIndices[idx.edgeIndex[1]],
+                edgeIndices[idx.edgeIndex[2]], edgeIndices[idx.edgeIndex[3]],
+                faceIndices[idx.faceIndex[0]], faceIndices[idx.faceIndex[1]],
+                faceIndices[idx.faceIndex[2]], faceIndices[idx.faceIndex[3]]
+            );
+        };
 
         small_size_t cond = 0; // 0b x x x x <-- each bit is 1 if sign is pos, 0 if sign is neg
         for(small_size_t i = 0; i < 4; ++i) {
@@ -262,6 +301,10 @@ public:
             >());
             break;
 
+        case 0b0011:
+            // intersects 03, 13, 12, 02, 2 triangles
+            ????
+
         // TODO
         }
     }
@@ -319,6 +362,50 @@ public:
         _faceData[f0Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices[0];
         _faceData[f1Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices[1];
         _faceData[f2Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices[2];
+    }
+
+    // Helper function: sewing a (skew) quadrilateral to the surface
+    // The tetra edges specified should be arranged so that the direction points outward.
+    template< typename Mesh >
+    void sewQuad(
+        Mesh& mesh,
+        small_size_t e0Idx, small_size_t e1Idx, small_size_t e2Idx, small_size_t e3Idx,
+        small_size_t f0Idx, small_size_t f1Idx, small_size_t f2Idx, small_size_t f3Idx
+    ) const {
+        using std::size_t;
+
+        // Add triangle with vertices on edges 012 and edges 230
+        //
+        //     e3 ------- f0 ------- e0
+        //     |                   / |
+        //     |                /    |
+        //     |             /       |
+        //     f3         /          f1
+        //     |       /             |
+        //     |    /                |
+        //     | /                   |
+        //     e2 ------- f2 ------- e1
+        const auto newHalfEdgeIndices0 = typename Mesh::NewTrianglePatch{} (
+            mesh,
+            {_edgeData[e0Idx].vertexInMesh, _edgeData[e1Idx].vertexInMesh, _edgeData[e2Idx].vertexInMesh},
+            {false, _faceData[f1Idx].hasHalfEdge, _faceData[f2Idx].hasHalfEdge},
+            {0, _faceData[f1Idx].firstHalfEdgeIdxInMesh, _faceData[f2Idx].firstHalfEdgeIdxInMesh}
+        );
+        const auto newHalfEdgeIndices1 = typename Mesh::NewTrianglePatch{} (
+            mesh,
+            {_edgeData[e2Idx].vertexInMesh, _edgeData[e3Idx].vertexInMesh, _edgeData[e0Idx].vertexInMesh},
+            {true, _faceData[f3Idx].hasHalfEdge, _faceData[f0Idx].hasHalfEdge},
+            {newHalfEdgeIndices0[0], _faceData[f3Idx].firstHalfEdgeIdxInMesh, _faceData[f0Idx].firstHalfEdgeIdxInMesh}
+        );
+
+        _faceData[f0Idx].hasHalfEdge = true;
+        _faceData[f1Idx].hasHalfEdge = true;
+        _faceData[f2Idx].hasHalfEdge = true;
+        _faceData[f3Idx].hasHalfEdge = true;
+        _faceData[f0Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices1[2];
+        _faceData[f1Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices0[1];
+        _faceData[f2Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices0[2];
+        _faceData[f3Idx].firstHalfEdgeIdxInMesh = newHalfEdgeIndices1[1];
     }
 
 private:
