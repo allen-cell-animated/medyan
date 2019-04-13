@@ -4,11 +4,80 @@
 #include <algorithm> // max, min
 #include <array>
 #include <cstdint> // uint_fast8_t
+#include <type_traits> // integral_constant, enable_if
 #include <vector>
 
 #include "util/math/vec.hpp"
 
 namespace mesh_gen {
+
+namespace indexer {
+
+using uif8 = std::uint_fast8_t;
+
+//-------------------------------------------------------------------------
+// Indexing in a tetrahedron:
+//
+// The vertices of the tetrahedra are v0, v1, v2, v3, which must satisfy
+//     r01 x r12 . r23 > 0 (specifically, the cuboid volume)
+//
+// The edges in a tetrahedra are in the following order:
+//     01, 02, 03, 12, 13, 23
+//
+// The faces in a tetrahedra are ordered the same as the opposing vertex
+//-------------------------------------------------------------------------
+constexpr uif8 tetraVertexIndexFromEdgeIndex[6][2] {
+    {0, 1}, {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 3}
+};
+
+template< uif8 v0, uif8 v1 > struct TetraEdgeIndexFromVertexIndex;
+template<> struct TetraEdgeIndexFromVertexIndex< 0, 1 > : std::integral_constant< uif8, 0 > {};
+template<> struct TetraEdgeIndexFromVertexIndex< 0, 2 > : std::integral_constant< uif8, 1 > {};
+template<> struct TetraEdgeIndexFromVertexIndex< 0, 3 > : std::integral_constant< uif8, 2 > {};
+template<> struct TetraEdgeIndexFromVertexIndex< 1, 2 > : std::integral_constant< uif8, 3 > {};
+template<> struct TetraEdgeIndexFromVertexIndex< 1, 3 > : std::integral_constant< uif8, 4 > {};
+template<> struct TetraEdgeIndexFromVertexIndex< 2, 3 > : std::integral_constant< uif8, 5 > {};
+template< uif8 v0, uif8 v1 >
+constexpr uif8 tetraEdgeIndexFromVertexIndex = TetraEdgeIndexFromVertexIndex< v0, v1 >::value;
+
+// 4 is invalid value
+constexpr uif8 tetraFaceIndexFromEdgeIndexTable[6][6] {
+    4, 3, 2, 3, 2, 4,
+    3, 4, 1, 3, 4, 1,
+    2, 1, 4, 4, 2, 1,
+    3, 3, 4, 4, 0, 0,
+    2, 4, 2, 0, 4, 0,
+    4, 1, 1, 0, 0, 4
+};
+template< uif8 e0, uif8 e1, std::enable_if_t< e0 != e1 && e0 + e1 != 5 >* = nullptr >
+constexpr uif8 getTetraFaceIndexFromEdgeIndex() {
+    return tetraFaceIndexFromEdgeIndexTable[e0][e1];
+}
+template< uif8 e0, uif8 e1 >
+constexpr uif8 tetraFaceIndexFromEdgeIndex = getTetraFaceIndexFromEdgeIndex< e0, e1 >();
+
+struct TetraTriangleIntersectionIndex {
+    uif8 vertexIndex[3][2];
+    uif8 edgeIndex[3];
+    uif8 faceIndex[3]; // (e2-e0, e0-e1, e1-e2)
+};
+template< uif8 v00, uif8 v01, uif8 v10, uif8 v11, uif8 v20, uif8 v21 >
+constexpr auto getTetraTriangleIntersectionIndex() {
+    constexpr uif8 e0 = tetraEdgeIndexFromVertexIndex< v00, v01 >;
+    constexpr uif8 e1 = tetraEdgeIndexFromVertexIndex< v10, v11 >;
+    constexpr uif8 e2 = tetraEdgeIndexFromVertexIndex< v20, v21 >;
+    return TetraTriangleIntersectionIndex {
+        { {v00, v01}, {v10, v11}, {v20, v21} },
+        { e0, e1, e2 },
+        {
+            tetraFaceIndexFromEdgeIndex< e2, e0 >,
+            tetraFaceIndexFromEdgeIndex< e0, e1 >,
+            tetraFaceIndexFromEdgeIndex< e1, e2 >
+        }
+    };
+}
+
+} // namespace indexer
 
 template< typename Float = double >
 class MarchingTetrahedraGenerator {
@@ -108,6 +177,28 @@ public:
             _getFaceIdxInTetra(nx, ny, nz, tetIdx, 3)
         };
 
+        const auto easyIntersect = [&](small_size_t eIdx, small_size_t v0Idx, small_size_t v1Idx) {
+            newIntersect(
+                mesh,
+                edgeIndices[eIdx],
+                vertexValues[v0Idx], vertexValues[v1Idx],
+                vertexCoords[v0Idx], vertexCoords[v1Idx]
+            );
+        };
+        const auto easyTriangle = [&](indexer::TetraTriangleIntersectionIndex idx) {
+            // Create intersections
+            easyIntersect(idx.edgeIndex[0], idx.vertexIndex[0][0], idx.vertexIndex[0][1]);
+            easyIntersect(idx.edgeIndex[1], idx.vertexIndex[1][0], idx.vertexIndex[1][1]);
+            easyIntersect(idx.edgeIndex[2], idx.vertexIndex[2][0], idx.vertexIndex[2][1]);
+
+            // Create a new triangle
+            sewTriangle(
+                mesh,
+                edgeIndices[idx.edgeIndex[0]], edgeIndices[idx.edgeIndex[1]], edgeIndices[idx.edgeIndex[2]],
+                faceIndices[idx.faceIndex[0]], faceIndices[idx.faceIndex[1]], faceIndices[idx.faceIndex[2]]
+            );
+        };
+
         small_size_t cond = 0; // 0b x x x x <-- each bit is 1 if sign is pos, 0 if sign is neg
         for(small_size_t i = 0; i < 4; ++i) {
             if(i > 0) cond << 1;
@@ -121,13 +212,29 @@ public:
 
         case 0b0001:
             // intersects 03, 13, 23, triangle (03, 13, 23)
-            {
-                newIntersect(mesh, edgeIndices[2], vertexValues[0], vertexValues[3], vertexCoords[0], vertexCoords[3]);
-                newIntersect(mesh, edgeIndices[4], vertexValues[1], vertexValues[3], vertexCoords[1], vertexCoords[3]);
-                newIntersect(mesh, edgeIndices[5], vertexValues[2], vertexValues[3], vertexCoords[2], vertexCoords[3]);
+            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                0, 3, 1, 3, 2, 3
+            >());
+            break;
+        case 0b1110:
+            // intersects 23, 13, 03, triangle (23, 13, 03)
+            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                2, 3, 1, 3, 0, 3
+            >());
+            break;
 
-                sewTriangle(mesh, edgeIndices[2], edgeIndices[4], edgeIndices[5], faceIndices[1], faceIndices[2], faceIndices[0]);
-            }
+        case 0b0010:
+            // intersects 12, 02, 23, triangle (12, 02, 23)
+            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                1, 2, 0, 2, 2, 3
+            >());
+            break;
+        case 0b1101:
+            // intersects 23, 02, 12, triangle (23, 02, 12)
+            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                2, 3, 0, 2, 1, 2
+            >());
+            break;
 
         // TODO
         }
@@ -190,15 +297,6 @@ public:
 
 private:
     // Constants
-    //-------------------------------------------------------------------------
-    // Indexing in tetrahedra:
-    //
-    // The vertices of the tetrahedra are v0, v1, v2, v3, which must satisfy
-    //     r01 x r12 . r23 > 0 (specifically, the cuboid volume)
-    //
-    // The edges in a tetrahedra are in the following order:
-    //     01, 02, 03, 12, 13, 23
-    // The faces in a tetrahedra are ordered the same as the opposing vertex
     //-------------------------------------------------------------------------
     // Indexing in cuboid:
     //
