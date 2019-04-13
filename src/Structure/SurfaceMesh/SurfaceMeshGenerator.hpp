@@ -236,6 +236,32 @@ public:
             >());
             break;
 
+        case 0b0100:
+            // intersects 12, 13, 01, triangle (12, 13, 01)
+            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                1, 2, 1, 3, 0, 1
+            >());
+            break;
+        case 0b1011:
+            // intersects 01, 13, 12, triangle (01, 13, 12)
+            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                0, 1, 1, 3, 1, 2
+            >());
+            break;
+
+        case 0b1000:
+            // intersects 03, 02, 01, triangle (03, 02, 01)
+            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                0, 3, 0, 2, 0, 1
+            >());
+            break;
+        case 0b0111:
+            // intersects 01, 02, 03, triangle (01, 02, 03)
+            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                0, 1, 0, 2, 0, 3
+            >());
+            break;
+
         // TODO
         }
     }
