@@ -141,10 +141,17 @@ public:
 //     - void setIndex(size_t)
 //   - Type TriangleAttribute
 //     - void setIndex(size_t)
+//   - Type BorderAttribute
+//     - void setIndex(size_t)
 //   - Type MetaAttribute
 //   - Type AttributeInitializerInfo
 //   - void init(Mesh, const AttributeInitializerInfo&)
 //   - AttributeInitializerInfo extract(Mesh)
+//   - void newVertex(...)
+//   - void newEdge(...)
+//   - void newTriangle(...)
+//   - void newHalfEdge(...)
+//   - void newBorder(...)
 template< typename Attribute > class SurfaceTriangularMesh {
 public:
 
@@ -155,6 +162,7 @@ public:
     using EdgeAttribute     = typename Attribute::EdgeAttribute;
     using HalfEdgeAttribute = typename Attribute::HalfEdgeAttribute;
     using TriangleAttribute = typename Attribute::TriangleAttribute;
+    using BorderAttribute   = typename Attribute::BorderAttribute;
     using MetaAttribute     = typename Attribute::MetaAttribute;
 
     // The elements should be trivially copyable.
@@ -164,8 +172,12 @@ public:
         VertexAttribute attr;
     };
     struct HalfEdge {
+        enum class PolygonType { Triangle, Border };
+
+        PolygonType polygonType;
         bool hasOpposite;
         size_t triangleIndex;
+        size_t polygonIndex;
         size_t targetVertexIndex;
         size_t oppositeHalfEdgeIndex;
         size_t nextHalfEdgeIndex;
@@ -177,17 +189,25 @@ public:
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
         EdgeAttribute attr;
     };
+    // A triangle is a closed polygon which has exactly 3 half edges.
     struct Triangle {
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
         TriangleAttribute attr;
     };
+    // A border is a closed polygon which might be non-planar, and should have
+    // more than 2 half edges.
+    struct Border {
+        size_t halfEdgeIndex; // Only one half edge is needed
+        BorderAttribute attr;
+    };
 
 private:
 
-    DeletableVector<Triangle> _triangles; // collection of triangles
-    DeletableVector<HalfEdge> _halfEdges; // collection of halfedges
-    DeletableVector<Edge>     _edges;     // collection of edges
-    DeletableVector<Vertex>   _vertices;  // collection of vertices
+    DeletableVector<Triangle> _triangles;     // collection of triangles
+    DeletableVector<HalfEdge> _halfEdges;     // collection of halfedges
+    DeletableVector<Edge>     _edges;         // collection of edges
+    DeletableVector<Vertex>   _vertices;      // collection of vertices
+    DeletableVector<Border>   _borders;       // collection of borders
 
     MetaAttribute _meta;
 
@@ -203,6 +223,8 @@ private:
     auto& _getElements() { return _edges; }
     template< typename Element, std::enable_if_t<std::is_same<Element, Vertex>::value, void>* = nullptr>
     auto& _getElements() { return _vertices; }
+    template< typename Element, std::enable_if_t<std::is_same<Element, Border>::value, void>* = nullptr>
+    auto& _getElements() { return _borders; }
 
     // Meshwork registration helper
     void _registerTriangle(size_t ti, size_t hei0, size_t hei1, size_t hei2) {
@@ -247,6 +269,11 @@ private:
         Attribute::newTriangle(*this, index, op);
         return index;
     }
+    template< typename Operation > size_t _newBorder(const Operation& op) {
+        size_t index = _borders.insert();
+        Attribute::newBorder(*this, index, op);
+        return index;
+    }
 
     template< typename Element, std::enable_if_t<std::is_same<Element, Vertex>::value, void>* = nullptr >
     void _retargetElement(size_t from, size_t to) {
@@ -283,6 +310,13 @@ private:
         });
         _triangles[to].attr.setIndex(to);
     }
+    template< typename Element, std::enable_if_t<std::is_same<Element, Border>::value, void>* = nullptr >
+    void _retargetElement(size_t from, size_t to) {
+        forEachHalfEdgeInPolygon< Border >(to, [this, to](size_t hei) {
+            _halfEdges[hei].polygonIndex = to;
+        });
+        _borders[to].attr.setIndex(to);
+    }
     template< typename Element > struct ElementRetargeter {
         SurfaceTriangularMesh& mesh;
 
@@ -312,6 +346,7 @@ private:
         _clearElement<HalfEdge>();
         _clearElement<Edge>();
         _clearElement<Triangle>();
+        _clearElement<Border>();
     }
 
 public:
@@ -444,10 +479,12 @@ public:
     auto numHalfEdges() const noexcept { return _halfEdges.size(); }
     auto numEdges()     const noexcept { return _edges.size(); }
     auto numTriangles() const noexcept { return _triangles.size(); }
+    auto numBorder()    const noexcept { return _borders.size(); }
     const auto& getTriangles() const { return _triangles; }
     const auto& getHalfEdges() const { return _halfEdges; }
     const auto& getEdges()     const { return _edges; }
     const auto& getVertices()  const { return _vertices; }
+    const auto& getBorders()   const { return _borders; }
 
     // Attribute accessor
     VertexAttribute&       getVertexAttribute(size_t index)       { return _vertices[index].attr; }
@@ -458,15 +495,19 @@ public:
     const HalfEdgeAttribute& getHalfEdgeAttribute(size_t index) const { return _halfEdges[index].attr; }
     TriangleAttribute&       getTriangleAttribute(size_t index)       { return _triangles[index].attr; }
     const TriangleAttribute& getTriangleAttribute(size_t index) const { return _triangles[index].attr; }
+    BorderAttribute&       getBorderAttribute(size_t index)       { return _borders[index].attr; }
+    const BorderAttribute& getBorderAttribute(size_t index) const { return _borders[index].attr; }
     MetaAttribute&       getMetaAttribute()       { return _meta; }
     const MetaAttribute& getMetaAttribute() const { return _meta; }
 
     // Meshwork traverse
     bool hasOpposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].hasOpposite; }
+    auto polygonType(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].polygonType; }
     size_t opposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].oppositeHalfEdgeIndex; }
     size_t next(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].nextHalfEdgeIndex; }
     size_t prev(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].prevHalfEdgeIndex; }
     size_t triangle(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].triangleIndex; }
+    size_t polygon(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].polygonIndex; }
     size_t target(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].targetVertexIndex; }
     size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
 
@@ -485,6 +526,19 @@ public:
     template< typename Func > void forEachHalfEdgeTargetingVertex(size_t vi, Func&& func) const {
         forEachHalfEdgeTargetingVertex(_vertices[vi], std::forward<Func>(func));
     }
+    template< typename Polygon, typename Func >
+    void forEachHalfEdgeInPolygon(const Polygon& p, Func&& func) const {
+        size_t hei0 = p.halfEdgeIndex;
+        size_t hei = hei0;
+        do {
+            func(hei);
+            hei = next(hei);
+        } while(hei != hei0);
+    }
+    template< typename Polygon, typename Func >
+    void forEachHalfEdgeInPolygon(size_t pi, Func&& func) const {
+        forEachHalfEdgeInPolygon(_getElements< Polygon >()[pi], std::forward<Func>(func));
+    }
     template< typename Func > void forEachHalfEdgeInTriangle(const Triangle& t, Func&& func) const {
         size_t hei0 = t.halfEdgeIndex;
         size_t hei = hei0;
@@ -494,7 +548,7 @@ public:
         } while(hei != hei0);
     }
     template< typename Func > void forEachHalfEdgeInTriangle(size_t ti, Func&& func) const {
-        forEachHalfEdgeInTriangle(_triangles[ti], std::forward<Func>(func));
+        forEachHalfEdgeInPolygon< Triangle >(_triangles[ti], std::forward<Func>(func));
     }
     template< typename Func > void forEachHalfEdgeInEdge(const Edge& e, Func&& func) const {
         size_t hei0 = e.halfEdgeIndex;

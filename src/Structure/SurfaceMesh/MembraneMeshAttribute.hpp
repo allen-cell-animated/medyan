@@ -86,6 +86,9 @@ struct MembraneMeshAttribute {
             triangle->setTopoIndex(index);
         }
     };
+    struct BorderAttribute {
+        void setIndex(size_t index) {}
+    };
     struct MetaAttribute {
         SubSystem *s;
         Membrane *m;
@@ -114,6 +117,10 @@ struct MembraneMeshAttribute {
     template< typename Operation >
     static void newTriangle(MeshType& mesh, size_t t, const Operation& op) {
         mesh.getTriangleAttribute(t).triangle.reset(mesh.getMetaAttribute().s->template addTrackable<Triangle>(mesh.getMetaAttribute().m, t));
+    }
+    template< typename Operation >
+    static void newBorder(MeshType& mesh, size_t, const Operation& op) {
+        // Do nothing
     }
 
     template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Vertex>::value, void>* = nullptr >

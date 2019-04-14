@@ -58,7 +58,7 @@ struct MembraneMeshTopologyCheck {
     size_t numBoundaries = 0;
 
     bool operator()(const MeshType& mesh, bool report = false) const {
-        bool res = true;
+        bool res = true; // Whether the topology is consistent
 
         const size_t chi = 2 - 2 * genus - numBoundaries; // Euler characteristic
 
