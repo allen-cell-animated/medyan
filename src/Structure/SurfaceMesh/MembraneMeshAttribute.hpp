@@ -227,6 +227,7 @@ struct MembraneMeshAttribute {
         // Calculate edge length and pesudo unit normal
         for(size_t ei = 0; ei < numEdges; ++ei) {
             const size_t hei = edges[ei].halfEdgeIndex;
+            const size_t hei_o = mesh.opposite(hei);
             const size_t vi0 = mesh.target(hei);
             const size_t vi1 = mesh.target(mesh.prev(hei));
 
@@ -237,7 +238,11 @@ struct MembraneMeshAttribute {
             );
 
             // pseudo unit normal
-            if(halfEdges[hei].hasOpposite) {
+            using PolygonType = typename MeshType::HalfEdge::PolygonType;
+            if(
+                halfEdges[hei].polygonType   == PolygonType::Triangle &&
+                halfEdges[hei_o].polygonType == PolygonType::Triangle
+            ) {
                 const size_t ti0 = mesh.triangle(hei);
                 const size_t ti1 = mesh.triangle(mesh.opposite(hei));
                 mesh.getEdgeAttribute(ei).template getGEdge<stretched>().pseudoUnitNormal = normalizedVector(

@@ -175,7 +175,7 @@ public:
         enum class PolygonType { Triangle, Border };
 
         PolygonType polygonType;
-        bool hasOpposite;
+        [[deprecated]] bool hasOpposite;
         size_t triangleIndex;
         size_t polygonIndex;
         size_t targetVertexIndex;
@@ -241,10 +241,10 @@ private:
     }
     void _registerEdge(size_t ei, size_t hei0, size_t hei1) {
         _edges[ei].halfEdgeIndex = hei0;
-        _halfEdges[hei0].hasOpposite = true;
+        _halfEdges[hei0].polygonType = PolygonType::Triangle;
         _halfEdges[hei0].oppositeHalfEdgeIndex = hei1;
         _halfEdges[hei0].edgeIndex = ei;
-        _halfEdges[hei1].hasOpposite = true;
+        _halfEdges[hei1].polygonType = PolygonType::Triangle;
         _halfEdges[hei1].oppositeHalfEdgeIndex = hei0;
         _halfEdges[hei1].edgeIndex = ei;
     }
@@ -285,9 +285,19 @@ private:
     }
     template< typename Element, std::enable_if_t<std::is_same<Element, HalfEdge>::value, void>* = nullptr >
     void _retargetElement(size_t from, size_t to) {
-        if(hasOpposite(to)) _halfEdges[opposite(to)].oppositeHalfEdgeIndex = to;
-        if(_triangles[triangle(to)].halfEdgeIndex == from)
-            _triangles[triangle(to)].halfEdgeIndex = to;
+        _halfEdges[opposite(to)].oppositeHalfEdgeIndex = to;
+
+        switch(_halfEdges[to].polygonType) {
+        case HalfEdge::PolygonType::Triangle:
+            if(_triangles[triangle(to)].halfEdgeIndex == from)
+                _triangles[triangle(to)].halfEdgeIndex = to;
+            break;
+        case HalfEdge::PolygonType::Border:
+            if(_borders[polygon(to)].halfEdgeIndex == from)
+                _borders[polygon(to)].halfEdgeIndex = to;
+            break;
+        }
+
         if(_vertices[target(to)].halfEdgeIndex == from)
             _vertices[target(to)].halfEdgeIndex = to;
         if(_edges[edge(to)].halfEdgeIndex == from)
@@ -366,6 +376,7 @@ public:
             typename Attribute::AttributeInitializerInfo attributeInitializerInfo;
         };
 
+        // TODO: support mesh with borders
         void init(
             SurfaceTriangularMesh& mesh,
             size_t numVertices,
@@ -391,7 +402,7 @@ public:
                 for(size_t i = 0; i < 3; ++i) {
                     const size_t hei = mesh._halfEdges.insert();
                     HalfEdge& he = mesh._halfEdges[hei];
-                    he.hasOpposite = false;
+                    he.polygonType = HalfEdge::PolygonType::Border;
                     he.triangleIndex = ti;
                     he.targetVertexIndex = t[i];
                     he.nextHalfEdgeIndex = (i == 2 ? hei - 2 : hei + 1);
@@ -414,11 +425,11 @@ public:
                         he.edgeIndex = mesh._edges.size() - 1;
                     } else {
                         // opposite found
-                        he.hasOpposite = true;
+                        he.polygonType = HalfEdge::PolygonType::Triangle;
                         he.oppositeHalfEdgeIndex = *findRes;
                         he.edgeIndex = mesh._halfEdges[he.oppositeHalfEdgeIndex].edgeIndex;
 
-                        mesh._halfEdges[he.oppositeHalfEdgeIndex].hasOpposite = true;
+                        mesh._halfEdges[he.oppositeHalfEdgeIndex].polygonType = HalfEdge::PolygonType::Triangle;
                         mesh._halfEdges[he.oppositeHalfEdgeIndex].oppositeHalfEdgeIndex = hei;
                     }
 
@@ -468,8 +479,7 @@ public:
     }
 
     bool updateClosedness() {
-        _isClosed = true;
-        for(const auto& he : _halfEdges) if(!he.hasOpposite) { _isClosed = false; break; }
+        _isClosed = (numBorders() == 0);
         return _isClosed;
     }
     bool isClosed()const noexcept { return _isClosed; }
@@ -479,7 +489,7 @@ public:
     auto numHalfEdges() const noexcept { return _halfEdges.size(); }
     auto numEdges()     const noexcept { return _edges.size(); }
     auto numTriangles() const noexcept { return _triangles.size(); }
-    auto numBorder()    const noexcept { return _borders.size(); }
+    auto numBorders()   const noexcept { return _borders.size(); }
     const auto& getTriangles() const { return _triangles; }
     const auto& getHalfEdges() const { return _halfEdges; }
     const auto& getEdges()     const { return _edges; }
@@ -501,7 +511,6 @@ public:
     const MetaAttribute& getMetaAttribute() const { return _meta; }
 
     // Meshwork traverse
-    bool hasOpposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].hasOpposite; }
     auto polygonType(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].polygonType; }
     size_t opposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].oppositeHalfEdgeIndex; }
     size_t next(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].nextHalfEdgeIndex; }
@@ -519,7 +528,6 @@ public:
         size_t hei = hei0;
         do {
             func(hei);
-            if(!hasOpposite(hei)) break;
             hei = prev(opposite(hei));
         } while(hei != hei0);
     }
@@ -553,7 +561,7 @@ public:
     template< typename Func > void forEachHalfEdgeInEdge(const Edge& e, Func&& func) const {
         size_t hei0 = e.halfEdgeIndex;
         func(hei0);
-        if(hasOpposite(hei0)) func(opposite(hei0));
+        func(opposite(hei0));
     }
     template< typename Func > void forEachHalfEdgeInEdge(size_t ei, Func&& func) const {
         forEachHalfEdgeInEdge(_edges[ei], std::forward<Func>(func));
