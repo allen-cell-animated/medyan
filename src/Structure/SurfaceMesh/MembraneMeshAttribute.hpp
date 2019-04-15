@@ -140,6 +140,10 @@ struct MembraneMeshAttribute {
     static void removeElement(MeshType& mesh, size_t i) {
         mesh.getMetaAttribute().s->template removeTrackable<Triangle>(mesh.getTriangleAttribute(i).triangle.get());
     }
+    template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Border>::value, void>* = nullptr >
+    static void removeElement(MeshType& mesh, size_t i) {
+        // Do nothing
+    }
 
     // Mesh attribute initializing and extracting
     // These operations do not follow the RAII idiom.

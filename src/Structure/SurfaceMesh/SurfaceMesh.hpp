@@ -241,10 +241,10 @@ private:
     }
     void _registerEdge(size_t ei, size_t hei0, size_t hei1) {
         _edges[ei].halfEdgeIndex = hei0;
-        _halfEdges[hei0].polygonType = PolygonType::Triangle;
+        _halfEdges[hei0].polygonType = HalfEdge::PolygonType::Triangle;
         _halfEdges[hei0].oppositeHalfEdgeIndex = hei1;
         _halfEdges[hei0].edgeIndex = ei;
-        _halfEdges[hei1].polygonType = PolygonType::Triangle;
+        _halfEdges[hei1].polygonType = HalfEdge::PolygonType::Triangle;
         _halfEdges[hei1].oppositeHalfEdgeIndex = hei0;
         _halfEdges[hei1].edgeIndex = ei;
     }
@@ -387,7 +387,7 @@ public:
             const size_t numTriangles = triangleVertexIndexList.size();
             mesh._triangles.getValue().resize(numTriangles);
             const size_t numHalfEdges = 3 * numTriangles;
-            mesh._halfEdges.getValue().reserve(numHalfEdges);
+            mesh._halfEdges.getValue().reserve(numHalfEdges); // Might be more than this number with borders.
             mesh._edges.getValue().reserve(numHalfEdges / 2); // Might be more than this number with borders.
 
             struct VertexAdditionalInfo {
@@ -547,7 +547,7 @@ public:
     void forEachHalfEdgeInPolygon(size_t pi, Func&& func) const {
         forEachHalfEdgeInPolygon(_getElements< Polygon >()[pi], std::forward<Func>(func));
     }
-    template< typename Func > void forEachHalfEdgeInTriangle(const Triangle& t, Func&& func) const {
+    template< typename Func > [[deprecated]] void forEachHalfEdgeInTriangle(const Triangle& t, Func&& func) const {
         size_t hei0 = t.halfEdgeIndex;
         size_t hei = hei0;
         do {
