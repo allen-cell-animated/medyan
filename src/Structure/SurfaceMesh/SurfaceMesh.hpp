@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <array>
 #include <cstddef> // ptrdiff_t
+#include <cstdint> // uint_fast8_t
 #include <iterator>
 #include <set>
 #include <type_traits>
@@ -152,6 +153,7 @@ public:
 //   - void newTriangle(...)
 //   - void newHalfEdge(...)
 //   - void newBorder(...)
+//   - void removeElement< Element >(...)
 template< typename Attribute > class SurfaceTriangularMesh {
 public:
 
@@ -169,6 +171,10 @@ public:
     struct Vertex {
         size_t halfEdgeIndex; // Only one HalfEdge targeting the vertex is needed.
         size_t degree; // Number of neighbors
+
+        // 0: vertex is inside, 1: vertex is on the border, >=2: pathological
+        std::uint_fast8_t numTargetingBorderHalfEdges;
+
         VertexAttribute attr;
     };
     struct HalfEdge {
@@ -187,6 +193,10 @@ public:
     };
     struct Edge {
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
+
+        // 0: edge is inside, 1: edge is on the border, 2: pathological
+        std::uint_fast8_t numBorderHalfEdges;
+
         EdgeAttribute attr;
     };
     // A triangle is a closed polygon which has exactly 3 half edges.
@@ -241,10 +251,11 @@ private:
     }
     void _registerEdge(size_t ei, size_t hei0, size_t hei1) {
         _edges[ei].halfEdgeIndex = hei0;
-        _halfEdges[hei0].polygonType = HalfEdge::PolygonType::Triangle;
+        _edges[ei].numBorderHalfEdges =
+            static_cast<std::uint_fast8_t>(_halfEdges[hei0].polygonType == HalfEdge::PolygonType::Border) +
+            static_cast<std::uint_fast8_t>(_halfEdges[hei1].polygonType == HalfEdge::PolygonType::Border);
         _halfEdges[hei0].oppositeHalfEdgeIndex = hei1;
         _halfEdges[hei0].edgeIndex = ei;
-        _halfEdges[hei1].polygonType = HalfEdge::PolygonType::Triangle;
         _halfEdges[hei1].oppositeHalfEdgeIndex = hei0;
         _halfEdges[hei1].edgeIndex = ei;
     }
@@ -522,6 +533,9 @@ public:
 
     size_t degree(size_t vertexIndex) const { return _vertices[vertexIndex].degree; }
 
+    bool isVertexOnBorder(size_t vertexIndex) const { return _vertices[vertexIndex].numTargetingBorderHalfEdges >= 1; }
+    bool isEdgeOnBorder(size_t edgeIndex) const { return _edges[edgeIndex].numBorderHalfEdges >= 1; }
+
     // Mesh neighbor iterators
     template< typename Func > void forEachHalfEdgeTargetingVertex(const Vertex& v, Func&& func) const {
         size_t hei0 = v.halfEdgeIndex;
@@ -567,9 +581,12 @@ public:
         forEachHalfEdgeInEdge(_edges[ei], std::forward<Func>(func));
     }
 
+    //-------------------------------------------------------------------------
     // The following are basic mesh topology operators
+    //-------------------------------------------------------------------------
 
     // Vertex insertion on edge.
+    // Note: this does not allow vertex insertion on border edges
     template< typename InsertionMethod >
     struct VertexInsertionOnEdge {
         static constexpr int deltaNumVertex = 1;
@@ -610,16 +627,25 @@ public:
             const size_t ti1    = mesh._newTriangle(insertionMethod);
             const size_t ti3    = mesh._newTriangle(insertionMethod);
 
-            // Adjust vertex
+            // Adjust vertex and new half edges
             vertices[vi].halfEdgeIndex = hei0_o;
+
             halfEdges[hei0_o].targetVertexIndex = vi;
             halfEdges[hei2_o].targetVertexIndex = vi;
             halfEdges[hei1_o].targetVertexIndex = vi;
             halfEdges[hei3_o].targetVertexIndex = vi;
+            halfEdges[hei0_o].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei2_o].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei1_o].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei3_o].polygonType = HalfEdge::PolygonType::Triangle;
+
             halfEdges[hei1].targetVertexIndex = vi1;
             halfEdges[hei3].targetVertexIndex = vi3;
+            halfEdges[hei1].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei3].polygonType = HalfEdge::PolygonType::Triangle;
 
             vertices[vi].degree = 4;
+            vertices[vi].numTargetingBorderHalfEdges = 0;
             ++vertices[vi1].degree;
             ++vertices[vi3].degree;
 
@@ -654,6 +680,9 @@ public:
         }
     };
     // Edge collapse
+    // Note:
+    //   - This does not allow collapsing of border edges
+    //   - The caller must ensure that at most one vertex can lie on the border
     struct EdgeCollapse {
         static constexpr int deltaNumVertex = -1;
 
@@ -700,6 +729,7 @@ public:
 
             // Adjust vertex degrees
             vertices[ov0].degree += vertices[ov1].degree - 4;
+            vertices[ov0].numTargetingBorderHalfEdges += vertices[ov1].numTargetingBorderHalfEdges;
             --vertices[mesh.target(ohei_n)].degree;
             --vertices[mesh.target(ohei_on)].degree;
 
@@ -729,6 +759,7 @@ public:
         }
     };
     // Edge flip
+    // Note: Border edges cannot be flipped
     struct EdgeFlip {
         static constexpr int deltaNumVertex = 0;
 

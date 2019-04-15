@@ -114,6 +114,8 @@ public:
         const size_t ti1 = mesh.triangle(hei_o);
 
         // Check if topo constraint is satisfied.
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         if(
             mesh.degree(vi0) <= _minDegree ||
             mesh.degree(vi2) <= _minDegree ||
@@ -281,6 +283,9 @@ public:
         const size_t ei3 = mesh.edge(hei_op); // v3 - v1
 
         // Check topology constraints
+        // Currently does not support insertion on border edges, but we may also implement that in the future.
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         // A new vertex with degree 4 will always be introduced
         if(
             mesh.degree(vi1) >= _maxDegree ||
@@ -467,14 +472,16 @@ public:
         const size_t ti1 = mesh.triangle(hei_o);
 
         // Check topology constraints
+        // Currently does not allow collapsing of border edges, but we may also implement that in the future
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         if(
             mesh.degree(vi0) + mesh.degree(vi2) - 4 > _maxDegree ||
             mesh.degree(vi0) + mesh.degree(vi2) - 4 < _minDegree ||
+            (mesh.isVertexOnBorder(vi0) && mesh.isVertexOnBorder(vi2)) ||
             mesh.degree(vi1) <= _minDegree ||
             mesh.degree(vi3) <= _minDegree
         ) return State::InvalidTopo;
-
-        // Future: maybe also geometric constraints (gap, smoothness, etc)
 
         // Check triangle quality constraints
         const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
