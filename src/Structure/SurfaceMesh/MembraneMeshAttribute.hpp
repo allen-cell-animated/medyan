@@ -89,6 +89,9 @@ struct MembraneMeshAttribute {
             triangle->setTopoIndex(index);
         }
     };
+    struct BorderAttribute {
+        void setIndex(size_t index) {}
+    };
     struct MetaAttribute {
         SubSystem *s;
         Membrane *m;
@@ -118,6 +121,10 @@ struct MembraneMeshAttribute {
     static void newTriangle(MeshType& mesh, size_t t, const Operation& op) {
         mesh.getTriangleAttribute(t).triangle.reset(mesh.getMetaAttribute().s->template addTrackable<Triangle>(mesh.getMetaAttribute().m, t));
     }
+    template< typename Operation >
+    static void newBorder(MeshType& mesh, size_t, const Operation& op) {
+        // Do nothing
+    }
 
     template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Vertex>::value, void>* = nullptr >
     static void removeElement(MeshType& mesh, size_t i) {
@@ -135,6 +142,10 @@ struct MembraneMeshAttribute {
     template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Triangle>::value, void>* = nullptr >
     static void removeElement(MeshType& mesh, size_t i) {
         mesh.getMetaAttribute().s->template removeTrackable<Triangle>(mesh.getTriangleAttribute(i).triangle.get());
+    }
+    template< typename Element, std::enable_if_t<std::is_same<Element, typename MeshType::Border>::value, void>* = nullptr >
+    static void removeElement(MeshType& mesh, size_t i) {
+        // Do nothing
     }
 
     // Mesh attribute initializing and extracting
@@ -223,6 +234,7 @@ struct MembraneMeshAttribute {
         // Calculate edge length and pesudo unit normal
         for(size_t ei = 0; ei < numEdges; ++ei) {
             const size_t hei = edges[ei].halfEdgeIndex;
+            const size_t hei_o = mesh.opposite(hei);
             const size_t vi0 = mesh.target(hei);
             const size_t vi1 = mesh.target(mesh.prev(hei));
 
@@ -233,7 +245,11 @@ struct MembraneMeshAttribute {
             );
 
             // pseudo unit normal
-            if(halfEdges[hei].hasOpposite) {
+            using PolygonType = typename MeshType::HalfEdge::PolygonType;
+            if(
+                halfEdges[hei].polygonType   == PolygonType::Triangle &&
+                halfEdges[hei_o].polygonType == PolygonType::Triangle
+            ) {
                 const size_t ti0 = mesh.triangle(hei);
                 const size_t ti1 = mesh.triangle(mesh.opposite(hei));
                 mesh.getEdgeAttribute(ei).template getGEdge<stretched>().pseudoUnitNormal = normalizedVector(
@@ -244,7 +260,7 @@ struct MembraneMeshAttribute {
         }
 
         // Calculate vcell area, curvature and vertex pseudo unit normal
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& vag = mesh.getVertexAttribute(vi).template getGVertex<stretched>();
 
             // clearing
@@ -401,7 +417,7 @@ struct MembraneMeshAttribute {
         // Calculate vcell area, curvature with derivative
         // Calculate vertex pseudo unit normal
         // Calculate derivative of volume on vertices
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& vag = mesh.getVertexAttribute(vi).gVertex;
 
             // clearing
@@ -564,7 +580,8 @@ struct MembraneMeshAttribute {
         - The normal and pseudo normal at the triangles, edges and vertices
         - The length of edges
 
-    Note: this method only works if the mesh is closed.
+    Note: this method only works if the mesh is closed. This must be ensured by
+          the caller of the function.
     
     In fact, the signed distance field serves as a good candidate for membrane
     boundary potential. However, this field is not C1-continuous everywhere,
@@ -704,6 +721,7 @@ struct MembraneMeshAttribute {
 
     // Vertex unit normals (Adaptive attribute) used in adaptive remeshing
     // Requires
+    //   - The vertex is not on the border
     //   - Unit normals in triangles (geometric)
     //   - Angles in halfedges (geometric)
     static void adaptiveComputeVertexNormal(MeshType& mesh, size_t vi) {
