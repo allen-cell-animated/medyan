@@ -30,6 +30,10 @@ Membrane::Membrane(
     // Update geometry
     updateGeometryValue<false>();
 
+    initMMembrane();
+}
+
+void Membrane::initMMembrane() {
 #ifdef MECHANICS
     // Calculate the total area and volume to set the equilibrium area and volume
     double area = 0.0;
@@ -41,7 +45,7 @@ Membrane::Membrane(
 
     _mMembrane = std::make_unique<MMembrane>(_memType);
     _mMembrane->setEqArea(
-        area * SysParams::Mechanics().MemEqAreaFactor[membraneType]
+        area * SysParams::Mechanics().MemEqAreaFactor[_memType]
     );
     _mMembrane->setEqVolume(volume);
 #endif

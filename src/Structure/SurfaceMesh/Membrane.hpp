@@ -59,6 +59,9 @@ public:
     const auto& getMesh() const { return _mesh; }
     auto&       getMesh()       { return _mesh; }
 
+    // Helper function to initialize MMembrane
+    void initMMembrane();
+
     // SubSystem management, inherited from Trackable
     virtual void addToSubSystem()override { }
     virtual void removeFromSubSystem()override { }
