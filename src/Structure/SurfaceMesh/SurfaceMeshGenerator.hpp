@@ -385,9 +385,9 @@ private:
     auto _getVertexIdxInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t vtxIdx) const {
         const small_size_t i = _tetraVertexLocalIndex[tetIdx][vtxIdx];
         return _getVertexIdx(
-            nx + (i >> 2) & 1,
-            ny + (i >> 1) & 1,
-            nz +  i       & 1
+            nx + ((i >> 2) & 1),
+            ny + ((i >> 1) & 1),
+            nz + ( i       & 1)
         );
     }
     auto _getCubeListSize() const {
@@ -409,9 +409,9 @@ private:
         const small_size_t i = _tetraEdgeLocalIndex[tetIdx][edgeIdx];
         const small_size_t idxInCuboid = i & 0b111 - 1;
         return _getEdgeIdx(
-            nx + (i >> 5) & 1,
-            ny + (i >> 4) & 1,
-            nz + (i >> 3) & 1,
+            nx + ((i >> 5) & 1),
+            ny + ((i >> 4) & 1),
+            nz + ((i >> 3) & 1),
             idxInCuboid
         );
     }
@@ -427,9 +427,9 @@ private:
     auto _vertexCoordinateInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t vtxIdx) const {
         const small_size_t i = _tetraVertexLocalIndex[tetIdx][vtxIdx];
         return _vertexCoordinate(
-            nx + (i >> 2) & 1,
-            ny + (i >> 1) & 1,
-            nz +  i       & 1
+            nx + ((i >> 2) & 1),
+            ny + ((i >> 1) & 1),
+            nz + ( i       & 1)
         );
     }
 };
