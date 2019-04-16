@@ -106,6 +106,7 @@ constexpr auto getTetraQuadIntersectionIndex() {
 template< typename Float = double >
 class MarchingTetrahedraGenerator {
 public:
+    using coordinate_type = mathfunc::Vec< 3, Float >;
     using small_size_t = std::uint_fast8_t;
 
     struct TetraEdgeData {
@@ -122,9 +123,14 @@ public:
         bool hasHalfEdge = false;
     };
 
+    struct Result {
+        std::vector< coordinate_type > vertexCoordinateList;
+        std::vector< std::array< std::size_t, 3 > > triangleList; // Each triangle consists of vertex indices
+    };
+
     MarchingTetrahedraGenerator(
         Float cubeSize,
-        const mathfunc::Vec< 3, Float >& boundingBoxOrigin,
+        const coordinate_type& boundingBoxOrigin,
         const std::array< std::size_t, 3 >& numCubes
     ) : _cuboidSize{ cubeSize, cubeSize, cubeSize },
         _numCuboids(numCubes),
@@ -135,11 +141,199 @@ public:
 
     // The function that generates the meshwork
     // Template parameters:
-    //   - Mesh: the type of the surface meshwork (with attributes)
     //   - FieldFunc: a functor that takes a point and returns given how far it is outside the surface
-    template< typename Mesh, typename FieldFunc >
-    void operator()(Mesh& mesh, FieldFunc&& func) {
+    template< typename FieldFunc >
+    Result operator()(FieldFunc&& func) {
         using std::size_t;
+
+        // Temporary data
+        std::vector< Float > _distValue; // using vertex indexing
+        std::vector< TetraEdgeData > _edgeData; // using edge indexing
+        std::vector< TetraFaceData > _faceData; // using face indexing
+
+        // Helper function: computing intersection for a tetrahedron
+        const auto calcTetra = [&](size_t nx, size_t ny, size_t nz, small_size_t tetIdx) {
+            using namespace std;
+            using namespace mathfunc;
+
+            // switch sign of 4 switches and decide which procedure to follow (0.0 count as positive)
+            // all pos / neg: nothing
+            // one pos: gen triangle pointing pos
+            // one neg: gen triangle pointing neg
+            // 2 pos 2 neg: gen 2 triangles
+
+            const array< size_t, 4 > vertexIndices {
+                _getVertexIdxInTetra(nx, ny, nz, tetIdx, 0),
+                _getVertexIdxInTetra(nx, ny, nz, tetIdx, 1),
+                _getVertexIdxInTetra(nx, ny, nz, tetIdx, 2),
+                _getVertexIdxInTetra(nx, ny, nz, tetIdx, 3)
+            };
+            const array< Float, 4 > vertexValues {
+                _distValue[vertexIndices[0]],
+                _distValue[vertexIndices[1]],
+                _distValue[vertexIndices[2]],
+                _distValue[vertexIndices[3]]
+            };
+            const array< Vec< 3, Float >, 4 > vertexCoords {
+                _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 0),
+                _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 1),
+                _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 2),
+                _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 3)
+            };
+            const array< TetraEdgeIndex, 6 > edgeIndices {
+                _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 0),
+                _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 1),
+                _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 2),
+                _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 3),
+                _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 4),
+                _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 5)
+            };
+            const array< size_t, 4 > faceIndices {
+                _getFaceIdxInTetra(nx, ny, nz, tetIdx, 0),
+                _getFaceIdxInTetra(nx, ny, nz, tetIdx, 1),
+                _getFaceIdxInTetra(nx, ny, nz, tetIdx, 2),
+                _getFaceIdxInTetra(nx, ny, nz, tetIdx, 3)
+            };
+
+            const auto easyIntersect = [&](small_size_t eIdx, small_size_t v0Idx, small_size_t v1Idx) {
+                newIntersect(
+                    edgeIndices[eIdx],
+                    vertexValues[v0Idx], vertexValues[v1Idx],
+                    vertexCoords[v0Idx], vertexCoords[v1Idx]
+                );
+            };
+            const auto easyTriangle = [&](indexer::TetraTriangleIntersectionIndex idx) {
+                // Create intersections
+                easyIntersect(idx.edgeIndex[0], idx.vertexIndex[0][0], idx.vertexIndex[0][1]);
+                easyIntersect(idx.edgeIndex[1], idx.vertexIndex[1][0], idx.vertexIndex[1][1]);
+                easyIntersect(idx.edgeIndex[2], idx.vertexIndex[2][0], idx.vertexIndex[2][1]);
+
+                // Create a new triangle
+                sewTriangle(
+                    edgeIndices[idx.edgeIndex[0]], edgeIndices[idx.edgeIndex[1]], edgeIndices[idx.edgeIndex[2]],
+                    faceIndices[idx.faceIndex[0]], faceIndices[idx.faceIndex[1]], faceIndices[idx.faceIndex[2]]
+                );
+            };
+            const auto easyQuad = [&](indexer::TetraQuadIntersectionIndex idx) {
+                // Create intersections
+                easyIntersect(idx.edgeIndex[0], idx.vertexIndex[0][0], idx.vertexIndex[0][1]);
+                easyIntersect(idx.edgeIndex[1], idx.vertexIndex[1][0], idx.vertexIndex[1][1]);
+                easyIntersect(idx.edgeIndex[2], idx.vertexIndex[2][0], idx.vertexIndex[2][1]);
+                easyIntersect(idx.edgeIndex[3], idx.vertexIndex[3][0], idx.vertexIndex[3][1]);
+
+                // Create a new quad
+                sewQuad(
+                    edgeIndices[idx.edgeIndex[0]], edgeIndices[idx.edgeIndex[1]],
+                    edgeIndices[idx.edgeIndex[2]], edgeIndices[idx.edgeIndex[3]],
+                    faceIndices[idx.faceIndex[0]], faceIndices[idx.faceIndex[1]],
+                    faceIndices[idx.faceIndex[2]], faceIndices[idx.faceIndex[3]]
+                );
+            };
+
+            small_size_t cond = 0; // 0b x x x x <-- each bit is 1 if sign is pos, 0 if sign is neg
+            for(small_size_t i = 0; i < 4; ++i) {
+                cond << 1;
+                cond |= (vertexValues[i] >= 0.0 ? 1 : 0);
+            }
+
+            switch(cond) {
+            case 0b0000:
+            case 0b1111:
+                break;
+
+            case 0b0001:
+                // intersects 03, 13, 23, triangle (03, 13, 23)
+                easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                    0, 3, 1, 3, 2, 3
+                >());
+                break;
+            case 0b1110:
+                // intersects 23, 13, 03, triangle (23, 13, 03)
+                easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                    2, 3, 1, 3, 0, 3
+                >());
+                break;
+
+            case 0b0010:
+                // intersects 12, 02, 23, triangle (12, 02, 23)
+                easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                    1, 2, 0, 2, 2, 3
+                >());
+                break;
+            case 0b1101:
+                // intersects 23, 02, 12, triangle (23, 02, 12)
+                easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                    2, 3, 0, 2, 1, 2
+                >());
+                break;
+
+            case 0b0100:
+                // intersects 12, 13, 01, triangle (12, 13, 01)
+                easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                    1, 2, 1, 3, 0, 1
+                >());
+                break;
+            case 0b1011:
+                // intersects 01, 13, 12, triangle (01, 13, 12)
+                easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                    0, 1, 1, 3, 1, 2
+                >());
+                break;
+
+            case 0b1000:
+                // intersects 03, 02, 01, triangle (03, 02, 01)
+                easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                    0, 3, 0, 2, 0, 1
+                >());
+                break;
+            case 0b0111:
+                // intersects 01, 02, 03, triangle (01, 02, 03)
+                easyTriangle(indexer::getTetraTriangleIntersectionIndex<
+                    0, 1, 0, 2, 0, 3
+                >());
+                break;
+
+            case 0b0011:
+                // intersects 02, 03, 13, 12, 2 triangles
+                easyQuad(indexer::getTetraQuadIntersectionIndex<
+                    0, 2, 0, 3, 1, 3, 1, 2
+                >());
+                break;
+            case 0b1100:
+                // intersects 12, 13, 03, 02, 2 triangles
+                easyQuad(indexer::getTetraQuadIntersectionIndex<
+                    1, 2, 1, 3, 0, 3, 0, 2
+                >());
+                break;
+
+            case 0b0101:
+                // intersects 01, 12, 23, 03, 2 triangles
+                easyQuad(indexer::getTetraQuadIntersectionIndex<
+                    0, 1, 1, 2, 2, 3, 0, 3
+                >());
+                break;
+            case 0b1010:
+                // intersects 03, 23, 12, 01, 2 triangles
+                easyQuad(indexer::getTetraQuadIntersectionIndex<
+                    0, 3, 2, 3, 1, 2, 0, 1
+                >());
+                break;
+
+            case 0b0110:
+                // intersects 01, 02, 23, 13, 2 triangles
+                easyQuad(indexer::getTetraQuadIntersectionIndex<
+                    0, 1, 0, 2, 2, 3, 1, 3
+                >());
+                break;
+            case 0b1001:
+                // intersects 13, 23, 02, 01, 2 triangles
+                easyQuad(indexer::getTetraQuadIntersectionIndex<
+                    1, 3, 2, 3, 0, 2, 0, 1
+                >());
+                break;
+
+            } // switch(cond)
+        }; // End of function calcTetra(...)
 
         // Precompute phase
         for(size_t nx = 0; nx <= _numCuboids[0]; ++nx)
@@ -152,197 +346,10 @@ public:
             for(size_t ny = 0; ny < _numCuboids[1]; ++ny)
                 for(size_t nz = 0; nz < _numCuboids[2]; ++nz)
                     for(small_size_t tetIdx = 0; tetIdx < _numTetrahedraPerCuboid; ++tetIdx)
-                        calcTetra(mesh, nx, ny, nz, tetIdx);
+                        calcTetra(nx, ny, nz, tetIdx);
 
     } // void operator()(...)
 
-    // Helper function: computing intersection for a tetrahedron
-    template< typename Mesh >
-    void calcTetra(Mesh& mesh, std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx) {
-        using namespace std;
-        using namespace mathfunc;
-
-        // switch sign of 4 switches and decide which procedure to follow (0.0 count as positive)
-        // all pos / neg: nothing
-        // one pos: gen triangle pointing pos
-        // one neg: gen triangle pointing neg
-        // 2 pos 2 neg: gen 2 triangles
-
-        const array< size_t, 4 > vertexIndices {
-            _getVertexIdxInTetra(nx, ny, nz, tetIdx, 0),
-            _getVertexIdxInTetra(nx, ny, nz, tetIdx, 1),
-            _getVertexIdxInTetra(nx, ny, nz, tetIdx, 2),
-            _getVertexIdxInTetra(nx, ny, nz, tetIdx, 3)
-        };
-        const array< Float, 4 > vertexValues {
-            _distValue[vertexIndices[0]],
-            _distValue[vertexIndices[1]],
-            _distValue[vertexIndices[2]],
-            _distValue[vertexIndices[3]]
-        };
-        const array< Vec< 3, Float >, 4 > vertexCoords {
-            _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 0),
-            _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 1),
-            _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 2),
-            _vertexCoordinateIdxInTetra(nx, ny, nz, tetIdx, 3)
-        };
-        const array< TetraEdgeIndex, 6 > edgeIndices {
-            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 0),
-            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 1),
-            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 2),
-            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 3),
-            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 4),
-            _getEdgeIdxInTetra(nx, ny, nz, tetIdx, 5)
-        };
-        const array< size_t, 4 > faceIndices {
-            _getFaceIdxInTetra(nx, ny, nz, tetIdx, 0),
-            _getFaceIdxInTetra(nx, ny, nz, tetIdx, 1),
-            _getFaceIdxInTetra(nx, ny, nz, tetIdx, 2),
-            _getFaceIdxInTetra(nx, ny, nz, tetIdx, 3)
-        };
-
-        const auto easyIntersect = [&](small_size_t eIdx, small_size_t v0Idx, small_size_t v1Idx) {
-            newIntersect(
-                mesh,
-                edgeIndices[eIdx],
-                vertexValues[v0Idx], vertexValues[v1Idx],
-                vertexCoords[v0Idx], vertexCoords[v1Idx]
-            );
-        };
-        const auto easyTriangle = [&](indexer::TetraTriangleIntersectionIndex idx) {
-            // Create intersections
-            easyIntersect(idx.edgeIndex[0], idx.vertexIndex[0][0], idx.vertexIndex[0][1]);
-            easyIntersect(idx.edgeIndex[1], idx.vertexIndex[1][0], idx.vertexIndex[1][1]);
-            easyIntersect(idx.edgeIndex[2], idx.vertexIndex[2][0], idx.vertexIndex[2][1]);
-
-            // Create a new triangle
-            sewTriangle(
-                mesh,
-                edgeIndices[idx.edgeIndex[0]], edgeIndices[idx.edgeIndex[1]], edgeIndices[idx.edgeIndex[2]],
-                faceIndices[idx.faceIndex[0]], faceIndices[idx.faceIndex[1]], faceIndices[idx.faceIndex[2]]
-            );
-        };
-        const auto easyQuad = [&](indexer::TetraQuadIntersectionIndex idx) {
-            // Create intersections
-            easyIntersect(idx.edgeIndex[0], idx.vertexIndex[0][0], idx.vertexIndex[0][1]);
-            easyIntersect(idx.edgeIndex[1], idx.vertexIndex[1][0], idx.vertexIndex[1][1]);
-            easyIntersect(idx.edgeIndex[2], idx.vertexIndex[2][0], idx.vertexIndex[2][1]);
-            easyIntersect(idx.edgeIndex[3], idx.vertexIndex[3][0], idx.vertexIndex[3][1]);
-
-            // Create a new quad
-            sewQuad(
-                mesh,
-                edgeIndices[idx.edgeIndex[0]], edgeIndices[idx.edgeIndex[1]],
-                edgeIndices[idx.edgeIndex[2]], edgeIndices[idx.edgeIndex[3]],
-                faceIndices[idx.faceIndex[0]], faceIndices[idx.faceIndex[1]],
-                faceIndices[idx.faceIndex[2]], faceIndices[idx.faceIndex[3]]
-            );
-        };
-
-        small_size_t cond = 0; // 0b x x x x <-- each bit is 1 if sign is pos, 0 if sign is neg
-        for(small_size_t i = 0; i < 4; ++i) {
-            cond << 1;
-            cond |= (vertexValues[i] >= 0.0 ? 1 : 0);
-        }
-
-        switch(cond) {
-        case 0b0000:
-        case 0b1111:
-            break;
-
-        case 0b0001:
-            // intersects 03, 13, 23, triangle (03, 13, 23)
-            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
-                0, 3, 1, 3, 2, 3
-            >());
-            break;
-        case 0b1110:
-            // intersects 23, 13, 03, triangle (23, 13, 03)
-            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
-                2, 3, 1, 3, 0, 3
-            >());
-            break;
-
-        case 0b0010:
-            // intersects 12, 02, 23, triangle (12, 02, 23)
-            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
-                1, 2, 0, 2, 2, 3
-            >());
-            break;
-        case 0b1101:
-            // intersects 23, 02, 12, triangle (23, 02, 12)
-            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
-                2, 3, 0, 2, 1, 2
-            >());
-            break;
-
-        case 0b0100:
-            // intersects 12, 13, 01, triangle (12, 13, 01)
-            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
-                1, 2, 1, 3, 0, 1
-            >());
-            break;
-        case 0b1011:
-            // intersects 01, 13, 12, triangle (01, 13, 12)
-            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
-                0, 1, 1, 3, 1, 2
-            >());
-            break;
-
-        case 0b1000:
-            // intersects 03, 02, 01, triangle (03, 02, 01)
-            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
-                0, 3, 0, 2, 0, 1
-            >());
-            break;
-        case 0b0111:
-            // intersects 01, 02, 03, triangle (01, 02, 03)
-            easyTriangle(indexer::getTetraTriangleIntersectionIndex<
-                0, 1, 0, 2, 0, 3
-            >());
-            break;
-
-        case 0b0011:
-            // intersects 02, 03, 13, 12, 2 triangles
-            easyQuad(indexer::getTetraQuadIntersectionIndex<
-                0, 2, 0, 3, 1, 3, 1, 2
-            >());
-            break;
-        case 0b1100:
-            // intersects 12, 13, 03, 02, 2 triangles
-            easyQuad(indexer::getTetraQuadIntersectionIndex<
-                1, 2, 1, 3, 0, 3, 0, 2
-            >());
-            break;
-
-        case 0b0101:
-            // intersects 01, 12, 23, 03, 2 triangles
-            easyQuad(indexer::getTetraQuadIntersectionIndex<
-                0, 1, 1, 2, 2, 3, 0, 3
-            >());
-            break;
-        case 0b1010:
-            // intersects 03, 23, 12, 01, 2 triangles
-            easyQuad(indexer::getTetraQuadIntersectionIndex<
-                0, 3, 2, 3, 1, 2, 0, 1
-            >());
-            break;
-
-        case 0b0110:
-            // intersects 01, 02, 23, 13, 2 triangles
-            easyQuad(indexer::getTetraQuadIntersectionIndex<
-                0, 1, 0, 2, 2, 3, 1, 3
-            >());
-            break;
-        case 0b1001:
-            // intersects 13, 23, 02, 01, 2 triangles
-            easyQuad(indexer::getTetraQuadIntersectionIndex<
-                1, 3, 2, 3, 0, 2, 0, 1
-            >());
-            break;
-
-        } // switch(cond)
-    } // void calcTetra(...)
 
     // Helper function: add a new intersection on edge
     // value0 and value1 should be the sequence in tetrahedra. This function will manage the flipping.
@@ -352,10 +359,10 @@ public:
         Mesh& mesh,
         const TetraEdgeIndex& idx,
         Float value0, Float value1,
-        const mathfunc::Vec<3, Float>& coord0, const mathfunc::Vec<3, Float>& coord1
+        const coordinate_type& coord0, const coordinate_type& coord1
     ) {
         struct InsertionCoordinate {
-            mathfunc::Vec< 3, Float > coord;
+            coordinate_type coord;
             auto coordinate(Mesh& mesh, size_t vi) const { return coord; }
         };
 
@@ -500,9 +507,9 @@ private:
 
     // Parameters
     Float                           _minPositionShift = 1e-2; // The position will have a minimal shift from either end
-    mathfunc::Vec< 3, Float >       _cuboidSize;
+    coordinate_type                 _cuboidSize;
     std::array< std::size_t, 3 >    _numCuboids;
-    mathfunc::Vec< 3, Float >       _boundingBoxOrigin;
+    coordinate_type                 _boundingBoxOrigin;
 
     // Internal data
     std::vector< Float > _distValue; // using vertex indexing
