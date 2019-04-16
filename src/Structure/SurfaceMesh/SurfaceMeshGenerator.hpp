@@ -210,7 +210,7 @@ public:
 
             small_size_t cond = 0; // 0bxxxx <-- each bit is 1 if sign is pos, 0 if sign is neg
             for(small_size_t i = 0; i < 4; ++i) {
-                cond << 1;
+                cond <<= 1;
                 cond |= (vertexValues[i] >= 0.0 ? 1 : 0);
             }
 
