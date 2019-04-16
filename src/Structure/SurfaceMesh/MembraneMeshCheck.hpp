@@ -58,7 +58,7 @@ struct MembraneMeshTopologyCheck {
     size_t numBoundaries = 0;
 
     bool operator()(const MeshType& mesh, bool report = false) const {
-        bool res = true;
+        bool res = true; // Whether the topology is consistent
 
         const size_t chi = 2 - 2 * genus - numBoundaries; // Euler characteristic
 
@@ -149,30 +149,15 @@ struct MembraneMeshTopologyCheck {
         // Check half edges
         for(size_t i = 0; i < numHalfEdges; ++i) {
             // Check opposite
-            if(mesh.hasOpposite(i)) {
-                const size_t hei_o = mesh.opposite(i);
-                if(!mesh.hasOpposite(hei_o)) {
-                    res = false;
-                    if(report) {
-                        LOG(ERROR) << "Half edge " << hei_o << " (opposite of half edge " << i << ") "
-                            << "does not have a half edge.";
-                    }
-                } else if(mesh.opposite(hei_o) != i) {
-                    res = false;
-                    if(report) {
-                        LOG(ERROR) << "Inconsistent opposite half edges: "
-                            << i << " -> " << hei_o << " -> " << mesh.opposite(hei_o);
-                    }
-                }
-            } else {
-                // Does not have an opposite
-                if(!numBoundaries) {
-                    res = false;
-                    if(report) {
-                        LOG(ERROR) << "In closed surface, half edge " << i << " does not have an opposite.";
-                    }
+            const size_t hei_o = mesh.opposite(i);
+            if(mesh.opposite(hei_o) != i) {
+                res = false;
+                if(report) {
+                    LOG(ERROR) << "Inconsistent opposite half edges: "
+                        << i << " -> " << hei_o << " -> " << mesh.opposite(hei_o);
                 }
             }
+
             // Check next/prev
             const size_t next = mesh.next(i);
             const size_t prev = mesh.prev(i);
@@ -215,7 +200,13 @@ struct MembraneMeshDihedralCheck {
         // Requires triangle unit normals
         for(size_t i = 0; i < numEdges; ++i) {
             const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
-            if(mesh.hasOpposite(hei)) {
+            const size_t hei_o = mesh.opposite(hei);
+
+            using PolygonType = MeshType::HalfEdge::PolygonType;
+            if(
+                mesh.getHalfEdges()[hei].polygonType   == PolygonType::Triangle &&
+                mesh.getHalfEdges()[hei_o].polygonType == PolygonType::Triangle
+            ) {
                 const size_t t0 = mesh.triangle(hei);
                 const size_t t1 = mesh.triangle(mesh.opposite(hei));
                 const auto& un0 = mesh.getTriangleAttribute(t0).gTriangle.unitNormal;
@@ -338,7 +329,13 @@ struct MembraneMeshQualityReport {
         double avgDotNormal = 0.0;
         for(size_t i = 0; i < numEdges; ++i) {
             const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
-            if(mesh.hasOpposite(hei)) {
+            const size_t hei_o = mesh.opposite(hei);
+
+            using PolygonType = MeshType::HalfEdge::PolygonType;
+            if(
+                mesh.getHalfEdges()[hei].polygonType   == PolygonType::Triangle &&
+                mesh.getHalfEdges()[hei_o].polygonType == PolygonType::Triangle
+            ) {
                 const size_t t0 = mesh.triangle(hei);
                 const size_t t1 = mesh.triangle(mesh.opposite(hei));
                 const auto& un0 = mesh.getTriangleAttribute(t0).gTriangle.unitNormal;

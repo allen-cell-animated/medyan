@@ -114,6 +114,8 @@ public:
         const size_t ti1 = mesh.triangle(hei_o);
 
         // Check if topo constraint is satisfied.
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         if(
             mesh.degree(vi0) <= _minDegree ||
             mesh.degree(vi2) <= _minDegree ||
@@ -158,7 +160,7 @@ public:
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) if(!mesh.isVertexOnBorder(vi)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         });
 
         // Does not change the edge preferrable length
@@ -281,6 +283,9 @@ public:
         const size_t ei3 = mesh.edge(hei_op); // v3 - v1
 
         // Check topology constraints
+        // Currently does not support insertion on border edges, but we may also implement that in the future.
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         // A new vertex with degree 4 will always be introduced
         if(
             mesh.degree(vi1) >= _maxDegree ||
@@ -312,7 +317,7 @@ public:
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) if(!mesh.isVertexOnBorder(vi)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
 
             // Set preferrable length of edges to be the same as before
             const auto eqLength = mesh.getEdgeAttribute(eis[0]).aEdge.eqLength;
@@ -467,14 +472,16 @@ public:
         const size_t ti1 = mesh.triangle(hei_o);
 
         // Check topology constraints
+        // Currently does not allow collapsing of border edges, but we may also implement that in the future
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         if(
             mesh.degree(vi0) + mesh.degree(vi2) - 4 > _maxDegree ||
             mesh.degree(vi0) + mesh.degree(vi2) - 4 < _minDegree ||
+            (mesh.isVertexOnBorder(vi0) && mesh.isVertexOnBorder(vi2)) ||
             mesh.degree(vi1) <= _minDegree ||
             mesh.degree(vi3) <= _minDegree
         ) return State::InvalidTopo;
-
-        // Future: maybe also geometric constraints (gap, smoothness, etc)
 
         // Check triangle quality constraints
         const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
@@ -513,10 +520,13 @@ public:
                 });
             }
 
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.opposite(hei_begin)));
+            if(!mesh.isVertexOnBorder(ov0)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
+            const auto v_first = mesh.target(mesh.opposite(hei_begin));
+            if(!mesh.isVertexOnBorder(v_first)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, v_first);
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
-                Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.next(hei1)));
+                const auto vi = mesh.target(mesh.next(hei1));
+                if(!mesh.isVertexOnBorder(vi))
+                    Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
             }
         };
 

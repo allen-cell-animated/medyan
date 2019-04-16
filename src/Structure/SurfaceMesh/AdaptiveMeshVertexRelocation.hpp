@@ -9,7 +9,7 @@
 namespace adaptive_mesh {
 
 // Different methods can be used in vertex relocation
-//   - Vertex relaxations are vertex movement via moving along assigned force fields
+//   - (Deprecated) Vertex relaxations are vertex movement via moving along assigned force fields
 //   - Direct vertex relocations are to move the vertex to the optimal location
 
 // Vertex relaxation as method of vertex relocation
@@ -316,7 +316,7 @@ public:
 
             // Move vertices
             for(size_t iterRelo = 0; iterRelo < _maxIterRelocation; ++iterRelo) {
-                for(size_t i = 0; i < numVertices; ++i) {
+                for(size_t i = 0; i < numVertices; ++i) if(!mesh.isVertexOnBorder(i)) {
                     // const auto coordOriginal = mesh.getVertexAttribute(i).getCoordinate();
                     const auto target = OptimalVertexLocationType{}(mesh, i);
                     /*const auto diff = target - coordOriginal;
