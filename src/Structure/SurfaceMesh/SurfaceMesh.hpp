@@ -263,11 +263,6 @@ private:
         _halfEdges[hei1].oppositeHalfEdgeIndex = hei0;
         _halfEdges[hei1].edgeIndex = ei;
     }
-    void _registerEdgeSingle(size_t ei, size_t hei) {
-        _edges[ei].halfEdgeIndex = hei;
-        _halfEdges[hei].hasOpposite = false;
-        _halfEdges[hei].edgeIndex = ei;
-    }
 
     template< typename Operation > size_t _newVertex(const Operation& op) {
         size_t index = _vertices.insert();
@@ -945,7 +940,7 @@ public:
     };
 
     // Insert a new vertex, without any connection
-    struct NewVertexInsertion {
+    struct [[deprecated]] NewVertexInsertion {
 
         // Returns the index of the inserted vertex
         template< typename InsertionMethod, typename AttributeSetter >
@@ -968,7 +963,7 @@ public:
     }; // End of struct NewVertexInsertion
 
     // Patch a new triangle
-    struct NewTrianglePatch {
+    struct [[deprecated]] NewTrianglePatch {
         static constexpr int deltaNumVertex = 0;
 
         // This function requires that
@@ -1007,7 +1002,7 @@ public:
                     mesh._registerEdge(ei, hei_o, newHalfEdges[i]);
                 } else {
                     const size_t ei = mesh._newEdge();
-                    mesh._registerEdgeSingle(ei, newHalfEdges[i]);
+                    // mesh._registerEdgeSingle(ei, newHalfEdges[i]);
 
                     // update vertex degrees
                     ++vertices[vi[ (i+2)%3 ]].degree;
