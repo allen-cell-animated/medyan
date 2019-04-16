@@ -159,7 +159,7 @@ public:
                     // Compute position
                     Float pos = vertexValues[v0Idx] / (vertexValues[v0Idx] - vertexValues[v1Idx]);
                     pos = std::min(1 - _minPositionShift, std::max(_minPositionShift, pos));
-                    auto newCoord = vertexCoords[v0Idx] * pos + vertexCoords[v1Idx] * (1 - pos);
+                    const auto newCoord = vertexCoords[v0Idx] * (1 - pos) + vertexCoords[v1Idx] * pos;
 
                     // Add new vertex
                     res.vertexCoordinateList.push_back(newCoord);
