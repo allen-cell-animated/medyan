@@ -28,7 +28,6 @@ Membrane::Membrane(
         triangleVertexIndexList,
         typename MembraneMeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
     );
-    _mesh.updateClosedness();
 
     // Update geometry
     updateGeometryValue<false>();

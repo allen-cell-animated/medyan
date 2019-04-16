@@ -225,7 +225,7 @@ private:
 
     MetaAttribute _meta;
 
-    bool _isClosed;
+    [[deprecated]] bool _isClosed;
     int _genus = 0; // Genus of the surface. Currently it is not tracked.
 
     // Element accessor
@@ -609,11 +609,7 @@ public:
         return Initializer().extract(*this);
     }
 
-    bool updateClosedness() {
-        _isClosed = (numBorders() == 0);
-        return _isClosed;
-    }
-    bool isClosed()const noexcept { return _isClosed; }
+    bool isClosed()const noexcept { return numBorders() == 0; }
 
     // Data accessors
     auto numVertices()  const noexcept { return _vertices.size(); }
