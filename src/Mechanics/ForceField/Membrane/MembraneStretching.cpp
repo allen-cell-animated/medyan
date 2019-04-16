@@ -21,7 +21,7 @@ double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(bool
         const auto eqArea = m->getMMembrane()->getEqArea();
 
         double area = 0.0;
-        for(const auto& v : m->getMesh().getVertices())
+        for(const auto& v : m->getMesh().getVertices()) if(v.numTargetingBorderHalfEdges == 0)
             area += stretched ? v.attr.gVertexS.area : v.attr.gVertex.area;
 
         U_i = _FFType.energy(area, kElastic, eqArea); 
@@ -54,7 +54,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
         for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.area;
 
         const size_t numVertices = mesh.getVertices().size();
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             const auto& v = mesh.getVertices()[vi];
            
             _FFType.forces(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
@@ -82,7 +82,7 @@ void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
         for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.area;
 
         const size_t numVertices = mesh.getVertices().size();
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             const auto& v = mesh.getVertices()[vi];
            
             _FFType.forcesAux(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);

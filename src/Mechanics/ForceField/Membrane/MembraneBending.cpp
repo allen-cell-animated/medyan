@@ -17,7 +17,7 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(bool stret
 
         U_i = 0;
 
-        for(const auto& v : mesh.getVertices()) {
+        for(const auto& v : mesh.getVertices()) if(v.numTargetingBorderHalfEdges == 0) {
             const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
             const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
 
@@ -47,7 +47,7 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces() {
         const auto& mesh = m->getMesh();
 
         const size_t numVertices = mesh.getVertices().size();
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             const auto& v = mesh.getVertices()[vi];
 
             const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
@@ -83,7 +83,7 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForcesAux() {
         const auto& mesh = m->getMesh();
 
         const size_t numVertices = mesh.getVertices().size();
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             const auto& v = mesh.getVertices()[vi];
 
             const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();

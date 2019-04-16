@@ -257,7 +257,7 @@ struct MembraneMeshAttribute {
         }
 
         // Calculate vcell area, curvature and vertex pseudo unit normal
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& vag = mesh.getVertexAttribute(vi).template getGVertex<stretched>();
 
             // clearing
@@ -414,7 +414,7 @@ struct MembraneMeshAttribute {
         // Calculate vcell area, curvature with derivative
         // Calculate vertex pseudo unit normal
         // Calculate derivative of volume on vertices
-        for(size_t vi = 0; vi < numVertices; ++vi) {
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
             auto& vag = mesh.getVertexAttribute(vi).gVertex;
 
             // clearing
@@ -577,7 +577,8 @@ struct MembraneMeshAttribute {
         - The normal and pseudo normal at the triangles, edges and vertices
         - The length of edges
 
-    Note: this method only works if the mesh is closed.
+    Note: this method only works if the mesh is closed. This must be ensured by
+          the caller of the function.
     
     In fact, the signed distance field serves as a good candidate for membrane
     boundary potential. However, this field is not C1-continuous everywhere,
@@ -717,6 +718,7 @@ struct MembraneMeshAttribute {
 
     // Vertex unit normals (Adaptive attribute) used in adaptive remeshing
     // Requires
+    //   - The vertex is not on the border
     //   - Unit normals in triangles (geometric)
     //   - Angles in halfedges (geometric)
     static void adaptiveComputeVertexNormal(MeshType& mesh, size_t vi) {

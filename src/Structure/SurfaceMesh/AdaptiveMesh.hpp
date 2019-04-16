@@ -160,7 +160,7 @@ public:
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) if(!mesh.isVertexOnBorder(vi)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         });
 
         // Does not change the edge preferrable length
@@ -317,7 +317,7 @@ public:
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) if(!mesh.isVertexOnBorder(vi)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
 
             // Set preferrable length of edges to be the same as before
             const auto eqLength = mesh.getEdgeAttribute(eis[0]).aEdge.eqLength;
@@ -520,10 +520,13 @@ public:
                 });
             }
 
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.opposite(hei_begin)));
+            if(!mesh.isVertexOnBorder(ov0)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
+            const auto v_first = mesh.target(mesh.opposite(hei_begin));
+            if(!mesh.isVertexOnBorder(v_first)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, v_first);
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
-                Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.next(hei1)));
+                const auto vi = mesh.target(mesh.next(hei1));
+                if(!mesh.isVertexOnBorder(vi))
+                    Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
             }
         };
 
