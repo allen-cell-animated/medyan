@@ -402,12 +402,12 @@ private:
     auto _getEdgeListSize() const {
         return _numTetraEdgesPerCuboid * _getCubeListSize();
     }
-    auto _getEdgeIdx(std::size_t nx, std::size_t ny, std::size_t nz, std::size_t edgeIdx) const {
+    auto _getEdgeIdx(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t edgeIdx) const {
         return _numTetraEdgesPerCuboid * _getCubeIdx(nx, ny, nz) + edgeIdx;
     }
     auto _getEdgeIdxInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t edgeIdx) const {
         const small_size_t i = _tetraEdgeLocalIndex[tetIdx][edgeIdx];
-        const small_size_t idxInCuboid = i & 0b111 - 1;
+        const small_size_t idxInCuboid = (i & 0b111) - 1;
         return _getEdgeIdx(
             nx + ((i >> 5) & 1),
             ny + ((i >> 4) & 1),
