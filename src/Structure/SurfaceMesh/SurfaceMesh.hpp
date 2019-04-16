@@ -186,7 +186,7 @@ public:
 
         PolygonType polygonType;
         [[deprecated]] bool hasOpposite;
-        size_t triangleIndex;
+        [[deprecated]] size_t triangleIndex;
         size_t polygonIndex;
         size_t targetVertexIndex;
         size_t oppositeHalfEdgeIndex;
@@ -245,13 +245,13 @@ private:
         _triangles[ti].halfEdgeIndex = hei0;
         _halfEdges[hei0].nextHalfEdgeIndex = hei1;
         _halfEdges[hei0].prevHalfEdgeIndex = hei2;
-        _halfEdges[hei0].triangleIndex = ti;
+        _halfEdges[hei0].polygonIndex = ti;
         _halfEdges[hei1].nextHalfEdgeIndex = hei2;
         _halfEdges[hei1].prevHalfEdgeIndex = hei0;
-        _halfEdges[hei1].triangleIndex = ti;
+        _halfEdges[hei1].polygonIndex = ti;
         _halfEdges[hei2].nextHalfEdgeIndex = hei0;
         _halfEdges[hei2].prevHalfEdgeIndex = hei1;
-        _halfEdges[hei2].triangleIndex = ti;
+        _halfEdges[hei2].polygonIndex = ti;
     }
     void _registerEdge(size_t ei, size_t hei0, size_t hei1) {
         _edges[ei].halfEdgeIndex = hei0;
@@ -331,7 +331,7 @@ private:
     template< typename Element, std::enable_if_t<std::is_same<Element, Triangle>::value, void>* = nullptr >
     void _retargetElement(size_t from, size_t to) {
         forEachHalfEdgeInTriangle(to, [this, to](size_t hei) {
-            _halfEdges[hei].triangleIndex = to;
+            _halfEdges[hei].polygonIndex = to;
         });
         _triangles[to].attr.setIndex(to);
     }
@@ -442,7 +442,7 @@ public:
                     HalfEdge& he = mesh._halfEdges[hei];
                     hai.push_back({true});
                     he.polygonType = HalfEdge::PolygonType::Triangle;
-                    he.triangleIndex = ti;
+                    he.polygonIndex = ti;
                     he.targetVertexIndex = t[i];
                     he.nextHalfEdgeIndex = (i == 2 ? hei - 2 : hei + 1);
                     he.prevHalfEdgeIndex = (i == 0 ? hei + 2 : hei - 1);
@@ -646,7 +646,7 @@ public:
     size_t opposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].oppositeHalfEdgeIndex; }
     size_t next(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].nextHalfEdgeIndex; }
     size_t prev(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].prevHalfEdgeIndex; }
-    size_t triangle(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].triangleIndex; }
+    size_t triangle(size_t halfEdgeIndex) const { return polygon(halfEdgeIndex); }
     size_t polygon(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].polygonIndex; }
     size_t target(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].targetVertexIndex; }
     size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
