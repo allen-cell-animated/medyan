@@ -396,7 +396,6 @@ public:
             PathologicalTopologyError(const std::string& what_arg) : std::runtime_error("Pathological Topology: " + what_arg) {}
         };
 
-        // TODO: support mesh with borders
         void init(
             SurfaceTriangularMesh& mesh,
             size_t numVertices,
@@ -521,31 +520,66 @@ public:
             }
 
             // Make borders
-            // 2-pass process:
-            //   1. create border half edges, associate vertices and edges
-            //   2. create borders and associate next/prev of half edges
-            const size_t currentNumHalfEdges = mesh._halfEdges.size();
-            for(size_t hei = 0; hei < currentNumHalfEdges; ++hei) {
-                if(hai[hei].isAtBorder && ! hai[hei].oppositeBorderCreated) {
-                    size_t cur_hei = hei;
+            {
+                // Method of finding the next half edge inside border
+                const auto findNextIn = [&mesh, &hai](size_t hei_b_cur) -> size_t {
+                    size_t hei_in = hei_b_cur;
+                    do {
+                        hei_in = mesh.prev(mesh.opposite(hei_in));
+                    } while(!hai[hei_in].isAtBorder);
+                    return hei_in;
+                };
 
-                    // Create first border half edge
-                    const size_t hei_b_first = mesh._halfEdges.insert();
-                    mesh._halfEdges[hei_b_first].polygonType = HalfEdge::PolygonType::Border;
+                // Method of associating a new border half edge with vertices, edges and the border
+                const auto registerBorderHalfEdge = [&mesh](size_t hei_b, size_t hei_in, size_t bi) {
+                    mesh._halfEdges[hei_b].polygonType = HalfEdge::PolygonType::Border;
+                    mesh._halfEdges[hei_b].polygonIndex = bi;
+                    mesh._halfEdges[hei_b].targetVertexIndex = mesh.target(mesh.prev(hei_in));
+                    mesh._registerEdge(mesh.edge(hei_in), hei_in, hei_b);
+                };
 
-                    // Create a border object
-                    const size_t bi = mesh._borders.insert();
-                    mesh._borders[bi].halfEdgeIndex = hei_b_first;
+                // Method of associating 2 consequtive half edges
+                const auto connectBorderHalfEdge = [&mesh](size_t hei_b_cur, size_t hei_b_last) {
+                    mesh._halfEdges[hei_b_cur].prevHalfEdgeIndex = hei_b_last;
+                    mesh._halfEdges[hei_b_last].nextHalfEdgeIndex = hei_b_cur;
+                };
 
-                    // Method of finding the next half edge inside border
-                    const auto findNextIn = [&](size_t cur_hei_in) -> size_t {
+                const size_t currentNumHalfEdges = mesh._halfEdges.size();
+                for(size_t hei = 0; hei < currentNumHalfEdges; ++hei) {
+                    if(hai[hei].isAtBorder && ! hai[hei].oppositeBorderCreated) {
+                        size_t hei_in_cur = hei;
+
+                        // Create first border half edge
+                        const size_t hei_b_first = mesh._halfEdges.insert();
+                        hai[hei_in_cur].oppositeBorderCreated = true;
+                        size_t hei_b_cur = hei_b_first;
+                        size_t hei_b_last = hei_b_first;
+
+                        // Create a border object
+                        const size_t bi = mesh._borders.insert();
+                        mesh._borders[bi].halfEdgeIndex = hei_b_first;
+                        registerBorderHalfEdge(hei_b_first, hei_in_cur, bi);
+
+                        // Sequentially create border half edges
+                        while( (hei_in_cur = findNextIn(hei_b_cur)) != hei ) {
+                            hei_b_cur = mesh._halfEdges.insert();
+                            hai[hei_in_cur].oppositeBorderCreated = true;
+
+                            registerBorderHalfEdge(hei_b_cur, hei_in_cur, bi);
+                            connectBorderHalfEdge(hei_b_cur, hei_b_last);
+
+                            hei_b_last = hei_b_cur;
+                        }
+                        connectBorderHalfEdge(hei_b_first, hei_b_last);
+
                     }
-                }
-            }
+                } // End looping half edges for making border
+            } // End making border
 
             // Initialize attributes
             Attribute::init(mesh, attributeInitializerInfo);
-        }
+
+        } // End of function void init(...)
 
         Info extract(const SurfaceTriangularMesh& mesh) const {
             Info info;
