@@ -511,8 +511,8 @@ public:
                 }
                 if(!pathoVertices.empty()) {
                     std::ostringstream oss;
-                    oss << "The following vertices has more than 1 targeting border half edges:";
-                    for(const auto& x : pathoVertices) oss << ' ' << x.first << ':' << x.second;
+                    oss << "The following vertices have more than 1 targeting border half edges:";
+                    for(const auto& x : pathoVertices) oss << ' ' << x.first << ':' << +x.second;
                     LOG(ERROR) << oss.str();
                 }
 
