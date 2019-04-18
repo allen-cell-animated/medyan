@@ -82,16 +82,19 @@ struct ChemistryAlgorithm {
     
     int minimizationSteps = 0;
     int neighborListSteps = 0;
+    
     //@}
+    
+    
 };
 
 /// Struct to hold Species and Reaction information
 /// @note - all filament-related reactions and species are 2D vectors corresponding
 ///         to the filament type specified in the input file.
 struct ChemistryData {
-    
+ 
     /// Reaction happening between SpeciesBulk and SpeciesDiffusing ONLY
-    vector<tuple<vector<string>, vector<string>, double>> genReactions = {};
+    vector<tuple<vector<string>, vector<string>, double, double, string>> genReactions = {};
     
     /// Reaction happening between SpeciesBulk ONLY
     vector<tuple<vector<string>, vector<string>, double>> bulkReactions = {};
@@ -106,11 +109,11 @@ struct ChemistryData {
      *  string of reactants, string of products, and the reaction rate.
      */
     /// Polymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> polymerizationReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string>>> polymerizationReactions;
     /// Depolymerization reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> depolymerizationReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string>>> depolymerizationReactions;
     /// Aging reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> agingReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string>>> agingReactions;
     /// Destruction reactions
     vector<vector<tuple<vector<string>, vector<string>, double>>> destructionReactions;
     
@@ -131,13 +134,13 @@ struct ChemistryData {
      *  range.
      */
     /// Linker reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> linkerReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double, double, string>>> linkerReactions;
     /// MotorGhost reactions
-    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double>>> motorReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, double, double, double, string>>> motorReactions;
     //@}
     
     /// MotorGhost walking reactions
-    vector<vector<tuple<vector<string>, vector<string>, double>>> motorWalkingReactions;
+    vector<vector<tuple<vector<string>, vector<string>, double, double, string>>> motorWalkingReactions;
     
     /// SpeciesBulk parsed, in the form of a tuple which contains the name and
     /// initial copy number, release time, removal time, CONST/REG qualifier, TARGET TYPE
@@ -397,8 +400,7 @@ public:
     /// Reads filament input file. Returns a vector of tuples containing
     /// filament type and positions (start and end points).
     /// @note - Does not check for coordinate correctness.
-     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> ,
-            vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
+     tuple< vector<tuple<short, vector<double>, vector<double>>> , vector<tuple<string, short, vector<vector<double>>>> , vector<tuple<string, short, vector<double>>> , vector<vector<double>> >  readFilaments();
 };
 
 /// Used to parse initial Bubble information, initialized by the Controller.

@@ -100,6 +100,8 @@ Reaction<M,N>* Reaction<M,N>::cloneImpl(const SpeciesPtrContainerVector &spcv)
 #endif
     //Copy reaction type
     newReaction->_reactionType = _reactionType;
+    newReaction->_gnum = _gnum;
+    newReaction->_hrcdid = _hrcdid;
     return newReaction;
 }
 

@@ -28,44 +28,43 @@ class Bead;
 /// For performing a conjugate gradient minimization method
 
 /*!
- *  CGMethod is an abstract class that contains methods for conjugate gradient 
- *  minimization. It has functions for various line search techniques, including golden 
- *  section, backtracking, and quadratic line search. This base class also contains 
+ *  CGMethod is an abstract class that contains methods for conjugate gradient
+ *  minimization. It has functions for various line search techniques, including golden
+ *  section, backtracking, and quadratic line search. This base class also contains
  *  parameters for tolerance criterion and other helpful parameters.
  */
 class CGMethod {
-    
-    
+
+
 
 protected:
 
 
     ///< Data vectors for calculation
     double *coord;  ///<bead coordinates (length 3*N)
-    
+    double *coordDiss;
     double *force = nullptr; ///< bead forces (length 3*N)
     double *forceAux = nullptr; ///< auxiliary force calculations (length 3*N)
     double *forceAuxPrev = nullptr; ///<auxiliary force calculation previously (length 3*N)
-//    cylinder* cylindervec;
 
     /// Safe mode which chooses the safe backtracking search if the
     /// minimizer got itself into trouble.
     bool _safeMode = false;
-    
+
     /// Minimum number of minimization steps, in the case of a
     /// small number of beads in the system
     const int _MINNUMSTEPS = 1E4;
-    
+
     //@{
     /// Parameter used in backtracking line search
     const double LAMBDAREDUCE = 0.5;     ///< Lambda reduction parameter for backtracking
     const double LAMBDATOL = 1e-8;       ///< Lambda tolerance parameter
-    
+
     const double SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
-    
+
     const double BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
     //@}
-    
+
     //@{
 
 #ifdef CUDAACCL
@@ -135,21 +134,21 @@ protected:
     double allFADotFA();
     double allFADotFAP();
     double allFDotFA();
-    
+
     /// Get the max force in the system
     double maxF();
-    
+
     /// Get bead with the max force in the system
     Bead* maxBead();
-    
+
     /// Transfers data to lightweight arrays for min
     void startMinimization();
     /// Transfers updated coordinates and force to bead members
     void endMinimization();
-    
+
     /// Move beads in search direction by d
     void moveBeads(double d);
-    
+
     /// shift the gradient by d
     void shiftGradient(double d);
     //@}
@@ -167,7 +166,7 @@ protected:
     /// energy change and compares the backtracked energy to it
     double backtrackingLineSearch(ForceFieldManager& FFM, double MAXDIST,
                                                           double LAMBDAMAX, bool *gpu_safestate);
-    
+
     /// The safemode backtracking search, returns the first energy decrease
     ///@note - The most robust linesearch method, but very slow
 
@@ -175,10 +174,10 @@ protected:
                                                               double LAMBDAMAX, bool *gpu_safestate);
 
     //@}
-    
+
     /// Print forces on all beads
     void printForces();
-    
+
     /// Initialize data arrays
     inline void allocate(long numBeadsx3, long Ncyl) {
 
@@ -187,8 +186,9 @@ protected:
         forceAux = new double[numBeadsx3];
         forceAuxPrev = new double[numBeadsx3];
     }
-    
+
     ///Deallocation of CG arrays
+
     inline void deallocate() {
 //        coord = CUDAcommon::serlvars.coord;
 //        delete [] coord;
@@ -196,12 +196,20 @@ protected:
         delete [] forceAux;
         delete [] forceAuxPrev;
     }
+
+
 public:
+
+    //double* getCoords();
+
+
+
+
     static long N; ///< Number of beads in the system, set before each minimization
     static long Ncyl;
-    
+
     virtual ~CGMethod() {};
-    
+
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, double GRADTOL,
                           double MAXDIST, double LAMBDAMAX, bool steplimit) = 0;

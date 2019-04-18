@@ -510,8 +510,8 @@ double CylinderExclVolRepulsion::energy(double *coord, double *f, int *beadSet,
 //            SysParams::exvolcounterz[1] += 1;
             //slightly move point
             movePointOutOfPlane(c1, c2, c3, c4, newc2, 2, 0.01);
-            c2 = newc2;
-            std::cout<<"move"<<endl;
+            for(int dim =0; dim <3; dim++)
+                c2[dim] = newc2[dim];
 //            std::cout<<i<<" 2.0 "<<c1[0]<<" "<<c1[1]<<" "<<c1[2]<<" "<<c2[0]<<" "<<c2[1]<<" "<<c2[2]<<" "<<c3[0]<<" "
 //                    ""<<c3[1]<<" "
 //                             ""<<c3[2]<<" "<<c4[0]<<" "<<c4[1]<<" "<<c4[2]<<" "<<U_i<<endl;

@@ -51,6 +51,36 @@ public:
     void equlibrate(ForceFieldManager &FFM, bool steplimit) {
         _CGType.minimize(FFM, _GRADTOL, _MAXDIST, _LAMBDAMAX, steplimit);
     }
+    
+
+    
+
+    
+    double getEnergy(ForceFieldManager &FFM, double d){
+      
+        //double* coord = _CGType.getCoords();
+        double* coord = CUDAcommon::serlvars.coord;
+        
+        FFM.vectorizeAllForceFields();
+        
+        double dummyForce[1] = {0};
+        
+        double f = FFM.computeEnergy(coord,dummyForce,0.0);
+        
+        // delete [] coord;
+        
+        FFM.cleanupAllForceFields();
+        
+        
+        
+        return f;
+        
+        
+        
+    }
+
+    
+    
 };
 
 #endif

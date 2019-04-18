@@ -19,6 +19,8 @@
 #include "common.h"
 
 #include "Parser.h"
+#include "DissipationTracker.h"
+
 
 ///FORWARD DECLARATIONS
 class CompartmentGrid;
@@ -27,16 +29,16 @@ class SubSystem;
 /// To print a specified output into a file
 /*!
  *  An output object, initialized by the Controller, can print a number of specific
- *  output formats, including current snapshot, forces, tensions, and birth times. 
+ *  output formats, including current snapshot, forces, tensions, and birth times.
  *  Upon destruction, the output file is closed.
  */
 
 class Output {
 protected:
     ofstream _outputFile; ///< The output file being used
-    
+
     SubSystem* _subSystem = nullptr;
-    
+
 public:
     /// Constructor, which opens the output file
     Output(string outputFileName, SubSystem* s) {
@@ -47,12 +49,12 @@ public:
             exit(EXIT_FAILURE);
         }
         cout << "Opening file " << outputFileName << endl;
-        
+
         _subSystem = s;
     }
     /// Destructor, which closes the output file
     ~Output() {_outputFile.close();}
-    
+
     /// To be implemented in sub classes
     virtual void print(int snapshot) = 0;
 };
@@ -64,28 +66,28 @@ class BasicSnapshot : public Output {
 public:
     BasicSnapshot(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~BasicSnapshot() {}
-    
+
     virtual void print(int snapshot);
 };
 
 /// Print birth times of beads for each Filament, Linker,
 /// MotorGhost, and BranchingPoint
 class BirthTimes : public Output {
-    
+
 public:
     BirthTimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~BirthTimes() {}
-    
+
     virtual void print(int snapshot);
 };
 
 /// Print forces on beads for each Filament
 class Forces : public Output {
-    
+
 public:
     Forces(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~Forces() {}
-    
+
     virtual void print(int snapshot);
 };
 
@@ -95,11 +97,11 @@ public:
 /// where k is the stretching force constant, l is the current
 /// length, and l_0 is the equilibrium length.
 class Tensions : public Output {
-    
+
 public:
     Tensions(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~Tensions() {}
-    
+
     virtual void print(int snapshot);
 };
 
@@ -109,24 +111,24 @@ public:
 /// vector distance away from the pin position for the pinned bead.
 /// @note - nhat is a vector pointing from the direction of the boundary normal.
 class WallTensions : public Output {
-    
+
 public:
     WallTensions(string outputFileName, SubSystem* s) :
                 Output(outputFileName, s) {}
     ~WallTensions() {}
-    
-    
+
+
     virtual void print(int snapshot);
 };
 
-    
+
 /// Print type of each species
 class Types : public Output {
-    
+
 public:
     Types(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~Types() {}
-        
+
     virtual void print(int snapshot);
 };
 
@@ -137,14 +139,14 @@ class Chemistry : public Output {
 
 ChemistryData _chemData; ///< chemistry data of this system
 CompartmentGrid* _grid; ///< compartment grid of the system
-    
+
 public:
     Chemistry(string outputFileName, SubSystem* s,
               ChemistryData chemData, CompartmentGrid* grid)
-    
+
         : Output(outputFileName, s),
          _chemData(chemData), _grid(grid) {}
-    
+
     ~Chemistry() {}
 
     virtual void print(int snapshot);
@@ -153,41 +155,56 @@ public:
 
 /// Print MotorGhost binding lifetimes
 class MotorLifetimes : public Output {
-    
+
 public:
     MotorLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~MotorLifetimes() {}
-    
+
     virtual void print(int snapshot);
 };
 
 /// Print MotorGhost walk lengths
 class MotorWalkLengths : public Output {
-    
+
 public:
     MotorWalkLengths(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~MotorWalkLengths() {}
-    
+
     virtual void print(int snapshot);
 };
 
 /// Print Linker binding lifetimes
 class LinkerLifetimes : public Output {
-    
+
 public:
     LinkerLifetimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~LinkerLifetimes() {}
-    
+
     virtual void print(int snapshot);
 };
 
 /// Print Filament turnover times
 class FilamentTurnoverTimes : public Output {
-    
+
 public:
     FilamentTurnoverTimes(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
     ~FilamentTurnoverTimes() {}
-    
+
+    virtual void print(int snapshot);
+};
+
+/// Print total, chemdiss, mechdiss, chem, and mech
+class Dissipation : public Output {
+
+    ChemSim* _cs;
+
+public:
+    Dissipation(string outputFileName, SubSystem* s, ChemSim* cs)
+
+    : Output(outputFileName, s), _cs(cs) {}
+
+    ~Dissipation() {}
+
     virtual void print(int snapshot);
 };
 
@@ -208,6 +225,48 @@ class ReactionOut : public Output {
 public:
     ReactionOut(string outputFileName, SubSystem* s): Output(outputFileName, s) {}
     ~ReactionOut() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+/// Print chem energy changes by HRCDID
+class HRCD : public Output {
+
+    ChemSim* _cs;
+
+public:
+    HRCD(string outputFileName, SubSystem* s, ChemSim* cs)
+
+    : Output(outputFileName, s), _cs(cs) {}
+
+    ~HRCD() {}
+
+    virtual void print(int snapshot);
+};
+
+
+// Print cm graph
+class CMGraph : public Output {
+
+public:
+    CMGraph(string outputFileName, SubSystem* s)
+
+    : Output(outputFileName, s) {}
+
+    ~CMGraph() {}
+
+    virtual void print(int snapshot);
+};
+
+
+
+// Print boundary repulsion force
+class BRForces : public Output {
+
+public:
+    BRForces(string outputFileName, SubSystem* s) : Output(outputFileName, s) {}
+    ~BRForces() {}
 
     virtual void print(int snapshot);
 };

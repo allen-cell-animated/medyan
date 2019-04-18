@@ -380,8 +380,19 @@ void ForceFieldManager::copyForces(double *fprev, double *f) {
     for (int i = 0; i < CGMethod::N; i++)
         fprev[i] = f[i];
 
-}
+#ifdef CROSSCHECK
+void ForceFieldManager::resetForces() {
 
+    for(auto b: Bead::getBeads()) {
+        b->force.assign (3, 0); //Set force to zero;
+        //std::memset((void*)(&b->loadForcesP[0]), 0, sizeof(b->loadForcesP));  //Set load force to zero;
+        //std::memset((void*)(&b->loadForcesM[0]), 0, sizeof(b->loadForcesM));  //Set load force to zero;
+        std::fill(b->loadForcesP.begin(), b->loadForcesP.end(), 0.0); //Set load force to zero
+        std::fill(b->loadForcesM.begin(), b->loadForcesM.end(), 0.0); //Set load force to zero
+    }
+}
+#endif
+}
 #ifdef CUDAACCL
 
 void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, double *f) {
@@ -401,10 +412,11 @@ void ForceFieldManager::CUDAcopyForces(cudaStream_t stream, double *fprev, doubl
     CUDAcommon::handleerror(cudaGetLastError(), "copyForcesCUDA", "ForceFieldManager.cu");
 }
 
+#endif
+    
 void ForceFieldManager::assignallforcemags() {
 
-    for (auto &ff : _forceFields)
+    for(auto &ff : _forceFields)
         ff->assignforcemags();
+    
 }
-
-#endif

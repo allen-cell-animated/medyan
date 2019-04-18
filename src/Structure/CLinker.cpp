@@ -49,7 +49,7 @@ CLinker::CLinker(short linkerType, Compartment* c,
 //    SpeciesBound* sb2 = _cc2->getCMonomer(_position2)->speciesBrancher(0);
 //    std::cout<<"Linker "<<cc1->getCylinder()->getID()<<" "<<_position1<<" "<<cc2->getCylinder()->getID()<<" "<<
 //            ""<<_position2<<" linkerType "<<linkerType<<endl;
-////    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
+//    std::cout<<"Species Bound "<<se1->getN()<<" "<<se2->getN()<<endl;
 //    std::cout<<"Motor "<<sm1->getN()<<" "<<sm2->getN()<<" BOUND "<<BM1->getN()<<" "<<BM2->getN()<<endl;
 //    std::cout<<"Linker "<<sl1->getN()<<" "<<sl2->getN()<<" BOUND "<<BL1->getN()<<" "<<BL2->getN()<<endl;
 //    std::cout<<"Brancher "<<sb1->getN()<<" "<<sb2->getN()<<" BOUND "<<BB1->getN()<<" "<<BB2->getN()<<endl;
@@ -113,6 +113,18 @@ void CLinker::createOffReaction(ReactionBase* onRxn, SubSystem* ps) {
     ReactionBase* offRxn =
     new Reaction<LMUNBINDINGREACTANTS,LMUNBINDINGPRODUCTS>(os, _offRate);
     offRxn->setReactionType(ReactionType::LINKERUNBINDING);
+    
+    //set gnum of offreaction
+    // Dissipation
+    if(SysParams::Chemistry().dissTracking){
+        
+    double gnum = onRxn->getGNumber();
+    offRxn->setGNumber(-gnum);
+    
+    //set hrcdid of offreaction
+    string hrcdid = onRxn->getHRCDID();
+    offRxn->setHRCDID(hrcdid + "off");
+    }
     
     //Attach the callback to the off reaction, add it
     LinkerUnbindingCallback lcallback(_pLinker, ps);

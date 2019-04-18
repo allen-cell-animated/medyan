@@ -26,6 +26,14 @@
 
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
+    
+    for(auto l:Linker::getLinkers()){
+        //Using += to ensure that the stretching forces are additive.
+        l->getMLinker()->stretchForce = stretchforce[l->_dbIndex];
+        
+    }
+    
+    
 #ifdef CUDAACCL
     double stretchforce[Linker::getLinkers().size()];
     CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Lstretchforce,
@@ -136,10 +144,12 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
 
 template<class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::deallocate() {
+    /*
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
         l->getMLinker()->stretchForce += stretchforce[l->_dbIndex];
-    }
+    
+    }*/
     delete [] stretchforce;
     delete [] beadSet;
     delete [] kstr;

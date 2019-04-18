@@ -697,8 +697,9 @@ struct MotorBindingCallback {
         if(SysParams::RUNSTATE==false){
         f=0.0;
         }
-        else
+        else {
             f=_offRate;
+        }
         //@
         cMotorGhost->setRates(_onRate, f);
         cMotorGhost->createOffReaction(r, _ps);

@@ -26,6 +26,10 @@
 
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
+    for(auto m: MotorGhost::getMotorGhosts()){
+        //Using += to ensure that the stretching forces are additive.
+        m->getMMotorGhost()->stretchForce = stretchforce[m->_dbIndex];
+    }
 #ifdef CUDAACCL
     double stretchforce[MotorGhost::getMotorGhosts().size()];
     CUDAcommon::handleerror(cudaMemcpy(stretchforce, gpu_Mstretchforce,
@@ -33,7 +37,8 @@ void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
                                        cudaMemcpyDeviceToHost));
     int id = 0;
     for(auto m:MotorGhost::getMotorGhosts())
-    {m->getMMotorGhost()->stretchForce = stretchforce[id];id++;}
+    {m->getMMotorGhost()->stretchForce = stretchforce[id];
+    id++;}
 #endif
 }
 
@@ -147,11 +152,13 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
 template<class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
+    /*cout<<"Nmotorghost "<<MotorGhost::getMotorGhosts().size()<<endl;
     for(auto m: MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
-        m->getMMotorGhost()->stretchForce += stretchforce[m->_dbIndex];
-//        std::cout<<m->getMMotorGhost()->stretchForce<<endl;
+        m->getMMotorGhost()->stretchForce = stretchforce[m->_dbIndex];
+        std::cout<<"MSF "<<m->getMMotorGhost()->stretchForce<<endl;
     }
+    cout<<"-------"<<endl;*/
     delete [] stretchforce;
     delete [] beadSet;
     delete [] kstr;

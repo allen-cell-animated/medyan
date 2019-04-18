@@ -1042,9 +1042,9 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, double GRADTOL,
     //@}
 #endif
     //TODO make sure it calculates stretchforce in CUDA.
-#ifdef CUDAACCL
+
     FFM.assignallforcemags();
-#endif
+
     endMinimization();
 #ifdef CUDATIMETRACK
     tendII= chrono::high_resolution_clock::now();

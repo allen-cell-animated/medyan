@@ -55,7 +55,7 @@ float MotorCatch::numBoundHeads(float onRate, float offRate,
 #else
     return min<double>(numHeads, numHeads * _dutyRatio + _beta * force / numHeads);
 #endif
-    
+
 }
 
 float MotorCatch::changeRate(float onRate, float offRate,
@@ -69,12 +69,15 @@ float MotorCatch::changeRate(float onRate, float offRate,
 #else
     double k_0 = onRate * (numHeads) / (exp(log((onRate + offRate) / offRate) * numHeads)
                                         - 1.0);
-    
+
     double factor = max(0.1, exp(-force / (numBoundHeads(onRate, offRate, force, numHeads) * _F0)));
 #endif
-    
+
     double newRate = k_0 * factor;
+    // cout<<"new rate is "<<newRate<<endl;
     return newRate;
+
+
 }
 
 float MotorStall::changeRate(float onRate, float offRate,
@@ -91,4 +94,3 @@ float MotorStall::changeRate(float onRate, float offRate,
 #endif
     return newRate;
 }
-

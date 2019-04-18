@@ -409,13 +409,19 @@ friend class ChemManager;
 private:
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
-    float _rMinsq; ///< Minimum reaction range squared
-    float _rMaxsq; ///< Maximum reaction range squared
+    float _rMinsq = _rMin * _rMin;
+    float _rMaxsq = _rMax * _rMax;
+    const std::vector<short> startInt = SysParams::Chemistry().bindingSites[0];
     double minparamcyl2;
     double maxparamcyl2;
     vector<double> bindingsites;
     static short HNLID;
     static short _idvec[2];
+    int dBInt = 1;
+    int dBI = SysParams::Chemistry().difBindInt;
+    std::set<int> difBindInts{2,12,22,32}; /// allow diffent binding sites for linkers and motors
+
+
 
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
@@ -423,10 +429,14 @@ private:
 //    multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
 #else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>> _possibleBindings;
+
+    unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> _reversePossibleBindings;
+
+
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
-    #endif
+#endif
     //static neighbor list
     static vector<CylinderCylinderNL*> _neighborLists;
 
@@ -580,13 +590,14 @@ private:
 
     float _rMin; ///< Minimum reaction range
     float _rMax; ///< Maximum reaction range
-    float _rMinsq; ///< Minimum reaction range squared
-    float _rMaxsq; ///< Maximum reaction range squared
+    float _rMinsq = _rMin * _rMin;
+    float _rMaxsq = _rMax * _rMax;
     double minparamcyl2;
     double maxparamcyl2;
     vector<double> bindingsites;
     static short HNLID;
     static short _idvec[2];
+
     //possible bindings at current state. updated according to neighbor list
 #ifdef DEBUGCONSTANTSEED
     vector<vector<tuple<CCylinder*, short>>> _possibleBindings;
@@ -594,6 +605,10 @@ private:
 #else
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
     _possibleBindings;
+
+    unordered_map<tuple<CCylinder*, short>, vector<tuple<CCylinder*, short>>> _reversePossibleBindings;
+
+
         //possible bindings at current state. updated according to neighbor list stencil
     unordered_multimap<tuple<CCylinder*, short>, tuple<CCylinder*, short>>
             _possibleBindingsstencil;
