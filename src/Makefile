@@ -121,8 +121,6 @@ CPPFLAGS_CXX      = $(CPPFLAGS)
 #
 ##################################################
 
-all: MEDYAN
-
 # Build main program
 MEDYAN: $(OBJECTS)
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
@@ -138,6 +136,8 @@ medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
 
 # Add empty dependency for dependencies
 %.d: ;
+
+all: MEDYAN medyan_test
 
 clean:
 	\find . -name "*.d" -delete
