@@ -754,19 +754,23 @@ struct CaMKIIBundlingCallback {
     	CaMKIIingPoint* cp;
 //        float frate;
         short camkiiType = _bManager->getBoundInt();
-        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
+        cout << "CAMKII bundling"<< _bManager << __LINE__ <<" "<< __FILE__ << endl;
         
         //choose a random binding site from manager
         //TODO Find a CAMKII with coordination number less than max number
         auto site = _bManager->chooseBindingSites();
+        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
 
         Cylinder*       c1  = get<0>(get<0>(site))->getCylinder();
         short           pos1 = get<1>(get<0>(site));
+        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
 
         Cylinder*       c2  = get<0>(get<1>(site))->getCylinder();
         short           pos2 = get<1>(get<1>(site));
-        cp->addBond(c1, pos1);
 
+        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ <<  " ddd " << cp << endl;
+        cp->addBond(c2, pos2);
+        cout << "CAMKII bundling"<< __FUNCTION__ << __LINE__ <<" "<< __FILE__ << endl;
 //TODO CJY make sure isn't needed before cleaning
 #if 0
 

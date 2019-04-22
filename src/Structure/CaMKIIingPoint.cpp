@@ -41,7 +41,7 @@ CaMKIIingPoint::CaMKIIingPoint(Cylinder* cylinder, short camkiiType, short posit
     : Trackable(true), _camkiiType(camkiiType), _camkiiID(_camkiiingPoints.getID()), _birthTime(tau()), _coordinate(3,0.0) {
 
 
-	_filType=1000; //TODO fix it
+	_filType=5000; //TODO fix it
 
     addBond(cylinder, position);
     //Find compartment

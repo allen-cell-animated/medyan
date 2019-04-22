@@ -38,18 +38,23 @@ class CaMKIIingPoint;
 class CaMKIICylinder : public Cylinder {
 
 protected:
-	CaMKIIingPoint *camkiiPoint;
+	CaMKIIingPoint *_camkiiPoint;
 	void updateCoordinate() override;
-    void updatePosition() override;
-    bool within(Cylinder* other, double dist) override;
-
+	void updatePosition() override;
+	bool within(Cylinder* other, double dist) override;
+	CaMKIIingPoint* getCaMKIIPointParent() {
+		return _camkiiPoint;
+	};
 
 public:
-    /// Constructor, initializes a cylinder
-    // composte is set to NULL and we use only one bead
-	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position,
-             bool extensionFront = false, bool extensionBack  = false,
-			 bool initialization = false):Cylinder(nullptr, b1, b1, type, position, extensionFront, extensionBack, initialization), camkiiPoint(camkiiPoint){};
+	/// Constructor, initializes a cylinder
+	// composte is set to NULL and we use only one bead
+	CaMKIICylinder(CaMKIIingPoint *camkiiPoint, Bead* b1, short type, int position, bool extensionFront = false, bool extensionBack  = false, bool initialization = false):
+		Cylinder(nullptr, b1, b1, type, position, extensionFront, extensionBack, initialization), _camkiiPoint(camkiiPoint){
+		cout<< "CAMKII" << __LINE__ << __FILE__ << "camkiiPoint= " << camkiiPoint<< endl;
+		_camkiiPoint = camkiiPoint;
+		cout<< "CAMKII" << __LINE__ << __FILE__ << "camkiiPoint= " << camkiiPoint<< endl;
+	};
 
 };
 

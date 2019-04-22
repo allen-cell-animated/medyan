@@ -623,23 +623,30 @@ void CaMKIIBundlingManager::removePossibleBindings(CCylinder* cc) {
 
 void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
-    _possibleBindings.clear();
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+	_possibleBindings.clear();
+	int camkiiFilamentType = 5000;
 
+	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+    //The first cylinder should be a CAMKII cylinder
     for(auto c : _compartment->getCylinders()) {
 
-        if(c->getType() != _filamentType) continue;
+        if(c->getType() != camkiiFilamentType) continue;
 
         auto cc = c->getCCylinder();
-
-        for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
-                 it1 != SysParams::Chemistry().bindingSites[_filamentType].end(); it1++) {
-
-            //now re add valid binding sites
-            if (areEqual(cc->getCMonomer(*it1)->speciesBound(
-                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0) ) {
+        //auto cp = c->getCaMKIIPointParent(); //TODO CAMKII
+        for(auto it1 = SysParams::Chemistry().bindingSites[camkiiFilamentType].begin();
+                 it1 != SysParams::Chemistry().bindingSites[camkiiFilamentType].end(); it1++) {
+        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+        	// skip if parent coordination number isn't between >=1 and <6 (MAX coordination number SysParams::Chemistry().maxcamkii_coord_number)
+        	//now re add valid binding sites
+            if (!areEqual(cc->getCMonomer(*it1)->speciesBound(
+                SysParams::Chemistry().camkiierBoundIndex[camkiiFilamentType])->getN(), 0.0) ) //TODO replace the previous if statement with condition on the coordination number
+            	{
 
                 //loop through neighbors
-                //now re add valid based on CCNL
+                // The neighbors should be the cylinders from the other filaments (obtained from the neighbor list)
+            	//now re add valid based on CCNL
                 for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
 
                     if(cn->getParent() == c->getParent()) continue;
@@ -651,17 +658,17 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
                              it2 != SysParams::Chemistry().bindingSites[_filamentType].end(); it2++) {
 
                         if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
-                            SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
-
+                            SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0)) {
+                        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                             //check distances..
-                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[_filamentType];
+                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[camkiiFilamentType];
                             auto mp2 = (float)*it2 / SysParams::Geometry().cylinderNumMon[_filamentType];
 
                             auto x1 = c->getFirstBead()->coordinate;
                             auto x2 = c->getSecondBead()->coordinate;
                             auto x3 = cn->getFirstBead()->coordinate;
                             auto x4 = cn->getSecondBead()->coordinate;
-
+                            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                             auto m1 = midPointCoordinate(x1, x2, mp1);
                             auto m2 = midPointCoordinate(x3, x4, mp2);
 
@@ -671,19 +678,19 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
 
 			    //auto bc1 = cc->getCylinder()->getBranchingCylinder(); //Carlos
 		            //auto bc2 = ccn->getCylinder()->getBranchingCylinder(); //Carlos
-			    auto bc3 = cc->getCylinder()->getMotherCylinder(); //Carlos
-		            auto bc4 = ccn->getCylinder()->getMotherCylinder(); //Carlos
+			    //auto bc3 = cc->getCylinder()->getMotherCylinder(); //Carlos
+		            //auto bc4 = ccn->getCylinder()->getMotherCylinder(); //Carlos
 
-		    	    if(bc3 || bc4) {
- 		            continue;} //Carlos
+		    	    //if(bc3 || bc4) {
+ 		            //continue;} //Carlos
 
 
                             auto t1 = tuple<CCylinder*, short>(cc, *it1);
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);
-
+                            cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                             //add in correct order
                             if(c->getID() > cn->getID())
-                                _possibleBindings.emplace(t1, t2);
+                                _possibleBindings.emplace(t1, t2);//TODO put the CAMKII point
                         }
                     }
                 }
