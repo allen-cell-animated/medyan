@@ -2606,12 +2606,12 @@ ChemistryData ChemistryParser::readChemistryInput() {
                 cout<<")"<<endl;
                 
                 chem.camkiibundlingReactions[filType].push_back(
-                tuple<vector<string>, vector<string>, double, double, double, double,double>
+                tuple<vector<string>, vector<string>, double, double, double, double,int>
                 (reactants, products, atof(lineVector[lineVector.size() - 5].c_str()),
                 		              atof(lineVector[lineVector.size() - 4].c_str()),
                                       atof(lineVector[lineVector.size() - 3].c_str()),
                                       atof(lineVector[lineVector.size() - 2].c_str()),
-                                      atof(lineVector[lineVector.size() - 1].c_str())));
+                                      atoi(lineVector[lineVector.size() - 1].c_str())));
             }
             else {
                 cout << "Error reading a CaMKII bundling reaction. Exiting." << endl;

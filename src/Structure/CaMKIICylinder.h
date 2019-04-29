@@ -42,9 +42,6 @@ protected:
 	void updateCoordinate() override;
 	void updatePosition() override;
 	bool within(Cylinder* other, double dist) override;
-	CaMKIIingPoint* getCaMKIIPointParent() {
-		return _camkiiPoint;
-	};
 
 public:
 	/// Constructor, initializes a cylinder
@@ -55,6 +52,11 @@ public:
 		_camkiiPoint = camkiiPoint;
 		cout<< "CAMKII" << __LINE__ << __FILE__ << "camkiiPoint= " << camkiiPoint<< endl;
 	};
+
+	CaMKIIingPoint* getCaMKIIPointParent() {
+		return _camkiiPoint;
+	};
+
 
 };
 
