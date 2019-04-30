@@ -368,7 +368,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     // Create a region inside the membrane
     auto regionInMembrane = (
         membraneData.size()?
-        MembraneRegion::makeByChildren(&MembraneHierarchy::getRoot()):
+        MembraneRegion::makeByChildren(MembraneHierarchy::getRoot()):
         make_unique<MembraneRegion>(_subSystem->getBoundary())
     );
 

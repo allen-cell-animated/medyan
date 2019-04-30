@@ -59,10 +59,10 @@ bool MembraneRegion::contains(const mathfunc::Vec3& point)const {
     return true;
 }
 
-std::unique_ptr<MembraneRegion> MembraneRegion::makeByChildren(MembraneHierarchy* hier, bool excludeChildren) {
+std::unique_ptr<MembraneRegion> MembraneRegion::makeByChildren(const MembraneHierarchy& hier, bool excludeChildren) {
     auto mr = unique_ptr<MembraneRegion>(new MembraneRegion());
 
-    for(auto& it: hier->children()) {
+    for(const auto& it: hier.children()) {
         auto eachHier = static_cast<MembraneHierarchy*>(it.get());
         mr->_hierOut.push_back(eachHier);
         if(excludeChildren) {
