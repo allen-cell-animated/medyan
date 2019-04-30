@@ -390,20 +390,20 @@ private:
             nz + ( i       & 1)
         );
     }
-    auto _getCubeListSize() const {
+    auto _getCuboidListSize() const {
         return (_numCuboids[0] + 1) * (_numCuboids[1] + 1) * (_numCuboids[2] + 1);
     }
-    auto _getCubeIdx(std::size_t nx, std::size_t ny, std::size_t nz) const {
+    auto _getCuboidIdx(std::size_t nx, std::size_t ny, std::size_t nz) const {
         std::size_t res = nx;
         res *= _numCuboids[1] + 1; res += ny;
         res *= _numCuboids[2] + 1; res += nz;
         return res;
     }
     auto _getEdgeListSize() const {
-        return _numTetraEdgesPerCuboid * _getCubeListSize();
+        return _numTetraEdgesPerCuboid * _getCuboidListSize();
     }
     auto _getEdgeIdx(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t edgeIdx) const {
-        return _numTetraEdgesPerCuboid * _getCubeIdx(nx, ny, nz) + edgeIdx;
+        return _numTetraEdgesPerCuboid * _getCuboidIdx(nx, ny, nz) + edgeIdx;
     }
     auto _getEdgeIdxInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t edgeIdx) const {
         const small_size_t i = _tetraEdgeLocalIndex[tetIdx][edgeIdx];
