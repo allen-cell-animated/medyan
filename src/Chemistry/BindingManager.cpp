@@ -845,30 +845,7 @@ void LinkerBindingManager::updateAllPossibleBindings() {
     _possibleBindings.clear();
     mints = chrono::high_resolution_clock::now();
     
-#ifdef DEBUGCONSTANTSEED
-    struct Orderset
-    {
-        bool operator()(Cylinder* lhs, Cylinder* rhs) const  {
-            return lhs->getID() < rhs->getID();
-        }
-    };
-    set<Cylinder*, Orderset> _cylinderssorted; ///< Set of cylinders that are in this
     for(auto c : _compartment->getCylinders()) {
-        _cylinderssorted.insert(c);
-    }
-    for(auto c :_cylinderssorted)
-#else
-        for(auto c :_compartment->getCylinders())
-#endif
-            
-    {
-        
-        
-//        auto x = _compartment->coordinates();
-//        std::cout<<"L updateall Cyl "<<c->getID()<<" "<<c->coordinate[0]<<" "<<
-//                 c->coordinate[1]<<" "<<c->coordinate[2]<<" in comp "<<x[0]<<" "
-//                         ""<<x[1]<<" "<<x[2]<<endl;
-
         
         if(c->getType() != _filamentType) continue;
         
@@ -879,31 +856,31 @@ void LinkerBindingManager::updateAllPossibleBindings() {
         
         for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
 
-
-                    if(cn->getParent() == c->getParent()) continue;
-                    if(cn->getType() != _filamentType) continue;
-                    if(c->getID() < cn->getID()) continue;
-                    auto ccn = cn->getCCylinder();
+            if(cn->getParent() == c->getParent()) continue;
+            if(cn->getType() != _filamentType) continue;
+            if(c->getID() < cn->getID()) continue;
+            auto ccn = cn->getCCylinder();
+    
+            auto x3 = cn->getFirstBead()->coordinate;
+            auto x4 = cn->getSecondBead()->coordinate;
             
-                    auto x3 = cn->getFirstBead()->coordinate;
-                    auto x4 = cn->getSecondBead()->coordinate;
-                    
-                    vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
-                    vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
-                    double maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
-                    
-                    double mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
-                                                                                            x3,x4)));
-                    mindistsq = mindistsq * mindistsq;
-                    if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
-                    
-                    double X1X3squared = sqmagnitude(X1X3);
-                    double X1X2squared = cylsqmagnitudevector[c->_dcIndex];
-                    double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
-                    double X3X4squared = cylsqmagnitudevector[cn->_dcIndex];
-                    double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
-                    double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
-                    mins2 = chrono::high_resolution_clock::now();
+            vector<double> X1X3 = {x3[0] - x1[0], x3[1] - x1[1], x3[2] - x1[2]};
+            vector<double> X3X4 = {x4[0] - x3[0], x4[1] - x3[1], x4[2] - x3[2]};
+            double maxdistsq = maxdistbetweencylinders(x1,x2,x3,x4);
+            
+            double mindistsq = scalarprojection(X1X3, normalizeVector(vectorProduct(x1,x2,
+                                                                                    x3,x4)));
+            mindistsq = mindistsq * mindistsq;
+            if(mindistsq > _rMaxsq || maxdistsq < _rMinsq) continue;
+            
+            double X1X3squared = sqmagnitude(X1X3);
+            double X1X2squared = cylsqmagnitudevector[c->_dcIndex];
+            double X1X3dotX1X2 = scalarprojection(X1X3, X1X2);
+            double X3X4squared = cylsqmagnitudevector[cn->_dcIndex];
+            double X1X3dotX3X4 = scalarprojection(X1X3,X3X4);
+            double X3X4dotX1X2 = scalarprojection(X3X4, X1X2);
+            mins2 = chrono::high_resolution_clock::now();
+
             int i = -1;
             dBInt = 2;
             for(auto it1 = SysParams::Chemistry().bindingSites[_filamentType].begin();
@@ -982,9 +959,10 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                             dBInt = 1;}
                         
                         bool check2 = true;
-                        if (areEqual(ccn->getCMonomer(*it2)->speciesBound(
-                                SysParams::Chemistry().linkerBoundIndex[_filamentType])->getN(), 1.0)) {
-
+                        if (areEqual(boundstate[1][offset + SysParams::Chemistry()
+                                                   .bindingSites[_filamentType]
+                                                   .size()*cn->_dcIndex + j], 1.0)) {
+                            total++;
                             //check distances..
                             auto mp2 = bindingsites.at(j);
 
@@ -1007,18 +985,11 @@ void LinkerBindingManager::updateAllPossibleBindings() {
                                 auto t1 = tuple<CCylinder *, short>(cc, *it1);
                                 auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 
-                            //add in correct order
-                            if(c->getID() > cn->getID()) {
-#ifdef DEBUGCONSTANTSEED
-                                appendpossibleBindings(t1,t2);
-//                                std::cout<<"placing L Cyl "<<c->getID()<<" bs "<<*it1<<" "
-//                                        "Cyl "<<cn->getID()<<" bs "<<*it2<<endl;
-//                                _possibleBindings.emplace(t1, t2);
-#else
-                                _possibleBindings.emplace(t1, t2);
-                                _reversePossibleBindings[t2].push_back(t1);
-#endif
-                            }
+                                //add in correct order
+                                if(c->getID() > cn->getID()) {
+                                    _possibleBindings.emplace(t1, t2);
+                                    _reversePossibleBindings[t2].push_back(t1);
+                                }
                             }
                             mine= chrono::high_resolution_clock::now();
                             chrono::duration<double> elapsed_emplace(mine - mins);
@@ -2155,23 +2126,7 @@ void MotorBindingManager::updateAllPossibleBindings() {
     timetaken = 0.0;
     _possibleBindings.clear();
     mints = chrono::high_resolution_clock::now();
-#ifdef DEBUGCONSTANTSEED
-    struct Orderset
-    {
-        bool operator()(Cylinder* lhs, Cylinder* rhs) const  {
-            return lhs->getID() < rhs->getID();
-        }
-    };
-    set<Cylinder*, Orderset> _cylinderssorted; ///< Set of cylinders that are in this
     for(auto c : _compartment->getCylinders()) {
-        _cylinderssorted.insert(c);
-    }
-    for(auto c :_cylinderssorted)
-#else
-        for(auto c :_compartment->getCylinders())
-#endif
-            
-        {
         if (c->getType() != _filamentType) continue;
 
         auto x1 = c->getFirstBead()->coordinate;
@@ -2287,22 +2242,11 @@ void MotorBindingManager::updateAllPossibleBindings() {
                                 auto t1 = tuple<CCylinder *, short>(cc, *it1);
                                 auto t2 = tuple<CCylinder *, short>(ccn, *it2);
 
-                            //add in correct order
-                            if(c->getID() > cn->getID()) {
-                                //                                        ""<<x[1]<<" "<<x[2]<<endl;
-#ifdef DEBUGCONSTANTSEED
-                                appendpossibleBindings(t1,t2);
-//                                _possibleBindings.emplace(t1, t2);
-#else
-                                _possibleBindings.emplace(t1, t2);
-                                _reversePossibleBindings[t2].push_back(t1);
-
-#endif
-//                                std::cout<<"M pb Cyl "<<cc->getCylinder()->getID()<<" bs "
-//                                        ""<<*it1<<" Cyl "<<ccn->getCylinder()->getID()<<""
-//                                        " bs "<<*it2<<" in comp "<<x[0]<<" "
-//                                        ""<<x[1]<<" "<<x[2]<<endl;
-                            }
+                                //add in correct order
+                                if(c->getID() > cn->getID()) {
+                                    _possibleBindings.emplace(t1, t2);
+                                    _reversePossibleBindings[t2].push_back(t1);
+                                }
                             }
                             mine= chrono::high_resolution_clock::now();
                             chrono::duration<double> elapsed_emplace(mine - mins);
