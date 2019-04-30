@@ -2,7 +2,7 @@
 
 #include "Structure/SurfaceMesh/MembraneHierarchy.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-#include "Boundary.h"
+#include "Structure/Boundary.h"
 
 #include "MathFunctions.h"
 
@@ -64,12 +64,16 @@ std::unique_ptr<MembraneRegion> MembraneRegion::makeByChildren(const MembraneHie
 
     for(const auto& it: hier.children()) {
         auto eachHier = static_cast<MembraneHierarchy*>(it.get());
-        mr->_hierOut.push_back(eachHier);
-        if(excludeChildren) {
-            size_t n = eachHier->numberOfChildren();
-            mr->_hierIn.reserve(n);
-            for(size_t idx = 0; idx < n; ++idx) {
-                mr->_hierIn.push_back( static_cast<MembraneHierarchy*>(eachHier->children(idx)) );
+        if(eachHier->getMembrane()->isClosed()) {
+            mr->_hierOut.push_back(eachHier);
+
+            if(excludeChildren) {
+                size_t n = eachHier->numberOfChildren();
+                for(size_t idx = 0; idx < n; ++idx) {
+                    auto childHier = static_cast< MembraneHierarchy* >(eachHier->children(idx));
+                    if(childHier->getMembrane()->isClosed())
+                        mr->_hierIn.push_back( childHier );
+                }
             }
         }
     }
