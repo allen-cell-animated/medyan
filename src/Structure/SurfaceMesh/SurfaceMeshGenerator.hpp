@@ -391,12 +391,12 @@ private:
         );
     }
     auto _getCubeListSize() const {
-        return _numCuboids[0] * _numCuboids[1] * _numCuboids[2];
+        return (_numCuboids[0] + 1) * (_numCuboids[1] + 1) * (_numCuboids[2] + 1);
     }
     auto _getCubeIdx(std::size_t nx, std::size_t ny, std::size_t nz) const {
         std::size_t res = nx;
-        res *= _numCuboids[0]; res += ny;
-        res *= _numCuboids[1]; res += nz;
+        res *= _numCuboids[0] + 1; res += ny;
+        res *= _numCuboids[1] + 1; res += nz;
         return res;
     }
     auto _getEdgeListSize() const {
