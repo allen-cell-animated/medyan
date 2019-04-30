@@ -378,8 +378,8 @@ private:
     }
     auto _getVertexIdx(std::size_t nx, std::size_t ny, std::size_t nz) const {
         std::size_t res = nx;
-        res *= _numCuboids[0] + 1; res += ny;
-        res *= _numCuboids[1] + 1; res += nz;
+        res *= _numCuboids[1] + 1; res += ny;
+        res *= _numCuboids[2] + 1; res += nz;
         return res;
     }
     auto _getVertexIdxInTetra(std::size_t nx, std::size_t ny, std::size_t nz, small_size_t tetIdx, small_size_t vtxIdx) const {
@@ -395,8 +395,8 @@ private:
     }
     auto _getCubeIdx(std::size_t nx, std::size_t ny, std::size_t nz) const {
         std::size_t res = nx;
-        res *= _numCuboids[0] + 1; res += ny;
-        res *= _numCuboids[1] + 1; res += nz;
+        res *= _numCuboids[1] + 1; res += ny;
+        res *= _numCuboids[2] + 1; res += nz;
         return res;
     }
     auto _getEdgeListSize() const {
