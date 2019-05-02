@@ -185,8 +185,6 @@ public:
         enum class PolygonType { Triangle, Border };
 
         PolygonType polygonType;
-        [[deprecated]] bool hasOpposite;
-        [[deprecated]] size_t triangleIndex;
         size_t polygonIndex;
         size_t targetVertexIndex;
         size_t oppositeHalfEdgeIndex;
@@ -225,7 +223,6 @@ private:
 
     MetaAttribute _meta;
 
-    [[deprecated]] bool _isClosed;
     int _genus = 0; // Genus of the surface. Currently it is not tracked.
 
     // Element accessor
@@ -680,14 +677,6 @@ public:
     void forEachHalfEdgeInPolygon(size_t pi, Func&& func) const {
         forEachHalfEdgeInPolygon(_getElements< Polygon >()[pi], std::forward<Func>(func));
     }
-    template< typename Func > [[deprecated]] void forEachHalfEdgeInTriangle(const Triangle& t, Func&& func) const {
-        size_t hei0 = t.halfEdgeIndex;
-        size_t hei = hei0;
-        do {
-            func(hei);
-            hei = next(hei);
-        } while(hei != hei0);
-    }
     template< typename Func > void forEachHalfEdgeInTriangle(size_t ti, Func&& func) const {
         forEachHalfEdgeInPolygon< Triangle >(_triangles[ti], std::forward<Func>(func));
     }
@@ -938,104 +927,6 @@ public:
         }
 
     };
-
-    // Insert a new vertex, without any connection
-    struct [[deprecated]] NewVertexInsertion {
-
-        // Returns the index of the inserted vertex
-        template< typename InsertionMethod, typename AttributeSetter >
-        auto operator()(SurfaceTriangularMesh& mesh, InsertionMethod&& im, AttributeSetter&& as) const {
-            const size_t vi = mesh._newVertex(std::forward<InsertionMethod>(im));
-            mesh._vertices[vi].degree = 0;
-
-            as(mesh, vi);
-
-            return vi;
-        }
-
-        template< typename InsertionMethod >
-        auto operator()(SurfaceTriangularMesh& mesh, InsertionMethod&& im) const {
-            return this->operator()(mesh, std::forward<InsertionMethod>(im), [](
-                SurfaceTriangularMesh& mesh,
-                size_t vi
-            ) {});
-        }
-    }; // End of struct NewVertexInsertion
-
-    // Patch a new triangle
-    struct [[deprecated]] NewTrianglePatch {
-        static constexpr int deltaNumVertex = 0;
-
-        // This function requires that
-        //   - The vertices are already added, facing outward
-        //   - The caller has knowledge on vertices and oppositing halfedges.
-        // Returns the indices of half edges added
-        //
-        // This function does not check for non-manifold errors.
-        //
-        // Note: existOppositeHalfEdge and opposteHalfEdge can be combined to std::optional starting C++17
-        template< typename AttributeSetter >
-        auto operator()(
-            SurfaceTriangularMesh& mesh,
-            const std::array< size_t, 3 >& vi,
-            const std::array< bool,   3 >& existOppositeHalfEdge, // indexed by (20, 01, 12)
-            const std::array< size_t, 3 >& oppositeHalfEdge, // opposite half edge index if exists
-            AttributeSetter&& as
-        ) const {
-            auto& edges = mesh._edges;
-            auto& halfEdges = mesh._halfEdges;
-            auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
-
-            std::array< size_t, 3 > newHalfEdges;
-
-            // Add new half edges and edges, and retarget vertices
-            for(size_t i = 0; i < 3; ++i) {
-                newHalfEdges[i] = mesh._newHalfEdge();
-
-                halfEdges[newHalfEdges[i]].targetVertexIndex = vi[i];
-                vertices[vi[i]].halfEdgeIndex = newHalfEdges[i];
-
-                if(existOppositeHalfEdge[i]) {
-                    const size_t hei_o = oppositeHalfEdge[i];
-                    const size_t ei = halfEdges[hei_o].edgeIndex;
-                    mesh._registerEdge(ei, hei_o, newHalfEdges[i]);
-                } else {
-                    const size_t ei = mesh._newEdge();
-                    // mesh._registerEdgeSingle(ei, newHalfEdges[i]);
-
-                    // update vertex degrees
-                    ++vertices[vi[ (i+2)%3 ]].degree;
-                    ++vertices[vi[ i       ]].degree;
-                }
-            }
-
-            // Add new triangle
-            const size_t ti = mesh._newTriangle();
-            mesh._registerTriangle(ti, newHalfEdges[0], newHalfEdges[1], newHalfEdges[2]);
-
-            // Update attributes of affected elements
-            as(mesh, ti, vi, newHalfEdges);
-
-            return newHalfEdges;
-
-        }
-
-        auto operator()(
-            SurfaceTriangularMesh& mesh,
-            const std::array< size_t, 3 >& vi,
-            const std::array< bool,   3 >& existOppositeHalfEdge, // indexed by (20, 01, 12)
-            const std::array< size_t, 3 >& oppositeHalfEdge // opposite half edge index if exists
-        ) const {
-            return this->operator()(mesh, vi, existOppositeHalfEdge, oppositeHalfEdge, [](
-                SurfaceTriangularMesh& mesh,
-                size_t ti,
-                std::array<size_t, 3> vis,
-                std::array<size_t, 3> heis
-            ) {});
-        }
-
-    }; // End of struct NewTrianglePatch
 
 }; // End of class SurfaceTriangularMesh
 

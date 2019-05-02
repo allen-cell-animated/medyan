@@ -45,7 +45,7 @@ template<> struct RelaxationForceField< VertexRelaxationType::GlobalElastic > {
 template<
     typename Mesh,
     VertexRelaxationType r
-> class GlobalRelaxationManager {
+> class [[deprecated]] GlobalRelaxationManager {
 public:
     using RelaxationForceFieldType = RelaxationForceField< r >;
     using GeometryManagerType = GeometryManager< Mesh >;
@@ -151,86 +151,6 @@ private:
         return res;
     }
 
-public:
-    // Constructor
-    GlobalRelaxationManager(
-        double epsilon2,
-        double dt,
-        size_t maxIterRelocation,
-        size_t maxIterRelaxation
-    ) : _epsilon2(epsilon2),
-        _dt(dt),
-        _maxIterRelocation(maxIterRelocation),
-        _maxIterRelaxation(maxIterRelaxation)
-    {}
-
-    // Returns whether relaxation is complete.
-    // Requires:
-    //   - Normals on vertices (not updated during vertex relocation; might be updated by edge flipping)
-    //   - Preferred lengths of edges (not updated during relaxation)
-    // For the purpose of global relaxation, we create a coordinate list and do work on them.
-    template< typename EdgeFlipManagerType >
-    [[deprecated]] bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
-        using namespace mathfunc;
-
-        // Initialization
-        const size_t numVertices = mesh.getVertices().size();
-        std::vector< Vec3 > coords(numVertices);
-        for(size_t i = 0; i < numVertices; ++i) {
-            coords[i] = mesh.getVertexAttribute(i).vertex->getCoordinate();
-        }
-
-        // Aux variables
-        std::vector< Vec3 > coordsOriginal = coords;
-        std::vector< Vec3 > forces(numVertices);
-        std::vector< Vec3 > coordsHalfway(numVertices);
-        std::vector< Vec3 > forcesHalfway(numVertices);
-        std::vector< Vec3 > targets(numVertices); // used in smoothing
-
-        // Main loop
-        bool needRelocation = true;
-        size_t flippingCount = 0;
-        size_t iter = 0;
-        while( (needRelocation || flippingCount) && iter < _maxIterRelaxation) {
-            ++iter;
-            needRelocation = !_vertexRelocation(coords, forces, coordsHalfway, forcesHalfway, mesh);
-
-            // Readjust coordinates (max move: size / 3)
-            for(size_t i = 0; i < numVertices; ++i) {
-                const Vec3 diff = coords[i] - coordsOriginal[i];
-                const auto magDiff = magnitude(diff);
-                const auto size = mesh.getVertexAttribute(i).aVertex.size;
-                const auto desiredDiff = (
-                    magDiff == 0.0
-                    ? diff
-                    : diff * (std::min(size * 0.33, magDiff) / magDiff)
-                );
-                coords[i] = coordsOriginal[i] + desiredDiff;
-            }
-
-            // Reassign coordinates
-            for (size_t i = 0; i < numVertices; ++i) {
-                mesh.getVertexAttribute(i).getCoordinate() = coords[i];
-            }
-
-            // Smooth out the folded geometry, without updating normals
-            while(!membrane_mesh_check::MembraneMeshDihedralCheck{0.0, 0.0}(mesh, true)) {
-                // Apply Laplacian smoothing
-                _laplacianSmoothing(targets, mesh); 
-            }
-
-            // Update normals
-            GeometryManagerType::computeAllTriangleNormals(mesh);
-            GeometryManagerType::computeAllAngles(mesh);
-            GeometryManagerType::computeAllVertexNormals(mesh);
-
-            // Try flipping
-            flippingCount = _edgeFlipping(mesh, efm);
-        }
-
-        if(needRelocation || flippingCount) return false;
-        else return true;
-    }
 };
 
 // Direct vertex relocation as method of vertex relocation
