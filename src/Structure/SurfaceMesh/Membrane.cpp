@@ -56,9 +56,11 @@ void Membrane::printSelf()const {
     
     cout << endl;
     
-    cout << "Membrane: ptr = " << this << endl;
     cout << "Membrane Id = " << getId() << endl;
     cout << "Membrane type = " << _memType << endl;
+    cout << "Number of vertices, edges, half edges, triangles, borders =\n  "
+        << _mesh.numVertices() << ' ' << _mesh.numEdges() << ' ' << _mesh.numHalfEdges() << ' '
+        << _mesh.numTriangles() << ' ' << _mesh.numBorders() << endl;
     
     cout << endl;
     
