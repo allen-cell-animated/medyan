@@ -638,24 +638,28 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
         CaMKIIingPoint *cp = nullptr;
         auto dc = dynamic_cast<CaMKIICylinder*>(c);
         if (dc) {
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+        	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
             cp = dc->getCaMKIIPointParent();
         } else {
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+        	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         }
-        for(auto it1 = SysParams::Chemistry().bindingSites[camkiiFilamentType].begin();
-                 it1 != SysParams::Chemistry().bindingSites[camkiiFilamentType].end(); it1++) {
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<cp<<"  "<<cp->getCoordinationNumber()<<endl;
+        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<"  it1_size"<<"      "<<SysParams::Chemistry().bindingSites[0].size()<<endl;
+        cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<"  it1_size"<<"      "<<SysParams::Chemistry().bindingSites[camkiiFilamentType].size()<<endl;
+        short it1=1;
+        //for(auto it1 = SysParams::Chemistry().bindingSites[camkiiFilamentType].begin();
+        //         it1 != SysParams::Chemistry().bindingSites[camkiiFilamentType].end(); it1++) {
+        	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ <<cp<<"  "<<cp->getCoordinationNumber()<<endl;
+
         	// skip if parent coordination number isn't between >=1 and <6 (MAX coordination number SysParams::Chemistry().maxcamkii_coord_number)
         	//now re add valid binding sites
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+        	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
         	//TODO see if CP is defined
         	if (cp && cp->getCoordinationNumber() < _maxCoordination) {
-            	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+            	//cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                 //loop through neighbors
                 // The neighbors should be the cylinders from the other filaments (obtained from the neighbor list)
             	//now re add valid based on CCNL
-                for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
+            	for (auto cn : _neighborLists[_nlIndex]->getNeighbors(cc->getCylinder())) {
                 	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                     if(cn->getParent() == c->getParent()) continue;
                     if(cn->getType() != _filamentType) continue;
@@ -669,7 +673,7 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
                             SysParams::Chemistry().camkiierBoundIndex[_filamentType])->getN(), 1.0)) {
                         	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                             //check distances..
-                            auto mp1 = (float)*it1 / SysParams::Geometry().cylinderNumMon[camkiiFilamentType];
+                            auto mp1 = (float) it1 / SysParams::Geometry().cylinderNumMon[camkiiFilamentType];
                             auto mp2 = (float)*it2 / SysParams::Geometry().cylinderNumMon[_filamentType];
 
                             auto x1 = c->getFirstBead()->coordinate;
@@ -693,7 +697,7 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
  		            //continue;} //Carlos
 
 
-                            auto t1 = tuple<CCylinder*, short>(cc, *it1);
+                            auto t1 = tuple<CCylinder*, short>(cc, it1);
                             auto t2 = tuple<CCylinder*, short>(ccn, *it2);
                             cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
                             //add in correct order
@@ -703,8 +707,8 @@ void CaMKIIBundlingManager::updateAllPossibleBindings() {
                     }
                 }
             }
-        	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
-        }
+        //cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
+        //}
     	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
     }
     int oldN = _bindingSpecies->getN();
