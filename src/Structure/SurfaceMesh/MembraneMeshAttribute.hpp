@@ -221,7 +221,7 @@ struct MembraneMeshAttribute {
         using namespace mathfunc;
 
         if(!mesh.getMetaAttribute().cacheValid) {
-            LOG(ERROR) << "Updating membrane mesh geometry values without a valid index cache."
+            LOG(ERROR) << "Updating membrane mesh geometry values without a valid index cache.";
             throw std::runtime_error("Membrane mesh index cache invalid");
         }
 
