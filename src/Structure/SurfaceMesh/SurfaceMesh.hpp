@@ -634,8 +634,8 @@ public:
     const TriangleAttribute& getTriangleAttribute(size_t index) const { return _triangles[index].attr; }
     BorderAttribute&       getBorderAttribute(size_t index)       { return _borders[index].attr; }
     const BorderAttribute& getBorderAttribute(size_t index) const { return _borders[index].attr; }
-    MetaAttribute&       getMetaAttribute()       { return _meta; }
-    const MetaAttribute& getMetaAttribute() const { return _meta; }
+    MetaAttribute&       getMetaAttribute()       noexcept { return _meta; }
+    const MetaAttribute& getMetaAttribute() const noexcept { return _meta; }
 
     // Meshwork traverse
     auto polygonType(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].polygonType; }

@@ -70,6 +70,10 @@ struct MembraneMeshAttribute {
         GHalfEdge gHalfEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::HalfEdgeAttribute aHalfEdge;
 
+        // The index in Bead::getDbData()
+        // [source, target, next target]
+        size_t cachedCoordIndex[3];
+
         template< bool stretched > const GHalfEdge& getGHalfEdge() const { return stretched ? gHalfEdgeS : gHalfEdge; }
         template< bool stretched >       GHalfEdge& getGHalfEdge()       { return stretched ? gHalfEdgeS : gHalfEdge; }
 
@@ -95,6 +99,8 @@ struct MembraneMeshAttribute {
     struct MetaAttribute {
         SubSystem *s;
         Membrane *m;
+
+        bool cacheValid = false;
     };
 
     using coordinate_type = typename VertexAttribute::coordinate_type;
@@ -148,6 +154,38 @@ struct MembraneMeshAttribute {
         // Do nothing
     }
 
+    // Mesh index caching
+    static void cacheIndices(MeshType& mesh) {
+
+        const auto& vertices = mesh.getVertices();
+        const auto& halfEdges = mesh.getHalfEdges();
+        const auto& edges = mesh.getEdges();
+        const auto& triangles = mesh.getTriangles();
+
+        const size_t numVertices = vertices.size();
+        const size_t numHalfEdges = halfEdges.size();
+        const size_t numEdges = edges.size();
+        const size_t numTriangles = triangles.size();
+
+        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
+            // The angle is (v0, v1, v2)
+            const size_t vi0 = mesh.target(mesh.prev(hei));
+            const size_t vi1 = mesh.target(hei);
+            const size_t vi2 = mesh.target(mesh.next(hei));
+
+            auto& hea = mesh.getHalfEdgeAttribute(hei);
+            hea.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getIndex();
+            hea.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getIndex();
+            hea.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
+        }
+
+        mesh.getMetaAttribute().cacheValid = true;
+
+    } // void cacheIndices(...)
+    static void invalidateCache(MeshType& mesh) noexcept {
+        mesh.getMetaAttribute().cacheValid = false;
+    }
+
     // Mesh attribute initializing and extracting
     // These operations do not follow the RAII idiom.
     // Initialization should happen only once, as it allocates resources
@@ -193,14 +231,12 @@ struct MembraneMeshAttribute {
 
         // Calculate angles stored in half edges
         for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            // The angle is (v0, v1, v2)
-            const size_t vi0 = mesh.target(mesh.prev(hei));
-            const size_t vi1 = mesh.target(hei);
-            const size_t vi2 = mesh.target(mesh.next(hei));
-            const auto& c0 = vertices[vi0].attr.vertex->template getCoordinate<stretched>();
-            const auto& c1 = vertices[vi1].attr.vertex->template getCoordinate<stretched>();
-            const auto& c2 = vertices[vi2].attr.vertex->template getCoordinate<stretched>();
+            // The angle is (c0, c1, c2)
+            auto& hea = mesh.getHalfEdgeAttribute(hei);
             auto& heag = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>();
+            const auto& c0 = Bead::getDbData().coords[hea.cachedCoordIndex[0]];
+            const auto& c1 = Bead::getDbData().coords[hea.cachedCoordIndex[1]];
+            const auto& c2 = Bead::getDbData().coords[hea.cachedCoordIndex[2]];
 
             const auto cp = cross(c0 - c1, c2 - c1);
             const auto dp =   dot(c0 - c1, c2 - c1);

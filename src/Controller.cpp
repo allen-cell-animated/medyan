@@ -1217,7 +1217,10 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
 
                 mins = chrono::high_resolution_clock::now();
-                _mController->run();
+                {
+                    ScopedMembraneMeshIndexCache smmic;
+                    _mController->run();
+                }
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
 
@@ -1350,7 +1353,10 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
-                _mController->run();
+                {
+                    ScopedMembraneMeshIndexCache smmic;
+                    _mController->run();
+                }
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
 
