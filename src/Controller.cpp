@@ -60,6 +60,12 @@ void rearrangeAllDatabases() {
     Cylinder::rearrange(); Cylinder::updateData();
 }
 
+void cacheAllMembraneMeshIndices() {
+    for(auto m : Membrane::getMembranes()) {
+        Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
+    }
+}
+
 } // namespace
 
 Controller::Controller(SubSystem* s) : _subSystem(s) {
@@ -358,6 +364,7 @@ void Controller::setupInitialNetwork(SystemParser& p) {
         );
 
         // Update membrane geometry
+        Membrane::MembraneMeshAttributeType::cacheIndices(newMembrane->getMesh());
         newMembrane->updateGeometryValue();
 
         // Add to the global membrane hierarchy
@@ -953,6 +960,9 @@ void Controller::membraneAdaptiveRemesh() const {
     // Requires _meshAdapter to be already initialized
     for(auto m : Membrane::getMembranes()) {
         _meshAdapter->adapt(m->getMesh());
+
+        // Recaching indices and calculate geometry
+        Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
         m->updateGeometryValue();
     }
 }
@@ -1028,10 +1038,8 @@ void Controller::run() {
         mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
 
-        {
-            ScopedMembraneMeshIndexCache smmic;
-            _mController->run(false);
-        }
+        cacheAllMembraneMeshIndices();
+        _mController->run(false);
 
         mine= chrono::high_resolution_clock::now();
         chrono::duration<double> elapsed_runm(mine - mins);
@@ -1110,10 +1118,9 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
-    {
-        ScopedMembraneMeshIndexCache smmic;
-        _mController->run(false);
-    }
+
+    cacheAllMembraneMeshIndices();
+    _mController->run(false);
     membraneAdaptiveRemesh();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runm2(mine - mins);
@@ -1223,10 +1230,9 @@ void Controller::run() {
             if(tauLastMinimization >= _minimizationTime) {
 
                 mins = chrono::high_resolution_clock::now();
-                {
-                    ScopedMembraneMeshIndexCache smmic;
-                    _mController->run();
-                }
+                cacheAllMembraneMeshIndices();
+                _mController->run();
+
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
 
@@ -1359,10 +1365,9 @@ void Controller::run() {
 #if defined(MECHANICS) && defined(CHEMISTRY)
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
-                {
-                    ScopedMembraneMeshIndexCache smmic;
-                    _mController->run();
-                }
+                cacheAllMembraneMeshIndices();
+                _mController->run();
+
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
 

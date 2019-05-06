@@ -126,21 +126,6 @@ public:
 
 };
 
-// An RAII structure for performing index caching and invalidate the cache for
-// all membranes
-struct ScopedMembraneMeshIndexCache {
-    ScopedMembraneMeshIndexCache() {
-        for(auto m : Membrane::getMembranes()) {
-            Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
-        }
-    }
-    ~ScopedMembraneMeshIndexCache() {
-        for(auto m : Membrane::getMembranes()) {
-            Membrane::MembraneMeshAttributeType::invalidateCache(m->getMesh());
-        }
-    }
-};
-
 
 
 #endif

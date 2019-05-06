@@ -14,6 +14,7 @@
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
+#include "util/io/log.h"
 
 /******************************************************************************
 Implements the attributes of the meshwork used by the membrane, mainly
@@ -155,36 +156,36 @@ struct MembraneMeshAttribute {
     }
 
     // Mesh index caching
+    template< bool forceUpdate = false >
     static void cacheIndices(MeshType& mesh) {
 
-        const auto& vertices = mesh.getVertices();
-        const auto& halfEdges = mesh.getHalfEdges();
-        const auto& edges = mesh.getEdges();
-        const auto& triangles = mesh.getTriangles();
+        if(forceUpdate || !mesh.getMetaAttribute().cacheValid) {
+            const auto& vertices = mesh.getVertices();
+            const auto& halfEdges = mesh.getHalfEdges();
+            const auto& edges = mesh.getEdges();
+            const auto& triangles = mesh.getTriangles();
 
-        const size_t numVertices = vertices.size();
-        const size_t numHalfEdges = halfEdges.size();
-        const size_t numEdges = edges.size();
-        const size_t numTriangles = triangles.size();
+            const size_t numVertices = vertices.size();
+            const size_t numHalfEdges = halfEdges.size();
+            const size_t numEdges = edges.size();
+            const size_t numTriangles = triangles.size();
 
-        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            // The angle is (v0, v1, v2)
-            const size_t vi0 = mesh.target(mesh.prev(hei));
-            const size_t vi1 = mesh.target(hei);
-            const size_t vi2 = mesh.target(mesh.next(hei));
+            for(size_t hei = 0; hei < numHalfEdges; ++hei) {
+                // The angle is (v0, v1, v2)
+                const size_t vi0 = mesh.target(mesh.prev(hei));
+                const size_t vi1 = mesh.target(hei);
+                const size_t vi2 = mesh.target(mesh.next(hei));
 
-            auto& hea = mesh.getHalfEdgeAttribute(hei);
-            hea.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getIndex();
-            hea.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getIndex();
-            hea.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
+                auto& hea = mesh.getHalfEdgeAttribute(hei);
+                hea.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getIndex();
+                hea.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getIndex();
+                hea.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
+            }
+
+            mesh.getMetaAttribute().cacheValid = true;
         }
 
-        mesh.getMetaAttribute().cacheValid = true;
-
     } // void cacheIndices(...)
-    static void invalidateCache(MeshType& mesh) noexcept {
-        mesh.getMetaAttribute().cacheValid = false;
-    }
 
     // Mesh attribute initializing and extracting
     // These operations do not follow the RAII idiom.
@@ -218,6 +219,11 @@ struct MembraneMeshAttribute {
     // Geometries
     template< bool stretched > static void updateGeometryValue(MeshType& mesh) {
         using namespace mathfunc;
+
+        if(!mesh.getMetaAttribute().cacheValid) {
+            LOG(ERROR) << "Updating membrane mesh geometry values without a valid index cache."
+            throw std::runtime_error("Membrane mesh index cache invalid");
+        }
 
         const auto& vertices = mesh.getVertices();
         const auto& halfEdges = mesh.getHalfEdges();
