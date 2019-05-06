@@ -1028,7 +1028,10 @@ void Controller::run() {
         mins = chrono::high_resolution_clock::now();
         cout<<"Minimizing energy"<<endl;
 
-        _mController->run(false);
+        {
+            ScopedMembraneMeshIndexCache smmic;
+            _mController->run(false);
+        }
 
         mine= chrono::high_resolution_clock::now();
         chrono::duration<double> elapsed_runm(mine - mins);
@@ -1107,7 +1110,10 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
-    _mController->run(false);
+    {
+        ScopedMembraneMeshIndexCache smmic;
+        _mController->run(false);
+    }
     membraneAdaptiveRemesh();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runm2(mine - mins);
