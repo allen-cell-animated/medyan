@@ -216,7 +216,14 @@ struct MembraneMeshAttribute {
         return info;
     }
 
+    //-------------------------------------------------------------------------
     // Geometries
+    //-------------------------------------------------------------------------
+
+    // This function updates geometries necessary for computing membrane energy
+    // and signed distance.
+    // This function uses cached indexing to enhance performance, so a valid
+    // cache is required when calling this function.
     template< bool stretched > static void updateGeometryValue(MeshType& mesh) {
         using namespace mathfunc;
 

@@ -27,6 +27,7 @@ Membrane::Membrane(
         typename MembraneMeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
     );
 
+    MembraneMeshAttributeType::cacheIndices(_mesh);
     // Update geometry
     updateGeometryValue<false>();
 
