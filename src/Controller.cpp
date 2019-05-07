@@ -953,8 +953,6 @@ void Controller::membraneAdaptiveRemesh() const {
     // Requires _meshAdapter to be already initialized
     for(auto m : Membrane::getMembranes()) {
         _meshAdapter->adapt(m->getMesh());
-
-        // Recaching indices and calculate geometry
         m->updateGeometryValue();
     }
 }
@@ -1109,7 +1107,6 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
-
     _mController->run(false);
     membraneAdaptiveRemesh();
     mine= chrono::high_resolution_clock::now();
