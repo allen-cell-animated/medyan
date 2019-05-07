@@ -154,6 +154,9 @@ public:
         typename Mesh::EdgeFlip{}(mesh, ei, [](
             Mesh& mesh, std::array<size_t, 2> tis, std::array<size_t, 4> vis
         ) {
+            // Invalidate mesh index cache
+            mesh.getMetaAttribute().cacheValid = false;
+
             for(auto ti : tis) {
                 Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
                 mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
@@ -311,6 +314,9 @@ public:
         typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
             Mesh& mesh, std::array<size_t, 4> tis, std::array<size_t, 5> vis, std::array<size_t, 4> eis
         ) {
+            // Invalidate mesh index cache
+            mesh.getMetaAttribute().cacheValid = false;
+
             for(auto ti : tis) {
                 Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
                 mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
@@ -511,6 +517,9 @@ public:
         auto attributeSetter = [](
             Mesh& mesh, size_t hei_begin, size_t hei_end, size_t ov0
         ) {
+            // Invalidate mesh index cache
+            mesh.getMetaAttribute().cacheValid = false;
+
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
                 const size_t hei1_n = mesh.next(hei1);
                 const size_t ti = mesh.triangle(hei1);

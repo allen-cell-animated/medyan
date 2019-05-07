@@ -1218,6 +1218,7 @@ void Controller::run() {
 
                 mins = chrono::high_resolution_clock::now();
                 _mController->run();
+
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
 
@@ -1351,6 +1352,7 @@ void Controller::run() {
             //run mcontroller, update system
             if(stepsLastMinimization >= _minimizationSteps) {
                 _mController->run();
+
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
 

@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
 #define MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
 
+#include <algorithm> // max
 #include <array>
 #include <limits> // numeric_limits
 #include <memory> // unique_ptr
@@ -14,6 +15,7 @@
 #include "Structure/SurfaceMesh/GeometricMeshAttribute.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
 #include "Structure/SurfaceMesh/Vertex.h"
+#include "util/io/log.h"
 
 /******************************************************************************
 Implements the attributes of the meshwork used by the membrane, mainly
@@ -41,6 +43,9 @@ struct MembraneMeshAttribute {
         GVertex gVertexS; // stretched version (temporary)
         AdaptiveMeshAttribute::VertexAttribute aVertex;
 
+        size_t cachedDegree;
+        size_t cachedCoordIndex;
+
         coordinate_ref_type getCoordinate() const { return vertex->coordinate(); }
 
         template< bool stretched > const GVertex& getGVertex() const { return stretched ? gVertexS : gVertex; }
@@ -58,6 +63,13 @@ struct MembraneMeshAttribute {
         GEdge gEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::EdgeAttribute aEdge;
 
+        // The index in Bead::getDbData()
+        // [target of half edge, opposite target]
+        size_t                                   cachedCoordIndex[2];
+        typename MeshType::HalfEdge::PolygonType cachedPolygonType[2];
+        // [polygon of half edge, opposite polygon]
+        size_t                                   cachedPolygonIndex[2];
+
         template< bool stretched > const GEdge& getGEdge() const { return stretched ? gEdgeS : gEdge; }
         template< bool stretched >       GEdge& getGEdge()       { return stretched ? gEdgeS : gEdge; }
 
@@ -70,6 +82,10 @@ struct MembraneMeshAttribute {
         GHalfEdge gHalfEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::HalfEdgeAttribute aHalfEdge;
 
+        // The index in Bead::getDbData()
+        // [source, target, next target]
+        size_t cachedCoordIndex[3];
+
         template< bool stretched > const GHalfEdge& getGHalfEdge() const { return stretched ? gHalfEdgeS : gHalfEdge; }
         template< bool stretched >       GHalfEdge& getGHalfEdge()       { return stretched ? gHalfEdgeS : gHalfEdge; }
 
@@ -81,6 +97,14 @@ struct MembraneMeshAttribute {
         GTriangle gTriangle;
         GTriangle gTriangleS; // stretched version (temporary);
         AdaptiveMeshAttribute::TriangleAttribute aTriangle;
+
+        // The index in Bead::getDbData()
+        // [target of half edge, next target, prev target]
+        size_t cachedCoordIndex[3];
+        // [half edge, next, prev]
+        size_t cachedHalfEdgeIndex[3];
+        // [edge of half edge, next edge, prev edge]
+        size_t cachedEdgeIndex[3];
 
         template< bool stretched > const GTriangle& getGTriangle() const { return stretched ? gTriangleS : gTriangle; }
         template< bool stretched >       GTriangle& getGTriangle()       { return stretched ? gTriangleS : gTriangle; }
@@ -95,6 +119,19 @@ struct MembraneMeshAttribute {
     struct MetaAttribute {
         SubSystem *s;
         Membrane *m;
+
+        bool cacheValid = false;
+
+        size_t vertexMaxDegree;
+
+        // A vertex has indeterminant number of neighbors, so the cache structure needs to be determined at run-time.
+        std::vector< size_t > cachedVertexTopo;
+        size_t cachedVertexTopoSize() const { return vertexMaxDegree * 5; }
+        size_t cachedVertexOffsetNeighborCoord(size_t idx) const { return cachedVertexTopoSize() * idx; }
+        size_t cachedVertexOffsetTargetingHE  (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree; }
+        size_t cachedVertexOffsetLeavingHE    (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 2; }
+        size_t cachedVertexOffsetOuterHE      (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 3; }
+        size_t cachedVertexOffsetPolygon      (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 4; }
     };
 
     using coordinate_type = typename VertexAttribute::coordinate_type;
@@ -148,6 +185,105 @@ struct MembraneMeshAttribute {
         // Do nothing
     }
 
+    // Mesh index caching
+    template< bool forceUpdate = false >
+    static void cacheIndices(MeshType& mesh) {
+
+        if(forceUpdate || !mesh.getMetaAttribute().cacheValid) {
+            const auto& vertices = mesh.getVertices();
+            const auto& halfEdges = mesh.getHalfEdges();
+            const auto& edges = mesh.getEdges();
+            const auto& triangles = mesh.getTriangles();
+
+            const size_t numVertices = vertices.size();
+            const size_t numHalfEdges = halfEdges.size();
+            const size_t numEdges = edges.size();
+            const size_t numTriangles = triangles.size();
+
+            for(size_t hei = 0; hei < numHalfEdges; ++hei) {
+                // The angle is (v0, v1, v2)
+                const size_t vi0 = mesh.target(mesh.prev(hei));
+                const size_t vi1 = mesh.target(hei);
+                const size_t vi2 = mesh.target(mesh.next(hei));
+
+                auto& hea = mesh.getHalfEdgeAttribute(hei);
+                hea.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getIndex();
+                hea.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getIndex();
+                hea.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
+            }
+
+            for(size_t ti = 0; ti < numTriangles; ++ti) {
+                const size_t hei = triangles[ti].halfEdgeIndex;
+                const size_t hei_n = mesh.next(hei);
+                const size_t hei_p = mesh.prev(hei);
+                const size_t vi0 = mesh.target(hei);
+                const size_t vi1 = mesh.target(hei_n);
+                const size_t vi2 = mesh.target(hei_p);
+
+                auto& ta = mesh.getTriangleAttribute(ti);
+                ta.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getIndex();
+                ta.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getIndex();
+                ta.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
+                ta.cachedHalfEdgeIndex[0] = hei;
+                ta.cachedHalfEdgeIndex[1] = hei_n;
+                ta.cachedHalfEdgeIndex[2] = hei_p;
+                ta.cachedEdgeIndex[0] = mesh.edge(hei);
+                ta.cachedEdgeIndex[1] = mesh.edge(hei_n);
+                ta.cachedEdgeIndex[2] = mesh.edge(hei_p);
+            }
+
+            for(size_t ei = 0; ei < numEdges; ++ei) {
+                const size_t hei = edges[ei].halfEdgeIndex;
+                const size_t hei_o = mesh.opposite(hei);
+                const size_t vi0 = mesh.target(hei);
+                const size_t vi1 = mesh.target(mesh.prev(hei));
+
+                auto& ea = mesh.getEdgeAttribute(ei);
+                ea.cachedCoordIndex[0]   = vertices[vi0].attr.vertex->Bead::getIndex();
+                ea.cachedCoordIndex[1]   = vertices[vi1].attr.vertex->Bead::getIndex();
+                ea.cachedPolygonType[0]  = halfEdges[hei].polygonType;
+                ea.cachedPolygonType[1]  = halfEdges[hei_o].polygonType;
+                ea.cachedPolygonIndex[0] = mesh.polygon(hei);
+                ea.cachedPolygonIndex[1] = mesh.polygon(hei_o);
+            }
+
+            // Determine vertex max number of neighbors
+            mesh.getMetaAttribute().vertexMaxDegree = 0;
+            for(size_t vi = 0; vi < numVertices; ++vi) {
+                mesh.getMetaAttribute().vertexMaxDegree = std::max(
+                    mesh.getMetaAttribute().vertexMaxDegree,
+                    mesh.degree(vi)
+                );
+            }
+            mesh.getMetaAttribute().cachedVertexTopo.resize(mesh.getMetaAttribute().cachedVertexTopoSize() * numVertices);
+            // Cache indices around vertices
+            for(size_t vi = 0; vi < numVertices; ++vi) {
+                auto& va = mesh.getVertexAttribute(vi);
+
+                va.cachedDegree = mesh.degree(vi);
+                va.cachedCoordIndex = vertices[vi].attr.vertex->Bead::getIndex();
+
+                size_t i = 0; // Neighbor index
+
+                mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+                    const size_t hei_o = mesh.opposite(hei);
+                    const size_t vn = mesh.target(hei_o);
+
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i] = vertices[vn].attr.vertex->Bead::getIndex();
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE  (vi) + i] = hei;
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE    (vi) + i] = hei_o;
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetOuterHE      (vi) + i] = mesh.prev(hei);
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetPolygon      (vi) + i] = mesh.polygon(hei);
+
+                    ++i;
+                });
+            }
+
+            mesh.getMetaAttribute().cacheValid = true;
+        }
+
+    } // void cacheIndices(...)
+
     // Mesh attribute initializing and extracting
     // These operations do not follow the RAII idiom.
     // Initialization should happen only once, as it allocates resources
@@ -177,9 +313,18 @@ struct MembraneMeshAttribute {
         return info;
     }
 
+    //-------------------------------------------------------------------------
     // Geometries
+    //-------------------------------------------------------------------------
+
+    // This function updates geometries necessary for computing membrane energy
+    // and signed distance.
+    // This function uses cached indexing to enhance performance, so a valid
+    // cache is needed in this function.
     template< bool stretched > static void updateGeometryValue(MeshType& mesh) {
         using namespace mathfunc;
+
+        cacheIndices(mesh);
 
         const auto& vertices = mesh.getVertices();
         const auto& halfEdges = mesh.getHalfEdges();
@@ -191,16 +336,16 @@ struct MembraneMeshAttribute {
         const size_t numEdges = edges.size();
         const size_t numTriangles = triangles.size();
 
+        const auto& coords = stretched ? Bead::getDbDataConst().coordsStr : Bead::getDbDataConst().coords;
+
         // Calculate angles stored in half edges
         for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            // The angle is (v0, v1, v2)
-            const size_t vi0 = mesh.target(mesh.prev(hei));
-            const size_t vi1 = mesh.target(hei);
-            const size_t vi2 = mesh.target(mesh.next(hei));
-            const auto& c0 = vertices[vi0].attr.vertex->template getCoordinate<stretched>();
-            const auto& c1 = vertices[vi1].attr.vertex->template getCoordinate<stretched>();
-            const auto& c2 = vertices[vi2].attr.vertex->template getCoordinate<stretched>();
-            auto& heag = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>();
+            // The angle is (c0, c1, c2)
+            auto& hea = mesh.getHalfEdgeAttribute(hei);
+            auto& heag = hea.template getGHalfEdge<stretched>();
+            const auto& c0 = coords[hea.cachedCoordIndex[0]];
+            const auto& c1 = coords[hea.cachedCoordIndex[1]];
+            const auto& c2 = coords[hea.cachedCoordIndex[2]];
 
             const auto cp = cross(c0 - c1, c2 - c1);
             const auto dp =   dot(c0 - c1, c2 - c1);
@@ -210,14 +355,11 @@ struct MembraneMeshAttribute {
 
         // Calculate triangle area, unit normal and cone volume
         for(size_t ti = 0; ti < numTriangles; ++ti) {
-            const size_t hei = triangles[ti].halfEdgeIndex;
-            const size_t vi0 = mesh.target(hei);
-            const size_t vi1 = mesh.target(mesh.next(hei));
-            const size_t vi2 = mesh.target(mesh.prev(hei));
-            const auto& c0 = vertices[vi0].attr.vertex->template getCoordinate<stretched>();
-            const auto& c1 = vertices[vi1].attr.vertex->template getCoordinate<stretched>();
-            const auto& c2 = vertices[vi2].attr.vertex->template getCoordinate<stretched>();
-            auto& tag = mesh.getTriangleAttribute(ti).template getGTriangle<stretched>();
+            auto& ta = mesh.getTriangleAttribute(ti);
+            auto& tag = ta.template getGTriangle<stretched>();
+            const auto& c0 = coords[ta.cachedCoordIndex[0]];
+            const auto& c1 = coords[ta.cachedCoordIndex[1]];
+            const auto& c2 = coords[ta.cachedCoordIndex[2]];
 
             const auto cp = cross(c1 - c0, c2 - c0);
 
@@ -233,35 +375,34 @@ struct MembraneMeshAttribute {
 
         // Calculate edge length and pesudo unit normal
         for(size_t ei = 0; ei < numEdges; ++ei) {
-            const size_t hei = edges[ei].halfEdgeIndex;
-            const size_t hei_o = mesh.opposite(hei);
-            const size_t vi0 = mesh.target(hei);
-            const size_t vi1 = mesh.target(mesh.prev(hei));
+            auto& ea = mesh.getEdgeAttribute(ei);
 
             // length
-            mesh.getEdgeAttribute(ei).template getGEdge<stretched>().length = distance(
-                vertices[vi0].attr.vertex->template getCoordinate<stretched>(),
-                vertices[vi1].attr.vertex->template getCoordinate<stretched>()
+            ea.template getGEdge<stretched>().length = distance(
+                coords[ea.cachedCoordIndex[0]],
+                coords[ea.cachedCoordIndex[1]]
             );
 
             // pseudo unit normal
             using PolygonType = typename MeshType::HalfEdge::PolygonType;
             if(
-                halfEdges[hei].polygonType   == PolygonType::Triangle &&
-                halfEdges[hei_o].polygonType == PolygonType::Triangle
+                ea.cachedPolygonType[0] == PolygonType::Triangle &&
+                ea.cachedPolygonType[1] == PolygonType::Triangle
             ) {
-                const size_t ti0 = mesh.triangle(hei);
-                const size_t ti1 = mesh.triangle(mesh.opposite(hei));
-                mesh.getEdgeAttribute(ei).template getGEdge<stretched>().pseudoUnitNormal = normalizedVector(
-                    mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal
-                    + mesh.getTriangleAttribute(ti1).template getGTriangle<stretched>().unitNormal
+                ea.template getGEdge<stretched>().pseudoUnitNormal = normalizedVector(
+                    mesh.getTriangleAttribute(ea.cachedPolygonIndex[0]).template getGTriangle<stretched>().unitNormal +
+                    mesh.getTriangleAttribute(ea.cachedPolygonIndex[1]).template getGTriangle<stretched>().unitNormal
                 );
             }
         }
 
+        const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
+
         // Calculate vcell area, curvature and vertex pseudo unit normal
         for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
-            auto& vag = mesh.getVertexAttribute(vi).template getGVertex<stretched>();
+            auto& va = mesh.getVertexAttribute(vi);
+            auto& vag = va.template getGVertex<stretched>();
+            const Vec3 ci = coords[va.cachedCoordIndex];
 
             // clearing
             vag.area = 0.0;
@@ -270,14 +411,12 @@ struct MembraneMeshAttribute {
             // k1 = 2A * k, where k is the result of LB operator
             Vec3 k1 {};
 
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, &vi, &vag, &k1](size_t hei) {
-                const size_t hei_o = mesh.opposite(hei);
-                const size_t ti0 = mesh.triangle(hei);
-                const size_t vn = mesh.target(hei_o);
-                const size_t hei_n = mesh.next(hei);
-                const size_t hei_on = mesh.next(hei_o);
-                const Vec3 ci = vertices[vi].attr.vertex->template getCoordinate<stretched>();
-                const Vec3 cn = vertices[vn].attr.vertex->template getCoordinate<stretched>();
+            for(size_t i = 0; i < va.cachedDegree; ++i) {
+                const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
+                const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
+                const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
+                const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
+                const Vec3 cn = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]];
 
                 const auto sumCotTheta =
                     mesh.getHalfEdgeAttribute(hei_n).template getGHalfEdge<stretched>().cotTheta
@@ -292,7 +431,7 @@ struct MembraneMeshAttribute {
 
                 k1 += sumCotTheta * diff;
                 vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal;
-            });
+            }
 
             const double invA = 1 / vag.area;
             const double magK1 = magnitude(k1);
@@ -303,9 +442,16 @@ struct MembraneMeshAttribute {
 
             vag.curv = flippingCurv * magK1 * 0.25 * invA;
         }
-    }
+    } // void updateGeometryValue(...)
+
+    // This function updates the geometry value with derivatives necessary in
+    // the membrane force calculation.
+    // This function uses cached indexing to enhance performance, so a valid
+    // cache is needed in this function.
     static void updateGeometryValueWithDerivative(MeshType& mesh) {
         using namespace mathfunc;
+
+        cacheIndices(mesh);
 
         const auto& vertices = mesh.getVertices();
         const auto& halfEdges = mesh.getHalfEdges();
@@ -317,15 +463,16 @@ struct MembraneMeshAttribute {
         const size_t numEdges = edges.size();
         const size_t numTriangles = triangles.size();
 
+        const auto& coords = Bead::getDbData().coords;
+
         // Calculate edge length with deriviative
         for(size_t ei = 0; ei < numEdges; ++ei) {
-            // The edge must have an opposite
+            auto& ea = mesh.getEdgeAttribute(ei);
+
             const size_t hei = edges[ei].halfEdgeIndex;
             const size_t hei_o = mesh.opposite(hei);
-            const size_t vi0 = mesh.target(hei);
-            const size_t vi1 = mesh.target(hei_o);
-            const Vec3 c0 = vertices[vi0].attr.vertex->coordinate();
-            const Vec3 c1 = vertices[vi1].attr.vertex->coordinate();
+            const Vec3 c0 = coords[ea.cachedCoordIndex[0]];
+            const Vec3 c1 = coords[ea.cachedCoordIndex[1]];
 
             const auto length = mesh.getEdgeAttribute(ei).gEdge.length = distance(c0, c1);
             const auto invL = 1.0 / length;
@@ -336,23 +483,21 @@ struct MembraneMeshAttribute {
         // Calculate angles and triangle areas with derivative
         // Calculate triangle normals and cone volumes
         for(size_t ti = 0; ti < numTriangles; ++ti) {
-            size_t hei[3];
-            hei[0] = triangles[ti].halfEdgeIndex;
-            hei[1] = mesh.next(hei[0]);
-            hei[2] = mesh.next(hei[1]);
+            auto& ta = mesh.getTriangleAttribute(ti);
+
+            const auto& hei = ta.cachedHalfEdgeIndex;
             auto& tag = mesh.getTriangleAttribute(ti).gTriangle;
 
-            const size_t vi[] {mesh.target(hei[0]), mesh.target(hei[1]), mesh.target(hei[2])};
             const Vec3 c[] {
-                vertices[vi[0]].attr.vertex->coordinate(),
-                vertices[vi[1]].attr.vertex->coordinate(),
-                vertices[vi[2]].attr.vertex->coordinate()
+                coords[ta.cachedCoordIndex[0]],
+                coords[ta.cachedCoordIndex[1]],
+                coords[ta.cachedCoordIndex[2]]
             };
 
             const double l[] {
-                edges[mesh.edge(hei[0])].attr.gEdge.length,
-                edges[mesh.edge(hei[1])].attr.gEdge.length,
-                edges[mesh.edge(hei[2])].attr.gEdge.length
+                edges[ta.cachedEdgeIndex[0]].attr.gEdge.length,
+                edges[ta.cachedEdgeIndex[1]].attr.gEdge.length,
+                edges[ta.cachedEdgeIndex[2]].attr.gEdge.length
             };
 
             const double dots[] {
@@ -414,11 +559,15 @@ struct MembraneMeshAttribute {
             mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea = {0.0, 0.0, 0.0};
         }
 
+        const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
+
         // Calculate vcell area, curvature with derivative
         // Calculate vertex pseudo unit normal
         // Calculate derivative of volume on vertices
         for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
-            auto& vag = mesh.getVertexAttribute(vi).gVertex;
+            auto& va = mesh.getVertexAttribute(vi);
+            auto& vag = va.gVertex;
+            const Vec3 ci = coords[va.cachedCoordIndex];
 
             // clearing
             vag.area = 0.0;
@@ -431,17 +580,15 @@ struct MembraneMeshAttribute {
             Vec3 k1 {};
 
             // derivative of k1 and curvature will be calculated in the next loop
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, vi, &vag, &k1](size_t hei) {
-                const size_t hei_o = mesh.opposite(hei);
-                const size_t ti0 = mesh.triangle(hei);
-                const size_t vn = mesh.target(hei_o);
-                const size_t hei_n = mesh.next(hei);
-                const size_t hei_on = mesh.next(hei_o);
-                const size_t hei_right = mesh.opposite(mesh.next(hei_on)); // hei_left is hei_n
-                const size_t vi_right = mesh.target(hei_right);
-                const Vec3 ci = vertices[vi].attr.vertex->coordinate();
-                const Vec3 cn = vertices[vn].attr.vertex->coordinate();
-                const Vec3 c_right = vertices[vi_right].attr.vertex->coordinate();
+            for(size_t i = 0; i < va.cachedDegree; ++i) {
+                const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
+                const size_t hei_o = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
+                const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
+                const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
+                const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
+                const size_t hei_right = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + 1) % va.cachedDegree];
+                const Vec3 cn = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]];
+                const Vec3 c_right = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]];
 
                 const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
                 const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
@@ -475,7 +622,7 @@ struct MembraneMeshAttribute {
                 // Added to derivative of sum of cone volume
                 const auto cp = cross(cn, c_right);
                 vag.dVolume += cp * (1.0 / 6);
-            });
+            }
 
             const auto invA = 1.0 / vag.area;
             const auto magK1 = magnitude(k1);
@@ -495,18 +642,14 @@ struct MembraneMeshAttribute {
             // Calculate derivative of k1 and curvature
             // Using another loop because k1 is needed for curvature derivative
             std::array<Vec3, 3> dK1 {}; // On center vertex, indexed by [k1x, k1y, k1z]
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, vi, &k1, &dK1, dCurvFac1, dCurvFac2](size_t hei) {
-                const size_t hei_o = mesh.opposite(hei);
-                const size_t vn = mesh.target(hei_o);
-                const size_t hei_n = mesh.next(hei);
-                const size_t hei_on = mesh.next(hei_o);
-                const size_t hei_right = mesh.opposite(mesh.next(hei_on)); // hei_left is hei_n
-                const size_t vi_left = mesh.target(hei_n);
-                const size_t vi_right = mesh.target(hei_right);
-                const Vec3 ci = vertices[vi].attr.vertex->coordinate();
-                const Vec3 cn = vertices[vn].attr.vertex->coordinate();
-                const Vec3 c_left = vertices[vi_left].attr.vertex->coordinate();
-                const Vec3 c_right = vertices[vi_right].attr.vertex->coordinate();
+            for(size_t i = 0; i < va.cachedDegree; ++i) {
+                const size_t hei_o = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
+                const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
+                const size_t hei_p = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + i];
+                const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
+                const Vec3 cn = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]];
+                const Vec3 c_left = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + va.cachedDegree - 1) % va.cachedDegree]];
+                const Vec3 c_right = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + (i + 1) % va.cachedDegree]];
 
                 const auto sumCotTheta = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.cotTheta + mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.cotTheta;
                 const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
@@ -536,7 +679,7 @@ struct MembraneMeshAttribute {
                 // As target for left and right
                 const auto diff_left = ci - c_left;
                 const auto diff_right = ci - c_right;
-                const auto& dCotThetaOfLeft = mesh.getHalfEdgeAttribute(mesh.next(hei_n)).gHalfEdge.dCotTheta[1];
+                const auto& dCotThetaOfLeft = mesh.getHalfEdgeAttribute(hei_p).gHalfEdge.dCotTheta[1];
                 const auto& dCotThetaOfRight = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dCotTheta[1];
                 dK1_n[0] += dCotThetaOfLeft[0] * diff_left;
                 dK1_n[1] += dCotThetaOfLeft[1] * diff_left;
@@ -553,7 +696,7 @@ struct MembraneMeshAttribute {
                 }}}; // A matrix product dK1_n * k1
                 mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv =
                     dCurvFac1 * mp + dCurvFac2 * mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
-            });
+            }
 
             // Also the derivative of curvature on central vertex
             vag.dCurv =
