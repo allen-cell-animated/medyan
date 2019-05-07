@@ -399,9 +399,13 @@ struct MembraneMeshAttribute {
             }
         }
 
+        const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
+
         // Calculate vcell area, curvature and vertex pseudo unit normal
         for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
-            auto& vag = mesh.getVertexAttribute(vi).template getGVertex<stretched>();
+            auto& va = mesh.getVertexAttribute(vi);
+            auto& vag = va.template getGVertex<stretched>();
+            const Vec3 ci = coords[va.cachedCoordIndex];
 
             // clearing
             vag.area = 0.0;
@@ -410,14 +414,12 @@ struct MembraneMeshAttribute {
             // k1 = 2A * k, where k is the result of LB operator
             Vec3 k1 {};
 
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&mesh, &vertices, &vi, &vag, &k1](size_t hei) {
-                const size_t hei_o = mesh.opposite(hei);
-                const size_t ti0 = mesh.triangle(hei);
-                const size_t vn = mesh.target(hei_o);
-                const size_t hei_n = mesh.next(hei);
-                const size_t hei_on = mesh.next(hei_o);
-                const Vec3 ci = vertices[vi].attr.vertex->template getCoordinate<stretched>();
-                const Vec3 cn = vertices[vn].attr.vertex->template getCoordinate<stretched>();
+            for(size_t i = 0; i < va.cachedDegree; ++i) {
+                const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
+                const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
+                const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
+                const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
+                const Vec3 cn = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]];
 
                 const auto sumCotTheta =
                     mesh.getHalfEdgeAttribute(hei_n).template getGHalfEdge<stretched>().cotTheta
@@ -432,7 +434,7 @@ struct MembraneMeshAttribute {
 
                 k1 += sumCotTheta * diff;
                 vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal;
-            });
+            }
 
             const double invA = 1 / vag.area;
             const double magK1 = magnitude(k1);
