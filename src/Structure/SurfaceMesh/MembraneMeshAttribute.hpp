@@ -130,7 +130,7 @@ struct MembraneMeshAttribute {
         size_t cachedVertexOffsetNeighborCoord(size_t idx) const { return cachedVertexTopoSize() * idx; }
         size_t cachedVertexOffsetTargetingHE  (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree; }
         size_t cachedVertexOffsetLeavingHE    (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 2; }
-        size_t cachedVertexOffsetOuterHE      (size_t idx) const { return cachedVertexTopoSize() * idx * vertexMaxDegree * 3; }
+        size_t cachedVertexOffsetOuterHE      (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 3; }
         size_t cachedVertexOffsetTriangle     (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 4; }
     };
 
