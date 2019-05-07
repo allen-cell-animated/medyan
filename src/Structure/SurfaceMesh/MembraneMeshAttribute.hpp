@@ -255,8 +255,8 @@ struct MembraneMeshAttribute {
                     mesh.degree(vi)
                 );
             }
-            cachedVertexTopo.resize(mesh.getMetaAttribute().cachedVertexTopoSize() * numVertices);
-            LOG(NOTE) << "cached vertex topo size: " << cachedVertexTopo.size();
+            mesh.getMetaAttribute().cachedVertexTopo.resize(mesh.getMetaAttribute().cachedVertexTopoSize() * numVertices);
+            LOG(NOTE) << "cached vertex topo size: " << mesh.getMetaAttribute().cachedVertexTopo.size();
             // Cache indices around vertices
             for(size_t vi = 0; vi < numVertices; ++vi) {
                 auto& va = mesh.getVertexAttribute(vi);
@@ -271,11 +271,11 @@ struct MembraneMeshAttribute {
                     const size_t hei_o = mesh.opposite(hei);
                     const size_t vn = mesh.target(hei_o);
 
-                    cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i] = vertices[vn].attr.vertex->Bead::getIndex();
-                    cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i] = hei;
-                    cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i] = hei_o;
-                    cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + i] = mesh.prev(hei);
-                    cachedVertexTopo[mesh.getMetaAttribtue().cachedVertexOffsetTriangle(vi) + i] = mesh.triangle(hei);
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i] = vertices[vn].attr.vertex->Bead::getIndex();
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE  (vi) + i] = hei;
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE    (vi) + i] = hei_o;
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetOuterHE      (vi) + i] = mesh.prev(hei);
+                    mesh.getMetaAttribute().cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetTriangle     (vi) + i] = mesh.triangle(hei);
 
                     ++i;
                 });
