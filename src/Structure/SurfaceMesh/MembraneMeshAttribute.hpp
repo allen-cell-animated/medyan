@@ -1,6 +1,7 @@
 #ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
 #define MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
 
+#include <algorithm> // max
 #include <array>
 #include <limits> // numeric_limits
 #include <memory> // unique_ptr
@@ -113,6 +114,8 @@ struct MembraneMeshAttribute {
         Membrane *m;
 
         bool cacheValid = false;
+
+        size_t vertexMaxDegree;
     };
 
     using coordinate_type = typename VertexAttribute::coordinate_type;
@@ -220,6 +223,51 @@ struct MembraneMeshAttribute {
                 ea.cachedPolygonIndex[1] = mesh.polygon(hei_o);
             }
 
+            // Determine vertex max number of neighbors
+            mesh.getMetaAttribute().vertexMaxDegree = 0;
+            for(size_t vi = 0; vi < numVertices; ++vi) {
+                mesh.getMetaAttribute().vertexMaxDegree = std::max(
+                    mesh.getMetaAttribute().vertexMaxDegree,
+                    mesh.degree(vi)
+                );
+            }
+            // TODO
+            // Cache indices around vertices
+            for(size_t vi = 0; vi < numVertices; ++vi) {
+                auto& va = mesh.getVertexAttribute(vi);
+                auto& vag = mesh.getVertexAttribute(vi).template getGVertex<stretched>();
+
+                va.cachedIsOnBorder = mesh.isVertexOnBorder(vi);
+                // TODO
+
+                mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+                    const size_t hei_o = mesh.opposite(hei);
+                    const size_t ti0 = mesh.triangle(hei);
+                    const size_t vn = mesh.target(hei_o);
+                    const size_t hei_n = mesh.next(hei);
+                    const size_t hei_on = mesh.next(hei_o);
+                    const Vec3 ci = vertices[vi].attr.vertex->template getCoordinate<stretched>();
+                    const Vec3 cn = vertices[vn].attr.vertex->template getCoordinate<stretched>();
+
+                    const auto sumCotTheta =
+                        mesh.getHalfEdgeAttribute(hei_n).template getGHalfEdge<stretched>().cotTheta
+                        + mesh.getHalfEdgeAttribute(hei_on).template getGHalfEdge<stretched>().cotTheta;
+
+                    const auto theta = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>().theta;
+
+                    const auto diff = ci - cn;
+                    const auto dist2 = magnitude2(diff);
+
+                    vag.area += sumCotTheta * dist2 * 0.125;
+
+                    k1 += sumCotTheta * diff;
+                    vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal;
+
+                    //TODO
+                });
+
+            }
+
             mesh.getMetaAttribute().cacheValid = true;
         }
 
@@ -320,8 +368,6 @@ struct MembraneMeshAttribute {
         // Calculate edge length and pesudo unit normal
         for(size_t ei = 0; ei < numEdges; ++ei) {
             auto& ea = mesh.getEdgeAttribute(ei);
-            const size_t hei = edges[ei].halfEdgeIndex;
-            const size_t hei_o = mesh.opposite(hei);
 
             // length
             ea.template getGEdge<stretched>().length = distance(
