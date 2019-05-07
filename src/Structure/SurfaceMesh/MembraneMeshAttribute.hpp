@@ -87,6 +87,10 @@ struct MembraneMeshAttribute {
         GTriangle gTriangleS; // stretched version (temporary);
         AdaptiveMeshAttribute::TriangleAttribute aTriangle;
 
+        // The index in Bead::getDbData()
+        // [target of half edge, next target, next target]
+        size_t cachedCoordIndex[3];
+
         template< bool stretched > const GTriangle& getGTriangle() const { return stretched ? gTriangleS : gTriangle; }
         template< bool stretched >       GTriangle& getGTriangle()       { return stretched ? gTriangleS : gTriangle; }
 
@@ -182,6 +186,18 @@ struct MembraneMeshAttribute {
                 hea.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
             }
 
+            for(size_t ti = 0; ti < numTriangles; ++ti) {
+                const size_t hei = triangles[ti].halfEdgeIndex;
+                const size_t vi0 = mesh.target(hei);
+                const size_t vi1 = mesh.target(mesh.next(hei));
+                const size_t vi2 = mesh.target(mesh.prev(hei));
+
+                auto& ta = mesh.getTriangleAttribute(ti);
+                ta.cachedCoordIndex[0] = vertices[vi0].attr.vertex->Bead::getIndex();
+                ta.cachedCoordIndex[1] = vertices[vi1].attr.vertex->Bead::getIndex();
+                ta.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
+            }
+
             mesh.getMetaAttribute().cacheValid = true;
         }
 
@@ -242,14 +258,16 @@ struct MembraneMeshAttribute {
         const size_t numEdges = edges.size();
         const size_t numTriangles = triangles.size();
 
+        const auto& coords = stretched ? Bead::getDbDataConst().coordsStr : Bead::getDbDataConst().coords;
+
         // Calculate angles stored in half edges
         for(size_t hei = 0; hei < numHalfEdges; ++hei) {
             // The angle is (c0, c1, c2)
             auto& hea = mesh.getHalfEdgeAttribute(hei);
-            auto& heag = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>();
-            const auto& c0 = Bead::getDbData().coords[hea.cachedCoordIndex[0]];
-            const auto& c1 = Bead::getDbData().coords[hea.cachedCoordIndex[1]];
-            const auto& c2 = Bead::getDbData().coords[hea.cachedCoordIndex[2]];
+            auto& heag = hea.template getGHalfEdge<stretched>();
+            const auto& c0 = coords[hea.cachedCoordIndex[0]];
+            const auto& c1 = coords[hea.cachedCoordIndex[1]];
+            const auto& c2 = coords[hea.cachedCoordIndex[2]];
 
             const auto cp = cross(c0 - c1, c2 - c1);
             const auto dp =   dot(c0 - c1, c2 - c1);
@@ -259,14 +277,11 @@ struct MembraneMeshAttribute {
 
         // Calculate triangle area, unit normal and cone volume
         for(size_t ti = 0; ti < numTriangles; ++ti) {
-            const size_t hei = triangles[ti].halfEdgeIndex;
-            const size_t vi0 = mesh.target(hei);
-            const size_t vi1 = mesh.target(mesh.next(hei));
-            const size_t vi2 = mesh.target(mesh.prev(hei));
-            const auto& c0 = vertices[vi0].attr.vertex->template getCoordinate<stretched>();
-            const auto& c1 = vertices[vi1].attr.vertex->template getCoordinate<stretched>();
-            const auto& c2 = vertices[vi2].attr.vertex->template getCoordinate<stretched>();
-            auto& tag = mesh.getTriangleAttribute(ti).template getGTriangle<stretched>();
+            auto& ta = mesh.getTriangleAttribute(ti);
+            auto& tag = ta.template getGTriangle<stretched>();
+            const auto& c0 = coords[ta.cachedCoordIndex[0]];
+            const auto& c1 = coords[ta.cachedCoordIndex[1]];
+            const auto& c2 = coords[ta.cachedCoordIndex[2]];
 
             const auto cp = cross(c1 - c0, c2 - c0);
 
@@ -352,9 +367,19 @@ struct MembraneMeshAttribute {
 
             vag.curv = flippingCurv * magK1 * 0.25 * invA;
         }
-    }
+    } // void updateGeometryValue(...)
+
+    // This function updates the geometry value with derivatives necessary in
+    // the membrane force calculation.
+    // This function uses cached indexing to enhance performance, so a valid
+    // cache is required when calling this function.
     static void updateGeometryValueWithDerivative(MeshType& mesh) {
         using namespace mathfunc;
+
+        if(!mesh.getMetaAttribute().cacheValid) {
+            LOG(ERROR) << "Updating membrane mesh geometry values without a valid index cache.";
+            throw std::runtime_error("Membrane mesh index cache invalid");
+        }
 
         const auto& vertices = mesh.getVertices();
         const auto& halfEdges = mesh.getHalfEdges();
