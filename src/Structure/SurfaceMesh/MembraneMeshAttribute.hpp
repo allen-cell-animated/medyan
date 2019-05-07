@@ -59,6 +59,13 @@ struct MembraneMeshAttribute {
         GEdge gEdgeS; // stretched version (temporary)
         AdaptiveMeshAttribute::EdgeAttribute aEdge;
 
+        // The index in Bead::getDbData()
+        // [target of half edge, opposite target]
+        size_t                                   cachedCoordIndex[2];
+        typename MeshType::HalfEdge::PolygonType cachedPolygonType[2];
+        // [polygon of half edge, opposite polygon]
+        size_t                                   cachedPolygonIndex[2];
+
         template< bool stretched > const GEdge& getGEdge() const { return stretched ? gEdgeS : gEdge; }
         template< bool stretched >       GEdge& getGEdge()       { return stretched ? gEdgeS : gEdge; }
 
@@ -88,7 +95,7 @@ struct MembraneMeshAttribute {
         AdaptiveMeshAttribute::TriangleAttribute aTriangle;
 
         // The index in Bead::getDbData()
-        // [target of half edge, next target, next target]
+        // [target of half edge, next target, prev target]
         size_t cachedCoordIndex[3];
 
         template< bool stretched > const GTriangle& getGTriangle() const { return stretched ? gTriangleS : gTriangle; }
@@ -198,6 +205,21 @@ struct MembraneMeshAttribute {
                 ta.cachedCoordIndex[2] = vertices[vi2].attr.vertex->Bead::getIndex();
             }
 
+            for(size_t ei = 0; ei < numEdges; ++ei) {
+                const size_t hei = edges[ei].halfEdgeIndex;
+                const size_t hei_o = mesh.opposite(hei);
+                const size_t vi0 = mesh.target(hei);
+                const size_t vi1 = mesh.target(mesh.prev(hei));
+
+                auto& ea = mesh.getEdgeAttribute(ei);
+                ea.cachedCoordIndex[0]   = vertices[vi0].attr.vertex->Bead::getIndex();
+                ea.cachedCoordIndex[1]   = vertices[vi1].attr.vertex->Bead::getIndex();
+                ea.cachedPolygonType[0]  = halfEdges[hei].polygonType;
+                ea.cachedPolygonType[1]  = halfEdges[hei_o].polygonType;
+                ea.cachedPolygonIndex[0] = mesh.polygon(hei);
+                ea.cachedPolygonIndex[1] = mesh.polygon(hei_o);
+            }
+
             mesh.getMetaAttribute().cacheValid = true;
         }
 
@@ -297,28 +319,25 @@ struct MembraneMeshAttribute {
 
         // Calculate edge length and pesudo unit normal
         for(size_t ei = 0; ei < numEdges; ++ei) {
+            auto& ea = mesh.getEdgeAttribute(ei);
             const size_t hei = edges[ei].halfEdgeIndex;
             const size_t hei_o = mesh.opposite(hei);
-            const size_t vi0 = mesh.target(hei);
-            const size_t vi1 = mesh.target(mesh.prev(hei));
 
             // length
-            mesh.getEdgeAttribute(ei).template getGEdge<stretched>().length = distance(
-                vertices[vi0].attr.vertex->template getCoordinate<stretched>(),
-                vertices[vi1].attr.vertex->template getCoordinate<stretched>()
+            ea.template getGEdge<stretched>().length = distance(
+                coords[ea.cachedCoordIndex[0]],
+                coords[ea.cachedCoordIndex[1]]
             );
 
             // pseudo unit normal
             using PolygonType = typename MeshType::HalfEdge::PolygonType;
             if(
-                halfEdges[hei].polygonType   == PolygonType::Triangle &&
-                halfEdges[hei_o].polygonType == PolygonType::Triangle
+                ea.cachedPolygonType[0] == PolygonType::Triangle &&
+                ea.cachedPolygonType[1] == PolygonType::Triangle
             ) {
-                const size_t ti0 = mesh.triangle(hei);
-                const size_t ti1 = mesh.triangle(mesh.opposite(hei));
-                mesh.getEdgeAttribute(ei).template getGEdge<stretched>().pseudoUnitNormal = normalizedVector(
-                    mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal
-                    + mesh.getTriangleAttribute(ti1).template getGTriangle<stretched>().unitNormal
+                ea.template getGEdge<stretched>().pseudoUnitNormal = normalizedVector(
+                    mesh.getTriangleAttribute(ea.cachedPolygonIndex[0]).template getGTriangle<stretched>().unitNormal +
+                    mesh.getTriangleAttribute(ea.cachedPolygonIndex[1]).template getGTriangle<stretched>().unitNormal
                 );
             }
         }
