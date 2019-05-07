@@ -43,7 +43,9 @@ struct MembraneMeshAttribute {
         GVertex gVertexS; // stretched version (temporary)
         AdaptiveMeshAttribute::VertexAttribute aVertex;
 
+        size_t cachedDegree;
         bool cachedIsOnBorder;
+        size_t cachedCoordIndex;
 
         coordinate_ref_type getCoordinate() const { return vertex->coordinate(); }
 
@@ -122,6 +124,14 @@ struct MembraneMeshAttribute {
         bool cacheValid = false;
 
         size_t vertexMaxDegree;
+
+        std::vector< size_t > cachedVertexTopo;
+        size_t cachedVertexTopoSize() const { return vertexMaxDegree * 5; }
+        size_t cachedVertexOffsetNeighborCoord(size_t idx) const { return cachedVertexTopoSize() * idx; }
+        size_t cachedVertexOffsetTargetingHE  (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree; }
+        size_t cachedVertexOffsetLeavingHE    (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 2; }
+        size_t cachedVertexOffsetOuterHE      (size_t idx) const { return cachedVertexTopoSize() * idx * vertexMaxDegree * 3; }
+        size_t cachedVertexOffsetTriangle     (size_t idx) const { return cachedVertexTopoSize() * idx + vertexMaxDegree * 4; }
     };
 
     using coordinate_type = typename VertexAttribute::coordinate_type;
@@ -245,40 +255,30 @@ struct MembraneMeshAttribute {
                     mesh.degree(vi)
                 );
             }
-            // TODO
+            cachedVertexTopo.resize(mesh.getMetaAttribute().cachedVertexTopoSize() * numVertices);
+            LOG(NOTE) << "cached vertex topo size: " << cachedVertexTopo.size();
             // Cache indices around vertices
             for(size_t vi = 0; vi < numVertices; ++vi) {
                 auto& va = mesh.getVertexAttribute(vi);
 
+                va.cachedDegree = mesh.degree(vi);
                 va.cachedIsOnBorder = mesh.isVertexOnBorder(vi);
-                // TODO
-/*
+                va.cachedCoordIndex = vertices[vi].attr.vertex->Bead::getIndex();
+
+                size_t i = 0; // Neighbor index
+
                 mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
                     const size_t hei_o = mesh.opposite(hei);
-                    const size_t ti0 = mesh.triangle(hei);
                     const size_t vn = mesh.target(hei_o);
-                    const size_t hei_n = mesh.next(hei);
-                    const size_t hei_on = mesh.next(hei_o);
-                    const Vec3 ci = vertices[vi].attr.vertex->template getCoordinate<stretched>();
-                    const Vec3 cn = vertices[vn].attr.vertex->template getCoordinate<stretched>();
 
-                    const auto sumCotTheta =
-                        mesh.getHalfEdgeAttribute(hei_n).template getGHalfEdge<stretched>().cotTheta
-                        + mesh.getHalfEdgeAttribute(hei_on).template getGHalfEdge<stretched>().cotTheta;
+                    cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i] = vertices[vn].attr.vertex->Bead::getIndex();
+                    cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i] = hei;
+                    cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i] = hei_o;
+                    cachedVertexTopo[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + i] = mesh.prev(hei);
+                    cachedVertexTopo[mesh.getMetaAttribtue().cachedVertexOffsetTriangle(vi) + i] = mesh.triangle(hei);
 
-                    const auto theta = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>().theta;
-
-                    const auto diff = ci - cn;
-                    const auto dist2 = magnitude2(diff);
-
-                    vag.area += sumCotTheta * dist2 * 0.125;
-
-                    k1 += sumCotTheta * diff;
-                    vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal;
-
-                    //TODO
+                    ++i;
                 });
-*/
             }
 
             mesh.getMetaAttribute().cacheValid = true;

@@ -654,6 +654,7 @@ public:
 
     // Mesh neighbor iterators
     template< typename Func > void forEachHalfEdgeTargetingVertex(const Vertex& v, Func&& func) const {
+        // Counter-clockwise iterating
         size_t hei0 = v.halfEdgeIndex;
         size_t hei = hei0;
         do {
