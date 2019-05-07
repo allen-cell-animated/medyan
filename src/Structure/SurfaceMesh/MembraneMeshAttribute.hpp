@@ -124,6 +124,7 @@ struct MembraneMeshAttribute {
 
         size_t vertexMaxDegree;
 
+        // A vertex has indeterminant number of neighbors, so the cache structure needs to be determined at run-time.
         std::vector< size_t > cachedVertexTopo;
         size_t cachedVertexTopoSize() const { return vertexMaxDegree * 5; }
         size_t cachedVertexOffsetNeighborCoord(size_t idx) const { return cachedVertexTopoSize() * idx; }
@@ -255,7 +256,6 @@ struct MembraneMeshAttribute {
                 );
             }
             mesh.getMetaAttribute().cachedVertexTopo.resize(mesh.getMetaAttribute().cachedVertexTopoSize() * numVertices);
-            LOG(NOTE) << "cached vertex topo size: " << mesh.getMetaAttribute().cachedVertexTopo.size();
             // Cache indices around vertices
             for(size_t vi = 0; vi < numVertices; ++vi) {
                 auto& va = mesh.getVertexAttribute(vi);
@@ -320,14 +320,11 @@ struct MembraneMeshAttribute {
     // This function updates geometries necessary for computing membrane energy
     // and signed distance.
     // This function uses cached indexing to enhance performance, so a valid
-    // cache is required when calling this function.
+    // cache is needed in this function.
     template< bool stretched > static void updateGeometryValue(MeshType& mesh) {
         using namespace mathfunc;
 
-        if(!mesh.getMetaAttribute().cacheValid) {
-            LOG(ERROR) << "Updating membrane mesh geometry values without a valid index cache.";
-            throw std::runtime_error("Membrane mesh index cache invalid");
-        }
+        cacheIndices(mesh);
 
         const auto& vertices = mesh.getVertices();
         const auto& halfEdges = mesh.getHalfEdges();
@@ -450,14 +447,11 @@ struct MembraneMeshAttribute {
     // This function updates the geometry value with derivatives necessary in
     // the membrane force calculation.
     // This function uses cached indexing to enhance performance, so a valid
-    // cache is required when calling this function.
+    // cache is needed in this function.
     static void updateGeometryValueWithDerivative(MeshType& mesh) {
         using namespace mathfunc;
 
-        if(!mesh.getMetaAttribute().cacheValid) {
-            LOG(ERROR) << "Updating membrane mesh geometry values without a valid index cache.";
-            throw std::runtime_error("Membrane mesh index cache invalid");
-        }
+        cacheIndices(mesh);
 
         const auto& vertices = mesh.getVertices();
         const auto& halfEdges = mesh.getHalfEdges();
