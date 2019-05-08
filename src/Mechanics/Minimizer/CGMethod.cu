@@ -519,8 +519,21 @@ void CGMethod::moveBeads(floatingpoint d)
     }
 }
 
+void CGMethod::moveBeadslineSearch(floatingpoint d)
+{
+	///<NOTE: Ignores static beads for now.
+	//if(!b->getstaticstate())
+
+//    std::cout<<"3N "<<N<<endl;
+//	cout<<"moving by lambda "<<d<<endl;
+	for (int i = 0; i < N; i++) {
+		coordlineSearch[i] = coord[i] + d * force[i];
+	}
+}
+
 void CGMethod::shiftGradient(floatingpoint d)
 {
+	//force is gradient, forceAux is force
     for (int i = 0; i < N; i ++) {
 	    force[i] = forceAux[i] + d * force[i];
     }
@@ -895,6 +908,7 @@ void CGMethod::endMinimization() {
     //coord management
     long i = 0;
     long index = 0;
+	checkcoord_forces();
     for(auto b: Bead::getBeads()) {
 
         //flatten indices
@@ -902,7 +916,6 @@ void CGMethod::endMinimization() {
         b->coordinate[0] = coord[index];
         b->coordinate[1] = coord[index + 1];
         b->coordinate[2] = coord[index + 2];
-//        std::cout<<"Bead "<<b->coordinate[0]<<" "<<b->coordinate[1]<<" "<<b->coordinate[2]<<endl;
         b->force[0] = force[index];
         b->force[1] = force[index +1];
         b->force[2] = force[index +2];
@@ -994,6 +1007,64 @@ void CGMethod::endMinimization() {
     CUDAcommon::cudatime.Tstartmin = elapsed_run.count();
     std::cout<<"end min time taken (s) "<<elapsed_run.count()<<endl;
 #endif
+}
+
+void CGMethod::checkcoord_forces() {
+    if(true) {
+
+        cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
+        Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
+        CCylinder **ccylindervec = CUDAcommon::serlvars.ccylindervec;
+        floatingpoint *coord = CUDAcommon::serlvars.coord;
+        std::cout << "check revectorized cylinders" << endl;
+        std::cout << "3 Total Cylinders " << Cylinder::getCylinders().size() << " Beads "
+                  << Bead::getBeads().size() << " maxcindex " << Cylinder::getmaxcindex() <<
+                  endl;
+        bool failstatus = false;
+        for (auto cyl:Cylinder::getCylinders()) {
+            int i = cyl->_dcIndex;
+            int id1 = cylindervec[i].ID;
+            int id2 = Cylinderpointervec[i]->getID();
+            int id3 = ccylindervec[i]->getCylinder()->getID();
+            if (id1 != id2 || id2 != id3 || id3 != id1) {
+            	cout<<"CylinderIDs do not match"<<endl;
+	            std::cout <<cyl->getID()<<" "<< id1 << " " << id2 << " " << id3 << endl;
+	            cout<<"cIndex "<<i<<endl;
+
+	            failstatus = true;
+            }
+            auto b1 = cyl->getFirstBead();
+            auto b2 = cyl->getSecondBead();
+            long idx1 = b1->_dbIndex;
+            long idx2 = b2->_dbIndex;
+            floatingpoint* coord_local;
+            floatingpoint* force_local;
+            coord_local = &coord[3 * idx1];
+	        force_local = &force[3 * idx1];
+	        for(int dim =0; dim < 3; dim++){
+	        	if(isnan(coord_local[dim])||isinf(coord_local[dim])||
+	        	isnan(force_local[dim])||isinf(force_local[dim])){
+	        		failstatus = true;
+			        cylinder c = cylindervec[i];
+			        std::cout << "bindices for cyl with ID " << cyl->getID() << " cindex " << i <<
+			                  " are " << idx1 << " " << idx2 << " " << c.bindices[0] << " "
+			                  << c.bindices[1] <<" coords ";
+			        std::cout << coord[3 * idx1] << " " << coord[3 * idx1 + 1] << " "
+			                  << coord[3 * idx1 + 2] << " " << coord[3 * idx2] << " "
+			                  << coord[3 * idx2 + 1] << " " << coord[3 * idx2 + 2] <<" forces ";
+			        std::cout << force[3 * idx1] << " " << force[3 * idx1 + 1] << " "
+			                  << force[3 * idx1 + 2] << " " << force[3 * idx2] << " "
+			                  << force[3 * idx2 + 1] << " " << force[3 * idx2 + 2] << endl;
+	        	}
+	        }
+        }
+        if(failstatus){
+        	cout<<"Coordinate/Force values are either Inf/NaN or Cylinder IODs do not "
+			   "match. Exiting."<<endl;
+        	exit(EXIT_FAILURE);
+        } else
+        	cout<<"Passed successfully"<<endl;
+    }
 }
 
 #ifdef CUDAACCL
@@ -1239,14 +1310,28 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 #endif
         sconvergencecheck = true;}
     //calculate first lambda
-    lambda = min(LAMBDAMAX, MAXDIST / f);
+	floatingpoint ravg = sum/(maxprevlambdacount);
+    if(runningaveragestatus)
+	    lambda = min<floatingpoint>(min<floatingpoint >(LAMBDAMAX, MAXDIST / f), ravg);
+    else
+	    lambda = min(LAMBDAMAX, MAXDIST / f);
+	   /* cout<<"lambda old "<<lambda<<" lambda max "<<LAMBDAMAX<<" maxdist/f "
+	    <<MAXDIST/f<<" ravg "<<ravg<<endl;*/
+
 
     //@} Lambda phase 1
 #ifdef DETAILEDOUTPUT_LAMBDA
     std::cout<<"SL lambdamax "<<LAMBDAMAX<<" serial_lambda "<<lambda<<" fmax "<<f<<" state "<<sconvergencecheck<<endl;
 #endif
 #endif
+	tbegin = chrono::high_resolution_clock::now();
     floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+	CUDAcommon::tmin.computeenerycallszero++;
+	tend = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
+	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
+
 
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
@@ -1267,7 +1352,19 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
         //TODO let each forcefield calculate energy IFF conv state = false. That will help
         // them avoid unnecessary iterations.
         //let each forcefield also add energies to two different energy variables.
+
+        tbegin = chrono::high_resolution_clock::now();
+	    #ifdef MOVEBEADSLINESEARCH
+	    moveBeadslineSearch(lambda);
+        floatingpoint energyLambda = FFM.computeEnergy(coordlineSearch, force, lambda);
+		#else
         floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+		#endif
+	    CUDAcommon::tmin.computeenerycallsnonzero++;
+	    tend = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+	    CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
+	    CUDAcommon::tmin.computeenergynonzero+= elapsed_energy.count();
 
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
@@ -1282,8 +1379,7 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 #ifdef SERIAL
         //@{ Lambda phase 2
         if(!(sconvergencecheck)){
-            floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda *
-                    allFDotFA();
+            floatingpoint idealEnergyChange = -BACKTRACKSLOPE * lambda * allFDotFA();
             floatingpoint energyChange = energyLambda - currentEnergy;
 #ifdef DETAILEDOUTPUT_LAMBDA
             std::cout<<"BACKTRACKSLOPE "<<BACKTRACKSLOPE<<" lambda "<<lambda<<" allFDotFA"
@@ -1321,12 +1417,33 @@ floatingpoint CGMethod::backtrackingLineSearch(ForceFieldManager& FFM, floatingp
 
 #endif
     }
-//    std::cout<<"lambda determined in "<<iter<< " iterations. FL "<<lambda<<endl;
+//    std::cout<<"lambda determined in "<<iter<< " iterations. lambda="<<lambda<<endl;
 //synchronize streams
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
         delete [] cconvergencecheck;
 #endif
+	    //running average
+        //@{
+	    sum = sum - previouslambdavec[headpos] + lambda;
+        previouslambdavec[headpos] = lambda;
+
+        if(headpos==maxprevlambdacount-1) {
+	        headpos = 0;
+	        floatingpoint temp = Rand::randfloatingpoint(0,1);
+	        if( temp >= 0.7) {
+		        runningaveragestatus = false;
+//		        cout<<"running lambda turned off "<<endl;
+	        }
+	        else {
+		        runningaveragestatus = true;
+//		        cout<<"running lambda turned on "<<endl;
+	        }
+        }
+        else
+        	headpos++;
+
+	    //@}
         return lambda;
     }
 
@@ -1346,7 +1463,14 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
     cconvergencecheck[0] = true;
 #endif
 //prepare for ping pong optimization
+	tbegin = chrono::high_resolution_clock::now();
     floatingpoint currentEnergy = FFM.computeEnergy(coord, force, 0.0);
+	CUDAcommon::tmin.computeenerycallszero++;
+	tend = chrono::high_resolution_clock::now();
+	chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+	CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
+	CUDAcommon::tmin.computeenergyzero+= elapsed_energy.count();
+
     if(ForceFieldManager::_culpritForceField != nullptr){
         endMinimization();
         FFM.printculprit(force);
@@ -1361,11 +1485,23 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 #endif
     int iter =0;
     //safe backtracking loop
-    std::cout<<"safe z"<<endl;
+//    std::cout<<"safe z"<<endl;
     while(!(cconvergencecheck[0])||!(sconvergencecheck)) {
         //new energy when moved by lambda
         iter++;
-        floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+
+	    tbegin = chrono::high_resolution_clock::now();
+	    #ifdef MOVEBEADSLINESEARCH
+	    moveBeadslineSearch(lambda);
+	    floatingpoint energyLambda = FFM.computeEnergy(coordlineSearch, force, lambda);
+	    #else
+	    floatingpoint energyLambda = FFM.computeEnergy(coord, force, lambda);
+		#endif
+	    CUDAcommon::tmin.computeenerycallsnonzero++;
+	    tend = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+	    CUDAcommon::tmin.computeenergy+= elapsed_energy.count();
+	    CUDAcommon::tmin.computeenergynonzero+= elapsed_energy.count();
 #ifdef DETAILEDOUTPUT_ENERGY
         CUDAcommon::handleerror(cudaDeviceSynchronize());
         floatingpoint cuda_energy[1];
@@ -1398,7 +1534,7 @@ floatingpoint CGMethod::safeBacktrackingLineSearch(ForceFieldManager& FFM, float
 
 #endif
     }
-//    std::cout<<"lambda determined in "<<iter<< " iterations. FL "<<lambda<<endl;
+//    std::cout<<"Safe lambda determined in "<<iter<< " iterations. lambda="<<lambda<<endl;
     if(cconvergencecheck[0]||sconvergencecheck) {
 #ifdef SERIAL
         delete [] cconvergencecheck;

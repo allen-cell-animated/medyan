@@ -273,8 +273,9 @@ floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatin
     return U;
 }
 
-floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
-                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint d){
+floatingpoint MotorGhostStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f,
+        int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1,
+        floatingpoint *pos2, floatingpoint d){
 
     int n = MotorGhostStretching<MotorGhostStretchingHarmonic>::n;
     int nint = MotorGhost::getMotorGhosts().size();
@@ -403,6 +404,34 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
         //asign stretching force
         stretchforce[i] = f0/invL;
 //        MotorGhost::getMotorGhosts()[i]->getMMotorGhost()->stretchForce = f0;
+
+	    #ifdef CHECKFORCES_INF_NAN
+	    if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
+           ||checkNaN_INF(f4,0,2)){
+		    cout<<"Force becomes infinite. Printing data "<<endl;
+		    cout<<"Printing coords"<<endl;
+		    cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+		    cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+		    cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+		    cout<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+		    cout<<"Printing force"<<endl;
+		    cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
+		    cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
+		    cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
+		    cout<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+		    cout<<"Printing binary Coords"<<endl;
+		    printvariablebinary(coord1,0,2);
+		    printvariablebinary(coord2,0,2);
+		    printvariablebinary(coord3,0,2);
+		    printvariablebinary(coord4,0,2);
+		    cout<<"Printing binary Force"<<endl;
+		    printvariablebinary(f1,0,2);
+		    printvariablebinary(f2,0,2);
+		    printvariablebinary(f3,0,2);
+		    printvariablebinary(f4,0,2);
+		    exit(EXIT_FAILURE);
+	    }
+	    #endif
     }
     delete [] v1;
     delete [] v2;

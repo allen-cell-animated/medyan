@@ -207,7 +207,7 @@ dist::dOut<1,false>& HybridBindingSearchManager::getdOut(short dOutID){
 void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
                                  CCylinder* cc, short bindingSite) {
 	if (SysParams::INITIALIZEDSTATUS) {
-/*		cout<<"Adding possible bindings "<<cc->getCylinder()->getID()<<" "
+		/*cout<<"Adding Cylinder with ID "<<cc->getCylinder()->getID()<<" "
 			<<bindingSite<<" manager indices "<<idvec[0]<<" "<<idvec[1]<<endl;*/
 		short idx = idvec[0];
 		short idx2 = idvec[1];
@@ -342,7 +342,7 @@ void HybridBindingSearchManager::addPossibleBindingsstencil(short idvec[2],
 void HybridBindingSearchManager::removePossibleBindingsstencil(short idvec[2], CCylinder*
                                     cc, short bindingSite) {
 
-/*	cout<<"Removing Cylinder "<<cc->getCylinder()->getID()<<" "<<bindingSite<<" "
+/*	cout<<"Removing Cylinder with ID "<<cc->getCylinder()->getID()<<" "<<bindingSite<<" "
         <<idvec[0]<<" "<<idvec[1]<<endl;*/
 
     short idx = idvec[0];
@@ -844,7 +844,8 @@ void HybridBindingSearchManager::countNpairsfound(short idvec[2]){
     short idx2 = idvec[1];
     int N = 0;
     Nbindingpairs[idx][idx2] = 0;
-	Nbindingpairs[idx][idx2] = 0;
+/*	cout<<"idx "<<idx<<" "<<idx2<<" "<<_possibleBindingsstencilvecuint[idx][idx2].size()
+	<<" "<<endl;*/
 //    N = _mpossibleBindingsstencilvecuint[idx][idx2].size();
     for (auto iter = _possibleBindingsstencilvecuint[idx][idx2].begin(); iter !=
 		    _possibleBindingsstencilvecuint[idx][idx2].end(); iter++) {

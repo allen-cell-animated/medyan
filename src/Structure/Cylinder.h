@@ -165,6 +165,7 @@ public:
         //Remove from cylinder structure by resetting to default value
         //Reset in bead coordinate vector and add _dbIndex to the list of removedcindex.
         removedcindex.push_back(_dcIndex);
+        cout<<"cindex "<<_dcIndex<<"removed from ID "<<_ID<<endl;
         resetarrays();
         _dcIndex = -1;
         _cylinders.removeElement(this);
@@ -199,19 +200,21 @@ public:
 
     //Vectorize beads so the coordinates are all available in a single array.
     //@{
-    static int maxcindex;
-    static int vectormaxsize;
+    static int maxcindex;//maximum cindex value alloted
+    static int vectormaxsize;//maximum length of the vector
     static int Ncyl;
     static vector<int> removedcindex;
     static void revectorizeifneeded(){
         //Run the special protocol during chemistry, the regular otherwise.
+        bool check = false;
         if(SysParams::DURINGCHEMISTRY)
             appendrevectorizeifneeded();
         else {
+            cout<<"revectorize Cylinder "<<endl;
             int newsize = vectormaxsize;
-            bool check = false;
+
             if (Bead::triggercylindervectorization ||
-                vectormaxsize - maxcindex <= bead_cache / 20) {
+                    (vectormaxsize - maxcindex) <= bead_cache / 20) {
 
                 newsize = (int(Ncyl / cylinder_cache) + 2) * cylinder_cache;
                 if (removedcindex.size() >= bead_cache)
@@ -258,9 +261,10 @@ public:
                 long idx1 = b1->_dbIndex;
                 long idx2 = b2->_dbIndex;
                 cylinder c = cylindervec[i];
-                std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
-                " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
+
                 if (c.bindices[0] != idx1 || c.bindices[1] != idx2) {
+                    std::cout << "3 bindices for cyl with ID "<<cyl->getID()<<" cindex " << i <<
+                              " are "<< idx1 << " " << idx2 << " " << c.bindices[0] << " " << c.bindices[1] << endl;
 
                     std::cout << "Bead " << b1->coordinate[0] << " " << b1->coordinate[1]
                               << " " << b1->coordinate[2] << " " << " " << b2->coordinate[0]
@@ -284,7 +288,7 @@ public:
 
         int newsize = vectormaxsize;
         bool check = false;
-        if(Bead::triggercylindervectorization || vectormaxsize - maxcindex <= bead_cache/20){
+        if(Bead::triggercylindervectorization || (vectormaxsize - maxcindex) <= bead_cache/20){
 
             cout<<"size "<<newsize<<" "<<vectormaxsize<<" "
                                                         ""<<Bead::triggercylindervectorization<<endl;

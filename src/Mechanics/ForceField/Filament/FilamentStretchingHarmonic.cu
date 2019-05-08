@@ -263,6 +263,7 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         f1 = &f[3 * beadSet[n * i]];
         f2 = &f[3 * beadSet[n * i + 1]];
 
+
         f2[0] +=  f0 * ( coord1[0] - coord2[0] );
         f2[1] +=  f0 * ( coord1[1] - coord2[1] );
         f2[2] +=  f0 * ( coord1[2] - coord2[2] );
@@ -271,22 +272,25 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         f1[0] +=  f0 * ( coord2[0] - coord1[0] );
         f1[1] +=  f0 * ( coord2[1] - coord1[1] );
         f1[2] +=  f0 * ( coord2[2] - coord1[2] );
-/*        std::cout<<"Fil stretch "<<i<<" "<< f0 * ( coord1[0] - coord2[0] )<<" "<<
-        f0 * ( coord1[1] - coord2[1] )<<" "<<
-        f0 * ( coord1[2] - coord2[2] )<<" "<<
-        f0 * ( coord2[0] - coord1[0] )<<" "<<
-        f0 * ( coord2[1] - coord1[1] )<<" "<<
-        f0 * ( coord2[2] - coord1[2] )<<endl;*/
-/*        std::cout<<i<<" "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<"
- * "<<f2[2]<<endl;*/
-/*        std::cout<<i<<" "<<beadSet[n * i]<<" "<<beadSet[n * i + 1]<<" "<<kstr[i]<<" "
-                ""<<f0<<" "
-                ""<<dist<<" "
-                ""<<eql[i]<<" "
-                ""<<invL<<" "<<coord1[0]<<" "
-                ""<<coord1[1]<<" "
-                ""<<coord1[2]<<" "<<coord2[0]<<" "
-                ""<<coord2[1]<<" "<<coord2[2]<<endl;*/
+
+        #ifdef CHECKFORCES_INF_NAN
+        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)){
+            cout<<"Force becomes infinite. Printing data "<<endl;
+            cout<<"Printing coords"<<endl;
+            cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<"Printing force"<<endl;
+            cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
+            cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
+	        cout<<"Printing binary Coords"<<endl;
+	        printvariablebinary(coord1,0,2);
+	        printvariablebinary(coord2,0,2);
+	        cout<<"Printing binary Force"<<endl;
+	        printvariablebinary(f1,0,2);
+	        printvariablebinary(f2,0,2);
+            exit(EXIT_FAILURE);
+        }
+		#endif
     }
 
 }

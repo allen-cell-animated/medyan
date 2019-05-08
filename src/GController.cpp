@@ -111,6 +111,7 @@ Compartment* GController::getCompartment(const vector<floatingpoint> &coords)
     //Check if out of bounds
     size_t index = 0;
     size_t i = 0;
+//	cout<<"getCompartment "<<coords[0]<<" "<<coords[1]<<" "<<coords[2]<<endl;
     for(auto x: coords)
     {
         //Flatten the coordinates to 1D, get integer index
@@ -134,7 +135,7 @@ Compartment* GController::getCompartment(const vector<floatingpoint> &coords)
         }
         i++;
     }
-    
+//    cout<<"index "<<index<<endl;
     try {
         return _compartmentGrid->getCompartment(index);
     }

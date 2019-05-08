@@ -221,10 +221,28 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
         l1l2 = scalarProduct(coord1, coord2,
                              coord2, coord3);
 
-        phi = safeacos(l1l2 / L1L2);
-        dPhi = phi-eqt[i];
+        floatingpoint x = l1l2/L1L2;
 
-        U_i = kbend[i] * ( 1 - cos(dPhi) );
+	    if (x < -1.0) x = -1.0;
+	    else if (x > 1.0) x = 1.0;
+
+        //Option 1 ignore eqt as it is always 0.
+        if(areEqual(eqt[i],0.0))
+	        U_i = kbend[i] * (1 - x);
+	        //Option 2 Need to calculate Cos(A-B).
+        else{
+        	floatingpoint cosA = x;
+        	floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
+        	floatingpoint cosAminusB = cosA*cos(eqt[i]) - sinA*sin(eqt[i]);
+        	U_i = kbend[i] *(1-cosAminusB);
+        }
+
+	    //Option 3 slow and time consuming.
+/*        phi = safeacos(l1l2 / L1L2);
+        dPhi = phi-eqt[i];*/
+//        cout<<"cos theta "<<cosAminusB<<" "<<cos(dPhi)<<endl;
+        /*U_i = kbend[i] * ( 1 - cos(dPhi) );*/
+
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
@@ -277,10 +295,26 @@ floatingpoint FilamentBendingCosine::energy(floatingpoint *coord, floatingpoint 
         l1l2 = scalarProductStretched(coord1, force1, coord2, force2,
                                       coord2, force2, coord3, force3, d);
 
-        phi = safeacos(l1l2 / L1L2);
+/*        phi = safeacos(l1l2 / L1L2);
         dPhi = phi-eqt[i];
 
-        U_i = kbend[i] * ( 1 - cos(dPhi) );
+        U_i = kbend[i] * ( 1 - cos(dPhi));*/
+
+	    floatingpoint x = l1l2/L1L2;
+
+	    if (x < -1.0) x = -1.0;
+	    else if (x > 1.0) x = 1.0;
+
+	    //Option 1 ignore eqt as it is always 0.
+	    if(areEqual(eqt[i],0.0))
+		    U_i = kbend[i] * (1 - x);
+		    //Option 2 Need to calculate Cos(A-B).
+	    else{
+		    floatingpoint cosA = x;
+		    floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
+		    floatingpoint cosAminusB = cosA*cos(eqt[i]) - sinA*sin(eqt[i]);
+		    U_i = kbend[i] *(1-cosAminusB);
+	    }
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
@@ -316,19 +350,15 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
         coord1 = &coord[3 * beadSet[n * i]];
         coord2 = &coord[3 * beadSet[n * i + 1]];
         coord3 = &coord[3 * beadSet[n * i + 2]];
-/*        std::cout<<"Bending beadset "<<beadSet[n * i]<<" "<<beadSet[n * i + 1 ]<<" "
-                ""<<beadSet[n * i + 2]<<endl;*/
+
         force1 = &f[3 * beadSet[n * i]];
         force2 = &f[3 * beadSet[n * i + 1]];
         force3 = &f[3 * beadSet[n * i + 2]];
 
-        L1 = sqrt(scalarProduct(coord1, coord2,
-                                coord1, coord2));
-        L2 = sqrt(scalarProduct(coord2, coord3,
-                                coord2, coord3));
+        L1 = sqrt(scalarProduct(coord1, coord2, coord1, coord2));
+        L2 = sqrt(scalarProduct(coord2, coord3, coord2, coord3));
 
-        l1l2 = scalarProduct(coord1, coord2,
-                             coord2, coord3);
+        l1l2 = scalarProduct(coord1, coord2, coord2, coord3);
 
         invL1 = 1/L1;
         invL2 = 1/L2;
@@ -339,14 +369,21 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
         if (areEqual(eqt[i], 0.0)) k = kbend[i];
 
         else{
-            if(abs(l1l2*A - 1.0)<0.001){
-//                cout<<"isequal "<<l1l2*A<<endl;
+            if(abs(abs(l1l2*A) - 1.0)<0.001)
                 l1l2 = 0.999*l1l2;
-                }
-            phi = safeacos(l1l2 *A);
-            dPhi = phi-eqt[i];
 
-            k = kbend[i] * sin(dPhi)/sin(phi);
+            floatingpoint x = l1l2 *A;
+	        if (x < -1.0) x = -1.0;
+	        else if (x > 1.0) x = 1.0;
+
+            floatingpoint cosp =  x;
+            floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+            floatingpoint sinpminusq = sinp * cos(eqt[i]) - cosp * sin(eqt[i]);
+
+/*            phi = safeacos(l1l2 *A);
+            dPhi = phi-eqt[i];
+			k = kbend[i] * sin(dPhi)/sin(phi);*/
+	        k = kbend[i] * sinpminusq/sinp;
         }
         //force on i-1, f = k*(-A*l2 + B*l1):
         force1[0] +=  k * ((-coord3[0] + coord2[0])*A +
@@ -379,41 +416,29 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
 
         force3[2] +=  k *( (coord2[2] - coord1[2])*A -
                            (coord3[2] - coord2[2])*C );
-        
-//        floatingpoint f1[3], f2[3], f3[3];
-//        f1[0] =  k * ((-coord3[0] + coord2[0])*A +
-//                           (coord2[0] - coord1[0])*B );
-//        f1[1] =  k * ((-coord3[1] + coord2[1])*A +
-//                           (coord2[1] - coord1[1])*B );
-//        f1[2] =  k * ((-coord3[2] + coord2[2])*A +
-//                           (coord2[2] - coord1[2])*B );
-//
-//
-//        //force on i, f = k*(A*(l1-l2) - B*l1 + C*l2):
-//        f2[0] =  k *( (coord3[0] - 2*coord2[0] + coord1[0])*A -
-//                           (coord2[0] - coord1[0])*B +
-//                           (coord3[0] - coord2[0])*C );
-//
-//        f2[1] =  k *( (coord3[1] - 2*coord2[1] + coord1[1])*A -
-//                           (coord2[1] - coord1[1])*B +
-//                           (coord3[1] - coord2[1])*C );
-//
-//        f2[2] =  k *( (coord3[2] - 2*coord2[2] + coord1[2])*A -
-//                           (coord2[2] - coord1[2])*B +
-//                           (coord3[2] - coord2[2])*C );
-//
-//        //force on i-1, f = k*(A*l - B*l2):
-//        f3[0] =  k *( (coord2[0] - coord1[0])*A -
-//                           (coord3[0] - coord2[0])*C );
-//
-//        f3[1] =  k *( (coord2[1] - coord1[1])*A -
-//                           (coord3[1] - coord2[1])*C );
-//
-//        f3[2] =  k *( (coord2[2] - coord1[2])*A -
-//                           (coord3[2] - coord2[2])*C );
-//        std::cout<<i<<" "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "
-//                ""<<f3[1]<<" "<<f3[2]<<endl;
 
-//               std::cout<<"BENDING "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<force2[0]<<" "<<force2[1]<<" "<<force2[2]<<" "<<force3[0]<<" "<<force3[1]<<" "<<force3[2]<<endl;
+	    #ifdef CHECKFORCES_INF_NAN
+	    if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)){
+		    cout<<"Force becomes infinite. Printing data "<<endl;
+		    cout<<"Printing coords"<<endl;
+		    cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+		    cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+		    cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+		    cout<<"Printing force"<<endl;
+		    cout<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<endl;
+		    cout<<force2[0]<<" "<<force2[1]<<" "<<force2[2]<<endl;
+		    cout<<force3[0]<<" "<<force3[1]<<" "<<force3[2]<<endl;
+		    cout<<"Printing binary Coords"<<endl;
+		    printvariablebinary(coord1,0,2);
+		    printvariablebinary(coord2,0,2);
+		    printvariablebinary(coord3,0,2);
+		    cout<<"Printing binary Force"<<endl;
+		    printvariablebinary(force1,0,2);
+		    printvariablebinary(force2,0,2);
+		    printvariablebinary(force3,0,2);
+		    exit(EXIT_FAILURE);
+	    }
+	    #endif
+
     }
 }

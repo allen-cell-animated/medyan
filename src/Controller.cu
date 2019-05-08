@@ -41,7 +41,7 @@
 #include 	<tuple>
 #include <vector>
 #include <algorithm>
-#include <src/Chemistry/ChemManager.h>
+#include "ChemManager.h"
 #include "Restart.h"
 #ifdef CUDAACCL
 #include "nvToolsExt.h"
@@ -670,18 +670,27 @@ void Controller::executeSpecialProtocols() {
 }
 
 void Controller::updatePositions() {
-
+	chrono::high_resolution_clock::time_point minsp, minep;
     //NEED TO UPDATE CYLINDERS FIRST
-
+	minsp = chrono::high_resolution_clock::now();
     //Reset Cylinder update position state
     Cylinder::setpositionupdatedstate = false;
     for(auto c : Cylinder::getCylinders())
     	c->updatePosition();
+    cout<<"Cylinder position updated"<<endl;
     //Reset state to updated state
 	Cylinder::setpositionupdatedstate = true;
+	minep = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> compartment_update(minep - minsp);
+    updatepositioncylinder += compartment_update.count();
 
+    minsp = chrono::high_resolution_clock::now();
     //update all other moveables
     for(auto m : _subSystem->getMovables()) m->updatePosition();
+
+    minep = chrono::high_resolution_clock::now();
+    chrono::duration<floatingpoint> compartment_update2(minep - minsp);
+    updatepositionmovable += compartment_update2.count();
     //@{ check begins
     /*std::cout<<"Check after update positions"<<endl;
     cylinder* cylindervec  = CUDAcommon::serlvars.cylindervec;
@@ -733,12 +742,7 @@ void Controller::updateReactionRates() {
 
 void Controller::updateNeighborLists() {
     chrono::high_resolution_clock::time_point mins, mine;
-    mins = chrono::high_resolution_clock::now();
-    //vectorize cylinder to have all cylinder information in a few arrays.
-//    _subSystem->vectorizeCylinder();
-    mine = chrono::high_resolution_clock::now();
-    chrono::duration<floatingpoint> elapsed_runbvec(mine - mins);
-    bmgrvectime += elapsed_runbvec.count();
+
     mins = chrono::high_resolution_clock::now();
     //Full reset of neighbor lists
     _subSystem->resetNeighborLists();
@@ -955,6 +959,9 @@ void Controller::run() {
 #ifdef MECHANICS
     cout<<"Minimizing energy"<<endl;
     mins = chrono::high_resolution_clock::now();
+    //TODO update neighorLists before and after minimization. Need excluded volume
+    // interactions.
+	_subSystem->resetNeighborLists();
     _mController->run(false);
     mine= chrono::high_resolution_clock::now();
     chrono::duration<floatingpoint> elapsed_runm2(mine - mins);
@@ -1025,14 +1032,38 @@ void Controller::run() {
             cout<<"Starting chemistry"<<endl;
             SysParams::DURINGCHEMISTRY = true;
             mins = chrono::high_resolution_clock::now();
-            auto var = !_cController->run(_minimizationTime);
+            floatingpoint chemistryTime = _minimizationTime;
+            //1 ms
+//            chemistryTime = 0.001;
+            auto var = !_cController->run(chemistryTime);
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
             SysParams::DURINGCHEMISTRY = false;
 
-            Bead::revectorizeifneeded();
-            Cylinder::revectorizeifneeded();
+            //Printing stretch forces
+/*            cout<<"Motor-forces ";
+            for(auto m: MotorGhost::getMotorGhosts()){
+                std::cout<<m->getMMotorGhost()->stretchForce<<" ";
+            }
+            cout<<endl;
+            cout<<"Linker-forces ";
+            for(auto l: Linker::getLinkers()){
+                std::cout<<l->getMLinker()->stretchForce<<" ";
+            }
+            cout<<endl;*/
+
+	        auto mtimex = CUDAcommon::tmin;
+	        cout<<"motorbinding calls "<<mtimex.motorbindingcalls<<endl;
+	        cout<<"motorunbinding calls "<<mtimex.motorunbindingcalls<<endl;
+	        cout<<"motorwalking calls "<<mtimex.motorwalkingcalls<<endl;
+	        cout<<"linkerbinding calls "<<mtimex.linkerbindingcalls<<endl;
+	        cout<<"linkerunbinding calls "<<mtimex.linkerunbindingcalls<<endl;
+	        CUDAcommon::tmin.motorbindingcalls = 0;
+	        CUDAcommon::tmin.motorunbindingcalls = 0;
+	        CUDAcommon::tmin.motorwalkingcalls = 0;
+	        CUDAcommon::tmin.linkerbindingcalls = 0;
+	        CUDAcommon::tmin.linkerunbindingcalls = 0;
             //print output if chemistry fails.
             mins = chrono::high_resolution_clock::now();
             if(var) {
@@ -1062,9 +1093,13 @@ void Controller::run() {
             CUDAcommon::cudavars = cvars;
     //@}
 #endif
-            //run mcontroller, update system
+            /*cout<<"times mtime "<<_minimizationTime<<" taulastmin "<<tauLastMinimization<<
+            " tau " <<tau() <<" oldTau "<<oldTau<<endl;*/
+			//run mcontroller, update system
             if(tauLastMinimization >= _minimizationTime) {
 
+	            Bead::revectorizeifneeded();
+	            Cylinder::revectorizeifneeded();
                 mins = chrono::high_resolution_clock::now();
                 _mController->run();
                 mine= chrono::high_resolution_clock::now();
@@ -1074,11 +1109,21 @@ void Controller::run() {
                 //update position
                 mins = chrono::high_resolution_clock::now();
                 updatePositions();
-//                cout<<"Position updated"<<endl;
+                cout<<"Position updated"<<endl;
                 tauLastMinimization = 0.0;
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_rxn2(mine - mins);
-                rxnratetime += elapsed_rxn2.count();
+                updateposition += elapsed_rxn2.count();
+
+	            //update reaction rates
+	            mins = chrono::high_resolution_clock::now();
+#ifdef DYNAMICRATES
+	            updateReactionRates();
+	            cout<<"updated Reaction Rates"<<endl;
+#endif
+	            mine= chrono::high_resolution_clock::now();
+	            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
+	            rxnratetime += elapsed_rxn3.count();
 
             }
             //output snapshot
@@ -1096,15 +1141,7 @@ void Controller::run() {
             for(auto o: _outputs) o->print(i);
             i++;
 #endif
-            //update reaction rates
-            mins = chrono::high_resolution_clock::now();
-#ifdef DYNAMICRATES
-            updateReactionRates();
-//            cout<<"updated Reaction Rates"<<endl;
-#endif
-            mine= chrono::high_resolution_clock::now();
-            chrono::duration<floatingpoint> elapsed_rxn3(mine - mins);
-            rxnratetime += elapsed_rxn3.count();
+
 #ifdef CHEMISTRY
             //activate/deactivate compartments
             mins = chrono::high_resolution_clock::now();
@@ -1123,10 +1160,11 @@ void Controller::run() {
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<floatingpoint> elapsed_runnl2(mine - mins);
                 nltime += elapsed_runnl2.count();
+                cout<<"update NeighborLists"<<endl;
             }
             //Special protocols
             mins = chrono::high_resolution_clock::now();
-            //special protocols
+            //TODO uncommented special protocols
             //executeSpecialProtocols();
             mine= chrono::high_resolution_clock::now();
             chrono::duration<floatingpoint> elapsed_runspl2(mine - mins);
@@ -1220,8 +1258,6 @@ void Controller::run() {
                 stepsLastNeighborList = 0;
             }
 
-
-
             //special protocols
             executeSpecialProtocols();
         }
@@ -1241,91 +1277,177 @@ void Controller::run() {
     chrono::duration<floatingpoint> elapsed_run(chk2-chk1);
     cout<< "Chemistry time for run=" << chemistrytime <<endl;
     cout << "Minimization time for run=" << minimizationtime <<endl;
-    cout<< "Neighbor list + Bmgr time for run="<<nltime<<endl;
-    cout<< "Neighbor list time "<<nl2time<<endl;
-    cout<< "Bmgr vec time "<<bmgrvectime<<endl;
-    cout<< "SIMD time "<<SubSystem::SIMDtime<<endl;
-    cout<< "HYBD time "<<SubSystem::HYBDtime<<endl;
-    cout<< "Bmgr time "<<bmgrtime<<endl;
+    cout<< "Neighbor-list+Bmgr-time for run="<<nltime<<endl;
+    cout<< "Neighbor-list time for run="<<nl2time<<endl;
+    cout<< "Bmgr-vec time for run="<<bmgrvectime<<endl;
+    cout<< "SIMD time for run="<<SubSystem::SIMDtime<<endl;
+    cout<< "HYBD time for run="<<SubSystem::HYBDtime<<endl;
+    cout<< "Bmgr time for run="<<bmgrtime<<endl;
+    cout<<"update-position time for run="<<updateposition<<endl;
+
     cout<<"rxnrate time for run="<<rxnratetime<<endl;
     cout<<"Output time for run="<<outputtime<<endl;
     cout<<"Special time for run="<<specialtime<<endl;
     cout << "Time elapsed for run: dt=" << elapsed_run.count() << endl;
     cout << "Total simulation time: dt=" << tau() << endl;
     cout<<"-----------"<<endl;
-    cout<<"Printing callback times"<<endl;
-    auto ctime = CUDAcommon::ctime;
-    auto ccount = CUDAcommon::ccount;
-	cout<<"UpdateBrancherBindingCallback "<<ctime.tUpdateBrancherBindingCallback<<" count "
-					  <<ccount.cUpdateBrancherBindingCallback<<endl;
-	cout<<"UpdateLinkerBindingCallback "<<ctime.tUpdateLinkerBindingCallback<<" count "
-	<<ccount.cUpdateLinkerBindingCallback<<endl;
-	cout<<"UpdateMotorBindingCallback "<<ctime.tUpdateMotorBindingCallback<<" count "
-	<<ccount.cUpdateMotorBindingCallback<<endl;
-	cout<<"UpdateMotorIDCallback "<<ctime.tUpdateMotorIDCallback<<" count "
-	<<ccount.cUpdateMotorIDCallback<<endl;
-	cout<<"FilamentExtensionPlusEndCallback "<<ctime.tFilamentExtensionPlusEndCallback<<" count "
-	<<ccount.cFilamentExtensionPlusEndCallback<<endl;
-	cout<<"FilamentExtensionMinusEndCallback "<<ctime.tFilamentExtensionMinusEndCallback<<" count "
-	<<ccount.cFilamentExtensionMinusEndCallback<<endl;
-	cout<<"FilamentRetractionPlusEndCallback "<<ctime.tFilamentRetractionPlusEndCallback<<" count "
-	<<ccount.cFilamentRetractionPlusEndCallback<<endl;
-	cout<<"FilamentRetractionMinusEndCallback "<<ctime.tFilamentRetractionMinusEndCallback<<" count "
-	<<ccount.cFilamentRetractionMinusEndCallback<<endl;
-	cout<<"FilamentPolymerizationPlusEndCallback "<<ctime.tFilamentPolymerizationPlusEndCallback<<" count "
-	<<ccount.cFilamentPolymerizationPlusEndCallback<<endl;
-	cout<<"FilamentPolymerizationMinusEndCallback "<<ctime.tFilamentPolymerizationMinusEndCallback<<" count "
-	<<ccount.cFilamentPolymerizationMinusEndCallback<<endl;
-	cout<<"FilamentDepolymerizationPlusEndCallback "<<ctime.tFilamentDepolymerizationPlusEndCallback<<" count "
-	<<ccount.cFilamentDepolymerizationPlusEndCallback<<endl;
-	cout<<"FilamentDepolymerizationMinusEndCallback "<<ctime.tFilamentDepolymerizationMinusEndCallback<<" count "
-	<<ccount.cFilamentDepolymerizationMinusEndCallback<<endl;
-	cout<<"BranchingPointUnbindingCallback "<<ctime.tBranchingPointUnbindingCallback<<" count "
-	<<ccount.cBranchingPointUnbindingCallback<<endl;
-	cout<<"BranchingCallback "<<ctime.tBranchingCallback<<" count "
-	<<ccount.cBranchingCallback<<endl;
-	cout<<"LinkerUnbindingCallback "<<ctime.tLinkerUnbindingCallback<<" count "
-	<<ccount.cLinkerUnbindingCallback<<endl;
-	cout<<"LinkerBindingCallback "<<ctime.tLinkerBindingCallback<<" count "
-	<<ccount.cLinkerBindingCallback<<endl;
-	cout<<"MotorUnbindingCallback "<<ctime.tMotorUnbindingCallback<<" count "
-	<<ccount.cMotorUnbindingCallback<<endl;
-	cout<<"MotorBindingCallback "<<ctime.tMotorBindingCallback<<" count "
-	<<ccount.cMotorBindingCallback<<endl;
-	cout<<"MotorWalkingCallback "<<ctime.tMotorWalkingCallback<<" count "
-	<<ccount.cMotorWalkingCallback<<endl;
-	cout<<"MotorMovingCylinderCallback "<<ctime.tMotorMovingCylinderCallback<<" count "
-	<<ccount.cMotorMovingCylinderCallback<<endl;
-	cout<<"FilamentCreationCallback "<<ctime.tFilamentCreationCallback<<" count "
-	<<ccount.cFilamentCreationCallback<<endl;
-	cout<<"FilamentSeveringCallback "<<ctime.tFilamentSeveringCallback<<" count "
-	<<ccount.cFilamentSeveringCallback<<endl;
-	cout<<"FilamentDestructionCallback "<<ctime.tFilamentDestructionCallback<<" count "
-	<<ccount.cFilamentDestructionCallback<<endl;
-	cout<<"------------"<<endl;
-	cout<<"Printing neighbor times"<<endl;
-	cout<<"Dynamic neighbor "<<SubSystem::timedneighbor<<endl;
-	cout<<"Neighbor "<<SubSystem::timeneighbor<<endl;
-    cout<<"Trackable "<<SubSystem::timetrackable<<endl;
-    cout << "Done with simulation!" << endl;
-    cout<<"-------------"<<endl;
-    cout<<"Filament extendPlusEnd 1 "<<Filament::FilextendPlusendtimer1<<endl;
-	cout<<"Filament extendPlusEnd 2 "<<Filament::FilextendPlusendtimer2<<endl;
-	cout<<"-------------"<<endl;
-	cout<<"Cylinder constructor"<<endl;
-	cout<<"part1 "<<Cylinder::timecylinder1<<" part2 "<<Cylinder::timecylinder2<<" "
-																			  "Ccylinder "
-	<<Cylinder::timecylinderchem<<" mCylinder "<<Cylinder::timecylindermech<<endl;
-	cout<<"initializeCCylinder for loop "<<ChemManager::tchemmanager1<<endl;
-	cout<<"extension Front/Back "<<ChemManager::tchemmanager2<<endl;
-	cout<<"initialize "<<ChemManager::tchemmanager3<<endl;
-	cout<<"last part "<<ChemManager::tchemmanager4<<endl;
-	cout<<"------------"<<endl;
-	cout<<"PolyPlusEndTemplate time"<<endl;
-	cout<<"For loop "<<CUDAcommon::ppendtime.rxntempate1<<" part2 (findspecies) "
-	<<CUDAcommon::ppendtime.rxntempate2<<" part3 (create rxn) "<<CUDAcommon::ppendtime
-	.rxntempate3<<" part4 (Callback) "<<CUDAcommon::ppendtime.rxntempate4<<endl;
+    if(true){
+        auto mtime = CUDAcommon::tmin;
+        cout<<"update-position time for run="<<updateposition<<endl;
+        cout<<"update-position-cylinder time for run="<<updatepositioncylinder<<endl;
+        cout<<"update-position-movable time for run="<<updatepositionmovable<<endl;
+        cout<<"move-compartment cylinder ="<<mtime.timecylinderupdate<<" calls "<<mtime
+        .callscylinderupdate<<endl;
+        cout<<"move-compartment linker ="<<mtime.timelinkerupdate<<" calls "<<mtime
+                .callslinkerupdate<<endl;
+        cout<<"move-compartment motor ="<<mtime.timemotorupdate<<" calls "<<mtime
+                .callsmotorupdate<<endl;
+        cout<<"-----------"<<endl;
 
+        cout << "Minimization time for run=" << minimizationtime <<endl;
+        cout<<"Printing minimization times in seconds."<<endl;
+        cout<<"starting minimization "<<mtime.vectorize<<endl;
+        cout<<"Finding lambda "<<mtime.findlambda<<endl;
+        cout<<"copy forces "<<mtime.copyforces<<endl;
+        cout<<"other computations "<<mtime.tother<<endl;
+        cout<<"end minimization "<<mtime.endminimization<<endl;
+        cout<<"compute energies "<<mtime.computeenergy<<" calls "<<mtime
+        .computeenergycalls<<endl;
+        cout<<"compute energieszero "<<mtime.computeenergyzero<<" calls "<<mtime
+        .computeenerycallszero<<endl;
+	    cout<<"compute energiesnonzero "<<mtime.computeenergynonzero<<" calls "<<mtime
+			    .computeenerycallsnonzero<<endl;
+        cout<<"compute forces "<<mtime.computeforces<<" calls "<<mtime
+                .computeforcescalls<<endl;
+        cout<<"Time taken to compute energy in each forcefield "<<endl;
+        cout<<"Filament, Linker, Motor, Branching, Excluded Volume, and Boundary"<<endl;
+        for(auto x:mtime.individualenergies)
+            cout<<x<<" ";
+        cout<<endl;
+	    cout<<"Time taken to compute energy in "<<endl;
+	    cout<<"Filament Stretching "<<mtime.stretchingenergy<<endl;
+	    cout<<"Filament Bending "<<mtime.bendingenergy<<endl;
+        cout<<"Time taken to compute energyzero in each forcefield "<<endl;
+        for(auto x:mtime.individualenergieszero)
+            cout<<x<<" ";
+        cout<<endl;
+        cout<<"Time taken to compute energynonzero in each forcefield "<<endl;
+        for(auto x:mtime.individualenergiesnonzero)
+            cout<<x<<" ";
+        cout<<endl;
+        cout<<"Time taken to compute forces in each forcefield "<<endl;
+        for(auto x:mtime.individualforces)
+            cout<<x<<" ";
+        cout<<endl;
+	    cout<<"Time taken to compute forces in "<<endl;
+	    cout<<"Filament Stretching "<<mtime.stretchingforces<<endl;
+	    cout<<"Filament Bending "<<mtime.bendingforces<<endl;
+
+		cout<<"Number of interactions considered in each force field"<<endl;
+
+		cout<<"Filament Stretching "<<mtime.numinteractions[0]<<endl;
+	    cout<<"Filament Bending "<<mtime.numinteractions[1]<<endl;
+	    cout<<"Linker Stretching "<<mtime.numinteractions[2]<<endl;
+	    cout<<"Motor Stretching "<<mtime.numinteractions[3]<<endl;
+	    cout<<"Branching Stretching "<<mtime.numinteractions[4]<<endl;
+	    cout<<"Branching Bending "<<mtime.numinteractions[5]<<endl;
+	    cout<<"Branching Dihedral "<<mtime.numinteractions[6]<<endl;
+	    cout<<"Branching Position "<<mtime.numinteractions[7]<<endl;
+	    cout<<"Cylinder-Cylinder Repulsion "<<mtime.numinteractions[8]<<endl;
+	    cout<<"Cylinder-Boundary Repulsion "<<mtime.numinteractions[9]<<endl;
+    }
+    if(false) {
+        cout << "Printing callback times" << endl;
+        auto ctime = CUDAcommon::ctime;
+        auto ccount = CUDAcommon::ccount;
+        cout << "UpdateBrancherBindingCallback " << ctime.tUpdateBrancherBindingCallback
+             << " count "
+             << ccount.cUpdateBrancherBindingCallback << endl;
+        cout << "UpdateLinkerBindingCallback " << ctime.tUpdateLinkerBindingCallback
+             << " count "
+             << ccount.cUpdateLinkerBindingCallback << endl;
+        cout << "UpdateMotorBindingCallback " << ctime.tUpdateMotorBindingCallback
+             << " count "
+             << ccount.cUpdateMotorBindingCallback << endl;
+        cout << "UpdateMotorIDCallback " << ctime.tUpdateMotorIDCallback << " count "
+             << ccount.cUpdateMotorIDCallback << endl;
+        cout << "FilamentExtensionPlusEndCallback "
+             << ctime.tFilamentExtensionPlusEndCallback << " count "
+             << ccount.cFilamentExtensionPlusEndCallback << endl;
+        cout << "FilamentExtensionMinusEndCallback "
+             << ctime.tFilamentExtensionMinusEndCallback << " count "
+             << ccount.cFilamentExtensionMinusEndCallback << endl;
+        cout << "FilamentRetractionPlusEndCallback "
+             << ctime.tFilamentRetractionPlusEndCallback << " count "
+             << ccount.cFilamentRetractionPlusEndCallback << endl;
+        cout << "FilamentRetractionMinusEndCallback "
+             << ctime.tFilamentRetractionMinusEndCallback << " count "
+             << ccount.cFilamentRetractionMinusEndCallback << endl;
+        cout << "FilamentPolymerizationPlusEndCallback "
+             << ctime.tFilamentPolymerizationPlusEndCallback << " count "
+             << ccount.cFilamentPolymerizationPlusEndCallback << endl;
+        cout << "FilamentPolymerizationMinusEndCallback "
+             << ctime.tFilamentPolymerizationMinusEndCallback << " count "
+             << ccount.cFilamentPolymerizationMinusEndCallback << endl;
+        cout << "FilamentDepolymerizationPlusEndCallback "
+             << ctime.tFilamentDepolymerizationPlusEndCallback << " count "
+             << ccount.cFilamentDepolymerizationPlusEndCallback << endl;
+        cout << "FilamentDepolymerizationMinusEndCallback "
+             << ctime.tFilamentDepolymerizationMinusEndCallback << " count "
+             << ccount.cFilamentDepolymerizationMinusEndCallback << endl;
+        cout << "BranchingPointUnbindingCallback " << ctime.tBranchingPointUnbindingCallback
+             << " count "
+             << ccount.cBranchingPointUnbindingCallback << endl;
+        cout << "BranchingCallback " << ctime.tBranchingCallback << " count "
+             << ccount.cBranchingCallback << endl;
+        cout << "LinkerUnbindingCallback " << ctime.tLinkerUnbindingCallback << " count "
+             << ccount.cLinkerUnbindingCallback << endl;
+        cout << "LinkerBindingCallback " << ctime.tLinkerBindingCallback << " count "
+             << ccount.cLinkerBindingCallback << endl;
+        cout << "MotorUnbindingCallback " << ctime.tMotorUnbindingCallback << " count "
+             << ccount.cMotorUnbindingCallback << endl;
+        cout << "MotorBindingCallback " << ctime.tMotorBindingCallback << " count "
+             << ccount.cMotorBindingCallback << endl;
+        cout << "MotorWalkingCallback " << ctime.tMotorWalkingCallback << " count "
+             << ccount.cMotorWalkingCallback << endl;
+        cout << "MotorMovingCylinderCallback " << ctime.tMotorMovingCylinderCallback
+             << " count "
+             << ccount.cMotorMovingCylinderCallback << endl;
+        cout << "FilamentCreationCallback " << ctime.tFilamentCreationCallback << " count "
+             << ccount.cFilamentCreationCallback << endl;
+        cout << "FilamentSeveringCallback " << ctime.tFilamentSeveringCallback << " count "
+             << ccount.cFilamentSeveringCallback << endl;
+        cout << "FilamentDestructionCallback " << ctime.tFilamentDestructionCallback
+             << " count "
+             << ccount.cFilamentDestructionCallback << endl;
+        cout << "------------" << endl;
+        cout << "Printing neighbor times" << endl;
+        cout << "Dynamic neighbor " << SubSystem::timedneighbor << endl;
+        cout << "Neighbor " << SubSystem::timeneighbor << endl;
+        cout << "Trackable " << SubSystem::timetrackable << endl;
+        cout << "Done with simulation!" << endl;
+        cout << "-------------" << endl;
+        cout << "Filament extendPlusEnd 1 " << Filament::FilextendPlusendtimer1 << endl;
+        cout << "Filament extendPlusEnd 2 " << Filament::FilextendPlusendtimer2 << endl;
+        cout << "-------------" << endl;
+        cout << "Cylinder constructor" << endl;
+        cout << "part1 " << Cylinder::timecylinder1 << " part2 " << Cylinder::timecylinder2
+             << " "
+                "Ccylinder "
+             << Cylinder::timecylinderchem << " mCylinder " << Cylinder::timecylindermech
+             << endl;
+        cout << "initializeCCylinder for loop " << ChemManager::tchemmanager1 << endl;
+        cout << "extension Front/Back " << ChemManager::tchemmanager2 << endl;
+        cout << "initialize " << ChemManager::tchemmanager3 << endl;
+        cout << "last part " << ChemManager::tchemmanager4 << endl;
+        cout << "------------" << endl;
+        cout << "PolyPlusEndTemplate time" << endl;
+        cout << "For loop " << CUDAcommon::ppendtime.rxntempate1 << " part2 (findspecies) "
+             << CUDAcommon::ppendtime.rxntempate2 << " part3 (create rxn) "
+             << CUDAcommon::ppendtime
+                     .rxntempate3 << " part4 (Callback) "
+             << CUDAcommon::ppendtime.rxntempate4 << endl;
+    }
 #ifdef CUDAACCL
     cudaDeviceReset();
 #endif

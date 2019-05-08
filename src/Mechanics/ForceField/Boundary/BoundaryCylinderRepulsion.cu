@@ -45,7 +45,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
             nint++;
         }
     }
-
+    CUDAcommon::tmin.numinteractions[9] += nint;
     beadSet = new int[n * nint];
     krep = new floatingpoint[nint];
     slen = new floatingpoint[nint];

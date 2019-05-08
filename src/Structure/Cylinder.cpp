@@ -35,6 +35,7 @@ vector<int> Cylinder::removedcindex;//vector of bead indices that were once allo
 // beads but are free to be reallocated now.
 void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                         CCylinder** ccylindervec){
+	cout<<"revectorize"<<endl;
     int i = 0;
     for(auto cyl:_cylinders.getElements()){
         //set _dcIndex
@@ -64,6 +65,7 @@ void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
 
 void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                            CCylinder** ccylindervec){
+	cout<<"append revectorize"<<endl;
 	int i = 0;
 	maxcindex = 0;
 	for(auto cyl:_cylinders.getElements()){
@@ -166,6 +168,7 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
         _dcIndex = *removedcindex.begin();
         removedcindex.erase(removedcindex.begin());
     }
+	cout<<"cindex "<<_dcIndex<< " alloted to ID "<<_ID<<endl;
     //@}
 
     //@{
@@ -277,6 +280,7 @@ void Cylinder::updatePosition() {
 		}
 
 		if (c != _compartment) {
+			mins = chrono::high_resolution_clock::now();
 
 #ifdef CHEMISTRY
 			auto oldCompartment = _compartment;
@@ -309,12 +313,13 @@ void Cylinder::updatePosition() {
 
 			auto newCCylinder = _cCylinder.get();
 
-//        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
+        std::cout<<"moving cylinder with cindex "<<_dcIndex<<" and ID "<<_ID<<endl;
 			//change both CCylinder and Compartment ID in the vector
 			CUDAcommon::serlvars.cylindervec[_dcIndex].cmpID = _compartment->getID();
 			CUDAcommon::serlvars.cylinderpointervec[_dcIndex] = this;
 			CUDAcommon::serlvars.ccylindervec[_dcIndex] = _cCylinder.get();
 
+			cout<<"Done "<<endl;
 			//Add new ccylinder to binding managers
 /*        for(auto &manager : newCompartment->getFilamentBindingManagers()){
 #ifdef NLORIGINAL
@@ -325,6 +330,10 @@ void Cylinder::updatePosition() {
             manager->addPossibleBindingsstencil(newCCylinder);
 #endif
         }*/
+			mine = chrono::high_resolution_clock::now();
+			chrono::duration<floatingpoint> compartment_update(mine - mins);
+			CUDAcommon::tmin.timecylinderupdate += compartment_update.count();
+			CUDAcommon::tmin.callscylinderupdate++;
 		}
 #endif
 

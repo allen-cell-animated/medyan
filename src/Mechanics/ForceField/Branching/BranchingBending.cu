@@ -26,6 +26,7 @@
 template <class BBendingInteractionType>
 void BranchingBending<BBendingInteractionType>::vectorize() {
 
+    CUDAcommon::tmin.numinteractions[5] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kbend = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     eqt = new floatingpoint[BranchingPoint::getBranchingPoints().size()];

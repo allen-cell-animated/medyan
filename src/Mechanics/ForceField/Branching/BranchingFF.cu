@@ -76,8 +76,9 @@ void BranchingFF::vectorize() {
     }
 
 
-    for (auto &interaction : _branchingInteractionVector)
+    for (auto &interaction : _branchingInteractionVector) {
         interaction->vectorize();
+    }
 }
 
 void BranchingFF::cleanup() {

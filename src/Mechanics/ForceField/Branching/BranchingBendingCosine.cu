@@ -217,10 +217,24 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
         l1l2 = scalarProduct(coord1, coord2,
                              coord3, coord4);
 
-        phi = safeacos(l1l2 / L1L2);
+        floatingpoint x=l1l2 / L1L2;
+        if (x < -1.0) x = -1.0;
+        else if (x > 1.0) x = 1.0;
+        //Option 1 ignore eqt as it is always 0.
+        if(areEqual(eqt[i],0.0))
+            U_i = kbend[i] * (1 - x);
+            //Option 2 Need to calculate Cos(A-B).
+        else{
+            floatingpoint cosA = x;
+            floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
+            floatingpoint cosAminusB = cosA*cos(eqt[i]) - sinA*sin(eqt[i]);
+            U_i = kbend[i] *(1-cosAminusB);
+        }
+
+        /*phi = safeacos(l1l2 / L1L2);
         dPhi = phi-eqt[i];
 
-        U_i = kbend[i] * ( 1 - cos(dPhi) );
+        U_i = kbend[i] * ( 1 - cos(dPhi) );*/
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
@@ -269,10 +283,25 @@ floatingpoint BranchingBendingCosine::energy(floatingpoint *coord, floatingpoint
         l1l2 = scalarProductStretched(coord1, force1, coord2, force2,
                                       coord3, force3, coord4, force4, d);
 
-        phi = safeacos(l1l2 / L1L2);
+        floatingpoint x = l1l2/L1L2;
+
+        if (x < -1.0) x = -1.0;
+        else if (x > 1.0) x = 1.0;
+        //Option 1 ignore eqt as it is always 0.
+        if(areEqual(eqt[i],0.0))
+            U_i = kbend[i] * (1 - x);
+            //Option 2 Need to calculate Cos(A-B).
+        else{
+            floatingpoint cosA = x;
+            floatingpoint sinA = max<floatingpoint>(sqrt(1-cosA*cosA),(floatingpoint)0.0);
+            floatingpoint cosAminusB = cosA*cos(eqt[i]) - sinA*sin(eqt[i]);
+            U_i = kbend[i] *(1-cosAminusB);
+        }
+
+        /*phi = safeacos(l1l2 / L1L2);
         dPhi = phi-eqt[i];
 
-        U_i = kbend[i] * ( 1 - cos(dPhi) );
+        U_i = kbend[i] * ( 1 - cos(dPhi) );*/
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
@@ -329,27 +358,31 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
         B = l1l2*invL1*A*A*L2;
         C = l1l2*invL2*A*A*L1;
 
-	    if(abs(l1l2*A - 1.0)<0.001){
-//		    cout<<"isequal "<<l1l2*A<<endl;
+        if (areEqual(eqt[i], 0.0)) k = kbend[i];
+
+        else{
+            if(abs(abs(l1l2*A) - 1.0)<0.001)
+                l1l2 = 0.999*l1l2;
+
+            floatingpoint x = l1l2 *A;
+            if (x < -1.0) x = -1.0;
+            else if (x > 1.0) x = 1.0;
+
+            floatingpoint cosp =  x;
+            floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+            floatingpoint sinpminusq = sinp * cos(eqt[i]) - cosp * sin(eqt[i]);
+
+            k = kbend[i] * sinpminusq/sinp;
+        }
+
+        /*	    if(abs(l1l2*A - 1.0)<0.001){
 		    l1l2 = 0.999*l1l2;
 	    }
 
-//        phi = safeacos(l1l2 / L1L2);
         phi = safeacos(l1l2 * A);
         dPhi = phi-eqt[i];
 
-        k =  kbend[i] * sin(dPhi)/sin(phi);
-
-/*        if(isnan(k)||isinf(k)||isnan(A)||isinf(A)||isnan(B)
-           ||isinf(B)||isnan(C) ||isinf(C)){
-            cout<<"Culprit is BranchingBending"<<endl;
-            cout<<"Forces "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<
-                                force2[0]<<" "<<force2[1]<<" "<<force2[2]<<" "<<
-                                force3[0]<<" "<<force3[1]<<" "<<force3[2]<<" "<<
-                                force4[0]<<" "<<force4[1]<<" "<<force4[2]<<" A,B,C "
-                                <<A<<" "<<B<<" "<<C<<" l1l2 "<<l1l2<<" phi "<<phi<<" k "
-                                <<k<<endl;
-        }*/
+        k =  kbend[i] * sin(dPhi)/sin(phi);*/
 
         //force on i, f = k*(-A*l2 + 2*B*l1):
         force1[0] += k * ((coord3[0] - coord4[0])*A +
@@ -384,20 +417,33 @@ void BranchingBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int 
         force4[2] += k *((-coord1[2] + coord2[2])*A -
                          (coord4[2] - coord3[2])*C );
 
-/*	    if(isnan(k)||isinf(k)||isnan(A)||isinf(A)||isnan(B)
-	       ||isinf(B)||isnan(C) ||isinf(C)){
-		    cout<<"Culprit is BranchingBending 2"<<endl;
-            cout<<"Forces "<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<" "<<
-                force2[0]<<" "<<force2[1]<<" "<<force2[2]<<" "<<
-                force3[0]<<" "<<force3[1]<<" "<<force3[2]<<" "<<
-                force4[0]<<" "<<force4[1]<<" "<<force4[2]<<" A,B,C "
-                <<A<<" "<<B<<" "<<C<<" l1l2 "<<l1l2<<" phi "<<phi<<" k "
-                <<k<<endl;
-		    cout<<"coord "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "
-		        <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
-		        <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<" "
-		        <<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
-	    }*/
+        #ifdef CHECKFORCES_INF_NAN
+        if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)
+        ||checkNaN_INF(force4,0,2)){
+            cout<<"Force becomes infinite. Printing data "<<endl;
+            cout<<"Printing coords"<<endl;
+            cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+            cout<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+            cout<<"Printing force"<<endl;
+            cout<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<endl;
+            cout<<force2[0]<<" "<<force2[1]<<" "<<force2[2]<<endl;
+            cout<<force3[0]<<" "<<force3[1]<<" "<<force3[2]<<endl;
+            cout<<force4[0]<<" "<<force4[1]<<" "<<force4[2]<<endl;
+            cout<<"Printing binary Coords"<<endl;
+            printvariablebinary(coord1,0,2);
+            printvariablebinary(coord2,0,2);
+            printvariablebinary(coord3,0,2);
+            printvariablebinary(coord4,0,2);
+            cout<<"Printing binary Force"<<endl;
+            printvariablebinary(force1,0,2);
+            printvariablebinary(force2,0,2);
+            printvariablebinary(force3,0,2);
+            printvariablebinary(force4,0,2);
+            exit(EXIT_FAILURE);
+        }
+        #endif
 
     }
 }

@@ -7,6 +7,7 @@ SERLvars CUDAcommon::serlvars;
 Callbacktime CUDAcommon::ctime;
 Callbackcount CUDAcommon::ccount;
 PolyPlusEndTemplatetime CUDAcommon::ppendtime;
+timeminimization CUDAcommon::tmin;
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 CUDAvars  CUDAcommon::cudavars;
 CylCylNLvars CUDAcommon::cylcylnlvars;

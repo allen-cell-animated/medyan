@@ -256,9 +256,15 @@ floatingpoint FilamentBendingHarmonic::energy(floatingpoint *coord, floatingpoin
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
 
-            //set culprit and return TODO
-            //FilamentInteractions::_filamentCulprit = Filament::getFilaments()[i];
-
+            for(auto cyl:Cylinder::getCylinders()){
+                auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
+                auto dbIndex2 = cyl->getSecondBead()->_dbIndex;
+                if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+                    auto F = dynamic_cast<Filament*>(cyl->getParent());
+                    FilamentInteractions::_filamentCulprit = F;
+                    break;
+                }
+            }
             return -1;
         }
 

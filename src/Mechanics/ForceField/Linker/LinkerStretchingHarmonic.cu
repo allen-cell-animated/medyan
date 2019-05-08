@@ -187,8 +187,8 @@ void LinkerStretchingHarmonic::checkforculprit() {
 
 #endif
 floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord,
-        floatingpoint *f, int *beadSet,
-                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2) {
+        floatingpoint *f, int *beadSet, floatingpoint *kstr, floatingpoint *eql,
+        floatingpoint *pos1, floatingpoint *pos2) {
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
         int nint = Linker::getLinkers().size();
@@ -229,8 +229,9 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord,
         return U;
     }
 
-floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f, int *beadSet,
-                                            floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint *pos2, floatingpoint d){
+floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoint * f,
+        int *beadSet, floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1,
+        floatingpoint *pos2, floatingpoint d){
 
         int n = LinkerStretching<LinkerStretchingHarmonic>::n;
         int nint = Linker::getLinkers().size();
@@ -259,7 +260,18 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
 
             dist = twoPointDistance(v1,  v2) - eql[i];
 
-            U += 0.5 * kstr[i] * dist * dist;
+            floatingpoint U_i= 0.5 * kstr[i] * dist * dist;
+
+            if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
+               || U_i != U_i || U_i < -1.0) {
+
+                //set culprit and return
+                LinkerInteractions::_linkerCulprit = Linker::getLinkers()[i];
+
+                return -1;
+            }
+            U += U_i;
+
         }
         delete [] v1;
         delete [] v2;
@@ -267,6 +279,7 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
         return U;
 
     }
+
     void LinkerStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, int *beadSet,
                                           floatingpoint *kstr, floatingpoint *eql, floatingpoint *pos1, floatingpoint
                                           *pos2, floatingpoint *stretchforce){
@@ -325,10 +338,34 @@ floatingpoint LinkerStretchingHarmonic::energy(floatingpoint *coord, floatingpoi
 
             //assign stretch force
             stretchforce[i] = f0/invL;
-//        std::cout<<"L "<<i<< " "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "
-//                ""<<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
-//            std::cout<<"L "<<i<<" "<<kstr[i]<<" "<<dist<<" "<<eql[i]<<" "<<invL<<" "
-//                    ""<<pos1[i]<<" "<<pos2[i]<<endl;
+
+	        #ifdef CHECKFORCES_INF_NAN
+	        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
+	           ||checkNaN_INF(f4,0,2)){
+		        cout<<"Force becomes infinite. Printing data "<<endl;
+		        cout<<"Printing coords"<<endl;
+		        cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+		        cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+		        cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+		        cout<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+		        cout<<"Printing force"<<endl;
+		        cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
+		        cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
+		        cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
+		        cout<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+		        cout<<"Printing binary Coords"<<endl;
+		        printvariablebinary(coord1,0,2);
+		        printvariablebinary(coord2,0,2);
+		        printvariablebinary(coord3,0,2);
+		        printvariablebinary(coord4,0,2);
+		        cout<<"Printing binary Force"<<endl;
+		        printvariablebinary(f1,0,2);
+		        printvariablebinary(f2,0,2);
+		        printvariablebinary(f3,0,2);
+		        printvariablebinary(f4,0,2);
+		        exit(EXIT_FAILURE);
+	        }
+	        #endif
         }
         delete [] v1;
         delete [] v2;

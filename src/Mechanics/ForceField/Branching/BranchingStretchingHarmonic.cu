@@ -327,19 +327,32 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
         f3[2] +=  -f0 * ( coord3[2] - v1[2] );
         stretchforce[i] = f0/invL;
 
-/*        if(isnan(f1[0])||isinf(f1[0])||isnan(f1[1])||isinf(f1[1])||isnan(f1[2])||isinf(f1[2])
-        ||isnan(f2[0])||isinf(f2[0])||isnan(f2[1])||isinf(f2[1])||isnan(f2[2])||isinf(f2[2])
-        ||isnan(f3[0])||isinf(f3[0])||isnan(f3[1])||isinf(f3[1])||isnan(f3[2])||isinf
-        (f3[2])){
-            cout<<"Branching Stretching force error"<<endl;
-            cout<<"f0 "<<f0<<" pos "<<pos[i]<<" invL "<<invL<<" v1 "<<v1[0]<<" "
-                    <<v1[1]<<" "<<v1[2]<<" kstr "<<kstr[i]<<endl;
-            cout<<"forces "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "
-            <<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
-            cout<<"coord "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "
-                <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
-                <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
-        }*/
+        #ifdef CHECKFORCES_INF_NAN
+        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)){
+            cout<<"Force becomes infinite. Printing data "<<endl;
+            cout<<"Printing coords"<<endl;
+            cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+
+            cout<<"Printing force"<<endl;
+            cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
+            cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
+            cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
+
+            cout<<"Printing binary Coords"<<endl;
+            printvariablebinary(coord1,0,2);
+            printvariablebinary(coord2,0,2);
+            printvariablebinary(coord3,0,2);
+
+            cout<<"Printing binary Force"<<endl;
+            printvariablebinary(f1,0,2);
+            printvariablebinary(f2,0,2);
+            printvariablebinary(f3,0,2);
+
+            exit(EXIT_FAILURE);
+        }
+        #endif
 
     }
     delete [] v1;

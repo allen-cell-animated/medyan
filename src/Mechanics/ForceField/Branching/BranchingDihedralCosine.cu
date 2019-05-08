@@ -413,20 +413,33 @@ void BranchingDihedralCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         f4[2] +=f0*( YD*( (coord4[0] - coord3[0])*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) - (coord4[1] - coord3[1])*(coord3[0] - (1-position)*coord1[0] - position*coord2[0]) ) + Y2*(coord4[2] - coord3[2]) - D2*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
 
-
-/*        if(isnan(f1[0])||isinf(f1[0])||isnan(f1[1])||isinf(f1[1])||isnan(f1[2])||isinf(f1[2])
-        ||isnan(f2[0])||isinf(f2[0])||isnan(f2[1])||isinf(f2[1])||isnan(f2[2])||isinf(f2[2])
-        ||isnan(f3[0])||isinf(f3[0])||isnan(f3[1])||isinf(f3[1])||isnan(f3[2])||isinf(f3[2])
-	    ||isnan(f4[0])||isinf(f4[0])||isnan(f4[1])||isinf(f4[1])||isnan(f4[2])||isinf(f4[2])) {
-	        cout << "Culprit is BranchingDihedralCosine" << endl;
-	        cout << "position " << position << " XD " << XD << " YD " << YD << " f0 " << f0 << endl;
-	        cout<<"forces "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "
-	        <<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
-	        cout<<"coord "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "
-	            <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
-	            <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<" "
-			        <<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
-        }*/
+        #ifdef CHECKFORCES_INF_NAN
+        if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
+           ||checkNaN_INF(f4,0,2)){
+            cout<<"Force becomes infinite. Printing data "<<endl;
+            cout<<"Printing coords"<<endl;
+            cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+            cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+            cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+            cout<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<endl;
+            cout<<"Printing force"<<endl;
+            cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
+            cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
+            cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
+            cout<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
+            cout<<"Printing binary Coords"<<endl;
+            printvariablebinary(coord1,0,2);
+            printvariablebinary(coord2,0,2);
+            printvariablebinary(coord3,0,2);
+            printvariablebinary(coord4,0,2);
+            cout<<"Printing binary Force"<<endl;
+            printvariablebinary(f1,0,2);
+            printvariablebinary(f2,0,2);
+            printvariablebinary(f3,0,2);
+            printvariablebinary(f4,0,2);
+            exit(EXIT_FAILURE);
+        }
+        #endif
     }
     delete [] mp;
     delete [] n1;

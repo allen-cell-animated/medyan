@@ -40,12 +40,14 @@ void MotorGhostStretching<MStretchingInteractionType>::assignforcemags() {
 template <class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
+    CUDAcommon::tmin.numinteractions[3] += MotorGhost::getMotorGhosts().size();
     beadSet = new int[n * MotorGhost::getMotorGhosts().size()];
     kstr = new floatingpoint[MotorGhost::getMotorGhosts().size()];
     eql = new floatingpoint[MotorGhost::getMotorGhosts().size()];
     pos1 = new floatingpoint[MotorGhost::getMotorGhosts().size()];
     pos2 = new floatingpoint[MotorGhost::getMotorGhosts().size()];
     stretchforce = new floatingpoint[MotorGhost::getMotorGhosts().size()];
+
 
     int i = 0;
 
@@ -147,11 +149,14 @@ void MotorGhostStretching<MStretchingInteractionType>::vectorize() {
 
 template<class MStretchingInteractionType>
 void MotorGhostStretching<MStretchingInteractionType>::deallocate() {
+//    cout<<"Motor-forces ";
     for(auto m: MotorGhost::getMotorGhosts()){
         //Using += to ensure that the stretching forces are additive.
         m->getMMotorGhost()->stretchForce += stretchforce[m->_dbIndex];
 //        std::cout<<m->getMMotorGhost()->stretchForce<<endl;
+//        cout<<stretchforce[m->_dbIndex]<<" ";
     }
+    cout<<endl;
     delete [] stretchforce;
     delete [] beadSet;
     delete [] kstr;

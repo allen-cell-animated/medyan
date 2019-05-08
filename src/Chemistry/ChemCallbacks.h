@@ -602,7 +602,7 @@ struct BranchingCallback {
             else {
                 b = nullptr;
                 cout<<"Brancher Error. Cannot find binding Site in the list. Cannot complete restart. Exiting." <<endl;
-                //exit(EXIT_FAILURE);
+                exit(EXIT_FAILURE);
             }
         }
         
@@ -636,6 +636,7 @@ struct LinkerUnbindingCallback {
     LinkerUnbindingCallback(Linker* l, SubSystem* ps) : _ps(ps), _linker(l) {}
     
     void operator() (ReactionBase *r) {
+	    CUDAcommon::tmin.linkerunbindingcalls++;
 	    mins = chrono::high_resolution_clock::now();
 
 //        //@{
@@ -670,6 +671,7 @@ struct LinkerBindingCallback {
     : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
+	    CUDAcommon::tmin.linkerbindingcalls++;
 	    mins = chrono::high_resolution_clock::now();
         
         //get a random binding
@@ -736,6 +738,7 @@ struct MotorUnbindingCallback {
     _ps(ps), _motor(m) {}
     
     void operator() (ReactionBase *r) {
+    	CUDAcommon::tmin.motorunbindingcalls++;
 	    mins = chrono::high_resolution_clock::now();
         
         //find the motor binding manager associated with this species
@@ -787,6 +790,7 @@ struct MotorBindingCallback {
     : _ps(ps), _mManager(mManager), _onRate(onRate), _offRate(offRate) {}
     
     void operator() (ReactionBase *r) {
+	    CUDAcommon::tmin.motorbindingcalls++;
 	    mins = chrono::high_resolution_clock::now();
         
         //get a random binding
@@ -869,6 +873,7 @@ struct MotorWalkingCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
+	    CUDAcommon::tmin.motorwalkingcalls++;
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor walking begins"<<endl;
         //get species
@@ -880,8 +885,7 @@ struct MotorWalkingCallback {
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
-
-
+//	    cout<<"motor-walk "<<m->getMMotorGhost()->stretchForce<<endl;
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
 /*        cout<<"filament Type "<<filType<<endl;
         cout<<"cylinder size "<<cylinderSize<<endl;
@@ -929,6 +933,7 @@ struct MotorMovingCylinderCallback {
     _motorType(motorType), _boundType(boundType), _ps(ps) {}
     
     void operator() (ReactionBase* r) {
+	    CUDAcommon::tmin.motorwalkingcalls++;
 	    mins = chrono::high_resolution_clock::now();
 //        cout<<"Motor moving cylinder begins"<<endl;
         //get species
@@ -939,6 +944,7 @@ struct MotorMovingCylinderCallback {
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
+//	    cout<<"motor-walk "<<m->getMMotorGhost()->stretchForce<<endl;
         
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
 /*        cout<<"filament Type "<<filType<<endl;

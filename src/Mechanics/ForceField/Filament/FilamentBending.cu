@@ -27,7 +27,7 @@ template <class FBendingInteractionType>
 void FilamentBending<FBendingInteractionType>::vectorize() {
 
     int numInteractions = Bead::getBeads().size() - 2 * Filament::getFilaments().size();
-
+    CUDAcommon::tmin.numinteractions[1] += numInteractions;
     beadSet = new int[n * numInteractions];
     kbend = new floatingpoint[numInteractions];
     eqt = new floatingpoint[numInteractions];

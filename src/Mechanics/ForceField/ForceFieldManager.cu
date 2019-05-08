@@ -123,7 +123,8 @@ void ForceFieldManager::cleanupAllForceFields() {
 #endif
 }
 
-floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoint *f, floatingpoint d, bool verbose) {
+floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoint *f,
+		floatingpoint d, bool verbose) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
 //    CUDAcommon::cudatime.TcomputeE = 0.0;
@@ -171,14 +172,48 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
 
     std::cout<<"Lambda used CUDA "<<cuda_lambda[0]<<" SERL "<<d<<endl;
 #endif
+    short count = 0;
+    CUDAcommon::tmin.computeenergycalls++;
+/*    if(areEqual(d,0.0))
+    	CUDAcommon::tmin.computeenerycallszero++;
+    else
+	    CUDAcommon::tmin.computeenerycallsnonzero++;*/
     for (auto &ff : _forceFields) {
+        tbegin = chrono::high_resolution_clock::now();
+	    #ifdef MOVEBEADSLINESEARCH
+        floatingpoint tempEnergy = ff->computeEnergy(coord, f, 0.0);
+		#else
+		floatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
+		#endif
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+//        cout<<ff->getName()<<" "<<tempEnergy<<"pN.nm"<<" ";
+        if(CUDAcommon::tmin.individualenergies.size() == _forceFields.size())
+            CUDAcommon::tmin.individualenergies[count] += elapsed_energy.count();
+        else
+            CUDAcommon::tmin.individualenergies.push_back(elapsed_energy.count());
 
-        floatingpoint tempEnergy = ff->computeEnergy(coord, f, d);
+		    if(areEqual(d,0.0)){
+			    if(CUDAcommon::tmin.individualenergieszero.size() == _forceFields.size())
+				    CUDAcommon::tmin.individualenergieszero[count] += elapsed_energy.count();
+			    else
+				    CUDAcommon::tmin.individualenergieszero.push_back(elapsed_energy.count());
+		    }
+		    else{
+			    if(CUDAcommon::tmin.individualenergiesnonzero.size() == _forceFields.size())
+				    CUDAcommon::tmin.individualenergiesnonzero[count] += elapsed_energy
+				    		.count();
+			    else
+				    CUDAcommon::tmin.individualenergiesnonzero.push_back(elapsed_energy
+				    .count());
+		    }
+
+        count++;
 //        cout<<ff->getName()<<" "<<tempEnergy<<endl;
 #ifdef ALLSYNC
         cudaDeviceSynchronize();
 #endif
-//        std::cout<<ff->getName()<<" "<<tempEnergy<<endl;
+
         if (verbose) cout << ff->getName() << " energy = " << tempEnergy << endl;
         //if energy is infinity, exit with infinity.
         if (tempEnergy <= -1) {
@@ -215,6 +250,7 @@ floatingpoint ForceFieldManager::computeEnergy(floatingpoint *coord, floatingpoi
                 ""<<energy<<endl;
 #endif
     }
+//    cout<<endl;
 #ifdef CUDATIMETRACK
     tbegin = chrono::high_resolution_clock::now();
 #endif
@@ -328,8 +364,18 @@ void ForceFieldManager::computeForces(floatingpoint *coord, floatingpoint *f) {
 #endif
     //recompute
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
+    short count = 0;
+    CUDAcommon::tmin.computeforcescalls++;
     for (auto &ff : _forceFields) {
+        tbegin = chrono::high_resolution_clock::now();
         ff->computeForces(coord, f);
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+        if(CUDAcommon::tmin.individualforces.size() == _forceFields.size())
+            CUDAcommon::tmin.individualforces[count]+= elapsed_energy.count();
+        else
+            CUDAcommon::tmin.individualforces.push_back(elapsed_energy.count());
+        count++;
 /*        for(int i=0;i<CGMethod::N;i++){
             if(isnan(f[i])||isinf(f[i])){
                 cout<<"Culprit ForceField "<<ff->getName()<<endl;
@@ -391,7 +437,7 @@ void ForceFieldManager::copyForces(floatingpoint *fprev, floatingpoint *f) {
 
 void ForceFieldManager::printculprit(floatingpoint* force){
 
-    cout<<"Printing cylinder data overall"<<endl;
+    /*cout<<"Printing cylinder data overall"<<endl;
     if(true) {
 
         cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
@@ -443,7 +489,7 @@ void ForceFieldManager::printculprit(floatingpoint* force){
         }
 
     cout<<"-------DONE------"<<endl;
-    }
+    }*/
 
 	//get the culprit in output
 	_culpritForceField->whoIsCulprit();

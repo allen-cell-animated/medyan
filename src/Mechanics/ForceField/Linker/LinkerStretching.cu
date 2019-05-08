@@ -39,7 +39,7 @@ void LinkerStretching<LStretchingInteractionType>::assignforcemags() {
 
 template <class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::vectorize() {
-
+    CUDAcommon::tmin.numinteractions[2] += Linker::getLinkers().size();
     beadSet = new int[n * Linker::getLinkers().size()];
     kstr = new floatingpoint[Linker::getLinkers().size()];
     eql = new floatingpoint[Linker::getLinkers().size()];
@@ -136,10 +136,13 @@ void LinkerStretching<LStretchingInteractionType>::vectorize() {
 
 template<class LStretchingInteractionType>
 void LinkerStretching<LStretchingInteractionType>::deallocate() {
+//cout<<"Linker-forces";
     for(auto l:Linker::getLinkers()){
         //Using += to ensure that the stretching forces are additive.
         l->getMLinker()->stretchForce += stretchforce[l->_dbIndex];
+//        cout<<stretchforce[l->_dbIndex]<<" ";
     }
+//    cout<<endl;
     delete [] stretchforce;
     delete [] beadSet;
     delete [] kstr;

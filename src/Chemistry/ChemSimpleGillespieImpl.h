@@ -45,7 +45,7 @@ public:
     
     /// Assignment is not allowed
     ChemSimpleGillespieImpl& operator=(ChemSimpleGillespieImpl &rhs) = delete;
-    
+
     ///Dtor: The reaction network is cleared.
     /// @note noexcept is important here. Otherwise, gcc flags the constructor as
     /// potentially throwing, which in turn disables move operations by the STL

@@ -312,6 +312,7 @@ public:
                 return false;
         }
         return true;
+//        cout<<"printing chemistry times "<<endTime<<" _t "<<_t<<" time "<<time<<endl;
     }
     
     /// This method runs the Gillespie algorithm for the given amount of reaction steps.

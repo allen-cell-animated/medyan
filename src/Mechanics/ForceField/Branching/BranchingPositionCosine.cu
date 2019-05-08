@@ -212,11 +212,27 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
         xd = scalarProduct(mp, coord2, mp, coord3);
 
-        theta = safeacos(xd / XD);
+        floatingpoint x = xd/XD;
+
+        if(abs(abs(x) - 1.0)<0.001) {
+            xd = 0.999 * XD;
+            x = xd / XD;
+        }
+
+        if (x < -1.0) x = -1.0;
+        else if (x > 1.0) x = 1.0;
+
+        floatingpoint cosp =  x;
+        posheta = 0.5*M_PI;
+        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint cospminusq = cosp * cos(posheta) - sinp * sin(posheta);
+        U_i = kpos[i] * ( 1 - cospminusq );
+
+        /*theta = safeacos(xd / XD);
         posheta = 0.5*M_PI;
         dTheta = theta-posheta;
 
-        U_i = kpos[i] * ( 1 - cos(dTheta) );
+        U_i = kpos[i] * ( 1 - cos(dTheta) );*/
 
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
@@ -264,12 +280,27 @@ floatingpoint BranchingPositionCosine::energy(floatingpoint *coord, floatingpoin
 
         xd = scalarProductStretched(mp, vzero, coord2, f2, mp, vzero, coord3, f3, d);
 
-        theta = safeacos(xd / XD);
+        floatingpoint x = xd/XD;
+
+        if(abs(abs(x) - 1.0)<0.001) {
+            xd = 0.999 * XD;
+            x = xd / XD;
+        }
+
+        if (x < -1.0) x = -1.0;
+        else if (x > 1.0) x = 1.0;
+
+        floatingpoint cosp =  x;
+        posheta = 0.5*M_PI;
+        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint cospminusq = cosp * cos(posheta) - sinp * sin(posheta);
+        U_i = kpos[i] * ( 1 - cospminusq );
+
+        /*theta = safeacos(xd / XD);
         posheta = 0.5*M_PI;
         dTheta = theta-posheta;
 
-        U_i = kpos[i] * ( 1 - cos(dTheta) );
-//    std::cout<<i << U_i<<endl;
+        U_i = kpos[i] * ( 1 - cos(dTheta) );*/
 
         if(fabs(U_i) == numeric_limits<floatingpoint>::infinity()
            || U_i != U_i || U_i < -1.0) {
@@ -313,19 +344,31 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         XD = X * D;
         xd = scalarProduct(mp, coord2, mp, coord3);
-//        std::cout<<xd<<" "<<scalarProduct(mp, coord2, mp, coord3)<<" "<<mp[0]<<" "<<mp[1]<<" "<<mp[2]<<" "
-//                ""<<coord2[0]<<" "
-//                ""<<coord2[1]<<" "<<coord2[2]<<" "
-//                ""<<coord3[0]<<" "
-//                ""<<coord3[1]<<" "<<coord3[2]<<" "<<endl;
         invX = 1/X;
         invD = 1/D;
         A = invX*invD;
         B = invX*invX;
         C = invD*invD;
 
-	    if(abs(xd/XD - 1.0)<0.001){
-//	        cout<<"isequal "<<xd/XD<<endl;
+        floatingpoint x = xd/XD;
+
+        if(abs(abs(x) - 1.0)<0.001) {
+            xd = 0.999 * XD;
+            x = xd / XD;
+        }
+
+        if (x < -1.0) x = -1.0;
+        else if (x > 1.0) x = 1.0;
+
+        floatingpoint cosp =  x;
+        posheta = 0.5*M_PI;
+        floatingpoint sinp = max<floatingpoint>(sqrt(1-cosp*cosp),(floatingpoint)0.0);
+        floatingpoint sinpminusq = sinp * cos(posheta) - cosp * sin(posheta);
+
+        position = pos[i];
+        k = kpos[i] * A * sinpminusq/sinp;
+
+	    /*if(abs(xd/XD - 1.0)<0.001){
 		    xd = 0.999*XD;
 	    }
 
@@ -335,13 +378,7 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
 
         position = pos[i];
 
-        k =  kpos[i] * A * sin(dTheta)/sin(theta);
-
-
-/*        if(isnan(theta)||isinf(theta)||isnan(position)||isinf(theta)||isnan(k)||isinf(k)){
-            cout<<"Culprit Branching Position Cosine "<<endl;
-            cout<<"theta "<<theta<<" position "<<position<<" theta "<<theta<<" k "<<k<<endl;
-        }*/
+        k =  kpos[i] * A * sin(dTheta)/sin(theta);*/
 
         //bead 1
         f1[0] +=  k * (1-position)* (- (1-position)*(coord2[0] - coord1[0]) - (coord3[0] - (1-position)*coord1[0] - position*coord2[0])
@@ -370,18 +407,32 @@ void BranchingPositionCosine::forces(floatingpoint *coord, floatingpoint *f, int
         f3[1] +=  k * ( (1-position)*(coord2[1] - coord1[1]) - xd * C*(coord3[1] - (1-position)*coord1[1] - position*coord2[1]) );
         f3[2] +=  k * ( (1-position)*(coord2[2] - coord1[2]) - xd * C*(coord3[2] - (1-position)*coord1[2] - position*coord2[2]) );
 
-/*        if(isnan(f1[0])||isinf(f1[0])||isnan(f1[1])||isinf(f1[1])||isnan(f1[2])||isinf(f1[2])
-           ||isnan(f2[0])||isinf(f2[0])||isnan(f2[1])||isinf(f2[1])||isnan(f2[2])||isinf(f2[2])
-           ||isnan(f3[0])||isinf(f3[0])||isnan(f3[1])||isinf(f3[1])||isnan(f3[2])||isinf(f3[2])) {
-            cout << "Culprit is BranchingPositionCosine" << endl;
-            cout<<"theta "<<theta<<" position "<<position<<" theta "<<theta<<" k "
-            <<k<<"xd " <<xd<<" XD "<<XD<<endl;
-            cout<<"forces "<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "
-                <<f2[2]<<" "<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
-            cout<<"coord "<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "
-                    <<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
-                    <<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
-        }*/
+	    #ifdef CHECKFORCES_INF_NAN
+	    if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)){
+		    cout<<"Force becomes infinite. Printing data "<<endl;
+		    cout<<"Printing coords"<<endl;
+		    cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+		    cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
+		    cout<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<endl;
+
+		    cout<<"Printing force"<<endl;
+		    cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<endl;
+		    cout<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<endl;
+		    cout<<f3[0]<<" "<<f3[1]<<" "<<f3[2]<<endl;
+
+		    cout<<"Printing binary Coords"<<endl;
+		    printvariablebinary(coord1,0,2);
+		    printvariablebinary(coord2,0,2);
+		    printvariablebinary(coord3,0,2);
+
+		    cout<<"Printing binary Force"<<endl;
+		    printvariablebinary(f1,0,2);
+		    printvariablebinary(f2,0,2);
+		    printvariablebinary(f3,0,2);
+
+		    exit(EXIT_FAILURE);
+	    }
+	    #endif
     }
     delete mp;
 }

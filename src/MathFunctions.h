@@ -15,7 +15,7 @@
 
 #include <cmath>
 #include <vector>
-
+#include <bitset>
 #include "common.h"
 #ifdef CUDAACCL
 #include <cuda.h>
@@ -178,6 +178,15 @@ namespace mathfunc {
 
         return (x2+y2+z2);
     }
+
+    inline doubleprecision sqmagnitude(const floatingpoint* c1, const floatingpoint* c2) {
+
+        doubleprecision x = c1[0] - c2[0];
+        doubleprecision y = c1[1] - c2[1];
+        doubleprecision z = c1[2] - c2[2];
+
+        return (x*x+y*y+z*z);
+    }
     ///ARRAY VERSION
     #ifdef CUDAACCL
     __host__ __device__
@@ -189,7 +198,8 @@ namespace mathfunc {
 
     #ifdef CUDAACCL
     __host__ __device__
-    #endif
+	#endif
+
     inline floatingpoint getdistancefromplane(floatingpoint *coord, floatingpoint * plane,int id){
         return (plane[0] * coord[id] + plane[1] * coord[id + 1] + plane[2] * coord[id + 2] + plane[3]) /
                sqrt(pow(plane[0], 2) + pow(plane[1], 2) + pow(plane[2], 2));
@@ -450,9 +460,17 @@ namespace mathfunc {
     ///CUDA VERSION
     #ifdef CUDAACCL
     __host__ __device__
-    #endif
+	#endif
+
+	inline doubleprecision scalarProduct(doubleprecision const *v1, floatingpoint const
+	*v2){
+        return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]);
+    }
+
+
     inline floatingpoint scalarProductmixedID(floatingpoint const *v1, floatingpoint const *v2,
-                                floatingpoint const *v3, floatingpoint const *v4, int const id1, int const id2, int const id3, int
+                                floatingpoint const *v3, floatingpoint const *v4, int
+                                const id1, int const id2, int const id3, int
                                        const id4) {
         return ((v2[id2] - v1[id1]) * (v4[id4] - v3[id3]) +
                 (v2[id2 + 1] - v1[id1 + 1]) * (v4[id4 + 1] - v3[id3 + 1]) +
@@ -855,7 +873,7 @@ namespace mathfunc {
     #ifdef CUDAACCL
     __host__ __device__
     #endif
-    inline void crossProduct(floatingpoint *cp,
+    inline void crossProduct(doubleprecision *cp,
                              floatingpoint const *v1,
                              floatingpoint const *v2) {
         cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
@@ -863,6 +881,13 @@ namespace mathfunc {
         cp[2] = v1[0] * v2[1] - v1[1] * v2[0];
     };
 
+	inline void crossProduct(floatingpoint *cp,
+	                         floatingpoint const *v1,
+	                         floatingpoint const *v2) {
+		cp[0] = v1[1] * v2[2] - v1[2] * v2[1];
+		cp[1] = v1[2] * v2[0] - v1[0] * v2[2];
+		cp[2] = v1[0] * v2[1] - v1[1] * v2[0];
+	};
     /// Vector product of two vectors v1[x,y,z] and v2[x,y,z]. Returns a 3d vector.
     inline vector<floatingpoint> crossProductStretched(const vector<floatingpoint> &v1,
                                                 const vector<floatingpoint> &p1,
@@ -1067,8 +1092,12 @@ namespace mathfunc {
         *(v3 + 2) = *(p4 + 2) - *(p1 + 2);
 
         crossProduct(cp, v1, v2);
-//        std::cout<<*(p2)<<endl;
-        auto retVal = areEqual(dotProduct(v3, cp), 0.0);
+        //Normalize before checking the angle.
+	    normalizeVector(cp);
+	    normalizeVector(v3);
+	    //Check for equality with a lowered threshold
+//	    cout<<"dotProduct "<<dotProduct(v3, cp)<<endl;
+        auto retVal = areEqualLT(dotProduct(v3, cp), (floatingpoint)0.0);
         delete [] v1;
         delete [] v2;
         delete [] v3;
@@ -1300,6 +1329,7 @@ namespace mathfunc {
         auto v2 = {p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]};
         auto v3 = {p4[0] - p1[0], p4[1] - p1[1], p4[2] - p1[2]};
 
+        //TODO normalize cp and v3
         auto cp = crossProduct(v1, v2);
 
         return areEqual(dotProduct(v3, cp), 0.0);
@@ -1312,6 +1342,35 @@ namespace mathfunc {
     inline size_t blockToSmemFB(int blockSize){return 9 * blockSize * sizeof(floatingpoint);}
     inline size_t blockToSmemFB2(int blockSize){return 18 * blockSize * sizeof(floatingpoint);}
     inline size_t blockToSmemFB3(int blockSize){return 3 * blockSize * sizeof(floatingpoint);}
+
+    inline bool checkNaN_INF(floatingpoint *x, int startpoint, int endpoint){
+    	for(int i = startpoint; i <= endpoint; i++){
+    		if(isnan(x[i])||isinf(x[i]))
+    			return true;
+    	}
+    	return false;
+    }
+    
+    inline void printvariablebinary(floatingpoint *x, int startpoint, int endpoint){
+    	string str;
+    	for(int i = startpoint; i <= endpoint; i++){
+    		str.clear();
+		    union { float f; uint32_t i; } u;
+		    u.f = x[i];
+		    for (int i = 0; i < 32; i++)
+		    {
+			    if (u.i % 2)  str.push_back('1');
+			    else str.push_back('0');
+			    u.i >>= 1;
+		    }
+
+		    // Reverse the string since now it's backwards
+		    string temp(str.rbegin(), str.rend());
+		    str = temp;
+		    cout<<str<<" ";
+    	}
+    	cout<<endl;
+    }
 
 
     /// Function to move bead out of plane by specified amount
@@ -1334,3 +1393,4 @@ namespace mathfunc {
 
 }
 #endif
+

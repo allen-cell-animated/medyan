@@ -127,8 +127,11 @@ public:
     floatingpoint bmgrvectime = 0.0;
     floatingpoint bmgrtime = 0.0;
     floatingpoint rxnratetime = 0.0;
+    floatingpoint updateposition = 0.0;
     floatingpoint outputtime =0.0;
     floatingpoint specialtime = 0.0;
+    floatingpoint updatepositioncylinder = 0.0;
+    floatingpoint updatepositionmovable=0.0;
 
     Controller(SubSystem* s);
     ~Controller() {};

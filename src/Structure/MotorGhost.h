@@ -56,6 +56,8 @@ friend struct MotorBindingCallback;
 friend struct MotorUnbindingCallback;
 
 private:
+
+    chrono::high_resolution_clock::time_point mins, mine;
     unique_ptr<MMotorGhost> _mMotorGhost; ///< Pointer to mech motor ghost
     unique_ptr<CMotorGhost> _cMotorGhost; ///< Pointer to chem motor ghost
     

@@ -36,16 +36,20 @@ class CGMethod {
     
 
 protected:
-
+    chrono::high_resolution_clock::time_point tbegin, tend;
 
     ///< Data vectors for calculation
     floatingpoint *coord;  ///<bead coordinates (length 3*N)
+    floatingpoint *coordlineSearch; ///coords used during line search
 
     floatingpoint *force; ///< bead forces (length 3*N)
     floatingpoint *forceAux; ///< auxiliary force calculations (length 3*N)
     floatingpoint *forceAuxPrev; ///<auxiliary force calculation previously (length 3*N)
 //    cylinder* cylindervec;
 
+//Gradients
+	floatingpoint FADotFA = 0.0;
+	floatingpoint FADotFAP = 0.0;
     /// Safe mode which chooses the safe backtracking search if the
     /// minimizer got itself into trouble.
     bool _safeMode = false;
@@ -62,6 +66,17 @@ protected:
     const floatingpoint SAFELAMBDAREDUCE = 0.9;  ///< Lambda reduction parameter for conservative backtracking
     
     const floatingpoint BACKTRACKSLOPE = 0.4;   ///< Backtracking slope
+    //@}
+
+
+    // Track the past 100 lambdas.
+    //@{
+    uint maxprevlambdacount = 10;
+    vector<floatingpoint> previouslambdavec=vector<floatingpoint>(maxprevlambdacount,0.0);
+    short headpos = 0; //position where the next lambda can be inserted.
+    short count = 0;//counter to track the number of successful lambda attempts made.
+    float sum = 0;//sum of the lambdas found in previouslambdavcec.
+    bool runningaveragestatus = false;
     //@}
     
     //@{
@@ -148,8 +163,16 @@ protected:
     /// Move beads in search direction by d
     void moveBeads(floatingpoint d);
 
+    /// Create moved beads during line search
+    void moveBeadslineSearch(floatingpoint d);
+
     /// shift the gradient by d
     void shiftGradient(floatingpoint d);
+
+    void setgradients(){
+        FADotFA = allFADotFA();
+	    FADotFAP = allFADotFAP();
+    }
     //@}
 
 #ifdef CUDAACCL
@@ -189,7 +212,7 @@ protected:
         LAMBDATOL = max<floatingpoint>(1e-8, LAMBDATOL);
         LAMBDATOL = min<floatingpoint>(1e-1, LAMBDATOL);
 
-        cout<<"maxF order "<<maxF_order<<" lambdatol "<<LAMBDATOL<<endl;
+//        cout<<"maxF order "<<maxF_order<<" lambdatol "<<LAMBDATOL<<endl;
     }
 
     //@}
@@ -204,11 +227,13 @@ protected:
         force = new floatingpoint[numBeadsx3];
         forceAux = new floatingpoint[numBeadsx3];
         forceAuxPrev = new floatingpoint[numBeadsx3];
+	    coordlineSearch = new floatingpoint[numBeadsx3];
 
         for(int i =0; i < numBeadsx3; i++){
         	force[i] = 0.0;
         	forceAux[i]=0.0;
         	forceAuxPrev[i]=0.0;
+	        coordlineSearch[i] = 0.0;
         }
     }
     
@@ -220,6 +245,7 @@ protected:
         delete [] forceAux;
         delete [] forceAuxPrev;
     }
+
 public:
     static long N; ///< Number of beads in the system, set before each minimization
     static long Ncyl;
@@ -229,6 +255,9 @@ public:
     /// Minimize the system
     virtual void minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
                           floatingpoint MAXDIST, floatingpoint LAMBDAMAX, bool steplimit) = 0;
+
+    //Checks to make sure none of the coordinates are NaN or Inf
+    inline void checkcoord_forces();
 };
 
 

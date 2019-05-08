@@ -33,6 +33,7 @@ private:
     
 protected:
     FilamentInteractions* _culpritInteraction; ///< Culprit in case of error
+    chrono::high_resolution_clock::time_point tbegin, tend;
     
 public:
     /// Constructor, intializes stretching, bending, and twisting forces

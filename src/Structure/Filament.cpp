@@ -362,6 +362,7 @@ void Filament::polymerizePlusEnd() {
     //update vector structure
     int cidx = cBack->_dcIndex;
     int bidx = b2->_dbIndex;
+    //Update coordinates in the structures
     auto C = midPointCoordinate(b1->coordinate,b2->coordinate,0.5);
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = C[i];
@@ -402,6 +403,7 @@ void Filament::polymerizeMinusEnd() {
     //update vector structure
     int cidx = cFront->_dcIndex;
     int bidx = b1->_dbIndex;
+    //Update coordinates in the structures
     auto C = midPointCoordinate(b1->coordinate,b2->coordinate,0.5);
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = C[i];
@@ -443,6 +445,7 @@ void Filament::depolymerizePlusEnd() {
     //update vector structure
     int cidx = cBack->_dcIndex;
     int bidx = b2->_dbIndex;
+    //Update coordinates in the structures
     auto C = midPointCoordinate(b1->coordinate,b2->coordinate,0.5);
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = C[i];
@@ -482,6 +485,7 @@ void Filament::depolymerizeMinusEnd() {
     //update vector structure
     int cidx = cFront->_dcIndex;
     int bidx = b1->_dbIndex;
+    //Update coordinates in the structures
     auto C = midPointCoordinate(b1->coordinate,b2->coordinate,0.5);
     for(int i=0; i < 3; i++) {
         CUDAcommon::serlvars.cylindervec[cidx].coord[i] = C[i];

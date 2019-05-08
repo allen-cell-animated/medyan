@@ -78,8 +78,9 @@ floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, floatingpoint *f, 
 
     floatingpoint U= 0.0;
     floatingpoint U_i=0.0;
-
+    short i = 0;
     for (auto &interaction : _filamentInteractionVector) {
+        tbegin = chrono::high_resolution_clock::now();
         U_i = interaction->computeEnergy(coord, f, d);
         if(U_i <= -1) {
             //set culprit and return
@@ -90,6 +91,13 @@ floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, floatingpoint *f, 
 #ifdef DETAILEDOUTPUT
         std::cout<<getName()<<" "<<U_i<<endl;
 #endif
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+        if(i ==0)
+            CUDAcommon::tmin.stretchingenergy+= elapsed_energy.count();
+        else
+            CUDAcommon::tmin.bendingenergy+= elapsed_energy.count();
+        i++;
     }
 
     return U;
@@ -97,8 +105,17 @@ floatingpoint FilamentFF::computeEnergy(floatingpoint *coord, floatingpoint *f, 
 
 void FilamentFF::computeForces(floatingpoint *coord, floatingpoint *f) {
 //    floatingpoint *F_i = new floatingpoint[CGMethod::N];
+    short i = 0;
     for (auto &interaction : _filamentInteractionVector) {
+        tbegin = chrono::high_resolution_clock::now();
         interaction->computeForces(coord, f);
+        tend = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> elapsed_energy(tend - tbegin);
+        if(i ==0)
+            CUDAcommon::tmin.stretchingforces+= elapsed_energy.count();
+        else
+            CUDAcommon::tmin.bendingforces+= elapsed_energy.count();
+        i++;
 //        CUDAcommon::handleerror(cudaDeviceSynchronize());
 
 

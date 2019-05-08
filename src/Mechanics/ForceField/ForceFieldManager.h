@@ -80,6 +80,8 @@ public:
     //@}
     void assignallforcemags();
 #endif
+private:
+    chrono::high_resolution_clock::time_point tbegin, tend;
 };
 
 #endif

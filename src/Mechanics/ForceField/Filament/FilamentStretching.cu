@@ -23,6 +23,7 @@
 
 template <class FStretchingInteractionType>
 void FilamentStretching<FStretchingInteractionType>::vectorize() {
+    CUDAcommon::tmin.numinteractions[0] += Cylinder::getCylinders().size();
     beadSet = new int[n * Cylinder::getCylinders().size()];
     kstr = new floatingpoint[Cylinder::getCylinders().size()];
     eql = new floatingpoint[Cylinder::getCylinders().size()];
@@ -111,7 +112,8 @@ void FilamentStretching<FStretchingInteractionType>::deallocate() {
 
 
 template <class FStretchingInteractionType>
-floatingpoint FilamentStretching<FStretchingInteractionType>::computeEnergy(floatingpoint* coord, floatingpoint *f, floatingpoint d){
+floatingpoint FilamentStretching<FStretchingInteractionType>::computeEnergy
+(floatingpoint* coord, floatingpoint *f, floatingpoint d){
 
     floatingpoint U_i[1], U_ii;
     floatingpoint* gU_i;
@@ -151,6 +153,7 @@ floatingpoint FilamentStretching<FStretchingInteractionType>::computeEnergy(floa
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
 #endif
+
 
     if (d == 0.0)
         U_ii = _FFType.energy(coord, f, beadSet, kstr, eql);

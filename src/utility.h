@@ -53,6 +53,12 @@ inline bool areEqual(floatingpoint d1, floatingpoint d2) {
     return fabs(d1 - d2) < ZERO_PREC;
 }
 
+//checking for equality with a lower threshold.
+inline bool areEqualLT(floatingpoint d1, floatingpoint d2) {
+	const floatingpoint ZERO_PRECLT = 1E-1;
+	return fabs(d1 - d2) < ZERO_PRECLT;
+}
+
 /// Safe arc cos function
 #ifdef CUDAACCL
  __host__ __device__

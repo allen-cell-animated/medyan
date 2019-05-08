@@ -113,7 +113,7 @@ void Linker::updatePosition() {
     }
     
     if(c != _compartment) {
-        
+	    chrono::high_resolution_clock::time_point mins, mine;
         _compartment = c;
 #ifdef CHEMISTRY
         SpeciesBound* firstSpecies = _cLinker->getFirstSpecies();
@@ -125,6 +125,10 @@ void Linker::updatePosition() {
         _cLinker->setFirstSpecies(firstSpecies);
         _cLinker->setSecondSpecies(secondSpecies);
 #endif
+	    mine = chrono::high_resolution_clock::now();
+	    chrono::duration<floatingpoint> compartment_update(mine - mins);
+	    CUDAcommon::tmin.timelinkerupdate += compartment_update.count();
+	    CUDAcommon::tmin.callslinkerupdate++;
     }
     
 #ifdef MECHANICS

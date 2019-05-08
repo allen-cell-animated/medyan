@@ -14,12 +14,12 @@
 ##################################################
 
 TESTS	:= $(shell find ./TESTS -name 'test_*')
-SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_module/*')
-SOURCES_CPP += ./dist_module/dist_coords.cpp ./dist_module/dist_mod_vars.cpp ./dist_module/dist_bench.cpp ./dist_module/dist_test.cpp ./dist_module/dist_example.cpp
-SOURCES_CU  := $(shell find . -name '*.cu'  ! -path './TESTS/*')
+SOURCES_CPP := $(shell find . -name '*.cpp' ! -path './TESTS/*' ! -path './dist_moduleV2/*')
+SOURCES_CPP += ./dist_moduleV2/dist_avx_par.cpp  ./dist_moduleV2/dist_bench.cpp  ./dist_moduleV2/dist_example.cpp  ./dist_moduleV2/dist_mod_vars.cpp
+SOURCES_CU  := $(shell find . -name '*.cu'  ! -path './TESTS/*' ! -path './dist_moduleV2/*')
 SOURCES = $(SOURCES_CPP) $(SOURCES_CU)
-HEADERS := $(shell find . -name '*.h' ! -path './dist_module/*')
-HEADERS += ./dist_module/umesimd/UMESimd.h
+HEADERS := $(shell find . -name '*.h' ! -path './dist_moduleV2/*')
+HEADERS += ./dist_moduleV2/umesimd/UMESimd.h
 
 OBJECTS_CPP := $(SOURCES_CPP:.cpp=.o)
 OBJECTS_CU  := $(SOURCES_CU:.cu=.o)
@@ -31,10 +31,12 @@ NVCC = nvcc -std=c++11
 
 # Flags used by compiler and linker
 DEBUG = -g
-FAST_CXX = -Os -ffast-math -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
+FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native -march=native # -Xpreprocessor -fopenmp # -mavx2
+#FAST_CXX = -Og -march=native -mtune=native
 
 # Compiler flags
-INCLUDES = -I./dist_module -I./dist_module/umesimd/ -I/usr/local/include \
+INCLUDES = -I./dist_module -I./dist_module/umesimd/ -I/usr/local/include -I/homes/achansek/xtl_install/include/ -I/homes/achansek/xtensor_install/include/ -I./dist_moduleV2 -I./dist_moduleV2/umesimd\
+-I /a/fs-3/export/home/deepthought2/achansek/boost_1_61_0\
 -I./ -IStructure -IStructure/Special      \
 -IStructure/SurfaceMesh                   \
 -IChemistry                               \
@@ -59,7 +61,7 @@ CXXFLAGS_NVCC = -g -G -x=cu -arch=sm_35 -Xcompiler -lpthread -ldl -lrt \
 -lineinfo --compiler-options -O0 -Xptxas -v $(INCLUDES_NVCC)
 
 # Linker flags
-LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_module/umesimd -static-libstdc++ -pthread 
+LDLIBS = -L/usr/local/lib/ -lboost_system -L./dist_module/umesimd -static-libstdc++ -pthread -L/a/fs-3/export/home/deepthought2/achansek/boost_1_61_0/lib/
 LDLIBS_NVCC = $(LDLIBS) -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -Icudart -lpthread -lnvToolsExt
 LDFLAGS_CXX = $(FAST_CXX) 
 
@@ -75,6 +77,7 @@ LDFLAGS_CXX = $(FAST_CXX)
 CPPFLAGS += -DCHEMISTRY
 #Initialize mechanical components of system
 CPPFLAGS += -DMECHANICS
+CPPFLAGS += -DMOVEBEADSLINESEARCH
 #Use dynamic rate changing
 CPPFLAGS += -DDYNAMICRATES
 #vectorized serial energy minimization
@@ -87,7 +90,10 @@ CPPFLAGS += -DSIMDBINDINGSEARCH
 #Boost memory macros
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
-
+CPPFLAGS += -DNPROCS=8
+CPPFLAGS += -DMOVEBEADSLINESEARCH
+CPPFLAGS += -DPLOSFEEDBACK
+CPPFLAGS += -DCHECKFORCES_INF_NAN
 #if compiling the testing suite
 #CPPFLAGS += -DTESTING
 

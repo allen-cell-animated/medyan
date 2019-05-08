@@ -26,6 +26,7 @@
 template <class BDihedralInteractionType>
 void BranchingDihedral<BDihedralInteractionType>::vectorize() {
 
+    CUDAcommon::tmin.numinteractions[6] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kdih = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     pos = new floatingpoint[BranchingPoint::getBranchingPoints().size()];

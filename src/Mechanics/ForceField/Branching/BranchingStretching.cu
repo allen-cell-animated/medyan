@@ -27,6 +27,7 @@
 template <class BStretchingInteractionType>
 void BranchingStretching<BStretchingInteractionType>::vectorize() {
 
+    CUDAcommon::tmin.numinteractions[4] += BranchingPoint::getBranchingPoints().size();
     beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
     kstr = new floatingpoint[BranchingPoint::getBranchingPoints().size()];
     eql = new floatingpoint[BranchingPoint::getBranchingPoints().size()];

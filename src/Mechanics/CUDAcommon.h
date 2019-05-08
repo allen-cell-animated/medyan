@@ -127,6 +127,44 @@ struct PolyPlusEndTemplatetime{
 	floatingpoint rxntempate4 = 0.0;
 
 };
+
+struct timeminimization{
+	floatingpoint vectorize = 0.0;
+	floatingpoint findlambda = 0.0;
+	floatingpoint computeforces = 0.0;
+	floatingpoint computeenergy = 0.0;
+	floatingpoint computeenergyzero = 0.0;
+	floatingpoint computeenergynonzero = 0.0;
+	vector<floatingpoint> individualenergies;
+	vector<floatingpoint> individualenergieszero;
+	vector<floatingpoint> individualenergiesnonzero;
+	vector<floatingpoint> individualforces;
+	floatingpoint endminimization = 0.0;
+	floatingpoint tother = 0.0;
+	floatingpoint copyforces =0.0;
+	floatingpoint stretchingenergy= 0.0;
+	floatingpoint stretchingforces= 0.0;
+	floatingpoint bendingenergy = 0.0;
+	floatingpoint bendingforces = 0.0;
+	int computeenergycalls = 0;
+	int computeenerycallszero = 0;
+	int computeenerycallsnonzero = 0;
+	int computeforcescalls = 0;
+	int numinteractions[10] = {0,0,0,0,0,0,0,0,0,0};
+	floatingpoint timecylinderupdate = 0.0;
+	floatingpoint timelinkerupdate = 0.0;
+	floatingpoint timemotorupdate = 0.0;
+	int callscylinderupdate = 0;
+	int callslinkerupdate = 0;
+	int callsmotorupdate = 0;
+	//
+	int motorbindingcalls = 0;
+	int motorunbindingcalls = 0;
+	int linkerbindingcalls = 0;
+	int linkerunbindingcalls = 0;
+	int motorwalkingcalls =0;
+
+};
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     floatingpoint * gpu_force = NULL;
@@ -225,6 +263,8 @@ public:
     static Callbacktime ctime;
 	static Callbackcount ccount;
 	static PolyPlusEndTemplatetime ppendtime;
+	static timeminimization tmin;
+
 #ifdef CUDAACCL
     static CUDAvars cudavars;
     static CylCylNLvars cylcylnlvars;

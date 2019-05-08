@@ -53,6 +53,7 @@ void CylinderExclVolume<CVolumeInteractionType>::vectorize() {
     }
 
     numInteractions = nint;
+    CUDAcommon::tmin.numinteractions[8] += numInteractions;
 //    std::cout<<"NINT1 "<<nint<<endl;
     beadSet = new int[n * nint];
     krep = new floatingpoint[nint];

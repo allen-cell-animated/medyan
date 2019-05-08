@@ -134,6 +134,7 @@ void MotorGhost::updatePosition() {
     }
     
     if(c != _compartment) {
+        mins = chrono::high_resolution_clock::now();
         
         _compartment = c;
 #ifdef CHEMISTRY
@@ -146,6 +147,10 @@ void MotorGhost::updatePosition() {
         _cMotorGhost->setFirstSpecies(firstSpecies);
         _cMotorGhost->setSecondSpecies(secondSpecies);
 #endif
+        mine = chrono::high_resolution_clock::now();
+        chrono::duration<floatingpoint> compartment_update(mine - mins);
+        CUDAcommon::tmin.timemotorupdate += compartment_update.count();
+        CUDAcommon::tmin.callsmotorupdate++;
     }
     
 #ifdef MECHANICS
@@ -202,15 +207,16 @@ void MotorGhost::updateReactionRates() {
         auto x2 = _c1->getSecondBead()->coordinate;
         auto x3 = _c2->getFirstBead()->coordinate;
         auto x4 = _c2->getSecondBead()->coordinate;
-        
+
+
+        auto mp1 = midPointCoordinate(x1, x2, _position1);
+        auto mp2 = midPointCoordinate(x3, x4, _position2);
         //get component of force in direction of forward walk for C1, C2
         vector<floatingpoint> motorC1Direction =
-        twoPointDirection(midPointCoordinate(x1, x2, _position1),
-                          midPointCoordinate(x3, x4, _position2));
+        twoPointDirection(mp1, mp2);
         
         vector<floatingpoint> motorC2Direction =
-        twoPointDirection(midPointCoordinate(x3, x4, _position2),
-                          midPointCoordinate(x1, x2, _position1));
+        twoPointDirection(mp2, mp1);
         
         vector<floatingpoint> c1Direction = twoPointDirection(x2,x1);
         vector<floatingpoint> c2Direction = twoPointDirection(x4,x3);
@@ -323,6 +329,18 @@ void MotorGhost::updateReactionRates() {
 void MotorGhost::moveMotorHead(Cylinder* c,
                                floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
+
+	//Print coordinate
+	auto x1 = _c1->getFirstBead()->coordinate;
+	auto x2 = _c1->getSecondBead()->coordinate;
+	auto x3 = _c2->getFirstBead()->coordinate;
+	auto x4 = _c2->getSecondBead()->coordinate;
+	auto mp1 = midPointCoordinate(x1, x2, _position1);
+	auto mp2 = midPointCoordinate(x3, x4, _position2);
+	auto motorcoord = midPointCoordinate(mp1,mp2,0.5);
+	cout<<"motor-walking "<<_motorID<<" "<<motorcoord[0]<<" "<<motorcoord[1]<<" "<<motorcoord[2]
+		<<" "<<_mMotorGhost->stretchForce<<endl;
+
     
     //shift the position of one side of the motor
     floatingpoint shift =  newPosition - oldPosition;
@@ -352,6 +370,18 @@ void MotorGhost::moveMotorHead(Cylinder* c,
 void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
                                floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
+
+	//Print coordinate
+	auto x1 = _c1->getFirstBead()->coordinate;
+	auto x2 = _c1->getSecondBead()->coordinate;
+	auto x3 = _c2->getFirstBead()->coordinate;
+	auto x4 = _c2->getSecondBead()->coordinate;
+	auto mp1 = midPointCoordinate(x1, x2, _position1);
+	auto mp2 = midPointCoordinate(x3, x4, _position2);
+	auto motorcoord = midPointCoordinate(mp1,mp2,0.5);
+	cout<<"motor-walking "<<_motorID<<" "<<motorcoord[0]<<" "<<motorcoord[1]<<" "
+        <<motorcoord[2]<<" "<<_mMotorGhost->stretchForce<<endl;
+
     
     //shift the head
     if(oldC == _c1) {
