@@ -408,8 +408,16 @@ struct MembraneMeshAttribute {
             vag.area = 0.0;
             vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
 
-            // k1 = 2A * k, where k is the result of LB operator
-            Vec3 k1 {};
+            // K = 2 * H * n is the result of LB operator.
+            // K * A = d AStar (on center vertex), where the choice of A could be different.
+            // Here the we use Vector Area for the A above, i.e. AVec = |d Vol (on center vertex)|
+            //
+            // We choose the following implementation (see star_perp_sq_mean_curvature of Surface Evolver):
+            //
+            //        (1/2) d AStar  dot  d Vol
+            //   H = ----------------------------
+            //               d Vol   dot  d Vol
+            Vec3 dAStar {};
 
             for(size_t i = 0; i < va.cachedDegree; ++i) {
                 const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
@@ -429,16 +437,16 @@ struct MembraneMeshAttribute {
 
                 vag.area += sumCotTheta * dist2 * 0.125;
 
-                k1 += sumCotTheta * diff;
+                dAStar += 0.5 * sumCotTheta * diff;
                 vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal;
             }
 
             const double invA = 1 / vag.area;
-            const double magK1 = magnitude(k1);
+            const double magK1 = magnitude(2 * dAStar); // deprecated
 
             normalize(vag.pseudoUnitNormal);
 
-            const int flippingCurv = (dot(k1, vag.pseudoUnitNormal) > 0 ? 1 : -1);
+            const int flippingCurv = (dot(2 * dAStar, vag.pseudoUnitNormal) > 0 ? 1 : -1);
 
             vag.curv = flippingCurv * magK1 * 0.25 * invA;
         }
@@ -575,9 +583,24 @@ struct MembraneMeshAttribute {
             vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
             vag.dVolume = {0.0, 0.0, 0.0};
 
-            // K = 2*H*n is the result of LB operator
-            // And let k1 = 2*A*k (as an intermediate variable)
-            Vec3 k1 {};
+            // K = 2 * H * n is the result of LB operator.
+            // K * A = d AStar (on center vertex), where the choice of A could be different.
+            // Here the we use Vector Area for the A above, i.e. AVec = |d Vol (on center vertex)|
+            //
+            // We choose the following implementation (see star_perp_sq_mean_curvature of Surface Evolver):
+            //
+            //        (1/2) d AStar  dot  d Vol
+            //   H = ----------------------------
+            //               d Vol   dot  d Vol
+            //
+            // Therefore (here D can operate on neighbor vertices, while d only on center vertex),
+            //
+            //          D(d AStar) d Vol + D(d Vol) d AStar - H * 2 D(d Vol) d Vol
+            //   DH = --------------------------------------------------------------
+            //                              d Vol  dot  d Vol
+            //
+            // And let k1 = A*k (as an intermediate variable)
+            Vec3 dAStar {};
 
             // derivative of k1 and curvature will be calculated in the next loop
             for(size_t i = 0; i < va.cachedDegree; ++i) {
@@ -614,7 +637,7 @@ struct MembraneMeshAttribute {
                     dCotThetaRight[1] * (dist2 * 0.125);
 
                 // Accumulate k1
-                k1 += sumCotTheta * diff;
+                dAStar += 0.5 * sumCotTheta * diff;
 
                 // Accumulate pseudo unit normal
                 vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
@@ -625,14 +648,14 @@ struct MembraneMeshAttribute {
             }
 
             const auto invA = 1.0 / vag.area;
-            const auto magK1 = magnitude(k1);
+            const auto magK1 = magnitude(2 * dAStar); // deprecated
 
             // Calculate pseudo unit normal
             normalize(vag.pseudoUnitNormal);
 
             // Calculate mean curvature H = |k1| / 4A
             // dH = (dK1)K1 / 4A|K1| - |K1|dA / 4A^2
-            const int flippingCurv = (dot(k1, vag.pseudoUnitNormal) > 0 ? 1 : -1);
+            const int flippingCurv = (dot(2 * dAStar, vag.pseudoUnitNormal) > 0 ? 1 : -1); // deprecated
             const auto dCurvFac1 = 0.25 * invA * flippingCurv / magK1;
             const auto dCurvFac2 = -0.25 * invA * invA * magK1 * flippingCurv;
 
@@ -690,9 +713,9 @@ struct MembraneMeshAttribute {
 
                 // Derivative of curvature
                 const Vec3 mp {{{
-                    dot(dK1_n[0], k1),
-                    dot(dK1_n[1], k1),
-                    dot(dK1_n[2], k1)
+                    dot(dK1_n[0], 2 * dAStar),
+                    dot(dK1_n[1], 2 * dAStar),
+                    dot(dK1_n[2], 2 * dAStar)
                 }}}; // A matrix product dK1_n * k1
                 mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv =
                     dCurvFac1 * mp + dCurvFac2 * mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
@@ -700,7 +723,7 @@ struct MembraneMeshAttribute {
 
             // Also the derivative of curvature on central vertex
             vag.dCurv =
-                dCurvFac1 * Vec3{ dot(dK1[0], k1), dot(dK1[1], k1), dot(dK1[2], k1) }
+                dCurvFac1 * Vec3{ dot(dK1[0], 2 * dAStar), dot(dK1[1], 2 * dAStar), dot(dK1[2], 2 * dAStar) }
                 + dCurvFac2 * vag.dArea;
 
         } // End loop vertices (V cells)
