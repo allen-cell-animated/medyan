@@ -653,8 +653,8 @@ struct MembraneMeshAttribute {
             // Calculate pseudo unit normal
             normalize(vag.pseudoUnitNormal);
 
-            // Calculate mean curvature H = |k1| / 4A
-            // dH = (dK1)K1 / 4A|K1| - |K1|dA / 4A^2
+            // Calculate mean curvature H = |dA| / 2A
+            // dH = (ddA)dA / 2A|dA| - |ddA|dA / 2A^2
             const int flippingCurv = (dot(2 * dAStar, vag.pseudoUnitNormal) > 0 ? 1 : -1); // deprecated
             const auto dCurvFac1 = 0.25 * invA * flippingCurv / magK1;
             const auto dCurvFac2 = -0.25 * invA * invA * magK1 * flippingCurv;
@@ -664,7 +664,7 @@ struct MembraneMeshAttribute {
 
             // Calculate derivative of k1 and curvature
             // Using another loop because k1 is needed for curvature derivative
-            std::array<Vec3, 3> dK1 {}; // On center vertex, indexed by [k1x, k1y, k1z]
+            std::array<Vec3, 3> dDAStar {}; // On center vertex, indexed by [k1x, k1y, k1z]
             for(size_t i = 0; i < va.cachedDegree; ++i) {
                 const size_t hei_o = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
                 const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
@@ -681,49 +681,49 @@ struct MembraneMeshAttribute {
                 const auto sumDCotThetaNeighbor = dCotThetaLeft[2] + dCotThetaRight[0];
 
                 const auto diff = ci - cn;
-                // Accumulate dK1 on the center vertex vi
-                dK1[0] += sumDCotThetaCenter[0] * diff;
-                dK1[1] += sumDCotThetaCenter[1] * diff;
-                dK1[2] += sumDCotThetaCenter[2] * diff;
-                dK1[0][0] += sumCotTheta;
-                dK1[1][1] += sumCotTheta;
-                dK1[2][2] += sumCotTheta; // dK1 += I * sumCotTheta, where I is gradient of diff (identity)
+                // Accumulate dDAStar on the center vertex vi
+                dDAStar[0] += 0.5 * sumDCotThetaCenter[0] * diff;
+                dDAStar[1] += 0.5 * sumDCotThetaCenter[1] * diff;
+                dDAStar[2] += 0.5 * sumDCotThetaCenter[2] * diff;
+                dDAStar[0][0] += 0.5 * sumCotTheta;
+                dDAStar[1][1] += 0.5 * sumCotTheta;
+                dDAStar[2][2] += 0.5 * sumCotTheta; // dDAStar += 0.5 * I * sumCotTheta, where I is gradient of diff (identity)
 
-                // Calculate dK1 and derivative of curvature on neighbor vertex vn
-                std::array<Vec3, 3> dK1_n {};
+                // Calculate dDAStar and derivative of curvature on neighbor vertex vn
+                std::array<Vec3, 3> dDAStar_n {};
                 // As direct target
-                dK1_n[0] = sumDCotThetaNeighbor[0] * diff;
-                dK1_n[1] = sumDCotThetaNeighbor[1] * diff;
-                dK1_n[2] = sumDCotThetaNeighbor[2] * diff;
-                dK1_n[0][0] -= sumCotTheta;
-                dK1_n[1][1] -= sumCotTheta;
-                dK1_n[2][2] -= sumCotTheta; // dK1 += (-I) * sumCotTheta
+                dDAStar_n[0] = 0.5 * sumDCotThetaNeighbor[0] * diff;
+                dDAStar_n[1] = 0.5 * sumDCotThetaNeighbor[1] * diff;
+                dDAStar_n[2] = 0.5 * sumDCotThetaNeighbor[2] * diff;
+                dDAStar_n[0][0] -= 0.5 * sumCotTheta;
+                dDAStar_n[1][1] -= 0.5 * sumCotTheta;
+                dDAStar_n[2][2] -= 0.5 * sumCotTheta; // dK1 += -0.5 * I * sumCotTheta
 
                 // As target for left and right
                 const auto diff_left = ci - c_left;
                 const auto diff_right = ci - c_right;
                 const auto& dCotThetaOfLeft = mesh.getHalfEdgeAttribute(hei_p).gHalfEdge.dCotTheta[1];
                 const auto& dCotThetaOfRight = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dCotTheta[1];
-                dK1_n[0] += dCotThetaOfLeft[0] * diff_left;
-                dK1_n[1] += dCotThetaOfLeft[1] * diff_left;
-                dK1_n[2] += dCotThetaOfLeft[2] * diff_left;
-                dK1_n[0] += dCotThetaOfRight[0] * diff_right;
-                dK1_n[1] += dCotThetaOfRight[1] * diff_right;
-                dK1_n[2] += dCotThetaOfRight[2] * diff_right;
+                dDAStar_n[0] += 0.5 * dCotThetaOfLeft[0] * diff_left;
+                dDAStar_n[1] += 0.5 * dCotThetaOfLeft[1] * diff_left;
+                dDAStar_n[2] += 0.5 * dCotThetaOfLeft[2] * diff_left;
+                dDAStar_n[0] += 0.5 * dCotThetaOfRight[0] * diff_right;
+                dDAStar_n[1] += 0.5 * dCotThetaOfRight[1] * diff_right;
+                dDAStar_n[2] += 0.5 * dCotThetaOfRight[2] * diff_right;
 
                 // Derivative of curvature
                 const Vec3 mp {{{
-                    dot(dK1_n[0], 2 * dAStar),
-                    dot(dK1_n[1], 2 * dAStar),
-                    dot(dK1_n[2], 2 * dAStar)
+                    dot(dDAStar_n[0], dAStar),
+                    dot(dDAStar_n[1], dAStar),
+                    dot(dDAStar_n[2], dAStar)
                 }}}; // A matrix product dK1_n * k1
                 mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv =
-                    dCurvFac1 * mp + dCurvFac2 * mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
+                    dCurvFac1 * 4 * mp + dCurvFac2 * mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
             }
 
             // Also the derivative of curvature on central vertex
             vag.dCurv =
-                dCurvFac1 * Vec3{ dot(dK1[0], 2 * dAStar), dot(dK1[1], 2 * dAStar), dot(dK1[2], 2 * dAStar) }
+                dCurvFac1 * 4 * Vec3{ dot(dDAStar[0], dAStar), dot(dDAStar[1], dAStar), dot(dDAStar[2], dAStar) }
                 + dCurvFac2 * vag.dArea;
 
         } // End loop vertices (V cells)
