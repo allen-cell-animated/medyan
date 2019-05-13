@@ -51,7 +51,9 @@ void Bubble::updatePositionManually() {
         iter = 1;
         currentStep++;
     }
-    if(tau() > (currentStep * SysParams::Chemistry().StepTime + iter * 0.01)){
+    //All position updates will be finished in 1 second
+    //Step displacement is 1 /StepTotal
+    if(tau() > (currentStep * SysParams::Chemistry().StepTime + iter * 1 / SysParams::Chemistry().StepTotal)){
         double *bcoord, *coord, step;
         
         if(currentStep > SysParams::Chemistry().IterChange){
