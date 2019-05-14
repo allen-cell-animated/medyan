@@ -328,12 +328,10 @@ struct MembraneMeshAttribute {
 
         const auto& vertices = mesh.getVertices();
         const auto& halfEdges = mesh.getHalfEdges();
-        const auto& edges = mesh.getEdges();
         const auto& triangles = mesh.getTriangles();
 
         const size_t numVertices = vertices.size();
         const size_t numHalfEdges = halfEdges.size();
-        const size_t numEdges = edges.size();
         const size_t numTriangles = triangles.size();
 
         const auto& coords = stretched ? Bead::getDbDataConst().coordsStr : Bead::getDbDataConst().coords;
@@ -349,11 +347,10 @@ struct MembraneMeshAttribute {
 
             const auto cp = cross(c0 - c1, c2 - c1);
             const auto dp =   dot(c0 - c1, c2 - c1);
-            const auto ct = heag.cotTheta = dp / magnitude(cp);
-            heag.theta = M_PI_2 - atan(ct);
+            heag.cotTheta = dp / magnitude(cp);
         }
 
-        // Calculate triangle area, unit normal and cone volume
+        // Calculate triangle area and cone volume
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             auto& ta = mesh.getTriangleAttribute(ti);
             auto& tag = ta.template getGTriangle<stretched>();
@@ -366,34 +363,8 @@ struct MembraneMeshAttribute {
             // area
             tag.area = magnitude(cp) * 0.5;
 
-            // unit normal
-            tag.unitNormal = normalizedVector(cp);
-
             // cone volume
             tag.coneVolume = dot(c0, cp) / 6;
-        }
-
-        // Calculate edge length and pesudo unit normal
-        for(size_t ei = 0; ei < numEdges; ++ei) {
-            auto& ea = mesh.getEdgeAttribute(ei);
-
-            // length
-            ea.template getGEdge<stretched>().length = distance(
-                coords[ea.cachedCoordIndex[0]],
-                coords[ea.cachedCoordIndex[1]]
-            );
-
-            // pseudo unit normal
-            using PolygonType = typename MeshType::HalfEdge::PolygonType;
-            if(
-                ea.cachedPolygonType[0] == PolygonType::Triangle &&
-                ea.cachedPolygonType[1] == PolygonType::Triangle
-            ) {
-                ea.template getGEdge<stretched>().pseudoUnitNormal = normalizedVector(
-                    mesh.getTriangleAttribute(ea.cachedPolygonIndex[0]).template getGTriangle<stretched>().unitNormal +
-                    mesh.getTriangleAttribute(ea.cachedPolygonIndex[1]).template getGTriangle<stretched>().unitNormal
-                );
-            }
         }
 
         const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
@@ -405,10 +376,8 @@ struct MembraneMeshAttribute {
             const Vec3 ci = coords[va.cachedCoordIndex];
 
             // clearing
-            vag.area = 0.0; // deprecated
             vag.astar = 0.0;
             vag.dAstar = {0.0, 0.0, 0.0};
-            vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
             vag.dVolume = {0.0, 0.0, 0.0};
 
             // K = 2 * H * n is the result of LB operator.
@@ -433,28 +402,17 @@ struct MembraneMeshAttribute {
                     mesh.getHalfEdgeAttribute(hei_n).template getGHalfEdge<stretched>().cotTheta
                     + mesh.getHalfEdgeAttribute(hei_on).template getGHalfEdge<stretched>().cotTheta;
 
-                const auto theta = mesh.getHalfEdgeAttribute(hei).template getGHalfEdge<stretched>().theta;
-
                 const auto diff = ci - cn;
-                const auto dist2 = magnitude2(diff);
 
-                vag.area += sumCotTheta * dist2 * 0.125; // deprecated
                 vag.astar += mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().area;
 
                 vag.dAstar += 0.5 * sumCotTheta * diff;
-                vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal;
 
                 // Added to derivative of sum of cone volume
                 vag.dVolume += cross(cn, c_right) * (1.0 / 6);
             }
 
             const auto dVolume2 = magnitude2(vag.dVolume);
-            const double invA = 1 / vag.area;
-            const double magK1 = magnitude(2 * vag.dAstar); // deprecated
-
-            normalize(vag.pseudoUnitNormal);
-
-            const int flippingCurv = (dot(2 * vag.dAstar, vag.pseudoUnitNormal) > 0 ? 1 : -1);
 
             vag.curv = 0.5 * dot(vag.dAstar, vag.dVolume) / dVolume2;
         }
@@ -481,7 +439,7 @@ struct MembraneMeshAttribute {
 
         const auto& coords = Bead::getDbData().coords;
 
-        // Calculate edge length with deriviative
+        // Calculate edge length
         for(size_t ei = 0; ei < numEdges; ++ei) {
             auto& ea = mesh.getEdgeAttribute(ei);
 
@@ -490,14 +448,11 @@ struct MembraneMeshAttribute {
             const Vec3 c0 = coords[ea.cachedCoordIndex[0]];
             const Vec3 c1 = coords[ea.cachedCoordIndex[1]];
 
-            const auto length = mesh.getEdgeAttribute(ei).gEdge.length = distance(c0, c1);
-            const auto invL = 1.0 / length;
-            mesh.getHalfEdgeAttribute(hei).gHalfEdge.dEdgeLength = (c0 - c1) * invL;
-            mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dEdgeLength = (c1 - c0) * invL;
+            mesh.getEdgeAttribute(ei).gEdge.length = distance(c0, c1);
         }
 
         // Calculate angles and triangle areas with derivative
-        // Calculate triangle normals and cone volumes
+        // Calculate triangle cone volumes
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             auto& ta = mesh.getTriangleAttribute(ti);
 
@@ -539,12 +494,11 @@ struct MembraneMeshAttribute {
                 mesh.getHalfEdgeAttribute(hei[2]).gHalfEdge.dTriangleArea = (l[1]*l[1]* r02 - dots[0]* r01) * (invA * 0.25);
             }
 
-            // Calculate thetas and gradients
+            // Calculate cot thetas and gradients
             for(size_t ai = 0; ai < 3; ++ai) {
                 auto& heag = mesh.getHalfEdgeAttribute(hei[ai]).gHalfEdge;
 
                 const auto ct = heag.cotTheta = dots[ai] * invA * 0.5;
-                heag.theta = M_PI_2 - atan(ct);
 
                 const size_t ai_n = (ai + 1) % 3;
                 const size_t ai_p = (ai + 2) % 3;
@@ -561,17 +515,10 @@ struct MembraneMeshAttribute {
                 heag.dCotTheta[0] = r01 * (invA * 0.5) - (dots[ai] * invA * invA * 0.5) * heag_p.dTriangleArea;
             }
 
-            // Calculate unit normal
-            tag.unitNormal = normalizedVector(cp);
-
             // Calculate cone volume and derivative
             tag.coneVolume = dot(c[0], r0) / 6.0;
             // The derivative of cone volume will be accumulated to each vertex
 
-        }
-
-        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea = {0.0, 0.0, 0.0}; // deprecated
         }
 
         const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
@@ -585,11 +532,8 @@ struct MembraneMeshAttribute {
             const Vec3 ci = coords[va.cachedCoordIndex];
 
             // clearing
-            vag.area = 0.0;
             vag.astar = 0.0;
-            vag.dArea = {0.0, 0.0, 0.0};
             vag.dAstar = {0.0, 0.0, 0.0};
-            vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
             vag.dVolume = {0.0, 0.0, 0.0};
 
             // K = 2 * H * n is the result of LB operator.
@@ -634,25 +578,9 @@ struct MembraneMeshAttribute {
                 const auto& dCotThetaLeft = mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dCotTheta;
                 const auto& dCotThetaRight = mesh.getHalfEdgeAttribute(hei_on).gHalfEdge.dCotTheta;
 
-                const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
-
                 const auto diff = ci - cn;
-                const auto dist2 = magnitude2(diff);
 
-                vag.area += sumCotTheta * dist2 * 0.125;
                 vag.astar += mesh.getTriangleAttribute(ti0).gTriangle.area;
-
-                // Area derivative
-                vag.dArea +=
-                    (dCotThetaLeft[0] + dCotThetaRight[2]) * (dist2 * 0.125)
-                    + (sumCotTheta * 0.25) * diff; // d(dist2) / dx = 2 * diff
-                mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea +=
-                    (dCotThetaLeft[2] + dCotThetaRight[0]) * (dist2 * 0.125)
-                    - (sumCotTheta * 0.25) * diff; // d(dist2) / dx = -2 * diff
-                mesh.getHalfEdgeAttribute(hei_n).gHalfEdge.dNeighborArea +=
-                    dCotThetaLeft[1] * (dist2 * 0.125);
-                mesh.getHalfEdgeAttribute(hei_right).gHalfEdge.dNeighborArea +=
-                    dCotThetaRight[1] * (dist2 * 0.125);
 
                 // Accumulate dAstar
                 vag.dAstar += 0.5 * sumCotTheta * diff;
@@ -662,26 +590,12 @@ struct MembraneMeshAttribute {
                     = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dTriangleArea
                     + mesh.getHalfEdgeAttribute(hei_p).gHalfEdge.dTriangleArea;
 
-                // Accumulate pseudo unit normal
-                vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
-
                 // Added to derivative of sum of cone volume
                 const auto cp = cross(cn, c_right);
                 vag.dVolume += cp * (1.0 / 6);
             }
 
             const auto dVolume2 = magnitude2(vag.dVolume);
-            const auto invA = 1.0 / vag.area;
-            const auto magK1 = magnitude(2 * vag.dAstar); // deprecated
-
-            // Calculate pseudo unit normal
-            normalize(vag.pseudoUnitNormal);
-
-            // Calculate mean curvature H = |dA| / 2A
-            // dH = (ddA)dA / 2A|dA| - |ddA|dA / 2A^2
-            const int flippingCurv = (dot(2 * vag.dAstar, vag.pseudoUnitNormal) > 0 ? 1 : -1); // deprecated
-            const auto dCurvFac1 = 0.25 * invA * flippingCurv / magK1;
-            const auto dCurvFac2 = -0.25 * invA * invA * magK1 * flippingCurv;
 
             vag.curv = 0.5 * dot(vag.dAstar, vag.dVolume) / dVolume2;
             // Derivative will be processed later.
@@ -855,7 +769,6 @@ struct MembraneMeshAttribute {
     Before this function is used, the following must be calculated:
         - The positions of all the elements are updated
         - The normal and pseudo normal at the triangles, edges and vertices
-        - The length of edges
 
     Note: this method only works if the mesh is closed. This must be ensured by
           the caller of the function.
@@ -908,10 +821,10 @@ struct MembraneMeshAttribute {
                 d = dot(mesh.getTriangleAttribute(ti).gTriangle.unitNormal, r0p);
             } else {
                 // p' is outside the triangle
-                const Vec3 r {
-                    mesh.getEdgeAttribute(mesh.edge(hei2)).gEdge.length, // 1->2
-                    mesh.getEdgeAttribute(mesh.edge(hei0)).gEdge.length, // 2->0
-                    mesh.getEdgeAttribute(mesh.edge(hei1)).gEdge.length  // 0->1
+                const Vec3 r2 {
+                    distance2(c[1], c[2]),
+                    distance2(c[2], c[0]),
+                    distance2(c[0], c[1])
                 };
                 const auto r1p = p - c[1];
                 const auto r2p = p - c[2];
@@ -920,27 +833,27 @@ struct MembraneMeshAttribute {
                 const auto dot_2p_20 = -dot(r2p, r02);
                 const auto dot_0p_01 = dot(r0p, r01);
 
-                if(b0 < 0 && dot_1p_12 >= 0 && dot_1p_12 <= r[0]*r[0]) {
+                if(b0 < 0 && dot_1p_12 >= 0 && dot_1p_12 <= r2[0]) {
                     // On edge 12
-                    d = magnitude(cross(r1p, r12)) / r[0];
+                    d = magnitude(cross(r1p, r12)) / std::sqrt(r2[0]);
                     if(dot(mesh.getEdgeAttribute(mesh.edge(hei2)).gEdge.pseudoUnitNormal, r1p) < 0) d = -d;
-                } else if(b1 < 0 && dot_2p_20 >= 0 && dot_2p_20 <= r[1]*r[1]) {
+                } else if(b1 < 0 && dot_2p_20 >= 0 && dot_2p_20 <= r2[1]) {
                     // On edge 20
-                    d = magnitude(cross(r2p, r02)) / r[1];
+                    d = magnitude(cross(r2p, r02)) / std::sqrt(r2[1]);
                     if(dot(mesh.getEdgeAttribute(mesh.edge(hei0)).gEdge.pseudoUnitNormal, r2p) < 0) d = -d;
-                } else if(b2 < 0 && dot_0p_01 >= 0 && dot_0p_01 <= r[2]*r[2]) {
+                } else if(b2 < 0 && dot_0p_01 >= 0 && dot_0p_01 <= r2[2]) {
                     // On edge 01
-                    d = magnitude(cross(r0p, r01)) / r[2];
+                    d = magnitude(cross(r0p, r01)) / std::sqrt(r2[2]);
                     if(dot(mesh.getEdgeAttribute(mesh.edge(hei1)).gEdge.pseudoUnitNormal, r0p) < 0) d = -d;
-                } else if(dot_0p_01 < 0 && dot_2p_20 > r[1]*r[1]) {
+                } else if(dot_0p_01 < 0 && dot_2p_20 > r2[1]) {
                     // On vertex 0
                     d = distance(c[0], p);
                     if(dot(mesh.getVertexAttribute(vi[0]).gVertex.pseudoUnitNormal, r0p) < 0) d = -d;
-                } else if(dot_1p_12 < 0 && dot_0p_01 > r[2]*r[2]) {
+                } else if(dot_1p_12 < 0 && dot_0p_01 > r2[2]) {
                     // On vertex 1
                     d = distance(c[1], p);
                     if(dot(mesh.getVertexAttribute(vi[1]).gVertex.pseudoUnitNormal, r1p) < 0) d = -d;
-                } else if(dot_2p_20 < 0 && dot_1p_12 > r[0]*r[0]) {
+                } else if(dot_2p_20 < 0 && dot_1p_12 > r2[0]) {
                     // On vertex 2
                     d = distance(c[2], p);
                     if(dot(mesh.getVertexAttribute(vi[2]).gVertex.pseudoUnitNormal, r2p) < 0) d = -d;

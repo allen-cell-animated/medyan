@@ -19,7 +19,7 @@ double MembraneStretching<MembraneStretchingAccumulationType::ByVertex>::compute
 
         double area = 0.0;
         for(const auto& v : m->getMesh().getVertices()) if(v.numTargetingBorderHalfEdges == 0)
-            area += stretched ? v.attr.gVertexS.area : v.attr.gVertex.area;
+            area += (stretched ? v.attr.gVertexS.astar : v.attr.gVertex.astar) / 3;
 
         U_i = _msh.energy(area, kElastic, eqArea); 
 
@@ -48,7 +48,7 @@ void MembraneStretching<MembraneStretchingAccumulationType::ByVertex>::computeFo
         const auto eqArea = m->getMMembrane()->getEqArea();
 
         double area = 0.0;
-        for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.area;
+        for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.astar / 3;
 
         const size_t numVertices = mesh.getVertices().size();
         for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
@@ -56,12 +56,12 @@ void MembraneStretching<MembraneStretchingAccumulationType::ByVertex>::computeFo
            
             _msh.forces(
                 force + 3 * v.attr.vertex->Bead::getIndex(),
-                area, v.attr.gVertex.dArea, kElastic, eqArea
+                area, v.attr.gVertex.dAstar / 3, kElastic, eqArea
             );
 
             // Position of this vertex also affects neighbor vcell areas
             mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea;
+                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborAstar / 3;
                 _msh.forces(
                     force + 3 * v.attr.vertex->Bead::getIndex(),
                     area, dArea, kElastic, eqArea
