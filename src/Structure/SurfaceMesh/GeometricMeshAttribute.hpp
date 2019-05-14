@@ -25,7 +25,7 @@ struct GHalfEdge {
     double cotTheta;
     std::array<mathfunc::Vec3, 3> dCotTheta; // Indexed by [(source, target, target(next))]
 
-    [[deprecated]] mathfunc::Vec3 dEdgeLength; // Derivative of length of edge on target. FIXME the source derivative wont exist if at boundary.
+    [[deprecated]] mathfunc::Vec3 dEdgeLength; // Derivative of length of edge on target.
     mathfunc::Vec3 dTriangleArea; // Derivative of area of triangle on target
 
     [[deprecated]] mathfunc::Vec3 dNeighborArea; // Derivative of area of vcell of source on target
@@ -36,7 +36,7 @@ struct GHalfEdge {
 
 struct GEdge {
 
-    double length; // Current length
+    [[deprecated]] double length; // Current length
 
     mathfunc::Vec3 pseudoUnitNormal; // The pseudo unit normal vector at the edge pointing outward.
 
