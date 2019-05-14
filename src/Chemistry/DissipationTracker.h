@@ -72,6 +72,9 @@ private:
     // vector of HRCD elements
     vector<tuple<string, double>> HRCDVec;
     
+    // vector of motor walking data
+    vector<tuple<double, double, double, double>> motorData;
+    
 public:
     
     // Constructor, allow access to objects that information is needed from, set all energy
@@ -125,13 +128,7 @@ public:
         // get the number of products
         int N = re->getN();
         
-        string hrcdid;
         
-        hrcdid = re->getHRCDID();
-        
-        if(reType==1){
-            hrcdid = "DIF";
-        }
         
         // for a vector of stoichiometric coefficients, assumed to be 1 for all
         
@@ -145,6 +142,14 @@ public:
         vector<string> reacNames = re->getReactantSpecies();
         vector<string> prodNames = re->getProductSpecies();
         
+        string hrcdid;
+        
+        hrcdid = re->getHRCDID();
+        
+        if(reType==1){
+            hrcdid = "DIF_";
+            hrcdid += reacNames[0];
+        }
         
         
         float delGZero;
@@ -431,7 +436,24 @@ public:
         return HRCDVec;
     }
     
+    void recordWalk(MotorGhost* m){
+        vector<double> mcoords = m->coordinate;
+        mcoords.insert(mcoords.begin(), tau());
+        motorData.push_back(make_tuple(mcoords[0], mcoords[1], mcoords[2], mcoords[3]));
+        
+        
+        //for(auto i = 0; i<mcoords.size(); i++){
+        //    cout<<mcoords[i]<<endl;
+        //}
+    }
     
+    vector<tuple<double, double, double, double>> getMotorData(){
+        return motorData;
+    }
+    
+    void clearMotorData(){
+        motorData.clear();
+    }
     
 };
 

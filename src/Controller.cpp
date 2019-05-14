@@ -218,12 +218,18 @@ void Controller::initialize(string inputFile,
     //Set up HRCD output if any
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
     _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
+        
+    //Set up MotorWalkingEvents
+    string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
+    _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, _subSystem, _cs));
     }
 
 
     //Set up CMGraph output if any
     string cmgraphsnapname = _outputDirectory + "CMGraph.traj";
     _outputs.push_back(new CMGraph(cmgraphsnapname, _subSystem));
+    
+    
 
 //    //Set up Turnover output if any
 //    string turnover = _outputDirectory + "Turnover.traj";

@@ -598,7 +598,7 @@ void MotorWalkPTemplate::addReaction(CCylinder* cc) {
 #ifdef REACTION_SIGNALING
         MotorWalkingCallback
         motorMoveCallback(cc->getCylinder(), site1, site2,
-                          motorType, boundType, _ps);
+                          motorType, boundType, _ps, _dt);
         ConnectionBlock rcb(rxn->connect(motorMoveCallback, false));
 #endif
 
@@ -711,7 +711,7 @@ void MotorWalkMTemplate::addReaction(CCylinder* cc) {
 #ifdef REACTION_SIGNALING
         MotorWalkingCallback
         motorMoveCallback(cc->getCylinder(), site1, site2,
-                          motorType, boundType, _ps);
+                          motorType, boundType, _ps, _dt);
         ConnectionBlock rcb(rxn->connect(motorMoveCallback, false));
 #endif
 

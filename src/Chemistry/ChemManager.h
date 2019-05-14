@@ -18,6 +18,7 @@
 
 #include "ReactionTemplate.h"
 #include "Parser.h"
+#include "DissipationTracker.h"
 
 //FORWARD DECLARATIONS
 class Compartment;
@@ -79,10 +80,12 @@ public:
     ///         if molecules should be released at the current time.
     virtual void updateCopyNumbers();
     
+    
 private:
     //DATA MEMBERS
     SubSystem* _subSystem;   ///< A pointer to subsytem for creation of callbacks, etc.
     ChemistryData _chemData; ///<The chemistry data for the system
+    DissipationTracker* _dt;
     
     /// A list of reactions to add to every new CCylinder
     /// @note - is a 2D vector corresponding to different filament types

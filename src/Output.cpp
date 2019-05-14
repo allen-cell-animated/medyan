@@ -962,3 +962,15 @@ void Concentrations::print(int snapshot) {
     }
     _outputFile << endl;
 }
+
+void MotorWalkingEvents::print(int snapshot) {
+    DissipationTracker* dt = _cs->getDT();
+    vector<tuple<double, double, double, double>> motorData = dt->getMotorData();
+    for(auto i = 0; i < motorData.size(); i++){
+        tuple<double, double, double, double> line = motorData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+    }
+    dt->clearMotorData();
+    
+    
+}

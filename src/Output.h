@@ -287,4 +287,19 @@ public:
     virtual void print(int snapshot);
 };
 
+/// Print total, chemdiss, mechdiss, chem, and mech
+class MotorWalkingEvents : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    MotorWalkingEvents(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~MotorWalkingEvents() {}
+    
+    virtual void print(int snapshot);
+};
+
 #endif

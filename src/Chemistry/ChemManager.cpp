@@ -390,10 +390,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add polymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
+                new PolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r), _dt));
             else
                 _filRxnTemplates[filType].emplace_back(
-                new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
+                new PolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r), _dt));
         }
 
         //set up reaction templates
@@ -595,10 +595,10 @@ void ChemManager::genFilReactionTemplates() {
             //Add depolymerization managers
             if(d == FilamentReactionDirection::FORWARD)
                 _filRxnTemplates[filType].emplace_back(
-                new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
+                new DepolyMinusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r), _dt));
             else
                 _filRxnTemplates[filType].emplace_back(
-                new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
+                new DepolyPlusEndTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r), _dt));
         }
 
         for(auto &r: _chemData.motorWalkingReactions[filType]) {
@@ -778,12 +778,14 @@ void ChemManager::genFilReactionTemplates() {
             }
 
             //add reaction
-            if(type == ReactionType::MOTORWALKINGFORWARD)
+            if(type == ReactionType::MOTORWALKINGFORWARD) {
+            
+            
                 _filRxnTemplates[filType].emplace_back(
-                new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
-            else {
+                new MotorWalkPTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r),_dt));
+            } else {
                 _filRxnTemplates[filType].emplace_back(
-                new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r),-get<3>(r), get<4>(r)+"m"));
+                new MotorWalkMTemplate(filType, reactantTemplate, productTemplate, get<2>(r),-get<3>(r), get<4>(r)+"m", _dt));
             }
         }
 
@@ -945,7 +947,7 @@ void ChemManager::genFilReactionTemplates() {
             }
 
             //add reaction
-            _filRxnTemplates[filType].emplace_back(new AgingTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r)));
+            _filRxnTemplates[filType].emplace_back(new AgingTemplate(filType, reactantTemplate, productTemplate, get<2>(r),get<3>(r), get<4>(r), _dt));
         }
 
 
@@ -2798,7 +2800,7 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
 
     //add reactions in compartment grid to chemsim
     grid->addChemSimReactions(chemSim);
-
+    _dt = chemSim->getDT();
     genFilReactionTemplates();
 }
 

@@ -34,6 +34,7 @@
 #include "MathFunctions.h"
 #include "SysParams.h"
 #include "Rand.h"
+#include "DissipationTracker.h"
 
 using namespace mathfunc;
 
@@ -728,13 +729,14 @@ struct MotorWalkingCallback {
     short _boundType;    ///< Type of bound this motor took place of
     
     SubSystem* _ps;      ///< Ptr to subsystem
+    DissipationTracker* _dt;
     
     MotorWalkingCallback(Cylinder* c,
                          short oldPosition, short newPosition,
-                         short motorType, short boundType, SubSystem* ps)
+                         short motorType, short boundType, SubSystem* ps, DissipationTracker* dt)
     
     :_c(c), _oldPosition(oldPosition), _newPosition(newPosition),
-    _motorType(motorType), _boundType(boundType), _ps(ps) {}
+    _motorType(motorType), _boundType(boundType), _ps(ps), _dt(dt) {}
     
     void operator() (ReactionBase* r) {
 //        cout<<"Motor walking begins"<<endl;
@@ -756,6 +758,9 @@ struct MotorWalkingCallback {
         cout<<"-----------"<<endl;*/
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
+        if(SysParams::Chemistry().dissTracking){
+        _dt->recordWalk(m);
+        }
         m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
         
 #ifdef DYNAMICRATES
