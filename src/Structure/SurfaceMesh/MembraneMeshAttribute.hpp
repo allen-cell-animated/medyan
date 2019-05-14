@@ -767,6 +767,79 @@ struct MembraneMeshAttribute {
 
     } // updateGeometryValueWithDerivative(...)
 
+    // This function updates geometries necessary for MEDYAN system, like
+    // pseudo unit normals.
+    // This function uses cached indexing to enhance performance, so a valid
+    // cache is needed in this function.
+    static void updateGeometryValueForSystem(MeshType& mesh) {
+        using namespace mathfunc;
+
+        cacheIndices(mesh);
+
+        const auto& vertices = mesh.getVertices();
+        const auto& edges = mesh.getEdges();
+        const auto& triangles = mesh.getTriangles();
+
+        const size_t numVertices = vertices.size();
+        const size_t numEdges = edges.size();
+        const size_t numTriangles = triangles.size();
+
+        const auto& coords = Bead::getDbDataConst().coords;
+
+        // Calculate triangle unit normal
+        for(size_t ti = 0; ti < numTriangles; ++ti) {
+            auto& ta = mesh.getTriangleAttribute(ti);
+            auto& tag = ta.gTriangle;
+            const auto& c0 = coords[ta.cachedCoordIndex[0]];
+            const auto& c1 = coords[ta.cachedCoordIndex[1]];
+            const auto& c2 = coords[ta.cachedCoordIndex[2]];
+
+            const auto cp = cross(c1 - c0, c2 - c0);
+
+            // unit normal
+            tag.unitNormal = normalizedVector(cp);
+        }
+
+        // Calculate edge pesudo unit normal
+        for(size_t ei = 0; ei < numEdges; ++ei) {
+            auto& ea = mesh.getEdgeAttribute(ei);
+
+            // pseudo unit normal
+            using PolygonType = typename MeshType::HalfEdge::PolygonType;
+            if(
+                ea.cachedPolygonType[0] == PolygonType::Triangle &&
+                ea.cachedPolygonType[1] == PolygonType::Triangle
+            ) {
+                ea.gEdge.pseudoUnitNormal = normalizedVector(
+                    mesh.getTriangleAttribute(ea.cachedPolygonIndex[0]).gTriangle.unitNormal +
+                    mesh.getTriangleAttribute(ea.cachedPolygonIndex[1]).gTriangle.unitNormal
+                );
+            }
+        }
+
+        const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
+
+        // Calculate vertex pseudo unit normal
+        for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
+            auto& va = mesh.getVertexAttribute(vi);
+            auto& vag = va.gVertex;
+
+            // clearing
+            vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
+
+            for(size_t i = 0; i < va.cachedDegree; ++i) {
+                const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
+                const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
+
+                const auto theta = mesh.getHalfEdgeAttribute(hei).gHalfEdge.theta;
+
+                vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
+            }
+
+            normalize(vag.pseudoUnitNormal);
+        }
+    } // void updateGeometryValue(...)
+
     // Signed distance using geometric attributes (the inefficient way)
     /**************************************************************************
     The function works in the following procedure:
@@ -888,6 +961,7 @@ struct MembraneMeshAttribute {
     }
 
     // Attribute computation in adaptive remeshing algorithms
+    //-------------------------------------------------------------------------
 
     // Triangle normal (Geometric attribute) used in adaptive remeshing
     static void adaptiveComputeTriangleNormal(MeshType& mesh, size_t ti) {

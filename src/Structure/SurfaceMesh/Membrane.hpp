@@ -92,6 +92,9 @@ public:
     void updateGeometryValueWithDerivative() {
         MembraneMeshAttributeType::updateGeometryValueWithDerivative(_mesh);
     }
+    void updateGeometryValueForSystem() {
+        MembraneMeshAttributeType::updateGeometryValueForSystem(_mesh);
+    }
 
     /**
      * Use pseudo normal signed distance field method to get the signed distance to a point.
