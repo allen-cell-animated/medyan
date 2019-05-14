@@ -21,7 +21,7 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(const doub
             const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
             const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
 
-            const auto area = stretched ? v.attr.gVertexS.area : v.attr.gVertex.area;
+            const auto area = (stretched ? v.attr.gVertexS.astar : v.attr.gVertex.astar) / 3;
             const auto curv = stretched ? v.attr.gVertexS.curv : v.attr.gVertex.curv;
 
             U_i += _FFType.energy(area, curv, kBending, eqCurv);
@@ -53,12 +53,12 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces(const double
             const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
             const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
 
-            const auto area = v.attr.gVertex.area;
+            const auto area = v.attr.gVertex.astar / 3;
             const auto curv = v.attr.gVertex.curv;
 
             _FFType.forces(
                 force + 3 * v.attr.vertex->Bead::getIndex(),
-                area, v.attr.gVertex.dArea,
+                area, v.attr.gVertex.dAstar / 3,
                 curv, v.attr.gVertex.dCurv,
                 kBending, eqCurv
             );
@@ -66,7 +66,7 @@ void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces(const double
             mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
                 const size_t hei_o = mesh.opposite(hei);
                 auto vt = mesh.getVertexAttribute(mesh.target(hei_o)).vertex;
-                const auto& dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
+                const auto& dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborAstar / 3;
                 const auto& dCurv = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
                 _FFType.forces(
                     force + 3 * vt->Bead::getIndex(),

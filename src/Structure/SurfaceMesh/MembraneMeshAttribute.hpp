@@ -570,9 +570,8 @@ struct MembraneMeshAttribute {
 
         }
 
-        // Clear derivative of vcell area on neighbors
         for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea = {0.0, 0.0, 0.0};
+            mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea = {0.0, 0.0, 0.0}; // deprecated
         }
 
         const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
@@ -620,6 +619,7 @@ struct MembraneMeshAttribute {
                 const size_t hei_o = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
                 const size_t ti0 = cvt[mesh.getMetaAttribute().cachedVertexOffsetPolygon(vi) + i];
                 const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
+                const size_t hei_p = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + i];
                 const size_t hei_on = cvt[mesh.getMetaAttribute().cachedVertexOffsetOuterHE(vi) + (i + 1) % va.cachedDegree];
                 const size_t hei_right = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + 1) % va.cachedDegree];
                 const Vec3 cn = coords[cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i]];
@@ -651,6 +651,11 @@ struct MembraneMeshAttribute {
 
                 // Accumulate dAstar
                 vag.dAstar += 0.5 * sumCotTheta * diff;
+
+                // Calculate dAstar_n (used in bending force calculation)
+                mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborAstar
+                    = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dTriangleArea
+                    + mesh.getHalfEdgeAttribute(hei_p).gHalfEdge.dTriangleArea;
 
                 // Accumulate pseudo unit normal
                 vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
