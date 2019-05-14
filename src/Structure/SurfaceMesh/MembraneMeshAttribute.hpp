@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
-#define MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_hpp
+#ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_Hpp
+#define MEDYAN_Structure_SurfaceMesh_MembraneMeshAttribute_Hpp
 
 #include <algorithm> // max
 #include <array>
@@ -405,7 +405,7 @@ struct MembraneMeshAttribute {
             const Vec3 ci = coords[va.cachedCoordIndex];
 
             // clearing
-            vag.area = 0.0;
+            vag.area = 0.0; // deprecated
             vag.astar = 0.0;
             vag.dAstar = {0.0, 0.0, 0.0};
             vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
@@ -438,7 +438,7 @@ struct MembraneMeshAttribute {
                 const auto diff = ci - cn;
                 const auto dist2 = magnitude2(diff);
 
-                vag.area += sumCotTheta * dist2 * 0.125;
+                vag.area += sumCotTheta * dist2 * 0.125; // deprecated
                 vag.astar += mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().area;
 
                 vag.dAstar += 0.5 * sumCotTheta * diff;
@@ -456,7 +456,7 @@ struct MembraneMeshAttribute {
 
             const int flippingCurv = (dot(2 * vag.dAstar, vag.pseudoUnitNormal) > 0 ? 1 : -1);
 
-            vag.curv = flippingCurv * magK1 * 0.25 * invA;
+            vag.curv = 0.5 * dot(vag.dAstar, vag.dVolume) / dVolume2;
         }
     } // void updateGeometryValue(...)
 
@@ -683,12 +683,12 @@ struct MembraneMeshAttribute {
             const auto dCurvFac1 = 0.25 * invA * flippingCurv / magK1;
             const auto dCurvFac2 = -0.25 * invA * invA * magK1 * flippingCurv;
 
-            vag.curv = flippingCurv * magK1 * 0.25 * invA;
+            vag.curv = 0.5 * dot(vag.dAstar, vag.dVolume) / dVolume2;
             // Derivative will be processed later.
 
             // Calculate derivative of curvature
             // Using another loop because d Vol, d AStar and H are needed for curvature derivative
-            std::array<Vec3, 3> dDAStar {}; // On center vertex, indexed by [k1x, k1y, k1z]
+            std::array<Vec3, 3> dDAstar {}; // On center vertex, indexed by [k1x, k1y, k1z]
             for(size_t i = 0; i < va.cachedDegree; ++i) {
                 const size_t hei_o = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
                 const size_t hei_n = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + (i + va.cachedDegree - 1) % va.cachedDegree];
@@ -705,35 +705,35 @@ struct MembraneMeshAttribute {
                 const auto sumDCotThetaNeighbor = dCotThetaLeft[2] + dCotThetaRight[0];
 
                 const auto diff = ci - cn;
-                // Accumulate dDAStar on the center vertex vi
-                dDAStar[0] += (0.5 * sumDCotThetaCenter[0]) * diff;
-                dDAStar[1] += (0.5 * sumDCotThetaCenter[1]) * diff;
-                dDAStar[2] += (0.5 * sumDCotThetaCenter[2]) * diff;
-                dDAStar[0][0] += 0.5 * sumCotTheta;
-                dDAStar[1][1] += 0.5 * sumCotTheta;
-                dDAStar[2][2] += 0.5 * sumCotTheta; // dDAStar += 0.5 * I * sumCotTheta, where I is gradient of diff (identity)
+                // Accumulate dDAstar on the center vertex vi
+                dDAstar[0] += (0.5 * sumDCotThetaCenter[0]) * diff;
+                dDAstar[1] += (0.5 * sumDCotThetaCenter[1]) * diff;
+                dDAstar[2] += (0.5 * sumDCotThetaCenter[2]) * diff;
+                dDAstar[0][0] += 0.5 * sumCotTheta;
+                dDAstar[1][1] += 0.5 * sumCotTheta;
+                dDAstar[2][2] += 0.5 * sumCotTheta; // dDAstar += 0.5 * I * sumCotTheta, where I is gradient of diff (identity)
 
-                // Calculate dDAStar and derivative of curvature on neighbor vertex vn
-                std::array<Vec3, 3> dDAStar_n {};
+                // Calculate dDAstar and derivative of curvature on neighbor vertex vn
+                std::array<Vec3, 3> dDAstar_n {};
                 // As direct target
-                dDAStar_n[0] = (0.5 * sumDCotThetaNeighbor[0]) * diff;
-                dDAStar_n[1] = (0.5 * sumDCotThetaNeighbor[1]) * diff;
-                dDAStar_n[2] = (0.5 * sumDCotThetaNeighbor[2]) * diff;
-                dDAStar_n[0][0] -= 0.5 * sumCotTheta;
-                dDAStar_n[1][1] -= 0.5 * sumCotTheta;
-                dDAStar_n[2][2] -= 0.5 * sumCotTheta; // dK1 += -0.5 * I * sumCotTheta
+                dDAstar_n[0] = (0.5 * sumDCotThetaNeighbor[0]) * diff;
+                dDAstar_n[1] = (0.5 * sumDCotThetaNeighbor[1]) * diff;
+                dDAstar_n[2] = (0.5 * sumDCotThetaNeighbor[2]) * diff;
+                dDAstar_n[0][0] -= 0.5 * sumCotTheta;
+                dDAstar_n[1][1] -= 0.5 * sumCotTheta;
+                dDAstar_n[2][2] -= 0.5 * sumCotTheta; // dK1 += -0.5 * I * sumCotTheta
 
                 // As target for left and right
                 const auto diff_left = ci - c_left;
                 const auto diff_right = ci - c_right;
                 const auto& dCotThetaOfLeft = mesh.getHalfEdgeAttribute(hei_p).gHalfEdge.dCotTheta[1];
                 const auto& dCotThetaOfRight = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dCotTheta[1];
-                dDAStar_n[0] += (0.5 * dCotThetaOfLeft[0]) * diff_left;
-                dDAStar_n[1] += (0.5 * dCotThetaOfLeft[1]) * diff_left;
-                dDAStar_n[2] += (0.5 * dCotThetaOfLeft[2]) * diff_left;
-                dDAStar_n[0] += (0.5 * dCotThetaOfRight[0]) * diff_right;
-                dDAStar_n[1] += (0.5 * dCotThetaOfRight[1]) * diff_right;
-                dDAStar_n[2] += (0.5 * dCotThetaOfRight[2]) * diff_right;
+                dDAstar_n[0] += (0.5 * dCotThetaOfLeft[0]) * diff_left;
+                dDAstar_n[1] += (0.5 * dCotThetaOfLeft[1]) * diff_left;
+                dDAstar_n[2] += (0.5 * dCotThetaOfLeft[2]) * diff_left;
+                dDAstar_n[0] += (0.5 * dCotThetaOfRight[0]) * diff_right;
+                dDAstar_n[1] += (0.5 * dCotThetaOfRight[1]) * diff_right;
+                dDAstar_n[2] += (0.5 * dCotThetaOfRight[2]) * diff_right;
 
                 // D_n (d Vol) = (1/2) D_n (c_left x cn + cn x c_right)
                 //             = (1/2) D_n (cn x (c_right - c_left))
@@ -743,35 +743,28 @@ struct MembraneMeshAttribute {
 
                 // Compute t1_n, t2_n and t3_n
                 const Vec3 t1_n {
-                    dot(dDAStar_n[0], vag.dVolume),
-                    dot(dDAStar_n[1], vag.dVolume),
-                    dot(dDAStar_n[2], vag.dVolume)
+                    dot(dDAstar_n[0], vag.dVolume),
+                    dot(dDAstar_n[1], vag.dVolume),
+                    dot(dDAstar_n[2], vag.dVolume)
                 };
                 const Vec3 t2_n = 0.5 * cross(vec_lr, vag.dAstar);
                 const Vec3 t3_n = 0.5 * cross(vec_lr, vag.dVolume);
 
                 // Derivative of curvature
-                const Vec3 mp {{{
-                    dot(dDAStar_n[0], vag.dAstar),
-                    dot(dDAStar_n[1], vag.dAstar),
-                    dot(dDAStar_n[2], vag.dAstar)
-                }}}; // A matrix product dK1_n * k1
-                mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv =
-                    dCurvFac1 * 4 * mp + dCurvFac2 * mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
+                mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv = (0.5 * (t1_n + t2_n) - (2 * vag.curv) * t3_n) / dVolume2;
             }
 
             const Vec3 t1 {
-                dot(dDAStar[0], vag.dVolume),
-                dot(dDAStar[1], vag.dVolume),
-                dot(dDAStar[2], vag.dVolume)
+                dot(dDAstar[0], vag.dVolume),
+                dot(dDAstar[1], vag.dVolume),
+                dot(dDAstar[2], vag.dVolume)
             };
 
             // Also the derivative of curvature on central vertex
-            vag.dCurv =
-                dCurvFac1 * 4 * Vec3{ dot(dDAStar[0], vag.dAstar), dot(dDAStar[1], vag.dAstar), dot(dDAStar[2], vag.dAstar) }
-                + dCurvFac2 * vag.dArea;
+            vag.dCurv = t1 * (0.5 / dVolume2);
 
         } // End loop vertices (V cells)
+
     } // updateGeometryValueWithDerivative(...)
 
     // Signed distance using geometric attributes (the inefficient way)
