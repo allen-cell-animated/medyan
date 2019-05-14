@@ -406,6 +406,8 @@ struct MembraneMeshAttribute {
 
             // clearing
             vag.area = 0.0;
+            vag.astar = 0.0;
+            vag.dAstar = {0.0, 0.0, 0.0};
             vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
             vag.dVolume = {0.0, 0.0, 0.0};
 
@@ -418,7 +420,6 @@ struct MembraneMeshAttribute {
             //        (1/2) d AStar  dot  d Vol
             //   H = ----------------------------
             //               d Vol   dot  d Vol
-            Vec3 dAStar {};
 
             for(size_t i = 0; i < va.cachedDegree; ++i) {
                 const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
@@ -438,8 +439,9 @@ struct MembraneMeshAttribute {
                 const auto dist2 = magnitude2(diff);
 
                 vag.area += sumCotTheta * dist2 * 0.125;
+                vag.astar += mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().area;
 
-                dAStar += 0.5 * sumCotTheta * diff;
+                vag.dAstar += 0.5 * sumCotTheta * diff;
                 vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).template getGTriangle<stretched>().unitNormal;
 
                 // Added to derivative of sum of cone volume
@@ -448,11 +450,11 @@ struct MembraneMeshAttribute {
 
             const auto dVolume2 = magnitude2(vag.dVolume);
             const double invA = 1 / vag.area;
-            const double magK1 = magnitude(2 * dAStar); // deprecated
+            const double magK1 = magnitude(2 * vag.dAstar); // deprecated
 
             normalize(vag.pseudoUnitNormal);
 
-            const int flippingCurv = (dot(2 * dAStar, vag.pseudoUnitNormal) > 0 ? 1 : -1);
+            const int flippingCurv = (dot(2 * vag.dAstar, vag.pseudoUnitNormal) > 0 ? 1 : -1);
 
             vag.curv = flippingCurv * magK1 * 0.25 * invA;
         }
@@ -585,7 +587,9 @@ struct MembraneMeshAttribute {
 
             // clearing
             vag.area = 0.0;
+            vag.astar = 0.0;
             vag.dArea = {0.0, 0.0, 0.0};
+            vag.dAstar = {0.0, 0.0, 0.0};
             vag.pseudoUnitNormal = {0.0, 0.0, 0.0};
             vag.dVolume = {0.0, 0.0, 0.0};
 
@@ -609,7 +613,6 @@ struct MembraneMeshAttribute {
             //   t1 = D(d AStar) d Vol    (D on both central and neighbor vertices)
             //   t2 = D(d Vol) d AStar    (D on only neighbor vertices because D(d Vol) on center vertex is 0)
             //   t3 = D(d Vol) d Vol      (D on only neighbor vertices because D(d Vol) on center vertex is 0)
-            Vec3 dAStar {};
 
             // derivative of k1 and curvature will be calculated in the next loop
             for(size_t i = 0; i < va.cachedDegree; ++i) {
@@ -632,6 +635,7 @@ struct MembraneMeshAttribute {
                 const auto dist2 = magnitude2(diff);
 
                 vag.area += sumCotTheta * dist2 * 0.125;
+                vag.astar += mesh.getTriangleAttribute(ti0).gTriangle.area;
 
                 // Area derivative
                 vag.dArea +=
@@ -645,8 +649,8 @@ struct MembraneMeshAttribute {
                 mesh.getHalfEdgeAttribute(hei_right).gHalfEdge.dNeighborArea +=
                     dCotThetaRight[1] * (dist2 * 0.125);
 
-                // Accumulate dAStar
-                dAStar += 0.5 * sumCotTheta * diff;
+                // Accumulate dAstar
+                vag.dAstar += 0.5 * sumCotTheta * diff;
 
                 // Accumulate pseudo unit normal
                 vag.pseudoUnitNormal += theta * mesh.getTriangleAttribute(ti0).gTriangle.unitNormal;
@@ -658,14 +662,14 @@ struct MembraneMeshAttribute {
 
             const auto dVolume2 = magnitude2(vag.dVolume);
             const auto invA = 1.0 / vag.area;
-            const auto magK1 = magnitude(2 * dAStar); // deprecated
+            const auto magK1 = magnitude(2 * vag.dAstar); // deprecated
 
             // Calculate pseudo unit normal
             normalize(vag.pseudoUnitNormal);
 
             // Calculate mean curvature H = |dA| / 2A
             // dH = (ddA)dA / 2A|dA| - |ddA|dA / 2A^2
-            const int flippingCurv = (dot(2 * dAStar, vag.pseudoUnitNormal) > 0 ? 1 : -1); // deprecated
+            const int flippingCurv = (dot(2 * vag.dAstar, vag.pseudoUnitNormal) > 0 ? 1 : -1); // deprecated
             const auto dCurvFac1 = 0.25 * invA * flippingCurv / magK1;
             const auto dCurvFac2 = -0.25 * invA * invA * magK1 * flippingCurv;
 
@@ -692,9 +696,9 @@ struct MembraneMeshAttribute {
 
                 const auto diff = ci - cn;
                 // Accumulate dDAStar on the center vertex vi
-                dDAStar[0] += 0.5 * sumDCotThetaCenter[0] * diff;
-                dDAStar[1] += 0.5 * sumDCotThetaCenter[1] * diff;
-                dDAStar[2] += 0.5 * sumDCotThetaCenter[2] * diff;
+                dDAStar[0] += (0.5 * sumDCotThetaCenter[0]) * diff;
+                dDAStar[1] += (0.5 * sumDCotThetaCenter[1]) * diff;
+                dDAStar[2] += (0.5 * sumDCotThetaCenter[2]) * diff;
                 dDAStar[0][0] += 0.5 * sumCotTheta;
                 dDAStar[1][1] += 0.5 * sumCotTheta;
                 dDAStar[2][2] += 0.5 * sumCotTheta; // dDAStar += 0.5 * I * sumCotTheta, where I is gradient of diff (identity)
@@ -702,9 +706,9 @@ struct MembraneMeshAttribute {
                 // Calculate dDAStar and derivative of curvature on neighbor vertex vn
                 std::array<Vec3, 3> dDAStar_n {};
                 // As direct target
-                dDAStar_n[0] = 0.5 * sumDCotThetaNeighbor[0] * diff;
-                dDAStar_n[1] = 0.5 * sumDCotThetaNeighbor[1] * diff;
-                dDAStar_n[2] = 0.5 * sumDCotThetaNeighbor[2] * diff;
+                dDAStar_n[0] = (0.5 * sumDCotThetaNeighbor[0]) * diff;
+                dDAStar_n[1] = (0.5 * sumDCotThetaNeighbor[1]) * diff;
+                dDAStar_n[2] = (0.5 * sumDCotThetaNeighbor[2]) * diff;
                 dDAStar_n[0][0] -= 0.5 * sumCotTheta;
                 dDAStar_n[1][1] -= 0.5 * sumCotTheta;
                 dDAStar_n[2][2] -= 0.5 * sumCotTheta; // dK1 += -0.5 * I * sumCotTheta
@@ -714,12 +718,18 @@ struct MembraneMeshAttribute {
                 const auto diff_right = ci - c_right;
                 const auto& dCotThetaOfLeft = mesh.getHalfEdgeAttribute(hei_p).gHalfEdge.dCotTheta[1];
                 const auto& dCotThetaOfRight = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dCotTheta[1];
-                dDAStar_n[0] += 0.5 * dCotThetaOfLeft[0] * diff_left;
-                dDAStar_n[1] += 0.5 * dCotThetaOfLeft[1] * diff_left;
-                dDAStar_n[2] += 0.5 * dCotThetaOfLeft[2] * diff_left;
-                dDAStar_n[0] += 0.5 * dCotThetaOfRight[0] * diff_right;
-                dDAStar_n[1] += 0.5 * dCotThetaOfRight[1] * diff_right;
-                dDAStar_n[2] += 0.5 * dCotThetaOfRight[2] * diff_right;
+                dDAStar_n[0] += (0.5 * dCotThetaOfLeft[0]) * diff_left;
+                dDAStar_n[1] += (0.5 * dCotThetaOfLeft[1]) * diff_left;
+                dDAStar_n[2] += (0.5 * dCotThetaOfLeft[2]) * diff_left;
+                dDAStar_n[0] += (0.5 * dCotThetaOfRight[0]) * diff_right;
+                dDAStar_n[1] += (0.5 * dCotThetaOfRight[1]) * diff_right;
+                dDAStar_n[2] += (0.5 * dCotThetaOfRight[2]) * diff_right;
+
+                // D_n (d Vol) = (1/2) D_n (c_left x cn + cn x c_right)
+                //             = (1/2) D_n (cn x (c_right - c_left))
+                // Then for any vector v,
+                // [D_n (d Vol)] v = (1/2) (c_right - c_left) x v
+                const auto vec_lr = c_right - c_left;
 
                 // Compute t1_n, t2_n and t3_n
                 const Vec3 t1_n {
@@ -727,14 +737,14 @@ struct MembraneMeshAttribute {
                     dot(dDAStar_n[1], vag.dVolume),
                     dot(dDAStar_n[2], vag.dVolume)
                 };
-
-                // TODO t2_n and t3_n
+                const Vec3 t2_n = 0.5 * cross(vec_lr, vag.dAstar);
+                const Vec3 t3_n = 0.5 * cross(vec_lr, vag.dVolume);
 
                 // Derivative of curvature
                 const Vec3 mp {{{
-                    dot(dDAStar_n[0], dAStar),
-                    dot(dDAStar_n[1], dAStar),
-                    dot(dDAStar_n[2], dAStar)
+                    dot(dDAStar_n[0], vag.dAstar),
+                    dot(dDAStar_n[1], vag.dAstar),
+                    dot(dDAStar_n[2], vag.dAstar)
                 }}}; // A matrix product dK1_n * k1
                 mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv =
                     dCurvFac1 * 4 * mp + dCurvFac2 * mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborArea;
@@ -748,7 +758,7 @@ struct MembraneMeshAttribute {
 
             // Also the derivative of curvature on central vertex
             vag.dCurv =
-                dCurvFac1 * 4 * Vec3{ dot(dDAStar[0], dAStar), dot(dDAStar[1], dAStar), dot(dDAStar[2], dAStar) }
+                dCurvFac1 * 4 * Vec3{ dot(dDAStar[0], vag.dAstar), dot(dDAStar[1], vag.dAstar), dot(dDAStar[2], vag.dAstar) }
                 + dCurvFac2 * vag.dArea;
 
         } // End loop vertices (V cells)

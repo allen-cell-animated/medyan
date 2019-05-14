@@ -7,6 +7,8 @@ struct GVertex {
 
     double area; // Current area
     mathfunc::Vec3 dArea; // Derivative of area on the central vertex, derivative on neighbors are stored in half edges
+    double astar; // 1-ring area
+    mathfunc::Vec3 dAstar; // Derivative of 1-ring area on the central vertex. Derivatives on neighbors are stored in half edges
 
     double curv; // Current mean curvature
     mathfunc::Vec3 dCurv;
@@ -27,6 +29,7 @@ struct GHalfEdge {
     mathfunc::Vec3 dTriangleArea; // Derivative of area of triangle on target
 
     mathfunc::Vec3 dNeighborArea; // Derivative of area of vcell of source on target
+    mathfunc::Vec3 dNeighborAstar; // Derivative (on target vertex) of 1-ring area of source vertex
     mathfunc::Vec3 dNeighborCurv; // Derivative of curv of vcell of source on target
     
 };
