@@ -16,6 +16,7 @@
 #include "BubbleCylinderRepulsionExp.h"
 
 #include "MTOC.h"
+#include "AFM.h"
 #include "Bubble.h"
 #include "Cylinder.h"
 #include "Bead.h"
@@ -35,6 +36,16 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
                 
                 auto mtoc = (MTOC*)bb->getParent();
                 auto filaments = mtoc->getFilaments();
+                
+                auto f = (Filament*)c->getParent();
+                
+                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+                    continue;
+            }
+            //if part of an AFM, skip
+            else if(bb->isAFM()){
+                auto afm = (AFM*)bb->getParent();
+                auto filaments = afm->getFilaments();
                 
                 auto f = (Filament*)c->getParent();
                 
@@ -77,6 +88,17 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
                 
                 auto mtoc = (MTOC*)bb->getParent();
                 auto filaments = mtoc->getFilaments();
+                
+                auto f = (Filament*)_neighborList->getNeighbors(bb)[ni]->getParent();
+                
+                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+                    continue;
+            }
+            //if part of an AFM, skip
+            else if(bb->isAFM()) {
+                
+                auto afm = (AFM*)bb->getParent();
+                auto filaments = afm->getFilaments();
                 
                 auto f = (Filament*)_neighborList->getNeighbors(bb)[ni]->getParent();
                 
@@ -165,6 +187,17 @@ void BubbleCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                 
                 if(find(filaments.begin(), filaments.end(), f) != filaments.end())
                 continue;
+            }
+            //if part of an AFM, skip
+            else if(bb->isAFM()) {
+                
+                auto afm = (AFM*)bb->getParent();
+                auto filaments = afm->getFilaments();
+                
+                auto f = (Filament*) _neighborList->getNeighbors(bb)[ni]->getParent();
+                
+                if(find(filaments.begin(), filaments.end(), f) != filaments.end())
+                    continue;
             }
             
             double kRep = bb->getRepulsionConst();

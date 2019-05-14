@@ -48,12 +48,15 @@ private:
     double _kRepuls;      ///< Repulsion constant for bubble-bubble and bubble-cylinder interactions
     double _screenLength; ///< Screening length for a repulsive potential
     double _MTOCBendingK; ///< use for MTOC-MT bending force field
+    double _AFMBendingK; ///< use for AFM-filament bending force field
     
     int _ID;        ///< Identifier
     
     static Database<Bubble*> _bubbles; ///< Collection in SubSystem
     
     bool _isMTOC = false;   ///< If representing a MTOC
+    
+    bool _isAFM = false;    ///< If representing a AFM
     
 public:
     vector<double> coordinate; ///< Current coordinates of bubble,
@@ -68,6 +71,7 @@ public:
     double getRepulsionConst() {return _kRepuls;}
     double getScreeningLength() {return _screenLength;}
     double getMTOCBendingK() {return _MTOCBendingK;}
+    double getAFMBendingK() {return _AFMBendingK;}
     
     Bead* getBead() {return _bead;}
     
@@ -77,6 +81,9 @@ public:
     
     void setAsMTOC() {_isMTOC = true;}
     bool isMTOC() {return _isMTOC;}
+    
+    void setAsAFM() {_isAFM = true;}
+    bool isAFM() {return _isAFM;}
 
     /// Print bubble information
     virtual void printSelf();

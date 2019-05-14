@@ -11,13 +11,14 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "BoundaryCylinderRepulsion.h"
+#include "BoundaryCylinderAFMRepulsion.h"
 
-#include "BoundaryCylinderRepulsionExp.h"
+#include "BoundaryCylinderAFMRepulsionExp.h"
 #include "BoundaryElement.h"
 #include "BoundaryElementImpl.h"
 
 #include "Bead.h"
+#include "Bubble.h"
 #include "Cylinder.h"
 
 #include "MathFunctions.h"
@@ -34,7 +35,7 @@
 using namespace mathfunc;
 
 template <class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
+void BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::vectorize() {
 
     //count interactions
     nint = 0;
@@ -186,7 +187,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::vectorize() {
 }
 
 template<class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
+void BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::deallocate() {
 
     delete [] beadSet;
     delete [] krep;
@@ -212,7 +213,7 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::deallocate() {
 }
 
 template <class BRepulsionInteractionType>
-double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(double *coord, double *f, double d) {
+double BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::computeEnergy(double *coord, double *f, double d) {
     double U_i[1], U_ii;
     double* gU_i;
     U_ii = 0.0;
@@ -269,7 +270,7 @@ double BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeEnergy(doubl
 }
 
 template <class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
+void BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     tbegin = chrono::high_resolution_clock::now();
@@ -328,8 +329,9 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeForces(double 
 }
 
 template <class BRepulsionInteractionType>
-void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
+void BoundaryCylinderAFMRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 //    std::cout<<"BOUNDARY REPULSION LOAD FORCES DOES NOT USE VECTORIZED FORCES/COORDINATES"<<endl;
+    double r, z, dz;
     for (auto be: BoundaryElement::getBoundaryElements()) {
 
         for(auto &c : _neighborList->getNeighbors(be)) {
@@ -363,9 +365,22 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = -dotProduct(be->normal(newCoord), normal);
+                    
+                    //recheck the upper plane based on bubble position
+                    r = be->distance(newCoord);
+                    for (auto bb : Bubble::getBubbles()){
+                        z = bb->coordinate[2] - 25;
+                    }
+                    dz = z - newCoord[2];
+                    
+                    if(dz < r){
+                        r = dz;
+                        proj = -dotProduct(vector<double>{0.0,0.0,-1.0}, normal);
+                    }
+                    
                     if(proj < 0.0) proj = 0.0;
 
-                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
+                    double loadForce = _FFType.loadForces(r, kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     bd->loadForcesP[bd->lfip++] += proj * loadForce;
                     //bd->loadForcesP[bd->lfip++] += loadForce;
@@ -397,8 +412,22 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
                     // Projection magnitude ratio on the direction of the cylinder
                     // (Effective monomer size) = (monomer size) * proj
                     double proj = -dotProduct(be->normal(newCoord), normal);
+                    
+                    //recheck the upper plane based on bubble position
+                    r = be->distance(newCoord);
+                    for (auto bb : Bubble::getBubbles()){
+                        z = bb->coordinate[2] - 25;
+                    }
+                    dz = z - newCoord[2];
+                    
+                    if(dz < r){
+                        r = dz;
+                        proj = -dotProduct(vector<double>{0.0,0.0,-1.0}, normal);
+                    }
+                    
                     if(proj < 0.0) proj = 0.0;
-                    double loadForce = _FFType.loadForces(be->distance(newCoord), kRep, screenLength);
+                    
+                    double loadForce = _FFType.loadForces(r, kRep, screenLength);
                     // The load force stored in bead also considers effective monomer size.
                     bd->loadForcesM[bd->lfim++] += proj * loadForce;
                     //bd->loadForcesM[bd->lfim++] += loadForce;
@@ -413,8 +442,8 @@ void BoundaryCylinderRepulsion<BRepulsionInteractionType>::computeLoadForces() {
 }
 
 ///Template specializations
-template double BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeEnergy(double *coord, double *f, double d);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeForces(double *coord, double *f);
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::computeLoadForces();
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::vectorize();
-template void BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>::deallocate();
+template double BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::computeEnergy(double *coord, double *f, double d);
+template void BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::computeForces(double *coord, double *f);
+template void BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::computeLoadForces();
+template void BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::vectorize();
+template void BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>::deallocate();

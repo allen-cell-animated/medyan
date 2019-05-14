@@ -72,7 +72,8 @@ struct MechParams {
     vector<double> BubbleRadius = {};
     vector<double> BubbleScreenLength = {};
     vector<double> MTOCBendingK = {};
-
+    vector<double> AFMBendingK = {};
+    
     double BubbleCutoff = 0.0;
 
     ///If using more than one bubble

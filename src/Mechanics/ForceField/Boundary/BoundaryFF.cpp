@@ -14,9 +14,13 @@
 #include "BoundaryFF.h"
 
 #include "BoundaryCylinderRepulsion.h"
-#include "BoundaryCylinderRepulsionIn.h"
 #include "BoundaryCylinderRepulsionExp.h"
+
+#include "BoundaryCylinderRepulsionIn.h"
 #include "BoundaryCylinderRepulsionExpIn.h"
+
+#include "BoundaryCylinderAFMRepulsion.h"
+#include "BoundaryCylinderAFMRepulsionExp.h"
 
 #include "BoundaryBubbleRepulsion.h"
 #include "BoundaryBubbleRepulsionExp.h"
@@ -26,26 +30,36 @@
 
 #include "BoundaryElement.h"
 #include "Bead.h"
+#include "Bubble.h"
 #include "Composite.h"
 
 BoundaryFF::BoundaryFF (string type) {
-    
-    if (type == "REPULSIONEXP") {
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
+    for(auto b : Bubble::getBubbles()){
+        if(b->isAFM()){
+            _boundaryInteractionVector.emplace_back(
+            new BoundaryCylinderAFMRepulsion<BoundaryCylinderAFMRepulsionExp>());
+            isSet = true;
+            continue;
+        }
+    }
+    if(!isSet){
+        if (type == "REPULSIONEXP") {
+            _boundaryInteractionVector.emplace_back(
+            new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
 
-//        _boundaryInteractionVector.emplace_back(
-//        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
-    }
-    else if(type == "REPULSIONEXPIN") {
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
-        _boundaryInteractionVector.emplace_back(
-        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
-    }
-    else {
-        cout << "Boundary FF not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
+    //        _boundaryInteractionVector.emplace_back(
+    //        new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+        }
+        else if(type == "REPULSIONEXPIN") {
+            _boundaryInteractionVector.emplace_back(
+            new BoundaryCylinderRepulsionIn<BoundaryCylinderRepulsionExpIn>());
+            _boundaryInteractionVector.emplace_back(
+            new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
+        }
+        else {
+            cout << "Boundary FF not recognized. Exiting." << endl;
+            exit(EXIT_FAILURE);
+        }
     }
     //if pinning to boundaries
     if(SysParams::Mechanics().pinBoundaryFilaments) {
