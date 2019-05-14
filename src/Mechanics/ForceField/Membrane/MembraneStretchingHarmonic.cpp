@@ -1,9 +1,4 @@
-#include "Mechanics/ForceField/Membrane/MembraneStretchingHarmonic.h"
-
-#include "Structure/SurfaceMesh/Vertex.h"
-#include "Structure/SurfaceMesh/Triangle.h"
-
-#include "MathFunctions.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingHarmonic.hpp"
 
 using namespace mathfunc;
 

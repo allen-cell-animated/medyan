@@ -604,14 +604,19 @@ struct MembraneMeshAttribute {
             //
             // Therefore (here D can operate on neighbor vertices, while d only on center vertex),
             //
-            //          D(d AStar) d Vol + D(d Vol) d AStar - H * 2 D(d Vol) d Vol
-            //   DH = --------------------------------------------------------------
-            //                              d Vol  dot  d Vol
+            //         (1/2) D(d AStar) d Vol + (1/2) D(d Vol) d AStar - H * 2 D(d Vol) d Vol
+            //   DH = -------------------------------------------------------------------------
+            //                                  d Vol  dot  d Vol
             //
             // For intermediate variables, let
             //   t1 = D(d AStar) d Vol    (D on both central and neighbor vertices)
             //   t2 = D(d Vol) d AStar    (D on only neighbor vertices because D(d Vol) on center vertex is 0)
             //   t3 = D(d Vol) d Vol      (D on only neighbor vertices because D(d Vol) on center vertex is 0)
+            // then
+            //
+            //          (1/2) t1 + (1/2) t2 - 2 H t3
+            //   DH = --------------------------------
+            //                d Vol  dot  d Vol
 
             // derivative of k1 and curvature will be calculated in the next loop
             for(size_t i = 0; i < va.cachedDegree; ++i) {
@@ -767,7 +772,7 @@ struct MembraneMeshAttribute {
                 + dCurvFac2 * vag.dArea;
 
         } // End loop vertices (V cells)
-    }
+    } // updateGeometryValueWithDerivative(...)
 
     // Signed distance using geometric attributes (the inefficient way)
     /**************************************************************************

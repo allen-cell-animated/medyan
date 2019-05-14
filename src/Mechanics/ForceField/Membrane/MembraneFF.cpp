@@ -14,8 +14,6 @@
 #include "Mechanics/ForceField/Membrane/MembraneFF.h"
 
 #include "Mechanics/ForceField/Membrane/MembraneStretching.h"
-#include "Mechanics/ForceField/Membrane/MembraneStretchingHarmonic.h"
-#include "Mechanics/ForceField/Membrane/MembraneStretchingVoronoiHarmonic.h"
 
 #include "Mechanics/ForceField/Membrane/MembraneBending.h"
 #include "Mechanics/ForceField/Membrane/MembraneBendingVoronoiHelfrich.h"
@@ -26,11 +24,11 @@ MembraneFF::MembraneFF (string& stretching, string& bending) {
     
     if (stretching == "TRIANGLE")
         _membraneInteractionVector.emplace_back(
-            new MembraneStretching<MembraneStretchingHarmonic>()
+            new MembraneStretching< MembraneStretchingAccumulationType::ByTriangle >()
         );
-    else if(stretching == "VORONOI")
+    else if(stretching == "VERTEX")
         _membraneInteractionVector.emplace_back(
-            new MembraneStretching<MembraneStretchingVoronoiHarmonic>()
+            new MembraneStretching< MembraneStretchingAccumulationType::ByVertex >()
         );
     else if(stretching == "") {}
     else {
