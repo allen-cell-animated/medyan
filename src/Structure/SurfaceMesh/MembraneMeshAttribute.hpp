@@ -627,10 +627,10 @@ struct MembraneMeshAttribute {
                 dDAstar_n[1] += (0.5 * dCotThetaOfRight[1]) * diff_right;
                 dDAstar_n[2] += (0.5 * dCotThetaOfRight[2]) * diff_right;
 
-                // D_n (d Vol) = (1/2) D_n (c_left x cn + cn x c_right)
-                //             = (1/2) D_n (cn x (c_right - c_left))
+                // D_n (d Vol) = (1/6) D_n (c_left x cn + cn x c_right)
+                //             = (1/6) D_n (cn x (c_right - c_left))
                 // Then for any vector v,
-                // [D_n (d Vol)] v = (1/2) (c_right - c_left) x v
+                // [D_n (d Vol)] v = (1/6) (c_right - c_left) x v
                 const auto vec_lr = c_right - c_left;
 
                 // Compute t1_n, t2_n and t3_n
@@ -639,8 +639,8 @@ struct MembraneMeshAttribute {
                     dot(dDAstar_n[1], vag.dVolume),
                     dot(dDAstar_n[2], vag.dVolume)
                 };
-                const Vec3 t2_n = 0.5 * cross(vec_lr, vag.dAstar);
-                const Vec3 t3_n = 0.5 * cross(vec_lr, vag.dVolume);
+                const Vec3 t2_n = (1.0 / 6) * cross(vec_lr, vag.dAstar);
+                const Vec3 t3_n = (1.0 / 6) * cross(vec_lr, vag.dVolume);
 
                 // Derivative of curvature
                 mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv = (0.5 * (t1_n + t2_n) - (2 * vag.curv) * t3_n) / dVolume2;
