@@ -659,8 +659,10 @@ struct MembraneMeshAttribute {
 
     } // updateGeometryValueWithDerivative(...)
 
-    // This function updates geometries necessary for MEDYAN system, like
-    // pseudo unit normals.
+    // This function updates geometries necessary for MEDYAN system. Currently
+    // the system needs
+    //   - (pseudo) unit normals
+    //   - triangle areas
     // This function uses cached indexing to enhance performance, so a valid
     // cache is needed in this function.
     static void updateGeometryValueForSystem(MeshType& mesh) {
@@ -678,7 +680,7 @@ struct MembraneMeshAttribute {
 
         const auto& coords = Bead::getDbDataConst().coords;
 
-        // Calculate triangle unit normal
+        // Calculate triangle unit normal and area
         for(size_t ti = 0; ti < numTriangles; ++ti) {
             auto& ta = mesh.getTriangleAttribute(ti);
             auto& tag = ta.gTriangle;
@@ -690,6 +692,9 @@ struct MembraneMeshAttribute {
 
             // unit normal
             tag.unitNormal = normalizedVector(cp);
+
+            // area
+            tag.area = magnitude(cp) * 0.5;
         }
 
         // Calculate edge pesudo unit normal
