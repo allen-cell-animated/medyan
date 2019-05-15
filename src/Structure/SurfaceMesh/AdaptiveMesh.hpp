@@ -99,9 +99,7 @@ public:
         const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
         const size_t hei_o = mesh.opposite(hei);
         const size_t hei_n = mesh.next(hei);
-        const size_t hei_p = mesh.prev(hei);
         const size_t hei_on = mesh.next(hei_o);
-        const size_t hei_op = mesh.prev(hei_o);
 
         const size_t vi0 = mesh.target(hei);
         const size_t vi1 = mesh.target(hei_n);
@@ -370,7 +368,6 @@ private:
 
         const auto hei_o = mesh.opposite(hei); // targeting vi1
         const auto hei_n = mesh.next(hei);
-        const auto hei_p = mesh.prev(hei); // targeting vi1
         const auto hei_ono = mesh.opposite(mesh.next(hei_o)); // targeting vi1
         const auto hei_opo = mesh.opposite(mesh.prev(hei_o));
 
@@ -463,9 +460,7 @@ public:
         const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
         const size_t hei_o = mesh.opposite(hei);
         const size_t hei_n = mesh.next(hei);
-        const size_t hei_p = mesh.prev(hei);
         const size_t hei_on = mesh.next(hei_o);
-        const size_t hei_op = mesh.prev(hei_o);
 
         const size_t vi0 = mesh.target(hei);
         const size_t vi1 = mesh.target(hei_n);
@@ -473,9 +468,6 @@ public:
         const size_t vi3 = mesh.target(hei_on);
         // Currently the edge connects v0 and v2.
         // If the edge collapses, v0 and v2 would become one point.
-
-        const size_t ti0 = mesh.triangle(hei);
-        const size_t ti1 = mesh.triangle(hei_o);
 
         // Check topology constraints
         // Currently does not allow collapsing of border edges, but we may also implement that in the future
@@ -490,9 +482,6 @@ public:
         ) return State::InvalidTopo;
 
         // Check triangle quality constraints
-        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
-        const Vec3 c2 = mesh.getVertexAttribute(vi2).getCoordinate();
-
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
         const auto prequalifyResult0 = _prequalify(mesh, hei_o);

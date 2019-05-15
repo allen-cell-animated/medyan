@@ -705,7 +705,6 @@ public:
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
 
             // Get index of current elements
             const size_t ohei       = edges[edgeIndex].halfEdgeIndex;
@@ -799,10 +798,8 @@ public:
         // Notice that halfedge index (not edge index) is used in this function.
         template< typename AttributeSetter >
         void operator()(SurfaceTriangularMesh& mesh, size_t ohei, AttributeSetter&& as)const {
-            auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
 
             // Preconditions should be handled by the caller
 
@@ -877,7 +874,6 @@ public:
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
 
             // Preconditions (like topology) should be handled by the caller.
 

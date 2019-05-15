@@ -1,17 +1,10 @@
-#ifndef MEDYAN_MembraneStretchingVoronoiHarmonic_h
-#define MEDYAN_MembraneStretchingVoronoiHarmonic_h
+#ifndef MEDYAN_Mechanics_ForceField_Membrane_MembraneStretchingHarmonic_Hpp
+#define MEDYAN_Mechanics_ForceField_Membrane_MembraneStretchingHarmonic_Hpp
 
-#include <array>
-#include <vector>
-
-#include "common.h"
 #include "MathFunctions.h"
 
-//FORWARD DECLARATIONS
-class Vertex;
-
 /// A harmonic potential used by the MembraneStretching
-class MembraneStretchingVoronoiHarmonic {
+class MembraneStretchingHarmonic {
     
 public:
     double energy(double, double, double);

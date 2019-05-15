@@ -5,8 +5,10 @@
 
 struct GVertex {
 
-    double area; // Current area
-    mathfunc::Vec3 dArea; // Derivative of area on the central vertex, derivative on neighbors are stored in half edges
+    [[deprecated]] double area; // Current area
+    [[deprecated]] mathfunc::Vec3 dArea; // Derivative of area on the central vertex, derivative on neighbors are stored in half edges
+    double astar; // 1-ring area
+    mathfunc::Vec3 dAstar; // Derivative of 1-ring area on the central vertex. Derivatives on neighbors are stored in half edges
 
     double curv; // Current mean curvature
     mathfunc::Vec3 dCurv;
@@ -23,17 +25,18 @@ struct GHalfEdge {
     double cotTheta;
     std::array<mathfunc::Vec3, 3> dCotTheta; // Indexed by [(source, target, target(next))]
 
-    mathfunc::Vec3 dEdgeLength; // Derivative of length of edge on target. FIXME the source derivative wont exist if at boundary.
+    [[deprecated]] mathfunc::Vec3 dEdgeLength; // Derivative of length of edge on target.
     mathfunc::Vec3 dTriangleArea; // Derivative of area of triangle on target
 
-    mathfunc::Vec3 dNeighborArea; // Derivative of area of vcell of source on target
+    [[deprecated]] mathfunc::Vec3 dNeighborArea; // Derivative of area of vcell of source on target
+    mathfunc::Vec3 dNeighborAstar; // Derivative (on target vertex) of 1-ring area of source vertex
     mathfunc::Vec3 dNeighborCurv; // Derivative of curv of vcell of source on target
     
 };
 
 struct GEdge {
 
-    double length; // Current length
+    [[deprecated]] double length; // Current length
 
     mathfunc::Vec3 pseudoUnitNormal; // The pseudo unit normal vector at the edge pointing outward.
 
