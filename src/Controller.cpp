@@ -218,10 +218,20 @@ void Controller::initialize(string inputFile,
     //Set up HRCD output if any
     string hrcdsnapname = _outputDirectory + "HRCD.traj";
     _outputs.push_back(new HRCD(hrcdsnapname, _subSystem, _cs));
-        
+    }
+    
+    if(SysParams::CParams.eventTracking){
     //Set up MotorWalkingEvents
     string motorwalkingevents = _outputDirectory + "motorwalkingevents.traj";
     _outputs.push_back(new MotorWalkingEvents(motorwalkingevents, _subSystem, _cs));
+        
+    //Set up LinkerUnbindingEvents
+    string linkerunbindingevents = _outputDirectory + "linkerunbindingevents.traj";
+    _outputs.push_back(new LinkerUnbindingEvents(linkerunbindingevents, _subSystem, _cs));
+        
+    //Set up LinkerBindingEvents
+    string linkerbindingevents = _outputDirectory + "linkerbindingevents.traj";
+    _outputs.push_back(new LinkerBindingEvents(linkerbindingevents, _subSystem, _cs));
     }
 
 

@@ -26,7 +26,7 @@
 #include "SysParams.h"
 #include <fstream>
 #include "MotorGhost.h"
-
+#include "Linker.h"
 
 
 using namespace mathfunc;
@@ -74,6 +74,12 @@ private:
     
     // vector of motor walking data
     vector<tuple<double, double, double, double>> motorData;
+    
+    // vector of linker unbinding data
+    vector<tuple<double, double, double, double>> linkerUnbindingData;
+    
+    // vector of linker binding data
+    vector<tuple<double, double, double, double>> linkerBindingData;
     
 public:
     
@@ -205,7 +211,11 @@ public:
             delGZero=re->getGNumber();
             species_copy_t nMon = reacN[1];
             delG = delGPolyChem(delGZero,nMon,"P");
-        
+            
+            
+            
+            
+            //recordLinkerBinding
             
         } else if(reType==7){
             // Motor Binding
@@ -224,6 +234,10 @@ public:
             species_copy_t nMon = prodN[0];
             delG = delGPolyChem(delGZero,nMon,"D");
             
+            CBound* CBound = re->getCBound();
+            SpeciesBound* sm1 = CBound->getFirstSpecies();
+            Linker* l = ((CLinker*)sm1->getCBound())->getLinker();
+            recordLinkerUnbinding(l);
             
             
         } else if(reType==9){
@@ -455,6 +469,37 @@ public:
         motorData.clear();
     }
     
+    void recordLinkerUnbinding(Linker* l){
+        vector<double> lcoords = l->coordinate;
+        lcoords.insert(lcoords.begin(), tau());
+        linkerUnbindingData.push_back(make_tuple(lcoords[0], lcoords[1], lcoords[2], lcoords[3]));
+        
+  
+    }
+    
+    vector<tuple<double, double, double, double>> getLinkerUnbindingData(){
+        return linkerUnbindingData;
+    }
+    
+    void clearLinkerUnbindingData(){
+        linkerUnbindingData.clear();
+    }
+    
+    void recordLinkerBinding(Linker* l){
+        vector<double> lcoords = l->coordinate;
+        lcoords.insert(lcoords.begin(), tau());
+        linkerBindingData.push_back(make_tuple(lcoords[0], lcoords[1], lcoords[2], lcoords[3]));
+        
+
+    }
+    
+    vector<tuple<double, double, double, double>> getLinkerBindingData(){
+        return linkerBindingData;
+    }
+    
+    void clearLinkerBindingData(){
+        linkerBindingData.clear();
+    }
 };
 
 

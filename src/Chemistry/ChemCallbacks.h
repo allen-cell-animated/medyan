@@ -555,10 +555,12 @@ struct LinkerBindingCallback {
     float _onRate;                ///< Rate of the binding reaction
     float _offRate;               ///< Rate of the unbinding reaction
     
-    LinkerBindingCallback(LinkerBindingManager* lManager,
-                          float onRate, float offRate, SubSystem* ps)
+    DissipationTracker* _dt;
     
-    : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate) {}
+    LinkerBindingCallback(LinkerBindingManager* lManager,
+                          float onRate, float offRate, SubSystem* ps, DissipationTracker* dt)
+    
+    : _ps(ps), _lManager(lManager), _onRate(onRate), _offRate(offRate), _dt(dt) {}
     
     void operator() (ReactionBase *r) {
         
@@ -598,6 +600,10 @@ struct LinkerBindingCallback {
         //@
         cLinker->setRates(_onRate, f);
         cLinker->createOffReaction(r, _ps);
+        
+        if(SysParams::Chemistry().eventTracking){
+            _dt->recordLinkerBinding(l);
+        }
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
@@ -758,7 +764,7 @@ struct MotorWalkingCallback {
         cout<<"-----------"<<endl;*/
         double oldpos = double(_oldPosition) / cylinderSize;
         double newpos = double(_newPosition) / cylinderSize;
-        if(SysParams::Chemistry().dissTracking){
+        if(SysParams::Chemistry().eventTracking){
         _dt->recordWalk(m);
         }
         m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);

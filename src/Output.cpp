@@ -974,3 +974,29 @@ void MotorWalkingEvents::print(int snapshot) {
     
     
 }
+
+
+void LinkerUnbindingEvents::print(int snapshot) {
+    DissipationTracker* dt = _cs->getDT();
+    vector<tuple<double, double, double, double>> linkerUnbindingData = dt->getLinkerUnbindingData();
+    for(auto i = 0; i < linkerUnbindingData.size(); i++){
+        tuple<double, double, double, double> line = linkerUnbindingData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+    }
+    dt->clearLinkerUnbindingData();
+    
+    
+}
+
+
+void LinkerBindingEvents::print(int snapshot) {
+    DissipationTracker* dt = _cs->getDT();
+    vector<tuple<double, double, double, double>> linkerBindingData = dt->getLinkerBindingData();
+    for(auto i = 0; i < linkerBindingData.size(); i++){
+        tuple<double, double, double, double> line = linkerBindingData[i];
+        _outputFile<< get<0>(line) << "     " << get<1>(line) << "     "<< get<2>(line)<<"     "<<get<3>(line) <<endl;
+    }
+    dt->clearLinkerBindingData();
+    
+    
+}

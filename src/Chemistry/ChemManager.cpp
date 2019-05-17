@@ -1640,7 +1640,7 @@ void ChemManager::genFilBindingReactions() {
                 lManager->setMIndex(managerIndex++);
 
                 //attach callback
-                LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem);
+                LinkerBindingCallback lcallback(lManager, onRate, offRate, _subSystem, _dt);
                 ConnectionBlock rcb(rxn->connect(lcallback,false));
 #ifdef HYBRID_NLSTENCILLIST
                 auto Hbsm = C->getHybridBindingSearchManager();
@@ -2794,13 +2794,15 @@ void ChemManager::initializeSystem(ChemSim* chemSim) {
 
     //try initial copy number setting
     updateCopyNumbers();
-
+    
+    _dt = chemSim->getDT();
+    
     genNucleationReactions();
     genFilBindingReactions();
 
     //add reactions in compartment grid to chemsim
     grid->addChemSimReactions(chemSim);
-    _dt = chemSim->getDT();
+    
     genFilReactionTemplates();
 }
 

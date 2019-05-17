@@ -218,6 +218,27 @@ void SystemParser::readChemParams() {
 
             }
         }
+        
+        if (line.find("EVENTTRACKING:") != string::npos) {
+            
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() != 2) {
+                cout <<
+                "There was an error parsing input file at Chemistry algorithm. Exiting."
+                << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if (lineVector.size() == 2) {
+                
+                const char * testStr1 = "ON";
+                const char * testStr2 = lineVector[1].c_str();
+                if(strcmp(testStr1, testStr2) == 0){
+                    CParams.eventTracking = true;
+                    
+                }
+                
+            }
+        }
 
         if (line.find("DIFBINDING:") != string::npos) {
 

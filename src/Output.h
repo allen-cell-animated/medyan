@@ -302,4 +302,33 @@ public:
     virtual void print(int snapshot);
 };
 
+class LinkerUnbindingEvents : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    LinkerUnbindingEvents(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~LinkerUnbindingEvents() {}
+    
+    virtual void print(int snapshot);
+};
+
+
+class LinkerBindingEvents : public Output {
+    
+    ChemSim* _cs;
+    
+public:
+    LinkerBindingEvents(string outputFileName, SubSystem* s, ChemSim* cs)
+    
+    : Output(outputFileName, s), _cs(cs) {}
+    
+    ~LinkerBindingEvents() {}
+    
+    virtual void print(int snapshot);
+};
+
 #endif

@@ -62,7 +62,9 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     
     //Create manager, intialize
     _chemManager = new ChemManager(_subSystem, chem);
+    csi->_dt = dt;
     _chemManager->initializeSystem(_chemSim);
+    
     
     // init chemsim
     _chemSim->initialize();
@@ -74,7 +76,7 @@ void CController::initialize(string& chemAlgorithm, ChemistryData& chem, Dissipa
     Cylinder::_chemManager = _chemManager;
     
 
-    csi->_dt = dt;
+    
     
     
     

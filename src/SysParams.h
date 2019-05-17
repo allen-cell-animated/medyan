@@ -177,6 +177,7 @@ struct ChemParams {
     double makeLinkersStaticTime = 0.0;
 
     bool dissTracking = false;
+    bool eventTracking = false;
     int difBindInt = 1;
 
     //@}
