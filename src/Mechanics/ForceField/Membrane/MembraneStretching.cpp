@@ -1,6 +1,4 @@
-#include <array>
-
-#include "Mechanics/ForceField/Membrane/MembraneStretching.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Triangle.h"
@@ -42,7 +40,10 @@ void MembraneStretching<MembraneStretchingAccumulationType::ByVertex>::computeFo
     
     for (auto m: Membrane::getMembranes()) {
 
+        Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
+
         const auto& mesh = m->getMesh();
+        const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
 
         const auto kElastic = m->getMMembrane()->getKElastic();
         const auto eqArea = m->getMMembrane()->getEqArea();
@@ -52,21 +53,22 @@ void MembraneStretching<MembraneStretchingAccumulationType::ByVertex>::computeFo
 
         const size_t numVertices = mesh.getVertices().size();
         for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
-            const auto& v = mesh.getVertices()[vi];
+            const auto& va = mesh.getVertexAttribute(vi);
            
             _msh.forces(
-                force + 3 * v.attr.vertex->Bead::getIndex(),
-                area, v.attr.gVertex.dAstar / 3, kElastic, eqArea
+                force + 3 * va.cachedCoordIndex,
+                area, va.gVertex.dAstar / 3, kElastic, eqArea
             );
 
-            // Position of this vertex also affects neighbor vcell areas
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+            // Position of this vertex also affects neighbor vertex areas
+            for(size_t i = 0; i < va.cachedDegree; ++i) {
+                const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborAstar / 3;
                 _msh.forces(
-                    force + 3 * v.attr.vertex->Bead::getIndex(),
+                    force + 3 * va.cachedCoordIndex,
                     area, dArea, kElastic, eqArea
                 );
-            });
+            }
         }
     }
 }
@@ -111,7 +113,9 @@ template<>
 void MembraneStretching<MembraneStretchingAccumulationType::ByTriangle>::computeForces(const double* coord, double* force) {
     
     for (auto m: Membrane::getMembranes()) {
-    
+
+        Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
+
         const auto& mesh = m->getMesh();
 
         const auto kElastic = m->getMMembrane()->getKElastic();
@@ -122,13 +126,16 @@ void MembraneStretching<MembraneStretchingAccumulationType::ByTriangle>::compute
 
         const size_t numTriangles = mesh.getTriangles().size();
         for(size_t ti = 0; ti < numTriangles; ++ti) {
-            mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
+            const auto& ta = mesh.getTriangleAttribute(ti);
+
+            for(size_t i = 0; i < 3; ++i) {
+                const size_t hei = ta.cachedHalfEdgeIndex[i];
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
                 _msh.forces(
-                    force + 3 * mesh.getVertexAttribute(mesh.target(hei)).vertex->Bead::getIndex(),
+                    force + 3 * ta.cachedCoordIndex[i],
                     area, dArea, kElastic, eqArea
                 );
-            });
+            }
         }
     }
 }

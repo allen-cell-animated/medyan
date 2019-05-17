@@ -35,7 +35,7 @@ using namespace mathfunc;
 #    include "MTriangle.h"
 
 #    include "MembraneInteractions.h"
-#    include "MembraneStretching.h"
+#    include "MembraneStretching.hpp"
 #    include "MembraneStretchingHarmonic.hpp"
 #    include "MembraneBending.h"
 #    include "MembraneBendingHelfrich.hpp"

@@ -13,7 +13,7 @@
 
 #include "Mechanics/ForceField/Membrane/MembraneFF.h"
 
-#include "Mechanics/ForceField/Membrane/MembraneStretching.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
 
 #include "Mechanics/ForceField/Membrane/MembraneBending.h"
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
