@@ -4,11 +4,11 @@
 #include "Structure/SurfaceMesh/Vertex.h"
 #include "Structure/SurfaceMesh/MVoronoiCell.h"
 
-#include "Mechanics/ForceField/Membrane/MembraneBendingVoronoiHelfrich.h"
+#include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 
 // Using the Helfrich Hamiltonian of mean curvature in Voronoi cells
 template<>
-double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(const double* coord, bool stretched) {
+double MembraneBending<MembraneBendingHelfrich>::computeEnergy(const double* coord, bool stretched) {
     double U = 0;
     double U_i;
 
@@ -40,39 +40,42 @@ double MembraneBending<MembraneBendingVoronoiHelfrich>::computeEnergy(const doub
 }
 
 template<>
-void MembraneBending<MembraneBendingVoronoiHelfrich>::computeForces(const double* coord, double* force) {
+void MembraneBending<MembraneBendingHelfrich>::computeForces(const double* coord, double* force) {
     
     for (auto m: Membrane::getMembranes()) {
     
+        Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
+
         const auto& mesh = m->getMesh();
+        const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
 
         const size_t numVertices = mesh.getVertices().size();
         for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
-            const auto& v = mesh.getVertices()[vi];
+            const auto& va = mesh.getVertexAttribute(vi);
 
-            const auto kBending = v.attr.vertex->getMVoronoiCell()->getBendingModulus();
-            const auto eqCurv = v.attr.vertex->getMVoronoiCell()->getEqCurv();
+            const auto kBending = va.vertex->getMVoronoiCell()->getBendingModulus();
+            const auto eqCurv = va.vertex->getMVoronoiCell()->getEqCurv();
 
-            const auto area = v.attr.gVertex.astar / 3;
-            const auto curv = v.attr.gVertex.curv;
+            const auto area = va.gVertex.astar / 3;
+            const auto curv = va.gVertex.curv;
 
             _FFType.forces(
-                force + 3 * v.attr.vertex->Bead::getIndex(),
-                area, v.attr.gVertex.dAstar / 3,
-                curv, v.attr.gVertex.dCurv,
+                force + 3 * va.cachedCoordIndex,
+                area, va.gVertex.dAstar / 3,
+                curv, va.gVertex.dCurv,
                 kBending, eqCurv
             );
 
-            mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-                const size_t hei_o = mesh.opposite(hei);
-                auto vt = mesh.getVertexAttribute(mesh.target(hei_o)).vertex;
+            for(size_t i = 0; i < va.cachedDegree; ++i) {
+                const size_t hei_o = cvt[mesh.getMetaAttribute().cachedVertexOffsetLeavingHE(vi) + i];
+                const size_t vn_i = cvt[mesh.getMetaAttribute().cachedVertexOffsetNeighborCoord(vi) + i];
                 const auto& dArea = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborAstar / 3;
                 const auto& dCurv = mesh.getHalfEdgeAttribute(hei_o).gHalfEdge.dNeighborCurv;
                 _FFType.forces(
-                    force + 3 * vt->Bead::getIndex(),
+                    force + 3 * vn_i,
                     area, dArea, curv, dCurv, kBending, eqCurv
                 );
-            });
+            }
         }
 
     }

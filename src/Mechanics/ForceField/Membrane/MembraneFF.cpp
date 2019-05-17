@@ -16,7 +16,7 @@
 #include "Mechanics/ForceField/Membrane/MembraneStretching.h"
 
 #include "Mechanics/ForceField/Membrane/MembraneBending.h"
-#include "Mechanics/ForceField/Membrane/MembraneBendingVoronoiHelfrich.h"
+#include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
@@ -38,7 +38,7 @@ MembraneFF::MembraneFF (string& stretching, string& bending) {
     
     if (bending == "HELFRICH")
         _membraneInteractionVector.emplace_back(
-            new MembraneBending<MembraneBendingVoronoiHelfrich>()
+            new MembraneBending<MembraneBendingHelfrich>()
         );
     else if(bending == "") {}
     else {

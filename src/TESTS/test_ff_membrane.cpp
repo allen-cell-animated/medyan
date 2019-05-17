@@ -38,7 +38,7 @@ using namespace mathfunc;
 #    include "MembraneStretching.h"
 #    include "MembraneStretchingHarmonic.hpp"
 #    include "MembraneBending.h"
-#    include "MembraneBendingVoronoiHelfrich.h"
+#    include "MembraneBendingHelfrich.hpp"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;
@@ -154,7 +154,7 @@ TEST_F(MembraneFFTest, CompareStretchingEnergy) {
 TEST_F(MembraneFFTest, Force) {
     MembraneStretching<MembraneStretchingHarmonic> mSTriangle;
     MembraneStretching<MembraneStretchingVoronoiHarmonic> mSVoronoi;
-    MembraneBending<MembraneBendingVoronoiHelfrich> mBVoronoi;
+    MembraneBending<MembraneBendingHelfrich> mBVoronoi;
     vector<MembraneInteractions*> memInteraction = {&mSTriangle, &mSVoronoi, &mBVoronoi};
 
     assignRandomForceAuxP(m, radius/500);
