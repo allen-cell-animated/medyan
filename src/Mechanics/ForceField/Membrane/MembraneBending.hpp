@@ -19,7 +19,7 @@ public:
     virtual double computeEnergy(const double* coord, bool stretched) override;
     virtual void computeForces(const double* coord, double* force) override;
     
-    virtual const string getName() {return "Membrane Bending";}
+    virtual string getName() const override { return "Membrane Bending"; }
 };
 
 #endif

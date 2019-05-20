@@ -36,7 +36,7 @@ using namespace mathfunc;
 
 #    include "MembraneInteractions.hpp"
 #    include "MembraneStretching.hpp"
-#    include "MembraneStretchingHarmonic.hpp"
+#    include "MembraneStretchingImpl.hpp"
 #    include "MembraneBending.hpp"
 #    include "MembraneBendingHelfrich.hpp"
 

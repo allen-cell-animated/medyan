@@ -22,7 +22,7 @@ public:
     virtual void computeForces(const double* coord, double* force) = 0;
     
     /// Get the name of this interaction
-    virtual const string getName() = 0;
+    virtual string getName() const = 0;
 };
 
 

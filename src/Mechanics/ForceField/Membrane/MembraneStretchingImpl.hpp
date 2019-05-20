@@ -1,5 +1,5 @@
-#ifndef MEDYAN_Mechanics_ForceField_Membrane_MembraneStretchingHarmonic_Hpp
-#define MEDYAN_Mechanics_ForceField_Membrane_MembraneStretchingHarmonic_Hpp
+#ifndef MEDYAN_Mechanics_ForceField_Membrane_MembraneStretchingImpl_Hpp
+#define MEDYAN_Mechanics_ForceField_Membrane_MembraneStretchingImpl_Hpp
 
 #include "MathFunctions.h"
 

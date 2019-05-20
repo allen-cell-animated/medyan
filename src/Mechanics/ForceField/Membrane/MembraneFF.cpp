@@ -13,27 +13,52 @@
 
 #include "Mechanics/ForceField/Membrane/MembraneFF.h"
 
+#include <stdexcept>
+
 #include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 
 #include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "util/io/log.h"
 
-MembraneFF::MembraneFF (string& stretching, string& bending) {
+MembraneFF::MembraneFF (const string& stretching, const string& stretchingAccu, const string& bending) {
     
-    if (stretching == "TRIANGLE")
-        _membraneInteractionVector.emplace_back(
-            new MembraneStretching< MembraneStretchingAccumulationType::ByTriangle >()
-        );
-    else if(stretching == "VERTEX")
-        _membraneInteractionVector.emplace_back(
-            new MembraneStretching< MembraneStretchingAccumulationType::ByVertex >()
-        );
+    if (stretching == "HARMONIC")
+        if(stretchingAccu == "TRIANGLE")
+            _membraneInteractionVector.emplace_back(
+                new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByTriangle >()
+            );
+        else if(stretchingAccu == "VERTEX")
+            _membraneInteractionVector.emplace_back(
+                new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByVertex >()
+            );
+        else {
+            LOG(ERROR) << "Membrane stretching accumulation type " << stretchingAccu << " is not recognized.";
+            throw std::runtime_error("Membrane stretching accumulation type not recognized");
+        }
+
+    else if(stretching == "LINEAR")
+        if(stretchingAccu == "TRIANGLE")
+            _membraneInteractionVector.emplace_back(
+                new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByTriangle >()
+            );
+        else if(stretchingAccu == "VERTEX")
+            _membraneInteractionVector.emplace_back(
+                new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByVertex >()
+            );
+        else {
+            LOG(ERROR) << "Membrane stretching accumulation type " << stretchingAccu << " is not recognized.";
+            throw std::runtime_error("Membrane stretching accumulation type not recognized");
+        }
+
     else if(stretching == "") {}
+
     else {
-        cout << "Membrane stretching FF not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
+        LOG(ERROR) << "Membrane stretching FF type " << stretching << " is not recognized.";
+        throw std::runtime_error("Membrane stretching FF type not recognized");
     }
     
     if (bending == "HELFRICH")

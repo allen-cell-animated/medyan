@@ -26,13 +26,13 @@ class Membrane;
 class MembraneFF : public ForceField {
  
 private:
-    vector<unique_ptr<MembraneInteractions>>
-    _membraneInteractionVector; ///< Vector of initialized membrane interactions
+    std::vector< std::unique_ptr< MembraneInteractions > >
+        _membraneInteractionVector; ///< Vector of initialized membrane interactions
     
     MembraneInteractions* _culpritInteraction; ///< Culprit in case of error
 public:
     /// Constructor, intializes stretching and bending forces
-    MembraneFF(string& stretching, string& bending);
+    MembraneFF(const string& stretching, const string& stretchingAccu, const string& bending);
 
     virtual void vectorize() override {}
     virtual void cleanup() override {}

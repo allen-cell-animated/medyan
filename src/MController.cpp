@@ -79,6 +79,7 @@ void MController::initializeFF (MechanicsFFType& forceFields) {
     
     _FFManager._forceFields.push_back(
         new MembraneFF(forceFields.MemStretchingFFType,
+                       forceFields.MemStretchingAccuType,
                        forceFields.MemBendingFFType));
 
     _FFManager._forceFields.push_back(

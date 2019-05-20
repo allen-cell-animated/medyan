@@ -640,6 +640,17 @@ MechanicsFFType SystemParser::readMechanicsFFType() {
                 MType.MemStretchingFFType = lineVector[1];
             }
         }
+        else if(line.find("MEM_STRETCHING_ACCU_TYPE") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() > 2) {
+                cout << "There was an error parsing input file at membrane stretching accumulation type. Exiting."
+                     << endl;
+                exit(EXIT_FAILURE);
+            }
+            else if(lineVector.size() == 2) {
+                MType.MemStretchingAccuType = lineVector[1];
+            }
+        }
         else if(line.find("MEM_BENDING_FF_TYPE") != string::npos) {
             vector<string> lineVector = split<string>(line);
             if(lineVector.size() > 2) {
@@ -1017,6 +1028,13 @@ void SystemParser::readMechParams() {
             if(lineVector.size() >= 2) {
                 for(size_t i = 1; i < lineVector.size(); ++i)
                     MParams.MemEqAreaFactor.push_back(atof(lineVector[i].c_str()));
+            }
+        }
+        else if (line.find("MEM_TENSION") != string::npos) {
+            vector<string> lineVector = split<string>(line);
+            if(lineVector.size() >= 2) {
+                for(size_t i = 1; i < lineVector.size(); ++i)
+                    MParams.MemTension.push_back(atof(lineVector[i].c_str()));
             }
         }
         else if (line.find("MEM_BENDING_K") != string::npos) {

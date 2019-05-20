@@ -377,14 +377,19 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     }
     
     // Membrane
-    if(mech.MemStretchingFFType != "" &&
+    if(mech.MemStretchingFFType == "HARMONIC" &&
        MParams.MemElasticK.size() != CParams.numMembranes) {
         cout << "Must set a membrane elastic modulus for all membranes. Exiting." << endl;
         return false;
     }
-    if(mech.MemStretchingFFType != "" &&
+    if(mech.MemStretchingFFType == "HARMONIC" &&
        MParams.MemEqAreaFactor.size() != CParams.numMembranes) {
         cout << "Must set a equilibrium area factor for all membranes. Exiting." << endl;
+        return false;
+    }
+    if(mech.MemStretchingFFType == "LINEAR" &&
+       MParams.MemTension.size() != CParams.numMembranes) {
+        cout << "Must set a membrane tension for all membranes. Exiting." << endl;
         return false;
     }
     if(mech.MemBendingFFType != "" &&
