@@ -1,5 +1,5 @@
-#ifndef MEDYAN_MembraneInteractions_h
-#define MEDYAN_MembraneInteractions_h
+#ifndef MEDYAN_Mechanics_ForceField_Membrane_MembraneInteractions_Hpp
+#define MEDYAN_Mechanics_ForceField_Membrane_MembraneInteractions_Hpp
 
 #include "common.h"
 
