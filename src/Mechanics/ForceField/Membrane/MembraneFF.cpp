@@ -15,7 +15,7 @@
 
 #include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
 
-#include "Mechanics/ForceField/Membrane/MembraneBending.h"
+#include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
 #include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"

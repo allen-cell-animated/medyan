@@ -1,4 +1,4 @@
-#include "Mechanics/ForceField/Membrane/MembraneBending.h"
+#include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
 
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/Vertex.h"
