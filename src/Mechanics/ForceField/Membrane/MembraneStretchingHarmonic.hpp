@@ -3,10 +3,9 @@
 
 #include "MathFunctions.h"
 
-/// A harmonic potential used by the MembraneStretching
-class MembraneStretchingHarmonic {
-    
-public:
+// A harmonic potential used by the MembraneStretching
+struct MembraneStretchingHarmonic {
+
     double energy(double area, double kElastic, double eqArea) const {
         // kElastic is the elastic modulus, which is independent of the actual eqArea
 
@@ -27,6 +26,21 @@ public:
         for(size_t i = 0; i < 3; ++i) force[i] += deltaF[i]; // v->force += deltaF;
     }
 
+};
+
+// A linear potential used by the MembraneStretching
+// Note: In energy minimization, other forces are needed to balance this force,
+// since the preferable area would be -inf.
+struct MembraneStretchingLinear {
+
+    double energy(double area, double tension) const {
+        return tension * area;
+    }
+
+    void forces(double* force, const mathfunc::Vec3& dArea, double tension) const {
+        const auto deltaF = - tension * dArea;
+        for(size_t i = 0; i < 3; ++i) force[i] += deltaF[i];
+    }
 };
 
 #endif
