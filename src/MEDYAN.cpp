@@ -69,7 +69,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 
 #include "analysis/io/read_snapshot.h"
 #include "Controller.h"
-#include "core/globals.h"
+#include "Core/Globals.hpp"
 #include "Rand.h"
 #include "Structure/SubSystem.h"
 #include "utility.h"
@@ -116,6 +116,7 @@ int main(int argc, char **argv) {
 
         Command* cmdAnalyze = cmdMain.addCommand("analyze", "Analyze simulation output",
             [] { globalMutable().mode = GlobalVar::RunMode::Analysis; });
+        cmdAnalyze->addOptionWithVar(0, "bond-frame", "frame", "Frame of membrane topology information", false, globalMutable().analyzeMembraneBondFrame);
         cmdAnalyze->addHelp();
 
         try {

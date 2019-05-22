@@ -13,7 +13,7 @@
 
 #include "Bead.h"
 
-#include "core/globals.h"
+#include "Core/Globals.hpp"
 #include "Compartment.h"
 #include "Composite.h"
 

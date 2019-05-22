@@ -1,6 +1,6 @@
 #include "Triangle.h"
 
-#include "core/globals.h"
+#include "Core/Globals.hpp"
 #include "Compartment.h"
 #include "MathFunctions.h"
 #include "GController.h"

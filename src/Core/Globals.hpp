@@ -1,5 +1,5 @@
-#ifndef MEDYAN_CORE_GLOBALS_H
-#define MEDYAN_CORE_GLOBALS_H
+#ifndef MEDYAN_Core_Globals_Hpp
+#define MEDYAN_Core_Globals_Hpp
 
 #include <string>
 
@@ -19,6 +19,9 @@ struct GlobalVar {
 
     bool randomGenSeedFixed = false;
     unsigned long long randomGenSeed; // The global random seed
+
+    // Analyze specific
+    std::size_t analyzeMembraneBondFrame = 0;
 
 };
 

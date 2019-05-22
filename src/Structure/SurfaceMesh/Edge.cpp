@@ -1,6 +1,6 @@
 #include "Structure/SurfaceMesh/Edge.h"
 
-#include "core/globals.h"
+#include "Core/Globals.hpp"
 #include "Compartment.h"
 #include "GController.h"
 #include "MathFunctions.h"
