@@ -11,36 +11,59 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "MembraneFF.h"
+#include "Mechanics/ForceField/Membrane/MembraneFF.h"
 
-#include "MembraneStretching.h"
-#include "MembraneStretchingHarmonic.h"
-#include "MembraneStretchingVoronoiHarmonic.h"
+#include <stdexcept>
 
-#include "MembraneBending.h"
-#include "MembraneBendingVoronoiHelfrich.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
 
-#include "Membrane.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneBending.hpp"
+#include "Mechanics/ForceField/Membrane/MembraneBendingHelfrich.hpp"
 
-MembraneFF::MembraneFF (string& stretching, string& bending) {
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "util/io/log.h"
+
+MembraneFF::MembraneFF (const string& stretching, const string& stretchingAccu, const string& bending) {
     
-    if (stretching == "TRIANGLE")
-        _membraneInteractionVector.emplace_back(
-            new MembraneStretching<MembraneStretchingHarmonic>()
-        );
-    else if(stretching == "VORONOI")
-        _membraneInteractionVector.emplace_back(
-            new MembraneStretching<MembraneStretchingVoronoiHarmonic>()
-        );
+    if (stretching == "HARMONIC")
+        if(stretchingAccu == "TRIANGLE")
+            _membraneInteractionVector.emplace_back(
+                new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByTriangle >()
+            );
+        else if(stretchingAccu == "VERTEX")
+            _membraneInteractionVector.emplace_back(
+                new MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByVertex >()
+            );
+        else {
+            LOG(ERROR) << "Membrane stretching accumulation type " << stretchingAccu << " is not recognized.";
+            throw std::runtime_error("Membrane stretching accumulation type not recognized");
+        }
+
+    else if(stretching == "LINEAR")
+        if(stretchingAccu == "TRIANGLE")
+            _membraneInteractionVector.emplace_back(
+                new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByTriangle >()
+            );
+        else if(stretchingAccu == "VERTEX")
+            _membraneInteractionVector.emplace_back(
+                new MembraneStretching< MembraneStretchingLinear, MembraneStretchingAccumulationType::ByVertex >()
+            );
+        else {
+            LOG(ERROR) << "Membrane stretching accumulation type " << stretchingAccu << " is not recognized.";
+            throw std::runtime_error("Membrane stretching accumulation type not recognized");
+        }
+
     else if(stretching == "") {}
+
     else {
-        cout << "Membrane stretching FF not recognized. Exiting." << endl;
-        exit(EXIT_FAILURE);
+        LOG(ERROR) << "Membrane stretching FF type " << stretching << " is not recognized.";
+        throw std::runtime_error("Membrane stretching FF type not recognized");
     }
     
     if (bending == "HELFRICH")
         _membraneInteractionVector.emplace_back(
-            new MembraneBending<MembraneBendingVoronoiHelfrich>()
+            new MembraneBending<MembraneBendingHelfrich>()
         );
     else if(bending == "") {}
     else {
@@ -62,14 +85,14 @@ void MembraneFF::whoIsCulprit() {
 }
 
 
-double MembraneFF::computeEnergy(bool stretched) {
+double MembraneFF::computeEnergy(double* coord, bool stretched) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _membraneInteractionVector) {
         
-        U_i = interaction->computeEnergy(stretched);
+        U_i = interaction->computeEnergy(coord, stretched);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -82,14 +105,8 @@ double MembraneFF::computeEnergy(bool stretched) {
     return U;
 }
 
-void MembraneFF::computeForces() {
+void MembraneFF::computeForces(double* coord, double* f) {
     
     for (auto &interaction : _membraneInteractionVector)
-        interaction->computeForces();
-}
-
-void MembraneFF::computeForcesAux() {
-    
-    for (auto &interaction : _membraneInteractionVector)
-        interaction->computeForcesAux();
+        interaction->computeForces(coord, f);
 }

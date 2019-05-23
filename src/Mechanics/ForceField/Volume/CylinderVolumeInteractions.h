@@ -14,10 +14,12 @@
 #ifndef MEDYAN_CylinderVolumeInteractions_h
 #define MEDYAN_CylinderVolumeInteractions_h
 
+#include "HybridNeighborListImpl.h"
 #include "common.h"
 
 //FORWARD DECLARATIONS
 class NeighborList;
+class HybridNeighborList;
 class Cylinder;
 
 /// Represents a volume interaction between [Cylinders](@ref Cylinder).
@@ -25,26 +27,36 @@ class CylinderVolumeInteractions {
 
 friend class CylinderVolumeFF;
     
-protected:
+public:
     //@{
     /// The cylinder culprits in the case of an error
-    Cylinder* _cylinderCulprit1 = nullptr;
-    Cylinder* _cylinderCulprit2 = nullptr;
+    static Cylinder* _cylinderCulprit1;
+    static Cylinder* _cylinderCulprit2;
     //@}
     
-public:
+    ///Vectorize the bead interactions for minimization
+    virtual void vectorize() = 0;
+    ///Deallocate the vectorized data
+    virtual void deallocate() = 0;
+    
     /// Compute the energy of this interaction
-    virtual double computeEnergy(bool stretched) = 0;
+    virtual double computeEnergy(double *coord) = 0;
     /// Compute the forces of this interaction
-    virtual void computeForces() = 0;
-    /// Compute the auxiliary forces of this interaction
-    virtual void computeForcesAux() = 0;
+    virtual void computeForces(double *coord, double *f) = 0;
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() = 0;
     
     /// Get the name of this interaction
     virtual const string getName() = 0;
+
+#ifdef HYBRID_NLSTENCILLIST
+
+    virtual void setHNeighborList(HybridCylinderCylinderNL* Hnl) = 0;
+
+    virtual HybridCylinderCylinderNL* getHNeighborList() = 0;
+#endif
+
 };
 
 

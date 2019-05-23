@@ -15,6 +15,9 @@
 #define MEDYAN_BranchingStretching_h
 
 #include "common.h"
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
 
 #include "BranchingInteractions.h"
 
@@ -28,10 +31,35 @@ class BranchingStretching : public BranchingInteractions {
 private:
     BStretchingInteractionType _FFType;
     
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *kstr;
+    double *eql;
+    double *pos;
+    double *stretchforce;
+
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_kstr;
+    double *gpu_eql;
+    double *gpu_pos;
+    int * gpu_params;
+    CUDAvars cvars;
+    double *F_i;
+#endif
+    
 public:
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    
+    ///Array describing indexed set of interactions
+    ///this is a 3-bead potential
+    const static int n = 3;
+    
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    virtual double computeEnergy(double *coord) override;
+    virtual void computeForces(double *coord, double *f);
     
     virtual const string getName() {return "Branching Stretching";}
 };

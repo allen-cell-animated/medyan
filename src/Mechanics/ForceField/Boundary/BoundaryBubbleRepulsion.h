@@ -34,23 +34,46 @@ class BoundaryBubbleRepulsion : public BoundaryInteractions {
 private:
     BRepulsionInteractionType _FFType;
     BoundaryBubbleNL* _neighborList; ///<Neighbor list of Bubble's bead - BoundaryElement
+    
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *krep;
+    double *slen;
+    double *U_i;
+    int nint = 0;
+    ///Array describing the number of neighbors for each boundary element (num boundary elements long)
+    int *nneighbors;
 public:
+    
+    const static int n = 1;
     
     /// Constructor
     BoundaryBubbleRepulsion() {
         _neighborList = new BoundaryBubbleNL(SysParams::Boundaries().BoundaryCutoff);
     }
     
-    virtual double computeEnergy(bool stretched) override;
+    virtual double computeEnergy(double *coord) override;
    
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual void computeForces(double *coord, double *f);
+    //virtual void computeForcesAux();
     
-    virtual void computeLoadForces() {return;}
+    virtual void computeLoadForces()  {return;}
     
     /// Get the neighbor list for this interaction
     virtual NeighborList* getNeighborList() {return _neighborList;}
     
     virtual const string getName() {return "Boundary-Bubble Repulsion";}
+
+    //TODO needs implmenetation @{
+    virtual void vectorize();
+    virtual void deallocate();
+
+    //virtual double computeEnergy(double *coord, double *f, double d)override { return 0.0; }
+    //@{
+    /// This repulsive force calculation also updates load forces
+    /// on beads within the interaction range.
+    //virtual void computeForces(double *coord, double *f){};
+    //@}
 };
 #endif

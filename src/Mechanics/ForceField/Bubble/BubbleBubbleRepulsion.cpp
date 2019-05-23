@@ -19,7 +19,18 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(bool stretched) {
+void BubbleBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
+    //cout << "Add later!" <<endl;
+}
+
+template <class BRepulsionInteractionType>
+void BubbleBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
+    //cout << "Add later!" <<endl;
+}
+
+
+template <class BRepulsionInteractionType>
+double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double* coord, bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
@@ -37,20 +48,19 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(bool stre
             Bead* bd1 = bb->getBead();
             Bead* bd2 = bbo->getBead();
             
-            U_i =  _FFType.energy(
-                bd1, bd2, radius1, radius2, kRep, screenLength, stretched);
+            U_i = _FFType.energy(bd1, bd2, radius1, radius2, kRep, screenLength, stretched);
             
             if(fabs(U_i) == numeric_limits<double>::infinity()
                || U_i != U_i || U_i < -1.0) {
                 
                 //set culprits and return
-                _otherCulprit = bbo;
-                _bubbleCulprit = bb;
+//                _otherCulprit = bbo;
+//                BubbleInteractions::_bubbleCulprit = bb;
                 
                 return -1;
             }
             else
-                U += U_i;
+            U += U_i;
         }
     }
     
@@ -58,7 +68,7 @@ double BubbleBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(bool stre
 }
 
 template <class BRepulsionInteractionType>
-void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
+void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
     
     for (auto bb : Bubble::getBubbles()) {
         
@@ -80,29 +90,32 @@ void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
 }
 
 
-template <class BRepulsionInteractionType>
-void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
-    
-    for (auto bb : Bubble::getBubbles()) {
-        
-        for(auto &bbo : _neighborList->getNeighbors(bb)) {
-            
-            double kRep = bb->getRepulsionConst();
-            double screenLength = bb->getScreeningLength();
-            
-            double radius1 = bb->getRadius();
-            double radius2 = bbo->getRadius();
-            
-            Bead* bd1 = bb->getBead();
-            Bead* bd2 = bbo->getBead();
-            
-            _FFType.forcesAux(bd1, bd2, radius1, radius2, kRep, screenLength);
-            
-        }
-    }
-}
+//template <class BRepulsionInteractionType>
+//void BubbleBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux(double *coord, double *f) {
+//
+//    for (auto bb : Bubble::getBubbles()) {
+//
+//        for(auto &bbo : _neighborList->getNeighbors(bb)) {
+//
+//            double kRep = bb->getRepulsionConst();
+//            double screenLength = bb->getScreeningLength();
+//
+//            double radius1 = bb->getRadius();
+//            double radius2 = bbo->getRadius();
+//
+//            Bead* bd1 = bb->getBead();
+//            Bead* bd2 = bbo->getBead();
+//
+//            _FFType.forcesAux(bd1, bd2, radius1, radius2, kRep, screenLength);
+//
+//        }
+//    }
+//}
 
 ///Template specializations
-template double BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(bool stretched);
-template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces();
-template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux();
+template double BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeEnergy(double *coord, bool stretched);
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForces(double *coord, double *f);
+//template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::computeForcesAux(double *coord, double *f);
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::vectorize();
+template void BubbleBubbleRepulsion<BubbleBubbleRepulsionExp>::deallocate();
+

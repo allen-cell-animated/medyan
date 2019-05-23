@@ -13,15 +13,16 @@
 
 #include "utility.h"
 
-#if defined(_MSC_VER)
-// preprocessors to use __rdtsc() for MSVC only
-#  include <intrin.h>
-#  pragma intrinsic(__rdtsc)
+#include "util/environment.h"
+
+#ifdef COMPILER_MSVC
+    #include <intrin.h>
+    #pragma intrinsic(__rdtsc)
 #endif
 
 unsigned long long rdtsc(){
 
-#if defined(_MSC_VER) // MSVC only
+#ifdef COMPILER_MSVC
     return __rdtsc();
 
 #else

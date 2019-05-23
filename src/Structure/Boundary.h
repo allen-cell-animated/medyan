@@ -25,7 +25,7 @@ class SubSystem;
 enum class BoundaryShape {Cube, Capsule, Sphere, Cylinder};
 
 /// BoundaryMove is a enum describing the movement of a boundary.
-enum class BoundaryMove {None, Top, All};
+enum class BoundaryMove {None, Top, Bottom, Left, Right, Front, Back, All};
 
 /// To store all [BoundarySurfaces](@ref BoundarySurface) that are in the SubSystem.
 /*!
@@ -42,12 +42,12 @@ protected:
     vector<unique_ptr<BoundarySurface>> _boundarySurfaces;
     
     BoundaryShape _shape; ///< Shape of boundary
-    BoundaryMove _move;   ///< Movement of boundary
+    vector<BoundaryMove> _move;   ///< Movement of boundary
     
     short _nDim; ///< Dimensionality
     
 public:
-    Boundary(SubSystem* s, int nDim, BoundaryShape shape, BoundaryMove move)
+    Boundary(SubSystem* s, int nDim, BoundaryShape shape, vector<BoundaryMove> move)
         : _subSystem(s), _shape(shape), _move(move), _nDim(nDim) {};
     
     ~Boundary() {};
@@ -78,13 +78,19 @@ public:
     virtual double lowerdistance(const vector<double>& coordinates) = 0;
     // Returns the distance from the boundary element in the side boundary
     virtual double sidedistance(const vector<double>& coordinates) = 0;
-    
+    virtual double getboundaryelementcoord(int bidx) = 0;
     ///Move a given part of a boundary a given distance
     ///@note a negative distance denotes movement towards the center of the grid.
-    virtual void move(double dist) = 0;
+    virtual void move(vector<double> dist) = 0;
     
     //Give a normal to the plane (pointing inward) at a given point
     virtual vector<double> normal(vector<double>& coordinates) = 0;
+
+    //returns volume of the enclosed volume. Note. If there are moving boundaries, this
+    // volume MAY not the same as volume specified in systeminputfile.
+    virtual void volume() = 0;
+
+    static double systemvolume;
     
 };
 

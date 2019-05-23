@@ -19,13 +19,13 @@
 #include "CGFletcherRievesMethod.h"
 #include "CGPolakRibiereMethod.h"
 #include "CGSteepestDescent.h"
+#include "Minimizer.h"
 
 //FORWARD DECLARATIONS
 class ForceFieldManager;
 
 /// An implementation of [Minimzer](@ref Minimizer).
-template <class CGType>
-class ConjugateGradient : public Minimizer {
+template <class CGType> class ConjugateGradient : public Minimizer {
     
 private:
     CGType _CGType;  ///< Implementation of a CG method

@@ -25,7 +25,7 @@
 using namespace mathfunc;
 #    include "Rand.h"
 
-#    include "core/controller/GController.h"
+#    include "GController.h"
 #    include "SubSystem.h"
 
 #    include "Membrane.hpp"
@@ -34,12 +34,11 @@ using namespace mathfunc;
 #    include "Triangle.h"
 #    include "MTriangle.h"
 
-#    include "MembraneInteractions.h"
-#    include "MembraneStretching.h"
-#    include "MembraneStretchingHarmonic.h"
-#    include "MembraneStretchingVoronoiHarmonic.h"
-#    include "MembraneBending.h"
-#    include "MembraneBendingVoronoiHelfrich.h"
+#    include "MembraneInteractions.hpp"
+#    include "MembraneStretching.hpp"
+#    include "MembraneStretchingImpl.hpp"
+#    include "MembraneBending.hpp"
+#    include "MembraneBendingHelfrich.hpp"
 
 namespace {
     using VertexData = tuple<array<double, 3>, vector<size_t>>;
@@ -155,7 +154,7 @@ TEST_F(MembraneFFTest, CompareStretchingEnergy) {
 TEST_F(MembraneFFTest, Force) {
     MembraneStretching<MembraneStretchingHarmonic> mSTriangle;
     MembraneStretching<MembraneStretchingVoronoiHarmonic> mSVoronoi;
-    MembraneBending<MembraneBendingVoronoiHelfrich> mBVoronoi;
+    MembraneBending<MembraneBendingHelfrich> mBVoronoi;
     vector<MembraneInteractions*> memInteraction = {&mSTriangle, &mSVoronoi, &mBVoronoi};
 
     assignRandomForceAuxP(m, radius/500);

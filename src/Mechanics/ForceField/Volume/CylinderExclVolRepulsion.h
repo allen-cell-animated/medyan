@@ -16,6 +16,7 @@
 
 #include "common.h"
 
+
 //FORWARD DECLARATIONS
 class Bead;
 
@@ -24,11 +25,39 @@ class Bead;
 class CylinderExclVolRepulsion {
     
 public:
-    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, bool stretched);
+
+
+    double energy(double *coord, int *beadSet, double *krep);
+    
+    double energy(double *coord, double *f, int *beadSet, double *krep, double d);
+    
+    void forces(double *coord, double *f, int *beadSet, double *krep);
+
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
+    void deallocate();
+    double* energy(double *coord, double *f, int *beadSet, double *krep, int *params);
+
+    double* energy(double *coord, double *f, int *beadSet, double *krep, double *z, int *params);
+
+    void forces(double *coord, double *f, int *beadSet, double *krep, int *params);
+    static void checkforculprit();
+    double *gU_i;
+    double *gU_sum;
+    char *gFF, *ginteraction;
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
+    cudaStream_t stream = NULL;
+
+#endif
+#ifdef CROSSCHECK
+    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+    double energy(Bead*, Bead*, Bead*, Bead*, double Krepuls, double d);
     
     void forces(Bead*, Bead*, Bead*, Bead*, double Krepuls);
     void forcesAux(Bead*, Bead*, Bead*, Bead*, double Krepuls);
+#endif
 };
-
-
 #endif

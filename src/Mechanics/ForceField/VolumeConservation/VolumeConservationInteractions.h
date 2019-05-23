@@ -17,11 +17,9 @@ protected:
 
 public:
     /// Compute the energy of this interaction
-    virtual double computeEnergy(bool stretched) = 0; // d is the stretching parameter along the force
+    virtual double computeEnergy(const double* coord, bool stretched) = 0; // d is the stretching parameter along the force
     /// Compute forces of this interaction
-    virtual void computeForces() = 0;
-    /// Compute auxiliary forces of this interaction
-    virtual void computeForcesAux() = 0;
+    virtual void computeForces(const double* coord, double* force) = 0;
     
     /// Get the name of this interaction
     virtual std::string getName()const = 0;

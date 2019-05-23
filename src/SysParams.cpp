@@ -13,6 +13,12 @@
 
 #include "SysParams.h"
 bool SysParams::RUNSTATE=true;
+bool SysParams::INITIALIZEDSTATUS=false;
+int SysParams::exvolcounter[3] = {0,0,0};
+long long SysParams::exvolcounterz[3] = {0,0,0};
+#ifdef NLSTENCILLIST
+short SysParams::numcylcylNL = 0;
+#endif
 vector<float> SysParams::MUBBareRate ={};
 vector<float> SysParams::LUBBareRate ={};
 vector<float> SysParams::BUBBareRate ={};
@@ -33,7 +39,7 @@ bool SysParams::checkChemParameters(ChemistryData& chem) {
         return false;
     }
     if(chem.speciesDiffusing.size() != CParams.numDiffusingSpecies) {
-        
+
         cout << "Number of diffusing species in chemistry input does not "
              << "match the system file. Check these parameters. Exiting."
         <<endl;
@@ -371,14 +377,19 @@ bool SysParams::checkMechParameters(MechanicsFFType& mech) {
     }
     
     // Membrane
-    if(mech.MemStretchingFFType != "" &&
+    if(mech.MemStretchingFFType == "HARMONIC" &&
        MParams.MemElasticK.size() != CParams.numMembranes) {
         cout << "Must set a membrane elastic modulus for all membranes. Exiting." << endl;
         return false;
     }
-    if(mech.MemStretchingFFType != "" &&
+    if(mech.MemStretchingFFType == "HARMONIC" &&
        MParams.MemEqAreaFactor.size() != CParams.numMembranes) {
         cout << "Must set a equilibrium area factor for all membranes. Exiting." << endl;
+        return false;
+    }
+    if(mech.MemStretchingFFType == "LINEAR" &&
+       MParams.MemTension.size() != CParams.numMembranes) {
+        cout << "Must set a membrane tension for all membranes. Exiting." << endl;
         return false;
     }
     if(mech.MemBendingFFType != "" &&
@@ -531,5 +542,6 @@ ChemParams   SysParams::CParams;
 GeoParams    SysParams::GParams;
 BoundParams  SysParams::BParams;
 DyRateParams SysParams::DRParams;
+
 
 

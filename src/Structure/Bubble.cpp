@@ -21,12 +21,19 @@
 Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
 
     : Trackable(true, false, true, false), _ps(ps), _type(type),
-      _ID(_bubbles.getID()), coordinate(coordinates) {
+      coordinate(coordinates) {
     
     //set up mechanical constants
     _kRepuls = SysParams::Mechanics().BubbleK[_type];
     _radius  = SysParams::Mechanics().BubbleRadius[_type];
     _screenLength = SysParams::Mechanics().BubbleScreenLength[_type];
+    
+    if(SysParams::Mechanics().MTOCBendingK.size() == 0){
+        _MTOCBendingK = 0.0;
+    }
+    else{
+      _MTOCBendingK = SysParams::Mechanics().MTOCBendingK[_type];
+    }
           
     //set up bead
     _bead = _ps->addTrackable<Bead>(coordinates, this, 0);
@@ -34,7 +41,7 @@ Bubble::Bubble(SubSystem* ps, vector<double> coordinates, short type)
 
 void Bubble::updatePosition() {
     
-    coordinate = _bead->coordinate;
+    coordinate = _bead->vcoordinate();
 }
 
 void Bubble::printSelf()const {
@@ -42,7 +49,7 @@ void Bubble::printSelf()const {
     cout << endl;
     
     cout << "Bubble: ptr = " << this << endl;
-    cout << "Bubble ID = " << _ID << endl;
+    cout << "Bubble ID = " << getId() << endl;
     cout << "Bubble type = " << _type << endl;
     cout << "Bubble radius = " << _radius << endl;
     
@@ -54,5 +61,3 @@ void Bubble::printSelf()const {
     
     cout << endl;
 }
-
-Database<Bubble*> Bubble::_bubbles;

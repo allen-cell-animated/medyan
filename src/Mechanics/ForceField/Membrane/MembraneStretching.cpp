@@ -1,119 +1,77 @@
-#include <array>
+#include "Mechanics/ForceField/Membrane/MembraneStretching.hpp"
 
-#include "MembraneStretching.h"
+#include <type_traits>
 
-#include "Membrane.hpp"
-#include "Triangle.h"
-#include "Vertex.h"
+#include "Mechanics/ForceField/Membrane/MembraneStretchingImpl.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/Triangle.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 
-#include "MembraneStretchingHarmonic.h"
-#include "MembraneStretchingVoronoiHarmonic.h"
+#ifdef __cpp_if_constexpr
+    #define IF_CONSTEXPR if constexpr
+#else
+    #define IF_CONSTEXPR if
 
-// Using the area of the Voronoi cells
-template<>
-double MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeEnergy(bool stretched) {
+namespace {
+
+template< typename Impl, std::enable_if_t< std::is_same< Impl, MembraneStretchingHarmonic >::value >* = nullptr >
+double implEnergy(const Impl& impl, double area, double param0, double param1) {
+    return impl.energy(area, param0, param1);
+}
+template< typename Impl, std::enable_if_t< std::is_same< Impl, MembraneStretchingLinear >::value >* = nullptr >
+double implEnergy(const Impl& impl, double area, double param0, double param1) {
+    return impl.energy(area, param0);
+}
+
+template< typename Impl, std::enable_if_t< std::is_same< Impl, MembraneStretchingHarmonic >::value >* = nullptr >
+void implForces(const Impl& impl, double* force, double area, const mathfunc::Vec3& dArea, double param0, double param1) {
+    impl.forces(force, area, dArea, param0, param1);
+}
+template< typename Impl, std::enable_if_t< std::is_same< Impl, MembraneStretchingLinear >::value >* = nullptr >
+void implForces(const Impl& impl, double* force, double area, const mathfunc::Vec3& dArea, double param0, double param1) {
+    impl.forces(force, dArea, param0);
+}
+
+} // namespace
+
+#endif // ifdef __cpp_if_constexpr
+
+template< typename Impl, MembraneStretchingAccumulationType accuType >
+double MembraneStretching< Impl, accuType >::computeEnergy(const double* coord, bool stretched) {
     double U = 0;
     double U_i;
 
     for(auto m: Membrane::getMembranes()) {
 
-        const auto kElastic = m->getMMembrane()->getKElastic();
-        const auto eqArea = m->getMMembrane()->getEqArea();
-
         double area = 0.0;
-        for(const auto& v : m->getMesh().getVertices())
-            area += stretched ? v.attr.gVertex.sArea : v.attr.gVertex.area;
 
-        U_i = _FFType.energy(area, kElastic, eqArea); 
-
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-            || U_i != U_i || U_i < -1.0) {
-            _membraneCulprit = m;
-            return -1;
-        } else
-            U += U_i;
-        
-    }
-
-    return U;
-}
-
-// Force on each vertex is calculated one-time using derivative of vcell area and
-// the derivative of neighbor vcell areas on the center vertex.
-template<>
-void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForces() {
-    
-    for (auto m: Membrane::getMembranes()) {
-
-        const auto& mesh = m->getMesh();
-
-        const auto kElastic = m->getMMembrane()->getKElastic();
-        const auto eqArea = m->getMMembrane()->getEqArea();
-
-        double area = 0.0;
-        for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.area;
-
-        const size_t numVertices = mesh.getVertices().size();
-        for(size_t vi = 0; vi < numVertices; ++vi) {
-            const auto& v = mesh.getVertices()[vi];
-           
-            _FFType.forces(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
-
-            // Position of this vertex also affects neighbor vcell areas
-            mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea;
-                _FFType.forces(v.attr.vertex, area, dArea, kElastic, eqArea);
-            });
+        IF_CONSTEXPR (accuType == MembraneStretchingAccumulationType::ByVertex) {
+            for(const auto& v : m->getMesh().getVertices()) if(v.numTargetingBorderHalfEdges == 0)
+                area += (stretched ? v.attr.gVertexS.astar : v.attr.gVertex.astar) / 3;
+        } else {
+            for(const auto& t : m->getMesh().getTriangles())
+                area += stretched ? t.attr.gTriangleS.area : t.attr.gTriangle.area;
         }
-    }
-}
 
-template<>
-void MembraneStretching<MembraneStretchingVoronoiHarmonic>::computeForcesAux() {
-    
-    for (auto m: Membrane::getMembranes()) {
-    
-        const auto& mesh = m->getMesh();
+        IF_CONSTEXPR (std::is_same< Impl, MembraneStretchingHarmonic >::value) {
+            const auto kElastic = m->getMMembrane()->getKElastic();
+            const auto eqArea = m->getMMembrane()->getEqArea();
 
-        const auto kElastic = m->getMMembrane()->getKElastic();
-        const auto eqArea = m->getMMembrane()->getEqArea();
+#ifdef __cpp_if_constexpr
+            U_i = _impl.energy(area, kElastic, eqArea);
+#else
+            U_i = implEnergy(_impl, area, kElastic, eqArea);
+#endif
 
-        double area = 0.0;
-        for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.area;
+        } else {
+            const auto tension = m->getMMembrane()->getTension();
 
-        const size_t numVertices = mesh.getVertices().size();
-        for(size_t vi = 0; vi < numVertices; ++vi) {
-            const auto& v = mesh.getVertices()[vi];
-           
-            _FFType.forcesAux(v.attr.vertex, area, v.attr.gVertex.dArea, kElastic, eqArea);
-
-            // Position of this vertex also affects neighbor vcell areas
-            mesh.forEachHalfEdgeTargetingVertex(vi, [this, &mesh, &v, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborArea;
-                _FFType.forcesAux(v.attr.vertex, area, dArea, kElastic, eqArea);
-            });
+#ifdef __cpp_if_constexpr
+            U_i = _impl.energy(area, tension);
+#else
+            U_i = implEnergy(_impl, area, tension, 0.0);
+#endif
         }
-    }
-}
-
-
-
-// Using the areas of the triangles
-template<>
-double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(bool stretched) {
-    double U = 0;
-    double U_i;
-
-    for(auto m: Membrane::getMembranes()) {
-
-        const auto kElastic = m->getMMembrane()->getKElastic();
-        const auto eqArea = m->getMMembrane()->getEqArea();
-
-        double area = 0.0;
-        for(const auto& t : m->getMesh().getTriangles())
-            area += stretched ? t.attr.gTriangle.sArea : t.attr.gTriangle.area;
-
-        U_i = _FFType.energy(area, kElastic, eqArea); 
 
         if(fabs(U_i) == numeric_limits<double>::infinity()
            || U_i != U_i || U_i < -1.0) { // (U_i != U_i) => (U_i == NaN)
@@ -131,50 +89,153 @@ double MembraneStretching<MembraneStretchingHarmonic>::computeEnergy(bool stretc
     return U;
 }
 
-// Currently force calculation using triangles are different with the one using vcells.
-// Using triangles, looping through triangles and forces are accumulated on the vertices.
-template<>
-void MembraneStretching<MembraneStretchingHarmonic>::computeForces() {
+template< typename Impl, MembraneStretchingAccumulationType accuType >
+void MembraneStretching< Impl, accuType >::computeForces(const double* coord, double* force) {
     
     for (auto m: Membrane::getMembranes()) {
-    
+
+        Membrane::MembraneMeshAttributeType::cacheIndices(m->getMesh());
+
         const auto& mesh = m->getMesh();
 
-        const auto kElastic = m->getMMembrane()->getKElastic();
-        const auto eqArea = m->getMMembrane()->getEqArea();
+        IF_CONSTEXPR (std::is_same< Impl, MembraneStretchingHarmonic >::value) {
 
-        double area = 0.0;
-        for(const auto& t : mesh.getTriangles()) area += t.attr.gTriangle.area;
+            const auto kElastic = m->getMMembrane()->getKElastic();
+            const auto eqArea = m->getMMembrane()->getEqArea();
 
-        const size_t numTriangles = mesh.getTriangles().size();
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
-            mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
-                _FFType.forces(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
-            });
-        }
+            double area = 0.0;
+            IF_CONSTEXPR (accuType == MembraneStretchingAccumulationType::ByVertex) {
+                for(const auto& v : mesh.getVertices()) area += v.attr.gVertex.astar / 3;
+
+                const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
+                const size_t numVertices = mesh.getVertices().size();
+                for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
+                    const auto& va = mesh.getVertexAttribute(vi);
+
+#ifdef __cpp_if_constexpr
+                    _impl.forces(
+                        force + 3 * va.cachedCoordIndex,
+                        area, va.gVertex.dAstar / 3, kElastic, eqArea
+                    );
+#else
+                    implForces(_impl,
+                        force + 3 * va.cachedCoordIndex,
+                        area, va.gVertex.dAstar / 3, kElastic, eqArea
+                    );
+#endif
+
+                    // Position of this vertex also affects neighbor vertex areas
+                    for(size_t i = 0; i < va.cachedDegree; ++i) {
+                        const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
+                        const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborAstar / 3;
+#ifdef __cpp_if_constexpr
+                        _impl.forces(
+                            force + 3 * va.cachedCoordIndex,
+                            area, dArea, kElastic, eqArea
+                        );
+#else
+                        implForces(_impl,
+                            force + 3 * va.cachedCoordIndex,
+                            area, dArea, kElastic, eqArea
+                        );
+#endif
+                    }
+                }
+            } else { // By triangle
+                for(const auto& t : mesh.getTriangles()) area += t.attr.gTriangle.area;
+
+                const size_t numTriangles = mesh.getTriangles().size();
+                for(size_t ti = 0; ti < numTriangles; ++ti) {
+                    const auto& ta = mesh.getTriangleAttribute(ti);
+
+                    for(size_t i = 0; i < 3; ++i) {
+                        const size_t hei = ta.cachedHalfEdgeIndex[i];
+                        const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
+#ifdef __cpp_if_constexpr
+                        _impl.forces(
+                            force + 3 * ta.cachedCoordIndex[i],
+                            area, dArea, kElastic, eqArea
+                        );
+#else
+                        implForces(_impl,
+                            force + 3 * ta.cachedCoordIndex[i],
+                            area, dArea, kElastic, eqArea
+                        );
+#endif
+                    }
+                }
+            } // end if (accuType ...)
+
+        } else { // Use linear energy
+            const auto tension = m->getMMembrane()->getTension();
+
+            IF_CONSTEXPR (accuType == MembraneStretchingAccumulationType::ByVertex) {
+
+                const auto& cvt = mesh.getMetaAttribute().cachedVertexTopo;
+                const size_t numVertices = mesh.getVertices().size();
+                for(size_t vi = 0; vi < numVertices; ++vi) if(!mesh.isVertexOnBorder(vi)) {
+                    const auto& va = mesh.getVertexAttribute(vi);
+                
+#ifdef __cpp_if_constexpr
+                    _impl.forces(
+                        force + 3 * va.cachedCoordIndex,
+                        va.gVertex.dAstar / 3, tension
+                    );
+#else
+                    implForces(_impl,
+                        force + 3 * va.cachedCoordIndex,
+                        0.0, va.gVertex.dAstar / 3, tension, 0.0
+                    );
+#endif
+
+                    // Position of this vertex also affects neighbor vertex areas
+                    for(size_t i = 0; i < va.cachedDegree; ++i) {
+                        const size_t hei = cvt[mesh.getMetaAttribute().cachedVertexOffsetTargetingHE(vi) + i];
+                        const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dNeighborAstar / 3;
+#ifdef __cpp_if_constexpr
+                        _impl.forces(
+                            force + 3 * va.cachedCoordIndex,
+                            dArea, tension
+                        );
+#else
+                        implForces(_impl,
+                            force + 3 * va.cachedCoordIndex,
+                            0.0, dArea, tension, 0.0
+                        );
+#endif
+                    }
+                }
+            } else { // By triangle
+
+                const size_t numTriangles = mesh.getTriangles().size();
+                for(size_t ti = 0; ti < numTriangles; ++ti) {
+                    const auto& ta = mesh.getTriangleAttribute(ti);
+
+                    for(size_t i = 0; i < 3; ++i) {
+                        const size_t hei = ta.cachedHalfEdgeIndex[i];
+                        const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
+#ifdef __cpp_if_constexpr
+                        _impl.forces(
+                            force + 3 * ta.cachedCoordIndex[i],
+                            dArea, tension
+                        );
+#else
+                        implForces(_impl,
+                            force + 3 * ta.cachedCoordIndex[i],
+                            0.0, dArea, tension, 0.0
+                        );
+#endif
+                    }
+                }
+            } // end if (accuType ...)
+
+        } // end if (Impl ...)
     }
 }
 
-template<>
-void MembraneStretching<MembraneStretchingHarmonic>::computeForcesAux() {
-    
-    for (auto m: Membrane::getMembranes()) {
-    
-        const auto& mesh = m->getMesh();
 
-        const auto kElastic = m->getMMembrane()->getKElastic();
-        const auto eqArea = m->getMMembrane()->getEqArea();
-
-        double area = 0.0;
-        for(const auto& t : mesh.getTriangles()) area += t.attr.gTriangle.area;
-
-        const size_t numTriangles = mesh.getTriangles().size();
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
-            mesh.forEachHalfEdgeInTriangle(ti, [this, &mesh, area, kElastic, eqArea](size_t hei) {
-                const auto& dArea = mesh.getHalfEdgeAttribute(hei).gHalfEdge.dTriangleArea;
-                _FFType.forcesAux(mesh.getVertexAttribute(mesh.target(hei)).vertex, area, dArea, kElastic, eqArea);
-            });
-        }
-    }
-}
+// Explicit instantiations
+template class MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByTriangle >;
+template class MembraneStretching< MembraneStretchingHarmonic, MembraneStretchingAccumulationType::ByVertex   >;
+template class MembraneStretching< MembraneStretchingLinear,   MembraneStretchingAccumulationType::ByTriangle >;
+template class MembraneStretching< MembraneStretchingLinear,   MembraneStretchingAccumulationType::ByVertex   >;

@@ -22,89 +22,131 @@
 #include "Bead.h"
 
 template <class MTOCInteractionType>
-double MTOCAttachment<MTOCInteractionType>::computeEnergy(bool stretched) {
+void MTOCAttachment<MTOCInteractionType>::vectorize() {
+    
+    for(auto mtoc : MTOC::getMTOCs()) {
+        beadSet = new int[n * mtoc->getFilaments().size() + 1];
+        kstr = new double[n * Cylinder::getCylinders().size() + 1];
+        
+        beadSet[0] = mtoc->getBubble()->getBead()->getIndex();
+        kstr[0] = 0;
+        
+        int i = 1;
+        
+        for (int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+            Filament *f = mtoc->getFilaments()[fIndex];
+            
+            beadSet[n * i] = f->getMinusEndCylinder()->getFirstBead()->getIndex();
+            
+            kstr[n * i] = f->getMinusEndCylinder()->getMCylinder()->getStretchingConst();
+            
+            i++;
+        }
+    }
+}
+
+template <class MTOCInteractionType>
+void MTOCAttachment<MTOCInteractionType>::deallocate() {
+    
+    delete [] beadSet;
+    delete [] kstr;
+}
+
+
+template <class MTOCInteractionType>
+double MTOCAttachment<MTOCInteractionType>::computeEnergy(double* coord, bool stretched) {
     
     double U = 0.0;
     double U_i=0.0;
     
+    //TO DO, for loop may be removed
+    
     for(auto mtoc : MTOC::getMTOCs()) {
         
-        Bead* b1 = mtoc->getBubble()->getBead();
+        //        Bead* b1 = mtoc->getBubble()->getBead();
+        //
+        //        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+        //
+        //            Filament *f = mtoc->getFilaments()[fIndex];
+        //
+        //            Cylinder* c = f->getMinusEndCylinder();
+        //
+        //            Bead* b2 = c->getFirstBead();
+        //            double kStretch = c->getMCylinder()->getStretchingConst();
+        double radius = mtoc->getBubble()->getRadius();
         
-        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-            
-            Filament *f = mtoc->getFilaments()[fIndex];
-            
-            Cylinder* c = f->getMinusEndCylinder();
-            
-            Bead* b2 = c->getFirstBead();
-            double kStretch = c->getMCylinder()->getStretchingConst();
-            double radius = mtoc->getBubble()->getRadius();
-            
-            U_i = _FFType.energy(b1, b2, kStretch, radius, stretched);
-            
-            if(fabs(U_i) == numeric_limits<double>::infinity()
-               || U_i != U_i || U_i < -1.0) {
-                
-                //set culprits and return
-                _otherCulprit = f;
-                _bubbleCulprit = mtoc->getBubble();
-                
-                return -1;
-            }
-            else
-                U += U_i;
-        }
+        U_i = _FFType.energy(coord, beadSet, kstr, radius);
     }
-    return U;
+    
+    return U_i;
+    
+    //            if(fabs(U_i) == numeric_limits<double>::infinity()
+    //               || U_i != U_i || U_i < -1.0) {
+    //
+    //                //set culprits and return
+    //                _otherCulprit = f;
+    //                _bubbleCulprit = mtoc->getBubble();
+    //
+    //                return -1;
+    //            }
+    //            else
+    //                U += U_i;
+    //        }
+    //    }
+    //    return U;
+    
 }
 
 template <class MTOCInteractionType>
-void MTOCAttachment<MTOCInteractionType>::computeForces() {
+void MTOCAttachment<MTOCInteractionType>::computeForces(double *coord, double *f) {
     
     for(auto mtoc : MTOC::getMTOCs()) {
-        
-        Bead* b1 = mtoc->getBubble()->getBead();
-        
-        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-            
-            Filament *f = mtoc->getFilaments()[fIndex];
-            
-            Cylinder* c = f->getMinusEndCylinder();
-            
-            Bead* b2 = c->getFirstBead();
-            double kStretch = c->getMCylinder()->getStretchingConst();
-            double radius = mtoc->getBubble()->getRadius();
-
-            _FFType.forces(b1, b2, kStretch, radius);
-        }
+        //
+        //        Bead* b1 = mtoc->getBubble()->getBead();
+        //
+        //        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+        //
+        //            Filament *f = mtoc->getFilaments()[fIndex];
+        //
+        //            Cylinder* c = f->getMinusEndCylinder();
+        //
+        //            Bead* b2 = c->getFirstBead();
+        //            double kStretch = c->getMCylinder()->getStretchingConst();
+        double radius = mtoc->getBubble()->getRadius();
+        _FFType.forces(coord, f, beadSet, kstr, radius);
+        //        }
     }
+    
 }
 
 
-template <class MTOCInteractionType>
-void MTOCAttachment<MTOCInteractionType>::computeForcesAux() {
-    
-    for(auto mtoc : MTOC::getMTOCs()) {
-    
-        Bead* b1 = mtoc->getBubble()->getBead();
-        
-        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
-            
-            Filament *f = mtoc->getFilaments()[fIndex];
-            
-            Cylinder* c = f->getMinusEndCylinder();
-            
-            Bead* b2 = c->getFirstBead();
-            double kStretch = c->getMCylinder()->getStretchingConst();
-            double radius = mtoc->getBubble()->getRadius();
-            
-            _FFType.forcesAux(b1, b2, kStretch, radius);
-        }
-    }
-}
+//template <class MTOCInteractionType>
+//void MTOCAttachment<MTOCInteractionType>::computeForcesAux(double *coord, double *f) {
+//    cout << "MTOCAttachment<MTOCInteractionType>::computeForcesAux should not be called in vectorized version." << endl;
+//
+//    for(auto mtoc : MTOC::getMTOCs()) {
+//
+//        Bead* b1 = mtoc->getBubble()->getBead();
+//
+//        for(int fIndex = 0; fIndex < mtoc->getFilaments().size(); fIndex++) {
+//
+//            Filament *f = mtoc->getFilaments()[fIndex];
+//
+//            Cylinder* c = f->getMinusEndCylinder();
+//
+//            Bead* b2 = c->getFirstBead();
+//            double kStretch = c->getMCylinder()->getStretchingConst();
+//            double radius = mtoc->getBubble()->getRadius();
+//
+//            _FFType.forcesAux(coord, f, beadSet, kstr);
+//        }
+//    }
+//}
 
 ///Template specializations
-template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(bool stretched);
-template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces();
-template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux();
+template double MTOCAttachment<MTOCAttachmentHarmonic>::computeEnergy(double *coord, bool stretched);
+template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForces(double *coord, double *f);
+//template void MTOCAttachment<MTOCAttachmentHarmonic>::computeForcesAux(double *coord, double *f);
+template void MTOCAttachment<MTOCAttachmentHarmonic>::vectorize();
+template void MTOCAttachment<MTOCAttachmentHarmonic>::deallocate();
+

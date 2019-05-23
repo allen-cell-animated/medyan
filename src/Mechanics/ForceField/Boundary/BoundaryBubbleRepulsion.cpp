@@ -20,85 +20,85 @@
 #include "Bead.h"
 
 template <class BRepulsionInteractionType>
-double BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(bool stretched) {
-    
-    double U = 0.0;
-    double U_i=0.0;
-    
-    for (auto be: BoundaryElement::getBoundaryElements()) {
+void BoundaryBubbleRepulsion<BRepulsionInteractionType>::vectorize() {
+    //count interactions
+    nint = 0;
+    for (auto be: BoundaryElement::getBoundaryElements())
+    {
         
-        for(auto &bb : _neighborList->getNeighbors(be)) {
-            
-            double kRep = be->getRepulsionConst();
-            double screenLength = be->getScreeningLength();
-            double radius = bb->getRadius();
-            
-            Bead* bd = bb->getBead();
-            
-            U_i =  _FFType.energy(
-                bd, be->distance(stretched ? bd->getCoordinate<true>() : bd->getCoordinate<false>()), radius, kRep, screenLength);
-            
-            if(fabs(U_i) == numeric_limits<double>::infinity()
-               || U_i != U_i || U_i < -1.0) {
-                
-                //set culprits and return
-                _otherCulprit = bb;
-                _boundaryElementCulprit = be;
-                
-                return -1;
-            }
-            else
-                U += U_i;
+        for(auto &c : _neighborList->getNeighbors(be)) {
+            nint++;
         }
     }
     
-    return U;
+    beadSet = new int[n * nint];
+    krep = new double[nint];
+    slen = new double[nint];
+    auto beList = BoundaryElement::getBoundaryElements();
+    
+    int nbe = BoundaryElement::getBoundaryElements().size();
+    int i = 0;
+    int ni = 0;
+    int bindex = 0;
+    
+    nneighbors = new int[nbe];//stores number of interactions per boundary element.
+    double *beListplane;
+    int *nintvec;
+    beListplane = new double[4 * nbe];
+    nintvec = new int[nbe];//stores cumulative number of nneighbors.
+
+    int cumnn=0;
+    for (i = 0; i < nbe; i++) {
+        
+        auto be = BoundaryElement::getBoundaryElements()[i];//beList[i];
+        auto nn = _neighborList->getNeighbors(be).size();
+        
+        nneighbors[i] = 0;
+        auto idx = 0;
+        
+        for (ni = 0; ni < nn; ni++) {
+            
+            bindex = _neighborList->getNeighbors(be)[ni]->getBead()->getIndex();
+            beadSet[cumnn+idx] = bindex;
+            krep[cumnn+idx] = be->getRepulsionConst();
+            slen[cumnn+idx] = be->getScreeningLength();
+            idx++;
+            
+            
+        }
+        nneighbors[i]=idx;
+        cumnn+=idx;
+        nintvec[i] = cumnn;
+    }
+    
+    
 }
 
 template <class BRepulsionInteractionType>
-void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces() {
-    
-    for (auto be: BoundaryElement::getBoundaryElements()) {
-        
-        for(auto &bb : _neighborList->getNeighbors(be)) {
-            
-            double kRep = be->getRepulsionConst();
-            double screenLength = be->getScreeningLength();
-            double radius = bb->getRadius();
-            
-            Bead* bd = bb->getBead();
-            
-            auto normal = be->normal(bd->coordinate);
-            _FFType.forces(bd, be->distance(bd->coordinate),
-                           radius, normal, kRep, screenLength);
-            
-        }
-    }
+void BoundaryBubbleRepulsion<BRepulsionInteractionType>::deallocate() {
+    delete [] beadSet;
+    delete [] krep;
+    delete [] slen;
+    delete [] nneighbors;
 }
-
 
 template <class BRepulsionInteractionType>
-void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForcesAux() {
+double BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeEnergy(double *coord) {
     
-    for (auto be: BoundaryElement::getBoundaryElements()) {
-        
-        for(auto &bb : _neighborList->getNeighbors(be)) {
-            
-            double kRep = be->getRepulsionConst();
-            double screenLength = be->getScreeningLength();
-            double radius = bb->getRadius();
-            
-            Bead* bd = bb->getBead();
-            
-            auto normal = be->normal(bd->coordinate);
-            _FFType.forcesAux(bd, be->distance(bd->coordinate),
-                              radius, normal, kRep, screenLength);
-            
-        }
-    }
+    return _FFType.energy(coord, beadSet, krep, slen, nneighbors);
+    
 }
+
+template <class BRepulsionInteractionType>
+void BoundaryBubbleRepulsion<BRepulsionInteractionType>::computeForces(double *coord, double *f) {
+    
+    _FFType.forces(coord, f, beadSet, krep, slen, nneighbors);
+}
+
 
 ///Template specializations
-template double BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(bool stretched);
-template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForces();
-template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForcesAux();
+template double BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeEnergy(double *coord);
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::computeForces(double *coord, double *f);
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::vectorize();
+template void BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>::deallocate();
+

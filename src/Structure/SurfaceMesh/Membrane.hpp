@@ -12,9 +12,9 @@
 #include "Composite.h"
 
 #include "MathFunctions.h"
-#include "MMembrane.h"
 #include "Structure/SubSystem.h"
 #include "Structure/SurfaceMesh/MembraneMeshAttribute.hpp"
+#include "Structure/SurfaceMesh/MMembrane.h"
 #include "Structure/SurfaceMesh/SurfaceMesh.hpp"
 
 /******************************************************************************
@@ -28,7 +28,7 @@ removing vertices, edges (halfedges) and triangles to/from the SubSystem.
 However, the ownership of all elements is in this Membrane class through
 inheriting Composite.
 ******************************************************************************/
-class Membrane: public Composite, public Trackable {
+class Membrane: public Composite, public Trackable, public Database< Membrane, false > {
 public:
     using MembraneMeshAttributeType = MembraneMeshAttribute< SurfaceTriangularMesh >;
     using coordinate_type = typename MembraneMeshAttributeType::coordinate_type;
@@ -43,9 +43,6 @@ private:
     short _memType; // Membrane type
 
     SubSystem* _subSystem; // SubSystem pointer
-
-    static Database<Membrane*> _membranes; // Collection in SubSystem
-    int _id; // Unique integer id of this membrane
 
 public:
 
@@ -62,20 +59,20 @@ public:
     const auto& getMesh() const { return _mesh; }
     auto&       getMesh()       { return _mesh; }
 
-    // Get Id
-    int getId()const { return _id; }
-    
+    // Helper function to initialize MMembrane
+    void initMMembrane();
+
     // SubSystem management, inherited from Trackable
-    virtual void addToSubSystem()override { _membranes.addElement(this); }
-    virtual void removeFromSubSystem()override { _membranes.removeElement(this); }
+    virtual void addToSubSystem()override { }
+    virtual void removeFromSubSystem()override { }
     
     /// Get all instances of this class from the SubSystem
     static const vector<Membrane*>& getMembranes() {
-        return _membranes.getElements();
+        return getElements();
     }
     /// Get the number of membranes in this system
-    static int numMembranes() {
-        return _membranes.countElements();
+    static std::size_t numMembranes() {
+        return getElements().size();
     }
 
     //@{
@@ -94,6 +91,9 @@ public:
     }
     void updateGeometryValueWithDerivative() {
         MembraneMeshAttributeType::updateGeometryValueWithDerivative(_mesh);
+    }
+    void updateGeometryValueForSystem() {
+        MembraneMeshAttributeType::updateGeometryValueForSystem(_mesh);
     }
 
     /**
@@ -115,15 +115,9 @@ public:
         return MembraneMeshAttributeType::contains(_mesh, p);
     }
 
-    // Function to monitor the quality of the meshwork
-    double meshworkQuality()const; // Must be used after updating the geometry
-                                   // Returns a value between 0 and 1,
-                                   // 1 being best and 0 being worst.
-
     /**************************************************************************
     Topological
     **************************************************************************/
-    bool updateClosedness() { return _mesh.updateClosedness(); }
     bool isClosed() const { return _mesh.isClosed(); }
 
     /**************************************************************************
@@ -134,8 +128,6 @@ public:
 
 
 };
-
-
 
 
 

@@ -4,11 +4,16 @@
 #include <algorithm>
 #include <array>
 #include <cstddef> // ptrdiff_t
+#include <cstdint> // uint_fast8_t
 #include <iterator>
-#include <set>
+#include <sstream>
+#include <stdexcept> // runtime_error
+#include <string>
 #include <type_traits>
-#include <utility> // move
+#include <utility> // move, pair
 #include <vector>
+
+#include "util/io/log.h"
 
 /******************************************************************************
 The data structure for an orientable, manifold 2d triangular meshwork in 3d
@@ -141,10 +146,18 @@ public:
 //     - void setIndex(size_t)
 //   - Type TriangleAttribute
 //     - void setIndex(size_t)
+//   - Type BorderAttribute
+//     - void setIndex(size_t)
 //   - Type MetaAttribute
 //   - Type AttributeInitializerInfo
 //   - void init(Mesh, const AttributeInitializerInfo&)
 //   - AttributeInitializerInfo extract(Mesh)
+//   - void newVertex(...)
+//   - void newEdge(...)
+//   - void newTriangle(...)
+//   - void newHalfEdge(...)
+//   - void newBorder(...)
+//   - void removeElement< Element >(...)
 template< typename Attribute > class SurfaceTriangularMesh {
 public:
 
@@ -155,17 +168,24 @@ public:
     using EdgeAttribute     = typename Attribute::EdgeAttribute;
     using HalfEdgeAttribute = typename Attribute::HalfEdgeAttribute;
     using TriangleAttribute = typename Attribute::TriangleAttribute;
+    using BorderAttribute   = typename Attribute::BorderAttribute;
     using MetaAttribute     = typename Attribute::MetaAttribute;
 
     // The elements should be trivially copyable.
     struct Vertex {
         size_t halfEdgeIndex; // Only one HalfEdge targeting the vertex is needed.
         size_t degree; // Number of neighbors
+
+        // 0: vertex is inside, 1: vertex is on the border, >=2: pathological
+        std::uint_fast8_t numTargetingBorderHalfEdges;
+
         VertexAttribute attr;
     };
     struct HalfEdge {
-        bool hasOpposite;
-        size_t triangleIndex;
+        enum class PolygonType { Triangle, Border };
+
+        PolygonType polygonType;
+        size_t polygonIndex;
         size_t targetVertexIndex;
         size_t oppositeHalfEdgeIndex;
         size_t nextHalfEdgeIndex;
@@ -175,23 +195,34 @@ public:
     };
     struct Edge {
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
+
+        // 0: edge is inside, 1: edge is on the border, 2: pathological
+        std::uint_fast8_t numBorderHalfEdges;
+
         EdgeAttribute attr;
     };
+    // A triangle is a closed polygon which has exactly 3 half edges.
     struct Triangle {
         size_t halfEdgeIndex; // Only one HalfEdge is needed.
         TriangleAttribute attr;
     };
+    // A border is a closed polygon which might be non-planar, and should have
+    // more than 2 half edges.
+    struct Border {
+        size_t halfEdgeIndex; // Only one half edge is needed
+        BorderAttribute attr;
+    };
 
 private:
 
-    DeletableVector<Triangle> _triangles; // collection of triangles
-    DeletableVector<HalfEdge> _halfEdges; // collection of halfedges
-    DeletableVector<Edge>     _edges;     // collection of edges
-    DeletableVector<Vertex>   _vertices;  // collection of vertices
+    DeletableVector<Triangle> _triangles;     // collection of triangles
+    DeletableVector<HalfEdge> _halfEdges;     // collection of halfedges
+    DeletableVector<Edge>     _edges;         // collection of edges
+    DeletableVector<Vertex>   _vertices;      // collection of vertices
+    DeletableVector<Border>   _borders;       // collection of borders
 
     MetaAttribute _meta;
 
-    bool _isClosed;
     int _genus = 0; // Genus of the surface. Currently it is not tracked.
 
     // Element accessor
@@ -203,26 +234,29 @@ private:
     auto& _getElements() { return _edges; }
     template< typename Element, std::enable_if_t<std::is_same<Element, Vertex>::value, void>* = nullptr>
     auto& _getElements() { return _vertices; }
+    template< typename Element, std::enable_if_t<std::is_same<Element, Border>::value, void>* = nullptr>
+    auto& _getElements() { return _borders; }
 
     // Meshwork registration helper
     void _registerTriangle(size_t ti, size_t hei0, size_t hei1, size_t hei2) {
         _triangles[ti].halfEdgeIndex = hei0;
         _halfEdges[hei0].nextHalfEdgeIndex = hei1;
         _halfEdges[hei0].prevHalfEdgeIndex = hei2;
-        _halfEdges[hei0].triangleIndex = ti;
+        _halfEdges[hei0].polygonIndex = ti;
         _halfEdges[hei1].nextHalfEdgeIndex = hei2;
         _halfEdges[hei1].prevHalfEdgeIndex = hei0;
-        _halfEdges[hei1].triangleIndex = ti;
+        _halfEdges[hei1].polygonIndex = ti;
         _halfEdges[hei2].nextHalfEdgeIndex = hei0;
         _halfEdges[hei2].prevHalfEdgeIndex = hei1;
-        _halfEdges[hei2].triangleIndex = ti;
+        _halfEdges[hei2].polygonIndex = ti;
     }
     void _registerEdge(size_t ei, size_t hei0, size_t hei1) {
         _edges[ei].halfEdgeIndex = hei0;
-        _halfEdges[hei0].hasOpposite = true;
+        _edges[ei].numBorderHalfEdges =
+            static_cast<std::uint_fast8_t>(_halfEdges[hei0].polygonType == HalfEdge::PolygonType::Border) +
+            static_cast<std::uint_fast8_t>(_halfEdges[hei1].polygonType == HalfEdge::PolygonType::Border);
         _halfEdges[hei0].oppositeHalfEdgeIndex = hei1;
         _halfEdges[hei0].edgeIndex = ei;
-        _halfEdges[hei1].hasOpposite = true;
         _halfEdges[hei1].oppositeHalfEdgeIndex = hei0;
         _halfEdges[hei1].edgeIndex = ei;
     }
@@ -237,14 +271,22 @@ private:
         Attribute::newEdge(*this, index, op);
         return index;
     }
+    size_t _newEdge() { return _newEdge([]{}); }
     template< typename Operation > size_t _newHalfEdge(const Operation& op) {
         size_t index = _halfEdges.insert();
         Attribute::newHalfEdge(*this, index, op);
         return index;
     }
+    size_t _newHalfEdge() { return _newHalfEdge([]{}); }
     template< typename Operation > size_t _newTriangle(const Operation& op) {
         size_t index = _triangles.insert();
         Attribute::newTriangle(*this, index, op);
+        return index;
+    }
+    size_t _newTriangle() { return _newTriangle([]{}); }
+    template< typename Operation > size_t _newBorder(const Operation& op) {
+        size_t index = _borders.insert();
+        Attribute::newBorder(*this, index, op);
         return index;
     }
 
@@ -258,9 +300,19 @@ private:
     }
     template< typename Element, std::enable_if_t<std::is_same<Element, HalfEdge>::value, void>* = nullptr >
     void _retargetElement(size_t from, size_t to) {
-        if(hasOpposite(to)) _halfEdges[opposite(to)].oppositeHalfEdgeIndex = to;
-        if(_triangles[triangle(to)].halfEdgeIndex == from)
-            _triangles[triangle(to)].halfEdgeIndex = to;
+        _halfEdges[opposite(to)].oppositeHalfEdgeIndex = to;
+
+        switch(_halfEdges[to].polygonType) {
+        case HalfEdge::PolygonType::Triangle:
+            if(_triangles[triangle(to)].halfEdgeIndex == from)
+                _triangles[triangle(to)].halfEdgeIndex = to;
+            break;
+        case HalfEdge::PolygonType::Border:
+            if(_borders[polygon(to)].halfEdgeIndex == from)
+                _borders[polygon(to)].halfEdgeIndex = to;
+            break;
+        }
+
         if(_vertices[target(to)].halfEdgeIndex == from)
             _vertices[target(to)].halfEdgeIndex = to;
         if(_edges[edge(to)].halfEdgeIndex == from)
@@ -279,9 +331,16 @@ private:
     template< typename Element, std::enable_if_t<std::is_same<Element, Triangle>::value, void>* = nullptr >
     void _retargetElement(size_t from, size_t to) {
         forEachHalfEdgeInTriangle(to, [this, to](size_t hei) {
-            _halfEdges[hei].triangleIndex = to;
+            _halfEdges[hei].polygonIndex = to;
         });
         _triangles[to].attr.setIndex(to);
+    }
+    template< typename Element, std::enable_if_t<std::is_same<Element, Border>::value, void>* = nullptr >
+    void _retargetElement(size_t from, size_t to) {
+        forEachHalfEdgeInPolygon< Border >(to, [this, to](size_t hei) {
+            _halfEdges[hei].polygonIndex = to;
+        });
+        _borders[to].attr.setIndex(to);
     }
     template< typename Element > struct ElementRetargeter {
         SurfaceTriangularMesh& mesh;
@@ -312,6 +371,7 @@ private:
         _clearElement<HalfEdge>();
         _clearElement<Edge>();
         _clearElement<Triangle>();
+        _clearElement<Border>();
     }
 
 public:
@@ -331,18 +391,24 @@ public:
             typename Attribute::AttributeInitializerInfo attributeInitializerInfo;
         };
 
+        class PathologicalTopologyError : public std::runtime_error {
+        public:
+            PathologicalTopologyError(const std::string& what_arg) : std::runtime_error("Pathological Topology: " + what_arg) {}
+        };
+
         void init(
             SurfaceTriangularMesh& mesh,
             size_t numVertices,
             const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList,
             const typename Attribute::AttributeInitializerInfo& attributeInitializerInfo
         ) const {
-            mesh._vertices.getValue().resize(numVertices);
             const size_t numTriangles = triangleVertexIndexList.size();
+            mesh._vertices.getValue().resize(numVertices);
             mesh._triangles.getValue().resize(numTriangles);
-            const size_t numHalfEdges = 3 * numTriangles;
-            mesh._halfEdges.getValue().reserve(numHalfEdges);
-            mesh._edges.getValue().reserve(numHalfEdges / 2); // Might be more than this number with borders.
+
+            const size_t estimatedNumHalfEdges = 3 * numTriangles;  // Might be more than this number with borders.
+            mesh._halfEdges.getValue().reserve(estimatedNumHalfEdges);
+            mesh._edges.getValue().reserve(estimatedNumHalfEdges / 2);
 
             struct VertexAdditionalInfo {
                 bool hasTargetingHalfEdge = false;
@@ -350,42 +416,74 @@ public:
             };
             std::vector< VertexAdditionalInfo > vai(numVertices);
 
+            struct HalfEdgeAdditionalInfo {
+                bool isAtBorder;
+                bool oppositeBorderCreated = false;
+            };
+            std::vector< HalfEdgeAdditionalInfo > hai;
+            hai.reserve(estimatedNumHalfEdges);
+
+            // Reset targeting border half edge counter
+            for(auto& v : mesh._vertices) {
+                v.numTargetingBorderHalfEdges = 0;
+            }
+
+            // Build topological information by inserting new half edges
+            // The newly added half edges are always in triangle, but might be at the border,
+            // if no opposite half edge is registered.
             for(size_t ti = 0; ti < numTriangles; ++ti) {
                 const auto& t = triangleVertexIndexList[ti];
                 mesh._triangles[ti].halfEdgeIndex = mesh._halfEdges.size(); // The next inserted halfedge index
+
                 for(size_t i = 0; i < 3; ++i) {
+
+                    // Insert a new half edge
                     const size_t hei = mesh._halfEdges.insert();
                     HalfEdge& he = mesh._halfEdges[hei];
-                    he.hasOpposite = false;
-                    he.triangleIndex = ti;
+                    hai.push_back({true});
+                    he.polygonType = HalfEdge::PolygonType::Triangle;
+                    he.polygonIndex = ti;
                     he.targetVertexIndex = t[i];
                     he.nextHalfEdgeIndex = (i == 2 ? hei - 2 : hei + 1);
                     he.prevHalfEdgeIndex = (i == 0 ? hei + 2 : hei - 1);
 
+                    ++ mesh._vertices[he.targetVertexIndex].numTargetingBorderHalfEdges;
+
                     // Remembering this edge in the vertices.
                     const size_t leftVertexIndex = t[i == 0 ? 2 : i - 1];
                     vai[leftVertexIndex].leavingHalfEdgeIndices.push_back(hei);
-                    // Search in the target vertex, whether there's an opposite halfedge leaving
-                    const auto findRes = std::find_if(
-                        vai[t[i]].leavingHalfEdgeIndices.begin(),
-                        vai[t[i]].leavingHalfEdgeIndices.end(),
-                        [&mesh, leftVertexIndex](size_t leavingHalfEdgeIndex) {
-                            return leftVertexIndex == mesh._halfEdges[leavingHalfEdgeIndex].targetVertexIndex;
-                        }
-                    );
-                    if(findRes == vai[t[i]].leavingHalfEdgeIndices.end()) {
-                        // opposite not found
-                        mesh._edges[mesh._edges.insert()].halfEdgeIndex = hei;
-                        he.edgeIndex = mesh._edges.size() - 1;
-                    } else {
-                        // opposite found
-                        he.hasOpposite = true;
-                        he.oppositeHalfEdgeIndex = *findRes;
-                        he.edgeIndex = mesh._halfEdges[he.oppositeHalfEdgeIndex].edgeIndex;
 
-                        mesh._halfEdges[he.oppositeHalfEdgeIndex].hasOpposite = true;
-                        mesh._halfEdges[he.oppositeHalfEdgeIndex].oppositeHalfEdgeIndex = hei;
+                    // Search in the target vertex, whether there's an opposite halfedge leaving
+                    {
+                        const auto findRes = std::find_if(
+                            vai[t[i]].leavingHalfEdgeIndices.begin(),
+                            vai[t[i]].leavingHalfEdgeIndices.end(),
+                            [&mesh, leftVertexIndex](size_t leavingHalfEdgeIndex) {
+                                return leftVertexIndex == mesh.target(leavingHalfEdgeIndex);
+                            }
+                        );
+                        if(findRes == vai[t[i]].leavingHalfEdgeIndices.end()) {
+                            // opposite not found
+                            const auto newEdgeIndex = mesh._edges.insert();
+                            mesh._edges[newEdgeIndex].halfEdgeIndex = hei;
+                            mesh._edges[newEdgeIndex].numBorderHalfEdges = 1;
+                            he.edgeIndex = newEdgeIndex;
+                        } else {
+                            // opposite found
+                            hai[hei].isAtBorder = false;
+                            he.oppositeHalfEdgeIndex = *findRes;
+                            he.edgeIndex = mesh.edge(he.oppositeHalfEdgeIndex);
+
+                            hai[he.oppositeHalfEdgeIndex].isAtBorder = false;
+                            mesh._halfEdges[he.oppositeHalfEdgeIndex].oppositeHalfEdgeIndex = hei;
+
+                            mesh._edges[he.edgeIndex].numBorderHalfEdges = 0;
+                            -- mesh._vertices[he.targetVertexIndex].numTargetingBorderHalfEdges;
+                            -- mesh._vertices[mesh.target(he.oppositeHalfEdgeIndex)].numTargetingBorderHalfEdges;
+                        }
                     }
+
+                    // TODO: search current vertex and make sure no overlapping half edge exists
 
                     // Set vertex half edge index
                     if(!vai[t[i]].hasTargetingHalfEdge) {
@@ -395,14 +493,93 @@ public:
                 } // end loop halfedges
             } // end loop triangles
 
-            // Registering vertex degrees (not accurate when there are holes)
+            // Registering vertex degrees and check for vertex topology
+            std::vector< size_t > unusedVertices;
+            std::vector< std::pair< size_t, std::uint_fast8_t > > pathoVertices;
             for(size_t vi = 0; vi < numVertices; ++vi) {
                 mesh._vertices[vi].degree = vai[vi].leavingHalfEdgeIndices.size();
+                if(mesh._vertices[vi].degree == 0) unusedVertices.emplace_back(vi);
+                if(mesh._vertices[vi].numTargetingBorderHalfEdges > 1)
+                    pathoVertices.emplace_back(vi, mesh._vertices[vi].numTargetingBorderHalfEdges);
             }
+            if(!unusedVertices.empty() || !pathoVertices.empty()) {
+                if(!unusedVertices.empty()) {
+                    std::ostringstream oss;
+                    oss << "The following vertices are unused:";
+                    for(auto x : unusedVertices) oss << ' ' << x;
+                    LOG(ERROR) << oss.str();
+                }
+                if(!pathoVertices.empty()) {
+                    std::ostringstream oss;
+                    oss << "The following vertices have more than 1 targeting border half edges:";
+                    for(const auto& x : pathoVertices) oss << ' ' << x.first << ':' << +x.second;
+                    LOG(ERROR) << oss.str();
+                }
+
+                throw PathologicalTopologyError("There are unused vertices or vertices on multiple borders");
+            }
+
+            // Make borders
+            {
+                // Method of finding the next half edge inside border
+                const auto findNextIn = [&mesh, &hai](size_t hei_b_cur) -> size_t {
+                    size_t hei_in = hei_b_cur;
+                    do {
+                        hei_in = mesh.prev(mesh.opposite(hei_in));
+                    } while(!hai[hei_in].isAtBorder);
+                    return hei_in;
+                };
+
+                // Method of associating a new border half edge with vertices, edges and the border
+                const auto registerBorderHalfEdge = [&mesh](size_t hei_b, size_t hei_in, size_t bi) {
+                    mesh._halfEdges[hei_b].polygonType = HalfEdge::PolygonType::Border;
+                    mesh._halfEdges[hei_b].polygonIndex = bi;
+                    mesh._halfEdges[hei_b].targetVertexIndex = mesh.target(mesh.prev(hei_in));
+                    mesh._registerEdge(mesh.edge(hei_in), hei_in, hei_b);
+                };
+
+                // Method of associating 2 consequtive half edges
+                const auto connectBorderHalfEdge = [&mesh](size_t hei_b_cur, size_t hei_b_last) {
+                    mesh._halfEdges[hei_b_cur].prevHalfEdgeIndex = hei_b_last;
+                    mesh._halfEdges[hei_b_last].nextHalfEdgeIndex = hei_b_cur;
+                };
+
+                const size_t currentNumHalfEdges = mesh._halfEdges.size();
+                for(size_t hei = 0; hei < currentNumHalfEdges; ++hei) {
+                    if(hai[hei].isAtBorder && ! hai[hei].oppositeBorderCreated) {
+                        size_t hei_in_cur = hei;
+
+                        // Create first border half edge
+                        const size_t hei_b_first = mesh._halfEdges.insert();
+                        hai[hei_in_cur].oppositeBorderCreated = true;
+                        size_t hei_b_cur = hei_b_first;
+                        size_t hei_b_last = hei_b_first;
+
+                        // Create a border object
+                        const size_t bi = mesh._borders.insert();
+                        mesh._borders[bi].halfEdgeIndex = hei_b_first;
+                        registerBorderHalfEdge(hei_b_first, hei_in_cur, bi);
+
+                        // Sequentially create border half edges
+                        while( (hei_in_cur = findNextIn(hei_b_cur)) != hei ) {
+                            hei_b_cur = mesh._halfEdges.insert();
+                            hai[hei_in_cur].oppositeBorderCreated = true;
+
+                            registerBorderHalfEdge(hei_b_cur, hei_in_cur, bi);
+                            connectBorderHalfEdge(hei_b_cur, hei_b_last);
+
+                            hei_b_last = hei_b_cur;
+                        }
+                        connectBorderHalfEdge(hei_b_first, hei_b_last);
+
+                    }
+                } // End looping half edges for making border
+            } // End making border
 
             // Initialize attributes
             Attribute::init(mesh, attributeInitializerInfo);
-        }
+
+        } // End of function void init(...)
 
         Info extract(const SurfaceTriangularMesh& mesh) const {
             Info info;
@@ -432,22 +609,19 @@ public:
         return Initializer().extract(*this);
     }
 
-    bool updateClosedness() {
-        _isClosed = true;
-        for(const auto& he : _halfEdges) if(!he.hasOpposite) { _isClosed = false; break; }
-        return _isClosed;
-    }
-    bool isClosed()const noexcept { return _isClosed; }
+    bool isClosed()const noexcept { return numBorders() == 0; }
 
     // Data accessors
     auto numVertices()  const noexcept { return _vertices.size(); }
     auto numHalfEdges() const noexcept { return _halfEdges.size(); }
     auto numEdges()     const noexcept { return _edges.size(); }
     auto numTriangles() const noexcept { return _triangles.size(); }
+    auto numBorders()   const noexcept { return _borders.size(); }
     const auto& getTriangles() const { return _triangles; }
     const auto& getHalfEdges() const { return _halfEdges; }
     const auto& getEdges()     const { return _edges; }
     const auto& getVertices()  const { return _vertices; }
+    const auto& getBorders()   const { return _borders; }
 
     // Attribute accessor
     VertexAttribute&       getVertexAttribute(size_t index)       { return _vertices[index].attr; }
@@ -458,56 +632,70 @@ public:
     const HalfEdgeAttribute& getHalfEdgeAttribute(size_t index) const { return _halfEdges[index].attr; }
     TriangleAttribute&       getTriangleAttribute(size_t index)       { return _triangles[index].attr; }
     const TriangleAttribute& getTriangleAttribute(size_t index) const { return _triangles[index].attr; }
-    MetaAttribute&       getMetaAttribute()       { return _meta; }
-    const MetaAttribute& getMetaAttribute() const { return _meta; }
+    BorderAttribute&       getBorderAttribute(size_t index)       { return _borders[index].attr; }
+    const BorderAttribute& getBorderAttribute(size_t index) const { return _borders[index].attr; }
+    MetaAttribute&       getMetaAttribute()       noexcept { return _meta; }
+    const MetaAttribute& getMetaAttribute() const noexcept { return _meta; }
 
     // Meshwork traverse
-    bool hasOpposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].hasOpposite; }
+    auto polygonType(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].polygonType; }
     size_t opposite(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].oppositeHalfEdgeIndex; }
     size_t next(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].nextHalfEdgeIndex; }
     size_t prev(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].prevHalfEdgeIndex; }
-    size_t triangle(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].triangleIndex; }
+    size_t triangle(size_t halfEdgeIndex) const { return polygon(halfEdgeIndex); }
+    size_t polygon(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].polygonIndex; }
     size_t target(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].targetVertexIndex; }
     size_t edge(size_t halfEdgeIndex) const { return _halfEdges[halfEdgeIndex].edgeIndex; }
 
     size_t degree(size_t vertexIndex) const { return _vertices[vertexIndex].degree; }
 
+    bool isVertexOnBorder(size_t vertexIndex) const { return _vertices[vertexIndex].numTargetingBorderHalfEdges >= 1; }
+    bool isEdgeOnBorder(size_t edgeIndex) const { return _edges[edgeIndex].numBorderHalfEdges >= 1; }
+
     // Mesh neighbor iterators
     template< typename Func > void forEachHalfEdgeTargetingVertex(const Vertex& v, Func&& func) const {
+        // Counter-clockwise iterating
         size_t hei0 = v.halfEdgeIndex;
         size_t hei = hei0;
         do {
             func(hei);
-            if(!hasOpposite(hei)) break;
             hei = prev(opposite(hei));
         } while(hei != hei0);
     }
     template< typename Func > void forEachHalfEdgeTargetingVertex(size_t vi, Func&& func) const {
         forEachHalfEdgeTargetingVertex(_vertices[vi], std::forward<Func>(func));
     }
-    template< typename Func > void forEachHalfEdgeInTriangle(const Triangle& t, Func&& func) const {
-        size_t hei0 = t.halfEdgeIndex;
+    template< typename Polygon, typename Func >
+    void forEachHalfEdgeInPolygon(const Polygon& p, Func&& func) const {
+        size_t hei0 = p.halfEdgeIndex;
         size_t hei = hei0;
         do {
             func(hei);
             hei = next(hei);
         } while(hei != hei0);
     }
+    template< typename Polygon, typename Func >
+    void forEachHalfEdgeInPolygon(size_t pi, Func&& func) const {
+        forEachHalfEdgeInPolygon(_getElements< Polygon >()[pi], std::forward<Func>(func));
+    }
     template< typename Func > void forEachHalfEdgeInTriangle(size_t ti, Func&& func) const {
-        forEachHalfEdgeInTriangle(_triangles[ti], std::forward<Func>(func));
+        forEachHalfEdgeInPolygon< Triangle >(_triangles[ti], std::forward<Func>(func));
     }
     template< typename Func > void forEachHalfEdgeInEdge(const Edge& e, Func&& func) const {
         size_t hei0 = e.halfEdgeIndex;
         func(hei0);
-        if(hasOpposite(hei0)) func(opposite(hei0));
+        func(opposite(hei0));
     }
     template< typename Func > void forEachHalfEdgeInEdge(size_t ei, Func&& func) const {
         forEachHalfEdgeInEdge(_edges[ei], std::forward<Func>(func));
     }
 
+    //-------------------------------------------------------------------------
     // The following are basic mesh topology operators
+    //-------------------------------------------------------------------------
 
     // Vertex insertion on edge.
+    // Note: this does not allow vertex insertion on border edges
     template< typename InsertionMethod >
     struct VertexInsertionOnEdge {
         static constexpr int deltaNumVertex = 1;
@@ -517,7 +705,6 @@ public:
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
 
             // Get index of current elements
             const size_t ohei       = edges[edgeIndex].halfEdgeIndex;
@@ -548,16 +735,25 @@ public:
             const size_t ti1    = mesh._newTriangle(insertionMethod);
             const size_t ti3    = mesh._newTriangle(insertionMethod);
 
-            // Adjust vertex
+            // Adjust vertex and new half edges
             vertices[vi].halfEdgeIndex = hei0_o;
+
             halfEdges[hei0_o].targetVertexIndex = vi;
             halfEdges[hei2_o].targetVertexIndex = vi;
             halfEdges[hei1_o].targetVertexIndex = vi;
             halfEdges[hei3_o].targetVertexIndex = vi;
+            halfEdges[hei0_o].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei2_o].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei1_o].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei3_o].polygonType = HalfEdge::PolygonType::Triangle;
+
             halfEdges[hei1].targetVertexIndex = vi1;
             halfEdges[hei3].targetVertexIndex = vi3;
+            halfEdges[hei1].polygonType = HalfEdge::PolygonType::Triangle;
+            halfEdges[hei3].polygonType = HalfEdge::PolygonType::Triangle;
 
             vertices[vi].degree = 4;
+            vertices[vi].numTargetingBorderHalfEdges = 0;
             ++vertices[vi1].degree;
             ++vertices[vi3].degree;
 
@@ -592,6 +788,9 @@ public:
         }
     };
     // Edge collapse
+    // Note:
+    //   - This does not allow collapsing of border edges
+    //   - The caller must ensure that at most one vertex can lie on the border
     struct EdgeCollapse {
         static constexpr int deltaNumVertex = -1;
 
@@ -599,10 +798,8 @@ public:
         // Notice that halfedge index (not edge index) is used in this function.
         template< typename AttributeSetter >
         void operator()(SurfaceTriangularMesh& mesh, size_t ohei, AttributeSetter&& as)const {
-            auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
 
             // Preconditions should be handled by the caller
 
@@ -638,6 +835,7 @@ public:
 
             // Adjust vertex degrees
             vertices[ov0].degree += vertices[ov1].degree - 4;
+            vertices[ov0].numTargetingBorderHalfEdges += vertices[ov1].numTargetingBorderHalfEdges;
             --vertices[mesh.target(ohei_n)].degree;
             --vertices[mesh.target(ohei_on)].degree;
 
@@ -667,6 +865,7 @@ public:
         }
     };
     // Edge flip
+    // Note: Border edges cannot be flipped
     struct EdgeFlip {
         static constexpr int deltaNumVertex = 0;
 
@@ -675,7 +874,6 @@ public:
             auto& edges = mesh._edges;
             auto& halfEdges = mesh._halfEdges;
             auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
 
             // Preconditions (like topology) should be handled by the caller.
 
@@ -727,31 +925,6 @@ public:
 
     };
 
-    // triangle subdivision, introduces 3 new vertices
-    template< typename InsertionMethod > struct [[deprecated]] TriangleSubdivision {
-        static constexpr int deltaNumVertex = 3;
-        void operator()(SurfaceTriangularMesh& mesh, size_t triangleIndex) const {
-            auto& edges = mesh._edges;
-            auto& halfEdges = mesh._halfEdges;
-            auto& vertices = mesh._vertices;
-            auto& triangles = mesh._triangles;
-
-            // TODO pre-conditions
-
-            const size_t ohei = triangles[triangleIndex].halfEdgeIndex;
-            const size_t ohei_n = mesh.next(ohei);
-            const size_t ohei_p = mesh.prev(ohei);
-            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei)); // ohei, ohei_n, ohei_p still have the same target
-
-            // Get the edge for future flipping.
-            const size_t eFlip = mesh.edge(mesh.prev(ohei));
-
-            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei_n));
-            VertexInsertionOnEdge<InsertionMethod>()(mesh, mesh.edge(ohei_p));
-            EdgeFlip()(mesh, eFlip);
-        }
-    };
-
-};
+}; // End of class SurfaceTriangularMesh
 
 #endif

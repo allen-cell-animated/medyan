@@ -15,7 +15,9 @@
 #define MEDYAN_BranchingDihedral_h
 
 #include "common.h"
-
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
 #include "BranchingInteractions.h"
 
 //FORWARD DECLARATIONS
@@ -28,10 +30,30 @@ class BranchingDihedral : public BranchingInteractions {
 private:
     BDihedralInteractionType _FFType;
     
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *kdih;
+    double *pos;
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_kdih;
+    double *gpu_pos;
+    int * gpu_params;
+    CUDAvars cvars;
+    double *F_i;
+#endif
 public:
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    
+    ///Array describing indexed set of interactions
+    ///this is a 4-bead potential
+    const static int n = 4;
+    
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    virtual double computeEnergy(double *coord) override;
+    virtual void computeForces(double *coord, double *f);
     
     virtual const string getName() {return "Branching Dihedral";}
 };

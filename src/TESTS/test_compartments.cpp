@@ -16,7 +16,7 @@
 #include <gtest/gtest.h>
 
 #include "Chemistry/Species.h"
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "Structure/CompartmentGrid.h"
 #include "SysParams.h"
 

@@ -1,17 +1,15 @@
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
 #include "Compartment.h"
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "SubSystem.h"
 #include "SysParams.h"
 
-#include "MTriangle.h"
-#include "MVoronoiCell.h"
-#include "MMembrane.h"
+#include "Structure/SurfaceMesh/MTriangle.h"
+#include "Structure/SurfaceMesh/MVoronoiCell.h"
+#include "Structure/SurfaceMesh/MMembrane.h"
 
 using namespace mathfunc;
-
-Database<Membrane*> Membrane::_membranes;
 
 Membrane::Membrane(
     SubSystem* s,
@@ -20,7 +18,7 @@ Membrane::Membrane(
     const std::vector< std::array< size_t, 3 > >& triangleVertexIndexList
 ) : Trackable(false, false, false, false),
     _mesh(typename MembraneMeshAttributeType::MetaAttribute{s, this}),
-    _subSystem(s), _memType(membraneType), _id(_membranes.getID()) {
+    _subSystem(s), _memType(membraneType) {
     
     // Build the meshwork topology using vertex and triangle information
     _mesh.init<typename MeshType::VertexTriangleInitializer>(
@@ -28,11 +26,14 @@ Membrane::Membrane(
         triangleVertexIndexList,
         typename MembraneMeshAttributeType::AttributeInitializerInfo{ vertexCoordinateList }
     );
-    _mesh.updateClosedness();
 
     // Update geometry
     updateGeometryValue<false>();
 
+    initMMembrane();
+}
+
+void Membrane::initMMembrane() {
 #ifdef MECHANICS
     // Calculate the total area and volume to set the equilibrium area and volume
     double area = 0.0;
@@ -44,7 +45,7 @@ Membrane::Membrane(
 
     _mMembrane = std::make_unique<MMembrane>(_memType);
     _mMembrane->setEqArea(
-        area * SysParams::Mechanics().MemEqAreaFactor[membraneType]
+        area * SysParams::Mechanics().MemEqAreaFactor[_memType]
     );
     _mMembrane->setEqVolume(volume);
 #endif
@@ -55,28 +56,12 @@ void Membrane::printSelf()const {
     
     cout << endl;
     
-    cout << "Membrane: ptr = " << this << endl;
-    cout << "Membrane Id = " << _id << endl;
+    cout << "Membrane Id = " << getId() << endl;
     cout << "Membrane type = " << _memType << endl;
+    cout << "Number of vertices, edges, half edges, triangles, borders =\n  "
+        << _mesh.numVertices() << ' ' << _mesh.numEdges() << ' ' << _mesh.numHalfEdges() << ' '
+        << _mesh.numTriangles() << ' ' << _mesh.numBorders() << endl;
     
     cout << endl;
     
-}
-
-double Membrane::meshworkQuality()const {
-    /*
-    This function calculates the quality of the meshwork of this membrane, and
-    the result is represented as a value between 0 and 1, 0 being worst and 1
-    being the best case (all equilateral).
-
-    The criterion used is the minimum angle in each triangle, parametrized and
-    averaged over all triangles. And the calculation requires the result of
-        - The angle calculation of all triangles
-    */
-
-    double res = 0;
-
-    // TODO implementation
-
-    return res;
 }

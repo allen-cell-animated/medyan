@@ -30,6 +30,7 @@ class BranchingPoint;
 class MBranchingPoint {
     
 public:
+
     /// Main constructor, sets constants
     MBranchingPoint(int branchType);
     
@@ -54,7 +55,7 @@ public:
     BranchingPoint* getBranchingPoint() {return _pBranchingPoint;}
     
     //Qin -----
-    double stretchForce = 0.0;
+    double stretchForce = 0.0; ///< Stretching force of brancher at current state
     double bendingForce = 0.0;
     double dihedralForce = 0.0;
     

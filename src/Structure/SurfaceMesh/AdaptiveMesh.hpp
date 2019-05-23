@@ -11,18 +11,13 @@ by Vittorio Cristini, Jerzy Blawzdziewicz and Michael Loewenberg,
 Performs mesh relaxation and topological transformation to improve mesh size
 quality and shape quality, while maintaining the geometrical accuracy.
 
-The algorithm was not introduced explicity in the article, and we'll formalize it as follows
+The algorithm works as follows.
 
-Init: Find per-element quantities for all elements.
 Loop
-    Global relaxation
-    Update per-element quantities and local averaged quantities
-    For all places that does not satisfy criteria 2, 3
-        Local topological transformation
-        Local relaxation
-        Update affected per-element quantities and local averaged quantites
-    End
-Until all criteria are met
+    Update size measures
+    Resample vertex to fulfill size quality by inserting/deleting vertex
+    Relocate vertex to optimize triangle quality
+Until all criteria are met or maximum iterations reached
 
 */
 
@@ -36,11 +31,38 @@ Until all criteria are met
 #include <vector>
 
 #include "MathFunctions.h"
+#include "Structure/SurfaceMesh/AdaptiveMeshGeometryManager.hpp"
+#include "Structure/SurfaceMesh/AdaptiveMeshVertexRelocation.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshCheck.hpp"
 #include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
-#include "Structure/SurfaceMesh/Membrane.hpp"
 
 namespace adaptive_mesh {
+
+// Recommended adaptive mesh parameters
+//-------------------------------------
+// Topological operations
+constexpr size_t surface_mesh_min_degree = 4;
+constexpr size_t surface_mesh_max_degree = 9;
+constexpr double edge_flip_min_dot_normal = 0.9;
+constexpr double edge_collapse_min_quality_improvement = 0.6;
+constexpr double edge_collapse_min_dot_normal = 0.85;
+// Vertex relocation operations
+constexpr double vertex_relaxation_epsilon = 0.05; // (unitless speed/force). The tolerance (l / l_0 - 1)
+constexpr double vertex_relaxation_dt = 2.0; // (has unit of length) (around minSize / (iterRelocation * avgForce))
+constexpr size_t vertex_relocation_max_iter_relocation = 10;
+constexpr size_t vertex_relocation_max_iter_tot = 3; // (vertex relocation + edge flipping) as 1 iter
+// Size diffusion
+constexpr double size_measure_curvature_resolution = 0.30; // cos of which should be slightly bigger than flip minDotNormal
+constexpr double size_measure_max = 60; // Related to the resolution of the system
+constexpr size_t size_measure_diffuse_iter = 4;
+// Main loop
+constexpr size_t mesh_adaptation_topology_max_iter = 8; // Max times of scanning all the edges for sampling adjustment
+constexpr size_t mesh_adaptation_soft_max_iter = 8;
+constexpr size_t mesh_adaptation_hard_max_iter = 25;
+
+// Implementation
+//-------------------------------------
 
 template< typename Mesh, TriangleQualityCriteria c > class EdgeFlipManager {
 public:
@@ -77,9 +99,7 @@ public:
         const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
         const size_t hei_o = mesh.opposite(hei);
         const size_t hei_n = mesh.next(hei);
-        const size_t hei_p = mesh.prev(hei);
         const size_t hei_on = mesh.next(hei_o);
-        const size_t hei_op = mesh.prev(hei_o);
 
         const size_t vi0 = mesh.target(hei);
         const size_t vi1 = mesh.target(hei_n);
@@ -92,6 +112,8 @@ public:
         const size_t ti1 = mesh.triangle(hei_o);
 
         // Check if topo constraint is satisfied.
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         if(
             mesh.degree(vi0) <= _minDegree ||
             mesh.degree(vi2) <= _minDegree ||
@@ -106,10 +128,10 @@ public:
         ) < _minDotNormal) return State::NonCoplanar;
 
         // Check if the target triangles are coplanar.
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
-        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
-        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
-        const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(vi3).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
+        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
+        const Vec3 c2 = mesh.getVertexAttribute(vi2).getCoordinate();
+        const Vec3 c3 = mesh.getVertexAttribute(vi3).getCoordinate();
         const auto n013 = cross(c1 - c0, c3 - c0);
         const auto mag_n013 = magnitude(n013);
         const auto n231 = cross(c3 - c2, c1 - c2);
@@ -130,13 +152,16 @@ public:
         typename Mesh::EdgeFlip{}(mesh, ei, [](
             Mesh& mesh, std::array<size_t, 2> tis, std::array<size_t, 4> vis
         ) {
+            // Invalidate mesh index cache
+            mesh.getMetaAttribute().cacheValid = false;
+
             for(auto ti : tis) {
                 Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
                 mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) if(!mesh.isVertexOnBorder(vi)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
         });
 
         // Does not change the edge preferrable length
@@ -154,9 +179,9 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::MidP
     size_t v0, v1;
     template< typename Mesh >
     auto coordinate(const Mesh& mesh, size_t v) const {
-        const auto& c0 = mesh.getVertexAttribute(v0).getCoordinate();
-        const auto& c1 = mesh.getVertexAttribute(v1).getCoordinate();
-        return mathfunc::midPointCoordinate(c0, c1, 0.5);
+        const auto c0 = mesh.getVertexAttribute(v0).getCoordinate();
+        const auto c1 = mesh.getVertexAttribute(v1).getCoordinate();
+        return (c0 + c1) * 0.5;
     }
 };
 template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgCurv > {
@@ -166,8 +191,8 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
     template< typename Mesh >
     auto coordinate(const Mesh& mesh, size_t v) const {
         using namespace mathfunc;
-        const auto& c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-        const auto& c1 = vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
+        const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
         const auto& un0 = mesh.getVertexAttribute(v0).aVertex.unitNormal;
         const auto& un1 = mesh.getVertexAttribute(v1).aVertex.unitNormal;
 
@@ -209,7 +234,7 @@ template<> struct EdgeSplitVertexInsertion< EdgeSplitVertexInsertionMethod::AvgC
             res1 = c1 + r1 * un1 + ro1 * (std::abs(r1) / mag_ro1);
         }
 
-        return vec2Vector(0.5 * (res0 + res1));
+        return 0.5 * (res0 + res1);
     }
 };
 
@@ -259,6 +284,9 @@ public:
         const size_t ei3 = mesh.edge(hei_op); // v3 - v1
 
         // Check topology constraints
+        // Currently does not support insertion on border edges, but we may also implement that in the future.
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         // A new vertex with degree 4 will always be introduced
         if(
             mesh.degree(vi1) >= _maxDegree ||
@@ -266,10 +294,10 @@ public:
         ) return State::InvalidTopo;
 
         // Check whether the current edge is the longest in the triangle
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
-        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
-        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
-        const auto c3 = vector2Vec<3, double>(mesh.getVertexAttribute(vi3).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
+        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
+        const Vec3 c2 = mesh.getVertexAttribute(vi2).getCoordinate();
+        const Vec3 c3 = mesh.getVertexAttribute(vi3).getCoordinate();
         const auto l2_e = distance2(c0, c2);
         const auto l2_01 = distance2(c0, c1);
         const auto l2_12 = distance2(c1, c2);
@@ -284,13 +312,16 @@ public:
         typename Mesh::template VertexInsertionOnEdge< EdgeSplitVertexInsertionType > {}(mesh, ei, [](
             Mesh& mesh, std::array<size_t, 4> tis, std::array<size_t, 5> vis, std::array<size_t, 4> eis
         ) {
+            // Invalidate mesh index cache
+            mesh.getMetaAttribute().cacheValid = false;
+
             for(auto ti : tis) {
                 Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
                 mesh.forEachHalfEdgeInTriangle(ti, [&](size_t hei) {
                     Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
                 });
             }
-            for(auto vi : vis) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
+            for(auto vi : vis) if(!mesh.isVertexOnBorder(vi)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
 
             // Set preferrable length of edges to be the same as before
             const auto eqLength = mesh.getEdgeAttribute(eis[0]).aEdge.eqLength;
@@ -337,14 +368,13 @@ private:
 
         const auto hei_o = mesh.opposite(hei); // targeting vi1
         const auto hei_n = mesh.next(hei);
-        const auto hei_p = mesh.prev(hei); // targeting vi1
         const auto hei_ono = mesh.opposite(mesh.next(hei_o)); // targeting vi1
         const auto hei_opo = mesh.opposite(mesh.prev(hei_o));
 
         const auto vi0 = mesh.target(hei); // preserved
         const auto vi1 = mesh.target(hei_o); // to be removed
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
-        const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(vi1).getCoordinate());
+        const Vec3 c0 = mesh.getVertexAttribute(vi0).getCoordinate();
+        const Vec3 c1 = mesh.getVertexAttribute(vi1).getCoordinate();
 
         const auto ti0 = mesh.triangle(hei);
         const auto ti1 = mesh.triangle(hei_o);
@@ -361,8 +391,8 @@ private:
                 const auto chei_po = mesh.opposite(mesh.prev(chei));
                 const auto vn = mesh.target(mesh.next(chei));
                 const auto vp = mesh.target(mesh.prev(chei));
-                const auto cn = vector2Vec<3, double>(mesh.getVertexAttribute(vn).getCoordinate());
-                const auto cp = vector2Vec<3, double>(mesh.getVertexAttribute(vp).getCoordinate());
+                const Vec3 cn = mesh.getVertexAttribute(vn).getCoordinate();
+                const Vec3 cp = mesh.getVertexAttribute(vp).getCoordinate();
 
                 // Triangle quality before
                 qBefore = TriangleQualityType::worseOne(
@@ -430,9 +460,7 @@ public:
         const size_t hei = mesh.getEdges()[ei].halfEdgeIndex;
         const size_t hei_o = mesh.opposite(hei);
         const size_t hei_n = mesh.next(hei);
-        const size_t hei_p = mesh.prev(hei);
         const size_t hei_on = mesh.next(hei_o);
-        const size_t hei_op = mesh.prev(hei_o);
 
         const size_t vi0 = mesh.target(hei);
         const size_t vi1 = mesh.target(hei_n);
@@ -441,23 +469,19 @@ public:
         // Currently the edge connects v0 and v2.
         // If the edge collapses, v0 and v2 would become one point.
 
-        const size_t ti0 = mesh.triangle(hei);
-        const size_t ti1 = mesh.triangle(hei_o);
-
         // Check topology constraints
+        // Currently does not allow collapsing of border edges, but we may also implement that in the future
+        if(mesh.isEdgeOnBorder(ei)) return State::InvalidTopo;
+
         if(
             mesh.degree(vi0) + mesh.degree(vi2) - 4 > _maxDegree ||
             mesh.degree(vi0) + mesh.degree(vi2) - 4 < _minDegree ||
+            (mesh.isVertexOnBorder(vi0) && mesh.isVertexOnBorder(vi2)) ||
             mesh.degree(vi1) <= _minDegree ||
             mesh.degree(vi3) <= _minDegree
         ) return State::InvalidTopo;
 
-        // Future: maybe also geometric constraints (gap, smoothness, etc)
-
         // Check triangle quality constraints
-        const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(vi0).getCoordinate());
-        const auto c2 = vector2Vec<3, double>(mesh.getVertexAttribute(vi2).getCoordinate());
-
         // Calculate previous triangle qualities around a vertex
         // if v0 is removed
         const auto prequalifyResult0 = _prequalify(mesh, hei_o);
@@ -482,6 +506,9 @@ public:
         auto attributeSetter = [](
             Mesh& mesh, size_t hei_begin, size_t hei_end, size_t ov0
         ) {
+            // Invalidate mesh index cache
+            mesh.getMetaAttribute().cacheValid = false;
+
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
                 const size_t hei1_n = mesh.next(hei1);
                 const size_t ti = mesh.triangle(hei1);
@@ -491,10 +518,13 @@ public:
                 });
             }
 
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.opposite(hei_begin)));
+            if(!mesh.isVertexOnBorder(ov0)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, ov0);
+            const auto v_first = mesh.target(mesh.opposite(hei_begin));
+            if(!mesh.isVertexOnBorder(v_first)) Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, v_first);
             for(size_t hei1 = hei_begin; hei1 != hei_end; hei1 = mesh.opposite(mesh.next(hei1))) {
-                Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, mesh.target(mesh.next(hei1)));
+                const auto vi = mesh.target(mesh.next(hei1));
+                if(!mesh.isVertexOnBorder(vi))
+                    Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
             }
         };
 
@@ -522,12 +552,12 @@ template<> struct VertexSizeMeasure< SizeMeasureCriteria::Curvature > {
 
     // Requires
     //   - Vertex unit normal
-    template< typename Mesh > auto vertexMaxSize(Mesh& mesh, size_t vi) const {
+    template< typename Mesh > auto vertexSize(Mesh& mesh, size_t vi) const {
         double minRadiusCurvature = std::numeric_limits<double>::infinity();
         const auto& un = mesh.getVertexAttribute(vi).aVertex.unitNormal;
-        const auto ci = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(vi).vertex->getCoordinate());
+        const mathfunc::Vec3 ci = mesh.getVertexAttribute(vi).getCoordinate();
         mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
-            const auto r = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).vertex->getCoordinate()) - ci;
+            const auto r = mesh.getVertexAttribute(mesh.target(mesh.opposite(hei))).getCoordinate() - ci;
             minRadiusCurvature = std::min(
                 std::abs(0.5 * mathfunc::magnitude2(r) / mathfunc::dot(un, r)),
                 minRadiusCurvature
@@ -542,15 +572,15 @@ template< SizeMeasureCriteria... > struct VertexSizeMeasureCombined;
 template< SizeMeasureCriteria c, SizeMeasureCriteria... cs >
 struct VertexSizeMeasureCombined< c, cs... > {
     template< typename Mesh >
-    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
-        return std::min(vsm.vertexMaxSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...));
+    static auto vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm, const VertexSizeMeasure<cs>&... vsms) {
+        return std::min(vsm.vertexSize(mesh, vi), VertexSizeMeasureCombined<cs...>::vertexSize(mesh, vi, vsms...));
     }
 };
 template< SizeMeasureCriteria c >
 struct VertexSizeMeasureCombined< c > {
     template< typename Mesh >
-    static auto vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) {
-        return vsm.vertexMaxSize(mesh, vi);
+    static auto vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<c>& vsm) {
+        return vsm.vertexSize(mesh, vi);
     }
 };
 
@@ -562,14 +592,14 @@ private:
     size_t _diffuseIter; // Diffusion iterations used in gradation control
 
     template< SizeMeasureCriteria... cs >
-    auto _vertexMaxSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<cs>&... vsms) const {
-        return VertexSizeMeasureCombined<cs...>::vertexMaxSize(mesh, vi, vsms...);
+    auto _vertexSize(Mesh& mesh, size_t vi, const VertexSizeMeasure<cs>&... vsms) const {
+        return VertexSizeMeasureCombined<cs...>::vertexSize(mesh, vi, vsms...);
     }
     template< SizeMeasureCriteria... cs >
-    void _updateVertexMaxSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
+    void _updateVertexSize(Mesh& mesh, const VertexSizeMeasure<cs>&... vsms) const {
         const size_t numVertices = mesh.getVertices().size();
         for(size_t i = 0; i < numVertices; ++i) {
-            mesh.getVertexAttribute(i).aVertex.maxSize = _vertexMaxSize(mesh, i, vsms...);
+            mesh.getVertexAttribute(i).aVertex.size = _vertexSize(mesh, i, vsms...);
         }
     }
 
@@ -579,7 +609,7 @@ private:
         // Initialize with max size
         for(size_t i = 0; i < numVertices; ++i) {
             auto& av = mesh.getVertexAttribute(i).aVertex;
-            av.size = av.maxSize;
+            av.size = std::min(av.size, _maxSize);
         }
 
         // Diffuse, with D * Delta t = 0.5, and uniformly weighted Laplace operator
@@ -596,8 +626,8 @@ private:
 
                 av.sizeAux = std::min(
                     0.5 * av.size + 0.5 * sumSizeNeighbor / deg,
-                    av.maxSize
-                ); // capped by maxSize
+                    _maxSize
+                ); // capped by _maxSize
             }
             for(size_t i = 0; i < numVertices; ++i) {
                 auto& av = mesh.getVertexAttribute(i).aVertex;
@@ -629,7 +659,7 @@ public:
         VertexSizeMeasure< SizeMeasureCriteria::Curvature > vsmCurv {_curvRes, _maxSize};
 
         // Compute size on each vertex
-        _updateVertexMaxSize(mesh, vsmCurv);
+        _updateVertexSize(mesh, vsmCurv);
 
         // Diffuse size on vertices
         _diffuseSize(mesh);
@@ -637,186 +667,17 @@ public:
         // Compute preferred length of edges
         _updateEdgeEqLength(mesh);
     }
-};
-
-enum class RelaxationType {
-    GlobalElastic // E = (l - l_0)^2 / (2 l_0), with const elastic modulus 1.0
-};
-template< RelaxationType > struct RelaxationForceField;
-template<> struct RelaxationForceField< RelaxationType::GlobalElastic > {
-
-    // The function requires the vertex unit normal information
-    template< typename Mesh, typename VecType >
-    void computeForces(std::vector<VecType>& forces, const Mesh& mesh, const std::vector<VecType>& coords) {
-        // The size of forces should be the same as the size of coords.
-        // Resizing of forces should be done by the caller.
-        const size_t numVertices = coords.size();
-        for(size_t i = 0; i < numVertices; ++i) {
-            VecType f {};
-            mesh.forEachHalfEdgeTargetingVertex(i, [&](size_t hei) {
-                const auto l0 = mesh.getEdgeAttribute(mesh.edge(hei)).aEdge.eqLength;
-                const auto r = coords[mesh.target(mesh.opposite(hei))] - coords[i];
-                const auto mag = mathfunc::magnitude(r);
-                f += r * (1.0 / l0 - 1.0 / mag);
-            });
-
-            const auto& un = mesh.getVertexAttribute(i).aVertex.unitNormal;
-            f -= un * mathfunc::dot(un, f); // Remove normal component
-
-            forces[i] = f;
-        }
-    }
-};
-
-// For the purpose of global relaxation, we create a coordinate list and do work on them.
-template<
-    typename Mesh,
-    RelaxationType r,
-    TriangleQualityCriteria c
-> class GlobalRelaxationManager {
-public:
-    using RelaxationForceFieldType = RelaxationForceField< r >;
-    using EdgeFlipManagerType = EdgeFlipManager< Mesh, c >;
-
-private:
-    double _epsilon2; // Square of force tolerance
-    double _dt; // Step size for Runge Kutta method
-    size_t _maxIterRelocation;
-    size_t _maxIterRelaxation; // each iteration: (relocation + edge flipping)
-
-    // Utility for max force magnitude squared
-    template< typename VecType > static auto _maxMag2(std::vector<VecType>& v) {
-        double res = 0.0;
-        for(const auto& i : v) {
-            double mag2 = mathfunc::magnitude2(i);
-            if(mag2 > res) res = mag2;
-        }
-        return res;
-    }
-
-    // Relocates vertices using 2nd order Runge Kutta method of overdamped dynamics
-    // Returns whether the final forces are below threshold.
-    template< typename VecType > bool _vertexRelocation(
-        std::vector<VecType>& coords,
-        std::vector<VecType>& forces,
-        std::vector<VecType>& coordsHalfway,
-        std::vector<VecType>& forcesHalfway,
-        const Mesh& mesh
-    ) const {
-        const size_t numVertices = coords.size();
-
-        RelaxationForceFieldType().computeForces(forces, mesh, coords);
-        auto maxMag2F = _maxMag2(forces);
-
-        size_t iter = 0;
-        while(maxMag2F >= _epsilon2 && iter < _maxIterRelocation) {
-            ++iter;
-
-            // Test move halfway
-            for(size_t i = 0; i < numVertices; ++i)
-                coordsHalfway[i] = coords[i] + (0.5 * _dt) * forces[i];
-
-            // Force at halfway
-            RelaxationForceFieldType().computeForces(forcesHalfway, mesh, coordsHalfway);
-
-            // Real move
-            for(size_t i = 0; i < numVertices; ++i)
-                coords[i] += forcesHalfway[i] * _dt;
-
-            // Compute new forces
-            RelaxationForceFieldType().computeForces(forces, mesh, coords);
-            maxMag2F = _maxMag2(forces);
-        }
-
-        if(maxMag2F >= _epsilon2) return false;
-        else return true;
-    }
-
-    // Returns whether at least 1 edge is flipped
-    size_t _edgeFlipping(Mesh& mesh, const EdgeFlipManagerType& efm) const {
-        // Edge flipping does not change edge id or total number of edges
-        // Also the preferred length does not need to be changed
-        size_t res = 0;
-        const size_t numEdges = mesh.getEdges().size();
-        for(size_t i = 0; i < numEdges; ++i) {
-            if(efm.tryFlip(mesh, i) == EdgeFlipManagerType::State::Success) ++res;
-        }
-        return res;
-    }
-
-public:
-    // Constructor
-    GlobalRelaxationManager(
-        double epsilon2,
-        double dt,
-        size_t maxIterRelocation,
-        size_t maxIterRelaxation
-    ) : _epsilon2(epsilon2),
-        _dt(dt),
-        _maxIterRelocation(maxIterRelocation),
-        _maxIterRelaxation(maxIterRelaxation)
-    {}
-
-    // Returns whether relaxation is complete.
-    // Requires:
-    //   - Normals on vertices (not updated during vertex relocation; might be updated by edge flipping)
-    //   - Preferred lengths of edges (not updated during relaxation)
-    bool relax(Mesh& mesh, const EdgeFlipManagerType& efm) const {
-        using namespace mathfunc;
-
-        // Initialization
-        const size_t numVertices = mesh.getVertices().size();
-        std::vector< Vec3 > coords(numVertices);
-        for(size_t i = 0; i < numVertices; ++i) {
-            coords[i] = vector2Vec<3, double>(mesh.getVertexAttribute(i).vertex->getCoordinate());
-        }
-
-        // Aux variables
-        std::vector< Vec3 > coordsOriginal = coords;
-        std::vector< Vec3 > forces(numVertices);
-        std::vector< Vec3 > coordsHalfway(numVertices);
-        std::vector< Vec3 > forcesHalfway(numVertices);
-
-        // Main loop
-        bool needRelocation = true;
-        size_t flippingCount = 0;
-        size_t iter = 0;
-        while( (needRelocation || flippingCount) && iter < _maxIterRelaxation) {
-            ++iter;
-            needRelocation = !_vertexRelocation(coords, forces, coordsHalfway, forcesHalfway, mesh);
-
-            // Readjust coordinates (max move: size / 3)
-            for(size_t i = 0; i < numVertices; ++i) {
-                const Vec3 diff = coords[i] - coordsOriginal[i];
-                const auto magDiff = magnitude(diff);
-                const auto size = mesh.getVertexAttribute(i).aVertex.size;
-                const auto desiredDiff = (
-                    magDiff == 0.0
-                    ? diff
-                    : diff * (std::min(size * 0.33, magDiff) / magDiff)
-                );
-                coords[i] = coordsOriginal[i] + desiredDiff;
-            }
-
-            // Reassign coordinates
-            for (size_t i = 0; i < numVertices; ++i) {
-                mesh.getVertexAttribute(i).getCoordinate() = vec2Vector(coords[i]);
-            }
-            // Try flipping
-            flippingCount = _edgeFlipping(mesh, efm);
-        }
-
-        if(needRelocation || flippingCount) return false;
-        else return true;
-    }
-};
+}; // End SizeMesasureManager
 
 template< typename Mesh >
 class MeshAdapter {
 public:
-    static constexpr auto relaxationType = RelaxationType::GlobalElastic;
+    using GeometryManagerType = GeometryManager< Mesh >;
+
+    static constexpr auto vertexRelaxationType = VertexRelaxationType::GlobalElastic;
+    static constexpr auto optimalVertexLocationMethod = OptimalVertexLocationMethod::Barycenter;
     static constexpr auto triangleQualityCriteria = TriangleQualityCriteria::RadiusRatio;
-    static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::MidPoint;
+    static constexpr auto edgeSplitVertexInsertionMethod = EdgeSplitVertexInsertionMethod::AvgCurv;
 
     struct Parameter {
         // Topology
@@ -830,7 +691,7 @@ public:
         double relaxationEpsilon;
         double relaxationDt;
         size_t relaxationMaxIterRelocation;
-        size_t relaxationMaxIterRelaxation;
+        size_t relaxationMaxIterTotal;
 
         // Size diffusion
         double curvatureResolution;
@@ -840,11 +701,12 @@ public:
         // Main loop
         size_t samplingAdjustmentMaxIter;
         size_t mainLoopSoftMaxIter;
+        size_t mainLoopHardMaxIter;
     };
 
 private:
     SizeMeasureManager< Mesh > _sizeMeasureManager;
-    GlobalRelaxationManager< Mesh, relaxationType, triangleQualityCriteria > _globalRelaxationManager;
+    DirectVertexRelocationManager< Mesh, optimalVertexLocationMethod > _directVertexRelocationManager;
 
     EdgeFlipManager< Mesh, triangleQualityCriteria > _edgeFlipManager;
     EdgeSplitManager< Mesh, triangleQualityCriteria, edgeSplitVertexInsertionMethod > _edgeSplitManager;
@@ -852,49 +714,21 @@ private:
 
     size_t _samplingAdjustmentMaxIter; // Maximum number of scans used in sampling.
     size_t _mainLoopSoftMaxIter; // Maximum iterations of the main loop if topology changes can be reduced to 0
-
-    void _computeAllTriangleNormals(Mesh& mesh) const {
-        const size_t numTriangles = mesh.getTriangles().size();
-
-        for(size_t ti = 0; ti < numTriangles; ++ti) {
-            Mesh::AttributeType::adaptiveComputeTriangleNormal(mesh, ti);
-        }
-    }
-
-    void _computeAllAngles(Mesh& mesh) const {
-        const size_t numHalfEdges = mesh.getHalfEdges().size();
-
-        for(size_t hei = 0; hei < numHalfEdges; ++hei) {
-            Mesh::AttributeType::adaptiveComputeAngle(mesh, hei);
-        }
-    }
-
-    // Requires
-    //   - Unit normals in triangles (geometric)
-    //   - Angles in halfedges (geometric)
-    void _computeAllVertexNormals(Mesh& mesh) const {
-        const size_t numVertices = mesh.getVertices().size();
-
-        for(size_t vi = 0; vi < numVertices; ++vi) {
-            Mesh::AttributeType::adaptiveComputeVertexNormal(mesh, vi);
-        }
-    }
+    size_t _mainLoopHardMaxIter; // Maximum iterations of the main loop (hard cap)
 
     void _computeSizeMeasures(Mesh& mesh) const {
-        _computeAllTriangleNormals(mesh);
-        _computeAllAngles(mesh);
-        _computeAllVertexNormals(mesh);
+        GeometryManagerType::computeAllTriangleNormals(mesh);
+        GeometryManagerType::computeAllAngles(mesh);
+        GeometryManagerType::computeAllVertexNormals(mesh);
         _sizeMeasureManager.computeSizeMeasure(mesh);
     }
 public:
     // Constructor
     MeshAdapter(Parameter param) :
         _sizeMeasureManager(param.curvatureResolution, param.maxSize, param.diffuseIter),
-        _globalRelaxationManager(
-            param.relaxationEpsilon * param.relaxationEpsilon,
-            param.relaxationDt,
+        _directVertexRelocationManager(
             param.relaxationMaxIterRelocation,
-            param.relaxationMaxIterRelaxation
+            param.relaxationMaxIterTotal
         ),
         _edgeFlipManager(param.minDegree, param.maxDegree, param.edgeFlipMinDotNormal),
         _edgeSplitManager(param.maxDegree),
@@ -905,18 +739,17 @@ public:
             param.edgeCollapseMinDotNormal
         ),
         _samplingAdjustmentMaxIter(param.samplingAdjustmentMaxIter),
-        _mainLoopSoftMaxIter(param.mainLoopSoftMaxIter)
+        _mainLoopSoftMaxIter(param.mainLoopSoftMaxIter),
+        _mainLoopHardMaxIter(param.mainLoopHardMaxIter)
     {}
 
     void adapt(Mesh& mesh) const {
         using namespace mathfunc;
 
-        _computeSizeMeasures(mesh);
-        LOG(INFO) << "Before mesh adapting...";
-        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}(mesh);
-
         size_t mainLoopIter = 0;
         while(true) {
+            _computeSizeMeasures(mesh);
+
             bool sizeMeasureSatisfied = true;
 
             size_t countTopoModified;
@@ -928,8 +761,8 @@ public:
                     const size_t v0 = mesh.target(hei0);
                     const size_t v1 = mesh.target(mesh.opposite(hei0));
 
-                    const auto c0 = vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-                    const auto c1 = vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
+                    const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
+                    const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
                     const double length2 = distance2(c0, c1);
 
                     const double eqLength = mesh.getEdgeAttribute(ei).aEdge.eqLength;
@@ -963,17 +796,14 @@ public:
                     countTopoModified == 0
                     && mainLoopIter >= _mainLoopSoftMaxIter
                 )
+                || mainLoopIter >= _mainLoopHardMaxIter
             ) break;
 
-            _globalRelaxationManager.relax(mesh, _edgeFlipManager);
-
-            _computeSizeMeasures(mesh);
+            _directVertexRelocationManager(mesh, _edgeFlipManager);
 
             ++mainLoopIter;
         } // End loop TopoModifying-Relaxation
 
-        LOG(INFO) << "After mesh adapting...";
-        membrane_mesh_check::MembraneMeshQualityReport<triangleQualityCriteria>{}(mesh);
     } // End function adapt(...)
 
 };

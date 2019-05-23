@@ -26,9 +26,9 @@
 #include "Cylinder.h"
 #include "Filament.h"
 #include "Linker.h"
-#include "Membrane.hpp"
 #include "MotorGhost.h"
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/SurfaceMesh/Vertex.h"
 
 using namespace mathfunc;
 
@@ -39,7 +39,7 @@ OutputStruct for Filaments
 constexpr char OutputStructFilament::name[];
 
 void OutputStructFilament::getFromSystemWithoutChildren() {
-    _id = _filament->getID();
+    _id = _filament->getId();
     _type = _filament->getType();
     _numBeads = _filament->getCylinderVector().size() + 1;
     _deltaMinusEnd = _filament->getDeltaMinusEnd();
@@ -48,8 +48,8 @@ void OutputStructFilament::getFromSystemWithoutChildren() {
     // Store coordinates
     _coords.reserve(_numBeads);
     for (auto cylinder : _filament->getCylinderVector())
-        _coords.push_back(vector2Vec<3, double>(cylinder->getFirstBead()->coordinate));
-    _coords.push_back(vector2Vec<3, double>(_filament->getCylinderVector().back()->getSecondBead()->coordinate));
+        _coords.push_back(cylinder->getFirstBead()->coordinate());
+    _coords.push_back(_filament->getCylinderVector().back()->getSecondBead()->coordinate());
         
 }
 
@@ -100,19 +100,19 @@ OutputStruct for Linkers
 constexpr char OutputStructLinker::name[];
 
 void OutputStructLinker::getFromSystemWithoutChildren() {
-    _id = _linker->getID();
+    _id = _linker->getId();
     _type = _linker->getType();
 
     // Store coordinates
     _coords = {{
         vector2Vec<3, double>(midPointCoordinate(
-            _linker->getFirstCylinder()->getFirstBead()->coordinate,
-            _linker->getFirstCylinder()->getSecondBead()->coordinate,
+            _linker->getFirstCylinder()->getFirstBead()->vcoordinate(),
+            _linker->getFirstCylinder()->getSecondBead()->vcoordinate(),
             _linker->getFirstPosition()
         )),
         vector2Vec<3, double>(midPointCoordinate(
-            _linker->getSecondCylinder()->getFirstBead()->coordinate,
-            _linker->getSecondCylinder()->getSecondBead()->coordinate,
+            _linker->getSecondCylinder()->getFirstBead()->vcoordinate(),
+            _linker->getSecondCylinder()->getSecondBead()->vcoordinate(),
             _linker->getSecondPosition()
         ))
     }};
@@ -155,19 +155,19 @@ OutputStruct for Motors
 constexpr char OutputStructMotor::name[];
 
 void OutputStructMotor::getFromSystemWithoutChildren() {
-    _id = _motor->getID();
+    _id = _motor->getId();
     _type = _motor->getType();
 
     // Store coordinates
     _coords = {{
         vector2Vec<3, double>(midPointCoordinate(
-            _motor->getFirstCylinder()->getFirstBead()->coordinate,
-            _motor->getFirstCylinder()->getSecondBead()->coordinate,
+            _motor->getFirstCylinder()->getFirstBead()->vcoordinate(),
+            _motor->getFirstCylinder()->getSecondBead()->vcoordinate(),
             _motor->getFirstPosition()
         )),
         vector2Vec<3, double>(midPointCoordinate(
-            _motor->getSecondCylinder()->getFirstBead()->coordinate,
-            _motor->getSecondCylinder()->getSecondBead()->coordinate,
+            _motor->getSecondCylinder()->getFirstBead()->vcoordinate(),
+            _motor->getSecondCylinder()->getSecondBead()->vcoordinate(),
             _motor->getSecondPosition()
         ))
     }};
@@ -212,7 +212,7 @@ OutputStruct for Branchers
 constexpr char OutputStructBrancher::name[];
 
 void OutputStructBrancher::getFromSystemWithoutChildren() {
-    _id = _brancher->getID();
+    _id = _brancher->getId();
     _type = _brancher->getType();
 
     // Store coordinates
@@ -254,7 +254,7 @@ OutputStruct for Bubbles
 constexpr char OutputStructBubble::name[];
 
 void OutputStructBubble::getFromSystemWithoutChildren() {
-    _id = _bubble->getID();
+    _id = _bubble->getId();
     _type = _bubble->getType();
 
     // Store coordinates
@@ -343,7 +343,7 @@ void OutputStructMembrane::getFromOutput(std::istream& is, std::istringstream& i
         std::getline(is, nextLine);
         std::istringstream newIss(nextLine);
 
-        _memInfo.attributeInitializerInfo.vertexCoordinateList.emplace_back(3);
+        _memInfo.attributeInitializerInfo.vertexCoordinateList.emplace_back();
         auto& coord = _memInfo.attributeInitializerInfo.vertexCoordinateList.back();
 
         // Record coordinates

@@ -18,80 +18,150 @@
 #include "BranchingPoint.h"
 #include "Cylinder.h"
 #include "Bead.h"
+#include "cross_check.h"
+#ifdef CUDAACCL
+#include "nvToolsExt.h"
+#endif
 
 template <class BDihedralInteractionType>
-double BranchingDihedral<BDihedralInteractionType>::computeEnergy(bool stretched) {
-    
-    double U = 0.0;
-    double U_i=0.0;
-    
+void BranchingDihedral<BDihedralInteractionType>::vectorize() {
+
+    beadSet = new int[n * BranchingPoint::getBranchingPoints().size()];
+    kdih = new double[BranchingPoint::getBranchingPoints().size()];
+    pos = new double[BranchingPoint::getBranchingPoints().size()];
+
+    int i = 0;
+
     for (auto b: BranchingPoint::getBranchingPoints()) {
-        
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
-        
-        double position = b->getPosition();
-        
-        U_i = _FFType.energy(b1, b2, b3, b4, kDihedr, position, stretched);
-        
-        if(fabs(U_i) == numeric_limits<double>::infinity()
-           || U_i != U_i || U_i < -1.0) {
-            
-            //set culprit and return
-            _branchingCulprit = b;
-            
-            return -1;
-        }
-        else
-            U += U_i;
+
+        beadSet[n * i] = b->getFirstCylinder()->getFirstBead()->getIndex();
+        beadSet[n * i + 1] = b->getFirstCylinder()->getSecondBead()->getIndex();
+        beadSet[n * i + 2] = b->getSecondCylinder()->getFirstBead()->getIndex();
+        beadSet[n * i + 3] = b->getSecondCylinder()->getSecondBead()->getIndex();
+
+        kdih[i] = b->getMBranchingPoint()->getDihedralConstant();
+        pos[i] = b->getPosition();
+        i++;
     }
-    
-    return U;
-    
+    //CUDA
+#ifdef CUDAACCL
+//    cudaEvent_t start, stop;
+//    CUDAcommon::handleerror(cudaEventCreate( &start));
+//    CUDAcommon::handleerror(cudaEventCreate( &stop));
+//    CUDAcommon::handleerror(cudaEventRecord( start, 0));
+
+    int numInteractions =BranchingPoint::getBranchingPoints().size();
+    _FFType.optimalblocksnthreads(numInteractions);
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_beadSet, n * numInteractions * sizeof(int)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_beadSet, beadSet, n * numInteractions * sizeof(int),
+                                       cudaMemcpyHostToDevice));
+
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_kdih, numInteractions * sizeof(double)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_kdih, kdih, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_pos, numInteractions * sizeof(double)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_pos, pos, numInteractions * sizeof(double), cudaMemcpyHostToDevice));
+
+    vector<int> params;
+    params.push_back(int(n));
+    params.push_back(numInteractions);
+
+    CUDAcommon::handleerror(cudaMalloc((void **) &gpu_params, 2 * sizeof(int)));
+    CUDAcommon::handleerror(cudaMemcpy(gpu_params, params.data(), 2 * sizeof(int), cudaMemcpyHostToDevice));
+
+#endif
+}
+
+template<class BDihedralInteractionType>
+void BranchingDihedral<BDihedralInteractionType>::deallocate() {
+    delete [] beadSet;
+    delete [] kdih;
+    delete [] pos;
+#ifdef CUDAACCL
+    _FFType.deallocate();
+    CUDAcommon::handleerror(cudaFree(gpu_beadSet));
+    CUDAcommon::handleerror(cudaFree(gpu_kdih));
+    CUDAcommon::handleerror(cudaFree(gpu_pos));
+    CUDAcommon::handleerror(cudaFree(gpu_params));
+#endif
+}
+
+
+template <class BDihedralInteractionType>
+double BranchingDihedral<BDihedralInteractionType>::computeEnergy(double *coord) {
+
+    double U_i[1], U_ii;
+    double* gU_i;
+    U_ii = 0.0;
+#ifdef CUDAACCL
+    //has to be changed to accomodate aux force
+    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
+    double * gpu_force=CUDAcommon::getCUDAvars().gpu_force;
+    double * gpu_d = CUDAcommon::getCUDAvars().gpu_lambda;
+
+
+//    if(d == 0.0){
+//        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_params);
+//
+//    }
+//    else{
+        gU_i=_FFType.energy(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_d,
+                            gpu_params);
+//    }
+
+#endif
+#ifdef SERIAL
+
+    U_ii = _FFType.energy(coord, beadSet, kdih, pos);
+
+#endif
+#if defined(SERIAL_CUDACROSSCHECK) && defined(DETAILEDOUTPUT_ENERGY)
+    CUDAcommon::handleerror(cudaDeviceSynchronize(),"ForceField", "ForceField");
+    double cuda_energy[1];
+    if(gU_i == NULL)
+        cuda_energy[0] = 0.0;
+    else {
+        CUDAcommon::handleerror(cudaMemcpy(cuda_energy, gU_i, sizeof(double),
+                                           cudaMemcpyDeviceToHost));
+    }
+    std::cout<<getName()<<" Serial Energy "<<U_ii<<" Cuda Energy "<<cuda_energy[0]<<endl;
+#endif
+    return U_ii;
+
 }
 
 template <class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::computeForces() {
-    
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-    
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
-        
-        double position = b->getPosition();
-        
-        //Qin
-        //_FFType.forces(b1, b2, b3, b4, kDihedr, position);
-        double f0 = _FFType.forces(b1, b2, b3, b4, kDihedr, position);
-        b->getMBranchingPoint()->dihedralForce = f0;
-        
-    }
-}
+void BranchingDihedral<BDihedralInteractionType>::computeForces(double *coord, double *f) {
+#ifdef CUDAACCL
+    //has to be changed to accomodate aux force
+    double * gpu_coord=CUDAcommon::getCUDAvars().gpu_coord;
 
-template <class BDihedralInteractionType>
-void BranchingDihedral<BDihedralInteractionType>::computeForcesAux() {
-    
-    for (auto b: BranchingPoint::getBranchingPoints()) {
-        
-        Bead* b1 = b->getFirstCylinder()->getFirstBead();
-        Bead* b2 = b->getFirstCylinder()->getSecondBead();
-        Bead* b3 = b->getSecondCylinder()->getFirstBead();
-        Bead* b4 = b->getSecondCylinder()->getSecondBead();
-        double kDihedr = b->getMBranchingPoint()->getDihedralConstant();
-        
-        double position = b->getPosition();
-        
-        _FFType.forcesAux(b1, b2, b3, b4, kDihedr, position);
+    double * gpu_force;
+
+    if(cross_checkclass::Aux){
+
+        gpu_force=CUDAcommon::getCUDAvars().gpu_forceAux;
+        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_params);
+
     }
+    else {
+
+
+        gpu_force = CUDAcommon::getCUDAvars().gpu_force;
+        _FFType.forces(gpu_coord, gpu_force, gpu_beadSet, gpu_kdih, gpu_pos, gpu_params);
+
+    }
+#endif
+#ifdef SERIAL
+
+
+    _FFType.forces(coord, f, beadSet, kdih, pos);
+
+#endif
 }
 
 ///Template specializations
-template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(bool stretched);
-template void BranchingDihedral<BranchingDihedralCosine>::computeForces();
-template void BranchingDihedral<BranchingDihedralCosine>::computeForcesAux();
+template double BranchingDihedral<BranchingDihedralCosine>::computeEnergy(double *coord);
+template void BranchingDihedral<BranchingDihedralCosine>::computeForces(double *coord, double *f);
+template void BranchingDihedral<BranchingDihedralCosine>::vectorize();
+template void BranchingDihedral<BranchingDihedralCosine>::deallocate();

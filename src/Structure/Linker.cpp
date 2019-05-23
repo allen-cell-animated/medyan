@@ -19,7 +19,7 @@
 #include "Cylinder.h"
 #include "ChemRNode.h"
 
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
 
@@ -28,10 +28,10 @@ using namespace mathfunc;
 
 void Linker::updateCoordinate() {
     
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
     
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
@@ -44,7 +44,7 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 
     : Trackable(true, true), _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _linkerType(linkerType), _linkerID(_linkers.getID()), _birthTime(tau()) {
+      _linkerType(linkerType), _birthTime(tau()) {
         
     updateCoordinate();
 
@@ -68,10 +68,10 @@ Linker::Linker(Cylinder* c1, Cylinder* c2, short linkerType,
 #endif
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
           
     _mLinker = unique_ptr<MLinker>(
         new MLinker(linkerType, position1, position2, x1, x2, x3, x4));
@@ -128,10 +128,10 @@ void Linker::updatePosition() {
     }
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
     
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
@@ -159,7 +159,13 @@ void Linker::updateReactionRates() {
     float newRate = _unbindingChangers[_linkerType]->changeRate(offRxn->getBareRate(), force);
     if(SysParams::RUNSTATE==false)
     {newRate=0.0;}
-    offRxn->setRate(newRate);
+#ifdef DETAILEDOUTPUT
+    std::cout<<"Linker UB f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+            ""<<coordinate[1]<<" "
+            ""<<coordinate[2]<<endl;
+#endif
+
+    offRxn->setRateScaled(newRate);
     offRxn->updatePropensity();
 }
 
@@ -169,7 +175,7 @@ void Linker::printSelf()const {
     cout << endl;
     
     cout << "Linker: ptr = " << this << endl;
-    cout << "Linker type = " << _linkerType << ", Linker ID = " << _linkerID << endl;
+    cout << "Linker type = " << _linkerType << ", Linker ID = " << getId() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
     cout << "Position on first cylinder (double) = " << _position1 << endl;
@@ -202,7 +208,7 @@ species_copy_t Linker::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto l : _linkers.getElements()) {
+    for(auto l : getElements()) {
         
         auto s = l->getCLinker()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
@@ -215,5 +221,4 @@ species_copy_t Linker::countSpecies(const string& name) {
 
 vector<LinkerRateChanger*> Linker::_unbindingChangers;
 
-Database<Linker*> Linker::_linkers;
 Histogram* Linker::_lifetimes;
