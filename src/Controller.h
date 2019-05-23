@@ -24,6 +24,7 @@
 #include "CController.h"
 #include "DRController.h"
 #include "Structure/SurfaceMesh/AdaptiveMesh.hpp"
+#include "Visual/Window.hpp"
 
 //FORWARD DECLARATIONS
 class SubSystem;
@@ -83,6 +84,12 @@ private:
     multimap<int,Compartment*> bCompmap;
     //@}
     double bounds[2], bounds_prev[2];
+
+    // Visualization window
+#ifdef VISUAL
+    visual::Window _window;
+#endif
+
     ///INITIALIZATION HELPER FUNCTIONS
     
     /// Set up an initial configuration of a network
