@@ -1,5 +1,5 @@
-#ifndef MEDYAN_VISUAL_COMMON_HPP
-#define MEDYAN_VISUAL_COMMON_HPP
+#ifndef MEDYAN_Visual_Common_Hpp
+#define MEDYAN_Visual_Common_Hpp
 
 #ifdef VISUAL
     #include <glad/glad.h>

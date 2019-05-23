@@ -12,6 +12,12 @@
 # for your given system.
 ##################################################
 
+# External library locations
+GLAD_INCLUDE     := -I../external/glad/include
+GLAD_SOURCE      := ../external/glad/src/glad.c
+GLFW_INCLUDE     := -I$(HOME)/Documents/repos/glfw/include
+GLFW_LIB         := -L$(HOME)/Documents/repos/glfw/src -lglfw3
+
 SOURCES_TEST             := $(shell find ./TESTS -name '*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
@@ -35,6 +41,7 @@ DEPFLAGS = -MMD -MP
 
 INCLUDES = \
 -I../external \
+$(GLAD_INCLUDE) $(GLFW_INCLUDE) \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
 -IChemistry                               \
@@ -57,7 +64,7 @@ CXXFLAGS_CXX = $(FAST_CXX) \
 -Wno-unknown-warning-option
 
 # Linking flags
-LDLIBS      = -L/usr/local/lib/ -lboost_system
+LDLIBS      = -L/usr/local/lib/ -lboost_system $(GLFW_LIB)
 
 LDFLAGS_CXX = $(FAST_CXX)
 
@@ -108,6 +115,9 @@ CPPFLAGS += -DPLOSFEEDBACK
 
 CPPFLAGS += -DHYBRID_NLSTENCILLIST
 CPPFLAGS += -DNLSTENCILLIST
+
+# Visualization
+CPPFLAGS += -DVISUAL
 
 # Non-CUDA specific
 CPPFLAGS_CXX      = $(CPPFLAGS)

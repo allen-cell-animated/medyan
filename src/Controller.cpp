@@ -52,6 +52,7 @@
 #endif
 #include "util/io/log.h"
 #include "util/profiler.h"
+#include "Visual/Window.hpp"
 using namespace mathfunc;
 
 namespace {
