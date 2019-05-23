@@ -12,7 +12,16 @@
 # for your given system.
 ##################################################
 
+# Platform
+UNAME_S := $(shell uname -s)
+
 # External library locations
+ifeq ($(UNAME_S), Darwin)
+OPENGL_LIB       := -framework Cocoa -framework OpenGL -framework IOKit \
+                    -framework CoreFoundation -framework CoreVideo
+else
+OPENGL_LIB       := -lGL -lX11
+endif
 GLAD_INCLUDE     := -I../external/glad/include
 GLAD_SOURCE      := ../external/glad/src/glad.c
 GLFW_INCLUDE     := -I$(HOME)/Documents/repos/glfw/include
@@ -64,7 +73,7 @@ CXXFLAGS_CXX = $(FAST_CXX) \
 -Wno-unknown-warning-option
 
 # Linking flags
-LDLIBS      = -L/usr/local/lib/ -lboost_system $(GLFW_LIB)
+LDLIBS      = -L/usr/local/lib/ -lboost_system $(OPENGL_LIB) $(GLFW_LIB)
 
 LDFLAGS_CXX = $(FAST_CXX)
 
