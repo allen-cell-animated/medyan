@@ -23,10 +23,33 @@ class Bead;
 class BranchingBendingCosine {
     
 public:
-    double energy(Bead*, Bead*, Bead*, Bead*, double, double, bool stretched);
+    double energy(double *coord, int *beadSet,
+                  double *kbend, double *eqt);
     
-    double forces(Bead*, Bead*, Bead*, Bead*, double, double);
-    void forcesAux(Bead*, Bead*, Bead*, Bead*, double, double);
+    double energy(double *coord, double *f, int *beadSet,
+                  double *kbend, double *eqt, double d);
+
+    void forces(double *coord, double *f, int *beadSet,
+                double *kbend, double *eqt);
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kbend, double *eqt, int *params);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kbend, double *eqt, double *z, int *params);
+
+    void forces(double *coord, double *f, int *beadSet, double *kbend, double *eqt, int *params);
+    void deallocate();
+    static void checkforculprit();
+    double *gU_i;
+    double *gU_sum;
+    char *gFF, *ginteraction;
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
+    cudaStream_t stream = NULL;
+#endif
 };
 
 #endif

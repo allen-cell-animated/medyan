@@ -11,12 +11,12 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "VolumeConservationFF.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationFF.h"
 
-#include "VolumeConservationMembrane.h"
-#include "VolumeConservationMembraneHarmonic.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembrane.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
 
-#include "Membrane.hpp"
+#include "Structure/SurfaceMesh/Membrane.hpp"
 
 VolumeConservationFF::VolumeConservationFF(string& type) {
     if (type == "MEMBRANE")
@@ -41,14 +41,14 @@ void VolumeConservationFF::whoIsCulprit() {
     cout << endl;
 }
 
-double VolumeConservationFF::computeEnergy(bool stretched) {
+double VolumeConservationFF::computeEnergy(double* coord, bool stretched) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _volumeConservationInteractionVector) {
         
-        U_i = interaction->computeEnergy(stretched);
+        U_i = interaction->computeEnergy(coord, stretched);
                 
         if(U_i <= -1) {
             //set culprit and return
@@ -61,14 +61,8 @@ double VolumeConservationFF::computeEnergy(bool stretched) {
     return U;
 }
 
-void VolumeConservationFF::computeForces() {
+void VolumeConservationFF::computeForces(double* coord, double* f) {
     
     for (auto &interaction : _volumeConservationInteractionVector)
-        interaction->computeForces();
-}
-
-void VolumeConservationFF::computeForcesAux() {
-    
-    for (auto &interaction : _volumeConservationInteractionVector)
-        interaction->computeForcesAux();
+        interaction->computeForces(coord, f);
 }

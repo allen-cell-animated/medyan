@@ -41,7 +41,7 @@ template <unsigned short M, unsigned short N>
         /// (starting from reactants)
         /// @param rate - the rate constant for this ReactionBase
         Reaction(initializer_list<Species*> species,
-                float rate = 0.0, bool isProtoCompartment = false, double volumeFrac=1.0, int rateVolumeDepExp=0)
+                float rate = 0.0, bool isProtoCompartment = false, double volumeFrac = 1.0, int rateVolumeDepExp = 0)
             : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
         }
@@ -52,7 +52,7 @@ template <unsigned short M, unsigned short N>
         /// @param rate - the rate constant for this ReactionBase
         template <typename InputContainer>
         Reaction(const InputContainer &species,
-                 float rate = 0.0, bool isProtoCompartment = false, double volumeFrac=1.0, int rateVolumeDepExp=0)
+                 float rate = 0.0, bool isProtoCompartment = false, double volumeFrac = 1.0, int rateVolumeDepExp = 0)
             : ReactionBase(rate, isProtoCompartment, volumeFrac, rateVolumeDepExp) {
             initializeSpecies(species);
         }
@@ -157,9 +157,25 @@ template <unsigned short M, unsigned short N>
         inline virtual double getProductOfReactantsImpl() const override
         {
             double prod = 1;
+
+//            
+//            if(M == 3 && N == 0){
+//                //double check if the name matches
+//                if(_rspecies[0]->getFullName() == _rspecies[1]->getFullName()){
+//
+//                    if(areEqual(_rspecies[0]->getN(),1.0)) return 0.0;
+//
+//                    prod*=_rspecies[0]->getN();
+//                    prod*=(_rspecies[1]->getN() - 1);
+//                    prod*=_rspecies[2]->getN();
+//                    return prod / 2;
+//                }
+//            }
+            
             for(auto i=0U; i<M; ++i)
                 prod*=_rspecies[i]->getN();
             return prod;
+            
             
         }
 
@@ -266,8 +282,8 @@ private:
 public:
     /// The main constructor
     DiffusionReaction(initializer_list<Species*> species,
-                      float rate = 0.0, bool isProtoCompartment = false, double volumeFrac=1.0)
-    : Reaction(species, rate, isProtoCompartment, volumeFrac, -1) { // Inversely dependent on compartment active volume
+                      float rate = 0.0, bool isProtoCompartment = false, double volumeFrac = 1.0)
+    : Reaction(species, rate, isProtoCompartment, volumeFrac, -1) {
     
         //set averaging
         if(dynamic_cast<RSpeciesAvg*>(_rspecies[0]))

@@ -1,16 +1,14 @@
 #include "Triangle.h"
 
-#include "core/globals.h"
+#include "Core/Globals.hpp"
 #include "Compartment.h"
 #include "MathFunctions.h"
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
-
-Database<Triangle*> Triangle::_triangles;
 
 Triangle::Triangle(Membrane* parent, size_t topoIndex):
     Trackable(true, false, true, false),
-    _parent(parent), _topoIndex{topoIndex}, _id(_triangles.getID()) {
+    _parent(parent), _topoIndex{topoIndex} {
 
 #ifdef MECHANICS
     // eqArea cannot be obtained at this moment
@@ -19,7 +17,7 @@ Triangle::Triangle(Membrane* parent, size_t topoIndex):
 
     // Set coordinate and add to compartment
     updateCoordinate();
-    if(medyan::Global::readGlobal().mode == medyan::GlobalVar::RunMode::Simulation) {
+    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
         try { _compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
         catch (exception& e) {
             cout << e.what() << endl;
@@ -44,13 +42,11 @@ void Triangle::updateCoordinate() {
     const size_t v1 = mesh.target(hei1);
     const size_t v2 = mesh.target(hei2);
 
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        coordinate[coordIdx] = (
-            mesh.getVertexAttribute(v0).vertex->coordinate[coordIdx]
-            + mesh.getVertexAttribute(v1).vertex->coordinate[coordIdx]
-            + mesh.getVertexAttribute(v2).vertex->coordinate[coordIdx]
-        ) / 3;
-    }
+    coordinate = (
+        mesh.getVertexAttribute(v0).getCoordinate()
+        + mesh.getVertexAttribute(v1).getCoordinate()
+        + mesh.getVertexAttribute(v2).getCoordinate()
+    ) / 3;
 }
 
 void Triangle::updatePosition() {
@@ -112,7 +108,7 @@ void Triangle::printSelf()const {
     cout << endl;
     
     cout << "Triangle: ptr = " << this << endl;
-    cout << "Triangle ID = " << _id << endl;
+    cout << "Triangle ID = " << getId() << endl;
     cout << "Parent ptr = " << getParent() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     

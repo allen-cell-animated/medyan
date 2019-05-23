@@ -1,8 +1,8 @@
-#include "MembraneRegion.h"
+#include "Structure/SurfaceMesh/MembraneRegion.h"
 
-#include "MembraneHierarchy.h"
-#include "Membrane.hpp"
-#include "Boundary.h"
+#include "Structure/SurfaceMesh/MembraneHierarchy.h"
+#include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Structure/Boundary.h"
 
 #include "MathFunctions.h"
 
@@ -59,17 +59,21 @@ bool MembraneRegion::contains(const mathfunc::Vec3& point)const {
     return true;
 }
 
-std::unique_ptr<MembraneRegion> MembraneRegion::makeByChildren(MembraneHierarchy* hier, bool excludeChildren) {
+std::unique_ptr<MembraneRegion> MembraneRegion::makeByChildren(const MembraneHierarchy& hier, bool excludeChildren) {
     auto mr = unique_ptr<MembraneRegion>(new MembraneRegion());
 
-    for(auto& it: hier->children()) {
+    for(const auto& it: hier.children()) {
         auto eachHier = static_cast<MembraneHierarchy*>(it.get());
-        mr->_hierOut.push_back(eachHier);
-        if(excludeChildren) {
-            size_t n = eachHier->numberOfChildren();
-            mr->_hierIn.reserve(n);
-            for(size_t idx = 0; idx < n; ++idx) {
-                mr->_hierIn.push_back( static_cast<MembraneHierarchy*>(eachHier->children(idx)) );
+        if(eachHier->getMembrane()->isClosed()) {
+            mr->_hierOut.push_back(eachHier);
+
+            if(excludeChildren) {
+                size_t n = eachHier->numberOfChildren();
+                for(size_t idx = 0; idx < n; ++idx) {
+                    auto childHier = static_cast< MembraneHierarchy* >(eachHier->children(idx));
+                    if(childHier->getMembrane()->isClosed())
+                        mr->_hierIn.push_back( childHier );
+                }
             }
         }
     }

@@ -21,10 +21,16 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+#ifdef CUDAACCL
+#include <cuda.h>
+#include <cuda_runtime.h>
+#ifdef __CUDACC__
+#define CUDA_HOSTDEV __host__ __device__
+#else
+#define CUDA_HOSTDEV
+#endif
 
-// Defines alternative operators for non-conforming compilers like MSVC. No use otherwise.
-#include <ciso646>
-
+#endif
 using namespace std;
 
 //to test for zero values
@@ -34,30 +40,23 @@ const double ZERO_PREC = 1E-6;
 extern unsigned long long rdtsc();
 
 ///Check equaility of doubles
+#ifdef CUDAACCL
+__host__ __device__
+#endif
 inline bool areEqual(double d1, double d2) {
-    
+    const double ZERO_PREC = 1E-6;
     return fabs(d1 - d2) < ZERO_PREC;
 }
 
 /// Safe arc cos function
+#ifdef CUDAACCL
+ __host__ __device__
+#endif
 inline double safeacos (double x) {
     if (x < -1.0) x = -1.0;
     else if (x > 1.0) x = 1.0;
     return acos(x);
 }
-
-#ifndef _MSC_VER // MSVC does not comply to the standard regarding __cplusplus value.
-                 // https://connect.microsoft.com/VisualStudio/feedback/details/763051/a-value-of-predefined-macro-cplusplus-is-still-199711l
-                 // One has to make sure the VS version already implements make_unique.
-#  if __cplusplus < 201402L // This function is already a standard in C++14
-/// Make a unique ptr
-template<typename T, typename ...Args>
-unique_ptr<T> make_unique( Args&& ...args )
-{
-    return unique_ptr<T>( new T( forward<Args>(args)... ) );
-}
-#  endif
-#endif
 
 /// Compare types
 template<typename T, typename U>

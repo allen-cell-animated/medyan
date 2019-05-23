@@ -21,6 +21,7 @@
 #endif
 
 #include "ChemNRMImpl.h"
+#include "Rand.h"
 
 #include "Rand.h"
 
@@ -28,7 +29,7 @@
 #ifdef BOOST_POOL_MEM_RNODENRM
 boost::pool<> allocator_rnodenrm(sizeof(RNodeNRM),BOOL_POOL_NSIZE);
 #endif
-    
+
 #ifdef BOOST_POOL_MEM_PQNODE
 boost::pool<> allocator_pqnode(sizeof(PQNode),BOOL_POOL_NSIZE);
 #endif
@@ -44,7 +45,7 @@ void PQNode::operator delete(void* ptr) noexcept {
     boost::fast_pool_allocator<PQNode>::deallocate((PQNode*)ptr);
 }
 #endif
- 
+
 #ifdef BOOST_POOL_MEM_RNODENRM
 void* RNodeNRM::operator new(size_t size) {
     void *ptr = boost::fast_pool_allocator<RNodeNRM>::allocate();
@@ -96,7 +97,7 @@ void RNodeNRM::updateHeap() {
 void RNodeNRM::generateNewRandTau() {
     double newTau;
     reComputePropensity();//calculated new _a
-    
+
 #ifdef TRACK_ZERO_COPY_N
     newTau = _chem_nrm.generateTau(_a) + _chem_nrm.getTime();
 #else
@@ -108,7 +109,6 @@ void RNodeNRM::generateNewRandTau() {
     setTau(newTau);
 //    std::cout<<"generating R and Tau reaction"<<endl;
 //    printSelf();
-//    std::cout<<endl;
 }
 
 void RNodeNRM::activateReaction() {
@@ -146,7 +146,7 @@ double ChemNRMImpl::generateTau(double a){
 #endif
 
     exponential_distribution<double>::param_type pm(a);
-    
+
     _exp_distr.param(pm);
     return _exp_distr(Rand::eng);
 }
@@ -163,7 +163,7 @@ bool ChemNRMImpl::makeStep() {
     if(tau_top==numeric_limits<double>::infinity()){
         cout << "The heap has been exhausted - no more reactions to fire, returning..." << endl;
         return false;
-    }    
+    }
     ///DEBUG
     //assert heap ordering
     if(tau_top < _t) {
@@ -176,12 +176,12 @@ bool ChemNRMImpl::makeStep() {
     }
     
     double t_prev = _t;
-    
+
     _t=tau_top;
     syncGlobalTime();
-//    std::cout<<"----------------"<<endl;
-//    rn->printSelf();
-//    std::cout<<"----------------"<<endl;
+/*    std::cout<<"------------"<<endl;
+    rn->printSelf();
+    std::cout<<"------------"<<endl;*/
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N
     if(!rn->isPassivated()){
@@ -194,22 +194,22 @@ bool ChemNRMImpl::makeStep() {
 #endif
     // Updating dependencies
     ReactionBase *r = rn->getReaction();
-    
+
     if(r->updateDependencies()) {
-    
+
         for(auto rit = r->dependents().begin(); rit!=r->dependents().end(); ++rit){
-            
+
             RNodeNRM *rn_other = (RNodeNRM*)((*rit)->getRnode());
             double a_old = rn_other->getPropensity();
-            
+
             //recompute propensity
             rn_other->reComputePropensity();
-            
+
             double tau_new;
             double tau_old = rn_other->getTau();
-            
+
             double a_new = rn_other->getPropensity();
-            
+
 #ifdef TRACK_ZERO_COPY_N
             //recompute tau
             tau_new = (a_old/a_new)*(tau_old-_t)+_t;
@@ -228,23 +228,23 @@ bool ChemNRMImpl::makeStep() {
             if(boost::math::isnan(tau_new)){tau_new=numeric_limits<double>::infinity();}
             ///DEBUG
             if(tau_new < _t) {
-                
+
                 cout << "WARNING: Generated tau may be incorrect. " << endl;
-                
+
                 cout << "Tau new = " << tau_new << endl;
                 cout << "Tau old = " << tau_old << endl;
                 cout << "Current global t = " << _t << endl;
                 cout << "Previous global t = " << t_prev << endl;
                 cout << "a_old = " << a_old << endl;
                 cout << "a_new = " << a_new << endl;
-                
+
                 cout << "Reaction type = " << rn->getReaction()->getReactionType() << endl;
-                
-                
+
+
                 rn->printSelf();
                 rn_other->printSelf();
             }
-            
+
             rn_other->setTau(tau_new);
             rn_other->updateHeap();
         }

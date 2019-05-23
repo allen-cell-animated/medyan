@@ -1,20 +1,18 @@
-#include "Edge.h"
+#include "Structure/SurfaceMesh/Edge.h"
 
-#include "core/globals.h"
+#include "Core/Globals.hpp"
 #include "Compartment.h"
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "MathFunctions.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 
-Database<Edge*> Edge::_edges;
-
 Edge::Edge(Membrane* parent, size_t topoIndex):
     Trackable(),
-    _parent(parent), _topoIndex{topoIndex}, _id(_edges.getID()) {
+    _parent(parent), _topoIndex{topoIndex} {
     
     // Set coordinate and add to compartment
     updateCoordinate();
-    if(medyan::Global::readGlobal().mode == medyan::GlobalVar::RunMode::Simulation) {
+    if(medyan::global().mode == medyan::GlobalVar::RunMode::Simulation) {
         try { _compartment = GController::getCompartment(mathfunc::vec2Vector(coordinate)); }
         catch (exception& e) {
             cout << e.what() << endl;
@@ -36,12 +34,7 @@ void Edge::updateCoordinate() {
     const size_t v0 = mesh.target(hei0);
     const size_t v1 = mesh.target(hei1);
 
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        coordinate[coordIdx] = (
-            mesh.getVertexAttribute(v0).vertex->coordinate[coordIdx]
-            + mesh.getVertexAttribute(v1).vertex->coordinate[coordIdx]
-        ) / 2;
-    }
+    coordinate = 0.5 * (mesh.getVertexAttribute(v0).getCoordinate() + mesh.getVertexAttribute(v1).getCoordinate());
 }
 
 void Edge::updatePosition() {
@@ -74,7 +67,7 @@ void Edge::printSelf()const {
     cout << endl;
     
     cout << "Edge: ptr = " << this << endl;
-    cout << "Edge ID = " << _id << endl;
+    cout << "Edge ID = " << getId() << endl;
     cout << "Parent ptr = " << getParent() << endl;
         
     cout << endl;

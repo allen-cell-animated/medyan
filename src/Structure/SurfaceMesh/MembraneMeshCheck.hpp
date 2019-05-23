@@ -1,6 +1,8 @@
 #ifndef MEDYAN_Structure_SurfaceMesh_MembraneMeshCheck_hpp
 #define MEDYAN_Structure_SurfaceMesh_MembraneMeshCheck_hpp
 
+#include <unordered_map>
+#include <unordered_set>
 #include "Structure/SurfaceMesh/MembraneMeshTriangleQuality.hpp"
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "util/io/log.h"
@@ -9,6 +11,46 @@ namespace membrane_mesh_check {
 
 using MeshType = Membrane::MeshType;
 
+struct MembraneMeshInfoDump {
+    void addInfo1Ring(
+        std::unordered_set<size_t>& vs, std::unordered_set<size_t>& es,
+        const MeshType& mesh, size_t vi
+    ) const {
+        mesh.forEachHalfEdgeTargetingVertex(vi, [&](size_t hei) {
+            const size_t hei_p = mesh.prev(hei);
+            const size_t vp = mesh.target(hei_p);
+            es.insert(mesh.edge(hei));
+            es.insert(mesh.edge(hei_p));
+            vs.insert(vp);
+        });
+        vs.insert(vi);
+    }
+    void operator()(const MeshType& mesh, size_t vi, size_t ring) const {
+        std::unordered_set<size_t> vs, es, cvs;
+        cvs.insert(vi);
+        for(size_t curRing = 1; curRing <= ring; ++curRing) {
+            for(auto i : cvs) addInfo1Ring(vs, es, mesh, i);
+            std::unordered_set<size_t> vs_next;
+            for (auto i : vs) if (cvs.find(i) == cvs.end()) {
+                vs_next.insert(i);
+            }
+            cvs = std::move(vs_next);
+        }
+
+        // Output
+        std::unordered_map<size_t, size_t> vri;
+        size_t index = 0; // 1 based index
+        for (auto i : vs) {
+            std::cout << mesh.getVertexAttribute(i).getCoordinate() << std::endl;
+            vri[i] = (++index);
+        }
+        for (auto i : es) {
+            const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
+            std::cout << vri[mesh.target(hei)] << ' ' << vri[mesh.target(mesh.opposite(hei))] << std::endl;
+        }
+
+    }
+};
 struct MembraneMeshTopologyCheck {
     size_t minDegree;
     size_t maxDegree;
@@ -16,7 +58,7 @@ struct MembraneMeshTopologyCheck {
     size_t numBoundaries = 0;
 
     bool operator()(const MeshType& mesh, bool report = false) const {
-        bool res = true;
+        bool res = true; // Whether the topology is consistent
 
         const size_t chi = 2 - 2 * genus - numBoundaries; // Euler characteristic
 
@@ -107,30 +149,15 @@ struct MembraneMeshTopologyCheck {
         // Check half edges
         for(size_t i = 0; i < numHalfEdges; ++i) {
             // Check opposite
-            if(mesh.hasOpposite(i)) {
-                const size_t hei_o = mesh.opposite(i);
-                if(!mesh.hasOpposite(hei_o)) {
-                    res = false;
-                    if(report) {
-                        LOG(ERROR) << "Half edge " << hei_o << " (opposite of half edge " << i << ") "
-                            << "does not have a half edge.";
-                    }
-                } else if(mesh.opposite(hei_o) != i) {
-                    res = false;
-                    if(report) {
-                        LOG(ERROR) << "Inconsistent opposite half edges: "
-                            << i << " -> " << hei_o << " -> " << mesh.opposite(hei_o);
-                    }
-                }
-            } else {
-                // Does not have an opposite
-                if(!numBoundaries) {
-                    res = false;
-                    if(report) {
-                        LOG(ERROR) << "In closed surface, half edge " << i << " does not have an opposite.";
-                    }
+            const size_t hei_o = mesh.opposite(i);
+            if(mesh.opposite(hei_o) != i) {
+                res = false;
+                if(report) {
+                    LOG(ERROR) << "Inconsistent opposite half edges: "
+                        << i << " -> " << hei_o << " -> " << mesh.opposite(hei_o);
                 }
             }
+
             // Check next/prev
             const size_t next = mesh.next(i);
             const size_t prev = mesh.prev(i);
@@ -162,7 +189,7 @@ struct MembraneMeshTopologyCheck {
 
 };
 
-struct MembraneMeshSizeQualityCheck {
+struct MembraneMeshDihedralCheck {
     double cosDihedralError;
     double cosDihedralWarning;
 
@@ -173,7 +200,13 @@ struct MembraneMeshSizeQualityCheck {
         // Requires triangle unit normals
         for(size_t i = 0; i < numEdges; ++i) {
             const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
-            if(mesh.hasOpposite(hei)) {
+            const size_t hei_o = mesh.opposite(hei);
+
+            using PolygonType = MeshType::HalfEdge::PolygonType;
+            if(
+                mesh.getHalfEdges()[hei].polygonType   == PolygonType::Triangle &&
+                mesh.getHalfEdges()[hei_o].polygonType == PolygonType::Triangle
+            ) {
                 const size_t t0 = mesh.triangle(hei);
                 const size_t t1 = mesh.triangle(mesh.opposite(hei));
                 const auto& un0 = mesh.getTriangleAttribute(t0).gTriangle.unitNormal;
@@ -201,6 +234,8 @@ struct MembraneMeshQualityCheck {
     double qualityWarning;
 
     bool operator()(const MeshType& mesh, bool report = false) const {
+        using namespace mathfunc;
+
         bool res = true;
 
         const size_t numTriangles = mesh.getTriangles().size();
@@ -209,9 +244,9 @@ struct MembraneMeshQualityCheck {
             const size_t v0 = mesh.target(hei);
             const size_t v1 = mesh.target(mesh.next(hei));
             const size_t v2 = mesh.target(mesh.prev(hei));
-            const auto c0 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-            const auto c1 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
-            const auto c2 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
+            const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
+            const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
+            const Vec3 c2 = mesh.getVertexAttribute(v2).getCoordinate();
 
             const auto q = TriangleQualityType{}(c0, c1, c2);
 
@@ -262,6 +297,8 @@ struct MembraneMeshQualityReport {
     using TriangleQualityType = TriangleQuality< c >;
 
     void operator()(const MeshType& mesh) const {
+        using namespace mathfunc;
+
         const size_t numEdges = mesh.getEdges().size();
         const size_t numTriangles = mesh.getTriangles().size();
 
@@ -273,9 +310,9 @@ struct MembraneMeshQualityReport {
             const size_t v0 = mesh.target(hei);
             const size_t v1 = mesh.target(mesh.next(hei));
             const size_t v2 = mesh.target(mesh.prev(hei));
-            const auto c0 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v0).getCoordinate());
-            const auto c1 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v1).getCoordinate());
-            const auto c2 = mathfunc::vector2Vec<3, double>(mesh.getVertexAttribute(v2).getCoordinate());
+            const Vec3 c0 = mesh.getVertexAttribute(v0).getCoordinate();
+            const Vec3 c1 = mesh.getVertexAttribute(v1).getCoordinate();
+            const Vec3 c2 = mesh.getVertexAttribute(v2).getCoordinate();
 
             const auto q = TriangleQualityType{}(c0, c1, c2);
 
@@ -292,12 +329,18 @@ struct MembraneMeshQualityReport {
         double avgDotNormal = 0.0;
         for(size_t i = 0; i < numEdges; ++i) {
             const size_t hei = mesh.getEdges()[i].halfEdgeIndex;
-            if(mesh.hasOpposite(hei)) {
+            const size_t hei_o = mesh.opposite(hei);
+
+            using PolygonType = MeshType::HalfEdge::PolygonType;
+            if(
+                mesh.getHalfEdges()[hei].polygonType   == PolygonType::Triangle &&
+                mesh.getHalfEdges()[hei_o].polygonType == PolygonType::Triangle
+            ) {
                 const size_t t0 = mesh.triangle(hei);
                 const size_t t1 = mesh.triangle(mesh.opposite(hei));
                 const auto& un0 = mesh.getTriangleAttribute(t0).gTriangle.unitNormal;
                 const auto& un1 = mesh.getTriangleAttribute(t1).gTriangle.unitNormal;
-                const auto cosDihedral = mathfunc::dot(un0, un1);
+                const auto cosDihedral = dot(un0, un1);
 
                 if(cosDihedral < minDotNormal) {
                     minDotNormal = cosDihedral;
@@ -308,6 +351,33 @@ struct MembraneMeshQualityReport {
         avgDotNormal /= numEdges;
         LOG(INFO) << "Cosine of dihedral angles: Avg " << avgDotNormal << " Worst " << minDotNormal;
     }
+
+    void sizeQuality(const MeshType& mesh) const {
+        const size_t numTriangles = mesh.getTriangles().size();
+
+        // Check triangle quality
+        double worstQuality = TriangleQualityType::best;
+        double avgQuality = 0.0;
+        for(size_t i = 0; i < numTriangles; ++i) {
+            const size_t hei = mesh.getTriangles()[i].halfEdgeIndex;
+            const size_t e0 = mesh.edge(hei);
+            const size_t e1 = mesh.edge(mesh.next(hei));
+            const size_t e2 = mesh.edge(mesh.prev(hei));
+            const auto l0 = mesh.getEdgeAttribute(e0).aEdge.eqLength;
+            const auto l1 = mesh.getEdgeAttribute(e1).aEdge.eqLength;
+            const auto l2 = mesh.getEdgeAttribute(e2).aEdge.eqLength;
+
+            const auto q = TriangleQualityType{}(l0, l1, l2);
+
+            if(TriangleQualityType::worse(q, worstQuality)) {
+                worstQuality = q;
+            }
+            avgQuality += q;
+        }
+        avgQuality /= numTriangles;
+        LOG(INFO) << "EXPECTED quality of triangles: Avg " << avgQuality << " Worst " << worstQuality;
+    }
+
 };
 
 } // namespace membrane_mesh_check

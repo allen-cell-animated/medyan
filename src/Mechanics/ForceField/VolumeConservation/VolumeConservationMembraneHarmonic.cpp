@@ -1,6 +1,6 @@
-#include "VolumeConservationMembraneHarmonic.h"
+#include "Mechanics/ForceField/VolumeConservation/VolumeConservationMembraneHarmonic.h"
 
-#include "Vertex.h"
+#include "Structure/SurfaceMesh/Vertex.h"
 
 double VolumeConservationMembraneHarmonic::energy(double volume, double kBulk, double eqVolume) {
     double dist = volume - eqVolume;
@@ -8,7 +8,7 @@ double VolumeConservationMembraneHarmonic::energy(double volume, double kBulk, d
 }
 
 void VolumeConservationMembraneHarmonic::forces(
-    Vertex* v,
+    double* force,
     double volume, const mathfunc::Vec3& dVolume,
     double kBulk, double eqVolume
 ) {
@@ -17,19 +17,6 @@ void VolumeConservationMembraneHarmonic::forces(
 
     double coeff = -kBulk / eqVolume * (volume - eqVolume);
     for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        v->force[coordIdx] += coeff * dVolume[coordIdx];
-    }
-}
-
-void VolumeConservationMembraneHarmonic::forcesAux(
-    Vertex* v,
-    double volume, const mathfunc::Vec3& dVolume,
-    double kBulk, double eqVolume
-) {
-    // Same as force calculation
-
-    double coeff = -kBulk / eqVolume * (volume - eqVolume);
-    for(size_t coordIdx = 0; coordIdx < 3; ++coordIdx) {
-        v->forceAux[coordIdx] += coeff * dVolume[coordIdx];
+        force[coordIdx] += coeff * dVolume[coordIdx];
     }
 }

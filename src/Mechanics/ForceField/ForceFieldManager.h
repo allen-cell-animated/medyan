@@ -32,6 +32,8 @@ class SubSystem;
  */
 class ForceFieldManager {
     
+friend class CGMethod;
+    
 public:
     vector<ForceField*> _forceFields; ///< All forcefields in the system
 
@@ -39,64 +41,46 @@ public:
 
     ForceFieldManager(SubSystem* s) { _subSystem = s; }
     
-    /// Update the geometry of all elements in the system
-    template< bool stretched > void updateGeometryValue() const;
-    void updateGeometryValueWithDerivative() const;
-
+    /// Vectorize all interactions involved in calculation
+    void vectorizeAllForceFields();
+    /// Deallocation of vectorized memory
+    void cleanupAllForceFields();
+    
     /// Compute the energy using all available force fields
     /// @return Returns infinity if there was a problem with a ForceField
     /// energy calculation, such that beads will not be moved to this
     /// problematic configuration.
-    /// @param print - prints detailed info about energies
-    template< bool stretched = false > double computeEnergy(bool verbose = false) {
-        double energy = 0;
-        for(auto &f : _forceFields) {
-            
-            auto tempEnergy = f->computeEnergy(stretched);
-            
-            if(verbose) cout << f->getName() << " energy = " << tempEnergy << endl;
-            
-            //if energy is infinity, exit with infinity.
-            if(tempEnergy <= -1) {
-                
-                //if this is the current energy, exit ungracefully
-                if(!stretched) {
-                    
-                    cout << "Energy = " << tempEnergy << endl;
-                    
-                    cout << "Energy of system became infinite. Try adjusting minimization parameters." << endl;
-                    cout << "The culprit was ... " << f->getName() << endl;
-                    
-                    //get the culprit in output
-                    f->whoIsCulprit();
-                    
-                    exit(EXIT_FAILURE);
-                }
-                //if this is a minimization try, just return infinity
-                else return numeric_limits<double>::infinity();
-            }
-            else energy += tempEnergy;
-        }
-        return energy;
-
-    }
+    /// @param stretched - whether intermediate variables are treated as temporary or not
+    template< bool stretched = false >
+    double computeEnergy(double *coord, bool verbose = false) const;
     
     /// Compute the forces of all force fields 
-    void computeForces();
-    /// Compute the forcesAux of all force fields
-    void computeForcesAux();
-    /// Compute forcesAuxP of all force fields
-    void computeForcesAuxP();
+    void computeForces(double *coord, double *f);
     
+#ifdef CUDAACCL
+        cudaStream_t  streamF = NULL;
+    /// CUDA Copy forces from f to fprev
+    void CUDAcopyForces(cudaStream_t  stream, double *f, double *fprev);
+#endif
+
     /// Compute the load forces on the beads. This does not update the force (xyz) vector
     /// contained by Bead, but updates the loadForce vector which contains precalculated
     /// load values based on the bead's directionality of growth in a filament.
     void computeLoadForces();
-    
+#ifdef CROSSCHECK
     /// Reset the forces of all objects
     void resetForces();
-    /// Reset the forcesAux of all objects
-    void resetForcesAux();
+#endif
+#ifdef CUDAACCL
+    vector<int> blocksnthreads;
+    int *gpu_nint;
+    //@{
+    vector<int> bntaddvec2;
+    int *gpu_params;
+    vector<int> params;
+    //@}
+    void assignallforcemags();
+#endif
 };
 
 #endif

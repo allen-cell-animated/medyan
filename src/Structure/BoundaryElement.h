@@ -23,7 +23,7 @@
 #include "Neighbor.h"
 #include "Component.h"
 
-#include "core/controller/GController.h"
+#include "GController.h"
 
 //FORWARD DECLARATIONS
 class Bead;
@@ -38,16 +38,13 @@ class Bead;
  * Extending the Neighbor class, all instances can be kept in 
  * [NeighborLists](@ref NeighborList).
  */
-class BoundaryElement : public Component, public Trackable, public Neighbor {
+class BoundaryElement : public Component, public Trackable, public Neighbor,
+    public Database< BoundaryElement, false > {
 
 friend class BoundaryCubic;
 friend class BoundarySpherical;
 friend class BoundaryCapsule;
 friend class BoundaryCylinder;
-    
-private:
-    static Database<BoundaryElement*> _boundaryElements;
-    ///< Collection of boundary elements in SubSystem
     
 protected:
     
@@ -76,24 +73,36 @@ public:
     ///update the coordinates of the boundary element
     virtual void updateCoords(const vector<double> newCoords) = 0;
     
+    //@{
     /// Implement for all boundary elements
     /// Returns the distance from a given point to this boundary element
     /// @return - 1) positive number if point is within boundary element
     ///           2) Negative number if point is outside boundary element
     ///           3) Infinity if point is not in domain of this boundary element
     virtual double distance(const vector<double>& point) = 0;
-    
+    virtual double distance(double const *point) = 0;
+    //@}
+
+    //@{
     //Qin
     virtual double lowerdistance(const vector<double>& point) = 0;
     virtual double sidedistance(const vector<double>& point) = 0;
-    
+
     /// Returns stretched distance, similar to distance above
     virtual double stretchedDistance(const vector<double>& point,
                                      const vector<double>& force, double d) = 0;
-    
+    virtual double stretchedDistance(double const *point,
+                                     double const *force, double d) = 0;
+    //@}
+
+
+    //@{
     /// Returns normal vector of point to plane
     virtual const vector<double> normal(const vector<double> &point) = 0;
-    
+    virtual const vector<double> normal(const double *point) = 0;
+    virtual const void elementeqn(double* var) = 0;
+    //@}
+
     //@{
     /// Getter for mechanical parameters
     virtual double getRepulsionConst() {return _kRep;}
@@ -102,23 +111,26 @@ public:
     
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem() { _boundaryElements.addElement(this);}
-    virtual void removeFromSubSystem() {_boundaryElements.removeElement(this);}
+    // Does nothing
+    virtual void addToSubSystem() { }
+    virtual void removeFromSubSystem() {}
     //@}
     
     /// Get all instances of this class from the SubSystem
     static const vector<BoundaryElement*>& getBoundaryElements() {
-        return _boundaryElements.getElements();
+        return getElements();
     }
     /// Get the number of boundary elements in this system
     static int numBoundaryElements() {
-        return _boundaryElements.countElements();
+        return getElements().size();
     }
     
     virtual void printSelf()const;
     
     //GetType implementation just returns zero (no boundary element types yet)
     virtual int getType() {return 0;}
+
+
 };
 
 #endif

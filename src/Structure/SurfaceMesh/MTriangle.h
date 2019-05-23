@@ -13,9 +13,6 @@ class MTriangle {
 
 private:
 
-    [[deprecated]] double _eqArea; // Length of unstretched area
-    [[deprecated]] double _kElastic; // Elastic modulus of the triangle
-
     double _kExVol; ///< Local excluded volume constant, which describes
                     ///< excluded volume interactions between triangles and cylinder tips
 

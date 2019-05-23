@@ -33,6 +33,7 @@ BoundaryFF::BoundaryFF (string type) {
     if (type == "REPULSIONEXP") {
         _boundaryInteractionVector.emplace_back(
         new BoundaryCylinderRepulsion<BoundaryCylinderRepulsionExp>());
+
         _boundaryInteractionVector.emplace_back(
         new BoundaryBubbleRepulsion<BoundaryBubbleRepulsionExp>());
     }
@@ -59,6 +60,19 @@ BoundaryFF::BoundaryFF (string type) {
     }
 }
 
+void BoundaryFF::vectorize() {
+    
+    for (auto &interaction : _boundaryInteractionVector)
+        interaction->vectorize();
+}
+
+void BoundaryFF::cleanup() {
+    
+    for (auto &interaction : _boundaryInteractionVector)
+        interaction->deallocate();
+}
+
+
 void BoundaryFF::whoIsCulprit() {
     
     cout << endl;
@@ -78,14 +92,14 @@ void BoundaryFF::whoIsCulprit() {
 }
 
 
-double BoundaryFF::computeEnergy(bool stretched) {
+double BoundaryFF::computeEnergy(double *coord, bool stretched) {
     
     double U= 0.0;
     double U_i=0.0;
     
     for (auto &interaction : _boundaryInteractionVector) {
         
-        U_i = interaction->computeEnergy(stretched);
+        U_i = interaction->computeEnergy(coord);
         
         if(U_i <= -1) {
             //set culprit and return
@@ -94,22 +108,21 @@ double BoundaryFF::computeEnergy(bool stretched) {
         }
         else U += U_i;
         
+        
     }
+    
+    
     return U;
 }
 
-void BoundaryFF::computeForces() {
+void BoundaryFF::computeForces(double *coord, double *f) {
 
-    for (auto &interaction : _boundaryInteractionVector)
-        interaction->computeForces();
-}
+    for (auto &interaction : _boundaryInteractionVector){
+        interaction->computeForces(coord, f);
 
-void BoundaryFF::computeForcesAux() {
+    }
     
-    for (auto &interaction : _boundaryInteractionVector)
-        interaction->computeForcesAux();
 }
-
 
 void BoundaryFF::computeLoadForces() {
     

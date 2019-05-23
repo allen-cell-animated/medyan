@@ -11,12 +11,12 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
-#include "TriangleCylinderVolumeFF.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderVolumeFF.h"
 
-#include "TriangleCylinderExclVolume.h"
-#include "TriangleCylinderBeadExclVolRepulsion.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderExclVolume.h"
+#include "Mechanics/ForceField/Volume/TriangleCylinderBeadExclVolRepulsion.h"
 
-#include "Triangle.h"
+#include "Structure/SurfaceMesh/Triangle.h"
 #include "Cylinder.h"
 
 TriangleCylinderVolumeFF::TriangleCylinderVolumeFF (string& type) {
@@ -43,14 +43,14 @@ void TriangleCylinderVolumeFF::whoIsCulprit() {
     cout << endl;
 }
 
-double TriangleCylinderVolumeFF::computeEnergy(bool stretched) {
+double TriangleCylinderVolumeFF::computeEnergy(double* coord, bool stretched) {
     
     double U= 0;
     double U_i;
     
     for (auto &interaction : _triangleCylinderVolInteractionVector) {
         
-        U_i = interaction->computeEnergy(stretched);
+        U_i = interaction->computeEnergy(coord, stretched);
                 
         if(U_i <= -1) {
             //set culprit and return
@@ -63,16 +63,10 @@ double TriangleCylinderVolumeFF::computeEnergy(bool stretched) {
     return U;
 }
 
-void TriangleCylinderVolumeFF::computeForces() {
+void TriangleCylinderVolumeFF::computeForces(double* coord, double* f) {
     
     for (auto &interaction : _triangleCylinderVolInteractionVector)
-        interaction->computeForces();
-}
-
-void TriangleCylinderVolumeFF::computeForcesAux() {
-    
-    for (auto &interaction : _triangleCylinderVolInteractionVector)
-        interaction->computeForcesAux();
+        interaction->computeForces(coord, f);
 }
 
 void TriangleCylinderVolumeFF::computeLoadForces() {

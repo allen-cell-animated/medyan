@@ -11,6 +11,7 @@
 #include "OutputStruct.h"
 
 #include "analysis/io/pdb.h"
+#include "Core/Globals.hpp"
 #include "util/io/log.h"
 #include "Structure/Bead.h"
 #include "Structure/SubSystem.h"
@@ -112,6 +113,9 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
     LOG(STEP) << "Writing to " << _pdbFilepath << " and " << _psfFilepath;
     psfGen.genHeader();
     psfGen.genNatom(maxBead.maxBead);
+
+    const size_t bondFrame = global().analyzeMembraneBondFrame;
+
     size_t numSnapshots = snapshots.size();
     for(size_t idx = 0; idx < numSnapshots; ++idx) {
         if (idx % 20 == 0) LOG(INFO) << "Generating model " << idx;
@@ -133,7 +137,6 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
         size_t filamentAlloc = maxBead.filament.size();
 
         std::vector< std::pair< size_t, size_t >> bondList;
-        const size_t bondFrame = 0;
 
         for(size_t i = 0; i < filamentAlloc; ++i) {
             atomCount = 0;
@@ -305,11 +308,11 @@ void SnapshotReader::readAndConvertToVmd(const size_t maxFrames) {
                 ++atomCount;
                 ++resSeq;
                 pg.genAtom(
-                    atomSerial, " CA ", ' ', "ARG", chain, resSeq, ' ',
+                    atomSerial, " CA ", ' ', "ARG", chain, 1/* resSeq */, ' ',
                     v[0], v[1], v[2]
                 );
                 if(idx == bondFrame) {
-                    psfGen.genAtom(atomId, "", resSeq, "ARG", "CA", "CA");
+                    psfGen.genAtom(atomId, "", 1/* resSeq */, "ARG", "CA", "CA");
                 }
             }
             ++resSeq;

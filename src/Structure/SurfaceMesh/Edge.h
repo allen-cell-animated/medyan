@@ -22,15 +22,13 @@ class Membrane;
 
 class Edge:
     public Movable,
-    public Trackable {
+    public Trackable,
+    public Database< Edge, false > {
 
 private:
 
     Membrane* _parent;
     size_t _topoIndex; // Index in the meshwork topology.
-
-    static Database<Edge*> _edges; // Collection of edges in SubSystem
-    int _id; // Unique integer id of this edge
 
     void updateCoordinate(); // helper function to update coordiante of this edge
 
@@ -47,18 +45,16 @@ public:
 
     /// Get all instances of this class from the SubSystem
     static const vector<Edge*>& getEdges() {
-        return _edges.getElements();
+        return getElements();
     }
-    /// Get Id
-    int getId()const { return _id; }
 
     int getType()const;
     void printSelf()const;
 
     //@{
     /// SubSystem management, inherited from Trackable
-    virtual void addToSubSystem()override { _edges.addElement(this); }
-    virtual void removeFromSubSystem()override { _edges.removeElement(this); }
+    virtual void addToSubSystem()override { }
+    virtual void removeFromSubSystem()override { }
     //@}
 
     //@{

@@ -52,7 +52,7 @@ public:
     Factory functions
     **************************************************************************/
     /// Create region with hier's children as outer limit
-    static std::unique_ptr<MembraneRegion> makeByChildren(MembraneHierarchy* hier, bool excludeChildren=false);
+    static std::unique_ptr<MembraneRegion> makeByChildren(const MembraneHierarchy& hier, bool excludeChildren=false);
 };
 
 #endif

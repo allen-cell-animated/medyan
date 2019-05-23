@@ -1,6 +1,7 @@
 #Mac OS X
 *.DS_Store
 
+# Text editors and IDEs
 # Xcode
 *.pbxuser
 *.mode1v3
@@ -10,10 +11,11 @@
 project.xcworkspace/
 xcuserdata/
 *.xcscheme
-
-# Project for Visual Studio 2017
+# Project for VS15
 .vs/
-/projects/VC15/**/MEDYAN/
+/projects/VS15/**/MEDYAN
+# VS Code
+.vscode/
 
 # Generated files
 ## LaTeX
@@ -28,9 +30,6 @@ src/MEDYAN
 src/medyan_test
 ## Python
 *.pyc
-
-# Output files
-*.traj
 
 # Backup files
 *~.nib

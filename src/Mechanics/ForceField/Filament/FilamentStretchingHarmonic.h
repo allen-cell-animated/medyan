@@ -23,10 +23,40 @@ class Bead;
 class FilamentStretchingHarmonic {
     
 public:
-    double energy(Bead*, Bead*, double, double, bool stretched);
+    double energy(double *coord, int *beadSet,
+                  double *kstr, double *eql);
+    
+    double energy(double *coord, double * f, int *beadSet,
+                  double *kstr, double *eql, double d);
+    
+    void forces(double *coord, double *f, int *beadSet,
+                double *kstr, double *eql);
+#ifdef CUDAACCL
+    void optimalblocksnthreads(int nint, cudaStream_t stream);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, int *params);
+
+    double* energy(double *coord, double *f, int *beadSet, double *kstr, double *eql, double *z, int *params);
+
+    void forces(double *coord, double *f, int *beadSet, double *kstr, double *eql, int *params);
+    void deallocate();
+    static void checkforculprit();
+    vector<int> blocksnthreadse;
+    vector<int> blocksnthreadsez;
+    vector<int> blocksnthreadsf;
+    vector<int> bntaddvec2;
+    double *gU_i;
+    double *gU_sum;
+    char *gFF, *ginteraction;
+    cudaStream_t stream = NULL;
+#endif
+#ifdef CROSSCHECK
+    double energy(Bead*, Bead*, double, double);
+    double energy(Bead*, Bead*, double, double, double);
     
     void forces(Bead*, Bead*, double, double);
     void forcesAux(Bead*, Bead*, double, double);
+#endif
 };
 
 #endif

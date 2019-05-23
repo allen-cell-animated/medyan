@@ -21,14 +21,21 @@
 
 //FORWARD DECLARATIONS
 class Bead;
+class BoundaryElement;
 
 /// A exponential repulsive potential used by the BoundaryBubbleRepulsion template.
 class BoundaryBubbleRepulsionExp {
     
 public:
-    double energy(Bead*, double, double, double, double);
-    void forces(Bead*, double, double, vector<double>& norm, double, double);
-    void forcesAux(Bead*, double, double, vector<double>& norm, double, double);
+    double energy(double *coord, int *beadSet,
+                  double *krep, double *slen, int *nneighbors);
+    
+    double energy(double *coord, double *f, int *beadSet,
+                  double *krep, double *slen, int *nnneighbors, double d);
+    
+    void forces(double *coord, double *f, int *beadSet,
+                double *krep, double *slen, int *nneighbors);
+
 };
 
 #endif

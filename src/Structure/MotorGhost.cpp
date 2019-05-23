@@ -20,7 +20,7 @@
 #include "Bead.h"
 #include "ChemRNode.h"
 
-#include "core/controller/GController.h"
+#include "GController.h"
 #include "SysParams.h"
 #include "MathFunctions.h"
 #include "Rand.h"
@@ -29,10 +29,10 @@ using namespace mathfunc;
 
 void MotorGhost::updateCoordinate() {
     
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
     
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
@@ -48,7 +48,7 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
     : Trackable(true, true),
       _c1(c1), _c2(c2),
       _position1(position1), _position2(position2),
-      _motorType(motorType), _motorID(_motorGhosts.getID()), _birthTime(tau()),
+      _motorType(motorType), _birthTime(tau()),
       _onRate(onRate), _offRate(offRate) {
           
     //find compartment
@@ -83,10 +83,10 @@ MotorGhost::MotorGhost(Cylinder* c1, Cylinder* c2, short motorType,
 #endif
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
 #ifdef PLOSFEEDBACK
     _mMotorGhost = unique_ptr<MMotorGhost>(
     new MMotorGhost(motorType, _numBoundHeads, position1, position2, x1, x2, x3, x4));
@@ -154,10 +154,10 @@ void MotorGhost::updatePosition() {
     }
     
 #ifdef MECHANICS
-    auto x1 = _c1->getFirstBead()->coordinate;
-    auto x2 = _c1->getSecondBead()->coordinate;
-    auto x3 = _c2->getFirstBead()->coordinate;
-    auto x4 = _c2->getSecondBead()->coordinate;
+    auto x1 = _c1->getFirstBead()->vcoordinate();
+    auto x2 = _c1->getSecondBead()->vcoordinate();
+    auto x3 = _c2->getFirstBead()->vcoordinate();
+    auto x4 = _c2->getSecondBead()->vcoordinate();
     
     auto m1 = midPointCoordinate(x1, x2, _position1);
     auto m2 = midPointCoordinate(x3, x4, _position2);
@@ -204,10 +204,10 @@ void MotorGhost::updateReactionRates() {
     //walking rate changer
     if(!_walkingChangers.empty()) {
         
-        auto x1 = _c1->getFirstBead()->coordinate;
-        auto x2 = _c1->getSecondBead()->coordinate;
-        auto x3 = _c2->getFirstBead()->coordinate;
-        auto x4 = _c2->getSecondBead()->coordinate;
+        auto x1 = _c1->getFirstBead()->vcoordinate();
+        auto x2 = _c1->getSecondBead()->vcoordinate();
+        auto x3 = _c2->getFirstBead()->vcoordinate();
+        auto x4 = _c2->getSecondBead()->vcoordinate();
         
         //get component of force in direction of forward walk for C1, C2
         vector<double> motorC1Direction =
@@ -239,9 +239,11 @@ void MotorGhost::updateReactionRates() {
                            _numHeads, max(0.0, forceDotDirectionC1));
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
+#ifdef DETAILEDOUTPUT
                 std::cout<<"Motor WF1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
                         ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
                          forceDotDirectionC2<<" NH "<<_numHeads<<endl;
+#endif
                 r->setRate(newRate);
                 r->updatePropensity();
 
@@ -255,9 +257,11 @@ void MotorGhost::updateReactionRates() {
                 
                 if(SysParams::RUNSTATE==false){
                     newRate=0.0;}
+#ifdef DETAILEDOUTPUT
                 std::cout<<"Motor WB1 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
                         ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
                          forceDotDirectionC2<<" NH "<<_numHeads<<endl;
+#endif
                 r->setRate(newRate);
                 r->updatePropensity();
             }
@@ -273,6 +277,11 @@ void MotorGhost::updateReactionRates() {
                            _numHeads, max(0.0, forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
+#ifdef DETAILEDOUTPUT
+                std::cout<<"Motor WF2 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
+                        forceDotDirectionC2<<" NH "<<_numHeads<<endl;
+#endif
                 r->setRate(newRate);
                 r->updatePropensity();
             }
@@ -285,6 +294,11 @@ void MotorGhost::updateReactionRates() {
                            _numHeads, max(0.0, -forceDotDirectionC2));
                 if(SysParams::RUNSTATE==false)
                 { newRate=0.0;}
+#ifdef DETAILEDOUTPUT
+                std::cout<<"Motor WB2 f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+                        ""<<coordinate[1]<<" "<<coordinate[2]<<" Fdirn "<<
+                         forceDotDirectionC2<<" NH "<<_numHeads<<endl;
+#endif
                 r->setRate(newRate);
                 r->updatePropensity();
             }
@@ -301,6 +315,11 @@ void MotorGhost::updateReactionRates() {
         float newRate =
         _unbindingChangers[_motorType]->
         changeRate(_cMotorGhost->getOnRate(), _cMotorGhost->getOffRate(), _numHeads, force);
+#ifdef DETAILEDOUTPUT
+        std::cout<<"Motor UB f "<<force<<" Rate "<<newRate<<" "<<coordinate[0]<<" "
+                ""<<coordinate[1]<<" "
+                ""<<coordinate[2]<<endl;
+#endif
         offRxn->setRate(newRate);
         offRxn->activateReaction();
     }
@@ -368,7 +387,7 @@ void MotorGhost::printSelf()const {
     cout << endl;
     
     cout << "MotorGhost: ptr = " << this << endl;
-    cout << "Motor type = " << _motorType << ", Motor ID = " << _motorID << endl;
+    cout << "Motor type = " << _motorType << ", Motor ID = " << getId() << endl;
     cout << "Coordinates = " << coordinate[0] << ", " << coordinate[1] << ", " << coordinate[2] << endl;
     
     cout << "Position on first cylinder (double) = " << _position1 << endl;
@@ -402,7 +421,7 @@ species_copy_t MotorGhost::countSpecies(const string& name) {
     
     species_copy_t copyNum = 0;
     
-    for(auto m : _motorGhosts.getElements()) {
+    for(auto m : getElements()) {
         
         auto s = m->getCMotorGhost()->getFirstSpecies();
         string sname = SpeciesNamesDB::removeUniqueFilName(s->getName());
@@ -416,7 +435,6 @@ species_copy_t MotorGhost::countSpecies(const string& name) {
 vector<MotorRateChanger*> MotorGhost::_unbindingChangers;
 vector<MotorRateChanger*> MotorGhost::_walkingChangers;
 
-Database<MotorGhost*> MotorGhost::_motorGhosts;
 Histogram* MotorGhost::_lifetimes;
 Histogram* MotorGhost::_walkLengths;
 

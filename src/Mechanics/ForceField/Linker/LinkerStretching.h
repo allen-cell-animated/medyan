@@ -15,8 +15,12 @@
 #define MEDYAN_LinkerStretching_h
 
 #include "common.h"
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
 
 #include "LinkerInteractions.h"
+#include "Linker.h"
 
 //FORWARD DECLARATIONS
 class Linker;
@@ -27,13 +31,49 @@ class LinkerStretching : public LinkerInteractions {
     
 private:
     LStretchingInteractionType _FFType;
+
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *kstr;
+    double *eql;
+    double *pos1;
+    double *pos2;
+    double *stretchforce;
+
+#ifdef CUDAACCL
+    int * gpu_beadSet;
+    double * gpu_kstr;
+    double *gpu_eql;
+    int * gpu_params;
+    double *gpu_pos1;
+    double *gpu_pos2;
+//    CUDAvars cvars;
+    double *F_i;
+    double *gpu_Lstretchforce;
+    cudaStream_t  stream = NULL;
+#endif
     
 public:
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    
+    ///Array describing indexed set of interactions
+    ///For linkers, this is a 4-bead potential
+    const static int n = 4;
+    
+    ///< Constructor
+    LinkerStretching () {}
+    ~LinkerStretching () {}
+
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    
+    virtual double computeEnergy(double *coord) override;
+    virtual void computeForces(double *coord, double *f);
     
     virtual const string getName() {return "Linker Stretching";}
+
+    virtual void assignforcemags();
 };
 
 #endif

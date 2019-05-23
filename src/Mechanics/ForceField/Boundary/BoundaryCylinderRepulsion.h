@@ -17,7 +17,9 @@
 #include <vector>
 
 #include "common.h"
-
+#ifdef CUDAACCL
+#include "CUDAcommon.h"
+#endif
 #include "BoundaryInteractions.h"
 #include "NeighborListImpl.h"
 
@@ -34,19 +36,49 @@ class BoundaryCylinderRepulsion : public BoundaryInteractions {
 private:
     BRepulsionInteractionType _FFType;
     BoundaryCylinderNL* _neighborList; ///<Neighbor list of BoundaryElement - Cylinder
+    
+    int *beadSet;
+    
+    ///Array describing the constants in calculation
+    double *krep;
+    double *slen;
+    double *U_i;
+    int nint = 0;
+    ///Array describing the number of neighbors for each boundary element (num boundary elements long)
+    int *nneighbors;
+#ifdef CUDAACCL
+    double *gU;
+    int *gpu_beadSet;
+    double *gpu_krep;
+    double *gpu_slen;
+    double *gpu_U_i;
+    int *gpu_params;
+    double *gpu_beListplane;
+    int *gpu_nintperbe;
+//    CUDAvars cvars;
+    double *F_i;
+    cudaStream_t stream = NULL;
+#endif
+    
 public:
+    
+    ///Array describing indexed set of interactions
+    ///For filaments, this is a 1-bead potential
+    const static int n = 1;
     
     /// Constructor
     BoundaryCylinderRepulsion() {
         _neighborList = new BoundaryCylinderNL(SysParams::Boundaries().BoundaryCutoff);
     }
     
-    virtual double computeEnergy(bool stretched) override;
+    virtual void vectorize();
+    virtual void deallocate();
+    
+    virtual double computeEnergy(double *coord) override;
     //@{
     /// This repulsive force calculation also updates load forces
     /// on beads within the interaction range.
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual void computeForces(double *coord, double *f);
     
     virtual void computeLoadForces();
     //@}

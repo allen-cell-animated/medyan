@@ -32,6 +32,7 @@ private:
     vector<unique_ptr<LinkerInteractions>>
     _linkerInteractionVector; ///< Vector of initialized linker interactions
     
+protected:
     /// The culprit in the case of an error
     LinkerInteractions* _culpritInteraction;
     
@@ -39,16 +40,20 @@ public:
     /// Constructor, intializes stretching, bending, and twisting forces
     LinkerFF(string& stretching, string& bending, string& twisting );
     
+    virtual void vectorize();
+    virtual void cleanup();
+
     virtual string getName() {return "Linker";}
     virtual void whoIsCulprit();
     
-    virtual double computeEnergy(bool stretched) override;
-    virtual void computeForces();
-    virtual void computeForcesAux();
+    virtual double computeEnergy(double *coord, bool stretched = false) override;
+    virtual void computeForces(double *coord, double *f);
     
     virtual void computeLoadForces() {return;}
     
     virtual vector<NeighborList*> getNeighborLists() {return vector<NeighborList*>{};}
+    //Assigns stretchforces for ratechangeimpl
+    virtual void assignforcemags();
     
 };
 

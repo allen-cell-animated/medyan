@@ -12,7 +12,22 @@
 # for your given system.
 ##################################################
 
-SOURCES_TEST             := $(shell find ./TESTS -name 'test_*.cpp')
+# Platform
+UNAME_S := $(shell uname -s)
+
+# External library locations
+ifeq ($(UNAME_S), Darwin)
+OPENGL_LIB       := -framework Cocoa -framework OpenGL -framework IOKit \
+                    -framework CoreFoundation -framework CoreVideo
+else
+OPENGL_LIB       := -lGL -lX11
+endif
+GLAD_INCLUDE     := -I../external/glad/include
+GLAD_SOURCE      := ../external/glad/src/glad.c
+GLFW_INCLUDE     := -I$(HOME)/Documents/repos/glfw/include
+GLFW_LIB         := -L$(HOME)/Documents/repos/glfw/src -lglfw3
+
+SOURCES_TEST             := $(shell find ./TESTS -name '*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
 SOURCES                  =  $(SOURCES_CPP)
@@ -26,29 +41,27 @@ OBJECTS                  =  $(OBJECTS_CPP)
 DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
-CXX = /usr/bin/g++ -std=c++14
+CXX = g++ -std=c++14
 DEBUG = -g
 FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native
 
 # Compiling flags
 DEPFLAGS = -MMD -MP
 
-INCLUDES_TEST = -I../build/gtest/include
 INCLUDES = \
+-I../external \
+$(GLAD_INCLUDE) $(GLFW_INCLUDE) \
 -I/usr/local/include -I/usr/include/boost \
 -I./ -IStructure -IStructure/Special      \
--IStructure/SurfaceMesh                   \
 -IChemistry                               \
 -IMechanics/                              \
 -IMechanics/Minimizer                     \
 -IMechanics/ForceField                    \
 -IMechanics/ForceField/Volume             \
--IMechanics/ForceField/VolumeConservation \
 -IMechanics/ForceField/Boundary           \
 -IMechanics/ForceField/Branching          \
 -IMechanics/ForceField/Filament           \
 -IMechanics/ForceField/Linker             \
--IMechanics/ForceField/Membrane           \
 -IMechanics/ForceField/MotorGhost         \
 -IMechanics/ForceField/Bubble             
 
@@ -60,8 +73,7 @@ CXXFLAGS_CXX = $(FAST_CXX) \
 -Wno-unknown-warning-option
 
 # Linking flags
-LDLIBS_TEST = -L../build/gtest/lib -lgtest -lgtest_main -lpthread
-LDLIBS      = -L/usr/local/lib/ -lboost_system
+LDLIBS      = -L/usr/local/lib/ -lboost_system $(OPENGL_LIB) $(GLFW_LIB)
 
 LDFLAGS_CXX = $(FAST_CXX)
 
@@ -85,7 +97,10 @@ CPPFLAGS += -DDYNAMICRATES
 CPPFLAGS += -DBOOST_MEM_POOL
 CPPFLAGS += -DBOOL_POOL_NSIZE=65536
 
-#Detailed chemistry macros.
+#serialized energy minimization                                                          
+CPPFLAGS += -DSERIAL
+
+#Detailed chemistry macros. 
 #FOR ALL STANDARD FUNCTIONALITY, NONE OF THESE SHOULD BE TURNED OFF!!!
 
 #Track dependents. Needed for Gillespie and NRM algorithm
@@ -107,9 +122,14 @@ CPPFLAGS += -DRSPECIES_SIGNALING
 # Implementation fix (should be turned on by default)
 CPPFLAGS += -DPLOSFEEDBACK
 
+CPPFLAGS += -DHYBRID_NLSTENCILLIST
+CPPFLAGS += -DNLSTENCILLIST
+
+# Visualization
+CPPFLAGS += -DVISUAL
+
 # Non-CUDA specific
 CPPFLAGS_CXX      = $(CPPFLAGS)
-CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST) -DTESTING
 
 ################MAKEFILE OPTIONS###################
 #
@@ -120,27 +140,23 @@ CPPFLAGS_CXX_TEST = $(CPPFLAGS_CXX) $(INCLUDES_TEST) -DTESTING
 #
 ##################################################
 
-all: MEDYAN
-
 # Build main program
 MEDYAN: $(OBJECTS)
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
 
 # Build test
 medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
-	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS) $(LDLIBS_TEST)
+	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS)
 
 # Compile to object and generate dependency
-test_%.o: test_%.cpp
-test_%.o: test_%.cpp test_%.d
-	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX_TEST) $(CXXFLAGS_CXX) -c -o $@ $<
-
 %.o: %.cpp
 %.o: %.cpp %.d 
 	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
 
 # Add empty dependency for dependencies
 %.d: ;
+
+all: MEDYAN medyan_test
 
 clean:
 	\find . -name "*.d" -delete

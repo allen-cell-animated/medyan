@@ -13,13 +13,19 @@ private:
 
     double _eqVolume; // The equilibrium volume
 
-    double _eqArea; // The equilibrium area
-    double _kElastic; // Area elasticity
+    double _eqArea; // The equilibrium area, used in quadratic stretching energy
+    double _kElastic; // Area elasticity, used in quadratic stretching energy
+
+    double _tension; // Membrane tension, used in linear stretching energy.
+                     // Note that the tension can also be defined in quadratic energy case,
+                     // but is not stored in this variable.
 
 public:
     MMembrane(short membraneType) {
         if(!SysParams::Mechanics().MemElasticK.empty())
             _kElastic = SysParams::Mechanics().MemElasticK[membraneType];
+        if(!SysParams::Mechanics().MemTension.empty())
+            _tension = SysParams::Mechanics().MemTension[membraneType];
     }
 
     double getEqVolume()const { return _eqVolume; }
@@ -30,6 +36,9 @@ public:
 
     double getKElastic()const { return _kElastic; }
     void setKElastic(double kElastic) { _kElastic = kElastic; }
+
+    double getTension()const { return _tension; }
+    void setTension(double tension) { _tension = tension; }
     
 };
 
