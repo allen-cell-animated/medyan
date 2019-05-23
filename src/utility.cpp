@@ -13,7 +13,7 @@
 
 #include "utility.h"
 
-#include "util/environment.h"
+#include "Util/Environment.h"
 
 #ifdef COMPILER_MSVC
     #include <intrin.h>
