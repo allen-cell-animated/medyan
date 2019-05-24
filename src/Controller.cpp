@@ -79,7 +79,7 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
 
     // Initialize visualization
 #ifdef VISUAL
-    visual::init();
+    visual::createWindow(1200, 800);
 #endif // VISUAL
 }
 

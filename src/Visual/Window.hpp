@@ -9,6 +9,9 @@
 
 #ifdef VISUAL
 
+// For best portability, the window signal handling could only be done from the
+// main thread (due to MacOS Cocoa framework).
+
 namespace visual {
 
 inline void glfwError(int id, const char* description) {
@@ -27,7 +30,7 @@ inline void processInput(GLFWwindow* window) {
     }
 }
 
-inline void init() {
+inline void createWindow(unsigned int width, unsigned int height) {
     LOG(INFO) << "Initializing GLFW";
     glfwSetErrorCallback(&glfwError);
     glfwInit();
@@ -36,10 +39,7 @@ inline void init() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    unsigned int windowWidth = 1200;
-    unsigned int windowHeight = 800;
-
-    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "MEDYAN", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(width, height, "MEDYAN", NULL, NULL);
     if(window == NULL) {
         LOG(ERROR) << "Failed to create GLFW window";
         glfwTerminate();
@@ -52,7 +52,7 @@ inline void init() {
         LOG(ERROR) << "Failed to initialize GLAD";
         return;
     }
-    glViewport(0, 0, windowWidth, windowHeight);
+    glViewport(0, 0, width, height);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // Shader
