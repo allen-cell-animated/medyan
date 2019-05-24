@@ -23,6 +23,19 @@ struct Window {
 namespace state {
 // Defines variables used in the main thread
 
+enum class ProjectionType { Orthographic, Perspective };
+
+// settings
+int windowWidth = 1200;
+int windowHeight = 800;
+ProjectionType projType = ProjectionType::Perspective;
+float fov = glm::radians(45.0f); // perspective
+float nearDistance = 0.1f;
+float farDistance = 100.0f;
+glm::mat4 projection;
+glm::mat4 view;
+glm::mat4 model;
+
 GLFWwindow* window;
 unsigned int vao;
 unsigned int vbo;
@@ -37,7 +50,8 @@ inline void glfwError(int id, const char* description) {
 }
 
 inline void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    //LOG(INFO) << "Changing window size: " << width << " x " << height;
+    state::windowWidth = width;
+    state::windowHeight = height;
     glViewport(0, 0, width, height);
 }
 inline void processInput(GLFWwindow* window) {
@@ -47,7 +61,7 @@ inline void processInput(GLFWwindow* window) {
     }
 }
 
-inline void createWindow(unsigned int width, unsigned int height) {
+inline void createWindow() {
     LOG(INFO) << "Initializing GLFW";
     glfwSetErrorCallback(&glfwError);
     glfwInit();
@@ -56,7 +70,7 @@ inline void createWindow(unsigned int width, unsigned int height) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    state::window = glfwCreateWindow(width, height, "MEDYAN", NULL, NULL);
+    state::window = glfwCreateWindow(state::windowWidth, state::windowHeight, "MEDYAN", NULL, NULL);
     if(state::window == NULL) {
         LOG(ERROR) << "Failed to create GLFW window";
         glfwTerminate();
@@ -69,18 +83,23 @@ inline void createWindow(unsigned int width, unsigned int height) {
         LOG(ERROR) << "Failed to initialize GLAD";
         return;
     }
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, state::windowWidth, state::windowHeight);
     glfwSetFramebufferSizeCallback(state::window, framebuffer_size_callback);
+
+    // Configure global opengl state
+    glEnable(GL_DEPTH_TEST);
 
     // Shader
     const char* const vertexshader = R"(
 #version 330 core
 layout (location = 0) in vec3 aPos;
 
-uniform mat4 transform;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main() {
-    gl_Position = transform * vec4(aPos, 1.0);
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 }
 )";
 
@@ -102,10 +121,10 @@ void main() {
 
     glBindBuffer(GL_ARRAY_BUFFER, state::vbo);
     float vertices[]{
-        -0.5f, -0.9f, 0.0f,
-        1.2f,-0.5f,0.0f,
-        0.0f, 0.5f,0.0f,
-        -0.9f,0.4f,0.1f
+        -15.5f, -25.9f, 8.0f,
+        30.0f,-0.5f,0.0f,
+        0.0f, 30.0f,-7.0f,
+        -9.9f,0.4f,0.1f
     };
     unsigned int indices[]{
         0, 1, 2,
@@ -142,13 +161,17 @@ inline void mainLoop() {
 
         // rendering
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // transform
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::translate(trans, glm::vec3(0.2f, -0.2f, 0.0f));
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        state::sd.setMat4("transform", trans);
+        state::projection = glm::perspective(state::fov, (float)state::windowWidth / (float)state::windowHeight, state::nearDistance, state::farDistance);
+        state::sd.setMat4("projection", state::projection);
+        state::model = glm::mat4(1.0f);
+        state::model = glm::rotate(state::model, (float)glfwGetTime(), glm::vec3(0.6f, 0.8f, 0.0f));
+        state::sd.setMat4("model", state::model);
+        state::view = glm::mat4(1.0f);
+        state::view = glm::translate(state::view, glm::vec3(0.0f, 0.0f, -60.0f));
+        state::sd.setMat4("view", state::view);
 
         glUseProgram(state::sd.id);
         glBindVertexArray(state::vao);

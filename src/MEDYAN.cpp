@@ -161,7 +161,7 @@ int main(int argc, char **argv) {
         {
             std::thread mainThread(&Controller::run, &c);
 #ifdef VISUAL
-            visual::createWindow(1200, 800);
+            visual::createWindow();
             visual::mainLoop();
             visual::deallocate();
 #endif // VISUAL
