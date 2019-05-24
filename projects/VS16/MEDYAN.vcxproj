@@ -19,28 +19,28 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Condition="!$(Configuration.Contains('Test'))" Include="..\..\src\**\*.cpp" Exclude="..\..\src\TESTS\**\*.cpp"/>
-    <ClCompile Condition="$(Configuration.Contains('Test'))" Include="..\..\src\**\*.cpp" Exclude="..\..\src\MEDYAN.cpp"/>
-    <ClInclude Condition="!$(Configuration.Contains('Test'))" Include="..\..\src\**\*.h;..\..\src\**\*.hpp" Exclude="..\..\src\TESTS\**\*.h"/>
-    <ClInclude Condition="$(Configuration.Contains('Test'))" Include="..\..\src\**\*.h;..\..\src\**\*.hpp"/>
+    <ClCompile Condition="!$(Configuration.Contains('Test'))" Include="..\..\src\**\*.cpp" Exclude="..\..\src\TESTS\**\*.cpp" />
+    <ClCompile Condition="$(Configuration.Contains('Test'))" Include="..\..\src\**\*.cpp" Exclude="..\..\src\MEDYAN.cpp" />
+    <ClInclude Condition="!$(Configuration.Contains('Test'))" Include="..\..\src\**\*.h;..\..\src\**\*.hpp" Exclude="..\..\src\TESTS\**\*.h" />
+    <ClInclude Condition="$(Configuration.Contains('Test'))" Include="..\..\src\**\*.h;..\..\src\**\*.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{42B694F4-C6FE-4039-8F68-EB063A43ED0F}</ProjectGuid>
     <RootNamespace>MEDYAN</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="$(Configuration.Contains('Debug'))" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration.Contains('Release'))" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
