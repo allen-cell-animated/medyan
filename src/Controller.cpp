@@ -52,7 +52,6 @@
 #endif
 #include "util/io/log.h"
 #include "util/profiler.h"
-#include "Visual/Window.hpp"
 using namespace mathfunc;
 
 namespace {
@@ -77,10 +76,6 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
     //set Trackable's subsystem ptr
     Trackable::_subSystem = _subSystem;
 
-    // Initialize visualization
-#ifdef VISUAL
-    visual::createWindow(1200, 800);
-#endif // VISUAL
 }
 
 void Controller::initialize(string inputFile,

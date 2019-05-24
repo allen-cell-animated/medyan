@@ -29,18 +29,21 @@ GLFW_LIB         := -L$(HOME)/Documents/repos/glfw/src -lglfw3
 
 SOURCES_TEST             := $(shell find ./TESTS -name '*.cpp')
 SOURCES_CPP              := $(shell find . -name '*.cpp' ! -path './TESTS/*')
+SOURCES_C                := $(GLAD_SOURCE)
 SOURCES_CPP_WITHOUT_MAIN := $(filter-out ./MEDYAN.cpp,$(SOURCES_CPP))
-SOURCES                  =  $(SOURCES_CPP)
+SOURCES                  =  $(SOURCES_CPP) $(SOURCES_C)
 HEADERS                  := $(shell find . -name '*.h' -o -name '*.hpp')
 
 OBJECTS_TEST             := $(SOURCES_TEST:.cpp=.o)
 OBJECTS_CPP              := $(SOURCES_CPP:.cpp=.o)
+OBJECTS_C                := $(SOURCES_C:.c=.o)
 OBJECTS_CPP_WITHOUT_MAIN := $(SOURCES_CPP_WITHOUT_MAIN:.cpp=.o)
-OBJECTS                  =  $(OBJECTS_CPP)
+OBJECTS                  =  $(OBJECTS_CPP) $(OBJECTS_C)
 
 DEPENDS := $(SOURCES_TEST:.cpp=.d) $(SOURCES_CPP:.cpp=.d)
 
 #CPP COMPILER CHOICE AND FLAGS
+CC  = g++ -xc
 CXX = g++ -std=c++14
 DEBUG = -g
 FAST_CXX = -Os -ffast-math -fno-finite-math-only -flto -funroll-loops -DNDEBUG -mtune=native
@@ -145,13 +148,17 @@ MEDYAN: $(OBJECTS)
 	$(CXX) $(LDFLAGS_CXX) -o MEDYAN $(OBJECTS) $(LDLIBS)
 
 # Build test
-medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST)
+medyan_test: $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(OBJECTS_C)
 	$(CXX) $(LDFLAGS_CXX) -o $@ $(OBJECTS_CPP_WITHOUT_MAIN) $(OBJECTS_TEST) $(LDLIBS)
 
 # Compile to object and generate dependency
 %.o: %.cpp
 %.o: %.cpp %.d 
 	$(CXX) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
+
+%.o: %.c
+%.o: %.c %.d
+	$(CC) $(DEPFLAGS) $(CPPFLAGS_CXX) $(CXXFLAGS_CXX) -c -o $@ $<
 
 # Add empty dependency for dependencies
 %.d: ;

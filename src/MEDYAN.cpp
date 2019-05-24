@@ -65,6 +65,8 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
  
  */
 
+#include <thread>
+
 #include "common.h"
 
 #include "analysis/io/read_snapshot.h"
@@ -75,6 +77,7 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "utility.h"
 #include "util/io/cmdparse.h"
 #include "util/io/log.h"
+#include "Visual/Window.hpp"
 
 using namespace medyan;
 
@@ -155,7 +158,16 @@ int main(int argc, char **argv) {
         c.initialize(global().systemInputFile,
                      global().inputDirectory,
                      global().outputDirectory);
-        c.run();
+        {
+            std::thread mainThread(&Controller::run, &c);
+#ifdef VISUAL
+            visual::createWindow(1200, 800);
+            visual::mainLoop();
+            visual::deallocate();
+#endif // VISUAL
+            mainThread.join();
+        }
+        // c.run();
         break;
     case GlobalVar::RunMode::Analysis:
         {

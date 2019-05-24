@@ -2,10 +2,12 @@
 #define MEDYAN_Visual_Window_Hpp
 
 #include <iostream> // cout, endl
+#include <vector>
 
 #include "Util/Environment.h"
 #include "util/io/log.h"
 #include "Visual/Common.hpp"
+#include "Visual/Shader.hpp"
 
 #ifdef VISUAL
 
@@ -13,6 +15,21 @@
 // main thread (due to MacOS Cocoa framework).
 
 namespace visual {
+
+struct Window {
+    GLFWwindow* window;
+}; // Currently not used
+
+namespace state {
+// Defines variables used in the main thread
+
+GLFWwindow* window;
+unsigned int vao;
+unsigned int vbo;
+unsigned int ebo;
+Shader sd;
+
+} // namespace state
 
 inline void glfwError(int id, const char* description) {
     LOG(ERROR) << description;
@@ -39,13 +56,13 @@ inline void createWindow(unsigned int width, unsigned int height) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow* window = glfwCreateWindow(width, height, "MEDYAN", NULL, NULL);
-    if(window == NULL) {
+    state::window = glfwCreateWindow(width, height, "MEDYAN", NULL, NULL);
+    if(state::window == NULL) {
         LOG(ERROR) << "Failed to create GLFW window";
         glfwTerminate();
         return;
     }
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(state::window);
 
     LOG(INFO) << "initializing GLAD";
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -53,7 +70,7 @@ inline void createWindow(unsigned int width, unsigned int height) {
         return;
     }
     glViewport(0, 0, width, height);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(state::window, framebuffer_size_callback);
 
     // Shader
     const char* const vertexshader = R"(
@@ -64,16 +81,6 @@ void main() {
     gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
 }
 )";
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexshader, NULL);
-    glCompileShader(vertexShader);
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        LOG(ERROR) << "Shader compile failed: " << infoLog;
-    }
 
     const char* const fragmentshader = R"(
 #version 330 core
@@ -83,31 +90,15 @@ void main() {
     FragColor = vec4(0.5f, 0.25f, 0.1f, 1.0f);
 }
 )";
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentshader, NULL);
-    glCompileShader(fragmentShader);
-
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        LOG(ERROR) << "Shader program link failed: " << infoLog;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    state::sd.init(vertexshader, fragmentshader);
 
     // Set up vertex
-    unsigned int vbo;
-    glGenBuffers(1, &vbo);
-    unsigned int vao, ebo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &ebo);
-    glBindVertexArray(vao); // Bind this first!
+    glGenBuffers(1, &state::vbo);
+    glGenVertexArrays(1, &state::vao);
+    glGenBuffers(1, &state::ebo);
+    glBindVertexArray(state::vao); // Bind this first!
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, state::vbo);
     float vertices[]{
         -0.5f, -0.9f, 0.0f,
         1.2f,-0.5f,0.0f,
@@ -118,8 +109,8 @@ void main() {
         0, 1, 2,
         1, 2, 3
     };
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Vertex attribute
@@ -134,30 +125,39 @@ void main() {
     // Draw wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+}
 
+// The main loop for all windows.
+// Note:
+//   - This function must be called from the main thread.
+inline void mainLoop() {
     // Loop
     LOG(INFO) << "Entering main loop";
-    while (!glfwWindowShouldClose(window)) {
+
+    while (!glfwWindowShouldClose(state::window)) {
         // input
-        processInput(window);
+        processInput(state::window);
 
         // rendering
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
-        glBindVertexArray(vao);
+        glUseProgram(state::sd.id);
+        glBindVertexArray(state::vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         // glBindVertexArray(0); // no need to unbind every time
 
         // check
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(state::window);
         glfwPollEvents();
     }
+}
+
+inline void deallocate() {
 
     // Deallocate resources
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &state::vao);
+    glDeleteBuffers(1, &state::vbo);
 
     glfwTerminate();
 
