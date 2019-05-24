@@ -11,9 +11,9 @@
 project.xcworkspace/
 xcuserdata/
 *.xcscheme
-# Project for VS15
+# Project for VS16
 .vs/
-/projects/VS15/**/MEDYAN
+/projects/VS16/**/MEDYAN
 # VS Code
 .vscode/
 
