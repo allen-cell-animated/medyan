@@ -52,12 +52,37 @@
 #endif
 #include "util/io/log.h"
 #include "util/profiler.h"
+#include "Visual/SharedData.hpp"
 using namespace mathfunc;
 
 namespace {
 
 void rearrangeAllDatabases() {
     Cylinder::rearrange(); Cylinder::updateData();
+}
+
+void prepareMembraneSharedData() {
+    std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
+
+    for(auto m : Membrane::getMembranes()) {
+        const auto info = m->getMesh().extract<Membrane::MeshType::VertexTriangleInitializer>();
+
+        const size_t numTriangles = info.triangleVertexIndexList.size();
+        visual::shared::triangleVertexIndices.reserve(3 * numTriangles);
+        for(size_t i = 0; i < numTriangles; ++i) {
+            for(size_t j = 0; j < 3; ++j)
+                visual::shared::triangleVertexIndices.push_back(info.triangleVertexIndexList[i][j]);
+        }
+
+        visual::shared::vertexCoords.reserve(3 * info.numVertices);
+        for(size_t i = 0; i < info.numVertices; ++i) {
+            for(size_t j = 0; j < 3; ++j)
+                visual::shared::vertexCoords.push_back((float) info.attributeInitializerInfo.vertexCoordinateList[i][j]);
+        }
+    }
+
+    visual::shared::coordChanged = true;
+    visual::shared::indexChanged = true;
 }
 
 } // namespace

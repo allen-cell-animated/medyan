@@ -32,12 +32,12 @@ int windowHeight = 800;
 ProjectionType projType = ProjectionType::Perspective;
 float fov = glm::radians(45.0f); // perspective
 float nearDistance = 0.1f;
-float farDistance = 9000.0f;
+float farDistance = 20000.0f;
 glm::mat4 projection;
 glm::mat4 view;
 glm::mat4 model;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5000.0f);
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 10000.0f);
 glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -213,7 +213,7 @@ void main() {
     glBindVertexArray(0);
 
     // Draw wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 }
 
@@ -252,14 +252,12 @@ inline void mainLoop() {
             if(shared::coordChanged) {
                 glBindBuffer(GL_ARRAY_BUFFER, state::vbo);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::vertexCoords.size(), &shared::vertexCoords[0], GL_DYNAMIC_DRAW);
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
                 shared::coordChanged = false;
             }
             if(shared::indexChanged) {
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::triangleVertexIndices.size(), &shared::triangleVertexIndices[0], GL_STATIC_DRAW);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::triangleVertexIndices.size(), &shared::triangleVertexIndices[0], GL_DYNAMIC_DRAW);
                 elementCount = shared::triangleVertexIndices.size();
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
                 shared::indexChanged = false;
             }
         }

@@ -8,13 +8,13 @@ namespace visual {
 
 namespace shared {
 
-std::mutex dataMutex;
+extern std::mutex dataMutex;
 
-bool coordChanged = true;
-bool indexChanged = true;
+extern bool coordChanged;
+extern bool indexChanged;
 
-std::vector< float > vertexCoords;
-std::vector< unsigned int > triangleVertexIndices;
+extern std::vector< float > vertexCoords;
+extern std::vector< unsigned int > triangleVertexIndices;
 
 }
 }
