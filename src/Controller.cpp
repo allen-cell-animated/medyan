@@ -52,6 +52,7 @@
 #endif
 #include "util/io/log.h"
 #include "util/profiler.h"
+#include "Visual/Window.hpp"
 using namespace mathfunc;
 
 namespace {
@@ -78,7 +79,7 @@ Controller::Controller(SubSystem* s) : _subSystem(s) {
 
     // Initialize visualization
 #ifdef VISUAL
-    _window.run();
+    visual::init();
 #endif // VISUAL
 }
 

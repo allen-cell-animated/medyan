@@ -163,7 +163,6 @@ void main() {
 
 }
 
-
 } // namespace visual
 
 #endif // ifdef VISUAL

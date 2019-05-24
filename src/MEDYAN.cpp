@@ -75,7 +75,6 @@ The cell cytoskeleton plays a key role in human biology and disease, contributin
 #include "utility.h"
 #include "util/io/cmdparse.h"
 #include "util/io/log.h"
-#include "visual/window.hpp"
 
 using namespace medyan;
 
@@ -146,9 +145,6 @@ int main(int argc, char **argv) {
         LOG(DEBUG) << "Global RNG seed: " << global().randomGenSeed;
     }
     Rand::eng.seed(global().randomGenSeed);
-
-    // Visual
-    visual::init();
 
     /**************************************************************************
     Start program 
