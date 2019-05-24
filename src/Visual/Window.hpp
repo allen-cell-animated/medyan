@@ -77,8 +77,10 @@ inline void createWindow(unsigned int width, unsigned int height) {
 #version 330 core
 layout (location = 0) in vec3 aPos;
 
+uniform mat4 transform;
+
 void main() {
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    gl_Position = transform * vec4(aPos, 1.0);
 }
 )";
 
@@ -141,6 +143,12 @@ inline void mainLoop() {
         // rendering
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // transform
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.2f, -0.2f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        state::sd.setMat4("transform", trans);
 
         glUseProgram(state::sd.id);
         glBindVertexArray(state::vao);

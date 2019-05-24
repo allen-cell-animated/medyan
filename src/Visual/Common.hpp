@@ -1,7 +1,7 @@
 #ifndef MEDYAN_Visual_Common_Hpp
 #define MEDYAN_Visual_Common_Hpp
 
-#include "util/environment.h"
+#include "Util/Environment.h"
 
 #ifdef VISUAL
     #ifdef PLATFORM_WINDOWS
@@ -9,6 +9,10 @@
     #endif
     #include <glad/glad.h>
     #include <GLFW/glfw3.h>
+
+    #include <glm/glm.hpp>
+    #include <glm/gtc/matrix_transform.hpp>
+    #include <glm/gtc/type_ptr.hpp>
 #endif
 
 namespace visual {

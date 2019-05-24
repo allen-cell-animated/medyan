@@ -47,6 +47,10 @@ struct Shader {
         glDeleteShader(fragmentShader);
 
     }
+
+    void setMat4(const char* name, const glm::mat4& mat) const {
+        glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, glm::value_ptr(mat));
+    }
 };
 
 } // namespace visual

@@ -117,7 +117,6 @@
       <AdditionalIncludeDirectories>
         %USERPROFILE%\Documents\Repos\glfw\include;
         ..\..\external\glad\include;
-        %USERPROFILE%\Documents\Repos\glm;
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>
