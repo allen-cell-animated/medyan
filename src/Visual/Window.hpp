@@ -36,6 +36,18 @@ glm::mat4 projection;
 glm::mat4 view;
 glm::mat4 model;
 
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 50.0f);
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+float cameraSpeed = 6.0f;
+float deltaTime = 0.01f;
+float lastTime = 0.0f;
+double mouseSpeed = 0.5;
+bool mouseLeftAlreadyPressed = false;
+double mouseLastX;
+double mouseLastY;
+
 GLFWwindow* window;
 unsigned int vao;
 unsigned int vbo;
@@ -54,10 +66,62 @@ inline void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     state::windowHeight = height;
     glViewport(0, 0, width, height);
 }
+inline void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+    using namespace state;
+    int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    if(state == GLFW_PRESS) {
+        if(mouseLeftAlreadyPressed) {
+            // Transform
+            double dist = glm::distance(cameraTarget, cameraPos);
+
+            cameraPos -= cameraRight * float(xpos - mouseLastX) + cameraUp * float(mouseLastY - ypos);
+            cameraPos = cameraTarget + glm::normalize(cameraPos - cameraTarget) * (float)dist;
+            
+            // Update direction
+            cameraRight = glm::normalize(glm::cross(cameraTarget - cameraPos, cameraUp));
+            cameraUp = glm::normalize(glm::cross(cameraRight, cameraTarget - cameraPos));
+
+        } else {
+            mouseLeftAlreadyPressed = true;
+        }
+        mouseLastX = xpos;
+        mouseLastY = ypos;
+    } else {
+        mouseLeftAlreadyPressed = false;
+    }
+}
 inline void processInput(GLFWwindow* window) {
+    using namespace state;
+
+    float currentTime = glfwGetTime();
+    deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+    float cameraMove = cameraSpeed * deltaTime;
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         LOG(INFO) << "Escape key hit!";
         glfwSetWindowShouldClose(window, true);
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        const auto change = cameraMove * glm::normalize(cameraTarget - cameraPos);
+        cameraPos += change;
+        cameraTarget += change;
+    }
+    if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        const auto change = cameraMove * glm::normalize(cameraTarget - cameraPos);
+        cameraPos -= change;
+        cameraTarget -= change;
+    }
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        const auto change = glm::normalize(glm::cross(glm::normalize(cameraTarget - cameraPos), cameraUp)) * cameraMove;
+        cameraPos -= change;
+        cameraTarget -= change;
+    }
+    if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        const auto change = glm::normalize(glm::cross(glm::normalize(cameraTarget - cameraPos), cameraUp)) * cameraMove;
+        cameraPos += change;
+        cameraTarget += change;
     }
 }
 
@@ -85,6 +149,8 @@ inline void createWindow() {
     }
     glViewport(0, 0, state::windowWidth, state::windowHeight);
     glfwSetFramebufferSizeCallback(state::window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(state::window, cursor_position_callback);
+    // glfwSetInputMode(state::window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 
     // Configure global opengl state
     glEnable(GL_DEPTH_TEST);
@@ -152,6 +218,8 @@ void main() {
 // Note:
 //   - This function must be called from the main thread.
 inline void mainLoop() {
+    using namespace state;
+
     // Loop
     LOG(INFO) << "Entering main loop";
 
@@ -167,10 +235,10 @@ inline void mainLoop() {
         state::projection = glm::perspective(state::fov, (float)state::windowWidth / (float)state::windowHeight, state::nearDistance, state::farDistance);
         state::sd.setMat4("projection", state::projection);
         state::model = glm::mat4(1.0f);
-        state::model = glm::rotate(state::model, (float)glfwGetTime(), glm::vec3(0.6f, 0.8f, 0.0f));
+        //state::model = glm::rotate(state::model, 10.0f * (float)glfwGetTime(), glm::vec3(0.6f, 0.8f, 0.0f));
         state::sd.setMat4("model", state::model);
-        state::view = glm::mat4(1.0f);
-        state::view = glm::translate(state::view, glm::vec3(0.0f, 0.0f, -60.0f));
+
+        state::view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
         state::sd.setMat4("view", state::view);
 
         glUseProgram(state::sd.id);
