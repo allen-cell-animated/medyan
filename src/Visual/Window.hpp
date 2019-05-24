@@ -8,6 +8,7 @@
 #include "util/io/log.h"
 #include "Visual/Common.hpp"
 #include "Visual/Shader.hpp"
+#include "Visual/SharedData.hpp"
 
 #ifdef VISUAL
 
@@ -31,12 +32,12 @@ int windowHeight = 800;
 ProjectionType projType = ProjectionType::Perspective;
 float fov = glm::radians(45.0f); // perspective
 float nearDistance = 0.1f;
-float farDistance = 100.0f;
+float farDistance = 9000.0f;
 glm::mat4 projection;
 glm::mat4 view;
 glm::mat4 model;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 50.0f);
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 5000.0f);
 glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -48,11 +49,13 @@ bool mouseLeftAlreadyPressed = false;
 double mouseLastX;
 double mouseLastY;
 
+// gl data
 GLFWwindow* window;
 unsigned int vao;
 unsigned int vbo;
 unsigned int ebo;
 Shader sd;
+unsigned int elementCount;
 
 } // namespace state
 
@@ -243,7 +246,25 @@ inline void mainLoop() {
 
         glUseProgram(state::sd.id);
         glBindVertexArray(state::vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // Update data
+        {
+            std::lock_guard<std::mutex> guard(shared::dataMutex);
+            if(shared::coordChanged) {
+                glBindBuffer(GL_ARRAY_BUFFER, state::vbo);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::vertexCoords.size(), &shared::vertexCoords[0], GL_DYNAMIC_DRAW);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                shared::coordChanged = false;
+            }
+            if(shared::indexChanged) {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::triangleVertexIndices.size(), &shared::triangleVertexIndices[0], GL_STATIC_DRAW);
+                elementCount = shared::triangleVertexIndices.size();
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+                shared::indexChanged = false;
+            }
+        }
+
+        glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
         // glBindVertexArray(0); // no need to unbind every time
 
         // check
