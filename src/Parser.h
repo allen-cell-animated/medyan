@@ -329,8 +329,9 @@ struct FilamentSetup {
 struct MembraneSetup {
     string inputFile = "";
 
-    /// Random generation of membrane is currently not allowed
-    int numMembranes = 0;
+    std::vector< std::vector< std::string > > meshParam;
+
+    [[deprecated]] int numMembranes = 0;
     /// Membrane type to create
     short membraneType = 0;
 };

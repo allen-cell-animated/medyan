@@ -11,12 +11,16 @@
 //  http://www.medyan.org
 //------------------------------------------------------------------
 
+#include <stdexcept> // runtime_error
+#include <utility> // move
+
 #include "Parser.h"
 #include "Filament.h"
 #include "Cylinder.h"
 #include "Bead.h"
 
 #include "SysParams.h"
+#include "util/io/log.h"
 
 void SystemParser::readChemParams() {
 
@@ -1881,7 +1885,7 @@ MembraneSetup SystemParser::readMembraneSetup() {
     _inputFile.clear();
     _inputFile.seekg(0);
     
-    MembraneSetup MemSetup;
+    MembraneSetup memSetup;
     
     string line;
     while(getline(_inputFile, line)) {
@@ -1896,11 +1900,20 @@ MembraneSetup SystemParser::readMembraneSetup() {
                 exit(EXIT_FAILURE);
             }
             else if (lineVector.size() == 2)
-                MemSetup.inputFile = lineVector[1];
+                memSetup.inputFile = lineVector[1];
         }
-        // number of membranes will be automatically inferred from the input file
+        else if(line.find("MEMBRANE_INIT") != string::npos) {
+            std::vector< std::string > lineVector = split< std::string >(line);
+            if(lineVector.size() < 2) {
+                LOG(ERROR) << "Error reading membrane initialization parameters.";
+                throw std::runtime_error("Error reading membrane initialization");
+            } else {
+                lineVector.erase(lineVector.begin()); // remove first element
+                memSetup.meshParam.push_back(std::move(lineVector));
+            }
+        }
     }
-    return MemSetup;
+    return memSetup;
 }
 
 

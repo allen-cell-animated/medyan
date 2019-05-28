@@ -36,6 +36,7 @@
 #include "Structure/SurfaceMesh/Membrane.hpp"
 #include "Structure/SurfaceMesh/MembraneHierarchy.h"
 #include "Structure/SurfaceMesh/MembraneRegion.h"
+#include "Structure/SurfaceMesh/SurfaceMeshGeneratorPreset.hpp"
 
 #include "SysParams.h"
 #include "MathFunctions.h"
@@ -337,8 +338,11 @@ void Controller::setupInitialNetwork(SystemParser& p) {
     if(MemSetup.inputFile != "") {
         membraneData = MembraneParser(_inputDirectory + MemSetup.inputFile).readMembranes();
     }
-    // Membrane auto initializer is currently not provided,
-    // which means that the input file is the only source of membrane information.
+
+    for(const auto& param : MemSetup.meshParam) {
+        const auto newMesh = mesh_gen::generateMeshViaParams(param);
+        membraneData.push_back({newMesh.vertexCoordinateList, newMesh.triangleList});
+    }
     
     // add membranes
     for (auto& it: membraneData) {
