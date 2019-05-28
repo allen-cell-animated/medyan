@@ -153,7 +153,8 @@ void BasicSnapshot::print(int snapshot) {
         
         //print first line
         _outputFile << "CAMKIIER " << camkii->getID() << " " <<
-                                      camkii->getType() << endl;
+                                      camkii->getType() << " " <<
+									  camkii->getCoordinationNumber()<< endl;
         
         //print coordinates
         auto x = camkii->coordinate;

@@ -31,7 +31,6 @@ Bead::Bead (vector<double> v, Composite* parent, int position)
       coordinate(v), coordinateP(v), coordinateB(v),
       force(3, 0), forceAux(3, 0), forceAuxP(3, 0),
       _position(position), _birthTime(tau()) {
-    
 	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;
 	cout << "parent: " << parent  << "\n" << endl;
 	cout << "CAMKII "<< __LINE__ <<" "<< __FILE__ << endl;

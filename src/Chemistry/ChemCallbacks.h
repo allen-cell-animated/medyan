@@ -603,7 +603,7 @@ struct CaMKIIBindingCallback {
 
         //choose a random binding site from manager
         auto site = _bManager->chooseBindingSite();
-
+        cout << get<0>(site)<< " "<< get<1>(site) << endl;
         //get info from site
         Cylinder* c1 = get<0>(site)->getCylinder();
         short filType = c1->getType();
@@ -752,6 +752,7 @@ struct CaMKIIBundlingCallback {
     void operator() (ReactionBase *r) {
     	cout << "CAMKII bundling"<< __LINE__ <<" "<< __FILE__ << endl;
     	CaMKIIingPoint* cp;
+    	// TODO CAMKII either find cp from NN or to get the one the reaction was on it
 //        float frate;
         short camkiiType = _bManager->getBoundInt();
         cout << "CAMKII bundling"<< _bManager << __LINE__ <<" "<< __FILE__ << endl;
