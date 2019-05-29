@@ -6,6 +6,7 @@
 
 #include "Util/Environment.h"
 #include "util/io/log.h"
+#include "Visual/Camera.hpp"
 #include "Visual/Common.hpp"
 #include "Visual/Shader.hpp"
 #include "Visual/SharedData.hpp"
@@ -34,17 +35,12 @@ float fov = glm::radians(45.0f); // perspective
 float nearDistance = 0.1f;
 float farDistance = 20000.0f;
 glm::mat4 projection;
-glm::mat4 view;
 glm::mat4 model;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 10000.0f);
-glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-float cameraSpeed = 6.0f;
+Camera camera;
+
 float deltaTime = 0.01f;
 float lastTime = 0.0f;
-double mouseSpeed = 0.5;
 bool mouseLeftAlreadyPressed = false;
 double mouseLastX;
 double mouseLastY;
@@ -76,14 +72,14 @@ inline void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
     if(state == GLFW_PRESS) {
         if(mouseLeftAlreadyPressed) {
             // Transform
-            double dist = glm::distance(cameraTarget, cameraPos);
+            double dist = glm::distance(camera.target, camera.position);
 
-            cameraPos -= cameraRight * float(xpos - mouseLastX) + cameraUp * float(mouseLastY - ypos);
-            cameraPos = cameraTarget + glm::normalize(cameraPos - cameraTarget) * (float)dist;
+            camera.position -= (camera.right * float(xpos - mouseLastX) + camera.up * float(mouseLastY - ypos)) * (float)camera.mouseControlSpeed;
+            camera.position = camera.target + glm::normalize(camera.position - camera.target) * (float)dist;
             
             // Update direction
-            cameraRight = glm::normalize(glm::cross(cameraTarget - cameraPos, cameraUp));
-            cameraUp = glm::normalize(glm::cross(cameraRight, cameraTarget - cameraPos));
+            camera.right = glm::normalize(glm::cross(camera.target - camera.position, camera.up));
+            camera.up = glm::normalize(glm::cross(camera.right, camera.target - camera.position));
 
         } else {
             mouseLeftAlreadyPressed = true;
@@ -100,7 +96,7 @@ inline void processInput(GLFWwindow* window) {
     float currentTime = glfwGetTime();
     deltaTime = currentTime - lastTime;
     lastTime = currentTime;
-    float cameraMove = cameraSpeed * deltaTime;
+    float cameraMove = camera.keyControlSpeed * deltaTime;
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         LOG(INFO) << "Escape key hit!";
@@ -108,24 +104,24 @@ inline void processInput(GLFWwindow* window) {
     }
 
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        const auto change = cameraMove * glm::normalize(cameraTarget - cameraPos);
-        cameraPos += change;
-        cameraTarget += change;
+        const auto change = cameraMove * glm::normalize(camera.target - camera.position);
+        camera.position += change;
+        camera.target += change;
     }
     if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        const auto change = cameraMove * glm::normalize(cameraTarget - cameraPos);
-        cameraPos -= change;
-        cameraTarget -= change;
+        const auto change = cameraMove * glm::normalize(camera.target - camera.position);
+        camera.position -= change;
+        camera.target -= change;
     }
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        const auto change = glm::normalize(glm::cross(glm::normalize(cameraTarget - cameraPos), cameraUp)) * cameraMove;
-        cameraPos -= change;
-        cameraTarget -= change;
+        const auto change = glm::normalize(glm::cross(glm::normalize(camera.target - camera.position), camera.up)) * cameraMove;
+        camera.position -= change;
+        camera.target -= change;
     }
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        const auto change = glm::normalize(glm::cross(glm::normalize(cameraTarget - cameraPos), cameraUp)) * cameraMove;
-        cameraPos += change;
-        cameraTarget += change;
+        const auto change = glm::normalize(glm::cross(glm::normalize(camera.target - camera.position), camera.up)) * cameraMove;
+        camera.position += change;
+        camera.target += change;
     }
 }
 
@@ -241,8 +237,7 @@ inline void mainLoop() {
         //state::model = glm::rotate(state::model, 10.0f * (float)glfwGetTime(), glm::vec3(0.6f, 0.8f, 0.0f));
         state::sd.setMat4("model", state::model);
 
-        state::view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
-        state::sd.setMat4("view", state::view);
+        state::sd.setMat4("view", camera.view());
 
         glUseProgram(state::sd.id);
         glBindVertexArray(state::vao[0]);
