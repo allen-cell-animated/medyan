@@ -68,18 +68,22 @@ void updateForceSharedData() {
     visual::shared::forceChanged = true;
 }
 
+template< bool stretched >
 void updateMembraneSharedData() {
     std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
 
+    size_t prevNumVertices = 0;
     for(auto m : Membrane::getMembranes()) {
-        const auto info = m->getMesh().extract<Membrane::MeshType::VertexTriangleInitializer>();
+        const size_t numVertices = m->getMesh().getVertices().size();
 
-        const size_t numTriangles = info.triangleVertexIndexList.size();
-        visual::shared::triangleVertexIndices.reserve(3 * numTriangles);
-        for(size_t i = 0; i < numTriangles; ++i) {
+        for(size_t i = 0; i < numVertices; ++i) {
+            const auto v = m->getMesh().getVertexAttribute(i).vertex;
             for(size_t j = 0; j < 3; ++j)
-                visual::shared::triangleVertexIndices.push_back(info.triangleVertexIndexList[i][j]);
+                visual::shared::vertexCoords[prevNumVertices + 3 * i + j] =
+                    (float) (stretched ? v->coordinateStr() : v->coordinate()) [j];
         }
+
+        prevNumVertices += numVertices;
     }
 
     visual::shared::coordChanged = true;
@@ -355,7 +359,7 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
 //        std::cout<<x<<" ";
 //    std::cout<<endl;
 #endif
-    if(!stretched) updateMembraneSharedData();
+    updateMembraneSharedData<stretched>();
     return energy;
 }
 template double ForceFieldManager::computeEnergy< false >(double *, bool) const;

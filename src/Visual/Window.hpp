@@ -272,13 +272,11 @@ inline void mainLoop() {
         {
             std::lock_guard<std::mutex> guard(shared::dataMutex);
             if(shared::forceChanged) {
-                LOG(INFO) << "Force changed!";
                 glBindBuffer(GL_ARRAY_BUFFER, state::vbo[1]);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::arrowVertexCoords.size(), &shared::arrowVertexCoords[0], GL_DYNAMIC_DRAW);
                 shared::forceChanged = false;
             }
             if(shared::forceIndexChanged) {
-                LOG(INFO) << "Force ind changed!";
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[1]);
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::lineVertexIndices.size(), &shared::lineVertexIndices[0], GL_DYNAMIC_DRAW);
                 forceElementCount = shared::lineVertexIndices.size();

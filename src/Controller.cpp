@@ -65,6 +65,9 @@ void rearrangeAllDatabases() {
 void prepareMembraneSharedData() {
     std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
 
+    visual::shared::triangleVertexIndices.clear();
+    visual::shared::vertexCoords.clear();
+
     for(auto m : Membrane::getMembranes()) {
         const auto info = m->getMesh().extract<Membrane::MeshType::VertexTriangleInitializer>();
 
@@ -1142,6 +1145,7 @@ void Controller::run() {
     mins = chrono::high_resolution_clock::now();
     _mController->run(false);
     membraneAdaptiveRemesh();
+    prepareMembraneSharedData();
     mine= chrono::high_resolution_clock::now();
     chrono::duration<double> elapsed_runm2(mine - mins);
     minimizationtime += elapsed_runm2.count();
@@ -1254,6 +1258,7 @@ void Controller::run() {
 
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
+                prepareMembraneSharedData();
 
                 mine= chrono::high_resolution_clock::now();
                 chrono::duration<double> elapsed_runm3(mine - mins);
@@ -1388,6 +1393,7 @@ void Controller::run() {
 
                 // Membrane remeshing
                 membraneAdaptiveRemesh();
+                prepareMembraneSharedData();
 
                 updatePositions();
                 
