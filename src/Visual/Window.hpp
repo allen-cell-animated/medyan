@@ -51,11 +51,12 @@ double mouseLastY;
 
 // gl data
 GLFWwindow* window;
-unsigned int vao;
-unsigned int vbo;
-unsigned int ebo;
+unsigned int vao[2]; // 0 for coord, 1 for force
+unsigned int vbo[2];
+unsigned int ebo[2];
 Shader sd;
 unsigned int elementCount;
+unsigned int forceElementCount;
 
 } // namespace state
 
@@ -183,26 +184,14 @@ void main() {
     state::sd.init(vertexshader, fragmentshader);
 
     // Set up vertex
-    glGenBuffers(1, &state::vbo);
-    glGenVertexArrays(1, &state::vao);
-    glGenBuffers(1, &state::ebo);
-    glBindVertexArray(state::vao); // Bind this first!
+    glGenBuffers(2, state::vbo);
+    glGenVertexArrays(2, state::vao);
+    glGenBuffers(2, state::ebo);
+    glBindVertexArray(state::vao[0]); // Bind this first!
 
-    glBindBuffer(GL_ARRAY_BUFFER, state::vbo);
-    float vertices[]{
-        -15.5f, -25.9f, 8.0f,
-        30.0f,-0.5f,0.0f,
-        0.0f, 30.0f,-7.0f,
-        -9.9f,0.4f,0.1f
-    };
-    unsigned int indices[]{
-        0, 1, 2,
-        1, 2, 3
-    };
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
+    // Coord vertex array
+    glBindBuffer(GL_ARRAY_BUFFER, state::vbo[0]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[0]);
     // Vertex attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     // ^^^ also register vbo as bound
@@ -211,6 +200,17 @@ void main() {
     // temporarily retarget
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    // Force vertex array
+    glBindVertexArray(state::vao[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, state::vbo[1]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[1]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     // Draw wireframe
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -245,17 +245,17 @@ inline void mainLoop() {
         state::sd.setMat4("view", state::view);
 
         glUseProgram(state::sd.id);
-        glBindVertexArray(state::vao);
+        glBindVertexArray(state::vao[0]);
         // Update data
         {
             std::lock_guard<std::mutex> guard(shared::dataMutex);
             if(shared::coordChanged) {
-                glBindBuffer(GL_ARRAY_BUFFER, state::vbo);
+                glBindBuffer(GL_ARRAY_BUFFER, state::vbo[0]);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::vertexCoords.size(), &shared::vertexCoords[0], GL_DYNAMIC_DRAW);
                 shared::coordChanged = false;
             }
             if(shared::indexChanged) {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[0]);
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::triangleVertexIndices.size(), &shared::triangleVertexIndices[0], GL_DYNAMIC_DRAW);
                 elementCount = shared::triangleVertexIndices.size();
                 shared::indexChanged = false;
@@ -263,7 +263,27 @@ inline void mainLoop() {
         }
 
         glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
-        // glBindVertexArray(0); // no need to unbind every time
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        glBindVertexArray(state::vao[1]);
+        {
+            std::lock_guard<std::mutex> guard(shared::dataMutex);
+            if(shared::forceChanged) {
+                glBindBuffer(GL_ARRAY_BUFFER, state::vbo[1]);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::arrowVertexCoords.size(), &shared::arrowVertexCoords[0], GL_DYNAMIC_DRAW);
+                shared::forceChanged = false;
+            }
+            if(shared::forceIndexChanged) {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[1]);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::lineVertexIndices.size(), &shared::lineVertexIndices[0], GL_DYNAMIC_DRAW);
+                forceElementCount = shared::lineVertexIndices.size();
+                shared::forceIndexChanged = false;
+            }
+        }
+        glDrawElements(GL_LINES, forceElementCount, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0); // no need to unbind every time
 
         // check
         glfwSwapBuffers(state::window);
@@ -274,8 +294,9 @@ inline void mainLoop() {
 inline void deallocate() {
 
     // Deallocate resources
-    glDeleteVertexArrays(1, &state::vao);
-    glDeleteBuffers(1, &state::vbo);
+    glDeleteVertexArrays(2, state::vao);
+    glDeleteBuffers(2, state::vbo);
+    glDeleteBuffers(2, state::ebo);
 
     glfwTerminate();
 

@@ -11,5 +11,10 @@ bool indexChanged = true;
 std::vector< float > vertexCoords;
 std::vector< unsigned int > triangleVertexIndices;
 
+bool forceChanged = true;
+bool forceIndexChanged = true;
+std::vector< float > arrowVertexCoords;
+std::vector< unsigned int > lineVertexIndices;
+
 } // namespace shared
 } // namespace visual

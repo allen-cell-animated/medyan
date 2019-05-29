@@ -12,6 +12,9 @@
 //------------------------------------------------------------------
 
 #include "ForceFieldManager.h"
+
+#include <numeric> // iota
+
 #include "ForceFieldManagerCUDA.h"
 
 #include "CGMethod.h"
@@ -21,6 +24,7 @@
 #include "SubSystem.h"
 #include "Structure/Bead.h"
 #include "Structure/SurfaceMesh/Membrane.hpp"
+#include "Visual/SharedData.hpp"
 
 namespace {
 
@@ -32,9 +36,59 @@ void updateGeometryValueWithDerivative() {
     for(auto m : Membrane::getMembranes()) m->updateGeometryValueWithDerivative();
 }
 
+void prepareForceSharedData() {
+    std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
+
+    visual::shared::arrowVertexCoords.resize(2 * Bead::getDbDataConst().forces.size_raw());
+    visual::shared::lineVertexIndices.resize(2 * Bead::numBeads());
+    std::iota(visual::shared::lineVertexIndices.begin(), visual::shared::lineVertexIndices.end(), 0u);
+
+    visual::shared::forceChanged = true;
+    visual::shared::forceIndexChanged = true;
+}
+
+void updateForceSharedData() {
+    std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
+
+    constexpr float factor = 2.0f;
+
+    size_t numBeads = Bead::numBeads();
+    for(size_t i = 0; i < numBeads; ++i) {
+        const auto coord = Bead::getDbDataConst().coords[i];
+        const auto force = Bead::getDbDataConst().forces[i];
+        const auto endCoord = coord + factor * force;
+        visual::shared::arrowVertexCoords[6 * i] = coord[0];
+        visual::shared::arrowVertexCoords[6 * i + 1] = coord[1];
+        visual::shared::arrowVertexCoords[6 * i + 2] = coord[2];
+        visual::shared::arrowVertexCoords[6 * i + 3] = endCoord[0];
+        visual::shared::arrowVertexCoords[6 * i + 4] = endCoord[1];
+        visual::shared::arrowVertexCoords[6 * i + 5] = endCoord[2];
+    }
+
+    visual::shared::forceChanged = true;
+}
+
+void updateMembraneSharedData() {
+    std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
+
+    for(auto m : Membrane::getMembranes()) {
+        const auto info = m->getMesh().extract<Membrane::MeshType::VertexTriangleInitializer>();
+
+        const size_t numTriangles = info.triangleVertexIndexList.size();
+        visual::shared::triangleVertexIndices.reserve(3 * numTriangles);
+        for(size_t i = 0; i < numTriangles; ++i) {
+            for(size_t j = 0; j < 3; ++j)
+                visual::shared::triangleVertexIndices.push_back(info.triangleVertexIndexList[i][j]);
+        }
+    }
+
+    visual::shared::coordChanged = true;
+}
+
 } // namespace
 
 void ForceFieldManager::vectorizeAllForceFields() {
+    prepareForceSharedData();
 #ifdef CUDATIMETRACK
     chrono::high_resolution_clock::time_point tbegin, tend;
     CUDAcommon::cudatime.TvectorizeFF = 0.0;
@@ -301,6 +355,7 @@ double ForceFieldManager::computeEnergy(double *coord, bool verbose) const {
 //        std::cout<<x<<" ";
 //    std::cout<<endl;
 #endif
+    if(!stretched) updateMembraneSharedData();
     return energy;
 }
 template double ForceFieldManager::computeEnergy< false >(double *, bool) const;
@@ -379,6 +434,8 @@ void ForceFieldManager::computeForces(double *coord, double *f) {
 //        std::cout <<"Fmax "<< id<<" "<<fmax<<" "<<F_i[3 * id] << " " << F_i[3 * id + 1] << " " << F_i[3 * id + 2] <<
 //                                                                                                                 endl;
     }
+
+    updateForceSharedData();
 //    delete F_i;
 }
 
