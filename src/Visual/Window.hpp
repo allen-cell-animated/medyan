@@ -90,6 +90,12 @@ inline void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
         mouseLeftAlreadyPressed = false;
     }
 }
+inline void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    using namespace state;
+    fov -= 0.02 * yoffset;
+    if(fov < 0.01f) fov = 0.01f;
+    if(fov > 3.13f) fov = 3.13f;
+}
 inline void processInput(GLFWwindow* window) {
     using namespace state;
 
@@ -150,7 +156,7 @@ inline void createWindow() {
     glViewport(0, 0, state::windowWidth, state::windowHeight);
     glfwSetFramebufferSizeCallback(state::window, framebuffer_size_callback);
     glfwSetCursorPosCallback(state::window, cursor_position_callback);
-    // glfwSetInputMode(state::window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
+    glfwSetScrollCallback(state::window, scroll_callback);
 
     // Configure global opengl state
     glEnable(GL_DEPTH_TEST);
@@ -266,11 +272,13 @@ inline void mainLoop() {
         {
             std::lock_guard<std::mutex> guard(shared::dataMutex);
             if(shared::forceChanged) {
+                LOG(INFO) << "Force changed!";
                 glBindBuffer(GL_ARRAY_BUFFER, state::vbo[1]);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shared::arrowVertexCoords.size(), &shared::arrowVertexCoords[0], GL_DYNAMIC_DRAW);
                 shared::forceChanged = false;
             }
             if(shared::forceIndexChanged) {
+                LOG(INFO) << "Force ind changed!";
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, state::ebo[1]);
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * shared::lineVertexIndices.size(), &shared::lineVertexIndices[0], GL_DYNAMIC_DRAW);
                 forceElementCount = shared::lineVertexIndices.size();

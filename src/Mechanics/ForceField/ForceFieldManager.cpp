@@ -50,7 +50,7 @@ void prepareForceSharedData() {
 void updateForceSharedData() {
     std::lock_guard<std::mutex> guard(visual::shared::dataMutex);
 
-    constexpr float factor = 2.0f;
+    constexpr float factor = 5.0f;
 
     size_t numBeads = Bead::numBeads();
     for(size_t i = 0; i < numBeads; ++i) {

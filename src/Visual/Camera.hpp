@@ -21,7 +21,7 @@ struct Camera {
     glm::vec3 up       = glm::vec3(0.0f, 1.0f, 0.0f);
 
     // Control settings
-    float keyControlSpeed     = 20.0f;
+    float keyControlSpeed     = 50.0f;
     double mouseControlSpeed  = 2.0;
 
 };
