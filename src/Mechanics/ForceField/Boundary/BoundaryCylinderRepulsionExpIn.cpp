@@ -334,6 +334,19 @@ void BoundaryCylinderRepulsionExpIn::forces(floatingpoint *coord, floatingpoint 
             force1[1] += f0 *norm[1];
             force1[2] += f0 *norm[2];
 
+            if(checkNaN_INF(force1, 0, 2)){
+                cout<<"Boundary Cylinder ExpIn Force becomes infinite. Printing data " <<endl;
+
+                cout<<"Printing coords"<<endl;
+                cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
+                cout<<"Printing force"<<endl;
+                cout<<force1[0]<<" "<<force1[1]<<" "<<force1[2]<<endl;
+                cout<<"Printing binary Coords"<<endl;
+                printvariablebinary(coord1,0,2);
+                cout<<"Printing binary Force"<<endl;
+                printvariablebinary(force1,0,2);
+                exit(EXIT_FAILURE);
+            }
         }
         Cumnc+=nc;
     }}

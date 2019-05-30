@@ -33,6 +33,35 @@ public:
     
     void forces(floatingpoint *coord, floatingpoint *f, int *beadSet, floatingpoint *krep);
 
+private:
+
+	floatingpoint energyN(floatingpoint *coord, floatingpoint *f, int *beadSet,
+	                      floatingpoint *krep, int intID);
+
+	void forceN(floatingpoint *coord, floatingpoint *f, int *beadSet,
+	                      floatingpoint *krep, int intID);
+
+	doubleprecision getenergyintegrand(doubleprecision& a, doubleprecision& b,
+			doubleprecision& c, doubleprecision& d, doubleprecision& e, doubleprecision& F,
+			doubleprecision s, doubleprecision t){
+		doubleprecision r_2 = c + 2*s*e + s*s*a - 2*t*F - 2*s*t*d + t*t*b;
+		return (1.0/(r_2 * r_2));
+	}
+
+	void getforceintegrand(doubleprecision& a, doubleprecision& b,
+	                                   doubleprecision& c, doubleprecision& d, doubleprecision& e, doubleprecision& F,
+	                                   doubleprecision s, doubleprecision t,
+	                                   doubleprecision* integrand){
+		doubleprecision r_2 = c + 2*s*e + s*s*a - 2*t*F - 2*s*t*d + t*t*b;
+		doubleprecision x = (1.0/(r_2 * r_2 * r_2));
+		integrand[0] = x;
+		integrand[1] = s*x;
+		integrand[2] = s*s*x;
+		integrand[3] = s*t*x;
+		integrand[4] = t*x;
+		integrand[5] = t*t*x;
+	}
+
 #ifdef CUDAACCL
     void optimalblocksnthreads(int nint, cudaStream_t stream);
     void deallocate();

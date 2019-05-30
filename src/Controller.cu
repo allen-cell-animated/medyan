@@ -1022,7 +1022,7 @@ void Controller::run() {
 #ifdef CHEMISTRY
         //activate/deactivate compartments
         mins = chrono::high_resolution_clock::now();
-        //activatedeactivateComp();
+        activatedeactivateComp();
         mine= chrono::high_resolution_clock::now();
         chrono::duration<floatingpoint> elapsed_runspl(mine - mins);
         specialtime += elapsed_runspl.count();
@@ -1040,6 +1040,25 @@ void Controller::run() {
             chrono::duration<floatingpoint> elapsed_runchem(mine - mins);
             chemistrytime += elapsed_runchem.count();
             SysParams::DURINGCHEMISTRY = false;
+
+            //Printing walking reaction
+            /*auto mwalk = CUDAcommon::mwalk;
+            cout<<"Motor-Walking statistics"<<endl;
+            cout<<"MW C2C "<<mwalk.contracttocontract<<endl;
+            cout<<"MW S2S "<<mwalk.stretchtostretch<<endl;
+            cout<<"MW E2E "<<mwalk.equibtoequib<<endl;
+            cout<<"MW C2S "<<mwalk.contracttostretch<<endl;
+            cout<<"MW S2C "<<mwalk.stretchtocontract<<endl;
+            cout<<"MW E2C "<<mwalk.equibtocontract<<endl;
+            cout<<"MW E2S "<<mwalk.equibtostretch<<endl;
+			//reset counters
+            CUDAcommon::mwalk.contracttocontract = 0;
+	        CUDAcommon::mwalk.stretchtocontract = 0;
+	        CUDAcommon::mwalk.contracttostretch = 0;
+	        CUDAcommon::mwalk.stretchtostretch = 0;
+	        CUDAcommon::mwalk.equibtoequib = 0;
+	        CUDAcommon::mwalk.equibtostretch = 0;
+	        CUDAcommon::mwalk.equibtocontract = 0;*/
 
             //Printing stretch forces
 /*            cout<<"Motor-forces ";

@@ -117,7 +117,7 @@ void HybridBindingSearchManager::setbindingsearchparameter
         vector<unordered_map<uint32_t, vector<uint32_t>>> temp2uint;
         vector<unordered_map<uint32_t, vector<uint32_t>>> rtemp2uint;
 
-        vector<int> tempNbind2;
+        vector<int> tempNbind2={0};
         temp2uint.push_back(tempuint);
         rtemp2uint.push_back(rtempuint);
 
@@ -172,7 +172,7 @@ void HybridBindingSearchManager::initializeSIMDvars(){
 				                                           sqrt(_rMaxsqvec[idx][idx2]));
 
 			auto coord = _compartment->coordinates();
-			cout<<_rMinsqvec[idx][idx2]<<" "<<_rMaxsqvec[idx][idx2]<<endl;
+//			cout<<_rMinsqvec[idx][idx2]<<" "<<_rMaxsqvec[idx][idx2]<<endl;
 			getdOut<1U, true>(count).init_dout(10000, {_rMinsqvec[idx][idx2],
 									 _rMaxsqvec[idx][idx2]});
 			getdOut<1U, false>(count).init_dout(10000, {_rMinsqvec[idx][idx2],
@@ -844,13 +844,13 @@ void HybridBindingSearchManager::countNpairsfound(short idvec[2]){
     short idx2 = idvec[1];
     int N = 0;
     Nbindingpairs[idx][idx2] = 0;
-/*	cout<<"idx "<<idx<<" "<<idx2<<" "<<_possibleBindingsstencilvecuint[idx][idx2].size()
-	<<" "<<endl;*/
+
 //    N = _mpossibleBindingsstencilvecuint[idx][idx2].size();
     for (auto iter = _possibleBindingsstencilvecuint[idx][idx2].begin(); iter !=
 		    _possibleBindingsstencilvecuint[idx][idx2].end(); iter++) {
         N += iter->second.size();
     }
+//    cout<<Nbindingpairs[idx][idx2]<<" "<<N<<endl;
     Nbindingpairs[idx][idx2] = N;
 }
 
@@ -866,7 +866,7 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV3() {
 			short idvec[2] = {idx, idx2};
 			bool LinkerorMotor = false; //Motor
 			if (bstateposvec[idx][idx2] == 1)
-				LinkerorMotor = true;
+				LinkerorMotor = true;//Linker
 			if(LinkerorMotor) {
 				//Linker
 				calculatebspairsLMselfV3<1,true, true>(getdOut<1U, true>(count), idvec);
@@ -875,9 +875,9 @@ void HybridBindingSearchManager::updateAllPossibleBindingsstencilSIMDV3() {
 			}
 			else{
 				//Motor
-				calculatebspairsLMselfV3<1,true, false>(getdOut<1U, true>(count), idvecM);
+				calculatebspairsLMselfV3<1,true, false>(getdOut<1U, true>(count), idvec);
 				calculatebspairsLMenclosedV3<1,false, false>(getdOut<1U, false>(count),
-				        bspairsmotor2, idvecM);
+				        bspairsmotor2, idvec);
 			}
 			count++;
 		}
@@ -1147,6 +1147,9 @@ bspairsoutS, int first, int last, short idvec[2], Compartment* nCmp){
 	        uint32_t t2 = cIndex2 << 4 | bsite2;
 
 	        //unordered map
+//	        cout<<_possibleBindingsstencilvecuint.size()<<" "
+//	        <<_possibleBindingsstencilvecuint[idvec[0]].size()
+//	        <<" "<<idvec[0]<<" "<<idvec[1]<<endl;
 			_possibleBindingsstencilvecuint[idvec[0]][idvec[1]][t1].push_back(t2);
 //	        _mpossibleBindingsstencilvecuint[idvec[0]][idvec[1]].emplace(t1,t2);
 			_reversepossibleBindingsstencilvecuint[idvec[0]][idvec[1]][t2].push_back(t1);

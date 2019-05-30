@@ -275,7 +275,13 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
 
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)){
-            cout<<"Force becomes infinite. Printing data "<<endl;
+            cout<<"Filament Stretching Force becomes infinite. Printing data "<<endl;
+
+            auto cyl = Cylinder::getCylinders()[i];
+            cout<<"Cylinder ID "<<cyl->getID()<<" with cindex "<<cyl->_dcIndex<<
+            " and bIndex "<< cyl->getFirstBead()->_dbIndex<<" "<<cyl->getSecondBead()
+            ->_dbIndex<<endl;
+
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
             cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
@@ -292,7 +298,4 @@ void FilamentStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f, 
         }
 		#endif
     }
-
 }
-
-

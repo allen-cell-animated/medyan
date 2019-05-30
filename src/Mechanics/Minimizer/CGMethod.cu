@@ -1010,7 +1010,7 @@ void CGMethod::endMinimization() {
 }
 
 void CGMethod::checkcoord_forces() {
-    if(true) {
+    if(false) {
 
         cylinder *cylindervec = CUDAcommon::serlvars.cylindervec;
         Cylinder **Cylinderpointervec = CUDAcommon::serlvars.cylinderpointervec;
@@ -1059,7 +1059,7 @@ void CGMethod::checkcoord_forces() {
 	        }
         }
         if(failstatus){
-        	cout<<"Coordinate/Force values are either Inf/NaN or Cylinder IODs do not "
+        	cout<<"Coordinate/Force values are either Inf/NaN or Cylinder IDs do not "
 			   "match. Exiting."<<endl;
         	exit(EXIT_FAILURE);
         } else

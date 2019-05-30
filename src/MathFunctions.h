@@ -1350,6 +1350,14 @@ namespace mathfunc {
     	}
     	return false;
     }
+
+    inline bool checkNaN_INF(doubleprecision *x, int startpoint, int endpoint){
+        for(int i = startpoint; i <= endpoint; i++){
+            if(isnan(x[i])||isinf(x[i]))
+                return true;
+        }
+        return false;
+    }
     
     inline void printvariablebinary(floatingpoint *x, int startpoint, int endpoint){
     	string str;

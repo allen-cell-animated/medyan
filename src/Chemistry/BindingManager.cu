@@ -2190,8 +2190,7 @@ void MotorBindingManager::addPossibleBindingsstencil(CCylinder* cc, short bindin
                 it != SysParams::Chemistry().bindingSites[_filamentType].end(); it++) {
 
                 if (areEqual(ccn->getCMonomer(*it)->speciesBound(
-                        SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1
-                        .0f)) {
+                        SysParams::Chemistry().motorBoundIndex[_filamentType])->getN(), 1.0f)) {
 
                     //check distances..
                     auto mp1 = (float)bindingSite / SysParams::Geometry().cylinderNumMon[_filamentType];

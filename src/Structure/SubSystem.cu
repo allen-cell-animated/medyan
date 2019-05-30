@@ -336,6 +336,7 @@ void SubSystem::updateBindingManagers() {
     }
     //UpdateAllBindingReactions
     for (auto C : _compartmentGrid->getCompartments()) {
+//        cout<<"Cmp ID "<<C->getID()<<endl;
         C->getHybridBindingSearchManager()->updateAllBindingReactions();
     }
 

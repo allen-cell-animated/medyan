@@ -112,7 +112,9 @@ MotorGhost::~MotorGhost() noexcept {
 }
 
 void MotorGhost::updatePosition() {
-    
+#ifdef CROSSCHECK
+    cout<<"MG position begin"<<endl;
+#endif
 #ifdef CHEMISTRY
     //update ccylinders
     _cMotorGhost->setFirstCCylinder(_c1->getCCylinder());
@@ -178,7 +180,9 @@ void MotorGhost::updatePosition() {
     _mMotorGhost->setStretchingConstant(_motorType, _numBoundHeads);
 
 #endif
-    
+#ifdef CROSSCHECK
+	cout<<"MG position end"<<endl;
+#endif
 }
 
 /// @note - This function updates forward walking rates using the
@@ -188,6 +192,17 @@ void MotorGhost::updatePosition() {
 /// Updates unbinding rates based on the stretch force. Does not
 /// consider compression forces, only stretching.
 void MotorGhost::updateReactionRates() {
+
+#ifdef CROSSCHECK
+    auto b1 = _c1->getFirstBead();
+    auto b2 = _c1->getSecondBead();
+    auto b3 = _c2->getFirstBead();
+    auto b4 = _c2->getSecondBead();
+    cout<<"MG mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
+        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
+            ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
+            <<b3->_dbIndex<<" "<<b4->_dbIndex<<endl;
+#endif
 
     //current force
     floatingpoint force = max<floatingpoint>((floatingpoint)0.0,
@@ -201,8 +216,6 @@ void MotorGhost::updateReactionRates() {
     
     //walking rate changer
     if(!_walkingChangers.empty()) {
-        /*cout<<"Walking URNrate "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
-        <<_position2<<endl;*/
         auto x1 = _c1->getFirstBead()->coordinate;
         auto x2 = _c1->getSecondBead()->coordinate;
         auto x3 = _c2->getFirstBead()->coordinate;
@@ -211,6 +224,7 @@ void MotorGhost::updateReactionRates() {
 
         auto mp1 = midPointCoordinate(x1, x2, _position1);
         auto mp2 = midPointCoordinate(x3, x4, _position2);
+
         //get component of force in direction of forward walk for C1, C2
         vector<floatingpoint> motorC1Direction =
         twoPointDirection(mp1, mp2);
@@ -324,12 +338,18 @@ void MotorGhost::updateReactionRates() {
         offRxn->setRate(newRate);
         offRxn->activateReaction();
     }
+#ifdef CROSSCHECK
+    cout<<"MG mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
+        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
+            ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
+        <<b3->_dbIndex<<" "<<b4->_dbIndex<<endl;
+#endif
 }
 
 void MotorGhost::moveMotorHead(Cylinder* c,
                                floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
-
+#ifdef CROSSCHECK
 	//Print coordinate
 	auto x1 = _c1->getFirstBead()->coordinate;
 	auto x2 = _c1->getSecondBead()->coordinate;
@@ -338,10 +358,27 @@ void MotorGhost::moveMotorHead(Cylinder* c,
 	auto mp1 = midPointCoordinate(x1, x2, _position1);
 	auto mp2 = midPointCoordinate(x3, x4, _position2);
 	auto motorcoord = midPointCoordinate(mp1,mp2,0.5);
-	cout<<"motor-walking "<<_motorID<<" "<<motorcoord[0]<<" "<<motorcoord[1]<<" "<<motorcoord[2]
-		<<" "<<_mMotorGhost->stretchForce<<endl;
 
-    
+    auto b1 = _c1->getFirstBead();
+    auto b2 = _c1->getSecondBead();
+    auto b3 = _c2->getFirstBead();
+    auto b4 = _c2->getSecondBead();
+
+
+	cout<<"motor-walking  mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
+        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
+            ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
+        <<b3->_dbIndex<<" "<<b4->_dbIndex<<" move "<<c->getID()<<" old "<<oldPosition<<" new "
+        <<newPosition<<endl;
+	cout<<"mcoord before "<<mp1[0]<<" "<<mp1[1]<<" "<<mp1[2]<<" "<<mp2[0]<<" "<<mp2[1]<<" "
+																			  ""<<mp2[2]<<endl;
+
+    if(c->getID() == _c1->getID() && newPosition == _position1)
+    	cout<<"c1 walking on itself"<<endl;
+    else if(c->getID() == _c2->getID() && newPosition == _position2)
+	    cout<<"c2 walking on itself"<<endl;
+#endif
+
     //shift the position of one side of the motor
     floatingpoint shift =  newPosition - oldPosition;
     
@@ -363,6 +400,52 @@ void MotorGhost::moveMotorHead(Cylinder* c,
     
     _cMotorGhost->moveMotorHead(c->getCCylinder(), oldpos, newpos,
                                 _motorType, boundType, ps);
+
+	auto x1 = _c1->getFirstBead()->coordinate;
+	auto x2 = _c1->getSecondBead()->coordinate;
+	auto x3 = _c2->getFirstBead()->coordinate;
+	auto x4 = _c2->getSecondBead()->coordinate;
+	auto mp1 = midPointCoordinate(x1, x2, _position1);
+	auto mp2 = midPointCoordinate(x3, x4, _position2);
+	auto DeltaL = twoPointDistance(mp1, mp2) - _mMotorGhost->getEqLength();
+
+    //(If motor is stretched) stretchForce > 0 => DeltaL > 0
+    //(If motor is contracted) stretchForce < 0 => DeltaL < 0
+    //Neither stretchForce = 0 => DeltaL = 0
+    bool stretchstate = _mMotorGhost->stretchForce > 0.0;
+    bool stretchstatenow = DeltaL > 0.0;
+
+    bool unstretched = _mMotorGhost->stretchForce == 0.0;
+    bool unstretchednow = DeltaL == 0.0;
+
+    //stretch - stretch
+    if(stretchstate == true && stretchstatenow == true)
+        CUDAcommon::mwalk.stretchtostretch++;
+    //stretch - contract
+    else if(stretchstate == true && stretchstatenow == false )
+        CUDAcommon::mwalk.stretchtocontract++;
+    //contract - contract
+    else if(stretchstate == false && stretchstatenow == false )
+        CUDAcommon::mwalk.contracttocontract++;
+    //contract - stretch
+    else if(stretchstate == false && stretchstatenow == true)
+        CUDAcommon::mwalk.contracttostretch++;
+    //equib - contract
+    else if(unstretched == true && stretchstatenow == false)
+        CUDAcommon::mwalk.equibtocontract++;
+    //equib - stretch
+    else if(unstretched == true && stretchstatenow == true)
+        CUDAcommon::mwalk.equibtostretch++;
+    //equib - equib
+    else if(unstretched == true && unstretchednow == true)
+        CUDAcommon::mwalk.equibtoequib++;
+
+#ifdef CROSSCHECK
+	cout<<"mcoord after "<<mp1[0]<<" "<<mp1[1]<<" "<<mp1[2]<<" "<<mp2[0]<<" "<<mp2[1]<<" "
+	                                                                                    ""<<mp2[2]<<endl;
+#endif
+
+
 #endif
     
 }
@@ -370,7 +453,7 @@ void MotorGhost::moveMotorHead(Cylinder* c,
 void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
                                floatingpoint oldPosition, floatingpoint newPosition,
                                short boundType, SubSystem* ps) {
-
+#ifdef CROSSCHECK
 	//Print coordinate
 	auto x1 = _c1->getFirstBead()->coordinate;
 	auto x2 = _c1->getSecondBead()->coordinate;
@@ -379,10 +462,23 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
 	auto mp1 = midPointCoordinate(x1, x2, _position1);
 	auto mp2 = midPointCoordinate(x3, x4, _position2);
 	auto motorcoord = midPointCoordinate(mp1,mp2,0.5);
-	cout<<"motor-walking "<<_motorID<<" "<<motorcoord[0]<<" "<<motorcoord[1]<<" "
-        <<motorcoord[2]<<" "<<_mMotorGhost->stretchForce<<endl;
 
-    
+    auto b1 = _c1->getFirstBead();
+    auto b2 = _c1->getSecondBead();
+    auto b3 = _c2->getFirstBead();
+    auto b4 = _c2->getSecondBead();
+
+    cout<<"motor-walking  mID "<<_motorID<<" "<<_c1->getID()<<" "<<_c2->getID()<<" "<<_position1<<" "
+        <<_position2<<" cindex "<<_c1->_dcIndex<<" "<<_c2->_dcIndex<<" bID "<<b1->getID
+            ()<<" "<<b2->getID()<<" bindex "<<b1->_dbIndex<<" "<<b2->_dbIndex<<" "
+        <<b3->_dbIndex<<" "<<b4->_dbIndex<<" move oldC "<<oldC->getID()<<" newC "
+        <<newC->getID() <<" old " <<oldPosition<<" new "<<newPosition<<endl;
+
+	if(newC->getID() == _c1->getID() && newPosition == _position1)
+		cout<<"c1 walking on itself"<<endl;
+	else if(newC->getID() == _c2->getID() && newPosition == _position2)
+		cout<<"c2 walking on itself"<<endl;
+#endif
     //shift the head
     if(oldC == _c1) {
         _position1 = newPosition;
@@ -403,6 +499,45 @@ void MotorGhost::moveMotorHead(Cylinder* oldC, Cylinder* newC,
     
     _cMotorGhost->moveMotorHead(oldC->getCCylinder(), newC->getCCylinder(),
                                 oldpos, newpos, _motorType, boundType, ps);
+
+	auto x1 = _c1->getFirstBead()->coordinate;
+	auto x2 = _c1->getSecondBead()->coordinate;
+	auto x3 = _c2->getFirstBead()->coordinate;
+	auto x4 = _c2->getSecondBead()->coordinate;
+	auto mp1 = midPointCoordinate(x1, x2, _position1);
+	auto mp2 = midPointCoordinate(x3, x4, _position2);
+	auto DeltaL = twoPointDistance(mp1, mp2) - _mMotorGhost->getEqLength();
+
+	//(If motor is stretched) stretchForce > 0 => DeltaL > 0
+	//(If motor is contracted) stretchForce < 0 => DeltaL < 0
+	//Neither stretchForce = 0 => DeltaL = 0
+	bool stretchstate = _mMotorGhost->stretchForce > 0.0;
+	bool stretchstatenow = DeltaL > 0.0;
+
+	bool unstretched = _mMotorGhost->stretchForce == 0.0;
+	bool unstretchednow = DeltaL == 0.0;
+
+	//stretch - stretch
+	if(stretchstate == true && stretchstatenow == true)
+		CUDAcommon::mwalk.stretchtostretch++;
+		//stretch - contract
+	else if(stretchstate == true && stretchstatenow == false )
+		CUDAcommon::mwalk.stretchtocontract++;
+		//contract - contract
+	else if(stretchstate == false && stretchstatenow == false )
+		CUDAcommon::mwalk.contracttocontract++;
+		//contract - stretch
+	else if(stretchstate == false && stretchstatenow == true)
+		CUDAcommon::mwalk.contracttostretch++;
+		//equib - contract
+	else if(unstretched == true && stretchstatenow == false)
+		CUDAcommon::mwalk.equibtocontract++;
+		//equib - stretch
+	else if(unstretched == true && stretchstatenow == true)
+		CUDAcommon::mwalk.equibtostretch++;
+		//equib - equib
+	else if(unstretched == true && unstretchednow == true)
+		CUDAcommon::mwalk.equibtoequib++;
 #endif
 }
 

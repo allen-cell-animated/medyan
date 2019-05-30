@@ -19,6 +19,7 @@
 #include "Bead.h"
 
 #include "MathFunctions.h"
+#include "Cylinder.h"
 
 #ifdef CUDAACCL
 #include <cuda.h>
@@ -329,7 +330,18 @@ void BranchingStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f,
 
         #ifdef CHECKFORCES_INF_NAN
         if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)){
-            cout<<"Force becomes infinite. Printing data "<<endl;
+            cout<<"Branching Stretching Force becomes infinite. Printing data "<<endl;
+
+            auto b = BranchingPoint::getBranchingPoints()[i];
+            auto cyl1 = b->getFirstCylinder();
+            auto cyl2 = b->getSecondCylinder();
+            cout<<"Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()<<" with cIndex "
+                <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
+                <<cyl1->getFirstBead()->_dbIndex<<" "
+                <<cyl1->getSecondBead()->_dbIndex<<" "
+                <<cyl2->getFirstBead()->_dbIndex<<" "
+                <<cyl2->getSecondBead()->_dbIndex<<endl;
+
             cout<<"Printing coords"<<endl;
             cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
             cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;

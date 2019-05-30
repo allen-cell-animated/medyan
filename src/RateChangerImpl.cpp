@@ -61,6 +61,8 @@ float MotorCatch::numBoundHeads(float onRate, float offRate,
 
 float MotorCatch::changeRate(float onRate, float offRate,
                              floatingpoint numHeads, floatingpoint force) {
+//    cout<<"offRate "<<offRate<<endl;
+//    return offRate;
     
     //calculate new rate
 #ifdef PLOSFEEDBACK
@@ -83,6 +85,8 @@ float MotorCatch::changeRate(float onRate, float offRate,
 
 float MotorStall::changeRate(float onRate, float offRate,
                              floatingpoint numHeads, floatingpoint force) {
+//    cout<<"onRate "<<onRate<<endl;
+//    return onRate*10;
     //determine k_0
     float k_0 = ((1 - _dutyRatio) / _dutyRatio) * onRate * _stepFrac;
 

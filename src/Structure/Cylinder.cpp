@@ -35,7 +35,9 @@ vector<int> Cylinder::removedcindex;//vector of bead indices that were once allo
 // beads but are free to be reallocated now.
 void Cylinder::revectorize(cylinder* cylindervec, Cylinder** cylinderpointervec,
                         CCylinder** ccylindervec){
+	#ifdef CROSSCHECK
 	cout<<"revectorize"<<endl;
+	#endif
     int i = 0;
     for(auto cyl:_cylinders.getElements()){
         //set _dcIndex
@@ -91,6 +93,14 @@ void Cylinder::appendrevectorize(cylinder* cylindervec, Cylinder** cylinderpoint
 
 	}
 	maxcindex++;
+	//Remove cindices in removedcindex vector that are greater-than-or-equal-to maxcindex
+	for(auto reusablecidx=removedcindex.begin();reusablecidx != removedcindex.end();){
+		if(*reusablecidx >= maxcindex)
+			removedcindex.erase(reusablecidx);
+		else
+			reusablecidx++;
+	}
+
 
 	Ncyl = _cylinders.getElements().size();
 }
@@ -168,7 +178,9 @@ Cylinder::Cylinder(Composite* parent, Bead* b1, Bead* b2, short type, int positi
         _dcIndex = *removedcindex.begin();
         removedcindex.erase(removedcindex.begin());
     }
+#ifdef CROSSCHECK
 	cout<<"cindex "<<_dcIndex<< " alloted to ID "<<_ID<<endl;
+#endif
     //@}
 
     //@{

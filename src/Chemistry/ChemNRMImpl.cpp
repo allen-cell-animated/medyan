@@ -191,6 +191,7 @@ bool ChemNRMImpl::makeStep() {
     auto rctnts = rn->getReaction()->getParent();
     cout<<(rctnts == NULL)<<endl;
     cout<<rctnts<<endl;*/
+//    rn->printSelf();
 
     rn->makeStep();
 #if defined TRACK_ZERO_COPY_N || defined TRACK_UPPER_COPY_N

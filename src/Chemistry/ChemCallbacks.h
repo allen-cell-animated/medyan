@@ -885,17 +885,28 @@ struct MotorWalkingCallback {
         
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
-//	    cout<<"motor-walk "<<m->getMMotorGhost()->stretchForce<<endl;
+
+
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
-/*        cout<<"filament Type "<<filType<<endl;
-        cout<<"cylinder size "<<cylinderSize<<endl;
-        cout<<"Cylinder oldpos "<<_c->getID()<<" "<<_oldPosition<<endl;
-        cout<<"newpos "<<_newPosition<<endl;
-        cout<<"-----------"<<endl;*/
+
         floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
         floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
-        
-        m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
+#ifdef CROSSCHECK
+        auto sb = SysParams::Chemistry().motorBoundIndex[0];
+	    CMonomer* monomernew = cc->getCMonomer(_newPosition);
+
+	    cout<<"mw before speciesMotor E-0/B-1 "<<sm1->getN()<<" "
+	    <<monomernew->speciesMotor(_motorType)->getN()<<endl;
+	    cout<<"mw before speciesBound E-1/B-0 "<<monomer->speciesBound(sb)->getN()
+	    <<" "<<monomernew->speciesBound(sb)->getN()<<endl;
+#endif
+	    m->moveMotorHead(_c, oldpos, newpos, _boundType, _ps);
+#ifdef CROSSCHECK
+	    cout<<"mw after speciesMotor E-0/B-1 "<<sm1->getN()<<" "<<
+	    monomernew->speciesMotor(_motorType)->getN()<<endl;
+	    cout<<"mw after speciesBound E-1/B-0 "<<monomer->speciesBound(sb)->getN()
+	        <<" "<<monomernew->speciesBound(sb)->getN()<<endl;
+#endif
         
 #ifdef DYNAMICRATES
         //reset the associated reactions
@@ -941,17 +952,17 @@ struct MotorMovingCylinderCallback {
         CMonomer* monomer = oldCC->getCMonomer(_oldPosition);
         SpeciesBound* sm1 = monomer->speciesMotor(_motorType);
         short filType = _oldC->getType();
-        
+
         //get motor
         MotorGhost* m = ((CMotorGhost*)sm1->getCBound())->getMotorGhost();
 //	    cout<<"motor-walk "<<m->getMMotorGhost()->stretchForce<<endl;
         
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
-/*        cout<<"filament Type "<<filType<<endl;
+        cout<<"filament Type "<<filType<<endl;
         cout<<"cylinder size "<<cylinderSize<<endl;
         cout<<"Cylinder oldpos "<<_oldC->getID()<<" "<<_oldPosition<<endl;
         cout<<"Cylinder newpos "<<_newC->getID()<<" "<<_newPosition<<endl;
-        cout<<"-----------"<<endl;*/
+        cout<<"-----------"<<endl;
         floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
         floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
         

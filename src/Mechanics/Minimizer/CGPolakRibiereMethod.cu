@@ -263,7 +263,6 @@ void PolakRibiere::minimize(ForceFieldManager &FFM, floatingpoint GRADTOL,
     Ms_issafestate = false;
     Ms_isminimizationstate = maxF() > GRADTOL;
 
-
     //
     //
 #ifdef DETAILEDOUTPUT

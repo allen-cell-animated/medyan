@@ -263,7 +263,7 @@ public:
 				newsize = (int(Nbeads / bead_cache) + 1) * bead_cache;
 			//set parameters and revectorize
 			if (newsize != vectormaxsize) {
-				cout<<"vectorize bead"<<endl;
+//				cout<<"vectorize bead"<<endl;
 				floatingpoint *coord = CUDAcommon::serlvars.coord;
 				delete[] coord;
 				floatingpoint *newcoord = new floatingpoint[3 * newsize];

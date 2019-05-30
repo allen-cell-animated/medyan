@@ -165,6 +165,17 @@ struct timeminimization{
 	int motorwalkingcalls =0;
 
 };
+
+struct motorwalking{
+	int stretchtocontract = 0;
+	int stretchtostretch = 0;
+	int contracttocontract = 0;
+	int contracttostretch = 0;
+	int equibtocontract = 0;
+	int equibtostretch = 0;
+	int equibtoequib = 0;
+};
+
 #if defined(CUDAACCL) || defined(CUDATIMETRACK)
 struct CUDAvars {
     floatingpoint * gpu_force = NULL;
@@ -264,6 +275,7 @@ public:
 	static Callbackcount ccount;
 	static PolyPlusEndTemplatetime ppendtime;
 	static timeminimization tmin;
+	static motorwalking mwalk;
 
 #ifdef CUDAACCL
     static CUDAvars cudavars;

@@ -419,7 +419,33 @@ void FilamentBendingCosine::forces(floatingpoint *coord, floatingpoint *f, int *
 
 	    #ifdef CHECKFORCES_INF_NAN
 	    if(checkNaN_INF(force1, 0, 2)||checkNaN_INF(force2,0,2)||checkNaN_INF(force3,0,2)){
-		    cout<<"Force becomes infinite. Printing data "<<endl;
+		    cout<<"Filament Bending Force becomes infinite. Printing data "<<endl;
+
+		    short found = 0;
+		    Cylinder *cyl1, *cyl2;
+		    for(auto cyl:Cylinder::getCylinders()){
+			    auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
+			    auto dbIndex2 = cyl->getSecondBead()->_dbIndex;
+			    if(dbIndex1 == beadSet[n * i] && dbIndex2 == beadSet[n * i + 1]) {
+				    cyl1 = cyl;
+				    found++;
+				    if(found>=2)
+					    break;
+			    }
+			    else if(dbIndex1 == beadSet[n * i + 1] && dbIndex2 == beadSet[n * i + 2]){
+				    cyl2 = cyl;
+				    found++;
+				    if(found>=2)
+					    break;
+			    }
+		    }
+		    cout<<"Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()<<" with cIndex "
+		        <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
+		        <<cyl1->getFirstBead()->_dbIndex<<" "
+		        <<cyl1->getSecondBead()->_dbIndex<<" "
+		        <<cyl2->getFirstBead()->_dbIndex<<" "
+		        <<cyl2->getSecondBead()->_dbIndex<<endl;
+
 		    cout<<"Printing coords"<<endl;
 		    cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
 		    cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;

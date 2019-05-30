@@ -18,6 +18,8 @@
 #include "Bead.h"
 #include "MathFunctions.h"
 #include "common.h"
+#include "Cylinder.h"
+#include "Filament.h"
 #ifdef CUDAACCL
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -365,23 +367,6 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
         f3 = &f[3 * beadSet[n * i + 2]];
         f4 = &f[3 * beadSet[n * i + 3]];
 
-//        std::cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<" "<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<" "
-//                ""<<coord3[0]<<" "<<coord3[1]<<" "<<coord3[2]<<" "<<coord4[0]<<" "<<coord4[1]<<" "<<coord4[2]<<" ";
-//        std::cout<<-f0 * ( v1[0] - v2[0] ) * (1 - pos1[i])<<" "
-//                 <<-f0 * ( v1[1] - v2[1] ) * (1 - pos1[i])<<" "
-//                 <<-f0 * ( v1[2] - v2[2] ) * (1 - pos1[i])<<" "
-//                 <<-f0 * ( v1[0] - v2[0] ) * (pos1[i])<<" "
-//                 <<-f0 * ( v1[1] - v2[1] ) * (pos1[i])<<" "
-//                 <<-f0 * ( v1[2] - v2[2] ) * (pos1[i])<<" "
-//                 <<f0 * ( v1[0] - v2[0] ) * (1 - pos2[i])<<" "
-//                 <<f0 * ( v1[1] - v2[1] ) * (1 - pos2[i])<<" "
-//                 <<f0 * ( v1[2] - v2[2] ) * (1 - pos2[i])<<" "
-//                 <<f0 * ( v1[0] - v2[0] ) * (pos2[i])<<" "
-//                 <<f0 * ( v1[1] - v2[1] ) * (pos2[i])<<" "
-//                 <<f0 * ( v1[2] - v2[2] ) * (pos2[i])<<" ";
-//        std::cout<<f1[0]<<" "<<f1[1]<<" "<<f1[2]<<" "<<f2[0]<<" "<<f2[1]<<" "<<f2[2]<<" "<<f3[0]<<" "
-//                ""<<f3[1]<<" "<<f3[2]<<" "<<f4[0]<<" "<<f4[1]<<" "<<f4[2]<<endl;
-
         //force on i
         f1[0] +=   -f0 * ( v1[0] - v2[0] ) * (1 - pos1[i]);
         f1[1] +=   -f0 * ( v1[1] - v2[1] ) * (1 - pos1[i]);
@@ -408,7 +393,19 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 	    #ifdef CHECKFORCES_INF_NAN
 	    if(checkNaN_INF(f1, 0, 2)||checkNaN_INF(f2,0,2)||checkNaN_INF(f3,0,2)
            ||checkNaN_INF(f4,0,2)){
-		    cout<<"Force becomes infinite. Printing data "<<endl;
+		    cout<<"MotorGhost Stretching Force becomes infinite. Printing data "<<endl;
+
+		    auto m = MotorGhost::getMotorGhosts()[i];
+		    auto cyl1 = m->getFirstCylinder();
+		    auto cyl2 = m->getSecondCylinder();
+		    cout<<"mID "<<m->getID()<<" Cylinder IDs "<<cyl1->getID()<<" "<<cyl2->getID()
+		    <<" with cIndex "
+		    <<cyl1->_dcIndex<<" "<<cyl2->_dcIndex<<" and bIndex "
+		    <<cyl1->getFirstBead()->_dbIndex<<" "
+		    <<cyl1->getSecondBead()->_dbIndex<<" "
+		        <<cyl2->getFirstBead()->_dbIndex<<" "
+		        <<cyl2->getSecondBead()->_dbIndex<<endl;
+
 		    cout<<"Printing coords"<<endl;
 		    cout<<coord1[0]<<" "<<coord1[1]<<" "<<coord1[2]<<endl;
 		    cout<<coord2[0]<<" "<<coord2[1]<<" "<<coord2[2]<<endl;
@@ -429,6 +426,10 @@ void MotorGhostStretchingHarmonic::forces(floatingpoint *coord, floatingpoint *f
 		    printvariablebinary(f2,0,2);
 		    printvariablebinary(f3,0,2);
 		    printvariablebinary(f4,0,2);
+
+		    cout<<"Printing Filament"<<endl;
+		    auto F = static_cast<Filament*>(cyl1->getParent());
+		    F->printSelf();
 		    exit(EXIT_FAILURE);
 	    }
 	    #endif
