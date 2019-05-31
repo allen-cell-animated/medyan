@@ -294,8 +294,8 @@ public:
         bool check = false;
         if(Bead::triggercylindervectorization || (vectormaxsize - maxcindex) <= bead_cache/20){
 
-            cout<<"size "<<newsize<<" "<<vectormaxsize<<" "
-                                                        ""<<Bead::triggercylindervectorization<<endl;
+            /*cout<<"size "<<newsize<<" "<<vectormaxsize<<" "
+                                                        ""<<Bead::triggercylindervectorization<<endl;*/
 
             newsize = vectormaxsize + cylinder_cache;
             if(newsize != vectormaxsize || Bead::triggercylindervectorization){

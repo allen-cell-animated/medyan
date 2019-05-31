@@ -958,11 +958,11 @@ struct MotorMovingCylinderCallback {
 //	    cout<<"motor-walk "<<m->getMMotorGhost()->stretchForce<<endl;
         
         int cylinderSize = SysParams::Geometry().cylinderNumMon[filType];
-        cout<<"filament Type "<<filType<<endl;
+/*        cout<<"filament Type "<<filType<<endl;
         cout<<"cylinder size "<<cylinderSize<<endl;
         cout<<"Cylinder oldpos "<<_oldC->getID()<<" "<<_oldPosition<<endl;
         cout<<"Cylinder newpos "<<_newC->getID()<<" "<<_newPosition<<endl;
-        cout<<"-----------"<<endl;
+        cout<<"-----------"<<endl;*/
         floatingpoint oldpos = floatingpoint(_oldPosition) / cylinderSize;
         floatingpoint newpos = floatingpoint(_newPosition) / cylinderSize;
         

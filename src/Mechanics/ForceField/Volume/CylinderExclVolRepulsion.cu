@@ -991,7 +991,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 
 		    cout<<"Cylinder Exclusion Force becomes infinite. Printing data "<<endl;
 
-		    short found = 0;
+		    /*short found = 0;
 		    Cylinder *cyl1, *cyl2;
 		    for(auto cyl:Cylinder::getCylinders()){
 			    auto dbIndex1 = cyl->getFirstBead()->_dbIndex;
@@ -1058,7 +1058,7 @@ void CylinderExclVolRepulsion::forces(floatingpoint *coord, floatingpoint *f, in
 		        <<EE<<" ATG2 "<<ATG2<<" DD "<<DD<<" BB "<<BB<<" ATG3 "<<ATG3<<" HH "<<HH<<" FF "
 		        <<FF<<" ATG4 "<<ATG4<<endl;
 
-		    exit(EXIT_FAILURE);
+		    exit(EXIT_FAILURE);*/
 	    }
 	    else{
 		    for(int dim = 0; dim<3; dim++) {
