@@ -8,6 +8,7 @@
 #include "util/io/log.h"
 #include "Visual/Camera.hpp"
 #include "Visual/Common.hpp"
+#include "Visual/Profile.hpp"
 #include "Visual/Shader.hpp"
 #include "Visual/SharedData.hpp"
 
